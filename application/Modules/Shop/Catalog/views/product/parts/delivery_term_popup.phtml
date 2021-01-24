@@ -1,0 +1,35 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+
+<div class="availability">
+	<?php
+	/*
+	if (($prod_quantity = $variant->getProductsQuantity())>0) {
+		if ($prod_quantity >= 10) {
+			echo '<span class="">'.SKLADEM_10AVIC . sklonovaniKusu(10) . '</span>';
+		}
+		else {
+			echo '<span class="">'.SKLADEM_ . $prod_quantity . ' ' . sklonovaniKusu($prod_quantity) . '</span>';
+		}
+		?>
+		<span class="available" id="available-<?= $variant->getId() ?>" onclick="ga('send', 'event', 'detail delivery detail', 'click', '<?= $variant->getProductsName() ?>');"><?= KDY_ZBOZI_DOSTANU_ ?></span>
+		<?php
+		echo view::renderPartial('parts/delivery_popup', ['product'=>$variant,'box_params'=>' id="delivery-' . $variant->getId() . '"']);
+	}
+	else {
+		echo '<span class="">' . $variant->getDeliveryText('') . '</span>';
+	}
+	*/
+	?>
+</div>
+

@@ -1,0 +1,54 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+<div class="row">
+	<div class="col-md-12">
+		<div class="content-white">
+			<div class="product-info center-content">
+				<div class="gallery">
+					<?php require('parts/images.phtml'); ?>
+					<?php require('parts/stickers.phtml'); ?>
+				</div>
+				<div class="info">
+					<div>
+						<?php include('parts/socials.phtml'); ?>
+						<h1><?= $product->getName() ?></h1>
+						<?php require 'parts/rank.phtml'; ?>
+						<?php require 'parts/price.phtml'; ?>
+
+
+						<div class="pre-actions">
+							<?php require 'parts/availability.phtml'; ?>
+						</div>
+
+						<div class="actions">
+							<div class="left">
+
+								<input type="button" class="button-popup-cart"
+								       onclick="ShoppingCart.buy(<?=$product->getId()?>,1);"
+								       value="<?=Tr::_('Koupit')?>"/>
+
+								<?php require 'parts/delivery_term_popup.phtml'; ?>
+							</div>
+							<?php require 'parts/compare.phtml'; ?>
+							<div class="clear"></div>
+						</div>
+						<?php require 'parts/brand.phtml'; ?>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+
+
+	</div>
+</div>

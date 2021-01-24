@@ -1,0 +1,25 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$products = $listing->getVisibleProducts();
+?>
+
+<?=$this->render('product_listing/list/sorting');?>
+<div class="products">
+	<?php
+	foreach ($products as $product):
+		$this->setVar('product', $product);
+		echo $this->render('product_listing/list/item');
+	endforeach;
+	?>
+</div>
+<?=$this->render('product_listing/list/pagination')?>

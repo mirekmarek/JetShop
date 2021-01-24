@@ -1,0 +1,29 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+?>
+
+<div class="bottom">
+	<?php if ($listing->pagination()->getPagesCount() > 1): ?>
+		<div class="pagination">
+			<?= $listing->pagination()->displayLinks(
+				function($page_no) use ($listing) {
+					return '<a href="' .$listing->pagination()->getPageURL($page_no) . '" class="pageResults" title=" ' . $page_no.' " onclick="ProductListing.pagination.go('.$page_no.');return false;">' . $page_no . '</a>';
+				},
+				function($page_no) {
+					return '<span>' . $page_no . '</span>';
+				}
+			) ?>
+		</div>
+	<?php endif; ?>
+</div>
+

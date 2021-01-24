@@ -1,0 +1,82 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use JetShop\Product;
+
+use Jet\UI_dataGrid;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\Tr;
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View               $this
+ * @var UI_dataGrid            $grid
+ */
+$grid = $this->getRaw( 'grid' );
+$router = $this->getController()->getControllerRouter();
+
+//TODO:
+$add_uri = '';
+
+$c_edit = $grid->getColumn( '_edit_' );
+$c_edit->setRenderer(
+	function( Product $item ) use ( $router ) {
+
+		$edit_uri = $item->getEditURL();
+		//TODO:
+		$delete_uri = '';
+
+		if( $edit_uri ):
+			echo UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
+		endif;
+		echo '&nbsp;';
+		if( $delete_uri ):
+			echo UI::button_delete()->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
+		endif;
+
+	}
+);
+$c_edit->setCssStyle( 'width:180px;' );
+
+
+$grid->getColumn( 'products_shop_data.name' )->setRenderer(
+	function( Product $item ) use ( $router ) {
+		$edit_uri = $router->action('edit')->URI( $item->getId() );
+		?>
+		<a href="<?=$edit_uri;?>"><?=$item->getInternalName();?></a>
+		<?php
+	}
+);
+
+$grid->getColumn( 'id' )->setCssStyle( 'width:120px;' );
+$grid->getColumn( 'id' )->setRenderer(
+	function( Product $item ) use ( $router ) {
+		$edit_uri = $router->action('edit')->URI( $item->getId() );
+		?>
+		<a href="<?=$edit_uri;?>"><?=$item->getId();?></a>
+		<?php
+	}
+);
+
+
+
+?>
+
+<div class="row toolbar">
+	<div class="col-xs-7 col-md-3">
+		<?=$this->getRaw( 'search_form' ) ?>
+	</div>
+	<div class="col-xs-5 col-md-3">
+		<?php if( $add_uri ): ?>
+			<?=UI::button_create( Tr::_( 'Create a new product' ) )->setUrl( $add_uri )?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<?=$grid->render();?>
+	</div>
+</div>

@@ -1,0 +1,23 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+<?php /* if( $brand ): ?>
+	<div class="manufacturer">
+		<div class="left">
+			<?= VYROBCE_ ?><a href="<?= $manufacturer->getUrl() ?>"><?= $manufacturer->getManufacturersName() ?></a>
+		</div>
+		<?php if( $manufacturer->getManufacturersImage() ): ?>
+			<div class="right"
+			     style="background-image:url(<?= DIR_WS_IMAGES . $manufacturer->getManufacturersImage() ?>)"></div>
+		<?php endif; ?>
+	</div>
+<?php endif; */ ?>

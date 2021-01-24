@@ -1,0 +1,25 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use JetShop\Category;
+use JetShop\Category_Menu;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View   $this
+ */
+
+$items = Category_Menu::getItems(0, Category::CATEGORY_TYPE_REGULAR);
+?>
+
+<h1>Homepage</h1>
+
+<?php foreach($items as $item): ?>
+	<a href="<?=$item->getUrl()?>" style="font-size: 14px;font-weight: bolder"><?=$item->getLabel()?></a>
+	<br/>
+	<?php foreach($item->getChildren() as $s_item): ?>
+		<a href="<?=$s_item->getUrl()?>" style="font-size: 10px;"><?=$s_item->getLabel()?></a>
+	<?php endforeach; ?>
+	<br/>
+<?php endforeach; ?>

@@ -1,0 +1,23 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+?>
+
+<div class="sorting">
+	<?php foreach($listing->sort()->getSortOptions() as $so):
+		if($so->isActive()): ?>
+			<span class="active" style="font-weight: bolder;"><?= $so->getLabel() ?></span>
+		<?php else: ?>
+			<a onclick="ProductListing.setSort('<?= $so->getId() ?>'); return false;"><?= $so->getLabel() ?></a>
+		<?php endif;
+	endforeach; ?>
+</div>

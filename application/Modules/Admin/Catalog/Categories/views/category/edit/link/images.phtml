@@ -1,0 +1,24 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Mvc_View;
+use JetShop\Category_ShopData;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View   $this
+ */
+
+$category = Controller_Main::getCurrentCategory();
+
+$image_classes = Category_ShopData::getImageClasses();
+unset($image_classes[Category_ShopData::IMG_MAIN]);
+
+echo $this->render('lj_start');
+
+foreach(Shops::getList() as $shop):
+	$shop_id = $shop->getId();
+
+	echo $category->getShopData( $shop_id )->renderImageWidgets( $image_classes );
+endforeach;
+echo $this->render('lj_end');

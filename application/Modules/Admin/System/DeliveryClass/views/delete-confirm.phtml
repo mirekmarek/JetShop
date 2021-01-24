@@ -1,0 +1,35 @@
+<?php
+namespace JetShopModule\Admin\System\DeliveryClass;
+
+use JetShop\DeliveryClass;
+use Jet\Http_Request;
+use Jet\UI;
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View   $this
+ * @var DeliveryClass       $delivery_class
+ */
+$delivery_class = $this->getRaw( 'delivery_class' );
+$router = $this->getController()->getControllerRouter();
+
+?>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+
+		<?=UI::button_goBack()?>
+		<p>
+			<?=Tr::_( 'Do you really want to delete this delivery class?' );?>
+			<br/>
+			<a href="<?=$router->action('edit')->URI( $delivery_class->getId() );?>"
+			   style="font-weight: bolder;font-size: 20px;"><?=$delivery_class->getInternalName();?> (<?=$delivery_class->getInternalName();?>)</a>
+		</p>
+
+		<form action="<?=Http_Request::currentURI()?>" method="post">
+			<input type="hidden" name="delete" value="yes">
+			<?=UI::button_delete()->setType( 'submit' )?>
+		</form>
+	</div>
+</div>

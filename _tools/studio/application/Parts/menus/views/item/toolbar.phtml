@@ -1,0 +1,19 @@
+<?php
+namespace JetStudio;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ * @var Menus_Menu_Item $item
+ */
+
+$item = $this->getRaw('item');
+
+$form = $item->getEditForm();
+?>
+<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit()")?>
+
+<?=UI::button_delete(Tr::_('Delete this menu item'))->setOnclick("$('#delete_menu_item_dialog').modal('show')") ?>

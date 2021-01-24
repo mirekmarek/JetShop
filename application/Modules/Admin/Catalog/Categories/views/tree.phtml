@@ -1,0 +1,130 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Data_Tree_Node;
+use Jet\UI;
+use Jet\Tr;
+use Jet\Mvc_View;
+use Jet\UI_button;
+use JetShop\Category;
+
+/**
+ * @var Mvc_View               $this
+ */
+
+
+$current_node = Controller_Main::getCurrentNode();
+
+
+$showCategory = function( Data_Tree_Node $node ) {
+	$is_active = $node->getData()['is_active'];
+	if(Category::getFilter_onlyActive() && !$is_active ) {
+		return;
+	}
+
+	$tree_icon = 'file';
+
+	$selected = $node->getId()==Controller_Main::getCurrentCategoryId();
+
+
+	if($node->getHasChildren()) {
+		$tree_icon = 'folder';
+
+		if($selected) {
+			$tree_icon = 'folder-open';
+		}
+	}
+
+	$text_decoration = 'none';
+
+	if(!$is_active) {
+		$text_decoration = 'line-through';
+	}
+
+	$name = $node->getLabel();
+	if(!$name) {
+		$name = Category::get( $node->getId() )->getShopData()->getName();
+		if(!$name) {
+			$name = '???';
+		}
+	}
+
+	$icon = Category::renderIcon($node->getData()['type'], true);
+
+	if($selected):
+		?>
+		<li class="selected" style="text-decoration: <?=$text_decoration?>;">
+			<span class="icon"><?=UI::icon($tree_icon)?></span>
+			<?php if($icon): ?>
+			<span class="icon"><?=$icon?></span>
+			<?php endif; ?>
+			<?=$name?>
+		</li>
+		<?php
+	else:
+		?>
+		<li style="text-decoration: <?=$text_decoration?>;">
+			<a href="<?=Category::getCategoryEditURL($node->getId())?>">
+				<span class="icon"><?=UI::icon($tree_icon)?></span>
+				<?php if($icon): ?>
+				<span class="icon"><?=$icon?></span>
+				<?php endif; ?>
+				<?=$name?>
+			</a>
+		</li>
+		<?php
+	endif;
+};
+?>
+
+<div class="sub-toolbar">
+	<form action="?set_filter" method="post">
+	<table>
+		<tr>
+			<td><?=Tr::_('Order by:')?></td>
+			<td>
+				<select name="order_by" onchange="this.form.submit()">
+					<?php foreach(Category::getSortScope() as $sort=>$sort_name): ?>
+						<option value="<?=$sort?>"<?=$sort==Category::getFilter_selectedSort() ? ' selected' : '' ?>><?=$sort_name?></option>
+					<?php endforeach; ?>
+				</select>
+			</td>
+			<td style="padding-left: 10px">
+				<label>
+					<input type="checkbox" name="only_active" value="1" onchange="this.form.submit()" <?=Category::getFilter_onlyActive()?' checked': ''?>/>
+					<?=Tr::_('Only active')?>
+				</label>
+			</td>
+		</tr>
+	</table>
+	</form>
+</div>
+
+<ul>
+	<?php if( Controller_Main::getCurrentCategoryId() ): ?>
+		<li><a href="<?=Category::getCategoryEditURL($current_node->getParentId())?>">..</a></li>
+		<?php $showCategory( $current_node ); ?>
+
+		<ul>
+		<?php
+		foreach($current_node->getChildren() as $node):
+			$showCategory( $node );
+		endforeach;
+		?>
+		</ul>
+	<?php else:
+		foreach($current_node->getChildren() as $node):
+			if($node->getData()['type']==Category::CATEGORY_TYPE_TOP) {
+				$showCategory( $node );
+			}
+		endforeach;
+		foreach($current_node->getChildren() as $node):
+			if($node->getData()['type']!=Category::CATEGORY_TYPE_TOP) {
+				$showCategory( $node );
+			}
+		endforeach;
+	endif; ?>
+</ul>
+
+
+

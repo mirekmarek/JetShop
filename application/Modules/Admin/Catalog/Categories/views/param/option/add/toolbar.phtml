@@ -1,0 +1,17 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Mvc_View;
+use Jet\UI;
+use JetShop\Parametrization_Group;
+
+/**
+ * @var Mvc_View   $this
+ * @var Parametrization_Group $new_group
+ */
+$new_option = $this->getRaw('new_option');
+
+$form_id = $new_option->getAddForm()->getId();
+
+?>
+<?=UI::button_save()->setOnclick("$('#$form_id').submit();")?>

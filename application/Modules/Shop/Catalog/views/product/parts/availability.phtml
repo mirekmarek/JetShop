@@ -1,0 +1,15 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+<div class="availability">
+	<?php /* $product->getDeliveryText(($product->getProductsQuantity() >= 10) ? SKLADEM_10AVIC . sklonovaniKusu(10) : SKLADEM_.' ' . $product->getProductsQuantity() . ' ' . sklonovaniKusu($product->getProductsQuantity()) ) */ ?>
+</div>

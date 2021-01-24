@@ -1,0 +1,27 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form;
+use Jet\Mvc_View;
+
+use JetShop\Shops;
+
+use JetShop\Parametrization_Group_ShopData;
+use JetShop\Parametrization_Group;
+
+/**
+ * @var Mvc_View   $this
+ * @var Parametrization_Group $new_group
+ * @var Form $form
+ */
+$group = Controller_Main::getCurrentParamGroup();
+
+
+echo $this->render('lj_start');
+
+	foreach(Shops::getList() as $shop):
+		$shop_id= $shop->getId();
+		echo $group->getShopData( $shop_id )->renderImageWidgets( Parametrization_Group_ShopData::getImageClasses() );
+	endforeach;
+
+echo $this->render('lj_end');

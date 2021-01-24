@@ -1,0 +1,135 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Stencils;
+
+use JetShop\Stencil;
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\Http_Request;
+
+/**
+ * @var Mvc_View   $this
+ * @var Form       $form
+ * @var Stencil    $stencil
+ */
+$form = $this->getRaw( 'form' );
+$router = $this->getController()->getControllerRouter();
+
+$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 1 ] );
+$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 4 ] );
+
+$stencil = $this->getRaw( 'stencil' );
+
+$sort_options = [];
+if(!$form->getIsReadonly()) {
+	foreach($stencil->getOptions() as $option) {
+		$sort_options[$option->getId()] = $option->getShopData()->getFilterLabel();
+	}
+}
+?>
+
+
+<?=$form->start()?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+
+			<?php if($this->getString('create_option_url')): ?>
+				<?=UI::button_create('Create option')->setUrl( $this->getString('create_option_url') )?>
+			<?php endif; ?>
+
+			<?php if(count($sort_options)>1): ?>
+				<?=UI::button('Sort options')->setOnclick('paramSort.openDialog()')?>
+			<?php endif; ?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+
+		<?=$form->field( 'name' )?>
+
+		<div class="form-group row">
+			<label class="col-md-1 col-form-label"><?=Tr::_('Options:')?></label>
+			<div class="col-md-8">
+				<table class="table table-striped" style="width: auto">
+					<?php foreach($stencil->getOptions() as $option): ?>
+						<tr><td><a href="<?=$router->action('edit_option')->URI($stencil->getId(), $option->getId())?>"><?=$option->getShopData()->getFilterLabel()?:'?'?></a></td></tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<?=$form->end()?>
+
+<?php
+
+$showSortDialog = function( $title, $sort_action, array $items ) {
+	$dialog = UI::dialog('sort_dialog', Tr::_($title), 400);
+	?>
+	<?=$dialog->start()?>
+	<div style="overflow: auto;height: 300px;">
+		<div class="sortable" id="sort_items">
+			<?php foreach($items as $id=>$title): ?>
+				<div class="sortable-item" data-id="<?=$id?>">
+					<i class="property-option-move"></i>
+					<?=$title?:'??'?>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?=$dialog->footer()?>
+	<form action="<?=Http_Request::currentURI(['action'=>$sort_action])?>" method="post">
+		<input type="hidden" name="sort_order" id="sort_order" />
+		<?=UI::button_save()?>
+	</form>
+	<?=$dialog->end()?>
+
+	<script type="text/javascript">
+
+		const paramSort = {
+			openDialog: function () {
+				paramSort.setSort();
+				$('#sort_dialog').modal('show');
+
+
+				$('#sort_items').sortable({
+					stop: function() {
+						paramSort.setSort();
+					}
+
+				});
+
+			},
+
+			setSort: function() {
+				var values = [];
+
+				$('#sort_items').find('.sortable-item').each( function(i, item) {
+					values.push($(item).data('id'));
+				});
+
+				$('#sort_order').val(values.join('|'));
+
+			}
+		};
+	</script>
+
+
+	<?php
+};
+
+if(count($sort_options)>1):
+	$showSortDialog( 'Sort options', 'save_sort_options', $sort_options );
+endif;
+

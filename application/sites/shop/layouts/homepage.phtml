@@ -1,0 +1,44 @@
+<?php
+use Jet\Mvc_Layout;
+use Jet\Mvc;
+use Jet\Tr;
+
+/**
+ * @var Mvc_Layout $this
+ */
+
+require 'parts/init_libs.php';
+?>
+<!DOCTYPE html>
+<html lang="<?=Mvc::getCurrentLocale()->getLanguage()?>">
+<head>
+	<title><?=Mvc::getCurrentSite()->getLocalizedData( Mvc::getCurrentLocale() )->getTitle()?> : <?=Mvc::getCurrentPage()->getTitle()?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="content-language" content="<?=Mvc::getCurrentLocale()->getLanguage()?>" />
+
+	<jet_layout_meta_tags/>
+	<jet_layout_css/>
+	<jet_layout_javascripts/>
+
+</head>
+<body>
+<div class="container-fluid">
+	<div class="page-header card text-white bg-dark">
+		<div class="card-body">
+			<h1>JetShop!</h1>
+			<small>JetShop Example</small>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-1" >
+		</div>
+		<div class="col-md-10" style="padding-top: 10px;padding-bottom: 20px;">
+			<jet_layout_main_position/>
+		</div>
+		<div class="col-md-1" >
+		</div>
+	</div>
+</div>
+</body>
+</html>

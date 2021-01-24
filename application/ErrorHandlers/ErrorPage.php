@@ -1,0 +1,59 @@
+<?php
+/**
+ *
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ *
+ * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ */
+namespace JetShop;
+
+use Jet\Debug;
+use Jet\Debug_ErrorHandler_Handler;
+use Jet\Debug_ErrorHandler_Error;
+use Jet\ErrorPages;
+
+/**
+ *
+ */
+class ErrorHandler_ErrorPage extends Debug_ErrorHandler_Handler
+{
+	/**
+	 * @var bool
+	 */
+	protected bool $displayed = false;
+
+	/**
+	 * @return string
+	 */
+	public function getName() : string
+	{
+		return 'ErrorPage';
+	}
+
+	/**
+	 * @param Debug_ErrorHandler_Error $error
+	 */
+	public function handle( Debug_ErrorHandler_Error $error ) : void
+	{
+		if(
+			$error->isFatal() &&
+			Debug::getOutputIsHTML()
+		) {
+			if(class_exists('Jet\ErrorPages', false)) {
+				if(ErrorPages::display( 500 )) {
+					$this->displayed = true;
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function errorDisplayed() : bool
+	{
+		return $this->displayed;
+	}
+
+}

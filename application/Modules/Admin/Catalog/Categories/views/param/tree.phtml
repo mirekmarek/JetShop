@@ -1,0 +1,104 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Http_Request;
+use Jet\UI;
+use Jet\Tr;
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View   $this
+ */
+
+$category = Controller_Main::getCurrentCategory();
+
+$category->getParametrizationGroups();
+?>
+<ul>
+	<?php if(!Controller_Main::getCurrentAction()): ?>
+		<li class="selected"><a href="<?=Http_Request::currentURI([], ['page', 'action','group_id', 'property_id', 'option_id'])?>"><?=Tr::_('Main settings')?></a></li>
+	<?php else: ?>
+		<li><a href="<?=Http_Request::currentURI([], ['page', 'action','group_id', 'property_id', 'option_id'])?>"><?=Tr::_('Main settings')?></a></li>
+	<?php endif; ?>
+	<ul>
+		<?php
+		foreach($category->getParametrizationGroups() as $group):
+			$group_edit_url = Http_Request::currentURI(['group_id'=>$group->getId()], ['page', 'action', 'property_id', 'option_id', 'type']);
+			$group_label = $group->getShopData()->getLabel();
+			if(!$group_label) {
+				$group_label = '???';
+			}
+
+			$inherited_class = $group->isInherited() ? ' inherited':'';
+
+			if($group->getId()==Controller_Main::getCurrentParamGroupId()):
+				?>
+				<li class="selected<?=$inherited_class?>"><a href="<?=$group_edit_url?>"><?=UI::icon('folder-open')?> <?=$group_label?></a></li>
+				<ul class="<?=$inherited_class?>">
+					<?php foreach($group->getProperties() as $property):
+						$property_edit_url = Http_Request::currentURI(['group_id'=>$group->getId(), 'property_id'=>$property->getId()], ['page', 'action', 'option_id','type']);
+
+						$property_label = $property->getShopData()->getLabel();
+						if(!$property_label) {
+							$property_label = '???';
+						}
+
+						$property_icons = ['file'=>$property->getTypeTitle()];
+
+						if($property->getId()==Controller_Main::getCurrentParamPropertyId()): ?>
+						<li class="selected">
+							<?php foreach($property_icons as $p_i=>$p_i_t) { echo UI::icon($p_i)->setTitle($p_i_t).' '; } ?>
+							<a href="<?=$property_edit_url?>"><?=$property_label?></a></li>
+						<ul>
+							<?php
+							foreach($property->getOptions() as $option):
+								$option_label = $option->getShopData()->getFilterLabel();
+								if(!$option_label) {
+									$option_label = '???';
+								}
+								$option_edit_url = Http_Request::currentURI(['group_id'=>$group->getId(), 'property_id'=>$property->getId(), 'option_id'=>$option->getId()], ['page', 'action', 'type']);
+
+								$option_inherited_class = $option->isInherited() ? ' inherited':'';
+
+								if($option->getId()==Controller_Main::getCurrentParamPropertyOptionId()):
+									?><li class="selected<?=$option_inherited_class?>"><a href="<?=$option_edit_url?>"><?=UI::icon('dot-circle')?> <?=$option_label;?></a></li><?php
+								else:
+									?><li class="<?=$option_inherited_class?>"><a href="<?=$option_edit_url?>"><?=UI::icon('dot-circle')?> <?=$option_label;?></a></li><?php
+								endif;
+							endforeach;
+
+							if(Controller_Main::getCurrentAction()=='option_add'):
+								?>
+								<li class="selected"><?=UI::icon('dot-circle')?> <?=Tr::_('New option')?></li>
+								<?php
+							endif;
+							?>
+						</ul>
+					<?php else: ?>
+						<li>
+							<a href="<?=$property_edit_url?>"><?php foreach($property_icons as $p_i=>$p_i_t) { echo UI::icon($p_i)->setTitle($p_i_t).' '; } ?><?=$property_label?></a>
+						</li>
+					<?php endif; ?>
+					<?php endforeach; ?>
+
+					<?php if(Controller_Main::getCurrentAction()=='property_add'): ?>
+						<li class="selected"><?=UI::icon('file')?> <?=Tr::_('New property')?></li>
+					<?php endif; ?>
+				</ul>
+			<?php
+			else:
+				?>
+				<li class="<?=$inherited_class?>"><a href="<?=$group_edit_url?>"><?=UI::icon('folder')?> <?=$group_label?></a></li>
+			<?php
+			endif;;
+		endforeach;
+
+		if(Controller_Main::getCurrentAction()=='group_add'):
+			?>
+			<li class="selected"><?=UI::icon('folder-open')?> <?=Tr::_('New group')?></li>
+			<?php
+		endif;
+		?>
+	</ul>
+
+</ul>

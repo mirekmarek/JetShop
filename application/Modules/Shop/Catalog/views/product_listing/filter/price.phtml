@@ -1,0 +1,37 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$filter_price = $listing->price();
+
+if ($filter_price->getLowestPrice() == $filter_price->getHighestPrice()) {
+	return;
+}
+
+$decimals = $filter_price->getFilterDecimalPlaces();
+$step = $filter_price->getFilterStep();
+?>
+<div class="slider">
+	<h4><?=Tr::_('Cenové rozmezí');?></h4>
+
+	<span id="amount-from"><?=Price::format($filter_price->getFrom())?></span>
+	<span class="currency-left"><?=Shops::getCurrencySymbolRight()?></span>
+	<span id="slider-range" disabled="disabled"></span>
+	<span id="amount-to"><?=Price::format($filter_price->getTo())?></span>
+	<span class="currency-right"><?=Shops::getCurrencySymbolRight()?></span>
+	<script type="text/javascript">
+		ProductListing.decimal_places = <?=$decimals?>;
+		ProductListing.decimal_point = ',';
+		ProductListing.filter.price.init( <?= $filter_price->getLowestPrice() ?>, <?= $filter_price->getHighestPrice() ?>, <?= $filter_price->getFrom() ?>,<?= $filter_price->getTo() ?>, false, <?=$step?> );
+	</script>
+</div>
+

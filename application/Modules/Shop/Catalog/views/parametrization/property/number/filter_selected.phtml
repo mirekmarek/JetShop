@@ -1,0 +1,23 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing_Filter_Properties_Property_Number $filter_property
+ */
+$filter_property = $this->getRaw('filter_property');
+$property = $filter_property->getProperty();
+
+$property_id = $property->getId();
+
+$units = ' '.$property->getUnits();
+?>
+<div class="filter-item-list">
+	<div class="filter-item-option-box">
+		<a href="javascript:ProductListing.filter.properties.bool.deactivate(<?=$property_id?>);">&times;</a>
+		<span class="filter-item-text"><?= $property->getLabel() ?>: <?=$filter_property->getFilterMin().$units?> - <?=$filter_property->getFilterMax().$units?></span>
+	</div>
+</div>

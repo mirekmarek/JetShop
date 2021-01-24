@@ -1,0 +1,51 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+
+$count = 0;
+$previews = array();
+
+for ($i = 1; $i <= 9; $i++) {
+	if ($img = $product->getImage($i)) {
+		$previews[] = array(
+			'url' => $img,
+			'image' => $product->getImageThumbnailUrl(110, 110, $i )
+		);
+	}
+}
+
+$total_previews = count($previews);
+
+?>
+
+<?php if( $product->getImage() ): ?>
+	<a href="<?= $product->getImageUrl() ?>" rel="prettyPhoto[products]"
+	   title="<?= $product->getName() ?>" class="main" id="product_gallery_first_image">
+		<img src="<?= $product->getImageThumbnailUrl( 600, 600 ) ?>"/>
+	</a>
+<?php endif; ?>
+
+<div class="thumbs">
+	<?php foreach ($previews as $preview):
+		$class = ($count >= 3 && ($total_previews > 4)) ? 'hidden' : 'thumb';
+		?>
+		
+		<a href="<?= $preview['url'] ?>" rel="prettyPhoto[products]" title="<?= $product->getName() ?>" class="<?= $class ?>">
+			<img src="<?= $preview['image'] ?>"/>
+		</a>
+		<?php
+		$count++;
+	endforeach; ?>
+
+	<?php if ($total_previews > 4): ?>
+		<a class="all" onclick="$('#product_gallery_first_image').click();"><span></span><?=Tr::_('Všechny obrázky')?></a>
+	<?php endif; ?>
+</div>

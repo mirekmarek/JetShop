@@ -1,0 +1,57 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$filter_brands = $listing->brands();
+
+if(!$filter_brands->getBrands()) {
+	return;
+}
+?>
+<h4><?=Tr::_('Značka')?></h4>
+<?php
+foreach( $filter_brands->getBrands() as $listing_brand ):
+	if($listing_brand->isDisabled()) {
+		continue;
+	}
+
+	$brand = $listing_brand->getBrand();
+	$brand_id = $brand->getId();
+
+	$selected = $listing_brand->isActive();
+	$element_id = 'filter_brand_'.$brand_id;
+	$count = $listing_brand->getCount();
+	$label = $brand->getShopData()->getName();
+	?>
+	<?php if(!$count && !$selected): ?>
+	<div class="item disabled">
+		<span><input type="checkbox" disabled="disabled" id="<?=$element_id;?>"></span>
+		<label for="<?=$element_id;?>"><?=$label;?> (<?=$count;?>)</label>
+	</div>
+	<?php else:
+		if($selected):
+			$URL = $listing_brand->generateURLWithout();
+			?>
+			<div class="item selected" onclick="ProductListing.filter.brands.toggleBrand(<?=$brand_id?>); return false">
+				<span><input id="<?=$element_id;?>" type="checkbox" checked="checked"></span>
+				<label for="<?=$element_id;?>"><a href="<?=$URL;?>"><?=$label;?></a> (<?=$count;?>)</label>
+			</div>
+		<?php else:
+			$URL = $listing_brand->generateURLWith();
+			?>
+			<div class="item default" onclick="ProductListing.filter.brands.toggleBrand(<?=$brand_id?>);return false;">
+				<span><input id="<?=$element_id;?>" type="checkbox"></span>
+				<label for="<?=$element_id;?>"><a href="<?=$URL;?>"><?=$label;?></a> (<?=$count;?>)</label>
+			</div>
+		<?php endif;
+	endif;
+endforeach; ?>

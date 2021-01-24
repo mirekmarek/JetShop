@@ -1,0 +1,17 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Mvc_View;
+use Jet\UI;
+use JetShop\Category;
+
+/**
+ * @var Mvc_View   $this
+ * @var Category $new_category
+ */
+
+$new_category = $this->getRaw('new_category');
+
+$form_id = $new_category->getAddForm()->getId();
+?>
+<?=UI::button_save()->setOnclick("$('#$form_id').submit();")?>

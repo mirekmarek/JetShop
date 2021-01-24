@@ -1,0 +1,33 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\UI;
+use JetShop\Shops;
+
+$category = Controller_Main::getCurrentCategory();
+
+if(
+	!$category ||
+	!$category->getId() ||
+	Controller_Main::getCurrentParamGroup()
+) {
+	return;
+}
+?>
+<?php if(count(Shops::getList())<2): ?>
+	<?php foreach(Shops::getList() as $shop): ?>
+		<a href="<?=$category->getURL($shop->getId())?>" target="_blank"><?=UI::icon('eye')?></a>
+	<?php endforeach; ?>
+<?php else: ?>
+	<div class="dropdown">
+		<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('eye')?>
+		</button>
+
+		<div class="dropdown-menu" style="padding: 10px;">
+			<?php foreach(Shops::getList() as $shop): ?>
+			<a class="dropdown-item" href="<?=$category->getURL($shop->getId())?>" target="_blank"><?=$shop->getName()?></a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+<?php endif; ?>

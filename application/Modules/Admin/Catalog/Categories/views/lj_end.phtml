@@ -1,0 +1,112 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use JetShop\Category;
+
+/**
+ * @var Mvc_View               $this
+ */
+
+?>
+
+	</div>
+</div>
+
+
+<?php if(Main::getCurrentUserCanEditCategory() ):
+	$dialog = UI::dialog('sort_categories', Tr::_('Sort categories'), 400);
+
+	$has_some_top_categories = false;
+	?>
+	<?=$dialog->start()?>
+	<div style="overflow: auto;">
+		<div class="sortable" id="categories-sort">
+			<?php foreach(Controller_Main::getCurrentNode()->getChildren() as $node):
+				if($node->getData()['type']!=Category::CATEGORY_TYPE_TOP) {
+					continue;
+				}
+				$has_some_top_categories = true;
+				?>
+				<div class="sortable-item" data-id="<?=$node->getId()?>">
+					<i class="property-option-move"></i>
+					<?=Category::renderIcon($node->getData()['type'], true)?>
+					<?=$node->getLabel()?>
+				</div>
+			<?php endforeach; ?>
+
+			<?php if( $has_some_top_categories ): ?>
+				<hr/>
+			<?php endif; ?>
+
+			<?php foreach(Controller_Main::getCurrentNode()->getChildren() as $node):
+				if($node->getData()['type']==Category::CATEGORY_TYPE_TOP) {
+					continue;
+				}
+				?>
+				<div class="sortable-item" data-id="<?=$node->getId()?>">
+					<i class="property-option-move"></i>
+					<?=Category::renderIcon($node->getData()['type'], true)?>
+					<?=$node->getLabel()?>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?=$dialog->footer()?>
+	<form action="?id=<?=Controller_Main::getCurrentCategoryId()?>&action=save_sort" method="post">
+		<input type="hidden" name="categories_sort_order" id="categories_sort_order" />
+		<?=UI::button_save()?>
+	</form>
+	<?=$dialog->end()?>
+<?php endif; ?>
+
+<script type="text/javascript">
+	$(document).ready( function() {
+		var whisperer = new Whisperer(
+			'category_search_input',
+			'search_category_whisperer',
+			'?search='
+		);
+
+		whisperer.init();
+
+		whisperer.onItemSelect = function ( item_node ) {
+			location = item_node.data('url');
+		};
+
+
+	} );
+
+	<?php if(Main::getCurrentUserCanEditCategory()): ?>
+	var sortCategories = {
+		openDialog: function () {
+			sortCategories.setSort();
+			$('#sort_categories').modal('show');
+
+
+			$('#categories-sort').sortable({
+				stop: function() {
+					sortCategories.setSort();
+				}
+
+			});
+
+		},
+
+		setSort: function() {
+			var values = [];
+
+			$('#categories-sort').find('.sortable-item').each( function(i, item) {
+				values.push($(item).data('id'));
+			});
+
+			$('#categories_sort_order').val(values.join('|'));
+
+		}
+	};
+	<?php endif; ?>
+</script>
+
+<?=$this->render('param/sort');?>

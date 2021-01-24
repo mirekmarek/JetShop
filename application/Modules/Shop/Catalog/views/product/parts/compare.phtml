@@ -1,0 +1,24 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+<?php /* if( $product->getIsComparable() ): ?>
+	<div class="right">
+		<div class="benefits">
+			<?php if( $product->getIsComparable() ): ?>
+				<span class="compare" data-products-id="<?= $product->getId() ?>" onclick="compareProducts.addProductToCompareList(this);">
+					<span class="icon"></span>
+					<span class="text"><?= POROVNAT ?></span>
+				</span>
+			<?php endif; ?>
+		</div>
+	</div>
+<?php endif;*/ ?>

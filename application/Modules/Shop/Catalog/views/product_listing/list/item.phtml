@@ -1,0 +1,111 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var Product $product
+ */
+
+$product = $this->getRaw('product');
+?>
+
+<div class="product" data-product-preview>
+	<div class="benefits">
+		<div class="icons">
+			<div class="left">
+			</div>
+			<div class="right">
+				<?php /*
+								<?php if ($product->getProductsPrice() > 0 && $product->getSpecialPrice()): ?>
+									<span class="discount">-<?= $product->getDiscountPercentage() ?>%</span><br />
+								<?php endif; ?>
+								<?php
+								foreach ($product->getProperties() as $group) {
+									if (!$group->getIsDisplayable()) continue;
+
+									foreach ($group->getProperties() as $property) {
+										if (!$property->getIsDisplayable()) continue;
+
+										echo $property->renderProductOptionsIcons();
+									}
+								}
+								?>
+								<?php if ($product->getIsComparable()): ?>
+									<span class="compare" title="<?= PRODUCT_ICON_POROVNAT ?>" data-products-id="<?=$product->getId()?>" onclick="compareProducts.addProductToCompareList(this); ga('send', 'event', 'category compare', 'click', '<?= str_replace('"', '', $product->getProductsName()) ?>');"></span>
+								<?php endif; ?>
+                                */ ?>
+			</div>
+		</div>
+	</div>
+
+	<div class="left-icons">
+	</div>
+
+	<div class="images">
+		<a href="<?= $product->getURL() ?>" class="image">
+			<?php
+
+			if($product->getImage()):
+				?>
+				<img src="<?=$product->getImageThumbnailUrl( 350, 350 )?>"/>
+			<?php
+			endif;
+			?>
+		</a>
+
+		<?php if ($product->getImage(1)): ?>
+			<div class="thumbnails-icon"></div>
+			<div class="thumbnails">
+				<div class="list">
+					<?php
+					for ($i = 0; $i <= 3; $i++) {
+						$img = $product->getImage($i);
+						if (!$img) {
+							break;
+						}
+						$selected = ($i == 0) ? ' class="selected"' : '';
+						?>
+						<div data-product-preview-thumb data-src="<?= $img ?>"<?= $selected ?>>
+							<img src="<?=$product->getImageThumbnailUrl( 350, 350, $i )?>"/>
+						</div>
+						<?php
+					}
+					?>
+				</div>
+			</div>
+		<?php endif; ?>
+	</div>
+
+	<a href="<?= $product->getUrl() ?>" class="title"><h2><?= $product->getName() ?></h2></a>
+
+	<div class="availability">
+		<?php /*= $product->getDeliveryText(($product->getProductsQuantity() >= 10) ? '<span>' . SKLADEM_10AVIC . sklonovaniKusu(10) . '</span>' : '<span>' . SKLADEM_.' ' . $product->getProductsQuantity() . ' ' . sklonovaniKusu($product->getProductsQuantity()) . '</span>' )*/ ?>
+	</div>
+
+	<div class="prices">
+		<?php if ($product->getActionPrice()): ?>
+			<div class="old"><?= Price::formatWithCurrency( $product->getStandardPrice() ) ?></div>
+		<?php endif; ?>
+		<div class="price"><?= Price::formatWithCurrency( $product->getFinalPrice() ) ?></div>
+	</div>
+
+	<div class="buttons">
+		<a href="<?= $product->getUrl() ?>" class="detail">
+			<span></span><?=Tr::_('Detail')?>
+		</a>
+
+		<?php if ($product->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER): ?>
+			<a href="<?= $product->getUrl() ?>" class="right"><?=Tr::_('Vyberte si variantu')?></a>
+		<?php else: ?>
+			<a class="right button-popup-cart" onclick="ShoppingCart.buy(<?=$product->getId()?>,1);return false;">
+				<span></span>
+				<?=Tr::_('Koupit');?>
+			</a>
+		<?php endif; ?>
+	</div>
+
+</div>
+

@@ -1,0 +1,18 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+?>
+<script type="text/javascript">
+	ProductListing.init(
+		<?=json_encode($listing->getStateData())?>
+	);
+</script>

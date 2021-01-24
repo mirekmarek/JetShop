@@ -1,0 +1,23 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+<div class="socials">
+
+	<ul class="social-likes">
+		<li class="facebook" title="Sdílet na Facebooku"></li>
+		<li class="twitter" title="Sdílet na Twitteru"></li>
+	</ul>
+	<div class="options">
+		<div class="link" data-send-products-link="<?= $product->getId() ?>"><?=Tr::_('Poslat odkaz') ?></div>
+		<div class="questions" id="scroll_product_tab_questions"><?=Tr::_('Otázky a odpovědi') ?></div>
+	</div>
+</div>

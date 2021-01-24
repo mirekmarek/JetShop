@@ -1,0 +1,19 @@
+<?php
+namespace JetApplication\Installer;
+
+use Jet\Tr;
+use Jet\SysConf_URI;
+
+?>
+
+<p>
+	<?= Tr::_( 'It is possible (and recommended) to delete _installer directory.' ); ?>
+</p>
+
+<p>
+	<?= Tr::_( 'Enjoy!! :-)' ); ?>
+</p>
+
+<form action="<?= SysConf_URI::getBase() ?>" method="get">
+	<?= Installer::buttonNext(); ?>
+</form>

@@ -1,0 +1,23 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var Mvc_View   $this
+ */
+
+$form_id = Controller_Main::getCurrentParamProperty()->getEditForm()->getId();
+?>
+<?=UI::button_save()->setOnclick("$('#$form_id').submit();")?>
+
+<?php if(!Controller_Main::getCurrentParamProperty()->isInherited()): ?>
+	<?=UI::button_create(Tr::_('Create option'))->setUrl(Http_Request::currentURI(['action'=>'create_option']))?>
+<?php endif; ?>
+
+<?php if($this->getBool('can_sort_options')): ?>
+	<?=UI::button('Sort options')->setOnclick('paramSort.openDialog()')?>
+<?php endif; ?>

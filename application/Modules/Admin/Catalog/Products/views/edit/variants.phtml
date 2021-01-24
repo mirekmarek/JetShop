@@ -1,0 +1,166 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use JetShop\Product;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View   $this
+ * @var Product $new_variant
+ */
+
+$product = Controller_Main::getCurrentProduct();
+
+
+$setup_form = $product->getVariantSetupForm();
+
+$setup_form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
+$setup_form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 10 ] );
+$setup_form->field('variant_control_property_ids')->input()->addCustomCssStyle('height:400px;');
+
+$new_variant = $this->getRaw('new_variant');
+$add_form = $new_variant->getAddVariantForm();
+
+$add_form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
+$add_form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 10 ] );
+
+
+$variants_update_form = $product->getUpdateVariantsForm();
+
+$variants = $product->getVariants();
+
+$variant_control_properties = $product->getVariantControlProperties();
+
+$setup_dialog = UI::dialog('variant_setup_dialog', Tr::_('Setup variant behavior'), 800);
+$add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if(!$setup_form->getIsReadonly()): ?>
+			<?=UI::button(Tr::_('Setup variant behavior'))->setOnclick("$('#variant_setup_dialog').modal('show')")->setIcon('cogs');?>
+		<?php endif; ?>
+
+		<?php if(!$add_form->getIsReadonly()): ?>
+			<?=UI::button_create('Add variant')->setOnclick("$('#variant_add_dialog').modal('show')")?>
+		<?php endif; ?>
+
+		<?php if($variants && !$variants_update_form->getIsReadonly()): ?>
+			<?=UI::button_save()->setOnclick("$('#".$variants_update_form->getId()."').submit()");?>
+		<?php endif; ?>
+	</div>
+</div>
+
+
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+
+		<?php if($variants): ?>
+		<fieldset>
+			<legend><?=Tr::_('Variants')?></legend>
+
+			<?=$variants_update_form->start()?>
+			<table class="table table-striped">
+				<?php foreach($variants as $variant): ?>
+				<tr>
+					<td nowrap="">
+						<table>
+							<tr>
+								<td colspan="2"><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getShopData()->getName()?></a></td>
+							</tr>
+							<tr>
+								<td><?=Tr::_('Internal code:')?></td>
+								<td><?=$variant->getInternalCode()?></td>
+							</tr>
+							<tr>
+								<td><?=Tr::_('EAN:')?></td>
+								<td><?=$variant->getEan()?></td>
+							</tr>
+							<tr>
+								<td><?=Tr::_('ID:')?></td>
+								<td><?=$variant->getId()?></td>
+							</tr>
+						</table>
+					</td>
+					<td nowrap="">
+						<table>
+						<?php foreach(Shops::getList() as $shop):
+							$shop_id = $shop->getId();
+							$shop_name = $shop->getName(); ?>
+							<tr>
+								<td><?=UI::flag( $shop->getLocale() )?> <?=$shop_name?>:</td>
+								<td><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop_id.'/variant_name')->input()->addCustomCssStyle('width:400px;')?></td>
+							</tr>
+
+						<?php endforeach; ?>
+						</table>
+					</td>
+
+					<?php foreach($variant_control_properties as $property): ?>
+						<td>
+							<?=$variants_update_form->field('/'.$variant->getId().'/'.$property->getId().'/value')->input()->addCustomCssStyle('width:400px;')?>
+							<div style="opacity: 0.3;position: relative;top: -5px;width: 300px;">
+							<?=$variants_update_form->field('/'.$variant->getId().'/'.$property->getId().'/information_in_not_available')->input()?>
+							</div>
+						</td>
+					<?php endforeach; ?>
+
+					<td width="100%">
+
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+			<?=$variants_update_form->end()?>
+		</fieldset>
+		<br/>
+		<?php endif; ?>
+	</div>
+</div>
+
+<?php if(!$setup_form->getIsReadonly()): ?>
+<?=$setup_form->start()?>
+<?=$setup_dialog->start()?>
+	<?=$setup_form->field('variant_sync_categories')?>
+	<?=$setup_form->field('variant_sync_descriptions')?>
+	<?=$setup_form->field('variant_sync_stickers')?>
+	<?=$setup_form->field('variant_sync_prices')?>
+	<?=$setup_form->field('variant_control_property_ids')?>
+
+<?=$setup_dialog->footer()?>
+	<?=UI::button_save()?>
+<?=$setup_dialog->end()?>
+<?=$setup_form->end()?>
+<?php endif; ?>
+
+
+<?php if(!$add_form->getIsReadonly()): ?>
+	<?=$add_form->start()?>
+	<?=$add_dialog->start()?>
+
+	<?=$add_form->field('ean')?>
+	<?=$add_form->field('internal_code')?>
+
+	<?php foreach(Shops::getList() as $shop):
+		$shop_id = $shop->getId();
+
+		$shop_data = $product->getShopData( $shop_id );
+		?>
+		<?=$shop_data->renderShopDataBlock_start()?>
+
+		<?=$add_form->field('/shop_data/'.$shop_id.'/variant_name')?>
+		<?=$shop_data->renderShopDataBlock_end()?>
+	<?php endforeach; ?>
+
+	<?=$add_dialog->footer()?>
+		<?=UI::button_save()?>
+	<?=$add_dialog->end()?>
+	<?=$add_form->end()?>
+<?php endif; ?>

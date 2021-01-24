@@ -1,0 +1,54 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use JetShop\Product;
+
+/**
+ * @var Mvc_View $this
+ * @var Form $images_form
+ * @var Form $image_delete_form
+ */
+
+$product = Controller_Main::getCurrentProduct();
+$shop_id = $this->getString('shop_id');
+$shop_data = $product->getShopData( $shop_id );
+
+for( $i=0; $i<Product::$max_image_count; $i++ ):
+	$image = $shop_data->getImage( $i );
+
+	if(!$image) {
+		continue;
+	}
+
+	$url = $shop_data->getImageUrl( $i );
+	$thb_url = $shop_data->getImageThumbnailUrl(150,150, $i);
+	?>
+
+	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
+		<div class="image-thumbnail" data-image="<?=$i?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
+			<div style="position: absolute;bottom: 5px;right: 5px;">
+				<input type="checkbox" value="<?=$i?>" data-url="<?=$url?>" class="select_image_checkbox"/>
+			</div>
+		</div>
+		<div style="width: 180px;height: 55px;padding: 5px;">
+			<table width="100%">
+				<tr>
+					<td style="width: 30px;">
+						<?=UI::icon('exchange-alt')?>
+					</td>
+					<td style="width: 30px;">
+						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
+					</td>
+					<td align="right" style="padding-right: 5px;">
+						<a href="javascript:ImagesHandler.deleteImage('<?=$shop_id?>', '<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+<?php endfor; ?>
+

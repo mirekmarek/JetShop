@@ -1,0 +1,98 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Stickers;
+
+use JetShop\Shops;
+use JetShop\Sticker;
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use JetShop\Sticker_ShopData;
+
+/**
+ * @var Mvc_View   $this
+ * @var Form       $form
+ * @var Sticker    $sticker
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
+$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
+
+$sticker = $this->getRaw( 'sticker' );
+
+$tabs = UI::tabsJS('sticker_tabs', [
+	'tab_main' => Tr::_('Main data'),
+	'tab_images' => Tr::_('Images')
+]);
+
+?>
+
+
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+
+		<?=$tabs?>
+
+		<?=$tabs->contentStart()?>
+			<?=$tabs->getTab('tab_main')->contentStart()?>
+				<?=$form->start()?>
+				<?=$form->field( 'name' )?>
+
+				<?php foreach(Shops::getList() as $shop):
+					$shop_id = $shop->getId();
+
+					$shop_data = $sticker->getShopData( $shop_id );
+					?>
+					<?=$shop_data->renderShopDataBlock_start()?>
+
+					<fieldset>
+						<legend class="sub"><?=Tr::_('Main data')?></legend>
+
+						<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
+
+						<?=$form->field('/shop_data/'.$shop_id.'/name')?>
+						<?=$form->field('/shop_data/'.$shop_id.'/second_name')?>
+						<?=$form->field('/shop_data/'.$shop_id.'/description')?>
+					</fieldset>
+
+					<fieldset>
+						<legend class="sub"><?=Tr::_('SEO')?></legend>
+						<?=$form->field('/shop_data/'.$shop_id.'/seo_h1')?>
+						<?=$form->field('/shop_data/'.$shop_id.'/seo_title')?>
+						<?=$form->field('/shop_data/'.$shop_id.'/seo_description')?>
+						<?=$form->field('/shop_data/'.$shop_id.'/seo_keywords')?>
+						<?=$form->field('/shop_data/'.$shop_id.'/internal_fulltext_keywords')?>
+					</fieldset>
+					<?=$shop_data->renderShopDataBlock_end()?>
+				<?php endforeach; ?>
+				<?=$form->end()?>
+			<?=$tabs->getTab('tab_main')->contentEnd()?>
+			<?=$tabs->getTab('tab_images')->contentStart()?>
+				<?php
+				foreach(Shops::getList() as $shop):
+					$shop_id = $shop->getId();
+
+					echo $sticker->getShopData( $shop_id )->renderImageWidgets( Sticker_ShopData::getImageClasses() );
+				endforeach;
+				?>
+			<?=$tabs->getTab('tab_images')->contentEnd()?>
+		<?=$tabs->contentEnd()?>
+
+
+
+	</div>
+</div>
+

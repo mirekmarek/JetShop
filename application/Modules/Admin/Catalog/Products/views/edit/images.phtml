@@ -1,0 +1,205 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\UI;
+use Jet\Tr;
+use Jet\UI_dialog;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View $this
+ * @var Form $images_form
+ * @var Form $image_delete_form
+ */
+
+$product = Controller_Main::getCurrentProduct();
+
+?>
+
+<style type="text/css">
+	.images_area>div {
+		float: left;
+	}
+</style>
+
+<script type="text/javascript">
+
+	var ImagesHandler = {
+		delete_shop_id: null,
+		delete_images: null,
+
+		_handleResponse: function( shop_id, response ) {
+			$('#images_'+shop_id).html( response['images'] );
+			ImagesHandler.initSort( shop_id );
+		},
+
+		initSort: function( shop_id ) {
+			$('#images_'+shop_id).sortable({
+				revert: true,
+				stop: function() {
+					ImagesHandler.saveSort( shop_id );
+				}
+			});
+		},
+
+		saveSort: function( shop_id ) {
+			var images = [];
+
+			$('#images_'+shop_id).find('.image-thumbnail').each(function ( i, image ) {
+				images.push( $(image).data('image') );
+			});
+
+			$.ajax({
+				url: '?page=images&action=save_sort&images='+images.join(',')+'&shop_id='+shop_id,
+				dataType: "json",
+				success: function( response ) {
+					ImagesHandler._handleResponse(shop_id, response);
+				}
+			});
+		},
+
+		deleteImage: function( shop_id, image, url ) {
+			ImagesHandler._delete(shop_id, [{
+				image: image,
+				url: url
+			}]);
+		},
+
+		deleteImages: function( shop_id )
+		{
+			var images = [];
+
+			$('.select_image_checkbox').each( function(i, checkbox) {
+				if(checkbox.checked) {
+					images.push( {
+						image: checkbox.value,
+						url: checkbox.dataset.url
+					} );
+				}
+			});
+
+			if(images.length) {
+				ImagesHandler._delete(shop_id, images);
+			}
+
+		},
+
+		_delete: function( shop_id, images ) {
+
+			ImagesHandler.delete_shop_id = shop_id;
+			ImagesHandler.delete_images = images;
+
+			//
+
+			var html = '';
+			for(var i=0;i<images.length;i++) {
+				var image = images[i];
+
+				html += '<div class="image-thumbnail" style="float:left;width: 180px;height: 180px;background-image: url('+image.url+');background-size: 170px auto;"></div>';
+			}
+
+			$('#image_delete_confirm_area').html( html );
+
+			$('#delete_image_confirm').modal('show');
+		},
+
+		deleteConfirm: function () {
+			var images = [];
+			for(var i=0; i<ImagesHandler.delete_images.length;i++) {
+				images.push(encodeURIComponent(ImagesHandler.delete_images[i].image));
+			}
+
+			$.ajax({
+				url: '?page=images&action=delete&shop_id='+ImagesHandler.delete_shop_id+'&images='+images.join(','),
+				dataType: "json",
+				success: function( response ) {
+					ImagesHandler._handleResponse(ImagesHandler.delete_shop_id, response);
+				}
+			});
+			$('#delete_image_confirm').modal('hide');
+
+		},
+
+
+		upload: function( shop_id ) {
+
+			JetMultiUploader.upload(
+				'upload_form_'+shop_id,
+				'upload_files_'+shop_id,
+				'?page=images&action=upload&shop_id='+shop_id,
+				function( response ) {
+					ImagesHandler._handleResponse(shop_id, response);
+				}
+			);
+
+		}
+	};
+
+	$(document).ready(function () {
+		<?php foreach(Shops::getList() as $shop):
+		$shop_id = $shop->getId();
+		 ?>
+		ImagesHandler.initSort('<?=$shop_id?>');
+		<?php endforeach; ?>
+	})
+</script>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<?=$this->getRaw('tabs')?>
+
+	<?php foreach(Shops::getList() as $shop):
+		$shop_id = $shop->getId();
+
+		$shop_data = $product->getShopData($shop_id);
+		$this->setVar('shop_id', $shop_id);
+	?>
+		<?=$shop_data->renderShopDataBlock_start()?>
+
+
+		<div style="background-color: #f0f0f0;border-radius: 5px;margin: 10px;padding: 10px;">
+			<div class="images_area" id="images_<?=$shop_id?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
+				<?php
+				require 'images/list.phtml';
+				?>
+			</div>
+		</div>
+
+		<table style="width: 100%">
+			<tr>
+				<td>
+					<form id="upload_form_<?=$shop_id?>">
+						<div class="btn btn-light btn-upload">
+							<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images' )?></span>
+							<input type="file" multiple id="upload_files_<?=$shop_id?>" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_id?>');">
+						</div>
+					</form>
+				</td>
+				<td align="right" style="padding: 10px">
+					<?=UI::button_delete(Tr::_('Delete selected images'))->setOnclick("ImagesHandler.deleteImages('$shop_id');")?>
+				</td>
+			</tr>
+		</table>
+
+		<?=$shop_data->renderShopDataBlock_end()?>
+		<br/>
+	<?php endforeach; ?>
+
+	</div>
+</div>
+
+
+<?php
+$delete_dialog = new UI_dialog('delete_image_confirm', Tr::_('Do you really want to delete those images?'), 650);
+
+echo $delete_dialog->start();
+	?>
+	<div id="image_delete_confirm_area" style="height: 250px;overflow: auto">
+
+	</div>
+	<?php
+echo $delete_dialog->footer();
+	echo UI::button_delete()->setOnclick("ImagesHandler.deleteConfirm();");
+echo $delete_dialog->end();

@@ -1,0 +1,86 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use JetShop\Category;
+
+/**
+ * @var Mvc_View               $this
+ */
+
+$category = Controller_Main::getCurrentCategory();
+
+$toolbar = $this->getRaw('toolbar');
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-2">
+		<div class="search-box">
+			<table>
+				<tr>
+					<td><?=UI::icon('search')?></td>
+					<td>
+						<input id="category_search_input" style="width: 250px;">
+						<div class="search-whisperer-area">
+							<div id="search_category_whisperer">
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+	<div class="col-md-10">
+		<?php if(Main::getCurrentUserCanEditCategory()):
+			if(!Controller_Main::getCurrentParamGroup()):
+				if( Category::getFilter_selectedSort()==Category::SORT_PRIORITY ):
+					echo UI::button('Sort categories')->setOnclick('sortCategories.openDialog()').'&nbsp;&nbsp;';
+				endif;
+
+				if(
+					Main::getCurrentUserCanCreateCategory() &&
+					($types = Category::getAllowedCreateTypes( Controller_Main::getCurrentCategory() ))
+				): ?>
+					<div class="dropdown">
+						<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<?=Tr::_('Create new ...')?>
+						</button>
+
+						<div class="dropdown-menu" style="padding: 10px;">
+							<?php foreach($types as $type=>$label): ?>
+								<a class="dropdown-item" href="<?=Http_Request::currentURI(['action' => 'create_'.$type], ['group_id', 'property_id', 'option_id'])?>" ><?=$label?></a>
+							<?php endforeach; ?>
+						</div>
+					</div>&nbsp;&nbsp;&nbsp;
+				<?php
+				endif;
+			endif;
+
+
+			if($toolbar):
+				echo $this->render($toolbar);
+			endif;
+
+			echo '&nbsp;&nbsp;&nbsp;';
+
+			echo $this->render('category/edit/preview');
+		endif; ?>
+	</div>
+</div>
+<div class="row h-100" id="main-col" style="margin-top: -10px;">
+	<div class="col-2 tree">
+		<?=$this->render('tree')?>
+	</div>
+<?php if($category && $category->getType()==Category::CATEGORY_TYPE_REGULAR): ?>
+	<div class="col-2 tree-sub">
+		<?=$this->render('param/tree')?>
+	</div>
+	<div class="col-8">
+<?php else: ?>
+	<div class="col-10">
+<?php endif; ?>
+
+	<?=$this->getRaw('tabs')?>

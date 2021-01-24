@@ -1,0 +1,149 @@
+<?php
+/**
+ *
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @license http://www.php-jet.net/license/license.txt
+ * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ */
+
+namespace Jet;
+
+/**
+ *
+ */
+class Form_Field_RegistrationUsername extends Form_Field_Input
+{
+	const ERROR_CODE_USER_ALREADY_EXISTS = 'user_already_exists';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_renderer_script = 'field';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_row_start_renderer_script = 'Field/row/start';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_row_end_renderer_script = 'Field/row/end';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_input_container_start_renderer_script = 'Field/input/container/start';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_input_container_end_renderer_script = 'Field/input/container/end';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_error_renderer = 'Field/error';
+
+	/**
+	 * @var string
+	 */
+	protected static string $default_label_renderer = 'Field/label';
+
+	/**
+	 * @var string string
+	 */
+	protected static string $default_input_renderer = 'Field/input/RegistrationUsername';
+
+
+	/**
+	 * @var string
+	 */
+	protected string $_type = Form::TYPE_REGISTRATION_USER_NAME;
+
+	/**
+	 * @var bool
+	 */
+	protected bool $is_required = true;
+
+
+	/**
+	 * @var callable
+	 */
+	protected $user_exists_check_callback = null;
+
+	/**
+	 * @var array
+	 */
+	protected array $error_messages = [
+		self::ERROR_CODE_EMPTY               => '',
+		self::ERROR_CODE_INVALID_FORMAT      => '',
+		self::ERROR_CODE_USER_ALREADY_EXISTS => '',
+	];
+
+	/**
+	 * validate value
+	 *
+	 * @return bool
+	 */
+	public function validate(): bool
+	{
+
+		if( !$this->_value ) {
+
+			$this->setError( self::ERROR_CODE_EMPTY );
+
+			return false;
+		}
+
+		if( !$this->validateFormat() ) {
+			$this->setError( self::ERROR_CODE_INVALID_FORMAT );
+
+			return false;
+		}
+
+		$callback = $this->getUserExistsCheckCallback();
+
+		if( !$callback( $this->_value ) ) {
+			$this->setError( self::ERROR_CODE_USER_ALREADY_EXISTS );
+
+			return false;
+		}
+
+		$this->setIsValid();
+
+		return true;
+	}
+
+	/**
+	 * @return callable|null
+	 */
+	public function getUserExistsCheckCallback(): callable|null
+	{
+		return $this->user_exists_check_callback;
+	}
+
+	/**
+	 * @param callable $user_exists_check_callback
+	 */
+	public function setUserExistsCheckCallback( callable $user_exists_check_callback ): void
+	{
+		$this->user_exists_check_callback = $user_exists_check_callback;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getRequiredErrorCodes(): array
+	{
+		$codes = [];
+
+		$codes[] = self::ERROR_CODE_EMPTY;
+		if( $this->validation_regexp ) {
+			$codes[] = self::ERROR_CODE_INVALID_FORMAT;
+		}
+		$codes[] = self::ERROR_CODE_USER_ALREADY_EXISTS;
+
+		return $codes;
+	}
+}

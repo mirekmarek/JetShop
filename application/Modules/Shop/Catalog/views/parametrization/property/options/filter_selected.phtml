@@ -1,0 +1,34 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var ProductListing_Filter_Properties_Property_Options|ProductListing_Filter_Properties_Property_StencilOptions $filter_property
+ */
+$filter_property = $this->getRaw('filter_property');
+$property = $filter_property->getProperty();
+
+$property_id = $property->getId();
+?>
+<div class="filter-item-list">
+	<div class="filter-box">
+	<div class="label">
+		<a href="javascript:ProductListing.filter.properties.option.deactivate(<?=$property_id?>);">&times;</a>
+		<?= $property->getLabel() ?>:
+	</div>
+	<div class="filter-item-option-box">
+		<?php foreach($filter_property->getActiveFilterOptions() as $filter_option ):
+			$option = $filter_option->getOption();
+			$option_id = $option->getId();
+			?>
+
+			<a href="javascript:ProductListing.filter.properties.option.disable(<?=$property_id?>,<?=$option_id?>);">&times;</a>
+			<span class="filter-item-text"><?= $option->getShopData()->getFilterLabel() ?></span>
+		<?php endforeach; ?>
+
+	</div>
+	</div>
+</div>

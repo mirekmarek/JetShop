@@ -1,0 +1,24 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form;
+use Jet\Mvc_View;
+use JetShop\Shops;
+use JetShop\Parametrization_Property_Option;
+use JetShop\Parametrization_Property_Option_ShopData;
+
+/**
+ * @var Mvc_View   $this
+ * @var Parametrization_Property_Option $option
+ * @var Form $form
+ */
+$option = Controller_Main::getCurrentParamPropertyOption();
+
+echo $this->render('lj_start');
+
+	foreach(Shops::getList() as $shop):
+		$shop_id= $shop->getId();
+		echo $option->getShopData( $shop_id )->renderImageWidgets( Parametrization_Property_Option_ShopData::getImageClasses() );
+	endforeach;
+
+echo $this->render('lj_end');

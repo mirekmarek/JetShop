@@ -1,0 +1,140 @@
+<?php
+namespace JetStudio;
+
+require_once 'parts/init_libs.php';
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\SysConf_URI;
+use Jet\Tr;
+use Jet\UI;
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>PHP Jet Studio</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<jet_layout_meta_tags/>
+	<jet_layout_css/>
+	<jet_layout_javascripts/>
+</head>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		const main_toolbar = document.getElementById("main-toolbar");
+		if(!main_toolbar) {
+			return;
+		}
+		const main_col = document.getElementById("main-col");
+		const main_toolbar_initial_offset = main_toolbar.offsetTop;
+		const main_toolbar_height = main_toolbar.offsetHeight;
+		const main_col_initial_padding_top = main_col.style.paddingTop;
+
+		window.onscroll = function() {
+			if (window.pageYOffset > main_toolbar_initial_offset) {
+				main_toolbar.classList.add("main-toolbar-sticky");
+				main_col.style.paddingTop = main_toolbar_height+'px';
+			} else {
+				main_toolbar.classList.remove("main-toolbar-sticky");
+				main_col.style.paddingTop = main_col_initial_padding_top;
+			}
+		};
+	});
+</script>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="<?=SysConf_URI::getBase()?>">Jet Studio</a>
+
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavBar" aria-controls="mainNavBar" aria-expanded="false" aria-label="">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="mainNavBar">
+			<ul class="nav navbar-nav">
+
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<?=UI::icon('eye')?>
+						<span class="caret"></span>
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<?php foreach( Sites::getSites() as $site ): ?>
+							<div class="dropdown-item">
+								<b><?=$site->getName()?></b>
+								<?php foreach( $site->getLocales() as $locale ):
+									$hp = $site->getHomepage($locale);
+									if(!$hp) {
+										continue;
+									}
+									?>
+									<a href="<?=$hp->getURL()?>" target="_blank"><?=UI::flag($locale)?> <?=$locale->getName()?></a>
+								<?php endforeach; ?>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</li>
+
+
+			</ul>
+
+			<ul class="navbar-nav ml-auto">
+
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span><?=UI::flag( Locale::getCurrentLocale() )?></span>
+						<span class="caret"></span>
+					</a>
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+						<?php foreach( Application::getLocales() as $locale ): ?>
+								<a class="dropdown-item" href="<?=Http_Request::currentURI(['std_locale'=>$locale->toString()])?>">
+									<?=UI::flag( $locale )?>
+									<?=$locale->getName( $locale )?>
+								</a>
+						<?php endforeach; ?>
+					</div>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link"  href="logout.php">
+						<?=UI::icon( 'sign-out-alt' )?>
+						<?=Tr::_( 'Logout',[], 'login' )?>
+					</a>
+				</li>
+
+			</ul>
+
+		</div>
+	</nav>
+
+
+	<?php if(Application::getCurrentPart()!='welcome'):
+		$parts = [];
+		foreach( Application::getParts() as $part=>$p ) {
+			$parts[$part] = UI::icon($p['icon']).' '.$p['label'];
+		}
+
+		echo UI::tabs( $parts, function($part) {return $part.'.php';}, Application::getCurrentPart() );
+	endif; ?>
+
+	<div class="container-fluid">
+		<jet_layout_main_position/>
+	</div>
+
+	<?=Application::getGeneralView()->render('dialog/select_locale');?>
+
+
+	<div id="__progress__">
+	    <div class="loading" align="center">
+	        <div id="__progress_prc__"></div>
+	        <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+	        <span class="sr-only"><?=Tr::_('Loading ...', [], Tr::COMMON_NAMESPACE);?></span>
+	    </div>
+	</div>
+
+</body>
+
+</html>

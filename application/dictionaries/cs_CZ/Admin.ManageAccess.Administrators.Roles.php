@@ -1,0 +1,22 @@
+<?php
+return [
+	'Administrators - User roles' => '',
+	'Edit role <b>%ROLE_NAME%</b>' => '',
+	'Get role data' => '',
+	'Add new role' => '',
+	'Update role' => '',
+	'Delete role' => '',
+	'Administrator roles management' => '',
+	'Please enter a name' => '',
+	'Invalid value' => '',
+	'Name' => '',
+	'Description' => '',
+	'Privileges' => '',
+	'Administration sections' => '',
+	'Modules and actions' => '',
+	'Users' => '',
+	'Username' => '',
+	'' => '',
+	'ID' => '',
+	'Create a new Role' => '',
+];

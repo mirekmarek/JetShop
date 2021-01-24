@@ -1,0 +1,25 @@
+<?php
+namespace JetShopModule\Shop\Catalog;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetShop\Price;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$product = Controller_Main::getProduct();
+?>
+<div class="price">
+	<div class="row">
+		<div class="cell"><?=Tr::_('Naše cena:') ?></div>
+		<div class="cell final"><?= Price::formatWithCurrency( $product->getFinalPrice() ) ?></div>
+	</div>
+	<?php if( $product->getActionPrice() ): ?>
+		<div class="row">
+			<div class="cell"><?=Tr::_('Běžná cena:')?></div>
+			<div class="cell normal"><?= Price::formatWithCurrency( $product->getStandardPrice() ) ?></div>
+		</div>
+	<?php endif; ?>
+</div>

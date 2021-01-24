@@ -1,0 +1,24 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\UI;
+
+/**
+ * @var Mvc_View   $this
+ */
+
+$form_id = Controller_Main::getCurrentCategory()->getEditForm()->getId();
+
+$category = Controller_Main::getCurrentCategory();
+?>
+<?=UI::button_save()->setOnclick("$('#$form_id').submit();")?>
+
+<?php if($category->getCanDefineProperties()): ?>
+	<?=UI::button_create('Create group')->setUrl( Http_Request::currentURI(['action'=>'create_group']) )?>
+
+	<?php if($this->getBool('can_sort_groups')): ?>
+	<?=UI::button('Sort groups')->setOnclick('paramSort.openDialog()')?>
+	<?php endif; ?>
+<?php endif; ?>

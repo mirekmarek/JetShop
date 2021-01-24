@@ -1,0 +1,70 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form;
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetShop\Category;
+
+/**
+ * @var Mvc_View   $this
+ */
+
+$category = Controller_Main::getCurrentCategory();
+$form = $category->getEditForm();
+
+
+$strategy_form = $category->getParametrizationStrategyForm();
+$strategy_form->setDefaultLabelWidth([
+	Form::LJ_SIZE_MEDIUM => 2
+]);
+
+if($form->getIsReadonly()) {
+	$strategy_form->setIsReadonly();
+}
+
+
+if(
+	$category->getParameterStrategy()==Category::PARAMETER_STRATEGY_INHERITED_FROM_OTHER_CATEGORY ||
+	$category->getParameterStrategy()==Category::PARAMETER_STRATEGY_TAKES_OVER_FROM_OTHER_CATEGORY
+) {
+	$show_cat_row = true;
+} else {
+	$show_cat_row = false;
+}
+
+$strategy_form->field('parameter_strategy')->input()->addJsAction('onchange', "toggleParameterInheritedCategoryIdRow(this.options[this.selectedIndex].value)");
+
+?>
+<?=$this->render('lj_start')?>
+<br/>
+
+<?=$strategy_form->start()?>
+	<?=$strategy_form->field('parameter_strategy')?>
+	<?=$strategy_form->field('parameter_inherited_category_id')?>
+
+	<div class="form-group row" id="parameter_inherited_category_id_row" style="display: <?=$show_cat_row?'':'none'?>">
+		<label class="col-md-3 col-form-label"><?=Tr::_('Inherit parameters from category:')?></label>
+		<div class="col-md-8">
+			<?=Category::renderSelectCategoryWidget("$('#parametrization_strategy_form__parameter_inherited_category_id').val(selected_item.id);", $category->getParameterInheritedCategoryId(), $category->getId() )?>
+		</div>
+	</div>
+
+
+<?=$strategy_form->end()?>
+
+<?=$this->render('lj_end')?>
+
+<script type="text/javascript">
+	function toggleParameterInheritedCategoryIdRow( strategy ) {
+		if(
+			strategy=='<?=Category::PARAMETER_STRATEGY_INHERITED_FROM_OTHER_CATEGORY?>' ||
+			strategy=='<?=Category::PARAMETER_STRATEGY_TAKES_OVER_FROM_OTHER_CATEGORY?>'
+		) {
+			$('#parameter_inherited_category_id_row').show();
+		} else {
+			$('#parameter_inherited_category_id_row').hide();
+		}
+	}
+</script>
+

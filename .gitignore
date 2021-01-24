@@ -1,0 +1,15 @@
+.settings
+.idea
+application/config/data_model.php
+application/config/db.php
+application/config/mailing.php
+application/data/**
+application/sites/**/site_data.php
+logs/**
+tmp/**
+cache/**
+images/gallery/**
+css/packages/**
+js/packages/**
+_tools/studio/css/packages/**
+_tools/studio/js/packages/**

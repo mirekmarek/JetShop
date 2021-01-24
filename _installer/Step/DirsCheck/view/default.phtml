@@ -1,0 +1,45 @@
+<?php
+
+namespace JetApplication\Installer;
+
+use Jet\Mvc_View;
+use Jet\UI;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ */
+?>
+
+	<table class="table table-stripped">
+		<tbody>
+		<?php foreach( $this->getRaw( 'dirs' ) as $dir => $dir_data ):
+
+			$icon = UI::icon( 'check' );
+			$css_class = '';
+			$comment = '';
+
+			if( !$dir_data['is_writeable'] ) {
+				if( $dir_data['is_required'] ) {
+					$icon = UI::icon( 'frown-open' );
+					$css_class = 'danger';
+				} else {
+					$icon = UI::icon( 'meh' );
+					$css_class = 'warning';
+
+					$comment = '<br/><br/>' . Tr::_( $dir_data['comment'] );
+				}
+			}
+			?>
+			<tr class="<?= $css_class; ?>">
+				<td><?= $icon ?></td>
+				<td><?= htmlspecialchars( $dir ); ?><?= $comment; ?></td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+
+	<br/>
+	<?php if( $this->getBool( 'is_OK' ) ):
+	echo Installer::continueForm();
+endif; ?>
