@@ -234,7 +234,7 @@ abstract class Core_Brand_ShopData extends DataModel_Related_1toN implements Ima
 		return 'brand';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->brand_id;
 	}

@@ -25,12 +25,16 @@ $product = Controller_Main::getCurrentProduct();
 
 <script type="text/javascript">
 
-	var ImagesHandler = {
+	const ImagesHandler = {
 		delete_shop_id: null,
 		delete_images: null,
 
 		_handleResponse: function( shop_id, response ) {
-			$('#images_'+shop_id).html( response['images'] );
+
+			for(let el_id in response['snippets']) {
+				document.getElementById(el_id).innerHTML = response['snippets'][el_id];
+			}
+
 			ImagesHandler.initSort( shop_id );
 		},
 
@@ -51,7 +55,7 @@ $product = Controller_Main::getCurrentProduct();
 			});
 
 			$.ajax({
-				url: '?page=images&action=save_sort&images='+images.join(',')+'&shop_id='+shop_id,
+				url: '?id=<?=$product->getId()?>&page=images&action=save_sort&images='+images.join(',')+'&shop_id='+shop_id,
 				dataType: "json",
 				success: function( response ) {
 					ImagesHandler._handleResponse(shop_id, response);
@@ -90,11 +94,9 @@ $product = Controller_Main::getCurrentProduct();
 			ImagesHandler.delete_shop_id = shop_id;
 			ImagesHandler.delete_images = images;
 
-			//
-
-			var html = '';
-			for(var i=0;i<images.length;i++) {
-				var image = images[i];
+			let html = '';
+			for(let i=0;i<images.length;i++) {
+				let image = images[i];
 
 				html += '<div class="image-thumbnail" style="float:left;width: 180px;height: 180px;background-image: url('+image.url+');background-size: 170px auto;"></div>';
 			}
@@ -105,13 +107,13 @@ $product = Controller_Main::getCurrentProduct();
 		},
 
 		deleteConfirm: function () {
-			var images = [];
-			for(var i=0; i<ImagesHandler.delete_images.length;i++) {
+			let images = [];
+			for(let i=0; i<ImagesHandler.delete_images.length;i++) {
 				images.push(encodeURIComponent(ImagesHandler.delete_images[i].image));
 			}
 
 			$.ajax({
-				url: '?page=images&action=delete&shop_id='+ImagesHandler.delete_shop_id+'&images='+images.join(','),
+				url: '?id=<?=$product->getId()?>&page=images&action=delete&shop_id='+ImagesHandler.delete_shop_id+'&images='+images.join(','),
 				dataType: "json",
 				success: function( response ) {
 					ImagesHandler._handleResponse(ImagesHandler.delete_shop_id, response);
@@ -123,16 +125,10 @@ $product = Controller_Main::getCurrentProduct();
 
 
 		upload: function( shop_id ) {
-
-			JetMultiUploader.upload(
+			JetAjaxForm.submitMultiUpload(
 				'upload_form_'+shop_id,
-				'upload_files_'+shop_id,
-				'?page=images&action=upload&shop_id='+shop_id,
-				function( response ) {
-					ImagesHandler._handleResponse(shop_id, response);
-				}
+				'images',
 			);
-
 		}
 	};
 
@@ -145,6 +141,13 @@ $product = Controller_Main::getCurrentProduct();
 	})
 </script>
 
+	<div class="row toolbar" id="main-toolbar">
+		<div class="col-md-12">
+			<?=UI::button_goBack()?>
+
+			<?=$this->render('edit/preview_button');?>
+		</div>
+	</div>
 
 <div class="row">
 	<div class="col-md-12">
@@ -170,10 +173,10 @@ $product = Controller_Main::getCurrentProduct();
 		<table style="width: 100%">
 			<tr>
 				<td>
-					<form id="upload_form_<?=$shop_id?>">
+					<form id="upload_form_<?=$shop_id?>" action="?id=<?=$product->getId()?>&page=images&action=upload&shop_id=<?=$shop_id?>">
 						<div class="btn btn-light btn-upload">
 							<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images' )?></span>
-							<input type="file" multiple id="upload_files_<?=$shop_id?>" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_id?>');">
+							<input type="file" multiple id="upload_files_<?=$shop_id?>" name="images[]" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_id?>');">
 						</div>
 					</form>
 				</td>

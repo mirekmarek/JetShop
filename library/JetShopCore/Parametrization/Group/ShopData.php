@@ -122,7 +122,7 @@ abstract class Core_Parametrization_Group_ShopData extends DataModel_Related_1to
 		return 'category_pg';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->group_id;
 	}

@@ -2,6 +2,8 @@
 namespace JetShop;
 
 use Jet\Db;
+use Jet\Mvc_Page;
+use Jet\Mvc_Site;
 
 abstract class Core_ShoppingCart
 {
@@ -29,15 +31,14 @@ abstract class Core_ShoppingCart
 	public static function get() : ShoppingCart
 	{
 		if(!static::$cart) {
+			if(!isset($_COOKIE['cart_id'])) {
+				$_COOKIE['cart_id'] = uniqid().uniqid().uniqid();
+			}
+
 			static::$cart = new ShoppingCart( Shops::getCurrentId() );
+			static::$cart->setId( $_COOKIE['cart_id'] );
+			static::$cart->setShopId( Shops::getCurrentId() );
 		}
-
-
-		if(!isset($_COOKIE['cart_id'])) {
-			$_COOKIE['cart_id'] = uniqid().uniqid().uniqid();
-		}
-
-		static::$cart->setId( $_COOKIE['cart_id'] );
 
 		return static::$cart;
 	}
@@ -96,6 +97,11 @@ abstract class Core_ShoppingCart
 		return $this->shop_id;
 	}
 
+	public function setShopId( string $shop_id ): void
+	{
+		$this->shop_id = $shop_id;
+	}
+
 	public function getId() : string
 	{
 		return $this->id;
@@ -125,7 +131,7 @@ abstract class Core_ShoppingCart
 		 */
 		$cart = $this;
 
-		$items = Db::get( $this->cart_db_connection )->fetchOne("SELECT items FROM ".$this->database_table_name." WHERE id='".addslashes($this->id)."'");
+		$items = Db::get( $this->cart_db_connection )->fetchOne("SELECT items FROM ".$this->database_table_name." WHERE id='".addslashes($this->id)."' and shop_id='{$this->shop_id}'");
 
 		if(!$items) {
 			return;
@@ -178,6 +184,7 @@ abstract class Core_ShoppingCart
 
 		Db::get( $this->cart_db_connection )->execCommand("INSERT INTO ".$this->database_table_name." SET
                         id='{$this->id}',
+                        shop_id='{$this->shop_id}',
                         last_activity_date_time=now(),
                         items='{$items}',
                         items_count={$count}
@@ -378,6 +385,13 @@ abstract class Core_ShoppingCart
 
 		return $items;
 
+	}
+
+	public static function getCartURL(): string
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get('shopping-cart', $shop->getLocale(), $shop->getSiteId())->getURL();
 	}
 
 }

@@ -7,7 +7,7 @@ interface Core_Images_ShopDataInterface {
 
 	public function getImageEntity() : string;
 
-	public function getImageObjectId() : int;
+	public function getImageObjectId() : int|string;
 
 	public static function getImageClasses() : array;
 

@@ -1,0 +1,76 @@
+<?php
+namespace JetShopModule\Admin\Delivery\Deadlines;
+
+use Jet\Tr;
+use JetShop\Delivery_Deadline;
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\UI;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View   $this
+ * @var Form       $form
+ * @var Delivery_Deadline    $delivery_deadline
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 1 ] );
+$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 4 ] );
+
+$delivery_deadline = $this->getRaw('delivery_deadline');
+?>
+
+
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs');?>
+		<br/>
+		<?=$form->start()?>
+
+		<?=$form->field( 'internal_name' )?>
+		<?=$form->field( 'code' )?>
+		<?=$form->field( 'internal_description' )?>
+
+
+		<?php foreach(Shops::getList() as $shop):
+			$shop_id= $shop->getId();
+
+			$shop_data = $delivery_deadline->getShopData( $shop_id );
+			?>
+			<?=$shop_data->renderShopDataBlock_start()?>
+
+			<fieldset>
+				<legend class="sub"><?=Tr::_('Main data')?></legend>
+
+				<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/title')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/description_short')?>
+
+				<?=$form->field('/shop_data/'.$shop_id.'/delay_business_days_optimistic')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/delay_business_days_pessimistic')?>
+
+			</fieldset>
+
+			<?=$shop_data->renderShopDataBlock_end()?>
+		<?php endforeach; ?>
+
+
+		<?=$form->end()?>
+
+	</div>
+</div>
+

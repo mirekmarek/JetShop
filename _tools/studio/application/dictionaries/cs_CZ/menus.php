@@ -49,4 +49,5 @@ return [
 	'System' => '',
 	'aaaa' => '',
 	'aaa`' => '',
+	'Catalog' => '',
 ];

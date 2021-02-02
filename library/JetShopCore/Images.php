@@ -57,8 +57,12 @@ abstract class Core_Images
 		self::$wm_dir = $wm_dir;
 	}
 
-	public static function calcNumericPath( int $object_id ) : string
+	public static function calcNumericPath( int|string $object_id ) : string
 	{
+		if(is_string($object_id)) {
+			return $object_id;
+		}
+
 		$map = [];
 
 		$numerical_order = 100000;
@@ -83,12 +87,12 @@ abstract class Core_Images
 
 	}
 
-	public static function getImageDirPath( string $shop_id, string $entity, string $image_class, int $object_id ) : string
+	public static function getImageDirPath( string $shop_id, string $entity, string $image_class, int|string $object_id ) : string
 	{
 		return $shop_id.'/'.$entity.'/'.$image_class.'/'.Images::calcNumericPath($object_id).'/';
 	}
 
-	public static function uploadImage( string $tmp_path, string $shop_id, string $entity, int $object_id, string $image_class, string &$object_property ) : void
+	public static function uploadImage( string $tmp_path, string $shop_id, string $entity, int|string $object_id, string $image_class, string &$object_property ) : void
 	{
 		$image_info = getimagesize($tmp_path);
 		if(!$image_info) {
@@ -252,7 +256,7 @@ abstract class Core_Images
 
 	}
 
-	public static function catchUploadForm( Form $form, string $entity, string $image_class, string $shop_id, int $object_id, string &$object_property ) : bool
+	public static function catchUploadForm( Form $form, string $entity, string $image_class, string $shop_id, int|string $object_id, string &$object_property ) : bool
 	{
 		if(
 			!$form->catchInput() ||

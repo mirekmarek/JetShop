@@ -32,5 +32,7 @@ $router = $this->getController()->getControllerRouter();
 			<input type="hidden" name="delete" value="yes">
 			<?=UI::button_delete()->setType( 'submit' )?>
 		</form>
+
+		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>

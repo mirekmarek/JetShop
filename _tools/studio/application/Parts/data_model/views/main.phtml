@@ -1,7 +1,7 @@
 <?php
 namespace JetStudio;
 
-use Jet\UI;
+use Jet\DataModel;use Jet\UI;
 use Jet\Tr;
 use Jet\UI_messages;
 
@@ -30,12 +30,13 @@ $allow_to_create_related = (
 	DataModels::getCurrentModel() &&
 	DataModels::getCurrentModel()->canHaveRelated()
 );
+
 ?>
 <?=Application::getView()->render('js');?>
 
 <div class="row toolbar" id="main-toolbar">
 
-	<div class="col-md-4" style="padding: 0px;">
+	<div class="col-md-1" style="padding: 0px;">
 		<div class="dropdown">
 			<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<?=UI::icon('plus')?> <?=Tr::_('Create a new DataModel')?>
@@ -49,6 +50,28 @@ $allow_to_create_related = (
 				<?php endif; ?>
 			</div>
 		</div>
+	</div>
+	<div class="col-md-3 text-right" style="padding: 0 10px 0 0;">
+		<?php if(DataModels::getCurrentModel()): ?>
+			<?=UI::button_create(Tr::_('Property'))
+				->setOnclick('DataModel.property.create.openDialog()')
+				->setIcon('plus')
+				->setClass('success');
+			?>
+
+			<?=UI::button_create(Tr::_('External relation'))
+				->setOnclick('DataModel.relation.create.openDialog()')
+				->setIcon('plus')
+				->setClass('success');
+			?>
+
+			<?=UI::button_create(Tr::_('Key'))
+				->setOnclick('DataModel.key.create.openDialog()')
+				->setIcon('plus')
+				->setClass('success');
+			?>
+
+		<?php endif; ?>
 	</div>
 	<div class="col-md-8" style="padding: 0px">
 		<?php if($what_to_edit): ?>

@@ -1,0 +1,45 @@
+<?php
+namespace JetShopModule\Admin\Services\Services;
+
+use JetShop\Services_Service;
+
+use Jet\UI;
+use Jet\Mvc_View;
+use Jet\Form;
+use JetShop\Services_Service_ShopData;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View $this
+ * @var Form     $form
+ * @var Services_Service     $service
+ */
+
+$service = $this->getRaw( 'service' );
+?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+
+		<?php if(!$service->getIsNew()): ?>
+			<?php foreach(Shops::getList() as $shop):
+				$shop_id= $shop->getId();
+
+				$shop_data = $service->getShopData( $shop_id );
+				?>
+				<?=$shop_data->renderImageWidgets( Services_Service_ShopData::getImageClasses() )?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	</div>
+</div>
+
+
+

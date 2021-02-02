@@ -10,4 +10,7 @@ return [
 	'Internal description:' => '',
 	'Delivery Class <b>%ITEM_NAME%</b> has been created' => '',
 	'Edit delivery class <b>%ITEM_NAME%</b>' => '',
+	'Please enter code' => '',
+	'Code:' => '',
+	'Delivery class with the same name already exists' => '',
 ];

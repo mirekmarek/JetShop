@@ -22,7 +22,8 @@ class Main extends Application_Module
 	 */
 	public function getViewsDir(): string
 	{
-		return parent::getViewsDir();
+		return Shops::getViewDir().'catalog/';
+		//return parent::getViewsDir();
 		//return $this->module_manifest->getModuleDir() . static::getDefaultViewsDir() . '/'.Shops::getCurrentId().'/';
 	}
 

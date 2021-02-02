@@ -1,0 +1,33 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;use Jet\Tr;use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ * @var ShoppingCart_Item $new_item
+ * @var Product $product
+ */
+
+$item = $this->getRaw('new_item');
+
+$product = $item->getProduct();
+?>
+
+<table>
+	<tr>
+		<td rowspan="2">
+			<img src="<?=$product->getImageThumbnailUrl(100, 100)?>"/>
+		</td>
+		<td>
+			<a href="<?=$product->getURL()?>"><?=$product->getName()?></a>
+		</td>
+	</tr>
+	<tr>
+		<td><?=$product->getShortDescription()?></td>
+	</tr>
+</table>
+
+<div class="modal-footer">
+	<?=UI::button()->setUrl(ShoppingCart::getCartURL())->setLabel(Tr::_('Proceed to checkout'))->setClass('success')?>
+</div>

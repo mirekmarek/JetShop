@@ -241,7 +241,7 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 		return 'sticker';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->sticker_id;
 	}

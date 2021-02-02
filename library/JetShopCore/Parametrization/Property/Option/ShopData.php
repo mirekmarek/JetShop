@@ -321,7 +321,7 @@ abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_R
 		return 'category_ppo';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->option_id;
 	}

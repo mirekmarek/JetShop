@@ -1,11 +1,11 @@
 <?php
 return [
-	'Delivery terms' => '',
-	'Edit delivery term <b>%NAME%</b>' => '',
+	'Delivery deadlines' => '',
+	'Edit delivery deadline <b>%NAME%</b>' => '',
 	'' => '',
 	'ID' => '',
 	'Name' => '',
-	'Create a new delivery term' => '',
-	'Delete delivery term <b>%NAME%</b>' => '',
-	'Do you really want to delete this delivery term?' => '',
+	'Create a new delivery deadline' => '',
+	'Delete delivery deadline <b>%NAME%</b>' => '',
+	'Do you really want to delete this delivery deadline?' => '',
 ];

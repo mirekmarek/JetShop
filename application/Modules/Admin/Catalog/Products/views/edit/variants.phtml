@@ -53,6 +53,8 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
 		<?php if($variants && !$variants_update_form->getIsReadonly()): ?>
 			<?=UI::button_save()->setOnclick("$('#".$variants_update_form->getId()."').submit()");?>
 		<?php endif; ?>
+
+		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

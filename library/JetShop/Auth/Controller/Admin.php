@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek.2m@gmail.com>
  */
-namespace JetShop;;
+namespace JetShop;
 
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;

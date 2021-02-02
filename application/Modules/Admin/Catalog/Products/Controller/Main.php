@@ -17,6 +17,7 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
 use Jet\UI_tabs;
+use JetShop\Application_Admin;
 use JetShop\Category;
 use JetShop\Product;
 
@@ -231,6 +232,8 @@ class Controller_Main extends Mvc_Controller_Default
 			$updated = false;
 			switch($GET->getString('action')) {
 				case 'upload':
+					Application_Admin::handleUploadTooLarge();
+
 					$shop_data->uploadImages();
 					$updated = true;
 					break;
@@ -250,7 +253,10 @@ class Controller_Main extends Mvc_Controller_Default
 				AJAX::response(
 					[
 						'result' => 'ok',
-						'images' => $this->view->render('edit/images/list')
+						'snippets' => [
+							'images_'.$shop_id => $this->view->render('edit/images/list')
+						]
+
 					]
 				);
 

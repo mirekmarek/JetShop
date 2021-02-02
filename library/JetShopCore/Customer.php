@@ -8,96 +8,225 @@ use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_RegistrationPassword;
-use Jet\Form_Field_Select;
 use Jet\Data_DateTime;
 use Jet\Locale;
 use Jet\Mailing_Email;
 use Jet\Tr;
+use Jet\Form_Field_Tel;
+use Jet\DataModel_Query;
+use Jet\Form_Field_DateTime;
 
 
-//TODO: shop ID ...
-//TODO: locale dle shop id
-#[DataModel_Definition(name: 'customer')]
-#[DataModel_Definition(database_table_name: 'customers')]
-#[DataModel_Definition(id_controller_class: DataModel_IDController_AutoIncrement::class)]
-#[DataModel_Definition(id_controller_options: ['id_property_name'=>'id'])]
+#[DataModel_Definition(
+	name: 'customer',
+	database_table_name: 'customers',
+	id_controller_class: DataModel_IDController_AutoIncrement::class,
+	id_controller_options: [
+		'id_property_name' => 'id'
+	],
+	relation: [
+		'related_to_class_name' => Core_Customer_Address::class,
+		'join_by_properties' => [
+			'id' => 'custommer_id'
+		],
+		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
+	]
+)]
 abstract class Core_Customer extends DataModel implements Auth_User_Interface
 {
 
-	#[DataModel_Definition(type: DataModel::TYPE_ID_AUTOINCREMENT)]
-	#[DataModel_Definition(is_id: true)]
-	#[DataModel_Definition(form_field_type: false)]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_ID_AUTOINCREMENT,
+		is_id: true,
+		form_field_type: false
+	)]
 	protected int $id = 0;
 
-	#[DataModel_Definition(type: DataModel::TYPE_STRING)]
-	#[DataModel_Definition(max_len: 100)]
-	#[DataModel_Definition(form_field_is_required: true)]
-	#[DataModel_Definition(is_key: true)]
-	#[DataModel_Definition(is_unique: true)]
-	#[DataModel_Definition(form_field_label: 'Username')]
-	#[DataModel_Definition(form_field_error_messages: [Form_Field_Input::ERROR_CODE_EMPTY=>'Please enter username'])]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		form_field_is_required: true,
+		is_key: true,
+		is_unique: true,
+		form_field_label: 'Username',
+		form_field_error_messages: [
+			Form_Field_Input::ERROR_CODE_EMPTY=>'Please enter username'
+		]
+	)]
 	protected string $username = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_STRING)]
-	#[DataModel_Definition(do_not_export: true)]
-	#[DataModel_Definition(max_len: 255)]
-	#[DataModel_Definition(form_field_type: false)]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		do_not_export: true,
+		max_len: 255,
+		form_field_type: false
+	)]
 	protected string $password = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_STRING)]
-	#[DataModel_Definition(max_len: 255)]
-	#[DataModel_Definition(form_field_label: 'E-mail')]
-	#[DataModel_Definition(form_field_is_required: true)]
-	#[DataModel_Definition(form_field_error_messages: [Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter e-mail address',Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Please enter e-mail address'])]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+		form_field_label: 'E-mail',
+		form_field_is_required: true,
+		form_field_error_messages: [
+			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter e-mail address',
+			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Please enter e-mail address'
+		]
+	)]
 	protected string $email = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_LOCALE)]
-	#[DataModel_Definition(form_field_label: 'Locale')]
-	#[DataModel_Definition(form_field_is_required: true)]
-	#[DataModel_Definition(form_field_error_messages: [Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select locale',Form_Field_Select::ERROR_CODE_EMPTY => 'Please select locale'])]
-	#[DataModel_Definition(form_field_get_select_options_callback: [self::class, 'getLocales'])]
-	protected ?Locale $locale = null;
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		form_field_type: false
+	)]
+	protected string $shop_id = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_STRING)]
-	#[DataModel_Definition(max_len: 100)]
-	#[DataModel_Definition(form_field_label: 'First name')]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		form_field_label: 'First name'
+	)]
 	protected string $first_name = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_STRING)]
-	#[DataModel_Definition(max_len: 100)]
-	#[DataModel_Definition(form_field_label: 'Surname')]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		form_field_label: 'Surname'
+	)]
 	protected string $surname = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_STRING)]
-	#[DataModel_Definition(max_len: 65536)]
-	#[DataModel_Definition(form_field_label: 'Description')]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536,
+		form_field_label: 'Description'
+	)]
 	protected string $description = '';
 
-	#[DataModel_Definition(type: DataModel::TYPE_BOOL)]
-	#[DataModel_Definition(default_value: true)]
-	#[DataModel_Definition(form_field_label: 'Password is valid')]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		default_value: true,
+		form_field_label: 'Password is valid'
+	)]
 	protected bool $password_is_valid = true;
 
-	#[DataModel_Definition(type: DataModel::TYPE_DATE_TIME)]
-	#[DataModel_Definition(default_value: null)]
-	#[DataModel_Definition(form_field_label: 'Password is valid till')]
-	#[DataModel_Definition(form_field_error_messages: [Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'])]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME,
+		default_value: null,
+		form_field_label: 'Password is valid till',
+		form_field_error_messages: [
+			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
+		]
+	)]
 	protected ?Data_DateTime $password_is_valid_till = null;
 
-	#[DataModel_Definition(type: DataModel::TYPE_BOOL)]
-	#[DataModel_Definition(default_value: false)]
-	#[DataModel_Definition(form_field_label: 'User is blocked')]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		default_value: false,
+		form_field_label: 'User is blocked'
+	)]
 	protected bool $user_is_blocked = false;
 
-	#[DataModel_Definition(type: DataModel::TYPE_DATE_TIME)]
-	#[DataModel_Definition(default_value: null)]
-	#[DataModel_Definition(form_field_label: 'User is blocked till')]
-	#[DataModel_Definition(form_field_error_messages: [Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'])]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME,
+		default_value: null,
+		form_field_label: 'User is blocked till',
+		form_field_error_messages: [
+			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
+		]
+	)]
 	protected ?Data_DateTime $user_is_blocked_till = null;
+
+	/**
+	 * @var ?Data_DateTime
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME,
+		form_field_type: false
+	)]
+	protected ?Data_DateTime $registration_date_time = null;
+
+	/**
+	 * @var string
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		form_field_type: false
+	)]
+	protected string $registration_IP = '';
+
+	/**
+	 * @var int
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+		form_field_type: false
+	)]
+	protected int $default_address_id = 0;
+
+	/**
+	 * @var string
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 20,
+		form_field_type: 'Tel',
+		form_field_label: 'Phone number:',
+		form_field_error_messages: [
+			Form_Field_Tel::ERROR_CODE_EMPTY => 'Please enter phone number',
+			Form_Field_Tel::ERROR_CODE_INVALID_FORMAT => 'Please enter phone number'
+		]
+	)]
+	protected string $phone_number = '';
+
+	/**
+	 * @var bool
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		form_field_type: false
+	)]
+	protected bool $mailing_accepted = false;
+
+	/**
+	 * @var int
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		form_field_type: false
+	)]
+	protected int $loyalty_program_points = 0;
+
+	/**
+	 * @var string
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 100,
+		form_field_type: false
+	)]
+	protected string $oauth_service = '';
+
+	/**
+	 * @var string
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 100,
+		form_field_type: false
+	)]
+	protected string $oauth_key = '';
+
+
 
 	protected ?Form $_form_add = null;
 
 	protected ?Form $_form_edit = null;
+
 
 	public function __construct( ?string $username = null, ?string $password = null )
 	{
@@ -231,18 +360,18 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$this->email = $email;
 	}
 
-	public function getLocale() : Locale
+
+	public function getShopId(): string
 	{
-		return $this->locale;
+		return $this->shop_id;
 	}
 
-	public function setLocale( string|Locale $locale ) : void
+	public function setShopId( string $shop_id ): void
 	{
-		if( !( $locale instanceof Locale ) ) {
-			$locale = new Locale( $locale );
-		}
-		$this->locale = $locale;
+		$this->shop_id = $shop_id;
 	}
+
+
 
 	public function getFirstName() : string
 	{
@@ -394,10 +523,12 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$this->setPasswordIsValid( false );
 		$this->save();
 
+		$shop = Shops::get($this->getShopId());
+
 		$email = new Mailing_Email(
 			'user_password_reset',
-			$this->getLocale(),
-			Application_Web::getSiteId()
+			$shop->getLocale(),
+			$shop->getSiteId()
 		);
 
 		$email->setVar('user', $this);
@@ -533,29 +664,158 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		return $this->catchForm( $this->getAddForm() );
 	}
 
-	public static function getLocales() : array
-	{
-		$locales = [];
-
-		foreach( Application_Shop::getSite()->getLocales() as $locale_str=>$locale ) {
-			$locales[$locale_str] = $locale->getName();
-		}
-
-		return $locales;
-	}
 
 	public function sendWelcomeEmail( string $password ) : void
 	{
+		$shop = Shops::get($this->getShopId());
+
 		$email = new Mailing_Email(
 			'user_welcome',
-			$this->getLocale(),
-			Application_Shop::getSiteId()
+			$shop->getLocale(),
+			$shop->getSiteId()
 		);
 
 		$email->setVar('user', $this);
 		$email->setVar('password', $password);
 
 		$email->send( $this->getEmail() );
+	}
+
+	/**
+	 * @param Data_DateTime|string|null $value
+	 */
+	public function setRegistrationDateTime( Data_DateTime|string|null $value ) : void
+	{
+		if( $value===null ) {
+			$this->registration_date_time = null;
+			return;
+		}
+		
+		if( !( $value instanceof Data_DateTime ) ) {
+			$value = new Data_DateTime( (string)$value );
+		}
+		
+		$this->registration_date_time = $value;
+	}
+
+	/**
+	 * @return Data_DateTime|null
+	 */
+	public function getRegistrationDateTime() : Data_DateTime|null
+	{
+		return $this->registration_date_time;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setRegistrationIp( string $value ) : void
+	{
+		$this->registration_IP = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRegistrationIp() : string
+	{
+		return $this->registration_IP;
+	}
+
+	/**
+	 * @param int $value
+	 */
+	public function setDefaultAddressId( int $value ) : void
+	{
+		$this->default_address_id = $value;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDefaultAddressId() : int
+	{
+		return $this->default_address_id;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setPhoneNumber( string $value ) : void
+	{
+		$this->phone_number = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPhoneNumber() : string
+	{
+		return $this->phone_number;
+	}
+
+	/**
+	 * @param bool $value
+	 */
+	public function setMailingAccepted( bool $value ) : void
+	{
+		$this->mailing_accepted = (bool)$value;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getMailingAccepted() : bool
+	{
+		return $this->mailing_accepted;
+	}
+
+	/**
+	 * @param int $value
+	 */
+	public function setLoyaltyProgramPoints( int $value ) : void
+	{
+		$this->loyalty_program_points = $value;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLoyaltyProgramPoints() : int
+	{
+		return $this->loyalty_program_points;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setOauthService( string $value ) : void
+	{
+		$this->oauth_service = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOauthService() : string
+	{
+		return $this->oauth_service;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setOauthKey( string $value ) : void
+	{
+		$this->oauth_key = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOauthKey() : string
+	{
+		return $this->oauth_key;
 	}
 
 

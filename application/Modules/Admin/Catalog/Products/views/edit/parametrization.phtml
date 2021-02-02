@@ -55,6 +55,8 @@ foreach($product->getCategories() as $category) {
 		<?php if( !$form->getIsReadonly() ): ?>
 			<?=UI::button_save()?>
 		<?php endif; ?>
+
+		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

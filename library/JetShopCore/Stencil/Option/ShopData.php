@@ -190,7 +190,7 @@ abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN imple
 		return 'category_ppo';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->stencil_id;
 	}

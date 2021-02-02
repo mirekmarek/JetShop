@@ -10,7 +10,7 @@ use Jet\UI;
 use JetShop\Price;
 use JetShop\Shops;
 use JetShop\Sticker;
-use JetShopAdmin\Shop_Admin;
+
 
 /**
  * @var Mvc_View   $this
@@ -37,6 +37,8 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 		<?php if( !$form->getIsReadonly() ): ?>
 			<?=UI::button_save()?>
 		<?php endif; ?>
+
+		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

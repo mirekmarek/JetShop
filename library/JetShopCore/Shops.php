@@ -30,6 +30,11 @@ class Core_Shops extends Config {
 	protected static ?array $_list = null;
 
 
+	public static function getCurrent() : Shops_Shop
+	{
+		return static::$current_shop;
+	}
+
 	public static function getCurrentId() : string
 	{
 		return static::$current_shop->getId();
@@ -255,6 +260,10 @@ class Core_Shops extends Config {
 		return static::get($shop_id)->getRoundPrecision_WithVAT();
 	}
 
+	public static function getViewDir() : string
+	{
+		return Mvc_Site::get(static::$current_shop->getSiteId())->getViewsPath();
+	}
 
 
 

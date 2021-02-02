@@ -339,7 +339,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 		return 'category';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->category_id;
 	}

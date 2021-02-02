@@ -1,4 +1,6 @@
 <?php
+namespace JetShop;
+
 use Jet\Mvc_Layout;
 use Jet\Mvc;
 use Jet\Tr;
@@ -22,17 +24,28 @@ require 'parts/init_libs.php';
 
 </head>
 <body>
-<div class="container-fluid">
-	<div class="page-header card text-white bg-dark">
-		<div class="card-body">
-			<h1>JetShop!</h1>
-			<small>JetShop Example</small>
+	<div class="container-fluid">
+		<div class="page-header card text-white bg-dark">
+			<div class="card-body">
+				<h1>JetShop!</h1>
+				<small>JetShop Example</small>
+
+				<div class="float-right" id="shopping_cart_icon">
+					<jet_module module="Shop.ShoppingCart" action="cart_icon" is_cacheable="false" />
+				</div>
+
+			</div>
 		</div>
+
+		<jet_module module="Shop.UI" action="breadcrumbNavigation" view="default" is_cacheable="true" />
+
+		<jet_layout_main_position/>
 	</div>
 
-	<jet_module module="Shop.UI" action="breadcrumbNavigation" view="default" is_cacheable="true" />
+	<script type="text/javascript">
+		ShoppingCart.base_URL = '<?=ShoppingCart::getCartURL()?>';
+	</script>
+	<jet_module module="Shop.ShoppingCart" action="cart_popup_dialog" is_cacheable="false" />
 
-	<jet_layout_main_position/>
-</div>
 </body>
 </html>

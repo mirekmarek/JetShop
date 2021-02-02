@@ -5,4 +5,6 @@ return [
 	'Detail' => '',
 	'Vyberte si variantu' => '',
 	'Koupit' => '',
+	'Máte vybráno:' => '',
+	'Zrušit filtr' => '',
 ];

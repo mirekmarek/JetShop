@@ -1,0 +1,12 @@
+<?php
+namespace JetShop;
+
+use Jet\UI;
+
+$dialog = UI::dialog('shopping_cart_popup', '', 400);
+
+echo $dialog->start();
+?>
+	<div id="shopping_cart_popup_content"></div>
+<?php
+echo $dialog->end();

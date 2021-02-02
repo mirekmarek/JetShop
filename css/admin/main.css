@@ -318,3 +318,7 @@ h4.inherited {
 	border-radius: .2rem;
 	font-size: 10px;
 }
+
+.active b {
+	padding-left: 2px;
+}

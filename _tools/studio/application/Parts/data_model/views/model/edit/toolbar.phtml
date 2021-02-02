@@ -36,14 +36,3 @@ $form = DataModels::getCurrentModel()->getEditForm();
 <?php endif; ?>
 
 
-<?=UI::button_create(Tr::_('Create property'))
-	->setOnclick('DataModel.property.create.openDialog()')
-?>
-
-<?=UI::button_create(Tr::_('Create external relation'))
-	->setOnclick('DataModel.relation.create.openDialog()')
-?>
-
-<?=UI::button_create(Tr::_('Create key'))
-	->setOnclick('DataModel.key.create.openDialog()')
-?>

@@ -37,6 +37,8 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 		<?php if( !$form->getIsReadonly() ): ?>
 			<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
 		<?php endif; ?>
+
+		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

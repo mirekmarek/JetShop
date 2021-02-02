@@ -1,10 +1,12 @@
 const ProductListing = {
+	set_filter_url: '',
 	state: {},
 
 	selected_filter_group_id: '',
 
-	init: function( state )
+	init: function( set_filter_url, state )
 	{
+		ProductListing.set_filter_url = set_filter_url;
 		ProductListing.state = state;
 	},
 
@@ -31,8 +33,8 @@ const ProductListing = {
 	_actualize: function() {
 
 		$.ajax({
-			type: "POST",
-			url: '?set_filter',
+			type: 'POST',
+			url: ProductListing.set_filter_url,
 			data: {
 				filter: JSON.stringify( ProductListing.state )
 			},

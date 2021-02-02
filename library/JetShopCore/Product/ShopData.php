@@ -237,7 +237,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 		is_key: true,
 		form_field_label: 'Delivery term:',
 		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [ DeliveryTerm::class ,'getScope']
+		form_field_get_select_options_callback: [Delivery_Deadline::class, 'getScope']
 	)]
 	protected int $delivery_term_id = 0;
 
@@ -529,7 +529,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 		return 'product';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->product_id;
 	}

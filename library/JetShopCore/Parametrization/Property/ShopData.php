@@ -323,7 +323,7 @@ abstract class Core_Parametrization_Property_ShopData extends DataModel_Related_
 		return 'category_pp';
 	}
 
-	public function getImageObjectId() : int
+	public function getImageObjectId() : int|string
 	{
 		return $this->property_id;
 	}

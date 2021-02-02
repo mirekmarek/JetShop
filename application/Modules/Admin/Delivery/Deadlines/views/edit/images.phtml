@@ -1,0 +1,44 @@
+<?php
+namespace JetShopModule\Admin\Delivery\Deadlines;
+
+use JetShop\Delivery_Method;
+
+use Jet\UI;
+use Jet\Mvc_View;
+use Jet\Form;
+use JetShop\Delivery_Method_ShopData;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View $this
+ * @var Form     $form
+ * @var Delivery_Method     $delivery_deadline
+ */
+
+$delivery_deadline = $this->getRaw( 'delivery_deadline' );
+?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+
+		<?php if(!$delivery_deadline->getIsNew()): ?>
+			<?php foreach(Shops::getList() as $shop):
+				$shop_id= $shop->getId();
+
+				$shop_data = $delivery_deadline->getShopData( $shop_id );
+				?>
+				<?=$shop_data->renderImageWidgets( Delivery_Method_ShopData::getImageClasses() )?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	</div>
+</div>
+
+
+
