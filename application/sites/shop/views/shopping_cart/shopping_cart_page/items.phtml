@@ -1,0 +1,62 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$cart = ShoppingCart::get();
+
+if($cart->getQuantity()<1):
+	echo $this->render('shopping_cart_page/empty');
+endif;
+?>
+<table class="table table-striped">
+	<?php foreach($cart->getItems() as $item):
+		$product = $item->getProduct();
+		?>
+		<tr>
+			<td style="width: 90px;">
+				<img src="<?=$product->getImageThumbnailUrl(90, 90)?>"/>
+			</td>
+			<td>
+				<a href="<?=$product->getURL()?>"><?=$product->getName()?></a>
+			</td>
+			<td style="width: 30px">
+				<?=UI::button_delete(' ')->setOnclick('ShoppingCart.remove('.$product->getId().');')->setSize(UI_button::SIZE_SMALL)?>
+			</td>
+			<td style="width: 60px;">
+				<input type="number" step="1" value="<?=$item->getQuantity()?>" style="width: 50px;" onchange="ShoppingCart.setQty(<?=$product->getId()?>, this.value)">
+			</td>
+			<td style="width: 10%">
+				<span class="small"><?=Price::formatWithCurrency($item->getPricePerItem())?></span><br/>
+			</td>
+			<td style="width: 10%">
+				<b><?=Price::formatWithCurrency($item->getAmount())?></b>
+			</td>
+		</tr>
+	<?php endforeach; ?>
+	<tfoot>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td style="font-weight: bolder;font-size: 1.5rem"><?=Price::formatWithCurrency($cart->getAmount())?></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td><?=UI::button(Tr::_('Order'))->setUrl(CashDesk::getCashDeskPageURL())->setClass('success')?></td>
+		</tr>
+	</tfoot>
+</table>

@@ -10,6 +10,10 @@ use Jet\Tr;
 
 abstract class Core_Delivery_Kind {
 
+	const KIND_E_DELIVERY = 'e-delivery';
+	const KIND_PERSONAL_TAKEOVER = 'personal-takeover';
+	const KIND_DELIVERY = 'delivery';
+
 	protected string $code = '';
 
 	protected string $title = '';
@@ -61,19 +65,15 @@ abstract class Core_Delivery_Kind {
 			static::$list = [];
 
 			$e_delivery = new Delivery_Kind();
-			$e_delivery->setCode('e-delivery');
+			$e_delivery->setCode( Delivery_Kind::KIND_E_DELIVERY );
 			$e_delivery->setTitle( Tr::_('e-Delivery', [], Delivery_Method::getManageModuleName()) );
 
 			$personal_takeover = new Delivery_Kind();
-			$personal_takeover->setCode('personal-takeover');
-			$personal_takeover->setTitle( Tr::_('Personal takeover', [], Delivery_Method::getManageModuleName()) );
-
-			$personal_takeover = new Delivery_Kind();
-			$personal_takeover->setCode('personal-takeover');
+			$personal_takeover->setCode( Delivery_Kind::KIND_PERSONAL_TAKEOVER );
 			$personal_takeover->setTitle( Tr::_('Personal takeover', [], Delivery_Method::getManageModuleName()) );
 
 			$delivery = new Delivery_Kind();
-			$delivery->setCode('delivery');
+			$delivery->setCode( Delivery_Kind::KIND_DELIVERY );
 			$delivery->setTitle( Tr::_('Delivery', [], Delivery_Method::getManageModuleName()) );
 
 			static::$list[$delivery->getCode()] = $delivery;

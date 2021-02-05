@@ -7,4 +7,7 @@ return [
 	'Detail' => '',
 	'Koupit' => '',
 	'Vyberte si variantu' => '',
+	'Add to cart' => '',
+	'More info' => '',
+	'Select variant' => '',
 ];

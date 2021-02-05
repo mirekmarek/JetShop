@@ -179,11 +179,10 @@ class Core_Shops_Shop extends Config_Section {
 	}
 
 	/**
-	 * @param bool $as_string
 	 *
 	 * @return Locale
 	 */
-	public function getLocale( $as_string=false ): Locale
+	public function getLocale(): Locale
 	{
 		return new Locale($this->locale);
 	}

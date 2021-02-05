@@ -17,7 +17,7 @@ class Listing extends Data_Listing {
 			'disallow_sort' => true
 		],
 		'code'       => ['title' => 'Code'],
-		'internal_name'  => ['title' => 'Name'],
+		'internal_name'  => ['title' => 'Internal name'],
 	];
 
 	protected array $filters = [

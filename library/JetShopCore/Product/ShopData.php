@@ -1,6 +1,7 @@
 <?php
 namespace JetShop;
 
+use http\Encoding\Stream;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
@@ -233,13 +234,24 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 	protected bool $deactivate_product_after_sold_out = false;
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
 		is_key: true,
 		form_field_label: 'Delivery term:',
 		form_field_type: Form::TYPE_SELECT,
 		form_field_get_select_options_callback: [Delivery_Deadline::class, 'getScope']
 	)]
-	protected int $delivery_term_id = 0;
+	protected string $delivery_term_code = '';
+
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+		form_field_label: 'Delivery class:',
+		form_field_type: Form::TYPE_SELECT,
+		form_field_get_select_options_callback: [Delivery_Class::class, 'getScope']
+	)]
+	protected string $delivery_class_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE,
@@ -450,14 +462,24 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 		$this->deactivate_product_after_sold_out = $deactivate_product_after_sold_out;
 	}
 
-	public function getDeliveryTermId() : int
+	public function getDeliveryTermCode() : string
 	{
-		return $this->delivery_term_id;
+		return $this->delivery_term_code;
 	}
 
-	public function setDeliveryTermId( int $delivery_term_id ) : void
+	public function setDeliveryTermCode( string $delivery_term_code ) : void
 	{
-		$this->delivery_term_id = $delivery_term_id;
+		$this->delivery_term_code = $delivery_term_code;
+	}
+
+	public function getDeliveryClassCode(): string
+	{
+		return $this->delivery_class_code;
+	}
+
+	public function setDeliveryClassCode( string $delivery_class_code ): void
+	{
+		$this->delivery_class_code = $delivery_class_code;
 	}
 
 	public function getDateAvailable() : Data_DateTime|null

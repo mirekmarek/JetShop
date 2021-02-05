@@ -112,7 +112,7 @@ trait Controller_Main_Category
 	public function category_not_active_Action() : void
 	{
 		Tr::setCurrentNamespace('category/not_active');
-
+		$this->view->setVar('category', static::$category);
 		$this->output('category/not_active');
 	}
 
@@ -127,6 +127,7 @@ trait Controller_Main_Category
 		$listing = $category->getProductListing();
 		$listing->setFilterView( $this->view );
 
+		$this->view->setVar('category', static::$category);
 		$this->view->setVar('listing', $listing);
 
 		$this->output('category/listing');
@@ -143,6 +144,7 @@ trait Controller_Main_Category
 
 		$listing->initByStateData( $state_data );
 
+		$this->view->setVar('category', static::$category);
 		$this->view->setVar('listing', $listing);
 
 		$response = [
@@ -162,6 +164,8 @@ trait Controller_Main_Category
 
 		Tr::setCurrentNamespace('category/signpost');
 
+		$this->view->setVar('category', static::$category);
+
 		$this->output('category/signpost');
 
 	}
@@ -171,6 +175,8 @@ trait Controller_Main_Category
 		Navigation_Breadcrumb::setByCategory( static::$category );
 
 		Tr::setCurrentNamespace('category/top');
+
+		$this->view->setVar('category', static::$category);
 
 		$this->output('category/top');
 	}

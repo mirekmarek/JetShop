@@ -21,12 +21,14 @@ if(!$b->getClass()) {
 	$b->setClass('danger');
 }
 
+$label = $b->getLabel()!=' ' ? '&nbsp;'.$b->getLabel() : '';
+
 if($b->getUrl()):
 	?><a href="<?=$b->getUrl()?>" class="btn btn-<?=$b->getClass()?> btn-<?=$b->getSize()?>" <?=$b->getJsActions()?>><?php
 	if( $b->getIcon() ) echo UI::icon($b->getIcon());
-	?>&nbsp;<?=$b->getLabel()?></a><?php
+	?><?=$label?></a><?php
 else:
 	?><button type="<?=$b->getType()?>" class="btn btn-<?=$b->getClass()?> btn-<?=$b->getSize()?>" <?=$b->getJsActions()?>><?php
 	if( $b->getIcon() ) echo UI::icon($b->getIcon());
-	?>&nbsp;<?=$b->getLabel()?></button><?php
+	?><?=$label?></button><?php
 endif;

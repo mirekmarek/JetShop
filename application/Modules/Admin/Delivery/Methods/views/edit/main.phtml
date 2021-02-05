@@ -1,0 +1,120 @@
+<?php
+namespace JetShopModule\Admin\Delivery\Methods;
+
+use JetShop\Delivery_Class;
+use JetShop\Delivery_Kind;
+use JetShop\Delivery_Method;
+
+use Jet\UI;
+use Jet\Mvc_View;
+use Jet\Form;
+use Jet\Tr;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View $this
+ * @var Form     $form
+ * @var Delivery_Method     $delivery_method
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setAutocomplete( false );
+$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 1 ] );
+$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 4 ] );
+
+$delivery_method = $this->getRaw( 'delivery_method' );
+
+$_delivery_classes = Delivery_Class::getList();
+
+$delivery_classes = [];
+
+foreach(Delivery_Kind::getScope() as $kind=>$kind_title) {
+	$delivery_classes[$kind] = [];
+}
+
+foreach($_delivery_classes as $dc) {
+	 $delivery_classes[$dc->getKind()][] = [
+	 	'code' => $dc->getCode(),
+	    'name' => $dc->getInternalName()
+	 ];
+}
+
+$form->field('kind')->input()->addJsAction('onchange', 'actualizeDeliveryClasses()');
+?>
+
+<?=$form->start()?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+		<br/>
+
+		<?=$form->field( 'internal_name' )?>
+		<?=$form->field( 'code' )?>
+		<?=$form->field( 'kind' )?>
+		<?=$form->field( 'delivery_classes' )?>
+		<?=$form->field( 'internal_description' )?>
+
+
+		<?php foreach(Shops::getList() as $shop):
+			$shop_id= $shop->getId();
+
+			$shop_data = $delivery_method->getShopData( $shop_id );
+			?>
+			<?=$shop_data->renderShopDataBlock_start()?>
+
+			<fieldset>
+				<legend class="sub"><?=Tr::_('Main data')?></legend>
+
+				<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/default_price')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/vat_rate')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/priority')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/title')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/description_short')?>
+
+			</fieldset>
+
+			<?=$shop_data->renderShopDataBlock_end()?>
+		<?php endforeach; ?>
+	</div>
+</div>
+
+<?=$form->end()?>
+
+<script type="text/javascript">
+	const delivery_classes = <?=json_encode($delivery_classes)?>;
+
+	function actualizeDeliveryClasses()
+	{
+		const kind = $('#edit_form__kind').val();
+		const select = $('#edit_form__delivery_classes');
+		const selected = select.val();
+
+		let cnt = select[0].options.length;
+		let i = 0;
+		for(i=0; i<cnt;i++) {
+			select[0].remove(0);
+		}
+
+		for(i=0; i<delivery_classes[kind].length;i++) {
+			let option = new Option(delivery_classes[kind][i]['name'], delivery_classes[kind][i]['code'] );
+			select[0].add( option );
+		}
+
+		select.val(selected);
+
+	}
+
+	actualizeDeliveryClasses();
+</script>

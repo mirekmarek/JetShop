@@ -36,8 +36,6 @@ $c_edit->setRenderer(
 );
 $c_edit->setCssStyle( 'width:200px;' );
 
-$grid->getColumn( 'code' )->setCssStyle( 'width:120px;' );
-
 $grid->getColumn( 'internal_name' )->setRenderer(
 	function( Services_Service $item ) use ( $router ) {
 		$edit_uri = $router->action('edit')->URI( $item->getCode() );
@@ -55,6 +53,16 @@ $grid->getColumn( 'code' )->setRenderer(
 		<?php
 	}
 );
+$grid->getColumn( 'code' )->setCssStyle( 'width:200px;' );
+
+$grid->getColumn( 'group' )->setRenderer(
+	function( Services_Service $item ) {
+		?>
+		<?=$item->getGroup();?>
+		<?php
+	}
+);
+$grid->getColumn( 'group' )->setCssStyle( 'width:200px;' );
 
 ?>
 

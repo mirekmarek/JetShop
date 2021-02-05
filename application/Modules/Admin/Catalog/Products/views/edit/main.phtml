@@ -47,6 +47,8 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
 
+		<br/>
+
 		<?=$form->field('is_active')?>
 		<?=$form->field('ean')?>
 		<?=$form->field('internal_code')?>
@@ -73,6 +75,9 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 
 				<?=$form->field('/shop_data/'.$shop_id.'/name')?>
 				<?=$form->field('/shop_data/'.$shop_id.'/variant_name')?>
+				<?php
+				$form->field('/shop_data/'.$shop_id.'/description')->input()->addCustomCssStyle('height:600px');
+				?>
 				<?=$form->field('/shop_data/'.$shop_id.'/description')?>
 				<?=$form->field('/shop_data/'.$shop_id.'/short_description')?>
 			</fieldset>
@@ -114,7 +119,8 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Availability')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_id.'/delivery_term_id')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/delivery_class_code')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/delivery_term_code')?>
 				<?=$form->field('/shop_data/'.$shop_id.'/date_available')?>
 				<?=$form->field('/shop_data/'.$shop_id.'/stock_status')?>
 			</fieldset>

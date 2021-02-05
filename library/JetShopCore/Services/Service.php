@@ -52,6 +52,18 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 100,
+		form_field_type: 'Input',
+		form_field_label: 'Group:'
+	)]
+	protected string $group = '';
+
+	/**
+	 * @var string
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
 		max_len: 255,
 		form_field_type: 'Input',
 		form_field_is_required: true,
@@ -304,5 +316,21 @@ abstract class Core_Services_Service extends DataModel
 		$module = Application_Modules::moduleInstance( Sticker::getManageModuleName() );
 
 		return $module->getServiceEditURL( $code );
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setGroup( string $value ) : void
+	{
+		$this->group = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getGroup() : string
+	{
+		return $this->group;
 	}
 }

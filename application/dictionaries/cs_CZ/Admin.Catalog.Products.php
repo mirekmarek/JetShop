@@ -55,4 +55,5 @@ return [
 	'Distinguish variants by:' => '',
 	'Product <b>%NAME%</b> has been updated' => '',
 	'Set as main category' => '',
+	'Delivery class:' => '',
 ];

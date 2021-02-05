@@ -1,15 +1,15 @@
 <?php
-namespace JetShopModule\Shop\Catalog;
+namespace JetShop;
 
 use Jet\Mvc_View;
 use Jet\Tr;
-use JetShop\Price;
 
 /**
  * @var Mvc_View $this
+ * @var Product $product
  */
 
-$product = Controller_Main::getProduct();
+$product = $this->getRaw('product');
 ?>
 <div class="price">
 	<div class="row">

@@ -45,7 +45,7 @@ $grid->getColumn( 'internal_name' )->setRenderer(
 		<?php
 	}
 );
-$grid->getColumn( 'internal_name' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'internal_name' )->setCssStyle( 'width:400px;' );
 
 $grid->getColumn( 'code' )->setRenderer(
 	function( Delivery_Class $item ) use ( $router ) {
@@ -55,7 +55,7 @@ $grid->getColumn( 'code' )->setRenderer(
 		<?php
 	}
 );
-$grid->getColumn( 'code' )->setCssStyle( 'width:120px;' );
+$grid->getColumn( 'code' )->setCssStyle( 'width:200px;' );
 
 
 
@@ -63,6 +63,16 @@ $grid->getColumn( 'kind' )->setRenderer(
 	function( Delivery_Class $item ) use ( $router ) {
 
 		echo Delivery_Kind::getScope()[$item->getKind()];
+	}
+);
+$grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
+
+$grid->getColumn( 'delivery_methods' )->setRenderer(
+	function( Delivery_Class $item ) use ( $router ) {
+
+		foreach($item->getDeliveryMethods() as $method) {
+			echo $method->getInternalName().'<br>';
+		}
 	}
 );
 

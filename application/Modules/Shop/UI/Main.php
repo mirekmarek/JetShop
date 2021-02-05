@@ -8,13 +8,14 @@
 namespace JetShopModule\Shop\UI;
 
 use Jet\Application_Module;
-use JetShop\Shops;
+use JetShop\Shop_Module_Trait;
 
 /**
  *
  */
 class Main extends Application_Module
 {
+	use Shop_Module_Trait;
 
 	/**
 	 *
@@ -22,9 +23,7 @@ class Main extends Application_Module
 	 */
 	public function getViewsDir(): string
 	{
-		return Shops::getViewDir().'UI/';
-		//return parent::getViewsDir();
-		//return $this->module_manifest->getModuleDir() . static::getDefaultViewsDir() . '/'.Shops::getCurrentId().'/';
+		return $this->_getViewsDir('UI');
 	}
 
 }

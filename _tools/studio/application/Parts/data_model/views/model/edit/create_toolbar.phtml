@@ -1,0 +1,24 @@
+<?php
+namespace JetStudio;
+
+use Jet\Tr;
+use Jet\UI;
+
+if(!DataModels::getCurrentModel()) {
+	return;
+}
+?>
+
+
+
+<?=UI::button_create(Tr::_('Create property'))
+	->setOnclick('DataModel.property.create.openDialog()')
+?>
+
+<?=UI::button_create(Tr::_('Create external relation'))
+	->setOnclick('DataModel.relation.create.openDialog()')
+?>
+
+<?=UI::button_create(Tr::_('Create key'))
+	->setOnclick('DataModel.key.create.openDialog()')
+?>

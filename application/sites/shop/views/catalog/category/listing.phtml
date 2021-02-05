@@ -1,16 +1,14 @@
 <?php
-namespace JetShopModule\Shop\Catalog;
+namespace JetShop;
 
 use Jet\Mvc_View;
-use JetShop\Category;
-use JetShop\Category_Menu;
 
 /**
  * @var Mvc_View   $this
  * @var Category $category
  */
 
-$category = Controller_Main::getCategory();
+$category = $this->getRaw('category');
 
 $subcategories = Category_Menu::getItems( $category->getId() );
 ?>

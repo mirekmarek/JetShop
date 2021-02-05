@@ -8,8 +8,8 @@ application/sites/**/site_data.php
 logs/**
 tmp/**
 cache/**
-images/gallery/**
 css/packages/**
 js/packages/**
 _tools/studio/css/packages/**
 _tools/studio/js/packages/**
+/images/

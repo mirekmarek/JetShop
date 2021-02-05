@@ -27,17 +27,17 @@ const ShoppingCart = {
 		let qty = $('#cart_quantity_'+product_id).val();
 		qty++;
 
-		ShoppingCart._setQty( product_id, qty );
+		ShoppingCart.setQty( product_id, qty );
 	},
 
 	decrement: function( product_id ) {
 		let qty = $('#cart_quantity_'+product_id).val();
 		qty--;
 
-		ShoppingCart._setQty( product_id, qty );
+		ShoppingCart.setQty( product_id, qty );
 	},
 
-	_setQty: function( product_id, qty ) {
+	setQty: function(product_id, qty ) {
 		$.ajax({
 			type: "GET",
 			url: ShoppingCart.base_URL+'?set_qty='+product_id+'&gty='+qty,
@@ -69,15 +69,12 @@ const ShoppingCart = {
 
 
 	_handleResponse: function (response) {
-		if(response['ok']) {
+		for( let id in response['snippets'] ) {
+			$('#'+id).html(response['snippets'][id]);
+		}
 
-			for( let id in response['snippets'] ) {
-				$('#'+id).html(response['snippets'][id]);
-			}
-			//TODO: $('#shopping_cart_error_message').html( '' );
-
-		} else {
-			//TODO: $('#shopping_cart_error_message').html( response['error_message'] );
+		if(!response['ok']) {
+			//TODO:
 		}
 	}
 

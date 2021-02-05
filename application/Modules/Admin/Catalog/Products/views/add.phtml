@@ -97,7 +97,8 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Availability')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_id.'/delivery_term_id')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/delivery_class_code')?>
+				<?=$form->field('/shop_data/'.$shop_id.'/delivery_term_code')?>
 				<?=$form->field('/shop_data/'.$shop_id.'/date_available')?>
 				<?=$form->field('/shop_data/'.$shop_id.'/stock_status')?>
 			</fieldset>

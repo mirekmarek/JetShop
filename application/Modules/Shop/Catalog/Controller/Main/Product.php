@@ -95,6 +95,7 @@ trait Controller_Main_Product
 	public function product_not_active_Action(): void
 	{
 		Tr::setCurrentNamespace('product/not_active');
+		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
 		$this->output('product/not_active');
@@ -103,6 +104,7 @@ trait Controller_Main_Product
 	public function product_set_Action(): void
 	{
 		Tr::setCurrentNamespace('product/set');
+		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
 		$this->output('product/set');
@@ -112,6 +114,7 @@ trait Controller_Main_Product
 	public function product_regular_Action(): void
 	{
 		Tr::setCurrentNamespace('product/regular');
+		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
 		$this->output('product/regular');
@@ -120,6 +123,7 @@ trait Controller_Main_Product
 	public function product_variant_Action(): void
 	{
 		Tr::setCurrentNamespace('product/variant');
+		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
 		$this->output('product/variant');
@@ -128,6 +132,7 @@ trait Controller_Main_Product
 	public function product_variant_master_Action(): void
 	{
 		Tr::setCurrentNamespace('product/variant_master');
+		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
 		$this->output('product/variant_master');

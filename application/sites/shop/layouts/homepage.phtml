@@ -51,7 +51,7 @@ require 'parts/init_libs.php';
 	</div>
 
 	<script type="text/javascript">
-		ShoppingCart.base_URL = '<?=ShoppingCart::getCartURL()?>';
+		ShoppingCart.base_URL = '<?=ShoppingCart::getCartPageURL()?>';
 	</script>
 	<jet_module module="Shop.ShoppingCart" action="cart_popup_dialog" is_cacheable="false" />
 </body>

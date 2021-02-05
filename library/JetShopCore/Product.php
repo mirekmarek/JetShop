@@ -285,7 +285,6 @@ abstract class Core_Product extends DataModel {
 
 	public static function getManageModule() : Product_ManageModuleInterface|Application_Module
 	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Application_Modules::moduleInstance( Product::getManageModuleName() );
 	}
 
@@ -650,8 +649,11 @@ abstract class Core_Product extends DataModel {
 				Form_Field_Date::ERROR_CODE_INVALID_FORMAT => 'Invalid date'
 			]);
 
+			$form->field('/shop_data/'.$shop_id.'/delivery_class_code')->setErrorMessages([
+				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value'
+			]);
 
-			$form->field('/shop_data/'.$shop_id.'/delivery_term_id')->setErrorMessages([
+			$form->field('/shop_data/'.$shop_id.'/delivery_term_code')->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value'
 			]);
 		}
@@ -1307,7 +1309,8 @@ abstract class Core_Product extends DataModel {
 			$sd = $this->getShopData();
 
 			$v_sd->setDateAvailable( $sd->getDateAvailable() );
-			$v_sd->setDeliveryTermId( $sd->getDeliveryTermId() );
+			$v_sd->setDeliveryTermCode( $sd->getDeliveryTermCode() );
+			$v_sd->setDeliveryClassCode( $sd->getDeliveryClassCode() );
 		}
 
 
@@ -1578,9 +1581,19 @@ abstract class Core_Product extends DataModel {
 		return $this->getShopData($shop_id)->isDeactivateProductAfterSoldOut();
 	}
 
-	public function getDeliveryTermId( string|null $shop_id=null ): int
+	public function getDeliveryTermCode( string|null $shop_id=null ): string
 	{
-		return $this->getShopData($shop_id)->getDeliveryTermId();
+		return $this->getShopData($shop_id)->getDeliveryTermCode();
+	}
+
+	public function getDeliveryClassCode( string|null $shop_id=null ): string
+	{
+		return $this->getShopData($shop_id)->getDeliveryClassCode();
+	}
+
+	public function getDeliveryClass( string|null $shop_id=null ) : ?Delivery_Class
+	{
+		return Delivery_Class::get( $this->getShopData($shop_id)->getDeliveryClassCode() );
 	}
 
 	public function getDateAvailable( string|null $shop_id=null ): ?Data_DateTime

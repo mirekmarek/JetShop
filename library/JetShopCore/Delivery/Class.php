@@ -9,8 +9,10 @@ use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Name;
+use Jet\DataModel_Related_MtoN_Iterator;
 use Jet\Form;
 use Jet\Form_Field_Input;
+use Jet\Form_Field_MultiSelect;
 use Jet\Tr;
 use Jet\Form_Field_Select;
 
@@ -93,6 +95,17 @@ abstract class Core_Delivery_Class extends DataModel
 	)]
 	protected string $kind = '';
 
+	/**
+	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Delivery_Class_Methods[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Delivery_Class_Methods::class,
+		form_field_creator_method_name: 'createMethodsInputField',
+	)]
+
+	protected $delivery_methods = null;
+
 
 	protected static ?array $scope = null;
 
@@ -106,6 +119,11 @@ abstract class Core_Delivery_Class extends DataModel
 	 * @var ?Form
 	 */
 	protected ?Form $_form_add = null;
+
+	/**
+	 * @var Delivery_Class[]
+	 */
+	protected static array $loaded_items = [];
 
 	/**
 	 * @return string
@@ -127,6 +145,24 @@ abstract class Core_Delivery_Class extends DataModel
 		
 		return $this->_form_edit;
 	}
+
+	public function createMethodsInputField() : Form_Field_MultiSelect
+	{
+		$input = new Form_Field_MultiSelect('delivery_methods', 'Methods:', $this->getDeliveryMethodCodes());
+
+		$input->setErrorMessages([
+			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select delivery method'
+		]);
+
+		$input->setSelectOptions(Delivery_Method::getScope());
+
+		$input->setCatcher( function($value) {
+			$this->setDeliveryMethods( $value );
+		} );
+
+		return $input;
+	}
+
 
 	/**
 	 * @return bool
@@ -180,12 +216,15 @@ abstract class Core_Delivery_Class extends DataModel
 	}
 
 	/**
-	 * @param int|string $id
+	 * @param int|string $code
 	 * @return static|null
 	 */
-	public static function get( int|string $id ) : static|null
+	public static function get( int|string $code ) : static|null
 	{
-		return static::load( $id );
+		if(!isset( static::$loaded_items[$code])) {
+			static::$loaded_items[$code] = static::load( $code );
+		}
+		return static::$loaded_items[$code];
 	}
 
 	/**
@@ -274,6 +313,52 @@ abstract class Core_Delivery_Class extends DataModel
 		}
 
 		return static::$scope;
+	}
+
+
+	/**
+	 * @param array $codes
+	 */
+	public function setDeliveryMethods( array $codes ) : void
+	{
+		$methods = [];
+
+		foreach( $codes as $code ) {
+
+			$method = Delivery_Method::get( $code );
+
+			if( !$method ) {
+				continue;
+			}
+
+			$methods[] = $method;
+		}
+		$this->delivery_methods->setItems( $methods );
+
+	}
+
+	/**
+	 *
+	 * @return array
+	 */
+	public function getDeliveryMethodCodes() : array
+	{
+		$codes = [];
+
+		foreach($this->getDeliveryMethods() as $class) {
+			$codes[] = $class->getCode();
+		}
+
+		return $codes;
+	}
+
+	/**
+	 *
+	 * @return Delivery_Method[]
+	 */
+	public function getDeliveryMethods() : iterable
+	{
+		return $this->delivery_methods;
 	}
 
 }

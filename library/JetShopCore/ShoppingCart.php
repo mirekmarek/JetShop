@@ -3,10 +3,11 @@ namespace JetShop;
 
 use Jet\Db;
 use Jet\Mvc_Page;
-use Jet\Mvc_Site;
 
 abstract class Core_ShoppingCart
 {
+	protected static string $cart_page_id = 'shopping-cart';
+
 	protected string $id = '';
 
 	protected string $shop_id = '';
@@ -27,6 +28,29 @@ abstract class Core_ShoppingCart
 	protected string $database_table_name = 'carts';
 
 	protected static ?ShoppingCart $cart = null;
+
+	public static function getCartPageId(): string
+	{
+		return static::$cart_page_id;
+	}
+
+	public static function setCartPageId( string $cart_page_id ): void
+	{
+		static::$cart_page_id = $cart_page_id;
+	}
+
+	public static function getCartPage(): Mvc_Page
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get(ShoppingCart::getCartPageId(), $shop->getLocale(), $shop->getSiteId());
+	}
+
+	public static function getCartPageURL(): string
+	{
+		return ShoppingCart::getCartPage()->getURL();
+	}
+
 
 	public static function get() : ShoppingCart
 	{
@@ -277,6 +301,11 @@ abstract class Core_ShoppingCart
 			return false;
 		}
 
+		if($quantity<1) {
+			$this->removeItem($product_id);
+			return true;
+		}
+
 		$item = $this->items[$product_id];
 
 		if(!$item->checkQuantity($quantity, true)) {
@@ -387,11 +416,5 @@ abstract class Core_ShoppingCart
 
 	}
 
-	public static function getCartURL(): string
-	{
-		$shop = Shops::getCurrent();
-
-		return Mvc_Page::get('shopping-cart', $shop->getLocale(), $shop->getSiteId())->getURL();
-	}
 
 }

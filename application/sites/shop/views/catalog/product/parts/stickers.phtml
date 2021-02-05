@@ -1,14 +1,15 @@
 <?php
-namespace JetShopModule\Shop\Catalog;
+namespace JetShop;
 
 use Jet\Mvc_View;
-use Jet\Tr;
 
 /**
  * @var Mvc_View $this
+ * @var Product $product
  */
 
-$product = Controller_Main::getProduct();
+$product = $this->getRaw('product');
+
 ?>
 
 <div class="stickers">

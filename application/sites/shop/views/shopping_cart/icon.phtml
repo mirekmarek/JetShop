@@ -31,7 +31,7 @@ $cart = ShoppingCart::get();
 					<?php endforeach; ?>
 				</table>
 
-				<?=UI::button()->setClass('success')->setUrl(ShoppingCart::getCartURL())->setLabel(Tr::_('Proceed to checkout'))?>
+				<?=UI::button()->setClass('success')->setUrl(ShoppingCart::getCartPageURL())->setLabel(Tr::_('Proceed to checkout'))?>
 			<?php else: ?>
 				<b><?=Tr::_('Shipping cart is empty');?></b>
 			<?php endif; ?>

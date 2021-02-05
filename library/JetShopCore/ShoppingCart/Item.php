@@ -114,9 +114,16 @@ abstract class Core_ShoppingCart_Item
 		return $this->getProduct()->getFinalPrice( $this->__cart->getShopId() );
 	}
 
-	abstract public function checkQuantity( int $quantity, bool $generate_error_message=false ) : bool;
+	public function checkQuantity( int $quantity, bool $generate_error_message=false ) : bool
+	{
+		//TODO:
+		return true;
+	}
 
-
-	abstract public function generateDeliveryTermInfo() : string;
+	public function generateDeliveryTermInfo() : string
+	{
+		//TODO:
+		return '';
+	}
 
 }
