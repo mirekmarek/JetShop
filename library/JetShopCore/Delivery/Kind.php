@@ -24,6 +24,16 @@ abstract class Core_Delivery_Kind {
 	 */
 	protected static ?array $list = null;
 
+	public static function get( string $code ) : ?Delivery_Kind
+	{
+		$list = Delivery_Kind::getList();
+		if(!isset($list[$code])) {
+			return null;
+		}
+
+		return $list[$code];
+	}
+
 	/**
 	 * @return string
 	 */
@@ -91,8 +101,8 @@ abstract class Core_Delivery_Kind {
 
 		$res = [];
 
-		foreach($list as $kind) {
-			$res[$kind->getCode()] = $kind->getTitle();
+		foreach($list as $item) {
+			$res[$item->getCode()] = $item->getTitle();
 		}
 
 		return $res;

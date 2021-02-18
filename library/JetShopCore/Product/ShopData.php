@@ -534,7 +534,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->shop_id, [$this->URL_path_part] );
+		return Shops::getURL( $this->shop_code, [$this->URL_path_part] );
 	}
 
 	public function generateURLPathPart() : void
@@ -543,7 +543,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 			return;
 		}
 
-		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'p', $this->product_id, $this->shop_id );
+		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'p', $this->product_id, $this->shop_code );
 	}
 
 	public function getImageEntity() : string
@@ -641,7 +641,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 
 			Images::uploadImage(
 				$new_image,
-				$this->shop_id,
+				$this->shop_code,
 				'product',
 				$this->product_id,
 				'image',

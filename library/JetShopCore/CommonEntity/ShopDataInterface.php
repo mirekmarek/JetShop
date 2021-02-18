@@ -3,9 +3,9 @@ namespace JetShop;
 
 interface Core_CommonEntity_ShopDataInterface {
 
-	public function getShopId() : string;
+	public function getShopCode() : string;
 
-	public function setShopId( string $shop_id ) : void;
+	public function setShopCode( string $shop_code ) : void;
 
 	public function isActive() : bool;
 

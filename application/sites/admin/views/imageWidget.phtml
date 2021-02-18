@@ -12,7 +12,7 @@ use Jet\Form;
  * @var Images_ShopDataInterface $shop_data
  */
 $image_class = $this->getString('image_class');
-$shop_id = $this->getString('shop_id');
+$shop_code = $this->getString('shop_code');
 $shop_data = $this->getRaw('shop_data');
 
 $entity = $shop_data->getImageEntity();
@@ -22,14 +22,14 @@ $upload_form = $shop_data->getImageUploadForm( $image_class );
 if($upload_form) {
 	$image_field = $upload_form->field('image');
 	$image_field->input()
-		->addJsAction('onchange', "Images.uploadImage(this.form.id, '{$entity}', '{$image_class}', '{$shop_id}')");
+		->addJsAction('onchange', "Images.uploadImage(this.form.id, '{$entity}', '{$image_class}', '{$shop_code}')");
 }
 ?>
 
 <td style="padding: 10px;">
 	<legend class="sub"><?=$this->getRaw('title')?></legend>
 
-	<div id="image_<?=$entity?>_<?=$image_class?>_<?=$shop_id?>">
+	<div id="image_<?=$entity?>_<?=$image_class?>_<?=$shop_code?>">
 		<?=$this->render('imageWidget/image')?>
 	</div>
 

@@ -30,7 +30,7 @@ class Navigation_Menu extends Core_Navigation_Menu {
 	{
 		if(!$this->__tree) {
 			$where = [
-				'categories_shop_data.shop_id'=>Shops::getCurrentId(),
+				'categories_shop_data.shop_code'=>Shops::getCurrentCode(),
 				'AND',
 				'categories_shop_data.is_active' => true,
 				'AND',

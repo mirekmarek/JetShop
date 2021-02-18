@@ -31,7 +31,7 @@ abstract class Core_Category_Menu_Item extends DataModel
 		max_len: 255,
 		form_field_type: false
 	)]
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	/**
 	 * @var string
@@ -132,17 +132,17 @@ abstract class Core_Category_Menu_Item extends DataModel
 	/**
 	 * @param string $value
 	 */
-	public function setShopId( string $value ) : void
+	public function setShopCode( string $value ) : void
 	{
-		$this->shop_id = $value;
+		$this->shop_code = $value;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
 	/**

@@ -187,7 +187,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 		) {
 			$target = $this->category->getTargetCategory();
 			if($target) {
-				$shop_data = $target->getShopData($this->shop_id);
+				$shop_data = $target->getShopData($this->shop_code);
 
 				return $shop_data->{$property};
 			}
@@ -314,7 +314,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 				[
 					'category_id' => $this->category_id,
 					'AND',
-					'shop_id' => $this->shop_id
+					'shop_code' => $this->shop_code
 				]
 			);
 		}
@@ -322,7 +322,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->shop_id, [$this->URL_path_part] );
+		return Shops::getURL( $this->shop_code, [$this->URL_path_part] );
 	}
 
 	public function generateURLPathPart() : void
@@ -331,7 +331,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 			return;
 		}
 
-		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'c', $this->category_id, $this->shop_id );
+		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'c', $this->category_id, $this->shop_code );
 	}
 
 	public function getImageEntity() : string
@@ -423,7 +423,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 
 		if(!isset($this->image_delete_forms[$image_class])) {
 
-			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->shop_id, []);
+			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->shop_code, []);
 
 			$this->image_delete_forms[$image_class] = $form;
 		}
@@ -458,7 +458,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 			],[
 				'category_id' => $this->category_id,
 				'AND',
-				'shop_id' => $this->shop_id
+				'shop_code' => $this->shop_code
 			]);
 		}
 	}

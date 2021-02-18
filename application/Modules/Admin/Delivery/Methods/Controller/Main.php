@@ -250,23 +250,23 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit delivery method <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $delivery_method->getInternalName() ] ) );
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 			$shop_name = $shop->getName();
-			$shop_data = $delivery_method->getShopData( $shop_id );
+			$shop_data = $delivery_method->getShopData( $shop_code );
 
 			foreach( Delivery_Method_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->catchImageWidget(
 					$image_class,
-					function() use ($image_class, $delivery_method, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $delivery_method, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'delivery method image '.$image_class.' uploaded', $delivery_method->getCode().':'.$shop_id, $delivery_method->getCode().' - '.$shop_name );
+						$this->logAllowedAction( 'delivery method image '.$image_class.' uploaded', $delivery_method->getCode().':'.$shop_code, $delivery_method->getCode().' - '.$shop_name );
 
 					},
-					function() use ($image_class, $delivery_method, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $delivery_method, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'delivery method image '.$image_class.' deleted', $delivery_method->getCode().':'.$shop_id, $delivery_method->getCode().' - '.$shop_name );
+						$this->logAllowedAction( 'delivery method image '.$image_class.' deleted', $delivery_method->getCode().':'.$shop_code, $delivery_method->getCode().' - '.$shop_name );
 					}
 				);
 
@@ -318,7 +318,7 @@ class Controller_Main extends Mvc_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		$delivery_method = $this->delivery_method;
 		foreach(Shops::getList() as $shop) {
-			$shop_data = $delivery_method->getShopData( $shop->getId() );
+			$shop_data = $delivery_method->getShopData( $shop->getCode() );
 
 			foreach( Delivery_Method_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->getImageUploadForm($image_class)->setIsReadonly();

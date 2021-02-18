@@ -1,0 +1,50 @@
+<?php
+namespace JetShop;
+
+use JetShop\Customer_AuthController;
+?>
+
+<div class="row">
+	<div class="col-md-8">
+		<div id="cash_desk_status_bar">
+			<?php require 'status_bar.phtml'; ?>
+		</div>
+	</div>
+</div>
+
+
+<div class="row">
+
+	<div class="col-md-8">
+		<div id="cash_desk_delivery">
+			<?php require 'delivery.phtml';?>
+		</div>
+
+		<div id="cash_desk_payment">
+			<?php require 'payment.phtml';?>
+		</div>
+
+		<div id="cash_desk_customer">
+			<?php require 'customer.phtml';?>
+		</div>
+
+		<div id="cash_desk_confirm">
+			<?php require 'confirm.phtml';?>
+		</div>
+
+		<br/><br/><br/><br/><br/>
+	</div>
+
+	<div class="col-md-4">
+		<div id="cash_desk_overview">
+			<?php require 'overview.phtml';?>
+		</div>
+
+	</div>
+</div>
+
+<?php
+require 'js.phtml';
+
+echo Customer_AuthController::getLoginModule()->renderResetPasswordDialog();
+?>

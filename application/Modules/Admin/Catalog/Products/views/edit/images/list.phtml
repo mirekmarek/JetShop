@@ -13,8 +13,8 @@ use JetShop\Product;
  */
 
 $product = Controller_Main::getCurrentProduct();
-$shop_id = $this->getString('shop_id');
-$shop_data = $product->getShopData( $shop_id );
+$shop_code = $this->getString('shop_code');
+$shop_data = $product->getShopData( $shop_code );
 
 for( $i=0; $i<Product::$max_image_count; $i++ ):
 	$image = $shop_data->getImage( $i );
@@ -43,7 +43,7 @@ for( $i=0; $i<Product::$max_image_count; $i++ ):
 						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
 					</td>
 					<td align="right" style="padding-right: 5px;">
-						<a href="javascript:ImagesHandler.deleteImage('<?=$shop_id?>', '<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+						<a href="javascript:ImagesHandler.deleteImage('<?=$shop_code?>', '<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
 					</td>
 				</tr>
 			</table>

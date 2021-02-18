@@ -15,7 +15,7 @@ class Core_Shops_Shop extends Config_Section {
 	#[Config_Definition(
 		type : Config::TYPE_STRING
 	)]
-	protected string $id = '';
+	protected string $code = '';
 
 	#[Config_Definition(
 		type : Config::TYPE_STRING
@@ -115,17 +115,17 @@ class Core_Shops_Shop extends Config_Section {
 	/**
 	 * @return string
 	 */
-	public function getId(): string
+	public function getCode(): string
 	{
-		return $this->id;
+		return $this->code;
 	}
 
 	/**
-	 * @param string $id
+	 * @param string $code
 	 */
-	public function setId( string $id ): void
+	public function setCode( string $code ): void
 	{
-		$this->id = $id;
+		$this->code = $code;
 	}
 
 	/**

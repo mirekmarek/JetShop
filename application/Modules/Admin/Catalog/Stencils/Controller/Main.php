@@ -130,7 +130,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$GET = Http_Request::GET();
 
 		AJAX::response([
-			'url_path_part' => Shops::generateURLPathPart( $GET->getString('name'), '', 0, $GET->getString('shop_id') )
+			'url_path_part' => Shops::generateURLPathPart( $GET->getString('name'), '', 0, $GET->getString('shop_code') )
 		]);
 
 		Application::end();
@@ -278,23 +278,23 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 			$shop_name = $shop->getName();
-			$shop_data = $option->getShopData( $shop_id );
+			$shop_data = $option->getShopData( $shop_code );
 
 			foreach( Stencil_Option_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 				$shop_data->catchImageWidget(
 					$image_class,
-					function() use ($image_class, $option, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $option, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'Stencil option image '.$image_class.' uploaded', $option->getId().':'.$shop_id, $shop_data->getFilterLabel().' - '.$shop_name );
+						$this->logAllowedAction( 'Stencil option image '.$image_class.' uploaded', $option->getId().':'.$shop_code, $shop_data->getFilterLabel().' - '.$shop_name );
 
 					},
-					function() use ($image_class, $option, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $option, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'Stencil option image '.$image_class.' deleted', $option->getId().':'.$shop_id, $shop_data->getFilterLabel().' - '.$shop_name );
+						$this->logAllowedAction( 'Stencil option image '.$image_class.' deleted', $option->getId().':'.$shop_code, $shop_data->getFilterLabel().' - '.$shop_name );
 					}
 				);
 

@@ -59,13 +59,14 @@ $grid->getColumn( 'code' )->setCssStyle( 'width:200px;' );
 
 
 
-$grid->getColumn( 'kind' )->setRenderer(
+$grid->getColumn( 'kinds' )->setRenderer(
 	function( Delivery_Class $item ) use ( $router ) {
-
-		echo Delivery_Kind::getScope()[$item->getKind()];
+		foreach($item->getKinds() as $kind) {
+			echo $kind->getTitle().'<br>';
+		}
 	}
 );
-$grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'kinds' )->setCssStyle( 'width:200px;' );
 
 $grid->getColumn( 'delivery_methods' )->setRenderer(
 	function( Delivery_Class $item ) use ( $router ) {

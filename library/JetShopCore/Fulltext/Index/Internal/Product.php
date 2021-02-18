@@ -60,7 +60,7 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 	 * @param array $only_types
 	 * @param bool $only_active
 	 * @param int $exclude_id
-	 * @param null|string $shop_id
+	 * @param null|string $shop_code
 	 *
 	 * @return Product[]
 	 */
@@ -68,10 +68,10 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 	                               array $only_types=[],
 	                               bool $only_active=false,
 	                               int $exclude_id=0,
-	                               string|null $shop_id=null ) : array
+	                               string|null $shop_code=null ) : array
 	{
-		if($shop_id===null) {
-			$shop_id = Shops::getCurrentId();
+		if($shop_code===null) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
 		$sql_query_where = [];
@@ -88,7 +88,7 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 			$sql_query_where[] = "product_is_active=1";
 		}
 
-		$ids = static::searchObjectIds( $shop_id, $search_string, implode(' AND ', $sql_query_where) );
+		$ids = static::searchObjectIds( $shop_code, $search_string, implode(' AND ', $sql_query_where) );
 
 		if(!$ids) {
 			return [];

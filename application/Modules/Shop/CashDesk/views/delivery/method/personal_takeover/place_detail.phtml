@@ -1,0 +1,53 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ * @var Delivery_PersonalTakeover_Place $place
+ */
+
+$place = $this->getRaw('place');
+
+$method = Delivery_Method::get( $place->getMethodCode() );
+$shd = $method->getShopData( Shops::getCurrentCode() );
+?>
+
+<h4><?=$place->getName()?></h4>
+<h6><?=$shd->getTitle()?></h6>
+
+<div>
+	<?php if($shd->getIcon1()): ?>
+		<img src="<?=$shd->getIcon1ThumbnailUrl(80, 80);?>">
+	<?php endif; ?>
+</div>
+<br/>
+<div>
+	<?=$place->getStreet()?><br/>
+	<?=$place->getZip()?> <?=$place->getTown()?><br/>
+</div>
+<br/>
+<div>
+	<b><?=Tr::_('Opening hours:')?></b>
+	<br/>
+	<table class="table">
+		<?php foreach($place->getOpeningHours() as $oh): ?>
+		<tr>
+			<td><?=$oh->getDay()?></td>
+			<td><?=$oh->getOpen1()?></td>
+			<td><?=$oh->getClose1()?></td>
+			<td><?=$oh->getOpen2()?></td>
+			<td><?=$oh->getClose2()?></td>
+			<td><?=$oh->getOpen3()?></td>
+			<td><?=$oh->getClose3()?></td>
+		</tr>
+		<?php endforeach; ?>
+	</table>
+</div>
+
+<div class="text-right"><?=Price::formatWithCurrency($shd->getDefaultPrice())?></div>
+
+<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPlace('{$place->getMethodCode()}', '{$place->getPlaceCode()}')")?>

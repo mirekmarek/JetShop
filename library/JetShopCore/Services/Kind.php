@@ -10,6 +10,11 @@ use Jet\Tr;
 
 abstract class Core_Services_Kind {
 
+	const KIND_DELIVERY = 'delivery';
+	const KIND_PAYMENT = 'payment';
+	const KIND_OTHER = 'other';
+
+
 	protected string $code = '';
 
 	protected string $title = '';
@@ -19,6 +24,16 @@ abstract class Core_Services_Kind {
 	 * @var Payment_Kind[]|null
 	 */
 	protected static ?array $list = null;
+
+	public static function get( string $code ) : ?Services_Kind
+	{
+		$list = Services_Kind::getList();
+		if(!isset($list[$code])) {
+			return null;
+		}
+
+		return $list[$code];
+	}
 
 	/**
 	 * @return string
@@ -61,15 +76,15 @@ abstract class Core_Services_Kind {
 			static::$list = [];
 
 			$delivery_service = new Services_Kind();
-			$delivery_service->setCode('delivery_service');
+			$delivery_service->setCode( Services_Kind::KIND_DELIVERY );
 			$delivery_service->setTitle( Tr::_('Delivery service', [], Services_Service::getManageModuleName()) );
 
 			$payment_service = new Services_Kind();
-			$payment_service->setCode('payment_service');
+			$payment_service->setCode( Services_Kind::KIND_PAYMENT );
 			$payment_service->setTitle( Tr::_('Payment service', [], Services_Service::getManageModuleName()) );
 
 			$other_service = new Services_Kind();
-			$other_service->setCode('other_service');
+			$other_service->setCode( Services_Kind::KIND_OTHER );
 			$other_service->setTitle( Tr::_('Other service', [], Services_Service::getManageModuleName()) );
 
 			
@@ -88,8 +103,8 @@ abstract class Core_Services_Kind {
 
 		$res = [];
 
-		foreach($list as $kind) {
-			$res[$kind->getCode()] = $kind->getTitle();
+		foreach($list as $item) {
+			$res[$item->getCode()] = $item->getTitle();
 		}
 
 		return $res;

@@ -52,6 +52,17 @@ abstract class Core_Payment_Kind {
 		$this->title = $title;
 	}
 
+	public static function get( string $code ) : ?Payment_Kind
+	{
+		$list = Payment_Kind::getList();
+		if(!isset($list[$code])) {
+			return null;
+		}
+
+		return $list[$code];
+	}
+
+
 	/**
 	 * @return Payment_Kind[]
 	 */
@@ -103,8 +114,8 @@ abstract class Core_Payment_Kind {
 
 		$res = [];
 
-		foreach($list as $kind) {
-			$res[$kind->getCode()] = $kind->getTitle();
+		foreach($list as $item) {
+			$res[$item->getCode()] = $item->getTitle();
 		}
 
 		return $res;

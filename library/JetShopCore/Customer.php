@@ -1,20 +1,18 @@
 <?php
 namespace JetShop;
 
+use Jet\Auth;
 use Jet\Auth_User_Interface;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
 use Jet\Form_Field_Input;
-use Jet\Form_Field_RegistrationPassword;
 use Jet\Data_DateTime;
-use Jet\Locale;
 use Jet\Mailing_Email;
 use Jet\Tr;
 use Jet\Form_Field_Tel;
 use Jet\DataModel_Query;
-use Jet\Form_Field_DateTime;
 
 
 #[DataModel_Definition(
@@ -27,7 +25,7 @@ use Jet\Form_Field_DateTime;
 	relation: [
 		'related_to_class_name' => Core_Customer_Address::class,
 		'join_by_properties' => [
-			'id' => 'custommer_id'
+			'id' => 'customer_id'
 		],
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
@@ -41,19 +39,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		form_field_type: false
 	)]
 	protected int $id = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		form_field_is_required: true,
-		is_key: true,
-		is_unique: true,
-		form_field_label: 'Username',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY=>'Please enter username'
-		]
-	)]
-	protected string $username = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -80,7 +65,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		is_key: true,
 		form_field_type: false
 	)]
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -157,16 +142,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	protected string $registration_IP = '';
 
 	/**
-	 * @var int
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true,
-		form_field_type: false
-	)]
-	protected int $default_address_id = 0;
-
-	/**
 	 * @var string
 	 */ 
 	#[DataModel_Definition(
@@ -221,6 +196,11 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	)]
 	protected string $oauth_key = '';
 
+	/**
+	 * @var Customer_Address[]
+	 */
+	protected ?array $_addresses = null;
+
 
 
 	protected ?Form $_form_add = null;
@@ -228,23 +208,17 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	protected ?Form $_form_edit = null;
 
 
-	public function __construct( ?string $username = null, ?string $password = null )
-	{
-
-		if( $username!==null ) {
-			$this->setUsername( $username );
-		}
-		if( $password!==null ) {
-			$this->setPassword( $password );
-		}
-
-		parent::__construct();
-	}
-
 	public function setPassword( string $password ) : void
 	{
 		if( $password ) {
 			$this->password = $this->encryptPassword( $password );
+		}
+	}
+
+	public function setEncryptedPassword( string $password ) : void
+	{
+		if($password) {
+			$this->password = $password;
 		}
 	}
 
@@ -275,8 +249,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 			$search = '%'.$search.'%';
 			$where[] = [
-				'username *'   => $search,
-				'OR',
 				'first_name *' => $search,
 				'OR',
 				'surname *'    => $search,
@@ -290,13 +262,13 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$list->setLoadFilter(
 			[
 				'id',
-				'username',
+				'email',
 				'first_name',
 				'surname',
 				'locale',
 			]
 		);
-		$list->getQuery()->setOrderBy( 'username' );
+		$list->getQuery()->setOrderBy( 'email' );
 
 		return $list;
 
@@ -306,7 +278,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	{
 		$user = static::load(
 			[
-				'username' => $username,
+				'email' => $username,
 			]
 		);
 
@@ -330,7 +302,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	{
 		return static::load(
 			[
-				'username' => $username,
+				'email' => $username,
 			]
 		);
 	}
@@ -342,12 +314,12 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	public function getUsername() : string
 	{
-		return $this->username;
+		return $this->email;
 	}
 
 	public function setUsername( string $username ) : void
 	{
-		$this->username = $username;
+		$this->email = $username;
 	}
 
 	public function getEmail() : string
@@ -361,14 +333,14 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	}
 
 
-	public function getShopId(): string
+	public function getShopCode(): string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ): void
+	public function setShopCode( string $shop_code ): void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 
@@ -501,11 +473,11 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	{
 		if( $this->getIsNew() ) {
 			$q = [
-				'username' => $username,
+				'email' => $username,
 			];
 		} else {
 			$q = [
-				'username' => $username,
+				'email' => $username,
 				'AND',
 				'id!='     => $this->id,
 			];
@@ -523,7 +495,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$this->setPasswordIsValid( false );
 		$this->save();
 
-		$shop = Shops::get($this->getShopId());
+		$shop = Shops::get($this->getShopCode());
 
 		$email = new Mailing_Email(
 			'user_password_reset',
@@ -572,14 +544,14 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 		$form = $this->getCommonForm();
 
-		$form->getField( 'username' )->setValidator(
+		$form->getField( 'email' )->setValidator(
 			function( Form_Field_Input $field ) {
-				$username = $field->getValue();
+				$email = $field->getValue();
 
-				if( $this->usernameExists( $username ) ) {
+				if( $this->usernameExists( $email ) ) {
 					$field->setCustomError(
 						Tr::_(
-							'Sorry, but username %USERNAME% is registered.', [ 'USERNAME' => $username ]
+							'Sorry, but e-mail %EMAIL% is registered.', [ 'EMAIL' => $email ]
 						)
 					);
 
@@ -590,28 +562,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 			}
 		);
 
-
-		return $form;
-	}
-
-	public function getRegistrationForm() : Form
-	{
-		$form = $this->_getForm();
-		$form->setName('register_user');
-
-		foreach( $form->getFields() as $field ) {
-			if( !in_array( $field->getName(), [ 'username', 'locale', 'password', 'email' ] ) ) {
-				$form->removeField( $field->getName() );
-			}
-		}
-
-		$form->getField( 'locale' )->setDefaultValue( Locale::getCurrentLocale() );
-
-		/**
-		 * @var Form_Field_RegistrationPassword $pwd
-		 */
-		$pwd = $form->getField( 'password' );
-		$pwd->setPasswordConfirmationLabel('Confirm password');
 
 		return $form;
 	}
@@ -636,7 +586,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	public function catchEditForm() : bool
 	{
-		return $this->catchForm( $this->getEditForm() );
+		return $this->getEditForm()->catch();
 	}
 
 	public function getAddForm() : Form
@@ -661,13 +611,13 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	public function catchAddForm() : bool
 	{
-		return $this->catchForm( $this->getAddForm() );
+		return $this->getAddForm()->catch();
 	}
 
 
 	public function sendWelcomeEmail( string $password ) : void
 	{
-		$shop = Shops::get($this->getShopId());
+		$shop = Shops::get($this->getShopCode());
 
 		$email = new Mailing_Email(
 			'user_welcome',
@@ -720,22 +670,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	public function getRegistrationIp() : string
 	{
 		return $this->registration_IP;
-	}
-
-	/**
-	 * @param int $value
-	 */
-	public function setDefaultAddressId( int $value ) : void
-	{
-		$this->default_address_id = $value;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getDefaultAddressId() : int
-	{
-		return $this->default_address_id;
 	}
 
 	/**
@@ -818,5 +752,128 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		return $this->oauth_key;
 	}
 
+	public static function getCurrentCustomer() : ?Customer
+	{
+		$user = Auth::getCurrentUser();
+		if(
+			!$user ||
+			!($user instanceof Customer)
+		) {
+			return null;
+		}
 
+		if(
+			$user->isBlocked() ||
+			$user->getShopCode()!=Shops::getCurrentCode()
+		) {
+			return null;
+		}
+
+		return $user;
+	}
+
+	public static function getByEmail( string $email_address, string $shop_code='' ) : ?static
+	{
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
+		}
+
+		/**
+		 * @var Customer[] $customers
+		 */
+		$customers = Customer::fetch([
+			'customer' => [
+				'email' => $email_address,
+				'AND',
+				'shop_code' => $shop_code
+			]
+		]);
+
+		if(count($customers)!=1) {
+			return null;
+		}
+
+		return $customers[0];
+	}
+
+	public function login() : void
+	{
+		/**
+		 * @var Customer $this
+		 * @var Customer_AuthController $auth_controller
+		 */
+		$auth_controller = Auth::getController();
+
+		$auth_controller->loginCustomer( $this );
+	}
+
+	/**
+	 * @return Customer_Address[]
+	 */
+	public function getAddresses() : iterable
+	{
+		if($this->_addresses===null) {
+			$this->_addresses = [];
+
+			foreach(Customer_Address::getList() as $a) {
+				$this->_addresses[$a->getId()] = $a;
+			}
+		}
+
+		return $this->_addresses;
+	}
+
+	public function getAddress( int $id ) : ?Customer_Address
+	{
+		$addresses = $this->getAddresses();
+
+		foreach($addresses as $adr) {
+			if($adr->getId()==$id) {
+				return $adr;
+			}
+		}
+
+		return null;
+	}
+
+	public function hasAddress( Customer_Address $address ) : bool
+	{
+		$a_hash = $address->getHash();
+
+		foreach($this->getAddresses() as $a ) {
+			if($a->getHash()==$a_hash) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function addAddress( Customer_Address $address ) : void
+	{
+		$address = clone $address;
+
+		$address->setCustomerId( $this->id );
+
+		$address->save();
+
+		$this->getAddresses();
+		$this->_addresses[$address->getId()] = $address;
+	}
+
+	public function setDefaultAddress( Customer_Address $address ) : void
+	{
+		Customer_Address::setDefaultAddress( $address );
+	}
+
+	public function getDefaultAddress() : ?Customer_Address
+	{
+		foreach($this->getAddresses() as $address) {
+			if($address->isDefault()) {
+				return $address;
+			}
+		}
+
+		return null;
+	}
 }

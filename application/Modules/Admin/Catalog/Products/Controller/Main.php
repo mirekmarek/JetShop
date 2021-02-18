@@ -225,9 +225,9 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if($GET->exists('action')) {
 			$product = static::getCurrentProduct();
-			$shop_id = $GET->getString('shop_id');
-			$shop_data = $product->getShopData($shop_id);
-			$this->view->setVar('shop_id', $shop_id);
+			$shop_code = $GET->getString('shop_code');
+			$shop_data = $product->getShopData($shop_code);
+			$this->view->setVar('shop_code', $shop_code);
 
 			$updated = false;
 			switch($GET->getString('action')) {
@@ -254,7 +254,7 @@ class Controller_Main extends Mvc_Controller_Default
 					[
 						'result' => 'ok',
 						'snippets' => [
-							'images_'.$shop_id => $this->view->render('edit/images/list')
+							'images_'.$shop_code => $this->view->render('edit/images/list')
 						]
 
 					]

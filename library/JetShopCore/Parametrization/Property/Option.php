@@ -90,14 +90,14 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 	public function afterLoad() : void 
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Parametrization_Property_Option_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 		}
 	}
@@ -205,13 +205,13 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		return $this->priority;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Parametrization_Property_Option_ShopData
+	public function getShopData( string|null $shop_code=null ) : Parametrization_Property_Option_ShopData
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 
@@ -249,9 +249,9 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 			$form = $this->getCommonForm('option_add_form');
 
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$seo_description_strategy = $form->field('/shop_data/'.$shop_id.'/alternative_category_description_strategy');
+				$seo_description_strategy = $form->field('/shop_data/'.$shop_code.'/alternative_category_description_strategy');
 				$seo_description_strategy->setErrorMessages([
 					Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 				]);
@@ -282,9 +282,9 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 			$form = $this->getCommonForm('option_edit_form_'.$this->id);
 
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$seo_description_strategy = $form->field('/shop_data/'.$shop_id.'/alternative_category_description_strategy');
+				$seo_description_strategy = $form->field('/shop_data/'.$shop_code.'/alternative_category_description_strategy');
 				$seo_description_strategy->setErrorMessages([
 					Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 				]);
@@ -314,69 +314,69 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		return true;
 	}
 
-	public function getFilterLabel( string|null $shop_id=null ) : string
+	public function getFilterLabel( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getFilterLabel();
+		return $this->getShopData( $shop_code )->getFilterLabel();
 	}
 
-	public function getProductDetailLabel( string|null $shop_id=null ) : string
+	public function getProductDetailLabel( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getProductDetailLabel();
+		return $this->getShopData( $shop_code )->getProductDetailLabel();
 	}
 
-	public function getUrlParam( string|null $shop_id=null ) : string
+	public function getUrlParam( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getUrlParam();
+		return $this->getShopData( $shop_code )->getUrlParam();
 	}
 
-	public function getDescription( string|null $shop_id=null ) : string
+	public function getDescription( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getDescription();
+		return $this->getShopData( $shop_code )->getDescription();
 	}
 	
-	public function getSeoH1( string|null $shop_id=null ) : string
+	public function getSeoH1( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getSeoH1();
+		return $this->getShopData( $shop_code )->getSeoH1();
 	}
 
-	public function getSeoTitle( string|null $shop_id=null ) : string
+	public function getSeoTitle( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getSeoTitle();
+		return $this->getShopData( $shop_code )->getSeoTitle();
 	}
 
-	public function getSeoDescription( string|null $shop_id=null ) : string
+	public function getSeoDescription( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getSeoDescription();
+		return $this->getShopData( $shop_code )->getSeoDescription();
 	}
 
-	public function getImageMain( string|null $shop_id=null ) : string
+	public function getImageMain( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getImageMain();
+		return $this->getShopData( $shop_code )->getImageMain();
 	}
 
-	public function getImageMainUrl( string|null $shop_id=null ) : string
+	public function getImageMainUrl( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getImageMainUrl();
+		return $this->getShopData( $shop_code )->getImageMainUrl();
 	}
 
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_id=null ) : string
+	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getImageMainThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData( $shop_code )->getImageMainThumbnailUrl( $max_w, $max_h );
 	}
 
-	public function getImagePictogram( string|null $shop_id=null ) : string
+	public function getImagePictogram( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getImagePictogram();
+		return $this->getShopData( $shop_code )->getImagePictogram();
 	}
 
-	public function getImagePictogramUrl( string|null $shop_id=null ) : string
+	public function getImagePictogramUrl( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getImagePictogramUrl();
+		return $this->getShopData( $shop_code )->getImagePictogramUrl();
 	}
 
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_id=null ) : string
+	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getImagePictogramThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData( $shop_code )->getImagePictogramThumbnailUrl( $max_w, $max_h );
 	}
 
 }

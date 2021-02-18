@@ -1,0 +1,22 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+$cash_desk = CashDesk::get();
+
+$delivery_method = $cash_desk->getSelectedDeliveryMethod();
+$dm_shd = $delivery_method->getShopData($cash_desk->getShopCode());
+?>
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<div><b><?= Tr::_('Delivery method') ?></b></div>
+		<div><?= $dm_shd->getTitle() ?> </div>
+		<div><?=Price::formatWithCurrency($dm_shd->getDefaultPrice())?></div>
+		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.delivery.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+</div>

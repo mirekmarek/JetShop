@@ -1,0 +1,40 @@
+<?php
+namespace JetShop;
+
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var Payment_Method $payment_method
+ */
+
+$cash_desk = CashDesk::get();
+$payment_method = $this->getRaw('payment_method');
+$pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
+
+
+?>
+
+<div class="card bg-info" onclick="CashDesk.payment.select('<?= $payment_method->getCode() ?>')">
+	<div class="card-body">
+		<h5 class="card-title">
+
+			<input type="radio" name="payment_method" checked onclick="setTimeout(function(){CashDesk.payment.select('<?= $payment_method->getCode() ?>')}, 10);return false;" />
+			<img src="<?=$pm_shd->getIcon1ThumbnailUrl(50, 50)?>" style="padding: 5px;">
+
+			<b><?= $pm_shd->getTitle() ?></b>
+
+			<span style="padding-left: 50px;">
+			<?= Price::formatWithCurrency($pm_shd->getDefaultPrice()) ?>
+			</span>
+
+		</h5>
+
+		<div class="card-text">
+
+			<?= $pm_shd->getDescription() ?>
+		</div>
+
+	</div>
+</div>

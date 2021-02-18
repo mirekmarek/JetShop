@@ -45,16 +45,16 @@ class Application_Shop
 	{
 		Application::initErrorPages( $router );
 		Logger::setLogger( new Logger_Shop() );
-		Auth::setController( new Auth_Controller_Shop() );
+		Auth::setController( new Customer_AuthController() );
 
 		$site_id = static::getSiteId();
 		$locale = Mvc::getCurrentLocale()->toString();
 		foreach( Shops::getList() as $shop ) {
 			if(
 				$shop->getSiteId()==$site_id &&
-				$shop->getLocale(true)==$locale
+				$shop->getLocale()->toString()==$locale
 			) {
-				Shops::setCurrent( $shop->getId() );
+				Shops::setCurrent( $shop->getCode() );
 
 				return;
 			}

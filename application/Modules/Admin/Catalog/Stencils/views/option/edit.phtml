@@ -51,29 +51,29 @@ $tabs = UI::tabsJS('option_tabs', [
 				<?=$form->start()?>
 
 				<?php foreach(Shops::getList() as $shop):
-					$shop_id = $shop->getId();
+					$shop_code = $shop->getCode();
 
-					$form->field('/shop_data/'.$shop_id.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_id.'/url_param')->getId()."', '".$shop_id."');");
-					$form->field('/shop_data/'.$shop_id.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_id.'/product_detail_label')->getId()."').val(this.value);");
-					$form->field('/shop_data/'.$shop_id.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_id."')");
+					$form->field('/shop_data/'.$shop_code.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_code.'/url_param')->getId()."', '".$shop_code."');");
+					$form->field('/shop_data/'.$shop_code.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_code.'/product_detail_label')->getId()."').val(this.value);");
+					$form->field('/shop_data/'.$shop_code.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_code."')");
 
-					$shop_data = $option->getShopData( $shop_id );
+					$shop_data = $option->getShopData( $shop_code );
 					?>
 					<?=$shop_data->renderShopDataBlock_start()?>
 
 					<fieldset>
 						<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-						<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
-						<?=$form->field('/shop_data/'.$shop_id.'/filter_label')?>
-						<?=$form->field('/shop_data/'.$shop_id.'/product_detail_label')?>
-						<?=$form->field('/shop_data/'.$shop_id.'/url_param')?>
-						<?=$form->field('/shop_data/'.$shop_id.'/description')?>
+						<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+						<?=$form->field('/shop_data/'.$shop_code.'/filter_label')?>
+						<?=$form->field('/shop_data/'.$shop_code.'/product_detail_label')?>
+						<?=$form->field('/shop_data/'.$shop_code.'/url_param')?>
+						<?=$form->field('/shop_data/'.$shop_code.'/description')?>
 					</fieldset>
 
 					<fieldset>
 						<legend class="sub"><?=Tr::_('SEO')?></legend>
-						<?=$form->field('/shop_data/'.$shop_id.'/internal_fulltext_keywords')?>
+						<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
 					</fieldset>
 					<?=$shop_data->renderShopDataBlock_end()?>
 				<?php endforeach; ?>
@@ -82,9 +82,9 @@ $tabs = UI::tabsJS('option_tabs', [
 			<?=$tabs->getTab('tab_images')->contentStart()?>
 				<?php
 				foreach(Shops::getList() as $shop):
-					$shop_id = $shop->getId();
+					$shop_code = $shop->getCode();
 
-					echo $option->getShopData( $shop_id )->renderImageWidgets( Stencil_Option_ShopData::getImageClasses() );
+					echo $option->getShopData( $shop_code )->renderImageWidgets( Stencil_Option_ShopData::getImageClasses() );
 				endforeach;
 				?>
 			<?=$tabs->getTab('tab_images')->contentEnd()?>

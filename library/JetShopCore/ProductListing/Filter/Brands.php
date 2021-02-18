@@ -18,7 +18,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 		$this->brands = [];
 
 		foreach(Brand::getAll() as $brand) {
-			if(!$brand->getShopData($this->shop_id)->isActive()) {
+			if(!$brand->getShopData($this->shop_code)->isActive()) {
 				continue;
 			}
 
@@ -89,7 +89,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 		$brands = [];
 		foreach( $this->brands as $brand ) {
 			if( $brand->isForced() ) {
-				$brands[] = $brand->getBrand()->getShopData($this->shop_id)->getUrlParam();
+				$brands[] = $brand->getBrand()->getShopData($this->shop_code)->getUrlParam();
 			}
 		}
 
@@ -103,7 +103,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 		$brands = [];
 		foreach( $this->brands as $brand ) {
 			if( $brand->isActive() ) {
-				$brands[] = $brand->getBrand()->getShopData($this->shop_id)->getUrlParam();
+				$brands[] = $brand->getBrand()->getShopData($this->shop_code)->getUrlParam();
 			}
 		}
 
@@ -125,7 +125,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 
 				foreach( $this->brands as $brand ) {
 
-					$url_param = $brand->getBrand()->getShopData($this->shop_id)->getUrlParam();
+					$url_param = $brand->getBrand()->getShopData($this->shop_code)->getUrlParam();
 
 					if(in_array($url_param, $brands)) {
 						if(!$brand->isForced()) {

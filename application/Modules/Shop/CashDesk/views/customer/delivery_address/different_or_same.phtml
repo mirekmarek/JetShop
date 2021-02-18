@@ -1,0 +1,21 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+
+?>
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<div class="title"><?=Tr::_('Where should we send the goods?')?></div>
+
+		<div class="options" style="padding-top: 10px;padding-bottom: 10px;">
+			<?=UI::button(Tr::_('To the same address'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSame();')->setClass('primary')?>
+			<?=UI::button(Tr::_('To another address'))->setOnclick('CashDesk.customer.deliveryAddress.setDifferent();')->setClass('primary')?>
+		</div>
+	</div>
+</div>
+
+

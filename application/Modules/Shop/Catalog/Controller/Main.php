@@ -31,7 +31,7 @@ class Controller_Main extends Mvc_Controller_Default
 		if( !$this->router ) {
 			$this->router = new Mvc_Controller_Router( $this );
 
-			$this->router->setDefaultAction('homepage');
+			//$this->router->setDefaultAction('homepage');
 
 			$main_router = Mvc::getRouter();
 			$path = $main_router->getUrlPath();

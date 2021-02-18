@@ -91,7 +91,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		is_key: true,
 		form_field_type: false
 	)]
-	protected bool $in_stock = false;
+	protected bool $available = false;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -157,6 +157,11 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		return $this->type;
 	}
 
+	public function isDiscount() : bool
+	{
+		return $this->type == Order_Item::ITEM_TYPE_DISCOUNT;
+	}
+
 	public function setType( string $type ) : void
 	{
 		$this->type = $type;
@@ -202,14 +207,14 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->product_id = $product_id;
 	}
 
-	public function isInStock() : bool
+	public function isAvailable() : bool
 	{
-		return $this->in_stock;
+		return $this->available;
 	}
 
-	public function setInStock( bool $in_stock ) : void
+	public function setAvailable( bool $available ) : void
 	{
-		$this->in_stock = $in_stock;
+		$this->available = $available;
 	}
 
 	public function getTitle() : string
@@ -302,7 +307,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	public function setDataByCartItem( ShoppingCart_Item $item, int $qty, bool $in_stock ) : void
 	{
 
-		$shop_id = $item->getCart()->getShopId();
+		$shop_code = $item->getCart()->getShopCode();
 
 		$product = $item->getProduct();
 
@@ -312,11 +317,11 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->title = $product->getFullName();
 		$this->code = $product->getInternalCode();
 
-		$this->in_stock = $in_stock;
+		$this->available = $in_stock;
 
 		$this->quantity = $qty;
 		$this->price_per_item = $item->getPricePerItem();
-		$this->vat_rate = $product->getVatRate( $shop_id );
+		$this->vat_rate = $product->getVatRate( $shop_code );
 		$this->total_price = $this->quantity * $this->price_per_item;
 
 

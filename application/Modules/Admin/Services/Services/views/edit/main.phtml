@@ -47,22 +47,22 @@ $service = $this->getRaw( 'service' );
 
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_id= $shop->getId();
+			$shop_code= $shop->getCode();
 
-			$shop_data = $service->getShopData( $shop_id );
+			$shop_data = $service->getShopData( $shop_code );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
-				<?=$form->field('/shop_data/'.$shop_id.'/default_price')?>
-				<?=$form->field('/shop_data/'.$shop_id.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_id.'/priority')?>
-				<?=$form->field('/shop_data/'.$shop_id.'/title')?>
-				<?=$form->field('/shop_data/'.$shop_id.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_id.'/description_short')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/default_price')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/vat_rate')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/priority')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/title')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_code.'/description_short')?>
 
 			</fieldset>
 

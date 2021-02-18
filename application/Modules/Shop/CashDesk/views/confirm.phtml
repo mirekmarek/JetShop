@@ -1,0 +1,50 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$cash_desk = CashDesk::get();
+
+if($cash_desk->getCurrentStep()!=CashDesk::STEP_CONFIRM) {
+	return;
+}
+
+$special_requirements_form = $cash_desk->getSpecialRequirementsForm();
+$special_requirements_form->setAction('?action=confirm_save_special_requirements');
+
+$special_requirements_form->tag()->addJsAction('onsubmit', 'CashDesk.confirm.saveSpecialRequirement();return false;');
+
+$special_requirements_form->field('special_requirements')->input()->addJsAction('onchange', 'CashDesk.confirm.saveSpecialRequirement();');
+?>
+<br/>
+<div class="card">
+	<div class="card-body bg-light">
+		<h2 class="card-title"><?=Tr::_('Almost done')?></h2>
+
+		<?=$special_requirements_form->start()?>
+			<?=$special_requirements_form->field('special_requirements')->input()->addCustomCssStyle('height:100px;')?>
+		<?=$special_requirements_form->end()?>
+
+		<br/>
+
+
+		<?php foreach($cash_desk->getAgreeFlags() as $code=>$flag):
+			$this->setVar( 'flag', $flag );
+			?>
+		<div id="agree_flag_area_<?=$code?>">
+			<?=$this->render('confirm/agree_flag')?>
+		</div>
+		<?php endforeach; ?>
+
+		<div class="text-right" id="cash_desk_order_send_button_area">
+			<?=UI::button(Tr::_('Send the order'))->setOnclick('CashDesk.confirm.send()')->setClass('success')?>
+		</div>
+
+	</div>
+</div>

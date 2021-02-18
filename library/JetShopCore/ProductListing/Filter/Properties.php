@@ -33,7 +33,7 @@ abstract class Core_ProductListing_Filter_Properties extends ProductListing_Filt
 		foreach($category->getParametrizationProperties() as $property) {
 			if(
 				!$property->getIsFilterable() ||
-				!$property->getShopData($this->shop_id)->isActive()
+				!$property->getShopData($this->shop_code)->isActive()
 			) {
 				continue;
 			}

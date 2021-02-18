@@ -120,4 +120,9 @@ return [
 	'Group&nbsp;<b>%NAME%</b>' => '',
 	'Property&nbsp;<b>%NAME%</b>' => '',
 	'Option&nbsp;<b>%NAME%</b>' => '',
+	'View categories' => '',
+	'Add new category' => '',
+	'Update category' => '',
+	'Delete category' => '',
+	'Catalog categories management' => '',
 ];

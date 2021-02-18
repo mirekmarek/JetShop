@@ -98,14 +98,14 @@ abstract class Core_Parametrization_Group extends DataModel_Related_1toN {
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Parametrization_Group_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 		}
 	}
@@ -245,13 +245,13 @@ abstract class Core_Parametrization_Group extends DataModel_Related_1toN {
 		return $this->allow_compare;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Parametrization_Group_ShopData
+	public function getShopData( string|null $shop_code=null ) : Parametrization_Group_ShopData
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 
@@ -325,43 +325,43 @@ abstract class Core_Parametrization_Group extends DataModel_Related_1toN {
 		return true;
 	}
 
-	public function getLabel( string|null $shop_id=null ) : string
+	public function getLabel( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getLabel();
+		return $this->getShopData($shop_code)->getLabel();
 	}
 
-	public function getDescription( string|null $shop_id=null ) : string
+	public function getDescription( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getDescription();
+		return $this->getShopData($shop_code)->getDescription();
 	}
 
-	public function getImageMain( string|null $shop_id=null ) : string
+	public function getImageMain( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImageMain();
+		return $this->getShopData($shop_code)->getImageMain();
 	}
 
-	public function getImageMainUrl( string|null $shop_id=null ) : string
+	public function getImageMainUrl( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImageMainUrl();
+		return $this->getShopData($shop_code)->getImageMainUrl();
 	}
 
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_id=null ) : string
+	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImageMainThumbnailUrl($max_w, $max_h);
+		return $this->getShopData($shop_code)->getImageMainThumbnailUrl($max_w, $max_h);
 	}
 
-	public function getImagePictogram( string|null $shop_id=null ) : string
+	public function getImagePictogram( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImagePictogram();
+		return $this->getShopData($shop_code)->getImagePictogram();
 	}
 
-	public function getImagePictogramUrl( string|null $shop_id=null ) : string
+	public function getImagePictogramUrl( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImagePictogramUrl();
+		return $this->getShopData($shop_code)->getImagePictogramUrl();
 	}
 
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_id=null ) : string
+	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImagePictogramThumbnailUrl($max_w, $max_h);
+		return $this->getShopData($shop_code)->getImagePictogramThumbnailUrl($max_w, $max_h);
 	}
 }

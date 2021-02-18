@@ -1,0 +1,27 @@
+<?php
+namespace JetShopModule\Order\Discounts\Code;
+
+use Jet\Mvc_View;
+use Jet\UI;
+use JetShop\Discounts_Code;
+use JetShop\Price;
+
+/**
+ * @var Mvc_View   $this
+ * @var Discounts_Code|null $used_code
+ * @var Main $module
+ */
+
+$module = $this->getRaw('module');
+
+$discounts = $module->getDiscounts();
+?>
+
+<?php foreach($discounts as $discount): ?>
+	<?=$discount->getTitle()?>:
+
+	-<?=Price::formatWithCurrency($discount->getTotalPrice())?>
+
+	<?=UI::button(' ')->setIcon('trash')->setOnclick('DiscountCode.cancel()')?>
+<?php endforeach; ?>
+

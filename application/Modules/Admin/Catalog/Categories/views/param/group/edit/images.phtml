@@ -20,8 +20,8 @@ $group = Controller_Main::getCurrentParamGroup();
 echo $this->render('lj_start');
 
 	foreach(Shops::getList() as $shop):
-		$shop_id= $shop->getId();
-		echo $group->getShopData( $shop_id )->renderImageWidgets( Parametrization_Group_ShopData::getImageClasses() );
+		$shop_code= $shop->getCode();
+		echo $group->getShopData( $shop_code )->renderImageWidgets( Parametrization_Group_ShopData::getImageClasses() );
 	endforeach;
 
 echo $this->render('lj_end');

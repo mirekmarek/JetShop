@@ -1,0 +1,38 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+$cash_desk = CashDesk::get();
+
+$da = $cash_desk->getDeliveryAddress();
+?>
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<div><b><?= Tr::_('Delivery address') ?></b></div>
+
+		<?php if($cash_desk->hasDifferentDeliveryAddress()): ?>
+			<div>
+				<?php if($cash_desk->isCompanyOrder()): ?>
+					<?=$da->getCompanyName()?><br>
+					<?=$da->getCompanyId()?><br>
+					<?=$da->getCompanyVatId()?><br>
+				<?php endif?>
+
+				<?=$da->getFirstName()?> <?=$da->getSurname()?><br>
+				<?=$da->getAddressStreetNo()?><br/>
+				<?=$da->getAddressZip()?> <?=$da->getAddressTown()?>
+			</div>
+		<?php else: ?>
+			<?=Tr::_('Same address as the billing address')?>
+		<?php endif; ?>
+
+
+		<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.deliveryAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+</div>
+

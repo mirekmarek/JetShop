@@ -1,0 +1,30 @@
+<?php
+namespace JetShop;
+
+$cash_desk = CashDesk::get();
+
+$order = $cash_desk->getOrder();
+
+?>
+<table class="table table-striped" style="width: 100%">
+	<?php foreach($order->getItems() as $item): ?>
+
+	<tr>
+		<td style="width: 100px;"></td>
+		<td><?=$item->getTitle()?></td>
+		<td style="width: 200px;">
+			<?php if($item->isDiscount()): ?>
+				- <?=Price::formatWithCurrency($item->getTotalPrice())?>
+			<?php else: ?>
+				<?=Price::formatWithCurrency($item->getTotalPrice())?>
+			<?php endif; ?>
+
+		</td>
+	</tr>
+	<?php endforeach; ?>
+	<tr>
+		<td></td>
+		<td></td>
+		<td style="font-size: 2er;font-weight: bolder"><?=Price::formatWithCurrency($order->getTotalPrice())?></td>
+	</tr>
+</table>

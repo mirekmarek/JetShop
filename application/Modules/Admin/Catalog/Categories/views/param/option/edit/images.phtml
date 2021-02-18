@@ -17,8 +17,8 @@ $option = Controller_Main::getCurrentParamPropertyOption();
 echo $this->render('lj_start');
 
 	foreach(Shops::getList() as $shop):
-		$shop_id= $shop->getId();
-		echo $option->getShopData( $shop_id )->renderImageWidgets( Parametrization_Property_Option_ShopData::getImageClasses() );
+		$shop_code= $shop->getCode();
+		echo $option->getShopData( $shop_code )->renderImageWidgets( Parametrization_Property_Option_ShopData::getImageClasses() );
 	endforeach;
 
 echo $this->render('lj_end');

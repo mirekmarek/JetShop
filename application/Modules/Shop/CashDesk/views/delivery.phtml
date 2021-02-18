@@ -1,0 +1,67 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$cash_desk = CashDesk::get();
+
+if($cash_desk->getCurrentStep()!=CashDesk::STEP_DELIVERY) {
+	require 'delivery/has_been_selected.phtml';
+
+	return;
+}
+
+$delivery_methods = $cash_desk->getAvailableDeliveryMethods();
+$selected_delivery_method = $cash_desk->getSelectedDeliveryMethod();
+
+$has_personal_takeover = false;
+
+foreach ( $delivery_methods as $delivery_method ) {
+	if($delivery_method->isPersonalTakeover()) {
+		$has_personal_takeover = true;
+	}
+}
+?>
+
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<h2 class="card-title"><?= Tr::_('Please select delivery method') ?></h2>
+	<?php
+	if($has_personal_takeover) {
+		require 'delivery/method/personal_takeover.phtml';
+	}
+	?>
+
+	<?php foreach ( $delivery_methods as $delivery_method ):
+
+		$this->setVar( 'delivery_method', $delivery_method );
+
+		if($delivery_method->isPersonalTakeover()) {
+			continue;
+		}
+
+		if($delivery_method->getCode()==$selected_delivery_method->getCode()) {
+			require 'delivery/method/selected.phtml';
+		} else {
+			require 'delivery/method/not-selected.phtml';
+		}
+		?>
+		<br/>
+	<?php endforeach; ?>
+
+
+		<div class="text-right">
+			<?=UI::button(Tr::_('Continue'))->setOnclick('CashDesk.delivery.continue()')->setClass('primary')?>
+		</div>
+
+	</div>
+</div>
+

@@ -10,7 +10,7 @@ abstract class Core_ShoppingCart
 
 	protected string $id = '';
 
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	/**
 	 * @var ShoppingCart_Item[]
@@ -59,9 +59,9 @@ abstract class Core_ShoppingCart
 				$_COOKIE['cart_id'] = uniqid().uniqid().uniqid();
 			}
 
-			static::$cart = new ShoppingCart( Shops::getCurrentId() );
+			static::$cart = new ShoppingCart( Shops::getCurrentCode() );
 			static::$cart->setId( $_COOKIE['cart_id'] );
-			static::$cart->setShopId( Shops::getCurrentId() );
+			static::$cart->setShopCode( Shops::getCurrentCode() );
 		}
 
 		return static::$cart;
@@ -87,9 +87,9 @@ abstract class Core_ShoppingCart
 		self::$default_database_table_name = $default_database_table_name;
 	}
 
-	public function __construct( string $shop_id )
+	public function __construct( string $shop_code )
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 
 		$this->cart_db_connection = static::$default_cart_db_connection;
 		$this->database_table_name = static::$default_database_table_name;
@@ -116,14 +116,14 @@ abstract class Core_ShoppingCart
 		$this->database_table_name = $database_table_name;
 	}
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ): void
+	public function setShopCode( string $shop_code ): void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 	public function getId() : string
@@ -155,7 +155,7 @@ abstract class Core_ShoppingCart
 		 */
 		$cart = $this;
 
-		$items = Db::get( $this->cart_db_connection )->fetchOne("SELECT items FROM ".$this->database_table_name." WHERE id='".addslashes($this->id)."' and shop_id='{$this->shop_id}'");
+		$items = Db::get( $this->cart_db_connection )->fetchOne("SELECT items FROM ".$this->database_table_name." WHERE id='".addslashes($this->id)."' and shop_code='{$this->shop_code}'");
 
 		if(!$items) {
 			return;
@@ -208,7 +208,7 @@ abstract class Core_ShoppingCart
 
 		Db::get( $this->cart_db_connection )->execCommand("INSERT INTO ".$this->database_table_name." SET
                         id='{$this->id}',
-                        shop_id='{$this->shop_id}',
+                        shop_code='{$this->shop_code}',
                         last_activity_date_time=now(),
                         items='{$items}',
                         items_count={$count}
@@ -388,7 +388,7 @@ abstract class Core_ShoppingCart
 		$items = [];
 		foreach( $this->getItems() as $cart_item ) {
 
-			$product_sq = $cart_item->getProduct()->getStockStatus( $this->shop_id );
+			$product_sq = $cart_item->getProduct()->getStockStatus( $this->shop_code );
 			$cart_q = $cart_item->getQuantity();
 
 

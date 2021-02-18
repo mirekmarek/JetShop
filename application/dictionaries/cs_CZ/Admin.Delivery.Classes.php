@@ -24,4 +24,10 @@ return [
 	'Please select delivery method' => '',
 	'Methods:' => '',
 	'Delivery methods' => '',
+	'Kinds' => '',
+	'Get delivery_class data' => '',
+	'Add new delivery_class' => '',
+	'Update delivery_class' => '',
+	'Delete delivery_class' => '',
+	'Delivery classes administration' => '',
 ];

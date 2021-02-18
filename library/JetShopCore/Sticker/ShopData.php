@@ -224,7 +224,7 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->shop_id, [$this->url_param] );
+		return Shops::getURL( $this->shop_code, [$this->url_param] );
 	}
 
 	public function generateUrlParam() : void
@@ -233,7 +233,7 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 			return;
 		}
 
-		$this->url_param = Shops::generateURLPathPart( $this->name, '', $this->sticker_id, $this->shop_id );
+		$this->url_param = Shops::generateURLPathPart( $this->name, '', $this->sticker_id, $this->shop_code );
 	}
 
 	public function getImageEntity() : string

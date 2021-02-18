@@ -7,7 +7,7 @@ abstract class Core_ProductListing_Pagination {
 
 	protected ?ProductListing $listing = null;
 
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	protected int $current_page_no = 1;
 
@@ -18,7 +18,7 @@ abstract class Core_ProductListing_Pagination {
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_id = $listing->getShopId();
+		$this->shop_code = $listing->getShopCode();
 
 		$this->init();
 	}

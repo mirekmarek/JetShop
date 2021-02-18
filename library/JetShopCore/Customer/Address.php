@@ -21,7 +21,7 @@ use Jet\Form;
 		'id_property_name' => 'id'
 	]
 )]
-class Core_Customer_Address extends DataModel
+abstract class Core_Customer_Address extends DataModel
 {
 
 	/**
@@ -154,6 +154,41 @@ class Core_Customer_Address extends DataModel
 	protected string $address_town = '';
 
 	/**
+	 * @var string
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 100,
+		form_field_type: false
+	)]
+	protected string $hash = '';
+
+	/**
+	 * @var bool
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true,
+		form_field_type: false
+	)]
+	protected bool $is_default = false;
+
+
+	public function __clone(): void
+	{
+		$this->setIsNew();
+		$this->id = 0;
+		$this->hash = '';
+
+	}
+
+	public function __wakeup(): void
+	{
+		$this->generateHash();
+	}
+
+	/**
 	 * @return int
 	 */
 	public function getId() : int
@@ -168,6 +203,8 @@ class Core_Customer_Address extends DataModel
 	{
 		if(!$this->_form_edit) {
 			$this->_form_edit = $this->getCommonForm('edit_form');
+
+			//TODO: get by module
 		}
 		
 		return $this->_form_edit;
@@ -178,7 +215,7 @@ class Core_Customer_Address extends DataModel
 	 */
 	public function catchEditForm() : bool
 	{
-		return $this->catchForm( $this->getEditForm() );
+		return $this->getEditForm()->catch();
 	}
 
 	/**
@@ -198,7 +235,7 @@ class Core_Customer_Address extends DataModel
 	 */
 	public function catchAddForm() : bool
 	{
-		return $this->catchForm( $this->getAddForm() );
+		return $this->getAddForm()->catch();
 	}
 
 	/**
@@ -211,7 +248,7 @@ class Core_Customer_Address extends DataModel
 	}
 
 	/**
-	 * @return iterable
+	 * @return Customer_Address[]
 	 */
 	public static function getList() : iterable
 	{
@@ -380,5 +417,91 @@ class Core_Customer_Address extends DataModel
 	public function getAddressTown() : string
 	{
 		return $this->address_town;
+	}
+
+	public function generateHash() : string
+	{
+		$this->hash = '';
+
+		foreach(get_object_vars($this) as $k=>$v) {
+			if(
+				$k[0]=='_' ||
+				$k=='is_default' ||
+				$k=='hash' ||
+				$k=='id' ||
+				$k=='customer_id'
+			) {
+				continue;
+			}
+
+			$this->hash .= ':'.$v;
+		}
+
+		$this->hash = md5( $this->hash );
+
+		return $this->hash;
+	}
+
+	public function getHash() : string
+	{
+		if(!$this->hash) {
+			$this->generateHash();
+		}
+
+		return $this->hash;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setHash( string $value ) : void
+	{
+		$this->hash = $value;
+	}
+
+	/**
+	 * @param bool $value
+	 */
+	public function setIsDefault( bool $value ) : void
+	{
+		$this->is_default = (bool)$value;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isDefault() : bool
+	{
+		return $this->is_default;
+	}
+
+
+	public function beforeSave(): void
+	{
+		$this->generateHash();
+	}
+
+	public static function setDefaultAddress( Customer_Address $address ) : void
+	{
+		Customer_Address::updateData(
+			[
+				'is_default' => true
+			],
+			[
+				'id' => $address->getId()
+			]
+		);
+
+		Customer_Address::updateData(
+			[
+				'is_default' => false
+			],
+			[
+				'customer_id' => $address->getCustomerId(),
+				'AND',
+				'id !=' => $address->getId(),
+			]
+		);
+
 	}
 }

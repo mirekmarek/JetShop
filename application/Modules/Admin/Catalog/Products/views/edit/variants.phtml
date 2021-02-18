@@ -94,11 +94,11 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
 					<td nowrap="">
 						<table>
 						<?php foreach(Shops::getList() as $shop):
-							$shop_id = $shop->getId();
+							$shop_code = $shop->getCode();
 							$shop_name = $shop->getName(); ?>
 							<tr>
 								<td><?=UI::flag( $shop->getLocale() )?> <?=$shop_name?>:</td>
-								<td><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop_id.'/variant_name')->input()->addCustomCssStyle('width:400px;')?></td>
+								<td><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop_code.'/variant_name')->input()->addCustomCssStyle('width:400px;')?></td>
 							</tr>
 
 						<?php endforeach; ?>
@@ -151,13 +151,13 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
 	<?=$add_form->field('internal_code')?>
 
 	<?php foreach(Shops::getList() as $shop):
-		$shop_id = $shop->getId();
+		$shop_code = $shop->getCode();
 
-		$shop_data = $product->getShopData( $shop_id );
+		$shop_data = $product->getShopData( $shop_code );
 		?>
 		<?=$shop_data->renderShopDataBlock_start()?>
 
-		<?=$add_form->field('/shop_data/'.$shop_id.'/variant_name')?>
+		<?=$add_form->field('/shop_data/'.$shop_code.'/variant_name')?>
 		<?=$shop_data->renderShopDataBlock_end()?>
 	<?php endforeach; ?>
 

@@ -37,4 +37,11 @@ return [
 	'Group' => '',
 	'Group:' => '',
 	'Service <b>%ITEM_NAME%</b> has been updated' => '',
+	'Kind' => '',
+	'Name' => '',
+	'Get service data' => '',
+	'Add new service' => '',
+	'Update service' => '',
+	'Delete service' => '',
+	'Admin.Services.Services' => '',
 ];

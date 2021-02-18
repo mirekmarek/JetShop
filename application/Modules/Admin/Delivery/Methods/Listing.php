@@ -35,6 +35,8 @@ class Listing extends Data_Listing {
 			'disallow_sort' => true
 		],
 		'internal_name'   => ['title' => 'Internal name'],
+		'payment_methods'   => ['title' => 'Payment methods', 'disallow_sort' => true],
+		'services'   => ['title' => 'Services', 'disallow_sort' => true],
 	];
 
 	/**

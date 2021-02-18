@@ -250,23 +250,23 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit service <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $service->getInternalName() ] ) );
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 			$shop_name = $shop->getName();
-			$shop_data = $service->getShopData( $shop_id );
+			$shop_data = $service->getShopData( $shop_code );
 
 			foreach( Services_Service_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->catchImageWidget(
 					$image_class,
-					function() use ($image_class, $service, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $service, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'service image '.$image_class.' uploaded', $service->getCode().':'.$shop_id, $service->getCode().' - '.$shop_name );
+						$this->logAllowedAction( 'service image '.$image_class.' uploaded', $service->getCode().':'.$shop_code, $service->getCode().' - '.$shop_name );
 
 					},
-					function() use ($image_class, $service, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $service, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'service image '.$image_class.' deleted', $service->getCode().':'.$shop_id, $service->getCode().' - '.$shop_name );
+						$this->logAllowedAction( 'service image '.$image_class.' deleted', $service->getCode().':'.$shop_code, $service->getCode().' - '.$shop_name );
 					}
 				);
 
@@ -318,7 +318,7 @@ class Controller_Main extends Mvc_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		$service = $this->service;
 		foreach(Shops::getList() as $shop) {
-			$shop_data = $service->getShopData( $shop->getId() );
+			$shop_data = $service->getShopData( $shop->getCode() );
 
 			foreach( Services_Service_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->getImageUploadForm($image_class)->setIsReadonly();

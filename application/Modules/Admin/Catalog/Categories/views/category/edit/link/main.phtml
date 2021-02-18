@@ -35,18 +35,18 @@ $form->setDefaultFieldWidth([Form::LJ_SIZE_MEDIUM=>8]);
 		</div>
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_id= $shop->getId();
-			$shop_data = $category->getShopData( $shop_id );
+			$shop_code= $shop->getCode();
+			$shop_data = $category->getShopData( $shop_code );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 				<fieldset>
 					<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-					<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
 
-					<?=$form->field('/shop_data/'.$shop_id.'/name')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/second_name')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/name')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/second_name')?>
 				</fieldset>
 			<?=$shop_data->renderShopDataBlock_end()?>
 		<?php endforeach; ?>

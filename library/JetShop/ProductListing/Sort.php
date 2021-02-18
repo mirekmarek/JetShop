@@ -39,7 +39,7 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 				[
 					'product_id'=>$initial_product_ids,
 					'AND',
-					'shop_id'=>$this->listing->getShopId()
+					'shop_code'=>$this->listing->getShopCode()
 				]
 			);
 
@@ -79,7 +79,7 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 
 		$predefined = new ProductListing_Sort_Option( 'predefined' );
 		$predefined->setIsDefault(true);
-		$predefined->setLabel('Výchozí');
+		$predefined->setLabel(Tr::_('Default'));
 		$predefined->setUrlParam('default');
 		$predefined->setSorter( function( array $ids ) {
 			//TODO:
@@ -89,7 +89,7 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 
 
 		$cheapest = new ProductListing_Sort_Option( 'cheapest' );
-		$cheapest->setLabel('Nejlevnější');
+		$cheapest->setLabel(Tr::_('The cheapest first'));
 		$cheapest->setUrlParam('cheapest');
 		$cheapest->setSorter( function( array $ids ) {
 			return $this->_sort( $ids, 'final_price', false );
@@ -98,14 +98,14 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 
 
 		$most_expensive = new ProductListing_Sort_Option( 'most_expensive' );
-		$most_expensive->setLabel('Nejdražší');
+		$most_expensive->setLabel(Tr::_('The most expensive first'));
 		$most_expensive->setUrlParam('most-expensive');
 		$most_expensive->setSorter( function( array $ids ) {
 			return $this->_sort( $ids, 'final_price', true );
 		} );
 
 		$reviews = new ProductListing_Sort_Option( 'reviews' );
-		$reviews->setLabel('Dle recenzí');
+		$reviews->setLabel(Tr::_('According to reviews'));
 		$reviews->setUrlParam('reviews');
 		$reviews->setSorter( function( array $ids ) {
 			//TODO:

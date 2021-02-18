@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication\Installer;
+namespace JetShop\Installer;
 
 use Jet\Mvc_View;
 use Jet\Mvc_Site;
@@ -7,9 +7,9 @@ use Jet\Form;
 use Jet\UI;
 use Jet\Tr;
 
-use JetApplication\Application_Admin;
-use JetApplication\Application_Web;
-use JetApplication\Application_REST;
+use JetShop\Application_Admin;
+use JetShop\Application_Shop;
+use JetShop\Application_REST;
 
 /**
  * @var Mvc_View $this
@@ -24,7 +24,7 @@ $main_form->setDefaultLabelWidth( [Form::LJ_SIZE_MEDIUM => 2] );
 $sites = $this->getRaw( 'sites' );
 
 $titles = [
-	Application_Web::getSiteId()   => Tr::_( 'Web' ),
+	Application_Shop::getSiteId()  => Tr::_( 'Shop' ),
 	Application_Admin::getSiteId() => Tr::_( 'Administration' ),
 	Application_REST::getSiteId()  => Tr::_( 'REST API' ),
 ];

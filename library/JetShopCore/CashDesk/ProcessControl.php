@@ -46,6 +46,24 @@ trait Core_CashDesk_ProcessControl
 		return true;
 	}
 
+	public function isDone() : bool
+	{
+		if(!$this->isReady()) {
+			return false;
+		}
+
+		$res = true;
+		foreach($this->getAgreeFlags() as $flag) {
+			if($flag->isMandatory() && !$flag->isChecked()) {
+				$flag->setShowError( true );
+				$res = false;
+			}
+		}
+
+		return $res;
+	}
+
+
 	public function getCurrentStep(): string
 	{
 		if($this->isReady()) {
@@ -136,7 +154,7 @@ trait Core_CashDesk_ProcessControl
 		if(!$state) {
 			$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
 		} else {
-			$this->setCurrentStep( cashDesk::STEP_CONFIRM );
+			$this->setCurrentStep( CashDesk::STEP_CONFIRM );
 		}
 
 		$this->getSession()->setValue('different_delivery_address_has_been_set', $state);
@@ -172,7 +190,7 @@ trait Core_CashDesk_ProcessControl
 		return $this->delivery_address_editable;
 	}
 
-	public function setDeliveryAddressEditable( bool $state ) : bool
+	public function setDeliveryAddressEditable( bool $state ) : void
 	{
 		$this->delivery_address_editable = $state;
 	}
@@ -180,10 +198,13 @@ trait Core_CashDesk_ProcessControl
 	public function isDeliveryAddressDisabled() : bool
 	{
 
+		/**
+		 * @var Delivery_Method $delivery_method
+		 */
 		$delivery_method = $this->getSelectedDeliveryMethod();
 
 		if(
-			$delivery_method->isPersonalPickup() ||
+			$delivery_method->isPersonalTakeover() ||
 			$delivery_method->isEDelivery()
 		) {
 			return true;

@@ -1,0 +1,26 @@
+<?php
+namespace JetShop;
+
+$cash_desk = CashDesk::get();
+?>
+
+
+<form action="?action=delivery_address_confirm" method="post" id="cash_desk_delivery_address_form" name="cash_desk_delivery_address_form" onsubmit="CashDesk.customer.deliveryAddress.confirm();return false;">
+	
+	<div class="customer-delivery-register">
+		<div class="heading">Kam máme zboží poslat?</div>
+		
+		<div class="inputs">
+			<?= form::input($new_prefix.'_company', ENTRY_COMPANY, $delivery_address->getCompany())->setIsRequired(false) ?>
+			<?= form::input($new_prefix.'_ICO', TEXT_ICO, $delivery_address->getICO())->setIsRequired(false) ?>
+			<?= form::input($new_prefix.'_DIC', TEXT_DIC, $delivery_address->getDIC())->setIsRequired(false) ?>
+			<?= form::input($new_prefix.'_firstname', ENTRY_FIRST_NAME, $delivery_address->getFirstName()) ?>
+			<?= form::input($new_prefix.'_lastname', ENTRY_LAST_NAME, $delivery_address->getLastName()) ?>
+			<?= form::input($new_prefix.'_city', ENTRY_CITY, $delivery_address->getCity())->turnOffAutocomplete() ?>
+			<?= form::input($new_prefix.'_postcode', ENTRY_POST_CODE, $delivery_address->getPostcode()) ?>
+			<?= form::input($new_prefix.'_street_address', ENTRY_STREET_ADDRESS, $delivery_address->getStreetAddress())->turnOffAutocomplete() ?>
+		</div>
+	</div>
+	
+	<input type="submit" value="Pokračovat" class="btn right border_red color_white bg_red big" />
+</form>

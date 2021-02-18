@@ -9,7 +9,7 @@ abstract class Core_ProductListing_Sort {
 
 	protected ?ProductListing $listing = null;
 
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	/**
 	 * @var ProductListing_Sort_Option[]
@@ -19,7 +19,7 @@ abstract class Core_ProductListing_Sort {
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_id = $listing->getShopId();
+		$this->shop_code = $listing->getShopCode();
 
 		$this->init();
 

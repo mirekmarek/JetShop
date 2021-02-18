@@ -1,0 +1,580 @@
+<?php
+namespace JetShopModule\Shop\CashDesk;
+
+use JetShop\CashDesk;
+
+$cash_desk = CashDesk::get();
+
+
+?>
+<script type="text/javascript" src="//maps.google.com/maps/api/js?key=<?=Config::map_API_key($cash_desk)?>"></script>
+<script type="text/javascript" src="//developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+
+<script type="text/javascript">
+	const CashDesk = {
+		step: '<?=$cash_desk->getCurrentStep()?>',
+		selected_delivery: '<?=$cash_desk->getSelectedDeliveryMethod()->getCode()?>',
+		selected_payment: '<?=$cash_desk->getSelectedPaymentMethod()->getCode()?>',
+		billing_address_editable: <?=$cash_desk->isBillingAddressEditable() ? 'true' : 'false'?>,
+		delivery_address_editable: <?=$cash_desk->isDeliveryAddressEditable() ? 'true' : 'false' ?>,
+
+
+		_request: {
+			doGet: function( URL, onOk, onError, do_not_apply_snippets ) {
+				$.ajax({
+					type: 'GET',
+					url: URL,
+					dataType: 'json',
+					success: function(response) {
+						CashDesk._request.handleResponse( response, onOk, onError, do_not_apply_snippets );
+					},
+					error: function() {
+						CashDesk._request.handleError();
+					},
+					complete: function() {
+					}
+				});
+
+			},
+			doForm: function( form_id, onOk, onError, do_not_apply_snippets ) {
+				const form = $('#'+form_id);
+
+				$.ajax({
+					type: 'POST',
+					url: form.attr('action'),
+					data: form.serialize(),
+					dataType: 'json',
+					success: function(response) {
+						CashDesk._request.handleResponse( response, onOk, onError, do_not_apply_snippets );
+					},
+					error: function() {
+						CashDesk._request.handleError();
+					},
+					complete: function() {
+					}
+				});
+
+			},
+			handleError: function () {
+				//TODO:
+			},
+			handleResponse: function (response, onOk, onError, do_not_apply_snippets) {
+
+				CashDesk.selected_delivery = response['selected_delivery'];
+				CashDesk.selected_payment = response['selected_payment'];
+
+				if(!do_not_apply_snippets) {
+					CashDesk._request.applySnippets( response );
+				}
+
+				if( response.ok && onOk ) {
+					onOk( response );
+				}
+
+				if(!response.ok && onError) {
+					onError( response );
+				}
+			},
+
+			applySnippets: function( response ) {
+				if(response['snippets']) {
+					for(let id in response['snippets']) {
+						let element = $('#'+id);
+						if(element.length) {
+							element.html(response['snippets'][id]);
+						}
+					}
+				}
+
+				CashDesk.delivery.personalTakeover.initialized = false;
+
+				if(CashDesk.billing_address_editable!=response.billing_address_editable) {
+					CashDesk.billing_address_editable=response.billing_address_editable;
+					if(CashDesk.billing_address_editable) {
+						CashDesk.customer.billingAddress.initEdit();
+					} else {
+						CashDesk.customer.billingAddress.disableEdit();
+					}
+				}
+
+				if(CashDesk.delivery_address_editable!=response.delivery_address_editable) {
+					CashDesk.delivery_address_editable=response.delivery_address_editable;
+					if(CashDesk.delivery_address_editable) {
+						CashDesk.customer.deliveryAddress.initEdit();
+					} else {
+						CashDesk.customer.deliveryAddress.disableEdit();
+					}
+				}
+
+			}
+		},
+		delivery: {
+
+			select: function( method ) {
+				if(CashDesk.selected_delivery==method) {
+					return;
+				}
+				CashDesk.selected_delivery=method;
+				CashDesk._request.doGet('?action=select_delivery&method=' + method);
+			},
+
+			back: function() {
+				$('#cash_desk_delivery').slideUp();
+				$('#cash_desk_payment').slideUp();
+				$('#cash_desk_customer').slideUp();
+
+				CashDesk._request.doGet('?action=back_to_delivery', function () {
+					$('#cash_desk_delivery').slideDown();
+				} );
+			},
+
+			continue: function() {
+				$('#cash_desk_delivery').slideUp();
+				$('#cash_desk_payment').hide();
+
+				CashDesk._request.doGet('?action=continue_to_payment', function () {
+					$('#cash_desk_delivery').slideDown();
+					$('#cash_desk_payment').slideDown();
+				});
+			},
+
+			personalTakeover: {
+				initialized: false,
+				map_instance: null,
+
+				map: {
+					center: {
+						lat: 0,
+						lon: 0,
+					},
+					default_zoom: 0
+				},
+
+				init: function( onInit ) {
+					if(CashDesk.delivery.personalTakeover.initialized) {
+						onInit();
+						return;
+					}
+
+					$.get( '?action=personal_takeover_get_map_data', function( map_data ) {
+						let map_instance = new google.maps.Map( document.getElementById('parsonal_takeover_map'),{});
+						let markers = {};
+
+						CashDesk.delivery.personalTakeover.map_instance = map_instance;
+
+						for( let id in map_data ) {
+							let marker_data = map_data[id];
+							let marker_options= {};
+
+							marker_options.title = marker_data.name;
+							marker_options.position = new google.maps.LatLng(marker_data.latitude, marker_data.longitude);
+
+							if(marker_data.icon) {
+								marker_options.icon = new google.maps.MarkerImage(marker_data.icon);
+							}
+
+							let marker = new google.maps.Marker(marker_options);
+							marker.marker_data = marker_data;
+
+							marker.setMap( map_instance );
+
+							markers[id] = marker;
+
+							marker.addListener("click",  () => {
+
+								map_instance.setCenter(markers[id].getPosition());
+								map_instance.setZoom(20);
+
+								CashDesk.delivery.personalTakeover.showPlace( id );
+							});
+
+						}
+
+						map_instance.setCenter( new google.maps.LatLng(
+							CashDesk.delivery.personalTakeover.map.center.lat,
+							CashDesk.delivery.personalTakeover.map.center.lon
+						) );
+						map_instance.setZoom(
+							CashDesk.delivery.personalTakeover.map.default_zoom
+						);
+
+						let marker_cluster_instance = new MarkerClusterer(
+							map_instance,
+							markers,
+							{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
+						);
+
+						CashDesk.delivery.personalTakeover.initialized = true;
+						onInit();
+					});
+
+				},
+
+				startSelection: function() {
+					CashDesk.delivery.personalTakeover.init( function() {
+						$('#select_personal_takeover_place_dialog').modal('show');
+						//TODO: resize map ...
+					} );
+				},
+
+				showPlace: function ( id ) {
+					$('#parsonal_takeover_place').load('?action=personal_takeover_show_place&id='+id);
+				},
+
+				selectPlace: function( method_code, place_code ) {
+					$('#select_personal_takeover_place_dialog').modal('hide');
+					setTimeout(function () {
+						CashDesk._request.doGet('?action=personal_takeover_select_place&method=' + method_code+'&place='+place_code);
+					}, 500);
+				}
+			}
+		},
+
+		payment: {
+			select: function( method ) {
+				if(CashDesk.selected_payment==method) {
+					return;
+				}
+				CashDesk.selected_payment=method;
+				CashDesk._request.doGet('?action=select_payment&method=' + method);
+			},
+
+			back: function() {
+				$('#cash_desk_payment').slideUp();
+				$('#cash_desk_customer').slideUp();
+
+				CashDesk._request.doGet('?action=back_to_payment', function () {
+					$('#cash_desk_payment').slideDown();
+				} );
+			},
+
+			continue: function() {
+				$('#cash_desk_customer').hide();
+
+				CashDesk._request.doGet('?action=continue_to_customer',
+					function() {
+						$('#cash_desk_payment').slideUp(500, function () {
+							$('#cash_desk_payment').slideDown();
+							$('#cash_desk_customer').slideDown();
+						}, null, true);
+					}
+				);
+			},
+
+			setPaymentOptions: function( method, callback ) {
+				CashDesk._request.doForm('payment_method_options_form_'+method, callback);
+			}
+
+		},
+
+		customer: {
+
+			email: {
+				set: function() {
+					CashDesk._request.doForm( 'cash_desk_set_email_form',
+						function(response) {
+							$('#cash_desk_customer').slideUp(500, function () {
+								CashDesk._request.applySnippets( response );
+								$('#cash_desk_customer').slideDown();
+							});
+						},
+						function(response) {
+							CashDesk._request.applySnippets( response );
+						},
+						true
+					);
+
+				},
+
+				back: function() {
+					$('#cash_desk_customer').slideUp(500, function () {
+						CashDesk._request.doGet('?action=customer_back_to_set_email', function() {
+							$('#cash_desk_customer').slideDown();
+						});
+					});
+				}
+			},
+
+			billingAddress: {
+				whisperer: null,
+				form: null,
+
+				initEdit: function() {
+					//TODO:
+					/*
+					CashDesk.customer.billingAddress.whisperer = new addressWhisperer('new_billing');
+					CashDesk.customer.billingAddress.whisperer.init();
+					 */
+				},
+
+				setIsPerson: function() {
+					let top = $('html, body').scrollTop();
+
+					$('#cash_desk_billing_address').slideUp(500, function () {
+						CashDesk._request.doGet('?action=customer_set_is_person', function() {
+							$('#cash_desk_billing_address').slideDown(200, function() {
+								$('html, body').animate({
+									scrollTop: top
+								}, 200);
+							});
+						});
+					});
+				},
+				setIsCompany: function() {
+					let top = $('html, body').scrollTop();
+
+					$('#cash_desk_billing_address').slideUp(500, function () {
+						CashDesk._request.doGet('?action=customer_set_is_company', function() {
+							$('#cash_desk_billing_address').slideDown(200, function() {
+								$('html, body').animate({
+									scrollTop: top
+								}, 200);
+							});
+						});
+					});
+				},
+
+				disableEdit: function() {
+					CashDesk.customer.billingAddress.whisperer = null;
+				},
+
+				select: function( id ) {
+					CashDesk._request.doGet('?action=customer_billing_address_select&id='+id);
+				},
+
+				sendField: function( field ) {
+					let field_name = field.name;
+					let value = field.value;
+
+					CashDesk._request.doGet(
+						'?action=customer_billing_address_catch_field&field='+field_name+'&value='+encodeURIComponent(value)
+					);
+				},
+
+				confirm: function() {
+					const onResponse = function( response ) {
+						if(response.ok) {
+							$('#cash_desk_delivery_address').hide();
+
+							$('#cash_desk_billing_address').slideUp(500, function () {
+								CashDesk._request.handleResponse(response);
+
+								$('#cash_desk_delivery_address').slideDown();
+								$('#cash_desk_billing_address').slideDown();
+							});
+
+						}
+					};
+
+					CashDesk._request.doForm( 'cash_desk_customer_billing_address_form', onResponse, null, true);
+				},
+
+				back: function() {
+					$('#cash_desk_delivery_address').slideUp( 200 );
+
+					$('#cash_desk_billing_address').slideUp(500, function () {
+						$('#cash_desk_billing_address').slideDown();
+
+						CashDesk._request.doGet('?action=customer_back_to_billing_address');
+					});
+
+				}
+			},
+
+			deliveryAddress: {
+				whisperer: null,
+				form: null,
+
+				setTheSame: function() {
+					$('#cash_desk_delivery_address').slideUp(500, function () {
+						CashDesk._request.doGet('?action=customer_delivery_address_set_the_same', function () {
+							$('#cash_desk_delivery_address').slideDown();
+						});
+					});
+					
+				},
+
+				setDifferent: function() {
+					$('#cash_desk_delivery_address').slideUp(500, function () {
+						CashDesk._request.doGet('?action=customer_delivery_address_set_different', function () {
+							$('#cash_desk_delivery_address').slideDown();
+						});
+					});
+
+				},
+
+				initEdit: function() {
+					//TODO:
+					/*
+					CashDesk.customer.deliveryAddress.whisperer = new addressWhisperer('new_delivery');
+					CashDesk.customer.deliveryAddress.whisperer.init();
+					 */
+				},
+
+				disableEdit: function() {
+					CashDesk.customer.deliveryAddress.whisperer = null;
+				},
+
+				select: function( id ) {
+					CashDesk._request.doGet('?action=customer_delivery_address_select&id='+id);
+				},
+
+				sendField: function( field ) {
+					let field_name = field.name;
+					let value = field.value;
+
+					CashDesk._request.doGet(
+						'?action=customer_delivery_address_catch_field&field='+field_name+'&value='+encodeURIComponent(value)
+					);
+				},
+
+
+				confirm: function() {
+					const onResponse = function( response ) {
+						if(response.ok) {
+							$('#cash_desk_delivery_address').slideUp(500, function () {
+								CashDesk._request.handleResponse(response);
+
+								$('#cash_desk_delivery_address').slideDown();
+							});
+						}
+					};
+
+					CashDesk._request.doForm( 'cash_desk_customer_delivery_address_form', onResponse, null, true);
+				},
+
+				back: function() {
+					$('#cash_desk_delivery_address').slideUp(500, function () {
+
+						CashDesk._request.doGet('?action=customer_back_to_delivery_address', function () {
+							$('#cash_desk_delivery_address').slideDown();
+						});
+
+					});
+				}
+
+			},
+
+
+
+			registration: {
+				login: function() {
+
+					CashDesk._request.doForm( 'cash_desk_login_form',
+						function(response) {
+							$('#cash_desk_customer').slideUp(400, function () {
+								CashDesk._request.applySnippets(response);
+
+								$('#cash_desk_customer').slideDown(400);
+							});
+						},
+						function(response) {
+							CashDesk._request.applySnippets(response);
+						},
+
+						true
+					);
+
+				},
+
+				continueWithoutRegistration: function() {
+					$('#cash_desk_customer').slideUp();
+
+					CashDesk._request.doGet('?action=registration_do_not_register', function () {
+						$('#cash_desk_customer').slideDown();
+					});
+				},
+
+				setPassword: function() {
+					CashDesk._request.doForm('registration_set_password_form',
+						function( response ) {
+							$('#cash_desk_customer').slideUp(500, function() {
+								CashDesk._request.applySnippets(response);
+								$('#cash_desk_customer').slideDown();
+							});
+						},
+						function( response ) {
+							CashDesk._request.applySnippets(response);
+						},
+						true
+					);
+				},
+
+				doNotRegister: function() {
+					$('#cash_desk_customer').slideUp();
+
+					CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
+						$('#cash_desk_customer').slideDown();
+					});
+				},
+
+				back: function() {
+					$('#cash_desk_customer').slideUp();
+
+					CashDesk._request.doGet('?action=customer_registration_back', function () {
+						$('#cash_desk_customer').slideDown();
+					});
+				}
+			}
+
+
+		},
+
+		confirm: {
+			saveSpecialRequirement: function() {
+				CashDesk._request.doForm('cash_desk_special_requirements_form');
+			},
+
+			toggleAgreeFlag: function( code, checked ) {
+				CashDesk._request.doGet('?action=confirm_toggle_agree_flag&flag='+code+'&state='+(checked?'1':'0') );
+
+			},
+
+			send: function() {
+
+				$('#cash_desk_order_send_button_area').fadeOut(200, function () {
+					CashDesk._request.doGet(
+						'?action=confirm_send',
+						function( response ) {
+							//TODO:
+						},
+						function( response ) {
+							CashDesk._request.applySnippets(response);
+						},
+						true
+					);
+
+
+				});
+
+
+			}
+		},
+
+		scrollTo: function(element_id) {
+			let header = $('header').outerHeight() + $('#cash_desk_status_bar_steps').outerHeight();
+		
+			$('html, body').animate({
+				scrollTop: $('#' + element_id).offset().top - header
+			}, 200, 'swing');
+		},
+	};
+
+	CashDesk.delivery.personalTakeover.map = {
+		center: {
+			lat: <?=Config::map_center_lat( $cash_desk )?>,
+			lon: <?=Config::map_center_lon( $cash_desk )?>,
+		},
+		default_zoom: <?=Config::map_default_zoom( $cash_desk )?>
+	};
+
+
+	<?php if($cash_desk->isBillingAddressEditable()): ?>
+		CashDesk.customer.billingAddress.initEdit();
+	<?php endif; ?>
+	<?php if($cash_desk->isDeliveryAddressEditable()): ?>
+		CashDesk.customer.deliveryAddress.initEdit();
+	<?php endif; ?>
+
+</script>

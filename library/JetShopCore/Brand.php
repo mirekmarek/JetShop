@@ -77,18 +77,18 @@ abstract class Core_Brand extends DataModel {
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Brand_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 
 			/** @noinspection PhpParamsInspection */
-			$this->shop_data[$shop_id]->setParents( $this );
+			$this->shop_data[$shop_code]->setParents( $this );
 		}
 	}
 
@@ -198,13 +198,13 @@ abstract class Core_Brand extends DataModel {
 		$this->name = $name;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Brand_ShopData
+	public function getShopData( string|null $shop_code=null ) : Brand_ShopData
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public function getEditURL() : string

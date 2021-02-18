@@ -1,0 +1,23 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+$cash_desk = CashDesk::get();
+
+$payment_method = $cash_desk->getSelectedPaymentMethod();
+$pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
+
+?>
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<div><b><?= Tr::_('Payment method') ?></b></div>
+		<div><?= $pm_shd->getTitle() ?> </div>
+		<div><?=Price::formatWithCurrency($pm_shd->getDefaultPrice())?></div>
+		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.payment.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+</div>

@@ -28,13 +28,13 @@ echo $this->render('lj_start');
 		echo $form->field('allow_compare');
 
 		foreach(Shops::getList() as $shop):
-			$shop_id= $shop->getId();
-			$shop_data = $new_group->getShopData($shop_id);
+			$shop_code= $shop->getCode();
+			$shop_data = $new_group->getShopData($shop_code);
 
 			echo $shop_data->renderShopDataBlock_start();
-				echo $form->field('/shop_data/'.$shop_id.'/is_active');
-				echo $form->field('/shop_data/'.$shop_id.'/label');
-				echo $form->field('/shop_data/'.$shop_id.'/description');
+				echo $form->field('/shop_data/'.$shop_code.'/is_active');
+				echo $form->field('/shop_data/'.$shop_code.'/label');
+				echo $form->field('/shop_data/'.$shop_code.'/description');
 			echo $shop_data->renderShopDataBlock_end();
 		endforeach;
 

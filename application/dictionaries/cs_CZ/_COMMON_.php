@@ -26,4 +26,9 @@ return [
 	'Firts' => '',
 	'Previous' => '',
 	'JetShop Example' => '',
+	'Selected personal takeover place' => '',
+	'Default' => '',
+	'The cheapest first' => '',
+	'The most expensive first' => '',
+	'According to reviews' => '',
 ];

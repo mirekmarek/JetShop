@@ -21,9 +21,9 @@ abstract class Core_Parametrization_Property_StencilOptions extends Parametrizat
 		]);
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/bool_yes_description');
+			$form->removeField('/shop_data/'.$shop_code.'/bool_yes_description');
 		}
 
 		return $form;
@@ -39,9 +39,9 @@ abstract class Core_Parametrization_Property_StencilOptions extends Parametrizat
 		]);
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/bool_yes_description');
+			$form->removeField('/shop_data/'.$shop_code.'/bool_yes_description');
 		}
 
 		return $form;

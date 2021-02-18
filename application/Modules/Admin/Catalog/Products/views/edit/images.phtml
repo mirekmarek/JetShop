@@ -26,51 +26,51 @@ $product = Controller_Main::getCurrentProduct();
 <script type="text/javascript">
 
 	const ImagesHandler = {
-		delete_shop_id: null,
+		delete_shop_code: null,
 		delete_images: null,
 
-		_handleResponse: function( shop_id, response ) {
+		_handleResponse: function( shop_code, response ) {
 
 			for(let el_id in response['snippets']) {
 				document.getElementById(el_id).innerHTML = response['snippets'][el_id];
 			}
 
-			ImagesHandler.initSort( shop_id );
+			ImagesHandler.initSort( shop_code );
 		},
 
-		initSort: function( shop_id ) {
-			$('#images_'+shop_id).sortable({
+		initSort: function( shop_code ) {
+			$('#images_'+shop_code).sortable({
 				revert: true,
 				stop: function() {
-					ImagesHandler.saveSort( shop_id );
+					ImagesHandler.saveSort( shop_code );
 				}
 			});
 		},
 
-		saveSort: function( shop_id ) {
+		saveSort: function( shop_code ) {
 			var images = [];
 
-			$('#images_'+shop_id).find('.image-thumbnail').each(function ( i, image ) {
+			$('#images_'+shop_code).find('.image-thumbnail').each(function ( i, image ) {
 				images.push( $(image).data('image') );
 			});
 
 			$.ajax({
-				url: '?id=<?=$product->getId()?>&page=images&action=save_sort&images='+images.join(',')+'&shop_id='+shop_id,
+				url: '?id=<?=$product->getId()?>&page=images&action=save_sort&images='+images.join(',')+'&shop_code='+shop_code,
 				dataType: "json",
 				success: function( response ) {
-					ImagesHandler._handleResponse(shop_id, response);
+					ImagesHandler._handleResponse(shop_code, response);
 				}
 			});
 		},
 
-		deleteImage: function( shop_id, image, url ) {
-			ImagesHandler._delete(shop_id, [{
+		deleteImage: function( shop_code, image, url ) {
+			ImagesHandler._delete(shop_code, [{
 				image: image,
 				url: url
 			}]);
 		},
 
-		deleteImages: function( shop_id )
+		deleteImages: function( shop_code )
 		{
 			var images = [];
 
@@ -84,14 +84,14 @@ $product = Controller_Main::getCurrentProduct();
 			});
 
 			if(images.length) {
-				ImagesHandler._delete(shop_id, images);
+				ImagesHandler._delete(shop_code, images);
 			}
 
 		},
 
-		_delete: function( shop_id, images ) {
+		_delete: function( shop_code, images ) {
 
-			ImagesHandler.delete_shop_id = shop_id;
+			ImagesHandler.delete_shop_code = shop_code;
 			ImagesHandler.delete_images = images;
 
 			let html = '';
@@ -113,10 +113,10 @@ $product = Controller_Main::getCurrentProduct();
 			}
 
 			$.ajax({
-				url: '?id=<?=$product->getId()?>&page=images&action=delete&shop_id='+ImagesHandler.delete_shop_id+'&images='+images.join(','),
+				url: '?id=<?=$product->getId()?>&page=images&action=delete&shop_code='+ImagesHandler.delete_shop_code+'&images='+images.join(','),
 				dataType: "json",
 				success: function( response ) {
-					ImagesHandler._handleResponse(ImagesHandler.delete_shop_id, response);
+					ImagesHandler._handleResponse(ImagesHandler.delete_shop_code, response);
 				}
 			});
 			$('#delete_image_confirm').modal('hide');
@@ -124,9 +124,9 @@ $product = Controller_Main::getCurrentProduct();
 		},
 
 
-		upload: function( shop_id ) {
+		upload: function( shop_code ) {
 			JetAjaxForm.submitMultiUpload(
-				'upload_form_'+shop_id,
+				'upload_form_'+shop_code,
 				'images',
 			);
 		}
@@ -134,9 +134,9 @@ $product = Controller_Main::getCurrentProduct();
 
 	$(document).ready(function () {
 		<?php foreach(Shops::getList() as $shop):
-		$shop_id = $shop->getId();
+		$shop_code = $shop->getCode();
 		 ?>
-		ImagesHandler.initSort('<?=$shop_id?>');
+		ImagesHandler.initSort('<?=$shop_code?>');
 		<?php endforeach; ?>
 	})
 </script>
@@ -154,16 +154,16 @@ $product = Controller_Main::getCurrentProduct();
 		<?=$this->getRaw('tabs')?>
 
 	<?php foreach(Shops::getList() as $shop):
-		$shop_id = $shop->getId();
+		$shop_code = $shop->getCode();
 
-		$shop_data = $product->getShopData($shop_id);
-		$this->setVar('shop_id', $shop_id);
+		$shop_data = $product->getShopData($shop_code);
+		$this->setVar('shop_code', $shop_code);
 	?>
 		<?=$shop_data->renderShopDataBlock_start()?>
 
 
 		<div style="background-color: #f0f0f0;border-radius: 5px;margin: 10px;padding: 10px;">
-			<div class="images_area" id="images_<?=$shop_id?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
+			<div class="images_area" id="images_<?=$shop_code?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
 				<?php
 				require 'images/list.phtml';
 				?>
@@ -173,15 +173,15 @@ $product = Controller_Main::getCurrentProduct();
 		<table style="width: 100%">
 			<tr>
 				<td>
-					<form id="upload_form_<?=$shop_id?>" action="?id=<?=$product->getId()?>&page=images&action=upload&shop_id=<?=$shop_id?>">
+					<form id="upload_form_<?=$shop_code?>" action="?id=<?=$product->getId()?>&page=images&action=upload&shop_code=<?=$shop_code?>">
 						<div class="btn btn-light btn-upload">
 							<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images' )?></span>
-							<input type="file" multiple id="upload_files_<?=$shop_id?>" name="images[]" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_id?>');">
+							<input type="file" multiple id="upload_files_<?=$shop_code?>" name="images[]" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_code?>');">
 						</div>
 					</form>
 				</td>
 				<td align="right" style="padding: 10px">
-					<?=UI::button_delete(Tr::_('Delete selected images'))->setOnclick("ImagesHandler.deleteImages('$shop_id');")?>
+					<?=UI::button_delete(Tr::_('Delete selected images'))->setOnclick("ImagesHandler.deleteImages('$shop_code');")?>
 				</td>
 			</tr>
 		</table>

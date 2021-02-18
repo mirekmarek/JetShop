@@ -1,0 +1,89 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+
+$cash_desk = CashDesk::get();
+
+if(
+	$cash_desk->isDeliveryAddressDisabled() ||
+	!$cash_desk->getBillingAddressHasBeenSet()
+) {
+	return;
+}
+
+if($cash_desk->getDeliveryAddressHasBeenSet()) {
+	require 'delivery_address/has_been_set.phtml';
+
+	return;
+}
+
+if(!$cash_desk->getDifferentDeliveryAddressHasBeenSet()) {
+	require 'delivery_address/different_or_same.phtml';
+
+	return;
+}
+
+
+
+$form = $cash_desk->getDeliveryAddressForm();
+
+
+$cash_desk->setDeliveryAddressEditable( true );
+
+foreach($form->getFields() as $field) {
+	if($field->getValue() && !$field->getLastErrorCode()) {
+		$field->input()->addCustomCssClass('is-valid');
+	}
+}
+?>
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<?=$form->start()?>
+
+		<h2 class="card-title"><?=Tr::_('Delivery address')?></h2>
+
+
+		<?php
+		if( Customer::getCurrentCustomer() ) {
+			require 'delivery_address/select_address.phtml';
+		}
+		?>
+
+
+
+		<?php if ($cash_desk->isCompanyOrder()): ?>
+			<div id="field_<?=$form->field('company_name')->getId()?>">
+				<?=$form->field('company_name')?>
+			</div>
+		<?php endif; ?>
+
+		<div id="field_<?=$form->field('first_name')->getId()?>">
+			<?=$form->field('first_name')?>
+		</div>
+		<div id="field_<?=$form->field('surname')->getId()?>">
+			<?=$form->field('surname')?>
+		</div>
+
+		<div id="field_<?=$form->field('address_street_no')->getId()?>">
+			<?=$form->field('address_street_no')?>
+		</div>
+		<div id="field_<?=$form->field('address_town')->getId()?>">
+			<?=$form->field('address_town')?>
+		</div>
+		<div id="field_<?=$form->field('address_zip')->getId()?>">
+			<?=$form->field('address_zip')?>
+		</div>
+
+		<div class="text-right">
+			<?=UI::button(Tr::_('Continue'))->setType('submit')->setClass('primary')?>
+		</div>
+
+		<?=$form->end()?>
+	</div>
+</div>
+
+

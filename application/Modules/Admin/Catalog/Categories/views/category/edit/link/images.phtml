@@ -17,8 +17,8 @@ unset($image_classes[Category_ShopData::IMG_MAIN]);
 echo $this->render('lj_start');
 
 foreach(Shops::getList() as $shop):
-	$shop_id = $shop->getId();
+	$shop_code = $shop->getCode();
 
-	echo $category->getShopData( $shop_id )->renderImageWidgets( $image_classes );
+	echo $category->getShopData( $shop_code )->renderImageWidgets( $image_classes );
 endforeach;
 echo $this->render('lj_end');

@@ -18,7 +18,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 		max_len: 100,
 		is_id: true
 	)]
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -32,14 +32,14 @@ abstract class Core_Fulltext_Index extends DataModel {
 	)]
 	protected string $words = '';
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ) : void
+	public function setShopCode( string $shop_code ) : void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 	public function getObjectId() : int
@@ -89,7 +89,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 	 */
 	protected function _collectWords( array $texts, $word_class_name, callable $index_word_setup) : array
 	{
-		$words = Fulltext_Dictionary::collectWords( $this->shop_id, $texts );
+		$words = Fulltext_Dictionary::collectWords( $this->shop_code, $texts );
 		$this->words = implode(' ', $words);
 
 		$result = [];
@@ -98,7 +98,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 			 * @var Fulltext_Index_Word $w
 			 */
 			$w = new $word_class_name();
-			$w->setShopId( $this->shop_id );
+			$w->setShopCode( $this->shop_code );
 			$w->setObjectId( $this->object_id );
 			$w->setWord( $word );
 
@@ -132,14 +132,14 @@ abstract class Core_Fulltext_Index extends DataModel {
 
 
 	/**
-	 * @param bool|string $shop_id
+	 * @param bool|string $shop_code
 	 * @param string $search_string
 	 * @param string $sql_query_where
 	 *
 	 * @return mixed
 	 */
 	public static function searchObjectIds(
-		bool|string $shop_id,
+		bool|string $shop_code,
 		string $search_string,
 		string $sql_query_where
 	) : mixed {
@@ -160,8 +160,8 @@ abstract class Core_Fulltext_Index extends DataModel {
 			$sql_query_where = " AND ($sql_query_where)";
 		}
 
-		if($shop_id) {
-			$sql_query_where .= " AND shop_id='".addslashes($shop_id)."'";
+		if($shop_code) {
+			$sql_query_where .= " AND shop_code='".addslashes($shop_code)."'";
 		}
 
 		$sql_query = [];

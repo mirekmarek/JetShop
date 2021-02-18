@@ -23,4 +23,10 @@ return [
 	'Delay business days - optimistic:' => '',
 	'Delay business days - pessimistic:' => '',
 	'Delivery Deadlines administration' => '',
+	'Internal name' => '',
+	'View delivery deadlines' => '',
+	'Add new delivery deadline' => '',
+	'Update delivery deadline' => '',
+	'Delete delivery deadline' => '',
+	'Catalog delivery deadlines management' => '',
 ];

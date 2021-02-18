@@ -31,9 +31,9 @@ $payment_method = $this->getRaw( 'payment_method' );
 
 		<?php if(!$payment_method->getIsNew()): ?>
 			<?php foreach(Shops::getList() as $shop):
-				$shop_id= $shop->getId();
+				$shop_code= $shop->getCode();
 
-				$shop_data = $payment_method->getShopData( $shop_id );
+				$shop_data = $payment_method->getShopData( $shop_code );
 				?>
 				<?=$shop_data->renderImageWidgets( Payment_Method_ShopData::getImageClasses() )?>
 			<?php endforeach; ?>

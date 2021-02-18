@@ -9,10 +9,12 @@ use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Name;
+use Jet\DataModel_Related_MtoN_Iterator;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\DataModel_Related_1toN;
 use Jet\DataModel_Related_1toN_Iterator;
+use Jet\Form_Field_MultiSelect;
 use Jet\Form_Field_Select;
 use Jet\Tr;
 
@@ -101,6 +103,29 @@ abstract class Core_Payment_Method extends DataModel
 	)]
 	protected $shop_data = null;
 
+
+	/**
+	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Delivery_Method[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Payment_Method_DeliveryMethods::class,
+		form_field_creator_method_name: 'createDeliveryMethodInputField',
+	)]
+	protected $delivery_methods = null;
+
+
+	/**
+	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Services_Service[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Payment_Method_Services::class,
+		form_field_creator_method_name: 'createServicesInputField',
+	)]
+	protected $services = null;
+
+
 	/**
 	 * @var ?Form
 	 */
@@ -110,6 +135,8 @@ abstract class Core_Payment_Method extends DataModel
 	 * @var ?Form
 	 */
 	protected ?Form $_form_add = null;
+
+	protected static ?array $scope = null;
 
 	/**
 	 * @return string
@@ -137,14 +164,14 @@ abstract class Core_Payment_Method extends DataModel
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Payment_Method_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 		}
 	}
@@ -168,7 +195,7 @@ abstract class Core_Payment_Method extends DataModel
 	 */
 	public function catchEditForm() : bool
 	{
-		return $this->catchForm( $this->getEditForm() );
+		return $this->getEditForm()->catch();
 	}
 
 	/**
@@ -210,7 +237,7 @@ abstract class Core_Payment_Method extends DataModel
 	 */
 	public function catchAddForm() : bool
 	{
-		return $this->catchForm( $this->getAddForm() );
+		return $this->getAddForm()->catch();
 	}
 
 	/**
@@ -251,6 +278,35 @@ abstract class Core_Payment_Method extends DataModel
 
 
 	/**
+	 * @param string $kind
+	 */
+	public function setKindCode( string $kind ): void
+	{
+		$this->kind = $kind;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getKindCode(): string
+	{
+		return $this->kind;
+	}
+
+	public function getKind() : ?Payment_Kind
+	{
+		return Payment_Kind::get( $this->kind );
+	}
+
+	public function getKindTitle() : string
+	{
+		$kind = $this->getKind();
+		return $kind ? $kind->getTitle() : '';
+	}
+
+
+
+	/**
 	 * @param string $value
 	 */
 	public function setInternalDescription( string $value ) : void
@@ -282,13 +338,13 @@ abstract class Core_Payment_Method extends DataModel
 		return $this->internal_name;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Payment_Method_ShopData|null
+	public function getShopData( string|null $shop_code=null ) : Payment_Method_ShopData|null
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public function getEditURL() : string
@@ -304,6 +360,158 @@ abstract class Core_Payment_Method extends DataModel
 		$module = Application_Modules::moduleInstance( Sticker::getManageModuleName() );
 
 		return $module->getPaymentMethodEditURL( $code );
+	}
+
+	public static function getScope() : array
+	{
+		if(static::$scope===null) {
+			$list = Payment_Method::getList();
+
+			static::$scope = [];
+
+			foreach($list as $item) {
+				static::$scope[$item->getCode()] = $item->getInternalName();
+			}
+		}
+
+		return static::$scope;
+	}
+
+
+
+
+	public function setDeliveryMethods( array $codes ) : void
+	{
+		$methods = [];
+
+		foreach( $codes as $code ) {
+
+			$class = Delivery_Method::get( $code );
+
+			if( !$class ) {
+				continue;
+			}
+
+			$methods[] = $class;
+		}
+		$this->delivery_methods->setItems( $methods );
+
+	}
+
+	public function getDeliveryMethodsCodes() : array
+	{
+		$codes = [];
+
+		foreach($this->getDeliveryMethods() as $method) {
+			$codes[] = $method->getCode();
+		}
+
+		return $codes;
+	}
+
+	/**
+	 *
+	 * @return Delivery_Method[]
+	 */
+	public function getDeliveryMethods() : iterable
+	{
+		return $this->delivery_methods;
+	}
+
+	public function createDeliveryMethodInputField() : Form_Field_MultiSelect
+	{
+		$input = new Form_Field_MultiSelect('delivery_methods', 'Delivery methods:', $this->getDeliveryMethodsCodes(), true );
+
+		$input->setErrorMessages([
+			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select delivery method',
+			Form_Field_MultiSelect::ERROR_CODE_EMPTY => 'Please select delivery method'
+		]);
+
+		$input->setSelectOptions(Delivery_Method::getScope());
+
+		$input->setCatcher( function($value) {
+			$this->setDeliveryMethods( $value );
+		} );
+
+		return $input;
+	}
+
+
+
+
+
+
+
+
+	public function setServices( array $codes ) : void
+	{
+		$services = [];
+
+		foreach( $codes as $code ) {
+
+			$class = Services_Service::get( $code );
+
+			if( !$class ) {
+				continue;
+			}
+
+			$services[] = $class;
+		}
+		$this->services->setItems( $services );
+
+	}
+
+	public function getServicesCodes() : array
+	{
+		$codes = [];
+
+		foreach($this->getServices() as $service) {
+			$codes[] = $service->getCode();
+		}
+
+		return $codes;
+	}
+
+	/**
+	 *
+	 * @return Services_Service[]
+	 */
+	public function getServices() : iterable
+	{
+		return $this->services;
+	}
+
+	public function createServicesInputField() : Form_Field_MultiSelect
+	{
+		$input = new Form_Field_MultiSelect('services', 'Services:', $this->getServicesCodes() );
+
+		$input->setErrorMessages([
+			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select service',
+		]);
+
+		$input->setSelectOptions( Services_Service::getScope( Services_Kind::KIND_PAYMENT ) );
+
+		$input->setCatcher( function($value) {
+			$this->setServices( $value );
+		} );
+
+		return $input;
+	}
+
+	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
+	{
+		$shd = $this->getShopData($cash_desk->getShopCode());
+
+		$item = new Order_Item();
+		$item->setType( Order_Item::ITEM_TYPE_PAYMENT );
+		$item->setQuantity( 1 );
+		$item->setTitle( $shd->getTitle() );
+		$item->setCode( $this->getCode() );
+		$item->setPricePerItem( $shd->getDefaultPrice() );
+		$item->setVatRate( $shd->getVatRate() );
+		$item->setDescription( $shd->getDescriptionShort() );
+
+		return $item;
 	}
 
 }

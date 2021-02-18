@@ -46,11 +46,11 @@ $form->setDefaultLabelWidth([
 	}
 
 	foreach(Shops::getList() as $shop):
-		$shop_id= $shop->getId();
-		$shop_data = $property->getShopData( $shop_id );
+		$shop_code= $shop->getCode();
+		$shop_data = $property->getShopData( $shop_code );
 
-		$form->field('/shop_data/'.$shop_id.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_id.'/url_param')->getId()."', '".$shop_id."')");
-		$form->field('/shop_data/'.$shop_id.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_id."')");
+		$form->field('/shop_data/'.$shop_code.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_code.'/url_param')->getId()."', '".$shop_code."')");
+		$form->field('/shop_data/'.$shop_code.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_code."')");
 
 		echo $shop_data->renderShopDataBlock_start();
 
@@ -58,28 +58,28 @@ $form->setDefaultLabelWidth([
 		<fieldset>
 			<legend class="sub"><?=Tr::_('Main data')?></legend>
 			<?php
-			echo $form->field('/shop_data/'.$shop_id.'/is_active');
-			echo $form->field('/shop_data/'.$shop_id.'/label');
-			echo $form->field('/shop_data/'.$shop_id.'/description');
+			echo $form->field('/shop_data/'.$shop_code.'/is_active');
+			echo $form->field('/shop_data/'.$shop_code.'/label');
+			echo $form->field('/shop_data/'.$shop_code.'/description');
 
-			if($form->fieldExists('/shop_data/'.$shop_id.'/bool_yes_description')) {
-				echo $form->field('/shop_data/'.$shop_id.'/bool_yes_description');
+			if($form->fieldExists('/shop_data/'.$shop_code.'/bool_yes_description')) {
+				echo $form->field('/shop_data/'.$shop_code.'/bool_yes_description');
 			}
 
-			echo $form->field('/shop_data/'.$shop_id.'/url_param');
-			echo $form->field('/shop_data/'.$shop_id.'/units');
+			echo $form->field('/shop_data/'.$shop_code.'/url_param');
+			echo $form->field('/shop_data/'.$shop_code.'/units');
 			?>
 		</fieldset>
 
 		<fieldset>
 			<legend class="sub"><?=Tr::_('SEO')?></legend>
 			<?php
-			echo $form->field('/shop_data/'.$shop_id.'/seo_h1');
-			echo $form->field('/shop_data/'.$shop_id.'/seo_h1_strategy');
-			echo $form->field('/shop_data/'.$shop_id.'/seo_title');
-			echo $form->field('/shop_data/'.$shop_id.'/seo_title_strategy');
-			echo $form->field('/shop_data/'.$shop_id.'/seo_description');
-			echo $form->field('/shop_data/'.$shop_id.'/seo_description_strategy');
+			echo $form->field('/shop_data/'.$shop_code.'/seo_h1');
+			echo $form->field('/shop_data/'.$shop_code.'/seo_h1_strategy');
+			echo $form->field('/shop_data/'.$shop_code.'/seo_title');
+			echo $form->field('/shop_data/'.$shop_code.'/seo_title_strategy');
+			echo $form->field('/shop_data/'.$shop_code.'/seo_description');
+			echo $form->field('/shop_data/'.$shop_code.'/seo_description_strategy');
 			?>
 		</fieldset>
 		<?php

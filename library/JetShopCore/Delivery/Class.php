@@ -75,27 +75,6 @@ abstract class Core_Delivery_Class extends DataModel
 	protected string $internal_description = '';
 
 	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 255,
-		form_field_type: 'Select',
-		form_field_is_required: true,
-		form_field_label: 'Kind:',
-		form_field_get_select_options_callback: [
-			Delivery_Kind::class,
-			'getScope'
-		],
-		form_field_error_messages: [
-			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select kind',
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select kind'
-		]
-	)]
-	protected string $kind = '';
-
-	/**
 	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Delivery_Class_Methods[]
 	 */
 	#[DataModel_Definition(
@@ -169,7 +148,7 @@ abstract class Core_Delivery_Class extends DataModel
 	 */
 	public function catchEditForm() : bool
 	{
-		return $this->catchForm( $this->getEditForm() );
+		return $this->getEditForm()->catch();
 	}
 
 	/**
@@ -212,7 +191,7 @@ abstract class Core_Delivery_Class extends DataModel
 	 */
 	public function catchAddForm() : bool
 	{
-		return $this->catchForm( $this->getAddForm() );
+		return $this->getAddForm()->catch();
 	}
 
 	/**
@@ -284,21 +263,51 @@ abstract class Core_Delivery_Class extends DataModel
 		return $module->getDeliveryClassEditURL( $code );
 	}
 
-	/**
-	 * @param string $value
-	 */
-	public function setKind( string $value ) : void
-	{
-		$this->kind = $value;
-	}
 
 	/**
-	 * @return string
+	 * @return Delivery_Kind[]
 	 */
-	public function getKind() : string
+	public function getKinds() : iterable
 	{
-		return $this->kind;
+		$kinds = [];
+		foreach($this->getDeliveryMethods() as $method) {
+			$kind = $method->getKind();
+
+			$kinds[$kind->getCode()] = $kind;
+		}
+
+		return $kinds;
 	}
+
+	public function hasKind( string $kind ) : bool
+	{
+		return isset($this->getKinds()[$kind]);
+	}
+
+	public function isPersonalTakeOverOnly() : bool
+	{
+		foreach( $this->getKinds() as $code=>$kind ) {
+			if($code!=Delivery_Kind::KIND_PERSONAL_TAKEOVER) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public function isEDelivery() : bool
+	{
+		foreach( $this->getKinds() as $code=>$kind ) {
+			if($code!=Delivery_Kind::KIND_E_DELIVERY) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
+
 
 	public static function getScope() : array
 	{
@@ -307,8 +316,8 @@ abstract class Core_Delivery_Class extends DataModel
 
 			static::$scope = [];
 
-			foreach($list as $kind) {
-				static::$scope[$kind->getCode()] = $kind->getInternalName();
+			foreach($list as $item) {
+				static::$scope[$item->getCode()] = $item->getInternalName();
 			}
 		}
 

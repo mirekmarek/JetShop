@@ -102,17 +102,17 @@ abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN imple
 
 	public function getArrayKeyValue() : string|int|null
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 	
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ) : void
+	public function setShopCode( string $shop_code ) : void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 	public function getStencilId() : int

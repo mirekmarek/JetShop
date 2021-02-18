@@ -18,7 +18,7 @@ abstract class Core_Fulltext_Index_Word extends DataModel {
 		is_id: true,
 		is_key: true
 	)]
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -35,14 +35,14 @@ abstract class Core_Fulltext_Index_Word extends DataModel {
 	)]
 	protected string $word = '';
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ) : void
+	public function setShopCode( string $shop_code ) : void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 	public function getObjectId() : int

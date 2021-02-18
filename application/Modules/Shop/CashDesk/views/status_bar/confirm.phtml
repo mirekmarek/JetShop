@@ -1,0 +1,9 @@
+<?php
+use Jet\Tr;
+use JetShop\ShoppingCart;
+?>
+<a class="btn btn-info" href="<?= ShoppingCart::getCartPageURL()?>"><?= Tr::_('Shopping cart'); ?></a>
+<a class="btn btn-info" onclick="CashDesk.delivery.back();return false;"><?= Tr::_('Delivery'); ?></a>
+<a class="btn btn-info" onclick="CashDesk.payment.back();return false;"><?= Tr::_('Payment'); ?></a>
+<a class="btn btn-info" onclick="CashDesk.customer.registration.back();return false;"><?= Tr::_('Registration'); ?></a>
+<div class="btn btn-primary"><?= Tr::_('Confirmation'); ?></div>

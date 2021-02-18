@@ -106,8 +106,29 @@ abstract class Core_Delivery_Method extends DataModel
 		data_model_class: Delivery_Method_Classes::class,
 		form_field_creator_method_name: 'createClassInputField',
 	)]
-
 	protected $delivery_classes = null;
+
+	/**
+	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Payment_Method[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Delivery_Method_PaymentMethods::class,
+		form_field_creator_method_name: 'createPaymentMethodInputField',
+	)]
+	protected $payment_methods = null;
+
+
+	/**
+	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Services_Service[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Delivery_Method_Services::class,
+		form_field_creator_method_name: 'createServicesInputField',
+	)]
+	protected $services = null;
+
 
 	/**
 	 * @var Delivery_Method_ShopData[]|DataModel_Related_1toN|DataModel_Related_1toN_Iterator|null
@@ -156,15 +177,15 @@ abstract class Core_Delivery_Method extends DataModel
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Delivery_Method_ShopData();
 				$sh->setDeliveryMethodCode($this->code);
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 		}
 	}
@@ -207,7 +228,7 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function catchEditForm() : bool
 	{
-		return $this->catchForm( $this->getEditForm() );
+		return $this->getEditForm()->catch();
 	}
 
 	/**
@@ -249,7 +270,7 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function catchAddForm() : bool
 	{
-		return $this->catchForm( $this->getAddForm() );
+		return $this->getAddForm()->catch();
 	}
 
 	/**
@@ -271,6 +292,20 @@ abstract class Core_Delivery_Method extends DataModel
 		return static::fetchInstances( $where );
 	}
 
+	public static function getScope() : array
+	{
+		if(static::$scope===null) {
+			$list = Delivery_Method::getList();
+
+			static::$scope = [];
+
+			foreach($list as $item) {
+				static::$scope[$item->getCode()] = $item->getInternalName();
+			}
+		}
+
+		return static::$scope;
+	}
 
 	/**
 	 * @param string $value
@@ -288,20 +323,32 @@ abstract class Core_Delivery_Method extends DataModel
 		return $this->code;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getKind(): string
-	{
-		return $this->kind;
-	}
 
 	/**
 	 * @param string $kind
 	 */
-	public function setKind( string $kind ): void
+	public function setKindCode( string $kind ): void
 	{
 		$this->kind = $kind;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getKindCode(): string
+	{
+		return $this->kind;
+	}
+
+	public function getKind() : ?Delivery_Kind
+	{
+		return Delivery_Kind::get( $this->kind );
+	}
+
+	public function getKindTitle() : string
+	{
+		$kind = $this->getKind();
+		return $kind ? $kind->getTitle() : '';
 	}
 
 
@@ -337,13 +384,13 @@ abstract class Core_Delivery_Method extends DataModel
 		return $this->internal_name;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Delivery_Method_ShopData|null
+	public function getShopData( string|null $shop_code=null ) : Delivery_Method_ShopData|null
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public function getEditURL() : string
@@ -406,7 +453,7 @@ abstract class Core_Delivery_Method extends DataModel
 		return $this->delivery_classes;
 	}
 
-	public function isPersonalTakeOver() : bool
+	public function isPersonalTakeover() : bool
 	{
 		return $this->kind == Delivery_Kind::KIND_PERSONAL_TAKEOVER;
 	}
@@ -417,13 +464,13 @@ abstract class Core_Delivery_Method extends DataModel
 	}
 
 
-	public function getPersonalTakeOverPlace( string $shop_id, string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
+	public function getPersonalTakeoverPlace( string $shop_code, string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
 	{
-		if(!$this->isPersonalTakeOver()) {
+		if(!$this->isPersonalTakeover()) {
 			return null;
 		}
 
-		$place = Delivery_PersonalTakeover_Place::getPlace( $shop_id, $this->code, $place_code );
+		$place = Delivery_PersonalTakeover_Place::getPlace( $shop_code, $this->code, $place_code );
 
 		if(!$place) {
 			return null;
@@ -436,24 +483,151 @@ abstract class Core_Delivery_Method extends DataModel
 		return $place;
 	}
 
-	public function hasPersonalTakeOverPlace( string $shop_id, string $place_code, $only_active=true ) : bool
+	public function hasPersonalTakeoverPlace( string $shop_code, string $place_code, $only_active=true ) : bool
 	{
-		return (bool)$this->getPersonalTakeOverPlace( $shop_id, $place_code, $only_active );
+		return (bool)$this->getPersonalTakeoverPlace( $shop_code, $place_code, $only_active );
 	}
 
-	public static function getScope() : array
+
+
+
+
+
+
+
+
+
+	public function setPaymentMethods( array $codes ) : void
 	{
-		if(static::$scope===null) {
-			$list = Delivery_Method::getList();
+		$methods = [];
 
-			static::$scope = [];
+		foreach( $codes as $code ) {
 
-			foreach($list as $kind) {
-				static::$scope[$kind->getCode()] = $kind->getInternalName();
+			$class = Payment_Method::get( $code );
+
+			if( !$class ) {
+				continue;
 			}
+
+			$methods[] = $class;
+		}
+		$this->payment_methods->setItems( $methods );
+
+	}
+
+	public function getPaymentMethodsCodes() : array
+	{
+		$codes = [];
+
+		foreach($this->getPaymentMethods() as $method) {
+			$codes[] = $method->getCode();
 		}
 
-		return static::$scope;
+		return $codes;
 	}
 
+	/**
+	 *
+	 * @return Payment_Method[]
+	 */
+	public function getPaymentMethods() : iterable
+	{
+		return $this->payment_methods;
+	}
+
+	public function createPaymentMethodInputField() : Form_Field_MultiSelect
+	{
+		$input = new Form_Field_MultiSelect('payment_methods', 'Payment methods:', $this->getPaymentMethodsCodes(), true );
+
+		$input->setErrorMessages([
+			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select payment method',
+			Form_Field_MultiSelect::ERROR_CODE_EMPTY => 'Please select payment method'
+		]);
+
+		$input->setSelectOptions(Payment_Method::getScope());
+
+		$input->setCatcher( function($value) {
+			$this->setPaymentMethods( $value );
+		} );
+
+		return $input;
+	}
+
+
+
+
+
+
+
+
+	public function setServices( array $codes ) : void
+	{
+		$services = [];
+
+		foreach( $codes as $code ) {
+
+			$class = Services_Service::get( $code );
+
+			if( !$class ) {
+				continue;
+			}
+
+			$services[] = $class;
+		}
+		$this->services->setItems( $services );
+
+	}
+
+	public function getServicesCodes() : array
+	{
+		$codes = [];
+
+		foreach($this->getServices() as $service) {
+			$codes[] = $service->getCode();
+		}
+
+		return $codes;
+	}
+
+	/**
+	 *
+	 * @return Services_Service[]
+	 */
+	public function getServices() : iterable
+	{
+		return $this->services;
+	}
+
+	public function createServicesInputField() : Form_Field_MultiSelect
+	{
+		$input = new Form_Field_MultiSelect('services', 'Services:', $this->getServicesCodes() );
+
+		$input->setErrorMessages([
+			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select service',
+		]);
+
+		$input->setSelectOptions( Services_Service::getScope( Services_Kind::KIND_DELIVERY ) );
+
+		$input->setCatcher( function($value) {
+			$this->setServices( $value );
+		} );
+
+		return $input;
+	}
+
+	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
+	{
+		$shd = $this->getShopData($cash_desk->getShopCode());
+
+		$item = new Order_Item();
+		$item->setType( Order_Item::ITEM_TYPE_DELIVERY );
+		$item->setQuantity( 1 );
+		$item->setTitle( $shd->getTitle() );
+		$item->setCode( $this->getCode() );
+		$item->setPricePerItem( $shd->getDefaultPrice() );
+		$item->setVatRate( $shd->getVatRate() );
+		$item->setDescription( $shd->getDescriptionShort() );
+
+		return $item;
+	}
 }

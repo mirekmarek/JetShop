@@ -25,5 +25,15 @@ return [
 			'output_position' => '__main__',
 			'output_position_order' => 1,
 		],
+		[
+			'module_name' => 'Shop.Homepage',
+			'controller_name' => 'Main',
+			'controller_action' => 'default',
+			'parameters' => [
+			],
+			'is_cacheable' => false,
+			'output_position' => '__main__',
+			'output_position_order' => 2,
+		],
 	],
 ];

@@ -392,7 +392,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$GET = Http_Request::GET();
 
 		AJAX::response([
-			'url_path_part' => Shops::generateURLPathPart( $GET->getString('generate_url_path_part'), '', 0, $GET->getString('shop_id') )
+			'url_path_part' => Shops::generateURLPathPart( $GET->getString('generate_url_path_part'), '', 0, $GET->getString('shop_code') )
 		]);
 
 		Application::end();

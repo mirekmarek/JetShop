@@ -6,29 +6,25 @@
  * @author Miroslav Marek <mirek.marek.2m@gmail.com>
  */
 
-namespace JetApplication\Installer;
+namespace JetShop\Installer;
 
 use Exception;
 use Jet\DataModel_Helper;
 
-use JetApplication\Auth_Administrator_Role;
-use JetApplication\Auth_Administrator_Role_Privilege;
-use JetApplication\Auth_Administrator_User;
-use JetApplication\Auth_Administrator_User_Roles;
+use JetShop\Auth_Administrator_Role;
+use JetShop\Auth_Administrator_Role_Privilege;
+use JetShop\Auth_Administrator_User;
+use JetShop\Auth_Administrator_User_Roles;
 
-use JetApplication\Auth_Visitor_Role;
-use JetApplication\Auth_Visitor_Role_Privilege;
-use JetApplication\Auth_Visitor_User;
-use JetApplication\Auth_Visitor_User_Roles;
+use JetShop\Auth_RESTClient_Role;
+use JetShop\Auth_RESTClient_Role_Privilege;
+use JetShop\Auth_RESTClient_User;
+use JetShop\Auth_RESTClient_User_Roles;
 
-use JetApplication\Auth_RESTClient_Role;
-use JetApplication\Auth_RESTClient_Role_Privilege;
-use JetApplication\Auth_RESTClient_User;
-use JetApplication\Auth_RESTClient_User_Roles;
-
-use JetApplication\Logger_Admin_Event;
-use JetApplication\Logger_Web_Event;
-use JetApplication\Logger_REST_Event;
+use JetShop\Customer;
+use JetShop\Logger_Admin_Event;
+use JetShop\Logger_Shop_Event;
+use JetShop\Logger_REST_Event;
 
 /**
  *
@@ -59,15 +55,14 @@ class Installer_Step_CreateDB_Controller extends Installer_Step_Controller
 
 
 		$classes = [
+			//TODO: to zdaleka neni vse ..
+
 			Auth_Administrator_Role::class,
 			Auth_Administrator_Role_Privilege::class,
 			Auth_Administrator_User::class,
 			Auth_Administrator_User_Roles::class,
 
-			Auth_Visitor_Role::class,
-			Auth_Visitor_Role_Privilege::class,
-			Auth_Visitor_User::class,
-			Auth_Visitor_User_Roles::class,
+			Customer::class,
 
 			Auth_RESTClient_Role::class,
 			Auth_RESTClient_Role_Privilege::class,
@@ -75,7 +70,7 @@ class Installer_Step_CreateDB_Controller extends Installer_Step_Controller
 			Auth_RESTClient_User_Roles::class,
 
 			Logger_Admin_Event::class,
-			Logger_Web_Event::class,
+			Logger_Shop_Event::class,
 			Logger_REST_Event::class,
 		];
 

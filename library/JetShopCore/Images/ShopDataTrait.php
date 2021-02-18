@@ -48,7 +48,7 @@ trait Core_Images_ShopDataTrait {
 		}
 
 		if(!isset($this->image_upload_forms[$image_class])) {
-			$this->image_upload_forms[$image_class] = Images::generateUploadForm($this->getImageEntity(), $image_class, $this->shop_id);
+			$this->image_upload_forms[$image_class] = Images::generateUploadForm($this->getImageEntity(), $image_class, $this->shop_code);
 		}
 
 		return $this->image_upload_forms[$image_class];
@@ -72,7 +72,7 @@ trait Core_Images_ShopDataTrait {
 			$form,
 			$this->getImageEntity(),
 			$image_class,
-			$this->getShopId(),
+			$this->getShopCode(),
 			$this->getImageObjectId(),
 			$this->{$property_name}
 		);
@@ -87,7 +87,7 @@ trait Core_Images_ShopDataTrait {
 
 		if(!isset($this->image_delete_forms[$image_class])) {
 
-			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->shop_id, []);
+			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->shop_code, []);
 
 			$this->image_delete_forms[$image_class] = $form;
 		}
@@ -148,7 +148,7 @@ trait Core_Images_ShopDataTrait {
 
 		$view->setVar('image_class', $image_class);
 		$view->setVar('title', $title );
-		$view->setVar('shop_id', $this->getShopId() );
+		$view->setVar('shop_code', $this->getShopCode() );
 		$view->setVar('shop_data', $this );
 
 		return $view->render('imageWidget');
@@ -159,7 +159,7 @@ trait Core_Images_ShopDataTrait {
 		$view = static::renderImageWidget_view();
 
 		$view->setVar('image_class', $image_class);
-		$view->setVar('shop_id', $this->getShopId() );
+		$view->setVar('shop_code', $this->getShopCode() );
 		$view->setVar('shop_data', $this );
 
 		return $view->render('imageWidget/image');
@@ -193,10 +193,10 @@ trait Core_Images_ShopDataTrait {
 
 		if($ok!==null) {
 			$entity = $this->getImageEntity();
-			$shop_id = $this->getShopId();
+			$shop_code = $this->getShopCode();
 
 			AJAX::formResponse($ok, [
-				'image_'.$entity.'_'.$image_class.'_'.$shop_id => $this->renderImageWidget_Image( $image_class ),
+				'image_'.$entity.'_'.$image_class.'_'.$shop_code => $this->renderImageWidget_Image( $image_class ),
 				'system-messages-area' => '',
 			]);
 		}

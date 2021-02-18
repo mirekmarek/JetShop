@@ -1,0 +1,30 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+$cash_desk = CashDesk::get();
+?>
+
+
+<br/>
+<div class="card">
+	<div class="card-body bg-light">
+		<div>
+			<?=Tr::_('Your e-mail: <strong>%MAIL%</strong>', ['MAIL'=>$cash_desk->getEmailAddress()])?>
+			<br>
+			<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.email.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		</div>
+		<br>
+
+		<div>
+			<?=Tr::_('Password has been set')?>
+			<br>
+			<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.registration.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		</div>
+		<br>
+
+	</div>
+</div>

@@ -35,33 +35,33 @@ class Core_Shops extends Config {
 		return static::$current_shop;
 	}
 
-	public static function getCurrentId() : string
+	public static function getCurrentCode() : string
 	{
-		return static::$current_shop->getId();
+		return static::$current_shop->getCode();
 	}
 
-	public static function setCurrent( string $shop_id, bool $init_system=false ) : void
+	public static function setCurrent( string $shop_code, bool $init_system=false ) : void
 	{
-		static::$current_shop = static::get($shop_id);
+		static::$current_shop = static::get($shop_code);
 
 		if($init_system) {
 			//TODO:
 		}
 	}
 
-	public static function exists( string $shop_id ) : bool
+	public static function exists( string $shop_code ) : bool
 	{
-		return isset(static::getList()[$shop_id]);
+		return isset(static::getList()[$shop_code]);
 	}
 	
-	public static function get( ?string $shop_id ) : Shops_Shop|null
+	public static function get( ?string $shop_code ) : Shops_Shop|null
 	{
 
-		if(!$shop_id) {
+		if(!$shop_code) {
 			return static::$current_shop;
 		}
 
-		return static::getList()[$shop_id];
+		return static::getList()[$shop_code];
 	}
 
 	/**
@@ -74,14 +74,24 @@ class Core_Shops extends Config {
 
 			$i = new Shops();
 			foreach( $i->shops as $shop ) {
-				static::$_list[$shop->getId()] = $shop;
+				static::$_list[$shop->getCode()] = $shop;
 			}
 
 			//TODO: seradit - napr. vychozi v administraci
 		}
 
 		return static::$_list;
+	}
 
+	public static function getScope() : array
+	{
+		$res = [];
+
+		foreach(Shops::getList() as $shop) {
+			$res[$shop->getCode()] = $shop->getName();
+		}
+
+		return $res;
 	}
 	
 	public function _shopConfigCreator( array $data ) : Shops_Shop
@@ -96,7 +106,7 @@ class Core_Shops extends Config {
 				$shop->getSiteId()==$site->getId() &&
 				$shop->getLocale()->toString()==$locale->toString()
 			) {
-				static::setCurrent( $shop->getId() );
+				static::setCurrent( $shop->getCode() );
 
 				return $shop;
 			}
@@ -118,13 +128,13 @@ class Core_Shops extends Config {
 				$shop = $_sh;
 			}
 
-			if($_sh->getId()==$id) {
+			if($_sh->getCode()==$id) {
 				$shop = $_sh;
 				break;
 			}
 		}
 
-		static::setCurrent( $shop->getId() );
+		static::setCurrent( $shop->getCode() );
 
 		return null;
 	}
@@ -164,14 +174,14 @@ class Core_Shops extends Config {
 
 
 
-	public static function getName( string|null $shop_id=null ) : string
+	public static function getName( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getName();
+		return static::get($shop_code)->getName();
 	}
 
-	public static function getURL( string|null $shop_id=null, array $path_fragments = [], array $GET_params = [] ) : string
+	public static function getURL( string|null $shop_code=null, array $path_fragments = [], array $GET_params = [] ) : string
 	{
-		$shop = static::get( $shop_id );
+		$shop = static::get( $shop_code );
 
 		$site = Mvc_Site::get( $shop->getSiteId() );
 
@@ -180,84 +190,84 @@ class Core_Shops extends Config {
 
 
 
-	public static function getCurrencyCode( string|null $shop_id=null ) : string
+	public static function getCurrencyCode( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencyCode();
+		return static::get($shop_code)->getCurrencyCode();
 	}
 
-	public static function getCurrencySymbolLeft( string|null $shop_id=null ) : string
+	public static function getCurrencySymbolLeft( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencySymbolLeft();
+		return static::get($shop_code)->getCurrencySymbolLeft();
 	}
 
-	public static function getCurrencySymbolRight( string|null $shop_id=null ) : string
+	public static function getCurrencySymbolRight( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencySymbolRight();
+		return static::get($shop_code)->getCurrencySymbolRight();
 	}
 
-	public static function getCurrencyWithVatTxt( string|null $shop_id=null ) : string
+	public static function getCurrencyWithVatTxt( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencyWithVatTxt();
+		return static::get($shop_code)->getCurrencyWithVatTxt();
 	}
 
-	public static function getCurrencyWoVatTxt( string|null $shop_id=null ) : string
+	public static function getCurrencyWoVatTxt( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencyWoVatTxt();
+		return static::get($shop_code)->getCurrencyWoVatTxt();
 	}
 
-	public static function getCurrencyDecimalSeparator( string|null $shop_id=null ) : string
+	public static function getCurrencyDecimalSeparator( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencyDecimalSeparator();
+		return static::get($shop_code)->getCurrencyDecimalSeparator();
 	}
 
-	public static function getCurrencyThousandsSeparator( string|null $shop_id=null ) : string
+	public static function getCurrencyThousandsSeparator( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getCurrencyThousandsSeparator();
+		return static::get($shop_code)->getCurrencyThousandsSeparator();
 	}
 
-	public static function getCurrencyDecimalPlaces( string|null $shop_id=null ) : int
+	public static function getCurrencyDecimalPlaces( string|null $shop_code=null ) : int
 	{
-		return static::get($shop_id)->getCurrencyDecimalPlaces();
+		return static::get($shop_code)->getCurrencyDecimalPlaces();
 	}
 
-	public static function getVatRates( string|null $shop_id=null ) : array
+	public static function getVatRates( string|null $shop_code=null ) : array
 	{
-		return static::get($shop_id)->getVatRates();
+		return static::get($shop_code)->getVatRates();
 	}
 
-	public static function getVatRatesScope( string|null $shop_id=null ) : array
+	public static function getVatRatesScope( string|null $shop_code=null ) : array
 	{
-		return static::get($shop_id)->getVatRatesScope();
+		return static::get($shop_code)->getVatRatesScope();
 	}
 
-	public static function getDefaultVatRate( string|null $shop_id=null ) : int
+	public static function getDefaultVatRate( string|null $shop_code=null ) : int
 	{
-		return static::get($shop_id)->getDefaultVatRate();
+		return static::get($shop_code)->getDefaultVatRate();
 	}
 
-	public static function getPhoneValidationRegExp( string|null $shop_id=null ) : string
+	public static function getPhoneValidationRegExp( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getPhoneValidationRegExp();
+		return static::get($shop_code)->getPhoneValidationRegExp();
 	}
 
-	public static function getPhonePrefix( string|null $shop_id=null ) : string
+	public static function getPhonePrefix( string|null $shop_code=null ) : string
 	{
-		return static::get($shop_id)->getPhonePrefix();
+		return static::get($shop_code)->getPhonePrefix();
 	}
 
-	public static function getRoundPrecision_WithoutVAT( string|null $shop_id=null ) : int
+	public static function getRoundPrecision_WithoutVAT( string|null $shop_code=null ) : int
 	{
-		return static::get($shop_id)->getRoundPrecision_WithoutVAT();
+		return static::get($shop_code)->getRoundPrecision_WithoutVAT();
 	}
 
-	public static function getRoundPrecision_VAT( string|null $shop_id=null ) : int
+	public static function getRoundPrecision_VAT( string|null $shop_code=null ) : int
 	{
-		return static::get($shop_id)->getRoundPrecision_VAT();
+		return static::get($shop_code)->getRoundPrecision_VAT();
 	}
 
-	public static function getRoundPrecision_WithVAT( string|null $shop_id=null ) : int|bool
+	public static function getRoundPrecision_WithVAT( string|null $shop_code=null ) : int|bool
 	{
-		return static::get($shop_id)->getRoundPrecision_WithVAT();
+		return static::get($shop_code)->getRoundPrecision_WithVAT();
 	}
 
 	public static function getViewDir() : string
@@ -268,7 +278,7 @@ class Core_Shops extends Config {
 
 
 
-	public static function generateURLPathPart( string $name, string $type='', int|null $id=null, string|null $shop_id=null ) : string
+	public static function generateURLPathPart( string $name, string $type='', int|null $id=null, string|null $shop_code=null ) : string
 	{
 
 		//TODO: jinam ...

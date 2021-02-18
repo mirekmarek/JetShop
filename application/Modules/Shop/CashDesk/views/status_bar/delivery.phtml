@@ -1,0 +1,9 @@
+<?php
+use Jet\Tr;
+use JetShop\ShoppingCart;
+?>
+<a class="btn btn-info" href="<?= ShoppingCart::getCartPageURL()?>"><?= Tr::_('Shopping cart'); ?></a>
+<div class="btn btn-primary"><?= Tr::_('Delivery'); ?></div>
+<div class="btn btn-light text-muted"><?= Tr::_('Payment'); ?></div>
+<div class="btn btn-light text-muted"><?= Tr::_('Registration'); ?></div>
+<div class="btn btn-light text-muted"><?= Tr::_('Confirmation'); ?></div>

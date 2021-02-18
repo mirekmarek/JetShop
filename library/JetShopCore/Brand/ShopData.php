@@ -226,7 +226,7 @@ abstract class Core_Brand_ShopData extends DataModel_Related_1toN implements Ima
 
 	public function generateUrlParam() : void
 	{
-		$this->url_param = Shops::generateURLPathPart( $this->name, '', 0, $this->shop_id );
+		$this->url_param = Shops::generateURLPathPart( $this->name, '', 0, $this->shop_code );
 	}
 
 	public function getImageEntity() : string

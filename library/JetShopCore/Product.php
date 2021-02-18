@@ -298,18 +298,18 @@ abstract class Core_Product extends DataModel {
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Product_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 
 			/** @noinspection PhpParamsInspection */
-			$this->shop_data[$shop_id]->setParents( $this );
+			$this->shop_data[$shop_code]->setParents( $this );
 		}
 
 		foreach( $this->categories as $c ) {
@@ -560,26 +560,26 @@ abstract class Core_Product extends DataModel {
 		$this->variant_sync_prices = $variant_sync_prices;
 	}
 
-	public function getInternalName( string|null $shop_id=null ) : string
+	public function getInternalName( string|null $shop_code=null ) : string
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		$name = $this->getShopData( $shop_id )->getName();
+		$name = $this->getShopData( $shop_code )->getName();
 
 		$name .= ' ('.$this->internal_code.')';
 
 		return $name;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Product_ShopData
+	public function getShopData( string|null $shop_code=null ) : Product_ShopData
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public function getEditURL() : string
@@ -620,40 +620,40 @@ abstract class Core_Product extends DataModel {
 
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$vat_rate = new Form_Field_Select('/shop_data/'.$shop_id.'/vat_rate', 'VAT rate:', $this->getShopData($shop_id)->getVatRate() );
+			$vat_rate = new Form_Field_Select('/shop_data/'.$shop_code.'/vat_rate', 'VAT rate:', $this->getShopData($shop_code)->getVatRate() );
 
 			$vat_rate->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid date'
 			]);
-			$vat_rate->setCatcher(function( $value ) use ($shop_id) {
-				$this->getShopData($shop_id)->setVatRate( $value );
+			$vat_rate->setCatcher(function( $value ) use ($shop_code) {
+				$this->getShopData($shop_code)->setVatRate( $value );
 			});
-			$vat_rate->setSelectOptions( Shops::getVatRatesScope( $shop_id ) );
+			$vat_rate->setSelectOptions( Shops::getVatRatesScope( $shop_code ) );
 
 
-			$form->removeField('/shop_data/'.$shop_id.'/vat_rate');
+			$form->removeField('/shop_data/'.$shop_code.'/vat_rate');
 			$form->addField( $vat_rate );
 
 
-			$form->field('/shop_data/'.$shop_id.'/date_available')->setErrorMessages([
+			$form->field('/shop_data/'.$shop_code.'/date_available')->setErrorMessages([
 				Form_Field_Date::ERROR_CODE_INVALID_FORMAT => 'Invalid date'
 			]);
 
-			$form->field('/shop_data/'.$shop_id.'/action_price_valid_from')->setErrorMessages([
+			$form->field('/shop_data/'.$shop_code.'/action_price_valid_from')->setErrorMessages([
 				Form_Field_Date::ERROR_CODE_INVALID_FORMAT => 'Invalid date'
 			]);
 
-			$form->field('/shop_data/'.$shop_id.'/action_price_valid_till')->setErrorMessages([
+			$form->field('/shop_data/'.$shop_code.'/action_price_valid_till')->setErrorMessages([
 				Form_Field_Date::ERROR_CODE_INVALID_FORMAT => 'Invalid date'
 			]);
 
-			$form->field('/shop_data/'.$shop_id.'/delivery_class_code')->setErrorMessages([
+			$form->field('/shop_data/'.$shop_code.'/delivery_class_code')->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value'
 			]);
 
-			$form->field('/shop_data/'.$shop_id.'/delivery_term_code')->setErrorMessages([
+			$form->field('/shop_data/'.$shop_code.'/delivery_term_code')->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value'
 			]);
 		}
@@ -671,9 +671,9 @@ abstract class Core_Product extends DataModel {
 			$this->_setupForm( $this->_add_form );
 
 			foreach(Shops::getList() as $shop) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$this->_add_form->field( '/shop_data/' . $shop_id . '/vat_rate' )->setDefaultValue( Shops::getDefaultVatRate( $shop_id ) );
+				$this->_add_form->field( '/shop_data/' . $shop_code . '/vat_rate' )->setDefaultValue( Shops::getDefaultVatRate( $shop_code ) );
 			}
 		}
 
@@ -721,11 +721,11 @@ abstract class Core_Product extends DataModel {
 				$this->_edit_form->field('supplier_id')->setIsReadonly(true);
 
 				foreach(Shops::getList() as $shop) {
-					$shop_id = $shop->getId();
+					$shop_code = $shop->getCode();
 
-					$this->_edit_form->field('/shop_data/'.$shop_id.'/vat_rate')->setIsReadonly(true);
-					$this->_edit_form->field('/shop_data/'.$shop_id.'/delivery_term_id')->setIsReadonly(true);
-					$this->_edit_form->field('/shop_data/'.$shop_id.'/date_available')->setIsReadonly(true);
+					$this->_edit_form->field('/shop_data/'.$shop_code.'/vat_rate')->setIsReadonly(true);
+					$this->_edit_form->field('/shop_data/'.$shop_code.'/delivery_term_id')->setIsReadonly(true);
+					$this->_edit_form->field('/shop_data/'.$shop_code.'/date_available')->setIsReadonly(true);
 
 				}
 
@@ -734,26 +734,26 @@ abstract class Core_Product extends DataModel {
 				if($master) {
 					if($master->variant_sync_prices) {
 						foreach(Shops::getList() as $shop) {
-							$shop_id = $shop->getId();
+							$shop_code = $shop->getCode();
 
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/standard_price')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/action_price')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/action_price_valid_from')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/action_price_valid_till')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/standard_price')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/action_price')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/action_price_valid_from')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/action_price_valid_till')->setIsReadonly(true);
 						}
 					}
 					if($master->variant_sync_descriptions) {
 						foreach(Shops::getList() as $shop) {
-							$shop_id = $shop->getId();
+							$shop_code = $shop->getCode();
 
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/name')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/description')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/short_description')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/seo_title')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/seo_h1')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/seo_description')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/seo_keywords')->setIsReadonly(true);
-							$this->_edit_form->field('/shop_data/'.$shop_id.'/internal_fulltext_keywords')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/name')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/description')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/short_description')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/seo_title')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/seo_h1')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/seo_description')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/seo_keywords')->setIsReadonly(true);
+							$this->_edit_form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')->setIsReadonly(true);
 						}
 					}
 
@@ -1119,9 +1119,9 @@ abstract class Core_Product extends DataModel {
 
 				if(!$keep) {
 					foreach( Shops::getList() as $shop ) {
-						$shop_id = $shop->getId();
+						$shop_code = $shop->getCode();
 
-						if( $field->getName()=='/shop_data/'.$shop_id.'/variant_name' ) {
+						if( $field->getName()=='/shop_data/'.$shop_code.'/variant_name' ) {
 							$keep = true;
 							break;
 						}
@@ -1164,12 +1164,12 @@ abstract class Core_Product extends DataModel {
 			foreach($this->getVariants() as $variant) {
 
 				foreach(Shops::getList() as $shop) {
-					$shop_id = $shop->getId();
+					$shop_code = $shop->getCode();
 
-					$variant_name = new Form_Field_Input('/'.$variant->getId().'/'.$shop_id.'/variant_name', 'Variant name', $variant->getShopData($shop_id)->getVariantName() );
+					$variant_name = new Form_Field_Input('/'.$variant->getId().'/'.$shop_code.'/variant_name', 'Variant name', $variant->getShopData($shop_code)->getVariantName() );
 
-					$variant_name->setCatcher( function( $value ) use ($variant, $shop_id) {
-						$variant->getShopData(  $shop_id )->setVariantName( $value );
+					$variant_name->setCatcher( function( $value ) use ($variant, $shop_code) {
+						$variant->getShopData(  $shop_code )->setVariantName( $value );
 					} );
 
 					$fields[] = $variant_name;
@@ -1303,9 +1303,9 @@ abstract class Core_Product extends DataModel {
 		$variant->supplier_id = $this->supplier_id;
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$v_sd = $variant->getShopData( $shop_id );
+			$v_sd = $variant->getShopData( $shop_code );
 			$sd = $this->getShopData();
 
 			$v_sd->setDateAvailable( $sd->getDateAvailable() );
@@ -1340,9 +1340,9 @@ abstract class Core_Product extends DataModel {
 
 		if($this->variant_sync_descriptions || $variant->getIsNew() ) {
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$v_sd = $variant->getShopData( $shop_id );
+				$v_sd = $variant->getShopData( $shop_code );
 				$sd = $this->getShopData();
 
 				$v_sd->setName( $sd->getName() );
@@ -1392,10 +1392,10 @@ abstract class Core_Product extends DataModel {
 
 		if($this->variant_sync_prices || $variant->getIsNew() ) {
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$v_sd = $variant->getShopData( $shop_id );
-				$t_sd = $this->getShopData( $shop_id );
+				$v_sd = $variant->getShopData( $shop_code );
+				$t_sd = $this->getShopData( $shop_code );
 
 				$v_sd->setStandardPrice( $t_sd->getStandardPrice() );
 				$v_sd->setActionPrice( $t_sd->getActionPrice() );
@@ -1414,10 +1414,10 @@ abstract class Core_Product extends DataModel {
 	public function afterAdd() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$this->shop_data[$shop_id]->generateURLPathPart();
-			$this->shop_data[$shop_id]->save();
+			$this->shop_data[$shop_code]->generateURLPathPart();
+			$this->shop_data[$shop_code]->save();
 		}
 
 		/** @noinspection PhpParamsInspection */
@@ -1484,40 +1484,40 @@ abstract class Core_Product extends DataModel {
 
 
 
-	public function getName( string|null $shop_id=null ) : string
+	public function getName( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getName();
+		return $this->getShopData($shop_code)->getName();
 	}
 
-	public function getDescription( string|null $shop_id=null ): string
+	public function getDescription( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getDescription();
+		return $this->getShopData($shop_code)->getDescription();
 	}
 
-	public function getSeoH1( string|null $shop_id=null ): string
+	public function getSeoH1( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getSeoH1();
+		return $this->getShopData($shop_code)->getSeoH1();
 	}
 
-	public function getSeoTitle( string|null $shop_id=null ): string
+	public function getSeoTitle( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getSeoTitle();
+		return $this->getShopData($shop_code)->getSeoTitle();
 	}
 
-	public function getSeoDescription( string|null $shop_id=null ): string
+	public function getSeoDescription( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getSeoDescription();
+		return $this->getShopData($shop_code)->getSeoDescription();
 	}
 
-	public function getShortDescription( string|null $shop_id=null ): string
+	public function getShortDescription( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getShortDescription();
+		return $this->getShopData($shop_code)->getShortDescription();
 	}
 
-	public function getFullName( string|null $shop_id=null ): string
+	public function getFullName( string|null $shop_code=null ): string
 	{
-		$name = $this->getName( $shop_id );
-		$variant_name = $this->getVariantName( $shop_id );
+		$name = $this->getName( $shop_code );
+		$variant_name = $this->getVariantName( $shop_code );
 		
 		if($variant_name) {
 			return $name.' '.$variant_name;
@@ -1526,119 +1526,119 @@ abstract class Core_Product extends DataModel {
 		return $name;
 	}
 
-	public function getVariantName( string|null $shop_id=null ): string
+	public function getVariantName( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getVariantName();
+		return $this->getShopData($shop_code)->getVariantName();
 	}
 
-	public function getVatRate( string|null $shop_id=null ): float
+	public function getVatRate( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getVatRate();
+		return $this->getShopData($shop_code)->getVatRate();
 	}
 
-	public function getStandardPrice( string|null $shop_id=null ): float
+	public function getStandardPrice( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getStandardPrice();
+		return $this->getShopData($shop_code)->getStandardPrice();
 	}
 
-	public function getActionPrice( string|null $shop_id=null ): float
+	public function getActionPrice( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getActionPrice();
+		return $this->getShopData($shop_code)->getActionPrice();
 	}
 
-	public function getActionPriceValidFrom( string|null $shop_id=null ): ?Data_DateTime
+	public function getActionPriceValidFrom( string|null $shop_code=null ): ?Data_DateTime
 	{
-		return $this->getShopData($shop_id)->getActionPriceValidFrom();
+		return $this->getShopData($shop_code)->getActionPriceValidFrom();
 	}
 
-	public function getActionPriceValidTill( string|null $shop_id=null ): ?Data_DateTime
+	public function getActionPriceValidTill( string|null $shop_code=null ): ?Data_DateTime
 	{
-		return $this->getShopData($shop_id)->getActionPriceValidTill();
+		return $this->getShopData($shop_code)->getActionPriceValidTill();
 	}
 
-	public function getSalePrice( string|null $shop_id=null ): float
+	public function getSalePrice( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getSalePrice();
+		return $this->getShopData($shop_code)->getSalePrice();
 	}
 
-	public function getFinalPrice( string|null $shop_id=null ): float
+	public function getFinalPrice( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getFinalPrice();
+		return $this->getShopData($shop_code)->getFinalPrice();
 	}
 
-	public function getDiscountPercentage( string|null $shop_id=null ): float
+	public function getDiscountPercentage( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getDiscountPercentage();
+		return $this->getShopData($shop_code)->getDiscountPercentage();
 	}
 
-	public function isResetSaleAfterSoldOut( string|null $shop_id=null ): bool
+	public function isResetSaleAfterSoldOut( string|null $shop_code=null ): bool
 	{
-		return $this->getShopData($shop_id)->isResetSaleAfterSoldOut();
+		return $this->getShopData($shop_code)->isResetSaleAfterSoldOut();
 	}
 
-	public function isDeactivateProductAfterSoldOut( string|null $shop_id=null ): bool
+	public function isDeactivateProductAfterSoldOut( string|null $shop_code=null ): bool
 	{
-		return $this->getShopData($shop_id)->isDeactivateProductAfterSoldOut();
+		return $this->getShopData($shop_code)->isDeactivateProductAfterSoldOut();
 	}
 
-	public function getDeliveryTermCode( string|null $shop_id=null ): string
+	public function getDeliveryTermCode( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getDeliveryTermCode();
+		return $this->getShopData($shop_code)->getDeliveryTermCode();
 	}
 
-	public function getDeliveryClassCode( string|null $shop_id=null ): string
+	public function getDeliveryClassCode( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getDeliveryClassCode();
+		return $this->getShopData($shop_code)->getDeliveryClassCode();
 	}
 
-	public function getDeliveryClass( string|null $shop_id=null ) : ?Delivery_Class
+	public function getDeliveryClass( string|null $shop_code=null ) : ?Delivery_Class
 	{
-		return Delivery_Class::get( $this->getShopData($shop_id)->getDeliveryClassCode() );
+		return Delivery_Class::get( $this->getShopData($shop_code)->getDeliveryClassCode() );
 	}
 
-	public function getDateAvailable( string|null $shop_id=null ): ?Data_DateTime
+	public function getDateAvailable( string|null $shop_code=null ): ?Data_DateTime
 	{
-		return $this->getShopData($shop_id)->getDateAvailable();
+		return $this->getShopData($shop_code)->getDateAvailable();
 	}
 
-	public function getStockStatus( string|null $shop_id=null ): int
+	public function getStockStatus( string|null $shop_code=null ): int
 	{
-		return $this->getShopData($shop_id)->getStockStatus();
+		return $this->getShopData($shop_code)->getStockStatus();
 	}
 
-	public function getSeoKeywords( string|null $shop_id=null ): string
+	public function getSeoKeywords( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getSeoKeywords();
+		return $this->getShopData($shop_code)->getSeoKeywords();
 	}
 
-	public function getInternalFulltextKeywords( string|null $shop_id=null ): float
+	public function getInternalFulltextKeywords( string|null $shop_code=null ): float
 	{
-		return $this->getShopData($shop_id)->getInternalFulltextKeywords();
+		return $this->getShopData($shop_code)->getInternalFulltextKeywords();
 	}
 
-	public function getURLPathPart( string|null $shop_id=null ): string
+	public function getURLPathPart( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getURLPathPart();
+		return $this->getShopData($shop_code)->getURLPathPart();
 	}
 
-	public function getURL( string|null $shop_id=null ): string
+	public function getURL( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getURL();
+		return $this->getShopData($shop_code)->getURL();
 	}
 
-	public function getImage( int $i = 0, string|null $shop_id=null  ): string
+	public function getImage( int $i = 0, string|null $shop_code=null  ): string
 	{
-		return $this->getShopData($shop_id)->getImage( $i );
+		return $this->getShopData($shop_code)->getImage( $i );
 	}
 
-	public function getImageUrl( int $i = 0, string|null $shop_id=null  ): string
+	public function getImageUrl( int $i = 0, string|null $shop_code=null  ): string
 	{
-		return $this->getShopData($shop_id)->getImageUrl( $i );
+		return $this->getShopData($shop_code)->getImageUrl( $i );
 	}
 
-	public function getImageThumbnailUrl( int $max_w, int $max_h, int $i=0, string|null $shop_id=null  ) : string
+	public function getImageThumbnailUrl( int $max_w, int $max_h, int $i=0, string|null $shop_code=null  ) : string
 	{
-		return $this->getShopData($shop_id)->getImageThumbnailUrl( $max_w, $max_h, $i );
+		return $this->getShopData($shop_code)->getImageThumbnailUrl( $max_w, $max_h, $i );
 	}
 
 }

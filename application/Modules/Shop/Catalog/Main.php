@@ -23,7 +23,8 @@ class Main extends Application_Module
 	 */
 	public function getViewsDir(): string
 	{
-		return $this->_getViewsDir('catalog');
+		return parent::getViewsDir();
+		//return $this->_getViewsDir('catalog');
 	}
 
 }

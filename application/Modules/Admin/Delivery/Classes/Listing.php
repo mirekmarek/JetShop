@@ -29,7 +29,7 @@ class Listing extends Data_Listing {
 			'disallow_sort' => true
 		],
 		'code'         => ['title' => 'Code'],
-		'kind'            => ['title' => 'Kind'],
+		'kinds'            => ['title' => 'Kinds', 'disallow_sort' => true],
 		'internal_name'   => ['title' => 'Internal name'],
 		'delivery_methods' => [
 			'title' => 'Delivery methods',

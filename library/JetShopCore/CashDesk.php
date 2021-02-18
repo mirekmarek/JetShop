@@ -17,7 +17,11 @@ abstract class Core_CashDesk
 
 
 	use CashDesk_Delivery;
+	use CashDesk_Payment;
+	use CashDesk_Customer;
+	use CashDesk_Confirm;
 	use CashDesk_ProcessControl;
+	use CashDesk_Order;
 
 	protected static string $module_name = 'Shop.CashDesk';
 
@@ -26,7 +30,7 @@ abstract class Core_CashDesk
 	protected static ?CashDesk $cash_desk = null;
 
 
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	protected ?Session $session = null;
 
@@ -71,20 +75,20 @@ abstract class Core_CashDesk
 	public static function get() : CashDesk
 	{
 		if(!static::$cash_desk) {
-			static::$cash_desk = new CashDesk( Shops::getCurrentId() );
+			static::$cash_desk = new CashDesk( Shops::getCurrentCode() );
 		}
 
 		return static::$cash_desk;
 	}
 
-	public function __construct( string $shop_id )
+	public function __construct( string $shop_code )
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
 	protected function getSession() : Session
@@ -100,6 +104,5 @@ abstract class Core_CashDesk
 	{
 		return Application_Modules::moduleInstance( CashDesk::getModuleName() );
 	}
-
 
 }

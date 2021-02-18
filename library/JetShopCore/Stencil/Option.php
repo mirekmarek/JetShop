@@ -71,14 +71,14 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Stencil_Option_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 
 		}
@@ -146,13 +146,13 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 		return $this->priority;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Stencil_Option_ShopData
+	public function getShopData( string|null $shop_code=null ) : Stencil_Option_ShopData
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public function isFirst() : bool
@@ -223,24 +223,24 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 		return true;
 	}
 
-	public function getFilterLabel( string|null $shop_id=null ) : string
+	public function getFilterLabel( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getFilterLabel();
+		return $this->getShopData( $shop_code )->getFilterLabel();
 	}
 
-	public function getProductDetailLabel( string|null $shop_id=null ) : string
+	public function getProductDetailLabel( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getProductDetailLabel();
+		return $this->getShopData( $shop_code )->getProductDetailLabel();
 	}
 
-	public function getUrlParam( string|null $shop_id=null ) : string
+	public function getUrlParam( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getUrlParam();
+		return $this->getShopData( $shop_code )->getUrlParam();
 	}
 
-	public function getDescription( string|null $shop_id=null ) : string
+	public function getDescription( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData( $shop_id )->getDescription();
+		return $this->getShopData( $shop_code )->getDescription();
 	}
 
 

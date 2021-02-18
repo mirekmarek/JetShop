@@ -1,14 +1,14 @@
 var Images = {
 	delete_form_id: null,
 
-	uploadImage: function( form_id, entity, image_class, shop_id ) {
+	uploadImage: function( form_id, entity, image_class, shop_code ) {
 		JetAjaxForm.submit(form_id );
 	},
 
-	deleteImage: function(form_id, entity, image_class, shop_id) {
+	deleteImage: function(form_id, entity, image_class, shop_code) {
 		Images.delete_form_id = form_id;
 
-		var img_url = $('#image_'+entity+'_'+image_class+'_'+shop_id+'_image').data('url');
+		var img_url = $('#image_'+entity+'_'+image_class+'_'+shop_code+'_image').data('url');
 
 		$('#image_delete_confirm_thb').css('background-image', 'url(' + img_url + ')');
 

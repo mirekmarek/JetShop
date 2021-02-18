@@ -1,0 +1,56 @@
+<?php
+namespace JetShop;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+
+$cash_desk = CashDesk::get();
+
+$form = $cash_desk->getSetEMailForm();
+
+$form->tag()->addJsAction('onsubmit', 'CashDesk.customer.email.set();return false;');
+
+$form->setDefaultLabelWidth([
+		Form::LJ_SIZE_MEDIUM => '3'
+]);
+
+$form->setDefaultFieldWidth([
+	Form::LJ_SIZE_MEDIUM => '9'
+]);
+
+?>
+
+
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+
+
+		<h2 class="card-title"><?=Tr::_("Please tell us your e-mail or log-in using your Google or Facebook account.")?></h2>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 col-sm-0"></div>
+				<div class="col-md-8 col-sm-12">
+					<?=$form->start()?>
+					<?=$form->field('email')?>
+
+					<div class="text-right">
+						<?=UI::button('Continue')->setClass('primary')->setType('submit')?>
+					</div>
+					<?=$form->end()?>
+
+				</div>
+				<div class="col-md-2 col-sm-0"></div>
+			</div>
+		</div>
+		<br/>
+		<?php /*
+		<div class="sso">
+			<?= customer_SSO_Google::renderLoginButton('cash_desk.php') ?>
+			<?= customer_SSO_FB::renderLoginButton('cash_desk.php') ?>
+		</div>
+	    */ ?>
+
+</div>

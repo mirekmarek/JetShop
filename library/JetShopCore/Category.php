@@ -292,18 +292,18 @@ abstract class Core_Category extends DataModel {
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Category_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 
 			/** @noinspection PhpParamsInspection */
-			$this->shop_data[$shop_id]->setParents( $this );
+			$this->shop_data[$shop_code]->setParents( $this );
 		}
 	}
 
@@ -331,18 +331,18 @@ abstract class Core_Category extends DataModel {
 		Category::$tree = [];
 	}
 
-	public static function getTree( string|null $shop_id=null, string|null $sort_order=null, bool|null $only_active=false ) : Data_Tree
+	public static function getTree( string|null $shop_code=null, string|null $sort_order=null, bool|null $only_active=false ) : Data_Tree
 	{
 
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
 		if($sort_order===null) {
 			$sort_order = Category::getFilter_selectedSort();
 		}
 
-		$key = $shop_id.':'.($only_active?1:0).':'.$sort_order;
+		$key = $shop_code.':'.($only_active?1:0).':'.$sort_order;
 
 
 
@@ -354,7 +354,7 @@ abstract class Core_Category extends DataModel {
 			};
 
 			$where = [
-				'categories_shop_data.shop_id'=>$shop_id
+				'categories_shop_data.shop_code'=>$shop_code
 			];
 
 			if($only_active) {
@@ -394,9 +394,9 @@ abstract class Core_Category extends DataModel {
 	public static function actualizeTreeData() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$tree = Category::getTree( $shop_id, Category::SORT_PRIORITY );
+			$tree = Category::getTree( $shop_code, Category::SORT_PRIORITY );
 
 			foreach( $tree as $node ) {
 
@@ -461,9 +461,9 @@ abstract class Core_Category extends DataModel {
 
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$tree = Category::getTree( $shop_id, Category::SORT_PRIORITY, true );
+			$tree = Category::getTree( $shop_code, Category::SORT_PRIORITY, true );
 
 			foreach($tree as $node ) {
 
@@ -519,7 +519,7 @@ abstract class Core_Category extends DataModel {
 					[
 						'category_id' => $id,
 						'AND',
-						'shop_id' => $shop_id
+						'shop_code' => $shop_code
 					]
 				);
 
@@ -538,7 +538,7 @@ abstract class Core_Category extends DataModel {
 		return explode(',', $this->path );
 	}
 
-	public function _getPathName( bool $as_array=false, string|null $eshop_id=null, string $path_str_glue=' / ' ) : array|string
+	public function _getPathName( bool $as_array=false, string|null $eshop_code=null, string $path_str_glue=' / ' ) : array|string
 	{
 
 		$result = [];
@@ -550,7 +550,7 @@ abstract class Core_Category extends DataModel {
 				continue;
 			}
 
-			$result[$id] = $category->getShopData($eshop_id)->getName();
+			$result[$id] = $category->getShopData($eshop_code)->getName();
 		}
 
 		if($as_array) {
@@ -570,9 +570,9 @@ abstract class Core_Category extends DataModel {
 		$this->id = $id;
 	}
 
-	public function isVisible( string|null $shop_id=null ) : bool
+	public function isVisible( string|null $shop_code=null ) : bool
 	{
-		$shop_data = $this->getShopData( $shop_id );
+		$shop_data = $this->getShopData( $shop_code );
 
 		if(
 			!$shop_data->isActive() ||
@@ -584,9 +584,9 @@ abstract class Core_Category extends DataModel {
 		return true;
 	}
 
-	public function isActive( string|null $shop_id=null ) : bool
+	public function isActive( string|null $shop_code=null ) : bool
 	{
-		return $this->getShopData($shop_id)->isActive();
+		return $this->getShopData($shop_code)->isActive();
 	}
 
 
@@ -622,88 +622,88 @@ abstract class Core_Category extends DataModel {
 		return $this->_children;
 	}
 
-	public function getNestedVisibleProductsCount( string|null $shop_id=null ) : int
+	public function getNestedVisibleProductsCount( string|null $shop_code=null ) : int
 	{
-		return $this->getShopData($shop_id)->getNestedVisibleProductsCount();
+		return $this->getShopData($shop_code)->getNestedVisibleProductsCount();
 	}
 
-	public function getVisibleProductsCount( string|null $shop_id=null ) : int
+	public function getVisibleProductsCount( string|null $shop_code=null ) : int
 	{
-		return $this->getShopData($shop_id)->getVisibleProductsCount();
+		return $this->getShopData($shop_code)->getVisibleProductsCount();
 	}
 
-	public function getName( string|null $shop_id=null ) : string
+	public function getName( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getName();
+		return $this->getShopData($shop_code)->getName();
 	}
 
-	public function getSecondName( string|null $shop_id=null ) : string
+	public function getSecondName( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getSecondName();
+		return $this->getShopData($shop_code)->getSecondName();
 	}
 
-	public function getDescription( string|null $shop_id=null ) : string
+	public function getDescription( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getDescription();
+		return $this->getShopData($shop_code)->getDescription();
 	}
 
-	public function getSeoH1( string|null $shop_id=null ) : string
+	public function getSeoH1( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getSeoH1();
+		return $this->getShopData($shop_code)->getSeoH1();
 	}
 
-	public function getSeoTitle( string|null $shop_id=null ) : string
+	public function getSeoTitle( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getSeoTitle();
+		return $this->getShopData($shop_code)->getSeoTitle();
 	}
 
-	public function getSeoDescription( string|null $shop_id=null ) : string
+	public function getSeoDescription( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getSeoDescription();
+		return $this->getShopData($shop_code)->getSeoDescription();
 	}
 
-	public function getSeoKeywords( string|null $shop_id=null ) : string
+	public function getSeoKeywords( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getSeoKeywords();
+		return $this->getShopData($shop_code)->getSeoKeywords();
 	}
 
-	public function isSeoDisableCanonical( string|null $shop_id=null ) : bool
+	public function isSeoDisableCanonical( string|null $shop_code=null ) : bool
 	{
-		return $this->getShopData($shop_id)->isSeoDisableCanonical();
+		return $this->getShopData($shop_code)->isSeoDisableCanonical();
 	}
 
-	public function getURL( string|null $shop_id=null ) : string
+	public function getURL( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getURL();
+		return $this->getShopData($shop_code)->getURL();
 	}
 
-	public function getURLPathPart( string|null $shop_id=null ): string
+	public function getURLPathPart( string|null $shop_code=null ): string
 	{
-		return $this->getShopData($shop_id)->getURLPathPart();
+		return $this->getShopData($shop_code)->getURLPathPart();
 	}
 
 
-	public function getImageMainUrl( string|null $shop_id=null ) : string
+	public function getImageMainUrl( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImageMainUrl();
+		return $this->getShopData($shop_code)->getImageMainUrl();
 	}
 
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_id=null ) : string
+	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImageMainThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData($shop_code)->getImageMainThumbnailUrl( $max_w, $max_h );
 	}
 
-	public function getImagePictogramUrl( string|null $shop_id=null ) : string
+	public function getImagePictogramUrl( string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImagePictogramUrl();
+		return $this->getShopData($shop_code)->getImagePictogramUrl();
 	}
 
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_id=null ) : string
+	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
 	{
-		return $this->getShopData($shop_id)->getImagePictogramThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData($shop_code)->getImagePictogramThumbnailUrl( $max_w, $max_h );
 	}
 
-	public function getProductListing( string|null $shop_id=null, bool $use_singleton=true ) : ProductListing|null
+	public function getProductListing( string|null $shop_code=null, bool $use_singleton=true ) : ProductListing|null
 	{
 		if($use_singleton && $this->_product_listing ) {
 			return $this->_product_listing;
@@ -716,7 +716,7 @@ abstract class Core_Category extends DataModel {
 		 */
 		$category = $this;
 
-		$listing = new ProductListing( $shop_id );
+		$listing = new ProductListing( $shop_code );
 		$listing->setCategory( $category );
 		if($this->type==Category::CATEGORY_TYPE_VIRTUAL) {
 			$listing->initByTargetFilter( $this->target_filter );
@@ -724,7 +724,7 @@ abstract class Core_Category extends DataModel {
 			$listing->init();
 		}
 
-		$listing->prepare( $category->getShopData($shop_id)->getProductIds() );
+		$listing->prepare( $category->getShopData($shop_code)->getProductIds() );
 
 
 		if($use_singleton) {
@@ -864,13 +864,13 @@ abstract class Core_Category extends DataModel {
 		$this->priority = $priority;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Category_ShopData
+	public function getShopData( string|null $shop_code=null ) : Category_ShopData
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public static function getAllowedCreateTypes( Category $parent_category=null ) : array
@@ -931,9 +931,9 @@ abstract class Core_Category extends DataModel {
 		$form->removeField('target_category_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/seo_disable_canonical');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_disable_canonical');
 		}
 
 		return $form;
@@ -948,9 +948,9 @@ abstract class Core_Category extends DataModel {
 		$form->removeField('target_category_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/seo_disable_canonical');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_disable_canonical');
 		}
 
 		return $form;
@@ -974,16 +974,16 @@ abstract class Core_Category extends DataModel {
 		$form->removeField('parameter_inherited_category_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/seo_disable_canonical');
-			$form->removeField('/shop_data/'.$shop_id.'/description');
-			$form->removeField('/shop_data/'.$shop_id.'/seo_disable_canonical');
-			$form->removeField('/shop_data/'.$shop_id.'/seo_h1');
-			$form->removeField('/shop_data/'.$shop_id.'/seo_title');
-			$form->removeField('/shop_data/'.$shop_id.'/seo_description');
-			$form->removeField('/shop_data/'.$shop_id.'/seo_keywords');
-			$form->removeField('/shop_data/'.$shop_id.'/internal_fulltext_keywords');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_disable_canonical');
+			$form->removeField('/shop_data/'.$shop_code.'/description');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_disable_canonical');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_h1');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_title');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_description');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_keywords');
+			$form->removeField('/shop_data/'.$shop_code.'/internal_fulltext_keywords');
 		}
 
 
@@ -1027,9 +1027,9 @@ abstract class Core_Category extends DataModel {
 		$form->removeField('target_category_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/seo_disable_canonical');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_disable_canonical');
 		}
 
 		return $form;
@@ -1043,9 +1043,9 @@ abstract class Core_Category extends DataModel {
 		$form->removeField('target_category_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$form->removeField('/shop_data/'.$shop_id.'/seo_disable_canonical');
+			$form->removeField('/shop_data/'.$shop_code.'/seo_disable_canonical');
 		}
 
 		return $form;
@@ -1178,10 +1178,10 @@ abstract class Core_Category extends DataModel {
 	public function afterAdd() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$this->shop_data[$shop_id]->generateURLPathPart();
-			$this->shop_data[$shop_id]->save();
+			$this->shop_data[$shop_code]->generateURLPathPart();
+			$this->shop_data[$shop_code]->save();
 		}
 
 		Category::resetTree();
@@ -1236,9 +1236,9 @@ abstract class Core_Category extends DataModel {
 
 		$product_ids = [];
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$product_ids[$shop_id] = [];
+			$product_ids[$shop_code] = [];
 		}
 
 		foreach($products as $product) {
@@ -1247,23 +1247,23 @@ abstract class Core_Category extends DataModel {
 			}
 
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
 				if(
-					!$product->getShopData($shop_id)->isActive() ||
-					$product->getShopData($shop_id)->getFinalPrice()<=0
+					!$product->getShopData($shop_code)->isActive() ||
+					$product->getShopData($shop_code)->getFinalPrice()<=0
 				) {
 					continue;
 				}
 
-				$product_ids[$shop_id][] = $product->getId();
+				$product_ids[$shop_code][] = $product->getId();
 			}
 		}
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$this->getShopData($shop_id)->setProductIds( $product_ids[$shop_id], true );
+			$this->getShopData($shop_code)->setProductIds( $product_ids[$shop_code], true );
 		}
 	}
 
@@ -1272,9 +1272,9 @@ abstract class Core_Category extends DataModel {
 		$target_category = $this->getTargetCategory();
 		if(!$target_category) {
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$this->getShopData($shop_id)->setProductIds( [], true );
+				$this->getShopData($shop_code)->setProductIds( [], true );
 
 			}
 
@@ -1282,16 +1282,16 @@ abstract class Core_Category extends DataModel {
 		}
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$listing = new ProductListing( $shop_id );
+			$listing = new ProductListing( $shop_code );
 			$listing->setCategory( $target_category );
 			$listing->initByTargetFilter( $this->target_filter );
 
-			$listing->prepare( $target_category->getShopData($shop_id)->getProductIds() );
+			$listing->prepare( $target_category->getShopData($shop_code)->getProductIds() );
 
 			$ids = $listing->getFilteredProductIds();
-			$this->getShopData($shop_id)->setProductIds( $ids, true );
+			$this->getShopData($shop_code)->setProductIds( $ids, true );
 		}
 	}
 
@@ -1305,25 +1305,25 @@ abstract class Core_Category extends DataModel {
 		$target_category = $this->getTargetCategory();
 		if(!$target_category) {
 			foreach( Shops::getList() as $shop ) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 
-				$this->getShopData($shop_id)->setProductIds( [], true );
+				$this->getShopData($shop_code)->setProductIds( [], true );
 
 			}
 			return;
 		}
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$listing = new ProductListing( $shop_id );
+			$listing = new ProductListing( $shop_code );
 			$listing->setCategory( $target_category );
 			$listing->initByTargetFilter( $this->target_filter );
 
-			$listing->prepare( $target_category->getShopData($shop_id)->getProductIds() );
+			$listing->prepare( $target_category->getShopData($shop_code)->getProductIds() );
 
 			$ids = $listing->getFilteredProductIds();
-			$this->getShopData($shop_id)->setProductIds( $ids, true );
+			$this->getShopData($shop_code)->setProductIds( $ids, true );
 
 		}
 
@@ -1363,15 +1363,15 @@ abstract class Core_Category extends DataModel {
 
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			$listing = new ProductListing( $shop_id );
+			$listing = new ProductListing( $shop_code );
 			$listing->setCategory( $target );
 			$listing->initByTargetFilter( $this->target_filter );
 
 			$target_url = $listing->generateCategoryTargetUrl();
 
-			$this->getShopData($shop_id)->setURLPathPart( $target_url, true );
+			$this->getShopData($shop_code)->setURLPathPart( $target_url, true );
 
 		}
 
@@ -1697,7 +1697,7 @@ abstract class Core_Category extends DataModel {
 		Category::actualizeTreeData();
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
 
 			$data = Category::fetchData(
@@ -1707,7 +1707,7 @@ abstract class Core_Category extends DataModel {
 					'all_children' => 'categories_shop_data.all_children'
 				],
 				[
-					'categories_shop_data.shop_id'=>$shop_id,
+					'categories_shop_data.shop_code'=>$shop_code,
 					'AND',
 					'categories_shop_data.is_active' => true,
 				]
@@ -1760,7 +1760,7 @@ abstract class Core_Category extends DataModel {
 					[
 						'category_id' => $id,
 						'AND',
-						'shop_id' => $shop_id,
+						'shop_code' => $shop_code,
 					]
 				);
 

@@ -123,6 +123,8 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	protected ?Form $_form_add = null;
 
+	protected static ?array $scope = null;
+
 	/**
 	 * @return string
 	 */
@@ -149,14 +151,14 @@ abstract class Core_Services_Service extends DataModel
 	public function afterLoad() : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 
-			if(!isset($this->shop_data[$shop_id])) {
+			if(!isset($this->shop_data[$shop_code])) {
 
 				$sh = new Services_Service_ShopData();
-				$sh->setShopId($shop_id);
+				$sh->setShopCode($shop_code);
 
-				$this->shop_data[$shop_id] = $sh;
+				$this->shop_data[$shop_code] = $sh;
 			}
 		}
 	}
@@ -180,7 +182,7 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	public function catchEditForm() : bool
 	{
-		return $this->catchForm( $this->getEditForm() );
+		return $this->getEditForm()->catch();
 	}
 
 	/**
@@ -222,7 +224,7 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	public function catchAddForm() : bool
 	{
-		return $this->catchForm( $this->getAddForm() );
+		return $this->getAddForm()->catch();
 	}
 
 	/**
@@ -261,6 +263,33 @@ abstract class Core_Services_Service extends DataModel
 		return $this->code;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getKindCode(): string
+	{
+		return $this->kind;
+	}
+
+	/**
+	 * @param string $kind
+	 */
+	public function setKindCode( string $kind ): void
+	{
+		$this->kind = $kind;
+	}
+
+
+	public function getKind(): ?Services_Kind
+	{
+		return Services_Kind::get( $this->kind );
+	}
+
+	public function getKindTitle() : string
+	{
+		$kind = $this->getKind();
+		return $kind?$kind->getTitle() : '?';
+	}
 
 	/**
 	 * @param string $value
@@ -294,13 +323,13 @@ abstract class Core_Services_Service extends DataModel
 		return $this->internal_name;
 	}
 
-	public function getShopData( string|null $shop_id=null ) : Services_Service_ShopData|null
+	public function getShopData( string|null $shop_code=null ) : Services_Service_ShopData|null
 	{
-		if(!$shop_id) {
-			$shop_id = Shops::getCurrentId();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
 		}
 
-		return $this->shop_data[$shop_id];
+		return $this->shop_data[$shop_code];
 	}
 
 	public function getEditURL() : string
@@ -333,4 +362,24 @@ abstract class Core_Services_Service extends DataModel
 	{
 		return $this->group;
 	}
+
+	public static function getScope( string $kind ) : array
+	{
+		if(static::$scope===null) {
+			$list = Services_Service::getList();
+
+			static::$scope = [];
+
+			foreach(Services_Kind::getScope() as $kind=>$kind_title) {
+				static::$scope[$kind] = [];
+			}
+
+			foreach($list as $item) {
+				static::$scope[$item->getKindCode()][$item->getCode()] = $item->getInternalName();
+			}
+		}
+
+		return static::$scope[$kind];
+	}
+
 }

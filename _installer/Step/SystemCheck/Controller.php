@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek.2m@gmail.com>
  */
 
-namespace JetApplication\Installer;
+namespace JetShop\Installer;
 
 require 'CompatibilityTester.php';
 

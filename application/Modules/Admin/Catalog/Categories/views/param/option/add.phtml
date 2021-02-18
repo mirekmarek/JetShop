@@ -34,33 +34,33 @@ echo $form->field('is_active');
 
 
 foreach(Shops::getList() as $shop):
-	$shop_id= $shop->getId();
+	$shop_code= $shop->getCode();
 
-	$shop_data = $new_option->getShopData( $shop_id );
+	$shop_data = $new_option->getShopData( $shop_code );
 
-	$form->field('/shop_data/'.$shop_id.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_id.'/url_param')->getId()."', '".$shop_id."');");
-	$form->field('/shop_data/'.$shop_id.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_id.'/product_detail_label')->getId()."').val(this.value);");
-	$form->field('/shop_data/'.$shop_id.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_id."')");
+	$form->field('/shop_data/'.$shop_code.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_code.'/url_param')->getId()."', '".$shop_code."');");
+	$form->field('/shop_data/'.$shop_code.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_code.'/product_detail_label')->getId()."').val(this.value);");
+	$form->field('/shop_data/'.$shop_code.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_code."')");
 	?>
 	<?=$shop_data->renderShopDataBlock_start()?>
 		<fieldset>
 			<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-			<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/filter_label')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/product_detail_label')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/url_param')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/description')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/filter_label')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/product_detail_label')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/url_param')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/description')?>
 		</fieldset>
 
 		<fieldset>
 			<legend class="sub"><?=Tr::_('SEO')?></legend>
-			<?=$form->field('/shop_data/'.$shop_id.'/seo_h1')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/seo_title')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/seo_description')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/alternative_category_description')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/alternative_category_description_strategy')?>
-			<?=$form->field('/shop_data/'.$shop_id.'/internal_fulltext_keywords')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/seo_h1')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/seo_title')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/seo_description')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/alternative_category_description')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/alternative_category_description_strategy')?>
+			<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
 		</fieldset>
 
 

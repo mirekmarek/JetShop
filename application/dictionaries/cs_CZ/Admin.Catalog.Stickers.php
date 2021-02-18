@@ -10,4 +10,9 @@ return [
 	'Images' => '',
 	'SEO' => '',
 	'Please upload image' => '',
+	'View stickers' => '',
+	'Add new sticker' => '',
+	'Update sticker' => '',
+	'Delete sticker' => '',
+	'Catalog stickers management' => '',
 ];

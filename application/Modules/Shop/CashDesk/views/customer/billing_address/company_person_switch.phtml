@@ -1,0 +1,26 @@
+<?php
+namespace JetShop;
+
+
+use Jet\Tr;
+use Jet\UI;
+
+$cash_desk = CashDesk::get();
+?>
+
+
+<div class="row" style="padding: 10px;">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		<?=Tr::_('I an shopping as a')?>
+
+		<?php if ($cash_desk->isCompanyOrder()): ?>
+			<?=UI::button(Tr::_('Private person'))->setOnclick('CashDesk.customer.billingAddress.setIsPerson();')->setClass('link')?>
+			<?=UI::button(Tr::_('Company'))->setOnclick(' ')->setClass('primary')?>
+		<?php else: ?>
+			<?=UI::button(Tr::_('Private person'))->setOnclick(' ')->setClass('primary')?>
+			<?=UI::button(Tr::_('Company'))->setOnclick('CashDesk.customer.billingAddress.setIsCompany();')->setClass('link')?>
+		<?php endif; ?>
+
+	</div>
+</div>

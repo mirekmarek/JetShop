@@ -581,10 +581,18 @@ class Wizard extends ModuleWizard {
 					continue;
 				}
 
-				$label = $model->getModelName().' / '.$model->getClassName();
+				if(str_contains($model->getClassName(), 'Core_')) {
+					continue;
+				}
+
+				//$label = $model->getModelName().' / '.$model->getClassName();
+
+				$label = $model->getClassName();
 
 				$data_model_list[$model->getClassName()] = $label;
 			}
+
+			asort($data_model_list);
 
 			$data_model_field = new Form_Field_Select('data_model', 'Select DataModel:', $this->data_model_class_name );
 			$data_model_field->setCatcher( function($value) {

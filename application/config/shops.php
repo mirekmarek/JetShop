@@ -2,7 +2,7 @@
 return [
 	'shops' => [
 		[
-			'id'      => 'cz',
+			'code'    => 'cz',
 			'site_id' => 'shop',
 			'locale'  => 'cs_CZ',
 			'name'    => 'CZ shop',
@@ -37,7 +37,7 @@ return [
 		],
 
 		[
-			'id'      => 'en',
+			'code'    => 'en',
 			'site_id' => 'shop',
 			'locale'  => 'en_US',
 			'name'    => 'EN shop',

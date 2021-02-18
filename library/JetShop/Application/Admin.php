@@ -53,7 +53,7 @@ class Application_Admin
 		//TOOD: vyber vychoziho shopu ...
 		//TODO: serazeni shopu ...
 
-		Shops::setCurrent( Shops::getDefault()->getId() );
+		Shops::setCurrent( Shops::getDefault()->getCode() );
 
 	}
 

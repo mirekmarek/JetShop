@@ -14,7 +14,7 @@ abstract class Core_ProductListing
 
 	protected string $base_URL_path_part = '';
 
-	protected ?string $shop_id = null;
+	protected ?string $shop_code = null;
 
 	protected ?array $initial_product_ids = null;
 
@@ -36,12 +36,12 @@ abstract class Core_ProductListing
 
 	protected ?Form $_target_filter_edit_form = null;
 
-	public function __construct( string|null $shop_id = null )
+	public function __construct( string|null $shop_code = null )
 	{
-		if( !$shop_id ) {
-			$shop_id = Shops::getCurrentId();
+		if( !$shop_code ) {
+			$shop_code = Shops::getCurrentCode();
 		}
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 
 	}
 
@@ -193,8 +193,8 @@ abstract class Core_ProductListing
 	{
 		$this->category = $category;
 
-		$this->base_URL_path_part = $category->getShopData( $this->shop_id )->getURLPathPart();
-		$this->base_URL = $category->getShopData( $this->shop_id )->getURL();
+		$this->base_URL_path_part = $category->getShopData( $this->shop_code )->getURLPathPart();
+		$this->base_URL = $category->getShopData( $this->shop_code )->getURL();
 	}
 
 	public function getCategory() : Category
@@ -223,9 +223,9 @@ abstract class Core_ProductListing
 	}
 
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
 	public function getTargetFilterEditForm( array &$target_filter ) : Form

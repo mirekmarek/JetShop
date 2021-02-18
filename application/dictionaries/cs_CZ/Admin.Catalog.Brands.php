@@ -21,4 +21,9 @@ return [
 	'Title:' => '',
 	'Keywords:' => '',
 	'Keywords words for internal fulltext:' => '',
+	'View brands' => '',
+	'Add new brand' => '',
+	'Update brand' => '',
+	'Delete brand' => '',
+	'Catalog brands management' => '',
 ];

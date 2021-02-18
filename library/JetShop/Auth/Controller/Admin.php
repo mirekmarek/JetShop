@@ -29,7 +29,7 @@ use JetShop\Auth_Administrator_User as Administrator;
  */
 class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interface
 {
-	const LOGIN_FORM_MODULE_NAME = 'Admin.Login';
+	protected static string $LOGIN_MODULE = 'Admin.Login';
 
 
 	const EVENT_LOGIN_FAILED = 'login_failed';
@@ -41,6 +41,23 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 * @var Administrator|bool|null
 	 */
 	protected Administrator|bool|null $current_user = null;
+
+
+	/**
+	 * @return string
+	 */
+	public static function getLoginModuleName(): string
+	{
+		return self::$LOGIN_MODULE;
+	}
+
+	/**
+	 * @param string $module_name
+	 */
+	public static function setLoginModuleName( string $module_name ): void
+	{
+		self::$LOGIN_MODULE = $module_name;
+	}
 
 	/**
 	 *
@@ -131,7 +148,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 			}
 		}
 
-		$module = Application_Modules::moduleInstance( static::LOGIN_FORM_MODULE_NAME );
+		$module = Application_Modules::moduleInstance( static::getLoginModuleName() );
 
 
 		$page_content = [];

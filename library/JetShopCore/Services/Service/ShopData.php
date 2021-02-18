@@ -325,7 +325,7 @@ abstract class Core_Services_Service_ShopData extends DataModel_Related_1toN imp
 
 	public function createVatRateInputField() : Form_Field_Select
 	{
-		$shop = Shops::get($this->shop_id);
+		$shop = Shops::get($this->shop_code);
 
 		$input = new Form_Field_Select('vat_rate', 'VAT rate:', !$this->getIsSaved() ? $shop->getDefaultVatRate()  : $this->vat_rate);
 

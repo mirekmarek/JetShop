@@ -1,0 +1,47 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+
+$cash_desk = CashDesk::get();
+
+if($cash_desk->getCurrentStep()==CashDesk::STEP_DELIVERY) {
+	return;
+}
+
+if($cash_desk->getCurrentStep()!=CashDesk::STEP_PAYMENT) {
+	require 'payment/has_been_selected.phtml';
+
+	return;
+}
+
+$payment_methods = $cash_desk->getAvailablePaymentMethods();
+$selected_payment_method = $cash_desk->getSelectedPaymentMethod();
+?>
+
+<br/>
+<div class="card">
+
+	<div class="card-body bg-light">
+		<h2 class="card-title"><?= Tr::_('Please select your preferred payment method') ?></h2>
+
+		<?php foreach ($payment_methods as $payment_method):
+			$this->setVar( 'payment_method', $payment_method );
+
+			if( $payment_method->getCode()==$selected_payment_method->getCode() ) {
+				require 'payment/method/selected.phtml';
+			} else {
+				require 'payment/method/not-selected.phtml';
+			} ?>
+			<br>
+		<?php endforeach ?>
+
+		<div class="text-right">
+			<?=UI::button(Tr::_('Continue'))->setOnclick('CashDesk.payment.continue()')->setClass('primary')?>
+		</div>
+
+	</div>
+</div>
+
+

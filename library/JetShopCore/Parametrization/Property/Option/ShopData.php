@@ -152,7 +152,7 @@ abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_R
 
 	public function getArrayKeyValue() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
 	public function getCategoryId() : int
@@ -185,14 +185,14 @@ abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_R
 		$this->property_id = $property_id;
 	}
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ) : void
+	public function setShopCode( string $shop_code ) : void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 	public function getOptionId() : int

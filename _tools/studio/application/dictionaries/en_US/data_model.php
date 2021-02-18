@@ -163,4 +163,12 @@ return [
 	'ID property name:' => '',
 	'Invalid DataModel class name format' => '',
 	'Invalid DataModel name format' => '',
+	'Property' => '',
+	'External relation' => '',
+	'Key' => '',
+	'N model:' => '',
+	'Please select N model' => '',
+	'Relation %name% property name:' => '',
+	'Invalid property name format' => '',
+	'Database table <b>%table%</b> has been created' => '',
 ];

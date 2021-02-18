@@ -56,4 +56,9 @@ return [
 	'Product <b>%NAME%</b> has been updated' => '',
 	'Set as main category' => '',
 	'Delivery class:' => '',
+	'View products' => '',
+	'Add new product' => '',
+	'Update product' => '',
+	'Delete product' => '',
+	'Catalog products management' => '',
 ];

@@ -27,28 +27,28 @@ $form->setDefaultFieldWidth([Form::LJ_SIZE_MEDIUM=>8]);
 <br/>
 <?=$form->start();?>
 		<?php foreach(Shops::getList() as $shop):
-			$shop_id= $shop->getId();
-			$shop_data = $new_category->getShopData( $shop_id );
+			$shop_code= $shop->getCode();
+			$shop_data = $new_category->getShopData( $shop_code );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 				<fieldset>
 					<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-					<?=$form->field('/shop_data/'.$shop_id.'/is_active')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
 
-					<?=$form->field('/shop_data/'.$shop_id.'/name')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/second_name')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/description')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/name')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/second_name')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/description')?>
 				</fieldset>
 
 				<fieldset>
 					<legend class="sub"><?=Tr::_('SEO')?></legend>
-					<?=$form->field('/shop_data/'.$shop_id.'/seo_h1')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/seo_title')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/seo_description')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/seo_keywords')?>
-					<?=$form->field('/shop_data/'.$shop_id.'/internal_fulltext_keywords')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/seo_h1')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/seo_title')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/seo_description')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/seo_keywords')?>
+					<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
 				</fieldset>
 
 			<?=$shop_data->renderShopDataBlock_end()?>

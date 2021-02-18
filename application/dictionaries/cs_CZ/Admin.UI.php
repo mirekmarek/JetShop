@@ -5,4 +5,8 @@ return [
 	'Change password' => '',
 	'Logout' => '',
 	'Catalog' => '',
+	'Customers and orders' => '',
+	'Statistics and reports' => '',
+	'Expedition' => '',
+	'Content and marketing' => '',
 ];

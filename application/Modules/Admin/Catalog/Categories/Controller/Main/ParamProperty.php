@@ -105,30 +105,30 @@ trait Controller_Main_ParamProperty
 		if(!$group->isInherited()) {
 
 			foreach(Shops::getList() as $shop) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 				$shop_name = $shop->getName();
-				$shop_data = $property->getShopData( $shop_id );
+				$shop_data = $property->getShopData( $shop_code );
 
 				foreach( Parametrization_Property_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->catchImageWidget(
 						$image_class,
-						function() use ($image_class, $property, $shop_id, $shop_name, $shop_data) {
+						function() use ($image_class, $property, $shop_code, $shop_name, $shop_data) {
 							$shop_data->save();
 
-							$this->logAllowedAction( 'prop.property image '.$image_class.' uploaded', $property->getId().':'.$shop_id, $shop_data->getLabel().' - '.$shop_name );
+							$this->logAllowedAction( 'prop.property image '.$image_class.' uploaded', $property->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
 
 						},
-						function() use ($image_class, $property, $shop_id, $shop_name, $shop_data) {
+						function() use ($image_class, $property, $shop_code, $shop_name, $shop_data) {
 							$shop_data->save();
 
-							$this->logAllowedAction( 'prop.property image '.$image_class.' deleted', $property->getId().':'.$shop_id, $shop_data->getLabel().' - '.$shop_name );
+							$this->logAllowedAction( 'prop.property image '.$image_class.' deleted', $property->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
 						}
 					);
 				}
 			}
 		} else {
 			foreach(Shops::getList() as $shop) {
-				$shop_data = $property->getShopData( $shop->getId() );
+				$shop_data = $property->getShopData( $shop->getCode() );
 
 				foreach( Parametrization_Property_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->getImageUploadForm( $image_class )->setIsReadonly();

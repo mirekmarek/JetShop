@@ -118,23 +118,23 @@ trait Controller_Main_Category
 		$category = static::getCurrentCategory();
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 			$shop_name = $shop->getName();
-			$shop_data = $category->getShopData( $shop_id );
+			$shop_data = $category->getShopData( $shop_code );
 
 			foreach( Category_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 				$shop_data->catchImageWidget(
 					$image_class,
-					function() use ($image_class, $category, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $category, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $category->getId().':'.$shop_id, $category->_getPathName().' - '.$shop_name );
+						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $category->getId().':'.$shop_code, $category->_getPathName().' - '.$shop_name );
 
 					},
-					function() use ($image_class, $category, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $category, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'category image '.$image_class.' deleted', $category->getId().':'.$shop_id, $category->_getPathName().' - '.$shop_name );
+						$this->logAllowedAction( 'category image '.$image_class.' deleted', $category->getId().':'.$shop_code, $category->_getPathName().' - '.$shop_name );
 					}
 				);
 

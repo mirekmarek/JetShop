@@ -138,4 +138,8 @@ return [
 	'Page <b>%site% : %page%</b> has been deleted' => 'Stránka <b>%site% : %page%</b> byla smazána',
 	'System' => '',
 	'Catalog' => '',
+	'Customers and orders' => '',
+	'Statistics and reports' => '',
+	'Expedition' => '',
+	'Content and marketing' => '',
 ];

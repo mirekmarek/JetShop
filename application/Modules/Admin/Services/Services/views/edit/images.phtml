@@ -31,9 +31,9 @@ $service = $this->getRaw( 'service' );
 
 		<?php if(!$service->getIsNew()): ?>
 			<?php foreach(Shops::getList() as $shop):
-				$shop_id= $shop->getId();
+				$shop_code= $shop->getCode();
 
-				$shop_data = $service->getShopData( $shop_id );
+				$shop_data = $service->getShopData( $shop_code );
 				?>
 				<?=$shop_data->renderImageWidgets( Services_Service_ShopData::getImageClasses() )?>
 			<?php endforeach; ?>

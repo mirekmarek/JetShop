@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek.2m@gmail.com>
  */
 
-namespace JetApplication\Installer;
+namespace JetShop\Installer;
 
 use Jet\Data_Array;
 use Jet\Exception;

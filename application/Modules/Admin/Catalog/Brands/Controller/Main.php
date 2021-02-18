@@ -109,24 +109,24 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 			$shop_name = $shop->getName();
 
-			$shop_data = $brand->getShopData( $shop_id );
+			$shop_data = $brand->getShopData( $shop_code );
 
 			foreach( Brand_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 				$shop_data->catchImageWidget(
 					$image_class,
-					function() use ($image_class, $brand, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $brand, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $brand->getId().':'.$shop_id, $brand->getName().' - '.$shop_name );
+						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $brand->getId().':'.$shop_code, $brand->getName().' - '.$shop_name );
 
 					},
-					function() use ($image_class, $brand, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $brand, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'category image '.$image_class.' deleted', $brand->getId().':'.$shop_id, $brand->getName().' - '.$shop_name );
+						$this->logAllowedAction( 'category image '.$image_class.' deleted', $brand->getId().':'.$shop_code, $brand->getName().' - '.$shop_name );
 					}
 				);
 

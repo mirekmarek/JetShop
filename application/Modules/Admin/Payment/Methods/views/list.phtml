@@ -56,6 +56,32 @@ $grid->getColumn( 'code' )->setRenderer(
 	}
 );
 
+$grid->getColumn( 'kind' )->setRenderer(
+	function( Payment_Method $item ) use ( $router ) {
+		echo $item->getKindTitle();
+	}
+);
+$grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
+
+$grid->getColumn( 'services' )->setRenderer(
+	function( Payment_Method $item ) use ( $router ) {
+		foreach($item->getServices() as $service) {
+			echo $service->getInternalName().'<br>';
+		}
+	}
+);
+$grid->getColumn( 'services' )->setCssStyle( 'width:350px;' );
+
+
+$grid->getColumn( 'delivery_methods' )->setRenderer(
+	function( Payment_Method $item ) use ( $router ) {
+		foreach($item->getDeliveryMethods() as $method) {
+			echo $method->getInternalName().'<br>';
+		}
+	}
+);
+$grid->getColumn( 'delivery_methods' )->setCssStyle( 'width:350px;' );
+
 ?>
 
 <?=$filter_form->start()?>

@@ -18,7 +18,7 @@ trait Core_CommonEntity_ShopDataTrait
 		is_key: true,
 		form_field_type: false
 	)]
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -30,17 +30,17 @@ trait Core_CommonEntity_ShopDataTrait
 
 	public function getArrayKeyValue() : null|string|int
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function getShopId() : string
+	public function getShopCode() : string
 	{
-		return $this->shop_id;
+		return $this->shop_code;
 	}
 
-	public function setShopId( string $shop_id ) : void
+	public function setShopCode( string $shop_code ) : void
 	{
-		$this->shop_id = $shop_id;
+		$this->shop_code = $shop_code;
 	}
 
 	public function isActive() : bool
@@ -57,7 +57,7 @@ trait Core_CommonEntity_ShopDataTrait
 	{
 		$view = new Mvc_View( Mvc::getCurrentSite()->getViewsPath() );
 
-		$view->setVar('shop', Shops::get($this->getShopId()) );
+		$view->setVar('shop', Shops::get($this->getShopCode()) );
 
 		return $view->render('shopDataBlock/start');
 
@@ -67,7 +67,7 @@ trait Core_CommonEntity_ShopDataTrait
 	{
 		$view = new Mvc_View( Mvc::getCurrentSite()->getViewsPath() );
 
-		$view->setVar('shop', Shops::get($this->getShopId()) );
+		$view->setVar('shop', Shops::get($this->getShopCode()) );
 
 		return $view->render('shopDataBlock/end');
 
@@ -91,7 +91,7 @@ trait Core_CommonEntity_ShopDataTrait
 
 	public function getForm( string $form_name, array|DataModel_PropertyFilter|null $property_filter = null ) : Form
 	{
-		if(!Shops::exists( $this->shop_id )) {
+		if(!Shops::exists( $this->shop_code )) {
 			return new Form($form_name, []);
 		}
 

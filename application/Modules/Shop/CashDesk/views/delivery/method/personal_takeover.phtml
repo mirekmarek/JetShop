@@ -1,0 +1,52 @@
+<?php
+namespace JetShop;
+
+
+use Jet\Mvc_View;use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var Delivery_Method $delivery_method
+ */
+
+$cash_desk = CashDesk::get();
+
+$selected_method = $cash_desk->getSelectedDeliveryMethod();
+
+if(!$selected_method->isPersonalTakeover()) {
+	$selected_method = null;
+}
+
+if($selected_method) {
+	require 'personal_takeover/selected.phtml';
+} else {
+	require 'personal_takeover/not-selected.phtml';
+}
+?>
+<br/>
+
+<div class="modal fade" id="select_personal_takeover_place_dialog" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-full">
+		<div class="modal-content h-100" style="border: 1px solid red;">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel"><?=Tr::_('Selected personal takeover place')?></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-2" id="parsonal_takeover_place">
+
+						</div>
+						<div class="col-md-10">
+							<div id="parsonal_takeover_map" style="width: 500px;height: 500px;"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

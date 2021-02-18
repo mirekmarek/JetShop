@@ -1,0 +1,30 @@
+<?php
+namespace JetShopModule\Shop\Login;
+?>
+
+<script type="text/javascript">
+	const CustomerLogin = {
+		login: function() {
+			JetAjaxForm.submit('customer_login_form', {
+				onSuccess: function() {
+					location.reload();
+				}
+			});
+		},
+
+		logout: function() {
+			JetAjaxForm.submit('customer_logout_form', {
+				onSuccess: function() {
+					location.reload();
+				}
+			});
+		},
+
+		passwordReset: {
+			start: function( email ) {
+				$('#reset_password_dialog').modal('show');
+				//TODO:
+			}
+		}
+	};
+</script>

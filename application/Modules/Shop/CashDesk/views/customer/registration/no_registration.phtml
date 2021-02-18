@@ -1,0 +1,15 @@
+<?php
+namespace JetShop;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+?>
+
+<br/>
+<div class="card">
+	<div class="card-body bg-light">
+		<?=UI_messages::createInfo(Tr::_('Close the order as an unregistered client. Unfortunately, this <strong> loses your loyalty discount </strong>'))?>
+		<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.registration.back();")->setClass('link')?>
+	</div>
+</div>

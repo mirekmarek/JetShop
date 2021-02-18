@@ -31,9 +31,9 @@ $delivery_method = $this->getRaw( 'delivery_method' );
 
 		<?php if(!$delivery_method->getIsNew()): ?>
 			<?php foreach(Shops::getList() as $shop):
-				$shop_id= $shop->getId();
+				$shop_code= $shop->getCode();
 
-				$shop_data = $delivery_method->getShopData( $shop_id );
+				$shop_data = $delivery_method->getShopData( $shop_code );
 				?>
 				<?=$shop_data->renderImageWidgets( Delivery_Method_ShopData::getImageClasses() )?>
 			<?php endforeach; ?>

@@ -14,15 +14,7 @@ if(!$r->getBaseCssClasses()) {
 }
 
 $field = $r->getField();
-/*
-if($field->getForm()->getRawData()) {
-	if($field->getLastErrorCode()) {
-		$r->addCustomCssClass('is-invalid');
-	} else {
-		$r->addCustomCssClass('is-valid');
-	}
-}
-*/
+
 if($field->getLastErrorCode()) {
 	$r->addCustomCssClass('is-invalid');
 }

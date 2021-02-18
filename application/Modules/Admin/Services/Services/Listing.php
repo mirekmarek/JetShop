@@ -29,8 +29,9 @@ class Listing extends Data_Listing {
 			'disallow_sort' => true
 		],
 		'code'         => ['title' => 'Code'],
+		'kind'         => ['title' => 'Kind'],
 		'group'         => ['title' => 'Group'],
-		'internal_name'   => ['title' => 'Service'],
+		'internal_name'   => ['title' => 'Name'],
 	];
 
 	/**

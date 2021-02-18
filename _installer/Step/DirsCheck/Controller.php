@@ -6,14 +6,14 @@
  * @author Miroslav Marek <mirek.marek.2m@gmail.com>
  */
 
-namespace JetApplication\Installer;
+namespace JetShop\Installer;
 
 use Jet\IO_Dir;
 use Jet\SysConf_Path;
 
-use JetApplication\Application_Admin;
-use JetApplication\Application_Web;
-use JetApplication\Application_REST;
+use JetShop\Application_Admin;
+use JetShop\Application_Shop;
+use JetShop\Application_REST;
 
 /**
  *
@@ -75,7 +75,7 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getSites() . Application_Web::getSiteId() . '/'   => [
+			SysConf_Path::getSites() . Application_Shop::getSiteId() . '/'   => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],

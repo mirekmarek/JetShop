@@ -65,6 +65,10 @@ class Form extends BaseObject
 	const TYPE_FILE = 'File';
 	const TYPE_FILE_IMAGE = 'FileImage';
 
+	/**
+	 * @var string
+	 */
+	protected static string $default_sent_key = '_jet_form_sent_';
 
 	/**
 	 * @var ?string
@@ -100,7 +104,8 @@ class Form extends BaseObject
 	/**
 	 * @var string
 	 */
-	protected string $sent_key = '_jet_form_sent_';
+	protected string $sent_key = '';
+
 
 	/**
 	 * @var string $name
@@ -143,6 +148,11 @@ class Form extends BaseObject
 	 * @var Form_Field[]
 	 */
 	protected array $fields = [];
+
+	/**
+	 * @var array 
+	 */
+	protected array $validation_errors = [];
 
 	/**
 	 * @var bool
@@ -511,6 +521,9 @@ class Form extends BaseObject
 	 */
 	public function getSentKey(): string
 	{
+		if(!$this->sent_key) {
+			$this->sent_key = static::getDefaultSentKey();
+		}
 		return $this->sent_key;
 	}
 
@@ -520,6 +533,22 @@ class Form extends BaseObject
 	public function setSentKey( string $sent_key ): void
 	{
 		$this->sent_key = $sent_key;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getDefaultSentKey(): string
+	{
+		return static::$default_sent_key;
+	}
+
+	/**
+	 * @param string $sent_key
+	 */
+	public static function setDefaultSentKey( string $sent_key ): void
+	{
+		static::$default_sent_key = $sent_key;
 	}
 
 
@@ -641,8 +670,26 @@ class Form extends BaseObject
 	}
 
 	/**
+	 * @throws Form_Exception
+	 */
+	protected function checkFieldsHasErrorMessages(): void
+	{
+		foreach( $this->fields as $field ) {
+			$required_error_codes = $field->getRequiredErrorCodes();
+
+			foreach( $required_error_codes as $code ) {
+				if( !$field->getErrorMessage( $code ) ) {
+					throw new Form_Exception(
+						'Form field error message is not set. Form:' . $this->name . ' Field:' . $field->getName() . ' Error code:' . $code
+					);
+				}
+			}
+		}
+	}
+
+	/**
 	 * catch values from input ($_POST is default)
-	 * and return true if form sent ...
+	 * and return true if the form has been sent ...
 	 *
 	 * @param array|null $input_data
 	 * @param bool $force_catch
@@ -698,52 +745,16 @@ class Form extends BaseObject
 
 		$this->common_message = '';
 		$this->is_valid = true;
+		$this->validation_errors = [];
 		foreach( $this->fields as $field ) {
-
-			if( $field->getIsReadonly() ) {
-				continue;
-			}
-
-			$validator = $field->getValidator();
-			if( $validator ) {
-				if( !$validator( $field ) ) {
-					$this->is_valid = false;
-				}
-
-				continue;
-			}
-
-			if( !$field->checkValueIsNotEmpty() ) {
-				$this->is_valid = false;
-				continue;
-			}
-
 			if( !$field->validate() ) {
 				$this->is_valid = false;
+				$this->validation_errors[$field->getName()] = $field->getLastErrorMessage();
 			}
-
 		}
 
 
 		return $this->is_valid;
-	}
-
-	/**
-	 * @throws Form_Exception
-	 */
-	protected function checkFieldsHasErrorMessages(): void
-	{
-		foreach( $this->fields as $field ) {
-			$required_error_codes = $field->getRequiredErrorCodes();
-
-			foreach( $required_error_codes as $code ) {
-				if( !$field->getErrorMessage( $code ) ) {
-					throw new Form_Exception(
-						'Form field error message is not set. Form:' . $this->name . ' Field:' . $field->getName() . ' Error code:' . $code
-					);
-				}
-			}
-		}
 	}
 
 	/**
@@ -781,23 +792,11 @@ class Form extends BaseObject
 	}
 
 	/**
-	 * get all errors in form
-	 *
 	 * @return array
 	 */
-	public function getAllErrors(): array
+	public function getValidationErrors(): array
 	{
-		$result = [];
-
-		foreach( $this->fields as $key => $field ) {
-			$last_error = $field->getLastErrorMessage();
-
-			if( $last_error ) {
-				$result[$key] = $last_error;
-			}
-		}
-
-		return $result;
+		return $this->validation_errors;
 	}
 
 	/**
@@ -809,65 +808,16 @@ class Form extends BaseObject
 	}
 
 	/**
-	 * returns field values if form is valid otherwise false
-	 *
-	 * @param bool $escape_values - example: for database usage *
-	 * @param bool $force_skip_is_valid
 	 *
 	 * @return array|bool
 	 */
-	public function getValues( bool $escape_values = false,
-	                           bool $force_skip_is_valid = false ): array|bool
+	public function getValues(): array|bool
 	{
-		if(
-			!$this->is_valid &&
-			!$force_skip_is_valid
-		) {
+		if( !$this->is_valid ) {
 			return false;
 		}
 
-		$result = [];
-		foreach( $this->fields as $key => $field ) {
-			if(
-				$field->getIsReadonly() ||
-				!$field->getHasValue()
-			) {
-				continue;
-			}
-
-			$value = $field->getValue();
-
-			if( $escape_values ) {
-				if( is_string( $value ) ) {
-					$value = addslashes( $value );
-				} else {
-					if( is_bool( $value ) ) {
-						$value = $value ? 1 : 0;
-					}
-				}
-			}
-
-			$result[$key] = $value;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @param bool $force_skip_is_valid
-	 *
-	 * @return Data_Array|null
-	 */
-	public function getData( bool $force_skip_is_valid = false ): Data_Array|null
-	{
-		if(
-			!$this->is_valid &&
-			!$force_skip_is_valid
-		) {
-			return null;
-		}
-
-		$data = new Data_Array();
+		$values = new Data_Array();
 
 		foreach( $this->fields as $key => $field ) {
 			if(
@@ -879,10 +829,10 @@ class Form extends BaseObject
 
 			$value = $field->getValue();
 
-			$data->set( $key, $value );
+			$values->set( $key, $value );
 		}
 
-		return $data;
+		return $values->getRawData();
 	}
 
 	/**
@@ -900,6 +850,19 @@ class Form extends BaseObject
 		}
 
 		return true;
+	}
+
+	public function catch() : bool
+	{
+		if(
+			$this->catchInput() &&
+			$this->validate()
+		) {
+			$this->catchData();
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

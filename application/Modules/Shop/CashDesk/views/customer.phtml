@@ -1,0 +1,34 @@
+<?php
+namespace JetShop;
+
+$cash_desk = CashDesk::get();
+
+
+if(
+	$cash_desk->getCurrentStep()==CashDesk::STEP_DELIVERY ||
+	$cash_desk->getCurrentStep()==CashDesk::STEP_PAYMENT
+) {
+	return;
+}
+
+if(Customer::getCurrentCustomer()) {
+	require  'customer/logged_in.phtml';
+
+} else {
+
+	if( !$cash_desk->getEmailHasBeenSet() ) {
+		require  'customer/email.phtml';
+	} else {
+		if( !$cash_desk->getCustomerRegisterOrNotBeenSet() ) {
+
+			if( ($cst = Customer::getByEmail($cash_desk->getEmailAddress())) ) {
+				require  'customer/exists_login.phtml';
+			} else {
+				require  'customer/registration/set_password.phtml';
+			}
+		} else {
+			require  'customer/registration.phtml';
+		}
+	}
+}
+

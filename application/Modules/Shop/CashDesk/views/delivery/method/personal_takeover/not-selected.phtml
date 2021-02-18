@@ -1,0 +1,36 @@
+<?php
+namespace JetShop;
+
+
+use Jet\Mvc_View;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var Delivery_Method $delivery_method
+ */
+
+$cash_desk = CashDesk::get();
+
+
+?>
+
+<div class="card bg-white" onclick="CashDesk.delivery.personalTakeover.startSelection()">
+	<div class="card-body">
+		<h5 class="card-title">
+
+			<input type="radio" name="delivery_method" onclick="setTimeout(function(){CashDesk.delivery.personalTakeover.startSelection()}, 10);return false;" />
+
+			<b><?=Tr::_('Personal takeover')?></b>
+
+			<span style="padding-left: 50px;">
+			</span>
+
+		</h5>
+
+		<div class="card-text">
+			Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut tempus purus at lorem. Fusce consectetuer risus a nunc. Mauris suscipit, ligula sit amet pharetra semper, nibh ante cursus purus, vel sagittis velit mauris vel metus. Maecenas sollicitudin. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam justo enim, consectetuer nec
+		</div>
+
+	</div>
+</div>

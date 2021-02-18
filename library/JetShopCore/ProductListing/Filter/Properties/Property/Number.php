@@ -159,7 +159,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 	public function generateCategoryTargetUrlPart() : string
 	{
 		if($this->isForced()) {
-			return $this->property->getShopData($this->listing->getShopId())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
+			return $this->property->getShopData($this->listing->getShopCode())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
 		} else {
 			return '';
 		}
@@ -168,7 +168,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 	public function generateUrlPart() : string
 	{
 		if($this->isActive()) {
-			return $this->property->getShopData($this->listing->getShopId())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
+			return $this->property->getShopData($this->listing->getShopCode())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
 		} else {
 			return '';
 		}
@@ -177,8 +177,8 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 
 	public function parseFilterUrl( array &$parts ) : void
 	{
-		$shop_id = $this->listing->getShopId();
-		$prefix = $this->property->getShopData($shop_id)->getUrlParam().'_';
+		$shop_code = $this->listing->getShopCode();
+		$prefix = $this->property->getShopData($shop_code)->getUrlParam().'_';
 
 		foreach($parts as $i=>$part) {
 			if(stripos($part, $prefix)===0) {
@@ -218,7 +218,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 	public function generateFilterUrlPart() : string
 	{
 		if($this->isActive()) {
-			return $this->property->getShopData($this->listing->getShopId())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
+			return $this->property->getShopData($this->listing->getShopCode())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
 		} else {
 			return '';
 		}

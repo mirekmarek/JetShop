@@ -22,4 +22,9 @@ return [
 	'Keywords words for internal fulltext:' => '',
 	'Please upload image' => '',
 	'Name:' => '',
+	'View stencils' => '',
+	'Add new stencil' => '',
+	'Update stencil' => '',
+	'Delete stencil' => '',
+	'Catalog stencils management' => '',
 ];

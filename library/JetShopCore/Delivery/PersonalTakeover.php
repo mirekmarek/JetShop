@@ -9,7 +9,7 @@ use Jet\Application_Modules;
 
 abstract class Core_Delivery_PersonalTakeover {
 
-	protected static string $module_name_prefix = 'Delivery.PersonalTakeover.';
+	protected static string $module_name_prefix = 'Order.Delivery.PersonalTakeover.';
 
 	public static function getModuleNamePrefix(): string
 	{
@@ -24,7 +24,7 @@ abstract class Core_Delivery_PersonalTakeover {
 	public static function actualizePlaces( Shops_Shop $shop, bool $verbose=false ) : bool
 	{
 		$past_list = Delivery_PersonalTakeover_Place::getListForShop(
-			shop_id: $shop->getId(),
+			shop_code: $shop->getCode(),
 			only_active: false
 		);
 
@@ -101,7 +101,7 @@ abstract class Core_Delivery_PersonalTakeover {
 
 		foreach(Application_Modules::activatedModulesList() as $manifest) {
 			if( str_starts_with( $manifest->getName(), $name_prefix ) ) {
-				$modules[] = Application_Modules::moduleInstance( $manifest->getName() );
+				$modules[$manifest->getName()] = Application_Modules::moduleInstance( $manifest->getName() );
 			}
 		}
 

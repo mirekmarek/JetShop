@@ -9,14 +9,14 @@ abstract class Core_ProductListing_Filter_Abstract {
 
 	protected ?ProductListing $listing = null;
 
-	protected string $shop_id = '';
+	protected string $shop_code = '';
 
 	protected array|null $filtered_product_ids = null;
 
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_id = $listing->getShopId();
+		$this->shop_code = $listing->getShopCode();
 
 		$this->init();
 	}

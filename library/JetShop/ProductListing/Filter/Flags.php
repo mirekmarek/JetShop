@@ -37,7 +37,7 @@ class ProductListing_Filter_Flags extends Core_ProductListing_Filter_Flags {
 				[
 					'product_id'=>$initial_product_ids,
 					'AND',
-					'shop_id'=>$this->listing->getShopId()
+					'shop_code'=>$this->listing->getShopCode()
 				]
 			);
 			$map = [

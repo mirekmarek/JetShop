@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek.2m@gmail.com>
  */
 
-namespace JetApplication\Installer;
+namespace JetShop\Installer;
 
 use Exception;
 use Jet\Http_Request;
@@ -21,9 +21,9 @@ use Jet\Tr;
 use Jet\UI_messages;
 use Jet\SysConf_URI;
 
-use JetApplication\Application_Admin;
-use JetApplication\Application_Web;
-use JetApplication\Application_REST;
+use JetShop\Application_Admin;
+use JetShop\Application_Shop;
+use JetShop\Application_REST;
 
 /**
  *
@@ -39,7 +39,7 @@ class Installer_Step_CreateSite_Controller extends Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public static function sitesCreated()
+	public static function sitesCreated() : bool
 	{
 		return count( Mvc_Site::getAllSites() ) == 3;
 	}
@@ -68,7 +68,7 @@ class Installer_Step_CreateSite_Controller extends Installer_Step_Controller
 
 			$web = Mvc_Factory::getSiteInstance();
 			$web->setName( 'Example Web' );
-			$web->setId( Application_Web::getSiteId() );
+			$web->setId( Application_Shop::getSiteId() );
 
 			$ld = $web->addLocale( $default_locale );
 			$ld->setTitle( Tr::_( 'PHP Jet Example Web', [], null, $default_locale ) );
@@ -93,7 +93,7 @@ class Installer_Step_CreateSite_Controller extends Installer_Step_Controller
 			$web->setIsDefault( true );
 			$web->setIsActive( true );
 			$web->setInitializer( [
-				Application_Web::class,
+				Application_Shop::class,
 				'init'
 			] );
 
@@ -188,8 +188,8 @@ class Installer_Step_CreateSite_Controller extends Installer_Step_Controller
 				] );
 				$sites[Application_Admin::getSiteId()]->setIsSecret( true );
 
-				$sites[Application_Web::getSiteId()]->setInitializer( [
-					Application_Web::class,
+				$sites[Application_Shop::getSiteId()]->setInitializer( [
+					Application_Shop::class,
 					'init'
 				] );
 

@@ -98,24 +98,24 @@ trait Controller_Main_ParamGroup
 
 		if(!$group->isInherited()) {
 			foreach(Shops::getList() as $shop) {
-				$shop_id = $shop->getId();
+				$shop_code = $shop->getCode();
 				$shop_name = $shop->getName();
 
-				$shop_data = $group->getShopData( $shop_id );
+				$shop_data = $group->getShopData( $shop_code );
 
 				foreach( Parametrization_Group_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->catchImageWidget(
 						$image_class,
-						function() use ($image_class, $group, $shop_id, $shop_name, $shop_data) {
+						function() use ($image_class, $group, $shop_code, $shop_name, $shop_data) {
 							$shop_data->save();
 
-							$this->logAllowedAction( 'prop.group image '.$image_class.' uploaded', $group->getId().':'.$shop_id, $shop_data->getLabel().' - '.$shop_name );
+							$this->logAllowedAction( 'prop.group image '.$image_class.' uploaded', $group->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
 
 						},
-						function() use ($image_class, $group, $shop_id, $shop_name, $shop_data) {
+						function() use ($image_class, $group, $shop_code, $shop_name, $shop_data) {
 							$shop_data->save();
 
-							$this->logAllowedAction( 'prop.group image '.$image_class.' deleted', $group->getId().':'.$shop_id, $shop_data->getLabel().' - '.$shop_name );
+							$this->logAllowedAction( 'prop.group image '.$image_class.' deleted', $group->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
 						}
 					);
 
@@ -124,7 +124,7 @@ trait Controller_Main_ParamGroup
 
 		} else {
 			foreach(Shops::getList() as $shop) {
-				$shop_data = $group->getShopData( $shop->getId() );
+				$shop_data = $group->getShopData( $shop->getCode() );
 
 				foreach( Parametrization_Group_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->getImageUploadForm( $image_class )->setIsReadonly();

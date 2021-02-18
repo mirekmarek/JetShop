@@ -1,0 +1,40 @@
+<?php
+namespace JetShop;
+
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var Delivery_Method $delivery_method
+ */
+
+$cash_desk = CashDesk::get();
+$delivery_method = $this->getRaw('delivery_method');
+$dm_shop_data = $delivery_method->getShopData($cash_desk->getShopCode());
+
+
+?>
+
+<div class="card bg-info" onclick="CashDesk.delivery.select('<?= $delivery_method->getCode() ?>')">
+	<div class="card-body">
+		<h5 class="card-title">
+
+			<input type="radio" name="delivery_method" checked onclick="setTimeout(function(){CashDesk.delivery.select('<?= $delivery_method->getCode() ?>')}, 10);return false;" />
+			<img src="<?=$dm_shop_data->getIcon1ThumbnailUrl(50, 50)?>" style="padding: 5px;">
+
+			<b><?= $dm_shop_data->getTitle() ?></b>
+
+			<span style="padding-left: 50px;">
+			<?= Price::formatWithCurrency($dm_shop_data->getDefaultPrice()) ?>
+			</span>
+
+		</h5>
+
+		<div class="card-text">
+
+			<?= $dm_shop_data->getDescription() ?>
+		</div>
+
+	</div>
+</div>

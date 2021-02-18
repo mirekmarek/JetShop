@@ -64,6 +64,16 @@ $grid->getColumn( 'group' )->setRenderer(
 );
 $grid->getColumn( 'group' )->setCssStyle( 'width:200px;' );
 
+
+$grid->getColumn( 'kind' )->setRenderer(
+	function( Services_Service $item ) {
+		?>
+		<?=$item->getKindTitle();?>
+		<?php
+	}
+);
+$grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
+
 ?>
 
 <?=$filter_form->start()?>

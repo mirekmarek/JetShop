@@ -113,23 +113,23 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 		foreach(Shops::getList() as $shop) {
-			$shop_id = $shop->getId();
+			$shop_code = $shop->getCode();
 			$shop_name = $shop->getName();
-			$shop_data = $sticker->getShopData( $shop_id );
+			$shop_data = $sticker->getShopData( $shop_code );
 
 			foreach( Sticker_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 				$shop_data->catchImageWidget(
 					$image_class,
-					function() use ($image_class, $sticker, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $sticker, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $sticker->getId().':'.$shop_id, $sticker->getName().' - '.$shop_name );
+						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $sticker->getId().':'.$shop_code, $sticker->getName().' - '.$shop_name );
 
 					},
-					function() use ($image_class, $sticker, $shop_id, $shop_name, $shop_data) {
+					function() use ($image_class, $sticker, $shop_code, $shop_name, $shop_data) {
 						$shop_data->save();
 
-						$this->logAllowedAction( 'category image '.$image_class.' deleted', $sticker->getId().':'.$shop_id, $sticker->getName().' - '.$shop_name );
+						$this->logAllowedAction( 'category image '.$image_class.' deleted', $sticker->getId().':'.$shop_code, $sticker->getName().' - '.$shop_name );
 					}
 				);
 
