@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  *
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 namespace JetShop;
 
@@ -29,7 +29,7 @@ use JetShop\Auth_Administrator_User as Administrator;
  */
 class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interface
 {
-	protected static string $LOGIN_MODULE = 'Admin.Login';
+	protected static string $login_module_name = 'Admin.Login';
 
 
 	const EVENT_LOGIN_FAILED = 'login_failed';
@@ -48,7 +48,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 */
 	public static function getLoginModuleName(): string
 	{
-		return self::$LOGIN_MODULE;
+		return self::$login_module_name;
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 */
 	public static function setLoginModuleName( string $module_name ): void
 	{
-		self::$LOGIN_MODULE = $module_name;
+		self::$login_module_name = $module_name;
 	}
 
 	/**

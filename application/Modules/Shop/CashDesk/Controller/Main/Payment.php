@@ -23,6 +23,10 @@ trait Controller_Main_Payment {
 			return $action=='select_payment';
 		});
 
+		$this->router->addAction('select_payment_option')->setResolver(function() use ($action) {
+			return $action=='select_payment_option';
+		});
+
 		$this->router->addAction('continue_to_customer')->setResolver(function() use ($action) {
 			return $action=='continue_to_customer';
 		});
@@ -30,6 +34,7 @@ trait Controller_Main_Payment {
 		$this->router->addAction('back_to_payment')->setResolver(function() use ($action) {
 			return $action=='back_to_payment';
 		});
+
 
 	}
 	
@@ -53,6 +58,28 @@ trait Controller_Main_Payment {
 
 		$response->response();
 	}
+
+	public function select_payment_option_Action() : void
+	{
+		/**
+		 * @var Controller_Main $this
+		 */
+
+		$response = new Controller_Main_Response( $this );
+		$cash_desk = CashDesk::get();
+		$GET = Http_Request::GET();
+
+		if(!$cash_desk->selectPaymentMethodOption( $GET->getString('option') )) {
+			$response->error();
+		}
+
+		$response->addSnippet( 'overview' );
+		$response->addSnippet( 'payment' );
+		$response->addSnippet( 'customer' );
+
+		$response->response();
+	}
+
 
 	public function continue_to_customer_Action()
 	{
@@ -92,5 +119,4 @@ trait Controller_Main_Payment {
 		$response->response();
 
 	}
-
 }

@@ -206,7 +206,7 @@ abstract class Core_ShoppingCart
 		$items = addslashes(serialize($this->items));
 		$count = count($this->items);
 
-		Db::get( $this->cart_db_connection )->execCommand("INSERT INTO ".$this->database_table_name." SET
+		Db::get( $this->cart_db_connection )->execute("INSERT INTO ".$this->database_table_name." SET
                         id='{$this->id}',
                         shop_code='{$this->shop_code}',
                         last_activity_date_time=now(),

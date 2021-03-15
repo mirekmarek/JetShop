@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
@@ -81,7 +81,7 @@ class ModuleWizards extends BaseObject implements Application_Part
 	 *
 	 * @return ModuleWizard|null
 	 */
-	public static function get( string $name )
+	public static function get( string $name ) : ?ModuleWizard
 	{
 		$list = static::getList();
 
@@ -124,7 +124,7 @@ class ModuleWizards extends BaseObject implements Application_Part
 	 *
 	 * @return string
 	 */
-	public static function getActionUrl( string $action, array $custom_get_params = [] )
+	public static function getActionUrl( string $action, array $custom_get_params = [] ) : string
 	{
 
 		$get_params = [];

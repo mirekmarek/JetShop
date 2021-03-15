@@ -7,6 +7,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetShop\Category;
 use JetShop\Category_ShopData;
+use JetShop\Exports;
 use JetShop\Shops;
 use JetShop\Application_Admin;
 
@@ -146,7 +147,47 @@ trait Controller_Main_Category
 
 	public function category_edit_exports_Action()
 	{
+		/**
+		 * @var Controller_Main $this
+		 */
 		$this->_setBreadcrumbNavigation( Tr::_( 'Exports' ) );
+
+		$GET = Http_Request::GET();
+
+		$selected_exp = null;
+		$selected_exp_shop = null;
+
+		$exp = $GET->getString('exp');
+		if($exp) {
+			$selected_exp = Exports::getActiveModule($exp);
+
+			if($selected_exp) {
+				$exp_shop = $GET->getString('exp_shop');
+				if($exp_shop) {
+					$selected_exp_shop = Shops::get($exp_shop);
+					if($selected_exp_shop) {
+						if(!$selected_exp->isAllowedForShop($selected_exp_shop)) {
+							$selected_exp = null;
+							$selected_exp_shop = null;
+						}
+					} else {
+						$selected_exp = null;
+					}
+				}
+			}
+		}
+
+		if($selected_exp_shop) {
+			$this->view->setVar('selected_exp', $selected_exp );
+			$this->view->setVar('selected_exp_shop', $selected_exp_shop );
+
+			$this->view->setVar('selected_exp_code', $selected_exp->getCode());
+			$this->view->setVar('selected_exp_shop_code', $selected_exp_shop->getCode());
+
+			$this->view->setVar('category', static::$current_category);
+		}
+
+
 
 		$this->output( 'category/edit/'.static::getCurrentCategory()->getType().'/exports' );
 	}

@@ -27,21 +27,21 @@ if($selected_method) {
 
 <div class="modal fade" id="select_personal_takeover_place_dialog" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-dialog-centered modal-full">
-		<div class="modal-content h-100" style="border: 1px solid red;">
+		<div class="modal-content h-100">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel"><?=Tr::_('Selected personal takeover place')?></h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body" id="select_personal_takeover_place_dialog__body">
 				<div class="container-fluid">
 					<div class="row">
 						<div class="col-md-2" id="parsonal_takeover_place">
 
 						</div>
-						<div class="col-md-10">
-							<div id="parsonal_takeover_map" style="width: 500px;height: 500px;"></div>
+						<div class="col-md-10" id="select_personal_takeover_place_dialog__col">
+							<div id="personal_takeover_map" style="width: 500px;height: 500px;"></div>
 						</div>
 					</div>
 				</div>

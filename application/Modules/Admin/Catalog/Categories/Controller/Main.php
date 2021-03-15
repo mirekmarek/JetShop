@@ -111,8 +111,8 @@ class Controller_Main extends Mvc_Controller_Default
 
 			$this->router->setDefaultAction(  'default', Main::ACTION_GET_CATEGORY  );
 
-			$this->router->addAction( 'search' )->setResolver(function() use ($GET) {
-				return $GET->exists('search');
+			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
+				return $GET->exists('whisper');
 			});
 
 			$this->router->addAction( 'set_filter' )->setResolver(function() use ($GET) {
@@ -352,7 +352,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->output( 'default' );
 	}
 
-	public function search_Action() : void
+	public function whisper_Action() : void
 	{
 		$GET = Http_Request::GET();
 
@@ -364,7 +364,7 @@ class Controller_Main extends Mvc_Controller_Default
 		}
 
 		$result = Fulltext_Index_Internal_Category::search(
-			$GET->getString('search'),
+			$GET->getString('whisper'),
 			$only_types,
 			$GET->getBool('only_active'),
 			$GET->getInt('exclude_branch_id')

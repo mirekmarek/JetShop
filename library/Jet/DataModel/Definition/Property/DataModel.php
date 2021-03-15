@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -82,7 +82,7 @@ class DataModel_Definition_Property_DataModel extends DataModel_Definition_Prope
 	 *
 	 * @return string
 	 */
-	public function getValueDataModelClass()
+	public function getValueDataModelClass() : string
 	{
 		return $this->data_model_class;
 	}
@@ -212,7 +212,7 @@ class DataModel_Definition_Property_DataModel extends DataModel_Definition_Prope
 	/**
 	 * @return DataModel_Definition_Model_Related
 	 */
-	public function getValueDataModelDefinition()
+	public function getValueDataModelDefinition() : DataModel_Definition_Model_Related
 	{
 		/**
 		 * @var DataModel_Definition_Model_Related $definition

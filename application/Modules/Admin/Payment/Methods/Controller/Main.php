@@ -20,6 +20,8 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
+use JetShop\Payment_Method_Option;
+use JetShop\Payment_Method_Option_ShopData;
 use JetShop\Payment_Method_ShopData;
 use JetShop\Shops;
 use JetShopModule\Admin\UI\Main as UI_module;
@@ -39,6 +41,11 @@ class Controller_Main extends Mvc_Controller_Default
 	 * @var ?Payment_Method
 	 */
 	protected ?Payment_Method $payment_method = null;
+
+	/**
+	 * @var ?Payment_Method_Option
+	 */
+	protected ?Payment_Method_Option $payment_method_option = null;
 
 	/**
 	 *
@@ -116,6 +123,65 @@ class Controller_Main extends Mvc_Controller_Default
 				return true;
 			} );
 
+			if(
+				$this->payment_method &&
+				$this->_getEditTabs()->getSelectedTabId()=='options'
+			) {
+				if($GET->exists('option')) {
+					$this->payment_method_option = $this->payment_method->getOption($GET->getString('option'));
+				}
+			}
+
+			$this->router->addAction('options_list', Main::ACTION_GET_PAYMENT_METHOD)->setResolver( function() use ($action) {
+				if(
+					$this->payment_method_option ||
+					!$this->payment_method ||
+					$this->_getEditTabs()->getSelectedTabId()!='options' ||
+					$action!=''
+				) {
+					return false;
+				}
+
+				return true;
+			} );
+
+
+			$this->router->addAction('options_create', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+				if(
+					!$this->payment_method ||
+					$this->_getEditTabs()->getSelectedTabId()!='options' ||
+					$action!='create_option'
+				) {
+					return false;
+				}
+
+				return true;
+			} );
+
+
+			$this->router->addAction('options_edit_main', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+				if(
+					!$this->payment_method_option ||
+					$this->_getEditOptionTabs()->getSelectedTabId()!='main' ||
+					$action!=''
+				) {
+					return false;
+				}
+
+				return true;
+			} );
+
+			$this->router->addAction('options_edit_images', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+				if(
+					!$this->payment_method_option ||
+					$this->_getEditOptionTabs()->getSelectedTabId()!='images' ||
+					$action!=''
+				) {
+					return false;
+				}
+
+				return true;
+			} );
 
 		}
 
@@ -132,6 +198,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$_tabs = [
 			'main'             => Tr::_('Main data'),
 			'images'           => Tr::_('Images'),
+			'options'          => Tr::_('Options'),
 		];
 
 
@@ -142,7 +209,27 @@ class Controller_Main extends Mvc_Controller_Default
 			},
 			Http_Request::GET()->getString('page')
 		);
+	}
 
+	protected function _getEditOptionTabs() : ?UI_tabs
+	{
+		if(!$this->payment_method_option) {
+			return null;
+		}
+
+		$_tabs = [
+			'main'             => Tr::_('Main data'),
+			'images'           => Tr::_('Images'),
+		];
+
+
+		return UI::tabs(
+			$_tabs,
+			function($page_id) {
+				return '?id='.$this->payment_method->getCode().'&page=options&option='.$this->payment_method_option->getCode().'&option_page='.$page_id;
+			},
+			Http_Request::GET()->getString('option_page')
+		);
 	}
 
 
@@ -363,5 +450,142 @@ class Controller_Main extends Mvc_Controller_Default
 
 		$this->output( 'delete-confirm' );
 	}
+
+
+
+	public function options_list_Action() : void
+	{
+		$payment_method = $this->payment_method;
+
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit payment method <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $payment_method->getInternalName() ] ) );
+
+
+		$this->view->setVar( 'payment_method', $payment_method );
+		$this->view->setVar( 'tabs', $this->_getEditTabs() );
+
+		$this->output( 'edit/options/list' );
+	}
+
+	public function options_create_Action() : void
+	{
+		$payment_method = $this->payment_method;
+
+		UI_module::initBreadcrumb();
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit payment method <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $payment_method->getInternalName() ] ), Http_Request::currentURL([], ['action']) );
+		Navigation_Breadcrumb::addURL( Tr::_('New option') );
+
+		$new_option = new Payment_Method_Option();
+		$new_option->setParents( $payment_method );
+
+		if( $new_option->catchAddForm() ) {
+			$payment_method->addOption( $new_option );
+			$payment_method->save();
+
+			$this->logAllowedAction( 'Payment method updated - option created', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+
+			UI_messages::success(
+				Tr::_( 'Payment method <b>%NAME%</b> has been updated - option created', ['NAME' => $payment_method->getInternalName()] )
+			);
+
+			Http_Headers::movedTemporary( Http_Request::currentURI( [], ['action'] ) );
+
+		}
+
+
+		$this->view->setVar( 'payment_method', $payment_method );
+		$this->view->setVar( 'new_option', $new_option );
+		$this->view->setVar( 'tabs', $this->_getEditTabs() );
+
+		$this->output( 'edit/options/create' );
+	}
+
+	public function options_edit_main_Action() : void
+	{
+
+		$payment_method = $this->payment_method;
+		$payment_method_option = $this->payment_method_option;
+
+		UI_module::initBreadcrumb();
+		Navigation_Breadcrumb::addURL(
+			Tr::_( 'Edit payment method <b>%NAME%</b>', [ 'NAME' => $payment_method->getInternalName() ] ),
+			Http_Request::currentURI([], ['action', 'option'])
+		);
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit option <b>%OPTION%</b>', ['OPTION'=>$payment_method_option->getShopData()->getTitle()] ) );
+
+		if($payment_method_option->catchEditForm()) {
+			$payment_method->save();
+
+			$this->logAllowedAction( 'Payment method - option updated', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+
+			UI_messages::success(
+				Tr::_( 'Payment method <b>%NAME%</b> has been updated - option updated', [ 'NAME' => $payment_method->getInternalName() ] )
+			);
+
+			Http_Headers::movedTemporary( Http_Request::currentURI() );
+
+		}
+
+
+
+		$this->view->setVar( 'tabs', $this->_getEditTabs() );
+		$this->view->setVar( 'option_tabs', $this->_getEditOptionTabs() );
+		$this->view->setVar( 'payment_method', $payment_method );
+		$this->view->setVar( 'payment_method_option', $payment_method_option );
+
+		$this->output( 'edit/options/edit/main' );
+
+	}
+
+
+	public function options_edit_images_Action() : void
+	{
+
+		$payment_method = $this->payment_method;
+		$payment_method_option = $this->payment_method_option;
+
+		UI_module::initBreadcrumb();
+		Navigation_Breadcrumb::addURL(
+			Tr::_( 'Edit payment method <b>%NAME%</b>', [ 'NAME' => $payment_method->getInternalName() ] ),
+			Http_Request::currentURI([], ['action', 'option'])
+		);
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit option <b>%OPTION%</b>', ['OPTION'=>$payment_method_option->getShopData()->getTitle()] ) );
+
+		Application_Admin::handleUploadTooLarge();
+
+
+		foreach(Shops::getList() as $shop) {
+			$shop_code = $shop->getCode();
+			$shop_name = $shop->getName();
+			$shop_data = $payment_method_option->getShopData( $shop_code );
+
+			foreach( Payment_Method_Option_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
+				$shop_data->catchImageWidget(
+					$image_class,
+					function() use ($image_class, $payment_method_option, $shop_code, $shop_name, $shop_data) {
+						$shop_data->save();
+
+						$this->logAllowedAction( 'Payment method option image '.$image_class.' uploaded', $payment_method_option->getCode().':'.$shop_code, $shop_data->getTitle().' - '.$shop_name );
+
+					},
+					function() use ($image_class, $payment_method_option, $shop_code, $shop_name, $shop_data) {
+						$shop_data->save();
+
+						$this->logAllowedAction( 'Payment method option image '.$image_class.' deleted', $payment_method_option->getCode().':'.$shop_code, $shop_data->getTitle().' - '.$shop_name );
+					}
+				);
+
+			}
+		}
+
+
+		$this->view->setVar( 'tabs', $this->_getEditTabs() );
+		$this->view->setVar( 'option_tabs', $this->_getEditOptionTabs() );
+		$this->view->setVar( 'payment_method', $payment_method );
+		$this->view->setVar( 'payment_method_option', $payment_method_option );
+
+		$this->output( 'edit/options/edit/images' );
+
+	}
+
 
 }

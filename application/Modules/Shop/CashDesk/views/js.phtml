@@ -158,7 +158,7 @@ $cash_desk = CashDesk::get();
 					}
 
 					$.get( '?action=personal_takeover_get_map_data', function( map_data ) {
-						let map_instance = new google.maps.Map( document.getElementById('parsonal_takeover_map'),{});
+						let map_instance = new google.maps.Map( document.getElementById('personal_takeover_map'),{});
 						let markers = {};
 
 						CashDesk.delivery.personalTakeover.map_instance = map_instance;
@@ -214,7 +214,17 @@ $cash_desk = CashDesk::get();
 				startSelection: function() {
 					CashDesk.delivery.personalTakeover.init( function() {
 						$('#select_personal_takeover_place_dialog').modal('show');
-						//TODO: resize map ...
+
+						setTimeout(function () {
+							$('#personal_takeover_map').height(
+								$('#select_personal_takeover_place_dialog__body').height()
+							);
+
+							$('#personal_takeover_map').width(
+								$('#select_personal_takeover_place_dialog__col').width()
+							);
+
+						}, 500);
 					} );
 				},
 
@@ -239,6 +249,11 @@ $cash_desk = CashDesk::get();
 				CashDesk.selected_payment=method;
 				CashDesk._request.doGet('?action=select_payment&method=' + method);
 			},
+
+			selectOption: function( option ) {
+				CashDesk._request.doGet('?action=select_payment_option&option=' + option);
+			},
+
 
 			back: function() {
 				$('#cash_desk_payment').slideUp();
@@ -481,7 +496,7 @@ $cash_desk = CashDesk::get();
 				continueWithoutRegistration: function() {
 					$('#cash_desk_customer').slideUp();
 
-					CashDesk._request.doGet('?action=registration_do_not_register', function () {
+					CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
 						$('#cash_desk_customer').slideDown();
 					});
 				},
@@ -537,18 +552,14 @@ $cash_desk = CashDesk::get();
 					CashDesk._request.doGet(
 						'?action=confirm_send',
 						function( response ) {
-							//TODO:
+							location = response.data.URL;
 						},
 						function( response ) {
 							CashDesk._request.applySnippets(response);
 						},
 						true
 					);
-
-
 				});
-
-
 			}
 		},
 

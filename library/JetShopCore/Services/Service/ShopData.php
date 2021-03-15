@@ -11,6 +11,7 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 use Jet\Form_Field_Select;
 use Jet\Tr;
+use Jet\Form;
 
 /**
  *
@@ -124,6 +125,16 @@ abstract class Core_Services_Service_ShopData extends DataModel_Related_1toN imp
 		form_field_creator_method_name: 'createVatRateInputField'
 	)]
 	protected float $vat_rate = 0.0;
+
+	/**
+	 * @var bool
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		form_field_type: Form::TYPE_CHECKBOX,
+		form_field_label: 'Discount is not allowed'
+	)]
+	protected bool $discount_is_not_allowed = false;
 
 
 	/**
@@ -340,5 +351,21 @@ abstract class Core_Services_Service_ShopData extends DataModel_Related_1toN imp
 		$input->setSelectOptions($vat_rates);
 
 		return $input;
+	}
+
+	/**
+	 * @param bool $value
+	 */
+	public function setDiscountIsNotAllowed( bool $value ) : void
+	{
+		$this->discount_is_not_allowed = (bool)$value;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getDiscountIsNotAllowed() : bool
+	{
+		return $this->discount_is_not_allowed;
 	}
 }

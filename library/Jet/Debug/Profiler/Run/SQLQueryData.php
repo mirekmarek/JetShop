@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -27,7 +27,7 @@ class Debug_Profiler_Run_SQLQueryData
 	/**
 	 * @var array
 	 */
-	protected array $query_data = [];
+	protected array $query_params = [];
 
 	/**
 	 * @var array
@@ -73,14 +73,14 @@ class Debug_Profiler_Run_SQLQueryData
 	/**
 	 * @param string $block_id
 	 * @param string $query
-	 * @param array $query_data
+	 * @param array $query_params
 	 */
-	public function __construct( string $block_id, string $query, array $query_data )
+	public function __construct( string $block_id, string $query, array $query_params )
 	{
 		$this->block_id = $block_id;
 
 		$this->query = $query;
-		$this->query_data = $query_data;
+		$this->query_params = $query_params;
 
 		$this->backtrace = Debug_Profiler::getBacktrace( 5 );
 
@@ -160,9 +160,9 @@ class Debug_Profiler_Run_SQLQueryData
 	/**
 	 * @return array
 	 */
-	public function getQueryData(): array
+	public function getQueryParams(): array
 	{
-		return $this->query_data;
+		return $this->query_params;
 	}
 
 	/**

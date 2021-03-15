@@ -1,0 +1,52 @@
+<?php
+namespace JetShopModule\Admin\WarehouseManagement\ReceiptOfGoods;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\Mvc_View;
+use Jet\UI;
+use JetShop\Product;
+
+/**
+ * @var Mvc_View   $this
+ * @var Form $add_form
+ */
+
+$add_form = $this->getRaw('add_form');
+$add_form->setDefaultLabelWidth([Form::LJ_SIZE_MEDIUM=>1]);
+$add_form->setDefaultFieldWidth([Form::LJ_SIZE_MEDIUM=>4]);
+
+$add_form->tag()->addJsAction('onsubmit', 'ReceiptOfGoods.addItem();return false;');
+?>
+
+<?=$add_form->start();?>
+
+	<?=$add_form->getCommonMessage()?>
+
+	<?=$add_form->field('product_id')?>
+
+	<div class="form-group row">
+		<label class="col-md-1 col-form-label"><?=Tr::_('Product:')?></label>
+		<div class="col-md-4">
+			<?=Product::renderSelectProductWidget(
+				"$('#add_form__product_id').val(selected_item.id);",
+				(int)$add_form->field('product_id')->getValue()
+			)?>
+		</div>
+	</div>
+
+	<?=$add_form->field('count')?>
+	<?=$add_form->field('context_type')?>
+	<?=$add_form->field('context')?>
+	<?=$add_form->field('price')?>
+	<?=$add_form->field('internal_description')?>
+
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-4">
+			<?=UI::button_create('Add')->setType('submit')->setClass('success')?>
+		</div>
+	</div>
+
+
+<?=$add_form->end();?>

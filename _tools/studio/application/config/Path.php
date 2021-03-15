@@ -1,23 +1,24 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav7 Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav7 Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetStudio;
 
 use Jet\SysConf_Path;
 
-$project_base = dirname(dirname(dirname(dirname(__DIR__)))).'/';
-$studio_base = dirname(dirname(__DIR__)).'/';
-$studio_application =  $studio_base.'application/';
-$project_application =  $project_base.'application/';
+$project_base = dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/';
+$studio_base = dirname( dirname( __DIR__ ) ) . '/';
+$studio_application = $studio_base . 'application/';
+$project_application = $project_base . 'application/';
 
-$library = $project_base.'library/';
+$library = $project_base . 'library/';
 
-require_once $library.'Jet/SysConf/Path.php';
-require_once $studio_base.'application/Classes/ProjectConf/Path.php';
+require_once $library . 'Jet/SysConf/Path.php';
+require_once $studio_base . 'application/Classes/ProjectConf/Path.php';
 
 SysConf_Path::setLibrary( $library );
 
@@ -34,20 +35,18 @@ SysConf_Path::setData( $studio_application . 'data/' );
 SysConf_Path::setDictionaries( $studio_application . 'dictionaries/' );
 
 
-
-
 SysConf_Path::setCache( $project_base . 'cache/' );
 
 ProjectConf_Path::setBase( $project_base );
 SysConf_Path::setSites( $project_application . 'sites/' );
-SysConf_Path::setMenus( $project_application.'menus/' );
+SysConf_Path::setMenus( $project_application . 'menus/' );
 
 ProjectConf_Path::setApplication( $project_application );
 
-ProjectConf_Path::setShopCoreClasses( $library.'JetShopCore/' );
-ProjectConf_Path::setShopClasses( $library.'JetShop' );
+ProjectConf_Path::setShopCoreClasses( $library . 'JetShopCore/' );
+ProjectConf_Path::setShopClasses( $library . 'JetShop' );
 
-ProjectConf_Path::setApplicationModules( $project_application.'Modules/' );
+ProjectConf_Path::setApplicationModules( $project_application . 'Modules/' );
 
 ProjectConf_Path::setSites( $project_base . 'sites/' );
 ProjectConf_Path::setConfig( $project_application . 'config/' );

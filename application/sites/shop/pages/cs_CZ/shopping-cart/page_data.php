@@ -13,11 +13,6 @@ return [
 	],
 	'layout_script_name' => 'shopping-cart',
 	'meta_tags' => [
-		[
-			'attribute' => 'attribute',
-			'attribute_value' => 'example',
-			'content' => 'Example tag',
-		],
 	],
 	'contents' => [
 		[

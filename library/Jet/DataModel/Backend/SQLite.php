@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -81,7 +81,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	 */
 	public function helper_create( DataModel_Definition_Model $definition ): void
 	{
-		$this->getDb()->execCommand( $this->helper_getCreateCommand( $definition ) );
+		$this->getDb()->execute( $this->helper_getCreateCommand( $definition ) );
 	}
 
 	/**
@@ -271,7 +271,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	 */
 	public function helper_drop( DataModel_Definition_Model $definition ): void
 	{
-		$this->getDb()->execCommand( $this->helper_getDropCommand( $definition ) );
+		$this->getDb()->execute( $this->helper_getDropCommand( $definition ) );
 	}
 
 	/**
@@ -296,7 +296,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		$this->transactionStart();
 		try {
 			foreach( $this->helper_getUpdateCommand( $definition ) as $q ) {
-				$this->getDb()->execCommand( $q );
+				$this->getDb()->execute( $q );
 			}
 		} catch( \Exception $e ) {
 			$this->transactionRollback();
@@ -372,7 +372,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 			foreach( $new_cols as $c => $v ) {
 				$_new_cols[] = $c . '=' . $v;
 			}
-			$update_default_values = 'UPDATE ' . $updated_table_name . ' SET ' . implode( ',' . PHP_EOL, $_new_cols );
+			$update_default_values = 'UPDATE ' . $updated_table_name . ' SET ' . implode( ',' . PHP_EOL, $_new_cols ).';';
 		}
 
 
@@ -493,7 +493,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	public function save( DataModel_RecordData $record ): string
 	{
 
-		$this->getDb()->execCommand( $this->createInsertQuery( $record ) );
+		$this->getDb()->execute( $this->createInsertQuery( $record ) );
 
 		return $this->getDb()->lastInsertId();
 	}
@@ -542,7 +542,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	 */
 	public function update( DataModel_RecordData $record, DataModel_Query $where ): int
 	{
-		return $this->getDb()->execCommand( $this->createUpdateQuery( $record, $where ) );
+		return $this->getDb()->execute( $this->createUpdateQuery( $record, $where ) );
 	}
 
 	/**
@@ -717,7 +717,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	 */
 	public function delete( DataModel_Query $where ): int
 	{
-		return $this->getDb()->execCommand( $this->createDeleteQuery( $where ) );
+		return $this->getDb()->execute( $this->createDeleteQuery( $where ) );
 	}
 
 	/**
@@ -790,7 +790,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 
 			$r_table_name = $this->_getTableName( $relation->getRelatedDataModelDefinition() );
 
-
+			/** @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection */
 			switch( $relation->getJoinType() ) {
 				case DataModel_Query::JOIN_TYPE_LEFT_JOIN:
 					$join_qp .= PHP_EOL . "\t\t" . 'JOIN ' . $r_table_name . ' ON' . PHP_EOL;

@@ -1,0 +1,17 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var Order $order
+ */
+
+
+$order = $this->getRaw('order');
+?>
+
+<h1>Order <?=$order->getId()?></h1>
+
+<h2>Done ...</h2>

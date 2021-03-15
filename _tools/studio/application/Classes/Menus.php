@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
@@ -43,7 +43,7 @@ class Menus extends BaseObject implements Application_Part
 	 * @param string|null $custom_menu_id
 	 * @param string|null $custom_menu_item_id
 	 *
-	 * @return string $url
+	 * @return string
 	 */
 	public static function getActionUrl(
 		string $action,
@@ -51,7 +51,7 @@ class Menus extends BaseObject implements Application_Part
 		?string $custom_menu_set = null,
 		?string $custom_menu_id = null,
 		?string $custom_menu_item_id = null
-	)
+	) : string
 	{
 
 		$get_params = [];

@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -415,9 +415,7 @@ class Navigation_Menu_Item extends BaseObject
 		 */
 		$page_class = Mvc_Factory::getPageClassName();
 
-		$page = $page_class::get( $this->page_id, $this->locale, $this->site_id );
-
-		return $page;
+		return $page_class::get( $this->page_id, $this->locale, $this->site_id );
 	}
 
 }

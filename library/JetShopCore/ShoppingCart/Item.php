@@ -120,10 +120,4 @@ abstract class Core_ShoppingCart_Item
 		return true;
 	}
 
-	public function generateDeliveryTermInfo() : string
-	{
-		//TODO:
-		return '';
-	}
-
 }

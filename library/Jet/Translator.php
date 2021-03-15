@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -155,7 +155,7 @@ class Translator extends BaseObject
 	 *
 	 * @return string
 	 */
-	public static function _( string $text, array $data = [], string|null $namespace = null, string|null $locale = null )
+	public static function _( string $text, array $data = [], string|null $namespace = null, string|null $locale = null ) : string
 	{
 		return static::getTranslation( $text, $data, $namespace, $locale );
 	}

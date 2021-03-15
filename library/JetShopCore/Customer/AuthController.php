@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  *
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 namespace JetShop;
 
@@ -31,7 +31,7 @@ use Jet\Data_DateTime;
  */
 abstract class Core_Customer_AuthController extends BaseObject implements Auth_Controller_Interface
 {
-	protected static string $LOGIN_MODULE = 'Shop.Login';
+	protected static string $login_module_name = 'Shop.Login';
 
 
 	const EVENT_LOGIN_FAILED = 'login_failed';
@@ -49,7 +49,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	 */
 	public static function getLoginModuleName(): string
 	{
-		return self::$LOGIN_MODULE;
+		return self::$login_module_name;
 	}
 
 	/**
@@ -57,7 +57,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	 */
 	public static function setLoginModuleName( string $module_name ): void
 	{
-		self::$LOGIN_MODULE = $module_name;
+		self::$login_module_name = $module_name;
 	}
 
 

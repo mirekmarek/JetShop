@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -120,9 +120,9 @@ class Debug_Profiler
 
 	/**
 	 * @param string $query
-	 * @param array $query_data
+	 * @param array $query_params
 	 */
-	public static function SQLQueryStart( string $query, $query_data = [] ): void
+	public static function SQLQueryStart( string $query, $query_params = [] ): void
 	{
 		if(
 			!static::$enabled ||
@@ -131,7 +131,7 @@ class Debug_Profiler
 			return;
 		}
 
-		static::$run->SQLQueryStart( $query, $query_data );
+		static::$run->SQLQueryStart( $query, $query_params );
 	}
 
 	/**

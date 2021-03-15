@@ -18,6 +18,25 @@ abstract class Core_Delivery_Kind {
 
 	protected string $title = '';
 
+	protected bool $module_is_required = false;
+
+	/**
+	 * @return bool
+	 */
+	public function moduleIsRequired(): bool
+	{
+		return $this->module_is_required;
+	}
+
+	/**
+	 * @param bool $module_is_required
+	 */
+	public function setModuleIsRequired( bool $module_is_required ): void
+	{
+		$this->module_is_required = $module_is_required;
+	}
+
+
 
 	/**
 	 * @var Delivery_Kind[]|null
@@ -67,7 +86,7 @@ abstract class Core_Delivery_Kind {
 	}
 
 	/**
-	 * @return Core_Delivery_Kind[]
+	 * @return Delivery_Kind[]
 	 */
 	public static function getList() : array
 	{
@@ -81,6 +100,7 @@ abstract class Core_Delivery_Kind {
 			$personal_takeover = new Delivery_Kind();
 			$personal_takeover->setCode( Delivery_Kind::KIND_PERSONAL_TAKEOVER );
 			$personal_takeover->setTitle( Tr::_('Personal takeover', [], Delivery_Method::getManageModuleName()) );
+			$personal_takeover->setModuleIsRequired( true );
 
 			$delivery = new Delivery_Kind();
 			$delivery->setCode( Delivery_Kind::KIND_DELIVERY );

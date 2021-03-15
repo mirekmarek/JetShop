@@ -35,16 +35,6 @@ abstract class Core_Customer_Address extends DataModel
 	protected int $id = 0;
 
 	/**
-	 * @var ?Form
-	 */ 
-	protected ?Form $_form_edit = null;
-
-	/**
-	 * @var ?Form
-	 */ 
-	protected ?Form $_form_add = null;
-
-	/**
 	 * @var int
 	 */ 
 	#[DataModel_Definition(
@@ -196,47 +186,6 @@ abstract class Core_Customer_Address extends DataModel
 		return $this->id;
 	}
 
-	/**
-	 * @return Form
-	 */
-	public function getEditForm() : Form
-	{
-		if(!$this->_form_edit) {
-			$this->_form_edit = $this->getCommonForm('edit_form');
-
-			//TODO: get by module
-		}
-		
-		return $this->_form_edit;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-			$this->_form_add = $this->getCommonForm('add_form');
-		}
-		
-		return $this->_form_add;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
 
 	/**
 	 * @param int|string $id

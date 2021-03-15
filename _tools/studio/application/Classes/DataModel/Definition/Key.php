@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
@@ -13,7 +13,6 @@ use Jet\DataModel;
 use Jet\DataModel_Definition_Key as Jet_DataModel_Definition_Key;
 use Jet\DataModel_Definition_Property_CustomData;
 use Jet\DataModel_Definition_Property_DataModel;
-use Jet\DataModel_Exception;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_MultiSelect;
@@ -49,8 +48,6 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 	 * @param string $name
 	 * @param string $type
 	 * @param array $property_names
-	 *
-	 * @throws DataModel_Exception
 	 */
 	public function __construct( string $name = '', string $type = DataModel::KEY_TYPE_INDEX, array $property_names = [] )
 	{
@@ -376,8 +373,6 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 		foreach( $this->getPropertyNames() as $property_name ) {
 			$properties[] = DataModels::getCurrentModel()->getProperty( $property_name )->getName();
 		}
-
-		$type = '';
 
 		$type = match ($this->getType()) {
 			DataModel::KEY_TYPE_INDEX => 'DataModel::KEY_TYPE_INDEX',

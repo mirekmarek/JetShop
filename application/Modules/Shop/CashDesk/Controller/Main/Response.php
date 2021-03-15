@@ -21,6 +21,8 @@ class Controller_Main_Response {
 
 	protected array $snippets = [];
 
+	protected array $data = [];
+
 	protected array $errors = [];
 
 	public function __construct( Controller_Main $controller )
@@ -39,6 +41,10 @@ class Controller_Main_Response {
 		$this->snippets[$id] = $view;
 	}
 
+	public function setData( string $key, mixed $data ) : void
+	{
+		$this->data[$key] = $data;
+	}
 
 	public function response()
 	{
@@ -53,6 +59,7 @@ class Controller_Main_Response {
 			'billing_address_editable' => $cash_desk->isBillingAddressEditable(),
 			'delivery_address_editable' => $cash_desk->isDeliveryAddressEditable(),
 			'snippets' => [],
+			'data' => $this->data,
 			'errors' => $this->errors,
 		];
 

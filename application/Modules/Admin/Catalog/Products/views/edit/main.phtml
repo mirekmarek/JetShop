@@ -2,6 +2,7 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\Http_Request;
+use Jet\Locale;
 use Jet\Mvc;
 use Jet\Mvc_View;
 use Jet\Form;
@@ -10,6 +11,8 @@ use Jet\UI;
 use JetShop\Price;
 use JetShop\Shops;
 use JetShop\Sticker;
+use JetShop\WarehouseManagement_Item;
+use JetShop\WarehouseManagement_Warehouse;
 
 
 /**
@@ -54,7 +57,6 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 		<?=$form->field('internal_code')?>
 		<?=$form->field('brand_id')?>
 		<?=$form->field('supplier_id')?>
-		<?=$form->field('stock_status')?>
 
 		<legend class="sub"><?=Tr::_('Stickers')?></legend>
 		<?php foreach(Sticker::getList() as $sticker): ?>
@@ -122,7 +124,47 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 				<?=$form->field('/shop_data/'.$shop_code.'/delivery_class_code')?>
 				<?=$form->field('/shop_data/'.$shop_code.'/delivery_term_code')?>
 				<?=$form->field('/shop_data/'.$shop_code.'/date_available')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/stock_status')?>
+				<div class="row">
+					<label class="col-form-label col-md-2"><?=Tr::_('Stock status:')?></label>
+					<div class="col-md-8">
+						<table class="table table-striped">
+							<tr>
+								<td style="width: 150px;font-weight: bolder;"><?=Tr::_('Total available:')?></td>
+								<td style="font-weight: bolder;"><?=$product->getShopData($shop_code)->getStockStatus()?></td>
+							</tr>
+							<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+								if(!in_array($shop_code, $warehouse->getShopCodes())) {
+									continue;
+								}
+
+								$item = WarehouseManagement_Item::get($warehouse->getCode(), $product->getId());
+								?>
+								<tr>
+									<td colspan="2">
+										<b><?=$warehouse->getInternalName()?></b>
+									</td>
+								</tr>
+
+								<tr>
+									<td><?=Tr::_('Available:')?></td>
+									<td><?=Locale::getCurrentLocale()->formatInt($item->getAvailable())?></td>
+								</tr>
+								<tr>
+									<td><?=Tr::_('In stock:')?></td>
+									<td><?=Locale::getCurrentLocale()->formatInt($item->getInStock())?></td>
+								</tr>
+								<tr>
+									<td><?=Tr::_('Blocked:')?></td>
+									<td><?=Locale::getCurrentLocale()->formatInt($item->getBlocked())?></td>
+								</tr>
+								<tr>
+									<td><?=Tr::_('Required:')?></td>
+									<td><?=Locale::getCurrentLocale()->formatInt($item->getRequired())?></td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+				</div>
 			</fieldset>
 
 

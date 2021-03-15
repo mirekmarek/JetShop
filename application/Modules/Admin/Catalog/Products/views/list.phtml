@@ -1,7 +1,8 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use JetShop\Product;
+use Jet\Form;
+use JetShop\Category;use JetShop\Product;
 
 use Jet\UI_dataGrid;
 use Jet\UI;
@@ -9,16 +10,18 @@ use Jet\UI_button;
 
 use Jet\Tr;
 use Jet\Mvc_View;
+use JetShop\Shops;
 
 /**
- * @var Mvc_View               $this
- * @var UI_dataGrid            $grid
+ * @var Mvc_View     $this
+ * @var UI_dataGrid  $grid
+ * @var Form         $filter_form
+ * @var Listing      $listing
  */
 $grid = $this->getRaw( 'grid' );
 $router = $this->getController()->getControllerRouter();
-
-//TODO:
-$add_uri = '';
+$filter_form = $this->getRaw( 'filter_form' );
+$listing = $this->getRaw('listing');
 
 $c_edit = $grid->getColumn( '_edit_' );
 $c_edit->setRenderer(
@@ -63,19 +66,111 @@ $grid->getColumn( 'id' )->setRenderer(
 
 
 ?>
+<script>
+	let productFilter = {
+		addCategory: function( id )
+		{
+			let categories = document.getElementById('filter_form__categories');
 
-<div class="row toolbar">
-	<div class="col-xs-7 col-md-3">
-		<?=$this->getRaw( 'search_form' ) ?>
-	</div>
-	<div class="col-xs-5 col-md-3">
-		<?php if( $add_uri ): ?>
-			<?=UI::button_create( Tr::_( 'Create a new product' ) )->setUrl( $add_uri )?>
-		<?php endif; ?>
+			let new_value = '';
+			if(categories.value.length) {
+				new_value = categories.value.split(',');
+				if(!new_value.includes(id)) {
+					new_value.push(id);
+				}
+
+				new_value = new_value.join(',');
+
+			} else {
+				new_value = id;
+			}
+
+			categories.value = new_value;
+
+			document.getElementById('filter_form').submit();
+		},
+
+		removeCategory: function( id )
+		{
+			let categories = document.getElementById('filter_form__categories');
+
+			let new_value = '';
+			if(categories.value.length) {
+				new_value = categories.value.split(',');
+				let _new_value = [];
+				for(let i=0;i<new_value.length;i++) {
+					if(new_value[i]!=id) {
+						_new_value.push(new_value[i]);
+					}
+				}
+				new_value = _new_value.join(',');
+			}
+
+			categories.value = new_value;
+
+			document.getElementById('filter_form').submit();
+
+		}
+	};
+</script>
+
+<?=$filter_form->start()?>
+
+<?=$filter_form->field('categories')?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-3">
+				<table style="width: 100%">
+					<tr>
+						<td style="width: 50px;"><?=Tr::_('Category:')?></td>
+						<td><?=Category::renderSelectCategoryWidget("productFilter.addCategory(selected_item.id)")?></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td style="padding: 5px;">
+							<?php foreach($listing->filter_categories_getSelected() as $c_id=>$category): ?>
+								<?=UI::button(' '.$category->_getPathName())->setIcon('trash')->setClass('info')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnclick("productFilter.removeCategory({$c_id})")?>
+							<?php endforeach; ?>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-3">
+				<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 100px;padding-top: 5px;padding-bottom: 5px;">
+				<table class="badge badge-<?=match((string)$filter_form->field('is_active_general')->getValue()) {'0'=>'light', '-1'=>'danger', '1'=>'success' }?>">
+					<tr>
+						<td style="width: 150px;"><?=Tr::_('Is active - general')?></td>
+						<td style="width: 100px;"><?=$filter_form->field('is_active_general')->input()->addJsAction('onchange', 'this.form.submit()')?></td>
+					</tr>
+				</table>
+				<?php foreach(Shops::getList() as $code=>$shop): ?>
+				<table class="badge badge-<?=match((string)$filter_form->field('is_active_'.$code)->getValue()) {'0'=>'light', '-1'=>'danger', '1'=>'success' }?>">
+					<tr>
+						<td style="width: 150px;"><?=Tr::_('Is active - '.$shop->getName())?></td>
+						<td style="width: 100px;"><?=$filter_form->field('is_active_'.$code)->input()->addJsAction('onchange', 'this.form.submit()')?></td>
+					</tr>
+				</table>
+				<?php endforeach; ?>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-7 col-md-3">
+
+			</div>
+		</div>
+
 	</div>
 </div>
+<?=$filter_form->end()?>
 
-<div class="row">
+
+<div class="row" id="main-col">
 	<div class="col-md-12">
 		<?=$grid->render();?>
 	</div>

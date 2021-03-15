@@ -14,6 +14,7 @@ use Jet\Form_Field_Select;
 use Jet\Data_DateTime;
 use Jet\Locale;
 use Jet\Mailing_Email;
+use Jet\Mailing_Email_Template;
 use Jet\Tr;
 
 /**
@@ -701,7 +702,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 		$this->save();
 
 
-		$email = new Mailing_Email(
+		$email = new Mailing_Email_Template(
 			'user_password_reset',
 			$this->getLocale(),
 			Application_Admin::getSiteId()
@@ -710,7 +711,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 		$email->setVar('user', $this);
 		$email->setVar('password', $password);
 
-		$email->send( $this->getEmail() );
+		$email->getEmail()->send( $this->getEmail() );
 	}
 
 	/**
@@ -923,7 +924,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	public function sendWelcomeEmail( string $password ) : void
 	{
-		$email = new Mailing_Email(
+		$email = new Mailing_Email_Template(
 			'user_welcome',
 			$this->getLocale(),
 			Application_Admin::getSiteId()
@@ -932,7 +933,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 		$email->setVar('user', $this);
 		$email->setVar('password', $password);
 
-		$email->send( $this->getEmail() );
+		$email->getEmail()->send( $this->getEmail() );
 	}
 
 }

@@ -10,6 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Name;
 use Jet\DataModel_Related_MtoN_Iterator;
+use Jet\Exception;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\DataModel_Related_1toN;
@@ -32,7 +33,8 @@ use Jet\Tr;
 )]
 abstract class Core_Payment_Method extends DataModel
 {
-	protected static string $MANAGE_MODULE = 'Admin.Payment.Methods';
+	protected static string $manage_module_name = 'Admin.Payment.Methods';
+	protected static string $method_module_name_prefix = 'Order.Payment.Methods.';
 
 	/**
 	 * @var string
@@ -125,6 +127,16 @@ abstract class Core_Payment_Method extends DataModel
 	)]
 	protected $services = null;
 
+	/**
+	 * @var Payment_Method_Option[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Payment_Method_Option::class,
+		form_field_type: false
+	)]
+	protected $options;
+
 
 	/**
 	 * @var ?Form
@@ -143,7 +155,7 @@ abstract class Core_Payment_Method extends DataModel
 	 */
 	public static function getManageModuleName(): string
 	{
-		return self::$MANAGE_MODULE;
+		return static::$manage_module_name;
 	}
 
 	/**
@@ -151,8 +163,26 @@ abstract class Core_Payment_Method extends DataModel
 	 */
 	public static function setManageModuleName( string $name ): void
 	{
-		self::$MANAGE_MODULE = $name;
+		static::$manage_module_name = $name;
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function getMethodModuleNamePrefix(): string
+	{
+		return static::$method_module_name_prefix;
+	}
+
+	/**
+	 * @param string $method_module_name_prefix
+	 */
+	public static function setMethodModuleNamePrefix( string $method_module_name_prefix ): void
+	{
+		static::$method_module_name_prefix = $method_module_name_prefix;
+	}
+
+
 
 	public function __construct()
 	{
@@ -174,6 +204,13 @@ abstract class Core_Payment_Method extends DataModel
 				$this->shop_data[$shop_code] = $sh;
 			}
 		}
+
+		foreach($this->options as $option) {
+
+			/** @noinspection PhpParamsInspection */
+			$option->setParents( $this );
+		}
+
 	}
 
 
@@ -507,11 +544,122 @@ abstract class Core_Payment_Method extends DataModel
 		$item->setQuantity( 1 );
 		$item->setTitle( $shd->getTitle() );
 		$item->setCode( $this->getCode() );
-		$item->setPricePerItem( $shd->getDefaultPrice() );
+		$item->setItemAmount( $shd->getDefaultPrice() );
 		$item->setVatRate( $shd->getVatRate() );
 		$item->setDescription( $shd->getDescriptionShort() );
 
 		return $item;
 	}
 
+
+	/**
+	 * @return Payment_Method_Option[]
+	 */
+	public function getOptions() : iterable
+	{
+		return $this->options;
+	}
+
+
+	public function getOption( string $code ) : Payment_Method_Option|null
+	{
+		if(!isset($this->options[$code])) {
+			return null;
+		}
+
+		return $this->options[$code];
+	}
+
+	public function addOption( Payment_Method_Option $option ) : void
+	{
+		/** @noinspection PhpParamsInspection */
+		$option->setParents( $this );
+
+		$this->options[] = $option;
+	}
+
+	/**
+	 * @param string $shop_code
+	 *
+	 * @return Payment_Method_Option[]
+	 */
+	public function getActiveOptions( string $shop_code ) : array
+	{
+		$res = [];
+
+		foreach($this->options as $option) {
+			$shd = $option->getShopData( $shop_code );
+			if($shd->isActive()) {
+				$res[$option->getCode()] = $option;
+			}
+		}
+
+		uasort( $res, function( Payment_Method_Option $a, Payment_Method_Option $b ) use ($shop_code) {
+			$p_a = $a->getShopData($shop_code)->getPriority();
+			$p_b = $b->getShopData($shop_code)->getPriority();
+
+			if(!$p_a<$p_b) {
+				return -1;
+			}
+
+			if(!$p_a>$p_b) {
+				return 1;
+			}
+
+			return 0;
+		} );
+
+		return $res;
+	}
+
+	public function getModuleName() : string
+	{
+		return Payment_Method::getMethodModuleNamePrefix().$this->getCode();
+	}
+
+	public function getModule(): ?Payment_Method_Module
+	{
+		$module_name = $this->getModuleName();
+
+		if(Application_Modules::moduleExists($module_name)) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */
+			return Application_Modules::moduleInstance( $module_name );
+		}
+
+		if($this->getKind()->moduleIsRequired()) {
+			throw new Exception('Payment module '.$module_name.' is required, but mussing (is not activated)');
+		}
+
+		return null;
+	}
+
+	public function getOrderStatusCode( CashDesk $cash_desk ) : string
+	{
+
+		$payment_method_module = $this->getModule();
+
+		if(
+			$payment_method_module &&
+			($order_status_code = $payment_method_module->getOrderStatusCode( $cash_desk ) )
+		) {
+			return $order_status_code;
+		}
+
+		return Shops::get( $cash_desk->getShopCode() )->getDefaultOrderStatusCode();
+	}
+
+	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	{
+		/**
+		 * @var Payment_Method $this
+		 */
+		$module = $this->getModule();
+
+		if($module) {
+			return $module->getOrderConfirmationEmailInfoText( $order, $this );
+		} else {
+			$shop_code = $order->getShopCode();
+			return $this->getShopData( $shop_code )->getConfirmationEmailInfoText();
+		}
+	}
 }

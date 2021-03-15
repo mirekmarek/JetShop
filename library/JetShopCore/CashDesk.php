@@ -27,6 +27,16 @@ abstract class Core_CashDesk
 
 	protected static string $cash_desk_page_id = 'cash-desk';
 
+	protected static string $cash_desk_confirmation_page_id = 'cash-desk-confirmation';
+
+	protected static string $cash_desk_payment_page_id = 'cash-desk-payment';
+
+	protected static string $cash_desk_payment_problem_page_id = 'cash-desk-payment-problem';
+
+	protected static string $cash_desk_payment_success_page_id = 'cash-desk-payment-success';
+
+	protected static string $cash_desk_payment_notification_page_id = 'cash-desk-payment-notification';
+
 	protected static ?CashDesk $cash_desk = null;
 
 
@@ -60,6 +70,139 @@ abstract class Core_CashDesk
 	{
 		return CashDesk::getCashDeskPage()->getURL();
 	}
+
+
+
+
+	public static function getCashDeskConfirmationPageId(): string
+	{
+		return self::$cash_desk_confirmation_page_id;
+	}
+
+	public static function setCashDeskConfirmationPageId( string $cash_desk_confirmation_page_id ): void
+	{
+		self::$cash_desk_confirmation_page_id = $cash_desk_confirmation_page_id;
+	}
+
+	public static function getCashDeskConfirmationPage(): Mvc_Page
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get(CashDesk::getCashDeskConfirmationPageId(), $shop->getLocale(), $shop->getSiteId());
+	}
+
+	public static function getCashDeskConfirmationPageURL(): string
+	{
+		return CashDesk::getCashDeskConfirmationPage()->getURL();
+	}
+
+
+
+
+
+	public static function getCashDeskPaymentPageId(): string
+	{
+		return self::$cash_desk_payment_page_id;
+	}
+
+	public static function setCashDeskPaymentPageId( string $cash_desk_payment_page_id ): void
+	{
+		self::$cash_desk_payment_page_id = $cash_desk_payment_page_id;
+	}
+
+	public static function getCashDeskPaymentPage(): Mvc_Page
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get(CashDesk::getCashDeskPaymentPageId(), $shop->getLocale(), $shop->getSiteId());
+	}
+
+	public static function getCashDeskPaymentPageURL(): string
+	{
+		return CashDesk::getCashDeskPaymentPage()->getURL();
+	}
+
+
+
+	public static function getCashDeskPaymentProblemPageId(): string
+	{
+		return self::$cash_desk_payment_problem_page_id;
+	}
+
+	public static function setCashDeskPaymentProblemPageId( string $cash_desk_payment_problem_page_id ): void
+	{
+		self::$cash_desk_payment_problem_page_id = $cash_desk_payment_problem_page_id;
+	}
+
+	public static function getCashDeskPaymentProblemPage(): Mvc_Page
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get(CashDesk::getCashDeskPaymentProblemPageId(), $shop->getLocale(), $shop->getSiteId());
+	}
+
+	public static function getCashDeskPaymentProblemPageURL(): string
+	{
+		return CashDesk::getCashDeskPaymentProblemPage()->getURL();
+	}
+
+
+
+
+	public static function getCashDeskPaymentSuccessPageId(): string
+	{
+		return self::$cash_desk_payment_success_page_id;
+	}
+
+	public static function setCashDeskPaymentSuccessPageId( string $cash_desk_payment_success_page_id ): void
+	{
+		self::$cash_desk_payment_success_page_id = $cash_desk_payment_success_page_id;
+	}
+
+	public static function getCashDeskPaymentSuccessPage(): Mvc_Page
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get(CashDesk::getCashDeskPaymentSuccessPageId(), $shop->getLocale(), $shop->getSiteId());
+	}
+
+	public static function getCashDeskPaymentSuccessPageURL(): string
+	{
+		return CashDesk::getCashDeskPaymentSuccessPage()->getURL();
+	}
+
+
+
+	public static function getCashDeskPaymentNotificationPageId(): string
+	{
+		return self::$cash_desk_payment_notification_page_id;
+	}
+
+	public static function setCashDeskPaymentNotificationPageId( string $cash_desk_payment_notification_page_id ): void
+	{
+		self::$cash_desk_payment_notification_page_id = $cash_desk_payment_notification_page_id;
+	}
+
+	public static function getCashDeskPaymentNotificationPage(): Mvc_Page
+	{
+		$shop = Shops::getCurrent();
+
+		return Mvc_Page::get(CashDesk::getCashDeskPaymentNotificationPageId(), $shop->getLocale(), $shop->getSiteId());
+	}
+
+	public static function getCashDeskPaymentNotificationPageURL(): string
+	{
+		return CashDesk::getCashDeskPaymentNotificationPage()->getURL();
+	}
+
+
+
+
+
+
+
+
+
 
 	public static function getModuleName(): string
 	{

@@ -31,4 +31,7 @@ return [
 	'The cheapest first' => '',
 	'The most expensive first' => '',
 	'According to reviews' => '',
+	'Options' => '',
+	'... select product ...' => '',
+	'Create' => '',
 ];

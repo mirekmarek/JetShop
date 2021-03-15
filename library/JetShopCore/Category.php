@@ -24,7 +24,7 @@ use Jet\Application_Module;
 	id_controller_options: ['id_property_name'=>'id']
 )]
 abstract class Core_Category extends DataModel {
-	protected static string $MANAGE_MODULE = 'Admin.Catalog.Categories';
+	protected static string $manage_module_name = 'Admin.Catalog.Categories';
 
 	const SORT_NAME = 'name';
 	const SORT_PRIORITY = 'priority';
@@ -205,7 +205,7 @@ abstract class Core_Category extends DataModel {
 
 	public static function getManageModuleName(): string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	public static function getManageModule() : Category_ManageModuleInterface|Application_Module
@@ -538,19 +538,37 @@ abstract class Core_Category extends DataModel {
 		return explode(',', $this->path );
 	}
 
-	public function _getPathName( bool $as_array=false, string|null $eshop_code=null, string $path_str_glue=' / ' ) : array|string
+	protected static ?array $_names = null;
+
+	public function _getPathName( bool $as_array=false, string|null $shop_code=null, string $path_str_glue=' / ' ) : array|string
 	{
 
 		$result = [];
 
-		foreach( $this->getPath() as $id ) {
-			$category = Category::get($id);
+		if(static::$_names===null) {
+			static::$_names = [];
 
-			if(!$category) {
-				continue;
+			$names = Category_ShopData::fetchData(['category_id', 'name', 'shop_code'], []);
+
+			foreach($names as $n) {
+				$category_id = (int)$n['category_id'];
+				$name = $n['name'];
+				$s_code = $n['shop_code'];
+
+				if(!isset(static::$_names[$s_code])) {
+					static::$_names[$s_code] = [];
+				}
+
+				static::$_names[$s_code][$category_id] = $name;
 			}
+		}
 
-			$result[$id] = $category->getShopData($eshop_code)->getName();
+		if(!$shop_code) {
+			$shop_code = Shops::getCurrentCode();
+		}
+
+		foreach( $this->getPath() as $id ) {
+			$result[$id] = static::$_names[$shop_code][$id] ?? '';
 		}
 
 		if($as_array) {

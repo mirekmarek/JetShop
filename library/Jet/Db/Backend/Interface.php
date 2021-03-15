@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -36,15 +36,6 @@ interface Db_Backend_Interface
 	public function getConfig(): Db_Backend_Config;
 
 	/**
-	 *
-	 * @param string $query
-	 * @param array $query_data
-	 *
-	 * @return string
-	 */
-	public function prepareQuery( string $query, array $query_data = [] ): string;
-
-	/**
 	 * Executes command (INSERT, UPDATE, DELETE or CREATE, ...) and return affected rows
 	 *
 	 * @param string $query
@@ -52,14 +43,16 @@ interface Db_Backend_Interface
 	 *
 	 * @return int
 	 */
-	public function execCommand( string $query, array $query_data = [] ): int;
+	public function execute( string $query, array $query_data = [] ): int;
 
 	/**
-	 * @param string $statement
+	 * @param string $query
+	 * @param array $query_params
+	 * @param ?callable $result_handler
 	 *
-	 * @return object
+	 * @return iterable
 	 */
-	public function doQuery( string $statement ): object;
+	public function query( string $query, array $query_params = [], ?callable $result_handler=null ): iterable;
 
 
 	/**
@@ -124,35 +117,28 @@ interface Db_Backend_Interface
 	/**
 	 * @return bool
 	 */
-	public function beginTransaction();
+	public function beginTransaction() : bool;
 
 	/**
 	 * @return bool
 	 */
-	public function commit();
+	public function commit() : bool;
 
 	/**
 	 * @return bool
 	 */
-	public function rollBack();
+	public function rollBack() : bool;
 
 	/**
 	 * @return bool
 	 */
-	public function inTransaction();
-
-	/**
-	 * @param string $string
-	 *
-	 * @return string
-	 */
-	public function quoteString( string $string ): string;
+	public function inTransaction() : bool;
 
 	/**
 	 * @param string|null $name
 	 *
 	 * @return string
 	 */
-	public function lastInsertId( string $name = null );
+	public function lastInsertId( string $name = null ) : string;
 
 }

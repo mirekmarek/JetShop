@@ -34,6 +34,8 @@ return [
 				21
 			],
 			'default_vat_rate' => 21,
+
+			'default_order_status_code' => 'new',
 		],
 
 		[
@@ -65,6 +67,8 @@ return [
 				20,
 			],
 			'default_vat_rate' => 20,
+
+			'default_order_status_code' => 'new',
 		],
 
 	]

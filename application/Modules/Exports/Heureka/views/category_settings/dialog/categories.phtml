@@ -1,0 +1,38 @@
+<?php
+namespace JetShopModule\Exports\Heureka;
+
+use Jet\Mvc_View;
+use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ * @var HeurekaCategory[] $categories
+ */
+
+$categories = $this->getRaw('export_categories');
+$parent_id = $this->getString('dialog_selected_category');
+
+$selected_category = $categories[$parent_id] ?? null;
+
+?>
+<?php if($selected_category && $selected_category->getFullName()): ?>
+	<div class="toolbar">
+		<?=$selected_category->getFullName()?>
+		<?=UI::button('Select')->setOnclick("heurekaCategorySelect.confirm('{$selected_category->getId()}', '{$selected_category->getFullName()}')")?>
+	</div>
+<?php endif; ?>
+
+<ul style="list-style-type:none;">
+	<?php if($selected_category): ?>
+		<li><a href="#" onclick="heurekaCategorySelect.select('<?=$selected_category->getParentId()?>');return false"><?=UI::icon('folder')?> ..</a></li>
+	<?php endif; ?>
+
+	<?php foreach($categories as $cat):
+		if($cat->getParentId()!=$parent_id) {
+			continue;
+		}
+		?>
+		<li><a href="#" onclick="heurekaCategorySelect.select('<?=$cat->getId()?>');return false"><?=UI::icon('folder')?> <?=$cat->getName()?></a></li>
+	<?php endforeach; ?>
+</ul>
+

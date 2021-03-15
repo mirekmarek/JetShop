@@ -1,15 +1,16 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
 
 use Jet\Data_Text;
 use Jet\Exception;
+use Jet\Form_Field_Int;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
 use Jet\Form_Field_Hidden;
@@ -19,6 +20,7 @@ use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Checkbox;
 use Jet\Mvc_Factory;
+use Jet\Mvc_Page_MetaTag_Interface;
 use Jet\Tr;
 use Jet\Locale;
 use Jet\Mvc_Page_Content_Interface;
@@ -195,6 +197,11 @@ class Pages_Page extends Mvc_Page
 				$page->setName( $value );
 			} );
 
+			$order_field = new Form_Field_Int( 'order', 'Order:', $page->getOrder() );
+			$order_field->setCatcher( function( $value ) use ( $page ) {
+				$page->setOrder( $value );
+			} );
+
 			$title_field = new Form_Field_Input( 'title', 'Title:', $page->getTitle() );
 			$title_field->setIsRequired( true );
 			$title_field->setErrorMessages( [
@@ -263,6 +270,7 @@ class Pages_Page extends Mvc_Page
 				$menu_title_field,
 				$breadcrumb_title_field,
 				$icon_field,
+				$order_field,
 
 				$is_secret_field,
 				$is_active_field,
@@ -1149,6 +1157,26 @@ class Pages_Page extends Mvc_Page
 		}
 
 		return $ok;
+	}
+
+
+	/**
+	 *
+	 * @return Mvc_Page_MetaTag_Interface[]
+	 */
+	public function getMetaTags(): array
+	{
+		$meta_tags = [];
+		
+		foreach( $this->meta_tags as $mt ) {
+			$key = $mt->getAttribute() . ':' . $mt->getAttributeValue();
+			if( $key == ':' ) {
+				$key = $mt->getContent();
+			}
+			$meta_tags[$key] = $mt;
+		}
+
+		return $meta_tags;
 	}
 
 }

@@ -2,11 +2,14 @@
 namespace JetShop;
 
 use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
 
 /**
  * @var Mvc_View $this
  */
 
+$dm_code = Discounts::getActiveModule('Order.Discounts.Code');
 ?>
 <div class="row">
 	<div class="col-md-2">
@@ -16,9 +19,27 @@ use Jet\Mvc_View;
 			<?=$this->render('shopping_cart_page/items')?>
 		</div>
 
-		<?php foreach(Discounts::getActiveModules() as $dm):
-			echo $dm->ShoppingCart_handle();
-		endforeach; ?>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-8">
+
+				</div>
+				<div class="col-md-4 text-right">
+					<?php if($dm_code): ?>
+						<?=$dm_code->ShoppingCart_handle()?>
+					<?php endif; ?>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12 text-right">
+					<?=UI::button(Tr::_('Order'))->setUrl(CashDesk::getCashDeskPageURL())->setClass('success')?>
+				</div>
+			</div>
+		</div>
+
+
+
 	</div>
 	<div class="col-md-2">
 	</div>

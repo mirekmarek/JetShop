@@ -7,11 +7,33 @@ trait Core_CashDesk_Delivery {
 
 	protected ?array $available_delivery_methods = null;
 
+	protected ?Delivery_Pricing_Module $delivery_pricing_module = null;
+
+	public function getDeliveryPricingModule() : Delivery_Pricing_Module
+	{
+		if(!$this->delivery_pricing_module) {
+			$this->delivery_pricing_module = Delivery_Pricing_Module::getModule();
+		}
+
+		return $this->delivery_pricing_module;
+	}
+
+	public function getDeliveryPrice( Delivery_Method $method ) : Delivery_Pricing_PriceInfo
+	{
+		/**
+		 * @var CashDesk $this
+		 */
+		return $this->getDeliveryPricingModule()->getPrice( $this, $method );
+	}
+
 	/**
 	 * @return Delivery_Method[]
 	 */
 	public function getAvailableDeliveryMethods() : iterable
 	{
+		/**
+		 * @var CashDesk $this
+		 */
 		if($this->available_delivery_methods===null) {
 			$this->available_delivery_methods = [];
 
@@ -96,6 +118,17 @@ trait Core_CashDesk_Delivery {
 				}
 			}
 
+			foreach($this->available_delivery_methods as $code=>$method) {
+				$module = $method->getModule();
+				if(!$module) {
+					continue;
+				}
+
+				if(!$module->isEnabledForOrder($this, $method)) {
+					unset($this->available_delivery_methods[$code]);
+				}
+			}
+
 			$this->getModule()->sortDeliveryMethods( $this, $this->available_delivery_methods );
 
 		}
@@ -130,6 +163,21 @@ trait Core_CashDesk_Delivery {
 		$code = $session->getValue('selected_delivery_method', $default_method->getCode());
 
 		if(!isset($methods[$code])) {
+			$session->setValue('selected_delivery_method', $default_method->getCode());
+			$session->setValue('selected_delivery_method_place_code', '');
+
+			return $default_method;
+		}
+
+		$method = $methods[$code];
+
+		if(
+			$method->isPersonalTakeover() &&
+			!$method->getPersonalTakeoverPlace(
+				$this->shop_code,
+				$session->getValue('selected_personal_takeover_place_code', '')
+			)
+		) {
 			$session->setValue('selected_delivery_method', $default_method->getCode());
 			$session->setValue('selected_delivery_method_place_code', '');
 
@@ -171,22 +219,23 @@ trait Core_CashDesk_Delivery {
 			return false;
 		}
 
-		if(!$this->selectDeliveryMethod($method_code)) {
-			return false;
-		}
-
 		/**
 		 * @var Session $session
 		 */
 		$session = $this->getSession();
-		$method = $this->getSelectedDeliveryMethod();
 
-		if(
-			!$method->hasPersonalTakeoverPlace( $this->shop_code, $place_code )
-		) {
-			$place_code = '';
+		$methods = $this->getAvailableDeliveryMethods();
+		if(!isset($methods[$method_code])) {
+			return false;
 		}
 
+		$method = $methods[$method_code];
+
+		if( !$method->hasPersonalTakeoverPlace( $this->shop_code, $place_code ) ) {
+			return false;
+		}
+
+		$session->setValue('selected_delivery_method', $method_code);
 		$session->setValue('selected_personal_takeover_place_code', $place_code);
 
 		return true;

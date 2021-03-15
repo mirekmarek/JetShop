@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
@@ -59,13 +59,13 @@ class Menus_MenuSet extends Navigation_MenuSet
 
 			$root_menu = $this->addMenu(
 				$id,
-				$this->_( $item_data['label'] ),
+				$item_data['label'],
 				$item_data['icon']
 			);
 
 			if( isset( $item_data['items'] ) ) {
 				foreach( $item_data['items'] as $menu_item_id => $menu_item_data ) {
-					$label = $this->_( $menu_item_data['label'] );
+					$label = $menu_item_data['label'];
 					$menu_item = new Menus_Menu_Item( $menu_item_id, $label );
 					$menu_item->setData( $menu_item_data );
 

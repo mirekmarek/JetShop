@@ -18,20 +18,20 @@ $on_select = $this->getRaw('on_select');
 ?>
 
 <script type="text/javascript">
-	var <?=$name?> = new function() {
-		var _this = this;
+	let <?=$name?> = new function() {
+		let _this = this;
 
 		this.init = function() {
-			var whisperer = new Whisperer(
+			let whisperer = new Whisperer(
 				'<?=$name?>_input',
 				'<?=$name?>_whisperer',
-				'<?=Category::getManageModule()->getCategorySelectWhispererUrl([ Category::CATEGORY_TYPE_REGULAR ], $exclude_branch_id, $only_active)?>&search='
+				'<?=Category::getManageModule()->getCategorySelectWhispererUrl([ Category::CATEGORY_TYPE_REGULAR ], $exclude_branch_id, $only_active)?>&whisper='
 			);
 
 			whisperer.init();
 
 			whisperer.onItemSelect = function ( item_node ) {
-				var selected_item = {
+				let selected_item = {
 					id: item_node.data('id'),
 					name: item_node.data('name'),
 					url: item_node.data('url')

@@ -14,9 +14,9 @@ $order = $cash_desk->getOrder();
 		<td><?=$item->getTitle()?></td>
 		<td style="width: 200px;">
 			<?php if($item->isDiscount()): ?>
-				- <?=Price::formatWithCurrency($item->getTotalPrice())?>
+				- <?=Price::formatWithCurrency($item->getTotalAmount())?>
 			<?php else: ?>
-				<?=Price::formatWithCurrency($item->getTotalPrice())?>
+				<?=Price::formatWithCurrency($item->getTotalAmount())?>
 			<?php endif; ?>
 
 		</td>

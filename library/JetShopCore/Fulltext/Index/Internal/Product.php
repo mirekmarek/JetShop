@@ -3,7 +3,6 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetShopAdmin\Shop_Admin;
 
 #[DataModel_Definition(
 	name: 'index_internal_product',
@@ -39,9 +38,9 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 		return $this->product_is_active;
 	}
 
-	public function setProductIsActive( string $category_is_active ) : void
+	public function setProductIsActive( string $product_is_active ) : void
 	{
-		$this->product_is_active = $category_is_active;
+		$this->product_is_active = $product_is_active;
 	}
 
 	/**
@@ -57,56 +56,88 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 
 	/**
 	 * @param $search_string
-	 * @param array $only_types
 	 * @param bool $only_active
-	 * @param int $exclude_id
+	 * @param array $filter
+	 * @param bool $only_ids
 	 * @param null|string $shop_code
 	 *
-	 * @return Product[]
+	 * @return Product[]|array
 	 */
 	public static function search( string $search_string,
-	                               array $only_types=[],
 	                               bool $only_active=false,
-	                               int $exclude_id=0,
+	                               array $filter=[],
+	                               bool $only_ids=false,
 	                               string|null $shop_code=null ) : array
 	{
+
+		if(!$search_string) {
+			return [];
+		}
+
 		if($shop_code===null) {
 			$shop_code = Shops::getCurrentCode();
 		}
 
 		$sql_query_where = [];
-
-		if($only_types) {
-			foreach( $only_types as $i=>$type ) {
-				$only_types[$i] = addslashes($type);
-			}
-
-			$sql_query_where[] = "product_type IN ('".implode("', '", $only_types)."')";
-		}
-
 		if($only_active) {
 			$sql_query_where[] = "product_is_active=1";
 		}
 
-		$ids = static::searchObjectIds( $shop_code, $search_string, implode(' AND ', $sql_query_where) );
+		if($filter) {
+			//TODO:
+		}
+
+		$ids = [];
+
+		if(((int)$search_string)>0) {
+			$_ids_by_code = Product::fetchIDs([
+				'id' => (int)$search_string,
+			]);
+			foreach($_ids_by_code as $id) {
+				$ids[] = (int)(string)$id;
+			}
+
+		} else {
+			$_ids_by_code = Product::fetchIDs([
+				'ean' => $search_string,
+				'OR',
+				'internal_code *' => $search_string.'%',
+			]);
+
+			foreach($_ids_by_code as $id) {
+				$ids[] = (int)(string)$id;
+			}
+		}
+
+		if(!$ids) {
+			$ids = static::searchObjectIds( $shop_code, $search_string, implode(' AND ', $sql_query_where) );
+		}
+
 
 		if(!$ids) {
 			return [];
 		}
 
-		if($exclude_id) {
-			if(($s = array_search( $exclude_id, $ids ))!==false) {
-				unset($ids[$s]);
-			}
-
+		if($only_ids) {
+			return $ids;
 		}
 
 		/**
 		 * @var Product[] $result
 		 */
-		$result = Product::fetch([
-			'products' => ['id' => $ids]
-		]);
+		$result = Product::fetch(
+			where_per_model: [
+				'products' => ['id' => $ids],
+				'products_shop_data' => ['shop_code'=>Shops::getCurrentCode()]
+			],
+			item_key_generator: function(Product $item) {
+				return $item->getId();
+			},
+			load_filter: [
+				'products.*',
+				'products_shop_data.name'
+			]
+		);
 
 
 		return $result;

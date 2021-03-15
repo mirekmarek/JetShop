@@ -50,13 +50,5 @@ endif;
 			<td></td>
 			<td style="font-weight: bolder;font-size: 1.5rem"><?=Price::formatWithCurrency($cart->getAmount())?></td>
 		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td><?=UI::button(Tr::_('Order'))->setUrl(CashDesk::getCashDeskPageURL())->setClass('success')?></td>
-		</tr>
 	</tfoot>
 </table>

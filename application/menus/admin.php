@@ -24,9 +24,14 @@
 		'icon' => '',
 		'index' => 5,
 	],
+	'warehouse-management' => [
+		'label' => 'Warehouse management',
+		'icon' => '',
+		'index' => 6,
+	],
 	'system' => [
 		'label' => 'System',
 		'icon' => '',
-		'index' => 6,
+		'index' => 7,
 	],
 ];

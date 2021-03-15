@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -44,7 +44,7 @@ interface DataModel_Related_Iterator_Interface extends BaseObject_Interface_Arra
 	/**
 	 * @return DataModel_Related_Interface[]
 	 */
-	public function getItems();
+	public function getItems() : iterable;
 
 	/**
 	 * @param callable $sort_callback

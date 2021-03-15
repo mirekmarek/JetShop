@@ -14,4 +14,5 @@ return [
 	'Unknown discount code' => '',
 	'Discount %D%% for delivery price' => '',
 	'Discount %D%% for products price' => '',
+	'Discount %D%% for payment price' => '',
 ];

@@ -262,7 +262,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_label: 'Stock status:'
+		form_field_type: false
 	)]
 	protected int $stock_status = 0;
 

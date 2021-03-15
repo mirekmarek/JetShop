@@ -12,22 +12,8 @@ return [
 	'http_headers' => [
 	],
 	'layout_script_name' => 'default',
+	'order' => 0,
 	'meta_tags' => [
-		[
-			'attribute' => 'Meta1attribute',
-			'attribute_value' => 'Meta 1 attribute value',
-			'content' => 'Meta 1 content',
-		],
-		[
-			'attribute' => 'Meta2attribute',
-			'attribute_value' => 'Meta 2 attribute value',
-			'content' => 'Meta 2 content',
-		],
-		[
-			'attribute' => 'Meta3attribute',
-			'attribute_value' => 'Meta 3 attribute value',
-			'content' => 'Meta 3 content',
-		],
 	],
 	'contents' => [
 		[

@@ -32,6 +32,8 @@ abstract class Core_Fulltext_Index extends DataModel {
 	)]
 	protected string $words = '';
 
+	protected static int $search_ids_count_limit = 200;
+
 	public function getShopCode() : string
 	{
 		return $this->shop_code;
@@ -126,8 +128,8 @@ abstract class Core_Fulltext_Index extends DataModel {
 		$table_index_words = $class::getIndexWordsDatabaseTableName();
 
 		$db = Db::get();
-		$db->execCommand( "DELETE FROM $table_index WHERE object_id=".$object_id );
-		$db->execCommand( "DELETE FROM $table_index_words WHERE object_id=".$object_id );
+		$db->execute( "DELETE FROM $table_index WHERE object_id=".$object_id );
+		$db->execute( "DELETE FROM $table_index_words WHERE object_id=".$object_id );
 	}
 
 
@@ -136,13 +138,14 @@ abstract class Core_Fulltext_Index extends DataModel {
 	 * @param string $search_string
 	 * @param string $sql_query_where
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public static function searchObjectIds(
 		bool|string $shop_code,
 		string $search_string,
 		string $sql_query_where
-	) : mixed {
+	) : array {
+
 		$search_string = Fulltext_Index::tidySearchString( $search_string );
 
 		$search_string = preg_replace( '/([0-9]+)x([0-9]+)/', '$1 $2', $search_string);
@@ -190,8 +193,9 @@ abstract class Core_Fulltext_Index extends DataModel {
 			$word = $r['word'];
 			$id = (int)$r['id'];
 
-			if(!in_array($id, $matches[$word])) {
-				$matches[$word][] = $id;
+			//if(!in_array($id, $matches[$word]))
+			{
+				$matches[$word][$id] = $id;
 			}
 		}
 
@@ -214,6 +218,8 @@ abstract class Core_Fulltext_Index extends DataModel {
 				$ids = $result;
 			}
 		}
+
+		$ids = array_slice($ids, 0, static::$search_ids_count_limit );
 
 		return $ids;
 	}

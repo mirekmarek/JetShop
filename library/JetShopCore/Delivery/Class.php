@@ -31,7 +31,7 @@ use Jet\Form_Field_Select;
 abstract class Core_Delivery_Class extends DataModel
 {
 
-	protected static string $MANAGE_MODULE = 'Admin.Delivery.Classes';
+	protected static string $manage_module_name = 'Admin.Delivery.Classes';
 
 	/**
 	 * @var string

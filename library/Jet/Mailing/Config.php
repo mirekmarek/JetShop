@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -20,8 +20,10 @@ class Mailing_Config extends Config
 	 *
 	 * @var Mailing_Config_Sender[]
 	 */
-	#[Config_Definition(type: Config::TYPE_SECTIONS)]
-	#[Config_Definition(section_creator_method_name: 'createSenderConfigInstance')]
+	#[Config_Definition(
+		type: Config::TYPE_SECTIONS,
+		section_creator_method_name: 'createSenderConfigInstance'
+	)]
 	protected array|null $senders = null;
 
 

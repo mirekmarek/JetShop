@@ -6,6 +6,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
+use Jet\Form;
 
 #[DataModel_Definition(
 	name: 'order_item',
@@ -24,11 +25,20 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	const ITEM_TYPE_DELIVERY = 'delivery';
 	const ITEM_TYPE_DISCOUNT = 'discount';
 
-	const DISCOUNT_TYPE_PRODUCTS = 'disc_products';
-	const DISCOUNT_TYPE_SERVICE = 'disc_service';
-	const DISCOUNT_TYPE_DELIVERY = 'disc_delivery';
-	const DISCOUNT_TYPE_PAYMENT = 'disc_payment';
-	const DISCOUNT_TYPE_TOTAL = 'disc_total';
+	const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'disc_products_amount';
+	const DISCOUNT_TYPE_PRODUCTS_PERCENT = 'disc_products_percent';
+
+	const DISCOUNT_TYPE_SERVICE_AMOUNT = 'disc_service_amount';
+	const DISCOUNT_TYPE_SERVICE_PERCENT = 'disc_service_percent';
+
+	const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'disc_delivery_amount';
+	const DISCOUNT_TYPE_DELIVERY_PERCENT = 'disc_delivery_percent';
+
+	const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'disc_payment_amount';
+	const DISCOUNT_TYPE_PAYMENT_PERCENT = 'disc_payment_percent';
+
+	const DISCOUNT_TYPE_TOTAL_AMOUNT = 'disc_total_amount';
+	const DISCOUNT_TYPE_TOTAL_PERCENT = 'disc_total_percent';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -113,7 +123,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $price_per_item = 0.0;
+	protected float $item_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
@@ -123,7 +133,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $total_price = 0.0;
+	protected float $total_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -140,6 +150,17 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_DATE
 	)]
 	protected ?Data_DateTime $delivery_date = null;
+
+	/**
+	 * @var string
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 64,
+		form_field_type: false
+	)]
+	protected string $warehouse_code = '';
 
 	public function getOrder() : Order
 	{
@@ -245,18 +266,18 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	public function setQuantity( int $quantity ) : void
 	{
 		$this->quantity = $quantity;
-		$this->total_price = $this->price_per_item*$this->quantity;
+		$this->total_amount = $this->item_amount*$this->quantity;
 	}
 
-	public function getPricePerItem() : float
+	public function getItemAmount() : float
 	{
-		return $this->price_per_item;
+		return $this->item_amount;
 	}
 
-	public function setPricePerItem( float $price_per_item ) : void
+	public function setItemAmount( float $item_amount ) : void
 	{
-		$this->price_per_item = $price_per_item;
-		$this->total_price = $price_per_item*$this->quantity;
+		$this->item_amount = $item_amount;
+		$this->total_amount = $item_amount*$this->quantity;
 	}
 
 	public function getVatRate() : float
@@ -269,9 +290,14 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->vat_rate = $vat_rate;
 	}
 
-	public function getTotalPrice() : float
+	public function setTotalAmount( float $total_amount ): void
 	{
-		return $this->total_price;
+		$this->total_amount = $total_amount;
+	}
+
+	public function getTotalAmount() : float
+	{
+		return $this->total_amount;
 	}
 
 	public function getDeliveryInfo() : string
@@ -320,14 +346,30 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->available = $in_stock;
 
 		$this->quantity = $qty;
-		$this->price_per_item = $item->getPricePerItem();
+		$this->item_amount = $item->getPricePerItem();
 		$this->vat_rate = $product->getVatRate( $shop_code );
-		$this->total_price = $this->quantity * $this->price_per_item;
+		$this->total_amount = $this->quantity * $this->item_amount;
 
 
 		//TODO: $this->delivery_info = '';
 		//TODO: $this->delivery_delay = 0;
 		//TODO: $this->delivery_date = '';
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setWarehouseCode( string $value ) : void
+	{
+		$this->warehouse_code = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getWarehouseCode() : string
+	{
+		return $this->warehouse_code;
 	}
 
 

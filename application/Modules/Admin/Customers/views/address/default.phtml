@@ -1,0 +1,25 @@
+<?php
+namespace JetShopModule\Admin\Customers;
+
+use Jet\Mvc_View;
+use JetShop\Customer_Address;
+
+/**
+ * @var Mvc_View $this
+ * @var string $code
+ * @var Customer_Address $address
+ */
+
+$shop_code = $this->getRaw('shop_code');
+$address = $this->getRaw('address');
+?>
+<?php if($address->getCompanyName()): ?>
+	<?=$address->getCompanyName()?><br>
+	<?=$address->getCompanyId()?><br>
+	<?=$address->getCompanyVatId()?><br>
+<?php endif?>
+
+<?=$address->getFirstName()?> <?=$address->getSurname()?><br>
+<?=$address->getAddressStreetNo()?><br/>
+<?=$address->getAddressZip()?> <?=$address->getAddressTown()?>
+

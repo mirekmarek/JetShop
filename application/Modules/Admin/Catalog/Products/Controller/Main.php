@@ -8,6 +8,8 @@ use Jet\UI;
 use Jet\UI_messages;
 
 
+use Jet\Application;
+
 use Jet\Mvc;
 use Jet\Mvc_Controller_Default;
 
@@ -19,6 +21,7 @@ use Jet\Navigation_Breadcrumb;
 use Jet\UI_tabs;
 use JetShop\Application_Admin;
 use JetShop\Category;
+use JetShop\Fulltext_Index_Internal_Product;
 use JetShop\Product;
 
 use JetShopModule\Admin\UI\Main as UI_module;
@@ -67,6 +70,10 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 			$this->router->setDefaultAction(  'listing', Main::ACTION_GET_PRODUCT  );
+
+			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
+				return $GET->exists('whisper');
+			});
 
 
 			$this->router->addAction('add', Main::ACTION_ADD_PRODUCT)
@@ -189,6 +196,7 @@ class Controller_Main extends Mvc_Controller_Default
 
 		$this->view->setVar( 'filter_form', $listing->filter_getForm());
 		$this->view->setVar( 'grid', $listing->getGrid() );
+		$this->view->setVar( 'listing', $listing );
 
 		$this->output( 'list' );
 
@@ -454,6 +462,23 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->view->setVar( 'product', $product );
 
 		$this->output( 'delete-confirm' );
+	}
+
+	public function whisper_Action() : void
+	{
+		$GET = Http_Request::GET();
+
+
+		$result = Fulltext_Index_Internal_Product::search(
+			$GET->getString('whisper'),
+			$GET->getBool('only_active'),
+			json_decode($GET->getRaw('filter'))
+		);
+
+		$this->view->setVar('result', $result);
+		echo $this->view->render('search_whisperer_result');
+
+		Application::end();
 	}
 
 }

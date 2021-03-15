@@ -2,6 +2,7 @@
 namespace JetShopModule\Admin\Payment\Methods;
 
 use JetShop\Payment_Method;
+use JetShop\Shops;
 
 use Jet\UI;
 use Jet\UI_dataGrid;
@@ -46,6 +47,7 @@ $grid->getColumn( 'internal_name' )->setRenderer(
 		<?php
 	}
 );
+$grid->getColumn( 'internal_name' )->setCssStyle( 'width:200px;' );
 
 $grid->getColumn( 'code' )->setRenderer(
 	function( Payment_Method $item ) use ( $router ) {
@@ -81,6 +83,28 @@ $grid->getColumn( 'delivery_methods' )->setRenderer(
 	}
 );
 $grid->getColumn( 'delivery_methods' )->setCssStyle( 'width:350px;' );
+
+
+$grid->getColumn( 'status' )->setRenderer(
+	function( Payment_Method $item ) {
+		echo '<table>';
+		foreach(Shops::getList() as $shop) {
+			$sd = $item->getShopData($shop->getCode());
+
+			echo '<tr style="background-color: transparent; border: none;"><td style="padding: 5px;border: none;">'.$shop->getName().':</td>';
+			echo '<td style="padding: 5px;border: none;">';
+			if($sd->isActive()) {
+				echo '<span class="badge badge-success">'.Tr::_('Active').'</span>';
+			} else {
+				echo '<span class="badge badge-danger">'.Tr::_('Not Active').'</span>';
+			}
+			echo '</td>';
+			echo '</tr>';
+		}
+		echo '</table>';
+	}
+);
+$grid->getColumn( 'status' )->setCssStyle('width:250px;');
 
 ?>
 

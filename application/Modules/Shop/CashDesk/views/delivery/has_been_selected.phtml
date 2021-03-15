@@ -4,11 +4,19 @@ namespace JetShop;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ */
 
 $cash_desk = CashDesk::get();
 
 $delivery_method = $cash_desk->getSelectedDeliveryMethod();
+
 $dm_shd = $delivery_method->getShopData($cash_desk->getShopCode());
+
+$this->setVar('delivery_method', $delivery_method);
 ?>
 <br/>
 <div class="card">
@@ -16,7 +24,19 @@ $dm_shd = $delivery_method->getShopData($cash_desk->getShopCode());
 	<div class="card-body bg-light">
 		<div><b><?= Tr::_('Delivery method') ?></b></div>
 		<div><?= $dm_shd->getTitle() ?> </div>
-		<div><?=Price::formatWithCurrency($dm_shd->getDefaultPrice())?></div>
+
+		<?php if($delivery_method->isPersonalTakeover()):
+			$place = $cash_desk->getSelectedPersonalTakeoverPlace();
+			?>
+			<div style="padding: 10px;font-size: 10px;">
+				<b><?=$place->getName()?></b><br>
+				<?=$place->getStreet()?><br>
+				<?=$place->getZip()?>  <?=$place->getTown()?>
+			</div>
+		<?php endif; ?>
+
+		<div><?=$this->render('delivery/price')?></div>
+
 		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.delivery.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
 	</div>
 </div>

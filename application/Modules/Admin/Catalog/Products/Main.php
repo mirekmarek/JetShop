@@ -20,17 +20,15 @@ class Main extends Application_Module implements Product_ManageModuleInterface
 	const ACTION_UPDATE_PRODUCT = 'update_product';
 	const ACTION_DELETE_PRODUCT = 'delete_product';
 
-	public function getProductSelectWhispererUrl( array $only_types=[], bool $only_active=false ) : string
+	public function getProductSelectWhispererUrl( array $filter=[], bool $only_active=false ) : string
 	{
-		$only_types = implode(',', $only_types);
-
 		$page = Mvc_Page::get( static::ADMIN_MAIN_PAGE );
 		if(!$page) {
 			return '';
 		}
 
 		return $page->getURL([], [
-			'only_types' => $only_types,
+			'filter' => json_encode($filter),
 			'only_active' => $only_active ? 1:0
 		]);
 

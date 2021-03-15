@@ -36,4 +36,13 @@ class Core_Discounts {
 		return $modules;
 	}
 
+	public static function getActiveModule( string $module ) : ?Discounts_Module
+	{
+		$modules = static::getActiveModules();
+		if(!isset($modules[$module])) {
+			return null;
+		}
+
+		return $modules[$module];
+	}
 }

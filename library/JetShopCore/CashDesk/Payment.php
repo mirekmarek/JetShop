@@ -7,11 +7,33 @@ trait Core_CashDesk_Payment {
 
 	protected ?array $available_payment_methods = null;
 
+	protected ?Payment_Pricing_Module $payment_pricing_module = null;
+
+	public function getPaymentPricingModule() : Payment_Pricing_Module
+	{
+		if(!$this->payment_pricing_module) {
+			$this->payment_pricing_module = Payment_Pricing_Module::getModule();
+		}
+
+		return $this->payment_pricing_module;
+	}
+
+	public function getPaymentPrice( Payment_Method $method ) : Payment_Pricing_PriceInfo
+	{
+		/**
+		 * @var CashDesk $this
+		 */
+		return $this->getPaymentPricingModule()->getPrice( $this, $method );
+	}
+	
 	/**
 	 * @return Payment_Method[]
 	 */
 	public function getAvailablePaymentMethods() : iterable
 	{
+		/**
+		 * @var CashDesk $this
+		 */
 		if($this->available_payment_methods===null) {
 			$this->available_payment_methods = [];
 
@@ -25,6 +47,18 @@ trait Core_CashDesk_Payment {
 					$this->available_payment_methods[$payment_method->getCode()] = $payment_method;
 				}
 			}
+
+			foreach($this->available_payment_methods as $code=>$method) {
+				$module = $method->getModule();
+				if(!$module) {
+					continue;
+				}
+
+				if(!$module->isEnabledForOrder($this, $method)) {
+					unset($this->available_payment_methods[$code]);
+				}
+			}
+
 
 			$this->getModule()->sortPaymentMethods( $this, $this->available_payment_methods );
 
@@ -59,6 +93,7 @@ trait Core_CashDesk_Payment {
 
 		if(!isset($methods[$code])) {
 			$session->setValue('selected_payment_method', $default_method->getCode());
+			$session->setValue('selected_payment_method_option', '');
 
 			return $default_method;
 		}
@@ -80,10 +115,54 @@ trait Core_CashDesk_Payment {
 		}
 		if($session->getValue('selected_payment_method')!=$code) {
 			$session->setValue('selected_payment_method', $code);
+			$session->setValue('selected_payment_method_option', '');
 		}
 
 		return true;
 	}
 
+	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option
+	{
+		/**
+		 * @var Session $session
+		 */
+		$session = $this->getSession();
+
+		$method = $this->getSelectedPaymentMethod();
+		$options = $method->getActiveOptions( $this->getShopCode() );
+
+		if( !$options ) {
+			return null;
+		}
+
+		$option_code = $session->getValue('selected_payment_method_option', '');
+		if(!isset($options[$option_code])) {
+			$option_code = array_keys($options)[0];
+		}
+
+		return $options[$option_code];
+	}
+
+	public function selectPaymentMethodOption( string $option_code ) : bool
+	{
+		/**
+		 * @var Session $session
+		 */
+		$session = $this->getSession();
+
+		$method = $this->getSelectedPaymentMethod();
+		$options = $method->getActiveOptions( $this->getShopCode() );
+
+		if(
+			!$options ||
+			!isset($options[$option_code])
+		) {
+			return false;
+		}
+
+		$session->setValue('selected_payment_method_option', $option_code);
+
+		return true;
+	}
 
 }

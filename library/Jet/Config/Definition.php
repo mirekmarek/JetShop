@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -31,9 +31,7 @@ class Config_Definition extends BaseObject
 	 */
 	public static function getMainConfigDefinition( string $class_name ): Config_Definition_Config
 	{
-		$definition = new Config_Definition_Config( $class_name );
-
-		return $definition;
+		return new Config_Definition_Config( $class_name );
 	}
 
 
@@ -44,8 +42,6 @@ class Config_Definition extends BaseObject
 	 */
 	public static function getSectionConfigDefinition( string $class_name ): Config_Definition_Config_Section
 	{
-		$definition = new Config_Definition_Config_Section( $class_name );
-
-		return $definition;
+		return new Config_Definition_Config_Section( $class_name );
 	}
 }

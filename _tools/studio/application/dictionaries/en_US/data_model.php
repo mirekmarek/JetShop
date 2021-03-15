@@ -171,4 +171,8 @@ return [
 	'Relation %name% property name:' => '',
 	'Invalid property name format' => '',
 	'Database table <b>%table%</b> has been created' => '',
+	'Upsss .... ' => '',
+	'I am sorry, but there are some troubles ...' => '',
+	'Class <strong>%class%</strong> has been created' => '',
+	'Property with the same name already exists' => '',
 ];

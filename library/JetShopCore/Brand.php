@@ -17,7 +17,7 @@ use Jet\DataModel_Fetch_Instances;
 )]
 abstract class Core_Brand extends DataModel {
 
-	protected static string $MANAGE_MODULE = 'Admin.Catalog.Brands';
+	protected static string $manage_module_name = 'Admin.Catalog.Brands';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
@@ -58,7 +58,7 @@ abstract class Core_Brand extends DataModel {
 
 	public static function getManageModuleName() : string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	public static function getManageModule() : Brand_ManageModuleInterface|Application_Module

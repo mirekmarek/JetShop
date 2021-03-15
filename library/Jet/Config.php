@@ -1,36 +1,38 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
 
 /**
  * Available attributes:
- *      Config:
+ *
+ * Class:
  * #[Config_Definition(name: 'some_name')]
  *
  *
- *      Config Property Definition:
- *           #[Config_Definition(type: Config::TYPE_*)]
+ * Properties:
+ *           #[Config_Definition(
+ *              type: Config::TYPE_*,
  *
- *           #[Config_Definition(description: 'Some description ...')]
- *           #[Config_Definition(is_required: true)]
- *           #[Config_Definition(default_value: 'some default value')]
+ *              description: 'Some description ...',
+ *              is_required: true,
+ *              default_value: 'some default value',
  *
  *
- *           #[Config_Definition(form_field_type: Form::TYPE_*)]
- *               - (optional, default: autodetect)
- *           #[Config_Definition(form_field_label: 'Some form filed label:')]
- *           #[Config_Definition(form_field_options: ['option1' => 'Option 1', 'option2' => 'Option 1', 'option3'=>'Option 3' ])]
- *                - optional
- *           #[Config_Definition(form_field_error_messages: ['error_code' => 'Message' ])]
- *           #[Config_Definition(form_field_get_select_options_callback: callable)]
- *               - optional
- *
+ *              form_field_type: Form::TYPE_*,
+ *                  - (optional, default: autodetect)
+ *              form_field_label: 'Some form filed label:',
+ *              form_field_options: ['option1' => 'Option 1', 'option2' => 'Option 1', 'option3'=>'Option 3' ]
+ *                  - optional
+ *              form_field_error_messages: [Form_Field_*::ERROR_CODE_* => 'Message' ]
+ *              form_field_get_select_options_callback: callable
+ *                  - optional
+ *             )]
  *
  */
 

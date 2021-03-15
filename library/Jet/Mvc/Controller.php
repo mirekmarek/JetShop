@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -122,7 +122,7 @@ abstract class Mvc_Controller extends BaseObject
 	 *
 	 * @return mixed
 	 */
-	public function getParameter( string $key, mixed $default_value = null )
+	public function getParameter( string $key, mixed $default_value = null ) : mixed
 	{
 		return $this->content->getParameter( $key, $default_value );
 	}

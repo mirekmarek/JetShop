@@ -1,6 +1,7 @@
 <?php
 namespace JetShop;
 
+use Jet\Mvc_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
@@ -10,6 +11,10 @@ $cash_desk = CashDesk::get();
 $payment_method = $cash_desk->getSelectedPaymentMethod();
 $pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
 
+/**
+ * @var Mvc_View $this
+ */
+$this->setVar('payment_method', $payment_method);
 ?>
 <br/>
 <div class="card">
@@ -17,7 +22,7 @@ $pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
 	<div class="card-body bg-light">
 		<div><b><?= Tr::_('Payment method') ?></b></div>
 		<div><?= $pm_shd->getTitle() ?> </div>
-		<div><?=Price::formatWithCurrency($pm_shd->getDefaultPrice())?></div>
+		<div><?=$this->render('payment/price')?></div>
 		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.payment.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
 	</div>
 </div>

@@ -1,0 +1,23 @@
+<?php
+namespace JetShop;
+
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ * @var Payment_Method $payment_method
+ */
+
+$cash_desk = CashDesk::get();
+
+$payment_method = $this->getRaw('payment_method');
+
+$price_info = $cash_desk->getPaymentPrice( $payment_method );
+?>
+<div style="display: inline-block">
+<?php if($price_info->isIsPromoPrice()):?>
+	<span style="text-decoration: line-through;font-size: 13px;"><?=Price::formatWithCurrency($price_info->getStandardPrice());?></span>
+	<br/>
+<?php endif; ?>
+	<b><?=Price::formatWithCurrency($price_info->getFinalPrice());?></b>
+</div>

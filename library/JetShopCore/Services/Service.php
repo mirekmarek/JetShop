@@ -30,7 +30,7 @@ use Jet\Tr;
 )]
 abstract class Core_Services_Service extends DataModel
 {
-	protected static string $MANAGE_MODULE = 'Admin.Services.Services';
+	protected static string $manage_module_name = 'Admin.Services.Services';
 
 	/**
 	 * @var string
@@ -130,7 +130,7 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	public static function getManageModuleName(): string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	/**
@@ -138,7 +138,7 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	public static function setManageModuleName( string $name ): void
 	{
-		self::$MANAGE_MODULE = $name;
+		self::$manage_module_name = $name;
 	}
 
 	public function __construct()

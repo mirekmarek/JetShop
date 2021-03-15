@@ -16,7 +16,7 @@ use Jet\DataModel_Fetch_Instances;
 	id_controller_options: ['id_property_name'=>'id']
 )]
 abstract class Core_Supplier extends DataModel {
-	protected static string $MANAGE_MODULE = 'Admin.Catalog.Suppliers';
+	protected static string $manage_module_name = 'Admin.Catalog.Suppliers';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
@@ -43,7 +43,7 @@ abstract class Core_Supplier extends DataModel {
 
 	public static function getManageModuleName() : string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	public static function getManageModule() : Supplier_ManageModuleInterface|Application_Module

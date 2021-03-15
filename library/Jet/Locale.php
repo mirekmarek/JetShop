@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -326,7 +326,7 @@ class Locale extends BaseObject
 	 *
 	 * @return array
 	 */
-	public static function getAllLocalesList( null|string|Locale $in_locale = null )
+	public static function getAllLocalesList( null|string|Locale $in_locale = null ) : array
 	{
 		if( !$in_locale ) {
 			$in_locale = static::getCurrentLocale();
@@ -672,7 +672,7 @@ class Locale extends BaseObject
 	 *
 	 * @return string
 	 */
-	public function formatCurrency( float|int $value, string $currency )
+	public function formatCurrency( float|int $value, string $currency ) : string
 	{
 		$f = new PHP_NumberFormatter( $this->locale, PHP_NumberFormatter::CURRENCY );
 		return $f->formatCurrency( $value, $currency );

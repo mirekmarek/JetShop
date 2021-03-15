@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -19,19 +19,21 @@ class DataModel_Config extends Config
 	 *
 	 * @var string
 	 */
-	#[Config_Definition(type: Config::TYPE_STRING)]
-	#[Config_Definition(is_required: true)]
-	#[Config_Definition(default_value: 'MySQL')]
-	#[Config_Definition(form_field_type: Form::TYPE_SELECT)]
-	#[Config_Definition(form_field_get_select_options_callback: [
-		'DataModel_Config',
-		'getBackendTypesList'
-	])]
-	#[Config_Definition(form_field_label: 'Default backend type: ')]
-	#[Config_Definition(form_field_error_messages: [
-		Form_Field::ERROR_CODE_EMPTY => 'Please select backend type',
-		Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select backend type'
-	])]
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+		is_required: true,
+		default_value: 'MySQL',
+		form_field_type: Form::TYPE_SELECT,
+		form_field_get_select_options_callback: [
+			'DataModel_Config',
+			'getBackendTypesList'
+		],
+		form_field_label: 'Default backend type: ',
+		form_field_error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please select backend type',
+			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select backend type'
+		]
+	)]
 	protected string $backend_type;
 
 
@@ -39,9 +41,11 @@ class DataModel_Config extends Config
 	 *
 	 * @var DataModel_Backend_Config
 	 */
-	#[Config_Definition(type: Config::TYPE_SECTION)]
-	#[Config_Definition(is_required: true)]
-	#[Config_Definition(section_creator_method_name: 'createBackendConfigInstance')]
+	#[Config_Definition(
+		type: Config::TYPE_SECTION,
+		is_required: true,
+		section_creator_method_name: 'createBackendConfigInstance'
+	)]
 	protected DataModel_Backend_Config $backend_config;
 
 

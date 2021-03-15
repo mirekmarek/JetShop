@@ -92,8 +92,10 @@ trait Controller_Main_Confirm {
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
-		if(!$cash_desk->saveOrder()) {
+		if(!($order=$cash_desk->saveOrder())) {
 			$response->error();
+		} else {
+			$response->setData('URL', CashDesk::getCashDeskPaymentPage()->getURL([$order->getKey()]));
 		}
 
 

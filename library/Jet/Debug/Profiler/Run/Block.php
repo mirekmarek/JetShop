@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -305,13 +305,13 @@ class Debug_Profiler_Run_Block
 
 	/**
 	 * @param string $query
-	 * @param array $query_data
+	 * @param array $query_params
 	 *
 	 * @return Debug_Profiler_Run_SQLQueryData
 	 */
-	public function SQLQueryStart( string $query, array $query_data ): Debug_Profiler_Run_SQLQueryData
+	public function SQLQueryStart( string $query, array $query_params ): Debug_Profiler_Run_SQLQueryData
 	{
-		$q = new Debug_Profiler_Run_SQLqueryData( $this->id, $query, $query_data );
+		$q = new Debug_Profiler_Run_SQLqueryData( $this->id, $query, $query_params );
 
 		$this->SQL_queries[] = $q;
 

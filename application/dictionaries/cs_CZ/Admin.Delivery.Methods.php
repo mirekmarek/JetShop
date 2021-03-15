@@ -49,4 +49,9 @@ return [
 	'Update delivery_method' => '',
 	'Delete delivery_method' => '',
 	'Admin.System.DeliveryMethod' => '',
+	'Status' => '',
+	'Active' => '',
+	'Not Active' => '',
+	'Discount is not allowed' => '',
+	'Confirmation e-mail info text:' => '',
 ];

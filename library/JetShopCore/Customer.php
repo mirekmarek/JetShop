@@ -10,6 +10,7 @@ use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
 use Jet\Mailing_Email;
+use Jet\Mailing_Email_Template;
 use Jet\Tr;
 use Jet\Form_Field_Tel;
 use Jet\DataModel_Query;
@@ -163,7 +164,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		type: DataModel::TYPE_BOOL,
 		form_field_type: false
 	)]
-	protected bool $mailing_accepted = false;
+	protected bool $mailing_subscribed = false;
 
 	/**
 	 * @var int
@@ -259,15 +260,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 
 		$list = static::fetchInstances( $where );
-		$list->setLoadFilter(
-			[
-				'id',
-				'email',
-				'first_name',
-				'surname',
-				'locale',
-			]
-		);
 		$list->getQuery()->setOrderBy( 'email' );
 
 		return $list;
@@ -329,8 +321,33 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	public function setEmail( string $email ) : void
 	{
-		$this->email = $email;
+
+		if($this->getIsNew()) {
+			$this->email = $email;
+		}
+
 	}
+
+	public function changeEmail( string $new_email, string $source, string $comment='' ) : void
+	{
+		if($this->getIsNew()) {
+			return;
+		}
+
+		if($new_email==$this->email) {
+			return;
+		}
+
+		$old_email = $this->email;
+
+		$this->email = $new_email;
+		//TODO: log change ...
+		$this->save();
+
+		Customer_MailingSubscribe::changeMail($this->shop_code, $old_email, $new_email, $source, $comment);
+		//TODO: orders ...
+	}
+
 
 
 	public function getShopCode(): string
@@ -343,6 +360,10 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$this->shop_code = $shop_code;
 	}
 
+	public function getName() : string
+	{
+		return $this->first_name.' '.$this->surname;
+	}
 
 
 	public function getFirstName() : string
@@ -363,11 +384,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	public function setSurname( string $surname ) : void
 	{
 		$this->surname = $surname;
-	}
-
-	public function getName() : string
-	{
-		return $this->first_name.' '.$this->surname;
 	}
 
 	public function getDescription() : string
@@ -497,7 +513,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 		$shop = Shops::get($this->getShopCode());
 
-		$email = new Mailing_Email(
+		$email = new Mailing_Email_Template(
 			'user_password_reset',
 			$shop->getLocale(),
 			$shop->getSiteId()
@@ -506,7 +522,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$email->setVar('user', $this);
 		$email->setVar('password', $password);
 
-		$email->send( $this->getEmail() );
+		$email->getEmail()->send( $this->getEmail() );
 
 	}
 
@@ -619,7 +635,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	{
 		$shop = Shops::get($this->getShopCode());
 
-		$email = new Mailing_Email(
+		$email = new Mailing_Email_Template(
 			'user_welcome',
 			$shop->getLocale(),
 			$shop->getSiteId()
@@ -628,7 +644,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$email->setVar('user', $this);
 		$email->setVar('password', $password);
 
-		$email->send( $this->getEmail() );
+		$email->getEmail()->send( $this->getEmail() );
 	}
 
 	/**
@@ -688,20 +704,56 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		return $this->phone_number;
 	}
 
-	/**
-	 * @param bool $value
-	 */
-	public function setMailingAccepted( bool $value ) : void
+	public function mailingSubscribe( string $source, string $comment='' ) : void
 	{
-		$this->mailing_accepted = (bool)$value;
+		if($this->mailing_subscribed) {
+			return;
+		}
+
+		Customer_MailingSubscribe::subscribe(
+			shop_code: $this->getShopCode(),
+			email_address: $this->getEmail(),
+			source: $source,
+			customer_id: $this->getId(),
+			comment: $comment
+		);
+
+		$this->mailing_subscribed = true;
+		$this->save();
+	}
+
+	/**
+	 * @return Customer_MailingSubscribe_Log[]
+	 */
+	public function getMailingSubscribeEventLog() : iterable
+	{
+		return Customer_MailingSubscribe_Log::getList( $this->getShopCode(), $this->getEmail() );
+	}
+
+	public function mailingUnsubscribe( string $source, string $comment='' ) : void
+	{
+		if(!$this->mailing_subscribed) {
+			return;
+		}
+
+		Customer_MailingSubscribe::unsubscribe(
+			shop_code: $this->getShopCode(),
+			email_address: $this->getEmail(),
+			source: $source,
+			customer_id: $this->getId(),
+			comment: $comment
+		);
+
+		$this->mailing_subscribed = false;
+		$this->save();
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function getMailingAccepted() : bool
+	public function getMailingSubscribed() : bool
 	{
-		return $this->mailing_accepted;
+		return $this->mailing_subscribed;
 	}
 
 	/**

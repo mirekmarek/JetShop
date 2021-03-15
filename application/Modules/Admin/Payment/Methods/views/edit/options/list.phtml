@@ -1,0 +1,64 @@
+<?php
+namespace JetShopModule\Admin\Payment\Methods;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use JetShop\Payment_Method;
+
+use Jet\UI;
+use Jet\Mvc_View;
+use Jet\Form;
+use JetShop\Shops;
+
+/**
+ * @var Mvc_View $this
+ * @var Form     $form
+ * @var Payment_Method     $payment_method
+ */
+$payment_method = $this->getRaw( 'payment_method' );
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?=UI::button_create(Tr::_('Create option'))->setUrl(Http_Request::currentURL(['action'=>'create_option']))?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+
+		<table class="table table-striped">
+			<?php foreach($payment_method->getOptions() as $option):
+				$edit_url = Http_Request::currentURL(['option'=>$option->getCode()]);
+				?>
+			<tr>
+				<td style="width: 300px;"><a href="<?=$edit_url?>"><?=$option->getCode()?></a></td>
+				<td style="width: 300px;"><a href="<?=$edit_url?>"><?=$option->getTitle()?></a></td>
+				<td>
+					<table>
+						<?php foreach(Shops::getList() as $shop):
+							$sd = $option->getShopData($shop->getCode());
+							?>
+						<tr style="background-color: transparent;">
+							<td style="padding: 5px;border: none;"><?=$shop->getName()?></td>
+							<td style="padding: 5px;border: none;">
+								<?php
+								if($sd->isActive()): ?>
+									<div class="badge badge-success"><?=Tr::_('Active');?></div>
+								<?php else: ?>
+									<div class="badge badge-danger"><?=Tr::_('Not Active')?></div>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<?php endforeach; ?>
+					</table>
+				</td>
+			</tr>
+			<?php endforeach; ?>
+		</table>
+
+	</div>
+</div>
+

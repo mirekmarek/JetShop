@@ -187,7 +187,7 @@ abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN imple
 
 	public function getImageEntity() : string
 	{
-		return 'category_ppo';
+		return 'stencil_option';
 	}
 
 	public function getImageObjectId() : int|string

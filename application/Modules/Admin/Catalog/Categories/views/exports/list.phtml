@@ -1,0 +1,38 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+
+use Jet\Http_Request;
+use JetShop\Exports;
+use JetShop\Shops;
+use Jet\Mvc_View;
+
+/**
+ * @var Mvc_View $this
+ */
+
+$modules = Exports::getActiveModules();
+
+
+$selected_exp_code = $this->getString('selected_exp_code');
+$selected_exp_shop_code = $this->getString('selected_exp_shop_code');
+?>
+<br/><br/>
+<ul>
+<?php foreach($modules as $module):
+	foreach(Shops::getList() as $shop):
+		if(!$module->isAllowedForShop($shop)):
+			continue;
+		endif;
+
+		$title = $module->getTitle().' - '.$shop->getName();
+		$link = Http_Request::currentURI(['exp'=>$module->getCode(),'exp_shop'=>$shop->getCode()]);
+
+		if($module->getCode()==$selected_exp_code && $shop->getCode()==$selected_exp_shop_code):
+			?><li class="selected"><a href="<?=$link?>"><?=$title?></a></li><?php
+		else:
+			?><li><a href="<?=$link?>"><?=$title?></a></li><?php
+		endif;
+	endforeach;
+endforeach; ?>
+</ul>

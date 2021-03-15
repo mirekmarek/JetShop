@@ -55,8 +55,39 @@ class Main extends CashDesk_Module
 
 	public function getDefaultDeliveryMethod( CashDesk $cash_desk, array $delivery_methods ) : ?Delivery_Method
 	{
+		$methods = [];
+
+		/**
+		 * @var Delivery_Method[] $delivery_methods
+		 */
 		foreach($delivery_methods as $delivery_method) {
-			return $delivery_method;
+			if($delivery_method->isPersonalTakeover()) {
+				continue;
+			}
+
+			$methods[] = $delivery_method;
+		}
+
+		//TODO: is default
+
+		uasort($methods, function( Delivery_Method $a, Delivery_Method $b ) use ($cash_desk) {
+			$p_a = $cash_desk->getDeliveryPrice( $a )->getFinalPrice();
+			$p_b = $cash_desk->getDeliveryPrice( $b )->getFinalPrice();
+
+
+			if($p_a==$p_b) {
+				return 0;
+			}
+
+			if($p_a<$p_b) {
+				return -1;
+			}
+
+			return 1;
+		});
+
+		foreach($methods as $method) {
+			return $method;
 		}
 
 		return null;

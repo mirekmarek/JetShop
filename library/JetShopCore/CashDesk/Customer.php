@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Auth;
 use Jet\Data_DateTime;
 use Jet\Form;
 use Jet\Form_Field_Email;
@@ -204,8 +203,7 @@ trait Core_CashDesk_Customer
 		 * @var CashDesk $this
 		 */
 		if(!$this->billing_address_form) {
-			$this->billing_address_form = $this->getBillingAddress()->getEditForm();
-			$this->billing_address_form->setName('cash_desk_customer_billing_address_form');
+			$this->billing_address_form = $this->getBillingAddress()->getCommonForm('cash_desk_customer_billing_address_form');
 
 
 			$phone = new Form_Field_Input('phone', 'Phone number:', $this->getPhone(), true);
@@ -409,9 +407,7 @@ trait Core_CashDesk_Customer
 		 * @var CashDesk $this
 		 */
 		if(!$this->delivery_address_form) {
-			$this->delivery_address_form = $this->getDeliveryAddress()->getEditForm();
-			$this->delivery_address_form->setName('cash_desk_customer_delivery_address_form');
-
+			$this->delivery_address_form = $this->getDeliveryAddress()->getCommonForm('cash_desk_customer_delivery_address_form');
 
 			$this->delivery_address_form->field('address_town')->setIsRequired(true);
 			$this->delivery_address_form->field('address_town')->setErrorMessages([
@@ -483,6 +479,7 @@ trait Core_CashDesk_Customer
 		/**
 		 * @var Session $session
 		 * @var Customer_Address $billing_address
+		 * @var CashDesk $this
 		 */
 		$session = $this->getSession();
 
@@ -505,6 +502,11 @@ trait Core_CashDesk_Customer
 		if($default_address) {
 			$this->setBillingAddress( $default_address );
 		}
+
+		foreach($this->getAgreeFlags() as $flag) {
+			$flag->onCustomerLogin( $this );
+		}
+
 	}
 
 	public function onCustomerLogout()
@@ -512,6 +514,7 @@ trait Core_CashDesk_Customer
 		/**
 		 * @var Session $session
 		 * @var Customer_Address $billing_address
+		 * @var CashDesk $this
 		 */
 		$session = $this->getSession();
 
@@ -528,6 +531,11 @@ trait Core_CashDesk_Customer
 		$this->setDeliveryAddressHasBeenSet(false);
 		$this->setEmailHasBeenSet(false);
 		$this->setDifferentDeliveryAddressHasBeenSet(false);
+
+		foreach($this->getAgreeFlags() as $flag) {
+			$flag->onCustomerLogout( $this );
+		}
+
 	}
 
 
@@ -536,6 +544,7 @@ trait Core_CashDesk_Customer
 		/**
 		 * @var CashDesk $this
 		 */
+
 
 		$customer = Customer::getCurrentCustomer();
 		if( $customer ) {
@@ -557,14 +566,13 @@ trait Core_CashDesk_Customer
 		$customer->setFirstName( $billing_address->getFirstName() );
 		$customer->setSurname( $billing_address->getSurname() );
 
-		$customer->setMailingAccepted( $this->getAgreeFlagChecked('newsletter_registration') );
-
 		$customer->setEncryptedPassword( $this->getPassword() );
 
 		$customer->setRegistrationIp( Http_Request::clientIP() );
 		$customer->setRegistrationDateTime( Data_DateTime::now() );
 
 		$customer->save();
+
 		$customer->login();
 	}
 

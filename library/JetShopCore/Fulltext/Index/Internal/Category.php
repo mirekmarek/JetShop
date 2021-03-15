@@ -92,9 +92,16 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 		/**
 		 * @var Category[] $result
 		 */
-		$result = Category::fetch([
-			'categories' => ['id' => $ids]
-		]);
+		$result = Category::fetch(
+			where_per_model: [
+				'categories' => ['id' => $ids],
+				'categories_shop_data' => ['shop_code'=> Shops::getCurrentCode() ]
+			],
+			load_filter: [
+				'categories.*',
+				'categories_shop_data.*'
+			]
+		);
 
 		if($exclude_branch_id) {
 			foreach($result as $i=>$category) {

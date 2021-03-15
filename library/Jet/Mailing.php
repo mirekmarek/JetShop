@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -66,17 +66,12 @@ class Mailing extends BaseObject
 	/**
 	 * @param Mailing_Email $email
 	 * @param string $to
-	 * @param array $headers
 	 *
 	 * @return bool
 	 */
-	public static function sendEmail( Mailing_Email $email, string $to, array $headers = [] ): bool
+	public static function sendEmail( Mailing_Email $email, string $to ): bool
 	{
-		return static::getBackend()->sendEmail( $email, $to, $headers );
+		return static::getBackend()->sendEmail( $email, $to );
 	}
 
-
 }
-
-
-

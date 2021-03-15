@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
@@ -48,7 +48,7 @@ class Pages extends BaseObject implements Application_Part
 	                                     array $custom_get_params = [],
 	                                     ?string $custom_page_id = null,
 	                                     ?string $custom_locale = null,
-	                                     ?string $custom_site_id = null )
+	                                     ?string $custom_site_id = null ) : string
 	{
 
 		$get_params = [];

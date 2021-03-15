@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetShop\Installer;
@@ -74,12 +74,14 @@ class Installer_Step_CreateSite_Controller extends Installer_Step_Controller
 			$ld->setTitle( Tr::_( 'PHP Jet Example Web', [], null, $default_locale ) );
 			$ld->setURLs( [$URL] );
 
+			/*
 			$meta_tag = new Mvc_Site_LocalizedData_MetaTag();
 			$meta_tag->setAttribute( 'attribute' );
 			$meta_tag->setAttributeValue( 'example' );
 			$meta_tag->setContent( 'Example tag' );
 
 			$ld->addDefaultMetaTag( $meta_tag );
+			*/
 
 			foreach( Installer::getSelectedLocales() as $locale ) {
 				if( $locale->toString() == $default_locale->toString() ) {

@@ -3,8 +3,11 @@ namespace JetShopModule\Order\Discounts\Code;
 
 use Jet\Mvc_View;
 use Jet\UI;
+use JetShop\CashDesk;
 use JetShop\Discounts_Code;
+use JetShop\Order_Item;
 use JetShop\Price;
+use JetShop\ShoppingCart;
 
 /**
  * @var Mvc_View   $this
@@ -14,14 +17,29 @@ use JetShop\Price;
 
 $module = $this->getRaw('module');
 
-$discounts = $module->getDiscounts();
+$discounts = $module->getDiscounts( CashDesk::get() );
 ?>
 
 <?php foreach($discounts as $discount): ?>
-	<?=$discount->getTitle()?>:
+<div style="padding: 10px;">
 
-	-<?=Price::formatWithCurrency($discount->getTotalPrice())?>
+	<?php if(
+		$discount->getSubType()==Order_Item::DISCOUNT_TYPE_PRODUCTS_PERCENT ||
+		$discount->getSubType()==Order_Item::DISCOUNT_TYPE_PRODUCTS_AMOUNT
+	):
+		$d_a = $discount->getItemAmount();
+		if($discount->getSubType()==Order_Item::DISCOUNT_TYPE_PRODUCTS_PERCENT) {
+			$d_a = Price::round(ShoppingCart::get()->getAmount() * ((100-$d_a)/100));
+		}
+		?>
+		<?=$discount->getTitle()?>:
+
+		<strong style="font-size: 20px;">-<?=Price::formatWithCurrency($d_a)?></strong>
+	<?php else: ?>
+		<?=$discount->getTitle()?>
+	<?php endif; ?>
 
 	<?=UI::button(' ')->setIcon('trash')->setOnclick('DiscountCode.cancel()')?>
+</div>
 <?php endforeach; ?>
 

@@ -5,6 +5,9 @@ use Jet\Config;
 use Jet\Config_Definition;
 use Jet\Config_Section;
 use Jet\Locale;
+use Jet\Mvc_Page;
+use Jet\Mvc_Page_Interface;
+use Jet\Mvc_Site;
 
 #[Config_Definition(
 	name: 'shops'
@@ -112,6 +115,11 @@ class Core_Shops_Shop extends Config_Section {
 	)]
 	protected int $round_precision_with_VAT = 0;
 
+	#[Config_Definition(
+		type : Config::TYPE_STRING
+	)]
+	protected string $default_order_status_code = '';
+
 	/**
 	 * @return string
 	 */
@@ -193,6 +201,11 @@ class Core_Shops_Shop extends Config_Section {
 	public function setLocale( string $locale ): void
 	{
 		$this->locale = $locale;
+	}
+
+	public function getHomepage() : Mvc_Page_Interface
+	{
+		return Mvc_Site::get( $this->getSiteId() )->getHomepage( $this->getLocale() );
 	}
 
 	/**
@@ -448,7 +461,20 @@ class Core_Shops_Shop extends Config_Section {
 		$this->round_precision_with_VAT = $round_precision_with_VAT;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getDefaultOrderStatusCode(): string
+	{
+		return $this->default_order_status_code;
+	}
 
-
+	/**
+	 * @param string $default_order_status_code
+	 */
+	public function setDefaultOrderStatusCode( string $default_order_status_code ): void
+	{
+		$this->default_order_status_code = $default_order_status_code;
+	}
 
 }

@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -109,7 +109,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	 */
 	public function helper_create( DataModel_Definition_Model $definition ): void
 	{
-		$this->getDbWrite()->execCommand( $this->helper_getCreateCommand( $definition ) );
+		$this->getDbWrite()->execute( $this->helper_getCreateCommand( $definition ) );
 	}
 
 	/**
@@ -369,7 +369,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	 */
 	public function helper_drop( DataModel_Definition_Model $definition ): void
 	{
-		$this->getDbWrite()->execCommand( $this->helper_getDropCommand( $definition ) );
+		$this->getDbWrite()->execute( $this->helper_getDropCommand( $definition ) );
 	}
 
 	/**
@@ -388,14 +388,14 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	/**
 	 * @param DataModel_Definition_Model $definition
 	 *
-	 * @throws \Exception|Exception
+	 * @throws \Exception
 	 */
 	public function helper_update( DataModel_Definition_Model $definition ): void
 	{
 		$this->transactionStart();
 		try {
 			foreach( $this->helper_getUpdateCommand( $definition ) as $q ) {
-				$this->getDbWrite()->execCommand( $q );
+				$this->getDbWrite()->execute( $q );
 			}
 		} catch( \Exception $e ) {
 			$this->transactionRollback();
@@ -466,7 +466,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 				$_new_cols[] = $c . '=' . $v;
 			}
 
-			$update_default_values = 'UPDATE ' . $updated_table_name . ' SET ' . implode( ', ', $_new_cols );
+			$update_default_values = 'UPDATE ' . $updated_table_name . ' SET ' . implode( ', ', $_new_cols ).';';
 		}
 
 
@@ -536,7 +536,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	 */
 	public function save( DataModel_RecordData $record ): int
 	{
-		$this->getDbWrite()->execCommand( $this->createInsertQuery( $record ) );
+		$this->getDbWrite()->execute( $this->createInsertQuery( $record ) );
 
 		return $this->getDbWrite()->lastInsertId();
 	}
@@ -574,7 +574,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	public function update( DataModel_RecordData $record, DataModel_Query $where ): int
 	{
 
-		return $this->getDbWrite()->execCommand( $this->createUpdateQuery( $record, $where ) );
+		return $this->getDbWrite()->execute( $this->createUpdateQuery( $record, $where ) );
 	}
 
 	/**
@@ -752,7 +752,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	 */
 	public function delete( DataModel_Query $where ): int
 	{
-		return $this->getDbWrite()->execCommand( $this->createDeleteQuery( $where ) );
+		return $this->getDbWrite()->execute( $this->createDeleteQuery( $where ) );
 	}
 
 	/**
@@ -825,6 +825,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 			$r_table_name = $this->_getTableName( $relation->getRelatedDataModelDefinition() );
 
 
+			/** @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection */
 			switch( $relation->getJoinType() ) {
 				case DataModel_Query::JOIN_TYPE_LEFT_JOIN:
 					$join_qp .= PHP_EOL . "\t\t" . 'JOIN ' . $r_table_name . ' ON' . PHP_EOL;

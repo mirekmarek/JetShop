@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -37,7 +37,7 @@ abstract class PackageCreator extends BaseObject
 	/**
 	 * @return string
 	 */
-	public static function getCSSClassName()
+	public static function getCSSClassName() : string
 	{
 		return static::$CSS_class_name;
 	}
@@ -102,10 +102,7 @@ abstract class PackageCreator extends BaseObject
 
 		$_URI = $this->normalizePath( $URI );
 
-		$content = IO_File::read( $_URI );
-
-
-		return $content;
+		return IO_File::read( $_URI );
 	}
 
 	/**

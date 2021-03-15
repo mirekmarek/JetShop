@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -125,7 +125,7 @@ abstract class DataModel_Definition_Relation extends BaseObject
 	/**
 	 * @return DataModel_Definition_Relation_Join_Condition[]|DataModel_Definition_Relation_Join_Item[]
 	 */
-	public function getJoinBy()
+	public function getJoinBy() : array
 	{
 		return $this->join_by;
 	}

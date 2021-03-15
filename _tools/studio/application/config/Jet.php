@@ -1,8 +1,9 @@
 <?php
+
 use Jet\SysConf_Path;
 use Jet\SysConf_Jet;
 
-require_once SysConf_Path::getLibrary().'Jet/SysConf/Jet.php';
+require_once SysConf_Path::getLibrary() . 'Jet/SysConf/Jet.php';
 
 SysConf_Jet::setDevelMode( true );
 SysConf_Jet::setDebugProfilerEnabled( false );

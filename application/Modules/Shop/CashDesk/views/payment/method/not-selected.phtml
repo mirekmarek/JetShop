@@ -13,7 +13,7 @@ $cash_desk = CashDesk::get();
 $payment_method = $this->getRaw('payment_method');
 $pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
 
-
+$this->setVar('payment_method', $payment_method);
 ?>
 
 <div class="card bg-white" onclick="CashDesk.payment.select('<?= $payment_method->getCode() ?>')">
@@ -26,7 +26,7 @@ $pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
 			<b><?= $pm_shd->getTitle() ?></b>
 
 			<span style="padding-left: 50px;">
-			<?= Price::formatWithCurrency($pm_shd->getDefaultPrice()) ?>
+				<?=$this->render('payment/price')?>
 			</span>
 
 		</h5>

@@ -1,10 +1,11 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetStudio;
 
 use Jet\Debug;
@@ -25,7 +26,7 @@ class ErrorHandler_ErrorPage extends Debug_ErrorHandler_Handler
 	/**
 	 * @return string
 	 */
-	public function getName() : string
+	public function getName(): string
 	{
 		return 'ErrorPage';
 	}
@@ -33,14 +34,14 @@ class ErrorHandler_ErrorPage extends Debug_ErrorHandler_Handler
 	/**
 	 * @param Debug_ErrorHandler_Error $error
 	 */
-	public function handle( Debug_ErrorHandler_Error $error ) : void
+	public function handle( Debug_ErrorHandler_Error $error ): void
 	{
 		if(
 			$error->isFatal() &&
 			Debug::getOutputIsHTML()
 		) {
-			if(class_exists('Jet\ErrorPages', false)) {
-				if(ErrorPages::display( 500 )) {
+			if( class_exists( 'Jet\ErrorPages', false ) ) {
+				if( ErrorPages::display( 500 ) ) {
 					$this->displayed = true;
 				}
 			}
@@ -51,7 +52,7 @@ class ErrorHandler_ErrorPage extends Debug_ErrorHandler_Handler
 	/**
 	 * @return bool
 	 */
-	public function errorDisplayed() : bool
+	public function errorDisplayed(): bool
 	{
 		return $this->displayed;
 	}

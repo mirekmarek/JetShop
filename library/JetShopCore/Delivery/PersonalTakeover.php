@@ -5,21 +5,11 @@
 
 namespace JetShop;
 
+
 use Jet\Application_Modules;
 
 abstract class Core_Delivery_PersonalTakeover {
 
-	protected static string $module_name_prefix = 'Order.Delivery.PersonalTakeover.';
-
-	public static function getModuleNamePrefix(): string
-	{
-		return self::$module_name_prefix;
-	}
-
-	public static function setModuleNamePrefix( string $module_name_prefix ): void
-	{
-		self::$module_name_prefix = $module_name_prefix;
-	}
 
 	public static function actualizePlaces( Shops_Shop $shop, bool $verbose=false ) : bool
 	{
@@ -35,7 +25,7 @@ abstract class Core_Delivery_PersonalTakeover {
 				echo "\t".$module->getModuleManifest()->getName()."\n";
 			}
 
-			foreach($module->getCurrentPlaces( $shop ) as $place) {
+			foreach( $module->getPlacesList( $shop ) as $place) {
 				$future_list[$place->getKey()] = $place;
 			}
 		}
@@ -91,18 +81,28 @@ abstract class Core_Delivery_PersonalTakeover {
 	}
 
 	/**
-	 * @return Delivery_PersonalTakeover_Module[]
+	 * @return Delivery_Method_Module_PersonalTakeover[]
 	 */
 	public static function getActiveModules() : iterable
 	{
+		$methods = Delivery_Method::getList();
+
 		$modules = [];
-
-		$name_prefix = static::getModuleNamePrefix();
-
-		foreach(Application_Modules::activatedModulesList() as $manifest) {
-			if( str_starts_with( $manifest->getName(), $name_prefix ) ) {
-				$modules[$manifest->getName()] = Application_Modules::moduleInstance( $manifest->getName() );
+		foreach($methods as $method) {
+			if(!$method->isPersonalTakeover()) {
+				continue;
 			}
+
+			$module_name = $method->getModuleName();
+
+			if(!Application_Modules::moduleIsActivated($module_name)) {
+				continue;
+			}
+
+			$module = $method->getModule();
+			$manifest = $module->getModuleManifest();
+
+			$modules[$manifest->getName()] = $module;
 		}
 
 		return $modules;

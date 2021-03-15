@@ -9,4 +9,5 @@ return [
 	'Statistics and reports' => '',
 	'Expedition' => '',
 	'Content and marketing' => '',
+	'Warehouse management' => '',
 ];

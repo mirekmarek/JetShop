@@ -18,10 +18,10 @@ $module = $this->getRaw('module');
 $form = $module->getUseCodeForm();
 
 $form->setDefaultLabelWidth([
-	Form::LJ_SIZE_MEDIUM => 2
+	Form::LJ_SIZE_MEDIUM => 0
 ]);
 $form->setDefaultFieldWidth([
-	Form::LJ_SIZE_MEDIUM => 2
+	Form::LJ_SIZE_MEDIUM => 10
 ]);
 
 $code_f = $form->field('code');

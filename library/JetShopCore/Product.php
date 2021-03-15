@@ -14,6 +14,8 @@ use Jet\Form_Field_MultiSelect;
 use Jet\Form_Field_Select;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Application_Module;
+use Jet\Mvc;
+use Jet\Mvc_View;
 
 /**
  *
@@ -27,7 +29,7 @@ use Jet\Application_Module;
 
 )]
 abstract class Core_Product extends DataModel {
-	protected static string $MANAGE_MODULE = 'Admin.Catalog.Products';
+	protected static string $manage_module_name = 'Admin.Catalog.Products';
 	
 	const PRODUCT_TYPE_REGULAR        = 'regular';
 	const PRODUCT_TYPE_VARIANT_MASTER = 'variant_master';
@@ -175,13 +177,6 @@ abstract class Core_Product extends DataModel {
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		is_key: true,
-		form_field_label: 'Total stock status:'
-	)]
-	protected int $stock_status = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
 		form_field_type: false
 	)]
 	protected int $review_count = 0;
@@ -280,7 +275,7 @@ abstract class Core_Product extends DataModel {
 
 	public static function getManageModuleName() : string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	public static function getManageModule() : Product_ManageModuleInterface|Application_Module
@@ -1641,4 +1636,42 @@ abstract class Core_Product extends DataModel {
 		return $this->getShopData($shop_code)->getImageThumbnailUrl( $max_w, $max_h, $i );
 	}
 
+	public static function renderSelectProductWidget( string $on_select,
+	                                                   int $selected_product_id=0,
+	                                                   array $filter = [],
+	                                                   bool $only_active=false,
+	                                                   string $name='select_product' ) : string
+	{
+		$view = new Mvc_View( Mvc::getCurrentSite()->getViewsPath() );
+
+		$view->setVar('selected_product_id', $selected_product_id);
+		$view->setVar('filter', $filter);
+		$view->setVar('on_select', $on_select);
+		$view->setVar('name', $name);
+		$view->setVar('only_active', $only_active);
+
+		return $view->render('selectProductWidget');
+	}
+
+
+	public function getAdminTitle( ?string $shop_code=null ) : string
+	{
+		$sd = $this->getShopData($shop_code);
+
+		$codes = [];
+		if($this->getInternalCode()) {
+			$codes[] = $this->getInternalCode();
+		}
+		if($this->getEan()) {
+			$codes[] = $this->getEan();
+		}
+
+		if($codes) {
+			$codes = ' ('.implode(', ', $codes).')';
+		} else {
+			$codes = '';
+		}
+
+		return $sd->getName().$codes;
+	}
 }

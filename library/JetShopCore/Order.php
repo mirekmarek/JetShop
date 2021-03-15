@@ -11,7 +11,16 @@ use Jet\DataModel_IDController_AutoIncrement;
 	name: 'order',
 	database_table_name: 'orders',
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: ['id_property_name'=>'id']
+	id_controller_options: [
+		'id_property_name' => 'id'
+	],
+	key: [
+		'name' => 'key',
+		'property_names' => [
+			'key'
+		],
+		'type' => DataModel::KEY_TYPE_UNIQUE
+	]
 )]
 abstract class Core_Order extends DataModel {
 
@@ -22,6 +31,16 @@ abstract class Core_Order extends DataModel {
 		form_field_type: false
 	)]
 	protected int $id = 0;
+
+	/**
+	 * @var string
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50,
+		form_field_type: false
+	)]
+	protected string $key = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -629,6 +648,11 @@ abstract class Core_Order extends DataModel {
 		return $this->delivery_method_code;
 	}
 
+	public function getDeliveryMethod() : Delivery_Method
+	{
+		return Delivery_Method::get( $this->getDeliveryMethodCode() );
+	}
+
 	public function setDeliveryMethodCode( string $delivery_method_code ) : void
 	{
 		$this->delivery_method_code = $delivery_method_code;
@@ -652,6 +676,11 @@ abstract class Core_Order extends DataModel {
 	public function setPaymentMethodCode( string $payment_method_code ) : void
 	{
 		$this->payment_method_code = $payment_method_code;
+	}
+
+	public function getPaymentMethod() : Payment_Method
+	{
+		return Payment_Method::get( $this->getPaymentMethodCode() );
 	}
 
 	public function getPaymentMethodSpecification() : string
@@ -745,6 +774,7 @@ abstract class Core_Order extends DataModel {
 	public function setStatusCode( string $status_code ) : void
 	{
 		$this->status_code = $status_code;
+		//TODO: history
 	}
 
 	public function getAllItemsAvailable() : bool
@@ -788,7 +818,7 @@ abstract class Core_Order extends DataModel {
 				continue;
 			}
 
-			$price = $discount_item->getTotalPrice();
+			$price = $discount_item->getTotalAmount();
 
 			$this->total_price += $price;
 
@@ -819,64 +849,142 @@ abstract class Core_Order extends DataModel {
 		$this->delivery_price_without_discount = $this->delivery_price;
 		$this->payment_price_without_discount = $this->payment_price;
 
+		$this->recalculate_discounts();
+	}
+
+	protected function recalculate_discounts() : void
+	{
 		$this->discount = 0.0;
 		$this->discount_percentage = 0.0;
+
+		$applyNominalDiscount = function( Order_Item $discount_item, float &$price  ) {
+			$discount = $discount_item->getItemAmount();
+
+			if($discount>$price) {
+				$discount = $price;
+			}
+
+			if($discount>$this->total_price) {
+				$discount = $this->total_price;
+			}
+
+			$price -= $discount;
+
+			$discount_item->setTotalAmount( $discount );
+
+			$this->discount += $discount;
+			$this->total_price -= $discount;
+		};
+
+		$applyPrcDiscount = function( Order_Item $discount_item, float &$price, float $orig_price  ) {
+			$discount = $discount_item->getItemAmount();
+			$discount = Price::round($orig_price * ($discount/100), $this->shop_code );
+
+			if($discount>$price) {
+				$discount = $price;
+			}
+
+			if($discount>$this->total_price) {
+				$discount = $this->total_price;
+			}
+
+			$price -= $discount;
+
+			$discount_item->setTotalAmount( $discount );
+
+			$this->discount += $discount;
+			$this->total_price -= $discount;
+		};
+
 
 		foreach( $this->items as $discount_item ) {
 			if($discount_item->getType()!=Order_Item::ITEM_TYPE_DISCOUNT) {
 				continue;
 			}
 
-			$discount = abs($discount_item->getTotalPrice());
-			$discount_updated = false;
+			switch($discount_item->getSubType()) {
+				case Order_Item::DISCOUNT_TYPE_PRODUCTS_PERCENT:
+					$applyPrcDiscount(
+						$discount_item,
+						$this->product_price,
+						$this->product_price_without_discount
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
+					$applyNominalDiscount(
+						$discount_item,
+						$this->product_price
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_SERVICE_PERCENT:
+					$applyPrcDiscount(
+						$discount_item,
+						$this->service_price,
+						$this->service_price_without_discount
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_SERVICE_AMOUNT:
+					$applyNominalDiscount(
+						$discount_item,
+						$this->service_price
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_DELIVERY_PERCENT:
+					$applyPrcDiscount(
+						$discount_item,
+						$this->delivery_price,
+						$this->delivery_price_without_discount
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_DELIVERY_AMOUNT:
+					$applyNominalDiscount(
+						$discount_item,
+						$this->delivery_price
+					);
+					break;
+
+				case Order_Item::DISCOUNT_TYPE_PAYMENT_PERCENT:
+					$applyPrcDiscount(
+						$discount_item,
+						$this->payment_price,
+						$this->payment_price_without_discount
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_PAYMENT_AMOUNT:
+					$applyNominalDiscount(
+						$discount_item,
+						$this->payment_price
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_TOTAL_AMOUNT:
+				case Order_Item::DISCOUNT_TYPE_TOTAL_PERCENT:
+					continue 2;
+			}
+		}
+
+
+		foreach( $this->items as $discount_item ) {
+			if($discount_item->getType()!=Order_Item::ITEM_TYPE_DISCOUNT) {
+				continue;
+			}
 
 			switch($discount_item->getSubType()) {
-				case Order_Item::DISCOUNT_TYPE_PRODUCTS:
-					if($discount>$this->product_price) {
-						$discount = $this->product_price;
-						$discount_updated = true;
-					}
-
-					$this->product_price -= $discount;
-				break;
-				case Order_Item::DISCOUNT_TYPE_SERVICE:
-					if($discount>$this->service_price) {
-						$discount = $this->service_price;
-						$discount_updated = true;
-					}
-
-					$this->service_price -= $discount;
-				break;
-				case Order_Item::DISCOUNT_TYPE_DELIVERY:
-					if($discount>$this->delivery_price) {
-						$discount = $this->delivery_price;
-						$discount_updated = true;
-					}
-
-					$this->delivery_price -= $discount;
-				break;
-				case Order_Item::DISCOUNT_TYPE_PAYMENT:
-					if($discount>$this->payment_price) {
-						$discount = $this->payment_price;
-						$discount_updated = true;
-					}
-
-					$this->payment_price -= $discount;
-
-				break;
+				case Order_Item::DISCOUNT_TYPE_TOTAL_AMOUNT:
+					$applyNominalDiscount(
+						$discount_item,
+						$this->total_price
+					);
+					break;
+				case Order_Item::DISCOUNT_TYPE_TOTAL_PERCENT:
+					$applyPrcDiscount(
+						$discount_item,
+						$this->total_price,
+						$this->total_price_without_discount
+					);
+					break;
+				default:
+					continue 2;
 			}
-
-			if($discount>$this->total_price) {
-				$discount = $this->total_price;
-				$discount_updated = true;
-			}
-
-			if($discount_updated) {
-				$discount_item->setPricePerItem( $discount );
-			}
-
-			$this->discount += $discount;
-			$this->total_price -= $discount;
 		}
 
 
@@ -887,5 +995,71 @@ abstract class Core_Order extends DataModel {
 
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getKey() : string
+	{
+		return $this->key;
+	}
 
+	public function beforeSave(): void
+	{
+		if($this->getIsNew()) {
+			$this->key = md5( time().uniqid().uniqid() );
+		}
+	}
+
+
+	public static function get( int $id ) : static|null
+	{
+		return Order::load( $id );
+	}
+
+	public static function getByKey( string $key ) : Order|null
+	{
+		/**
+		 * @var Order[] $orders
+		 */
+		$orders = Order::fetch(['order' => [
+			'key' => $key
+		]]);
+
+		if(count($orders)!=1) {
+			return null;
+		}
+
+		return $orders[0];
+	}
+
+	/**
+	 * @return iterable
+	 */
+	public static function getList() : iterable
+	{
+		$where = [];
+
+		return static::fetchInstances( $where );
+	}
+
+
+	public function onNewOrderSave() : void
+	{
+		/**
+		 * @var Order $this
+		 */
+		foreach(Discounts::getActiveModules() as $dm) {
+			$dm->Order_saved( $this );
+		}
+
+		$this->event( 'NewOrderSave' )->handleImmediately();
+
+	}
+
+	public function event( string $event ) : Order_Event
+	{
+		$e = Order_Event::newEvent( $this->getId(), $event );
+
+		return $e;
+	}
 }

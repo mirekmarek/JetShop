@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace Jet;
@@ -39,9 +39,7 @@ trait BaseObject_Trait
 	 */
 	public function objectSetterMethodName( string $property_name ): string
 	{
-		$setter_method_name = 'set' . str_replace( '_', '', $property_name );
-
-		return $setter_method_name;
+		return 'set' . str_replace( '_', '', $property_name );
 	}
 
 	/**
@@ -51,9 +49,7 @@ trait BaseObject_Trait
 	 */
 	public function objectGetterMethodName( string $property_name ): string
 	{
-		$setter_method_name = 'get' . str_replace( '_', '', $property_name );
-
-		return $setter_method_name;
+		return 'get' . str_replace( '_', '', $property_name );
 	}
 
 

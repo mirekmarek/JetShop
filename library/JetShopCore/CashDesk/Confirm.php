@@ -14,7 +14,7 @@ trait Core_CashDesk_Confirm {
 
 	protected ?Form $comment_form = null;
 
-	public function mainInitAgreeFlags() : void
+	public function initMainAgreeFlags() : void
 	{
 		/**
 		 * @var CashDesk $this
@@ -22,30 +22,79 @@ trait Core_CashDesk_Confirm {
 		if($this->agree_flags===null) {
 			$this->agree_flags = [];
 
-			$terms = new CashDesk_AgreeFlag('terms', 'I agree with terms and conditions');
-			$terms->setIsMandatory(true);
-			$terms->setErrorMessage('To complete the order, it is necessary to agree to the terms and conditions');
-			$this->addAgreeFlag($terms);
+			$this->initMainAgreeFlags_terns();
+			$this->initMainAgreeFlags_survey_disagree();
+			$this->initMainAgreeFlags_mailing_subscribe();
 
-
-			$survey_disagree = new CashDesk_AgreeFlag('survey_disagree', 'I disagree with the survey');
-			$survey_disagree->setOrderStateSetter( function( Order $order, bool $state ) {
-				$order->setSurveyDisagreement( !$state );
-			} );
-			$this->addAgreeFlag($survey_disagree);
-
-
-			$newsletter_registration = new CashDesk_AgreeFlag('newsletter_registration', 'I agree with newsletter registration');
-			$newsletter_registration->setDefaultChecked(true);
-			$newsletter_registration->setOrderStateSetter( function( Order $order, bool $state ) {
-				$order->setNewsletterAccepted( $state );
-			} );
-
-			$this->addAgreeFlag($newsletter_registration);
 
 			$this->getModule()->initAgreeFlags( $this, $this->agree_flags );
 		}
 	}
+
+	public function initMainAgreeFlags_terns() : void
+	{
+		$terms = new CashDesk_AgreeFlag('terms', 'I agree with terms and conditions');
+		$terms->setIsMandatory(true);
+		$terms->setErrorMessage('To complete the order, it is necessary to agree to the terms and conditions');
+		$this->addAgreeFlag($terms);
+	}
+
+
+	public function initMainAgreeFlags_survey_disagree() : void
+	{
+		$survey_disagree = new CashDesk_AgreeFlag('survey_disagree', 'I disagree with the survey');
+		$survey_disagree->setOrderStateSetter( function( Order $order, bool $state ) {
+			$order->setSurveyDisagreement( !$state );
+		} );
+		$this->addAgreeFlag($survey_disagree);
+	}
+
+	public function initMainAgreeFlags_mailing_subscribe() : void
+	{
+		$mailing_subscribe = new CashDesk_AgreeFlag('mailing_subscribe', 'I agree with newsletter registration');
+		$mailing_subscribe->setDefaultChecked(true);
+		$mailing_subscribe->setOrderStateSetter( function( Order $order, bool $state ) {
+			$order->setNewsletterAccepted( $state );
+		} );
+
+		$mailing_subscribe->setOnOrderSave(function( Order $order, bool $checked ) {
+			$mailing_subscribe_source = 'order:'.$order->getId();
+
+			$customer = Customer::getCurrentCustomer();
+			if( $customer ) {
+				if($checked) {
+					$customer->mailingSubscribe($mailing_subscribe_source);
+				} else {
+					$customer->mailingUnsubscribe($mailing_subscribe_source);
+				}
+
+				return;
+			}
+
+			if($checked) {
+				Customer_MailingSubscribe::subscribe(
+					$order->getShopCode(),
+					$order->getEmail(),
+					$mailing_subscribe_source
+				);
+			} else {
+				Customer_MailingSubscribe::unsubscribe(
+					$order->getShopCode(),
+					$order->getEmail(),
+					$mailing_subscribe_source
+				);
+			}
+		});
+
+		$mailing_subscribe->setOnCustomerLogin( function( CashDesk $cash_desk, bool $checked ) use ($mailing_subscribe) {
+			$customer = Customer::getCurrentCustomer();
+
+			$mailing_subscribe->setIsChecked( $customer->getMailingSubscribed() );
+		} );
+
+		$this->addAgreeFlag($mailing_subscribe);
+	}
+
 
 	public function addAgreeFlag( CashDesk_AgreeFlag $agree_flag )
 	{
@@ -85,7 +134,7 @@ trait Core_CashDesk_Confirm {
 	public function getAgreeFlags() : array
 	{
 
-		$this->mainInitAgreeFlags();
+		$this->initMainAgreeFlags();
 
 		/**
 		 * @var CashDesk $this

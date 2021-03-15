@@ -2,6 +2,7 @@
 namespace JetShop;
 
 use Jet\Data_DateTime;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 
 trait Core_CashDesk_Order {
@@ -74,34 +75,42 @@ trait Core_CashDesk_Order {
 		$order->addItem( $delivery_method->getOrderItem( $this ) );
 
 		$order->setPaymentMethodCode( $payment_method->getCode() );
-		//TODO: payment specifications
-		$order->addItem( $payment_method->getOrderItem( $this ) );
+		$payment_order_item = $payment_method->getOrderItem( $this );
+		if(($payment_option=$this->getSelectedPaymentMethodOption())) {
+			$payment_order_item->setSubCode($payment_option->getCode());
+			$payment_order_item->setDescription( $payment_option->getTitle($this->shop_code) );
+		}
 
+		$order->addItem( $payment_order_item );
+
+		//TODO: vernostni sleva
 		//TODO: services
 		//TODO: gifts
 
 		foreach(Discounts::getActiveModules() as $dm) {
-			foreach( $dm->getDiscounts() as $discount ) {
+			foreach( $dm->getDiscounts( $this ) as $discount ) {
 				$discount->setType( Order_Item::ITEM_TYPE_DISCOUNT );
 				$order->addItem($discount);
 			}
 		}
 
-		//TODO: status_code - default status id
+		$order->setStatusCode( $payment_method->getOrderStatusCode( $this ) );
 
 		$order->recalculate();
+
+		WarehouseManagement::selectWarehousesForOrder( $order );
 
 		return $order;
 	}
 
-	public function saveOrder() : bool
+	public function saveOrder() : ?Order
 	{
 		/**
 		 * @var CashDesk $this
 		 */
 
 		if(!$this->isDone()) {
-			return false;
+			return null;
 		}
 
 		$order = $this->getOrder();
@@ -110,6 +119,13 @@ trait Core_CashDesk_Order {
 		$this->saveCustomerAddresses();
 
 		$order->save();
+
+		foreach($this->getAgreeFlags() as $flag) {
+			/**
+			 * @var CashDesk_AgreeFlag $flag
+			 */
+			$flag->onOrderSave( $order );
+		}
 
 		$session = $this->getSession();
 		$session->reset();
@@ -123,16 +139,9 @@ trait Core_CashDesk_Order {
 
 		$this->setCurrentStep( CashDesk::STEP_DELIVERY );
 
-		foreach(Discounts::getActiveModules() as $dm) {
-			$dm->Order_saved( $order );
-		}
+		$order->onNewOrderSave();
 
-		//TODO: emit event
-		//TODO: process payment
-
-		die('??');
-
-		return true;
+		return $order;
 	}
 
 

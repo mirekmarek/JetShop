@@ -47,7 +47,10 @@ trait Controller_Main_Product
 				static::$category = static::$product->getMainCategory();
 			}
 
-			if(!static::$product->isActive()) {
+			if(
+				!static::$product->isActive() ||
+				!static::$product->getShopData()->isActive()
+			) {
 				$this->router->addAction('product_not_active')->setResolver(function() {
 					return true;
 				});

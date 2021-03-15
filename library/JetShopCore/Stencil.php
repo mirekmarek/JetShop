@@ -17,7 +17,7 @@ use Jet\DataModel_Fetch_Instances;
 )]
 abstract class Core_Stencil extends DataModel {
 
-	protected static string $MANAGE_MODULE = 'Admin.Catalog.Stencils';
+	protected static string $manage_module_name = 'Admin.Catalog.Stencils';
 
 	const IMG_MAIN = 'main';
 	const IMG_PICTOGRAM = 'pictogram';
@@ -57,7 +57,7 @@ abstract class Core_Stencil extends DataModel {
 
 	public static function getManageModuleName() : string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	public static function getManageModule() : Stencil_ManageModuleInterface|Application_Module

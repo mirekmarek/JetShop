@@ -10,6 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Name;
 use Jet\DataModel_Related_MtoN_Iterator;
+use Jet\Exception;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\DataModel_Related_1toN;
@@ -33,7 +34,8 @@ use Jet\Form_Field_MultiSelect;
 abstract class Core_Delivery_Method extends DataModel
 {
 
-	protected static string $MANAGE_MODULE = 'Admin.Delivery.Methods';
+	protected static string $manage_module_name = 'Admin.Delivery.Methods';
+	protected static string $method_module_name_prefix = 'Order.Delivery.Methods.';
 
 	/**
 	 * @var string
@@ -156,7 +158,7 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public static function getManageModuleName(): string
 	{
-		return self::$MANAGE_MODULE;
+		return static::$manage_module_name;
 	}
 
 	/**
@@ -164,8 +166,26 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public static function setManageModuleName( string $name ): void
 	{
-		self::$MANAGE_MODULE = $name;
+		static::$manage_module_name = $name;
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function getMethodModuleNamePrefix(): string
+	{
+		return static::$method_module_name_prefix;
+	}
+
+	/**
+	 * @param string $method_module_name_prefix
+	 */
+	public static function setMethodModuleNamePrefix( string $method_module_name_prefix ): void
+	{
+		static::$method_module_name_prefix = $method_module_name_prefix;
+	}
+
+
 
 	public function __construct()
 	{
@@ -624,10 +644,48 @@ abstract class Core_Delivery_Method extends DataModel
 		$item->setQuantity( 1 );
 		$item->setTitle( $shd->getTitle() );
 		$item->setCode( $this->getCode() );
-		$item->setPricePerItem( $shd->getDefaultPrice() );
+		$item->setItemAmount( $shd->getDefaultPrice() );
 		$item->setVatRate( $shd->getVatRate() );
 		$item->setDescription( $shd->getDescriptionShort() );
 
 		return $item;
 	}
+
+	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	{
+		/**
+		 * @var Delivery_Method $this
+		 */
+		$module = $this->getModule();
+
+		if($module) {
+			return $module->getOrderConfirmationEmailInfoText( $order, $this );
+		} else {
+			$shop_code = $order->getShopCode();
+			return $this->getShopData( $shop_code )->getConfirmationEmailInfoText();
+		}
+	}
+
+	public function getModuleName() : string
+	{
+		return Delivery_Method::getMethodModuleNamePrefix().$this->getCode();
+	}
+
+	public function getModule(): null|Core_Delivery_Method_Module|Core_Delivery_Method_Module_PersonalTakeover
+	{
+		$module_name = $this->getModuleName();
+
+		if(Application_Modules::moduleExists($module_name)) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */
+			return Application_Modules::moduleInstance( $module_name );
+		}
+
+		if($this->getKind()->moduleIsRequired()) {
+			throw new Exception('Delivery module '.$module_name.' is required, but mussing (is not activated)');
+		}
+
+
+		return null;
+	}
+
 }

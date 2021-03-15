@@ -183,5 +183,55 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 		return $flags;
 	}
 
+	public function prepareFilter( array $initial_product_ids ) : void
+	{
+		if(!$initial_product_ids) {
+			return;
+		}
+
+		$map = $this->listing->cache()->get( static::CACHE_KEY );
+
+		if($map===null) {
+			$select_items = ['product_id'];
+			$map = [];
+
+			foreach($this->flags as $flag_id=>$flag) {
+				$map[$flag_id] = [];
+
+				foreach($flag->getSelectItems() as $select_item) {
+					$select_items[] = $select_item;
+				}
+			}
+
+			$data = Product_ShopData::fetchData(
+				$select_items,
+				[
+					'product_id'=>$initial_product_ids,
+					'AND',
+					'shop_code'=>$this->listing->getShopCode()
+				]
+			);
+
+			foreach($data as $d) {
+				$p_id = (int)$d['product_id'];
+
+				foreach($this->flags as $flag_id=>$flag) {
+					if( $flag->addToMap( $d ) ) {
+						$map[$flag_id][] = $p_id;
+					}
+				}
+			}
+
+			$this->listing->cache()->set( static::CACHE_KEY, $map );
+		}
+
+		foreach($map as $flag_id=>$product_ids) {
+			if(isset( $this->flags[$flag_id])) {
+				$this->flags[$flag_id]->setProductIds( $product_ids );
+			}
+		}
+
+	}
+
 
 }

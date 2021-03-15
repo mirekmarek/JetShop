@@ -22,7 +22,7 @@ use Jet\Form_Field_Input;
 	]
 )]
 abstract class Core_Delivery_Deadline extends DataModel {
-	protected static string $MANAGE_MODULE = 'Admin.Delivery.Deadlines';
+	protected static string $manage_module_name = 'Admin.Delivery.Deadlines';
 
 	/**
 	 * @var string
@@ -78,7 +78,7 @@ abstract class Core_Delivery_Deadline extends DataModel {
 
 	public static function getManageModuleName() : string
 	{
-		return self::$MANAGE_MODULE;
+		return self::$manage_module_name;
 	}
 
 	public static function getManageModule() : Delivery_Deadline_ManageModuleInterface|Application_Module

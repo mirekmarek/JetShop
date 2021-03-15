@@ -11,6 +11,7 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 use Jet\Form_Field_Select;
 use Jet\Tr;
+use Jet\Form;
 
 /**
  *
@@ -94,6 +95,18 @@ abstract class Core_Payment_Method_ShopData extends DataModel_Related_1toN imple
 	)]
 	protected string $description_short = '';
 
+
+	/**
+	 * @var string
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 999999,
+		form_field_type: Form::TYPE_WYSIWYG,
+		form_field_label: 'Confirmation e-mail info text:'
+	)]
+	protected string $confirmation_email_info_text = '';
+
 	/**
 	 * @var int
 	 */ 
@@ -124,6 +137,16 @@ abstract class Core_Payment_Method_ShopData extends DataModel_Related_1toN imple
 		form_field_creator_method_name: 'createVatRateInputField'
 	)]
 	protected float $vat_rate = 0.0;
+
+	/**
+	 * @var bool
+	 */ 
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		form_field_type: Form::TYPE_CHECKBOX,
+		form_field_label: 'Discount is not allowed'
+	)]
+	protected bool $discount_is_not_allowed = false;
 
 
 	/**
@@ -340,5 +363,37 @@ abstract class Core_Payment_Method_ShopData extends DataModel_Related_1toN imple
 		$input->setSelectOptions($vat_rates);
 
 		return $input;
+	}
+
+	/**
+	 * @param bool $value
+	 */
+	public function setDiscountIsNotAllowed( bool $value ) : void
+	{
+		$this->discount_is_not_allowed = (bool)$value;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getDiscountIsNotAllowed() : bool
+	{
+		return $this->discount_is_not_allowed;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setConfirmationEmailInfoText( string $value ) : void
+	{
+		$this->confirmation_email_info_text = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getConfirmationEmailInfoText() : string
+	{
+		return $this->confirmation_email_info_text;
 	}
 }

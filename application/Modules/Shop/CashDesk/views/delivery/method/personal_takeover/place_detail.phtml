@@ -14,6 +14,8 @@ $place = $this->getRaw('place');
 
 $method = Delivery_Method::get( $place->getMethodCode() );
 $shd = $method->getShopData( Shops::getCurrentCode() );
+
+$this->setVar('delivery_method', $method);
 ?>
 
 <h4><?=$place->getName()?></h4>
@@ -48,6 +50,6 @@ $shd = $method->getShopData( Shops::getCurrentCode() );
 	</table>
 </div>
 
-<div class="text-right"><?=Price::formatWithCurrency($shd->getDefaultPrice())?></div>
+<div class="text-right"><?=$this->render('delivery/price')?></div>
 
 <?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPlace('{$place->getMethodCode()}', '{$place->getPlaceCode()}')")?>

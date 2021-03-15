@@ -1,13 +1,14 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
- * @author Miroslav Marek <mirek.marek.2m@gmail.com>
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
 namespace JetStudio;
 
+use Jet\Autoloader;
 use Jet\BaseObject;
 use Jet\Form_Field_Input;
 use Jet\Http_Request;
@@ -250,7 +251,7 @@ class DataModels extends BaseObject implements Application_Part
 	/**
 	 * @return string|bool
 	 */
-	public static function getCurrentClassName()
+	public static function getCurrentClassName() : string|bool
 	{
 		if( static::getCurrentClass() ) {
 			return static::getCurrentClass()->getFullClassName();
@@ -262,7 +263,7 @@ class DataModels extends BaseObject implements Application_Part
 	/**
 	 * @return DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|DataModel_Definition_Model_Related_MtoN|null
 	 */
-	public static function getCurrentModel()
+	public static function getCurrentModel() : DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|DataModel_Definition_Model_Related_MtoN|null
 	{
 		$class = static::getCurrentClass();
 		if( !$class ) {
@@ -273,9 +274,9 @@ class DataModels extends BaseObject implements Application_Part
 	}
 
 	/**
-	 * @return DataModel_Definition_Property_Interface|\Jet\DataModel_Definition_Property|null
+	 * @return DataModel_Definition_Property_Interface|DataModel_Definition_Property|null
 	 */
-	public static function getCurrentProperty()
+	public static function getCurrentProperty() : DataModel_Definition_Property_Interface|DataModel_Definition_Property|null
 	{
 		if( static::$current_property === null ) {
 			static::$current_property = false;
@@ -294,7 +295,7 @@ class DataModels extends BaseObject implements Application_Part
 			}
 		}
 
-		return static::$current_property;
+		return static::$current_property ? : null;
 	}
 
 	/**
@@ -584,17 +585,7 @@ class DataModels extends BaseObject implements Application_Part
 	 */
 	public static function generateScriptPath( string $namespace, string $class_name ): string
 	{
-		if( !isset( static::getNamespaces()[$namespace] ) ) {
-			return '';
-		}
-
-		$namespace = static::getNamespaces()[$namespace];
-
-		$class_name = str_replace( '__', '_', $class_name );
-		$class_name = str_replace( '\\', DIRECTORY_SEPARATOR, $class_name );
-		$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
-
-		return $namespace->getRootDir() . $class_name . '.php';
+		return Autoloader::getScriptPath($namespace.'\\'.$class_name);
 	}
 
 

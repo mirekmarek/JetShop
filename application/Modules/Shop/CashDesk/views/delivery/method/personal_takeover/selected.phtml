@@ -16,6 +16,7 @@ $place = $cash_desk->getSelectedPersonalTakeoverPlace();
 $delivery_method = $cash_desk->getSelectedDeliveryMethod();
 $dm_shop_data = $delivery_method->getShopData($cash_desk->getShopCode());
 
+$this->setVar('delivery_method', $delivery_method);
 ?>
 
 <div class="card bg-white" onclick="CashDesk.delivery.personalTakeover.startSelection()">
@@ -27,7 +28,7 @@ $dm_shop_data = $delivery_method->getShopData($cash_desk->getShopCode());
 			<b><?=Tr::_('Personal takeover')?> - <?=$dm_shop_data->getTitle()?></b>
 
 			<span style="padding-left: 50px;">
-				<?= Price::formatWithCurrency($dm_shop_data->getDefaultPrice()) ?>
+				<?=$this->render('delivery/price')?>
 			</span>
 
 		</h5>

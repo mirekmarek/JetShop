@@ -5,15 +5,19 @@ use Jet\Http_Request;
 use Jet\Mvc_View;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_tabs;
 use JetShop\Category;
 
 /**
- * @var Mvc_View               $this
+ * @var Mvc_View $this
+ * @var UI_tabs  $tabs
  */
 
 $category = Controller_Main::getCurrentCategory();
 
 $toolbar = $this->getRaw('toolbar');
+
+$tabs = $this->getRaw('tabs');
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-2">
@@ -74,13 +78,34 @@ $toolbar = $this->getRaw('toolbar');
 	<div class="col-2 tree">
 		<?=$this->render('tree')?>
 	</div>
-<?php if($category && $category->getType()==Category::CATEGORY_TYPE_REGULAR): ?>
-	<div class="col-2 tree-sub">
-		<?=$this->render('param/tree')?>
-	</div>
-	<div class="col-8">
-<?php else: ?>
-	<div class="col-10">
-<?php endif; ?>
+<?php
+$col = 10;
+if(
+	$category &&
+	$category->getType()==Category::CATEGORY_TYPE_REGULAR
+):
+	if(
+		$tabs->getSelectedTabId()=='parametrization' ||
+		Controller_Main::getCurrentParamGroup() ||
+		Controller_Main::getCurrentParamProperty() ||
+		Controller_Main::getCurrentParamPropertyOption()
+	):
+		$col = 8;
+		?>
+		<div class="col-2 tree-sub">
+			<?=$this->render('param/tree')?>
+		</div>
+		<?php
+	endif;
+	if($tabs->getSelectedTabId()=='exports'):
+		$col = 8;
+		?>
+		<div class="col-2 tree-sub">
+			<?=$this->render('exports/list')?>
+		</div>
+	<?php
+	endif;
+endif; ?>
 
-	<?=$this->getRaw('tabs')?>
+<div class="col-<?=$col?>">
+	<?=$tabs?>

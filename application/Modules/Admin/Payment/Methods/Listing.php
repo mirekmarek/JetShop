@@ -31,6 +31,10 @@ class Listing extends Data_Listing {
 		'code'         => ['title' => 'Code'],
 		'kind'         => ['title' => 'Kind'],
 		'internal_name'   => ['title' => 'Internal name'],
+		'status'          => [
+			'title' => 'Status',
+			'disallow_sort' => true
+		],
 		'delivery_methods'   => ['title' => 'Delivery methods', 'disallow_sort' => true],
 		'services'   => ['title' => 'Services', 'disallow_sort' => true],
 	];

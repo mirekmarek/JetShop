@@ -20,9 +20,16 @@ abstract class Core_ProductListing_Filter_Flags_Flag {
 
 	protected bool $is_forced = false;
 
+	protected array $select_items = [];
+
 	protected array $product_ids = [];
 
 	protected ?int $_count = null;
+
+	/**
+	 * @var callable
+	 */
+	protected $analyzer;
 
 	public function __construct(  ProductListing $listing, $id )
 	{
@@ -137,4 +144,36 @@ abstract class Core_ProductListing_Filter_Flags_Flag {
 
 		return $url;
 	}
+
+	public function getSelectItems(): array
+	{
+		return $this->select_items;
+	}
+
+	public function setSelectItems( array $select_items ): void
+	{
+		$this->select_items = $select_items;
+	}
+
+	public function getAnalyzer(): callable
+	{
+		return $this->analyzer;
+	}
+
+	public function setAnalyzer( callable $analyzer ): void
+	{
+		$this->analyzer = $analyzer;
+	}
+
+	public function addToMap( array $item ) : bool
+	{
+		$analyzer = $this->analyzer;
+
+		if($analyzer($item)) {
+			return true;
+		}
+
+		return false;
+	}
+
 }

@@ -12,6 +12,7 @@ use Jet\UI_button;
 use Jet\Tr;
 use Jet\Mvc_View;
 use Jet\Form;
+use JetShop\Shops;
 
 /**
  * @var Mvc_View     $this
@@ -93,6 +94,28 @@ $grid->getColumn( 'payment_methods' )->setRenderer(
 	}
 );
 $grid->getColumn( 'payment_methods' )->setCssStyle( 'width:350px;' );
+
+$grid->getColumn( 'status' )->setRenderer(
+	function( Delivery_Method $item ) {
+		echo '<table>';
+		foreach(Shops::getList() as $shop) {
+			$sd = $item->getShopData($shop->getCode());
+
+			echo '<tr style="background-color: transparent; border: none;"><td style="padding: 5px;border: none;">'.$shop->getName().':</td>';
+			echo '<td style="padding: 5px;border: none;">';
+			if($sd->isActive()) {
+				echo '<span class="badge badge-success">'.Tr::_('Active').'</span>';
+			} else {
+				echo '<span class="badge badge-danger">'.Tr::_('Not Active').'</span>';
+			}
+			echo '</td>';
+			echo '</tr>';
+		}
+		echo '</table>';
+	}
+);
+$grid->getColumn( 'status' )->setCssStyle('width:250px;');
+
 
 ?>
 
