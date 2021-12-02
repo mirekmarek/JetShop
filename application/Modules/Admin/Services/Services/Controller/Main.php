@@ -7,14 +7,15 @@
  */
 namespace JetShopModule\Admin\Services\Services;
 
+use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
 use JetShop\Application_Admin;
 use JetShop\Services_Service;
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
@@ -27,13 +28,13 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
-	 * @var ?Mvc_Controller_Router_AddEditDelete
+	 * @var ?MVC_Controller_Router_AddEditDelete
 	 */
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	/**
 	 * @var ?Services_Service
@@ -42,12 +43,12 @@ class Controller_Main extends Mvc_Controller_Default
 
 	/**
 	 *
-	 * @return Mvc_Controller_Router_AddEditDelete
+	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->service = Services_Service::get($id));
@@ -189,7 +190,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $service->catchAddForm() ) {
 			$service->save();
 
-			$this->logAllowedAction( 'Service created', $service->getCode(), $service->getInternalName(), $service );
+			Logger::success(
+				'service_created',
+				'Service '.$service->getInternalName().' ('.$service->getCode().') created',
+				$service->getCode(),
+				$service->getInternalName(),
+				$service
+			);
 
 			UI_messages::success(
 				Tr::_( 'Service <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $service->getInternalName() ] )
@@ -223,7 +230,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $service->catchEditForm() ) {
 
 			$service->save();
-			$this->logAllowedAction( 'Service updated', $service->getCode(), $service->getInternalName(), $service );
+			Logger::success(
+				'service_updated',
+				'Service '.$service->getInternalName().' ('.$service->getCode().') updated',
+				$service->getCode(),
+				$service->getInternalName(),
+				$service
+			);
 
 			UI_messages::success(
 				Tr::_( 'Service <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $service->getInternalName() ] )
@@ -250,27 +263,14 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit service <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $service->getInternalName() ] ) );
 
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $service->getShopData( $shop_code );
-
-			foreach( Services_Service_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $service, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'service image '.$image_class.' uploaded', $service->getCode().':'.$shop_code, $service->getCode().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $service, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'service image '.$image_class.' deleted', $service->getCode().':'.$shop_code, $service->getCode().' - '.$shop_name );
-					}
-				);
-
-			}
+			$service->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Service',
+				object_id: $service->getCode(),
+				object_name: $service->getInternalName(),
+				upload_event: 'service_image_uploaded',
+				delete_event: 'service_image_deleted'
+			);
 		}
 
 		$this->view->setVar( 'service', $service );
@@ -318,7 +318,7 @@ class Controller_Main extends Mvc_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		$service = $this->service;
 		foreach(Shops::getList() as $shop) {
-			$shop_data = $service->getShopData( $shop->getCode() );
+			$shop_data = $service->getShopData( $shop );
 
 			foreach( Services_Service_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->getImageUploadForm($image_class)->setIsReadonly();
@@ -349,7 +349,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$service->delete();
-			$this->logAllowedAction( 'Service deleted', $service->getCode(), $service->getInternalName(), $service );
+			Logger::success(
+				'service_deleted',
+				'Service '.$service->getInternalName().' ('.$service->getCode().') deleted',
+				$service->getCode(),
+				$service->getInternalName(),
+				$service
+			);
 
 			UI_messages::info(
 				Tr::_( 'Service <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $service->getInternalName() ] )

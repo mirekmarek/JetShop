@@ -9,11 +9,11 @@ use Jet\UI_dataGrid;
 use Jet\UI_button;
 
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 
 /**
- * @var Mvc_View     $this
+ * @var MVC_View     $this
  * @var UI_dataGrid  $grid
  * @var Form         $filter_form
  */
@@ -89,9 +89,9 @@ $grid->getColumn( 'status' )->setRenderer(
 	function( Payment_Method $item ) {
 		echo '<table>';
 		foreach(Shops::getList() as $shop) {
-			$sd = $item->getShopData($shop->getCode());
+			$sd = $item->getShopData($shop);
 
-			echo '<tr style="background-color: transparent; border: none;"><td style="padding: 5px;border: none;">'.$shop->getName().':</td>';
+			echo '<tr style="background-color: transparent; border: none;"><td style="padding: 5px;border: none;">'.$shop->getShopName().':</td>';
 			echo '<td style="padding: 5px;border: none;">';
 			if($sd->isActive()) {
 				echo '<span class="badge badge-success">'.Tr::_('Active').'</span>';

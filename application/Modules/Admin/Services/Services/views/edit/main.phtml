@@ -4,13 +4,13 @@ namespace JetShopModule\Admin\Services\Services;
 use JetShop\Services_Service;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Services_Service     $service
  */
@@ -47,22 +47,22 @@ $service = $this->getRaw( 'service' );
 
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_code= $shop->getCode();
+			$shop_key= $shop->getKey();
 
-			$shop_data = $service->getShopData( $shop_code );
+			$shop_data = $service->getShopData( $shop );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/default_price')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/priority')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/title')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/description_short')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/title')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
 
 			</fieldset>
 

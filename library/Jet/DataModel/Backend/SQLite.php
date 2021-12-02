@@ -27,7 +27,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	/**
 	 * @var ?DataModel_Backend_SQLite_Config
 	 */
-	protected $config = null;
+	protected ?DataModel_Backend_Config $config = null;
 	/**
 	 *
 	 * @var ?Db_Backend_Interface
@@ -93,6 +93,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	public function helper_getCreateCommand( DataModel_Definition_Model $definition, ?string $force_table_name = null ): string
 	{
 
+		/*
 		$options = [];
 
 		$_options = [];
@@ -102,7 +103,8 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		}
 
 		$_options = implode( ' ', $_options );
-
+		*/
+		$_options = '';
 
 		$_columns = [];
 
@@ -114,7 +116,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 			$_columns[] = "\t" . $this->_getColumnName( $property, true, false ) . ' ' . $this->_getSQLType( $property );
 		}
 
-		$table_name = $force_table_name ? $force_table_name : $this->_getTableName( $definition );
+		$table_name = $force_table_name ? : $this->_getTableName( $definition );
 
 		$create_index_query = [];
 		$keys = [];
@@ -173,7 +175,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	 *
 	 * @return string
 	 */
-	protected function _getColumnName( DataModel_Definition_Property $property_definition, $quote = true, $add_table_name = true ): string
+	protected function _getColumnName( DataModel_Definition_Property $property_definition, bool $quote = true, bool $add_table_name = true ): string
 	{
 		$column_name = $property_definition->getDatabaseColumnName();
 
@@ -437,11 +439,11 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		}
 
 		if( is_int( $value ) ) {
-			return (int)$value;
+			return $value;
 		}
 
 		if( is_float( $value ) ) {
-			return (float)$value;
+			return $value;
 		}
 
 		if( $value instanceof Data_DateTime ) {
@@ -859,9 +861,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 			$group_by_qp[] = $val;
 		}
 
-		$group_by_qp = PHP_EOL . 'GROUP BY' . PHP_EOL . "\t" . implode( ',' . PHP_EOL . "\t", $group_by_qp ) . PHP_EOL;
-
-		return $group_by_qp;
+		return PHP_EOL . 'GROUP BY' . PHP_EOL . "\t" . implode( ',' . PHP_EOL . "\t", $group_by_qp ) . PHP_EOL;
 	}
 
 	/**
@@ -923,36 +923,6 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 	/**
 	 * @param DataModel_Query $query
 	 *
-	 * @return mixed
-	 */
-	public function fetchAll( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchAll' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 * @param string $fetch_method
-	 *
-	 * @return mixed
-	 */
-	protected function _fetch( DataModel_Query $query, string $fetch_method ): mixed
-	{
-
-		$data = $this->getDb()->$fetch_method(
-			$this->createSelectQuery( $query )
-		);
-
-		if( !is_array( $data ) ) {
-			return $data;
-		}
-
-		return $this->validateResultData( $query, $fetch_method, $data );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
 	 * @return string
 	 */
 	public function createSelectQuery( DataModel_Query $query ): string
@@ -1001,7 +971,6 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 				$backend_function_call = $property->toString( $mapper );
 
 				$columns_qp[] = $backend_function_call . ' AS ' . $this->_quoteName( $select_as ) . '';
-				continue;
 			}
 
 		}
@@ -1076,6 +1045,36 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		}
 
 		return $limit_qp;
+	}
+
+	/**
+	 * @param DataModel_Query $query
+	 * @param string $fetch_method
+	 *
+	 * @return mixed
+	 */
+	protected function _fetch( DataModel_Query $query, string $fetch_method ): mixed
+	{
+
+		$data = $this->getDb()->$fetch_method(
+			$this->createSelectQuery( $query )
+		);
+
+		if( !is_array( $data ) ) {
+			return $data;
+		}
+
+		return $this->validateResultData( $query, $fetch_method, $data );
+	}
+
+	/**
+	 * @param DataModel_Query $query
+	 *
+	 * @return mixed
+	 */
+	public function fetchAll( DataModel_Query $query ): mixed
+	{
+		return $this->_fetch( $query, 'fetchAll' );
 	}
 
 	/**

@@ -16,7 +16,6 @@ use Jet\SysConf_URI;
 use Jet\Tr;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\DataModel_IDController_UniqueString;
-use Jet\DataModel_IDController_Name;
 use Jet\DataModel_IDController_Passive;
 
 /**
@@ -31,7 +30,6 @@ class DataModels extends BaseObject implements Application_Part
 	protected static array $id_controllers = [
 		DataModel_IDController_AutoIncrement::class => 'AutoIncrement',
 		DataModel_IDController_UniqueString::class  => 'UniqueString',
-		DataModel_IDController_Name::class          => 'Name',
 		DataModel_IDController_Passive::class       => 'Passive',
 	];
 
@@ -39,7 +37,6 @@ class DataModels extends BaseObject implements Application_Part
 
 	const MODEL_TYPE_RELATED_1TON = 'Related_1toN';
 	const MODEL_TYPE_RELATED_1TO1 = 'Related_1to1';
-	const MODEL_TYPE_RELATED_MTON = 'Related_MtoN';
 
 
 	/**
@@ -48,7 +45,6 @@ class DataModels extends BaseObject implements Application_Part
 	protected static array $types = [
 		self::MODEL_TYPE_RELATED_1TON => 'Related DataModel 1toN',
 		self::MODEL_TYPE_RELATED_1TO1 => 'Related DataModel 1to1',
-		self::MODEL_TYPE_RELATED_MTON => 'Related DataModel MtoN',
 
 	];
 
@@ -91,10 +87,10 @@ class DataModels extends BaseObject implements Application_Part
 	public static function load_getDirs(): array
 	{
 		return [
-			ProjectConf_Path::getShopCoreClasses(),
-			ProjectConf_Path::getShopClasses(),
+			ProjectConf_Path::getApplicationClasses(),
 			ProjectConf_Path::getApplicationModules()
 		];
+
 	}
 
 
@@ -151,7 +147,7 @@ class DataModels extends BaseObject implements Application_Part
 			static::$namespaces = [];
 			$app_ns = new DataModel_Namespace(
 				Project::getApplicationNamespace(),
-				ProjectConf_Path::getShopClasses()
+				ProjectConf_Path::getApplicationClasses()
 			);
 
 			static::$namespaces[$app_ns->getNamespace()] = $app_ns;
@@ -261,9 +257,9 @@ class DataModels extends BaseObject implements Application_Part
 	}
 
 	/**
-	 * @return DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|DataModel_Definition_Model_Related_MtoN|null
+	 * @return DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|null
 	 */
-	public static function getCurrentModel() : DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|DataModel_Definition_Model_Related_MtoN|null
+	public static function getCurrentModel() : DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|null
 	{
 		$class = static::getCurrentClass();
 		if( !$class ) {
@@ -534,7 +530,16 @@ class DataModels extends BaseObject implements Application_Part
 		$exists = false;
 
 		if( $model ) {
+			$m_class = DataModels::getClass($model->getClassName());
+
 			foreach( DataModels::getClasses() as $class ) {
+				if(
+					$class->isDescendantOf( $m_class ) ||
+					$m_class->isDescendantOf($class)
+				) {
+					continue;
+				}
+
 				$m = $class->getDefinition();
 
 				if(

@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Session;
 
 trait Core_CashDesk_Payment {
 
@@ -37,13 +36,10 @@ trait Core_CashDesk_Payment {
 		if($this->available_payment_methods===null) {
 			$this->available_payment_methods = [];
 
-			/**
-			 * @var Delivery_Method $delivery_method
-			 */
 			$delivery_method = $this->getSelectedDeliveryMethod();
 
 			foreach($delivery_method->getPaymentMethods() as $payment_method ) {
-				if($payment_method->getShopData($this->shop_code)->isActive()) {
+				if($payment_method->getShopData($this->getShop())->isActive()) {
 					$this->available_payment_methods[$payment_method->getCode()] = $payment_method;
 				}
 			}
@@ -80,9 +76,6 @@ trait Core_CashDesk_Payment {
 
 	public function getSelectedPaymentMethod() : Payment_Method
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$methods = $this->getAvailablePaymentMethods();
@@ -103,9 +96,6 @@ trait Core_CashDesk_Payment {
 
 	public function selectPaymentMethod( string $code ) : bool
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$methods = $this->getAvailablePaymentMethods();
@@ -123,13 +113,10 @@ trait Core_CashDesk_Payment {
 
 	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$method = $this->getSelectedPaymentMethod();
-		$options = $method->getActiveOptions( $this->getShopCode() );
+		$options = $method->getActiveOptions( $this->getShop() );
 
 		if( !$options ) {
 			return null;
@@ -145,13 +132,10 @@ trait Core_CashDesk_Payment {
 
 	public function selectPaymentMethodOption( string $option_code ) : bool
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$method = $this->getSelectedPaymentMethod();
-		$options = $method->getActiveOptions( $this->getShopCode() );
+		$options = $method->getActiveOptions( $this->getShop() );
 
 		if(
 			!$options ||

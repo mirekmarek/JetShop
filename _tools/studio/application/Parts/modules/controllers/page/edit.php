@@ -21,7 +21,8 @@ if( $page ) {
 }
 
 if( $res ) {
-	if( $module->save() ) {
+
+	if( $page->save() ) {
 		UI_messages::success( Tr::_( 'Saved ...' ) );
 	}
 

@@ -23,13 +23,13 @@ abstract class Translator_Backend extends BaseObject
 
 	/**
 	 *
-	 * @param string $namespace
+	 * @param string $dictionary
 	 * @param Locale $locale
 	 * @param ?string $file_path (optional, default: by configuration)
 	 *
 	 * @return Translator_Dictionary
 	 */
-	abstract public function loadDictionary( string $namespace, Locale $locale, ?string $file_path = null ): Translator_Dictionary;
+	abstract public function loadDictionary( string $dictionary, Locale $locale, ?string $file_path = null ): Translator_Dictionary;
 
 	/**
 	 *
@@ -40,4 +40,33 @@ abstract class Translator_Backend extends BaseObject
 	abstract public function saveDictionary( Translator_Dictionary $dictionary, ?string $file_path = null ): void;
 
 
+	/**
+	 * @param string $translation
+	 * @param array $data
+	 *
+	 * @return string
+	 */
+	public function updateTranslation( string $translation, array $data ) : string
+	{
+		if(!$data) {
+			return $translation;
+		}
+
+		return Data_Text::replaceData( $translation, $data );
+	}
+
+	/**
+	 *
+	 * @param string $phrase
+	 *
+	 * @return string
+	 */
+	public function generateHash( string $phrase ): string
+	{
+		if( strlen( $phrase ) < 255 ) {
+			return $phrase;
+		}
+
+		return md5( $phrase );
+	}
 }

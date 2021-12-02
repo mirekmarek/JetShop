@@ -9,7 +9,6 @@ use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
-use Jet\Mailing_Email;
 use Jet\Mailing_Email_Template;
 use Jet\Tr;
 use Jet\Form_Field_Tel;
@@ -33,6 +32,7 @@ use Jet\DataModel_Query;
 )]
 abstract class Core_Customer extends DataModel implements Auth_User_Interface
 {
+	use CommonEntity_ShopRelationTrait;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
@@ -63,13 +63,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		is_key: true,
-		form_field_type: false
-	)]
-	protected string $shop_code = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		form_field_label: 'First name'
 	)]
@@ -91,14 +84,12 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		default_value: true,
 		form_field_label: 'Password is valid'
 	)]
 	protected bool $password_is_valid = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		default_value: null,
 		form_field_label: 'Password is valid till',
 		form_field_error_messages: [
 			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
@@ -108,14 +99,12 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		default_value: false,
 		form_field_label: 'User is blocked'
 	)]
 	protected bool $user_is_blocked = false;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		default_value: null,
 		form_field_label: 'User is blocked till',
 		form_field_error_messages: [
 			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
@@ -209,12 +198,13 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	protected ?Form $_form_edit = null;
 
 
-	public function setPassword( string $password ) : void
+	public function setPassword( string $password, bool $encrypt_password=true ): void
 	{
 		if( $password ) {
-			$this->password = $this->encryptPassword( $password );
+			$this->password = $encrypt_password ? $this->encryptPassword( $password ) : $password;
 		}
 	}
+
 
 	public function setEncryptedPassword( string $password ) : void
 	{
@@ -223,9 +213,9 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		}
 	}
 
-	public function encryptPassword( string $password ) : string
+	public function encryptPassword( string $plain_password ) : string
 	{
-		return password_hash( $password, PASSWORD_DEFAULT );
+		return password_hash( $plain_password, PASSWORD_DEFAULT );
 	}
 
 	public static function get( string|int $id ) : static|null
@@ -344,21 +334,11 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		//TODO: log change ...
 		$this->save();
 
-		Customer_MailingSubscribe::changeMail($this->shop_code, $old_email, $new_email, $source, $comment);
+		Customer_MailingSubscribe::changeMail($this->getShop(), $old_email, $new_email, $source, $comment);
 		//TODO: orders ...
 	}
 
 
-
-	public function getShopCode(): string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ): void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getName() : string
 	{
@@ -475,7 +455,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		return false;
 	}
 
-	public function hasPrivilege( string $privilege, mixed $value ) : bool
+	public function hasPrivilege( string $privilege, mixed $value=null ): bool
 	{
 		return false;
 	}
@@ -485,21 +465,11 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		return [];
 	}
 
-	public function usernameExists( string $username ) : bool
+	public static function usernameExists( string $username ) : bool
 	{
-		if( $this->getIsNew() ) {
-			$q = [
-				'email' => $username,
-			];
-		} else {
-			$q = [
-				'email' => $username,
-				'AND',
-				'id!='     => $this->id,
-			];
-		}
-
-		return (bool)static::getBackendInstance()->getCount( static::createQuery( $q ) );
+		return (bool)static::getBackendInstance()->getCount( static::createQuery( [
+			'username' => $username,
+		] ) );
 	}
 
 	public function resetPassword() : void
@@ -511,18 +481,18 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		$this->setPasswordIsValid( false );
 		$this->save();
 
-		$shop = Shops::get($this->getShopCode());
-
-		$email = new Mailing_Email_Template(
-			'user_password_reset',
-			$shop->getLocale(),
-			$shop->getSiteId()
+		$email_template = new Mailing_Email_Template(
+			template_id: 'user_password_reset',
+			locale: $this->getLocale()
 		);
 
-		$email->setVar('user', $this);
-		$email->setVar('password', $password);
+		$email_template->setVar('user', $this);
+		$email_template->setVar('password', $password);
 
-		$email->getEmail()->send( $this->getEmail() );
+
+		$email = $email_template->getEmail();
+		$email->setTo( $this->getEmail() );
+		$email->send();
 
 	}
 
@@ -633,18 +603,18 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 	public function sendWelcomeEmail( string $password ) : void
 	{
-		$shop = Shops::get($this->getShopCode());
-
-		$email = new Mailing_Email_Template(
-			'user_welcome',
-			$shop->getLocale(),
-			$shop->getSiteId()
+		$email_template = new Mailing_Email_Template(
+			template_id: 'user_welcome',
+			locale: $this->getLocale()
 		);
 
-		$email->setVar('user', $this);
-		$email->setVar('password', $password);
+		$email_template->setVar('user', $this);
+		$email_template->setVar('password', $password);
 
-		$email->getEmail()->send( $this->getEmail() );
+		$email = $email_template->getEmail();
+		$email->setTo( $this->getEmail() );
+		$email->send();
+
 	}
 
 	/**
@@ -711,7 +681,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		}
 
 		Customer_MailingSubscribe::subscribe(
-			shop_code: $this->getShopCode(),
+			shop: $this->getShop(),
 			email_address: $this->getEmail(),
 			source: $source,
 			customer_id: $this->getId(),
@@ -727,7 +697,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	 */
 	public function getMailingSubscribeEventLog() : iterable
 	{
-		return Customer_MailingSubscribe_Log::getList( $this->getShopCode(), $this->getEmail() );
+		return Customer_MailingSubscribe_Log::getList( $this->getShop(), $this->getEmail() );
 	}
 
 	public function mailingUnsubscribe( string $source, string $comment='' ) : void
@@ -737,7 +707,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		}
 
 		Customer_MailingSubscribe::unsubscribe(
-			shop_code: $this->getShopCode(),
+			shop: $this->getShop(),
 			email_address: $this->getEmail(),
 			source: $source,
 			customer_id: $this->getId(),
@@ -808,7 +778,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	{
 		$user = Auth::getCurrentUser();
 		if(
-			!$user ||
 			!($user instanceof Customer)
 		) {
 			return null;
@@ -816,7 +785,7 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 
 		if(
 			$user->isBlocked() ||
-			$user->getShopCode()!=Shops::getCurrentCode()
+			$user->getShop()->getKey()!=Shops::getCurrentKey()
 		) {
 			return null;
 		}
@@ -824,20 +793,17 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		return $user;
 	}
 
-	public static function getByEmail( string $email_address, string $shop_code='' ) : ?static
+	public static function getByEmail( string $email_address, ?Shops_Shop $shop=null ) : ?static
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
+		if(!$shop) {
+			$shop = Shops::getCurrent();
 		}
 
-		/**
-		 * @var Customer[] $customers
-		 */
 		$customers = Customer::fetch([
 			'customer' => [
 				'email' => $email_address,
 				'AND',
-				'shop_code' => $shop_code
+				$shop->getWhere()
 			]
 		]);
 

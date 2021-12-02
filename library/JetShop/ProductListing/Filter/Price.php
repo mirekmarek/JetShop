@@ -10,16 +10,12 @@ class ProductListing_Filter_Price extends Core_ProductListing_Filter_Price {
 
 	public function getFilterDecimalPlaces() : int
 	{
-		return Shops::getCurrencyDecimalPlaces($this->shop_code);
+		return Shops::getCurrencyDecimalPlaces($this->shop);
 	}
 
 	public function getFilterStep() : int
 	{
-		if( $this->shop_code=='sk' ) {
-			return 1;
-		} else {
-			return 10;
-		}
+		return 10;
 	}
 
 }

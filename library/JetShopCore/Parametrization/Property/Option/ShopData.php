@@ -3,19 +3,15 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\DataModel;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'parametrization_properties_options_shop_data',
 	database_table_name: 'parametrization_properties_options_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Parametrization_Property_Option::class
 )]
-abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Parametrization_Property_Option_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	#[DataModel_Definition(
@@ -132,29 +128,6 @@ abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_R
 	)]
 	protected string $image_pictogram = '';
 
-	public function setParents( Category $category,
-	                            Parametrization_Group $group,
-	                            Parametrization_Property $property,
-	                            Parametrization_Property_Option $option ) : void
-	{
-		$this->category = $category;
-		$this->category_id = $category->getId();
-
-		$this->group = $group;
-		$this->group_id = $group->getId();
-
-		$this->property = $property;
-		$this->property_id = $property->getId();
-
-		$this->option = $option;
-		$this->option_id = $option->getId();
-	}
-
-	public function getArrayKeyValue() : string
-	{
-		return $this->shop_code;
-	}
-
 	public function getCategoryId() : int
 	{
 		return $this->category_id;
@@ -183,16 +156,6 @@ abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_R
 	public function setPropertyId( int $property_id ) : void
 	{
 		$this->property_id = $property_id;
-	}
-
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
 	}
 
 	public function getOptionId() : int
@@ -372,19 +335,6 @@ abstract class Core_Parametrization_Property_Option_ShopData extends DataModel_R
 	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h ) : string
 	{
 		return $this->getImageThumbnailUrl( Category_ShopData::IMG_PICTOGRAM, $max_w, $max_h );
-	}
-
-	public function getPossibleToEditImages() : bool
-	{
-		if($this->property->isInherited()) {
-			return false;
-		}
-
-		if($this->option->getEditForm()->getIsReadonly()) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

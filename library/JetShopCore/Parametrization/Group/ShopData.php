@@ -4,19 +4,15 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\DataModel;
-use Jet\DataModel_Related_1toN;
-use Jet\DataModel_IDController_Passive;
 use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'parametrization_groups_shop_data',
 	database_table_name: 'parametrization_groups_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Parametrization_Group::class
 )]
-abstract class Core_Parametrization_Group_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Parametrization_Group_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	#[DataModel_Definition(
@@ -27,8 +23,6 @@ abstract class Core_Parametrization_Group_ShopData extends DataModel_Related_1to
 	)]
 	protected int $category_id = 0;
 
-	protected Category|null $category = null;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_id: true,
@@ -36,8 +30,6 @@ abstract class Core_Parametrization_Group_ShopData extends DataModel_Related_1to
 		form_field_type: false
 	)]
 	protected int $group_id = 0;
-
-	protected Parametrization_Group|null $group = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -67,15 +59,6 @@ abstract class Core_Parametrization_Group_ShopData extends DataModel_Related_1to
 		max_len: 255
 	)]
 	protected string $image_pictogram = '';
-
-	public function setParents( Category $category, Parametrization_Group $group ) : void
-	{
-		$this->category_id = $category->getId();
-		$this->category = $category;
-
-		$this->group_id = $group->getId();
-		$this->group = $group;
-	}
 
 	public function getCategoryId() : int
 	{
@@ -173,18 +156,5 @@ abstract class Core_Parametrization_Group_ShopData extends DataModel_Related_1to
 	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h ) : string
 	{
 		return $this->getImageThumbnailUrl( Category_ShopData::IMG_PICTOGRAM, $max_w, $max_h );
-	}
-
-	public function getPossibleToEditImages() : bool
-	{
-		if($this->group->isInherited()) {
-			return false;
-		}
-
-		if($this->category->getEditForm()->getIsReadonly()) {
-			return false;
-		}
-
-		return true;
 	}
 }

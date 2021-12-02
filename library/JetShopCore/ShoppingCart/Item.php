@@ -68,8 +68,6 @@ abstract class Core_ShoppingCart_Item
 
 	public function setQuantity( int $quantity ) : bool
 	{
-		$quantity = (int)$quantity;
-
 		if(!$this->checkQuantity($quantity)) {
 			return false;
 		}
@@ -111,7 +109,7 @@ abstract class Core_ShoppingCart_Item
 			return $this->__forced_price_per_item;
 		}
 
-		return $this->getProduct()->getFinalPrice( $this->__cart->getShopCode() );
+		return $this->getProduct()->getFinalPrice( $this->__cart->getShop() );
 	}
 
 	public function checkQuantity( int $quantity, bool $generate_error_message=false ) : bool

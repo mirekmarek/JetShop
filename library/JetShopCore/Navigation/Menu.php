@@ -29,7 +29,7 @@ abstract class Core_Navigation_Menu extends BaseObject
 			return static::$menus[$menu_id];
 		}
 
-		$cache_key = 'menu:'.Shops::getCurrentCode().':'.$menu_id;
+		$cache_key = 'menu:'.Shops::getCurrent()->getKey().':'.$menu_id;
 		$menu = Cache::load( $cache_key );
 		if($menu) {
 			/**

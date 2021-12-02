@@ -12,8 +12,11 @@ use Jet\DataModel_Related_1toN;
 #[DataModel_Definition(
 	name: 'products_set_items',
 	database_table_name: 'products_set_items',
-	id_controller_class: DataModel_IDController_Passive::class,
-	parent_model_class: Product::class
+	parent_model_class: Product::class,
+	default_order_by: [
+		'+sort_order'
+	],
+	id_controller_class: DataModel_IDController_Passive::class
 )]
 abstract class Core_Product_SetItem extends DataModel_Related_1toN
 {
@@ -48,7 +51,7 @@ abstract class Core_Product_SetItem extends DataModel_Related_1toN
 	)]
 	protected int $sort_order = 0;
 
-	public function getArrayKeyValue() : int|string|null
+	public function getArrayKeyValue() : string
 	{
 		return $this->item_product_id;
 	}
@@ -82,4 +85,16 @@ abstract class Core_Product_SetItem extends DataModel_Related_1toN
 	{
 		$this->sort_order = $sort_order;
 	}
+
+	public function getCount(): int
+	{
+		return $this->count;
+	}
+
+	public function setCount( int $count ): void
+	{
+		$this->count = $count;
+	}
+
+
 }

@@ -13,21 +13,20 @@ use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Input;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetShop\Category;
 use JetShop\Exports_Join_Category;
 use JetShop\Exports_Join_Property;
 use JetShop\Exports_Join_Property_Option;
-use JetShop\Parametrization_Group;
 use JetShop\Parametrization_Property;
 use JetShop\Shops_Shop;
 
 /**
  *
  */
-class Controller_handleCategorySettings extends Mvc_Controller_Default
+class Controller_handleCategorySettings extends MVC_Controller_Default
 {
 	protected Category $category;
 
@@ -42,9 +41,9 @@ class Controller_handleCategorySettings extends Mvc_Controller_Default
 	 */
 	public function handleCategorySettings_Action() : void
 	{
-		$this->category = $this->getParameter('category');
-		$this->shop = $this->getParameter('shop');
-		$this->export = $this->getParameter('export');
+		$this->category = $this->getContent()->getParameter('category');
+		$this->shop = $this->getContent()->getParameter('shop');
+		$this->export = $this->getContent()->getParameter('export');
 
 		$this->categories = $this->export->getExportCategories( $this->shop );
 
@@ -63,7 +62,7 @@ class Controller_handleCategorySettings extends Mvc_Controller_Default
 
 		$export_category_id = Exports_Join_Category::get(
 			$this->export->getCode(),
-			$this->shop->getCode(),
+			$this->shop,
 			$this->category->getId()
 		);
 
@@ -94,11 +93,7 @@ class Controller_handleCategorySettings extends Mvc_Controller_Default
 			Http_Headers::reload();
 		}
 
-		if(isset($this->categories[$export_category_id->toString()])) {
-			$export_category = $this->categories[$export_category_id->toString()];
-		} else {
-			$export_category = null;
-		}
+		$export_category = $this->categories[$export_category_id->toString()] ?? null;
 
 		$this->view->setVar('category_form', $category_form);
 		$this->view->setVar('export_category_id', $export_category_id);
@@ -113,7 +108,7 @@ class Controller_handleCategorySettings extends Mvc_Controller_Default
 			foreach($p_group->getProperties() as $p_property) {
 				$p_g = Exports_Join_Property::get(
 					$this->export->getCode(),
-					$this->shop->getCode(),
+					$this->shop,
 					$p_property->getId()
 				);
 
@@ -135,7 +130,7 @@ class Controller_handleCategorySettings extends Mvc_Controller_Default
 
 						$o_g = Exports_Join_Property_Option::get(
 							$this->export->getCode(),
-							$this->shop->getCode(),
+							$this->shop,
 							$p_property->getId(),
 							$p_option->getId()
 						);

@@ -1,6 +1,6 @@
 <?php
 return [
-	'vendor'      => '',
-	'label'       => 'Shop.UI',
+	'vendor' => '',
+	'label' => 'Shop.UI',
 	'description' => '',
 ];

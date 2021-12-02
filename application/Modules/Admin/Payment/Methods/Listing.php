@@ -48,9 +48,11 @@ class Listing extends Data_Listing {
 
 	/**
 	 * @return Payment_Method[]|DataModel_Fetch_Instances
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function getList() : DataModel_Fetch_Instances
 	{
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Payment_Method::getList();
 	}
 

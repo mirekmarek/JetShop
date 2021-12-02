@@ -4,13 +4,13 @@ namespace JetShopModule\Admin\Delivery\Deadlines;
 use JetShop\Delivery_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Delivery_Method_ShopData;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Delivery_Method     $delivery_deadline
  */
@@ -30,12 +30,8 @@ $delivery_deadline = $this->getRaw( 'delivery_deadline' );
 
 		<?php if(!$delivery_deadline->getIsNew()): ?>
 			<?php foreach(Shops::getList() as $shop):
-				$shop_code= $shop->getCode();
-
-				$shop_data = $delivery_deadline->getShopData( $shop_code );
-				?>
-				<?=$shop_data->renderImageWidgets( Delivery_Method_ShopData::getImageClasses() )?>
-			<?php endforeach; ?>
+				echo $delivery_deadline->getShopData( $shop )->renderImageWidgets( Delivery_Method_ShopData::getImageClasses(), !$delivery_deadline->getEditForm()->getIsReadonly() );
+			endforeach; ?>
 		<?php endif; ?>
 	</div>
 </div>

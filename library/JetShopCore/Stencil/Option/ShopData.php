@@ -3,8 +3,6 @@ namespace JetShop;
 
 use Jet\DataModel_Definition;
 use Jet\DataModel;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
 
 /**
@@ -13,12 +11,10 @@ use Jet\Tr;
 #[DataModel_Definition(
 	name: 'stencils_options_shop_data',
 	database_table_name: 'stencils_options_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Stencil_Option::class
 )]
-abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Stencil_Option_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	#[DataModel_Definition(
@@ -28,8 +24,6 @@ abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN imple
 		form_field_type: false
 	)]
 	protected int $stencil_id = 0;
-
-	protected ?Stencil $stencil = null;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -90,49 +84,15 @@ abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN imple
 	)]
 	protected string $image_pictogram = '';
 
-	public function setParents( Stencil $stencil, Stencil_Option $option ) : void
-	{
-		$this->stencil = $stencil;
-		$this->stencil_id = $stencil->getId();
-
-		$this->option = $option;
-		$this->option_id = $option->getId();
-
-	}
-
-	public function getArrayKeyValue() : string|int|null
-	{
-		return $this->shop_code;
-	}
-	
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getStencilId() : int
 	{
 		return $this->stencil_id;
 	}
 
-	public function getStencil() : Stencil
-	{
-		return $this->stencil;
-	}
-
 	public function getOptionId() : int
 	{
 		return $this->option_id;
-	}
-
-	public function getOption() : Stencil_Option
-	{
-		return $this->option;
 	}
 
 	public function getFilterLabel() : string
@@ -243,12 +203,4 @@ abstract class Core_Stencil_Option_ShopData extends DataModel_Related_1toN imple
 		return $this->getImageThumbnailUrl( Stencil::IMG_PICTOGRAM, $max_w, $max_h );
 	}
 
-	public function getPossibleToEditImages() : bool
-	{
-		if($this->option->getEditForm()->getIsReadonly()) {
-			return false;
-		}
-
-		return true;
-	}
 }

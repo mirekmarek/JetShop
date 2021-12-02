@@ -1,11 +1,10 @@
 <?php
 namespace JetShop;
 
-use Jet\Mvc_View;
-use Jet\Tr;
+use Jet\MVC_View;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var ProductListing_Filter_Properties_Property_Options|ProductListing_Filter_Properties_Property_StencilOptions $filter_property
  */
 $filter_property = $this->getRaw('filter_property');
@@ -91,7 +90,7 @@ $units = ($property->getUnits()) ? ' ' . $property->getUnits() : '';
 
 	<?php if( $property->getDescription() || $property->getImageMain() ): ?>
 		<div class="title">
-			Další <?=$property->getLabel(); ?>
+			Dalï¿½ï¿½ <?=$property->getLabel(); ?>
 			<?php if ($property->getDescription()): ?>
 				<span class="label-description" data-tooltip title="<?= htmlspecialchars($property->getDescription()) ?>">i</span>
 			<?php endif; ?>
@@ -104,7 +103,7 @@ $units = ($property->getUnits()) ? ' ' . $property->getUnits() : '';
 		</div>
 		<div style="clear: both;"></div>
 	<?php else: ?>
-		<div class="title">Další <?=$property->getLabel(); ?></div>
+		<div class="title">Dalï¿½ï¿½ <?=$property->getLabel(); ?></div>
 	<?php endif; ?>
 
 

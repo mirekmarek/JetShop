@@ -12,13 +12,7 @@ use Jet\DataModel_IDController_Passive;
 )]
 abstract class Core_Fulltext_Index_Word extends DataModel {
 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_id: true,
-		is_key: true
-	)]
-	protected string $shop_code = '';
+	use CommonEntity_ShopRelationTrait_ShopIsId;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -34,16 +28,6 @@ abstract class Core_Fulltext_Index_Word extends DataModel {
 		is_id: true
 	)]
 	protected string $word = '';
-
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getObjectId() : int
 	{

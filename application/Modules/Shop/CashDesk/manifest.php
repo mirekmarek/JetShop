@@ -1,6 +1,6 @@
 <?php
 return [
-	'vendor'      => '',
-	'label'       => 'Shop.CashDesk',
+	'vendor' => '',
+	'label' => 'Shop.CashDesk',
 	'description' => '',
 ];

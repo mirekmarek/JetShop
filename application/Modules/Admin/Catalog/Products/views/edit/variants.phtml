@@ -1,7 +1,7 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
@@ -9,7 +9,7 @@ use JetShop\Product;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var Product $new_variant
  */
 
@@ -94,11 +94,11 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
 					<td nowrap="">
 						<table>
 						<?php foreach(Shops::getList() as $shop):
-							$shop_code = $shop->getCode();
-							$shop_name = $shop->getName(); ?>
+							$shop_key = $shop->getKey();
+							$shop_name = $shop->getShopName(); ?>
 							<tr>
 								<td><?=UI::flag( $shop->getLocale() )?> <?=$shop_name?>:</td>
-								<td><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop_code.'/variant_name')->input()->addCustomCssStyle('width:400px;')?></td>
+								<td><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop_key.'/variant_name')->input()->addCustomCssStyle('width:400px;')?></td>
 							</tr>
 
 						<?php endforeach; ?>
@@ -151,13 +151,13 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
 	<?=$add_form->field('internal_code')?>
 
 	<?php foreach(Shops::getList() as $shop):
-		$shop_code = $shop->getCode();
+		$shop_key = $shop->getKey();
 
-		$shop_data = $product->getShopData( $shop_code );
+		$shop_data = $product->getShopData( $shop );
 		?>
 		<?=$shop_data->renderShopDataBlock_start()?>
 
-		<?=$add_form->field('/shop_data/'.$shop_code.'/variant_name')?>
+		<?=$add_form->field('/shop_data/'.$shop_key.'/variant_name')?>
 		<?=$shop_data->renderShopDataBlock_end()?>
 	<?php endforeach; ?>
 

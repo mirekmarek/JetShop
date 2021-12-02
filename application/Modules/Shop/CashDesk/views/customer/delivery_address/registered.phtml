@@ -3,7 +3,7 @@ namespace JetShop;
 
 $cash_desk = CashDesk::get();
 
-$delivery_address = $order->getDeliveryAddress();
+$delivery_address = $cash_desk->getDeliveryAddress();
 
 $new_is_selected = 0==$delivery_address->getId();
 $new_prefix = 'new_delivery';
@@ -14,7 +14,7 @@ $new_prefix = 'new_delivery';
 	<div class="customer-delivery-registered">
 		<div class="heading">Kam máme zboží poslat?</div>
 		
-		<?php foreach (Customer::getCurrentCustomer()->getAddressList() as $address): ?>
+		<?php foreach (Customer::getCurrentCustomer()->getAddresses() as $address): ?>
 				
 			<?php if ($address->getId() == $delivery_address->getId()): ?>
 			
@@ -51,9 +51,8 @@ $new_prefix = 'new_delivery';
 		<?php endforeach; ?>
 		
 		
-		<?php if (!$delivery_address->getId()): ?>
-			<?php
-			CashDesk::setDeliveryAddressEditable( true );
+		<?php if (!$delivery_address->getId()):
+			$cash_desk->setDeliveryAddressEditable( true );
 			?>
 			
 			<div class="address selected">
@@ -62,17 +61,10 @@ $new_prefix = 'new_delivery';
 						<input type="radio" checked />
 					</div>
 					<div class="new">
-						<?= NEW_ADDRESS ?>
 					</div>
 				</div>
 
 				<div class="inputs">
-					<?= form::input($new_prefix.'_company', ENTRY_COMPANY, $delivery_address->getCompany())->setIsRequired(false) ?>
-					<?= form::input($new_prefix.'_firstname', ENTRY_FIRST_NAME, $delivery_address->getFirstName()) ?>
-					<?= form::input($new_prefix.'_lastname', ENTRY_LAST_NAME, $delivery_address->getLastName()) ?>
-					<?= form::input($new_prefix.'_city', ENTRY_CITY, $delivery_address->getCity())->turnOffAutocomplete() ?>
-					<?= form::input($new_prefix.'_postcode', ENTRY_POST_CODE, $delivery_address->getPostcode()) ?>
-					<?= form::input($new_prefix.'_street_address', ENTRY_STREET_ADDRESS, $delivery_address->getStreetAddress())->turnOffAutocomplete() ?>
 				</div>
 			</div>
 			
@@ -83,7 +75,6 @@ $new_prefix = 'new_delivery';
 						<input type="radio" name="select_delivery_address_id" value="0" />
 					</div>
 					<div class="new" onclick="CashDesk.customer.deliveryAddress.selectNew();">
-						<?= NEW_ADDRESS ?>
 					</div>
 				</div>
 			</div>

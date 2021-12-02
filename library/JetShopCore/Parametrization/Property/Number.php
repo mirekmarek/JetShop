@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel_Definition;
 use Jet\Form;
 
 abstract class Core_Parametrization_Property_Number extends Parametrization_Property
@@ -15,9 +14,7 @@ abstract class Core_Parametrization_Property_Number extends Parametrization_Prop
 		$form->removeField('stencil_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			$form->removeField('/shop_data/'.$shop_code.'/bool_yes_description');
+			$form->removeField('/shop_data/'.$shop->getKey().'/bool_yes_description');
 		}
 
 		return $form;
@@ -30,9 +27,7 @@ abstract class Core_Parametrization_Property_Number extends Parametrization_Prop
 		$form->removeField('stencil_id');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			$form->removeField('/shop_data/'.$shop_code.'/bool_yes_description');
+			$form->removeField('/shop_data/'.$shop->getKey().'/bool_yes_description');
 		}
 
 		return $form;

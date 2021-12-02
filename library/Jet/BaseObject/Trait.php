@@ -128,7 +128,7 @@ trait BaseObject_Trait
 			if( is_object( $val ) ) {
 				try {
 					$this->{$key} = clone $val;
-				} catch( Error $e ) {
+				} /** @noinspection PhpUnusedLocalVariableInspection */ catch( Error $e ) {
 				}
 			}
 		}
@@ -143,7 +143,7 @@ trait BaseObject_Trait
 
 		$r = [];
 		foreach( $vars as $k => $v ) {
-			if( substr( $k, 0, 2 ) === '__' ) {
+			if( str_starts_with( $k, '__' ) ) {
 				continue;
 			}
 			$r[$k] = $v;

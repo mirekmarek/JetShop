@@ -10,7 +10,7 @@ namespace JetShopModule\Admin\Login;
 use Jet\Logger;
 use Jet\Session;
 use Jet\Tr;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Http_Headers;
 use Jet\Auth;
 use Jet\Navigation_Breadcrumb;
@@ -22,7 +22,7 @@ use JetShop\Auth_Administrator_User as User;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
@@ -127,7 +127,7 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 		Navigation_Breadcrumb::addURL(
-			Tr::_( 'Change password', [], Tr::COMMON_NAMESPACE )
+			Tr::_( 'Change password', [], Tr::COMMON_DICTIONARY )
 		);
 
 		if( $form->catchInput()&&$form->validate() ) {

@@ -344,7 +344,6 @@ class Data_Tree extends BaseObject implements BaseObject_Interface_IteratorCount
 	 */
 	public function getPath( string $target_node_id ): array|bool
 	{
-		$target_node_id = (string)$target_node_id;
 		$target_node = $this->getNode( $target_node_id );
 
 		if( !$target_node ) {
@@ -362,9 +361,8 @@ class Data_Tree extends BaseObject implements BaseObject_Interface_IteratorCount
 			$target_node = $parent;
 		}
 
-		$path = array_reverse( $path );
+		return array_reverse( $path );
 
-		return $path;
 	}
 
 	/**
@@ -402,11 +400,6 @@ class Data_Tree extends BaseObject implements BaseObject_Interface_IteratorCount
 	protected function _setData( array|Iterator $items ): void
 	{
 		$this->__parent_map = [];
-
-		/**
-		 * @var array $root_item
-		 */
-		$root_item = null;
 
 		$ids = [];
 
@@ -574,6 +567,10 @@ class Data_Tree extends BaseObject implements BaseObject_Interface_IteratorCount
 		$id = $this->getNodeData_id( $item_data );
 		$parent_id = $this->getNodeData_parentId( $item_data );
 
+		if(!$parent_id) {
+			$parent_id = '';
+		}
+
 		if( isset( $this->nodes[$id] ) ) {
 			throw new Data_Tree_Exception(
 				'Node \'' . $id . '\' already exists', Data_Tree_Exception::CODE_NODE_ALREADY_EXISTS
@@ -682,12 +679,12 @@ class Data_Tree extends BaseObject implements BaseObject_Interface_IteratorCount
 	}
 
 
-	//- Mvc_Controller_REST_Serializable ----------------------------------------------------------------------
-	//- Mvc_Controller_REST_Serializable ----------------------------------------------------------------------
-	//- Mvc_Controller_REST_Serializable ----------------------------------------------------------------------
-	//- Mvc_Controller_REST_Serializable ----------------------------------------------------------------------
-	//- Mvc_Controller_REST_Serializable ----------------------------------------------------------------------
-	//- Mvc_Controller_REST_Serializable ----------------------------------------------------------------------
+	//- MVC_Controller_REST_Serializable ----------------------------------------------------------------------
+	//- MVC_Controller_REST_Serializable ----------------------------------------------------------------------
+	//- MVC_Controller_REST_Serializable ----------------------------------------------------------------------
+	//- MVC_Controller_REST_Serializable ----------------------------------------------------------------------
+	//- MVC_Controller_REST_Serializable ----------------------------------------------------------------------
+	//- MVC_Controller_REST_Serializable ----------------------------------------------------------------------
 
 	/**
 	 *

@@ -39,7 +39,7 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 				[
 					'product_id'=>$initial_product_ids,
 					'AND',
-					'shop_code'=>$this->listing->getShopCode()
+					$this->listing->getShop()->getWhere()
 				]
 			);
 

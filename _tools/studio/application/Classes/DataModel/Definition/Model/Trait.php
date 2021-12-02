@@ -91,6 +91,9 @@ trait DataModel_Definition_Model_Trait
 		$this->class_name = $_class->getFullClassName();
 
 		foreach( $this->properties as $property ) {
+			/**
+			 * @var DataModel_Definition_Property_Interface $property
+			 */
 			$property->setClass( $_class );
 		}
 	}
@@ -161,7 +164,7 @@ trait DataModel_Definition_Model_Trait
 	 */
 	protected function _initKeys(): void
 	{
-		/** @noinspection PhpUndefinedClassInspection */
+		/** @noinspection PhpMultipleClassDeclarationsInspection */
 		parent::_initKeys();
 
 		$keys_definition_data = $this->class_arguments['keys'] ?? [];
@@ -337,9 +340,7 @@ trait DataModel_Definition_Model_Trait
 	 */
 	public function createClass_methods( ClassCreator_Class $class ): void
 	{
-		$model = $this;
-
-		foreach( $model->getProperties() as $property ) {
+		foreach( $this->getProperties() as $property ) {
 			if(
 				$property->isInherited() &&
 				!$property->isOverload()
@@ -483,29 +484,6 @@ trait DataModel_Definition_Model_Trait
 
 			if(
 				$this instanceof DataModel_Definition_Model_Related_1toN
-				||
-				$this instanceof DataModel_Definition_Model_Related_MtoN
-			) {
-
-				$iterator_class_field = new Form_Field_Input( 'iterator_class', 'Iterator class:', $this->getIteratorClassName() );
-				$iterator_class_field->setCatcher( function( $value ) {
-					$this->setIteratorClass( $value );
-				} );
-				$iterator_class_field->setIsRequired( true );
-				$iterator_class_field->setValidationRegexp( '/^[a-z0-9\\\\\_]{2,}$/i' );
-				$iterator_class_field->setErrorMessages( [
-					Form_Field_Input::ERROR_CODE_EMPTY          => 'Please enter iterator class name',
-					Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid iterator class name name format'
-				] );
-
-				$fields[$iterator_class_field->getName()] = $iterator_class_field;
-			}
-
-
-			if(
-				$this instanceof DataModel_Definition_Model_Related_1toN
-				||
-				$this instanceof DataModel_Definition_Model_Related_MtoN
 			) {
 				$default_order_by_field = new Form_Field_Hidden( 'default_order_by', '', implode( '|', $this->getDefaultOrderBy() ) );
 				$default_order_by_field->setCatcher( function( $value ) {
@@ -973,7 +951,7 @@ trait DataModel_Definition_Model_Trait
 		} );
 
 
-		$fields = [
+		return [
 			'type'                => $type,
 			'namespace'           => $namespace,
 			'class_name'          => $class_name,
@@ -983,7 +961,6 @@ trait DataModel_Definition_Model_Trait
 			'id_property_name'    => $id_property_name
 		];
 
-		return $fields;
 	}
 
 	/**
@@ -1124,7 +1101,6 @@ trait DataModel_Definition_Model_Trait
 				$id_controller_option = 'id_property_name';
 				break;
 			case 'Jet\DataModel_IDController_UniqueString':
-			case 'Jet\DataModel_IDController_Name':
 				$id_property = new DataModel_Definition_Property_Id( $model->getClassName(), $id_property_name );
 				$id_controller_option = 'id_property_name';
 				break;

@@ -15,9 +15,9 @@ abstract class DataModel_IDController extends BaseObject
 {
 
 	/**
-	 * @var ?DataModel_Interface
+	 * @var ?DataModel
 	 */
-	protected ?DataModel_Interface $_data_model_instance = null;
+	protected ?DataModel $_data_model_instance = null;
 
 	/**
 	 *
@@ -92,9 +92,9 @@ abstract class DataModel_IDController extends BaseObject
 	}
 
 	/**
-	 * @return DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|DataModel_Definition_Model_Related|DataModel_Definition_Model_Related_MtoN
+	 * @return DataModel_Definition_Model_Main|DataModel_Definition_Model_Related
 	 */
-	public function getDataModelDefinition(): DataModel_Definition_Model_Main|DataModel_Definition_Model_Related_1to1|DataModel_Definition_Model_Related_1toN|DataModel_Definition_Model_Related|DataModel_Definition_Model_Related_MtoN
+	public function getDataModelDefinition(): DataModel_Definition_Model_Main|DataModel_Definition_Model_Related
 	{
 		return DataModel_Definition::get( $this->data_model_class_name );
 	}
@@ -140,9 +140,9 @@ abstract class DataModel_IDController extends BaseObject
 	}
 
 	/**
-	 * @param DataModel_Interface $data_model
+	 * @param DataModel $data_model
 	 */
-	public function assocDataModelInstance( DataModel_Interface $data_model ): void
+	public function assocDataModelInstance( DataModel $data_model ): void
 	{
 		$this->_data_model_instance = $data_model;
 	}

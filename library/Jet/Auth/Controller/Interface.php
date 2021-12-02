@@ -51,7 +51,7 @@ interface Auth_Controller_Interface
 	 *
 	 * @return bool
 	 */
-	public function getCurrentUserHasPrivilege( string $privilege, mixed $value ): bool;
+	public function getCurrentUserHasPrivilege( string $privilege, mixed $value=null ): bool;
 
 	/**
 	 * @param string $module_name
@@ -63,10 +63,11 @@ interface Auth_Controller_Interface
 
 
 	/**
-	 * @param Mvc_Page_Interface $page
+	 * @param MVC_Page_Interface $page
 	 *
 	 * @return bool
 	 */
-	public function checkPageAccess( Mvc_Page_Interface $page ): bool;
+	public function checkPageAccess( MVC_Page_Interface $page ): bool;
 
 }
+

@@ -4,13 +4,13 @@ namespace JetShopModule\Admin\Delivery\Methods;
 use JetShop\Delivery_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Delivery_Method_ShopData;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Delivery_Method     $delivery_method
  */
@@ -29,15 +29,11 @@ $delivery_method = $this->getRaw( 'delivery_method' );
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
 
-		<?php if(!$delivery_method->getIsNew()): ?>
-			<?php foreach(Shops::getList() as $shop):
-				$shop_code= $shop->getCode();
-
-				$shop_data = $delivery_method->getShopData( $shop_code );
-				?>
-				<?=$shop_data->renderImageWidgets( Delivery_Method_ShopData::getImageClasses() )?>
-			<?php endforeach; ?>
-		<?php endif; ?>
+		<?php if(!$delivery_method->getIsNew()):
+			foreach(Shops::getList() as $shop):
+				echo $delivery_method->getShopData( $shop )->renderImageWidgets( Delivery_Method_ShopData::getImageClasses(), $delivery_method->getEditForm()->getIsReadonly() );
+			endforeach;
+		endif; ?>
 	</div>
 </div>
 

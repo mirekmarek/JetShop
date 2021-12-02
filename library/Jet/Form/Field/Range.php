@@ -18,47 +18,6 @@ class Form_Field_Range extends Form_Field_Input
 	/**
 	 * @var string
 	 */
-	protected static string $default_renderer_script = 'field';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_start_renderer_script = 'Field/row/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_end_renderer_script = 'Field/row/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_start_renderer_script = 'Field/input/container/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_end_renderer_script = 'Field/input/container/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_error_renderer = 'Field/error';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_label_renderer = 'Field/label';
-
-	/**
-	 * @var string string
-	 */
-	protected static string $default_input_renderer = 'Field/input/Range';
-
-
-	/**
-	 * @var string
-	 */
 	protected string $_type = Form::TYPE_RANGE;
 
 	/**
@@ -97,7 +56,7 @@ class Form_Field_Range extends Form_Field_Input
 	 */
 	public function setMinValue( int $min ): void
 	{
-		$this->min_value = (int)$min;
+		$this->min_value = $min;
 	}
 
 	/**

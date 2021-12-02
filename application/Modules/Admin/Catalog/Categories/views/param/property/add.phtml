@@ -4,12 +4,12 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Form;
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Parametrization_Property;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var Parametrization_Property $new_property
  * @var Form $form
  */
@@ -44,39 +44,39 @@ echo $this->render('lj_start');
 		}
 
 		foreach(Shops::getList() as $shop):
-			$shop_code= $shop->getCode();
-			$shop_data = $new_property->getShopData( $shop_code );
+			$shop_key= $shop->getKey();
+			$shop_data = $new_property->getShopData( $shop );
 
-			$form->field('/shop_data/'.$shop_code.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_code.'/url_param')->getId()."', '".$shop_code."')");
-			$form->field('/shop_data/'.$shop_code.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_code."')");
+			$form->field('/shop_data/'.$shop_key.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."')");
+			$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Main data')?></legend>
 				<?php
-				echo $form->field('/shop_data/'.$shop_code.'/is_active');
-				echo $form->field('/shop_data/'.$shop_code.'/label');
-				echo $form->field('/shop_data/'.$shop_code.'/description');
+				echo $form->field('/shop_data/'.$shop_key.'/is_active');
+				echo $form->field('/shop_data/'.$shop_key.'/label');
+				echo $form->field('/shop_data/'.$shop_key.'/description');
 
-				if($form->fieldExists('/shop_data/'.$shop_code.'/bool_yes_description')) {
-					echo $form->field('/shop_data/'.$shop_code.'/bool_yes_description');
+				if($form->fieldExists('/shop_data/'.$shop_key.'/bool_yes_description')) {
+					echo $form->field('/shop_data/'.$shop_key.'/bool_yes_description');
 				}
 
-				echo $form->field('/shop_data/'.$shop_code.'/url_param');
-				echo $form->field('/shop_data/'.$shop_code.'/units');
+				echo $form->field('/shop_data/'.$shop_key.'/url_param');
+				echo $form->field('/shop_data/'.$shop_key.'/units');
 				?>
 			</fieldset>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('SEO')?></legend>
 				<?php
-				echo $form->field('/shop_data/'.$shop_code.'/seo_h1');
-				echo $form->field('/shop_data/'.$shop_code.'/seo_h1_strategy');
-				echo $form->field('/shop_data/'.$shop_code.'/seo_title');
-				echo $form->field('/shop_data/'.$shop_code.'/seo_title_strategy');
-				echo $form->field('/shop_data/'.$shop_code.'/seo_description');
-				echo $form->field('/shop_data/'.$shop_code.'/seo_description_strategy');
+				echo $form->field('/shop_data/'.$shop_key.'/seo_h1');
+				echo $form->field('/shop_data/'.$shop_key.'/seo_h1_strategy');
+				echo $form->field('/shop_data/'.$shop_key.'/seo_title');
+				echo $form->field('/shop_data/'.$shop_key.'/seo_title_strategy');
+				echo $form->field('/shop_data/'.$shop_key.'/seo_description');
+				echo $form->field('/shop_data/'.$shop_key.'/seo_description_strategy');
 				?>
 			</fieldset>
 			<?=$shop_data->renderShopDataBlock_end()?>

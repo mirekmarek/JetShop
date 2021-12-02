@@ -5,9 +5,9 @@ use Jet\Data_Paginator;
 
 abstract class Core_ProductListing_Pagination {
 
-	protected ?ProductListing $listing = null;
+	protected ProductListing $listing;
 
-	protected string $shop_code = '';
+	protected Shops_Shop $shop;
 
 	protected int $current_page_no = 1;
 
@@ -18,7 +18,7 @@ abstract class Core_ProductListing_Pagination {
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_code = $listing->getShopCode();
+		$this->shop = $listing->getShop();
 
 		$this->init();
 	}

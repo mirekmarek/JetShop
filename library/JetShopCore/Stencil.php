@@ -44,7 +44,7 @@ abstract class Core_Stencil extends DataModel {
 		data_model_class: Stencil_Option::class,
 		form_field_type: false
 	)]
-	protected $options;
+	protected array $options = [];
 
 	protected ?Form $_add_form = null;
 
@@ -70,15 +70,6 @@ abstract class Core_Stencil extends DataModel {
 		parent::__construct();
 
 		$this->afterLoad();
-	}
-
-	public function afterLoad() : void
-	{
-		foreach($this->options as $option) {
-
-			/** @noinspection PhpParamsInspection */
-			$option->setParents( $this );
-		}
 	}
 
 	public static function get( int $id ) : Stencil|null
@@ -193,9 +184,6 @@ abstract class Core_Stencil extends DataModel {
 
 	public function addOption( Stencil_Option $option ) : void
 	{
-		/** @noinspection PhpParamsInspection */
-		$option->setParents( $this );
-
 		$this->options[] = $option;
 	}
 

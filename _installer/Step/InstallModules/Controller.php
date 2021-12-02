@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Jet\Application_Modules;
 use Jet\Application_Module_Manifest;

@@ -1,13 +1,14 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Stencils;
 
+use Jet\Logger;
 use JetShop\Application_Admin;
 use JetShop\Stencil;
 
 use Jet\UI_messages;
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -18,7 +19,6 @@ use Jet\AJAX;
 use JetShop\Shops;
 
 use JetShop\Stencil_Option;
-use JetShop\Stencil_Option_ShopData;
 use JetShopModule\Admin\UI\Main as UI_module;
 
 use Jet\Application;
@@ -26,19 +26,19 @@ use Jet\Application;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	protected ?Stencil $stencil = null;
 
 	protected ?Stencil_Option $option = null;
 
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->stencil = Stencil::get((int)$id));
@@ -130,7 +130,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$GET = Http_Request::GET();
 
 		AJAX::response([
-			'url_path_part' => Shops::generateURLPathPart( $GET->getString('name'), '', 0, $GET->getString('shop_code') )
+			'url_path_part' => Shops::generateURLPathPart( $GET->getString('name'), '', 0, Shops::get( $GET->getString('shop_key') ) )
 		]);
 
 		Application::end();
@@ -148,7 +148,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $stencil->catchAddForm() ) {
 			$stencil->save();
 
-			$this->logAllowedAction( 'Stencil created', $stencil->getId(), $stencil->getName(), $stencil );
+			Logger::success(
+				'stencil_created',
+				'Stencil '.$stencil->getName().' ('.$stencil->getId().') created',
+				$stencil->getId(),
+				$stencil->getName(),
+				$stencil
+			);
 
 			UI_messages::success(
 				Tr::_( 'Stencil <b>%NAME%</b> has been created', [ 'NAME' => $stencil->getName() ] )
@@ -175,7 +181,14 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $stencil->catchEditForm() ) {
 
 			$stencil->save();
-			$this->logAllowedAction( 'Stencil updated', $stencil->getId(), $stencil->getName(), $stencil );
+
+			Logger::success(
+				'stencil_updated',
+				'Stencil '.$stencil->getName().' ('.$stencil->getId().') updated',
+				$stencil->getId(),
+				$stencil->getName(),
+				$stencil
+			);
 
 			UI_messages::success(
 				Tr::_( 'Stencil <b>%NAME%</b> has been updated', [ 'NAME' => $stencil->getName() ] )
@@ -208,7 +221,15 @@ class Controller_Main extends Mvc_Controller_Default
 
 			$option->setPriority( $priority );
 			$option->save();
-			$this->logAllowedAction( 'stencil.option priority updated', $option->getId(), $option->getShopData()->getFilterLabel(), $priority );
+
+
+			Logger::success(
+				'stencil_updated',
+				'Stencil '.$stencil->getName().' ('.$stencil->getId().') updated',
+				$stencil->getId(),
+				$stencil->getName(),
+				$stencil
+			);
 		}
 
 		Http_Headers::reload([], ['action']);
@@ -227,13 +248,18 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 		$new_option = new Stencil_Option();
-		$new_option->setParents( $stencil );
 
 		if( $new_option->catchAddForm() ) {
 			$stencil->addOption( $new_option );
 			$stencil->save();
 
-			$this->logAllowedAction( 'Stencil updated - option created', $stencil->getId(), $stencil->getName(), $stencil );
+			Logger::success(
+				'stencil_updated',
+				'Stencil '.$stencil->getName().' ('.$stencil->getId().') updated',
+				$stencil->getId(),
+				$stencil->getName(),
+				$stencil
+			);
 
 			UI_messages::success(
 				Tr::_( 'Stencil <b>%NAME%</b> has been updated - option created', ['NAME' => $stencil->getName()] )
@@ -266,7 +292,14 @@ class Controller_Main extends Mvc_Controller_Default
 		if($option->catchEditForm()) {
 			$stencil->save();
 
-			$this->logAllowedAction( 'Stencil updated - option updated', $stencil->getId(), $stencil->getName(), $stencil );
+			Logger::success(
+				'stencil_updated',
+				'Stencil '.$stencil->getName().' ('.$stencil->getId().') updated',
+				$stencil->getId(),
+				$stencil->getName(),
+				$stencil
+			);
+
 
 			UI_messages::success(
 				Tr::_( 'Stencil <b>%NAME%</b> has been updated - option updated', [ 'NAME' => $stencil->getName() ] )
@@ -276,29 +309,15 @@ class Controller_Main extends Mvc_Controller_Default
 
 		}
 
-
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $option->getShopData( $shop_code );
-
-			foreach( Stencil_Option_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $option, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'Stencil option image '.$image_class.' uploaded', $option->getId().':'.$shop_code, $shop_data->getFilterLabel().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $option, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'Stencil option image '.$image_class.' deleted', $option->getId().':'.$shop_code, $shop_data->getFilterLabel().' - '.$shop_name );
-					}
-				);
-
-			}
+			$option->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Stencil option',
+				object_id: $option->getId(),
+				object_name: $option->getFilterLabel(),
+				upload_event: 'stencil_option_image_uploaded',
+				delete_event: 'stencil_option_image_deleted'
+			);
 		}
 
 
@@ -337,7 +356,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$stencil->delete();
-			$this->logAllowedAction( 'Stencil deleted', $stencil->getId(), $stencil->getName(), $stencil );
+			Logger::success(
+				'stencil_deleted',
+				'Stencil '.$stencil->getName().' ('.$stencil->getId().') deleted',
+				$stencil->getId(),
+				$stencil->getName(),
+				$stencil
+			);
 
 			UI_messages::info(
 				Tr::_( 'Stencil <b>%NAME%</b> has been deleted', [ 'NAME' => $stencil->getName() ] )

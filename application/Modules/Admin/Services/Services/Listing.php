@@ -43,9 +43,11 @@ class Listing extends Data_Listing {
 
 	/**
 	 * @return Services_Service[]|DataModel_Fetch_Instances
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function getList() : DataModel_Fetch_Instances
 	{
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Services_Service::getList();
 	}
 

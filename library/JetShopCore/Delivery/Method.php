@@ -8,13 +8,10 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Name;
-use Jet\DataModel_Related_MtoN_Iterator;
+use Jet\DataModel_IDController_Passive;
 use Jet\Exception;
 use Jet\Form;
 use Jet\Form_Field_Input;
-use Jet\DataModel_Related_1toN;
-use Jet\DataModel_Related_1toN_Iterator;
 use Jet\Form_Field_Select;
 use Jet\Tr;
 use Jet\Form_Field_MultiSelect;
@@ -25,11 +22,7 @@ use Jet\Form_Field_MultiSelect;
 #[DataModel_Definition(
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
-	id_controller_class: DataModel_IDController_Name::class,
-	id_controller_options: [
-		'id_property_name' => 'code',
-		'get_name_method_name' => 'getCode'
-	]
+	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_Delivery_Method extends DataModel
 {
@@ -101,45 +94,45 @@ abstract class Core_Delivery_Method extends DataModel
 
 
 	/**
-	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Delivery_Method_Classes[]
+	 * @var Delivery_Method_Class[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Delivery_Method_Classes::class,
+		data_model_class: Delivery_Method_Class::class,
 		form_field_creator_method_name: 'createClassInputField',
 	)]
-	protected $delivery_classes = null;
+	protected array $delivery_classes = [];
 
 	/**
-	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Payment_Method[]
+	 * @var Delivery_Method_PaymentMethods[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Delivery_Method_PaymentMethods::class,
 		form_field_creator_method_name: 'createPaymentMethodInputField',
 	)]
-	protected $payment_methods = null;
+	protected array $payment_methods = [];
 
 
 	/**
-	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Services_Service[]
+	 * @var Delivery_Method_Services[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Delivery_Method_Services::class,
 		form_field_creator_method_name: 'createServicesInputField',
 	)]
-	protected $services = null;
+	protected array $services = [];
 
 
 	/**
-	 * @var Delivery_Method_ShopData[]|DataModel_Related_1toN|DataModel_Related_1toN_Iterator|null
+	 * @var Delivery_Method_ShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Delivery_Method_ShopData::class
 	)]
-	protected $shop_data = null;
+	protected array $shop_data = [];
 
 	protected static ?array $scope = null;
 
@@ -196,18 +189,7 @@ abstract class Core_Delivery_Method extends DataModel
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Delivery_Method_ShopData();
-				$sh->setDeliveryMethodCode($this->code);
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-		}
+		Delivery_Method_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 
@@ -332,7 +314,7 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function setCode( string $value ) : void
 	{
-		$this->code = (string)$value;
+		$this->code = $value;
 	}
 
 	/**
@@ -404,14 +386,12 @@ abstract class Core_Delivery_Method extends DataModel
 		return $this->internal_name;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Delivery_Method_ShopData|null
-	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
 
-		return $this->shop_data[$shop_code];
+	public function getShopData( ?Shops_Shop $shop=null ) : Delivery_Method_ShopData
+	{
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
+
 
 	public function getEditURL() : string
 	{
@@ -433,20 +413,27 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function setDeliveryClasses( array $codes ) : void
 	{
-		$classes = [];
+		foreach($this->delivery_classes as $r) {
+			if(!in_array($r->getClassCode(), $codes)) {
+				$r->delete();
+				unset($this->delivery_classes[$r->getClassCode()]);
+			}
+		}
 
 		foreach( $codes as $code ) {
-
-			$class = Delivery_Class::get( $code );
-
-			if( !$class ) {
+			if( !($r = Delivery_Class::get( $code )) ) {
 				continue;
 			}
 
-			$classes[] = $class;
-		}
-		$this->delivery_classes->setItems( $classes );
+			if(!isset($this->delivery_classes[$r->getCode()])) {
+				$new_item = new Delivery_Method_Class();
+				$new_item->setMethodCode($this->getCode());
+				$new_item->setClassCode($code);
 
+				$this->delivery_classes[$code] = $new_item;
+				$new_item->save();
+			}
+		}
 	}
 
 	/**
@@ -470,7 +457,16 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function getDeliveryClasses() : iterable
 	{
-		return $this->delivery_classes;
+		$res = [];
+
+		foreach( $this->delivery_classes as $code=>$rec ) {
+			$rec = $rec->getClass();
+			if($rec) {
+				$res[$code] = $rec;
+			}
+		}
+
+		return $res;
 	}
 
 	public function isPersonalTakeover() : bool
@@ -484,13 +480,13 @@ abstract class Core_Delivery_Method extends DataModel
 	}
 
 
-	public function getPersonalTakeoverPlace( string $shop_code, string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
+	public function getPersonalTakeoverPlace( Shops_Shop $shop, string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
 	{
 		if(!$this->isPersonalTakeover()) {
 			return null;
 		}
 
-		$place = Delivery_PersonalTakeover_Place::getPlace( $shop_code, $this->code, $place_code );
+		$place = Delivery_PersonalTakeover_Place::getPlace( $shop, $this->code, $place_code );
 
 		if(!$place) {
 			return null;
@@ -503,9 +499,9 @@ abstract class Core_Delivery_Method extends DataModel
 		return $place;
 	}
 
-	public function hasPersonalTakeoverPlace( string $shop_code, string $place_code, $only_active=true ) : bool
+	public function hasPersonalTakeoverPlace( Shops_Shop $shop, string $place_code, $only_active=true ) : bool
 	{
-		return (bool)$this->getPersonalTakeoverPlace( $shop_code, $place_code, $only_active );
+		return (bool)$this->getPersonalTakeoverPlace( $shop, $place_code, $only_active );
 	}
 
 
@@ -519,31 +515,32 @@ abstract class Core_Delivery_Method extends DataModel
 
 	public function setPaymentMethods( array $codes ) : void
 	{
-		$methods = [];
+		foreach($this->payment_methods as $r) {
+			if(!in_array($r->getPaymentMethodCode(), $codes)) {
+				$r->delete();
+				unset($this->payment_methods[$r->getPaymentMethodCode()]);
+			}
+		}
 
 		foreach( $codes as $code ) {
-
-			$class = Payment_Method::get( $code );
-
-			if( !$class ) {
+			if( !($r = Payment_Method::get( $code )) ) {
 				continue;
 			}
 
-			$methods[] = $class;
-		}
-		$this->payment_methods->setItems( $methods );
+			if(!isset($this->payment_methods[$r->getCode()])) {
+				$new_item = new Delivery_Method_PaymentMethods();
+				$new_item->setDeliveryMethodCode($this->getCode());
+				$new_item->setPaymentMethodCode($code);
 
+				$this->payment_methods[$code] = $new_item;
+				$new_item->save();
+			}
+		}
 	}
 
 	public function getPaymentMethodsCodes() : array
 	{
-		$codes = [];
-
-		foreach($this->getPaymentMethods() as $method) {
-			$codes[] = $method->getCode();
-		}
-
-		return $codes;
+		return array_keys( $this->getPaymentMethods() );
 	}
 
 	/**
@@ -552,7 +549,15 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function getPaymentMethods() : iterable
 	{
-		return $this->payment_methods;
+		$res = [];
+
+		foreach( $this->payment_methods as $code=>$item ) {
+			if(($item = $item->getPaymentMethod())) {
+				$res[$code] = $item;
+			}
+		}
+
+		return $res;
 	}
 
 	public function createPaymentMethodInputField() : Form_Field_MultiSelect
@@ -582,31 +587,32 @@ abstract class Core_Delivery_Method extends DataModel
 
 	public function setServices( array $codes ) : void
 	{
-		$services = [];
+		foreach($this->services as $r) {
+			if(!in_array($r->getServiceCode(), $codes)) {
+				$r->delete();
+				unset($this->services[$r->getServiceCode()]);
+			}
+		}
 
 		foreach( $codes as $code ) {
-
-			$class = Services_Service::get( $code );
-
-			if( !$class ) {
+			if( !($r = Payment_Method::get( $code )) ) {
 				continue;
 			}
 
-			$services[] = $class;
-		}
-		$this->services->setItems( $services );
+			if(!isset($this->services[$r->getCode()])) {
+				$new_item = new Delivery_Method_Services();
+				$new_item->setDeliveryMethodCode($this->getCode());
+				$new_item->setServiceCode($code);
 
+				$this->services[$code] = $new_item;
+				$new_item->save();
+			}
+		}
 	}
 
 	public function getServicesCodes() : array
 	{
-		$codes = [];
-
-		foreach($this->getServices() as $service) {
-			$codes[] = $service->getCode();
-		}
-
-		return $codes;
+		return array_keys($this->getServices());
 	}
 
 	/**
@@ -615,7 +621,14 @@ abstract class Core_Delivery_Method extends DataModel
 	 */
 	public function getServices() : iterable
 	{
-		return $this->services;
+		$res = [];
+		foreach($this->services as $code=>$item) {
+			if(($item = $item->getService())) {
+				$res[$code] = $item;
+			}
+		}
+
+		return $res;
 	}
 
 	public function createServicesInputField() : Form_Field_MultiSelect
@@ -637,7 +650,7 @@ abstract class Core_Delivery_Method extends DataModel
 
 	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
 	{
-		$shd = $this->getShopData($cash_desk->getShopCode());
+		$shd = $this->getShopData($cash_desk->getShop());
 
 		$item = new Order_Item();
 		$item->setType( Order_Item::ITEM_TYPE_DELIVERY );
@@ -661,8 +674,7 @@ abstract class Core_Delivery_Method extends DataModel
 		if($module) {
 			return $module->getOrderConfirmationEmailInfoText( $order, $this );
 		} else {
-			$shop_code = $order->getShopCode();
-			return $this->getShopData( $shop_code )->getConfirmationEmailInfoText();
+			return $this->getShopData( $order->getShop() )->getConfirmationEmailInfoText();
 		}
 	}
 

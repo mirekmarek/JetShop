@@ -2,30 +2,32 @@
 /**
  *
  * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetShop;
 
 use Jet\Debug_ErrorHandler;
 use Jet\SysConf_Path;
-use Jet\SysConf_Jet;
+use Jet\SysConf_Jet_Debug;
 
 //Debug_Profiler::blockStart('INIT - ErrorHandler');
 
-require SysConf_Path::getLibrary().'Jet/Debug.php';
-require SysConf_Path::getLibrary().'Jet/Debug/ErrorHandler.php';
+require SysConf_Path::getLibrary() . 'Jet/Debug.php';
+require SysConf_Path::getLibrary() . 'Jet/Debug/ErrorHandler.php';
 
 
-require SysConf_Path::getApplication().'ErrorHandlers/Log.php';
-require SysConf_Path::getApplication().'ErrorHandlers/Display.php';
-require SysConf_Path::getApplication().'ErrorHandlers/ErrorPage.php';
-
+require SysConf_Path::getApplication() . 'ErrorHandlers/Log.php';
+require SysConf_Path::getApplication() . 'ErrorHandlers/HTTPHeader.php';
+require SysConf_Path::getApplication() . 'ErrorHandlers/Display.php';
+require SysConf_Path::getApplication() . 'ErrorHandlers/ErrorPage.php';
 
 
 ErrorHandler_Log::register();
+ErrorHandler_HTTPHeader::register();
 
-if( SysConf_Jet::isDevelMode() ) {
+if( SysConf_Jet_Debug::getDevelMode() ) {
 	ErrorHandler_Display::register();
 } else {
 	ErrorHandler_ErrorPage::register();

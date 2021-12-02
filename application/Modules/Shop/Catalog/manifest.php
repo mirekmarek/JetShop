@@ -1,6 +1,6 @@
 <?php
 return [
-	'vendor'      => '',
-	'label'       => 'Catalog browser',
+	'vendor' => '',
+	'label' => 'Catalog browser',
 	'description' => '',
 ];

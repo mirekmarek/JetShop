@@ -55,27 +55,27 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 	}
 
 	/**
-	 * @param $search_string
+	 * @param string $search_string
 	 * @param bool $only_active
 	 * @param array $filter
 	 * @param bool $only_ids
-	 * @param null|string $shop_code
+	 * @param ?Shops_Shop $shop
 	 *
-	 * @return Product[]|array
+	 * @return Product[]
 	 */
 	public static function search( string $search_string,
 	                               bool $only_active=false,
 	                               array $filter=[],
 	                               bool $only_ids=false,
-	                               string|null $shop_code=null ) : array
+	                               ?Shops_Shop $shop = null ) : array
 	{
 
 		if(!$search_string) {
 			return [];
 		}
 
-		if($shop_code===null) {
-			$shop_code = Shops::getCurrentCode();
+		if(!$shop) {
+			$shop = Shops::getCurrent();
 		}
 
 		$sql_query_where = [];
@@ -83,12 +83,14 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 			$sql_query_where[] = "product_is_active=1";
 		}
 
+		/** @noinspection PhpStatementHasEmptyBodyInspection */
 		if($filter) {
 			//TODO:
 		}
 
 		$ids = [];
 
+		/** @noinspection PhpIfWithCommonPartsInspection */
 		if(((int)$search_string)>0) {
 			$_ids_by_code = Product::fetchIDs([
 				'id' => (int)$search_string,
@@ -110,7 +112,7 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 		}
 
 		if(!$ids) {
-			$ids = static::searchObjectIds( $shop_code, $search_string, implode(' AND ', $sql_query_where) );
+			$ids = static::searchObjectIds( $shop, $search_string, implode(' AND ', $sql_query_where) );
 		}
 
 
@@ -122,13 +124,10 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 			return $ids;
 		}
 
-		/**
-		 * @var Product[] $result
-		 */
 		$result = Product::fetch(
 			where_per_model: [
 				'products' => ['id' => $ids],
-				'products_shop_data' => ['shop_code'=>Shops::getCurrentCode()]
+				'products_shop_data' => Shops::getCurrent()->getWhere()
 			],
 			item_key_generator: function(Product $item) {
 				return $item->getId();

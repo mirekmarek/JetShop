@@ -198,9 +198,6 @@ trait Core_CashDesk_ProcessControl
 	public function isDeliveryAddressDisabled() : bool
 	{
 
-		/**
-		 * @var Delivery_Method $delivery_method
-		 */
 		$delivery_method = $this->getSelectedDeliveryMethod();
 
 		if(

@@ -1,12 +1,12 @@
 <?php
 namespace JetShop;
 
+use Jet\Application_Module;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\DataModel_IDController_AutoIncrement;
-use JetShopAdmin\Application_Module;
 use Jet\DataModel_Fetch_Instances;
 
 #[DataModel_Definition(
@@ -48,7 +48,6 @@ abstract class Core_Supplier extends DataModel {
 
 	public static function getManageModule() : Supplier_ManageModuleInterface|Application_Module
 	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Application_Modules::moduleInstance( self::getManageModuleName() );
 	}
 

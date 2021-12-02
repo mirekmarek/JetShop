@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Jet\Locale;
 use Jet\Tr;
@@ -386,6 +386,7 @@ class Installer_CompatibilityTester
 			case 'K':
 				$val *= 1024;
 		}
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$val = $val * 1;
 
 

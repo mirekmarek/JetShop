@@ -8,8 +8,9 @@
 namespace JetShop;
 
 use Jet\Logger;
-use Jet\Mvc_Site;
-use Jet\Mvc_Router;
+use Jet\MVC;
+use Jet\MVC_Base_Interface;
+use Jet\MVC_Router;
 use Jet\Auth;
 
 /**
@@ -20,23 +21,23 @@ class Application_REST
 	/**
 	 * @return string
 	 */
-	public static function getSiteId() : string
+	public static function getBaseId() : string
 	{
 		return 'rest';
 	}
 
 	/**
-	 * @return Mvc_Site
+	 * @return MVC_Base_Interface
 	 */
-	public static function getSite() : Mvc_Site
+	public static function getBase() : MVC_Base_Interface
 	{
-		return Mvc_Site::get( static::getSiteId() );
+		return MVC::getBase( static::getBaseId() );
 	}
 
 	/**
-	 * @param Mvc_Router $router
+	 * @param MVC_Router $router
 	 */
-	public static function init( Mvc_Router $router ) : void
+	public static function init( MVC_Router $router ) : void
 	{
 		Application::initErrorPages( $router );
 		Logger::setLogger( new Logger_REST() );

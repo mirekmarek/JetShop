@@ -11,23 +11,24 @@ use Jet\Http_Request;
 		editModule: {
 			addPage: {
 				openDialog: function () {
-					Modules.editModule.addPage.toggleFields($('#add_page_form__site_id').val());
+					Modules.editModule.addPage.toggleFields($('#add_page_form__base_id').val());
 					$('#add_page_dialog').modal('show');
 				},
 
 				generateId: function (name) {
-					const site_id = $('#add_page_form__site_id').val();
+					const base_id = $('#add_page_form__base_id').val();
 
 					$.ajax({
-						url: '<?=Modules::getActionUrl( 'page/generate_id' )?>&name=' + encodeURIComponent(name) + '&site_id=' + encodeURIComponent(site_id),
+						url: '<?=Modules::getActionUrl( 'page/generate_id' )?>&name=' + encodeURIComponent(name) + '&base_id=' + encodeURIComponent(base_id),
+						dataType: 'json',
 						success: function (result) {
 							$('#add_page_form__page_id').val(result.id);
 						}
 					});
 				},
 
-				toggleFields: function (site_id) {
-					if (site_id) {
+				toggleFields: function (base_id) {
+					if (base_id) {
 						$('#add_page_form__page_id').attr('readonly', false);
 						$('#add_page_form__page_name').attr('readonly', false);
 					} else {
@@ -58,9 +59,9 @@ use Jet\Http_Request;
 						}
 					);
 				},
-				removeContent: function (site_id, page_id, index) {
+				removeContent: function (base_id, page_id, index) {
 					const form = $('#delete_content_form')[0]
-					form.site.value = site_id;
+					form.base.value = base_id;
 					form.page.value = page_id;
 					form.index.value = index;
 
@@ -87,6 +88,7 @@ use Jet\Http_Request;
 				generateId: function (name) {
 					$.ajax({
 						url: '<?=Modules::getActionUrl( 'menu_item/generate_id' )?>&name=' + encodeURIComponent(name),
+						dataType: 'json',
 						success: function (result) {
 							$('#create_menu_item_form__id').val(result.id);
 						}
@@ -134,6 +136,7 @@ use Jet\Http_Request;
 			generateId: function (name) {
 				$.ajax({
 					url: '<?=Modules::getActionUrl( 'page/generate_id' )?>&name=' + encodeURIComponent(name),
+					dataType: 'json',
 					success: function (result) {
 						$('#page_create_form__id').val(result.id);
 					}
@@ -154,6 +157,7 @@ use Jet\Http_Request;
 
 					$.ajax({
 						url: '<?=Modules::getActionUrl( 'page/get_module_controllers' )?>&module=' + encodeURIComponent(module_name),
+						dataType: 'json',
 						success: function (result) {
 							$.each(result.controllers, function (name) {
 								controllers.append($('<option></option>').attr('value', name).text(name));
@@ -175,6 +179,7 @@ use Jet\Http_Request;
 
 					$.ajax({
 						url: '<?=Modules::getActionUrl( 'page/get_module_controller_actions' )?>&module=' + encodeURIComponent(module_name.val()) + '&controller=' + encodeURIComponent(controller),
+						dataType: 'json',
 						success: function (result) {
 
 							$.each(result.actions, function (name) {

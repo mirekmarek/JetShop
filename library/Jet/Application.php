@@ -42,11 +42,11 @@ class Application extends BaseObject
 	/**
 	 * @param ?string $URL
 	 */
-	public static function runMvc( ?string $URL = null ): void
+	public static function runMVC( ?string $URL = null ): void
 	{
 		Debug_Profiler::blockStart( 'MVC router - Init and resolve' );
 
-		$router = Mvc::getRouter();
+		$router = MVC::getRouter();
 
 		$router->resolve( $URL );
 
@@ -70,17 +70,17 @@ class Application extends BaseObject
 			return;
 		}
 
-		$site = Mvc::getCurrentSite();
-		$locale = Mvc::getCurrentLocale();
-		$page = Mvc::getCurrentPage();
+		$base = $router->getBase();
+		$locale = $router->getLocale();
+		$page = $router->getPage();
 
 
-		if( !$site->getIsActive() ) {
+		if( !$base->getIsActive() ) {
 			ErrorPages::handleServiceUnavailable( false );
 			return;
 		}
 
-		if( !$site->getLocalizedData( $locale )->getIsActive() ) {
+		if( !$base->getLocalizedData( $locale )->getIsActive() ) {
 			ErrorPages::handleNotFound( false );
 			return;
 		}
@@ -94,7 +94,7 @@ class Application extends BaseObject
 			$page->getSSLRequired() &&
 			!Http_Request::isHttps()
 		) {
-			Http_Headers::movedPermanently( Http_Request::URL( true, true ) );
+			Http_Headers::movedPermanently( Http_Request::URL( force_SSL: true ) );
 		}
 
 
@@ -103,7 +103,7 @@ class Application extends BaseObject
 			return;
 		}
 
-		if( $router->accessNotAllowed() ) {
+		if( $router->getAccessNotAllowed() ) {
 			ErrorPages::handleUnauthorized( false );
 
 			return;

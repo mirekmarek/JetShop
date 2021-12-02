@@ -23,7 +23,7 @@ class Main extends Application_Module
 	 */
 	public function getViewsDir(): string
 	{
-		return $this->_getViewsDir('UI');
+		return $this->_getViewsDir('ui');
 	}
 
 }

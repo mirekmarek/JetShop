@@ -6,4 +6,6 @@ return [
 	'Zrušit filtr' => '',
 	'Detail' => '',
 	'Koupit' => '',
+	'More info' => '',
+	'Add to cart' => '',
 ];

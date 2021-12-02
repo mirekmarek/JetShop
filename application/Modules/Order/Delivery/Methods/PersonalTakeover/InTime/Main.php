@@ -43,7 +43,7 @@ class Main extends Delivery_Method_Module_PersonalTakeover
 			$place = new Delivery_PersonalTakeover_Place();
 
 
-			$place->setShopCode( $shop->getCode() );
+			$place->setShop( $shop );
 			$place->setPlaceCode( $item['code'] );
 			$place->setMethodCode( static::$method_code );
 

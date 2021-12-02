@@ -9,8 +9,9 @@ namespace JetShopModule\Admin\Customers;
 
 
 use Jet\Application_Modules;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Customer_Address;
+use JetShop\Shops_Shop;
 
 /**
  *
@@ -18,13 +19,13 @@ use JetShop\Customer_Address;
 class AddressFormatter
 {
 
-	public static function format( string $shop_code, Customer_Address $address ) : string
+	public static function format( Shops_Shop $shop, Customer_Address $address ) : string
 	{
 		$module = Application_Modules::moduleInstance('Admin.Customers');
-		$view = new Mvc_View($module->getViewsDir());
+		$view = new MVC_View($module->getViewsDir());
 
 		$view->setVar('address', $address);
-		$view->setVar('shop_code', $shop_code);
+		$view->setVar('shop', $shop);
 
 		return $view->render('address/default');
 	}

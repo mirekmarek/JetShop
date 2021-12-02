@@ -1,352 +1,230 @@
 <?php
 namespace JetShop;
 
-use Jet\Config;
-use Jet\Config_Definition;
-use Jet\Config_Section;
 use Jet\Locale;
-use Jet\Mvc_Page;
-use Jet\Mvc_Page_Interface;
-use Jet\Mvc_Site;
-
-#[Config_Definition(
-	name: 'shops'
-)]
-class Core_Shops_Shop extends Config_Section {
+use Jet\MVC;
+use Jet\MVC_Base_Interface;
+use Jet\MVC_Page_Interface;
 
 
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
-	protected string $code = '';
+abstract class Core_Shops_Shop  {
 
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
-	protected string $name = '';
 
-	#[Config_Definition(
-		type : Config::TYPE_BOOL
-	)]
-	protected bool $is_default = false;
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
-	protected string $site_id = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
-	protected string $locale = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
+	protected string $shop_code = '';
+	protected ?Locale $locale = null;
+	protected string $shop_name = '';
+	protected bool $is_default_shop = false;
+	protected string $base_id = '';
 	protected string $currency_code = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $currency_symbol_left = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $currency_symbol_right = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $currency_with_vat_txt = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $currency_wo_vat_txt = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $currency_decimal_separator = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $currency_thousands_separator = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_INT
-	)]
 	protected int $currency_decimal_places = 0;
-
-	#[Config_Definition(
-		type : Config::TYPE_ARRAY
-	)]
 	protected array $vat_rates = [];
-
-	#[Config_Definition(
-		type : Config::TYPE_FLOAT
-	)]
 	protected float $default_vat_rate = 0.0;
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $phone_validation_reg_exp = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $phone_prefix = '';
-
-	#[Config_Definition(
-		type : Config::TYPE_INT
-	)]
 	protected int $round_precision_without_VAT = 0;
-
-	#[Config_Definition(
-		type : Config::TYPE_INT
-	)]
 	protected int $round_precision_VAT = 0;
-
-	#[Config_Definition(
-		type : Config::TYPE_INT
-	)]
 	protected int $round_precision_with_VAT = 0;
-
-	#[Config_Definition(
-		type : Config::TYPE_STRING
-	)]
 	protected string $default_order_status_code = '';
 
-	/**
-	 * @return string
-	 */
-	public function getCode(): string
+	public static function init( MVC_Base_Interface $base ) : array
 	{
-		return $this->code;
+		$res = [];
+		foreach($base->getLocales() as $locale) {
+			$ld = $base->getLocalizedData( $locale );
+			if(!$ld->getParameter('shop_code', '')) {
+				continue;
+			}
+
+			$item = new static();
+			$item->base_id = $base->getId();
+			$item->locale = $locale;
+
+			foreach($ld->getParameters() as $param=>$value) {
+				if(is_int($item->{$param})) {
+					$value = (int)$value;
+				}
+				if(is_float($item->{$param})) {
+					$value = (float)$value;
+				}
+				if(is_bool($item->{$param})) {
+					$value = (bool)$value;
+				}
+				if(is_array($item->{$param})) {
+					$value = explode(',', $value);
+				}
+
+				$item->{$param} = $value;
+			}
+
+			$res[$item->getKey()] = $item;
+		}
+
+		return $res;
 	}
 
-	/**
-	 * @param string $code
-	 */
-	public function setCode( string $code ): void
+	public function getKey() : string
 	{
-		$this->code = $code;
+		return $this->shop_code.'_'.$this->locale;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getName(): string
+	public function getWhere( string $prefix='' ) : array
 	{
-		return $this->name;
+		return [
+			$prefix.'shop_code' => $this->shop_code,
+			'AND',
+			$prefix.'locale' => $this->locale
+		];
 	}
 
-	/**
-	 * @param string $name
-	 */
-	public function setName( string $name ): void
+	public function getShopCode(): string
 	{
-		$this->name = $name;
+		return $this->shop_code;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isDefault(): bool
+	public function setShopCode( string $shop_code ): void
 	{
-		return $this->is_default;
+		$this->shop_code = $shop_code;
 	}
 
-	/**
-	 * @param bool $is_default
-	 */
-	public function setIsDefault( bool $is_default ): void
-	{
-		$this->is_default = $is_default;
-	}
-
-
-
-	/**
-	 * @return string
-	 */
-	public function getSiteId(): string
-	{
-		return $this->site_id;
-	}
-
-	/**
-	 * @param string $site_id
-	 */
-	public function setSiteId( string $site_id ): void
-	{
-		$this->site_id = $site_id;
-	}
-
-	/**
-	 *
-	 * @return Locale
-	 */
 	public function getLocale(): Locale
 	{
 		return new Locale($this->locale);
 	}
 
-	/**
-	 * @param string $locale
-	 */
-	public function setLocale( string $locale ): void
+	public function setLocale( Locale $locale ): void
 	{
 		$this->locale = $locale;
 	}
 
-	public function getHomepage() : Mvc_Page_Interface
+
+	public function getShopName(): string
 	{
-		return Mvc_Site::get( $this->getSiteId() )->getHomepage( $this->getLocale() );
+		return $this->shop_name;
 	}
 
-	/**
-	 * @return string
-	 */
+	public function setShopName( string $shop_name ): void
+	{
+		$this->shop_name = $shop_name;
+	}
+
+	public function getIsDefaultShop(): bool
+	{
+		return $this->is_default_shop;
+	}
+
+	public function setIsDefaultShop( bool $is_default_shop ): void
+	{
+		$this->is_default_shop = $is_default_shop;
+	}
+
+
+
+	public function getBaseId(): string
+	{
+		return $this->base_id;
+	}
+
+	public function setBaseId( string $base_id ): void
+	{
+		$this->base_id = $base_id;
+	}
+
+	public function getHomepage() : MVC_Page_Interface
+	{
+		return MVC::getBase( $this->getBaseId() )->getHomepage( $this->getLocale() );
+	}
+
 	public function getCurrencyCode(): string
 	{
 		return $this->currency_code;
 	}
 
-	/**
-	 * @param string $currency_code
-	 */
 	public function setCurrencyCode( string $currency_code ): void
 	{
 		$this->currency_code = $currency_code;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCurrencySymbolLeft(): string
 	{
 		return $this->currency_symbol_left;
 	}
 
-	/**
-	 * @param string $currency_symbol_left
-	 */
 	public function setCurrencySymbolLeft( string $currency_symbol_left ): void
 	{
 		$this->currency_symbol_left = $currency_symbol_left;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCurrencySymbolRight(): string
 	{
 		return $this->currency_symbol_right;
 	}
 
-	/**
-	 * @param string $currency_symbol_right
-	 */
 	public function setCurrencySymbolRight( string $currency_symbol_right ): void
 	{
 		$this->currency_symbol_right = $currency_symbol_right;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCurrencyWithVatTxt(): string
 	{
 		return $this->currency_with_vat_txt;
 	}
 
-	/**
-	 * @param string $currency_with_vat_txt
-	 */
 	public function setCurrencyWithVatTxt( string $currency_with_vat_txt ): void
 	{
 		$this->currency_with_vat_txt = $currency_with_vat_txt;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCurrencyWoVatTxt(): string
 	{
 		return $this->currency_wo_vat_txt;
 	}
 
-	/**
-	 * @param string $currency_wo_vat_txt
-	 */
 	public function setCurrencyWoVatTxt( string $currency_wo_vat_txt ): void
 	{
 		$this->currency_wo_vat_txt = $currency_wo_vat_txt;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCurrencyDecimalSeparator(): string
 	{
 		return $this->currency_decimal_separator;
 	}
 
-	/**
-	 * @param string $currency_decimal_separator
-	 */
 	public function setCurrencyDecimalSeparator( string $currency_decimal_separator ): void
 	{
 		$this->currency_decimal_separator = $currency_decimal_separator;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCurrencyThousandsSeparator(): string
 	{
 		return $this->currency_thousands_separator;
 	}
 
-	/**
-	 * @param string $currency_thousands_separator
-	 */
 	public function setCurrencyThousandsSeparator( string $currency_thousands_separator ): void
 	{
 		$this->currency_thousands_separator = $currency_thousands_separator;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getCurrencyDecimalPlaces(): int
 	{
 		return $this->currency_decimal_places;
 	}
 
-	/**
-	 * @param int $currency_decimal_places
-	 */
 	public function setCurrencyDecimalPlaces( int $currency_decimal_places ): void
 	{
 		$this->currency_decimal_places = $currency_decimal_places;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getVatRates(): array
 	{
 		return $this->vat_rates;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getVatRatesScope() : array
 	{
 		$scope = [];
@@ -354,127 +232,80 @@ class Core_Shops_Shop extends Config_Section {
 			$scope[$rate] = $rate.'%';
 		}
 		return $scope;
-
 	}
 
-	/**
-	 * @param array $vat_rates
-	 */
 	public function setVatRates( array $vat_rates ): void
 	{
 		$this->vat_rates = $vat_rates;
 	}
 
-	/**
-	 * @return float
-	 */
 	public function getDefaultVatRate(): float
 	{
 		return $this->default_vat_rate;
 	}
 
-	/**
-	 * @param float $default_vat_rate
-	 */
 	public function setDefaultVatRate( float $default_vat_rate ): void
 	{
 		$this->default_vat_rate = $default_vat_rate;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getPhoneValidationRegExp(): string
 	{
 		return $this->phone_validation_reg_exp;
 	}
 
-	/**
-	 * @param string $phone_validation_reg_exp
-	 */
 	public function setPhoneValidationRegExp( string $phone_validation_reg_exp ): void
 	{
 		$this->phone_validation_reg_exp = $phone_validation_reg_exp;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getPhonePrefix(): string
 	{
 		return $this->phone_prefix;
 	}
 
-	/**
-	 * @param string $phone_prefix
-	 */
 	public function setPhonePrefix( string $phone_prefix ): void
 	{
 		$this->phone_prefix = $phone_prefix;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getRoundPrecision_WithoutVAT(): int
 	{
 		return $this->round_precision_without_VAT;
 	}
 
-	/**
-	 * @param int $round_precision_without_VAT
-	 */
 	public function setRoundPrecisionWithoutVAT( int $round_precision_without_VAT ): void
 	{
 		$this->round_precision_without_VAT = $round_precision_without_VAT;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getRoundPrecision_VAT(): int
 	{
 		return $this->round_precision_VAT;
 	}
 
-	/**
-	 * @param int $round_precision_VAT
-	 */
 	public function setRoundPrecisionVAT( int $round_precision_VAT ): void
 	{
 		$this->round_precision_VAT = $round_precision_VAT;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getRoundPrecision_WithVAT(): int
 	{
 		return $this->round_precision_with_VAT;
 	}
 
-	/**
-	 * @param int $round_precision_with_VAT
-	 */
 	public function setRoundPrecisionWithVAT( int $round_precision_with_VAT ): void
 	{
 		$this->round_precision_with_VAT = $round_precision_with_VAT;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDefaultOrderStatusCode(): string
 	{
 		return $this->default_order_status_code;
 	}
 
-	/**
-	 * @param string $default_order_status_code
-	 */
 	public function setDefaultOrderStatusCode( string $default_order_status_code ): void
 	{
 		$this->default_order_status_code = $default_order_status_code;
 	}
-
 }

@@ -14,7 +14,6 @@ use JetShop\CashDesk_Module;
 use JetShop\Delivery_Method;
 use JetShop\Payment_Method;
 use JetShop\Shop_Module_Trait;
-use JetShop\Shops;
 use JetShop\Shops_Shop;
 
 /**
@@ -36,11 +35,11 @@ class Main extends CashDesk_Module
 
 	public function sortDeliveryMethods( CashDesk $cash_desk, array &$delivery_methods ) : void
 	{
-		$shop_code = CashDesk::get()->getShopCode();
+		$shop = CashDesk::get()->getShop();
 
-		uasort( $delivery_methods, function( Delivery_Method $a, Delivery_Method $b ) use ($shop_code) {
-			$p_a = $a->getShopData($shop_code)->getPriority();
-			$p_b = $b->getShopData($shop_code)->getPriority();
+		uasort( $delivery_methods, function( Delivery_Method $a, Delivery_Method $b ) use ($shop) {
+			$p_a = $a->getShopData($shop)->getPriority();
+			$p_b = $b->getShopData($shop)->getPriority();
 
 			if(!$p_a<$p_b) {
 				return -1;
@@ -96,11 +95,11 @@ class Main extends CashDesk_Module
 	public function sortPaymentMethods( CashDesk $cash_desk, array &$payment_methods ) : void
 	{
 
-		$shop_code = CashDesk::get()->getShopCode();
+		$shop = CashDesk::get()->getShop();
 
-		uasort( $payment_methods, function( Payment_Method $a, Payment_Method $b ) use ($shop_code) {
-			$p_a = $a->getShopData($shop_code)->getPriority();
-			$p_b = $b->getShopData($shop_code)->getPriority();
+		uasort( $payment_methods, function( Payment_Method $a, Payment_Method $b ) use ($shop) {
+			$p_a = $a->getShopData($shop)->getPriority();
+			$p_b = $b->getShopData($shop)->getPriority();
 
 			if(!$p_a<$p_b) {
 				return -1;
@@ -142,9 +141,9 @@ class Main extends CashDesk_Module
 		}
 
 		$field = $form->getField('phone');
-		$field->setRendererScript('phone');
+		$field->setViewScript('field/phone');
 
-		$shop = Shops::get($cash_desk->getShopCode());
+		$shop = $cash_desk->getShop();
 
 		$field->setValidator( function( Form_Field_Input $field ) use ($shop) {
 			return static::phoneValidator( $field, $shop );

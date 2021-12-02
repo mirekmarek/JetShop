@@ -52,10 +52,10 @@ JetAjaxForm.defaultHandlers = {
 
 
 var urlPathPart = {
-	afterNameChanged: function( name, url_path_part_input_id, shop_code ) {
+	afterNameChanged: function( name, url_path_part_input_id, shop_key ) {
 
 		$.ajax({
-			url: "?action=generate_url_path_part&name="+encodeURIComponent(name)+'&shop_code='+shop_code,
+			url: "?action=generate_url_path_part&name="+encodeURIComponent(name)+'&shop_key='+shop_key,
 			dataType: 'json',
 			success: function( data ){
 				$('#'+url_path_part_input_id).val(data.url_path_part);
@@ -63,9 +63,9 @@ var urlPathPart = {
 		});
 	},
 
-	afterPathPartChanged: function( input, shop_code ) {
+	afterPathPartChanged: function( input, shop_key ) {
 		$.ajax({
-			url: "?action=generate_url_path_part&name="+encodeURIComponent(input.value)+'&shop_code='+shop_code,
+			url: "?action=generate_url_path_part&name="+encodeURIComponent(input.value)+'&shop_key='+shop_key,
 			dataType: 'json',
 			success: function( data ){
 				input.value = data.url_path_part;

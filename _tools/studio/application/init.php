@@ -5,69 +5,81 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetStudio;
 
-use Jet\Application_Factory;
-use Jet\Application_Modules_Handler_Default;
+use Jet\DataModel;
+use Jet\Factory_Application;
 use Jet\Config;
-use Jet\DataModel_Factory;
-use Jet\Form;
+use Jet\Factory_DataModel;
 use Jet\Http_Request;
 use Jet\Locale;
-use Jet\SysConf_Jet;
+use Jet\SysConf_Jet_Form;
+use Jet\SysConf_Jet_Modules;
+use Jet\SysConf_Jet_UI;
 use Jet\SysConf_Path;
 use Jet\Translator;
-use Jet\Mvc_Factory;
-use Jet\Application_Modules;
-use Jet\UI;
+use Jet\Factory_MVC;
 
 
-require __DIR__ . '/config/Path.php';
-require __DIR__ . '/config/URI.php';
-require __DIR__ . '/config/Jet.php';
+require __DIR__.'/config/Path.php';
+require __DIR__.'/config/URI.php';
+require __DIR__.'/config/Jet.php';
 
-require ProjectConf_Path::getApplication() . 'Init/Cache/MVC.php';
+require ProjectConf_Path::getApplication().'Init/Cache/MVC.php';
 
-require __DIR__ . '/Init/PHP.php';
-require __DIR__ . '/Init/ErrorHandler.php';
-require __DIR__ . '/Init/Autoloader.php';
+require __DIR__.'/Init/PHP.php';
+require __DIR__.'/Init/ErrorHandler.php';
+require __DIR__.'/Init/Autoloader.php';
 
 
-UI::setViewsDir( SysConf_Path::getBase() . 'views/UI/' );
-Form::setDefaultViewsDir( SysConf_Path::getBase() . 'views/Form/' );
 
-Http_Request::initialize( SysConf_Jet::isHideHttpRequest() );
+Http_Request::initialize();
 
 Locale::setCurrentLocale( Application::getCurrentLocale() );
 Translator::setCurrentLocale( Application::getCurrentLocale() );
 
-//AccessControl::handle();
+SysConf_Jet_UI::setViewsDir( __DIR__.'/views/ui/' );
+SysConf_Jet_Form::setDefaultViewsDir( __DIR__.'/views/form/' );
 
-Config::setBeTolerant( true );
+AccessControl::handle();
 
-Project::setApplicationNamespace( 'JetShop' );
-
-DataModel_Factory::setPropertyDefinitionClassNamePrefix( __NAMESPACE__ . '\DataModel_Definition_Property_' );
-DataModel_Factory::setModelDefinitionClassNamePrefix( __NAMESPACE__ . '\DataModel_Definition_Model_' );
+SysConf_Jet_Modules::setActivatedModulesListFilePath( ProjectConf_Path::getData().'activated_modules_list.php' );
+SysConf_Jet_Modules::setInstalledModulesListFilePath( ProjectConf_Path::getData().'installed_modules_list.php' );
 
 
-Mvc_Factory::setSiteClassName( 'JetStudio\\Sites_Site' );
-Mvc_Factory::setPageClassName( 'JetStudio\\Pages_Page' );
-Mvc_Factory::setPageContentClassName( 'JetStudio\\Pages_Page_Content' );
+Config::setBeTolerant(true);
+SysConf_Path::setConfig( ProjectConf_Path::getConfig() );
 
-Application_Modules::setModuleRootNamespace( 'JetShopModule' );
+Project::setApplicationNamespace('JetApplication');
 
-Config::setBeTolerant( true );
-Config::setConfigDirPath( ProjectConf_Path::getConfig() );
+$property_definition_class_names = [
+	DataModel::TYPE_ID               => DataModel_Definition_Property_Id::class,
+	DataModel::TYPE_ID_AUTOINCREMENT => DataModel_Definition_Property_IdAutoIncrement::class,
+	DataModel::TYPE_STRING           => DataModel_Definition_Property_String::class,
+	DataModel::TYPE_BOOL             => DataModel_Definition_Property_Bool::class,
+	DataModel::TYPE_INT              => DataModel_Definition_Property_Int::class,
+	DataModel::TYPE_FLOAT            => DataModel_Definition_Property_Float::class,
+	DataModel::TYPE_LOCALE           => DataModel_Definition_Property_Locale::class,
+	DataModel::TYPE_DATE             => DataModel_Definition_Property_Date::class,
+	DataModel::TYPE_DATE_TIME        => DataModel_Definition_Property_DateTime::class,
+	DataModel::TYPE_CUSTOM_DATA      => DataModel_Definition_Property_CustomData::class,
+	DataModel::TYPE_DATA_MODEL       => DataModel_Definition_Property_DataModel::class,
+];
+foreach($property_definition_class_names as $type=>$class_name) {
+	Factory_DataModel::setPropertyDefinitionClassName($type, $class_name);
+}
 
-/**
- * @var Application_Modules_Handler_Default $modules_handler
- */
-$modules_handler = Application_Modules::getHandler();
-$modules_handler->setActivatedModulesListFilePath( ProjectConf_Path::getData() . 'activated_modules_list.php' );
-$modules_handler->setInstalledModulesListFilePath( ProjectConf_Path::getData() . 'installed_modules_list.php' );
+$model_definition_class_names = [
+	'Main'         => DataModel_Definition_Model_Main::class,
+	'Related_1to1' => DataModel_Definition_Model_Related_1to1::class,
+	'Related_1toN' => DataModel_Definition_Model_Related_1toN::class,
+];
 
-Application_Factory::setModuleManifestClassName( __NAMESPACE__ . '\Modules_Manifest' );
-Application_Modules::setBasePath( ProjectConf_Path::getApplication() . 'Modules/' );
+foreach($model_definition_class_names as $type=>$class_name) {
+	Factory_DataModel::setModelDefinitionClassName($type, $class_name);
+}
 
+Factory_MVC::setBaseClassName( Bases_Base::class );
+Factory_MVC::setPageClassName( Pages_Page::class );
+Factory_MVC::setPageContentClassName( Pages_Page_Content::class );
+Factory_Application::setModuleManifestClassName( Modules_Manifest::class );

@@ -25,26 +25,18 @@ abstract class Core_Product_Sticker extends DataModel_Related_1toN
 	)]
 	protected int $product_id = 0;
 
-	protected Product|null $product = null;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_id: true,
 		is_key: true
 	)]
-	protected int $sticker_id = 0;
+	protected string $sticker_code = '';
 
 	protected Sticker|null $sticker = null;
 
-	public function getArrayKeyValue() : int|string|null
+	public function getArrayKeyValue() : string
 	{
-		return $this->sticker_id;
-	}
-
-	public function setParents( Product $product ) : void
-	{
-		$this->product = $product;
-		$this->product_id = $product->getId();
+		return $this->sticker_code;
 	}
 
 	public function getProductId() : int
@@ -57,13 +49,13 @@ abstract class Core_Product_Sticker extends DataModel_Related_1toN
 		$this->product_id = $product_id;
 	}
 
-	public function getStickerId() : int
+	public function getStickerCode() : string
 	{
-		return $this->sticker_id;
+		return $this->sticker_code;
 	}
 
-	public function setStickerId( int $sticker_id ) : void
+	public function setStickerCode( string $sticker_code ) : void
 	{
-		$this->sticker_id = $sticker_id;
+		$this->sticker_code = $sticker_code;
 	}
 }

@@ -8,7 +8,6 @@
 namespace JetShopModule\Shop\CashDesk;
 
 use Jet\AJAX;
-use Jet\Form_Field;
 use JetShop\CashDesk;
 
 class Controller_Main_Response {

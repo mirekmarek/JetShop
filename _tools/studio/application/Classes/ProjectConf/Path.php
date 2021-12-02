@@ -16,11 +16,11 @@ class ProjectConf_Path
 	/**
 	 * @var string
 	 */
-	protected static string $base = '';
+	protected static string $root = '';
 	/**
 	 * @var string
 	 */
-	protected static string $sites = '';
+	protected static string $bases = '';
 	/**
 	 * @var string
 	 */
@@ -42,12 +42,7 @@ class ProjectConf_Path
 	/**
 	 * @var string
 	 */
-	protected static string $shop_classes = '';
-
-	/**
-	 * @var string
-	 */
-	protected static string $shop_core_classes = '';
+	protected static string $application_classes = '';
 
 	/**
 	 * @var string
@@ -86,35 +81,35 @@ class ProjectConf_Path
 	/**
 	 * @return string
 	 */
-	public static function getBase(): string
+	public static function getRoot(): string
 	{
-		static::_check( 'base' );
-		return static::$base;
+		static::_check( 'root' );
+		return static::$root;
 	}
 
 	/**
-	 * @param string $base
+	 * @param string $root
 	 */
-	public static function setBase( string $base ): void
+	public static function setRoot( string $root ): void
 	{
-		static::$base = $base;
+		static::$root = $root;
 	}
 
 	/**
 	 * @return string
 	 */
-	public static function getSites(): string
+	public static function getBases(): string
 	{
-		static::_check( 'sites' );
-		return static::$sites;
+		static::_check( 'bases' );
+		return static::$bases;
 	}
 
 	/**
-	 * @param string $sites
+	 * @param string $bases
 	 */
-	public static function setSites( string $sites ): void
+	public static function setBases( string $bases ): void
 	{
-		static::$sites = $sites;
+		static::$bases = $bases;
 	}
 
 	/**
@@ -185,26 +180,21 @@ class ProjectConf_Path
 		static::$application = $application;
 	}
 
-	public static function getShopClasses(): string
+	/**
+	 * @return string
+	 */
+	public static function getApplicationClasses(): string
 	{
-		static::_check( 'shop_classes' );
-		return static::$shop_classes;
+		static::_check( 'application_classes' );
+		return static::$application_classes;
 	}
 
-	public static function setShopClasses( string $shop_classes ): void
+	/**
+	 * @param string $application_classes
+	 */
+	public static function setApplicationClasses( string $application_classes ): void
 	{
-		static::$shop_classes = $shop_classes;
-	}
-
-	public static function getShopCoreClasses(): string
-	{
-		static::_check( 'shop_core_classes' );
-		return static::$shop_core_classes;
-	}
-
-	public static function setShopCoreClasses( string $shop_core_classes ): void
-	{
-		static::$shop_core_classes = $shop_core_classes;
+		static::$application_classes = $application_classes;
 	}
 
 

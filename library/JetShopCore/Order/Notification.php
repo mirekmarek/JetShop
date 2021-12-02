@@ -5,11 +5,9 @@
 
 namespace JetShop;
 
-use Jet\Mailing_Email_Template;
-
 abstract class Core_Order_Notification
 {
-	protected string $shop_code = '';
+	use CommonEntity_ShopRelationTrait;
 
 	protected int $customer_id = 0;
 
@@ -22,16 +20,6 @@ abstract class Core_Order_Notification
 	protected string $text_view_script = '';
 
 	protected array $view_data = [];
-
-	public function getShopCode(): string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ): void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getCustomerId(): int
 	{

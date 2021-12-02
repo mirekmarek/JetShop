@@ -46,7 +46,7 @@ trait DataModel_Trait_Load
 	{
 
 		/**
-		 * @var DataModel_Interface $this
+		 * @var DataModel $this
 		 */
 		$query = new DataModel_Query( static::getDataModelDefinition() );
 		$query->setWhere( $where );
@@ -113,9 +113,6 @@ trait DataModel_Trait_Load
 			}
 
 
-			/**
-			 * @var DataModel_Related_Interface $class_name
-			 */
 			$class_name = $property_definition->getValueDataModelClass();
 
 			$related_dm_definition = DataModel_Definition::get( $class_name );
@@ -160,6 +157,9 @@ trait DataModel_Trait_Load
 				}
 			}
 
+			/**
+			 * @var DataModel_Related $class_name
+			 */
 
 			$_this->{$property_name} = $class_name::initRelatedByData(
 				$this_related_data,
@@ -262,7 +262,7 @@ trait DataModel_Trait_Load
 
 			/**
 			 * @var DataModel_Definition_Property_DataModel $related_property
-			 * @var DataModel_Related_Interface $class_name
+			 * @var DataModel_Related $class_name
 			 */
 			$class_name = $related_property->getValueDataModelClass();
 			$related_dm_definition = DataModel_Definition::get( $class_name );
@@ -303,7 +303,7 @@ trait DataModel_Trait_Load
 	 * @param callable|null $item_key_generator
 	 * @param array|DataModel_PropertyFilter|null $load_filter
 	 *
-	 * @return DataModel[]
+	 * @return static[]
 	 */
 	public static function fetch( array $where_per_model = [],
 	                              array|string|null $order_by = null,
@@ -390,7 +390,7 @@ trait DataModel_Trait_Load
 
 			/**
 			 * @var DataModel_Definition_Property_DataModel $related_property
-			 * @var DataModel_Related_Interface $class_name
+			 * @var DataModel_Related $class_name
 			 */
 			$class_name = $related_property->getValueDataModelClass();
 			$related_dm_definition = DataModel_Definition::get( $class_name );

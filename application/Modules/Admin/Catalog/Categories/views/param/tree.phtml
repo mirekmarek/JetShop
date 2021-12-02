@@ -4,10 +4,10 @@ namespace JetShopModule\Admin\Catalog\Categories;
 use Jet\Http_Request;
 use Jet\UI;
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  */
 
 $category = Controller_Main::getCurrentCategory();
@@ -58,7 +58,7 @@ $category->getParametrizationGroups();
 								}
 								$option_edit_url = Http_Request::currentURI(['group_id'=>$group->getId(), 'property_id'=>$property->getId(), 'option_id'=>$option->getId()], ['page', 'action', 'type']);
 
-								$option_inherited_class = $option->isInherited() ? ' inherited':'';
+								$option_inherited_class = $property->isInherited() ? ' inherited':'';
 
 								if($option->getId()==Controller_Main::getCurrentParamPropertyOptionId()):
 									?><li class="selected<?=$option_inherited_class?>"><a href="<?=$option_edit_url?>"><?=UI::icon('dot-circle')?> <?=$option_label;?></a></li><?php
@@ -90,7 +90,7 @@ $category->getParametrizationGroups();
 				?>
 				<li class="<?=$inherited_class?>"><a href="<?=$group_edit_url?>"><?=UI::icon('folder')?> <?=$group_label?></a></li>
 			<?php
-			endif;;
+			endif;
 		endforeach;
 
 		if(Controller_Main::getCurrentAction()=='group_add'):

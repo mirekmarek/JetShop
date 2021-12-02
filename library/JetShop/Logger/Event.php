@@ -27,9 +27,6 @@ use Jet\Http_Request;
 abstract class Logger_Event extends DataModel
 {
 
-	/**
-	 * @var int
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true

@@ -7,21 +7,21 @@
  */
 namespace JetShopModule\Admin\Payment\Methods;
 
+use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
 use JetShop\Application_Admin;
 use JetShop\Payment_Method;
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
 use JetShop\Payment_Method_Option;
-use JetShop\Payment_Method_Option_ShopData;
 use JetShop\Payment_Method_ShopData;
 use JetShop\Shops;
 use JetShopModule\Admin\UI\Main as UI_module;
@@ -29,13 +29,13 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
-	 * @var ?Mvc_Controller_Router_AddEditDelete
+	 * @var ?MVC_Controller_Router_AddEditDelete
 	 */
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	/**
 	 * @var ?Payment_Method
@@ -49,12 +49,12 @@ class Controller_Main extends Mvc_Controller_Default
 
 	/**
 	 *
-	 * @return Mvc_Controller_Router_AddEditDelete
+	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->payment_method = Payment_Method::get($id));
@@ -276,7 +276,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $payment_method->catchAddForm() ) {
 			$payment_method->save();
 
-			$this->logAllowedAction( 'Payment Method created', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+			Logger::success(
+				'payment_method_created',
+				'Payment method '.$payment_method->getInternalName().' ('.$payment_method->getCode().') created',
+				$payment_method->getCode(),
+				$payment_method->getInternalName(),
+				$payment_method
+			);
 
 			UI_messages::success(
 				Tr::_( 'Payment Method <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $payment_method->getInternalName() ] )
@@ -310,7 +316,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $payment_method->catchEditForm() ) {
 
 			$payment_method->save();
-			$this->logAllowedAction( 'Payment Method updated', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+			Logger::success(
+				'payment_method_updated',
+				'Payment method '.$payment_method->getInternalName().' ('.$payment_method->getCode().') updated',
+				$payment_method->getCode(),
+				$payment_method->getInternalName(),
+				$payment_method
+			);
 
 			UI_messages::success(
 				Tr::_( 'Payment Method <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $payment_method->getInternalName() ] )
@@ -337,27 +349,14 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit payment method <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $payment_method->getInternalName() ] ) );
 
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $payment_method->getShopData( $shop_code );
-
-			foreach( Payment_Method_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $payment_method, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'payment method image '.$image_class.' uploaded', $payment_method->getCode().':'.$shop_code, $payment_method->getCode().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $payment_method, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'payment method image '.$image_class.' deleted', $payment_method->getCode().':'.$shop_code, $payment_method->getCode().' - '.$shop_name );
-					}
-				);
-
-			}
+			$payment_method->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Payment method',
+				object_id: $payment_method->getCode(),
+				object_name: $payment_method->getInternalName(),
+				upload_event: 'payment_method_image_uploaded',
+				delete_event: 'payment_method_image_deleted'
+			);
 		}
 
 		$this->view->setVar( 'payment_method', $payment_method );
@@ -405,7 +404,7 @@ class Controller_Main extends Mvc_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		$payment_method = $this->payment_method;
 		foreach(Shops::getList() as $shop) {
-			$shop_data = $payment_method->getShopData( $shop->getCode() );
+			$shop_data = $payment_method->getShopData( $shop );
 
 			foreach( Payment_Method_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->getImageUploadForm($image_class)->setIsReadonly();
@@ -436,7 +435,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$payment_method->delete();
-			$this->logAllowedAction( 'Payment Method deleted', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+			Logger::success(
+				'payment_method_deleted',
+				'Payment method '.$payment_method->getInternalName().' ('.$payment_method->getCode().') deleted',
+				$payment_method->getCode(),
+				$payment_method->getInternalName(),
+				$payment_method
+			);
 
 			UI_messages::info(
 				Tr::_( 'Payment Method <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $payment_method->getInternalName() ] )
@@ -475,13 +480,18 @@ class Controller_Main extends Mvc_Controller_Default
 		Navigation_Breadcrumb::addURL( Tr::_('New option') );
 
 		$new_option = new Payment_Method_Option();
-		$new_option->setParents( $payment_method );
 
 		if( $new_option->catchAddForm() ) {
 			$payment_method->addOption( $new_option );
 			$payment_method->save();
 
-			$this->logAllowedAction( 'Payment method updated - option created', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+			Logger::success(
+				'payment_method_updated',
+				'Payment method '.$payment_method->getInternalName().' ('.$payment_method->getCode().') updated',
+				$payment_method->getCode(),
+				$payment_method->getInternalName(),
+				$payment_method
+			);
 
 			UI_messages::success(
 				Tr::_( 'Payment method <b>%NAME%</b> has been updated - option created', ['NAME' => $payment_method->getInternalName()] )
@@ -515,7 +525,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if($payment_method_option->catchEditForm()) {
 			$payment_method->save();
 
-			$this->logAllowedAction( 'Payment method - option updated', $payment_method->getCode(), $payment_method->getInternalName(), $payment_method );
+			Logger::success(
+				'payment_method_updated',
+				'Payment method '.$payment_method->getInternalName().' ('.$payment_method->getCode().') updated',
+				$payment_method->getCode(),
+				$payment_method->getInternalName(),
+				$payment_method
+			);
 
 			UI_messages::success(
 				Tr::_( 'Payment method <b>%NAME%</b> has been updated - option updated', [ 'NAME' => $payment_method->getInternalName() ] )
@@ -552,31 +568,16 @@ class Controller_Main extends Mvc_Controller_Default
 
 		Application_Admin::handleUploadTooLarge();
 
-
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $payment_method_option->getShopData( $shop_code );
-
-			foreach( Payment_Method_Option_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $payment_method_option, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'Payment method option image '.$image_class.' uploaded', $payment_method_option->getCode().':'.$shop_code, $shop_data->getTitle().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $payment_method_option, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'Payment method option image '.$image_class.' deleted', $payment_method_option->getCode().':'.$shop_code, $shop_data->getTitle().' - '.$shop_name );
-					}
-				);
-
-			}
+			$payment_method_option->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Payment method option',
+				object_id: $payment_method_option->getCode(),
+				object_name: $payment_method_option->getTitle(),
+				upload_event: 'payment_method_option_image_uploaded',
+				delete_event: 'payment_method_option_image_deleted'
+			);
 		}
-
 
 		$this->view->setVar( 'tabs', $this->_getEditTabs() );
 		$this->view->setVar( 'option_tabs', $this->_getEditOptionTabs() );

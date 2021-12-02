@@ -3,7 +3,8 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Application_Modules;
-use Jet\Mvc_Page;
+use Jet\MVC;
+use Jet\MVC_Page_Interface;
 use Jet\Session;
 
 abstract class Core_CashDesk
@@ -40,7 +41,7 @@ abstract class Core_CashDesk
 	protected static ?CashDesk $cash_desk = null;
 
 
-	protected string $shop_code = '';
+	protected ?Shops_Shop $shop = null;
 
 	protected ?Session $session = null;
 
@@ -59,11 +60,11 @@ abstract class Core_CashDesk
 		static::$cash_desk_page_id = $cash_desk_page_id;
 	}
 
-	public static function getCashDeskPage(): Mvc_Page
+	public static function getCashDeskPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(CashDesk::getCashDeskPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(CashDesk::getCashDeskPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCashDeskPageURL(): string
@@ -84,11 +85,11 @@ abstract class Core_CashDesk
 		self::$cash_desk_confirmation_page_id = $cash_desk_confirmation_page_id;
 	}
 
-	public static function getCashDeskConfirmationPage(): Mvc_Page
+	public static function getCashDeskConfirmationPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(CashDesk::getCashDeskConfirmationPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(CashDesk::getCashDeskConfirmationPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCashDeskConfirmationPageURL(): string
@@ -110,11 +111,11 @@ abstract class Core_CashDesk
 		self::$cash_desk_payment_page_id = $cash_desk_payment_page_id;
 	}
 
-	public static function getCashDeskPaymentPage(): Mvc_Page
+	public static function getCashDeskPaymentPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(CashDesk::getCashDeskPaymentPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(CashDesk::getCashDeskPaymentPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCashDeskPaymentPageURL(): string
@@ -134,11 +135,11 @@ abstract class Core_CashDesk
 		self::$cash_desk_payment_problem_page_id = $cash_desk_payment_problem_page_id;
 	}
 
-	public static function getCashDeskPaymentProblemPage(): Mvc_Page
+	public static function getCashDeskPaymentProblemPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(CashDesk::getCashDeskPaymentProblemPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(CashDesk::getCashDeskPaymentProblemPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCashDeskPaymentProblemPageURL(): string
@@ -159,11 +160,11 @@ abstract class Core_CashDesk
 		self::$cash_desk_payment_success_page_id = $cash_desk_payment_success_page_id;
 	}
 
-	public static function getCashDeskPaymentSuccessPage(): Mvc_Page
+	public static function getCashDeskPaymentSuccessPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(CashDesk::getCashDeskPaymentSuccessPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(CashDesk::getCashDeskPaymentSuccessPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCashDeskPaymentSuccessPageURL(): string
@@ -183,11 +184,11 @@ abstract class Core_CashDesk
 		self::$cash_desk_payment_notification_page_id = $cash_desk_payment_notification_page_id;
 	}
 
-	public static function getCashDeskPaymentNotificationPage(): Mvc_Page
+	public static function getCashDeskPaymentNotificationPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(CashDesk::getCashDeskPaymentNotificationPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(CashDesk::getCashDeskPaymentNotificationPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCashDeskPaymentNotificationPageURL(): string
@@ -218,20 +219,20 @@ abstract class Core_CashDesk
 	public static function get() : CashDesk
 	{
 		if(!static::$cash_desk) {
-			static::$cash_desk = new CashDesk( Shops::getCurrentCode() );
+			static::$cash_desk = new CashDesk( Shops::getCurrent() );
 		}
 
 		return static::$cash_desk;
 	}
 
-	public function __construct( string $shop_code )
+	public function __construct( Shops_Shop $shop )
 	{
-		$this->shop_code = $shop_code;
+		$this->shop = $shop;
 	}
 
-	public function getShopCode() : string
+	public function getShop() : Shops_Shop
 	{
-		return $this->shop_code;
+		return $this->shop;
 	}
 
 	protected function getSession() : Session

@@ -145,4 +145,8 @@ return [
 	'Nafukovací' => '',
 	'Select Google category' => '',
 	'Google category:' => '',
+	'Default' => '',
+	'The cheapest first' => '',
+	'The most expensive first' => '',
+	'According to reviews' => '',
 ];

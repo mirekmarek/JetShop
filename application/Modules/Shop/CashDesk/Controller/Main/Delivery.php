@@ -76,7 +76,7 @@ trait Controller_Main_Delivery {
 		[$method_code, $place_code] = explode(':', $id);
 
 		$place = Delivery_PersonalTakeover_Place::getPlace(
-			Shops::getCurrentCode(),
+			Shops::getCurrent(),
 			$method_code,
 			$place_code
 		);
@@ -94,9 +94,6 @@ trait Controller_Main_Delivery {
 
 	public function personal_takeover_select_place_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 		$GET = Http_Request::GET();
@@ -114,9 +111,6 @@ trait Controller_Main_Delivery {
 
 	public function select_delivery_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -134,9 +128,6 @@ trait Controller_Main_Delivery {
 
 	public function continue_to_payment_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -154,9 +145,6 @@ trait Controller_Main_Delivery {
 
 	public function back_to_delivery_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();

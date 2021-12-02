@@ -68,143 +68,16 @@ class Http_Headers
 	const CODE_598_NETWORK_READ_TIMEOUT_ERROR = 598;
 	const CODE_599_NETWORK_CONNECT_TIMEOUT_ERROR = 599;
 
-	/**
-	 *
-	 * @var array
-	 */
-	protected static array $response_messages = [
-		200 => 'OK',
-		201 => 'Created',
-		202 => 'Accepted',
-		204 => 'No Content',
-		205 => 'Reset Content',
-		206 => 'Partial Content',
-
-		301 => 'Moved Permanently',
-		302 => 'Found',
-		303 => 'See Other',
-		304 => 'Not Modified',
-		307 => 'Temporary Redirect',
-		308 => 'Permanent Redirect',
-
-		400 => 'Bad Request',
-		401 => 'Unauthorized',
-		402 => 'Payment Required',
-		403 => 'Forbidden',
-		404 => 'Not Found',
-		405 => 'Method Not Allowed',
-		406 => 'Not Acceptable',
-		407 => 'Proxy Authentication Required',
-		408 => 'Request Timeout',
-		409 => 'Conflict',
-		410 => 'Gone',
-		411 => 'Length Required',
-		412 => 'Precondition Failed',
-		413 => 'Request Entity Too Large',
-		414 => 'Request-URI Too Long',
-		415 => 'Unsupported Media Type',
-		416 => 'Requested Range Not Satisfiable',
-		417 => 'Expectation Failed',
-		425 => 'Unordered Collection',
-		426 => 'Upgrade Required',
-		428 => 'Precondition Required',
-		429 => 'Too Many Requests',
-		431 => 'Request Header Fields Too Large',
-		444 => 'No Response',
-		451 => 'Unavailable For Legal Reasons',
-
-		500 => 'Internal Server Error',
-		501 => 'Not Implemented',
-		502 => 'Bad Gateway',
-		503 => 'Service Unavailable',
-		504 => 'Gateway Timeout',
-		505 => 'HTTP Version Not Supported',
-		506 => 'Variant Also Negotiates',
-		509 => 'Bandwidth Limit Exceeded',
-		510 => 'Not Extended',
-		511 => 'Network Authentication Required',
-		598 => 'Network read timeout error',
-		599 => 'Network connect timeout error',
-	];
-
 
 	/**
-	 * @var string
-	 */
-	protected static string $header_function_name = '\header';
-
-	/**
-	 *
-	 * @var string
-	 */
-	protected static string $http_version = '1.1';
-
-	/**
-	 * @return string
-	 */
-	public static function getHeaderFunctionName(): string
-	{
-		return static::$header_function_name;
-	}
-
-	/**
-	 * @param string $header_function_name
-	 */
-	public static function setHeaderFunctionName( string $header_function_name ): void
-	{
-		static::$header_function_name = $header_function_name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getHttpVersion(): string
-	{
-		return static::$http_version;
-	}
-
-	/**
-	 * @param string $http_version
-	 */
-	public static function setHttpVersion( string $http_version ): void
-	{
-		static::$http_version = $http_version;
-	}
-
-	/**
-	 *
-	 * @return array
-	 */
-	public static function getResponseCodes(): array
-	{
-		return static::$response_messages;
-	}
-
-	/**
-	 *
-	 * @param array $headers (optional)
-	 */
-	public static function responseOK( array $headers = [] ): void
-	{
-		static::response( static::CODE_200_OK, $headers );
-	}
-
-	/**
-	 *
 	 * @param int $code
-	 * @param array $headers (optional)
+	 * @param array $headers
+	 * @param string $custom_response_message
 	 *
-	 * @return bool
 	 */
-	public static function response( int $code, array $headers = [] ): bool
+	public static function response( int $code, array $headers = [], string $custom_response_message='' ): void
 	{
-
-
-		$header = static::getResponseHeader( $code );
-		if( !$header ) {
-			return false;
-		}
-
+		$header = static::createResponseHeader( $code, $custom_response_message );
 
 		static::sendHeader( $header, true, $code );
 
@@ -221,24 +94,23 @@ class Http_Headers
 			}
 
 		}
-
-		return true;
 	}
 
 	/**
-	 *
 	 * @param int $http_code
+	 * @param string $custom_response_message
 	 *
-	 * @return string|bool
+	 * @return string
 	 */
-	public static function getResponseHeader( int $http_code ): string|bool
+	protected static function createResponseHeader( int $http_code, string $custom_response_message='' ): string
 	{
-		$message = static::getResponseMessage( $http_code );
-		if( !$message ) {
-			return false;
+		if($custom_response_message) {
+			$message = $custom_response_message;
+		} else {
+			$message = static::getResponseMessage( $http_code );
 		}
 
-		return 'HTTP/' . static::$http_version . ' ' . $http_code . ' ' . $message;
+		return 'HTTP/' . SysConf_Jet_Http::getHttpVersion() . ' ' . $http_code . ' ' . $message;
 	}
 
 	/**
@@ -246,15 +118,17 @@ class Http_Headers
 	 *
 	 * @param int $http_code
 	 *
-	 * @return string|bool
+	 * @return string
 	 */
-	public static function getResponseMessage( int $http_code ): string|bool
+	protected static function getResponseMessage( int $http_code ): string
 	{
-		if( !isset( static::$response_messages[$http_code] ) ) {
-			return false;
+		$response_messages = SysConf_Jet_Http::getResponseMessages();
+
+		if( !isset( $response_messages[$http_code] ) ) {
+			throw new Http_Request_Exception('Unknown HTTP response code '.$http_code.' - response message is not defined');
 		}
 
-		return static::$response_messages[$http_code];
+		return $response_messages[$http_code];
 	}
 
 	/**
@@ -266,12 +140,14 @@ class Http_Headers
 	 * @param int $http_response_code
 	 *
 	 */
-	public static function sendHeader( string $header, bool $replace = true, int $http_response_code = 0 ): void
+	protected static function sendHeader( string $header, bool $replace = true, int $http_response_code = 0 ): void
 	{
-		$f_name = static::$header_function_name;
+		$f_name = SysConf_Jet_Http::getHeaderFunctionName();
 
 		$f_name( $header, $replace, $http_response_code );
 	}
+
+
 
 	/**
 	 * @param int $http_code
@@ -327,85 +203,6 @@ class Http_Headers
 	}
 
 
-	/**
-	 * See other - 303
-	 *
-	 * @param string $target_URL target URL
-	 * @param array $headers (optional, default: none)
-	 * @param bool $application_end (optional, default: true)
-	 */
-	public static function seeOther( string $target_URL, array $headers = [], bool $application_end = true ): void
-	{
-		static::redirect(
-			static::CODE_303_SEE_OTHER,
-			$target_URL,
-			$headers,
-			$application_end
-		);
-	}
-
-
-	/**
-	 * Page not found - 404
-	 *
-	 * @param array $headers (optional, default: none)
-	 */
-	public static function notFound( array $headers = [] ): void
-	{
-		static::response( static::CODE_404_NOT_FOUND, $headers );
-	}
-
-	/**
-	 * Page not found - 304
-	 *
-	 * @param array $headers (optional, default: none)
-	 */
-	public static function notModified( array $headers = [] ): void
-	{
-		static::response( static::CODE_304_NOT_MODIFIED, $headers );
-	}
-
-
-	/**
-	 * Authorization required - 401
-	 *
-	 * @param array $headers (optional, default: none)
-	 */
-	public static function authorizationRequired( array $headers = [] ): void
-	{
-		static::response( static::CODE_401_UNAUTHORIZED, $headers );
-	}
-
-	/**
-	 * Bad request - 400
-	 *
-	 * @param array $headers (optional, default: none)
-	 */
-	public static function badRequest( array $headers = [] ): void
-	{
-		static::response( static::CODE_400_BAD_REQUEST, $headers );
-	}
-
-	/**
-	 * Forbidden - 403
-	 *
-	 * @param array $headers (optional, default: none)
-	 */
-	public static function forbidden( array $headers = [] ): void
-	{
-		static::response( static::CODE_403_FORBIDDEN, $headers );
-	}
-
-	/**
-	 * Internal server error - 500
-	 *
-	 * @param array $headers (optional)
-	 */
-	public static function internalServerError( array $headers = [] ): void
-	{
-		static::response( static::CODE_500_INTERNAL_SERVER_ERROR, $headers );
-	}
-
 
 	/**
 	 * Reload current page
@@ -437,31 +234,23 @@ class Http_Headers
 	 */
 	public static function sendDownloadFileHeaders( string $file_name, string $file_mime, int $file_size, bool $force_download = false ): void
 	{
-
-		$date = gmdate( 'D, d M Y H:i:s' );
+		$headers = [
+			'Content-Type' => $file_mime,
+			'Content-Length' => $file_size,
+			'Cache-Control' => 'public, must-revalidate, max-age=0',
+			'Pragma' => 'public',
+			'Expires' => 'Tue, 01 February 2011 07:00:00 GMT',
+			'Last-Modified' => gmdate( 'D, d M Y H:i:s' ) . ' GMT' ,
+		];
 
 		if( $force_download ) {
-			static::sendHeader( 'Content-Description: File Transfer' );
-			static::sendHeader( 'Cache-Control: public, must-revalidate, max-age=0' );
-			static::sendHeader( 'Pragma: public' );
-			static::sendHeader( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' );
-			static::sendHeader( 'Last-Modified: ' . $date . ' GMT' );
-			static::sendHeader( 'Content-Type: application/force-download' );
-			static::sendHeader( 'Content-Type: application/octet-stream' );
-			static::sendHeader( 'Content-Type: application/download' );
-			static::sendHeader( 'Content-Type: ' . $file_mime );
-			static::sendHeader( 'Content-Disposition: attachment; filename="' . $file_name . '";' );
-			static::sendHeader( 'Content-Transfer-Encoding: binary' );
-			static::sendHeader( 'Content-Length: ' . $file_size );
+			$headers['Content-Disposition'] = 'attachment; filename="' . $file_name . '";';
+			$headers['Content-Transfer-Encoding'] = 'binary';
 		} else {
-			static::sendHeader( 'Content-Type: ' . $file_mime );
-			static::sendHeader( 'Cache-Control: public, must-revalidate, max-age=0' );
-			static::sendHeader( 'Pragma: public' );
-			static::sendHeader( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' );
-			static::sendHeader( 'Last-Modified: ' . $date . ' GMT' );
-			static::sendHeader( 'Content-Length: ' . $file_size );
-			static::sendHeader( 'Content-Disposition: inline; filename="' . $file_name . '";' );
+			$headers['Content-Transfer-Encoding'] = 'inline; filename="' . $file_name . '";';
 		}
+
+		static::response(static::CODE_200_OK, $headers);
 	}
 
 }

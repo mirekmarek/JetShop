@@ -2,10 +2,11 @@
 namespace JetShopModule\Admin\Catalog\Brands;
 
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\Logger;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
 
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -14,7 +15,6 @@ use Jet\Navigation_Breadcrumb;
 
 use JetShop\Application_Admin;
 use JetShop\Brand;
-use JetShop\Brand_ShopData;
 
 use JetShop\Shops;
 use JetShopModule\Admin\UI\Main as UI_module;
@@ -22,17 +22,17 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	protected ?Brand $brand = null;
 
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->brand = Brand::get((int)$id));
@@ -84,7 +84,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $brand->catchAddForm() ) {
 			$brand->save();
 
-			$this->logAllowedAction( 'Brand created', $brand->getId(), $brand->getName(), $brand );
+			Logger::success(
+				event: 'brand_created',
+				event_message: 'Brand \''.$brand->getName().'\' ('.$brand->getId().') created',
+				context_object_id: $brand->getId(),
+				context_object_name: $brand->getName(),
+				context_object_data: $brand
+			);
 
 			UI_messages::success(
 				Tr::_( 'Brand <b>%NAME%</b> has been created', [ 'NAME' => $brand->getName() ] )
@@ -109,28 +115,14 @@ class Controller_Main extends Mvc_Controller_Default
 
 
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-
-			$shop_data = $brand->getShopData( $shop_code );
-
-			foreach( Brand_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $brand, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $brand->getId().':'.$shop_code, $brand->getName().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $brand, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'category image '.$image_class.' deleted', $brand->getId().':'.$shop_code, $brand->getName().' - '.$shop_name );
-					}
-				);
-
-			}
+			$brand->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Sticker',
+				object_id: $brand->getId(),
+				object_name: $brand->getName(),
+				upload_event: 'brand_image_uploaded',
+				delete_event: 'brand_image_deleted'
+			);
 		}
 
 
@@ -143,7 +135,14 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $brand->catchEditForm() ) {
 
 			$brand->save();
-			$this->logAllowedAction( 'Brand updated', $brand->getId(), $brand->getName(), $brand );
+
+			Logger::success(
+				event: 'brand_updated',
+				event_message: 'Brand \''.$brand->getName().'\' ('.$brand->getId().') updated',
+				context_object_id: $brand->getId(),
+				context_object_name: $brand->getName(),
+				context_object_data: $brand
+			);
 
 			UI_messages::success(
 				Tr::_( 'Brand <b>%NAME%</b> has been updated', [ 'NAME' => $brand->getName() ] )
@@ -188,7 +187,14 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$brand->delete();
-			$this->logAllowedAction( 'Brand deleted', $brand->getId(), $brand->getName(), $brand );
+
+			Logger::success(
+				event: 'brand_deleted',
+				event_message: 'Brand \''.$brand->getName().'\' ('.$brand->getId().') deleted',
+				context_object_id: $brand->getId(),
+				context_object_name: $brand->getName(),
+				context_object_data: $brand
+			);
 
 			UI_messages::info(
 				Tr::_( 'Brand <b>%NAME%</b> has been deleted', [ 'NAME' => $brand->getName() ] )

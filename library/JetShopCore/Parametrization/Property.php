@@ -7,8 +7,6 @@ use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\DataModel_PropertyFilter;
-use Jet\DataModel_Definition_Model_Related_1toN;
-use Jet\DataModel_Related_1toN_Iterator;
 use Jet\Tr;
 
 
@@ -89,21 +87,18 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		default_value: true,
 		form_field_label: 'Allow to show on a product detail'
 	)]
 	protected bool $allow_display = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		default_value: true,
 		form_field_label: 'Allow to filter products'
 	)]
 	protected bool $allow_filter = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		default_value: true,
 		form_field_label: 'Allow to compare products'
 	)]
 	protected bool $allow_compare = true;
@@ -115,7 +110,7 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Parametrization_Property_ShopData::class
 	)]
-	protected $shop_data;
+	protected array $shop_data = [];
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -140,17 +135,13 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 		form_field_type: false
 
 	)]
-	protected $options;
+	protected array $options = [];
 
 	protected bool $is_inherited = false;
 
 	protected bool $is_first = false;
 
 	protected bool $is_last = false;
-
-	protected Category|null $category = null;
-
-	protected Parametrization_Group|null $group = null;
 
 	protected Form|null $_add_form = null;
 
@@ -173,13 +164,8 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 		$this->afterLoad();
 	}
 
-	public static function initRelatedByData( array $this_data, array &$related_data, DataModel_PropertyFilter $load_filter = null ) : DataModel_Related_1toN_Iterator
+	public static function initRelatedByData( array $this_data, array &$related_data, DataModel_PropertyFilter $load_filter = null ) : array
 	{
-
-		/**
-		 * @var DataModel_Definition_Model_Related_1toN $data_model_definition
-		 */
-		$data_model_definition = static::getDataModelDefinition();
 
 		$items = [];
 
@@ -187,7 +173,7 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 			/**
 			 * @var DataModel $class_name
 			 */
-			$class_name = get_called_class().'_'.$d['type'];
+			$class_name = static::class.'_'.$d['type'];
 
 			/**
 			 * @var Parametrization_Property $item
@@ -197,35 +183,16 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 			$items[] = $item;
 		}
 
-
-		/**
-		 * @var DataModel_Related_1toN_Iterator $iterator
-		 */
-
-		$iterator_class_name = $data_model_definition->getIteratorClassName();
-
-		$iterator = new $iterator_class_name( $data_model_definition, $items );
-
-		return $iterator;
+		return $items;
 	}
 
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Parametrization_Property_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-		}
+		Parametrization_Property_ShopData::checkShopData($this, $this->shop_data);
 	}
 
-	public function getArrayKeyValue() : int|string|null
+	public function getArrayKeyValue() : string
 	{
 		return $this->id;
 	}
@@ -240,30 +207,6 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 		$this->id = $id;
 	}
 
-
-	/**
-	 * @param Category $category
-	 * @param Parametrization_Group $group
-	 */
-	public function setParents( Category $category, Parametrization_Group $group )
-	{
-
-		$this->category = $category;
-		$this->category_id = $category->getId();
-
-		$this->group = $group;
-		$this->group_id = $group->getId();
-
-		foreach($this->shop_data as $shop_data) {
-			/** @noinspection PhpParamsInspection */
-			$shop_data->setParents( $category, $group, $this );
-		}
-
-		foreach($this->options as $option) {
-			/** @noinspection PhpParamsInspection */
-			$option->setParents( $category, $group, $this );
-		}
-	}
 
 	public function getCategoryId() : int
 	{
@@ -287,12 +230,12 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 
 	public function getCategory() : Category
 	{
-		return $this->category;
+		return Category::get($this->category_id);
 	}
 
 	public function getGroup() : Parametrization_Group
 	{
-		return $this->group;
+		return $this->getCategory()->getParametrizationGroup($this->group_id);
 	}
 
 	public function setIsActive( bool $is_active ) : void
@@ -425,13 +368,10 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 	}
 
 
-	public function getShopData( string|null $shop_code=null ) : Parametrization_Property_ShopData
-	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
 
-		return $this->shop_data[$shop_code];
+	public function getShopData( ?Shops_Shop $shop=null ) : Parametrization_Property_ShopData
+	{
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 	public function getAddForm() : Form
@@ -448,19 +388,19 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 		$form = $this->getCommonForm('property_add_form');
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
+			$shop_key = $shop->getKey();
 
-			$seo_h1_strategy = $form->field('/shop_data/'.$shop_code.'/seo_h1_strategy');
+			$seo_h1_strategy = $form->field('/shop_data/'.$shop_key.'/seo_h1_strategy');
 			$seo_h1_strategy->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 			]);
 
-			$seo_title_strategy = $form->field('/shop_data/'.$shop_code.'/seo_title_strategy');
+			$seo_title_strategy = $form->field('/shop_data/'.$shop_key.'/seo_title_strategy');
 			$seo_title_strategy->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 			]);
 
-			$seo_description_strategy = $form->field('/shop_data/'.$shop_code.'/seo_description_strategy');
+			$seo_description_strategy = $form->field('/shop_data/'.$shop_key.'/seo_description_strategy');
 			$seo_description_strategy->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 			]);
@@ -502,19 +442,19 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
+			$shop_key = $shop->getKey();
 
-			$seo_h1_strategy = $form->field('/shop_data/'.$shop_code.'/seo_h1_strategy');
+			$seo_h1_strategy = $form->field('/shop_data/'.$shop_key.'/seo_h1_strategy');
 			$seo_h1_strategy->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 			]);
 
-			$seo_title_strategy = $form->field('/shop_data/'.$shop_code.'/seo_title_strategy');
+			$seo_title_strategy = $form->field('/shop_data/'.$shop_key.'/seo_title_strategy');
 			$seo_title_strategy->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 			]);
 
-			$seo_description_strategy = $form->field('/shop_data/'.$shop_code.'/seo_description_strategy');
+			$seo_description_strategy = $form->field('/shop_data/'.$shop_key.'/seo_description_strategy');
 			$seo_description_strategy->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 			]);
@@ -544,12 +484,7 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 			return null;
 		}
 
-		$option = $this->options[$id];
-
-		/** @noinspection PhpParamsInspection */
-		$option->setParents( $this->category, $this->group, $this );
-
-		return $option;
+		return $this->options[$id];
 	}
 
 
@@ -558,20 +493,11 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 	 */
 	public function getOptions() : iterable
 	{
-		foreach($this->options as $option) {
-			/** @noinspection PhpParamsInspection */
-			$option->setParents( $this->category, $this->group, $this );
-		}
-
 		return $this->options;
 	}
 
 	public function addOption( Parametrization_Property_Option $option ) : void
 	{
-
-		/** @noinspection PhpParamsInspection */
-		$option->setParents( $this->category, $this->group, $this );
-
 		$this->options[] = $option;
 	}
 
@@ -583,89 +509,89 @@ abstract class Core_Parametrization_Property extends DataModel_Related_1toN {
 
 
 
-	public function getLabel( string|null $shop_code=null ) : string
+	public function getLabel( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getLabel();
+		return $this->getShopData($shop)->getLabel();
 	}
 
-	public function getDescription( string|null $shop_code=null ) : string
+	public function getDescription( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getDescription();
+		return $this->getShopData($shop)->getDescription();
 	}
 
-	public function getBoolYesDescription( string|null $shop_code=null ) : string
+	public function getBoolYesDescription( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getBoolYesDescription();
+		return $this->getShopData($shop)->getBoolYesDescription();
 	}
 
-	public function getUrlParam( string|null $shop_code=null ) : string
+	public function getUrlParam( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getUrlParam();
+		return $this->getShopData($shop)->getUrlParam();
 	}
 
-	public function getUnits( string|null $shop_code=null ) : string
+	public function getUnits( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getUnits();
+		return $this->getShopData($shop)->getUnits();
 	}
 
-	public function getSeoH1( string|null $shop_code=null ) : string
+	public function getSeoH1( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getUnits();
+		return $this->getShopData($shop)->getUnits();
 	}
 
-	public function getSeoH1Strategy( string|null $shop_code=null ) : string
+	public function getSeoH1Strategy( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getSeoH1Strategy();
+		return $this->getShopData($shop)->getSeoH1Strategy();
 	}
 
-	public function getSeoTitle( string|null $shop_code=null ) : string
+	public function getSeoTitle( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getSeoTitle();
+		return $this->getShopData($shop)->getSeoTitle();
 	}
 
-	public function getSeoTitleStrategy( string|null $shop_code=null ) : string
+	public function getSeoTitleStrategy( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getSeoTitleStrategy();
+		return $this->getShopData($shop)->getSeoTitleStrategy();
 	}
 
-	public function getSeoDescription( string|null $shop_code=null ) : string
+	public function getSeoDescription( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getSeoDescription();
+		return $this->getShopData($shop)->getSeoDescription();
 	}
 
-	public function getSeoDescriptionStrategy( string|null $shop_code=null ) : string
+	public function getSeoDescriptionStrategy( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getSeoDescriptionStrategy();
+		return $this->getShopData($shop)->getSeoDescriptionStrategy();
 	}
 
-	public function getImageMain( string|null $shop_code=null ) : string
+	public function getImageMain( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getImageMain();
+		return $this->getShopData($shop)->getImageMain();
 	}
 
-	public function getImageMainUrl( string|null $shop_code=null ) : string
+	public function getImageMainUrl( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getImageMainUrl();
+		return $this->getShopData($shop)->getImageMainUrl();
 	}
 
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null  ) : string
+	public function getImageMainThumbnailUrl( int $max_w, int $max_h, ?Shops_Shop $shop=null   ) : string
 	{
-		return $this->getShopData($shop_code)->getImageMainThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData($shop)->getImageMainThumbnailUrl( $max_w, $max_h );
 	}
 
-	public function getImagePictogram( string|null $shop_code=null ) : string
+	public function getImagePictogram( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getImagePictogram();
+		return $this->getShopData($shop)->getImagePictogram();
 	}
 
-	public function getImagePictogramUrl( string|null $shop_code=null ) : string
+	public function getImagePictogramUrl( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData($shop_code)->getImagePictogramUrl();
+		return $this->getShopData($shop)->getImagePictogramUrl();
 	}
 
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null  ) : string
+	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, ?Shops_Shop $shop=null   ) : string
 	{
-		return $this->getShopData($shop_code)->getImagePictogramThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData($shop)->getImagePictogramThumbnailUrl( $max_w, $max_h );
 	}
 
 }

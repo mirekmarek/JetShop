@@ -2,13 +2,15 @@
 /**
  *
  * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetShop;
 
 use Jet\Autoloader_Loader;
 use Jet\Application_Modules;
+use Jet\SysConf_Jet_Modules;
 
 /**
  *
@@ -24,15 +26,15 @@ class Autoloader_ApplicationModules extends Autoloader_Loader
 	 *
 	 * @return bool|string
 	 */
-	public function getScriptPath( string $root_namespace, string $namespace, string $class_name ) : bool|string
+	public function getScriptPath( string $root_namespace, string $namespace, string $class_name ): bool|string
 	{
-		if( $root_namespace!=Application_Modules::getModuleRootNamespace() ) {
+		if( $root_namespace != SysConf_Jet_Modules::getModuleRootNamespace() ) {
 			return false;
 		}
 
-		$module_name = str_replace( '\\', '.', substr( $namespace, strlen($root_namespace)+1 ) );
+		$module_name = str_replace( '\\', '.', substr( $namespace, strlen( $root_namespace ) + 1 ) );
 
-		if( !Application_Modules::moduleIsActivated( $module_name) ) {
+		if( !Application_Modules::moduleIsActivated( $module_name ) ) {
 			return false;
 		}
 
@@ -40,10 +42,7 @@ class Autoloader_ApplicationModules extends Autoloader_Loader
 		$module_path = Application_Modules::getModuleDir( $module_name );
 
 		$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
-		$path = $module_path.$class_name.'.php';
-
-
-		return $path;
+		return $module_path . $class_name . '.php';
 
 	}
 }

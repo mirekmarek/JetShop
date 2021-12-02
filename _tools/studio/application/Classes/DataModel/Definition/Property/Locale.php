@@ -34,6 +34,14 @@ class DataModel_Definition_Property_Locale extends Jet_DataModel_Definition_Prop
 	}
 
 	/**
+	 * @return mixed
+	 */
+	public function getDefaultValue() : mixed
+	{
+		return null;
+	}
+
+	/**
 	 *
 	 * @param ClassCreator_Class $class
 	 *
@@ -46,10 +54,7 @@ class DataModel_Definition_Property_Locale extends Jet_DataModel_Definition_Prop
 			new ClassCreator_UseClass( 'Jet', 'Locale' )
 		);
 
-		$property = $this->createClassProperty_main( $class, 'Locale', 'DataModel::TYPE_LOCALE' );
-
-		return $property;
-
+		return $this->createClassProperty_main( $class, 'Locale', 'DataModel::TYPE_LOCALE' );
 	}
 
 	/**

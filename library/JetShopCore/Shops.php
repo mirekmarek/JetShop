@@ -2,27 +2,13 @@
 namespace JetShop;
 
 use Jet\Locale;
-use Jet\Config;
-use Jet\Config_Definition;
 use Jet\Data_Text;
-use Jet\Mvc_Site;
-use Jet\Mvc_Site_Interface;
+use Jet\MVC;
 
-#[Config_Definition(
-	name: 'shops'
-)]
-class Core_Shops extends Config {
+
+class Core_Shops {
 
 	protected static ?Shops_Shop $current_shop = null;
-
-	/**
-	 * @var Shops_Shop[]|null
-	 */
-	#[Config_Definition(
-		type : Config::TYPE_SECTIONS,
-		section_creator_method_name : '_shopConfigCreator'
-	)]
-	protected ?array $shops = null;
 
 	/**
 	 * @var Shops_Shop[]|null
@@ -35,34 +21,38 @@ class Core_Shops extends Config {
 		return static::$current_shop;
 	}
 
-	public static function getCurrentCode() : string
+
+	public static function getCurrentKey() : string
 	{
-		return static::$current_shop->getCode();
+		return static::$current_shop->getKey();
 	}
 
-	public static function setCurrent( string $shop_code, bool $init_system=false ) : void
+	public static function setCurrent( Shops_Shop $shop, bool $init_system=false ) : void
 	{
-		static::$current_shop = static::get($shop_code);
+		static::$current_shop = $shop;
 
+		/** @noinspection PhpStatementHasEmptyBodyInspection */
 		if($init_system) {
 			//TODO:
 		}
 	}
 
-	public static function exists( string $shop_code ) : bool
+	public static function exists( string $key ) : bool
 	{
-		return isset(static::getList()[$shop_code]);
+		return isset(static::getList()[$key]);
 	}
-	
-	public static function get( ?string $shop_code ) : Shops_Shop|null
-	{
 
-		if(!$shop_code) {
-			return static::$current_shop;
+	public static function get( string $key ) : Shops_Shop|null
+	{
+		foreach( static::getList() as $shop ) {
+			if($shop->getKey()==$key) {
+				return $shop;
+			}
 		}
 
-		return static::getList()[$shop_code];
+		return null;
 	}
+
 
 	/**
 	 * @return Shops_Shop[]
@@ -72,12 +62,13 @@ class Core_Shops extends Config {
 		if(static::$_list===null) {
 			static::$_list = [];
 
-			$i = new Shops();
-			foreach( $i->shops as $shop ) {
-				static::$_list[$shop->getCode()] = $shop;
+			foreach(MVC::getBases() as $base) {
+				foreach(Shops_Shop::init($base) as $key=>$shop) {
+					static::$_list[$key] = $shop;
+				}
 			}
 
-			//TODO: seradit - napr. vychozi v administraci
+			//TODO: sort - for administration etc.
 		}
 
 		return static::$_list;
@@ -87,33 +78,31 @@ class Core_Shops extends Config {
 	{
 		$res = [];
 
-		foreach(Shops::getList() as $shop) {
-			$res[$shop->getCode()] = $shop->getName();
+		foreach(Shops::getList() as $key=>$shop) {
+			$res[$key] = $shop->getShopName();
 		}
 
 		return $res;
 	}
-	
-	public function _shopConfigCreator( array $data ) : Shops_Shop
-	{
-		return new Shops_Shop( $data );
-	}
 
-	public static function determineBySite( Mvc_Site_Interface $site, Locale $locale ) : Shops_Shop|null
+	public static function determineByBase( string $base_id, Locale $locale ) : Shops_Shop|null
 	{
-		foreach( static::getList() as $shop ) {
+
+		foreach(static::getList() as $shop) {
 			if(
-				$shop->getSiteId()==$site->getId() &&
+				$shop->getBaseId()==$base_id &&
 				$shop->getLocale()->toString()==$locale->toString()
 			) {
-				static::setCurrent( $shop->getCode() );
+				static::setCurrent( $shop );
 
 				return $shop;
 			}
 		}
 
+
 		return null;
 	}
+
 
 	public static function determineByCliArg( array $argv ) : Shops_Shop|null
 	{
@@ -121,20 +110,20 @@ class Core_Shops extends Config {
 		 * @var Shops_Shop $shop
 		 */
 		$shop = null;
-		$id = isset($argv[0]) ? $argv[0] : '';
+		$key = $argv[0] ?? '';
 
 		foreach(static::getList() as $_sh) {
 			if(!$shop) {
 				$shop = $_sh;
 			}
 
-			if($_sh->getCode()==$id) {
+			if($_sh->getKey()==$key) {
 				$shop = $_sh;
 				break;
 			}
 		}
 
-		static::setCurrent( $shop->getCode() );
+		static::setCurrent( $shop );
 
 		return null;
 	}
@@ -145,7 +134,7 @@ class Core_Shops extends Config {
 	public static function getDefault() : Shops_Shop|null
 	{
 		foreach(static::getList() as $shop) {
-			if($shop->isDefault()) {
+			if($shop->getIsDefaultShop()) {
 				return $shop;
 			}
 		}
@@ -166,122 +155,108 @@ class Core_Shops extends Config {
 
 
 
-
-
-
-
-
-
-
-
-	public static function getName( string|null $shop_code=null ) : string
+	public static function getName( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getName();
+		return ($shop ?:static::$current_shop)->getShopName();
 	}
 
-	public static function getURL( string|null $shop_code=null, array $path_fragments = [], array $GET_params = [] ) : string
+	public static function getURL( ?Shops_Shop $shop = null, array $path_fragments = [], array $GET_params = [] ) : string
 	{
-		$shop = static::get( $shop_code );
+		$shop = ($shop ?:static::$current_shop);
 
-		$site = Mvc_Site::get( $shop->getSiteId() );
+		$base = MVC::getBase( $shop->getBaseId() );
 
-		return $site->getHomepage( $shop->getLocale() )->getURL( $path_fragments, $GET_params );
+		return $base->getHomepage( $shop->getLocale() )->getURL( $path_fragments, $GET_params );
 	}
 
-
-
-	public static function getCurrencyCode( string|null $shop_code=null ) : string
+	
+	public static function getCurrencySymbolLeft( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getCurrencyCode();
+		return ($shop ?:static::$current_shop)->getCurrencySymbolLeft();
 	}
 
-	public static function getCurrencySymbolLeft( string|null $shop_code=null ) : string
+	public static function getCurrencySymbolRight( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getCurrencySymbolLeft();
+		return ($shop ?:static::$current_shop)->getCurrencySymbolRight();
 	}
 
-	public static function getCurrencySymbolRight( string|null $shop_code=null ) : string
+	public static function getCurrencyWithVatTxt( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getCurrencySymbolRight();
+		return ($shop ?:static::$current_shop)->getCurrencyWithVatTxt();
 	}
 
-	public static function getCurrencyWithVatTxt( string|null $shop_code=null ) : string
+	public static function getCurrencyWoVatTxt( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getCurrencyWithVatTxt();
+		return ($shop ?:static::$current_shop)->getCurrencyWoVatTxt();
 	}
 
-	public static function getCurrencyWoVatTxt( string|null $shop_code=null ) : string
+	public static function getCurrencyDecimalSeparator( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getCurrencyWoVatTxt();
+		return ($shop ?:static::$current_shop)->getCurrencyDecimalSeparator();
 	}
 
-	public static function getCurrencyDecimalSeparator( string|null $shop_code=null ) : string
+	public static function getCurrencyThousandsSeparator( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getCurrencyDecimalSeparator();
+		return ($shop ?:static::$current_shop)->getCurrencyThousandsSeparator();
 	}
 
-	public static function getCurrencyThousandsSeparator( string|null $shop_code=null ) : string
+	public static function getCurrencyDecimalPlaces( ?Shops_Shop $shop = null ) : int
 	{
-		return static::get($shop_code)->getCurrencyThousandsSeparator();
+		return ($shop ?:static::$current_shop)->getCurrencyDecimalPlaces();
 	}
 
-	public static function getCurrencyDecimalPlaces( string|null $shop_code=null ) : int
+	public static function getVatRates( ?Shops_Shop $shop = null ) : array
 	{
-		return static::get($shop_code)->getCurrencyDecimalPlaces();
+		return ($shop ?:static::$current_shop)->getVatRates();
 	}
 
-	public static function getVatRates( string|null $shop_code=null ) : array
+	public static function getVatRatesScope( ?Shops_Shop $shop = null ) : array
 	{
-		return static::get($shop_code)->getVatRates();
+		return ($shop ?:static::$current_shop)->getVatRatesScope();
 	}
 
-	public static function getVatRatesScope( string|null $shop_code=null ) : array
+	public static function getDefaultVatRate( ?Shops_Shop $shop = null ) : int
 	{
-		return static::get($shop_code)->getVatRatesScope();
+		return ($shop ?:static::$current_shop)->getDefaultVatRate();
 	}
 
-	public static function getDefaultVatRate( string|null $shop_code=null ) : int
+	public static function getPhoneValidationRegExp( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getDefaultVatRate();
+		return ($shop ?:static::$current_shop)->getPhoneValidationRegExp();
 	}
 
-	public static function getPhoneValidationRegExp( string|null $shop_code=null ) : string
+	public static function getPhonePrefix( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getPhoneValidationRegExp();
+		return ($shop ?:static::$current_shop)->getPhonePrefix();
 	}
 
-	public static function getPhonePrefix( string|null $shop_code=null ) : string
+	public static function getRoundPrecision_WithoutVAT( ?Shops_Shop $shop = null) : int
 	{
-		return static::get($shop_code)->getPhonePrefix();
+		return ($shop ?:static::$current_shop)->getRoundPrecision_WithoutVAT();
 	}
 
-	public static function getRoundPrecision_WithoutVAT( string|null $shop_code=null ) : int
+	public static function getRoundPrecision_VAT( ?Shops_Shop $shop = null) : int
 	{
-		return static::get($shop_code)->getRoundPrecision_WithoutVAT();
+		return ($shop ?:static::$current_shop)->getRoundPrecision_VAT();
 	}
 
-	public static function getRoundPrecision_VAT( string|null $shop_code=null ) : int
+	public static function getRoundPrecision_WithVAT( ?Shops_Shop $shop = null) : int|bool
 	{
-		return static::get($shop_code)->getRoundPrecision_VAT();
+		return ($shop ?:static::$current_shop)->getRoundPrecision_WithVAT();
 	}
 
-	public static function getRoundPrecision_WithVAT( string|null $shop_code=null ) : int|bool
+	public static function getViewDir( ?Shops_Shop $shop = null ) : string
 	{
-		return static::get($shop_code)->getRoundPrecision_WithVAT();
-	}
-
-	public static function getViewDir() : string
-	{
-		return Mvc_Site::get(static::$current_shop->getSiteId())->getViewsPath();
+		return MVC::getBase(($shop ?:static::$current_shop)->getBaseId())->getViewsPath();
 	}
 
 
 
 
-	public static function generateURLPathPart( string $name, string $type='', int|null $id=null, string|null $shop_code=null ) : string
+	public static function generateURLPathPart( string $name, string $type='', int|null $id=null, ?Shops_Shop $shop=null ) : string
 	{
 
-		//TODO: jinam ...
+		//TODO: move somewhere else ...
 		$name = Data_Text::removeAccents( $name );
 
 		$name = strtolower($name);

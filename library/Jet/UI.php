@@ -16,41 +16,17 @@ class UI
 {
 
 	/**
-	 * @var ?string
-	 */
-	protected static ?string $views_dir = null;
-
-	/**
 	 * @var string
 	 */
-	protected static string $translator_namespace = Tr::COMMON_NAMESPACE;
+	protected static string $translator_namespace = Tr::COMMON_DICTIONARY;
 
 
 	/**
-	 * @return string
+	 * @return MVC_View
 	 */
-	public static function getViewsDir(): string
+	public static function getView(): MVC_View
 	{
-		if( !static::$views_dir ) {
-			static::$views_dir = Mvc::getCurrentSite()->getViewsPath() . 'UI/';
-		}
-		return static::$views_dir;
-	}
-
-	/**
-	 * @param string $views_dir
-	 */
-	public static function setViewsDir( string $views_dir ): void
-	{
-		static::$views_dir = $views_dir;
-	}
-
-	/**
-	 * @return Mvc_View
-	 */
-	public static function getView(): Mvc_View
-	{
-		return Mvc_Factory::getViewInstance( static::getViewsDir() );
+		return Factory_MVC::getViewInstance( SysConf_Jet_UI::getViewsDir() );
 	}
 
 

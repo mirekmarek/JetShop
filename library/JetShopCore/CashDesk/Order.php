@@ -2,7 +2,6 @@
 namespace JetShop;
 
 use Jet\Data_DateTime;
-use Jet\Http_Headers;
 use Jet\Http_Request;
 
 trait Core_CashDesk_Order {
@@ -22,7 +21,7 @@ trait Core_CashDesk_Order {
 
 		$order = new Order();
 
-		$order->setShopCode( $this->getShopCode() );
+		$order->setShop( $this->shop );
 		$order->setIpAddress( Http_Request::clientIP() );
 		$order->setDatePurchased( Data_DateTime::now() );
 		if($customer) {
@@ -78,12 +77,12 @@ trait Core_CashDesk_Order {
 		$payment_order_item = $payment_method->getOrderItem( $this );
 		if(($payment_option=$this->getSelectedPaymentMethodOption())) {
 			$payment_order_item->setSubCode($payment_option->getCode());
-			$payment_order_item->setDescription( $payment_option->getTitle($this->shop_code) );
+			$payment_order_item->setDescription( $payment_option->getTitle($this->shop) );
 		}
 
 		$order->addItem( $payment_order_item );
 
-		//TODO: vernostni sleva
+		//TODO: vip discounts
 		//TODO: services
 		//TODO: gifts
 
@@ -121,9 +120,6 @@ trait Core_CashDesk_Order {
 		$order->save();
 
 		foreach($this->getAgreeFlags() as $flag) {
-			/**
-			 * @var CashDesk_AgreeFlag $flag
-			 */
 			$flag->onOrderSave( $order );
 		}
 

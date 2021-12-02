@@ -11,9 +11,7 @@ use Jet\Mailing;
 abstract class Core_Order_Event_HandlerModule extends Application_Module
 {
 	protected Order_Event $event;
-
-	protected string $shop_code;
-
+	protected Shops_Shop $shop;
 	protected Order $order;
 
 	/**
@@ -26,19 +24,13 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 	{
 		$this->event = $event;
 		$order = $event->getOrder();
-
-		$this->shop_code = $order->getShopCode();
+		$this->shop = $order->getShop();
 		$this->order = $order;
 	}
 
 	public function getEvent(): Order_Event
 	{
 		return $this->event;
-	}
-
-	public function getShopCode(): string
-	{
-		return $this->shop_code;
 	}
 
 	public function getOrder(): Order
@@ -111,6 +103,7 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 
 	/**
 	 * @return Order_Notification_Email[]|Order_Notification_SMS[]
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	public function getNotifications() : array
 	{
@@ -133,13 +126,12 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 
 	protected function prepareEmail( string $kind ) : Order_Notification_Email
 	{
-		$shop_code = $this->event->getShopCode();
-		$shop = Shops::get($shop_code);
+		$shop = $this->event->getShop();
 
 		$email = new Order_Notification_Email();
 		$email->setViewRootDir( $this->getViewsDir().$kind.'/email/'.$shop->getLocale().'/' );
 		$email->setKind( $kind );
-		$email->setShopCode( $shop->getCode() );
+		$email->setShop( $shop );
 		$email->setCustomerId( $this->event->getOrder()->getCustomerId() );
 		$email->setOrderId( $this->event->getOrder()->getId() );
 		$email->setMailTo( $this->order->getEmail() );
@@ -148,7 +140,7 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 		$email->setViewData('event', $this);
 		$email->setViewData('order', $this->order);
 
-		$sender = Mailing::getConfig()->getSender( $shop->getLocale(), $shop->getSiteId(), '' );
+		$sender = Mailing::getConfig()->getSender( Mailing::DEFAULT_SENDER_ID );
 		$email->setSenderName( $sender->getName() );
 		$email->setSenderEmail( $sender->getEmail() );
 
@@ -157,13 +149,12 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 
 	protected function prepareSms( string $kind ) : Order_Notification_SMS
 	{
-		$shop_code = $this->event->getShopCode();
-		$shop = Shops::get($shop_code);
+		$shop = $this->event->getShop();
 
 		$SMS = new Order_Notification_SMS();
 		$SMS->setViewRootDir( $this->getViewsDir().$kind.'/SMS/'.$shop->getLocale().'/' );
 		$SMS->setKind($kind);
-		$SMS->setShopCode( $shop->getCode() );
+		$SMS->setShop( $shop );
 		$SMS->setCustomerId( $this->event->getOrder()->getCustomerId() );
 		$SMS->setOrderId( $this->event->getOrder()->getId() );
 		$SMS->setToNumber( $this->order->getPhone() );
@@ -180,6 +171,7 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 	/**
 	 *
 	 * @return Order_Notification_Email[]|Order_Notification_SMS[]
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	abstract public function generateNotifications() : array;
 

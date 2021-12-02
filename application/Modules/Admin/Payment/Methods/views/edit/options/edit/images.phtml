@@ -2,21 +2,20 @@
 namespace JetShopModule\Admin\Payment\Methods;
 
 
-use Jet\Tr;
 use JetShop\Payment_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Payment_Method_Option;
 use JetShop\Payment_Method_Option_ShopData;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Payment_Method     $payment_method
- * @var Payment_Method_Option    $new_option
+ * @var Payment_Method_Option    $option
  */
 
 $option = $this->getRaw('payment_method_option');
@@ -40,12 +39,8 @@ $image_classes = Payment_Method_Option_ShopData::getImageClasses();
 			<?=$this->getRaw('option_tabs')?>
 			<?php
 			foreach(Shops::getList() as $shop):
-				$shop_code = $shop->getCode();
-
-				echo $option->getShopData( $shop_code )->renderImageWidgets( $image_classes );
+				echo $option->getShopData( $shop )->renderImageWidgets( $image_classes, !$option->getEditForm()->getIsReadonly() );
 			endforeach;
-
 			?>
-
 		</div>
 	</div>

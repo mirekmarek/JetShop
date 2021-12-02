@@ -12,11 +12,14 @@ use Jet\Http_Request;
 use Jet\IO_File;
 use Jet\Locale;
 use Jet\Logger;
-use Jet\Mvc_Site;
-use Jet\Mvc_Page;
-use Jet\Mvc_View;
-use Jet\Mvc_Router;
+use Jet\MVC;
+use Jet\MVC_Base_Interface;
+use Jet\MVC_View;
+use Jet\MVC_Router;
 use Jet\Auth;
+use Jet\SysConf_Jet_ErrorPages;
+use Jet\SysConf_Jet_Form;
+use Jet\SysConf_Jet_UI;
 use Jet\Tr;
 use Jet\UI_messages;
 
@@ -28,32 +31,38 @@ class Application_Admin
 	/**
 	 * @return string
 	 */
-	public static function getSiteId() : string
+	public static function getBaseId() : string
 	{
 		return 'admin';
 	}
 
 	/**
-	 * @return Mvc_Site
+	 * @return MVC_Base_Interface
 	 */
-	public static function getSite() : Mvc_Site
+	public static function getBase() : MVC_Base_Interface
 	{
-		return Mvc_Site::get( static::getSiteId() );
+		return MVC::getBase( static::getBaseId() );
 	}
 
 	/**
-	 * @param Mvc_Router $router
+	 * @param MVC_Router $router
 	 */
-	public static function init( Mvc_Router $router ) : void
+	public static function init( MVC_Router $router ) : void
 	{
 		Application::initErrorPages( $router );
 		Logger::setLogger( new Logger_Admin() );
 		Auth::setController( new Auth_Controller_Admin() );
 
-		//TOOD: vyber vychoziho shopu ...
-		//TODO: serazeni shopu ...
+		//TODO: select default shop ...
+		//TODO: sort shops ...
 
-		Shops::setCurrent( Shops::getDefault()->getCode() );
+		$default_shop = Shops::getDefault();
+		Shops::setCurrent( $default_shop );
+
+		SysConf_Jet_UI::setViewsDir( $router->getBase()->getViewsPath() . 'ui/' );
+		SysConf_Jet_Form::setDefaultViewsDir( $router->getBase()->getViewsPath() . 'form/' );
+		SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
+
 
 	}
 
@@ -66,7 +75,7 @@ class Application_Admin
 	public static function requireDialog( string $dialog_id, array $options=[] ) : null|string
 	{
 
-		$page = Mvc_Page::get('dialog-'.$dialog_id);
+		$page = MVC::getPage('dialog-'.$dialog_id);
 
 		if(
 			!$page ||
@@ -83,7 +92,7 @@ class Application_Admin
 			return null;
 		}
 
-		$view = new Mvc_View( $module->getViewsDir().'admin/dialog-hooks/' );
+		$view = new MVC_View( $module->getViewsDir().'admin/dialog-hooks/' );
 		foreach( $options as $k=>$v ) {
 			$view->setVar( $k, $v );
 		}
@@ -103,7 +112,7 @@ class Application_Admin
 			$error_message = UI_messages::createDanger( Tr::_($error_message, [
 				'max_upload_size' => Locale::getCurrentLocale()->formatSize(IO_File::getMaxUploadSize()),
 				'max_file_uploads' => Locale::getCurrentLocale()->formatInt(IO_File::getMaxFileUploads())
-			], Tr::COMMON_NAMESPACE) )->toString();
+			], Tr::COMMON_DICTIONARY) )->toString();
 
 			AJAX::formResponse(false, [
 				'system-messages-area' => $error_message

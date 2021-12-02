@@ -25,7 +25,14 @@ class DataModel_Definition_Property_Bool extends Jet_DataModel_Definition_Proper
 	 */
 	public function showEditFormFields(): void
 	{
+	}
 
+	/**
+	 * @return bool
+	 */
+	public function getDefaultValue() : bool
+	{
+		return false;
 	}
 
 	/**
@@ -37,9 +44,7 @@ class DataModel_Definition_Property_Bool extends Jet_DataModel_Definition_Proper
 	public function createClassProperty( ClassCreator_Class $class ): ClassCreator_Class_Property
 	{
 
-		$property = $this->createClassProperty_main( $class, 'bool', 'DataModel::TYPE_BOOL' );
-
-		return $property;
+		return $this->createClassProperty_main( $class, 'bool', 'DataModel::TYPE_BOOL' );
 
 	}
 

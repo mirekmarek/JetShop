@@ -17,46 +17,6 @@ class Form_Field_File extends Form_Field
 	const ERROR_CODE_FILE_IS_TOO_LARGE = 'file_is_too_large';
 	const ERROR_CODE_DISALLOWED_FILE_TYPE = 'disallowed_file_type';
 
-	/**
-	 * @var string
-	 */
-	protected static string $default_renderer_script = 'field';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_start_renderer_script = 'Field/row/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_end_renderer_script = 'Field/row/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_start_renderer_script = 'Field/input/container/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_end_renderer_script = 'Field/input/container/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_error_renderer = 'Field/error';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_label_renderer = 'Field/label';
-
-	/**
-	 * @var string string
-	 */
-	protected static string $default_input_renderer = 'Field/input/File';
-
 
 	/**
 	 * @var string
@@ -401,9 +361,7 @@ class Form_Field_File extends Form_Field
 		};
 
 		if( !is_array( $this->_value ) ) {
-			if(
-			!$check_file_size( $this->_value, $this->file_name )
-			) {
+			if( !$check_file_size( $this->_value, $this->file_name ) ) {
 				$this->setError( self::ERROR_CODE_FILE_IS_TOO_LARGE );
 
 				return false;
@@ -494,7 +452,7 @@ class Form_Field_File extends Form_Field
 	{
 		$name = parent::getTagNameValue( $name );
 
-		if( substr( $name, -1 ) != ']' ) {
+		if( !str_ends_with( $name, ']' ) ) {
 			$name .= '[]';
 		}
 

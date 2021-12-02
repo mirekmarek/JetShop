@@ -22,13 +22,12 @@ use Jet\Form_Field_Select;
 	name: 'role_privilege',
 	database_table_name: 'roles_rest_clients_privileges',
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: ['id_property_name'=>'id'],
+	id_controller_options: ['id_property_name' => 'id'],
 	parent_model_class: Auth_RESTClient_Role::class
 )]
 class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements Auth_Role_Privilege_Interface
 {
-	/**
-	 */
+
 	#[DataModel_Definition(
 		related_to: 'main.id',
 		form_field_type: false
@@ -73,7 +72,7 @@ class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements A
 	 * @param string $privilege
 	 * @param array $values
 	 */
-	public function __construct( $privilege = '', array $values = [] )
+	public function __construct( string $privilege = '', array $values = [] )
 	{
 
 		if( $privilege ) {
@@ -87,7 +86,7 @@ class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements A
 	/**
 	 * @return string
 	 */
-	public function getPrivilege() : string
+	public function getPrivilege(): string
 	{
 		return $this->privilege;
 	}
@@ -95,7 +94,7 @@ class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements A
 	/**
 	 * @param string $privilege
 	 */
-	public function setPrivilege( string $privilege ) : void
+	public function setPrivilege( string $privilege ): void
 	{
 		$this->privilege = $privilege;
 	}
@@ -105,7 +104,7 @@ class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements A
 	 *
 	 * @return bool
 	 */
-	public function hasValue( mixed $value ) : bool
+	public function hasValue( mixed $value ): bool
 	{
 		if( is_array( $value ) ) {
 			foreach( $value as $v ) {
@@ -123,7 +122,7 @@ class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements A
 	/**
 	 * @return array
 	 */
-	public function getValues() : array
+	public function getValues(): array
 	{
 		return $this->values;
 	}
@@ -131,16 +130,16 @@ class Auth_RESTClient_Role_Privilege extends DataModel_Related_1toN implements A
 	/**
 	 * @param array $values
 	 */
-	public function setValues( array $values ) : void
+	public function setValues( array $values ): void
 	{
 		$this->values = $values;
 	}
 
 	/**
 	 *
-	 * @return null|string|int
+	 * @return string
 	 */
-	public function getArrayKeyValue(): null|string|int
+	public function getArrayKeyValue(): string
 	{
 		return $this->privilege;
 	}

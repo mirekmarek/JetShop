@@ -2,7 +2,8 @@
 namespace JetShop;
 
 use Jet\Db;
-use Jet\Mvc_Page;
+use Jet\MVC;
+use Jet\MVC_Page_Interface;
 
 abstract class Core_ShoppingCart
 {
@@ -10,7 +11,7 @@ abstract class Core_ShoppingCart
 
 	protected string $id = '';
 
-	protected string $shop_code = '';
+	protected ?Shops_Shop $shop = null;
 
 	/**
 	 * @var ShoppingCart_Item[]
@@ -39,11 +40,11 @@ abstract class Core_ShoppingCart
 		static::$cart_page_id = $cart_page_id;
 	}
 
-	public static function getCartPage(): Mvc_Page
+	public static function getCartPage(): MVC_Page_Interface
 	{
 		$shop = Shops::getCurrent();
 
-		return Mvc_Page::get(ShoppingCart::getCartPageId(), $shop->getLocale(), $shop->getSiteId());
+		return MVC::getPage(ShoppingCart::getCartPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
 
 	public static function getCartPageURL(): string
@@ -59,9 +60,9 @@ abstract class Core_ShoppingCart
 				$_COOKIE['cart_id'] = uniqid().uniqid().uniqid();
 			}
 
-			static::$cart = new ShoppingCart( Shops::getCurrentCode() );
+			static::$cart = new ShoppingCart( Shops::getCurrent() );
 			static::$cart->setId( $_COOKIE['cart_id'] );
-			static::$cart->setShopCode( Shops::getCurrentCode() );
+			static::$cart->setShop( Shops::getCurrent() );
 		}
 
 		return static::$cart;
@@ -87,9 +88,9 @@ abstract class Core_ShoppingCart
 		self::$default_database_table_name = $default_database_table_name;
 	}
 
-	public function __construct( string $shop_code )
+	public function __construct( Shops_Shop $shop )
 	{
-		$this->shop_code = $shop_code;
+		$this->shop = $shop;
 
 		$this->cart_db_connection = static::$default_cart_db_connection;
 		$this->database_table_name = static::$default_database_table_name;
@@ -116,14 +117,14 @@ abstract class Core_ShoppingCart
 		$this->database_table_name = $database_table_name;
 	}
 
-	public function getShopCode() : string
+	public function getShop() : Shops_Shop
 	{
-		return $this->shop_code;
+		return $this->shop;
 	}
 
-	public function setShopCode( string $shop_code ): void
+	public function setShop( Shops_Shop $shop ): void
 	{
-		$this->shop_code = $shop_code;
+		$this->shop = $shop;
 	}
 
 	public function getId() : string
@@ -155,7 +156,8 @@ abstract class Core_ShoppingCart
 		 */
 		$cart = $this;
 
-		$items = Db::get( $this->cart_db_connection )->fetchOne("SELECT items FROM ".$this->database_table_name." WHERE id='".addslashes($this->id)."' and shop_code='{$this->shop_code}'");
+		//TODO: SQL ...
+		$items = Db::get( $this->cart_db_connection )->fetchOne("SELECT items FROM ".$this->database_table_name." WHERE id='".addslashes($this->id)."' and shop_code='{$this->shop->getShopCode()}'");
 
 		if(!$items) {
 			return;
@@ -206,9 +208,10 @@ abstract class Core_ShoppingCart
 		$items = addslashes(serialize($this->items));
 		$count = count($this->items);
 
+		//TODO: SQL ...
 		Db::get( $this->cart_db_connection )->execute("INSERT INTO ".$this->database_table_name." SET
                         id='{$this->id}',
-                        shop_code='{$this->shop_code}',
+                        shop_code='{$this->shop->getShopCode()}',
                         last_activity_date_time=now(),
                         items='{$items}',
                         items_count={$count}
@@ -222,8 +225,6 @@ abstract class Core_ShoppingCart
 
 	public function getItemQuantity( int $product_id ) : int
 	{
-
-		$product_id = (int)$product_id;
 
 		if( isset($this->items[$product_id] )) {
 			return $this->items[$product_id]->getQuantity();
@@ -294,8 +295,6 @@ abstract class Core_ShoppingCart
 
 	public function setQuantity( int $product_id, int $quantity, string &$error_message='' ) : bool
 	{
-		$product_id = (int)$product_id;
-		$quantity = (int)$quantity;
 
 		if(!isset($this->items[$product_id])) {
 			return false;
@@ -322,11 +321,8 @@ abstract class Core_ShoppingCart
 	public function addItem( int $product_id, int $quantity, string &$error_message='' ) : bool|shoppingCart_item
 	{
 
-		$product_id = (int)$product_id;
-		$quantity = (int)$quantity;
-
 		$item = new ShoppingCart_Item( $product_id, $quantity );
-		/** @noinspection PhpParamsInspection */
+
 		$item->setCart( $this );
 
 
@@ -388,10 +384,11 @@ abstract class Core_ShoppingCart
 		$items = [];
 		foreach( $this->getItems() as $cart_item ) {
 
-			$product_sq = $cart_item->getProduct()->getStockStatus( $this->shop_code );
+			$product_sq = $cart_item->getProduct()->getStockStatus( $this->shop );
 			$cart_q = $cart_item->getQuantity();
 
 
+			/** @noinspection PhpIfWithCommonPartsInspection */
 			if(
 				$cart_q>$product_sq &&
 				$product_sq>0

@@ -4,17 +4,17 @@ namespace JetShop;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  */
 
 $cash_desk = CashDesk::get();
 
 $delivery_method = $cash_desk->getSelectedDeliveryMethod();
 
-$dm_shd = $delivery_method->getShopData($cash_desk->getShopCode());
+$dm_shd = $delivery_method->getShopData($cash_desk->getShop());
 
 $this->setVar('delivery_method', $delivery_method);
 ?>

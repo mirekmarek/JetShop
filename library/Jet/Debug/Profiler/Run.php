@@ -66,7 +66,7 @@ class Debug_Profiler_Run
 	{
 
 		if( php_sapi_name() == 'cli' ) {
-			$this->request_URL = isset( $_SERVER['SCRIPT_FILENAME'] ) ? $_SERVER['SCRIPT_FILENAME'] : 'CLI';
+			$this->request_URL = $_SERVER['SCRIPT_FILENAME'] ?? 'CLI';
 		} else {
 			if(
 				!isset( $_SERVER['HTTP_HOST'] ) ||
@@ -204,7 +204,7 @@ class Debug_Profiler_Run
 	}
 
 	/**
-	 * @param string $label (Does nothing. Only for best practises and clarity of source code)
+	 * @param string $label
 	 */
 	public function blockEnd( string $label ): void
 	{
@@ -316,12 +316,46 @@ class Debug_Profiler_Run
 	{
 		$vars = get_object_vars( $this );
 		foreach( $vars as $k => $v ) {
-			if( substr( $k, 0, 2 ) === '__' ) {
+			if( str_starts_with( $k, '__' ) ) {
 				unset( $vars[$k] );
 			}
 		}
 
 		return array_keys( $vars );
+	}
+
+	/**
+	 *
+	 * @param int $shift (optional, default: 0)
+	 *
+	 * @return array
+	 */
+	public static function getBacktrace( int $shift = 0 ): array
+	{
+		$_backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+
+		if( $shift ) {
+			for( $c = 0; $c < $shift; $c++ ) {
+				array_shift( $_backtrace );
+			}
+		}
+
+		$backtrace = [];
+
+		foreach( $_backtrace as $bt ) {
+			if( !isset( $bt['file'] ) ) {
+				$backtrace[] = '?';
+			} else {
+				$file = $bt['file'];
+
+				$file = '~/'.substr($file, strlen(SysConf_Path::getBase()));
+
+				$backtrace[] = $file . ':' . $bt['line'];
+			}
+		}
+
+		return $backtrace;
+
 	}
 
 }

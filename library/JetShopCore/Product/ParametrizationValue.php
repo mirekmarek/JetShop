@@ -25,8 +25,6 @@ abstract class Core_Product_ParametrizationValue extends DataModel_Related_1toN
 	)]
 	protected int $product_id = 0;
 
-	protected Product|null $product = null;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_id: true,
@@ -49,14 +47,6 @@ abstract class Core_Product_ParametrizationValue extends DataModel_Related_1toN
 	protected bool $information_is_not_available = false;
 
 
-	/**
-	 * @param Product $product
-	 */
-	public function setParents( Product $product )
-	{
-		$this->product = $product;
-		$this->product_id = $product->getId();
-	}
 
 	/**
 	 * @param Parametrization_Property $property
@@ -67,7 +57,7 @@ abstract class Core_Product_ParametrizationValue extends DataModel_Related_1toN
 		$this->property_id = $property->getId();
 	}
 
-	public function getArrayKeyValue() : int
+	public function getArrayKeyValue() : string
 	{
 		return $this->property_id;
 	}
@@ -114,7 +104,6 @@ abstract class Core_Product_ParametrizationValue extends DataModel_Related_1toN
 
 	public function getValueEditForm() : Form
 	{
-		/** @noinspection PhpParamsInspection */
 		return $this->property->getValueInstance()->getValueEditForm( $this );
 	}
 

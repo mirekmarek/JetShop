@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Session;
 
 trait Core_CashDesk_Delivery {
 
@@ -85,7 +84,7 @@ trait Core_CashDesk_Delivery {
 
 			foreach($delivery_classes as $class ) {
 				foreach($class->getDeliveryMethods() as $method) {
-					if(!$method->getShopData($this->shop_code)->isActive()) {
+					if(!$method->getShopData($this->shop)->isActive()) {
 						continue;
 					}
 
@@ -151,9 +150,6 @@ trait Core_CashDesk_Delivery {
 
 	public function getSelectedDeliveryMethod() : Delivery_Method
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$methods = $this->getAvailableDeliveryMethods();
@@ -174,7 +170,7 @@ trait Core_CashDesk_Delivery {
 		if(
 			$method->isPersonalTakeover() &&
 			!$method->getPersonalTakeoverPlace(
-				$this->shop_code,
+				$this->shop,
 				$session->getValue('selected_personal_takeover_place_code', '')
 			)
 		) {
@@ -189,9 +185,6 @@ trait Core_CashDesk_Delivery {
 
 	public function selectDeliveryMethod( string $code ) : bool
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$methods = $this->getAvailableDeliveryMethods();
@@ -210,7 +203,7 @@ trait Core_CashDesk_Delivery {
 	public function selectPersonalTakeoverPlace( string $method_code, string $place_code ) : bool
 	{
 
-		$place = Delivery_PersonalTakeover_Place::getPlace( $this->shop_code, $method_code, $place_code );
+		$place = Delivery_PersonalTakeover_Place::getPlace( $this->shop, $method_code, $place_code );
 
 		if(
 			!$place ||
@@ -219,9 +212,6 @@ trait Core_CashDesk_Delivery {
 			return false;
 		}
 
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$methods = $this->getAvailableDeliveryMethods();
@@ -231,7 +221,7 @@ trait Core_CashDesk_Delivery {
 
 		$method = $methods[$method_code];
 
-		if( !$method->hasPersonalTakeoverPlace( $this->shop_code, $place_code ) ) {
+		if( !$method->hasPersonalTakeoverPlace( $this->shop, $place_code ) ) {
 			return false;
 		}
 
@@ -243,9 +233,6 @@ trait Core_CashDesk_Delivery {
 
 	public function getSelectedPersonalTakeoverPlace() : ?Delivery_PersonalTakeover_Place
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 		$method = $this->getSelectedDeliveryMethod();
 
@@ -255,6 +242,6 @@ trait Core_CashDesk_Delivery {
 			return null;
 		}
 
-		return $method->getPersonalTakeoverPlace( $this->shop_code, $place_code );
+		return $method->getPersonalTakeoverPlace( $this->shop, $place_code );
 	}
 }

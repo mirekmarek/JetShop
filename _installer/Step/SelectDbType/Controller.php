@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Exception;
 use Jet\Form;
@@ -35,7 +35,7 @@ class Installer_Step_SelectDbType_Controller extends Installer_Step_Controller
 	 */
 	public function getIsAvailable(): bool
 	{
-		return !Installer_Step_CreateSite_Controller::sitesCreated();
+		return !Installer_Step_CreateBases_Controller::basesCreated();
 	}
 
 	/**
@@ -87,7 +87,7 @@ class Installer_Step_SelectDbType_Controller extends Installer_Step_Controller
 				$db_config->saveConfigFile();
 				$data_model_config->saveConfigFile();
 			} catch( Exception $e ) {
-				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_NAMESPACE ) );
+				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_DICTIONARY ) );
 				Http_Headers::reload();
 			}
 

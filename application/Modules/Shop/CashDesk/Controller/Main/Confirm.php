@@ -40,10 +40,6 @@ trait Controller_Main_Confirm {
 
 	public function confirm_toggle_agree_flag_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
-
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 		$GET = Http_Request::GET();
@@ -66,10 +62,6 @@ trait Controller_Main_Confirm {
 
 	public function confirm_save_special_requirements_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
-
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -84,10 +76,6 @@ trait Controller_Main_Confirm {
 
 	public function confirm_send_Action() : void
 	{
-
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();

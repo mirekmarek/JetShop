@@ -25,8 +25,6 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 	)]
 	protected int $product_id = 0;
 
-	protected Product|null $product = null;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_id: true,
@@ -36,15 +34,9 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 
 	protected Category|null $category = null;
 
-	public function getArrayKeyValue() : int|string|null
+	public function getArrayKeyValue() : string
 	{
 		return $this->category_id;
-	}
-
-	public function setParents( Product $product ) : void
-	{
-		$this->product = $product;
-		$this->product_id = $product->getId();
 	}
 
 	public function getProductId() : int

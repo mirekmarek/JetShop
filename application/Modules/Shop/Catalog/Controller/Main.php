@@ -7,33 +7,33 @@
  */
 namespace JetShopModule\Shop\Catalog;
 
-use Jet\Mvc;
-use Jet\Mvc_Controller_Default;
-use Jet\Mvc_Controller_Router;
-use Jet\Mvc_Layout;
+use Jet\MVC;
+use Jet\MVC_Controller_Default;
+use Jet\MVC_Controller_Router;
+use Jet\MVC_Layout;
 use Jet\Tr;
 
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	use Controller_Main_Category;
 	use Controller_Main_Product;
 
-	protected ?Mvc_Controller_Router $router = null;
+	protected ?MVC_Controller_Router $router = null;
 
 
-	public function getControllerRouter() : Mvc_Controller_Router
+	public function getControllerRouter() : MVC_Controller_Router
 	{
 
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router( $this );
+			$this->router = new MVC_Controller_Router( $this );
 
 			//$this->router->setDefaultAction('homepage');
 
-			$main_router = Mvc::getRouter();
+			$main_router = MVC::getRouter();
 			$path = $main_router->getUrlPath();
 
 			if($path) {
@@ -72,9 +72,9 @@ class Controller_Main extends Mvc_Controller_Default
 	 */
 	public function homepage_Action() : void
 	{
-		Tr::setCurrentNamespace('homepage');
+		Tr::setCurrentDictionary('homepage');
 
-		Mvc_Layout::getCurrentLayout()->setScriptName('homepage');
+		MVC_Layout::getCurrentLayout()->setScriptName('homepage');
 
 		$this->output('homepage');
 	}

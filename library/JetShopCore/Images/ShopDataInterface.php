@@ -11,8 +11,6 @@ interface Core_Images_ShopDataInterface {
 
 	public static function getImageClasses() : array;
 
-	public function getPossibleToEditImages() : bool;
-
 	public function getImage( string $image_class ) : string;
 
 	public function setImage( string $image_class, string $path ) : void;
@@ -33,14 +31,17 @@ interface Core_Images_ShopDataInterface {
 
 	public static function renderImageWidget_container_end() : string;
 
-	public function renderImageWidget( string $image_class, string $title ) : string;
+	public function renderImageWidget( string $image_class, string $title, bool $editable ) : string;
 
-	public function renderImageWidget_Image( string $image_class ) : string;
+	public function renderImageWidget_Image( string $image_class, bool $editable ) : string;
 
 	public function catchImageWidget(
-		string $image_class,
-		callable $onUpload,
-		callable $onDelete
+		Shops_Shop $shop,
+		string $entity_name,
+		string $object_id,
+		string $object_name,
+		string $upload_event,
+		string $delete_event
 	) : void;
 
 }

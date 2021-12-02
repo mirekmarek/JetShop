@@ -68,12 +68,12 @@ class Navigation_Menu_Item extends BaseObject
 	/**
 	 * @var string
 	 */
-	protected string $site_id = '';
+	protected string $base_id = '';
 
 	/**
-	 * @var string
+	 * @var ?Locale
 	 */
-	protected string $locale = '';
+	protected ?Locale $locale = null;
 
 	/**
 	 * @var array
@@ -300,32 +300,36 @@ class Navigation_Menu_Item extends BaseObject
 	/**
 	 * @return string
 	 */
-	public function getSiteId(): string
+	public function getBaseId(): string
 	{
-		return $this->site_id;
+		return $this->base_id;
 	}
 
 	/**
-	 * @param string $site_id
+	 * @param string $base_id
 	 */
-	public function setSiteId( string $site_id ): void
+	public function setBaseId( string $base_id ): void
 	{
-		$this->site_id = $site_id;
+		$this->base_id = $base_id;
 	}
 
 	/**
-	 * @return string
+	 * @return ?Locale
 	 */
-	public function getLocale(): string
+	public function getLocale(): ?Locale
 	{
 		return $this->locale;
 	}
 
 	/**
-	 * @param string $locale
+	 * @param Locale|string $locale
 	 */
-	public function setLocale( string $locale ): void
+	public function setLocale( Locale|string $locale ): void
 	{
+		if(!$locale instanceof Locale) {
+			$locale = new Locale($locale);
+		}
+
 		$this->locale = $locale;
 	}
 
@@ -406,16 +410,11 @@ class Navigation_Menu_Item extends BaseObject
 	}
 
 	/**
-	 * @return Mvc_Page_Interface|null
+	 * @return MVC_Page_Interface|null
 	 */
-	public function getTargetPage(): Mvc_Page_Interface|null
+	public function getTargetPage(): MVC_Page_Interface|null
 	{
-		/**
-		 * @var Mvc_Page $page_class
-		 */
-		$page_class = Mvc_Factory::getPageClassName();
-
-		return $page_class::get( $this->page_id, $this->locale, $this->site_id );
+		return MVC::getPage( $this->page_id, $this->locale, $this->base_id );
 	}
 
 }

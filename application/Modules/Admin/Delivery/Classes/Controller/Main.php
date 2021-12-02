@@ -7,11 +7,12 @@
  */
 namespace JetShopModule\Admin\Delivery\Classes;
 
+use Jet\Logger;
 use JetShop\Delivery_Class;
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
@@ -22,13 +23,13 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
-	 * @var ?Mvc_Controller_Router_AddEditDelete
+	 * @var ?MVC_Controller_Router_AddEditDelete
 	 */
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	/**
 	 * @var ?Delivery_Class
@@ -37,12 +38,12 @@ class Controller_Main extends Mvc_Controller_Default
 
 	/**
 	 *
-	 * @return Mvc_Controller_Router_AddEditDelete
+	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->delivery_class = Delivery_Class::get($id));
@@ -103,7 +104,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $delivery_class->catchAddForm() ) {
 			$delivery_class->save();
 
-			$this->logAllowedAction( 'Delivery Class created', $delivery_class->getCode(), $delivery_class->getInternalName(), $delivery_class );
+			Logger::success(
+				'delivery_class_created',
+				'Delivery class '.$delivery_class->getInternalName().' ('.$delivery_class->getCode().') created',
+				$delivery_class->getCode(),
+				$delivery_class->getInternalName(),
+				$delivery_class
+			);
 
 			UI_messages::success(
 				Tr::_( 'Delivery Class <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $delivery_class->getInternalName() ] )
@@ -133,7 +140,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $delivery_class->catchEditForm() ) {
 
 			$delivery_class->save();
-			$this->logAllowedAction( 'Delivery Class updated', $delivery_class->getCode(), $delivery_class->getInternalName(), $delivery_class );
+			Logger::success(
+				'delivery_class_updated',
+				'Delivery class '.$delivery_class->getInternalName().' ('.$delivery_class->getCode().') updated',
+				$delivery_class->getCode(),
+				$delivery_class->getInternalName(),
+				$delivery_class
+			);
 
 			UI_messages::success(
 				Tr::_( 'Delivery Class <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $delivery_class->getInternalName() ] )
@@ -184,7 +197,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$delivery_class->delete();
-			$this->logAllowedAction( 'Delivery Class deleted', $delivery_class->getCode(), $delivery_class->getInternalName(), $delivery_class );
+			Logger::success(
+				'delivery_class_deleted',
+				'Delivery class '.$delivery_class->getInternalName().' ('.$delivery_class->getCode().') deleted',
+				$delivery_class->getCode(),
+				$delivery_class->getInternalName(),
+				$delivery_class
+			);
 
 			UI_messages::info(
 				Tr::_( 'Delivery Class <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $delivery_class->getInternalName() ] )

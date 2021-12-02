@@ -34,6 +34,14 @@ class DataModel_Definition_Property_DateTime extends Jet_DataModel_Definition_Pr
 
 	}
 
+	/**
+	 * @return mixed
+	 */
+	public function getDefaultValue() : mixed
+	{
+		return null;
+	}
+
 
 	/**
 	 *
@@ -47,9 +55,7 @@ class DataModel_Definition_Property_DateTime extends Jet_DataModel_Definition_Pr
 			new ClassCreator_UseClass( 'Jet', 'Data_DateTime' )
 		);
 
-		$property = $this->createClassProperty_main( $class, 'Data_DateTime', 'DataModel::TYPE_DATE_TIME' );
-
-		return $property;
+		return $this->createClassProperty_main( $class, 'Data_DateTime', 'DataModel::TYPE_DATE_TIME' );
 	}
 
 	/**

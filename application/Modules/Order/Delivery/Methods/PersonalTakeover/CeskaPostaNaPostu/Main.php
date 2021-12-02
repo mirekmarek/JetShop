@@ -10,7 +10,7 @@ namespace JetShopModule\Order\Delivery\Methods\PersonalTakeover\CeskaPostaNaPost
 use JetShop\Delivery_Method_Module_PersonalTakeover;
 use JetShop\Delivery_PersonalTakeover_Place;
 use JetShop\Shops_Shop;
-use \SimpleXMLElement;
+use SimpleXMLElement;
 
 /**
  *
@@ -44,7 +44,8 @@ class Main extends Delivery_Method_Module_PersonalTakeover
 
 			$place = new Delivery_PersonalTakeover_Place();
 
-			$place->setShopCode( $shop->getCode() );
+			$place->setShop( $shop );
+
 			$place->setPlaceCode( (string)$item->PSC );
 			$place->setMethodCode( static::$method_code );
 
@@ -65,7 +66,7 @@ class Main extends Delivery_Method_Module_PersonalTakeover
 				foreach( $oph_item->den as $oph_day ) {
 
 					$day = '';
-					foreach( $oph_day->attributes() as $k=>$v ) {
+					foreach( $oph_day->attributes() as $v ) {
 						$day = (string)$v;
 					}
 

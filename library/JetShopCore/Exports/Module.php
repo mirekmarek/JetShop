@@ -6,7 +6,7 @@
 namespace JetShop;
 
 use Jet\Application_Module;
-use Jet\Mvc_Page_Content;
+use Jet\MVC_Page_Content;
 
 abstract class Core_Exports_Module extends Application_Module
 {
@@ -30,7 +30,7 @@ abstract class Core_Exports_Module extends Application_Module
 
 	public function handleCategorySettings( Category $category, Shops_Shop $shop ): string
 	{
-		$content = new class extends Mvc_Page_Content {
+		$content = new class extends MVC_Page_Content {
 			public function output( string $output ): void
 			{
 				$this->output = $output;
@@ -53,10 +53,14 @@ abstract class Core_Exports_Module extends Application_Module
 		return $content->getOutput();
 	}
 
-	abstract public function handleProductSettings( Product $product, Shops_Shop $shop ) : string;
+	public function handleProductSettings( Product $product, Shops_Shop $shop ): string
+	{
+		// TODO: Implement handleProductSettings() method.
+		return '';
+	}
 
 	abstract public function actualizeMetadata( Shops_Shop $shop ) : void;
 
-	abstract public function generateExports() : void;
+	abstract public function generateExports( Shops_Shop $shop ) : void;
 
 }

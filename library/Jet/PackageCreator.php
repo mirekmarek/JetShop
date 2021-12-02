@@ -15,81 +15,46 @@ abstract class PackageCreator extends BaseObject
 {
 
 	/**
-	 * @var string
-	 */
-	protected static string $CSS_class_name = PackageCreator_CSS_Default::class;
-
-	/**
-	 * @var string
-	 */
-	protected static string $JavaScript_class_name = PackageCreator_JavaScript_Default::class;
-
-	/**
-	 * @var Locale|null
-	 */
-	protected Locale|null $locale = null;
-
-	/**
 	 * @var array
 	 */
 	protected array $URIs = [];
 
 	/**
-	 * @return string
+	 * @var string|null
 	 */
-	public static function getCSSClassName() : string
-	{
-		return static::$CSS_class_name;
-	}
-
-	/**
-	 * @param string $CSS_class_name
-	 */
-	public static function setCSSClassName( string $CSS_class_name ): void
-	{
-		static::$CSS_class_name = $CSS_class_name;
-	}
-
-
-	/**
-	 * @param string $media
-	 * @param array $URIs
-	 *
-	 * @return PackageCreator_CSS
-	 */
-	public static function CSS( string $media, array $URIs ): PackageCreator_CSS
-	{
-		$class_name = static::getCSSClassName();
-		return new $class_name( $media, $URIs );
-	}
+	protected string|null $key = null;
 
 	/**
 	 * @return string
 	 */
-	public static function getJavaScriptClassName(): string
-	{
-		return static::$JavaScript_class_name;
-	}
+	abstract public function getPackagePath(): string;
 
 	/**
-	 * @param string $JavaScript_class_name
+	 * @return string
 	 */
-	public static function setJavaScriptClassName( string $JavaScript_class_name ): void
-	{
-		static::$JavaScript_class_name = $JavaScript_class_name;
-	}
+	abstract public function getPackageURI(): string;
 
 
 	/**
-	 * @param array $URIs
 	 *
-	 * @return PackageCreator_JavaScript
 	 */
-	public static function JavaScript( array $URIs ): PackageCreator_JavaScript
+	public function generate(): void
 	{
-		$class_name = static::getJavaScriptClassName();
-		return new $class_name( $URIs );
+		$package_path = $this->getPackagePath();
+
+		if( !IO_File::exists( $package_path ) ) {
+
+			IO_File::write(
+				$package_path,
+				$this->createPackage()
+			);
+		}
 	}
+
+	/**
+	 * @return string
+	 */
+	abstract protected function createPackage(): string;
 
 
 	/**
@@ -130,7 +95,7 @@ abstract class PackageCreator extends BaseObject
 		}
 
 
-		if( substr( $o_URI, 0, 2 ) == '//' ) {
+		if( str_starts_with( $o_URI, '//' ) ) {
 			return 'http:' . $o_URI;
 		}
 
@@ -148,5 +113,16 @@ abstract class PackageCreator extends BaseObject
 		return $URI;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
+	protected function getKey(): string
+	{
+		if( !$this->key ) {
+			$this->key = md5( implode( '', $this->URIs ) );
+		}
 
+		return $this->key;
+	}
 }

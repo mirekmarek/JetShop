@@ -3,6 +3,7 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\Logger;
 use Jet\Tr;
 use JetShop\Application_Admin;
 use JetShop\Parametrization_Group;
@@ -98,33 +99,18 @@ trait Controller_Main_ParamGroup
 
 		if(!$group->isInherited()) {
 			foreach(Shops::getList() as $shop) {
-				$shop_code = $shop->getCode();
-				$shop_name = $shop->getName();
-
-				$shop_data = $group->getShopData( $shop_code );
-
-				foreach( Parametrization_Group_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-					$shop_data->catchImageWidget(
-						$image_class,
-						function() use ($image_class, $group, $shop_code, $shop_name, $shop_data) {
-							$shop_data->save();
-
-							$this->logAllowedAction( 'prop.group image '.$image_class.' uploaded', $group->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
-
-						},
-						function() use ($image_class, $group, $shop_code, $shop_name, $shop_data) {
-							$shop_data->save();
-
-							$this->logAllowedAction( 'prop.group image '.$image_class.' deleted', $group->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
-						}
-					);
-
-				}
+				$group->getShopData( $shop )->catchImageWidget(
+					shop: $shop,
+					entity_name: 'Param.group image',
+					object_id: $group->getId(),
+					object_name: $group->getFilterLabel(),
+					upload_event: 'param.group_image_uploaded',
+					delete_event: 'param.group_image_deleted'
+				);
 			}
-
 		} else {
 			foreach(Shops::getList() as $shop) {
-				$shop_data = $group->getShopData( $shop->getCode() );
+				$shop_data = $group->getShopData( $shop );
 
 				foreach( Parametrization_Group_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->getImageUploadForm( $image_class )->setIsReadonly();
@@ -183,7 +169,14 @@ trait Controller_Main_ParamGroup
 
 			$group->setPriority( $priority );
 			$group->save();
-			$this->logAllowedAction( 'prop.group priority updated', $group->getId(), $group->getShopData()->getLabel(), $priority );
+
+			Logger::success(
+				'param.group_priority_updated',
+				'Param. group '.$group->getShopData()->getLabel().' ('.$group->getId().') priority updated',
+				$group->getId(),
+				$group->getShopData()->getLabel(),
+				$priority
+			);
 		}
 
 		Http_Headers::reload([], ['action']);

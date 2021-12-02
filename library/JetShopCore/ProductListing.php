@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use Jet\Form;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 abstract class Core_ProductListing
 {
@@ -14,11 +14,11 @@ abstract class Core_ProductListing
 
 	protected string $base_URL_path_part = '';
 
-	protected ?string $shop_code = null;
+	protected Shops_Shop $shop;
 
 	protected ?array $initial_product_ids = null;
 
-	protected ?Mvc_View $filter_view = null;
+	protected ?MVC_View $filter_view = null;
 
 
 	/**
@@ -36,21 +36,21 @@ abstract class Core_ProductListing
 
 	protected ?Form $_target_filter_edit_form = null;
 
-	public function __construct( string|null $shop_code = null )
+	public function __construct( ?Shops_Shop $shop = null )
 	{
-		if( !$shop_code ) {
-			$shop_code = Shops::getCurrentCode();
+		if( !$shop ) {
+			$shop = Shops::getCurrent();
 		}
-		$this->shop_code = $shop_code;
+		$this->shop = $shop;
 
 	}
 
-	public function getFilterView(): Mvc_View
+	public function getFilterView(): MVC_View
 	{
 		return $this->filter_view;
 	}
 
-	public function setFilterView( Mvc_View $filter_view ): void
+	public function setFilterView( MVC_View $filter_view ): void
 	{
 		$this->filter_view = $filter_view;
 	}
@@ -59,15 +59,10 @@ abstract class Core_ProductListing
 
 	public function init() : void
 	{
-		/** @noinspection PhpParamsInspection */
 		$this->cache = new ProductListing_Cache( $this );
-		/** @noinspection PhpParamsInspection */
 		$properties = new ProductListing_Filter_Properties( $this );
-		/** @noinspection PhpParamsInspection */
 		$brands = new ProductListing_Filter_Brands( $this );
-		/** @noinspection PhpParamsInspection */
 		$flags = new ProductListing_Filter_Flags( $this );
-		/** @noinspection PhpParamsInspection */
 		$price = new ProductListing_Filter_Price( $this );
 
 		$this->filters[$properties->getKey()] = $properties;
@@ -75,13 +70,8 @@ abstract class Core_ProductListing
 		$this->filters[$flags->getKey()] = $flags;
 		$this->filters[$price->getKey()] = $price;
 
-		/** @noinspection PhpParamsInspection */
 		$this->sort = new ProductListing_Sort( $this );
-
-		/** @noinspection PhpParamsInspection */
 		$this->pagination = new ProductListing_Pagination( $this );
-
-		/** @noinspection PhpParamsInspection */
 		$this->variant_manager = new ProductListing_VariantManager( $this );
 	}
 
@@ -193,8 +183,8 @@ abstract class Core_ProductListing
 	{
 		$this->category = $category;
 
-		$this->base_URL_path_part = $category->getShopData( $this->shop_code )->getURLPathPart();
-		$this->base_URL = $category->getShopData( $this->shop_code )->getURL();
+		$this->base_URL_path_part = $category->getShopData( $this->shop )->getURLPathPart();
+		$this->base_URL = $category->getShopData( $this->shop )->getURL();
 	}
 
 	public function getCategory() : Category
@@ -222,10 +212,9 @@ abstract class Core_ProductListing
 		$this->base_URL_path_part = $base_URL_path_part;
 	}
 
-
-	public function getShopCode() : string
+	public function getShop() : Shops_Shop
 	{
-		return $this->shop_code;
+		return $this->shop;
 	}
 
 	public function getTargetFilterEditForm( array &$target_filter ) : Form

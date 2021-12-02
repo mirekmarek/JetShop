@@ -5,7 +5,7 @@
 
 namespace JetShop;
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 abstract class Core_Order_Notification_SMS extends Order_Notification {
 
@@ -28,7 +28,7 @@ abstract class Core_Order_Notification_SMS extends Order_Notification {
 	public function generateText() : string
 	{
 
-		$view = new Mvc_View( $this->getViewRootDir() );
+		$view = new MVC_View( $this->getViewRootDir() );
 
 		$view->setVar( 'SMS', $this );
 
@@ -47,7 +47,7 @@ abstract class Core_Order_Notification_SMS extends Order_Notification {
 		//TODO:
 		/*
 		SMS::send(
-			$this->shop_code,
+			$this->shop,
 			$this->kind,
 			$this->generateText(),
 			$this->to_number,

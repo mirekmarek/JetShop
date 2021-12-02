@@ -3,8 +3,6 @@ namespace JetShop;
 use Jet\Form;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Checkbox;
-use Jet\Mvc;
-use Jet\Mvc_View;
 use Jet\Tr;
 
 /**
@@ -159,7 +157,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 	public function generateCategoryTargetUrlPart() : string
 	{
 		if($this->isForced()) {
-			return $this->property->getShopData($this->listing->getShopCode())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
+			return $this->property->getShopData($this->listing->getShop())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
 		} else {
 			return '';
 		}
@@ -168,7 +166,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 	public function generateUrlPart() : string
 	{
 		if($this->isActive()) {
-			return $this->property->getShopData($this->listing->getShopCode())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
+			return $this->property->getShopData($this->listing->getShop())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
 		} else {
 			return '';
 		}
@@ -177,8 +175,8 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 
 	public function parseFilterUrl( array &$parts ) : void
 	{
-		$shop_code = $this->listing->getShopCode();
-		$prefix = $this->property->getShopData($shop_code)->getUrlParam().'_';
+		$shop = $this->listing->getShop();
+		$prefix = $this->property->getShopData($shop)->getUrlParam().'_';
 
 		foreach($parts as $i=>$part) {
 			if(stripos($part, $prefix)===0) {
@@ -218,7 +216,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 	public function generateFilterUrlPart() : string
 	{
 		if($this->isActive()) {
-			return $this->property->getShopData($this->listing->getShopCode())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
+			return $this->property->getShopData($this->listing->getShop())->getUrlParam().'_'.$this->filter_min.'+'.$this->filter_max;
 		} else {
 			return '';
 		}

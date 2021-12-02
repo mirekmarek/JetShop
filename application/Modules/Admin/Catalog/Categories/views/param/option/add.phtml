@@ -1,19 +1,14 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Categories;
 
-use Jet\UI;
 use Jet\Form;
 use Jet\Tr;
-use Jet\Mvc_View;
-use JetShop\Category;
-use JetShop\Parametrization_Property;
+use Jet\MVC_View;
 use JetShop\Parametrization_Property_Option;
 use JetShop\Shops;
-use JetShopAdmin\Shop_Admin;
-use JetShop\Parametrization_Group;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var Parametrization_Property_Option $new_option
  * @var Form $form
  */
@@ -34,33 +29,33 @@ echo $form->field('is_active');
 
 
 foreach(Shops::getList() as $shop):
-	$shop_code= $shop->getCode();
+	$shop_key= $shop->getKey();
 
-	$shop_data = $new_option->getShopData( $shop_code );
+	$shop_data = $new_option->getShopData( $shop );
 
-	$form->field('/shop_data/'.$shop_code.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_code.'/url_param')->getId()."', '".$shop_code."');");
-	$form->field('/shop_data/'.$shop_code.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_code.'/product_detail_label')->getId()."').val(this.value);");
-	$form->field('/shop_data/'.$shop_code.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_code."')");
+	$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
+	$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
+	$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
 	?>
 	<?=$shop_data->renderShopDataBlock_start()?>
 		<fieldset>
 			<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-			<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/filter_label')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/product_detail_label')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/url_param')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/description')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/filter_label')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/url_param')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 		</fieldset>
 
 		<fieldset>
 			<legend class="sub"><?=Tr::_('SEO')?></legend>
-			<?=$form->field('/shop_data/'.$shop_code.'/seo_h1')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/seo_title')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/seo_description')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/alternative_category_description')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/alternative_category_description_strategy')?>
-			<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/alternative_category_description')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/alternative_category_description_strategy')?>
+			<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
 		</fieldset>
 
 

@@ -1,16 +1,18 @@
 <?php
 namespace JetShopModule\Admin\Customers;
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Customer_Address;
+use JetShop\Shops_Shop;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var string $code
  * @var Customer_Address $address
+ * @var Shops_Shop $shop
  */
 
-$shop_code = $this->getRaw('shop_code');
+$shop = $this->getRaw('shop');
 $address = $this->getRaw('address');
 ?>
 <?php if($address->getCompanyName()): ?>

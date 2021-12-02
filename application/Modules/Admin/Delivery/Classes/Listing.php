@@ -46,6 +46,7 @@ class Listing extends Data_Listing {
 
 	/**
 	 * @return Delivery_Class[]|DataModel_Fetch_Instances
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function getList() : DataModel_Fetch_Instances
 	{

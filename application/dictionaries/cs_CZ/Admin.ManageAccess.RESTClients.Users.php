@@ -6,4 +6,9 @@ return [
 	'Update user' => '',
 	'Delete user' => '',
 	'REST clients users management' => '',
+	'- all -' => '',
+	'ID' => '',
+	'Username' => '',
+	'Create a new User' => '',
+	'Role:' => '',
 ];

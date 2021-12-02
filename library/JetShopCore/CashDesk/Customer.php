@@ -25,9 +25,6 @@ trait Core_CashDesk_Customer
 
 	public function getEmailAddress() : string
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		return $session->getValue('email_address', '');
@@ -35,9 +32,6 @@ trait Core_CashDesk_Customer
 
 	public function setEmailAddress( string $email ) : void
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$session->setValue('email_address', $email);
@@ -51,7 +45,7 @@ trait Core_CashDesk_Customer
 			$email = new Form_Field_Email('email', 'E-mail:', $this->getEmailAddress(), true);
 			$email->setErrorMessages([
 				Form_Field_Email::ERROR_CODE_EMPTY => 'Please enter your e-mail address',
-				Form_Field_Email::ERROR_CODE_INVALID_FORMAT => 'Invalid e-mail address format. Plase check it.'
+				Form_Field_Email::ERROR_CODE_INVALID_FORMAT => 'Invalid e-mail address format. Please check it.'
 			]);
 
 			$email->setCatcher(function($value) {
@@ -80,9 +74,6 @@ trait Core_CashDesk_Customer
 
 	public function setPassword( string $password ) : void
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$this->setNoRegistration( false );
@@ -95,9 +86,6 @@ trait Core_CashDesk_Customer
 
 	public function getPassword() : string
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$this->setNoRegistration( false );
@@ -107,9 +95,6 @@ trait Core_CashDesk_Customer
 
 	public function setNoRegistration( bool $state ) : void
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$session->setValue('no_registration', $state);
@@ -117,9 +102,6 @@ trait Core_CashDesk_Customer
 
 	public function getNoRegistration() : bool
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		return (bool)$session->getValue('no_registration', false);
@@ -274,9 +256,6 @@ trait Core_CashDesk_Customer
 
 	public function isCompanyOrder() : bool
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		return (bool)$session->getValue('is_company_order', false);
@@ -284,9 +263,6 @@ trait Core_CashDesk_Customer
 
 	public function setIsCompanyOrder( bool $state ) : void
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$session->setValue('is_company_order', $state);
@@ -294,9 +270,6 @@ trait Core_CashDesk_Customer
 
 	public function getPhone() : string
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		return $session->getValue('phone', '');
@@ -304,9 +277,6 @@ trait Core_CashDesk_Customer
 
 	public function setPhone( string $phone ) : void
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$session->setValue('phone', $phone);
@@ -315,9 +285,6 @@ trait Core_CashDesk_Customer
 
 	public function hasDifferentDeliveryAddress() : bool
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		return $session->getValue('different_delivery_address',false);
@@ -325,9 +292,6 @@ trait Core_CashDesk_Customer
 
 	public function setHasDifferentDeliveryAddress( bool $state ) : void
 	{
-		/**
-		 * @var Session $session
-		 */
 		$session = $this->getSession();
 
 		$session->setValue('different_delivery_address', $state);
@@ -558,7 +522,7 @@ trait Core_CashDesk_Customer
 		$billing_address = $this->getBillingAddress();
 
 		$customer = new Customer();
-		$customer->setShopCode($this->getShopCode());
+		$customer->setShop($this->getShop());
 
 		$customer->setEmail( $this->getEmailAddress() );
 		$customer->setPhoneNumber( $this->getPhone() );

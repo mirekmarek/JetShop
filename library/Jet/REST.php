@@ -27,76 +27,6 @@ class REST extends BaseObject
 
 
 	/**
-	 * @var string
-	 */
-	protected static string $sort_get_param = 'sort';
-
-	/**
-	 * @var string
-	 */
-	protected static string $page_get_param = 'page';
-
-	/**
-	 * @var string
-	 */
-	protected static string $items_per_page_get_param = 'items_per_page';
-
-	/**
-	 * @var int
-	 */
-	protected static int $default_items_per_page = 20;
-
-	/**
-	 * @var int
-	 */
-	protected static int $max_items_per_page = 100;
-
-	/**
-	 *
-	 * Format:
-	 *
-	 * error_code => array(http_error_code, error_message)
-	 *
-	 * Example:
-	 *
-	 * <code>
-	 * const ERROR_CODE_OBJECT_NOT_FOUND = 'ObjectNotFound';
-	 *
-	 * protected static $errors = array(
-	 *      self::ERROR_CODE_OBJECT_NOT_FOUND => array(self::HTTP_NOT_FOUND, 'Object not found')
-	 * );
-	 * </code>
-	 *
-	 * @var array
-	 */
-	protected static array $errors = [
-		self::ERR_CODE_AUTHORIZATION_REQUIRED => [
-			Http_Headers::CODE_401_UNAUTHORIZED,
-			'Access denied! Authorization required! ',
-		],
-		self::ERR_CODE_ACCESS_DENIED          => [
-			Http_Headers::CODE_401_UNAUTHORIZED,
-			'Access denied! Insufficient permissions! ',
-		],
-		self::ERR_CODE_VALIDATION_ERROR       => [
-			Http_Headers::CODE_400_BAD_REQUEST,
-			'Validation error',
-		],
-		self::ERR_CODE_REQUEST_ERROR          => [
-			Http_Headers::CODE_400_BAD_REQUEST,
-			'Bad request'
-		],
-		self::ERR_CODE_UNKNOWN_ITEM           => [
-			Http_Headers::CODE_404_NOT_FOUND,
-			'Unknown item'
-		],
-		self::ERR_CODE_COMMON                 => [
-			Http_Headers::CODE_400_BAD_REQUEST,
-			'Common error'
-		],
-	];
-
-	/**
 	 * @var array|null
 	 */
 	protected array|null $http_headers = null;
@@ -111,98 +41,6 @@ class REST extends BaseObject
 	 */
 	protected static ?array $request_data = null;
 
-	/**
-	 * @param string $code
-	 * @param int $http_code
-	 * @param string $message
-	 */
-	public static function defineError( string $code, int $http_code, string $message )
-	{
-		static::$errors[$code] = [
-			$http_code,
-			$message
-		];
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getSortGetParam(): string
-	{
-		return static::$sort_get_param;
-	}
-
-	/**
-	 * @param string $sort_get_param
-	 */
-	public static function setSortGetParam( string $sort_get_param ): void
-	{
-		static::$sort_get_param = $sort_get_param;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getPageGetParam(): string
-	{
-		return static::$page_get_param;
-	}
-
-	/**
-	 * @param string $page_get_param
-	 */
-	public static function setPageGetParam( string $page_get_param ): void
-	{
-		static::$page_get_param = $page_get_param;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getItemsPerPageGetParam(): string
-	{
-		return static::$items_per_page_get_param;
-	}
-
-	/**
-	 * @param string $items_per_page_get_param
-	 */
-	public static function setItemsPerPageGetParam( string $items_per_page_get_param ): void
-	{
-		static::$items_per_page_get_param = $items_per_page_get_param;
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function getDefaultItemsPerPage(): int
-	{
-		return static::$default_items_per_page;
-	}
-
-	/**
-	 * @param int $default_items_per_page
-	 */
-	public static function setDefaultItemsPerPage( int $default_items_per_page ): void
-	{
-		static::$default_items_per_page = (int)$default_items_per_page;
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function getMaxItemsPerPage(): int
-	{
-		return static::$max_items_per_page;
-	}
-
-	/**
-	 * @param int $max_items_per_page
-	 */
-	public static function setMaxItemsPerPage( int $max_items_per_page ): void
-	{
-		static::$max_items_per_page = (int)$max_items_per_page;
-	}
 
 	/**
 	 *
@@ -212,11 +50,11 @@ class REST extends BaseObject
 		Debug::setOutputIsJSON( true );
 
 		ErrorPages::setHandler( 401, [
-			get_called_class(),
+			static::class,
 			'handleNotAuthorized'
 		] );
 		ErrorPages::setHandler( 404, [
-			get_called_class(),
+			static::class,
 			'responseBadRequest'
 		] );
 	}
@@ -263,7 +101,6 @@ class REST extends BaseObject
 	}
 
 	/**
-	 * Get request HTTP header or default value if does not exist
 	 *
 	 * @param string $header
 	 * @param string $default_value
@@ -275,7 +112,7 @@ class REST extends BaseObject
 	{
 		$headers = Http_Request::headers();
 
-		return isset( $headers[$header] ) ? $headers[$header] : $default_value;
+		return $headers[$header] ?? $default_value;
 	}
 
 
@@ -309,21 +146,23 @@ class REST extends BaseObject
 	 * @param string|int $code
 	 * @param mixed $data
 	 *
-	 * @throws Mvc_Controller_Exception
+	 * @throws MVC_Controller_Exception
 	 */
 	public static function responseError( string|int $code, mixed $data = null ): void
 	{
-		if( !isset( static::$errors[$code] ) ) {
-			throw new Mvc_Controller_Exception(
-				'REST Error (code:' . $code . ') is not specified! Please enter the error. Add ' . get_called_class() . '::$errors[' . $code . '] entry.  ',
-				Mvc_Controller_Exception::CODE_INVALID_RESPONSE_CODE
+		$errors = SysConf_Jet_REST::getErrors();
+
+		if( !isset( $errors[$code] ) ) {
+			throw new MVC_Controller_Exception(
+				'REST Error (code:' . $code . ') is not specified!',
+				MVC_Controller_Exception::CODE_INVALID_RESPONSE_CODE
 			);
 		}
 
 		[
 			$http_code,
 			$error_message
-		] = static::$errors[$code];
+		] = $errors[$code];
 
 		$error_code = $code;
 
@@ -397,13 +236,13 @@ class REST extends BaseObject
 	                                     string $http_message = 'OK' )
 	{
 
-		Http_Headers::sendHeader( 'HTTP/1.1 ' . $http_code . ' ' . $http_message, true, $http_code );
+		$http_headers['Content-Type'] = 'application/json;charset=' . SysConf_Jet_Main::getCharset();
 
-		Http_Headers::sendHeader( 'Content-type:application/json;charset=' . SysConf_Jet::getCharset() );
-
-		foreach( $http_headers as $header => $header_value ) {
-			Http_Headers::sendHeader( $header . ': ' . $header_value );
-		}
+		Http_Headers::response(
+			code: $http_code,
+			headers: $http_headers,
+			custom_response_message: $http_message
+		);
 
 		echo $response_text;
 		Application::end();
@@ -421,14 +260,14 @@ class REST extends BaseObject
 	{
 		$GET = Http_Request::GET();
 
-		$current_page_no = $GET->getInt( static::getPageGetParam(), 1 );
-		$items_per_page = $GET->getInt( static::getItemsPerPageGetParam(), static::getDefaultItemsPerPage() );
+		$current_page_no = $GET->getInt( SysConf_Jet_REST::getPageGetParam(), 1 );
+		$items_per_page = $GET->getInt( SysConf_Jet_REST::getItemsPerPageGetParam(), SysConf_Jet_REST::getDefaultItemsPerPage() );
 
-		if( $items_per_page > static::getMaxItemsPerPage() ) {
-			$items_per_page = static::getMaxItemsPerPage();
+		if( $items_per_page > SysConf_Jet_REST::getMaxItemsPerPage() ) {
+			$items_per_page = SysConf_Jet_REST::getMaxItemsPerPage();
 		}
 
-		$page_get_param = static::getPageGetParam();
+		$page_get_param = SysConf_Jet_REST::getPageGetParam();
 
 		$paginator = new Data_Paginator( $current_page_no, $items_per_page, function( $page_no ) use ( $page_get_param ) {
 			return Http_Request::currentURL( [$page_get_param => $page_no] );
@@ -451,7 +290,7 @@ class REST extends BaseObject
 	{
 		$GET = Http_Request::GET();
 
-		if( ($order_by_param = $GET->getString( static::getSortGetParam() )) ) {
+		if( ($order_by_param = $GET->getString( SysConf_Jet_REST::getSortGetParam() )) ) {
 
 			$order_by = [];
 

@@ -6,7 +6,6 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 
-
 #[DataModel_Definition(
 	name: 'order',
 	database_table_name: 'orders',
@@ -23,7 +22,7 @@ use Jet\DataModel_IDController_AutoIncrement;
 	]
 )]
 abstract class Core_Order extends DataModel {
-
+	use CommonEntity_ShopRelationTrait;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
@@ -41,14 +40,6 @@ abstract class Core_Order extends DataModel {
 		form_field_type: false
 	)]
 	protected string $key = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-		form_field_type: false
-	)]
-	protected string $shop_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -332,7 +323,7 @@ abstract class Core_Order extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Order_Item::class
 	)]
-	protected $items;
+	protected array $items = [];
 
 
 	public function getId() : int
@@ -345,15 +336,7 @@ abstract class Core_Order extends DataModel {
 		$this->id = $id;
 	}
 
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
 
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getImportSource() : string
 	{
@@ -878,7 +861,7 @@ abstract class Core_Order extends DataModel {
 
 		$applyPrcDiscount = function( Order_Item $discount_item, float &$price, float $orig_price  ) {
 			$discount = $discount_item->getItemAmount();
-			$discount = Price::round($orig_price * ($discount/100), $this->shop_code );
+			$discount = Price::round($orig_price * ($discount/100), $this->getShop() );
 
 			if($discount>$price) {
 				$discount = $price;
@@ -988,7 +971,7 @@ abstract class Core_Order extends DataModel {
 		}
 
 
-		if($this->discount) {
+		if($this->discount>0) {
 			$this->discount_percentage = (1-$this->total_price / $this->total_price_without_discount)*100;
 			$this->discount_percentage = round($this->discount_percentage, 3);
 		}
@@ -1018,9 +1001,6 @@ abstract class Core_Order extends DataModel {
 
 	public static function getByKey( string $key ) : Order|null
 	{
-		/**
-		 * @var Order[] $orders
-		 */
 		$orders = Order::fetch(['order' => [
 			'key' => $key
 		]]);

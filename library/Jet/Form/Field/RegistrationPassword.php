@@ -20,46 +20,6 @@ class Form_Field_RegistrationPassword extends Form_Field
 	/**
 	 * @var string
 	 */
-	protected static string $default_renderer_script = 'field-RegistrationPassword';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_start_renderer_script = 'Field/row/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_end_renderer_script = 'Field/row/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_start_renderer_script = 'Field/input/container/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_end_renderer_script = 'Field/input/container/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_error_renderer = 'Field/error';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_label_renderer = 'Field/label';
-
-	/**
-	 * @var string string
-	 */
-	protected static string $default_input_renderer = 'Field/input/RegistrationPassword';
-
-	/**
-	 * @var string
-	 */
 	protected string $_type = Form::TYPE_REGISTRATION_PASSWORD;
 
 	/**

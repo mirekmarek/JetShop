@@ -7,9 +7,8 @@ use Jet\Tr;
 abstract class Core_ProductListing_Sort {
 	const CACHE_KEY = 'sort';
 
-	protected ?ProductListing $listing = null;
-
-	protected string $shop_code = '';
+	protected ProductListing $listing;
+	protected Shops_Shop $shop;
 
 	/**
 	 * @var ProductListing_Sort_Option[]
@@ -19,7 +18,7 @@ abstract class Core_ProductListing_Sort {
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_code = $listing->getShopCode();
+		$this->shop = $listing->getShop();
 
 		$this->init();
 

@@ -2,14 +2,11 @@
 namespace JetShopModule\Admin\Catalog\Stickers;
 
 
-use Jet\UI;
-use Jet\UI_dataGrid;
+use Jet\Logger;
 use Jet\UI_messages;
 
-
-use Jet\Mvc;
-use Jet\Mvc_Controller_Default;
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Default;
+use Jet\MVC_Controller_Router_AddEditDelete;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -19,28 +16,26 @@ use Jet\Navigation_Breadcrumb;
 use JetShop\Application_Admin;
 use JetShop\Shops;
 use JetShop\Sticker;
-use JetShop\Sticker_ShopData;
 
-use Jet\Application;
 use JetShopModule\Admin\UI\Main as UI_module;
 
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	protected ?Sticker $sticker = null;
 
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
-				function($id) {
-					return (bool)($this->sticker = Sticker::get((int)$id));
+				function($code) {
+					return (bool)($this->sticker = Sticker::get((string)$code));
 				},
 				[
 					'listing'=> Main::ACTION_GET_STICKER,
@@ -89,13 +84,20 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $sticker->catchAddForm() ) {
 			$sticker->save();
 
-			$this->logAllowedAction( 'Sticker created', $sticker->getId(), $sticker->getName(), $sticker );
-
-			UI_messages::success(
-				Tr::_( 'Sticker <b>%NAME%</b> has been created', [ 'NAME' => $sticker->getName() ] )
+			Logger::success(
+				event: 'sticker_created',
+				event_message: 'Brand \''.$sticker->getInternalName().'\' ('.$sticker->getCode().') created',
+				context_object_id: $sticker->getCode(),
+				context_object_name: $sticker->getInternalName(),
+				context_object_data: $sticker
 			);
 
-			Http_Headers::reload( ['id'=>$sticker->getId()], ['action'] );
+
+			UI_messages::success(
+				Tr::_( 'Sticker <b>%NAME%</b> has been created', [ 'NAME' => $sticker->getInternalName() ] )
+			);
+
+			Http_Headers::reload( ['id'=>$sticker->getCode()], ['action'] );
 		}
 
 		$this->view->setVar( 'form', $form );
@@ -111,33 +113,19 @@ class Controller_Main extends Mvc_Controller_Default
 
 		Application_Admin::handleUploadTooLarge();
 
-
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $sticker->getShopData( $shop_code );
-
-			foreach( Sticker_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $sticker, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $sticker->getId().':'.$shop_code, $sticker->getName().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $sticker, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'category image '.$image_class.' deleted', $sticker->getId().':'.$shop_code, $sticker->getName().' - '.$shop_name );
-					}
-				);
-
-			}
+			$sticker->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Sticker',
+				object_id: $sticker->getCode(),
+				object_name: $sticker->getInternalName(),
+				upload_event: 'sticker_image_uploaded',
+				delete_event: 'sticker_image_deleted'
+			);
 		}
 
 
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit sticker <b>%NAME%</b>', [ 'NAME' => $sticker->getName() ] ) );
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit sticker <b>%NAME%</b>', [ 'NAME' => $sticker->getInternalName() ] ) );
 
 
 
@@ -146,10 +134,17 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $sticker->catchEditForm() ) {
 
 			$sticker->save();
-			$this->logAllowedAction( 'Sticker updated', $sticker->getId(), $sticker->getName(), $sticker );
+
+			Logger::success(
+				event: 'sticker_updated',
+				event_message: 'Brand \''.$sticker->getInternalName().'\' ('.$sticker->getCode().') updated',
+				context_object_id: $sticker->getCode(),
+				context_object_name: $sticker->getInternalName(),
+				context_object_data: $sticker
+			);
 
 			UI_messages::success(
-				Tr::_( 'Sticker <b>%NAME%</b> has been updated', [ 'NAME' => $sticker->getName() ] )
+				Tr::_( 'Sticker <b>%NAME%</b> has been updated', [ 'NAME' => $sticker->getInternalName() ] )
 			);
 
 			Http_Headers::reload();
@@ -167,7 +162,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$sticker = $this->sticker;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Sticker detail <b>%NAME%</b>', [ 'NAME' => $sticker->getName() ] )
+			Tr::_( 'Sticker detail <b>%NAME%</b>', [ 'NAME' => $sticker->getInternalName() ] )
 		);
 
 		$form = $sticker->getEditForm();
@@ -186,15 +181,22 @@ class Controller_Main extends Mvc_Controller_Default
 		$sticker = $this->sticker;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete sticker <b>%NAME%</b>', [ 'NAME' => $sticker->getName() ] )
+			Tr::_( 'Delete sticker <b>%NAME%</b>', [ 'NAME' => $sticker->getInternalName() ] )
 		);
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$sticker->delete();
-			$this->logAllowedAction( 'Sticker deleted', $sticker->getId(), $sticker->getName(), $sticker );
+
+			Logger::success(
+				event: 'sticker_deleted',
+				event_message: 'Brand \''.$sticker->getInternalName().'\' ('.$sticker->getCode().') deleted',
+				context_object_id: $sticker->getCode(),
+				context_object_name: $sticker->getInternalName(),
+				context_object_data: $sticker
+			);
 
 			UI_messages::info(
-				Tr::_( 'Sticker <b>%NAME%</b> has been deleted', [ 'NAME' => $sticker->getName() ] )
+				Tr::_( 'Sticker <b>%NAME%</b> has been deleted', [ 'NAME' => $sticker->getInternalName() ] )
 			);
 
 			Http_Headers::reload([], ['action', 'id']);

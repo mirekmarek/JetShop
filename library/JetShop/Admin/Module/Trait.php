@@ -3,7 +3,7 @@ namespace JetShop;
 
 
 use Jet\Auth;
-use Jet\Mvc_Page;
+use Jet\MVC;
 
 trait Admin_Module_Trait {
 
@@ -13,7 +13,7 @@ trait Admin_Module_Trait {
 			return '';
 		}
 
-		$page = Mvc_Page::get( $page_id );
+		$page = MVC::getPage( $page_id );
 		if(!$page) {
 			return '';
 		}

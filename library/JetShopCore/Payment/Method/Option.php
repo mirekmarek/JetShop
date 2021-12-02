@@ -5,7 +5,6 @@ use Jet\DataModel_IDController_Passive;
 use Jet\Form;
 use Jet\DataModel;
 use Jet\DataModel_Related_1toN;
-use Jet\DataModel_Related_1toN_Iterator;
 use Jet\Form_Field_Input;
 use Jet\Tr;
 
@@ -42,13 +41,14 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 	)]
 	protected string $payment_method_code = '';
 
-	protected ?Payment_Method $payment_method = null;
-
+	/**
+	 * @var Payment_Method_Option_ShopData[]
+	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_Option_ShopData::class
 	)]
-	protected $shop_data;
+	protected array $shop_data = [];
 
 
 	protected ?Form $_add_form = null;
@@ -65,30 +65,9 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Payment_Method_Option_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-
-		}
+		Payment_Method_Option_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
-	public function setParents( Payment_Method $payment_method ) : void
-	{
-		$this->payment_method = $payment_method;
-		$this->payment_method_code = $payment_method->getCode();
-
-		foreach($this->shop_data as $shop_data) {
-			$shop_data->setParents( $payment_method, $this );
-		}
-
-	}
 
 	public function isInherited() : bool
 	{
@@ -98,11 +77,6 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 	public function getPaymentMethodCode() : int
 	{
 		return $this->payment_method_code;
-	}
-
-	public function getPaymentMethod() : Payment_Method
-	{
-		return $this->payment_method;
 	}
 
 
@@ -121,14 +95,9 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 		return $this->code;
 	}
 
-
-	public function getShopData( string|null $shop_code=null ) : Payment_Method_Option_ShopData
+	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_Option_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 	public function getAddForm() : Form
@@ -143,7 +112,8 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 
 				$code = $field->getValue();
 
-				foreach( $this->getPaymentMethod()->getOptions() as $option ) {
+
+				foreach( Payment_Method::get($this->payment_method_code)->getOptions() as $option ) {
 					if($option->getCode()==$code) {
 						$field->setCustomError(Tr::_('This code is already used'));
 						return false;
@@ -198,14 +168,14 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 		return true;
 	}
 
-	public function getDescription( string|null $shop_code=null ) : string
+	public function getDescription( ?Shops_Shop $shop=null ) : string
 	{
-		return $this->getShopData( $shop_code )->getDescription();
+		return $this->getShopData( $shop )->getDescription();
 	}
 
-	public function getTitle( string|null $shop_code=null ) : string
+	public function getTitle( ?Shops_Shop $shop=null ) : string
 	{
-		return $this->getShopData( $shop_code )->getTitle();
+		return $this->getShopData( $shop )->getTitle();
 	}
 
 

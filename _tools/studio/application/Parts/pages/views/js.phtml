@@ -13,7 +13,7 @@ namespace JetStudio;
 					'<?=Pages_Page::getCreateForm()->getId()?>',
 					{
 						onSuccess: function (form, response_data) {
-							location = '?site=<?=Pages::getCurrentSiteId()?>&locale=<?=Pages::getCurrentLocale()?>&page=' + encodeURIComponent(response_data['new_page_id'])
+							location = '?base=<?=Pages::getCurrentBaseId()?>&locale=<?=Pages::getCurrentLocale()?>&page=' + encodeURIComponent(response_data['new_page_id'])
 						}
 					}
 				);
@@ -21,6 +21,7 @@ namespace JetStudio;
 			generateId: function (name) {
 				$.ajax({
 					url: '<?=Pages::getActionUrl( 'generate_id', [], false )?>&name=' + encodeURIComponent(name),
+					dataType: 'json',
 					success: function (result) {
 						$('#page_create_form__id').val(result.id);
 					}
@@ -41,6 +42,7 @@ namespace JetStudio;
 
 					$.ajax({
 						url: '<?=Pages::getActionUrl( 'get_module_controllers', [], false )?>&module=' + encodeURIComponent(module_name),
+						dataType: 'json',
 						success: function (result) {
 							$.each(result.controllers, function (name) {
 								controllers.append($('<option></option>').attr('value', name).text(name));
@@ -62,6 +64,7 @@ namespace JetStudio;
 
 					$.ajax({
 						url: '<?=Pages::getActionUrl( 'get_module_controller_actions', [], false )?>&module=' + encodeURIComponent(module_name.val()) + '&controller=' + encodeURIComponent(controller),
+						dataType: 'json',
 						success: function (result) {
 
 							$.each(result.actions, function (name) {

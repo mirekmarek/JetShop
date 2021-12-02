@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use Jet\Data_Tree;
-use Jet\Mvc_Site;
+use Jet\MVC;
 
 abstract class Core_Category_Menu
 {
@@ -14,22 +14,17 @@ abstract class Core_Category_Menu
 	public static function generateAll() : void
 	{
 		foreach(Shops::getList() as $shop) {
-			static::generate( $shop->getCode() );
+			static::generate( $shop );
 		}
 	}
 
-	public static function generate( string $shop_code ) : void
+	public static function generate( Shops_Shop $shop ) : void
 	{
-		$tree = static::getTree( $shop_code );
+		$tree = static::getTree( $shop );
 
-		/**
-		 * @var Category_Menu_Item[] $current_items
-		 */
 		$current_items = Category_Menu_Item::fetch(
 			where_per_model: [
-				'category_menu_item' => [
-					'shop_code' => $shop_code
-				]
+				'category_menu_item' => $shop->getWhere()
 			],
 			item_key_generator: function( Category_Menu_Item $item ) {
 				return $item->getCategoryId();
@@ -43,7 +38,7 @@ abstract class Core_Category_Menu
 				continue;
 			}
 
-			$new_item = static::createMenuItem( $shop_code, $d );
+			$new_item = static::createMenuItem( $shop, $d );
 			$category_id = $new_item->getCategoryId();
 			$exists[] = $category_id;
 
@@ -65,14 +60,13 @@ abstract class Core_Category_Menu
 		}
 	}
 
-	protected static function createMenuItem( string $shop_code, array $data ) : Category_Menu_Item
+	protected static function createMenuItem( Shops_Shop $shop, array $data ) : Category_Menu_Item
 	{
-		$shop = Shops::get($shop_code);
-		$site = Mvc_Site::get($shop->getSiteId());
+		$site = MVC::getBase($shop->getBaseId());
 
 		$menu_item = new Category_Menu_Item();
 
-		$menu_item->setShopCode( $shop_code );
+		$menu_item->setShop( $shop );
 
 		$menu_item->setCategoryId( $data['id'] );
 		$menu_item->setParentCategoryId( $data['parent_id'] );
@@ -91,13 +85,13 @@ abstract class Core_Category_Menu
 		return $menu_item;
 	}
 
-	protected static function getTree( $shop_code ) : Data_Tree
+	protected static function getTree( Shops_Shop $shop ) : Data_Tree
 	{
 
 		$sort = 'priority';
 
 		$where = [
-			'categories_shop_data.shop_code'=>$shop_code,
+			$shop->getWhere('categories_shop_data.'),
 			'AND',
 			'categories_shop_data.is_active'=>true,
 			'AND',
@@ -140,14 +134,14 @@ abstract class Core_Category_Menu
 	/**
 	 * @param int $parent_id
 	 * @param string $type
-	 * @param string $shop_code
+	 * @param ?Shops_Shop $shop
 	 *
 	 * @return Category_Menu_Item[]
 	 */
-	public static function getItems( int $parent_id, string $type='', string $shop_code='' ) : array
+	public static function getItems( int $parent_id, string $type='', ?Shops_Shop $shop = null ) : array
 	{
 
-		$all = static::getAllItems($shop_code);
+		$all = static::getAllItems($shop);
 
 		$res = [];
 
@@ -170,24 +164,24 @@ abstract class Core_Category_Menu
 	}
 
 	/**
-	 * @param string $shop_code
+	 * @param Shops_Shop|null $shop
 	 *
 	 * @return Category_Menu_Item[]
 	 */
-	public static function getAllItems( string $shop_code='' ) : array
+	public static function getAllItems( ?Shops_Shop $shop = null ) : array
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
+		if(!$shop) {
+			$shop = Shops::getCurrent();
 		}
 
-		if(array_key_exists($shop_code, static::$menus )) {
-			return static::$menus[$shop_code];
+		$shop_key = $shop->getKey();
+
+		if(array_key_exists($shop_key, static::$menus )) {
+			return static::$menus[$shop_key];
 		}
 
-		static::$menus[$shop_code] = Category_Menu_Item::fetch(
-			where_per_model: [
-				'shop_code' => $shop_code
-			],
+		static::$menus[$shop_key] = Category_Menu_Item::fetch(
+			where_per_model: $shop->getWhere(),
 			order_by: 'priority',
 			item_key_generator: function( Category_Menu_Item $item ) {
 				return $item->getCategoryId();
@@ -195,18 +189,18 @@ abstract class Core_Category_Menu
 
 		);
 
-		foreach( static::$menus[$shop_code] as $item ) {
+		foreach( static::$menus[$shop_key] as $item ) {
 			$parent_id = $item->getParentCategoryId();
 			if(
 				$parent_id &&
-				isset(static::$menus[$shop_code][$parent_id])
+				isset(static::$menus[$shop_key][$parent_id])
 			) {
-				static::$menus[$shop_code][$parent_id]->addChildren( $item );
+				static::$menus[$shop_key][$parent_id]->addChildren( $item );
 			}
 		}
 
 
-		return static::$menus[$shop_code];
+		return static::$menus[$shop_key];
 	}
 
 }

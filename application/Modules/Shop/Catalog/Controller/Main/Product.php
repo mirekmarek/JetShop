@@ -10,7 +10,7 @@ namespace JetShopModule\Shop\Catalog;
 use Jet\ErrorPages;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use Jet\Mvc;
+use Jet\MVC;
 use Jet\Tr;
 use JetShop\Category;
 use JetShop\Navigation_Breadcrumb;
@@ -26,13 +26,13 @@ trait Controller_Main_Product
 
 	public function getControllerRouter_product( int $object_id, array $path ) : void
 	{
-		Mvc::getRouter()->setUsedUrlPath( $path[0]);
+		MVC::getRouter()->setUsedUrlPath( $path[0]);
 
 		static::$product = Product::get($object_id);
 
 		if(static::$product) {
 			if(static::$product->getURLPathPart()!=$path[0] ) {
-				Mvc::getRouter()->setIsRedirect( static::$product->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
+				MVC::getRouter()->setIsRedirect( static::$product->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
 
 				return;
 			}
@@ -97,7 +97,7 @@ trait Controller_Main_Product
 
 	public function product_not_active_Action(): void
 	{
-		Tr::setCurrentNamespace('product/not_active');
+		Tr::setCurrentDictionary('product.not_active');
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
@@ -106,7 +106,7 @@ trait Controller_Main_Product
 
 	public function product_set_Action(): void
 	{
-		Tr::setCurrentNamespace('product/set');
+		Tr::setCurrentDictionary('product.set');
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
@@ -116,7 +116,7 @@ trait Controller_Main_Product
 
 	public function product_regular_Action(): void
 	{
-		Tr::setCurrentNamespace('product/regular');
+		Tr::setCurrentDictionary('product.regular');
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
@@ -125,7 +125,7 @@ trait Controller_Main_Product
 
 	public function product_variant_Action(): void
 	{
-		Tr::setCurrentNamespace('product/variant');
+		Tr::setCurrentDictionary('product.variant');
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
@@ -134,7 +134,7 @@ trait Controller_Main_Product
 
 	public function product_variant_master_Action(): void
 	{
-		Tr::setCurrentNamespace('product/variant_master');
+		Tr::setCurrentDictionary('product.variant_master');
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
@@ -144,7 +144,7 @@ trait Controller_Main_Product
 }
 
 /*
-Tr::setCurrentNamespace('product');
+Tr::setCurrentDictionary('product');
 
 $layout = Application_Shop::getDefaultLayout();
 $view = Application_Shop::getDefaultView();

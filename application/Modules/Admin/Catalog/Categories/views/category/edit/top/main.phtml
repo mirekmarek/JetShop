@@ -3,11 +3,11 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Form;
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  */
 
 $category = Controller_Main::getCurrentCategory();
@@ -21,28 +21,28 @@ $form->setDefaultFieldWidth([Form::LJ_SIZE_MEDIUM=>8]);
 <?=$form->start();?>
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_code = $shop->getCode();
-			$shop_data = $category->getShopData( $shop_code );
+			$shop_key = $shop->getKey();
+			$shop_data = $category->getShopData( $shop );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 				<fieldset>
 					<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-					<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
 
-					<?=$form->field('/shop_data/'.$shop_code.'/name')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/second_name')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 				</fieldset>
 
 				<fieldset>
 					<legend class="sub"><?=Tr::_('SEO')?></legend>
-					<?=$form->field('/shop_data/'.$shop_code.'/seo_h1')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/seo_title')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/seo_description')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/seo_keywords')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
 				</fieldset>
 			<?=$shop_data->renderShopDataBlock_end()?>
 		<?php endforeach; ?>

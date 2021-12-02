@@ -4,19 +4,15 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'stickers_shop_data',
 	database_table_name: 'stickers_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Sticker::class
 )]
-abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Sticker_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	const IMG_PICTOGRAM_FILTER = 'pictogram_filter';
@@ -24,14 +20,12 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 	const IMG_PICTOGRAM_PRODUCT_LISTING = 'pictogram_product_listing';
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
+		type: DataModel::TYPE_ID,
 		is_id: true,
-		related_to: 'main.id',
+		related_to: 'main.code',
 		form_field_type: false
 	)]
-	protected int $sticker_id = 0;
-
-	protected ?Sticker $sticker = null;
+	protected string $sticker_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -124,18 +118,6 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 	)]
 	protected string $image_pictogram_product_listing = '';
 
-
-	public function getSticker() : Sticker
-	{
-		return $this->sticker;
-	}
-
-	public function setParents( Sticker $sticker ) : void
-	{
-		$this->sticker = $sticker;
-		$this->sticker_id = $sticker->getId();
-	}
-
 	public function getName() : string
 	{
 		return $this->name;
@@ -224,16 +206,16 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->shop_code, [$this->url_param] );
+		return Shops::getURL( $this->getShop(), [$this->url_param] );
 	}
 
 	public function generateUrlParam() : void
 	{
-		if(!$this->sticker_id) {
+		if(!$this->sticker_code) {
 			return;
 		}
 
-		$this->url_param = Shops::generateURLPathPart( $this->name, '', $this->sticker_id, $this->shop_code );
+		$this->url_param = Shops::generateURLPathPart( $this->name, '', $this->sticker_code, $this->getShop() );
 	}
 
 	public function getImageEntity() : string
@@ -243,7 +225,7 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 
 	public function getImageObjectId() : int|string
 	{
-		return $this->sticker_id;
+		return $this->sticker_code;
 	}
 
 	public static function getImageClasses() : array
@@ -254,12 +236,6 @@ abstract class Core_Sticker_ShopData extends DataModel_Related_1toN implements I
 			Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_LISTING => Tr::_('Pictogram - Product listing', [], Sticker::getManageModuleName() ),
 		];
 	}
-
-	public function getPossibleToEditImages() : bool
-	{
-		return !$this->sticker->getEditForm()->getIsReadonly();
-	}
-
 
 	public function setImageFilter( string $image ) : void
 	{

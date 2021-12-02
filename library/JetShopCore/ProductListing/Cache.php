@@ -3,11 +3,10 @@ namespace JetShop;
 
 abstract class Core_ProductListing_Cache {
 
-	protected ?ProductListing $listing = null;
+	protected ProductListing $listing;
+	protected Shops_Shop $shop;
 
 	protected bool $enabled = true;
-
-	protected string $shop_code = '';
 
 	protected string $cache_key = '';
 
@@ -19,7 +18,7 @@ abstract class Core_ProductListing_Cache {
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_code = $listing->getShopCode();
+		$this->shop = $listing->getShop();
 
 		$this->init();
 	}
@@ -36,7 +35,7 @@ abstract class Core_ProductListing_Cache {
 			$this->enabled = false;
 		}
 
-		$this->cache_key = 'listing:'.$this->shop_code.':'.md5(implode(',', $initial_product_ids));
+		$this->cache_key = 'listing:'.$this->shop->getKey().':'.md5(implode(',', $initial_product_ids));
 
 		$cache_rec = Cache::load( $this->cache_key );
 

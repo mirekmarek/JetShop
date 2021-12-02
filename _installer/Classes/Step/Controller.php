@@ -5,10 +5,11 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop\Installer;
 
-use Jet\Mvc_Layout;
-use Jet\Mvc_View;
+namespace JetApplication\Installer;
+
+use Jet\MVC_Layout;
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\Http_Request;
 
@@ -28,13 +29,13 @@ abstract class Installer_Step_Controller
 	protected string $label = '';
 
 	/**
-	 * @var ?Mvc_Layout
+	 * @var ?MVC_Layout
 	 */
-	protected ?Mvc_Layout $layout = null;
+	protected ?MVC_Layout $layout = null;
 	/**
-	 * @var ?Mvc_View
+	 * @var ?MVC_View
 	 */
-	protected ?Mvc_View $view = null;
+	protected ?MVC_View $view = null;
 
 	/**
 	 * @var bool
@@ -59,7 +60,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @var bool
 	 */
-	protected bool$is_future = false;
+	protected bool $is_future = false;
 
 	/**
 	 * @var bool
@@ -76,7 +77,7 @@ abstract class Installer_Step_Controller
 	{
 		$this->name = $name;
 
-		$this->view = new Mvc_View( $step_base_path.'view/' );
+		$this->view = new MVC_View( $step_base_path . 'view/' );
 		$this->view->setVar( 'controller', $this );
 
 	}
@@ -84,7 +85,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return string
 	 */
-	public function getName() : string
+	public function getName(): string
 	{
 		return $this->name;
 	}
@@ -92,13 +93,13 @@ abstract class Installer_Step_Controller
 	/**
 	 *
 	 */
-	abstract public function main() : void;
+	abstract public function main(): void;
 
 	/**
 	 * @param string $name
 	 *
 	 */
-	public function render( string $name ) : void
+	public function render( string $name ): void
 	{
 		$output = $this->view->render( $name );
 
@@ -110,7 +111,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public function getIsCurrent() : bool
+	public function getIsCurrent(): bool
 	{
 		return $this->is_current;
 	}
@@ -118,7 +119,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @param bool $is_current
 	 */
-	public function setIsCurrent( bool $is_current ) : void
+	public function setIsCurrent( bool $is_current ): void
 	{
 		$this->is_current = $is_current;
 	}
@@ -126,7 +127,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public function getIsFuture() : bool
+	public function getIsFuture(): bool
 	{
 		return $this->is_future;
 	}
@@ -134,7 +135,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @param bool $is_future
 	 */
-	public function setIsFuture( bool $is_future ) : void
+	public function setIsFuture( bool $is_future ): void
 	{
 		$this->is_future = $is_future;
 	}
@@ -142,7 +143,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public function getIsPast() : bool
+	public function getIsPast(): bool
 	{
 		return $this->is_past;
 	}
@@ -150,7 +151,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @param bool $is_past
 	 */
-	public function setIsPast( bool $is_past ) : void
+	public function setIsPast( bool $is_past ): void
 	{
 		$this->is_past = $is_past;
 	}
@@ -158,7 +159,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public function getIsLast() : bool
+	public function getIsLast(): bool
 	{
 		return $this->is_last;
 	}
@@ -167,15 +168,15 @@ abstract class Installer_Step_Controller
 	 * @param bool $is_last
 	 *
 	 */
-	public function setIsLast( bool $is_last  ) : void
+	public function setIsLast( bool $is_last ): void
 	{
-		$this->is_last = (bool)$is_last;
+		$this->is_last = $is_last;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function getIsPrevious() : bool
+	public function getIsPrevious(): bool
 	{
 		return $this->is_previous;
 	}
@@ -183,7 +184,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @param bool $is_previous
 	 */
-	public function setIsPrevious( bool $is_previous ) : void
+	public function setIsPrevious( bool $is_previous ): void
 	{
 		$this->is_previous = $is_previous;
 	}
@@ -191,7 +192,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public function getIsComing() : bool
+	public function getIsComing(): bool
 	{
 		return $this->is_coming;
 	}
@@ -199,7 +200,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @param bool $is_coming
 	 */
-	public function setIsComing( bool $is_coming ) : void
+	public function setIsComing( bool $is_coming ): void
 	{
 		$this->is_coming = $is_coming;
 	}
@@ -207,15 +208,15 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return string
 	 */
-	public function getURL() : string
+	public function getURL(): string
 	{
-		return '?step='.$this->name;
+		return '?step=' . $this->name;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function getIsSubStep() : bool
+	public function getIsSubStep(): bool
 	{
 		return false;
 	}
@@ -223,7 +224,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool|array
 	 */
-	public function getStepsAfter() : bool|array
+	public function getStepsAfter(): bool|array
 	{
 		return false;
 	}
@@ -231,7 +232,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return bool
 	 */
-	public function getIsAvailable() : bool
+	public function getIsAvailable(): bool
 	{
 		return true;
 	}
@@ -239,7 +240,7 @@ abstract class Installer_Step_Controller
 	/**
 	 * @return string
 	 */
-	public function getLabel() : string
+	public function getLabel(): string
 	{
 		return Tr::_( $this->label, [], $this->name );
 	}
@@ -247,7 +248,7 @@ abstract class Installer_Step_Controller
 	/**
 	 *
 	 */
-	public function catchContinue() : void
+	public function catchContinue(): void
 	{
 		if( Http_Request::POST()->exists( 'go' ) ) {
 			Installer::goToNext();

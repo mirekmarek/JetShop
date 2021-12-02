@@ -10,18 +10,18 @@ namespace JetShopModule\Order\Discounts\Code;
 use Jet\AJAX;
 use Jet\Application;
 use Jet\Http_Request;
-use Jet\Mvc_Controller_Default;
-use Jet\Mvc_Controller_Router;
+use Jet\MVC_Controller_Default;
+use Jet\MVC_Controller_Router;
 
 /**
  *
  */
-class Controller_ShoppingCart extends Mvc_Controller_Default
+class Controller_ShoppingCart extends MVC_Controller_Default
 {
 
-	public function getControllerRouter(): Mvc_Controller_Router
+	public function getControllerRouter(): MVC_Controller_Router
 	{
-		$router = new Mvc_Controller_Router( $this );
+		$router = new MVC_Controller_Router( $this );
 
 		$router->setDefaultAction('default');
 

@@ -2,20 +2,16 @@
 namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Form;
 use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'parametrization_properties_shop_data',
 	database_table_name: 'parametrization_properties_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Parametrization_Property::class
 )]
-abstract class Core_Parametrization_Property_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Parametrization_Property_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	#[DataModel_Definition(
@@ -149,18 +145,6 @@ abstract class Core_Parametrization_Property_ShopData extends DataModel_Related_
 	public static function getSeoStrategyOptions() : array
 	{
 		return self::$seo_strategy_options;
-	}
-
-	public function setParents( Category $category, Parametrization_Group $group, Parametrization_Property $property ) : void
-	{
-		$this->category = $category;
-		$this->category_id = $property->getCategoryId();
-
-		$this->group = $group;
-		$this->group_id = $group->getId();
-
-		$this->property = $property;
-		$this->property_id = $property->getId();
 	}
 
 	public function setCategoryId( int $category_id ) : void
@@ -374,19 +358,6 @@ abstract class Core_Parametrization_Property_ShopData extends DataModel_Related_
 	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h ) : string
 	{
 		return $this->getImageThumbnailUrl( Category_ShopData::IMG_PICTOGRAM, $max_w, $max_h );
-	}
-
-	public function getPossibleToEditImages() : bool
-	{
-		if($this->property->isInherited()) {
-			return false;
-		}
-
-		if($this->category->getEditForm()->getIsReadonly()) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

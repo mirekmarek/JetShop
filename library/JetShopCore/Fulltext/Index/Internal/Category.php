@@ -3,7 +3,6 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetShopAdmin\Shop_Admin;
 
 #[DataModel_Definition(
 	name: 'index_internal_category',
@@ -55,18 +54,18 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 	}
 
 	/**
-	 * @param $search_string
+	 * @param string $search_string
 	 * @param array $only_types
 	 * @param bool $only_active
 	 * @param int $exclude_branch_id
-	 * @param null|string $shop_code
+	 * @param ?Shops_Shop $shop
 	 *
 	 * @return Category[]
 	 */
-	public static function search( string $search_string, array $only_types=[], bool $only_active=false, int $exclude_branch_id=0, string|null $shop_code=null ) : array
+	public static function search( string $search_string, array $only_types=[], bool $only_active=false, int $exclude_branch_id=0, ?Shops_Shop $shop = null ) : array
 	{
-		if($shop_code===null) {
-			$shop_code = Shops::getCurrentCode();
+		if($shop===null) {
+			$shop = Shops::getCurrent();
 		}
 
 		$sql_query_where = [];
@@ -83,19 +82,16 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 			$sql_query_where[] = "category_is_active=1";
 		}
 
-		$ids = static::searchObjectIds( $shop_code, $search_string, implode(' AND ', $sql_query_where) );
+		$ids = static::searchObjectIds( $shop, $search_string, implode(' AND ', $sql_query_where) );
 
 		if(!$ids) {
 			return [];
 		}
 
-		/**
-		 * @var Category[] $result
-		 */
 		$result = Category::fetch(
 			where_per_model: [
 				'categories' => ['id' => $ids],
-				'categories_shop_data' => ['shop_code'=> Shops::getCurrentCode() ]
+				'categories_shop_data' => Shops::getCurrent()->getWhere()
 			],
 			load_filter: [
 				'categories.*',
@@ -109,7 +105,6 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 				$path = $category->getPath();
 				if(in_array($exclude_branch_id, $path)) {
 					unset($result[$i]);
-					continue;
 				}
 			}
 		}

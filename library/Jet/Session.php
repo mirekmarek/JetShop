@@ -28,24 +28,15 @@ class Session extends BaseObject
 	protected string $namespace = '';
 
 	/**
-	 * @param string $namespace
-	 */
-	public function __construct( string $namespace )
-	{
-
-		$this->namespace = (string)$namespace;
-
-		$this->sessionStart();
-	}
-
-	/**
 	 *
 	 */
 	protected function sessionStart(): void
 	{
 		if( !static::$session_started ) {
-			/** @noinspection PhpUsageOfSilenceOperatorInspection */
-			@session_start();
+			if(session_status() !== PHP_SESSION_ACTIVE) {
+				session_start();
+			}
+
 			static::$session_started = true;
 			if( static::$session_validator ) {
 				$validator = static::$session_validator;
@@ -86,12 +77,32 @@ class Session extends BaseObject
 	}
 
 	/**
+	 * @return string
+	 */
+	public static function getSessionId(): string
+	{
+		return session_id();
+	}
+
+
+	/**
 	 *
 	 */
 	public static function destroy(): void
 	{
 		session_destroy();
 		$_SESSION = [];
+	}
+
+	/**
+	 * @param string $namespace
+	 */
+	public function __construct( string $namespace )
+	{
+
+		$this->namespace = $namespace;
+
+		$this->sessionStart();
 	}
 
 	/**
@@ -120,11 +131,9 @@ class Session extends BaseObject
 	 */
 	protected function checkKey( string &$key ): void
 	{
-		$key = (string)$key;
-
 		if( $key == '' ) {
 			throw new Session_Exception(
-				'The key must be a non-empty string', Session_Exception::CODE_INVALID_KEY
+				'Key must be a non-empty string', Session_Exception::CODE_INVALID_KEY
 			);
 		}
 	}
@@ -179,11 +188,4 @@ class Session extends BaseObject
 		$_SESSION[$this->namespace] = [];
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getSessionId(): string
-	{
-		return session_id();
-	}
 }

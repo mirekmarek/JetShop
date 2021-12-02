@@ -5,19 +5,25 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Jet\Config;
-use Jet\Form;
+use Jet\SysConf_Jet_Form;
+use Jet\SysConf_Jet_UI;
 use Jet\SysConf_Path;
-use Jet\UI;
+use Jet\SysConf_Jet_PackageCreator_CSS;
+use Jet\SysConf_Jet_PackageCreator_JavaScript;
 
 Config::setBeTolerant( true );
 
-Form::setDefaultViewsDir( __DIR__.'/views/Form/' );
-UI::setViewsDir( __DIR__.'/views/UI/' );
+SysConf_Jet_Form::setDefaultViewsDir( __DIR__.'/views/form/' );
+SysConf_Jet_UI::setViewsDir( __DIR__.'/views/ui/' );
+
 
 require 'Classes/Installer.php';
+
+SysConf_Jet_PackageCreator_CSS::setEnabled( false );
+SysConf_Jet_PackageCreator_JavaScript::setEnabled( false );
 
 Installer::setBasePath( SysConf_Path::getBase().'_installer/' );
 
@@ -29,7 +35,7 @@ Installer::setSteps(
 		'SelectDbType',
 		'CreateDB',
 		'SelectLocales',
-		'CreateSite',
+		'CreateBases',
 		'Mailing',
 		'InstallModules',
 		'CreateAdministrator',
@@ -41,6 +47,6 @@ Installer::setSteps(
 
 Installer::setAvailableLocales(
 	[
-		'cs_CZ',
+		'en_US', 'cs_CZ',
 	]
 );

@@ -32,12 +32,6 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 	)]
 	protected int $category_id = 0;
 
-	protected Category|null $category = null;
-
-	protected int|null $group_id = null;
-
-	protected Parametrization_Group|null $group = null;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -45,8 +39,6 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		related_to: 'parent.id'		
 	)]
 	protected int $property_id = 0;
-
-	protected Parametrization_Property|null $property = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -69,7 +61,7 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Parametrization_Property_Option_ShopData::class
 	)]
-	protected $shop_data;
+	protected array $shop_data = [];
 
 	protected bool $is_first = false;
 
@@ -89,40 +81,7 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 
 	public function afterLoad() : void 
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Parametrization_Property_Option_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-		}
-	}
-
-	public function setParents( Category $category, Parametrization_Group $group, Parametrization_Property $property ) : void
-	{
-		$this->category = $category;
-		$this->category_id = $property->getCategoryId();
-
-		$this->group = $group;
-		$this->group_id = $group->getId();
-
-		$this->property = $property;
-		$this->property_id = $property->getId();
-
-		foreach($this->shop_data as $shop_data) {
-			/** @noinspection PhpParamsInspection */
-			$shop_data->setParents( $category, $group, $property, $this );
-		}
-
-	}
-
-	public function isInherited() : bool
-	{
-		return $this->property->isInherited();
+		Parametrization_Property_Option_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 	public function setCategoryId( int $category_id ) : void
@@ -135,26 +94,6 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		return $this->category_id;
 	}
 
-	public function getCategory() : Category
-	{
-		return $this->category;
-	}
-
-	public function setGroupId( int $group_id ) : void
-	{
-		$this->group_id = $group_id;
-	}
-
-	public function getGroupId() : int
-	{
-		return $this->group_id;
-	}
-
-	public function getGroup() : Parametrization_Group
-	{
-		return $this->group;
-	}
-
 	public function setPropertyId( int $property_id ) : void
 	{
 		$this->property_id = $property_id;
@@ -163,11 +102,6 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 	public function getPropertyId() : int
 	{
 		return $this->property_id;
-	}
-
-	public function getProperty() : Parametrization_Property
-	{
-		return $this->property;
 	}
 
 	public function getId() : int
@@ -180,7 +114,7 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		$this->id = $id;
 	}
 
-	public function getArrayKeyValue() : int|string|null 
+	public function getArrayKeyValue() : string
 	{
 		return $this->id;
 	}
@@ -205,23 +139,12 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		return $this->priority;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Parametrization_Property_Option_ShopData
+
+	public function getShopData( ?Shops_Shop $shop=null ) : Parametrization_Property_Option_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
-
-
-	/**
-	 * @param Parametrization_Property_Option_ShopData[] $shop_data
-	 */
-	public function setShopData( array $shop_data )
-	{
-		$this->shop_data = $shop_data;
-	}
+	
 
 	public function isFirst() : bool
 	{
@@ -249,9 +172,9 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 			$form = $this->getCommonForm('option_add_form');
 
 			foreach( Shops::getList() as $shop ) {
-				$shop_code = $shop->getCode();
+				$shop_key = $shop->getKey();
 
-				$seo_description_strategy = $form->field('/shop_data/'.$shop_code.'/alternative_category_description_strategy');
+				$seo_description_strategy = $form->field('/shop_data/'.$shop_key.'/alternative_category_description_strategy');
 				$seo_description_strategy->setErrorMessages([
 					Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 				]);
@@ -282,20 +205,15 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 			$form = $this->getCommonForm('option_edit_form_'.$this->id);
 
 			foreach( Shops::getList() as $shop ) {
-				$shop_code = $shop->getCode();
+				$shop_key = $shop->getKey();
 
-				$seo_description_strategy = $form->field('/shop_data/'.$shop_code.'/alternative_category_description_strategy');
+				$seo_description_strategy = $form->field('/shop_data/'.$shop_key.'/alternative_category_description_strategy');
 				$seo_description_strategy->setErrorMessages([
 					Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value',
 				]);
 			}
 
 			$this->_edit_form = $form;
-
-			if($this->getProperty()->isInherited()) {
-				$this->_edit_form->setIsReadonly();
-			}
-
 		}
 
 		return $this->_edit_form;
@@ -314,69 +232,69 @@ abstract class Core_Parametrization_Property_Option extends DataModel_Related_1t
 		return true;
 	}
 
-	public function getFilterLabel( string|null $shop_code=null ) : string
+	public function getFilterLabel( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getFilterLabel();
+		return $this->getShopData( $shop )->getFilterLabel();
 	}
 
-	public function getProductDetailLabel( string|null $shop_code=null ) : string
+	public function getProductDetailLabel( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getProductDetailLabel();
+		return $this->getShopData( $shop )->getProductDetailLabel();
 	}
 
-	public function getUrlParam( string|null $shop_code=null ) : string
+	public function getUrlParam( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getUrlParam();
+		return $this->getShopData( $shop )->getUrlParam();
 	}
 
-	public function getDescription( string|null $shop_code=null ) : string
+	public function getDescription( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getDescription();
+		return $this->getShopData( $shop )->getDescription();
 	}
 	
-	public function getSeoH1( string|null $shop_code=null ) : string
+	public function getSeoH1( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getSeoH1();
+		return $this->getShopData( $shop )->getSeoH1();
 	}
 
-	public function getSeoTitle( string|null $shop_code=null ) : string
+	public function getSeoTitle( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getSeoTitle();
+		return $this->getShopData( $shop )->getSeoTitle();
 	}
 
-	public function getSeoDescription( string|null $shop_code=null ) : string
+	public function getSeoDescription( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getSeoDescription();
+		return $this->getShopData( $shop )->getSeoDescription();
 	}
 
-	public function getImageMain( string|null $shop_code=null ) : string
+	public function getImageMain( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getImageMain();
+		return $this->getShopData( $shop )->getImageMain();
 	}
 
-	public function getImageMainUrl( string|null $shop_code=null ) : string
+	public function getImageMainUrl( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getImageMainUrl();
+		return $this->getShopData( $shop )->getImageMainUrl();
 	}
 
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
+	public function getImageMainThumbnailUrl( int $max_w, int $max_h, ?Shops_Shop $shop = null ) : string
 	{
-		return $this->getShopData( $shop_code )->getImageMainThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData( $shop )->getImageMainThumbnailUrl( $max_w, $max_h );
 	}
 
-	public function getImagePictogram( string|null $shop_code=null ) : string
+	public function getImagePictogram( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getImagePictogram();
+		return $this->getShopData( $shop )->getImagePictogram();
 	}
 
-	public function getImagePictogramUrl( string|null $shop_code=null ) : string
+	public function getImagePictogramUrl( ?Shops_Shop $shop=null  ) : string
 	{
-		return $this->getShopData( $shop_code )->getImagePictogramUrl();
+		return $this->getShopData( $shop )->getImagePictogramUrl();
 	}
 
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, string|null $shop_code=null ) : string
+	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, ?Shops_Shop $shop = null ) : string
 	{
-		return $this->getShopData( $shop_code )->getImagePictogramThumbnailUrl( $max_w, $max_h );
+		return $this->getShopData( $shop )->getImagePictogramThumbnailUrl( $max_w, $max_h );
 	}
 
 }

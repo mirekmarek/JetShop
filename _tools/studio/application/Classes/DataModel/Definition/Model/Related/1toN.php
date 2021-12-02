@@ -118,33 +118,10 @@ class DataModel_Definition_Model_Related_1toN extends Jet_DataModel_Definition_M
 
 		$class->setAttribute( 'DataModel_Definition', 'parent_model_class', $parent_class->getClassName() . '::class' );
 
-		$iterator_class = $this->getIteratorClassName();
-
-
-		if( $iterator_class != 'Jet\\DataModel_Related_1toN_Iterator' ) {
-
-			if( substr( $iterator_class, 0, 4 ) == 'Jet\\' ) {
-				$iterator_class = substr( $iterator_class, 4 );
-
-				$class->addUse( new ClassCreator_UseClass( 'Jet', $iterator_class ) );
-			}
-
-			$class->setAttribute( 'DataModel_Definition', 'iterator_class', $iterator_class . '::class' );
-		}
-
 		if( $this->getDefaultOrderBy() ) {
 			$class->setAttribute( 'DataModel_Definition', 'default_order_by', $this->getDefaultOrderBy() );
 		}
 
-	}
-
-
-	/**
-	 * @param string $iterator_class
-	 */
-	public function setIteratorClass( string $iterator_class ): void
-	{
-		$this->iterator_class = $iterator_class;
 	}
 
 	/**
@@ -178,5 +155,48 @@ class DataModel_Definition_Model_Related_1toN extends Jet_DataModel_Definition_M
 		return $res;
 	}
 
+
+	/**
+	 * @param ClassCreator_Class $class
+	 */
+	public function createClass_methods( ClassCreator_Class $class ): void
+	{
+		$id_property_name = '';
+		foreach( $this->getProperties() as $property ) {
+			if(
+				$property->getIsId() &&
+				!$property->getRelatedToClassName()
+			) {
+				$id_property_name = $property->getName();
+				break;
+			}
+		}
+
+		$get_array_key_value = $class->createMethod( 'getArrayKeyValue' );
+		$get_array_key_value->setReturnType('string');
+
+		if($id_property_name) {
+			$get_array_key_value->line( 1, 'return $this->'.$id_property_name.';' );
+		} else {
+			$get_array_key_value->line( 1, '//TODO: implement ...' );
+			$get_array_key_value->line( 1, 'return \'\';' );
+		}
+
+
+		foreach( $this->getProperties() as $property ) {
+			if(
+				$property->isInherited() &&
+				!$property->isOverload()
+			) {
+				continue;
+			}
+
+			$property->createClassMethods( $class );
+		}
+
+		if( ($id_controller_definition = $this->getIDControllerDefinition()) ) {
+			$id_controller_definition->createClassMethods( $class );
+		}
+	}
 
 }

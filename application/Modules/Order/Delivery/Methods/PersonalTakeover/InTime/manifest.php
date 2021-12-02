@@ -1,6 +1,6 @@
 <?php
 return [
-	'vendor'      => '',
-	'label'       => 'Delivery.PersonalTakeover.InTime',
+	'vendor' => '',
+	'label' => 'Delivery.PersonalTakeover.InTime',
 	'description' => '',
 ];

@@ -4,13 +4,13 @@ namespace JetShopModule\Admin\Payment\Methods;
 use JetShop\Payment_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Payment_Method     $payment_method
  */
@@ -51,24 +51,24 @@ $form->field( 'services' )->input()->addCustomCssStyle('height: 200px');
 
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_code= $shop->getCode();
+			$shop_key= $shop->getKey();
 
-			$shop_data = $payment_method->getShopData( $shop_code );
+			$shop_data = $payment_method->getShopData( $shop );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/default_price')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/discount_is_not_allowed')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/priority')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/title')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/description_short')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/confirmation_email_info_text')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/discount_is_not_allowed')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/title')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/confirmation_email_info_text')?>
 
 
 			</fieldset>

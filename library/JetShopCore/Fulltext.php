@@ -6,13 +6,11 @@ abstract class Core_Fulltext {
 	public static function update_Category_afterAdd( Category $category ) : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
 
-			$shop_data = $category->getShopData( $shop_code );
-
+			$shop_data = $category->getShopData( $shop );
 
 			$internal_index = new Fulltext_Index_Internal_Category();
-			$internal_index->setShopCode( $shop_code );
+			$internal_index->setShop( $shop );
 			$internal_index->setObjectId( $category->getId() );
 			$internal_index->setCategoryType( $category->getType() );
 			$internal_index->setCategoryIsActive( $shop_data->isActive() );
@@ -56,12 +54,10 @@ abstract class Core_Fulltext {
 	public static function update_Product_afterAdd( Product $product ) : void
 	{
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			$shop_data = $product->getShopData( $shop_code );
+			$shop_data = $product->getShopData( $shop );
 
 			$internal_index = new Fulltext_Index_Internal_Product();
-			$internal_index->setShopCode( $shop_code );
+			$internal_index->setShop( $shop );
 			$internal_index->setObjectId( $product->getId() );
 			$internal_index->setProductType( $product->getType() );
 			$internal_index->setProductIsActive( $product->isActive() && $shop_data->isActive() );

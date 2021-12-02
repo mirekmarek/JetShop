@@ -1,6 +1,6 @@
 <?php
 return [
-	'vendor'      => '',
-	'label'       => 'Order.Delivery.PersonalTakeover.CeskaPostaBalikovna',
+	'vendor' => '',
+	'label' => 'Order.Delivery.PersonalTakeover.CeskaPostaBalikovna',
 	'description' => '',
 ];

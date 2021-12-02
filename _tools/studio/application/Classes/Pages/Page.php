@@ -8,30 +8,34 @@
 
 namespace JetStudio;
 
-use Jet\Data_Text;
 use Jet\Exception;
 use Jet\Form_Field_Int;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
 use Jet\Form_Field_Hidden;
-use Jet\Mvc_Layout;
-use Jet\Mvc_Page;
+use Jet\IO_Dir;
+use Jet\MVC;
+use Jet\MVC_Layout;
+use Jet\MVC_Page;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Checkbox;
-use Jet\Mvc_Factory;
-use Jet\Mvc_Page_MetaTag_Interface;
+use Jet\Factory_MVC;
+use Jet\MVC_Page_MetaTag_Interface;
+use Jet\SysConf_Jet_MVC;
 use Jet\Tr;
 use Jet\Locale;
-use Jet\Mvc_Page_Content_Interface;
+use Jet\MVC_Page_Content_Interface;
 
 /**
  *
  */
-class Pages_Page extends Mvc_Page
+class Pages_Page extends MVC_Page
 {
 	const MAX_META_TAGS_COUNT = 100;
-	const MAX_HTT_HEADERS_COUNT = 100;
+	const MAX_HTTP_HEADERS_COUNT = 100;
+
+	const PARAMS_COUNT = 5;
 
 	/**
 	 * @var bool
@@ -127,7 +131,7 @@ class Pages_Page extends Mvc_Page
 				) {
 					$field->setCustomError(
 						Tr::_( 'Page with the identifier already exists' ),
-						'site_id_is_not_unique'
+						'base_id_is_not_unique'
 					);
 
 					return false;
@@ -167,15 +171,13 @@ class Pages_Page extends Mvc_Page
 			return false;
 		}
 
-		$new_page = static::createPage(
-			Pages::getCurrentSiteId(),
+		return static::createPage(
+			Pages::getCurrentBaseId(),
 			Pages::getCurrentLocale(),
 			$form->field( 'id' )->getValue(),
 			$form->field( 'name' )->getValue(),
 			Pages::getCurrentPage()
 		);
-
-		return $new_page;
 	}
 
 
@@ -277,10 +279,11 @@ class Pages_Page extends Mvc_Page
 				$SSL_required_field
 			];
 
-			if( $this->getId() != static::HOMEPAGE_ID ) {
+			if( $this->getId() != MVC::HOMEPAGE_ID ) {
 				$relative_path_fragment_field = new Form_Field_Input( 'relative_path_fragment', 'URL:', rawurldecode( $page->getRelativePathFragment() ) );
 				$relative_path_fragment_field->setIsRequired( true );
-				$relative_path_fragment_field->setCatcher( function( $value ) use ( $page ) {
+				$relative_path_fragment_field->setCatcher( function( $value ) use ( $page, $relative_path_fragment_field ) {
+					$value = rawurlencode($value);
 					$page->setRelativePathFragment( $value );
 				} );
 				$relative_path_fragment_field->setIsRequired( true );
@@ -290,11 +293,13 @@ class Pages_Page extends Mvc_Page
 				$relative_path_fragment_field->setValidator( function( Form_Field_Input $field ) use ( $page ) {
 					$value = $field->getValue();
 
-					$value = Data_Text::removeAccents( $value );
-					$value = strtolower( $value );
+					//$value = Data_Text::removeAccents( $value );
+					$value = mb_strtolower( $value );
 
 					$value = str_replace( ' ', '-', $value );
-					$value = preg_replace( '/[^a-z0-9-]/i', '', $value );
+					//$value = preg_replace( '/[^a-z0-9-]/i', '', $value );
+					$value = preg_replace( '/[^\p{L}0-9\-]/u', '', $value );
+
 					$value = preg_replace( '~([-]{2,})~', '-', $value );
 
 					$field->setValue( $value );
@@ -387,6 +392,31 @@ class Pages_Page extends Mvc_Page
 				$u++;
 			}
 
+			
+			$i = 0;
+			foreach( $this->parameters as $key => $val ) {
+
+				$param_key = new Form_Field_Input( '/params/' . $i . '/key', '', $key );
+				$fields[] = $param_key;
+
+				$param_value = new Form_Field_Input( '/params/' . $i . '/value', '', $val );
+				$fields[] = $param_value;
+
+				$i++;
+			}
+
+			for( $c = 0; $c < static::PARAMS_COUNT; $c++ ) {
+
+				$param_key = new Form_Field_Input( '/params/' . $i . '/key', '', '' );
+				$fields[] = $param_key;
+
+				$param_value = new Form_Field_Input( '/params/' . $i . '/value', '', '' );
+				$fields[] = $param_value;
+
+				$i++;
+			}
+
+
 			$form = new Form(
 				'page_edit_form_main',
 				$fields
@@ -415,6 +445,7 @@ class Pages_Page extends Mvc_Page
 
 			$this->catchEditForm_metaTags( $form );
 			$this->catchEditForm_httpHeaders( $form );
+			$this->catchEditForm_params( $form );
 
 			return true;
 		}
@@ -445,7 +476,7 @@ class Pages_Page extends Mvc_Page
 				continue;
 			}
 
-			$meta_tag = Mvc_Factory::getPageMetaTagInstance();
+			$meta_tag = Factory_MVC::getPageMetaTagInstance();
 
 			$meta_tag->setAttribute( $attribute );
 			$meta_tag->setAttributeValue( $attribute_value );
@@ -467,7 +498,7 @@ class Pages_Page extends Mvc_Page
 	{
 		$http_headers = [];
 
-		for( $u = 0; $u < static::MAX_HTT_HEADERS_COUNT; $u++ ) {
+		for( $u = 0; $u < static::MAX_HTTP_HEADERS_COUNT; $u++ ) {
 			if( !$form->fieldExists( $p_f_prefix . '/http_headers/' . $u ) ) {
 				break;
 			}
@@ -485,6 +516,30 @@ class Pages_Page extends Mvc_Page
 		$this->setHttpHeaders( $http_headers );
 	}
 
+	/**
+	 * @param Form $form
+	 * @param string $field_prefix
+	 */
+	public function catchEditForm_params( Form $form, string $field_prefix = '' ): void
+	{
+		$params = [];
+
+		$i = 0;
+		while( $form->fieldExists( $field_prefix . '/params/' . $i . '/key' ) ) {
+
+			$param_key = $form->field( $field_prefix . '/params/' . $i . '/key' )->getValue();
+			$param_value = $form->field( $field_prefix . '/params/' . $i . '/value' )->getValue();
+
+			if( $param_key ) {
+				$params[$param_key] = $param_value;
+			}
+
+			$i++;
+		}
+
+		$this->setParameters( $params );
+	}
+
 
 	/**
 	 * @return Form
@@ -495,9 +550,9 @@ class Pages_Page extends Mvc_Page
 
 			$page = $this;
 			/**
-			 * @var Sites_Site $site
+			 * @var Bases_Base $base
 			 */
-			$site = $this->getSite();
+			$base = $this->getBase();
 
 			$layout_script_name_field = new Form_Field_Select( 'layout_script_name', 'Layout script name:', $page->getLayoutScriptName() );
 			$layout_script_name_field->setErrorMessages( [
@@ -506,7 +561,7 @@ class Pages_Page extends Mvc_Page
 			$layout_script_name_field->setCatcher( function( $value ) use ( $page ) {
 				$page->setLayoutScriptName( $value );
 			} );
-			$layouts = $site->getLayoutsList();
+			$layouts = $base->getLayoutsList();
 			if( !$layouts ) {
 				$layouts = ['' => ''];
 			}
@@ -527,7 +582,7 @@ class Pages_Page extends Mvc_Page
 				$content_form = $content->getEditForm( $this );
 
 				foreach( $content_form->getFields() as $field ) {
-					if( substr( $field->getName(), 0, 9 ) != '/content/' ) {
+					if( !str_starts_with( $field->getName(), '/content/' ) ) {
 						if( $field->getName()[0] != '/' ) {
 							$field->setName( '/content/' . $i . '/' . $field->getName() );
 						} else {
@@ -595,23 +650,20 @@ class Pages_Page extends Mvc_Page
 		return true;
 	}
 
-
-
-
 	/**
-	 * @param string $site_id
-	 * @param Locale|string $locale
+	 * @param string $base_id
+	 * @param Locale $locale
 	 * @param string $id
 	 * @param string $name
 	 * @param Pages_Page|null $parent
 	 *
 	 * @return Pages_Page
 	 */
-	public static function createPage( string $site_id,
-	                                   Locale|string $locale,
-	                                   string $id,
-	                                   string $name,
-	                                   ?Pages_Page $parent = null ): Pages_Page
+	public static function createPage( string       $base_id,
+	                                   Locale       $locale,
+	                                   string       $id,
+	                                   string       $name,
+	                                   ?Pages_Page  $parent = null ): Pages_Page
 	{
 
 		if( !is_object( $locale ) ) {
@@ -620,7 +672,7 @@ class Pages_Page extends Mvc_Page
 
 
 		$page = new Pages_Page();
-		$page->setSiteId( $site_id );
+		$page->setBaseId( $base_id );
 		$page->setLocale( $locale );
 		$page->setId( $id );
 		$page->setName( $name );
@@ -629,12 +681,19 @@ class Pages_Page extends Mvc_Page
 
 		if( $parent ) {
 			$page->setRelativePathFragment( $id );
-			$page->original_relative_path_fragment = $id;
 			$page->parent_id = $parent->getId();
 			if( $parent->getRelativePath() ) {
 				$page->relative_path = $parent->getRelativePath() . '/' . $page->relative_path_fragment . '/';
 			}
 		}
+
+
+		if($parent) {
+			$page->setDataFilePath( $parent->getDataDirPath().rawurldecode( $page->getRelativePathFragment() ).'/'.SysConf_Jet_MVC::getPageDataFileName() );
+		} else {
+			$page->setDataFilePath( Bases::getBase($base_id)->getPagesDataPath($locale).SysConf_Jet_MVC::getPageDataFileName() );
+		}
+
 
 		return $page;
 	}
@@ -835,7 +894,7 @@ class Pages_Page extends Mvc_Page
 
 
 			$is_cacheable = Pages_Page_Content::getField__is_cacheable( false );
-			$output_position = Pages_Page_Content::getField__output_position( Mvc_Layout::DEFAULT_OUTPUT_POSITION, $this );
+			$output_position = Pages_Page_Content::getField__output_position( MVC_Layout::DEFAULT_OUTPUT_POSITION, $this );
 			$output_position_order = Pages_Page_Content::getField__output_position_order( 0 );
 
 			$module_name = Pages_Page_Content::getField__module_name( '' );
@@ -1019,12 +1078,6 @@ class Pages_Page extends Mvc_Page
 
 
 
-
-
-
-
-
-
 	/**
 	 * @param string $module_name
 	 * @param string $controller
@@ -1064,7 +1117,7 @@ class Pages_Page extends Mvc_Page
 	 */
 	public function getFullId(): string
 	{
-		return $this->site_id . '.' . $this->id;
+		return $this->base_id . '.' . $this->id;
 	}
 
 
@@ -1122,9 +1175,9 @@ class Pages_Page extends Mvc_Page
 
 
 	/**
-	 * @param Mvc_Page_Content_Interface $content
+	 * @param MVC_Page_Content_Interface $content
 	 */
-	public function addContent( Mvc_Page_Content_Interface $content ): void
+	public function addContent( MVC_Page_Content_Interface $content ): void
 	{
 
 		parent::addContent( $content );
@@ -1159,10 +1212,26 @@ class Pages_Page extends Mvc_Page
 		return $ok;
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function delete(): bool
+	{
+		$ok = true;
+		try {
+			IO_Dir::remove( $this->getDataDirPath() );
+		} catch( Exception $e ) {
+			$ok = false;
+			Application::handleError( $e );
+		}
+
+		return $ok;
+	}
+
 
 	/**
 	 *
-	 * @return Mvc_Page_MetaTag_Interface[]
+	 * @return MVC_Page_MetaTag_Interface[]
 	 */
 	public function getMetaTags(): array
 	{

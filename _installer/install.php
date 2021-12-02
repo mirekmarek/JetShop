@@ -5,7 +5,7 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 require 'init.php';
 

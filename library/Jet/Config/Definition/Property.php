@@ -46,11 +46,6 @@ abstract class Config_Definition_Property extends BaseObject implements Form_Fie
 	protected string $label = '';
 
 	/**
-	 * @var mixed
-	 */
-	protected $default_value = '';
-
-	/**
 	 * @var bool
 	 */
 	protected bool $is_required = false;
@@ -163,24 +158,6 @@ abstract class Config_Definition_Property extends BaseObject implements Form_Fie
 	}
 
 	/**
-	 * @param Config $config
-	 *
-	 * @return mixed
-	 */
-	public function getDefaultValue( /** @noinspection PhpUnusedParameterInspection */ Config $config ): mixed
-	{
-		return $this->default_value;
-	}
-
-	/**
-	 * @param mixed $default_value
-	 */
-	public function setDefaultValue( mixed $default_value ): void
-	{
-		$this->default_value = $default_value;
-	}
-
-	/**
 	 * @return bool
 	 */
 	public function getIsRequired(): bool
@@ -246,7 +223,7 @@ abstract class Config_Definition_Property extends BaseObject implements Form_Fie
 	 *
 	 * @throws Config_Exception
 	 */
-	public function prepareValue( /** @noinspection PhpUnusedParameterInspection */ mixed $value, Config $config ): mixed
+	public function prepareValue( mixed $value, Config $config ): mixed
 	{
 
 		$this->checkValueType( $value );

@@ -8,6 +8,7 @@
 
 namespace JetStudio;
 
+use Jet\BaseObject_Exception;
 use Jet\DataModel_Definition_Property_DataModel as Jet_DataModel_Definition_Property_DataModel;
 use Jet\Form_Field;
 use Jet\Tr;
@@ -63,11 +64,14 @@ class DataModel_Definition_Property_DataModel extends Jet_DataModel_Definition_P
 		$related_model = $related_class->getDefinition();
 
 		if( $related_model ) {
-			echo '<label>' . Tr::_( 'Related DataModel:' ) . '&nbsp;&nbsp;</label>';
-			echo
-				'<a href="?class=' . $related_class->getFullClassName() . '">'
-				. $related_model->getModelName() . ' (' . $related_model->getClassName() . ')'
-				. '</a>';
+			?>
+			<div class="card">
+				<div class=" card-body">
+					<?=Tr::_( 'Related DataModel:' )?>&nbsp;&nbsp;<a href="?class=<?=$related_class->getFullClassName()?>"><?=$related_model->getClassName()?> (<?=$related_model->getModelName()?>)</a>
+				</div>
+			</div>
+			<br>
+			<?php
 		}
 	}
 
@@ -81,10 +85,15 @@ class DataModel_Definition_Property_DataModel extends Jet_DataModel_Definition_P
 	public function createClassProperty( ClassCreator_Class $class ): ClassCreator_Class_Property
 	{
 
-		$related_dm = DataModels::getClass( $this->getDataModelClass() )->getDefinition();
+		$related_dm = DataModels::getClass( $this->getDataModelClass() );
+		if(!$related_dm) {
+			throw new BaseObject_Exception( 'Class ' . $this->getDataModelClass() . ' does not exist' );
+		}
+		$related_dm = $related_dm->getDefinition();
 		$attributes = [];
 
 		$property_type = '';
+		$default_value = null;
 
 		if( !$related_dm ) {
 			$class->addError( 'Unable to get related DataModel definition (related model ID: ' . $this->getDataModelClass() . ')' );
@@ -104,59 +113,45 @@ class DataModel_Definition_Property_DataModel extends Jet_DataModel_Definition_P
 
 			$type = $related_dm->getInternalType();
 
-			$property_type = $use->getClass();
 
-			switch( $type ) {
+			switch($type) {
 				case DataModels::MODEL_TYPE_RELATED_1TO1:
-					$class->addUse( new ClassCreator_UseClass( 'Jet', 'DataModel_Related_1to1' ) );
-					$property_type .= '|DataModel_Related_1to1|null';
-					break;
+					$property_type = $use->getClass();
+				break;
 				case DataModels::MODEL_TYPE_RELATED_1TON:
-
-					$class->addUse( new ClassCreator_UseClass( 'Jet', 'DataModel_Related_1toN' ) );
-
-					$iterator_class = $related_dm->getIteratorClassName();
-
-					if( substr( $iterator_class, 0, 4 ) == 'Jet\\' ) {
-						$iterator_class = substr( $iterator_class, 4 );
-
-						$class->addUse( new ClassCreator_UseClass( 'Jet', $iterator_class ) );
-					}
-
-					$property_type .= '[]|DataModel_Related_1toN|' . $iterator_class;
-					break;
-				case DataModels::MODEL_TYPE_RELATED_MTON:
-					$N_model = $related_dm->getNModel();
-
-					if( $N_model ) {
-						$class->addUse( new ClassCreator_UseClass( 'Jet', 'DataModel_Related_MtoN' ) );
-
-						/*
-						if($N_model->getNamespaceId()!=Project::getCurrentNamespaceId()) {
-
-							$ns = Project::getCurrentNamespace();
-
-							$class->addUse(
-								new ClassCreator_UseClass($ns->getNamespace(), $N_model->getClassName())
-							);
-
-						}
-						*/
-
-						$property_type .= '|DataModel_Related_MtoN|' . $N_model->getClassName() . '[]';
-					} else {
-						$class->addError( 'Unable to get N DataModel definition' );
-					}
-
-					break;
+					$property_type = 'array';
+					$default_value = [];
+				break;
 			}
 		}
 
 
 		$property = $this->createClassProperty_main( $class, $property_type, 'DataModel::TYPE_DATA_MODEL', $attributes );
+		$property->setDefaultValue( $default_value );
 
 		return $property;
 	}
+
+	/**
+	 * @return array|null
+	 */
+	public function getDefaultValue() : ?array
+	{
+		$related_dm = DataModels::getClass( $this->getDataModelClass() )->getDefinition();
+
+		if( $related_dm ) {
+			switch( $related_dm->getInternalType() ) {
+				case DataModels::MODEL_TYPE_RELATED_1TO1:
+					return null;
+
+				case DataModels::MODEL_TYPE_RELATED_1TON:
+					return [];
+			}
+		}
+
+		return null;
+	}
+
 
 	/**
 	 * @param ClassCreator_Class $class

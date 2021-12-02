@@ -11,7 +11,7 @@ abstract class Core_Payment_Method_Module extends Application_Module
 {
 	public function getDefaultPrice( CashDesk $cash_desk, Payment_Method $payment_method ) : float
 	{
-		return $payment_method->getShopData($cash_desk->getShopCode())->getDefaultPrice();
+		return $payment_method->getShopData($cash_desk->getShop())->getDefaultPrice();
 	}
 
 	public function isEnabledForOrder( CashDesk $cash_desk, Payment_Method $payment_method ) : bool
@@ -25,7 +25,7 @@ abstract class Core_Payment_Method_Module extends Application_Module
 
 	public function getOrderConfirmationEmailInfoText( Order $order, Payment_Method $payment_method ) : string
 	{
-		return $payment_method->getShopData( $order->getShopCode() )->getConfirmationEmailInfoText();
+		return $payment_method->getShopData( $order->getShop() )->getConfirmationEmailInfoText();
 	}
 
 }

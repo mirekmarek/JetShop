@@ -7,11 +7,12 @@
  */
 namespace JetShopModule\Admin\ManageAccess\Administrators\Users;
 
+use Jet\Logger;
 use JetShop\Auth_Administrator_User as User;
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
@@ -22,13 +23,13 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
-	 * @var ?Mvc_Controller_Router_AddEditDelete
+	 * @var ?MVC_Controller_Router_AddEditDelete
 	 */
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	/**
 	 * @var ?User
@@ -37,12 +38,12 @@ class Controller_Main extends Mvc_Controller_Default
 
 	/**
 	 *
-	 * @return Mvc_Controller_Router_AddEditDelete
+	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->user = User::get($id));
@@ -74,7 +75,7 @@ class Controller_Main extends Mvc_Controller_Default
 	/**
 	 * @param string $current_label
 	 */
-	protected function _setBreadcrumbNavigation( $current_label = '' ) : void
+	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		UI_module::initBreadcrumb();
 
@@ -116,7 +117,13 @@ class Controller_Main extends Mvc_Controller_Default
 			$user->setPassword( $password );
 			$user->save();
 
-			$this->logAllowedAction( 'User created', $user->getId(), $user->getUsername(), $user );
+			Logger::success(
+				'user_created',
+				'User '.$user->getUsername().' ('.$user->getId().') created',
+				$user->getId(),
+				$user->getName(),
+				$user
+			);
 
 			$user->sendWelcomeEmail( $password );
 
@@ -161,7 +168,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $user->catchEditForm() ) {
 
 			$user->save();
-			$this->logAllowedAction( 'User updated', $user->getId(), $user->getUsername(), $user );
+			Logger::success(
+				'user_updated',
+				'User '.$user->getUsername().' ('.$user->getId().') updated',
+				$user->getId(),
+				$user->getName(),
+				$user
+			);
 
 			UI_messages::success(
 				Tr::_( 'User <b>%USERNAME%</b> has been updated', [ 'USERNAME' => $user->getUsername() ] )
@@ -212,7 +225,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$user->delete();
-			$this->logAllowedAction( 'User deleted', $user->getId(), $user->getUsername(), $user );
+			Logger::success(
+				'user_deleted',
+				'User '.$user->getUsername().' ('.$user->getId().') deleted',
+				$user->getId(),
+				$user->getName(),
+				$user
+			);
 
 			UI_messages::info(
 				Tr::_( 'User <b>%USERNAME%</b> has been deleted', [ 'USERNAME' => $user->getUsername() ] )

@@ -30,7 +30,7 @@ class Navigation_Menu extends Core_Navigation_Menu {
 	{
 		if(!$this->__tree) {
 			$where = [
-				'categories_shop_data.shop_code'=>Shops::getCurrentCode(),
+				Shops::getCurrent()->getWhere('categories_shop_data.'),
 				'AND',
 				'categories_shop_data.is_active' => true,
 				'AND',
@@ -86,14 +86,12 @@ class Navigation_Menu extends Core_Navigation_Menu {
 
 
 		$target = null;
-		$t_d = null;
+
 		if($d['target_category_id']) {
 			$target = $this->__tree->getNode( $d['target_category_id']);
 		}
 
-		if($target) {
-			$t_d = $target->getData();
-		}
+		$t_d = $target?->getData();
 
 		$menu_item = new Navigation_Menu_Item( $this );
 

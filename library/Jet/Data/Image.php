@@ -59,7 +59,7 @@ class Data_Image extends BaseObject
 	 */
 	public function __construct( string $path )
 	{
-		$this->path = (string)$path;
+		$this->path = $path;
 
 		if( !IO_File::exists( $path ) ) {
 			throw new Data_Image_Exception(
@@ -229,8 +229,6 @@ class Data_Image extends BaseObject
 			$new_height = $this->height;
 		}
 
-
-		$image = null;
 		$image = match ($this->img_type) {
 			self::TYPE_JPG => imagecreatefromjpeg( $this->path ),
 			self::TYPE_GIF => imagecreatefromgif( $this->path ),

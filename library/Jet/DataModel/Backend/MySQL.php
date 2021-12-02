@@ -26,7 +26,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	/**
 	 * @var ?DataModel_Backend_MySQL_Config
 	 */
-	protected $config = null;
+	protected ?DataModel_Backend_Config $config = null;
 
 	/**
 	 *
@@ -184,7 +184,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 			}
 		}
 
-		$table_name = $force_table_name ? $force_table_name : $this->_getTableName( $definition );
+		$table_name = $force_table_name ? : $this->_getTableName( $definition );
 
 		$q = 'CREATE TABLE IF NOT EXISTS ' . $table_name . ' (' . PHP_EOL;
 		$q .= implode( ',' . PHP_EOL, $_columns );
@@ -285,9 +285,9 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 
 				if( $max_len <= 512 ) {
 					if( $column->getIsId() ) {
-						return 'varchar(' . ((int)$max_len) . ') COLLATE utf8_bin NOT NULL  DEFAULT \'\'';
+						return 'varchar(' . ($max_len) . ') COLLATE utf8_bin NOT NULL  DEFAULT \'\'';
 					} else {
-						return 'varchar(' . ((int)$max_len) . ') DEFAULT ' . $this->_getValue( $default_value );
+						return 'varchar(' . ($max_len) . ') DEFAULT ' . $this->_getValue( $default_value );
 					}
 				}
 
@@ -339,11 +339,11 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 		}
 
 		if( is_int( $value ) ) {
-			return (int)$value;
+			return $value;
 		}
 
 		if( is_float( $value ) ) {
-			return (float)$value;
+			return $value;
 		}
 
 		if( $value instanceof Data_DateTime ) {
@@ -492,7 +492,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	 *
 	 * @return array
 	 */
-	protected function _getRecord( DataModel_RecordData $record, $quote = true, $add_table_name = false ): array
+	protected function _getRecord( DataModel_RecordData $record, bool $quote = true, bool $add_table_name = false ): array
 	{
 		$_record = [];
 
@@ -927,36 +927,6 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 	/**
 	 * @param DataModel_Query $query
 	 *
-	 * @return mixed
-	 */
-	public function fetchAll( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchAll' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 * @param string $fetch_method
-	 *
-	 * @return mixed
-	 */
-	protected function _fetch( DataModel_Query $query, string $fetch_method ): mixed
-	{
-
-		$data = $this->getDbRead()->$fetch_method(
-			$this->createSelectQuery( $query )
-		);
-
-		if( !is_array( $data ) ) {
-			return $data;
-		}
-
-		return $this->validateResultData( $query, $fetch_method, $data );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
 	 * @return string
 	 */
 	public function createSelectQuery( DataModel_Query $query ): string
@@ -1004,7 +974,6 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 				$backend_function_call = $property->toString( $mapper );
 
 				$columns_qp[] = $backend_function_call . ' AS ' . $this->_quoteName( $select_as ) . '';
-				continue;
 			}
 
 		}
@@ -1042,9 +1011,7 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 			$group_by_qp[] = $val;
 		}
 
-		$group_by_qp = PHP_EOL . 'GROUP BY' . PHP_EOL . "\t" . implode( ',' . PHP_EOL . "\t", $group_by_qp ) . PHP_EOL;
-
-		return $group_by_qp;
+		return PHP_EOL . 'GROUP BY' . PHP_EOL . "\t" . implode( ',' . PHP_EOL . "\t", $group_by_qp ) . PHP_EOL;
 	}
 
 	/**
@@ -1112,6 +1079,36 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 		}
 
 		return $limit_qp;
+	}
+
+	/**
+	 * @param DataModel_Query $query
+	 * @param string $fetch_method
+	 *
+	 * @return mixed
+	 */
+	protected function _fetch( DataModel_Query $query, string $fetch_method ): mixed
+	{
+
+		$data = $this->getDbRead()->$fetch_method(
+			$this->createSelectQuery( $query )
+		);
+
+		if( !is_array( $data ) ) {
+			return $data;
+		}
+
+		return $this->validateResultData( $query, $fetch_method, $data );
+	}
+
+	/**
+	 * @param DataModel_Query $query
+	 *
+	 * @return mixed
+	 */
+	public function fetchAll( DataModel_Query $query ): mixed
+	{
+		return $this->_fetch( $query, 'fetchAll' );
 	}
 
 	/**

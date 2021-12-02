@@ -115,7 +115,7 @@ abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter_Ab
 				[
 					'product_id'=>$initial_product_ids,
 					'AND',
-					'shop_code'=>$this->listing->getShopCode()
+					$this->listing->getShop()->getWhere()
 				]
 			);
 

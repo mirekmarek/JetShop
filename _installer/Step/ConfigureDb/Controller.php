@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Exception;
 use Jet\Db;
@@ -38,7 +38,7 @@ class Installer_Step_ConfigureDb_Controller extends Installer_Step_Controller
 	 */
 	public function getIsAvailable(): bool
 	{
-		return !Installer_Step_CreateSite_Controller::sitesCreated();
+		return !Installer_Step_CreateBases_Controller::basesCreated();
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Installer_Step_ConfigureDb_Controller extends Installer_Step_Controller
 
 
 	/**
-	 * @param $connection_config
+	 * @param Db_Backend_PDO_Config $connection_config
 	 */
 	protected function configure( Db_Backend_PDO_Config $connection_config )
 	{
@@ -97,7 +97,7 @@ class Installer_Step_ConfigureDb_Controller extends Installer_Step_Controller
 				$this->main_config->saveConfigFile();
 			} catch( Exception $e ) {
 				$ok = false;
-				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_NAMESPACE ) );
+				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_DICTIONARY ) );
 			}
 
 			if( $ok ) {
@@ -111,7 +111,7 @@ class Installer_Step_ConfigureDb_Controller extends Installer_Step_Controller
 	}
 
 	/**
-	 * @param $connection_config
+	 * @param Db_Backend_PDO_Config $connection_config
 	 */
 	protected function test( Db_Backend_PDO_Config $connection_config ): void
 	{

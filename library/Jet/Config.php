@@ -21,7 +21,6 @@ namespace Jet;
  *
  *              description: 'Some description ...',
  *              is_required: true,
- *              default_value: 'some default value',
  *
  *
  *              form_field_type: Form::TYPE_*,
@@ -53,12 +52,6 @@ abstract class Config extends BaseObject
 
 
 	/**
-	 *
-	 * @var string|null
-	 */
-	protected static string|null $config_dir_path = null;
-
-	/**
 	 * @var bool
 	 */
 	protected static bool $be_tolerant = false;
@@ -85,26 +78,6 @@ abstract class Config extends BaseObject
 	 */
 	private array|null $properties_definition = null;
 
-
-	/**
-	 * @return string
-	 */
-	public static function getConfigDirPath(): string
-	{
-		if( !static::$config_dir_path ) {
-			static::$config_dir_path = SysConf_Path::getConfig();
-		}
-
-		return static::$config_dir_path;
-	}
-
-	/**
-	 * @param string $path
-	 */
-	public static function setConfigDirPath( string $path ): void
-	{
-		static::$config_dir_path = $path;
-	}
 
 	/**
 	 * @return bool
@@ -160,8 +133,6 @@ abstract class Config extends BaseObject
 					);
 				}
 
-				$this->{$property_name} = $property_definition->getDefaultValue( $this );
-
 				continue;
 			}
 
@@ -175,7 +146,7 @@ abstract class Config extends BaseObject
 	public function getDefinition(): Config_Definition_Config
 	{
 		if( !$this->definition ) {
-			$this->definition = Config_Definition::getMainConfigDefinition( get_called_class() );
+			$this->definition = Config_Definition::getMainConfigDefinition( static::class );
 		}
 
 		return $this->definition;
@@ -342,7 +313,7 @@ abstract class Config extends BaseObject
 	public function getConfigFilePath(): string
 	{
 		if( !$this->_config_file_path ) {
-			$this->_config_file_path = static::getConfigDirPath() . $this->getDefinition()->getName() . '.php';
+			$this->_config_file_path = SysConf_Path::getConfig() . $this->getDefinition()->getName() . '.php';
 		}
 
 		return $this->_config_file_path;
@@ -383,7 +354,6 @@ abstract class Config extends BaseObject
 
 			}
 
-			/** @noinspection PhpIncludeInspection */
 			$data = require $config_file_path;
 			if( !is_array( $data ) ) {
 				throw new Config_Exception(
@@ -405,15 +375,10 @@ abstract class Config extends BaseObject
 	 */
 	public function saveConfigFile(): void
 	{
-		$config_file_path = $this->getConfigFilePath();
-
-		$config_data = $this->toArray();
-
-		$config_data = '<?php' . PHP_EOL . 'return ' . (new Data_Array( $config_data ))->export();
-
-		IO_File::write( $config_file_path, $config_data );
-
-		Cache::resetOPCache();
+		IO_File::writeDataAsPhp(
+			$this->getConfigFilePath(),
+			$this->toArray()
+		);
 
 		Config::$_config_file_data = [];
 	}

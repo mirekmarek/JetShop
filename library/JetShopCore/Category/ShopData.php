@@ -5,8 +5,6 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Form;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
 
 /**
@@ -15,12 +13,10 @@ use Jet\Tr;
 #[DataModel_Definition(
 	name: 'categories_shop_data',
 	database_table_name: 'categories_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Category::class,
 )]
-abstract class Core_Category_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Category_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	const IMG_MAIN = 'main';
@@ -33,8 +29,6 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 		form_field_type:  false
 	)]
 	protected int $category_id = 0;
-
-	protected ?Category $category = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -165,29 +159,21 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 	)]
 	protected string $all_children = '';
 
-	public function getCategory() : Category
-	{
-		return $this->category;
-	}
-
-	public function setParents( Category $category ) : void
-	{
-		$this->category = $category;
-		$this->category_id = $category->getId();
-	}
 
 	protected function _getProperty( string $property ) : mixed
 	{
+		$category = Category::get($this->category_id);
+
 		if(
 			!$this->{$property} &&
 			(
-				$this->category->getType()==Category::CATEGORY_TYPE_LINK ||
-				$this->category->getType()==Category::CATEGORY_TYPE_VIRTUAL
+				$category->getType()==Category::CATEGORY_TYPE_LINK ||
+				$category->getType()==Category::CATEGORY_TYPE_VIRTUAL
 			)
 		) {
-			$target = $this->category->getTargetCategory();
+			$target = $category->getTargetCategory();
 			if($target) {
-				$shop_data = $target->getShopData($this->shop_code);
+				$shop_data = $target->getShopData( $this->getShop() );
 
 				return $shop_data->{$property};
 			}
@@ -314,7 +300,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 				[
 					'category_id' => $this->category_id,
 					'AND',
-					'shop_code' => $this->shop_code
+					$this->getShop()->getWhere()
 				]
 			);
 		}
@@ -322,7 +308,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->shop_code, [$this->URL_path_part] );
+		return Shops::getURL( $this->getShop(), [$this->URL_path_part] );
 	}
 
 	public function generateURLPathPart() : void
@@ -331,7 +317,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 			return;
 		}
 
-		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'c', $this->category_id, $this->shop_code );
+		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'c', $this->category_id, $this->getShop() );
 	}
 
 	public function getImageEntity() : string
@@ -397,25 +383,17 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 		return $this->getImageThumbnailUrl(Category_ShopData::IMG_PICTOGRAM, $max_w, $max_h);
 	}
 
-	public function getPossibleToEditImages() : bool
-	{
-		return !$this->category->getEditForm()->getIsReadonly();
-	}
-
 	public function getImageDeleteForm( string $image_class ) : Form|null
 	{
-		if(!$this->getPossibleToEditImages()) {
-			return null;
-		}
-
 		$property_name = 'image_'.$image_class;
 		$img = $this->{$property_name};
 
+		$category = Category::get($this->category_id);
 		if(
 			!$img &&
 			(
-				$this->category->getType()==Category::CATEGORY_TYPE_LINK ||
-				$this->category->getType()==Category::CATEGORY_TYPE_VIRTUAL
+				$category->getType()==Category::CATEGORY_TYPE_LINK ||
+				$category->getType()==Category::CATEGORY_TYPE_VIRTUAL
 			)
 		) {
 			return null;
@@ -423,7 +401,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 
 		if(!isset($this->image_delete_forms[$image_class])) {
 
-			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->shop_code, []);
+			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->getShopKey(), []);
 
 			$this->image_delete_forms[$image_class] = $form;
 		}
@@ -458,7 +436,7 @@ abstract class Core_Category_ShopData extends DataModel_Related_1toN implements 
 			],[
 				'category_id' => $this->category_id,
 				'AND',
-				'shop_code' => $this->shop_code
+				$this->getShop()->getWhere()
 			]);
 		}
 	}

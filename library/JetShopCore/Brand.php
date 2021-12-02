@@ -40,7 +40,7 @@ abstract class Core_Brand extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Brand_ShopData::class
 	)]
-	protected $shop_data;
+	protected array $shop_data = [];
 
 	protected ?Form $_add_form = null;
 
@@ -63,7 +63,6 @@ abstract class Core_Brand extends DataModel {
 
 	public static function getManageModule() : Brand_ManageModuleInterface|Application_Module
 	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Application_Modules::moduleInstance( self::getManageModuleName() );
 	}
 
@@ -76,20 +75,7 @@ abstract class Core_Brand extends DataModel {
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Brand_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-
-			/** @noinspection PhpParamsInspection */
-			$this->shop_data[$shop_code]->setParents( $this );
-		}
+		Brand_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 	public static function get( int $id ) : Brand|null
@@ -198,13 +184,9 @@ abstract class Core_Brand extends DataModel {
 		$this->name = $name;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Brand_ShopData
+	public function getShopData( ?Shops_Shop $shop=null ) : Brand_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 	public function getEditURL() : string
@@ -300,7 +282,6 @@ abstract class Core_Brand extends DataModel {
 
 			Category::syncCategories();
 		}
-
 	}
 
 }

@@ -4,6 +4,7 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\Logger;
 use Jet\Tr;
 use JetShop\Application_Admin;
 use JetShop\Parametrization_Property_Option;
@@ -51,10 +52,11 @@ trait Controller_Main_ParamOption
 	{
 		$this->_setBreadcrumbNavigation( Tr::_('Main settings') );
 
+		$property = static::getCurrentParamProperty();
 		$option = static::getCurrentParamPropertyOption();
 
 
-		if(!$option->isInherited()) {
+		if(!$property->isInherited()) {
 			if($option->catchEditForm()) {
 				$this->_editCategorySave();
 			}
@@ -78,35 +80,23 @@ trait Controller_Main_ParamOption
 
 		$this->_setBreadcrumbNavigation( Tr::_('Images') );
 
+		$property = static::getCurrentParamProperty();
 		$option = static::getCurrentParamPropertyOption();
 
-		if(!$option->isInherited()) {
+		if(!$property->isInherited()) {
 			foreach(Shops::getList() as $shop) {
-				$shop_code = $shop->getCode();
-				$shop_name = $shop->getName();
-				$shop_data = $option->getShopData( $shop_code );
-
-				foreach( Parametrization_Property_Option_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-					$shop_data->catchImageWidget(
-						$image_class,
-						function() use ($image_class, $option, $shop_code, $shop_name, $shop_data) {
-							$shop_data->save();
-
-							$this->logAllowedAction( 'prop.property image '.$image_class.' uploaded', $option->getId().':'.$shop_code, $shop_data->getFilterLabel().' - '.$shop_name );
-
-						},
-						function() use ($image_class, $option, $shop_code, $shop_name, $shop_data) {
-							$shop_data->save();
-
-							$this->logAllowedAction( 'prop.property image '.$image_class.' deleted', $option->getId().':'.$shop_code, $shop_data->getFilterLabel().' - '.$shop_name );
-						}
-					);
-
-				}
+				$option->getShopData( $shop )->catchImageWidget(
+					shop: $shop,
+					entity_name: 'Param.property image',
+					object_id: $option->getId(),
+					object_name: $option->getFilterLabel(),
+					upload_event: 'param.property_image_uploaded',
+					delete_event: 'param.property_image_deleted'
+				);
 			}
 		} else {
 			foreach(Shops::getList() as $shop) {
-				$shop_data = $option->getShopData( $shop->getCode() );
+				$shop_data = $option->getShopData( $shop );
 
 				foreach( Parametrization_Property_Option_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->getImageUploadForm( $image_class )->setIsReadonly();
@@ -179,7 +169,13 @@ trait Controller_Main_ParamOption
 
 				$option->setPriority( $priority );
 				$option->save();
-				$this->logAllowedAction( 'prop.property.option priority updated', $option->getId(), $option->getShopData()->getFilterLabel(), $priority );
+				Logger::success(
+					'param.property.option_priority_updated',
+					'Param. property option '.$option->getShopData()->getFilterLabel().' ('.$option->getId().') priority updated',
+					$option->getId(),
+					$option->getShopData()->getFilterLabel(),
+					$priority
+				);
 			}
 		}
 

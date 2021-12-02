@@ -41,7 +41,7 @@ trait Data_Listing_Filter_shop {
 		$options = [0=>Tr::_('- all -')];
 
 		foreach(Shops::getList() as $shop) {
-			$options[$shop->getCode()] = $shop->getName();
+			$options[$shop->getKey()] = $shop->getShopName();
 		}
 		$field->setSelectOptions( $options );
 
@@ -55,9 +55,7 @@ trait Data_Listing_Filter_shop {
 	protected function filter_shop_getWhere() : void
 	{
 		if($this->shop) {
-			$this->filter_addWhere([
-				'shop_code' => $this->shop,
-			]);
+			$this->filter_addWhere(Shops::get($this->shop)->getWhere());
 		}
 	}
 

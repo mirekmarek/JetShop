@@ -3,14 +3,14 @@ namespace JetShopModule\Admin\Catalog\Stickers;
 
 use JetShop\Shops;
 use JetShop\Sticker;
-use Jet\Mvc_View;
+use JetShop\Sticker_ShopData;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
-use JetShop\Sticker_ShopData;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var Form       $form
  * @var Sticker    $sticker
  */
@@ -49,32 +49,33 @@ $tabs = UI::tabsJS('sticker_tabs', [
 		<?=$tabs->contentStart()?>
 			<?=$tabs->getTab('tab_main')->contentStart()?>
 				<?=$form->start()?>
-				<?=$form->field( 'name' )?>
+				<?=$form->field( 'internal_name' )?>
+				<?=$form->field( 'code' )?>
 
 				<?php foreach(Shops::getList() as $shop):
-					$shop_code = $shop->getCode();
+					$shop_key = $shop->getKey();
 
-					$shop_data = $sticker->getShopData( $shop_code );
+					$shop_data = $sticker->getShopData( $shop );
 					?>
 					<?=$shop_data->renderShopDataBlock_start()?>
 
 					<fieldset>
 						<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-						<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
 
-						<?=$form->field('/shop_data/'.$shop_code.'/name')?>
-						<?=$form->field('/shop_data/'.$shop_code.'/second_name')?>
-						<?=$form->field('/shop_data/'.$shop_code.'/description')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 					</fieldset>
 
 					<fieldset>
 						<legend class="sub"><?=Tr::_('SEO')?></legend>
-						<?=$form->field('/shop_data/'.$shop_code.'/seo_h1')?>
-						<?=$form->field('/shop_data/'.$shop_code.'/seo_title')?>
-						<?=$form->field('/shop_data/'.$shop_code.'/seo_description')?>
-						<?=$form->field('/shop_data/'.$shop_code.'/seo_keywords')?>
-						<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
 					</fieldset>
 					<?=$shop_data->renderShopDataBlock_end()?>
 				<?php endforeach; ?>
@@ -83,9 +84,7 @@ $tabs = UI::tabsJS('sticker_tabs', [
 			<?=$tabs->getTab('tab_images')->contentStart()?>
 				<?php
 				foreach(Shops::getList() as $shop):
-					$shop_code = $shop->getCode();
-
-					echo $sticker->getShopData( $shop_code )->renderImageWidgets( Sticker_ShopData::getImageClasses() );
+					echo $sticker->getShopData( $shop )->renderImageWidgets( Sticker_ShopData::getImageClasses(), !$form->getIsReadonly() );
 				endforeach;
 				?>
 			<?=$tabs->getTab('tab_images')->contentEnd()?>

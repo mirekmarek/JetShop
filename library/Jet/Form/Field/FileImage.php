@@ -16,46 +16,6 @@ class Form_Field_FileImage extends Form_Field_File
 	const ERROR_CODE_FILE_IS_TOO_LARGE = 'file_is_too_large';
 	const ERROR_CODE_DISALLOWED_FILE_TYPE = 'disallowed_file_type';
 
-	/**
-	 * @var string
-	 */
-	protected static string $default_renderer_script = 'field';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_start_renderer_script = 'Field/row/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_row_end_renderer_script = 'Field/row/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_start_renderer_script = 'Field/input/container/start';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_input_container_end_renderer_script = 'Field/input/container/end';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_error_renderer = 'Field/error';
-
-	/**
-	 * @var string
-	 */
-	protected static string $default_label_renderer = 'Field/label';
-
-	/**
-	 * @var string string
-	 */
-	protected static string $default_input_renderer = 'Field/input/FileImage';
-
 
 	/**
 	 * @var string
@@ -138,7 +98,7 @@ class Form_Field_FileImage extends Form_Field_File
 				try {
 					$image = new Data_Image( $path );
 					$image->createThumbnail( $path, $this->maximal_width, $this->maximal_height );
-				} catch( Data_Image_Exception $e ) {
+				} /** @noinspection PhpUnusedLocalVariableInspection */ catch( Data_Image_Exception $e ) {
 					return false;
 				}
 			}

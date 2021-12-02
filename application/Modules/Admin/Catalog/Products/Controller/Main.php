@@ -3,15 +3,16 @@ namespace JetShopModule\Admin\Catalog\Products;
 
 
 use Jet\AJAX;
-use Jet\Mvc_Controller_Router;
+use Jet\Logger;
+use Jet\MVC_Controller_Router;
 use Jet\UI;
 use Jet\UI_messages;
 
 
 use Jet\Application;
 
-use Jet\Mvc;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC;
+use Jet\MVC_Controller_Default;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -24,25 +25,25 @@ use JetShop\Category;
 use JetShop\Fulltext_Index_Internal_Product;
 use JetShop\Product;
 
+use JetShop\Shops;
 use JetShopModule\Admin\UI\Main as UI_module;
 
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
-	protected ?Mvc_Controller_Router $router = null;
+	protected ?MVC_Controller_Router $router = null;
 
 	protected static ?Product $current_product = null;
 
 
-	public function getControllerRouter() : Mvc_Controller_Router
+	public function getControllerRouter() : MVC_Controller_Router
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router( $this );
+			$this->router = new MVC_Controller_Router( $this );
 
 			$GET = Http_Request::GET();
-			$product = null;
 
 			$product_id = $GET->getInt('id');
 			if($product_id) {
@@ -80,7 +81,7 @@ class Controller_Main extends Mvc_Controller_Default
 				->setResolver( function() use ($action) {
 					return $action=='add';
 				} )
-				->setURICreator(function( $id ) {
+				->setURICreator(function() {
 					return Http_Request::currentURL(['action'=>'add'], ['id']);
 				});
 
@@ -142,7 +143,7 @@ class Controller_Main extends Mvc_Controller_Default
 			'images'           => Tr::_('Images'),
 			'variants'         => Tr::_('Variants'),
 			'set'              => Tr::_('Set'),
-			'exports'          => Tr::_('Exports'),
+			//'exports'          => Tr::_('Exports'),
 		];
 
 		switch($product->getType()) {
@@ -181,13 +182,26 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
+		} else {
+			$product = static::getCurrentProduct();
+
+			if($product) {
+				Navigation_Breadcrumb::reset();
+
+				$page = MVC::getPage();
+				Navigation_Breadcrumb::addURL(
+					UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle(),
+					Http_Request::currentURI([], ['id'])
+				);
+
+
+				Navigation_Breadcrumb::addURL( $product->getAdminTitle() );
+			}
 		}
 	}
 
 	public function listing_Action() : void
 	{
-
-		$this->_setBreadcrumbNavigation();
 
 		$this->_setBreadcrumbNavigation();
 
@@ -205,6 +219,8 @@ class Controller_Main extends Mvc_Controller_Default
 
 	public function edit_Action() : void
 	{
+		$this->_setBreadcrumbNavigation();
+
 		$product = static::getCurrentProduct();
 
 		if( $product->catchEditForm() ) {
@@ -213,10 +229,16 @@ class Controller_Main extends Mvc_Controller_Default
 			$product->syncVariants();
 			Category::syncCategories();
 
-			$this->logAllowedAction( 'Product updated', $product->getId(), $product->getInternalName(), $product );
+			Logger::success(
+				'product_updated',
+				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
+				$product->getId(),
+				$product->getAdminTitle(),
+				$product
+			);
 
 			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getInternalName() ] )
+				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
 			);
 
 			Http_Headers::reload();
@@ -229,13 +251,16 @@ class Controller_Main extends Mvc_Controller_Default
 
 	public function edit_images_Action() : void
 	{
+		$this->_setBreadcrumbNavigation();
+
 		$GET = Http_Request::GET();
 
 		if($GET->exists('action')) {
 			$product = static::getCurrentProduct();
-			$shop_code = $GET->getString('shop_code');
-			$shop_data = $product->getShopData($shop_code);
-			$this->view->setVar('shop_code', $shop_code);
+			$shop = Shops::get( $GET->getString('shop_key') );
+
+			$shop_data = $product->getShopData($shop);
+			$this->view->setVar('shop', $shop );
 
 			$updated = false;
 			switch($GET->getString('action')) {
@@ -262,7 +287,7 @@ class Controller_Main extends Mvc_Controller_Default
 					[
 						'result' => 'ok',
 						'snippets' => [
-							'images_'.$shop_code => $this->view->render('edit/images/list')
+							'images_'.$shop->getKey() => $this->view->render('edit/images/list')
 						]
 
 					]
@@ -280,6 +305,8 @@ class Controller_Main extends Mvc_Controller_Default
 
 	public function edit_variants_Action() : void
 	{
+		$this->_setBreadcrumbNavigation();
+
 		$product = static::getCurrentProduct();
 
 		$updated = false;
@@ -309,10 +336,16 @@ class Controller_Main extends Mvc_Controller_Default
 			}
 			Category::syncCategories();
 
-			$this->logAllowedAction( 'Product updated', $product->getId(), $product->getInternalName(), $product );
+			Logger::success(
+				'product_updated',
+				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
+				$product->getId(),
+				$product->getAdminTitle(),
+				$product
+			);
 
 			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getInternalName() ] )
+				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
 			);
 
 			Http_Headers::reload();
@@ -321,14 +354,63 @@ class Controller_Main extends Mvc_Controller_Default
 
 		$this->view->setVar('new_variant', $new_variant);
 
-		//TODO:
+		//TODO: it's shit ... revision needed
 
 		$this->output( 'edit/variants' );
 	}
 
+	public function edit_set_Action() : void
+	{
+		$this->_setBreadcrumbNavigation();
+
+		$product = static::getCurrentProduct();
+
+		$updated = false;
+
+		if($product->catchSetAddItemForm()) {
+			$updated = true;
+		}
+
+		if($product->catchSetSetupForm()) {
+			$updated = true;
+		}
+
+		$GET = Http_Request::GET();
+
+		if($GET->getInt('remove_item')) {
+			$product->removeSetItem($GET->getInt('remove_item'));
+			$updated = true;
+		}
+
+		if($updated) {
+			$product->save();
+
+			Category::syncCategories();
+
+			Logger::success(
+				'product_updated',
+				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
+				$product->getId(),
+				$product->getAdminTitle(),
+				$product
+			);
+
+			UI_messages::success(
+				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
+			);
+
+			Http_Headers::reload([], ['remove_item']);
+		}
+
+		$this->output( 'edit/set' );
+	}
+
+
 
 	public function edit_categories_Action() : void
 	{
+		$this->_setBreadcrumbNavigation();
+
 		$product = static::getCurrentProduct();
 
 		$allowed = true;
@@ -367,10 +449,16 @@ class Controller_Main extends Mvc_Controller_Default
 				$product->syncVariants();
 				Category::syncCategories();
 
-				$this->logAllowedAction( 'Product updated', $product->getId(), $product->getInternalName(), $product );
+				Logger::success(
+					'product_updated',
+					'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
+					$product->getId(),
+					$product->getAdminTitle(),
+					$product
+				);
 
 				UI_messages::success(
-					Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getInternalName() ] )
+					Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
 				);
 
 				Http_Headers::reload();
@@ -384,6 +472,8 @@ class Controller_Main extends Mvc_Controller_Default
 
 	public function edit_parametrization_Action() : void
 	{
+		$this->_setBreadcrumbNavigation();
+
 		$product = static::getCurrentProduct();
 
 		if( $product->catchParametrizationEditForm() ) {
@@ -392,10 +482,16 @@ class Controller_Main extends Mvc_Controller_Default
 			$product->syncVariants();
 			Category::syncCategories();
 
-			$this->logAllowedAction( 'Product updated', $product->getId(), $product->getInternalName(), $product );
+			Logger::success(
+				'product_updated',
+				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
+				$product->getId(),
+				$product->getAdminTitle(),
+				$product
+			);
 
 			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getInternalName() ] )
+				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
 			);
 
 			Http_Headers::reload();
@@ -418,13 +514,19 @@ class Controller_Main extends Mvc_Controller_Default
 			$product->save();
 			Category::syncCategories();
 
-			$this->logAllowedAction( 'Product created', $product->getId(), $product->getInternalName(), $product );
-
-			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been created', [ 'NAME' => $product->getInternalName() ] )
+			Logger::success(
+				'product_created',
+				'Product '.$product->getAdminTitle().' ('.$product->getId().') created',
+				$product->getId(),
+				$product->getAdminTitle(),
+				$product
 			);
 
-			Http_Headers::movedTemporary( $this->getControllerRouter()->getEditURI( $product->getId() ) );
+			UI_messages::success(
+				Tr::_( 'Product <b>%NAME%</b> has been created', [ 'NAME' => $product->getAdminTitle() ] )
+			);
+
+			Http_Headers::movedTemporary( $product->getEditURL() );
 		}
 
 		$this->view->setVar( 'form', $form );
@@ -437,25 +539,29 @@ class Controller_Main extends Mvc_Controller_Default
 
 	public function delete_Action() : void
 	{
+		$this->_setBreadcrumbNavigation( Tr::_( 'Delete product' ) );
 
-		/**
-		 * @var Product $product
-		 */
-		$product = $this->getParameter( 'product' );
+		$product = static::$current_product;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete product <b>%NAME%</b>', [ 'NAME' => $product->getInternalName() ] )
+			Tr::_( 'Delete product <b>%NAME%</b>', [ 'NAME' => $product->getAdminTitle() ] )
 		);
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$product->delete();
-			$this->logAllowedAction( 'Product deleted', $product->getId(), $product->getInternalName(), $product );
-
-			UI_messages::info(
-				Tr::_( 'Product <b>%NAME%</b> has been deleted', [ 'NAME' => $product->getInternalName() ] )
+			Logger::success(
+				'product_deleted',
+				'Product '.$product->getAdminTitle().' ('.$product->getId().') deleted',
+				$product->getId(),
+				$product->getAdminTitle(),
+				$product
 			);
 
-			Http_Headers::movedTemporary( Mvc::getCurrentPage()->getURI() );
+			UI_messages::info(
+				Tr::_( 'Product <b>%NAME%</b> has been deleted', [ 'NAME' => $product->getAdminTitle() ] )
+			);
+
+			Http_Headers::movedTemporary( MVC::getPage()->getURLPath() );
 		}
 
 

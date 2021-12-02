@@ -1,10 +1,8 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Http_Request;
 use Jet\Locale;
-use Jet\Mvc;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
@@ -16,7 +14,7 @@ use JetShop\WarehouseManagement_Warehouse;
 
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  */
 
 $product = Controller_Main::getCurrentProduct();
@@ -60,60 +58,60 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 
 		<legend class="sub"><?=Tr::_('Stickers')?></legend>
 		<?php foreach(Sticker::getList() as $sticker): ?>
-			<?=$form->field('/sticker/'.$sticker->getId())?>
+			<?=$form->field('/sticker/'.$sticker->getCode())?>
 		<?php endforeach; ?>
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_code = $shop->getCode();
+			$shop_key = $shop->getKey();
 
-			$shop_data = $product->getShopData( $shop_code );
+			$shop_data = $product->getShopData( $shop );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
 
-				<?=$form->field('/shop_data/'.$shop_code.'/name')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/variant_name')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/variant_name')?>
 				<?php
-				$form->field('/shop_data/'.$shop_code.'/description')->input()->addCustomCssStyle('height:600px');
+				$form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle('height:600px');
 				?>
-				<?=$form->field('/shop_data/'.$shop_code.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/short_description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/short_description')?>
 			</fieldset>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('SEO')?></legend>
-				<?=$form->field('/shop_data/'.$shop_code.'/seo_h1')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/seo_title')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/seo_description')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/seo_keywords')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/internal_fulltext_keywords')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
 			</fieldset>
 
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Price')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_code.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/standard_price')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/action_price')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/action_price_valid_from')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/action_price_valid_till')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/sale_price')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/reset_sale_after_sold_out')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/deactivate_product_after_sold_out')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/standard_price')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/action_price')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/action_price_valid_from')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/action_price_valid_till')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/sale_price')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/reset_sale_after_sold_out')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/deactivate_product_after_sold_out')?>
 
 				<div class="row">
 					<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 20px;margin-top: -3px;"><?=Tr::_('Price:')?></label>
-					<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Price::formatWithCurrency($product->getShopData($shop_code)->getFinalPrice(), $shop_code)?></div>
+					<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Price::formatWithCurrency($product->getShopData($shop)->getFinalPrice(), $shop )?></div>
 				</div>
 
-				<?php if($product->getShopData($shop_code)->getDiscountPercentage()>0): ?>
+				<?php if($product->getShopData($shop)->getDiscountPercentage()>0): ?>
 					<div class="row" style="opacity: 0.5">
 						<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 15px;margin-top: -3px;"><?=Tr::_('Discount:')?></label>
-						<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$product->getShopData($shop_code)->getDiscountPercentage();?>%</div>
+						<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$product->getShopData($shop)->getDiscountPercentage();?>%</div>
 					</div>
 				<?php endif; ?>
 
@@ -121,19 +119,19 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
 			<fieldset>
 				<legend class="sub"><?=Tr::_('Availability')?></legend>
 
-				<?=$form->field('/shop_data/'.$shop_code.'/delivery_class_code')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/delivery_term_code')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/date_available')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/delivery_class_code')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/delivery_term_code')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/date_available')?>
 				<div class="row">
 					<label class="col-form-label col-md-2"><?=Tr::_('Stock status:')?></label>
 					<div class="col-md-8">
 						<table class="table table-striped">
 							<tr>
 								<td style="width: 150px;font-weight: bolder;"><?=Tr::_('Total available:')?></td>
-								<td style="font-weight: bolder;"><?=$product->getShopData($shop_code)->getStockStatus()?></td>
+								<td style="font-weight: bolder;"><?=$product->getShopData($shop)->getStockStatus()?></td>
 							</tr>
 							<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
-								if(!in_array($shop_code, $warehouse->getShopCodes())) {
+								if(!$warehouse->hasShop($shop)) {
 									continue;
 								}
 

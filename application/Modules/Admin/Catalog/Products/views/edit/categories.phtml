@@ -1,18 +1,13 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use Jet\Mvc;
-use Jet\Http_Request;
-
-use Jet\UI_button;
-use Jet\UI_icon;
 use JetShop\Category;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  */
 
 $product = Controller_Main::getCurrentProduct();
@@ -29,8 +24,8 @@ $form = $product->getEditForm();
 		<?=UI::button_goBack()?>
 
 		<?php if( !$form->getIsReadonly() ): ?>
-			<div style="display: inline-block;position: absolute;">
-				<table>
+			<div style="display: inline-block;margin-top: -20px;">
+				<table style="position: relative;top: 15px;">
 					<tr>
 						<td style="padding-left: 30px;font-weight: bolder;"><?=Tr::_('Add category: ')?></td>
 						<td style="width: 400px;"><?=Category::renderSelectCategoryWidget("$('#category_add_form__category_id').val(selected_item.id);$('#category_add_form').submit();" )?></td>

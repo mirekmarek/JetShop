@@ -5,14 +5,15 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop\Installer;
+
+namespace JetApplication\Installer;
 
 use Jet\Db;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Password;
 use Jet\Db_Config;
-use Jet\Db_Factory;
+use Jet\Factory_Db;
 use Jet\Db_Backend_Config;
 use Jet\Db_Backend_PDO_Config;
 use Jet\DataModel_Config;
@@ -31,7 +32,7 @@ class Installer_DbDriverConfig_mysql extends Installer_DbDriverConfig
 	 */
 	public function initialize( Db_Config $db_config, DataModel_Config $data_model_config ) : Db_Backend_Config|Db_Backend_PDO_Config
 	{
-		$connection_config = Db_Factory::getBackendConfigInstance();
+		$connection_config = Factory_Db::getBackendConfigInstance();
 		$connection_config->setName( 'default' );
 		$connection_config->setDriver( Db::DRIVER_MYSQL );
 		$connection_config->setUsername( '' );
@@ -39,7 +40,6 @@ class Installer_DbDriverConfig_mysql extends Installer_DbDriverConfig
 		$connection_config->setDSN( 'host=localhost;port=3306;dbname=;charset=utf8' );
 
 		$db_config->addConnection( 'default', $connection_config );
-
 
 
 		$data_model_config->setBackendType( 'MySQL' );
@@ -59,7 +59,7 @@ class Installer_DbDriverConfig_mysql extends Installer_DbDriverConfig
 	 */
 	public function getForm() : Form
 	{
-		if(!$this->_form) {
+		if( !$this->_form ) {
 			$DSN_data = [
 				'host'        => 'localhost',
 				'port'        => 3306,
@@ -70,17 +70,20 @@ class Installer_DbDriverConfig_mysql extends Installer_DbDriverConfig
 			$DSN = $this->connection_config->getDsn();
 			$DSN = explode( ':', $DSN );
 
-			if( count( $DSN )==2 ) {
+			if( count( $DSN ) == 2 ) {
 				$DSN = $DSN[1];
 				$DSN = explode( ';', $DSN );
 
 				foreach( $DSN as $DSN_line ) {
 					$DSN_line = explode( '=', $DSN_line );
-					if( count( $DSN_line )!=2 ) {
+					if( count( $DSN_line ) != 2 ) {
 						continue;
 					}
 
-					list( $key, $val ) = $DSN_line;
+					[
+						$key,
+						$val
+					] = $DSN_line;
 
 					if( array_key_exists( $key, $DSN_data ) ) {
 						$DSN_data[$key] = $val;
@@ -121,11 +124,16 @@ class Installer_DbDriverConfig_mysql extends Installer_DbDriverConfig
 
 			$form = new Form(
 				'edit_connection', [
-					$username, $password, $dbname, $host, $port, $unix_socket,
+					$username,
+					$password,
+					$dbname,
+					$host,
+					$port,
+					$unix_socket,
 				]
 			);
 
-			$form->setAutocomplete(false);
+			$form->setAutocomplete( false );
 
 			$this->_form = $form;
 		}
@@ -144,20 +152,20 @@ class Installer_DbDriverConfig_mysql extends Installer_DbDriverConfig
 			$form->catchInput() &&
 			$form->validate()
 		) {
-			$unix_socket = $form->getField('unix_socket');
-			$host = $form->getField('host');
-			$username = $form->getField('username');
-			$password = $form->getField('password');
-			$dbname = $form->getField('dbname');
-			$port = $form->getField('port');
+			$unix_socket = $form->getField( 'unix_socket' );
+			$host = $form->getField( 'host' );
+			$username = $form->getField( 'username' );
+			$password = $form->getField( 'password' );
+			$dbname = $form->getField( 'dbname' );
+			$port = $form->getField( 'port' );
 
 			if( $unix_socket->getValue() ) {
-				$DSN = 'unix_socket='.$unix_socket->getValue();
+				$DSN = 'unix_socket=' . $unix_socket->getValue();
 			} else {
-				$DSN = 'host='.$host->getValue().';port='.$port->getValue();
+				$DSN = 'host=' . $host->getValue() . ';port=' . $port->getValue();
 			}
 
-			$DSN .= ';dbname='.$dbname->getValue();
+			$DSN .= ';dbname=' . $dbname->getValue();
 			$DSN .= ';charset=utf8';
 
 			$this->connection_config->setUsername( $username->getValue() );

@@ -6,14 +6,14 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Jet\IO_Dir;
 use Jet\SysConf_Path;
 
-use JetShop\Application_Admin;
-use JetShop\Application_Shop;
-use JetShop\Application_REST;
+use JetApplication\Application_Admin;
+use JetApplication\Application_Web;
+use JetApplication\Application_REST;
 
 /**
  *
@@ -31,7 +31,7 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 	 */
 	public function getIsAvailable(): bool
 	{
-		return !Installer_Step_CreateSite_Controller::sitesCreated();
+		return !Installer_Step_CreateBases_Controller::basesCreated();
 	}
 
 	/**
@@ -71,15 +71,15 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_writeable' => false,
 			],
 
-			SysConf_Path::getSites() . Application_Admin::getSiteId() . '/' => [
+			SysConf_Path::getBases() . Application_Admin::getBaseId() . '/' => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getSites() . Application_Shop::getSiteId() . '/'   => [
+			SysConf_Path::getBases() . Application_Web::getBaseId() . '/'   => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getSites() . Application_REST::getSiteId() . '/'  => [
+			SysConf_Path::getBases() . Application_REST::getBaseId() . '/'  => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],

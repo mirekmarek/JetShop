@@ -3,13 +3,13 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Form;
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Brand;
 use JetShop\Parametrization_Property;
 use JetShop\Sticker;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  */
 
 $category = Controller_Main::getCurrentCategory();
@@ -93,7 +93,7 @@ $target_filter_form->setDefaultLabelWidth([
 					foreach( Sticker::getList() as $sticker ):
 						?>
 						<div style="width: 250px;height: 30px;float: left;">
-							<?=$target_filter_form->field( '/stickers/'.$sticker->getId() )->input()?>
+							<?=$target_filter_form->field( '/stickers/'.$sticker->getCode() )->input()?>
 						</div>
 					<?php
 					endforeach;

@@ -65,35 +65,16 @@ class Form extends BaseObject
 	const TYPE_FILE = 'File';
 	const TYPE_FILE_IMAGE = 'FileImage';
 
-	/**
-	 * @var string
-	 */
-	protected static string $default_sent_key = '_jet_form_sent_';
-
-	/**
-	 * @var ?string
-	 */
-	protected static ?string $default_views_dir = null;
 
 	/**
 	 * @var string
 	 */
-	protected static string $default_renderer_start_script = 'start';
+	protected string $start_view_script = '';
 
 	/**
 	 * @var string
 	 */
-	protected static string $default_renderer_end_script = 'end';
-
-	/**
-	 * @var string
-	 */
-	protected string $renderer_start_script = 'start';
-
-	/**
-	 * @var string
-	 */
-	protected string $renderer_end_script = 'end';
+	protected string $end_view_script = '';
 
 	/**
 	 *
@@ -221,96 +202,43 @@ class Form extends BaseObject
 	 */
 	protected ?Form_Renderer_Single $_message_tag = null;
 
+	/**
+	 * @return string
+	 */
+	public function getStartViewScript(): string
+	{
+		if( !$this->start_view_script ) {
+			$this->start_view_script = SysConf_Jet_Form_DefaultViews::get('Form', 'start');
+		}
+		return $this->start_view_script;
+	}
+
+	/**
+	 * @param string $start_view_script
+	 */
+	public function setStartViewScript( string $start_view_script ): void
+	{
+		$this->start_view_script = $start_view_script;
+	}
 
 	/**
 	 * @return string
 	 */
-	public static function getDefaultViewsDir(): string
+	public function getEndViewScript(): string
 	{
-		if( !static::$default_views_dir ) {
-			static::$default_views_dir = Mvc::getCurrentSite()->getViewsPath() . 'Form/';
+		if( !$this->end_view_script ) {
+			$this->end_view_script = SysConf_Jet_Form_DefaultViews::get('Form', 'end');
 		}
 
-		return static::$default_views_dir;
+		return $this->end_view_script;
 	}
 
 	/**
-	 * @param string $default_views_dir
+	 * @param string $end_view_script
 	 */
-	public static function setDefaultViewsDir( string $default_views_dir ): void
+	public function setEndViewScript( string $end_view_script ): void
 	{
-		static::$default_views_dir = $default_views_dir;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getDefaultRendererStartScript(): string
-	{
-		return static::$default_renderer_start_script;
-	}
-
-	/**
-	 * @param string $default_renderer_start_script
-	 */
-	public static function setDefaultRendererStartScript( string $default_renderer_start_script ): void
-	{
-		static::$default_renderer_start_script = $default_renderer_start_script;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getDefaultRendererEndScript(): string
-	{
-		return static::$default_renderer_end_script;
-	}
-
-	/**
-	 * @param string $default_renderer_end_script
-	 */
-	public static function setDefaultRendererEndScript( string $default_renderer_end_script ): void
-	{
-		static::$default_renderer_end_script = $default_renderer_end_script;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRendererStartScript(): string
-	{
-		if( !$this->renderer_start_script ) {
-			$this->renderer_start_script = static::getRendererStartScript();
-		}
-		return $this->renderer_start_script;
-	}
-
-	/**
-	 * @param string $renderer_start_script
-	 */
-	public function setRendererStartScript( string $renderer_start_script ): void
-	{
-		$this->renderer_start_script = $renderer_start_script;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRendererEndScript(): string
-	{
-		if( !$this->renderer_end_script ) {
-			$this->renderer_end_script = static::getRendererEndScript();
-		}
-
-		return $this->renderer_end_script;
-	}
-
-	/**
-	 * @param string $renderer_end_script
-	 */
-	public function setRendererEndScript( string $renderer_end_script ): void
-	{
-		$this->renderer_end_script = $renderer_end_script;
+		$this->end_view_script = $end_view_script;
 	}
 
 
@@ -479,7 +407,7 @@ class Form extends BaseObject
 	 */
 	public function setNovalidate( bool $novalidate ): void
 	{
-		$this->novalidate = (bool)$novalidate;
+		$this->novalidate = $novalidate;
 	}
 
 	/**
@@ -522,7 +450,7 @@ class Form extends BaseObject
 	public function getSentKey(): string
 	{
 		if(!$this->sent_key) {
-			$this->sent_key = static::getDefaultSentKey();
+			$this->sent_key = SysConf_Jet_Form::getDefaultSentKey();
 		}
 		return $this->sent_key;
 	}
@@ -535,21 +463,7 @@ class Form extends BaseObject
 		$this->sent_key = $sent_key;
 	}
 
-	/**
-	 * @return string
-	 */
-	public static function getDefaultSentKey(): string
-	{
-		return static::$default_sent_key;
-	}
 
-	/**
-	 * @param string $sent_key
-	 */
-	public static function setDefaultSentKey( string $sent_key ): void
-	{
-		static::$default_sent_key = $sent_key;
-	}
 
 
 	/**
@@ -950,7 +864,7 @@ class Form extends BaseObject
 	public function getViewsDir(): string
 	{
 		if( !$this->views_dir ) {
-			$this->views_dir = static::getDefaultViewsDir();
+			$this->views_dir = SysConf_Jet_Form::getDefaultViewsDir();
 		}
 
 		return $this->views_dir;
@@ -965,11 +879,11 @@ class Form extends BaseObject
 	}
 
 	/**
-	 * @return Mvc_View
+	 * @return MVC_View
 	 */
-	public function getView(): Mvc_View
+	public function getView(): MVC_View
 	{
-		return Mvc_Factory::getViewInstance( $this->getViewsDir() );
+		return Factory_MVC::getViewInstance( $this->getViewsDir() );
 	}
 
 
@@ -981,10 +895,10 @@ class Form extends BaseObject
 		if( !$this->_form_tag ) {
 			$this->checkFieldsHasErrorMessages();
 
-			$this->_form_tag = Form_Factory::gerRendererPairInstance( $this );
+			$this->_form_tag = Factory_Form::gerRendererPairInstance( $this );
 
-			$this->_form_tag->setViewScriptStart( $this->getRendererStartScript() );
-			$this->_form_tag->setViewScriptEnd( $this->getRendererEndScript() );
+			$this->_form_tag->setViewScriptStart( $this->getStartViewScript() );
+			$this->_form_tag->setViewScriptEnd( $this->getEndViewScript() );
 		}
 
 		return $this->_form_tag;
@@ -1013,7 +927,7 @@ class Form extends BaseObject
 	public function message(): Form_Renderer_Single
 	{
 		if( !$this->_message_tag ) {
-			$this->_message_tag = Form_Factory::gerRendererSingleInstance( $this );
+			$this->_message_tag = Factory_Form::gerRendererSingleInstance( $this );
 			$this->_message_tag->setViewScript( 'message' );
 		}
 

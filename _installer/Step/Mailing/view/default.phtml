@@ -1,15 +1,13 @@
 <?php
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Jet\Form;
 use Jet\Mailing;
-use Jet\Mvc_Site;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Tr;
-use Jet\UI;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form $form
  */
 
@@ -21,21 +19,14 @@ $config = Mailing::getConfig();
 <h3><?= Tr::_( 'Set the mail sender' ) ?></h3>
 <?= $form->start() ?>
 
-<?php foreach( Mvc_Site::getAllSites() as $site ): ?>
+<?php foreach( $config->getSenders() as $sender_id=>$sender ): ?>
+	<fieldset style="padding-left: 60px;">
+		<?php if($sender_id!=Mailing::DEFAULT_SENDER_ID): ?>
+		<legend><?= $sender_id ?></legend>
+		<?php endif; ?>
 
-	<fieldset>
-		<legend><?= $site->getName() ?></legend>
-
-		<?php foreach( $site->getLocales() as $locale ):
-			$key = $config->getSenderKey( $locale, $site->getId(), '' );
-			?>
-			<fieldset style="padding-left: 60px;">
-				<legend><?= UI::flag( $locale ) ?> <?= $locale->getName(); ?></legend>
-
-				<?= $form->field( '/senders/' . $key . '/email' ) ?>
-				<?= $form->field( '/senders/' . $key . '/name' ) ?>
-			</fieldset>
-		<?php endforeach; ?>
+		<?= $form->field( '/senders/' . $sender_id . '/email' ) ?>
+		<?= $form->field( '/senders/' . $sender_id . '/name' ) ?>
 	</fieldset>
 <?php endforeach; ?>
 

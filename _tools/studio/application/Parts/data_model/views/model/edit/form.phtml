@@ -2,6 +2,7 @@
 
 namespace JetStudio;
 
+use Jet\DataModel_Definition_Model_Related;
 use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
@@ -17,32 +18,48 @@ $form->setDefaultFieldWidth( [
 	Form::LJ_SIZE_MEDIUM => 10
 ] );
 
+if($current instanceof DataModel_Definition_Model_Related):
+	$main = $current->getMainModelDefinition();
+	$parent = $current->getParentModelDefinition();
+	?>
+<div class="card">
+	<div class="card-body">
+		<table>
+			<tr>
+				<td><?=Tr::_('Main DataModel:')?></td>
+				<td><a href="?class=<?=$main->getClassName()?>"><?=$main->getClassName()?> (<?=$main->getModelName()?>)</a></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Parent DataModel:')?></td>
+				<td><a href="?class=<?=$parent->getClassName()?>"><?=$parent->getClassName()?> (<?=$parent->getModelName()?>)</a></td>
+			</tr>
+		</table>
+	</div>
+</div>
+<br>
+<?php
+endif;
 
 echo $form->start();
 
 echo $form->field( 'model_name' );
 echo $form->field( 'database_table_name' );
 
-if( !($current instanceof DataModel_Definition_Model_Related_MtoN) ):
-	echo $form->field( 'id_controller_class' );
+echo $form->field( 'id_controller_class' );
 
-	if(
-		$current->getIDControllerDefinition() &&
-		($id_controller_options = $current->getIDControllerDefinition()->getOptionsList())
-	):
-		?>
-		<legend><?= Tr::_( 'ID controller options' ) ?></legend>
-		<?php
-		foreach( $id_controller_options as $id_option ) {
-			echo $form->field( '/id_controller_options/' . $id_option );
-		}
-	endif;
-
-	if( $form->fieldExists( 'iterator_class' ) ):
-		echo $form->field( 'iterator_class' );
-	endif;
-
+if(
+	$current->getIDControllerDefinition() &&
+	($id_controller_options = $current->getIDControllerDefinition()->getOptionsList())
+):
+	?>
+	<legend><?= Tr::_( 'ID controller options' ) ?></legend>
+	<?php
+	foreach( $id_controller_options as $id_option ) {
+		echo $form->field( '/id_controller_options/' . $id_option );
+	}
 endif;
+
+
 
 
 if( $form->fieldExists( 'default_order_by' ) ):

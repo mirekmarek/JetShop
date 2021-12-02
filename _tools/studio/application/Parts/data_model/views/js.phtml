@@ -25,11 +25,15 @@ namespace JetStudio;
 				class_name = class_name.replace(' ', '_');
 				form.class_name.value = class_name;
 
-				$.ajax(
-					'<?=DataModels::getActionUrl( 'model/generate/script_path' )?>&namespace=' + encodeURIComponent(namespace) + '&class_name=' + class_name
-				).done(function (data) {
-					form.script_path.value = data.path;
+				$.ajax({
+					url: '<?=DataModels::getActionUrl( 'model/generate/script_path' )?>&namespace=' + encodeURIComponent(namespace) + '&class_name=' + class_name,
+					dataType: 'json',
+					success: function (data) {
+						form.script_path.value = data.path;
+						$('#base_create_form__id').val(result.id);
+					}
 				});
+
 
 			},
 
@@ -39,11 +43,6 @@ namespace JetStudio;
 				model_name = model_name.replace('\\', '_');
 
 				form.model_name.value = model_name;
-			},
-			MtoN: {
-				selected: function (value) {
-					JetAjaxForm.submit('select_N_form');
-				}
 			}
 		},
 
@@ -74,7 +73,7 @@ namespace JetStudio;
 					if (values.length) {
 						values = values.split('|');
 					} else {
-						values = new Array();
+						values = [];
 					}
 
 					values.push('+' + id);
@@ -95,7 +94,7 @@ namespace JetStudio;
 
 					let val = '';
 					let e_id = '';
-					let new_values = new Array();
+					let new_values = [];
 
 					for (let i = 0; i < values.length; i++) {
 						val = values[i];
@@ -122,7 +121,7 @@ namespace JetStudio;
 					let val = '';
 					let e_id = '';
 					let o_sort = '';
-					let new_values = new Array();
+					let new_values = [];
 
 					for (let i = 0; i < values.length; i++) {
 						val = values[i];
@@ -195,7 +194,7 @@ namespace JetStudio;
 						handle: 'i.property-option-move',
 						stop: function () {
 
-							let new_values = new Array();
+							let new_values = [];
 
 							selected_area.find('.order_by_options_item_selected').each(function (i, item) {
 								let id = $(item).data('id');

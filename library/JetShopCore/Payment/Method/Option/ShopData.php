@@ -3,8 +3,6 @@ namespace JetShop;
 
 use Jet\DataModel_Definition;
 use Jet\DataModel;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
 
 /**
@@ -13,16 +11,14 @@ use Jet\Tr;
 #[DataModel_Definition(
 	name: 'payment_methods_options_shop_data',
 	database_table_name: 'payment_methods_options_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Payment_Method_Option::class
 )]
-abstract class Core_Payment_Method_Option_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
 	const IMG_ICON1 = 'icon1';
 	const IMG_ICON2 = 'icon2';
 	const IMG_ICON3 = 'icon3';
 	
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	#[DataModel_Definition(
@@ -90,30 +86,6 @@ abstract class Core_Payment_Method_Option_ShopData extends DataModel_Related_1to
 	)]
 	protected string $image_icon3 = '';
 
-	public function setParents( Payment_Method $payment_method, Payment_Method_Option $option ) : void
-	{
-		$this->payment_method = $payment_method;
-		$this->payment_method_code = $payment_method->getCode();
-
-		$this->option = $option;
-		$this->option_code = $option->getCode();
-
-	}
-
-	public function getArrayKeyValue() : string
-	{
-		return $this->shop_code;
-	}
-	
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getPaymentMethodCode() : string
 	{
@@ -246,15 +218,5 @@ abstract class Core_Payment_Method_Option_ShopData extends DataModel_Related_1to
 	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ) : string
 	{
 		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON3, $max_w, $max_h );
-	}
-
-
-	public function getPossibleToEditImages() : bool
-	{
-		if($this->option->getEditForm()->getIsReadonly()) {
-			return false;
-		}
-
-		return true;
 	}
 }

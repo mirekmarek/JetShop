@@ -9,7 +9,7 @@
 namespace JetStudio;
 
 use Jet\Autoloader_Loader;
-use Jet\Application_Modules;
+use Jet\SysConf_Jet_Modules;
 
 /**
  *
@@ -27,7 +27,7 @@ class Autoloader_ProjectModules extends Autoloader_Loader
 	 */
 	public function getScriptPath( string $root_namespace, string $namespace, string $class_name ): bool|string
 	{
-		if( $root_namespace != Application_Modules::getModuleRootNamespace() ) {
+		if( $root_namespace != SysConf_Jet_Modules::getModuleRootNamespace() ) {
 			return false;
 		}
 
@@ -38,8 +38,6 @@ class Autoloader_ProjectModules extends Autoloader_Loader
 		$module_path = str_replace( '\\', '/', $module_path );
 		$class_name = str_replace( '_', '/', $class_name );
 
-		$path = $module_path . $class_name . '.php';
-
-		return $path;
+		return $module_path . $class_name . '.php';
 	}
 }

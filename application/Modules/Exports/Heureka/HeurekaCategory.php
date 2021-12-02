@@ -8,6 +8,7 @@
 namespace JetShopModule\Exports\Heureka;
 
 use Jet\BaseObject;
+use SimpleXMLElement;
 
 class HeurekaCategory extends BaseObject {
 
@@ -21,7 +22,7 @@ class HeurekaCategory extends BaseObject {
 
 	protected string $full_name = '';
 
-	public function __construct( \SimpleXMLElement $xnl_node, string $parent_id, array $path )
+	public function __construct( SimpleXMLElement $xnl_node, string $parent_id, array $path )
 	{
 		$id = trim((string)$xnl_node->CATEGORY_ID);
 		$this->setId( $id );

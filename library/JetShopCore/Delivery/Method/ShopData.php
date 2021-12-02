@@ -7,8 +7,6 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Form_Field_Select;
 use Jet\Tr;
 use Jet\Form;
@@ -19,12 +17,10 @@ use Jet\Form;
 #[DataModel_Definition(
 	name: 'delivery_method_shop_data',
 	database_table_name: 'delivery_methods_shop_data',
-	parent_model_class: Delivery_Method::class,
-	id_controller_class: DataModel_IDController_Passive::class
+	parent_model_class: Delivery_Method::class
 )]
-abstract class Core_Delivery_Method_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface
+abstract class Core_Delivery_Method_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface
 {
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	const IMG_ICON1 = 'icon1';
@@ -153,7 +149,7 @@ abstract class Core_Delivery_Method_ShopData extends DataModel_Related_1toN impl
 	 */
 	public function setDeliveryMethodCode( string $value ) : void
 	{
-		$this->delivery_method_code = (string)$value;
+		$this->delivery_method_code = $value;
 	}
 
 	/**
@@ -181,11 +177,6 @@ abstract class Core_Delivery_Method_ShopData extends DataModel_Related_1toN impl
 			Delivery_Method_ShopData::IMG_ICON2 => Tr::_('Icon 2', [], Delivery_Method::getManageModuleName() ),
 			Delivery_Method_ShopData::IMG_ICON3 => Tr::_('Icon 3', [], Delivery_Method::getManageModuleName() ),
 		];
-	}
-
-	public function getPossibleToEditImages(): bool
-	{
-		return true;
 	}
 
 	public function setIcon1( string $image ) : void
@@ -364,7 +355,7 @@ abstract class Core_Delivery_Method_ShopData extends DataModel_Related_1toN impl
 
 	public function createVatRateInputField() : Form_Field_Select
 	{
-		$shop = Shops::get($this->shop_code);
+		$shop = $this->getShop();
 
 		$input = new Form_Field_Select('vat_rate', 'VAT rate:', !$this->getIsSaved() ? $shop->getDefaultVatRate()  : $this->vat_rate);
 
@@ -386,7 +377,7 @@ abstract class Core_Delivery_Method_ShopData extends DataModel_Related_1toN impl
 	 */
 	public function setDiscountIsNotAllowed( bool $value ) : void
 	{
-		$this->discount_is_not_allowed = (bool)$value;
+		$this->discount_is_not_allowed = $value;
 	}
 
 	/**

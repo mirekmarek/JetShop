@@ -15,18 +15,18 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Int;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
-use Jet\Mvc_Page_Content;
+use Jet\MVC_Page_Content;
 
 /**
  *
  */
-class Pages_Page_Content extends Mvc_Page_Content
+class Pages_Page_Content extends MVC_Page_Content
 {
 	const CONTENT_KIND_MODULE = 'module';
 	const CONTENT_KIND_CLASS = 'class';
 	const CONTENT_KIND_STATIC = 'static';
 	const CONTENT_KIND_CALLBACK = 'callback';
-	const PARAMS_COUNT = 3;
+	const PARAMS_COUNT = 5;
 
 	/**
 	 * @var ?Form
@@ -63,9 +63,7 @@ class Pages_Page_Content extends Mvc_Page_Content
 	 */
 	public static function getField__is_cacheable( bool $default_value ): Form_Field_Checkbox
 	{
-		$is_cacheable = new Form_Field_Checkbox( 'is_cacheable', 'Is cacheable', $default_value );
-
-		return $is_cacheable;
+		return new Form_Field_Checkbox( 'is_cacheable', 'Is cacheable', $default_value );
 	}
 
 
@@ -79,13 +77,13 @@ class Pages_Page_Content extends Mvc_Page_Content
 	public static function getField__output_position( string $default_value, Pages_Page $page ): Form_Field_Select
 	{
 		/**
-		 * @var Sites_Site $site
+		 * @var Bases_Base $base
 		 */
-		$site = $page->getSite();
+		$base = $page->getBase();
 
 		$output_position = new Form_Field_Select( 'output_position', 'Output position:', $default_value );
 		$output_position->setIsRequired( true );
-		$output_position->setSelectOptions( $site->getLayoutOutputPositions( $page->getLayoutScriptName() ) );
+		$output_position->setSelectOptions( $base->getLayoutOutputPositions( $page->getLayoutScriptName() ) );
 		$output_position->setErrorMessages( [
 			Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select output position',
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select output position'
@@ -102,9 +100,8 @@ class Pages_Page_Content extends Mvc_Page_Content
 	 */
 	public static function getField__output_position_order( int $default_value ): Form_Field_Int
 	{
-		$output_position_order = new Form_Field_Int( 'output_position_order', 'Output position order:', $default_value );
+		return new Form_Field_Int( 'output_position_order', 'Output position order:', $default_value );
 
-		return $output_position_order;
 	}
 
 	/**

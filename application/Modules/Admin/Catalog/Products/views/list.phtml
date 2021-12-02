@@ -2,18 +2,20 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\Form;
-use JetShop\Category;use JetShop\Product;
+use Jet\UI_messages;
+use JetShop\Category;
+use JetShop\Product;
+use JetShop\Shops;
 
 use Jet\UI_dataGrid;
 use Jet\UI;
 use Jet\UI_button;
 
 use Jet\Tr;
-use Jet\Mvc_View;
-use JetShop\Shops;
+use Jet\MVC_View;
 
 /**
- * @var Mvc_View     $this
+ * @var MVC_View     $this
  * @var UI_dataGrid  $grid
  * @var Form         $filter_form
  * @var Listing      $listing
@@ -28,15 +30,11 @@ $c_edit->setRenderer(
 	function( Product $item ) use ( $router ) {
 
 		$edit_uri = $item->getEditURL();
-		//TODO:
+		//TODO: checkboxy a multiakce
 		$delete_uri = '';
 
 		if( $edit_uri ):
 			echo UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
-		endif;
-		echo '&nbsp;';
-		if( $delete_uri ):
-			echo UI::button_delete()->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
 		endif;
 
 	}
@@ -48,8 +46,61 @@ $grid->getColumn( 'products_shop_data.name' )->setRenderer(
 	function( Product $item ) use ( $router ) {
 		$edit_uri = $router->action('edit')->URI( $item->getId() );
 		?>
-		<a href="<?=$edit_uri;?>"><?=$item->getInternalName();?></a>
+		<?=$item->renderActiveState()?>
+		<a href="<?=$edit_uri;?>"><?=$item->getAdminTitle();?></a>
+
 		<?php
+		if($item->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER) {
+			?>
+			<br>
+			<table>
+				<thead>
+				<tr>
+					<th colspan="2"><?=Tr::_('Variants')?></th>
+				</tr>
+				</thead>
+				<?php foreach($item->getVariants() as $variant): ?>
+					<tr>
+						<td><?=$variant->renderActiveState() ?></td>
+						<td><a href="<?=$variant->getEditURL()?>"><?=$variant->getAdminTitle()?></a></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+			<?php
+		}
+
+		if( $item->getType()==Product::PRODUCT_TYPE_SET ) {
+			?>
+			<br>
+			<table>
+				<thead>
+				<tr>
+					<th colspan="2"><?=Tr::_('Set items')?></th>
+				</tr>
+				</thead>
+				<?php foreach($item->getSetItems() as $set_item):
+					$set_item_product = Product::get($set_item->getItemProductId());
+
+					if(!$set_item_product) {
+						?>
+						<tr>
+							<td></td>
+							<td><?=UI_messages::createDanger(Tr::_('Unknown product %ID%', ['ID'=>$set_item->getItemProductId()]))->setCloseable(false)?></td>
+						</tr>
+						<?php
+						continue;
+					}
+
+					?>
+					<tr>
+						<td><?=$set_item_product->renderActiveState()?></td>
+						<td><a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+			<?php
+		}
+
 	}
 );
 
@@ -120,6 +171,11 @@ $grid->getColumn( 'id' )->setRenderer(
 <div class="row toolbar" id="main-toolbar">
 	<div class="container-fluid">
 		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-3" style="padding-bottom: 10px;">
+				<?=UI::button_create('')->setUrl($router->getAction('add')->URI())->setClass('success')?>
+			</div>
+		</div>
+		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-3">
 				<table style="width: 100%">
 					<tr>
@@ -139,6 +195,13 @@ $grid->getColumn( 'id' )->setRenderer(
 			<div class="col-xs-12 col-sm-12 col-md-3">
 				<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
 			</div>
+			<div class="col-xs-12 col-sm-12 col-md-3">
+				<?php
+				$filter_form->field('product_type')->input()->addJsAction('onchange', 'this.form.submit()');
+				$filter_form->field('product_type')->label()->addCustomCssClass('text-right');
+				?>
+				<?=$filter_form->field('product_type')?>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 100px;padding-top: 5px;padding-bottom: 5px;">
@@ -151,7 +214,7 @@ $grid->getColumn( 'id' )->setRenderer(
 				<?php foreach(Shops::getList() as $code=>$shop): ?>
 				<table class="badge badge-<?=match((string)$filter_form->field('is_active_'.$code)->getValue()) {'0'=>'light', '-1'=>'danger', '1'=>'success' }?>">
 					<tr>
-						<td style="width: 150px;"><?=Tr::_('Is active - '.$shop->getName())?></td>
+						<td style="width: 150px;"><?=Tr::_('Is active - '.$shop->getShopName())?></td>
 						<td style="width: 100px;"><?=$filter_form->field('is_active_'.$code)->input()->addJsAction('onchange', 'this.form.submit()')?></td>
 					</tr>
 				</table>

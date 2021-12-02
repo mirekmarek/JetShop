@@ -3,11 +3,14 @@ namespace JetShop;
 
 
 use Jet\Application_Modules;
+use Jet\SysConf_Path;
 
 abstract class Core_Exports
 {
 
 	protected static string $module_name_prefix = 'Exports.';
+
+	protected static ?string $root_path = null;
 
 	public static function getModuleNamePrefix(): string
 	{
@@ -18,6 +21,27 @@ abstract class Core_Exports
 	{
 		self::$module_name_prefix = $module_name_prefix;
 	}
+
+	/**
+	 * @return string|null
+	 */
+	public static function getRootPath(): ?string
+	{
+		if(!static::$root_path) {
+			static::$root_path = SysConf_Path::getBase().'exports/';
+		}
+
+		return static::$root_path;
+	}
+
+	/**
+	 * @param string|null $root_path
+	 */
+	public static function setRootPath( ?string $root_path ): void
+	{
+		static::$root_path = $root_path;
+	}
+
 
 
 	/**

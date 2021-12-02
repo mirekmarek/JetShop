@@ -14,38 +14,38 @@ namespace Jet;
 class DataModel_Definition_Model_Related_1toN extends DataModel_Definition_Model_Related
 {
 
-	/**
-	 * @var string
-	 */
-	protected string $iterator_class = DataModel_Related_1toN_Iterator::class;
 
 	/**
-	 * @return string
+	 *
 	 */
-	public function getIteratorClassName(): string
+	public function init(): void
 	{
-		return $this->iterator_class;
-	}
+		parent::init();
 
-	/**
-	 * @param string $iterator_class
-	 */
-	public function setIteratorClass( string $iterator_class ): void
-	{
-		$this->iterator_class = $iterator_class;
+		$this->default_order_by = $this->getClassArgument( 'default_order_by', [] );
 	}
 
 
 	/**
-	 * @throws DataModel_Exception
+	 * @var array
 	 */
-	protected function _initParents(): void
-	{
-		parent::_initParents();
+	protected array $default_order_by = [];
 
-		$iterator_class = $this->getClassArgument( 'iterator_class', null );
-		if( $iterator_class ) {
-			$this->iterator_class = $iterator_class;
-		}
+
+	/**
+	 * @return array
+	 */
+	public function getDefaultOrderBy(): array
+	{
+		return $this->default_order_by;
 	}
+
+	/**
+	 * @param array $default_order_by
+	 */
+	public function setDefaultOrderBy( array $default_order_by ): void
+	{
+		$this->default_order_by = $default_order_by;
+	}
+
 }

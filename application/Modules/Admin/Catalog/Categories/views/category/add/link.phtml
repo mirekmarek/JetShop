@@ -1,17 +1,14 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Categories;
 
-use Jet\UI;
 use Jet\Form;
 use Jet\Tr;
-use Jet\Mvc;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Category;
 use JetShop\Shops;
-use JetShopAdmin\Shop_Admin;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var Category   $new_category
  */
 
@@ -38,18 +35,18 @@ $form->setDefaultFieldWidth([Form::LJ_SIZE_MEDIUM=>8]);
 
 
 		<?php foreach(Shops::getList() as $shop):
-			$shop_code= $shop->getCode();
-			$shop_data = $new_category->getShopData( $shop_code );
+			$shop_key = $shop->getKey();
+			$shop_data = $new_category->getShopData( $shop );
 			?>
 			<?=$shop_data->renderShopDataBlock_start()?>
 
 				<fieldset>
 					<legend class="sub"><?=Tr::_('Main data')?></legend>
 
-					<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
 
-					<?=$form->field('/shop_data/'.$shop_code.'/name')?>
-					<?=$form->field('/shop_data/'.$shop_code.'/second_name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
 
 				</fieldset>
 

@@ -6,7 +6,6 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Form;
 
 #[DataModel_Definition(
 	name: 'order_item',
@@ -161,6 +160,11 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		form_field_type: false
 	)]
 	protected string $warehouse_code = '';
+
+	public function getArrayKeyValue(): string
+	{
+		return $this->id;
+	}
 
 	public function getOrder() : Order
 	{
@@ -332,9 +336,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 
 	public function setDataByCartItem( ShoppingCart_Item $item, int $qty, bool $in_stock ) : void
 	{
-
-		$shop_code = $item->getCart()->getShopCode();
-
 		$product = $item->getProduct();
 
 		$this->type = Order_Item::ITEM_TYPE_PRODUCT;
@@ -347,7 +348,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 
 		$this->quantity = $qty;
 		$this->item_amount = $item->getPricePerItem();
-		$this->vat_rate = $product->getVatRate( $shop_code );
+		$this->vat_rate = $product->getVatRate( $item->getCart()->getShop() );
 		$this->total_amount = $this->quantity * $this->item_amount;
 
 

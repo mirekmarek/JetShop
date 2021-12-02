@@ -8,9 +8,9 @@
 
 namespace Jet;
 
-use \IntlDateFormatter as PHP_IntlDateFormatter;
-use \NumberFormatter as PHP_NumberFormatter;
-use \Locale as PHP_Locale;
+use IntlDateFormatter as PHP_IntlDateFormatter;
+use NumberFormatter as PHP_NumberFormatter;
+use Locale as PHP_Locale;
 
 
 /**
@@ -33,13 +33,13 @@ class Locale extends BaseObject
 	const DATE_TIME_FORMAT_MEDIUM = PHP_IntlDateFormatter::MEDIUM;
 
 	/**
-	 * Long style (January 12, 1952 or 3:30:32pm)
+	 * Long style (January 12, 1952, 3:30:32pm)
 	 * @link http://php.net/manual/en/intl.intldateformatter-constants.php
 	 */
 	const DATE_TIME_FORMAT_LONG = PHP_IntlDateFormatter::LONG;
 
 	/**
-	 * Completely specified style (Tuesday, April 12, 1952 AD or 3:30:42pm PST)
+	 * Completely specified style (Tuesday, April 12, 1952 AD, 3:30:42pm PST)
 	 * @link http://php.net/manual/en/intl.intldateformatter-constants.php
 	 */
 	const DATE_TIME_FORMAT_FULL = PHP_IntlDateFormatter::FULL;
@@ -322,11 +322,11 @@ class Locale extends BaseObject
 
 	/**
 	 *
-	 * @param null|string|Locale $in_locale (optional, default: current locale)
+	 * @param null|Locale $in_locale (optional, default: current locale)
 	 *
 	 * @return array
 	 */
-	public static function getAllLocalesList( null|string|Locale $in_locale = null ) : array
+	public static function getAllLocalesList( null|Locale $in_locale = null ) : array
 	{
 		if( !$in_locale ) {
 			$in_locale = static::getCurrentLocale();
@@ -363,12 +363,12 @@ class Locale extends BaseObject
 	 *
 	 * Alias of: Locale::getCurrentLocale()->formatDate($date_and_time);
 	 *
-	 * @param Data_DateTime $date_and_time
+	 * @param ?Data_DateTime $date_and_time
 	 * @param int $format
 	 *
 	 * @return string
 	 */
-	public static function date( Data_DateTime $date_and_time, int $format = self::DATE_TIME_FORMAT_MEDIUM ): string
+	public static function date( ?Data_DateTime $date_and_time, int $format = self::DATE_TIME_FORMAT_MEDIUM ): string
 	{
 		return static::getCurrentLocale()->formatDate( $date_and_time, $format );
 	}
@@ -377,13 +377,13 @@ class Locale extends BaseObject
 	 *
 	 * Alias of: Locale::getCurrentLocale()->formatDateAdnTime($date_and_time);
 	 *
-	 * @param Data_DateTime $date_and_time
+	 * @param Data_DateTime|null $date_and_time
 	 * @param int $date_format
 	 * @param int $time_format
 	 *
 	 * @return string
 	 */
-	public static function dateAndTime( Data_DateTime $date_and_time,
+	public static function dateAndTime( ?Data_DateTime $date_and_time,
 	                                    int $date_format = self::DATE_TIME_FORMAT_MEDIUM,
 	                                    int $time_format = self::DATE_TIME_FORMAT_SHORT ): string
 	{
@@ -395,12 +395,12 @@ class Locale extends BaseObject
 	 *
 	 * Alias of: Locale::getCurrentLocale()->formatTime($date_and_time);
 	 *
-	 * @param Data_DateTime $date_and_time
+	 * @param Data_DateTime|null $date_and_time
 	 * @param int $time_format
 	 *
 	 * @return string
 	 */
-	public static function time( Data_DateTime $date_and_time, int $time_format = self::DATE_TIME_FORMAT_SHORT ): string
+	public static function time( ?Data_DateTime $date_and_time, int $time_format = self::DATE_TIME_FORMAT_SHORT ): string
 	{
 		return static::getCurrentLocale()->formatTime( $date_and_time, $time_format );
 	}
@@ -520,12 +520,12 @@ class Locale extends BaseObject
 	/**
 	 * Returns date formatted by locale
 	 *
-	 * @param Data_DateTime $date_and_time
+	 * @param ?Data_DateTime $date_and_time
 	 * @param int $format
 	 *
 	 * @return string
 	 */
-	public function formatDate( Data_DateTime $date_and_time, int $format = self::DATE_TIME_FORMAT_MEDIUM ): string
+	public function formatDate( ?Data_DateTime $date_and_time, int $format = self::DATE_TIME_FORMAT_MEDIUM ): string
 	{
 		if( !$date_and_time ) {
 			return '';
@@ -540,13 +540,13 @@ class Locale extends BaseObject
 
 	/**
 	 *
-	 * @param Data_DateTime $date_and_time
+	 * @param ?Data_DateTime $date_and_time
 	 * @param int $date_format
 	 * @param int $time_format
 	 *
 	 * @return string
 	 */
-	public function formatDateAndTime( Data_DateTime $date_and_time,
+	public function formatDateAndTime( ?Data_DateTime $date_and_time,
 	                                   int $date_format = self::DATE_TIME_FORMAT_MEDIUM,
 	                                   int $time_format = self::DATE_TIME_FORMAT_SHORT ): string
 	{
@@ -565,12 +565,12 @@ class Locale extends BaseObject
 
 	/**
 	 *
-	 * @param Data_DateTime $date_and_time
+	 * @param ?Data_DateTime $date_and_time
 	 * @param int $time_format
 	 *
 	 * @return string
 	 */
-	public function formatTime( Data_DateTime $date_and_time, int $time_format = self::DATE_TIME_FORMAT_SHORT ): string
+	public function formatTime( ?Data_DateTime $date_and_time, int $time_format = self::DATE_TIME_FORMAT_SHORT ): string
 	{
 		if( !$date_and_time ) {
 			return '';
@@ -635,7 +635,7 @@ class Locale extends BaseObject
 	 *
 	 * @return string
 	 */
-	public function formatSize( int $bytes, string $unit = 'B', int $max_places = 2, string $glue = ' ' ): string
+	public function formatSize( int $bytes, string $unit = 'iB', int $max_places = 2, string $glue = ' ' ): string
 	{
 
 		$units = [
@@ -681,16 +681,16 @@ class Locale extends BaseObject
 	/**
 	 *  ISO 4217
 	 *
-	 * @param string $currency_code
+	 * @param string $currency
 	 *
 	 * @return PHP_NumberFormatter
 	 */
-	public function getCurrencyFormatter( string $currency_code ): PHP_NumberFormatter
+	public function getCurrencyFormatter( string $currency ): PHP_NumberFormatter
 	{
-		if( !isset( $this->_currency_formatter[$currency_code] ) ) {
-			$this->_currency_formatter[$currency_code] = new PHP_NumberFormatter( $this . '@currency=' . $currency_code, PHP_NumberFormatter::CURRENCY );
+		if( !isset( $this->_currency_formatter[$currency] ) ) {
+			$this->_currency_formatter[$currency] = new PHP_NumberFormatter( $this . '@currency=' . $currency, PHP_NumberFormatter::CURRENCY );
 		}
-		return $this->_currency_formatter[$currency_code];
+		return $this->_currency_formatter[$currency];
 	}
 
 	/**
@@ -741,13 +741,13 @@ class Locale extends BaseObject
 	 *
 	 * Example: cs_CZ locale name in cs_CZ locale: čeština (Česká republika)
 	 *
-	 * @param string|Locale|null $in_locale (optional, default: current locale)
+	 * @param Locale|null $in_locale (optional, default: current locale)
 	 *
 	 * @return string
 	 * @see PHP_Locale::getDisplayName
 	 *
 	 */
-	public function getName( string|Locale|null $in_locale = null ): string
+	public function getName( Locale|null $in_locale = null ): string
 	{
 		if( !$in_locale ) {
 			$in_locale = static::getCurrentLocale();
@@ -761,13 +761,13 @@ class Locale extends BaseObject
 	 *
 	 * Example: cs_CZ locale name in cs_CZ locale: čeština
 	 *
-	 * @param string|Locale|null $in_locale (optional, default: current locale)
+	 * @param Locale|null $in_locale (optional, default: current locale)
 	 *
 	 * @return string
 	 * @see PHP_Locale::getDisplayLanguage
 	 *
 	 */
-	public function getLanguageName( string|Locale|null $in_locale = null ): string
+	public function getLanguageName( Locale|null $in_locale = null ): string
 	{
 		if( !$in_locale ) {
 			$in_locale = static::getCurrentLocale();
@@ -781,13 +781,13 @@ class Locale extends BaseObject
 	 *
 	 * Example: cs_CZ region name in cs_CZ locale: Česká republika
 	 *
-	 * @param string|Locale|null $in_locale (optional, default: current locale)
+	 * @param Locale|null $in_locale (optional, default: current locale)
 	 *
 	 * @return string
 	 * @see PHP_Locale::getDisplayRegion
 	 *
 	 */
-	public function getRegionName( string|Locale|null $in_locale = null ): string
+	public function getRegionName( Locale|null $in_locale = null ): string
 	{
 		if( !$in_locale ) {
 			$in_locale = static::getCurrentLocale();

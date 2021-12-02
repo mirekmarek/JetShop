@@ -4,13 +4,13 @@ namespace JetShopModule\Admin\Services\Services;
 use JetShop\Services_Service;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Services_Service_ShopData;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Services_Service     $service
  */
@@ -29,15 +29,11 @@ $service = $this->getRaw( 'service' );
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
 
-		<?php if(!$service->getIsNew()): ?>
-			<?php foreach(Shops::getList() as $shop):
-				$shop_code= $shop->getCode();
-
-				$shop_data = $service->getShopData( $shop_code );
-				?>
-				<?=$shop_data->renderImageWidgets( Services_Service_ShopData::getImageClasses() )?>
-			<?php endforeach; ?>
-		<?php endif; ?>
+		<?php if(!$service->getIsNew()):
+			foreach(Shops::getList() as $shop):
+				echo $service->getShopData( $shop )->renderImageWidgets( Services_Service_ShopData::getImageClasses(), !$service->getEditForm()->getIsReadonly() );
+			endforeach;
+		endif; ?>
 	</div>
 </div>
 

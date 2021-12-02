@@ -31,8 +31,6 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 	)]
 	protected int $stencil_id = 0;
 
-	protected ?Stencil $stencil = null;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		form_field_label: 'Is active'
@@ -46,11 +44,14 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 	)]
 	protected int $priority = 0;
 
+	/**
+	 * @var Stencil_Option_ShopData[]
+	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Stencil_Option_ShopData::class
 	)]
-	protected $shop_data;
+	protected array $shop_data = [];
 
 	protected bool $is_first = false;
 
@@ -70,29 +71,7 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Stencil_Option_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-
-		}
-	}
-
-	public function setParents( Stencil $stencil ) : void
-	{
-		$this->stencil = $stencil;
-		$this->stencil_id = $stencil->getId();
-
-		foreach($this->shop_data as $shop_data) {
-			$shop_data->setParents( $stencil, $this );
-		}
-
+		Stencil_Option_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 	public function isInherited() : bool
@@ -103,11 +82,6 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 	public function getStencilIs() : int
 	{
 		return $this->stencil_id;
-	}
-
-	public function getStencil() : Stencil
-	{
-		return $this->stencil;
 	}
 
 
@@ -121,7 +95,7 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 		$this->id = $id;
 	}
 
-	public function getArrayKeyValue() : int
+	public function getArrayKeyValue() : string
 	{
 		return $this->id;
 	}
@@ -146,13 +120,9 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 		return $this->priority;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Stencil_Option_ShopData
+	public function getShopData( ?Shops_Shop $shop=null ) : Stencil_Option_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 	public function isFirst() : bool
@@ -223,24 +193,24 @@ abstract class Core_Stencil_Option extends DataModel_Related_1toN {
 		return true;
 	}
 
-	public function getFilterLabel( string|null $shop_code=null ) : string
+	public function getFilterLabel( ?Shops_Shop $shop=null ) : string
 	{
-		return $this->getShopData( $shop_code )->getFilterLabel();
+		return $this->getShopData( $shop )->getFilterLabel();
 	}
 
-	public function getProductDetailLabel( string|null $shop_code=null ) : string
+	public function getProductDetailLabel( ?Shops_Shop $shop=null ) : string
 	{
-		return $this->getShopData( $shop_code )->getProductDetailLabel();
+		return $this->getShopData( $shop )->getProductDetailLabel();
 	}
 
-	public function getUrlParam( string|null $shop_code=null ) : string
+	public function getUrlParam( ?Shops_Shop $shop=null ) : string
 	{
-		return $this->getShopData( $shop_code )->getUrlParam();
+		return $this->getShopData( $shop )->getUrlParam();
 	}
 
-	public function getDescription( string|null $shop_code=null ) : string
+	public function getDescription( ?Shops_Shop $shop=null ) : string
 	{
-		return $this->getShopData( $shop_code )->getDescription();
+		return $this->getShopData( $shop )->getDescription();
 	}
 
 

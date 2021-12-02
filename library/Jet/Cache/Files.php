@@ -64,15 +64,10 @@ abstract class Cache_Files
 
 		$file_path = $this->getDataFilePath( $entity );
 
-		file_put_contents(
+		IO_File::writeDataAsPhp(
 			$file_path,
-			'<?php return ' . var_export( $data, true ) . ';',
-			LOCK_EX
+			$data
 		);
-
-		chmod( $file_path, SysConf_Jet::getIOModFile() );
-
-		Cache::resetOPCache();
 	}
 
 
@@ -126,7 +121,7 @@ abstract class Cache_Files
 			LOCK_EX
 		);
 
-		chmod( $file_path, SysConf_Jet::getIOModFile() );
+		chmod( $file_path, SysConf_Jet_IO::getFileMod() );
 	}
 
 	/**

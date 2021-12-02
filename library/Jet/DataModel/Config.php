@@ -22,7 +22,6 @@ class DataModel_Config extends Config
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		default_value: 'MySQL',
 		form_field_type: Form::TYPE_SELECT,
 		form_field_get_select_options_callback: [
 			'DataModel_Config',
@@ -34,7 +33,7 @@ class DataModel_Config extends Config
 			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select backend type'
 		]
 	)]
-	protected string $backend_type;
+	protected string $backend_type = 'MySQL';
 
 
 	/**
@@ -109,7 +108,7 @@ class DataModel_Config extends Config
 	 */
 	public function createBackendConfigInstance( array $data ): DataModel_Backend_Config
 	{
-		return DataModel_Factory::getBackendConfigInstance(
+		return Factory_DataModel::getBackendConfigInstance(
 			$this->getBackendType(),
 			$data
 		);

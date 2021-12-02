@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\Form_Field_Select;
 
@@ -21,9 +20,9 @@ abstract class Core_Parametrization_Property_StencilOptions extends Parametrizat
 		]);
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
+			$shop_key = $shop->getKey();
 
-			$form->removeField('/shop_data/'.$shop_code.'/bool_yes_description');
+			$form->removeField('/shop_data/'.$shop_key.'/bool_yes_description');
 		}
 
 		return $form;
@@ -39,9 +38,9 @@ abstract class Core_Parametrization_Property_StencilOptions extends Parametrizat
 		]);
 
 		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
+			$shop_key = $shop->getKey();
 
-			$form->removeField('/shop_data/'.$shop_code.'/bool_yes_description');
+			$form->removeField('/shop_data/'.$shop_key.'/bool_yes_description');
 		}
 
 		return $form;

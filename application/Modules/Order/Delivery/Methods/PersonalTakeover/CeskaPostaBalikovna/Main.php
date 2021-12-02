@@ -10,7 +10,7 @@ namespace JetShopModule\Order\Delivery\Methods\PersonalTakeover\CeskaPostaBaliko
 use JetShop\Delivery_Method_Module_PersonalTakeover;
 use JetShop\Delivery_PersonalTakeover_Place;
 use JetShop\Shops_Shop;
-use \SimpleXMLElement;
+use SimpleXMLElement;
 
 /**
  *
@@ -45,7 +45,7 @@ class Main extends Delivery_Method_Module_PersonalTakeover
 
 			$place = new Delivery_PersonalTakeover_Place();
 
-			$place->setShopCode( $shop->getCode() );
+			$place->setShop( $shop );
 			$place->setPlaceCode( (string)$item->PSC );
 			$place->setMethodCode( static::$method_code );
 

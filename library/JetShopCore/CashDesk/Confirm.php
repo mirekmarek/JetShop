@@ -73,13 +73,13 @@ trait Core_CashDesk_Confirm {
 
 			if($checked) {
 				Customer_MailingSubscribe::subscribe(
-					$order->getShopCode(),
+					$order->getShop(),
 					$order->getEmail(),
 					$mailing_subscribe_source
 				);
 			} else {
 				Customer_MailingSubscribe::unsubscribe(
-					$order->getShopCode(),
+					$order->getShop(),
 					$order->getEmail(),
 					$mailing_subscribe_source
 				);
@@ -146,7 +146,7 @@ trait Core_CashDesk_Confirm {
 
 			$session_key = 'agree_flag_'.$flag->getCode();
 
-			$checked = $session->getValue($session_key, null);
+			$checked = $session->getValue($session_key);
 
 			if($checked===null) {
 				$checked = $flag->isDefaultChecked();

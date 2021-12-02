@@ -1,0 +1,29 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Tr;
+use JetShop\Product;
+use Jet\MVC_View;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View   $this
+ * @var Product    $product
+ */
+
+$product = $this->getRaw('product');
+
+
+if($product->isActive()):
+	?><span class="badge badge-success"> <?=Tr::_('Active')?> </span> <?php
+else:
+	?><span class="badge badge-danger"><?=Tr::_('Inactive')?></span> <?php
+endif;
+
+foreach(Shops::getList() as $shop):
+	if($product->getShopData($shop)->isActive()):
+		?><span class="badge badge-success"><?=$shop->getShopName()?></span> <?php
+	else:
+		?><span class="badge badge-danger"><?=$shop->getShopName()?></span> <?php
+	endif;
+endforeach;

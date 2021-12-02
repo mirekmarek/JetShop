@@ -8,13 +8,10 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Name;
-use Jet\DataModel_Related_MtoN_Iterator;
+use Jet\DataModel_IDController_Passive;
 use Jet\Exception;
 use Jet\Form;
 use Jet\Form_Field_Input;
-use Jet\DataModel_Related_1toN;
-use Jet\DataModel_Related_1toN_Iterator;
 use Jet\Form_Field_MultiSelect;
 use Jet\Form_Field_Select;
 use Jet\Tr;
@@ -25,11 +22,7 @@ use Jet\Tr;
 #[DataModel_Definition(
 	name: 'payment_method',
 	database_table_name: 'payment_methods',
-	id_controller_class: DataModel_IDController_Name::class,
-	id_controller_options: [
-		'id_property_name' => 'code',
-		'get_name_method_name' => 'getCode'
-	]
+	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_Payment_Method extends DataModel
 {
@@ -97,35 +90,35 @@ abstract class Core_Payment_Method extends DataModel
 
 
 	/**
-	 * @var Payment_Method_ShopData[]|DataModel_Related_1toN|DataModel_Related_1toN_Iterator|null
+	 * @var Payment_Method_ShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_ShopData::class
 	)]
-	protected $shop_data = null;
+	protected array $shop_data = [];
 
 
 	/**
-	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Delivery_Method[]
+	 * @var Payment_Method_DeliveryMethods[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_DeliveryMethods::class,
 		form_field_creator_method_name: 'createDeliveryMethodInputField',
 	)]
-	protected $delivery_methods = null;
+	protected array $delivery_methods = [];
 
 
 	/**
-	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Services_Service[]
+	 * @var Payment_Method_Services[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_Services::class,
 		form_field_creator_method_name: 'createServicesInputField',
 	)]
-	protected $services = null;
+	protected array $services = [];
 
 	/**
 	 * @var Payment_Method_Option[]
@@ -135,7 +128,7 @@ abstract class Core_Payment_Method extends DataModel
 		data_model_class: Payment_Method_Option::class,
 		form_field_type: false
 	)]
-	protected $options;
+	protected array $options = [];
 
 
 	/**
@@ -193,24 +186,7 @@ abstract class Core_Payment_Method extends DataModel
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Payment_Method_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-		}
-
-		foreach($this->options as $option) {
-
-			/** @noinspection PhpParamsInspection */
-			$option->setParents( $this );
-		}
-
+		Payment_Method_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 
@@ -302,7 +278,7 @@ abstract class Core_Payment_Method extends DataModel
 	 */
 	public function setCode( string $value ) : void
 	{
-		$this->code = (string)$value;
+		$this->code = $value;
 	}
 
 	/**
@@ -375,13 +351,9 @@ abstract class Core_Payment_Method extends DataModel
 		return $this->internal_name;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Payment_Method_ShopData|null
+	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 	public function getEditURL() : string
@@ -419,40 +391,48 @@ abstract class Core_Payment_Method extends DataModel
 
 	public function setDeliveryMethods( array $codes ) : void
 	{
-		$methods = [];
+		foreach($this->delivery_methods as $r) {
+			if(!in_array($r->getDeliveryMethodCode(), $codes)) {
+				$r->delete();
+				unset($this->delivery_methods[$r->getDeliveryMethodCode()]);
+			}
+		}
 
 		foreach( $codes as $code ) {
-
-			$class = Delivery_Method::get( $code );
-
-			if( !$class ) {
+			if( !($r = Delivery_Method::get( $code )) ) {
 				continue;
 			}
 
-			$methods[] = $class;
-		}
-		$this->delivery_methods->setItems( $methods );
+			if(!isset($this->delivery_methods[$r->getCode()])) {
+				$new_item = new Payment_Method_DeliveryMethods();
+				$new_item->setPaymentMethodCode($this->getCode());
+				$new_item->setDeliveryMethodCode($code);
 
+				$this->delivery_methods[$code] = $new_item;
+				$new_item->save();
+			}
+		}
 	}
 
 	public function getDeliveryMethodsCodes() : array
 	{
-		$codes = [];
-
-		foreach($this->getDeliveryMethods() as $method) {
-			$codes[] = $method->getCode();
-		}
-
-		return $codes;
+		return array_keys($this->getDeliveryMethods());
 	}
 
 	/**
 	 *
 	 * @return Delivery_Method[]
 	 */
-	public function getDeliveryMethods() : iterable
+	public function getDeliveryMethods() : array
 	{
-		return $this->delivery_methods;
+		$res = [];
+		foreach($this->delivery_methods as $code=>$item) {
+			if(($item = $item->getDeliveryMethod())) {
+				$res[$code] = $item;
+			}
+		}
+
+		return $res;
 	}
 
 	public function createDeliveryMethodInputField() : Form_Field_MultiSelect
@@ -482,40 +462,48 @@ abstract class Core_Payment_Method extends DataModel
 
 	public function setServices( array $codes ) : void
 	{
-		$services = [];
+		foreach($this->services as $r) {
+			if(!in_array($r->getServiceCode(), $codes)) {
+				$r->delete();
+				unset($this->services[$r->getServiceCode()]);
+			}
+		}
 
 		foreach( $codes as $code ) {
-
-			$class = Services_Service::get( $code );
-
-			if( !$class ) {
+			if( !($r = Services_Service::get( $code )) ) {
 				continue;
 			}
 
-			$services[] = $class;
-		}
-		$this->services->setItems( $services );
+			if(!isset($this->services[$r->getCode()])) {
+				$new_item = new Payment_Method_Services();
+				$new_item->setPaymentMethodCode($this->getCode());
+				$new_item->setServiceCode($code);
 
+				$this->services[$code] = $new_item;
+				$new_item->save();
+			}
+		}
 	}
 
 	public function getServicesCodes() : array
 	{
-		$codes = [];
-
-		foreach($this->getServices() as $service) {
-			$codes[] = $service->getCode();
-		}
-
-		return $codes;
+		return array_keys($this->getServices());
 	}
 
 	/**
 	 *
 	 * @return Services_Service[]
 	 */
-	public function getServices() : iterable
+	public function getServices() : array
 	{
-		return $this->services;
+		$res = [];
+		foreach($this->services as $code=>$item) {
+			if(($item = $item->getService())) {
+				$res[$code] = $item;
+			}
+		}
+
+		return $res;
 	}
 
 	public function createServicesInputField() : Form_Field_MultiSelect
@@ -537,7 +525,7 @@ abstract class Core_Payment_Method extends DataModel
 
 	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
 	{
-		$shd = $this->getShopData($cash_desk->getShopCode());
+		$shd = $this->getShopData($cash_desk->getShop());
 
 		$item = new Order_Item();
 		$item->setType( Order_Item::ITEM_TYPE_PAYMENT );
@@ -572,31 +560,28 @@ abstract class Core_Payment_Method extends DataModel
 
 	public function addOption( Payment_Method_Option $option ) : void
 	{
-		/** @noinspection PhpParamsInspection */
-		$option->setParents( $this );
-
-		$this->options[] = $option;
+		$this->options[$option->getCode()] = $option;
 	}
 
 	/**
-	 * @param string $shop_code
+	 * @param Shops_Shop $shop
 	 *
 	 * @return Payment_Method_Option[]
 	 */
-	public function getActiveOptions( string $shop_code ) : array
+	public function getActiveOptions( Shops_Shop $shop ) : array
 	{
 		$res = [];
 
 		foreach($this->options as $option) {
-			$shd = $option->getShopData( $shop_code );
+			$shd = $option->getShopData( $shop );
 			if($shd->isActive()) {
 				$res[$option->getCode()] = $option;
 			}
 		}
 
-		uasort( $res, function( Payment_Method_Option $a, Payment_Method_Option $b ) use ($shop_code) {
-			$p_a = $a->getShopData($shop_code)->getPriority();
-			$p_b = $b->getShopData($shop_code)->getPriority();
+		uasort( $res, function( Payment_Method_Option $a, Payment_Method_Option $b ) use ($shop) {
+			$p_a = $a->getShopData($shop)->getPriority();
+			$p_b = $b->getShopData($shop)->getPriority();
 
 			if(!$p_a<$p_b) {
 				return -1;
@@ -645,7 +630,7 @@ abstract class Core_Payment_Method extends DataModel
 			return $order_status_code;
 		}
 
-		return Shops::get( $cash_desk->getShopCode() )->getDefaultOrderStatusCode();
+		return $cash_desk->getShop()->getDefaultOrderStatusCode();
 	}
 
 	public function getOrderConfirmationEmailInfoText( Order $order ) : string
@@ -658,8 +643,8 @@ abstract class Core_Payment_Method extends DataModel
 		if($module) {
 			return $module->getOrderConfirmationEmailInfoText( $order, $this );
 		} else {
-			$shop_code = $order->getShopCode();
-			return $this->getShopData( $shop_code )->getConfirmationEmailInfoText();
+			$shop = $order->getShop();
+			return $this->getShopData( $shop )->getConfirmationEmailInfoText();
 		}
 	}
 }

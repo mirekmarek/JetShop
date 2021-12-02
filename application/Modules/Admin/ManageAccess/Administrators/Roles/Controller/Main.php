@@ -9,11 +9,12 @@
 
 namespace JetShopModule\Admin\ManageAccess\Administrators\Roles;
 
+use Jet\Logger;
 use JetShop\Auth_Administrator_Role as Role;
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 
 use Jet\UI_messages;
 
@@ -27,13 +28,13 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
-	 * @var ?Mvc_Controller_Router_AddEditDelete
+	 * @var ?MVC_Controller_Router_AddEditDelete
 	 */
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	/**
 	 * @var ?Role
@@ -41,10 +42,10 @@ class Controller_Main extends Mvc_Controller_Default
 	protected ?Role $role = null;
 
 
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->role = Role::get($id));
@@ -66,7 +67,7 @@ class Controller_Main extends Mvc_Controller_Default
 	/**
 	 * @param string $current_label
 	 */
-	protected function _setBreadcrumbNavigation( $current_label = '' ) : void
+	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		UI_module::initBreadcrumb();
 
@@ -105,7 +106,14 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( $role->catchAddForm() ) {
 			$role->save();
-			$this->logAllowedAction( 'Role created', $role->getId(), $role->getName(), $role );
+
+			Logger::success(
+				'role_created',
+				'Role '.$role->getName().' ('.$role->getId().') created',
+				$role->getId(),
+				$role->getName(),
+				$role
+			);
 
 			UI_messages::success(
 				Tr::_( 'Role <b>%ROLE_NAME%</b> has been created', [ 'ROLE_NAME' => $role->getName() ] )
@@ -134,7 +142,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( $role->catchEditForm() ) {
 			$role->save();
-			$this->logAllowedAction( 'Role updated', $role->getId(), $role->getName(), $role );
+			Logger::success(
+				'role_updated',
+				'Role '.$role->getName().' ('.$role->getId().') updated',
+				$role->getId(),
+				$role->getName(),
+				$role
+			);
 
 			UI_messages::success(
 				Tr::_( 'Role <b>%ROLE_NAME%</b> has been updated', [ 'ROLE_NAME' => $role->getName() ] )
@@ -188,7 +202,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$role->delete();
 
-			$this->logAllowedAction( 'Role deleted', $role->getId(), $role->getName(), $role );
+			Logger::success(
+				'role_deleted',
+				'Role '.$role->getName().' ('.$role->getId().') deleted',
+				$role->getId(),
+				$role->getName(),
+				$role
+			);
 
 			UI_messages::info( Tr::_( 'Role <b>%ROLE_NAME%</b> has been deleted', [ 'ROLE_NAME' => $role->getName() ] ) );
 			Http_Headers::reload([], ['action', 'id']);

@@ -40,9 +40,6 @@ trait Controller_Main_Payment {
 	
 	public function select_payment_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -61,9 +58,6 @@ trait Controller_Main_Payment {
 
 	public function select_payment_option_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -83,9 +77,6 @@ trait Controller_Main_Payment {
 
 	public function continue_to_customer_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -103,9 +94,6 @@ trait Controller_Main_Payment {
 
 	public function back_to_payment_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();

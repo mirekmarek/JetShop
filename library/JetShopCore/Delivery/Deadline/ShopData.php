@@ -7,10 +7,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
-use Jet\Form;
 
 /**
  *
@@ -19,11 +16,9 @@ use Jet\Form;
 	name: 'delivery_deadline_shop_data',
 	database_table_name: 'delivery_deadlines_shop_data',
 	parent_model_class: Delivery_Deadline::class,
-	id_controller_class: DataModel_IDController_Passive::class
 )]
-abstract class Core_Delivery_Deadline_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface
+abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface
 {
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	const IMG_ICON1 = 'icon1';
@@ -121,7 +116,7 @@ abstract class Core_Delivery_Deadline_ShopData extends DataModel_Related_1toN im
 	 */
 	public function setDeliveryDeadlineCode( string $value ) : void
 	{
-		$this->delivery_deadline_code = (string)$value;
+		$this->delivery_deadline_code = $value;
 	}
 
 	/**
@@ -149,11 +144,6 @@ abstract class Core_Delivery_Deadline_ShopData extends DataModel_Related_1toN im
 			Delivery_Method_ShopData::IMG_ICON2 => Tr::_('Icon 2', [], Delivery_Method::getManageModuleName() ),
 			Delivery_Method_ShopData::IMG_ICON3 => Tr::_('Icon 3', [], Delivery_Method::getManageModuleName() ),
 		];
-	}
-
-	public function getPossibleToEditImages(): bool
-	{
-		return true;
 	}
 
 	public function setIcon1( string $image ) : void
@@ -284,7 +274,7 @@ abstract class Core_Delivery_Deadline_ShopData extends DataModel_Related_1toN im
 	/**
 	 * @param int $value
 	 */
-	public function setDelayBusinessDaysPesimistic( int $value ) : void
+	public function setDelayBusinessDaysPessimistic( int $value ) : void
 	{
 		$this->delay_business_days_pessimistic = $value;
 	}
@@ -292,7 +282,7 @@ abstract class Core_Delivery_Deadline_ShopData extends DataModel_Related_1toN im
 	/**
 	 * @return int
 	 */
-	public function getDelayBusinessDaysPesimistic() : int
+	public function getDelayBusinessDaysPessimistic() : int
 	{
 		return $this->delay_business_days_pessimistic;
 	}

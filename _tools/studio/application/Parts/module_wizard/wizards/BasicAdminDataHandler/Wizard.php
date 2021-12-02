@@ -20,7 +20,7 @@ use JetStudio\DataModels;
 use JetStudio\Menus;
 use JetStudio\ModuleWizard;
 use JetStudio\ModuleWizards;
-use JetStudio\Sites;
+use JetStudio\Bases;
 
 /**
  *
@@ -123,11 +123,14 @@ class Wizard extends ModuleWizard
 			'TXT_LISTING_TITLE_ID'   => 'ID',
 			'TXT_LISTING_TITLE_NAME' => $def_name,
 
-			'LOG_EVENT_CREATED' => $def_name . ' created',
-			'LOG_EVENT_UPDATED' => $def_name . ' updated',
-			'LOG_EVENT_DELETED' => $def_name . ' deleted',
+			'LOG_EVENT_CREATED' => $model_name . '_created',
+			'LOG_EVENT_CREATED_MESSAGE' => $def_name . ' created',
+			'LOG_EVENT_UPDATED' => $model_name . '_updated',
+			'LOG_EVENT_UPDATED_MESSAGE' => $def_name . ' updated',
+			'LOG_EVENT_DELETED' => $model_name . '_deleted',
+			'LOG_EVENT_DELETED_MESSAGE' => $def_name . ' deleted',
 
-			'PAGE_SITE_ID'       => 'admin',
+			'PAGE_BASE_ID'       => 'admin',
 			'PAGE_ID'            => $page_id,
 			'PAGE_TITLE'         => $def_name . ' administration',
 			'PAGE_ICON'          => '',
@@ -202,8 +205,11 @@ class Wizard extends ModuleWizard
 
 		$scope = [
 			'LOG_EVENT_CREATED' => 'Create event:',
+			'LOG_EVENT_CREATED_MESSAGE' => 'Create event - message:',
 			'LOG_EVENT_UPDATED' => 'Update event:',
+			'LOG_EVENT_UPDATED_MESSAGE' => 'Update event - message:',
 			'LOG_EVENT_DELETED' => 'Delete event:',
+			'LOG_EVENT_DELETED_MESSAGE' => 'Delete event - message:',
 		];
 
 		foreach( $scope as $f => $title ) {
@@ -283,19 +289,13 @@ class Wizard extends ModuleWizard
 
 			if(
 				$property->getType() != DataModel::TYPE_DATA_MODEL &&
-				$property->getType() != DataModel::TYPE_CUSTOM_DATA
+				$property->getType() != DataModel::TYPE_CUSTOM_DATA &&
+				$property->getType() != DataModel::TYPE_ID &&
+				$property->getType() != DataModel::TYPE_ID_AUTOINCREMENT
 			) {
 				$name_properties[$property->getName()] = $property->getName();
 			}
 
-			/*
-			if(
-				$property->getType()!=DataModel::TYPE_DATA_MODEL &&
-				$property->getType()!=DataModel::TYPE_CUSTOM_DATA
-			) {
-				$grid_properties[$property->getName()] = $property->getName();
-			}
-			*/
 		}
 
 
@@ -401,23 +401,23 @@ class Wizard extends ModuleWizard
 	public function generateSetupForm_page( array &$fields ): void
 	{
 
-		$sites_list = ['' => ''];
+		$bases_list = ['' => ''];
 
-		foreach( Sites::getSites() as $site ) {
-			$sites_list[$site->getId()] = $site->getName();
+		foreach( Bases::getBases() as $base ) {
+			$bases_list[$base->getId()] = $base->getName();
 		}
 
-		$page_site_id_field = new Form_Field_Select( 'PAGE_SITE_ID', 'Site:' );
-		$page_site_id_field->setCatcher( function( $value ) {
-			$this->values['PAGE_SITE_ID'] = $value;
+		$page_base_id_field = new Form_Field_Select( 'PAGE_BASE_ID', 'Base:' );
+		$page_base_id_field->setCatcher( function( $value ) {
+			$this->values['PAGE_BASE_ID'] = $value;
 		} );
-		$page_site_id_field->setIsRequired( true );
-		$page_site_id_field->setErrorMessages( [
-			Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select site',
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select site',
+		$page_base_id_field->setIsRequired( true );
+		$page_base_id_field->setErrorMessages( [
+			Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select base',
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select base',
 		] );
-		$page_site_id_field->setSelectOptions( $sites_list );
-		$fields[] = $page_site_id_field;
+		$page_base_id_field->setSelectOptions( $bases_list );
+		$fields[] = $page_base_id_field;
 
 
 		/*
@@ -572,18 +572,10 @@ class Wizard extends ModuleWizard
 					continue;
 				}
 
-				if( str_contains( $model->getClassName(), 'Core_' ) ) {
-					continue;
-				}
-
-				//$label = $model->getModelName().' / '.$model->getClassName();
-
-				$label = $model->getClassName();
+				$label = $model->getModelName() . ' / ' . $model->getClassName();
 
 				$data_model_list[$model->getClassName()] = $label;
 			}
-
-			asort( $data_model_list );
 
 			$data_model_field = new Form_Field_Select( 'data_model', 'Select DataModel:', $this->data_model_class_name );
 			$data_model_field->setCatcher( function( $value ) {
@@ -621,6 +613,4 @@ class Wizard extends ModuleWizard
 			Http_Headers::reload( ['data_model' => $data_model_id] );
 		}
 	}
-
-
 }

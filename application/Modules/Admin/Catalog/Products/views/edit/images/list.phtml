@@ -1,20 +1,22 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
 use JetShop\Product;
+use JetShop\Shops_Shop;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
+ * @var Shops_Shop $shop
  * @var Form $images_form
  * @var Form $image_delete_form
  */
 
 $product = Controller_Main::getCurrentProduct();
-$shop_code = $this->getString('shop_code');
-$shop_data = $product->getShopData( $shop_code );
+$shop = $this->getRaw('shop');
+$shop_data = $product->getShopData( $shop );
 
 for( $i=0; $i<Product::$max_image_count; $i++ ):
 	$image = $shop_data->getImage( $i );
@@ -25,6 +27,7 @@ for( $i=0; $i<Product::$max_image_count; $i++ ):
 
 	$url = $shop_data->getImageUrl( $i );
 	$thb_url = $shop_data->getImageThumbnailUrl(150,150, $i);
+
 	?>
 
 	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
@@ -43,7 +46,7 @@ for( $i=0; $i<Product::$max_image_count; $i++ ):
 						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
 					</td>
 					<td align="right" style="padding-right: 5px;">
-						<a href="javascript:ImagesHandler.deleteImage('<?=$shop_code?>', '<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+						<a href="javascript:ImagesHandler.deleteImage('<?=$shop->getKey()?>', '<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
 					</td>
 				</tr>
 			</table>

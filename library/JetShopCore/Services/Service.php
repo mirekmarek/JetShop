@@ -8,9 +8,7 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Name;
-use Jet\DataModel_Related_1toN;
-use Jet\DataModel_Related_1toN_Iterator;
+use Jet\DataModel_IDController_Passive;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
@@ -22,11 +20,7 @@ use Jet\Tr;
 #[DataModel_Definition(
 	name: 'service',
 	database_table_name: 'services',
-	id_controller_class: DataModel_IDController_Name::class,
-	id_controller_options: [
-		'id_property_name' => 'code',
-		'get_name_method_name' => 'getCode'
-	]
+	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_Services_Service extends DataModel
 {
@@ -105,13 +99,13 @@ abstract class Core_Services_Service extends DataModel
 
 
 	/**
-	 * @var Services_Service_ShopData[]|DataModel_Related_1toN|DataModel_Related_1toN_Iterator|null
+	 * @var Services_Service_ShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Services_Service_ShopData::class
 	)]
-	protected $shop_data = null;
+	protected array $shop_data = [];
 
 	/**
 	 * @var ?Form
@@ -150,17 +144,7 @@ abstract class Core_Services_Service extends DataModel
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Services_Service_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-		}
+		Services_Service_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 
@@ -252,7 +236,7 @@ abstract class Core_Services_Service extends DataModel
 	 */
 	public function setCode( string $value ) : void
 	{
-		$this->code = (string)$value;
+		$this->code = $value;
 	}
 
 	/**
@@ -323,13 +307,9 @@ abstract class Core_Services_Service extends DataModel
 		return $this->internal_name;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Services_Service_ShopData|null
+	public function getShopData( ?Shops_Shop $shop=null ) : Services_Service_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 	public function getEditURL() : string
@@ -370,8 +350,8 @@ abstract class Core_Services_Service extends DataModel
 
 			static::$scope = [];
 
-			foreach(Services_Kind::getScope() as $kind=>$kind_title) {
-				static::$scope[$kind] = [];
+			foreach(Services_Kind::getScope() as $_kind=>$kind_title) {
+				static::$scope[$_kind] = [];
 			}
 
 			foreach($list as $item) {

@@ -5,16 +5,15 @@ abstract class Core_ProductListing_VariantManager
 {
 	const CACHE_KEY = 'f_variants';
 
-	protected ?ProductListing $listing = null;
-
-	protected string $shop_code = '';
+	protected ProductListing $listing;
+	protected Shops_Shop $shop;
 
 	protected array $map = [];
 
 	public function __construct( ProductListing $listing )
 	{
 		$this->listing = $listing;
-		$this->shop_code = $listing->getShopCode();
+		$this->shop = $listing->getShop();
 
 		$this->init();
 	}
@@ -91,7 +90,7 @@ abstract class Core_ProductListing_VariantManager
 			if($d['type']==Product::PRODUCT_TYPE_VARIANT_MASTER) {
 				$v_ids = [];
 
-				foreach( $d['variant_ids'] as $i=>$id) {
+				foreach( $d['variant_ids'] as $id) {
 					if(in_array($id, $filtered_product_ids)) {
 						$v_ids[] = $id;
 					}

@@ -5,20 +5,19 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetStudio;
 
 use Jet\SysConf_Path;
 
-$project_base = dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/';
-$studio_base = dirname( dirname( __DIR__ ) ) . '/';
-$studio_application = $studio_base . 'application/';
-$project_application = $project_base . 'application/';
+$project_base = dirname( __DIR__, 4 ) .'/';
+$studio_base = dirname( __DIR__, 2 ) .'/';
+$studio_application =  $studio_base.'application/';
+$project_application =  $project_base.'application/';
 
-$library = $project_base . 'library/';
+$library = $project_base.'library/';
 
-require_once $library . 'Jet/SysConf/Path.php';
-require_once $studio_base . 'application/Classes/ProjectConf/Path.php';
+require_once $library.'Jet/SysConf/Path.php';
+require_once $studio_base.'application/Classes/ProjectConf/Path.php';
 
 SysConf_Path::setLibrary( $library );
 
@@ -35,20 +34,19 @@ SysConf_Path::setData( $studio_application . 'data/' );
 SysConf_Path::setDictionaries( $studio_application . 'dictionaries/' );
 
 
+
+
 SysConf_Path::setCache( $project_base . 'cache/' );
 
-ProjectConf_Path::setBase( $project_base );
-SysConf_Path::setSites( $project_application . 'sites/' );
+ProjectConf_Path::setRoot( $project_base );
+SysConf_Path::setBases( $project_application . 'bases/' );
 SysConf_Path::setMenus( $project_application . 'menus/' );
 
 ProjectConf_Path::setApplication( $project_application );
+ProjectConf_Path::setApplicationClasses( $project_application.'Classes/' );
+ProjectConf_Path::setApplicationModules( $project_application.'Modules/' );
 
-ProjectConf_Path::setShopCoreClasses( $library . 'JetShopCore/' );
-ProjectConf_Path::setShopClasses( $library . 'JetShop' );
-
-ProjectConf_Path::setApplicationModules( $project_application . 'Modules/' );
-
-ProjectConf_Path::setSites( $project_base . 'sites/' );
+ProjectConf_Path::setBases( $project_base . 'bases/' );
 ProjectConf_Path::setConfig( $project_application . 'config/' );
 
 
@@ -61,3 +59,5 @@ ProjectConf_Path::setData( $project_application . 'data/' );
 ProjectConf_Path::setDictionaries( $project_application . 'dictionaries/' );
 
 ProjectConf_Path::setTemplates( $studio_base . 'templates/' );
+
+SysConf_Path::setModules( ProjectConf_Path::getApplication().'Modules/' );

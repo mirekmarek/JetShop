@@ -26,6 +26,13 @@ interface Auth_Role_Interface
 	 */
 	public static function getList(): iterable;
 
+	/**
+	 * @param string $id
+	 *
+	 * @return bool
+	 */
+	public static function idExists( string $id ): bool;
+
 
 	/**
 	 * @return string
@@ -94,7 +101,7 @@ interface Auth_Role_Interface
 	 * @param string $privilege
 	 * @param array $values
 	 */
-	public function setPrivilege( string $privilege, array $values );
+	public function setPrivilege( string $privilege, array $values ) : void;
 
 	/**
 	 * Example:
@@ -116,6 +123,6 @@ interface Auth_Role_Interface
 	 *
 	 * @return bool
 	 */
-	public function hasPrivilege( string $privilege, mixed $value ): bool;
+	public function hasPrivilege( string $privilege, mixed $value=null ): bool;
 
 }

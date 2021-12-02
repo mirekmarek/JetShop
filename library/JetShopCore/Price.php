@@ -3,45 +3,29 @@ namespace JetShop;
 
 class Core_Price {
 	
-	public static function format( float $price, string|null $shop_code=null ) : string
+	public static function format( float $price, ?Shops_Shop $shop=null ) : string
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
 		return number_format(
 			$price,
-			Shops::getCurrencyDecimalPlaces( $shop_code ),
-			Shops::getCurrencyDecimalSeparator( $shop_code ),
-			Shops::getCurrencyThousandsSeparator( $shop_code )
+			Shops::getCurrencyDecimalPlaces( $shop ),
+			Shops::getCurrencyDecimalSeparator( $shop ),
+			Shops::getCurrencyThousandsSeparator( $shop )
 		);
 	}
 
-	public static function formatWithCurrency( float $price, string|null $shop_code=null ) : string
+	public static function formatWithCurrency( float $price, ?Shops_Shop $shop=null ) : string
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return Shops::getCurrencySymbolLeft( $shop_code ).Price::format( $price, $shop_code ).Shops::getCurrencySymbolRight( $shop_code );
+		return Shops::getCurrencySymbolLeft( $shop ).Price::format( $price, $shop ).Shops::getCurrencySymbolRight( $shop );
 	}
 
-	public static function formatWithVatTxt( float $price, string|null $shop_code=null ) : string
+	public static function formatWithVatTxt( float $price, ?Shops_Shop $shop=null  ) : string
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return Price::formatWithCurrency( $price, $shop_code ).Shops::getCurrencyWithVatTxt( $shop_code );
+		return Price::formatWithCurrency( $price, $shop ).Shops::getCurrencyWithVatTxt( $shop );
 	}
 
-	public static function round( float $price, string|null $shop_code=null ) : float
+	public static function round( float $price, ?Shops_Shop $shop=null  ) : float
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return round( $price, Shops::getCurrencyDecimalPlaces( $shop_code ) );
+		return round( $price, Shops::getCurrencyDecimalPlaces( $shop ) );
 	}
 
 }

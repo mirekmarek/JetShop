@@ -2,17 +2,16 @@
 namespace JetShopModule\Admin\Payment\Methods;
 
 
-use Jet\Tr;
 use JetShop\Payment_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Payment_Method_Option;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Payment_Method     $payment_method
  * @var Payment_Method_Option    $new_option
@@ -48,13 +47,13 @@ $form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 4 ] );
 			<?=$form->field('code')?>
 
 			<?php foreach(Shops::getList() as $shop):
-				$shop_code = $shop->getCode();
-				$shop_data = $option->getShopData( $shop_code );
+				$shop_key = $shop->getKey();
+				$shop_data = $option->getShopData( $shop );
 				?>
 				<?=$shop_data->renderShopDataBlock_start()?>
-				<?=$form->field('/shop_data/'.$shop_code.'/is_active')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/title')?>
-				<?=$form->field('/shop_data/'.$shop_code.'/description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/title')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 				<?=$shop_data->renderShopDataBlock_end()?>
 			<?php endforeach; ?>
 

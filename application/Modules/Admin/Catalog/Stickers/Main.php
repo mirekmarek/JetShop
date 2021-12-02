@@ -2,8 +2,10 @@
 namespace JetShopModule\Admin\Catalog\Stickers;
 
 use JetShop\Sticker_ManageModuleInterface;
-use Jet\Application_Module;
 use JetShop\Auth_Administrator_Role;
+use JetShop\Admin_Module_Trait;
+
+use Jet\Application_Module;
 use Jet\Auth;
 
 /**
@@ -11,6 +13,8 @@ use Jet\Auth;
  */
 class Main extends Application_Module implements Sticker_ManageModuleInterface
 {
+	use Admin_Module_Trait;
+
 	const ADMIN_MAIN_PAGE = 'stickers';
 
 	const ACTION_GET_STICKER = 'get_sticker';
@@ -19,13 +23,13 @@ class Main extends Application_Module implements Sticker_ManageModuleInterface
 	const ACTION_DELETE_STICKER = 'delete_sticker';
 
 
-	public function getStickerEditUrl( int $id ) : string
+	public function getStickerEditUrl( string $code ) : string
 	{
 		return $this->getEditUrl(
 			static::ACTION_GET_STICKER,
 			static::ACTION_UPDATE_STICKER,
 			static::ADMIN_MAIN_PAGE,
-			$id
+			$code
 		);
 	}
 

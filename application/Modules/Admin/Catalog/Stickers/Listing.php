@@ -16,8 +16,8 @@ class Listing extends Data_Listing {
 			'title'         => '',
 			'disallow_sort' => true
 		],
-		'id'         => ['title' => 'ID'],
-		'name'       => ['title' => 'Name'],
+		'code'           => ['title' => 'Code'],
+		'internal_name'  => ['title' => 'Internal name'],
 	];
 
 	protected array $filters = [
@@ -59,7 +59,9 @@ class Listing extends Data_Listing {
 
 		$search = '%'.$this->search.'%';
 		$this->filter_addWhere([
-			'name *'   => $search,
+			'internal_name *'   => $search,
+			'OR',
+			'code *'   => $search,
 		]);
 
 	}

@@ -2,17 +2,17 @@
 namespace JetShop;
 
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Payment_Method $payment_method
  */
 
 $cash_desk = CashDesk::get();
 
 $payment_method_option = $this->getRaw('payment_method_option');
-$pmo_shd = $payment_method->getShopData($cash_desk->getShopCode());
+$pmo_shd = $payment_method->getShopData($cash_desk->getShop());
 
 ?>
 

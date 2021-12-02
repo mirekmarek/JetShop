@@ -1,23 +1,17 @@
 <?php
 namespace JetShop;
 
-use http\Encoding\Stream;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\Data_DateTime;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 
 #[DataModel_Definition(
 	name: 'products_shop_data',
 	database_table_name: 'products_shop_data',
-	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Product::class
 )]
-abstract class Core_Product_ShopData extends DataModel_Related_1toN implements CommonEntity_ShopDataInterface {
-
-	use CommonEntity_ShopDataTrait;
+abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -26,8 +20,6 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 		form_field_type: false
 	)]
 	protected int $product_id = 0;
-
-	protected Product|null $product = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -284,16 +276,6 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 	)]
 	protected int $question_count = 0;
 
-	public function getProduct() : Product
-	{
-		return $this->product;
-	}
-
-	public function setParents( Product $product ) : void
-	{
-		$this->product = $product;
-		$this->product_id = $product->getId();
-	}
 
 	public function getName() : string
 	{
@@ -534,7 +516,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->shop_code, [$this->URL_path_part] );
+		return Shops::getURL( $this->getShop(), [$this->URL_path_part] );
 	}
 
 	public function generateURLPathPart() : void
@@ -543,7 +525,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 			return;
 		}
 
-		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'p', $this->product_id, $this->shop_code );
+		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'p', $this->product_id, $this->getShop() );
 	}
 
 	public function getImageEntity() : string
@@ -554,11 +536,6 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 	public function getImageObjectId() : int|string
 	{
 		return $this->product_id;
-	}
-
-	public function getPossibleToEditImages() : bool
-	{
-		return !$this->product->getEditForm()->getIsReadonly();
 	}
 
 	public function actualizePrice() : void
@@ -613,7 +590,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 
 
 		$new_images = [];
-		foreach( $_FILES['images']['tmp_name'] as $i=>$tmp_name ) {
+		foreach( $_FILES['images']['tmp_name'] as $tmp_name ) {
 			if(
 				!$tmp_name ||
 				!@getimagesize( $tmp_name )
@@ -641,7 +618,7 @@ abstract class Core_Product_ShopData extends DataModel_Related_1toN implements C
 
 			Images::uploadImage(
 				$new_image,
-				$this->shop_code,
+				$this->getShop(),
 				'product',
 				$this->product_id,
 				'image',

@@ -8,7 +8,6 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use Jet\Form;
 
 /**
  *
@@ -21,17 +20,7 @@ use Jet\Form;
 abstract class Core_Category_Menu_Item extends DataModel
 {
 
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_id: true,
-		is_key: true,
-		max_len: 255,
-		form_field_type: false
-	)]
-	protected string $shop_code = '';
+	use CommonEntity_ShopRelationTrait_ShopIsId;
 
 	/**
 	 * @var string
@@ -128,22 +117,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	 * @var Category_Menu_Item[]
 	 */
 	protected array $_children = [];
-
-	/**
-	 * @param string $value
-	 */
-	public function setShopCode( string $value ) : void
-	{
-		$this->shop_code = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
 
 	/**
 	 * @return int

@@ -26,4 +26,7 @@ return [
 	'Update brand' => '',
 	'Delete brand' => '',
 	'Catalog brands management' => '',
+	'Brand <b>%NAME%</b> has been updated' => '',
+	'Delete brand <b>%NAME%</b>' => '',
+	'Do you really want to delete this brand?' => '',
 ];

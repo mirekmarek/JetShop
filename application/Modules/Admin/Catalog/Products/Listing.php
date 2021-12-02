@@ -31,7 +31,8 @@ class Listing extends Data_Listing {
 	protected array $filters = [
 		'search',
 		'categories',
-		'is_active'
+		'is_active',
+		'product_type',
 	];
 
 	protected string $search = '';
@@ -41,6 +42,8 @@ class Listing extends Data_Listing {
 	protected int $is_active_general = 0;
 	
 	protected array $is_active_per_shop = [];
+	
+	protected string $product_type = '';
 
 	
 	protected function getList() : DataModel_Fetch_Instances
@@ -161,11 +164,7 @@ class Listing extends Data_Listing {
 		$ids = [];
 
 		foreach($items as $item) {
-			/**
-			 * @var Product_Category $item
-			 */
-
-			$ids[] = (int)$item->getProductId();
+			$ids[] = $item->getProductId();
 		}
 
 
@@ -251,14 +250,14 @@ class Listing extends Data_Listing {
 		];
 
 		$is_active_general = new Form_Field_Select('is_active_general', 'Is active - general:', $this->is_active_general);
-		$is_active_general->setSelectOptions( $options );;
+		$is_active_general->setSelectOptions( $options );
 		$is_active_general->setErrorMessages($error_messages);
 		$form->addField($is_active_general);
 
 		foreach(Shops::getList() as $code => $shop) {
 
-			$is_active = new Form_Field_Select('is_active_'.$code, 'Is active - '.$shop->getName().':', $this->is_active_per_shop[$code]);
-			$is_active->setSelectOptions( $options );;
+			$is_active = new Form_Field_Select('is_active_'.$code, 'Is active - '.$shop->getShopName().':', $this->is_active_per_shop[$code]);
+			$is_active->setSelectOptions( $options );
 			$is_active->setErrorMessages($error_messages);
 			$form->addField($is_active);
 		}
@@ -281,7 +280,7 @@ class Listing extends Data_Listing {
 			}
 
 			$_ids = Product_ShopData::fetchData(['product_id'], [
-				'shop_code' => $code,
+				$shop->getWhere(),
 				'AND',
 				'is_active' => ($this->is_active_per_shop[$code]=='1')
 			]);
@@ -309,7 +308,56 @@ class Listing extends Data_Listing {
 			$this->filter_addWhere($where);
 		}
 	}
-	
+
+
+
+
+
+
+
+
+
+
+
+	protected function filter_product_type_catchGetParams() : void
+	{
+		$this->product_type = Http_Request::GET()->getString('product_type', '', array_keys(Product::getProductTypes()));
+		if($this->product_type) {
+			$this->setGetParam('product_type', $this->product_type);
+		}
+	}
+
+	public function filter_product_type_catchForm( Form $form ) : void
+	{
+		$this->product_type = $form->field('product_type')->getValue();
+		if($this->product_type) {
+			$this->setGetParam('product_type', $this->product_type);
+		}
+	}
+
+	protected function filter_product_type_getForm( Form $form ) : void
+	{
+		$options = [''=>Tr::_(' - all -')] + Product::getProductTypes();
+
+		$product_type = new Form_Field_Select('product_type', 'Product type:', $this->product_type );
+		$product_type->setSelectOptions( $options );
+		$product_type->setErrorMessages([
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select product type'
+		]);
+		$form->addField($product_type);
+	}
+
+	protected function filter_product_type_getWhere() : void
+	{
+		if(!$this->product_type) {
+			return;
+		}
+
+		$this->filter_addWhere([
+			'type'   => $this->product_type,
+		]);
+
+	}
 	
 	
 }

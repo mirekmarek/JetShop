@@ -7,4 +7,5 @@ return [
 	'Discount code' => '',
 	'Please enter your discount code' => '',
 	'Use' => '',
+	'Proceed to checkout' => '',
 ];

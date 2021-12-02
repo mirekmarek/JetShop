@@ -2,8 +2,9 @@
 namespace JetShop;
 
 use Jet\Form;
-use Jet\Mvc;
-use Jet\Mvc_View;
+use Jet\Logger;
+use Jet\MVC;
+use Jet\MVC_View;
 use Jet\AJAX;
 
 trait Core_Images_ShopDataTrait {
@@ -43,12 +44,8 @@ trait Core_Images_ShopDataTrait {
 
 	public function getImageUploadForm( string $image_class ) : Form|null
 	{
-		if(!$this->getPossibleToEditImages()) {
-			return null;
-		}
-
 		if(!isset($this->image_upload_forms[$image_class])) {
-			$this->image_upload_forms[$image_class] = Images::generateUploadForm($this->getImageEntity(), $image_class, $this->shop_code);
+			$this->image_upload_forms[$image_class] = Images::generateUploadForm($this->getImageEntity(), $image_class, $this->getShop() );
 		}
 
 		return $this->image_upload_forms[$image_class];
@@ -57,10 +54,6 @@ trait Core_Images_ShopDataTrait {
 
 	public function catchImageUploadForm( string $image_class ) : bool
 	{
-		if(!$this->getPossibleToEditImages()) {
-			return false;
-		}
-
 		$form = $this->getImageUploadForm( $image_class );
 		if(!$form) {
 			return false;
@@ -72,7 +65,7 @@ trait Core_Images_ShopDataTrait {
 			$form,
 			$this->getImageEntity(),
 			$image_class,
-			$this->getShopCode(),
+			$this->getShop(),
 			$this->getImageObjectId(),
 			$this->{$property_name}
 		);
@@ -81,13 +74,9 @@ trait Core_Images_ShopDataTrait {
 
 	public function getImageDeleteForm( string $image_class ) : Form|null
 	{
-		if(!$this->getPossibleToEditImages()) {
-			return null;
-		}
-
 		if(!isset($this->image_delete_forms[$image_class])) {
 
-			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->shop_code, []);
+			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->getShopKey(), []);
 
 			$this->image_delete_forms[$image_class] = $form;
 		}
@@ -98,10 +87,6 @@ trait Core_Images_ShopDataTrait {
 
 	public function catchImageDeleteForm( string $image_class ) : bool
 	{
-		if(!$this->getPossibleToEditImages()) {
-			return false;
-		}
-
 		$form = $this->getImageDeleteForm( $image_class );
 		if(!$form) {
 			return false;
@@ -123,84 +108,125 @@ trait Core_Images_ShopDataTrait {
 		return true;
 	}
 
-	protected static function renderImageWidget_view() : Mvc_View
+	protected static function renderImageWidget_view() : MVC_View
 	{
-		return new Mvc_View( Mvc::getCurrentSite()->getViewsPath() );
+		return new MVC_View( MVC::getBase()->getViewsPath() );
 	}
 
 	public static function renderImageWidget_container_start() : string
 	{
 		$view = static::renderImageWidget_view();
 
-		return $view->render('imageWidget/container/start');
+		return $view->render('image-widget/container/start');
 	}
 
 	public static function renderImageWidget_container_end() : string
 	{
 		$view = static::renderImageWidget_view();
 
-		return $view->render('imageWidget/container/end');
+		return $view->render('image-widget/container/end');
 	}
 
-	public function renderImageWidget( string $image_class, string $title ) : string
+	public function renderImageWidget( string $image_class, string $title, bool $editable ) : string
 	{
 		$view = static::renderImageWidget_view();
 
 		$view->setVar('image_class', $image_class);
 		$view->setVar('title', $title );
-		$view->setVar('shop_code', $this->getShopCode() );
+		$view->setVar('shop', $this->getShop() );
 		$view->setVar('shop_data', $this );
+		$view->setVar('editable', $editable );
 
-		return $view->render('imageWidget');
+		return $view->render('image-widget');
 	}
 
-	public function renderImageWidget_Image( string $image_class ) : string
+	public function renderImageWidget_Image( string $image_class, bool $editable ) : string
 	{
 		$view = static::renderImageWidget_view();
 
 		$view->setVar('image_class', $image_class);
-		$view->setVar('shop_code', $this->getShopCode() );
+		$view->setVar('shop', $this->getShop() );
 		$view->setVar('shop_data', $this );
+		$view->setVar('editable', $editable );
 
-		return $view->render('imageWidget/image');
+		return $view->render('image-widget/image');
 	}
 
 	public function catchImageWidget(
-		$image_class,
-		callable $onUpload,
-		callable $onDelete
+		Shops_Shop $shop,
+		string $entity_name,
+		string $object_id,
+		string $object_name,
+		string $upload_event,
+		string $delete_event
 	) : void
 	{
-		if(!$this->getPossibleToEditImages()) {
-			return;
-		}
+		foreach( static::getImageClasses() as $image_class=>$image_class_name ) {
 
-		$ok = null;
-		if($this->getImageUploadForm( $image_class )->catchInput()) {
-			$ok = false;
-			if( $this->catchImageUploadForm( $image_class ) ) {
-				$onUpload();
+			$ok = null;
+			if($this->getImageUploadForm( $image_class )->catchInput()) {
+				if( $this->catchImageUploadForm( $image_class ) ) {
+					$this->save();
+
+					Logger::success(
+						event: $upload_event,
+						event_message: $entity_name.' \''.$object_name.'\' ('.$object_id.') image '.$image_class.' uploaded',
+						context_object_id: $object_id,
+						context_object_name: $object_name,
+						context_object_data: [
+							'image_class' => $image_class,
+							'shop_key' => $shop->getKey()
+						]
+					);
+
+					$ok = true;
+				} else {
+					$ok = false;
+				}
+
+			}
+
+			if( $this->catchImageDeleteForm( $image_class ) ) {
+				$this->save();
+
+				Logger::success(
+					event: $delete_event,
+					event_message: $entity_name.' \''.$object_name.'\' ('.$object_id.') image '.$image_class.' deleted',
+					context_object_id: $object_id,
+					context_object_name: $object_name,
+					context_object_data: [
+						'image_class' => $image_class,
+						'shop_key' => $shop->getKey()
+					]
+				);
 
 				$ok = true;
 			}
 
+			if($ok!==null) {
+				$entity = $this->getImageEntity();
+
+				AJAX::formResponse($ok, [
+					'image_'.$entity.'_'.$image_class.'_'.$shop->getKey() => $this->renderImageWidget_Image( $image_class, true ),
+					'system-messages-area' => '',
+				]);
+			}
 		}
+	}
 
-		if( $this->catchImageDeleteForm( $image_class ) ) {
-			$onDelete();
-			$ok = true;
-		}
+	public function renderImageWidgets( array $image_classes, bool $editable ) : string
+	{
+		$res = $this->renderShopDataBlock_start();
 
-		if($ok!==null) {
-			$entity = $this->getImageEntity();
-			$shop_code = $this->getShopCode();
+		$res .= static::renderImageWidget_container_start();
+		foreach($image_classes as $image_class=>$title):
+			$res .= $this->renderImageWidget( $image_class, $title, $editable );
+		endforeach;
+		$res .= static::renderImageWidget_container_end();
 
-			AJAX::formResponse($ok, [
-				'image_'.$entity.'_'.$image_class.'_'.$shop_code => $this->renderImageWidget_Image( $image_class ),
-				'system-messages-area' => '',
-			]);
-		}
+		$res .= $this->renderShopDataBlock_end();
 
+		return $res;
 	}
 
 }

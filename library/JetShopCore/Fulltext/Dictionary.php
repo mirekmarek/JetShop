@@ -15,18 +15,13 @@ use JsonSerializable;
 )]
 abstract class Core_Fulltext_Dictionary extends DataModel implements JsonSerializable {
 
+	use CommonEntity_ShopRelationTrait;
+
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true
 	)]
 	protected int $id = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true
-	)]
-	protected string $shop_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -67,35 +62,37 @@ abstract class Core_Fulltext_Dictionary extends DataModel implements JsonSeriali
 	}
 
 	/**
-	 * @param string $shop_code
+	 * @param Shops_Shop $shop
 	 *
 	 * @return Fulltext_Dictionary[]
 	 */
-	public static function getDictionary( string $shop_code ) : iterable
+	public static function getDictionary( Shops_Shop $shop ) : iterable
 	{
-		if(isset( Fulltext_Dictionary::$loaded_dictionaries[$shop_code])) {
-			return Fulltext_Dictionary::$loaded_dictionaries[$shop_code];
+		$shop_key = $shop->getKey();
+
+		if(isset( Fulltext_Dictionary::$loaded_dictionaries[$shop_key])) {
+			return Fulltext_Dictionary::$loaded_dictionaries[$shop_key];
 		}
 
-		Fulltext_Dictionary::$loaded_dictionaries[$shop_code] = Fulltext_Dictionary::fetchInstances( [
-			'shop_code' => $shop_code
-		] );
+		Fulltext_Dictionary::$loaded_dictionaries[$shop_key] = Fulltext_Dictionary::fetchInstances( $shop->getWhere() );
 
-		return Fulltext_Dictionary::$loaded_dictionaries[$shop_code];
+		return Fulltext_Dictionary::$loaded_dictionaries[$shop_key];
 
 	}
 
-	public static function findWordVariants( string $shop_code, string $word ) : array
+	public static function findWordVariants( Shops_Shop $shop, string $word ) : array
 	{
-		if(!isset(Fulltext_Dictionary::$word_variants[$shop_code])) {
-			Fulltext_Dictionary::$word_variants[$shop_code] = [];
+		$shop_key = $shop->getKey();
 
-			foreach( Fulltext_Dictionary::getDictionary( $shop_code ) as $rec ) {
-				static::$word_variants[$shop_code][] = explode(' ', trim($rec->getWords()));
+		if(!isset(Fulltext_Dictionary::$word_variants[$shop_key])) {
+			Fulltext_Dictionary::$word_variants[$shop_key] = [];
+
+			foreach( Fulltext_Dictionary::getDictionary( $shop ) as $rec ) {
+				static::$word_variants[$shop_key][] = explode(' ', trim($rec->getWords()));
 			}
 		}
 
-		foreach( Fulltext_Dictionary::$word_variants[$shop_code] as $variants ) {
+		foreach( Fulltext_Dictionary::$word_variants[$shop_key] as $variants ) {
 			if(in_array($word, $variants)) {
 				return $variants;
 			}
@@ -104,7 +101,7 @@ abstract class Core_Fulltext_Dictionary extends DataModel implements JsonSeriali
 		return [$word];
 	}
 
-	public static function collectWords( string $shop_code, array $texts ) : array
+	public static function collectWords( Shops_Shop $shop, array $texts ) : array
 	{
 		$words = [];
 
@@ -121,7 +118,7 @@ abstract class Core_Fulltext_Dictionary extends DataModel implements JsonSeriali
 					continue;
 				}
 
-				$variants = Fulltext_Dictionary::findWordVariants( $shop_code, $word );
+				$variants = Fulltext_Dictionary::findWordVariants( $shop, $word );
 
 				foreach( $variants as $variant ) {
 					if(!in_array($variant, $words)) {
@@ -141,17 +138,7 @@ abstract class Core_Fulltext_Dictionary extends DataModel implements JsonSeriali
 
 	public function setId( int $id ) : void
 	{
-		$this->id = (int)$id;
-	}
-
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
+		$this->id = $id;
 	}
 
 	public function getNote() : string

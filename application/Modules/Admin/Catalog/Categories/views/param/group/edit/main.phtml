@@ -3,14 +3,14 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Form;
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 use JetShop\Shops;
 
 use JetShop\Parametrization_Group;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var Parametrization_Group $new_group
  * @var Form $form
  */
@@ -37,13 +37,13 @@ $form->setDefaultLabelWidth([
 		echo $form->field('allow_compare');
 
 		foreach(Shops::getList() as $shop):
-			$shop_code= $shop->getCode();
-			$shop_data = $group->getShopData( $shop_code );
+			$shop_key= $shop->getKey();
+			$shop_data = $group->getShopData( $shop );
 
 			echo $shop_data->renderShopDataBlock_start();
-				echo $form->field('/shop_data/'.$shop_code.'/is_active');
-				echo $form->field('/shop_data/'.$shop_code.'/label');
-				echo $form->field('/shop_data/'.$shop_code.'/description');
+				echo $form->field('/shop_data/'.$shop_key.'/is_active');
+				echo $form->field('/shop_data/'.$shop_key.'/label');
+				echo $form->field('/shop_data/'.$shop_key.'/description');
 			echo $shop_data->renderShopDataBlock_end();
 		endforeach;
 

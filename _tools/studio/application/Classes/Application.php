@@ -14,8 +14,8 @@ use Jet\Application as Jet_Application;
 use Jet\Http_Request;
 use Jet\IO_File;
 use Jet\Locale;
-use Jet\Mvc_Layout;
-use Jet\Mvc_View;
+use Jet\MVC_Layout;
+use Jet\MVC_View;
 use Jet\SysConf_Path;
 use Jet\Tr;
 use Jet\UI_messages;
@@ -27,9 +27,9 @@ class Application extends Jet_Application
 {
 
 	/**
-	 * @var ?Mvc_Layout
+	 * @var ?MVC_Layout
 	 */
-	protected static ?Mvc_Layout $layout = null;
+	protected static ?MVC_Layout $layout = null;
 
 	/**
 	 * @var string
@@ -108,33 +108,33 @@ class Application extends Jet_Application
 	public static function getParts(): array
 	{
 		return [
-			'sites'         => [
-				'label' => Tr::_( 'Sites', [], Tr::COMMON_NAMESPACE ),
+			'bases'         => [
+				'label' => Tr::_( 'Bases', [], Tr::COMMON_DICTIONARY ),
 				'icon'  => 'compass',
-				'class' => 'Sites',
+				'class' => 'Bases',
 			],
 			'pages'         => [
-				'label' => Tr::_( 'Pages', [], Tr::COMMON_NAMESPACE ),
+				'label' => Tr::_( 'Pages', [], Tr::COMMON_DICTIONARY ),
 				'icon'  => 'file-code',
 				'class' => 'Pages',
 			],
 			'data_model'    => [
-				'label' => Tr::_( 'DataModel', [], Tr::COMMON_NAMESPACE ),
+				'label' => Tr::_( 'DataModel', [], Tr::COMMON_DICTIONARY ),
 				'icon'  => 'database',
 				'class' => 'DataModels',
 			],
 			'menus'         => [
-				'label' => Tr::_( 'Menus', [], Tr::COMMON_NAMESPACE ),
+				'label' => Tr::_( 'Menus', [], Tr::COMMON_DICTIONARY ),
 				'icon'  => 'sitemap',
 				'class' => 'Menus',
 			],
 			'modules'       => [
-				'label' => Tr::_( 'Modules', [], Tr::COMMON_NAMESPACE ),
+				'label' => Tr::_( 'Modules', [], Tr::COMMON_DICTIONARY ),
 				'icon'  => 'boxes',
 				'class' => 'Modules',
 			],
 			'module_wizard' => [
-				'label' => Tr::_( 'Module wizard', [], Tr::COMMON_NAMESPACE ),
+				'label' => Tr::_( 'Module wizard', [], Tr::COMMON_DICTIONARY ),
 				'icon'  => 'magic',
 				'class' => 'ModuleWizards',
 			],
@@ -142,12 +142,12 @@ class Application extends Jet_Application
 	}
 
 	/**
-	 * @param $part
+	 * @param string $part
 	 */
 	public static function setCurrentPart( string $part ): void
 	{
 		static::$current_part = $part;
-		Tr::setCurrentNamespace( $part );
+		Tr::setCurrentDictionary( $part );
 	}
 
 	/**
@@ -159,40 +159,36 @@ class Application extends Jet_Application
 	}
 
 	/**
-	 * @return Mvc_View
+	 * @return MVC_View
 	 */
-	public static function getGeneralView(): Mvc_View
+	public static function getGeneralView(): MVC_View
 	{
-		$view = new Mvc_View( SysConf_Path::getBase() . 'views/' );
-
-		return $view;
+		return new MVC_View( SysConf_Path::getBase() . 'application/views/' );
 	}
 
 	/**
 	 * @param string|null $part
 	 *
-	 * @return Mvc_View
+	 * @return MVC_View
 	 */
-	public static function getView( ?string $part = null ): Mvc_View
+	public static function getView( ?string $part = null ): MVC_View
 	{
 		if( !$part ) {
 			$part = static::getCurrentPart();
 		}
-		$view = new Mvc_View( SysConf_Path::getApplication() . 'Parts/' . $part . '/views/' );
-
-		return $view;
+		return new MVC_View( SysConf_Path::getApplication() . 'Parts/' . $part . '/views/' );
 	}
 
 	/**
 	 * @param string $script
 	 *
-	 * @return Mvc_Layout
+	 * @return MVC_Layout
 	 */
-	public static function getLayout( string $script = 'default' ): Mvc_Layout
+	public static function getLayout( string $script = 'default' ): MVC_Layout
 	{
 		if( !static::$layout ) {
-			static::$layout = new Mvc_Layout( SysConf_Path::getBase() . 'layouts/', $script );
-			Mvc_Layout::setCurrentLayout( static::$layout );
+			static::$layout = new MVC_Layout( SysConf_Path::getBase() . 'application/layouts/', $script );
+			MVC_Layout::setCurrentLayout( static::$layout );
 		}
 
 		return static::$layout;
@@ -259,7 +255,7 @@ class Application extends Jet_Application
 		$error_message = Tr::_( 'Something went wrong!<br/><br/>%error%',
 			[
 				'error' => $e->getMessage()
-			], Tr::COMMON_NAMESPACE );
+			], Tr::COMMON_DICTIONARY );
 
 		if( $form ) {
 			$form->setCommonMessage( UI_messages::createDanger( $error_message ) );

@@ -27,7 +27,7 @@ class Debug_Profiler_Run_Block_Anonymous extends Debug_Profiler_Run_Block
 	public function __construct( int $level, ?Debug_Profiler_Run_Block $parent_block = null )
 	{
 		$this->label = '?';
-		$this->level = (int)$level;
+		$this->level = $level;
 
 
 		$this->timestamp_start = microtime( true );
@@ -52,7 +52,7 @@ class Debug_Profiler_Run_Block_Anonymous extends Debug_Profiler_Run_Block
 			return;
 		}
 
-		$this->timestamp_end = $timestamp_end ? $timestamp_end : microtime( true );
+		$this->timestamp_end = $timestamp_end ? : microtime( true );
 		$this->memory_end = memory_get_usage();
 		$this->memory_peak_end = memory_get_peak_usage();
 	}

@@ -8,13 +8,12 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Name;
-use Jet\DataModel_Related_MtoN_Iterator;
+use Jet\DataModel_IDController_Passive;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_MultiSelect;
 use Jet\Tr;
-use Jet\Form_Field_Select;
+
 
 /**
  *
@@ -22,11 +21,7 @@ use Jet\Form_Field_Select;
 #[DataModel_Definition(
 	name: 'delivery_class',
 	database_table_name: 'delivery_classes',
-	id_controller_class: DataModel_IDController_Name::class,
-	id_controller_options: [
-		'id_property_name' => 'code',
-		'get_name_method_name' => 'getCode'
-	]
+	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_Delivery_Class extends DataModel
 {
@@ -75,15 +70,15 @@ abstract class Core_Delivery_Class extends DataModel
 	protected string $internal_description = '';
 
 	/**
-	 * @var Auth_Administrator_User_Roles|DataModel_Related_MtoN_Iterator|Delivery_Class_Methods[]
+	 * @var Delivery_Class_Method[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Delivery_Class_Methods::class,
+		data_model_class: Delivery_Class_Method::class,
 		form_field_creator_method_name: 'createMethodsInputField',
 	)]
 
-	protected $delivery_methods = null;
+	protected array $delivery_methods = [];
 
 
 	protected static ?array $scope = null;
@@ -330,20 +325,27 @@ abstract class Core_Delivery_Class extends DataModel
 	 */
 	public function setDeliveryMethods( array $codes ) : void
 	{
-		$methods = [];
+		foreach($this->delivery_methods as $r) {
+			if(!in_array($r->getMethodCode(), $codes)) {
+				$r->delete();
+				unset($this->delivery_methods[$r->getMethodCode()]);
+			}
+		}
 
 		foreach( $codes as $code ) {
-
-			$method = Delivery_Method::get( $code );
-
-			if( !$method ) {
+			if( !($r = Delivery_Method::get( $code )) ) {
 				continue;
 			}
 
-			$methods[] = $method;
-		}
-		$this->delivery_methods->setItems( $methods );
+			if(!isset($this->delivery_methods[$r->getCode()])) {
+				$new_item = new Delivery_Class_Method();
+				$new_item->setClassCode($this->getCode());
+				$new_item->setMethodCode($code);
 
+				$this->delivery_methods[$code] = $new_item;
+				$new_item->save();
+			}
+		}
 	}
 
 	/**
@@ -367,7 +369,12 @@ abstract class Core_Delivery_Class extends DataModel
 	 */
 	public function getDeliveryMethods() : iterable
 	{
-		return $this->delivery_methods;
+		$res = [];
+		foreach($this->delivery_methods as $item) {
+			$res[$item->getMethodCode()] = $item->getMethod();
+		}
+
+		return $res;
 	}
 
 }

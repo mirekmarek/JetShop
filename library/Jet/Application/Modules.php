@@ -13,18 +13,6 @@ namespace Jet;
  */
 class Application_Modules extends BaseObject
 {
-
-	/**
-	 * @var ?string
-	 */
-	protected static ?string $base_path = null;
-
-	/**
-	 * @var string
-	 */
-	protected static string $module_root_namespace = 'JetApplicationModule';
-
-
 	/**
 	 * @var ?Application_Modules_Handler
 	 */
@@ -32,19 +20,23 @@ class Application_Modules extends BaseObject
 
 
 	/**
-	 * @return string
+	 * @return Application_Modules_Handler
 	 */
-	public static function getModuleRootNamespace(): string
+	public static function getHandler(): Application_Modules_Handler
 	{
-		return static::$module_root_namespace;
+		if( !static::$handler ) {
+			static::$handler = Factory_Application::getDefaultModuleHandlerInstance();
+		}
+
+		return static::$handler;
 	}
 
 	/**
-	 * @param string $module_root_namespace
+	 * @param Application_Modules_Handler $handler
 	 */
-	public static function setModuleRootNamespace( string $module_root_namespace ): void
+	public static function setHandler( Application_Modules_Handler $handler ) : void
 	{
-		static::$module_root_namespace = $module_root_namespace;
+		static::$handler = $handler;
 	}
 
 	/**
@@ -54,51 +46,8 @@ class Application_Modules extends BaseObject
 	 */
 	public static function getModuleDir( string $module_name ): string
 	{
-		return static::getBasePath() . str_replace( '.', '/', $module_name ) . '/';
+		return static::getHandler()->getModuleDir( $module_name );
 	}
-
-
-	/**
-	 * @return Application_Modules_Handler
-	 */
-	public static function getHandler(): Application_Modules_Handler
-	{
-		if( !static::$handler ) {
-
-
-			static::$handler = new Application_Modules_Handler_Default();
-		}
-
-		return static::$handler;
-	}
-
-	/**
-	 * @param Application_Modules_Handler $handler
-	 */
-	public static function setHandler( Application_Modules_Handler $handler )
-	{
-		static::$handler = $handler;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getBasePath(): string
-	{
-		if( !static::$base_path ) {
-			static::$base_path = SysConf_Path::getApplication() . 'Modules/';
-		}
-		return static::$base_path;
-	}
-
-	/**
-	 * @param string $base_path
-	 */
-	public static function setBasePath( string $base_path ): void
-	{
-		static::$base_path = $base_path;
-	}
-
 
 	/**
 	 *

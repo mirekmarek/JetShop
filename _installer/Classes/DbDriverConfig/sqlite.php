@@ -5,13 +5,14 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop\Installer;
+
+namespace JetApplication\Installer;
 
 use Jet\Db;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Db_Config;
-use Jet\Db_Factory;
+use Jet\Factory_Db;
 use Jet\Db_Backend_Config;
 use Jet\Db_Backend_PDO_Config;
 use Jet\DataModel_Config;
@@ -32,12 +33,12 @@ class Installer_DbDriverConfig_sqlite extends Installer_DbDriverConfig
 	 */
 	public function initialize( Db_Config $db_config, DataModel_Config $data_model_config ) : Db_Backend_Config|Db_Backend_PDO_Config
 	{
-		$connection_config = Db_Factory::getBackendConfigInstance();
+		$connection_config = Factory_Db::getBackendConfigInstance();
 		$connection_config->setName( 'default' );
 		$connection_config->setDriver( Db::DRIVER_SQLITE );
 		$connection_config->setUsername( '' );
 		$connection_config->setPassword( '' );
-		$connection_config->setDSN( SysConf_Path::getData().'database.sq3' );
+		$connection_config->setDSN( SysConf_Path::getData() . 'database.sq3' );
 
 		$db_config->addConnection( 'default', $connection_config );
 
@@ -59,12 +60,12 @@ class Installer_DbDriverConfig_sqlite extends Installer_DbDriverConfig
 	 */
 	public function getForm() : Form
 	{
-		if(!$this->_form) {
+		if( !$this->_form ) {
 
 			$dp = '';
 
 			if( $this->connection_config->getDsn() ) {
-				$dp = explode(':', $this->connection_config->getDsn());
+				$dp = explode( ':', $this->connection_config->getDsn() );
 				$dp = $dp[1];
 			}
 
@@ -82,7 +83,7 @@ class Installer_DbDriverConfig_sqlite extends Installer_DbDriverConfig
 				]
 			);
 
-			$form->setAutocomplete(false);
+			$form->setAutocomplete( false );
 
 			$this->_form = $form;
 		}
@@ -101,7 +102,7 @@ class Installer_DbDriverConfig_sqlite extends Installer_DbDriverConfig
 			$form->catchInput() &&
 			$form->validate()
 		) {
-			$data_path = $form->getField('data_path');
+			$data_path = $form->getField( 'data_path' );
 
 			$this->connection_config->setUsername( '' );
 			$this->connection_config->setPassword( '' );

@@ -6,7 +6,7 @@ use JetShop\Admin_Module_Trait;
 use JetShop\Auth_Administrator_Role;
 use JetShop\Category_ManageModuleInterface;
 use Jet\Auth;
-use Jet\Mvc_Page;
+use Jet\MVC;
 
 /**
  *
@@ -25,9 +25,8 @@ class Main extends Application_Module implements Category_ManageModuleInterface
 	public function getCategorySelectWhispererUrl( array $only_types=[], int $exclude_branch_id=0, bool $only_active=false ) : string
 	{
 		$only_types = implode(',', $only_types);
-		$exclude_branch_id = (int)$exclude_branch_id;
 
-		$page = Mvc_Page::get( static::ADMIN_MAIN_PAGE );
+		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
 		if(!$page) {
 			return '';
 		}

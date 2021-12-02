@@ -19,57 +19,9 @@ class IO_File
 {
 
 	/**
-	 * Chmod mask for new file
-	 *
-	 * @var ?int
-	 */
-	protected static ?int $default_mod = null;
-
-	/**
 	 * @var ?array
 	 */
 	protected static ?array $http_response_header = null;
-
-	/**
-	 * @var ?array
-	 */
-	protected static ?array $extensions_mimes_map = null;
-
-	/**
-	 * @return int
-	 */
-	public static function getDefaultMod(): int
-	{
-		if( static::$default_mod === null ) {
-			static::$default_mod = SysConf_Jet::getIOModFile();
-		}
-
-		return static::$default_mod;
-	}
-
-	/**
-	 * @param int $default_mod
-	 */
-	public static function setDefaultMod( int $default_mod ): void
-	{
-		static::$default_mod = $default_mod;
-	}
-
-	/**
-	 * @return array
-	 */
-	public static function getExtensionsMimesMap(): array
-	{
-		return static::$extensions_mimes_map;
-	}
-
-	/**
-	 * @param array $extensions_mimes_map
-	 */
-	public static function setExtensionsMimesMap( array $extensions_mimes_map ): void
-	{
-		static::$extensions_mimes_map = $extensions_mimes_map;
-	}
 
 	/**
 	 *
@@ -142,11 +94,13 @@ class IO_File
 
 		$mime_type = null;
 
-		if( is_array( static::$extensions_mimes_map ) ) {
+		$extensions_mimes_map = SysConf_Jet_IO::getExtensionsMimesMap();
+
+		if( is_array( $extensions_mimes_map ) ) {
 			$extension = strtolower( pathinfo( $file_path, PATHINFO_EXTENSION ) );
 
-			if( isset( static::$extensions_mimes_map[$extension] ) ) {
-				$mime_type = static::$extensions_mimes_map[$extension];
+			if( isset( $extensions_mimes_map[$extension] ) ) {
+				$mime_type = $extensions_mimes_map[$extension];
 			}
 		}
 
@@ -182,6 +136,22 @@ class IO_File
 	}
 
 	/**
+	 * @param string $path
+	 * @param array $data
+	 * @param bool $reset_cache
+	 *
+	 * @throws IO_File_Exception
+	 */
+	public static function writeDataAsPhp( string $path, array $data, bool $reset_cache=true ) : void
+	{
+		$content = '<?php' . PHP_EOL . 'return ' . (new Data_Array( $data ))->export();
+
+		IO_File::write( $path, $content );
+		Cache::resetOPCache();
+
+	}
+
+	/**
 	 * Writes data to file including file locking
 	 *
 	 * @param string $file_path
@@ -202,7 +172,7 @@ class IO_File
 			$is_new = true;
 		}
 
-		$flags = $append ? FILE_APPEND : null;
+		$flags = $append ? FILE_APPEND|LOCK_EX : LOCK_EX;
 
 		if( !file_put_contents( $file_path, $data, $flags ) ) {
 			$error = static::_getLastError();
@@ -232,7 +202,7 @@ class IO_File
 	 */
 	public static function chmod( string $file_path, ?int $chmod_mask = null ): void
 	{
-		$chmod_mask = ($chmod_mask === null) ? static::getDefaultMod() : $chmod_mask;
+		$chmod_mask = ($chmod_mask === null) ? SysConf_Jet_IO::getFileMod() : $chmod_mask;
 
 		if( !chmod( $file_path, $chmod_mask ) ) {
 			$error = static::_getLastError();

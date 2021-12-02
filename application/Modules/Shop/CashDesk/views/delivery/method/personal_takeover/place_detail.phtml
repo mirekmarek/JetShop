@@ -1,19 +1,19 @@
 <?php
 namespace JetShop;
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Delivery_PersonalTakeover_Place $place
  */
 
 $place = $this->getRaw('place');
 
 $method = Delivery_Method::get( $place->getMethodCode() );
-$shd = $method->getShopData( Shops::getCurrentCode() );
+$shd = $method->getShopData();
 
 $this->setVar('delivery_method', $method);
 ?>

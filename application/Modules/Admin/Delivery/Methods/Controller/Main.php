@@ -7,14 +7,15 @@
  */
 namespace JetShopModule\Admin\Delivery\Methods;
 
+use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
 use JetShop\Application_Admin;
 use JetShop\Delivery_Method;
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
@@ -27,13 +28,13 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
 	/**
-	 * @var ?Mvc_Controller_Router_AddEditDelete
+	 * @var ?MVC_Controller_Router_AddEditDelete
 	 */
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	/**
 	 * @var ?Delivery_Method
@@ -42,12 +43,12 @@ class Controller_Main extends Mvc_Controller_Default
 
 	/**
 	 *
-	 * @return Mvc_Controller_Router_AddEditDelete
+	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->delivery_method = Delivery_Method::get($id));
@@ -189,7 +190,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $delivery_method->catchAddForm() ) {
 			$delivery_method->save();
 
-			$this->logAllowedAction( 'Delivery Method created', $delivery_method->getCode(), $delivery_method->getInternalName(), $delivery_method );
+			Logger::success(
+				'delivery_method_created',
+				'Delivery method '.$delivery_method->getInternalName().' ('.$delivery_method->getCode().') created',
+				$delivery_method->getCode(),
+				$delivery_method->getInternalName(),
+				$delivery_method
+			);
 
 			UI_messages::success(
 				Tr::_( 'Delivery Method <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $delivery_method->getInternalName() ] )
@@ -223,7 +230,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $delivery_method->catchEditForm() ) {
 
 			$delivery_method->save();
-			$this->logAllowedAction( 'Delivery Method updated', $delivery_method->getCode(), $delivery_method->getInternalName(), $delivery_method );
+			Logger::success(
+				'delivery_method_updated',
+				'Delivery method '.$delivery_method->getInternalName().' ('.$delivery_method->getCode().') updated',
+				$delivery_method->getCode(),
+				$delivery_method->getInternalName(),
+				$delivery_method
+			);
 
 			UI_messages::success(
 				Tr::_( 'Delivery Method <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $delivery_method->getInternalName() ] )
@@ -250,27 +263,14 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit delivery method <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $delivery_method->getInternalName() ] ) );
 
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $delivery_method->getShopData( $shop_code );
-
-			foreach( Delivery_Method_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $delivery_method, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'delivery method image '.$image_class.' uploaded', $delivery_method->getCode().':'.$shop_code, $delivery_method->getCode().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $delivery_method, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'delivery method image '.$image_class.' deleted', $delivery_method->getCode().':'.$shop_code, $delivery_method->getCode().' - '.$shop_name );
-					}
-				);
-
-			}
+			$delivery_method->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Delivery method',
+				object_id: $delivery_method->getCode(),
+				object_name: $delivery_method->getInternalName(),
+				upload_event: 'delivery_method_image_uploaded',
+				delete_event: 'delivery_method_image_deleted'
+			);
 		}
 
 		$this->view->setVar( 'delivery_method', $delivery_method );
@@ -318,7 +318,7 @@ class Controller_Main extends Mvc_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		$delivery_method = $this->delivery_method;
 		foreach(Shops::getList() as $shop) {
-			$shop_data = $delivery_method->getShopData( $shop->getCode() );
+			$shop_data = $delivery_method->getShopData( $shop );
 
 			foreach( Delivery_Method_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
 				$shop_data->getImageUploadForm($image_class)->setIsReadonly();
@@ -349,7 +349,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$delivery_method->delete();
-			$this->logAllowedAction( 'Delivery Method deleted', $delivery_method->getCode(), $delivery_method->getInternalName(), $delivery_method );
+			Logger::success(
+				'delivery_method_deleted',
+				'Delivery method '.$delivery_method->getInternalName().' ('.$delivery_method->getCode().') deleted',
+				$delivery_method->getCode(),
+				$delivery_method->getInternalName(),
+				$delivery_method
+			);
 
 			UI_messages::info(
 				Tr::_( 'Delivery Method <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $delivery_method->getInternalName() ] )

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
@@ -17,11 +18,6 @@ class Config_Definition_Property_Bool extends Config_Definition_Property
 	 * @var string
 	 */
 	protected string $_type = Config::TYPE_BOOL;
-
-	/**
-	 * @var bool
-	 */
-	protected $default_value = false;
 
 	/**
 	 * @var string|bool

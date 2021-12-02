@@ -9,22 +9,22 @@ namespace JetShopModule\Shop\ShoppingCart;
 
 use Jet\AJAX;
 use Jet\Http_Request;
-use Jet\Mvc_Controller_Default;
-use Jet\Mvc_Controller_Router;
-use Jet\Mvc_Controller_Router_Interface;
+use Jet\MVC_Controller_Default;
+use Jet\MVC_Controller_Router;
+use Jet\MVC_Controller_Router_Interface;
 use JetShop\ShoppingCart;
 
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
-	protected ?Mvc_Controller_Router $router = null;
+	protected ?MVC_Controller_Router $router = null;
 
-	public function getControllerRouter(): Mvc_Controller_Router_Interface|Mvc_Controller_Router|null
+	public function getControllerRouter(): MVC_Controller_Router_Interface|MVC_Controller_Router|null
 	{
 		if(!$this->router) {
-			$this->router = new Mvc_Controller_Router( $this );
+			$this->router = new MVC_Controller_Router( $this );
 
 			$this->router->setDefaultAction('default');
 

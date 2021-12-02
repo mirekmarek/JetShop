@@ -13,10 +13,6 @@ namespace Jet;
  */
 class Navigation_MenuSet extends BaseObject
 {
-	/**
-	 * @var string|null
-	 */
-	protected static string|null $menus_dir_path = null;
 
 	/**
 	 * @var string
@@ -51,26 +47,6 @@ class Navigation_MenuSet extends BaseObject
 
 
 	/**
-	 * @return string
-	 */
-	public static function getMenusDirPath(): string
-	{
-		if( !self::$menus_dir_path ) {
-			self::$menus_dir_path = SysConf_Path::getMenus();
-		}
-
-		return self::$menus_dir_path;
-	}
-
-	/**
-	 * @param string $menus_path
-	 */
-	public static function setMenusDirPath( string $menus_path ): void
-	{
-		self::$menus_dir_path = $menus_path;
-	}
-
-	/**
 	 * @param string $name
 	 * @param string|null|bool $translator_namespace
 	 *
@@ -90,9 +66,9 @@ class Navigation_MenuSet extends BaseObject
 	 */
 	public static function getList(): iterable
 	{
-		$files = IO_Dir::getList( static::getMenusDirPath(), '*.php', false );
+		$files = IO_Dir::getList( SysConf_Path::getMenus(), '*.php', false );
 
-		foreach( $files as $path => $name ) {
+		foreach( $files as $name ) {
 			$name = pathinfo( $name )['filename'];
 			static::get( $name );
 		}
@@ -118,7 +94,7 @@ class Navigation_MenuSet extends BaseObject
 	public function setName( string $name ): void
 	{
 		$this->name = $name;
-		$this->config_file_path = static::getMenusDirPath() . $name . '.php';
+		$this->config_file_path = SysConf_Path::getMenus() . $name . '.php';
 	}
 
 	/**
@@ -183,15 +159,36 @@ class Navigation_MenuSet extends BaseObject
 	protected function initModuleMenuItems(): void
 	{
 		foreach( Application_Modules::activatedModulesList() as $manifest ) {
-			foreach( $manifest->getMenuItems( $this->name ) as $menu_item ) {
 
-				$m = $this->getMenu( $menu_item->getMenuId() );
-
-				if( $m ) {
-					$m->addItem( $menu_item );
-				}
+			$items_file_path = $manifest->getModuleDir().SysConf_Jet_Modules::getMenuItemsDir().'/'.$this->name.'.php';
+			if(!IO_File::isReadable($items_file_path)) {
+				continue;
 			}
 
+			$menu_data = require $items_file_path;
+
+			$translator_namespace = $manifest->getName();
+
+			foreach($menu_data as $menu_id=>$menu_items_data) {
+				$menu = $this->getMenu( $menu_id );
+				if( !$menu ) {
+					continue;
+				}
+
+				foreach( $menu_items_data as $item_id => $menu_item_data ) {
+					$label = '';
+
+					if( !empty( $menu_item_data['label'] ) ) {
+						$label = Tr::_( $menu_item_data['label'], [], $translator_namespace );
+					}
+
+					$menu_item = new Navigation_Menu_Item( $item_id, $label );
+					$menu_item->setMenuId( $menu_id );
+					$menu_item->setData( $menu_item_data );
+
+					$menu->addItem( $menu_item );
+				}
+			}
 		}
 	}
 
@@ -262,11 +259,7 @@ class Navigation_MenuSet extends BaseObject
 
 		}
 
-		$res = new Data_Array( $res );
-
-		IO_File::write( $this->config_file_path, '<?php return ' . $res->export() );
-		Mvc_Cache::reset();
-
+		IO_File::writeDataAsPhp( $this->config_file_path, $res );
 	}
 
 }

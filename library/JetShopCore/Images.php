@@ -81,25 +81,25 @@ abstract class Core_Images
 		return implode('/',$map);
 	}
 
-	public static function getThbRootDir( string $shop_code, string $entity, string $image_class ) : string
+	public static function getThbRootDir( Shops_Shop $shop, string $entity, string $image_class ) : string
 	{
-		return $shop_code.'/'.$entity.'/'.$image_class.'/'.Images::getThbDir().'/';
+		return $shop->getKey().'/'.$entity.'/'.$image_class.'/'.Images::getThbDir().'/';
 
 	}
 
-	public static function getImageDirPath( string $shop_code, string $entity, string $image_class, int|string $object_id ) : string
+	public static function getImageDirPath( Shops_Shop $shop, string $entity, string $image_class, int|string $object_id ) : string
 	{
-		return $shop_code.'/'.$entity.'/'.$image_class.'/'.Images::calcNumericPath($object_id).'/';
+		return $shop->getKey().'/'.$entity.'/'.$image_class.'/'.Images::calcNumericPath($object_id).'/';
 	}
 
-	public static function uploadImage( string $tmp_path, string $shop_code, string $entity, int|string $object_id, string $image_class, string &$object_property ) : void
+	public static function uploadImage( string $tmp_path, Shops_Shop $shop, string $entity, int|string $object_id, string $image_class, string &$object_property ) : void
 	{
 		$image_info = getimagesize($tmp_path);
 		if(!$image_info) {
 			return;
 		}
 
-		$target_path = Images::getImageDirPath( $shop_code, $entity, $image_class, $object_id ).uniqid().uniqid().image_type_to_extension($image_info[2]);
+		$target_path = Images::getImageDirPath( $shop, $entity, $image_class, $object_id ).uniqid().uniqid().image_type_to_extension($image_info[2]);
 
 		$target_full_path = Images::getRootPath().$target_path;
 		$target_dir = dirname($target_full_path);
@@ -116,14 +116,14 @@ abstract class Core_Images
 		$object_property = $target_path;
 	}
 
-	public static function takeImage( string $src_path, string $shop_code, string $entity, int $object_id, string $image_class,  string &$object_property ) : void
+	public static function takeImage( string $src_path, Shops_Shop $shop, string $entity, int $object_id, string $image_class,  string &$object_property ) : void
 	{
 		$image_info = getimagesize($src_path);
 		if(!$image_info) {
 			return;
 		}
 
-		$target_path = Images::getImageDirPath( $shop_code, $entity, $image_class, $object_id ).uniqid().uniqid().image_type_to_extension($image_info[2]);
+		$target_path = Images::getImageDirPath( $shop, $entity, $image_class, $object_id ).uniqid().uniqid().image_type_to_extension($image_info[2]);
 
 		$target_full_path = Images::getRootPath().$target_path;
 		$target_dir = dirname($target_full_path);
@@ -140,14 +140,14 @@ abstract class Core_Images
 		$object_property = $target_path;
 	}
 
-	public static function cloneImage( string $source_path, string $shop_code, string $entity, int $object_id, string $image_class, string &$object_property ) : void
+	public static function cloneImage( string $source_path, Shops_Shop $shop, string $entity, int $object_id, string $image_class, string &$object_property ) : void
 	{
 		$image_info = getimagesize($source_path);
 		if(!$image_info) {
 			return;
 		}
 
-		$target_path = Images::getImageDirPath( $shop_code, $entity, $image_class, $object_id ).uniqid().uniqid().image_type_to_extension($image_info[2]);
+		$target_path = Images::getImageDirPath( $shop, $entity, $image_class, $object_id ).uniqid().uniqid().image_type_to_extension($image_info[2]);
 
 		IO_File::copy( $source_path, Images::getRootPath().$target_path );
 
@@ -164,13 +164,17 @@ abstract class Core_Images
 
 		$path = explode('/', $path);
 
-		$shop_code = array_shift( $path );
+		$shop = Shops::get(array_shift( $path ));
+		if(!$shop) {
+			return;
+		}
+
 		$entity = array_shift( $path );
 		$image_class = array_shift( $path );
 
 		$path = implode('/', $path);
 
-		$thb_dir = Images::getRootPath().Images::getThbRootDir( $shop_code, $entity, $image_class );
+		$thb_dir = Images::getRootPath().Images::getThbRootDir( $shop, $entity, $image_class );
 
 		$sizes_list = IO_Dir::getList( $thb_dir, '*', true, false );
 
@@ -204,18 +208,19 @@ abstract class Core_Images
 			return '';
 		}
 
-		$max_w = (int)$max_w;
-		$max_h = (int)$max_h;
-
 		$path = explode('/', $path);
 
-		$shop_code = array_shift( $path );
+		$shop = Shops::get(array_shift( $path ));
+		if(!$shop) {
+			return '';
+		}
+
 		$entity = array_shift( $path );
 		$image_class = array_shift( $path );
 
 		$path = implode('/', $path);
 
-		$thb_path = Images::getThbRootDir( $shop_code, $entity, $image_class ).$max_w.'x'.$max_h.'/'.$path;
+		$thb_path = Images::getThbRootDir( $shop, $entity, $image_class ).$max_w.'x'.$max_h.'/'.$path;
 
 		$thb_source_path = Images::getRootPath().$_path;
 		$thb_target_path = Images::getRootPath().$thb_path;
@@ -241,7 +246,7 @@ abstract class Core_Images
 		return $url;
 	}
 
-	public static function generateUploadForm( string $entity, string $image_class, string $shop_code ) : Form
+	public static function generateUploadForm( string $entity, string $image_class, Shops_Shop $shop ) : Form
 	{
 		$image_field = new Form_Field_FileImage('image');
 		$image_field->setErrorMessages([
@@ -250,13 +255,13 @@ abstract class Core_Images
 
 		]);
 
-		return new Form($entity.'_image_'.$image_class.'_'.$shop_code, [
+		return new Form($entity.'_image_'.$image_class.'_'.$shop->getKey(), [
 			$image_field
 		]);
 
 	}
 
-	public static function catchUploadForm( Form $form, string $entity, string $image_class, string $shop_code, int|string $object_id, string &$object_property ) : bool
+	public static function catchUploadForm( Form $form, string $entity, string $image_class, Shops_Shop $shop, int|string $object_id, string &$object_property ) : bool
 	{
 		if(
 			!$form->catchInput() ||
@@ -271,7 +276,7 @@ abstract class Core_Images
 
 		Images::uploadImage(
 			$image_field->getTmpFilePath(),
-			$shop_code,
+			$shop,
 			$entity,
 			$object_id,
 			$image_class,

@@ -13,12 +13,7 @@ use Jet\Db;
 )]
 abstract class Core_Fulltext_Index extends DataModel {
 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_id: true
-	)]
-	protected string $shop_code = '';
+	use CommonEntity_ShopRelationTrait_ShopIsId;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -34,15 +29,6 @@ abstract class Core_Fulltext_Index extends DataModel {
 
 	protected static int $search_ids_count_limit = 200;
 
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
-	}
-
-	public function setShopCode( string $shop_code ) : void
-	{
-		$this->shop_code = $shop_code;
-	}
 
 	public function getObjectId() : int
 	{
@@ -89,9 +75,9 @@ abstract class Core_Fulltext_Index extends DataModel {
 	 *
 	 * @return Fulltext_Index_Word[]
 	 */
-	protected function _collectWords( array $texts, $word_class_name, callable $index_word_setup) : array
+	protected function _collectWords( array $texts, string $word_class_name, callable $index_word_setup) : array
 	{
-		$words = Fulltext_Dictionary::collectWords( $this->shop_code, $texts );
+		$words = Fulltext_Dictionary::collectWords( $this->getShop(), $texts );
 		$this->words = implode(' ', $words);
 
 		$result = [];
@@ -100,7 +86,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 			 * @var Fulltext_Index_Word $w
 			 */
 			$w = new $word_class_name();
-			$w->setShopCode( $this->shop_code );
+			$w->setShop( $this->getShop() );
 			$w->setObjectId( $this->object_id );
 			$w->setWord( $word );
 
@@ -118,7 +104,6 @@ abstract class Core_Fulltext_Index extends DataModel {
 	 */
 	public static function deleteRecord( int $object_id ) : void
 	{
-		$object_id = (int)$object_id;
 		$class = get_called_class();
 
 		/**
@@ -134,14 +119,14 @@ abstract class Core_Fulltext_Index extends DataModel {
 
 
 	/**
-	 * @param bool|string $shop_code
+	 * @param Shops_Shop $shop
 	 * @param string $search_string
 	 * @param string $sql_query_where
 	 *
 	 * @return array
 	 */
 	public static function searchObjectIds(
-		bool|string $shop_code,
+		Shops_Shop $shop,
 		string $search_string,
 		string $sql_query_where
 	) : array {
@@ -163,9 +148,8 @@ abstract class Core_Fulltext_Index extends DataModel {
 			$sql_query_where = " AND ($sql_query_where)";
 		}
 
-		if($shop_code) {
-			$sql_query_where .= " AND shop_code='".addslashes($shop_code)."'";
-		}
+		//TODO: SQL!
+			$sql_query_where .= " AND shop_code='".addslashes($shop->getShopCode())."' AND locale='".addslashes($shop->getLocale())."'";
 
 		$sql_query = [];
 		$matches = [];
@@ -202,7 +186,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 		$ids = [];
 
 		if(count($matches)>1) {
-			foreach( $matches as $q_string=>$result ) {
+			foreach( $matches as $result ) {
 				if(!$result) {
 					return [];
 				}
@@ -214,7 +198,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 
 			$ids = call_user_func_array('array_intersect', $ids);
 		} else {
-			foreach( $matches as $q_string=>$result ) {
+			foreach( $matches as $result ) {
 				$ids = $result;
 			}
 		}

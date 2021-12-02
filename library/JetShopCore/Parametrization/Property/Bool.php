@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel_Definition;
 use Jet\Form;
 
 

@@ -9,9 +9,9 @@ namespace JetShop;
 
 use Jet\Application as Jet_Application;
 
-use Jet\Mvc_Router;
+use Jet\MVC_Router;
 
-use Jet\ErrorPages;
+use Jet\SysConf_Jet_ErrorPages;
 
 /**
  *
@@ -20,19 +20,11 @@ class Application extends Jet_Application
 {
 
 	/**
-	 * @param Mvc_Router $router
+	 * @param MVC_Router $router
 	 */
-	public static function initErrorPages( Mvc_Router $router )
+	public static function initErrorPages( MVC_Router $router )
 	{
-		$current_site = $router->getSite();
-		$current_locale = $router->getLocale();
-
-		ErrorPages::setErrorPagesDir(
-			$current_site->getPagesDataPath(
-				$current_locale
-			)
-		);
-
+		SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
 	}
 
 }

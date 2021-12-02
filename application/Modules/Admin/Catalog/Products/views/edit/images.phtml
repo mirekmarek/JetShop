@@ -1,6 +1,6 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use Jet\UI;
 use Jet\Tr;
@@ -8,7 +8,7 @@ use Jet\UI_dialog;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form $images_form
  * @var Form $image_delete_form
  */
@@ -26,53 +26,53 @@ $product = Controller_Main::getCurrentProduct();
 <script type="text/javascript">
 
 	const ImagesHandler = {
-		delete_shop_code: null,
+		delete_shop_key: null,
 		delete_images: null,
 
-		_handleResponse: function( shop_code, response ) {
+		_handleResponse: function( shop_key, response ) {
 
 			for(let el_id in response['snippets']) {
 				document.getElementById(el_id).innerHTML = response['snippets'][el_id];
 			}
 
-			ImagesHandler.initSort( shop_code );
+			ImagesHandler.initSort( shop_key );
 		},
 
-		initSort: function( shop_code ) {
-			$('#images_'+shop_code).sortable({
+		initSort: function( shop_key ) {
+			$('#images_'+shop_key).sortable({
 				revert: true,
 				stop: function() {
-					ImagesHandler.saveSort( shop_code );
+					ImagesHandler.saveSort( shop_key );
 				}
 			});
 		},
 
-		saveSort: function( shop_code ) {
-			var images = [];
+		saveSort: function( shop_key ) {
+			let images = [];
 
-			$('#images_'+shop_code).find('.image-thumbnail').each(function ( i, image ) {
+			$('#images_'+shop_key).find('.image-thumbnail').each(function ( i, image ) {
 				images.push( $(image).data('image') );
 			});
 
 			$.ajax({
-				url: '?id=<?=$product->getId()?>&page=images&action=save_sort&images='+images.join(',')+'&shop_code='+shop_code,
+				url: '?id=<?=$product->getId()?>&page=images&action=save_sort&images='+images.join(',')+'&shop_key='+shop_key,
 				dataType: "json",
 				success: function( response ) {
-					ImagesHandler._handleResponse(shop_code, response);
+					ImagesHandler._handleResponse(shop_key, response);
 				}
 			});
 		},
 
-		deleteImage: function( shop_code, image, url ) {
-			ImagesHandler._delete(shop_code, [{
+		deleteImage: function( shop_key, image, url ) {
+			ImagesHandler._delete(shop_key, [{
 				image: image,
 				url: url
 			}]);
 		},
 
-		deleteImages: function( shop_code )
+		deleteImages: function( shop_key )
 		{
-			var images = [];
+			let images = [];
 
 			$('.select_image_checkbox').each( function(i, checkbox) {
 				if(checkbox.checked) {
@@ -84,14 +84,14 @@ $product = Controller_Main::getCurrentProduct();
 			});
 
 			if(images.length) {
-				ImagesHandler._delete(shop_code, images);
+				ImagesHandler._delete(shop_key, images);
 			}
 
 		},
 
-		_delete: function( shop_code, images ) {
+		_delete: function( shop_key, images ) {
 
-			ImagesHandler.delete_shop_code = shop_code;
+			ImagesHandler.delete_shop_key = shop_key;
 			ImagesHandler.delete_images = images;
 
 			let html = '';
@@ -113,10 +113,10 @@ $product = Controller_Main::getCurrentProduct();
 			}
 
 			$.ajax({
-				url: '?id=<?=$product->getId()?>&page=images&action=delete&shop_code='+ImagesHandler.delete_shop_code+'&images='+images.join(','),
+				url: '?id=<?=$product->getId()?>&page=images&action=delete&shop_key='+ImagesHandler.delete_shop_key+'&images='+images.join(','),
 				dataType: "json",
 				success: function( response ) {
-					ImagesHandler._handleResponse(ImagesHandler.delete_shop_code, response);
+					ImagesHandler._handleResponse(ImagesHandler.delete_shop_key, response);
 				}
 			});
 			$('#delete_image_confirm').modal('hide');
@@ -124,19 +124,17 @@ $product = Controller_Main::getCurrentProduct();
 		},
 
 
-		upload: function( shop_code ) {
+		upload: function( shop_key ) {
 			JetAjaxForm.submitMultiUpload(
-				'upload_form_'+shop_code,
+				'upload_form_'+shop_key,
 				'images',
 			);
 		}
 	};
 
 	$(document).ready(function () {
-		<?php foreach(Shops::getList() as $shop):
-		$shop_code = $shop->getCode();
-		 ?>
-		ImagesHandler.initSort('<?=$shop_code?>');
+		<?php foreach(Shops::getList() as $shop): ?>
+		ImagesHandler.initSort('<?=$shop->getKey()?>');
 		<?php endforeach; ?>
 	})
 </script>
@@ -154,16 +152,15 @@ $product = Controller_Main::getCurrentProduct();
 		<?=$this->getRaw('tabs')?>
 
 	<?php foreach(Shops::getList() as $shop):
-		$shop_code = $shop->getCode();
-
-		$shop_data = $product->getShopData($shop_code);
-		$this->setVar('shop_code', $shop_code);
+		$shop_data = $product->getShopData($shop);
+		$shop_key = $shop->getKey();
+		$this->setVar('shop', $shop );
 	?>
 		<?=$shop_data->renderShopDataBlock_start()?>
 
 
 		<div style="background-color: #f0f0f0;border-radius: 5px;margin: 10px;padding: 10px;">
-			<div class="images_area" id="images_<?=$shop_code?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
+			<div class="images_area" id="images_<?=$shop_key?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
 				<?php
 				require 'images/list.phtml';
 				?>
@@ -173,15 +170,15 @@ $product = Controller_Main::getCurrentProduct();
 		<table style="width: 100%">
 			<tr>
 				<td>
-					<form id="upload_form_<?=$shop_code?>" action="?id=<?=$product->getId()?>&page=images&action=upload&shop_code=<?=$shop_code?>">
+					<form id="upload_form_<?=$shop_key?>" action="?id=<?=$product->getId()?>&page=images&action=upload&shop_key=<?=$shop_key?>">
 						<div class="btn btn-light btn-upload">
 							<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images' )?></span>
-							<input type="file" multiple id="upload_files_<?=$shop_code?>" name="images[]" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_code?>');">
+							<input type="file" multiple id="upload_files_<?=$shop_key?>" name="images[]" class="upload-button" onchange="ImagesHandler.upload('<?=$shop_key?>');">
 						</div>
 					</form>
 				</td>
 				<td align="right" style="padding: 10px">
-					<?=UI::button_delete(Tr::_('Delete selected images'))->setOnclick("ImagesHandler.deleteImages('$shop_code');")?>
+					<?=UI::button_delete(Tr::_('Delete selected images'))->setOnclick("ImagesHandler.deleteImages('$shop_key');")?>
 				</td>
 			</tr>
 		</table>

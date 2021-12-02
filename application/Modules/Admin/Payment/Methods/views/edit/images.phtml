@@ -4,13 +4,13 @@ namespace JetShopModule\Admin\Payment\Methods;
 use JetShop\Payment_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Payment_Method_ShopData;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Payment_Method     $payment_method
  */
@@ -29,15 +29,11 @@ $payment_method = $this->getRaw( 'payment_method' );
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
 
-		<?php if(!$payment_method->getIsNew()): ?>
-			<?php foreach(Shops::getList() as $shop):
-				$shop_code= $shop->getCode();
-
-				$shop_data = $payment_method->getShopData( $shop_code );
-				?>
-				<?=$shop_data->renderImageWidgets( Payment_Method_ShopData::getImageClasses() )?>
-			<?php endforeach; ?>
-		<?php endif; ?>
+		<?php if(!$payment_method->getIsNew()):
+			foreach(Shops::getList() as $shop):
+				echo $payment_method->getShopData( $shop )->renderImageWidgets( Payment_Method_ShopData::getImageClasses(), $payment_method->getEditForm()->getIsReadonly() );
+			endforeach;
+		endif; ?>
 	</div>
 </div>
 

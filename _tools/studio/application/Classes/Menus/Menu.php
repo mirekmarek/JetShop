@@ -108,15 +108,12 @@ class Menus_Menu extends Navigation_Menu
 			return false;
 		}
 
-		$menu_item = new Menus_Menu(
+		return new Menus_Menu(
 			$form->field( 'id' )->getValue(),
 			$form->field( 'label' )->getValue(),
 			$form->field( 'index' )->getValue(),
 			$form->field( 'icon' )->getValue()
 		);
-
-
-		return $menu_item;
 	}
 
 
@@ -190,7 +187,7 @@ class Menus_Menu extends Navigation_Menu
 			$this->getItem( $item_id )->setIndex( $i );
 		}
 
-		$this->sortItems();
+		//$this->sortItems();
 
 		return true;
 	}
@@ -230,7 +227,7 @@ class Menus_Menu extends Navigation_Menu
 
 		unset( $this->items[$id] );
 
-		$this->sortItems();
+		//$this->sortItems();
 	}
 
 	/**
@@ -278,7 +275,7 @@ class Menus_Menu extends Navigation_Menu
 	 *
 	 * @return Menus_Menu_Item[]
 	 */
-	public function getItems( $check_access = true ): array
+	public function getItems( bool $check_access = true ): array
 	{
 		return $this->items;
 	}

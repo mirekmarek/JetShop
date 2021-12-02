@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 use Exception;
 use Jet\Data_DateTime;
@@ -40,13 +40,12 @@ class Installer_Step_Final_Controller extends Installer_Step_Controller
 
 
 		if(
-			$OK &&
-			Installer_Step_CreateSite_Controller::sitesCreated()
+			Installer_Step_CreateBases_Controller::basesCreated()
 		) {
 			try {
 				IO_File::write( $install_symptom_file_path, Data_DateTime::now()->toString() );
 			} catch( Exception $e ) {
-				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_NAMESPACE ) );
+				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_DICTIONARY ) );
 				$OK = false;
 			}
 		}

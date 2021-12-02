@@ -5,7 +5,6 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 use Jet\Tr;
 
 /**
@@ -17,9 +16,8 @@ use Jet\Tr;
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Brand::class
 )]
-abstract class Core_Brand_ShopData extends DataModel_Related_1toN implements Images_ShopDataInterface, CommonEntity_ShopDataInterface {
+abstract class Core_Brand_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
 
-	use CommonEntity_ShopDataTrait;
 	use Images_ShopDataTrait;
 
 	const IMG_LOGO = 'logo';
@@ -127,16 +125,6 @@ abstract class Core_Brand_ShopData extends DataModel_Related_1toN implements Ima
 	)]
 	protected string $image_title = '';
 
-	public function getBrand() : string
-	{
-		return $this->brand;
-	}
-
-	public function setParents( Brand $brand ) : void
-	{
-		$this->brand = $brand;
-		$this->brand_id = $brand->getId();
-	}
 
 	public function getName() : string
 	{
@@ -226,7 +214,7 @@ abstract class Core_Brand_ShopData extends DataModel_Related_1toN implements Ima
 
 	public function generateUrlParam() : void
 	{
-		$this->url_param = Shops::generateURLPathPart( $this->name, '', 0, $this->shop_code );
+		$this->url_param = Shops::generateURLPathPart( $this->name, '', 0, $this->getShop() );
 	}
 
 	public function getImageEntity() : string
@@ -246,11 +234,6 @@ abstract class Core_Brand_ShopData extends DataModel_Related_1toN implements Ima
 			Brand_ShopData::IMG_BIG_LOGO => Tr::_('Big logo', [], Brand::getManageModuleName() ),
 			Brand_ShopData::IMG_TITLE => Tr::_('Title image', [], Brand::getManageModuleName() ),
 		];
-	}
-
-	public function getPossibleToEditImages() : bool
-	{
-		return !$this->brand->getEditForm()->getIsReadonly();
 	}
 
 	public function setImageLogo( string $image ) : void

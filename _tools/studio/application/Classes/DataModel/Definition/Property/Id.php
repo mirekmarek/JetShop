@@ -36,6 +36,15 @@ class DataModel_Definition_Property_Id extends Jet_DataModel_Definition_Property
 
 
 	/**
+	 * @return mixed
+	 */
+	public function getDefaultValue() : string
+	{
+		return '';
+	}
+
+
+	/**
 	 *
 	 * @param ClassCreator_Class $class
 	 *
@@ -44,9 +53,8 @@ class DataModel_Definition_Property_Id extends Jet_DataModel_Definition_Property
 	public function createClassProperty( ClassCreator_Class $class ): ClassCreator_Class_Property
 	{
 
-		$property = $this->createClassProperty_main( $class, 'string', 'DataModel::TYPE_ID' );
+		return $this->createClassProperty_main( $class, 'string', 'DataModel::TYPE_ID' );
 
-		return $property;
 	}
 
 	/**

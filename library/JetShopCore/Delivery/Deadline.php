@@ -4,9 +4,7 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Name;
-use Jet\DataModel_Related_1toN;
-use Jet\DataModel_Related_1toN_Iterator;
+use Jet\DataModel_IDController_Passive;
 use Jet\Form;
 use Jet\Application_Module;
 use Jet\DataModel_Fetch_Instances;
@@ -15,11 +13,7 @@ use Jet\Form_Field_Input;
 #[DataModel_Definition(
 	name: 'delivery_deadline',
 	database_table_name: 'delivery_deadlines',
-	id_controller_class: DataModel_IDController_Name::class,
-	id_controller_options: [
-		'id_property_name' => 'code',
-		'get_name_method_name' => 'getCode'
-	]
+	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_Delivery_Deadline extends DataModel {
 	protected static string $manage_module_name = 'Admin.Delivery.Deadlines';
@@ -58,13 +52,13 @@ abstract class Core_Delivery_Deadline extends DataModel {
 	protected string $internal_description = '';
 
 	/**
-	 * @var Delivery_Deadline_ShopData[]|DataModel_Related_1toN|DataModel_Related_1toN_Iterator|null
+	 * @var Delivery_Deadline_ShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Delivery_Deadline_ShopData::class
 	)]
-	protected $shop_data = null;
+	protected array $shop_data = [];
 
 
 	protected ?Form $_add_form = null;
@@ -95,19 +89,7 @@ abstract class Core_Delivery_Deadline extends DataModel {
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Delivery_Deadline_ShopData();
-				$sh->setDeliveryDeadlineCode($this->code);
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-		}
-
+		Delivery_Deadline_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
 	public static function get( string $id ) : Delivery_Deadline|null
@@ -245,14 +227,9 @@ abstract class Core_Delivery_Deadline extends DataModel {
 	}
 
 
-
-	public function getShopData( string|null $shop_code=null ) : Delivery_Deadline_ShopData|null
+	public function getShopData( ?Shops_Shop $shop=null ) : Delivery_Deadline_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 
 }

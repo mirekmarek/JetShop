@@ -8,7 +8,7 @@
 
 namespace Jet;
 
-use \ReflectionClass;
+use ReflectionClass;
 
 
 /**
@@ -136,7 +136,7 @@ abstract class DataModel_Definition_Model extends BaseObject
 	protected function _mainInit( string $data_model_class_name ): void
 	{
 
-		$this->class_name = (string)$data_model_class_name;
+		$this->class_name = $data_model_class_name;
 		$this->class_reflection = new ReflectionClass( $data_model_class_name );
 
 		$this->class_arguments = Attributes::getClassArguments( $this->class_reflection, 'Jet\DataModel_Definition' );
@@ -192,12 +192,6 @@ abstract class DataModel_Definition_Model extends BaseObject
 		$this->id_controller_class = $this->getClassArgument( 'id_controller_class' );
 
 		if( !$this->id_controller_class ) {
-			if( $this->class_reflection->isSubclassOf( DataModel_Related_MtoN::class ) ) {
-				$this->id_controller_class = DataModel_IDController_Passive::class;
-
-				return;
-			}
-
 			throw new DataModel_Exception(
 				'DataModel \'' . $this->class_name . '\' does not have ID controller class name! Please define attribute #[DataModel_Definition(id_controller_class: SomeClass:class)] ',
 				DataModel_Exception::CODE_DEFINITION_NONSENSE
@@ -251,7 +245,7 @@ abstract class DataModel_Definition_Model extends BaseObject
 					$property_dd
 				);
 			} else {
-				$property_definition = DataModel_Factory::getPropertyDefinitionInstance(
+				$property_definition = Factory_DataModel::getPropertyDefinitionInstance(
 					$this->class_name,
 					$property_name,
 					$property_dd
@@ -304,8 +298,8 @@ abstract class DataModel_Definition_Model extends BaseObject
 	 * @throws DataModel_Exception
 	 *
 	 */
-	protected function _initRelationProperty( string $property_name, /** @noinspection PhpUnusedParameterInspection */
-	                                          string $related_to, /** @noinspection PhpUnusedParameterInspection */
+	protected function _initRelationProperty( string $property_name,
+	                                          string $related_to,
 	                                          array $property_definition_data ): DataModel_Definition_Property|null
 	{
 		throw new DataModel_Exception(
@@ -421,13 +415,7 @@ abstract class DataModel_Definition_Model extends BaseObject
 	{
 		$id_controller_class = $this->getIDControllerClassName();
 
-		/**
-		 * @var DataModel_IDController $empty_id
-		 */
-		$empty_id = new $id_controller_class( $this, $this->getIDControllerOptions() );
-
-
-		return $empty_id;
+		return new $id_controller_class( $this, $this->getIDControllerOptions() );
 	}
 
 	/**

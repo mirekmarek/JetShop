@@ -13,6 +13,7 @@ use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_Int;
 use Jet\Form;
 use Jet\Form_Field_Input;
+use Jet\Form_Field_Select;
 use Jet\Navigation_Menu_Item;
 
 /**
@@ -109,7 +110,21 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 			$URL = new Form_Field_Input( 'URL', 'URL:', '' );
 
 			$page_id = new Form_Field_Input( 'page_id', 'Page ID:', '' );
-			$site_id = new Form_Field_Input( 'site_id', 'Site ID:', '' );
+
+
+			$bases = ['' => ''];
+			foreach( Bases::getBases() as $base ) {
+				$bases[$base->getId()] = $base->getName();
+			}
+			$base_id = new Form_Field_Select( 'base_id', 'Base:', '' );
+			$base_id->setSelectOptions( $bases );
+			$base_id->setIsRequired( true );
+			$base_id->setErrorMessages( [
+				Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select base',
+				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select base',
+			] );
+
+
 			$locale = new Form_Field_Input( 'locale', 'Locale:', '' );
 
 
@@ -125,7 +140,7 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 				$URL,
 
 				$page_id,
-				$site_id,
+				$base_id,
 				$locale,
 			];
 
@@ -185,7 +200,7 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 		$menu_item->setURL( $form->field( 'URL' )->getValue() );
 
 		$menu_item->setPageId( $form->field( 'page_id' )->getValue() );
-		$menu_item->setSiteId( $form->field( 'site_id' )->getValue() );
+		$menu_item->setBaseId( $form->field( 'base_id' )->getValue() );
 		$menu_item->setLocale( $form->field( 'locale' )->getValue() );
 
 		$menu_item->setUrlParts( static::catchURLParts( $form ) );
@@ -248,9 +263,20 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 				$this->setPageId( $value );
 			} );
 
-			$site_id = new Form_Field_Input( 'site_id', 'Site ID:', $this->getSiteId() );
-			$site_id->setCatcher( function( $value ) {
-				$this->setSiteId( $value );
+			$bases = ['' => ''];
+			foreach( Bases::getBases() as $base ) {
+				$bases[$base->getId()] = $base->getName();
+			}
+			$base_id = new Form_Field_Select( 'base_id', 'Base:', $this->getBaseId() );
+			$base_id->setSelectOptions( $bases );
+			$base_id->setIsRequired( true );
+			$base_id->setErrorMessages( [
+				Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select base',
+				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select base',
+			] );
+
+			$base_id->setCatcher( function( $value ) {
+				$this->setBaseId( $value );
 			} );
 
 			$locale = new Form_Field_Input( 'locale', 'Locale:', $this->getLocale() );
@@ -270,13 +296,13 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 				$URL,
 
 				$page_id,
-				$site_id,
+				$base_id,
 				$locale,
 			];
 
 			$URL_parts = $this->getUrlParts();
 			for( $c = 0; $c < static::URL_PARTS_COUNT; $c++ ) {
-				$URL_part_value = isset( $URL_parts[$c] ) ? $URL_parts[$c] : '';
+				$URL_part_value = $URL_parts[$c] ?? '';
 
 				$URL_part = new Form_Field_Input( '/URL_parts/' . $c, '', $URL_part_value );
 				$fields[] = $URL_part;
@@ -287,8 +313,8 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 			$GET_params_keys = array_keys( $GET_params );
 			$GET_params_values = array_values( $GET_params );
 			for( $c = 0; $c < static::GET_PARAMS_COUNT; $c++ ) {
-				$key = isset( $GET_params_keys[$c] ) ? $GET_params_keys[$c] : '';
-				$value = isset( $GET_params_values[$c] ) ? $GET_params_values[$c] : '';
+				$key = $GET_params_keys[$c] ?? '';
+				$value = $GET_params_values[$c] ?? '';
 
 				$GET_param_key = new Form_Field_Input( '/GET_params/' . $c . '/key', '', $key );
 				$fields[] = $GET_param_key;
@@ -407,13 +433,52 @@ class Menus_Menu_Item extends Navigation_Menu_Item
 			$menu_item['URL'] = $this->getUrl();
 		} else {
 			$menu_item['page_id'] = $this->getPageId();
-			$menu_item['site_id'] = $this->getSiteId();
+			$menu_item['base_id'] = $this->getBaseId();
 			$menu_item['locale'] = (string)$this->getLocale();
 			$menu_item['url_parts'] = $this->getUrlParts();
 			$menu_item['get_params'] = $this->getGetParams();
 		}
 
+		foreach($menu_item as $key=>$value) {
+			if(
+				$value==='' ||
+				$value===false ||
+				$value===[]
+			) {
+				unset($menu_item[$key]);
+			}
+		}
+
 		return $menu_item;
 	}
+
+
+
+
+	/**
+	 * @return string
+	 */
+	public function getLabel(): string
+	{
+		return $this->label;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getIcon(): string
+	{
+		return $this->icon;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUrl(): string
+	{
+		return $this->URL ? : '';
+	}
+
+
 
 }

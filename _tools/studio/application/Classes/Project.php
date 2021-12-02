@@ -9,7 +9,7 @@
 namespace JetStudio;
 
 use Jet\BaseObject;
-use Jet\Mvc_Site;
+use Jet\MVC;
 use Jet\Locale;
 use Jet\Form_Field_Input;
 use Jet\Data_Text;
@@ -37,8 +37,8 @@ class Project extends BaseObject implements Application_Part
 	{
 		$locales = [];
 
-		foreach( Mvc_Site::getAllSites() as $site ) {
-			foreach( $site->getLocales() as $locale ) {
+		foreach( MVC::getBases() as $base ) {
+			foreach( $base->getLocales() as $locale ) {
 				$locale_str = (string)$locale;
 
 				$locales[$locale_str] = $as_string ? $locale_str : $locale;
@@ -109,10 +109,7 @@ class Project extends BaseObject implements Application_Part
 
 		$class_name = $field->getValue();
 
-		if(
-			$field->getIsRequired() &&
-			!$class_name
-		) {
+		if( !$class_name ) {
 			$field->setError( Form_Field::ERROR_CODE_EMPTY );
 			return false;
 		}
@@ -121,7 +118,7 @@ class Project extends BaseObject implements Application_Part
 			!preg_match( '/^([a-zA-Z1-9\\\_]{3,})$/', $class_name ) ||
 			str_contains( $class_name, '\\\\' ) ||
 			str_contains( $class_name, '__' ) ||
-			substr( $class_name, -1 ) == '\\'
+			str_ends_with( $class_name, '\\' )
 		) {
 			$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
 
@@ -152,9 +149,7 @@ class Project extends BaseObject implements Application_Part
 		!$method_name
 		) {
 			$field->setError( Form_Field::ERROR_CODE_EMPTY );
-			if( $class_name_field ) {
-				$class_name_field->setCustomError( $field->getErrorMessage( Form_Field::ERROR_CODE_EMPTY ) );
-			}
+			$class_name_field?->setCustomError( $field->getErrorMessage( Form_Field::ERROR_CODE_EMPTY ) );
 			return false;
 		}
 
@@ -163,9 +158,7 @@ class Project extends BaseObject implements Application_Part
 			str_contains( $method_name, '__' )
 		) {
 			$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
-			if( $class_name_field ) {
-				$class_name_field->setCustomError( $field->getErrorMessage( Form_Field::ERROR_CODE_INVALID_FORMAT ) );
-			}
+			$class_name_field?->setCustomError( $field->getErrorMessage( Form_Field::ERROR_CODE_INVALID_FORMAT ) );
 
 			return false;
 		}
@@ -188,10 +181,7 @@ class Project extends BaseObject implements Application_Part
 
 		$controller_name = $field->getValue();
 
-		if(
-			$field->getIsRequired() &&
-			!$controller_name
-		) {
+		if( !$controller_name ) {
 			$field->setError( Form_Field::ERROR_CODE_EMPTY );
 			return false;
 		}

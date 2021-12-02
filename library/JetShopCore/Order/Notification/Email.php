@@ -7,7 +7,7 @@ namespace JetShop;
 
 use Jet\Mailing_Email;
 use Jet\Mailing_Email_Template;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 abstract class Core_Order_Notification_Email extends Order_Notification {
 
@@ -101,7 +101,7 @@ abstract class Core_Order_Notification_Email extends Order_Notification {
 
 	public function generateText() : string
 	{
-		$view = new Mvc_View( $this->getViewRootDir() );
+		$view = new MVC_View( $this->getViewRootDir() );
 
 		$view->setVar( 'email', $this );
 
@@ -116,7 +116,7 @@ abstract class Core_Order_Notification_Email extends Order_Notification {
 
 	public function generateHtml() : string
 	{
-		$view = new Mvc_View( $this->getViewRootDir() );
+		$view = new MVC_View( $this->getViewRootDir() );
 
 		$view->setVar( 'email', $this );
 
@@ -132,7 +132,7 @@ abstract class Core_Order_Notification_Email extends Order_Notification {
 
 	public function generateSubject() : string
 	{
-		$view = new Mvc_View( $this->getViewRootDir() );
+		$view = new MVC_View( $this->getViewRootDir() );
 
 		$view->setVar( 'email', $this );
 
@@ -168,7 +168,10 @@ abstract class Core_Order_Notification_Email extends Order_Notification {
 
 	public function send() : void
 	{
-		$this->getEmail()->send( $this->mail_to );
+		$email = $this->getEmail();
+		$email->setTo( $this->mail_to );
+		$email->send();
+
 		//TODO: sent
 	}
 

@@ -6,7 +6,7 @@ use JetShop\Admin_Module_Trait;
 use JetShop\Auth_Administrator_Role;
 use JetShop\Product_ManageModuleInterface;
 use Jet\Auth;
-use Jet\Mvc_Page;
+use Jet\MVC;
 
 
 class Main extends Application_Module implements Product_ManageModuleInterface
@@ -22,7 +22,7 @@ class Main extends Application_Module implements Product_ManageModuleInterface
 
 	public function getProductSelectWhispererUrl( array $filter=[], bool $only_active=false ) : string
 	{
-		$page = Mvc_Page::get( static::ADMIN_MAIN_PAGE );
+		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
 		if(!$page) {
 			return '';
 		}

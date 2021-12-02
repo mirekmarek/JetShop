@@ -2,20 +2,20 @@
 namespace JetShop;
 
 
-use Jet\Mvc_View;
+use Jet\MVC_View;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Payment_Method $payment_method
  */
 
 $cash_desk = CashDesk::get();
 $payment_method = $this->getRaw('payment_method');
-$pm_shd = $payment_method->getShopData($cash_desk->getShopCode());
+$pm_shd = $payment_method->getShopData($cash_desk->getShop());
 
 $this->setVar('payment_method', $payment_method);
 
-$options = $payment_method->getActiveOptions( $cash_desk->getShopCode() );
+$options = $payment_method->getActiveOptions( $cash_desk->getShop() );
 ?>
 
 <div class="card bg-info">

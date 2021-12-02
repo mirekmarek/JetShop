@@ -16,7 +16,7 @@ if(
 ?>
 <?php if(count(Shops::getList())<2): ?>
 	<?php foreach(Shops::getList() as $shop): ?>
-		<a href="<?=$category->getURL($shop->getCode())?>" target="_blank"><?=UI::icon('eye')?></a>
+		<a href="<?=$category->getURL($shop)?>" target="_blank"><?=UI::icon('eye')?></a>
 	<?php endforeach; ?>
 <?php else: ?>
 	<div class="dropdown">
@@ -26,7 +26,7 @@ if(
 
 		<div class="dropdown-menu" style="padding: 10px;">
 			<?php foreach(Shops::getList() as $shop): ?>
-			<a class="dropdown-item" href="<?=$category->getURL($shop->getCode())?>" target="_blank"><?=$shop->getName()?></a>
+			<a class="dropdown-item" href="<?=$category->getURL($shop)?>" target="_blank"><?=$shop->getShopName()?></a>
 			<?php endforeach; ?>
 		</div>
 	</div>

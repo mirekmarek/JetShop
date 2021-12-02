@@ -1,16 +1,14 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Mvc;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Tr;
-use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
 use JetShop\Product;
 
 /**
- * @var Mvc_View   $this
+ * @var MVC_View   $this
  * @var UI_tabs    $tabs
  */
 
@@ -23,7 +21,7 @@ if($product->getType()==Product::PRODUCT_TYPE_VARIANT):
 
 	if($master) {
 		echo UI_messages::createWarning( Tr::_('Is variant of %MASTER%', [
-			'MASTER' => '<a href="'.$master->getEditURL().'"><b>'.$master->getInternalName().'</b></a>'
+			'MASTER' => '<a href="'.$master->getEditURL().'"><b>'.$master->getAdminTitle().'</b></a>'
 		]) );
 	} else {
 		echo UI_messages::createDanger( Tr::_('Is variant of unknown product!', [

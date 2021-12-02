@@ -14,7 +14,7 @@ abstract class Core_Delivery_PersonalTakeover {
 	public static function actualizePlaces( Shops_Shop $shop, bool $verbose=false ) : bool
 	{
 		$past_list = Delivery_PersonalTakeover_Place::getListForShop(
-			shop_code: $shop->getCode(),
+			shop: $shop,
 			only_active: false
 		);
 

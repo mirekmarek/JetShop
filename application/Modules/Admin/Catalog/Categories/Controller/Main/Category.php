@@ -3,10 +3,11 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetShop\Category;
-use JetShop\Category_ShopData;
+
 use JetShop\Exports;
 use JetShop\Shops;
 use JetShop\Application_Admin;
@@ -119,27 +120,14 @@ trait Controller_Main_Category
 		$category = static::getCurrentCategory();
 
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $category->getShopData( $shop_code );
-
-			foreach( Category_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $category, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'category image '.$image_class.' uploaded', $category->getId().':'.$shop_code, $category->_getPathName().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $category, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'category image '.$image_class.' deleted', $category->getId().':'.$shop_code, $category->_getPathName().' - '.$shop_name );
-					}
-				);
-
-			}
+			$category->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Category image',
+				object_id: $category->getId(),
+				object_name: $category->_getPathName(),
+				upload_event: 'category_image_uploaded',
+				delete_event: 'category_image_deleted'
+			);
 		}
 
 		$this->output( 'category/edit/'.static::getCurrentCategory()->getType().'/images' );
@@ -147,9 +135,7 @@ trait Controller_Main_Category
 
 	public function category_edit_exports_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
+
 		$this->_setBreadcrumbNavigation( Tr::_( 'Exports' ) );
 
 		$GET = Http_Request::GET();
@@ -182,7 +168,7 @@ trait Controller_Main_Category
 			$this->view->setVar('selected_exp_shop', $selected_exp_shop );
 
 			$this->view->setVar('selected_exp_code', $selected_exp->getCode());
-			$this->view->setVar('selected_exp_shop_code', $selected_exp_shop->getCode());
+			$this->view->setVar('selected_exp_shop_key', $selected_exp_shop->getKey() );
 
 			$this->view->setVar('category', static::$current_category);
 		}
@@ -260,7 +246,13 @@ trait Controller_Main_Category
 		if($new_category->catchAddForm()) {
 			$new_category->save();
 
-			$this->logAllowedAction( 'Category created', $new_category->getId(), $new_category->_getPathName() , $new_category );
+			Logger::success(
+				event: 'category_created',
+				event_message: 'Category '.$new_category->_getPathName().' ('.$new_category->getId().') created',
+				context_object_id: $new_category->getId(),
+				context_object_name: $new_category->_getPathName(),
+				context_object_data: $new_category
+			);
 
 			UI_messages::success(
 				Tr::_( 'Category <b>%NAME%</b> has been created', [ 'NAME' => $new_category->_getPathName() ] )
@@ -294,7 +286,13 @@ trait Controller_Main_Category
 
 			$category->setPriority( $priority );
 			$category->save();
-			$this->logAllowedAction( 'Category priority updated', $category->getId(), $category->_getPathName(), $priority );
+			Logger::success(
+				event: 'category_priority_updated',
+				event_message: 'Category '.$category->_getPathName().' ('.$category->getId().') priority updated',
+				context_object_id: $category->getId(),
+				context_object_name: $category->_getPathName(),
+				context_object_data: $priority
+			);
 		}
 
 		Http_Headers::reload([], ['action']);

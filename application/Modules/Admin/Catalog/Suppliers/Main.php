@@ -1,6 +1,7 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Suppliers;
 
+use JetShop\Admin_Module_Trait;
 use JetShop\Supplier_ManageModuleInterface;
 use Jet\Application_Module;
 use JetShop\Auth_Administrator_Role;
@@ -11,6 +12,8 @@ use Jet\Auth;
  */
 class Main extends Application_Module implements Supplier_ManageModuleInterface
 {
+	use Admin_Module_Trait;
+
 	const ADMIN_MAIN_PAGE = 'suppliers';
 
 	const ACTION_GET_SUPPLIER = 'get_supplier';

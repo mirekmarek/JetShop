@@ -8,7 +8,6 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Form;
 
 /**
  *
@@ -413,7 +412,7 @@ abstract class Core_Customer_Address extends DataModel
 	 */
 	public function setIsDefault( bool $value ) : void
 	{
-		$this->is_default = (bool)$value;
+		$this->is_default = $value;
 	}
 
 	/**

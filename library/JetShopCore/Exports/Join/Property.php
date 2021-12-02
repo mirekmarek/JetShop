@@ -8,7 +8,6 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use Jet\Form;
 
 /**
  *
@@ -20,6 +19,7 @@ use Jet\Form;
 )]
 abstract class Core_Exports_Join_Property extends DataModel
 {
+	use CommonEntity_ShopRelationTrait_ShopIsId;
 
 	/**
 	 * @var string
@@ -48,30 +48,18 @@ abstract class Core_Exports_Join_Property extends DataModel
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		is_id: true,
-		is_key: true,
-		max_len: 50,
-		form_field_type: false
-	)]
-	protected string $shop_code = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
 		form_field_type: false
 	)]
 	protected string $export_property_id = '';
 
-	public static function get( string $export_code, string $shop_code, int $property_id  ) : static|null
+	public static function get( string $export_code, Shops_Shop $shop, int $property_id  ) : static|null
 	{
 		$i = static::load( [
 			'export_code' => $export_code,
 			'AND',
-			'shop_code' => $shop_code,
+			$shop->getWhere(),
 			'AND',
 			'property_id' => $property_id
 		] );
@@ -79,7 +67,7 @@ abstract class Core_Exports_Join_Property extends DataModel
 		if(!$i) {
 			$i = new static();
 			$i->setExportCode( $export_code );
-			$i->setShopCode( $shop_code );
+			$i->setShop( $shop );
 			$i->setPropertyId( $property_id );
 		}
 
@@ -103,7 +91,7 @@ abstract class Core_Exports_Join_Property extends DataModel
 	 */
 	public function setExportCode( string $value ) : void
 	{
-		$this->export_code = (string)$value;
+		$this->export_code = $value;
 		
 		if( $this->getIsSaved() ) {
 			$this->setIsNew();
@@ -133,22 +121,6 @@ abstract class Core_Exports_Join_Property extends DataModel
 	public function getPropertyId() : int
 	{
 		return $this->property_id;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setShopCode( string $value ) : void
-	{
-		$this->shop_code = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getShopCode() : string
-	{
-		return $this->shop_code;
 	}
 
 	/**

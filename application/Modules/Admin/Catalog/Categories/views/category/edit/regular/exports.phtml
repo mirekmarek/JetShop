@@ -3,11 +3,11 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 
 use JetShop\Exports_Module;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use JetShop\Shops_Shop;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Exports_Module $selected_exp
  * @var Shops_Shop $selected_exp_shop
  */
@@ -21,7 +21,7 @@ $category = $this->getRaw('category');
 ?>
 <?=$this->render('lj_start')?>
 	<?php if($selected_exp): ?>
-		<legend><?=$selected_exp->getTitle()?> - <?=$selected_exp_shop->getName()?></legend>
+		<legend><?=$selected_exp->getTitle()?> - <?=$selected_exp_shop->getShopName()?></legend>
 		<?=$selected_exp->handleCategorySettings( $category, $selected_exp_shop )?>
 	<?php endif; ?>
 <?=$this->render('lj_end')?>

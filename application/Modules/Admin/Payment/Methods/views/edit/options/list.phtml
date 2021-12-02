@@ -6,12 +6,12 @@ use Jet\Tr;
 use JetShop\Payment_Method;
 
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  * @var Form     $form
  * @var Payment_Method     $payment_method
  */
@@ -39,10 +39,10 @@ $payment_method = $this->getRaw( 'payment_method' );
 				<td>
 					<table>
 						<?php foreach(Shops::getList() as $shop):
-							$sd = $option->getShopData($shop->getCode());
+							$sd = $option->getShopData($shop);
 							?>
 						<tr style="background-color: transparent;">
-							<td style="padding: 5px;border: none;"><?=$shop->getName()?></td>
+							<td style="padding: 5px;border: none;"><?=$shop->getShopName()?></td>
 							<td style="padding: 5px;border: none;">
 								<?php
 								if($sd->isActive()): ?>

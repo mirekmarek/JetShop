@@ -257,11 +257,7 @@ trait DataModel_Definition_Property_Trait
 
 			$related_model = DataModels::getClass( $this->getDataModelClass() );
 
-			if(
-				$related_model &&
-				!($related_model instanceof DataModel_Definition_Model_Related_MtoN)
-			) {
-
+			if( $related_model ) {
 				$form_field_type_field->setSelectOptions( [
 					''      => Tr::_( 'Include to the common form' ),
 					'false' => Tr::_( 'DO NOT include to the common form' )
@@ -492,15 +488,11 @@ trait DataModel_Definition_Property_Trait
 
 			$related_model = DataModels::getClass( $this->getDataModelClass() );
 
-			if(
-				$related_model &&
-				!($related_model instanceof DataModel_Definition_Model_Related_MtoN)
-			) {
+			if( $related_model ) {
 				echo '<legend>' . Tr::_( 'Form definition' ) . '</legend>';
 
 				$type = $form->field( 'form_field_type' );
 				echo $type;
-
 			}
 
 			return;
@@ -847,21 +839,6 @@ trait DataModel_Definition_Property_Trait
 		$this->do_not_export = $do_not_export;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getDefaultValue(): mixed
-	{
-		return $this->default_value;
-	}
-
-	/**
-	 * @param string $default_value
-	 */
-	public function setDefaultValue( string $default_value ): void
-	{
-		$this->default_value = $default_value;
-	}
 
 
 	/**
@@ -963,13 +940,10 @@ trait DataModel_Definition_Property_Trait
 	): ClassCreator_Class_Property
 	{
 		$declared_type = $property_type;
-		if( $data_model_type == 'DataModel::TYPE_DATA_MODEL' ) {
-			$declared_type = '';
-		}
 
 		$property = new ClassCreator_Class_Property( $this->getName(), $property_type, $declared_type );
 
-		$property->setDefaultValue( $this->default_value );
+		$property->setDefaultValue( $this->getDefaultValue() );
 
 		if( $this->getRelatedToClassName() ) {
 
@@ -1130,9 +1104,7 @@ trait DataModel_Definition_Property_Trait
 			$name[$i] = ucfirst( strtolower( $n ) );
 		}
 
-		$name = implode( '', $name );
-
-		return $name;
+		return implode( '', $name );
 
 	}
 

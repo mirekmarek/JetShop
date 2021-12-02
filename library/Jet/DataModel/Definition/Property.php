@@ -8,6 +8,8 @@
 
 namespace Jet;
 
+use ReflectionObject;
+
 /**
  *
  */
@@ -71,12 +73,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 	protected bool $do_not_export = false;
 
 	/**
-	 *
-	 * @var mixed
-	 */
-	protected $default_value = null;
-
-	/**
 	 * @var array
 	 */
 	protected array $backend_options = [];
@@ -106,7 +102,7 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 	 */
 	public function __construct( string $data_model_class_name, string $name, ?array $definition_data = null )
 	{
-		$this->data_model_class_name = (string)$data_model_class_name;
+		$this->data_model_class_name = $data_model_class_name;
 		$this->name = $name;
 
 		if( $definition_data ) {
@@ -134,11 +130,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 
 				$this->{$key} = $val;
 			}
-
-			$this->is_id = (bool)$this->is_id;
-			$this->is_key = (bool)$this->is_key;
-			$this->is_unique = (bool)$this->is_unique;
-			$this->form_field_is_required = (bool)$this->form_field_is_required;
 
 			if( $this->is_id ) {
 				if( !isset( $definition_data['form_field_type'] ) ) {
@@ -172,9 +163,9 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 
 	/**
 	 *
-	 * @return DataModel_Definition_Model|DataModel_Definition_Model_Related
+	 * @return DataModel_Definition_Model_Main|DataModel_Definition_Model_Related
 	 */
-	public function getDataModelDefinition(): DataModel_Definition_Model|DataModel_Definition_Model_Related
+	public function getDataModelDefinition(): DataModel_Definition_Model_Main|DataModel_Definition_Model_Related
 	{
 		return DataModel_Definition::get( $this->data_model_class_name );
 	}
@@ -313,17 +304,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 		return null;
 	}
 
-	/**
-	 * @param mixed &$property
-	 */
-	public function initPropertyDefaultValue( mixed &$property ): void
-	{
-		if( $property === null ) {
-			$property = $this->getDefaultValue();
-
-			$this->checkValueType( $property );
-		}
-	}
 
 	/**
 	 *
@@ -331,7 +311,15 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 	 */
 	public function getDefaultValue(): mixed
 	{
-		return $this->default_value;
+		$class_name = $this->getDataModelClassName();
+
+		$i = new $class_name();
+
+		$r = new ReflectionObject( $i );
+		$p = $r->getProperty( $this->getName() );
+		$p->setAccessible(true);
+
+		return $p->getValue($i);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpIncludeInspection */
 /**
  *
  * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
@@ -27,7 +27,7 @@ class Autoloader_Cache_Backend_Files extends Cache_Files implements Autoloader_C
 	 */
 	public function isActive(): bool
 	{
-		return SysConf_Jet::isCacheAutoloaderEnabled();
+		return SysConf_Jet_Autoloader::getCacheEnabled();
 	}
 
 	/**

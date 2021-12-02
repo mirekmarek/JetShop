@@ -1,12 +1,15 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
+use Jet\Tr;
 use Jet\UI;
-use Jet\Mvc_View;
+use Jet\MVC_View;
+use Jet\UI_messages;
+use JetShop\Product;
 use JetShop\Shops;
 
 /**
- * @var Mvc_View $this
+ * @var MVC_View $this
  */
 $product = Controller_Main::getCurrentProduct();
 
@@ -18,8 +21,19 @@ $product = Controller_Main::getCurrentProduct();
 	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 		<?php foreach( Shops::getList() as $shop ): ?>
 			<div class="dropdown-item" style="padding-bottom: 10px;">
-				<a href="<?=$product->getURL($shop->getCode())?>" target="_blank"><?=$shop->getName()?></a>
+				<a href="<?=$product->getURL($shop)?>" target="_blank"><?=$shop->getShopName()?></a>
 			</div>
 		<?php endforeach; ?>
 	</div>
+</div>
+
+<div style="display: inline-block">
+<?php if($product->getType()==Product::PRODUCT_TYPE_VARIANT):
+	$variant_master = Product::get($product->getVariantMasterProductId());
+	?>
+	<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
+		'URL' => $variant_master->getEditURL(),
+		'NAME' => $variant_master->getAdminTitle()
+	]))->setCloseable(false)?>
+<?php endif; ?>
 </div>

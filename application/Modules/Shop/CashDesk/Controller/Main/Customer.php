@@ -102,9 +102,6 @@ trait Controller_Main_Customer {
 
 	public function customer_set_email_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -124,9 +121,6 @@ trait Controller_Main_Customer {
 
 	public function customer_back_to_set_email_Action() : void
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -141,9 +135,6 @@ trait Controller_Main_Customer {
 
 	public function customer_set_password_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -159,9 +150,6 @@ trait Controller_Main_Customer {
 
 	public function customer_registration_back_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -174,9 +162,6 @@ trait Controller_Main_Customer {
 
 	public function customer_registration_do_not_register_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -193,9 +178,6 @@ trait Controller_Main_Customer {
 
 	public function customer_set_is_person_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -207,9 +189,6 @@ trait Controller_Main_Customer {
 
 	public function customer_set_is_company_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -221,10 +200,6 @@ trait Controller_Main_Customer {
 
 	public function customer_billing_address_catch_field_Action()
 	{
-
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -260,9 +235,6 @@ trait Controller_Main_Customer {
 
 	public function customer_billing_address_send_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -303,9 +275,6 @@ trait Controller_Main_Customer {
 
 	public function customer_back_to_billing_address_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -323,9 +292,6 @@ trait Controller_Main_Customer {
 
 	public function customer_delivery_address_set_the_same_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -345,9 +311,6 @@ trait Controller_Main_Customer {
 
 	public function customer_delivery_address_set_different_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -363,9 +326,6 @@ trait Controller_Main_Customer {
 
 	public function customer_back_to_delivery_address_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -383,10 +343,6 @@ trait Controller_Main_Customer {
 
 	public function customer_delivery_address_catch_field_Action()
 	{
-
-		/**
-		 * @var Controller_Main $this
-		 */
 
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -422,9 +378,6 @@ trait Controller_Main_Customer {
 
 	public function customer_delivery_address_send_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -450,9 +403,6 @@ trait Controller_Main_Customer {
 
 	public function customer_login_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 
@@ -469,7 +419,7 @@ trait Controller_Main_Customer {
 			if(!Auth::login( $cash_desk->getEmailAddress(), $password )) {
 				$form->setCommonMessage( UI_messages::createDanger(Tr::_('Incorrect password')) );
 				$response->error();
-			} else {
+			} /** @noinspection PhpStatementHasEmptyBodyInspection */ else {
 				//TODO:
 			}
 		}
@@ -482,9 +432,6 @@ trait Controller_Main_Customer {
 
 	public function customer_billing_address_select_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 		$GET = Http_Request::GET();
@@ -506,9 +453,6 @@ trait Controller_Main_Customer {
 
 	public function customer_delivery_address_select_Action()
 	{
-		/**
-		 * @var Controller_Main $this
-		 */
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
 		$GET = Http_Request::GET();

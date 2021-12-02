@@ -2,8 +2,6 @@
 namespace JetShop;
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
-use Jet\Mvc;
-use Jet\Mvc_View;
 use Jet\Tr;
 
 /**
@@ -23,14 +21,13 @@ abstract class Core_ProductListing_Filter_Properties_Property_Options extends Pr
 	{
 		parent::__construct( $listing, $property );
 
-		$shop_code = $listing->getShopCode();
+		$shop = $listing->getShop();
 
 		foreach( $property->getOptions() as $option ) {
-			if(!$option->getShopData($shop_code)->isActive()) {
+			if(!$option->getShopData($shop)->isActive()) {
 				continue;
 			}
 
-			/** @noinspection PhpParamsInspection */
 			$f_o = new ProductListing_Filter_Properties_Property_Option( $this, $option );
 			$this->filter_options[ $option->getId() ] = $f_o;
 		}
@@ -178,7 +175,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Options extends Pr
 				$filter->setIsActive( in_array($id, $options) );
 			}
 		} else {
-			foreach( $this->filter_options as $id=>$filter ) {
+			foreach( $this->filter_options as $filter ) {
 				$filter->setIsActive( false );
 			}
 
@@ -187,42 +184,42 @@ abstract class Core_ProductListing_Filter_Properties_Property_Options extends Pr
 
 	public function generateCategoryTargetUrlPart() : string
 	{
-		$shop_code = $this->listing->getShopCode();
+		$shop = $this->listing->getShop();
 
 		$options = [];
 		foreach($this->filter_options as $o) {
 			if($o->isForced()) {
-				$options[] = $o->getOption()->getShopData($shop_code)->getUrlParam();
+				$options[] = $o->getOption()->getShopData($shop)->getUrlParam();
 			}
 		}
 		if(!$options) {
 			return '';
 		}
 
-		return $this->property->getShopData($shop_code)->getUrlParam().'_'.implode('+', $options);
+		return $this->property->getShopData($shop)->getUrlParam().'_'.implode('+', $options);
 	}
 
 	public function generateUrlPart() : string
 	{
-		$shop_code = $this->listing->getShopCode();
+		$shop = $this->listing->getShop();
 
 		$options = [];
 		foreach($this->filter_options as $o) {
 			if($o->isActive()) {
-				$options[] = $o->getOption()->getShopData($shop_code)->getUrlParam();
+				$options[] = $o->getOption()->getShopData($shop)->getUrlParam();
 			}
 		}
 		if(!$options) {
 			return '';
 		}
 
-		return $this->property->getShopData($shop_code)->getUrlParam().'_'.implode('+', $options);
+		return $this->property->getShopData($shop)->getUrlParam().'_'.implode('+', $options);
 	}
 
 	public function parseFilterUrl( array &$parts ) : void
 	{
-		$shop_code = $this->listing->getShopCode();
-		$prefix = $this->property->getShopData($shop_code)->getUrlParam().'_';
+		$shop = $this->listing->getShop();
+		$prefix = $this->property->getShopData($shop)->getUrlParam().'_';
 
 		foreach($parts as $i=>$part) {
 			if(stripos($part, $prefix)===0) {
@@ -233,7 +230,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Options extends Pr
 
 				foreach( $this->filter_options as $filter_option ) {
 
-					$url_param = $filter_option->getOption()->getShopData($shop_code)->getUrlParam();
+					$url_param = $filter_option->getOption()->getShopData($shop)->getUrlParam();
 
 					if(in_array($url_param, $options)) {
 						if(!$filter_option->isForced()) {
@@ -275,19 +272,19 @@ abstract class Core_ProductListing_Filter_Properties_Property_Options extends Pr
 
 	public function generateFilterUrlPart() : string
 	{
-		$shop_code = $this->listing->getShopCode();
+		$shop = $this->listing->getShop();
 
 		$options = [];
 		foreach($this->filter_options as $o) {
 			if($o->isActive()) {
-				$options[] = $o->getOption()->getShopData($shop_code)->getUrlParam();
+				$options[] = $o->getOption()->getShopData($shop)->getUrlParam();
 			}
 		}
 		if(!$options) {
 			return '';
 		}
 
-		return $this->property->getShopData($shop_code)->getUrlParam().'_'.implode('+', $options);
+		return $this->property->getShopData($shop)->getUrlParam().'_'.implode('+', $options);
 	}
 
 	public function isForced() : bool

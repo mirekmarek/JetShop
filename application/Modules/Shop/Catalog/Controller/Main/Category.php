@@ -9,7 +9,7 @@ namespace JetShopModule\Shop\Catalog;
 
 use Jet\ErrorPages;
 use Jet\Http_Headers;
-use Jet\Mvc;
+use Jet\MVC;
 use Jet\Tr;
 use Jet\Http_Request;
 use Jet\AJAX;
@@ -29,7 +29,7 @@ trait Controller_Main_Category
 
 		$category_URL_path = array_shift( $path );
 
-		Mvc::getRouter()->setUsedUrlPath($category_URL_path);
+		MVC::getRouter()->setUsedUrlPath($category_URL_path);
 
 		static::$category = Category::get($object_id);
 
@@ -37,7 +37,7 @@ trait Controller_Main_Category
 		if(static::$category) {
 
 			if(static::$category->getURLPathPart()!=$category_URL_path ) {
-				Mvc::getRouter()->setIsRedirect( static::$category->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
+				MVC::getRouter()->setIsRedirect( static::$category->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
 				return;
 			}
 
@@ -62,11 +62,11 @@ trait Controller_Main_Category
 								$valid_url = $listing->generateUrl(true).$qs;
 
 								if($valid_url!=Http_Request::currentURL()) {
-									Mvc::getRouter()->setIsRedirect( $valid_url, Http_Headers::CODE_301_MOVED_PERMANENTLY );
+									MVC::getRouter()->setIsRedirect( $valid_url, Http_Headers::CODE_301_MOVED_PERMANENTLY );
 									return;
 								}
 
-								Mvc::getRouter()->setUsedUrlPath($category_URL_path.'/'.implode('/', $path));
+								MVC::getRouter()->setUsedUrlPath($category_URL_path.'/'.implode('/', $path));
 							}
 
 
@@ -86,7 +86,7 @@ trait Controller_Main_Category
 						$this->router->setDefaultAction('category_top');
 						break;
 					case Category::CATEGORY_TYPE_LINK:
-						Mvc::getRouter()->setIsRedirect( static::$category->getTargetCategory()->getURL(), Http_Headers::CODE_302_MOVED_TEMPORARY );
+						MVC::getRouter()->setIsRedirect( static::$category->getTargetCategory()->getURL(), Http_Headers::CODE_302_MOVED_TEMPORARY );
 						break;
 
 				}
@@ -111,14 +111,14 @@ trait Controller_Main_Category
 
 	public function category_not_active_Action() : void
 	{
-		Tr::setCurrentNamespace('category/not_active');
+		Tr::setCurrentDictionary('category.not_active');
 		$this->view->setVar('category', static::$category);
 		$this->output('category/not_active');
 	}
 
 	public function category_listing_Action() : void
 	{
-		Tr::setCurrentNamespace('category/listing');
+		Tr::setCurrentDictionary('category.listing');
 
 		Navigation_Breadcrumb::setByCategory( static::$category );
 
@@ -162,7 +162,7 @@ trait Controller_Main_Category
 	{
 		Navigation_Breadcrumb::setByCategory( static::$category );
 
-		Tr::setCurrentNamespace('category/signpost');
+		Tr::setCurrentDictionary('category/signpost');
 
 		$this->view->setVar('category', static::$category);
 
@@ -174,7 +174,7 @@ trait Controller_Main_Category
 	{
 		Navigation_Breadcrumb::setByCategory( static::$category );
 
-		Tr::setCurrentNamespace('category/top');
+		Tr::setCurrentDictionary('category.top');
 
 		$this->view->setVar('category', static::$category);
 

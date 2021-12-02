@@ -2,11 +2,12 @@
 namespace JetShopModule\Admin\Catalog\Suppliers;
 
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\Logger;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
 
 
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -21,17 +22,17 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	protected ?Supplier $supplier = null;
 
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->supplier = Supplier::get((int)$id));
@@ -82,7 +83,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $supplier->catchAddForm() ) {
 			$supplier->save();
 
-			$this->logAllowedAction( 'Supplier created', $supplier->getId(), $supplier->getName(), $supplier );
+			Logger::success(
+				'supplier_created',
+				'Supplier '.$supplier->getName().' ('.$supplier->getId().') created',
+				$supplier->getId(),
+				$supplier->getName(),
+				$supplier
+			);
 
 			UI_messages::success(
 				Tr::_( 'Supplier <b>%NAME%</b> has been created', [ 'NAME' => $supplier->getName() ] )
@@ -114,7 +121,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $supplier->catchEditForm() ) {
 
 			$supplier->save();
-			$this->logAllowedAction( 'Supplier updated', $supplier->getId(), $supplier->getName(), $supplier );
+			Logger::success(
+				'supplier_updated',
+				'Supplier '.$supplier->getName().' ('.$supplier->getId().') updated',
+				$supplier->getId(),
+				$supplier->getName(),
+				$supplier
+			);
 
 			UI_messages::success(
 				Tr::_( 'Supplier <b>%NAME%</b> has been updated', [ 'NAME' => $supplier->getName() ] )
@@ -159,7 +172,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$supplier->delete();
-			$this->logAllowedAction( 'Supplier deleted', $supplier->getId(), $supplier->getName(), $supplier );
+			Logger::success(
+				'supplier_deleted',
+				'Supplier '.$supplier->getName().' ('.$supplier->getId().') deleted',
+				$supplier->getId(),
+				$supplier->getName(),
+				$supplier
+			);
 
 			UI_messages::info(
 				Tr::_( 'Supplier <b>%NAME%</b> has been deleted', [ 'NAME' => $supplier->getName() ] )

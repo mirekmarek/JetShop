@@ -6,9 +6,9 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
-use JetShop\Auth_Administrator_User;
+use JetApplication\Auth_Administrator_User;
 
 /**
  *

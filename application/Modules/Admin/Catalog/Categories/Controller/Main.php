@@ -3,14 +3,15 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 
 use Jet\AJAX;
-use Jet\Mvc_Controller_Router;
+use Jet\Logger;
+use Jet\MVC_Controller_Router;
 use JetShop\Category;
 use JetShop\Parametrization_Group;
 use JetShop\Parametrization_Property;
 use JetShop\Parametrization_Property_Option;
 use JetShop\Fulltext_Index_Internal_Category;
 
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 
 use Jet\UI;
 use Jet\UI_messages;
@@ -31,14 +32,14 @@ use JetShop\Stencil_Option;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 	use Controller_Main_Category;
 	use Controller_Main_ParamGroup;
 	use Controller_Main_ParamProperty;
 	use Controller_Main_ParamOption;
 	
-	protected ?Mvc_Controller_Router $router = null;
+	protected ?MVC_Controller_Router $router = null;
 
 	protected static ?Category $current_category = null;
 
@@ -51,14 +52,13 @@ class Controller_Main extends Mvc_Controller_Default
 	protected static string $current_action = '';
 
 
-	public function getControllerRouter() : Mvc_Controller_Router
+	public function getControllerRouter() : MVC_Controller_Router
 	{
 
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router( $this );
+			$this->router = new MVC_Controller_Router( $this );
 
 			$GET = Http_Request::GET();
-			$category = null;
 
 			$category_id = $GET->getInt('id');
 			if($category_id) {
@@ -264,8 +264,6 @@ class Controller_Main extends Mvc_Controller_Default
 			return null;
 		}
 
-		$tabs = [];
-
 		if(static::$current_param_property_option) {
 			$tabs = [
 				'main'   => Tr::_( 'Main data' ),
@@ -330,7 +328,13 @@ class Controller_Main extends Mvc_Controller_Default
 	{
 		$category = static::getCurrentCategory();
 		$category->save();
-		$this->logAllowedAction( 'Category updated', $category->getId(), $category->_getPathName(), $category );
+		Logger::success(
+			event: 'category_updated',
+			event_message:  'Category '.$category->_getPathName().' ('.$category->getId().') updated',
+			context_object_id: $category->getId(),
+			context_object_name: $category->_getPathName(),
+			context_object_data: $category
+		);
 
 		UI_messages::success(
 			Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->_getPathName() ] )
@@ -392,7 +396,7 @@ class Controller_Main extends Mvc_Controller_Default
 		$GET = Http_Request::GET();
 
 		AJAX::response([
-			'url_path_part' => Shops::generateURLPathPart( $GET->getString('generate_url_path_part'), '', 0, $GET->getString('shop_code') )
+			'url_path_part' => Shops::generateURLPathPart( $GET->getString('generate_url_path_part'), '', 0, Shops::get( $GET->getString('shop_key') ) )
 		]);
 
 		Application::end();

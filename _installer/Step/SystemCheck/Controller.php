@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop\Installer;
+namespace JetApplication\Installer;
 
 require 'CompatibilityTester.php';
 
@@ -26,7 +26,7 @@ class Installer_Step_SystemCheck_Controller extends Installer_Step_Controller
 	 */
 	public function getIsAvailable(): bool
 	{
-		return !Installer_Step_CreateSite_Controller::sitesCreated();
+		return !Installer_Step_CreateBases_Controller::basesCreated();
 	}
 
 	/**

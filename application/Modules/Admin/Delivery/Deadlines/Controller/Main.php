@@ -2,11 +2,12 @@
 namespace JetShopModule\Admin\Delivery\Deadlines;
 
 
-use Jet\Mvc_Controller_Router_AddEditDelete;
+use Jet\Logger;
+use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI;
 use Jet\UI_messages;
 
-use Jet\Mvc_Controller_Default;
+use Jet\MVC_Controller_Default;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -14,7 +15,7 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
 use Jet\UI_tabs;
-use JetShop\Delivery_Deadline_ShopData;
+
 use JetShop\Shops;
 use JetShop\Application_Admin;
 use JetShop\Delivery_Deadline;
@@ -24,17 +25,17 @@ use JetShopModule\Admin\UI\Main as UI_module;
 /**
  *
  */
-class Controller_Main extends Mvc_Controller_Default
+class Controller_Main extends MVC_Controller_Default
 {
 
-	protected ?Mvc_Controller_Router_AddEditDelete $router = null;
+	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	protected ?Delivery_Deadline $delivery_deadline = null;
 
-	public function getControllerRouter() : Mvc_Controller_Router_AddEditDelete
+	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
-			$this->router = new Mvc_Controller_Router_AddEditDelete(
+			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
 					return (bool)($this->delivery_deadline = Delivery_Deadline::get((int)$id));
@@ -167,7 +168,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $delivery_deadline->catchAddForm() ) {
 			$delivery_deadline->save();
 
-			$this->logAllowedAction( 'Delivery deadline created', $delivery_deadline->getCode(), $delivery_deadline->getInternalName(), $delivery_deadline );
+			Logger::success(
+				'delivery_deadline_created',
+				'Delivery deadline '.$delivery_deadline->getInternalName().' ('.$delivery_deadline->getCode().') created',
+				$delivery_deadline->getCode(),
+				$delivery_deadline->getInternalName(),
+				$delivery_deadline
+			);
 
 			UI_messages::success(
 				Tr::_( 'Delivery deadline <b>%NAME%</b> has been created', [ 'NAME' => $delivery_deadline->getInternalName() ] )
@@ -196,7 +203,13 @@ class Controller_Main extends Mvc_Controller_Default
 		if( $delivery_deadline->catchEditForm() ) {
 
 			$delivery_deadline->save();
-			$this->logAllowedAction( 'Delivery deadline updated', $delivery_deadline->getCode(), $delivery_deadline->getInternalName(), $delivery_deadline );
+			Logger::success(
+				'delivery_deadline_updated',
+				'Delivery deadline '.$delivery_deadline->getInternalName().' ('.$delivery_deadline->getCode().') updated',
+				$delivery_deadline->getCode(),
+				$delivery_deadline->getInternalName(),
+				$delivery_deadline
+			);
 
 			UI_messages::success(
 				Tr::_( 'Delivery deadline <b>%NAME%</b> has been updated', [ 'NAME' => $delivery_deadline->getInternalName() ] )
@@ -223,27 +236,14 @@ class Controller_Main extends Mvc_Controller_Default
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit delivery deadline <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $delivery_deadline->getInternalName() ] ) );
 
 		foreach(Shops::getList() as $shop) {
-			$shop_code = $shop->getCode();
-			$shop_name = $shop->getName();
-			$shop_data = $delivery_deadline->getShopData( $shop_code );
-
-			foreach( Delivery_Deadline_ShopData::getImageClasses() as $image_class=> $image_class_name ) {
-				$shop_data->catchImageWidget(
-					$image_class,
-					function() use ($image_class, $delivery_deadline, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'delivery deadline image '.$image_class.' uploaded', $delivery_deadline->getCode().':'.$shop_code, $delivery_deadline->getCode().' - '.$shop_name );
-
-					},
-					function() use ($image_class, $delivery_deadline, $shop_code, $shop_name, $shop_data) {
-						$shop_data->save();
-
-						$this->logAllowedAction( 'delivery deadline image '.$image_class.' deleted', $delivery_deadline->getCode().':'.$shop_code, $delivery_deadline->getCode().' - '.$shop_name );
-					}
-				);
-
-			}
+			$delivery_deadline->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'Deadline',
+				object_id: $delivery_deadline->getCode(),
+				object_name: $delivery_deadline->getInternalName(),
+				upload_event: 'deadline_image_uploaded',
+				delete_event: 'deadline_image_deleted'
+			);
 		}
 
 		$this->view->setVar( 'delivery_deadline', $delivery_deadline );
@@ -284,7 +284,13 @@ class Controller_Main extends Mvc_Controller_Default
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$delivery_deadline->delete();
-			$this->logAllowedAction( 'Delivery deadline deleted', $delivery_deadline->getCode(), $delivery_deadline->getInternalName(), $delivery_deadline );
+			Logger::success(
+				'delivery_deadline_deleted',
+				'Delivery deadline '.$delivery_deadline->getInternalName().' ('.$delivery_deadline->getCode().') deleted',
+				$delivery_deadline->getCode(),
+				$delivery_deadline->getInternalName(),
+				$delivery_deadline
+			);
 
 			UI_messages::info(
 				Tr::_( 'Delivery deadline <b>%NAME%</b> has been deleted', [ 'NAME' => $delivery_deadline->getInternalName() ] )

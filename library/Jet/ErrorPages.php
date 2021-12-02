@@ -13,10 +13,6 @@ namespace Jet;
  */
 class ErrorPages extends BaseObject
 {
-	/**
-	 * @var string
-	 */
-	protected static string $error_pages_dir = '';
 
 	/**
 	 * @var callable[]
@@ -27,40 +23,6 @@ class ErrorPages extends BaseObject
 	 * @var callable[]
 	 */
 	protected static array $displayers = [];
-
-	/**
-	 *
-	 *
-	 * @param string $error_pages_dir
-	 * @param bool $check_path (optional, default: true)
-	 *
-	 * @throws ErrorPages_Exception
-	 */
-	public static function setErrorPagesDir( string $error_pages_dir, bool $check_path = true ): void
-	{
-		$error_pages_dir = rtrim( $error_pages_dir, '/\\' . DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
-
-		if(
-			$check_path &&
-			!is_dir( $error_pages_dir )
-		) {
-			throw new ErrorPages_Exception(
-				'Error pages directory \'' . $error_pages_dir . '\' does not exist',
-				ErrorPages_Exception::CODE_INVALID_ERROR_PAGES_DIR_PATH
-			);
-		}
-
-		static::$error_pages_dir = $error_pages_dir;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public static function getErrorPagesDir(): string
-	{
-		return static::$error_pages_dir;
-	}
 
 	/**
 	 * @param int $code
@@ -184,7 +146,6 @@ class ErrorPages extends BaseObject
 			ob_implicit_flush();
 		}
 
-		/** @noinspection PhpIncludeInspection */
 		require $path;
 
 		return true;
@@ -198,12 +159,11 @@ class ErrorPages extends BaseObject
 	 */
 	public static function getErrorPageFilePath( int $code ): bool|string
 	{
-		if( !static::$error_pages_dir ) {
+		if( !SysConf_Jet_ErrorPages::getErrorPagesDir() ) {
 			return false;
 		}
 
-		$code = (int)$code;
-		$path = static::$error_pages_dir . $code . '.phtml';
+		$path = SysConf_Jet_ErrorPages::getErrorPagesDir() . $code . '.'.SysConf_Jet_MVC_View::getScriptFileSuffix();
 
 		if(
 			is_file( $path ) &&

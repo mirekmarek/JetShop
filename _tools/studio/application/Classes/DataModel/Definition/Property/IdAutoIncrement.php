@@ -35,6 +35,15 @@ class DataModel_Definition_Property_IdAutoIncrement extends Jet_DataModel_Defini
 
 
 	/**
+	 * @return int
+	 */
+	public function getDefaultValue() : int
+	{
+		return 0;
+	}
+
+
+	/**
 	 *
 	 * @param ClassCreator_Class $class
 	 *
@@ -42,10 +51,7 @@ class DataModel_Definition_Property_IdAutoIncrement extends Jet_DataModel_Defini
 	 */
 	public function createClassProperty( ClassCreator_Class $class ): ClassCreator_Class_Property
 	{
-
-		$property = $this->createClassProperty_main( $class, 'int', 'DataModel::TYPE_ID_AUTOINCREMENT' );
-
-		return $property;
+		return $this->createClassProperty_main( $class, 'int', 'DataModel::TYPE_ID_AUTOINCREMENT' );
 	}
 
 	/**

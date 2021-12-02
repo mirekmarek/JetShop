@@ -8,11 +8,11 @@ use Jet\UI_dataGrid;
 use Jet\UI_button;
 
 use Jet\Tr;
-use Jet\Mvc_View;
+use Jet\MVC_View;
 use Jet\Form;
 
 /**
- * @var Mvc_View     $this
+ * @var MVC_View     $this
  * @var UI_dataGrid  $grid
  * @var Form         $filter_form
  */
@@ -24,12 +24,12 @@ $router = $this->getController()->getControllerRouter();
 $c_edit = $grid->getColumn( '_edit_' );
 $c_edit->setRenderer(
 	function( %<DATA_MODEL_CLASS_ALIAS>% $item ) use ( $router ) {
+		if( ( $delete_uri = $router->action('delete')->URI( $item->%<ITEM_ID_GETTER>%() ) ) ):
+			echo UI::button_delete(' ')->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
+			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		endif;
 		if( ( $edit_uri = $router->action('edit')->URI( $item->%<ITEM_ID_GETTER>%() ) ) ):
 			echo UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
-		endif;
-		echo '&nbsp;';
-		if( ( $delete_uri = $router->action('delete')->URI( $item->%<ITEM_ID_GETTER>%() ) ) ):
-			echo UI::button_delete()->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
 		endif;
 
 	}
@@ -38,20 +38,21 @@ $c_edit->setCssStyle( 'width:200px;' );
 
 $grid->getColumn( '%<ID_PROPERTY>%' )->setCssStyle( 'width:120px;' );
 
-$grid->getColumn( '%<NAME_PROPERTY>%' )->setRenderer(
-	function( %<DATA_MODEL_CLASS_ALIAS>% $item ) use ( $router ) {
-		$edit_uri = $router->action('edit')->URI( $item->%<ITEM_ID_GETTER>%() );
-		?>
-		<a href="<?=$edit_uri;?>"><?=$item->%<ITEM_NAME_GETTER>%();?></a>
-		<?php
-	}
-);
-
 $grid->getColumn( '%<ID_PROPERTY>%' )->setRenderer(
 	function( %<DATA_MODEL_CLASS_ALIAS>% $item ) use ( $router ) {
 		$edit_uri = $router->action('edit')->URI( $item->%<ITEM_ID_GETTER>%() );
 		?>
 		<a href="<?=$edit_uri;?>"><?=$item->%<ITEM_ID_GETTER>%();?></a>
+		<?php
+	}
+);
+
+
+$grid->getColumn( '%<NAME_PROPERTY>%' )->setRenderer(
+	function( %<DATA_MODEL_CLASS_ALIAS>% $item ) use ( $router ) {
+		$edit_uri = $router->action('edit')->URI( $item->%<ITEM_ID_GETTER>%() );
+		?>
+		<a href="<?=$edit_uri;?>"><?=$item->%<ITEM_NAME_GETTER>%();?></a>
 		<?php
 	}
 );

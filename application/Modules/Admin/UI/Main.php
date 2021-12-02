@@ -9,8 +9,7 @@ namespace JetShopModule\Admin\UI;
 
 use Jet\Application_Module;
 use Jet\Navigation_Breadcrumb;
-use Jet\Mvc;
-use Jet\Mvc_Page;
+use Jet\MVC;
 use Jet\UI;
 
 
@@ -25,10 +24,7 @@ class Main extends Application_Module
 	 */
 	public static function initBreadcrumb()
 	{
-		/**
-		 * @var Mvc_Page $page
-		 */
-		$page = Mvc::getCurrentPage();
+		$page = MVC::getPage();
 
 		Navigation_Breadcrumb::reset();
 

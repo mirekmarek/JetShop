@@ -7,4 +7,6 @@ return [
 	'Koupit' => '',
 	'Máte vybráno:' => '',
 	'Zrušit filtr' => '',
+	'More info' => '',
+	'Add to cart' => '',
 ];

@@ -19,9 +19,6 @@ trait DataModel_Trait_Delete
 	 */
 	public function delete(): void
 	{
-		/**
-		 * @var DataModel $this
-		 */
 		if( $this->getLoadFilter() ) {
 			throw new DataModel_Exception(
 				'Nothing to delete... Object is not completely loaded. (Class: \'' . get_class(
@@ -54,18 +51,25 @@ trait DataModel_Trait_Delete
 
 			foreach( $definition->getProperties() as $property_name => $property_definition ) {
 
+
 				$prop = $this->{$property_name};
+
 				if(
-					($prop instanceof DataModel_Related_Interface) ||
-					($prop instanceof DataModel_Related_Iterator_Interface)
+					is_object($prop) &&
+					$prop instanceof DataModel_Related
 				) {
 					$prop->delete();
 				}
+
+				if(is_array($prop)) {
+					foreach($prop as $v) {
+						if( $v instanceof DataModel_Related ) {
+							$v->delete();
+						}
+					}
+				}
 			}
 
-			/**
-			 * @var DataModel_IDController $id_controller
-			 */
 			$id_controller = $this->getIDController();
 
 			$backend->delete( $id_controller->getQuery() );

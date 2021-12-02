@@ -11,9 +11,9 @@ use Jet\Application_Module;
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
 
-use Jet\Mvc;
-use Jet\Mvc_Factory;
-use Jet\Mvc_Page_Interface;
+use Jet\Factory_MVC;
+use Jet\MVC;
+use Jet\MVC_Page_Interface;
 
 use Jet\Application_Modules;
 
@@ -144,7 +144,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	public function handleLogin() : void
 	{
 
-		$page = Mvc::getCurrentPage();
+		$page = MVC::getPage();
 
 
 		$action = 'login';
@@ -164,7 +164,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		$module = Application_Modules::moduleInstance( static::getLoginModuleName() );
 
 		$page_content = [];
-		$page_content_item = Mvc_Factory::getPageContentInstance();
+		$page_content_item = Factory_MVC::getPageContentInstance();
 
 		$page_content_item->setModuleName( $module->getModuleManifest()->getName() );
 		$page_content_item->setControllerAction( $action );
@@ -183,6 +183,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	public function logout() : void
 	{
 		$user = $this->getCurrentUser();
+		/** @noinspection PhpStatementHasEmptyBodyInspection */
 		if( $user ) {
 			/*
 			Logger::info(
@@ -247,7 +248,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	 *
 	 * @return bool
 	 */
-	public function getCurrentUserHasPrivilege( string $privilege, mixed $value ) : bool
+	public function getCurrentUserHasPrivilege( string $privilege, mixed $value=null ): bool
 	{
 		$current_user = $this->getCurrentUser();
 
@@ -275,11 +276,11 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 
 
 	/**
-	 * @param Mvc_Page_Interface $page
+	 * @param MVC_Page_Interface $page
 	 *
 	 * @return bool
 	 */
-	public function checkPageAccess( Mvc_Page_Interface $page ) : bool
+	public function checkPageAccess( MVC_Page_Interface $page ) : bool
 	{
 		return true;
 	}

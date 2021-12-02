@@ -1,35 +1,50 @@
 <?php
 namespace JetShop;
 
+use Jet\Application_Module;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_IDController_Passive;
 use Jet\Form;
-use Jet\DataModel_IDController_AutoIncrement;
 use Jet\DataModel_Fetch_Instances;
+use Jet\Form_Field_Input;
+use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'stickers',
 	database_table_name: 'stickers',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: ['id_property_name'=>'id']
+	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_Sticker extends DataModel {
 	protected static string $manage_module_name = 'Admin.Catalog.Stickers';
 
+	/**
+	 * @var string
+	 */
 	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
+		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: false
+		form_field_type: 'Input',
+		form_field_is_required: true,
+		form_field_label: 'Code:',
+		form_field_error_messages: [
+			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+		]
 	)]
-	protected int $id = 0;
+	protected string $code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		form_field_label: 'Name:'
+		max_len: 255,
+		form_field_type: 'Input',
+		form_field_is_required: true,
+		form_field_label: 'Internal name:',
+		form_field_error_messages: [
+			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter internal name'
+		]
 	)]
-	protected string $name = '';
+	protected string $internal_name = '';
 
 	/**
 	 * @var Sticker_ShopData[]
@@ -38,7 +53,7 @@ abstract class Core_Sticker extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Sticker_ShopData::class
 	)]
-	protected $shop_data;
+	protected array $shop_data = [];
 
 	/**
 	 * @var Sticker[]
@@ -61,7 +76,6 @@ abstract class Core_Sticker extends DataModel {
 
 	public static function getManageModule() : Sticker_ManageModuleInterface|Application_Module
 	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Application_Modules::moduleInstance( self::getManageModuleName() );
 	}
 
@@ -74,31 +88,18 @@ abstract class Core_Sticker extends DataModel {
 
 	public function afterLoad() : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_code = $shop->getCode();
-
-			if(!isset($this->shop_data[$shop_code])) {
-
-				$sh = new Sticker_ShopData();
-				$sh->setShopCode($shop_code);
-
-				$this->shop_data[$shop_code] = $sh;
-			}
-
-			/** @noinspection PhpParamsInspection */
-			$this->shop_data[$shop_code]->setParents( $this );
-		}
+		Sticker_ShopData::checkShopData( $this, $this->shop_data );
 	}
 
-	public static function get( int $id ) : Sticker|null
+	public static function get( string $code ) : Sticker|null
 	{
-		if(isset(static::$loaded_items[$id])) {
-			return static::$loaded_items[$id];
+		if(isset( static::$loaded_items[$code])) {
+			return static::$loaded_items[$code];
 		}
 
-		static::$loaded_items[$id] = Sticker::load( $id );
+		static::$loaded_items[$code] = Sticker::load( $code );
 
-		return static::$loaded_items[$id];
+		return static::$loaded_items[$code];
 	}
 
 	/**
@@ -121,8 +122,8 @@ abstract class Core_Sticker extends DataModel {
 					/**
 					 * @var Sticker $sticker
 					 */
-					static::$_all[$sticker->getId()] = $sticker;
-					static::$loaded_items[$sticker->getId()] = $sticker;
+					static::$_all[$sticker->getCode()] = $sticker;
+					static::$loaded_items[$sticker->getCode()] = $sticker;
 				}
 
 				Cache::save('stickers', static::$_all);
@@ -152,50 +153,49 @@ abstract class Core_Sticker extends DataModel {
 			$search = '%'.$search.'%';
 
 			$where[] = [
-				'name *' => $search
+				'code *' => $search,
+				'OR',
+				'internal_name *' => $search
 			];
 		}
 
 
 		$list = static::fetchInstances( $where );
 
-		$list->getQuery()->setOrderBy( 'name' );
+		$list->getQuery()->setOrderBy( 'internal_name' );
 
 		return $list;
 	}
 
-	public function getId() : int
+	public function getCode() : string
 	{
-		return $this->id;
+		return $this->code;
 	}
 
-	public function setId( int $id ) : void
+	public function setCode( string $code ) : void
 	{
-		$this->id = $id;
+		$this->code = $code;
 	}
 
-	public function getName() : string
+	public function getInternalName() : string
 	{
-		return $this->name;
+		return $this->internal_name;
 	}
 
-	public function setName( string $name ) : void
+	public function setInternalName( string $internal_name ) : void
 	{
-		$this->name = $name;
+		$this->internal_name = $internal_name;
 	}
 
-	public function getShopData( string|null $shop_code=null ) : Sticker_ShopData|null
+	public function getShopData( ?Shops_Shop $shop=null ) : Sticker_ShopData
 	{
-		if(!$shop_code) {
-			$shop_code = Shops::getCurrentCode();
-		}
-
-		return $this->shop_data[$shop_code];
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
+
 
 	public function getEditURL() : string
 	{
-		return Sticker::getStickerEditURL( $this->id );
+		return Sticker::getStickerEditURL( $this->code );
 	}
 
 	public static function getStickerEditURL( int $id ) : string
@@ -213,6 +213,29 @@ abstract class Core_Sticker extends DataModel {
 		if(!$this->_add_form) {
 			$this->_add_form = $this->getCommonForm('add_form');
 			$this->_add_form->setCustomTranslatorNamespace( Sticker::getManageModuleName() );
+
+			$code = $this->_add_form->getField('code');
+
+			$code->setValidator(function( Form_Field_Input $field ) {
+				$value = $field->getValue();
+				if(!$value) {
+					$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
+					return false;
+				}
+
+				$exists = Sticker::get($value);
+
+				if($exists) {
+					$field->setCustomError(
+						Tr::_('Sticker with the same name already exists')
+					);
+
+					return false;
+				}
+
+				return true;
+			});
+
 		}
 
 		return $this->_add_form;
@@ -238,6 +261,7 @@ abstract class Core_Sticker extends DataModel {
 		if(!$this->_edit_form) {
 			$this->_edit_form = $this->getCommonForm('edit_form');
 			$this->_edit_form->setCustomTranslatorNamespace( Sticker::getManageModuleName() );
+			$this->_edit_form->getField('code')->setIsReadonly(true);
 		}
 
 		return $this->_edit_form;
@@ -274,7 +298,7 @@ abstract class Core_Sticker extends DataModel {
 
 	public function actualizeReferences() : void
 	{
-		$products = Product_Sticker::fetchData(['product_id'], [ 'sticker_id'=>$this->id ], '', 'fetchCol');
+		$products = Product_Sticker::fetchData(['product_id'], [ 'sticker_code'=>$this->code ], '', 'fetchCol');
 
 		if($products) {
 			$categories = Product_Category::fetchData(['category_id'], ['product_id'=>$products], '', 'fetchCol' );

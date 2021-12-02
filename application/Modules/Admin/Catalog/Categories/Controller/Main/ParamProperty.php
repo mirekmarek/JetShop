@@ -3,6 +3,7 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\Logger;
 use Jet\Tr;
 use JetShop\Application_Admin;
 use JetShop\Parametrization_Property;
@@ -103,32 +104,19 @@ trait Controller_Main_ParamProperty
 
 
 		if(!$group->isInherited()) {
-
 			foreach(Shops::getList() as $shop) {
-				$shop_code = $shop->getCode();
-				$shop_name = $shop->getName();
-				$shop_data = $property->getShopData( $shop_code );
-
-				foreach( Parametrization_Property_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
-					$shop_data->catchImageWidget(
-						$image_class,
-						function() use ($image_class, $property, $shop_code, $shop_name, $shop_data) {
-							$shop_data->save();
-
-							$this->logAllowedAction( 'prop.property image '.$image_class.' uploaded', $property->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
-
-						},
-						function() use ($image_class, $property, $shop_code, $shop_name, $shop_data) {
-							$shop_data->save();
-
-							$this->logAllowedAction( 'prop.property image '.$image_class.' deleted', $property->getId().':'.$shop_code, $shop_data->getLabel().' - '.$shop_name );
-						}
-					);
-				}
+				$property->getShopData( $shop )->catchImageWidget(
+					shop: $shop,
+					entity_name: 'Param.property image',
+					object_id: $property->getId(),
+					object_name: $property->getLabel(),
+					upload_event: 'param.property_image_uploaded',
+					delete_event: 'param.property_image_deleted'
+				);
 			}
 		} else {
 			foreach(Shops::getList() as $shop) {
-				$shop_data = $property->getShopData( $shop->getCode() );
+				$shop_data = $property->getShopData( $shop );
 
 				foreach( Parametrization_Property_ShopData::getImageClasses() as $image_class=>$image_class_name ) {
 					$shop_data->getImageUploadForm( $image_class )->setIsReadonly();
@@ -202,7 +190,14 @@ trait Controller_Main_ParamProperty
 
 				$property->setPriority( $priority );
 				$property->save();
-				$this->logAllowedAction( 'prop.property priority updated', $group->getId(), $group->getShopData()->getLabel(), $priority );
+
+				Logger::success(
+					'param.property_priority_updated',
+					'Param. property '.$group->getShopData()->getLabel().' ('.$group->getId().') priority updated',
+					$group->getId(),
+					$group->getShopData()->getLabel(),
+					$priority
+				);
 			}
 		}
 

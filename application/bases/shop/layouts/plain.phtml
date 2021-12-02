@@ -1,0 +1,26 @@
+<?php
+use Jet\MVC_Layout;
+use Jet\MVC;
+
+/**
+ * @var MVC_Layout $this
+ */
+
+require 'parts/init_libs.php';
+?>
+<!DOCTYPE html>
+<html lang="<?=MVC::getLocale()->getLanguage()?>">
+<head>
+	<title><?=MVC::getBase()->getLocalizedData( MVC::getLocale() )->getTitle()?> : <?=MVC::getPage()->getTitle()?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="content-language" content="<?=MVC::getLocale()->getLanguage()?>" />
+
+	<jet_layout_meta_tags/>
+	<jet_layout_css/>
+	<jet_layout_javascripts/>
+
+</head>
+<body>
+	<jet_layout_main_position/>
+</body>
+</html>
