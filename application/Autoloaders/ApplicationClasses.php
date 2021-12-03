@@ -38,7 +38,7 @@ class Autoloader_ApplicationClasses extends Autoloader_Loader
 		} else {
 			$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
 
-			return SysConf_Path::getLibrary() . 'JetShop/' . $class_name . '.php';
+			return SysConf_Path::getApplication() . 'Classes/' . $class_name . '.php';
 		}
 
 	}

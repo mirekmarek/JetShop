@@ -103,7 +103,7 @@ trait Controller_Main_ParamGroup
 					shop: $shop,
 					entity_name: 'Param.group image',
 					object_id: $group->getId(),
-					object_name: $group->getFilterLabel(),
+					object_name: $group->getLabel(),
 					upload_event: 'param.group_image_uploaded',
 					delete_event: 'param.group_image_deleted'
 				);
