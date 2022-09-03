@@ -1,0 +1,88 @@
+<?php
+namespace JetShopModule\Admin\Catalog\KindsOfProduct;
+
+use JetShop\KindOfProduct as KindOfProduct;
+
+use Jet\UI;
+use Jet\UI_dataGrid;
+use Jet\UI_button;
+
+use Jet\Tr;
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View     $this
+ * @var UI_dataGrid  $grid
+ * @var Form         $filter_form
+ */
+$grid = $this->getRaw( 'grid' );
+$filter_form = $this->getRaw( 'filter_form' );
+$router = $this->getController()->getControllerRouter();
+
+
+$c_edit = $grid->getColumn( '_edit_' );
+$c_edit->setRenderer(
+	function( KindOfProduct $item ) use ( $router ) {
+		if( ( $delete_uri = $router->action('delete')->URI( $item->getId() ) ) ):
+			echo UI::button_delete(' ')->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
+			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		endif;
+		if( ( $edit_uri = $router->action('edit_main')->URI( $item->getId() ) ) ):
+			echo UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
+		endif;
+
+	}
+);
+$c_edit->addCustomCssStyle( 'width:200px;' );
+
+$grid->getColumn( 'id' )->addCustomCssStyle( 'width:120px;' );
+
+$grid->getColumn( 'id' )->setRenderer(
+	function( KindOfProduct $item ) use ( $router ) {
+		$edit_uri = $router->action('edit_main')->URI( $item->getId() );
+		?>
+		<a href="<?=$edit_uri;?>"><?=$item->getId();?></a>
+		<?php
+	}
+);
+
+
+$grid->getColumn( 'internal_name' )->setRenderer(
+	function( KindOfProduct $item ) use ( $router ) {
+		$edit_uri = $router->action('edit_main')->URI( $item->getId() );
+		?>
+		<a href="<?=$edit_uri;?>"><?=$item->getInternalName();?></a>
+		<?php
+	}
+);
+
+$grid->getColumn( 'internal_description' )->setRenderer(
+	function( KindOfProduct $item ) use ( $router ) {
+		echo nl2br($item->getInternalName());
+	}
+);
+?>
+
+<?=$filter_form->start()?>
+<div class="row toolbar">
+	<?php if( ( $add_uri = $router->action('add')->URI() ) ): ?>
+		<div class="col-md-2 col-sm-12">
+			<?=UI::button_create( Tr::_( 'Create a new Kind of product' ) )->setUrl( $add_uri )?>
+		</div>
+	<?php endif; ?>
+
+	<div class="col-md-3 col-sm-12">
+		<?=$filter_form->field('search')->input()?>
+	</div>
+	<div class="col-md-4 col-sm-12">
+	</div>
+
+</div>
+<?=$filter_form->end()?>
+
+<div class="row">
+	<div class="col-md-12">
+		<?=$grid->render();?>
+	</div>
+</div>

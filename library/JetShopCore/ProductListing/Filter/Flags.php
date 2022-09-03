@@ -12,20 +12,25 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 	 * @var ProductListing_Filter_Flags_Flag[]
 	 */
 	protected array $flags = [];
+	
+	public function initProductListing() : void
+	{
+	
+	}
 
-	public function getTargetFilterEditForm( Form $form, array &$target_filter ) : void
+	public function getAutoAppendProductFilterEditForm( Form $form ) : void
 	{
 		foreach($this->flags as $flag) {
 			$id = $flag->getId();
 			
 			$field = new Form_Field_Checkbox('/flags/'.$id, $flag->getLabel() );
-			$field->setDefaultValue( !empty($target_filter['flags'][$id]) );
+			$field->setDefaultValue( $flag->isActive() );
 			
 			$form->addField( $field );
 		}
 	}
 
-	public function catchTargetFilterEditForm( Form $form, array &$target_filter ) : void
+	public function catchAutoAppendFilterEditForm( Form $form, array &$target_filter ) : void
 	{
 		$target_filter['flags'] = [];
 
@@ -38,14 +43,12 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 		}
 	}
 
-	public function initByTargetFilter( array &$target_filter ) : void
+	public function initAutoAppendFilter( array &$target_filter ) : void
 	{
 		foreach( $this->flags as $id=> $filter ) {
-
 			if(isset($target_filter['flags'][$id])) {
-				$filter->setIsForced(true);
+				$filter->setIsActive(true);
 			}
-
 		}
 	}
 
@@ -70,19 +73,7 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 			$filter->setIsActive( in_array($id, $active) );
 		}
 	}
-
-
-	public function generateCategoryTargetUrl( array &$parts ) : void
-	{
-
-		foreach( $this->flags as $flag ) {
-			if( $flag->isForced() ) {
-				$parts[] = $flag->getUrlParam();
-			}
-		}
-
-	}
-
+	
 	public function generateUrl( array &$parts ) : void
 	{
 
@@ -103,9 +94,7 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 				if($flag->getUrlParam()==$part) {
 					unset($parts[$i]);
 
-					if(!$flag->isForced()) {
-						$flag->setIsActive(true);
-					}
+					$flag->setIsActive(true);
 
 					continue 2;
 				}
@@ -117,7 +106,7 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 	public function filterIsActive() : bool
 	{
 		foreach( $this->flags as $s) {
-			if($s->isActive() || $s->isForced() ) {
+			if( $s->isActive() ) {
 				return true;
 			}
 		}
@@ -132,7 +121,7 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 			$id_map = [];
 
 			foreach( $this->flags as $s) {
-				if($s->isActive() || $s->isForced() ) {
+				if($s->isActive() ) {
 					$id_map[] = $s->getProductIds();
 				}
 			}

@@ -1,0 +1,51 @@
+<?php
+namespace JetShopModule\Admin\Orders;
+
+use JetShop\Order as Order;
+
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Order     $order
+ */
+
+/*
+$form = $this->getRaw( 'form' );
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
+*/
+$order = $this->getRaw( 'order' );
+$router = $this->getController()->getControllerRouter();
+?>
+
+<?php /*
+<?=$form->start()?>
+*/ ?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php /*if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+		<?php endif;*/ ?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?php /*
+		<?=$form->field( 'id' )?>
+		*/ ?>
+	</div>
+</div>
+
+<?php /*
+<?=$form->end()?>
+*/ ?>

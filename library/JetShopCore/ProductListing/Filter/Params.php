@@ -8,88 +8,99 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 	protected string $key = 'properties';
 
 	/**
-	 * @var ProductListing_Filter_Properties_Group[]
+	 * @var ProductListing_Filter_Params_Property[]
 	 */
-	protected array $groups = [];
-
-	/**
-	 * @var ProductListing_Filter_Properties_Property[]
-	 */
-	protected array $properties = [];
+	protected array $parameters;
 
 	protected array|null $filtered_product_ids = null;
 
 	protected function init() : void
 	{
-		$category = $this->listing->getCategory();
-		if(!$category) {
-			return;
-		}
-		$kind = $category->getKindOfProduct();
-		if(!$kind) {
-			return;
-		}
-
-		$this->properties = [];
-
-		$group_ids = [];
-
-		foreach($category->getParametrizationProperties() as $property) {
-			if(
-				!$property->getIsFilterable() ||
-				!$property->getShopData($this->shop)->isActive()
-			) {
-				continue;
-			}
-
-			$prop_filter = $property->getFilterInstance( $this->listing );
-
-			$this->properties[$property->getId()] = $prop_filter;
-
-			$group_ids[$property->getGroupId()] = $property->getGroupId();
-		}
-
-
-		$this->groups = [];
-
-		foreach($category->getParametrizationGroups() as $group) {
-			$g_id = $group->getId();
-			if(!isset($group_ids[$g_id])) {
-				continue;
-			}
-
-			$this->groups[$g_id] = new ProductListing_Filter_Properties_Group( $this->listing, $group );
-
-		}
 	}
-
-	public function getTargetFilterEditForm( Form $form, array &$target_filter ) : void
+	
+	
+	public function initProductListing() : void
 	{
-		foreach($this->properties as $property) {
-			$property->getTargetFilterEditForm( $form, $target_filter );
+		$this->parameters = [];
+		
+		if(
+			($category = $this->listing->getCategory()) &&
+			($kind = $category->getKindOfProduct())
+		) {
+			foreach($kind->getFilterGroups() as $g ) {
+				$group = $g->getGroup();
+				if(
+					!$group->isActive() ||
+					!$group->getShopData()->isActive()
+				) {
+					continue;
+				}
+				
+				foreach($g->getProperties() as $p) {
+					$property = $p->getProperty();
+					
+					if(
+						!$property->isActive() ||
+						!$property->getShopData()->isActive()
+					) {
+						continue;
+					}
+					
+					$prop_filter = $property->getFilterInstance( $this->listing );
+					
+					$this->parameters[$property->getId()] = $prop_filter;
+				}
+				
+			}
+		}
+	}
+	
+	public function initAutoAppendFilter( array &$target_filter ) : void
+	{
+		$this->parameters = [];
+		
+		if(
+			($category = $this->listing->getCategory()) &&
+			($kind = $category->getKindOfProduct())
+		) {
+			foreach($kind->getAllProperties() as $property) {
+				$prop_filter = $property->getFilterInstance( $this->listing );
+				
+				$this->parameters[$property->getId()] = $prop_filter;
+			}
+		}
+		
+		foreach( $this->parameters as $property) {
+			$property->initAutoAppendFilter( $target_filter );
+		}
+	}
+	
+	
+
+	public function getAutoAppendProductFilterEditForm( Form $form ) : void
+	{
+		foreach( $this->parameters as $property) {
+			$property->getAutoAppendProductFilterEditForm( $form );
 		}
 	}
 
-	public function catchTargetFilterEditForm( Form $form, &$target_filter ) : void
+	public function catchAutoAppendFilterEditForm( Form $form, &$target_filter ) : void
 	{
 		$target_filter['properties'] = [];
-
-		foreach($this->properties as $property) {
-			$property->catchTargetFilterEditForm( $form, $target_filter );
+		
+		foreach( $this->parameters as $property) {
+			$property->catchAutoAppendFilterEditForm( $form, $target_filter );
 		}
 	}
 
-	public function initByTargetFilter( array &$target_filter ) : void
-	{
-		foreach($this->properties as $prop_filter) {
-			$prop_filter->initByTargetFilter( $target_filter );
-		}
-	}
-
+	
+	
+	
+	
 	public function getStateData( &$state_data ) : void
 	{
 		$properties = [];
-		foreach( $this->properties as $id=>$filter ) {
+		foreach( $this->parameters as $id=> $filter ) {
 
 			$properties[$id] = $filter->getStateData();
 		}
@@ -101,7 +112,7 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 	{
 		$properties = $state_data['properties'];
 
-		foreach( $this->properties as $id=>$filter ) {
+		foreach( $this->parameters as $id=> $filter ) {
 			if(
 				!isset($properties[$id]) ||
 				!is_array($properties[$id])
@@ -112,19 +123,10 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 			$filter->initByStateData( $properties[$id] );
 		}
 	}
-
-	public function generateCategoryTargetUrl( array &$parts ) : void
-	{
-		foreach( $this->properties as $property ) {
-			if( ($part = $property->generateCategoryTargetUrlPart()) ) {
-				$parts[] = $part;
-			}
-		}
-	}
-
+	
 	public function generateUrl( array &$parts ) : void
 	{
-		foreach( $this->properties as $property ) {
+		foreach( $this->parameters as $property ) {
 			if( ($part = $property->generateUrlPart()) ) {
 				$parts[] = $part;
 			}
@@ -133,7 +135,7 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 
 	public function parseFilterUrl( array &$parts ) : void
 	{
-		foreach( $this->properties as $property ) {
+		foreach( $this->parameters as $property ) {
 			$property->parseFilterUrl( $parts );
 		}
 	}
@@ -184,7 +186,7 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 			}
 		}
 
-		foreach($this->properties as $property_id=>$prop_filter) {
+		foreach( $this->parameters as $property_id=> $prop_filter) {
 			if(isset($data_map[$property_id])) {
 				$prop_filter->prepareFilter( $data_map[$property_id] );
 			}
@@ -195,11 +197,8 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 
 	public function filterIsActive() : bool
 	{
-		foreach($this->properties as $p) {
-			if(
-				$p->isActive() ||
-				$p->isForced()
-			) {
+		foreach( $this->parameters as $p) {
+			if( $p->isActive() ) {
 				return true;
 			}
 		}
@@ -212,8 +211,8 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 		if($this->filtered_product_ids===null) {
 			$id_map = [];
 
-			foreach($this->properties as $property) {
-				if($property->isActive() || $property->isForced()) {
+			foreach( $this->parameters as $property) {
+				if( $property->isActive() ) {
 					$id_map[] = $property->getFilteredProductIds();
 				}
 			}
@@ -224,49 +223,29 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 
 		return $this->filtered_product_ids;
 	}
-
-	/**
-	 * @return ProductListing_Filter_Properties_Group[]
-	 */
-	public function getGroups() : array
-	{
-		return $this->groups;
-	}
-
+	
 	/**
 	 * @param int $group_id
 	 *
-	 * @return ProductListing_Filter_Properties_Property[]
+	 * @return ProductListing_Filter_Params_Property[]
 	 */
-	public function getProperties( int $group_id=0 ) : array
+	public function getParameters( int $group_id=0 ) : array
 	{
-		if(!$group_id) {
-			return $this->properties;
-		}
-
-		$properties = [];
-
-		foreach($this->properties as $id=>$property) {
-			if($property->getProperty()->getGroupId()==$group_id) {
-				$properties[$id] = $property;
-			}
-		}
-
-		return $properties;
+		return $this->parameters;
 	}
 
 
 	/**
 	 * @param int $group_id
 	 *
-	 * @return ProductListing_Filter_Properties_Property[]
+	 * @return ProductListing_Filter_Params_Property[]
 	 */
 	public function getActiveProperties( int $group_id=0 ) : array
 	{
 
 		$properties = [];
 
-		foreach($this->properties as $id=>$property) {
+		foreach( $this->parameters as $id=> $property) {
 			if($property->isActive()) {
 				$properties[$id] = $property;
 			}
@@ -281,16 +260,13 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 			$initial_product_ids,
 			'properties',
 			function( ProductListing_Filter_Params $filter, &$id_map ) use ($property_id) {
-				foreach($filter->getProperties() as $filter_property) {
+				foreach( $filter->getParameters() as $filter_property) {
 
 					if($filter_property->getProperty()->getId()==$property_id) {
 						continue;
 					}
 
-					if(
-						$filter_property->isActive() ||
-						$filter_property->isForced()
-					) {
+					if( $filter_property->isActive() ) {
 						$id_map[] = $filter_property->getFilteredProductIds();
 					}
 				}
@@ -302,18 +278,15 @@ abstract class Core_ProductListing_Filter_Params extends ProductListing_Filter_A
 
 	public function disableNonRelevantFilters() : void
 	{
-		foreach($this->properties as $property) {
+		foreach( $this->parameters as $property) {
 			$property->disableNonRelevantFilters();
 		}
 
-		foreach($this->groups as $group) {
-			$group->disableNonRelevantFilters();
-		}
 	}
 
 	public function resetCount() : void
 	{
-		foreach($this->properties as $property)
+		foreach( $this->parameters as $property)
 		{
 			$property->resetCount();
 		}

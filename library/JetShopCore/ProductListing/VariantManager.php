@@ -23,7 +23,7 @@ abstract class Core_ProductListing_VariantManager
 
 	}
 
-	public function prepare( array $initial_product_ids ) : void
+	public function prepareFilter( array $initial_product_ids ) : void
 	{
 		if(!$initial_product_ids) {
 			return;

@@ -21,6 +21,8 @@ abstract class Core_ProductListing_Filter_Abstract {
 	}
 
 	abstract protected function init() : void;
+	
+	abstract public function initProductListing() : void;
 
 	public function resetFilter() : void
 	{
@@ -34,19 +36,17 @@ abstract class Core_ProductListing_Filter_Abstract {
 		return $this->key;
 	}
 
-	abstract public function getTargetFilterEditForm(  Form $form, array &$target_filter ) : void;
+	abstract public function getAutoAppendProductFilterEditForm(  Form $form ) : void;
 
-	abstract public function catchTargetFilterEditForm(  Form $form, array &$target_filter ) : void;
+	abstract public function catchAutoAppendFilterEditForm(  Form $form, array &$target_filter ) : void;
 
-	abstract public function initByTargetFilter( array &$target_filter ) : void;
+	abstract public function initAutoAppendFilter( array &$target_filter ) : void;
 
 	abstract public function getStateData( array &$state_data ) : void;
 
 	abstract public function initByStateData( array $state_data ) : void;
 
 	abstract public function parseFilterUrl( array &$parts ) : void;
-
-	abstract public function generateCategoryTargetUrl( array &$parts ) : void;
 
 	abstract public function generateUrl( array &$parts ) : void;
 

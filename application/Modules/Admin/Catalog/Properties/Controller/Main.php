@@ -1,0 +1,473 @@
+<?php
+/**
+ *
+ * @copyright 
+ * @license  
+ * @author  
+ */
+namespace JetShopModule\Admin\Catalog\Properties;
+
+use Jet\Application;
+use Jet\MVC_Controller_Router;
+use Jet\UI;
+use JetShop\Application_Admin;
+use JetShop\Fulltext_Index_Internal_Property;
+use JetShop\Property;
+
+use Jet\MVC_Controller_Default;
+use Jet\UI_messages;
+use Jet\Http_Headers;
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\Navigation_Breadcrumb;
+use Jet\Logger;
+use JetShop\Property_Options_Option;
+use JetShop\Shops;
+
+/**
+ *
+ */
+class Controller_Main extends MVC_Controller_Default
+{
+
+	protected ?MVC_Controller_Router $router = null;
+
+	protected ?Property $property = null;
+	
+	protected ?Property_Options_Option $option = null;
+
+	/**
+	 *
+	 * @return MVC_Controller_Router
+	 */
+	public function getControllerRouter() : MVC_Controller_Router
+	{
+		if( !$this->router ) {
+			$GET = Http_Request::GET();
+			
+			$property_id = $GET->getInt( 'id' );
+			$action = $GET->getString('action');
+			$selected_tab = '';
+			
+			if($property_id) {
+				$this->property = Property::get( $property_id );
+				
+				if($this->property) {
+					$option_id = $GET->getInt( 'option_id' );
+					if($option_id) {
+						$this->option = $this->property->getOption( $option_id );
+					}
+					
+					
+					$_tabs = [
+						'main'   => Tr::_( 'Main data' ),
+						'images' => Tr::_( 'Images' ),
+					];
+					
+					if(
+						!$this->option &&
+						$this->property->getType()==Property::PROPERTY_TYPE_OPTIONS
+					) {
+						$_tabs['options'] = Tr::_( 'Options' );
+					}
+					
+					$tabs = UI::tabs(
+						$_tabs,
+						function($page_id) {
+							return Http_Request::currentURI(['page'=>$page_id]);
+						},
+						Http_Request::GET()->getString('page', 'main')
+					);
+					
+					$selected_tab = $tabs->getSelectedTabId();
+					
+					$this->view->setVar('tabs', $tabs);
+					
+				}
+			}
+			
+			
+			
+			
+			$this->router = new MVC_Controller_Router( $this );
+			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
+				return $GET->exists('whisper');
+			});
+			
+			$this->router->setDefaultAction('listing', Main::ACTION_GET_PROPERTY);
+			
+			$this->router->getAction('listing')->setResolver(function() use ($action) {
+				return (!$this->property && !$action) ;
+			});
+			
+			
+			
+			$this->router->addAction('add_property', Main::ACTION_ADD_PROPERTY)
+				->setResolver(function() use ($action) {
+					return ($action=='add_property' && !$this->property);
+				})
+				->setURICreator(function( string $type=''  ) {
+					return Http_Request::currentURI( ['action' => 'add_property', 'type'=>$type], ['id', 'option_id', 'page'] );
+				});
+			$this->router->addAction('delete_property', Main::ACTION_DELETE_PROPERTY)
+				->setResolver(function() use ($action) {
+					return $this->property && !$this->option && $action=='delete';
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['id'=>$id, 'action'=>'delete'], ['option_id', 'page'] );
+				});
+			
+			$this->router->addAction('edit_property_main', Main::ACTION_UPDATE_PROPERTY)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->property && !$this->option && $selected_tab=='main';
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['id'=>$id], ['option_id', 'page','action'] );
+				});
+			
+			$this->router->addAction('edit_property_images', Main::ACTION_UPDATE_PROPERTY)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->property && !$this->option && $selected_tab=='images';
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['id'=>$id, 'page'=>'images'], ['option_id', 'action'] );
+				});
+			
+			$this->router->addAction('edit_property_options', Main::ACTION_UPDATE_PROPERTY)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->property && !$this->option && $selected_tab=='options' && !$action;
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['id'=>$id, 'page'=>'properties'], ['option_id', 'action'] );
+				});
+			
+			$this->router->addAction('edit_property_options_sort', Main::ACTION_UPDATE_PROPERTY)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->property && !$this->option && $selected_tab=='options' && $action=='sort_options';
+				});
+			
+			
+			$this->router->addAction('edit_property_option_main', Main::ACTION_UPDATE_PROPERTY)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->option && $selected_tab=='main' && !$action;
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['option_id'=>$id, 'page'=>'main'], ['action'] );
+				});
+			$this->router->addAction('edit_property_option_images', Main::ACTION_UPDATE_PROPERTY)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->option && $selected_tab=='images' && !$action;
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['option_id'=>$id, 'page'=>'images'], ['action'] );
+				});
+			
+			
+			
+		}
+
+		return $this->router;
+	}
+
+
+	/**
+	 *
+	 */
+	public function listing_Action() : void
+	{
+		$listing = new Listing();
+		$listing->handle();
+
+		$this->view->setVar( 'filter_form', $listing->getFilterForm());
+		$this->view->setVar( 'grid', $listing->getGrid() );
+
+		$this->output( 'list' );
+	}
+
+	/**
+	 *
+	 */
+	public function add_property_Action() : void
+	{
+		
+		$type = Http_Request::GET()->getString( key: 'type', valid_values: array_keys(Property::getTypes()));
+		if(!$type) {
+			die();
+		}
+		
+		Navigation_Breadcrumb::addURL( Tr::_( 'Create a new Property (%TYPE%)', ['TYPE'=>Property::getTypes()[$type]] ) );
+
+		$class_name = Property::class.'_'.$type;
+		
+		$property = new $class_name();
+
+
+		$form = $property->getAddForm();
+
+		if( $property->catchAddForm() ) {
+			$property->save();
+
+			Logger::success(
+				event: 'property_created',
+				event_message: 'Property created',
+				context_object_id: $property->getId(),
+				context_object_name: $property->getInternalName(),
+				context_object_data: $property
+			);
+
+
+			UI_messages::success(
+				Tr::_( 'Property <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $property->getInternalName() ] )
+			);
+
+			Http_Headers::reload( ['id'=>$property->getId()], ['action'] );
+		}
+
+		$this->view->setVar( 'form', $form );
+		$this->view->setVar( 'property', $property );
+
+		$this->output( 'add' );
+
+	}
+
+	public function edit_property_main_Action() : void
+	{
+		$property = $this->property;
+
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ) );
+
+		$form = $property->getEditForm();
+
+		if( $property->catchEditForm() ) {
+
+			$property->save();
+
+			Logger::success(
+				event: 'property_updated',
+				event_message: 'Property updated',
+				context_object_id: $property->getId(),
+				context_object_name: $property->getInternalName(),
+				context_object_data: $property
+			);
+
+			UI_messages::success(
+				Tr::_( 'Property <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $property->getInternalName() ] )
+			);
+
+			Http_Headers::reload();
+		}
+
+		$this->view->setVar( 'form', $form );
+		$this->view->setVar( 'property', $property );
+
+		$this->output( 'edit/main' );
+
+	}
+	
+	public function edit_property_images_Action() : void
+	{
+		Application_Admin::handleUploadTooLarge();
+		
+		$property = $this->property;
+		
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b> - images', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ) );
+		
+		foreach(Shops::getList() as $shop) {
+			$property->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'property image',
+				object_id: $property->getId(),
+				object_name: $property->getInternalName(),
+				upload_event: 'property_image_uploaded',
+				delete_event: 'property_image_deleted'
+			);
+		}
+		
+		
+		$this->view->setVar( 'property', $property );
+		$this->output( 'edit/images' );
+	}
+	
+	public function edit_property_options_Action() : void
+	{
+		$property = $this->property;
+		
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b> - options', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ) );
+		
+		$new_option = new Property_Options_Option();
+		
+		if($new_option->catchAddForm()) {
+			$property->addOption( $new_option );
+			
+			$property->save();
+			
+			Logger::success(
+				event: 'property_updated.option_added',
+				event_message: 'Property updated - option added',
+				context_object_id: $property->getId(),
+				context_object_name: $property->getInternalName(),
+				context_object_data: $property
+			);
+			
+			UI_messages::success(
+				Tr::_( 'Option <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $new_option->getInternalName() ] )
+			);
+			
+			Http_Headers::reload();
+		}
+		
+		$this->view->setVar('new_option', $new_option);
+		
+		
+		$this->view->setVar( 'property', $property );
+		$this->output( 'edit/options' );
+	}
+	
+	public function edit_property_options_sort_Action() : void
+	{
+		$property = $this->property;
+		
+		$sort = explode('|', Http_Request::POST()->getString('sort_order'));
+		$property->sortOptions( $sort );
+		$property->save();
+		
+		Logger::success(
+			event: 'property_updated.options_sorted',
+			event_message: 'Property updated - options sorted',
+			context_object_id: $property->getId(),
+			context_object_name: $property->getInternalName(),
+			context_object_data: $property
+		);
+		
+		Http_Headers::reload(unset_GET_params: ['action']);
+		
+	}
+	
+	public function edit_property_option_main_Action() : void
+	{
+		$property = $this->property;
+		$option = $this->option;
+		
+		Navigation_Breadcrumb::addURL(
+			Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b> - options', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ),
+			Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id'])
+		);
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit option <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $option->getInternalName() ] ) );
+		
+		$form = $option->getEditForm();
+		
+		if( $option->catchEditForm() ) {
+			
+			$option->save();
+			
+			Logger::success(
+				event: 'property_updated.option_update',
+				event_message: 'Property updated - option updated',
+				context_object_id: $option->getId(),
+				context_object_name: $option->getInternalName(),
+				context_object_data: $option
+			);
+			
+			UI_messages::success(
+				Tr::_( 'Option <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $option->getInternalName() ] )
+			);
+			
+			Http_Headers::reload();
+		}
+		
+		$this->view->setVar( 'form', $form );
+		$this->view->setVar( 'property', $property );
+		$this->view->setVar( 'option', $option );
+		
+		$this->output( 'edit/option/main' );
+		
+	}
+	
+	public function edit_property_option_images_Action() : void
+	{
+		Application_Admin::handleUploadTooLarge();
+		
+		$property = $this->property;
+		$option = $this->option;
+		
+		Navigation_Breadcrumb::addURL(
+			Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b> - options', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ),
+			Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id'])
+		);
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit option <b>%ITEM_NAME%</b> - images', [ 'ITEM_NAME' => $option->getInternalName() ] ) );
+		
+		foreach(Shops::getList() as $shop) {
+			$option->getShopData( $shop )->catchImageWidget(
+				shop: $shop,
+				entity_name: 'property option image',
+				object_id: $option->getId(),
+				object_name: $option->getInternalName(),
+				upload_event: 'property_option_image_uploaded',
+				delete_event: 'property_option_image_deleted'
+			);
+		}
+		
+		
+		$this->view->setVar( 'property', $property );
+		$this->view->setVar( 'option', $option );
+		
+		$this->output( 'edit/option/images' );
+	}
+	
+	
+	
+	public function delete_property_Action() : void
+	{
+		$property = $this->property;
+
+		Navigation_Breadcrumb::addURL(
+			Tr::_( 'Delete property  <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $property->getInternalName() ] )
+		);
+		$this->view->setVar( 'property', $property );
+		
+		if($property->isItPossibleToDelete( $kinds )) {
+			if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
+				$property->delete();
+				
+				Logger::success(
+					event: 'property_deleted',
+					event_message: 'Property deleted',
+					context_object_id: $property->getId(),
+					context_object_name: $property->getInternalName(),
+					context_object_data: $property
+				);
+				
+				UI_messages::info(
+					Tr::_( 'Property <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $property->getInternalName() ] )
+				);
+				
+				Http_Headers::reload([], ['action', 'id']);
+			}
+			$this->output( 'delete/confirm' );
+			
+		} else {
+			$this->view->setVar( 'kinds', $kinds );
+			$this->output( 'delete/not-possible' );
+		}
+
+
+
+	}
+	
+	public function whisper_Action() : void
+	{
+		$GET = Http_Request::GET();
+		
+		$result = Fulltext_Index_Internal_Property::search(
+			search_string: $GET->getString('whisper'),
+			only_active: $GET->getBool('only_active'),
+			only_type: $GET->getString('only_type')
+		);
+		
+		$this->view->setVar('result', $result);
+		echo $this->view->render('search_whisperer_result');
+		
+		Application::end();
+	}
+	
+}

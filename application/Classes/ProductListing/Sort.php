@@ -7,7 +7,7 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 
 	protected array|null $map = null;
 
-	public static function getTargetFilterEditForm_SortOptionsScope() : array
+	public static function getAutoAppendProductFilterEditForm_SortOptionsScope() : array
 	{
 		return [
 			'predefined'     => Tr::_('Predefined',     [], Category::getManageModuleName()),
@@ -22,7 +22,7 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 		return 'sort';
 	}
 
-	public function prepare( array $initial_product_ids ) : void
+	public function prepareFilter( array $initial_product_ids ) : void
 	{
 		if(!$initial_product_ids) {
 			return;

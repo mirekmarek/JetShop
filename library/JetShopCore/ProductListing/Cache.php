@@ -19,17 +19,20 @@ abstract class Core_ProductListing_Cache {
 	{
 		$this->listing = $listing;
 		$this->shop = $listing->getShop();
-
-		$this->init();
-	}
-
-
-	public function init() : void
-	{
+		
 		$this->enabled = Cache::isEnabled();
 	}
+	
+	public function init() : void
+	{
+	}
+	
+	public function disable() : void
+	{
+		$this->enabled = false;
+	}
 
-	public function prepare( array $initial_product_ids ) : void
+	public function prepareFilter( array $initial_product_ids ) : void
 	{
 		if(!$initial_product_ids) {
 			$this->enabled = false;

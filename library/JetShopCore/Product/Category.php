@@ -30,6 +30,12 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 		is_key: true
 	)]
 	protected int $category_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $auto_appended = false;
 
 	protected Category|null $category = null;
 
@@ -57,5 +63,16 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 	{
 		$this->category_id = $category_id;
 	}
+	
+	public function getAutoAppended(): bool
+	{
+		return $this->auto_appended;
+	}
+	
+	public function setAutoAppended( bool $auto_appended ): void
+	{
+		$this->auto_appended = $auto_appended;
+	}
 
+	
 }

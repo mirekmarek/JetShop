@@ -1,8 +1,5 @@
 <?php
 namespace JetShop;
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Tr;
 
 abstract class Core_ProductListing_Sort {
 	const CACHE_KEY = 'sort';
@@ -23,20 +20,11 @@ abstract class Core_ProductListing_Sort {
 		$this->init();
 
 		$has_some_active = false;
-
+		
 		foreach($this->sort_options as $so) {
-			if( $so->isForced() ) {
+			if( $so->isDefault() ) {
 				$so->setIsActive(true);
 				$has_some_active = true;
-			}
-		}
-
-		if(!$has_some_active) {
-			foreach($this->sort_options as $so) {
-				if( $so->isDefault() ) {
-					$so->setIsActive(true);
-					$has_some_active = true;
-				}
 			}
 		}
 
@@ -51,55 +39,11 @@ abstract class Core_ProductListing_Sort {
 
 	abstract protected function init() : void;
 
-	abstract public function prepare( array $initial_product_ids ) : void;
-
-	abstract public static function getTargetFilterEditForm_SortOptionsScope() : array;
+	abstract public function prepareFilter( array $initial_product_ids ) : void;
 
 	abstract public function getSortUrlParam() : string;
 
-	public function getTargetFilterEditForm( Form $form, array &$target_filter ) : void
-	{
-		$selected = '';
-		if(!empty($target_filter['sort_order'])) {
-			$selected = $target_filter['sort_order'];
-		}
-
-		$sort = new Form_Field_Select('sort_order', Tr::_('Sort order: ', [], Category::getManageModuleName()) );
-		$sort->setDefaultValue( $selected );
-
-		$select_options = [
-			'' => Tr::_('- default -', [], Category::getManageModuleName())
-		];
-
-		foreach( ProductListing_Sort::getTargetFilterEditForm_SortOptionsScope() as $key=>$name ) {
-			$select_options[$key] = $name;
-		}
-
-		$sort->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => Tr::_('Please select sort option', [], Category::getManageModuleName())
-		]);
-
-		$sort->setSelectOptions( $select_options );
-
-		$form->addField($sort);
-	}
-
-	public function catchTargetFilterEditForm( Form $form, &$target_filter ) : void
-	{
-		$target_filter['sort_order'] = $form->getField('sort_order')->getValue();
-	}
-
-	public function initByTargetFilter( array &$target_filter ) : void
-	{
-
-		if(
-			isset($target_filter['sort_order']) &&
-			isset($this->sort_options[$target_filter['sort_order']])
-		) {
-			$this->sort_options[$target_filter['sort_order']]->setIsForced(true);
-		}
-	}
-
+	
 	public function setSelectedSort( string $option_id ) : void
 	{
 		if(!isset($this->sort_options[$option_id])) {
@@ -134,19 +78,6 @@ abstract class Core_ProductListing_Sort {
 		}
 	}
 
-	public function generateCategoryTargetUrl( array &$parts ) : void
-	{
-		foreach($this->sort_options as $sort_option) {
-			if( $sort_option->isForced() ) {
-				if(!$sort_option->isDefault()) {
-					$parts[] = $this->getSortUrlParam().'_'.$sort_option->getUrlParam();
-				}
-
-				break;
-			}
-		}
-	}
-
 	public function generateUrl( array &$parts ) : void
 	{
 		foreach($this->sort_options as $sort_option) {
@@ -172,15 +103,7 @@ abstract class Core_ProductListing_Sort {
 
 
 				foreach( $this->sort_options as $sort_option ) {
-
-					$is_active = false;
-					if($sort_option->getUrlParam()==$sort_param) {
-						if(!$sort_option->isForced()) {
-							$is_active = true;
-						}
-					}
-
-					$sort_option->setIsActive($is_active);
+					$sort_option->setIsActive( ($sort_option->getUrlParam()==$sort_param) );
 				}
 
 			}

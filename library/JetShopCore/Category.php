@@ -604,15 +604,8 @@ abstract class Core_Category extends DataModel {
 		 */
 		$category = $this;
 
-		$listing = new ProductListing( $shop );
-		$listing->setCategory( $category );
-		if($this->auto_append_products_filter) {
-			$listing->initByTargetFilter( $this->auto_append_products_filter );
-		} else {
-			$listing->init();
-		}
-
-		$listing->prepare( $category->getShopData($shop)->getProductIds() );
+		$listing = new ProductListing( $category, $shop );
+		$listing->prepareProductListing( $category->getShopData($shop)->getProductIds() );
 
 
 		if($use_singleton) {
@@ -765,9 +758,7 @@ abstract class Core_Category extends DataModel {
 	{
 		if($this->_auto_append_product_filter_edit_form===null) {
 
-			$listing = new ProductListing();
-			$listing->setCategory( $this );
-			$listing->init();
+			$listing = new ProductListing( $this );
 
 			$this->_auto_append_product_filter_edit_form = $listing->getAutoAppendProductFilterEditForm( $this->auto_append_products_filter );
 
@@ -778,11 +769,14 @@ abstract class Core_Category extends DataModel {
 
 	public function catchAutoAppendProductFilterEditForm() : bool
 	{
-		$listing = new ProductListing();
-		$listing->setCategory( $this );
-		$listing->init();
+		$listing = new ProductListing( $this );
 
 		return $listing->catchAutoAppendProductFilterEditForm( $this->auto_append_products_filter );
+	}
+	
+	public function handleAutoAppendProduct() : void
+	{
+	
 	}
 	
 
@@ -820,39 +814,18 @@ abstract class Core_Category extends DataModel {
 
 	public function actualizeProductsList() : void
 	{
-		//TODO:
-		/*
-		switch($this->type) {
-			case Category::CATEGORY_TYPE_REGULAR:
-				$this->actualizeProductsList_regular();
-				break;
-			case Category::CATEGORY_TYPE_TOP:
-				$this->actualizeProductsList_top();
-				break;
-			case Category::CATEGORY_TYPE_VIRTUAL:
-				$this->actualizeProductsList_virtual();
-				break;
-			case Category::CATEGORY_TYPE_LINK:
-				$this->actualizeProductsList_link();
-				break;
-		}
-		*/
-	}
-
-	protected function actualizeProductsList_regular() : void
-	{
 		$products = Product::getListByCategory( $this->id );
-
+		
 		$product_ids = [];
 		foreach( Shops::getList() as $shop ) {
 			$product_ids[$shop->getKey()] = [];
 		}
-
+		
 		foreach($products as $product) {
 			if(!$product->isActive()) {
 				continue;
 			}
-
+			
 			foreach( Shops::getList() as $shop ) {
 				if(
 					!$product->getShopData($shop)->isActive() ||
@@ -860,40 +833,14 @@ abstract class Core_Category extends DataModel {
 				) {
 					continue;
 				}
-
+				
 				$product_ids[$shop->getKey()][] = $product->getId();
 			}
 		}
-
+		
 		foreach( Shops::getList() as $shop ) {
 			$this->getShopData($shop)->setProductIds( $product_ids[$shop->getKey()], true );
 		}
-	}
-
-	protected function actualizeProductsList_virtual() : void
-	{
-		/*
-		$target_category = $this->getTargetCategory();
-		if(!$target_category) {
-			foreach( Shops::getList() as $shop ) {
-				$this->getShopData($shop)->setProductIds( [], true );
-			}
-
-			return;
-		}
-
-		foreach( Shops::getList() as $shop ) {
-
-			$listing = new ProductListing( $shop );
-			$listing->setCategory( $target_category );
-			$listing->initByTargetFilter( $this->target_filter );
-
-			$listing->prepare( $target_category->getShopData($shop)->getProductIds() );
-
-			$ids = $listing->getFilteredProductIds();
-			$this->getShopData($shop)->setProductIds( $ids, true );
-		}
-		*/
 	}
 
 

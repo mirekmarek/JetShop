@@ -38,9 +38,9 @@ abstract class Core_Property_Number extends Property
 		return new Property_Value_Number( $this );
 	}
 
-	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Properties_Property_Number
+	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property_Number
 	{
-		return new ProductListing_Filter_Properties_Property_Number( $listing, $this );
+		return new ProductListing_Filter_Params_Property_Number( $listing, $this );
 	}
 	
 }

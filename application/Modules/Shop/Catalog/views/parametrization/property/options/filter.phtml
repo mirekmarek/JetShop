@@ -5,7 +5,7 @@ use Jet\MVC_View;
 
 /**
  * @var MVC_View $this
- * @var ProductListing_Filter_Properties_Property_Options|ProductListing_Filter_Properties_Property_StencilOptions $filter_property
+ * @var ProductListing_Filter_Params_Property_Options|ProductListing_Filter_Params_Property_StencilOptions $filter_property
  */
 $filter_property = $this->getRaw('filter_property');
 $property = $filter_property->getProperty();
@@ -35,80 +35,7 @@ $col_width = '';
 
 $units = ($property->getUnits()) ? ' ' . $property->getUnits() : '';
 ?>
-<?php if( $filter_property->isForced() ): ?>
-	<?php if( $property->getDescription() || $property->getImageMain() ): ?>
-		<div class="title">
-			<?=$property->getLabel(); ?>
-			<?php if ($property->getDescription()): ?>
-				<span class="label-description" data-tooltip title="<?= htmlspecialchars($property->getDescription()) ?>">i</span>
-			<?php endif; ?>
-			<div class="group-sub-description-info" onmouseover="ProductListing.filter.properties.showPropertyInfo(<?=$property->getId();?>);" onmouseout="ProductListing.filter.properties.hidePropertyInfo(<?=$property->getId();?>);" style="width: 12px;height: 12px;"> </div>
-		</div>
-		<div class="group-sub-description-content" id="filter_property_info_<?=$property->getId();?>">
-			<?php if($property->getImageMain()): ?>
-				<img src="<?=$property->getImageMainUrl()?>" />
-			<?php endif; ?>
-		</div>
-		<div style="clear: both;"></div>
-	<?php else: ?>
-		<div class="title"><?=$property->getLabel(); ?></div>
-	<?php endif; ?>
 
-	<div class="group-sub-content">
-
-		<?php foreach( $filter_property->getFilterOptions() as $filter_option ):
-
-			$option = $filter_option->getOption();
-
-			$count = $filter_option->getCount();
-
-			$label = $option->getFilterLabel();
-			$description = ($option->getDescription()) ? '<span class="sub-label-description" data-tooltip title="' . htmlspecialchars($option->getDescription() ) . '">i</span>' : '';
-
-			$ipc = '';
-			$ipd = '';
-			$img = '';
-			$it = '';
-
-			if ($option->getImageMain()) {
-				$ipc = ' image-preview';
-				$img = ' background-image:url(' . $option->getImageMainThumbnailUrl(50,50) . ')';
-				$it = ' class="image-text"';
-			}
-
-			$element_id = 'filter_option_'.$option->getId();
-			?>
-
-			<div class="item selected<?=$ipc;?>"<?=$ipd;?> style="<?=$col_width;?><?=$img;?>">
-				<span><input id="<?=$element_id;?>" type="checkbox" checked="checked" disabled></span>
-				<label for="<?=$element_id;?>"<?=$it;?>><?=$label . $units; ?> (<?=$count; ?>)<?= $description ?></label>
-			</div>
-
-		<?php endforeach; ?>
-
-	</div>
-
-	<?php if( $property->getDescription() || $property->getImageMain() ): ?>
-		<div class="title">
-			Dal�� <?=$property->getLabel(); ?>
-			<?php if ($property->getDescription()): ?>
-				<span class="label-description" data-tooltip title="<?= htmlspecialchars($property->getDescription()) ?>">i</span>
-			<?php endif; ?>
-			<div class="group-sub-description-info" onmouseover="ProductListing.filter.properties.showPropertyInfo(<?=$property->getId();?>);" onmouseout="ProductListing.filter.properties.hidePropertyInfo(<?=$property->getId();?>);" style="width: 12px;height: 12px;"> </div>
-		</div>
-		<div class="group-sub-description-content" id="filter_property_info_<?=$property->getId();?>">
-			<?php if($property->getImageMain()): ?>
-				<img src="<?=$property->getImageMainUrl()?>" />
-			<?php endif; ?>
-		</div>
-		<div style="clear: both;"></div>
-	<?php else: ?>
-		<div class="title">Dal�� <?=$property->getLabel(); ?></div>
-	<?php endif; ?>
-
-
-
-<?php else: ?>
 	<?php if( $property->getDescription() || $property->getImageMain() ): ?>
 		<div class="title">
 			<?= $property->getLabel() ?>
@@ -126,7 +53,7 @@ $units = ($property->getUnits()) ? ' ' . $property->getUnits() : '';
 	<?php else: ?>
 		<div class="title"><?=$property->getLabel()?></div>
 	<?php endif; ?>
-<?php endif; ?>
+
 
 
 <div class="group-sub-content">

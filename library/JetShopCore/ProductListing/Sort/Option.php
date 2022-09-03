@@ -14,8 +14,6 @@ abstract class Core_ProductListing_Sort_Option {
 
 	protected bool $is_active = false;
 
-	protected bool $is_forced = false;
-
 	/**
 	 * @var callable
 	 */
@@ -69,16 +67,6 @@ abstract class Core_ProductListing_Sort_Option {
 	public function setIsActive( bool $is_active ) : void
 	{
 		$this->is_active = $is_active;
-	}
-
-	public function isForced() : bool
-	{
-		return $this->is_forced;
-	}
-
-	public function setIsForced( bool $is_forced ) : void
-	{
-		$this->is_forced = $is_forced;
 	}
 
 	public function getSorter() : callable

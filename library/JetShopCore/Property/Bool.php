@@ -34,9 +34,9 @@ abstract class Core_Property_Bool extends Property
 		return new Property_Value_Bool( $this );
 	}
 
-	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Properties_Property_Bool
+	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property_Bool
 	{
-		return new ProductListing_Filter_Properties_Property_Bool( $listing, $this );
+		return new ProductListing_Filter_Params_Property_Bool( $listing, $this );
 	}
 
 }

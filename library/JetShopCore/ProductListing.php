@@ -1,11 +1,19 @@
 <?php
 namespace JetShop;
 
-use Jet\Form;
 use Jet\MVC_View;
 
 abstract class Core_ProductListing
 {
+	use ProductListing_AutoAppendProductFilter;
+	
+	protected static array $filter_list = [
+		ProductListing_Filter_Params::class,
+		ProductListing_Filter_Brands::class,
+		ProductListing_Filter_Flags::class,
+		ProductListing_Filter_Price::class,
+	];
+	
 	protected ?ProductListing_Cache $cache = null;
 
 	protected ?Category $category = null;
@@ -34,14 +42,30 @@ abstract class Core_ProductListing
 
 	protected ?array $filtered_product_ids = null;
 
-	protected ?Form $_target_filter_edit_form = null;
-
-	public function __construct( ?Shops_Shop $shop = null )
+	public function __construct( Category $category, ?Shops_Shop $shop = null )
 	{
 		if( !$shop ) {
 			$shop = Shops::getCurrent();
 		}
 		$this->shop = $shop;
+		$this->category = $category;
+		
+		$this->base_URL_path_part = $category->getShopData( $this->shop )->getURLPathPart();
+		$this->base_URL = $category->getShopData( $this->shop )->getURL();
+		
+		$this->cache = new ProductListing_Cache( $this );
+		
+		foreach(ProductListing::$filter_list as $class_name ) {
+			/**
+			 * @var ProductListing_Filter_Abstract $filter
+			 */
+			$filter = new $class_name( $this );
+			$this->filters[$filter->getKey()] = $filter;
+		}
+		
+		$this->sort = new ProductListing_Sort( $this );
+		$this->pagination = new ProductListing_Pagination( $this );
+		$this->variant_manager = new ProductListing_VariantManager( $this );
 
 	}
 
@@ -56,48 +80,29 @@ abstract class Core_ProductListing
 	}
 
 
-
-	public function init() : void
+	public function prepareProductListing( array $initial_product_ids ) : void
 	{
-		$this->cache = new ProductListing_Cache( $this );
-		$params = new ProductListing_Filter_Params( $this );
-		$brands = new ProductListing_Filter_Brands( $this );
-		$flags = new ProductListing_Filter_Flags( $this );
-		$price = new ProductListing_Filter_Price( $this );
-
-		$this->filters[$params->getKey()] = $params;
-		$this->filters[$brands->getKey()] = $brands;
-		$this->filters[$flags->getKey()] = $flags;
-		$this->filters[$price->getKey()] = $price;
-
-		$this->sort = new ProductListing_Sort( $this );
-		$this->pagination = new ProductListing_Pagination( $this );
-		$this->variant_manager = new ProductListing_VariantManager( $this );
-	}
-
-
-	public function prepare( array $initial_product_ids ) : void
-	{
-		$this->cache->prepare( $initial_product_ids );
-
 		$this->initial_product_ids = [];
 		foreach( $initial_product_ids as $id ) {
 			$this->initial_product_ids[] = (int)$id;
 		}
-
+		
+		foreach( $this->filters as $filter ) {
+			$filter->initProductListing();
+		}
+		
+		
+		$this->cache->prepareFilter( $this->initial_product_ids );
+		
 		foreach( $this->filters as $filter ) {
 			$filter->prepareFilter( $this->initial_product_ids );
 		}
 
-		$this->variant_manager->prepare( $initial_product_ids );
-		$this->sort->prepare( $initial_product_ids );
+		$this->variant_manager->prepareFilter( $this->initial_product_ids );
+		$this->sort->prepareFilter( $this->initial_product_ids );
 
 	}
 
-	public function getInitialProductIds() : array
-	{
-		return $this->initial_product_ids;
-	}
 
 	public function resetFilter() : void
 	{
@@ -105,9 +110,6 @@ abstract class Core_ProductListing
 		foreach( $this->filters as $filter ) {
 			$filter->resetFilter();
 		}
-
-		//$this->sort->resetFilter();
-		//$this->pagination->resetFilter();
 	}
 
 	public function resetCount() : void
@@ -179,14 +181,6 @@ abstract class Core_ProductListing
 		return $this->cache;
 	}
 
-	public function setCategory( Category $category ) : void
-	{
-		$this->category = $category;
-
-		$this->base_URL_path_part = $category->getShopData( $this->shop )->getURLPathPart();
-		$this->base_URL = $category->getShopData( $this->shop )->getURL();
-	}
-
 	public function getCategory() : Category
 	{
 		return $this->category;
@@ -217,49 +211,6 @@ abstract class Core_ProductListing
 		return $this->shop;
 	}
 
-	public function getAutoAppendProductFilterEditForm( array &$target_filter ) : Form
-	{
-		if( !$this->_target_filter_edit_form ) {
-			$this->_target_filter_edit_form = new Form( 'target_filter_edit_form', [] );
-
-			foreach( $this->filters as $filter ) {
-				$filter->getTargetFilterEditForm( $this->_target_filter_edit_form, $target_filter );
-			}
-
-			$this->sort->getTargetFilterEditForm( $this->_target_filter_edit_form, $target_filter );
-
-			$this->_target_filter_edit_form->setDoNotTranslateTexts( true );
-		}
-
-		return $this->_target_filter_edit_form;
-	}
-
-	public function catchAutoAppendProductFilterEditForm( array &$target_filter ) : bool
-	{
-		$form = $this->getAutoAppendProductFilterEditForm( $target_filter );
-		if( !$form->catchInput() || !$form->validate() ) {
-			return false;
-		}
-
-		foreach( $this->filters as $filter ) {
-			$filter->catchTargetFilterEditForm( $form, $target_filter );
-		}
-
-		$this->sort->catchTargetFilterEditForm( $form, $target_filter );
-
-		return true;
-	}
-
-	public function initByTargetFilter( array $target_filter ) : void
-	{
-		$this->init();
-
-		foreach( $this->filters as $filter ) {
-			$filter->initByTargetFilter( $target_filter );
-		}
-
-		$this->sort->initByTargetFilter( $target_filter );
-	}
 
 	public function parseFilterUrl( array $parts ) : void
 	{
@@ -298,25 +249,6 @@ abstract class Core_ProductListing
 
 		$this->sort->initByStateData( $state_data );
 		$this->pagination->initByStateData( $state_data );
-	}
-
-	public function generateCategoryTargetUrl() : string
-	{
-		$parts = [];
-
-		foreach( $this->filters as $filter ) {
-			$filter->generateCategoryTargetUrl( $parts );
-		}
-
-		$this->sort->generateCategoryTargetUrl( $parts );
-
-
-		if( !$parts ) {
-			return $this->base_URL_path_part;
-		} else {
-			return $this->base_URL_path_part . '/' . implode( '/', $parts );
-
-		}
 	}
 
 	public function generateUrl( bool $with_page_no=false ) : string
@@ -363,15 +295,8 @@ abstract class Core_ProductListing
 				}
 			}
 
-			if( count( $id_map ) > 0 ) {
-				if( count( $id_map ) == 1 ) {
-					$this->filtered_product_ids = $id_map[0];
-				} else {
-					$this->filtered_product_ids = call_user_func_array( 'array_intersect', $id_map );
-				}
-			}
-
-
+			$this->filtered_product_ids = $this->idMapIntersect($id_map);
+			
 			$this->filtered_product_ids = $this->manageVariants( $this->filtered_product_ids );
 
 			$this->filtered_product_ids = $this->sort->sort( $this->filtered_product_ids );

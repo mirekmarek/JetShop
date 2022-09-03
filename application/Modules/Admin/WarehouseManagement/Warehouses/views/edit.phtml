@@ -1,0 +1,55 @@
+<?php
+namespace JetShopModule\Admin\WarehouseManagement\Warehouses;
+
+use JetShop\WarehouseManagement_Warehouse as Warehouse;
+
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Warehouse     $warehouse
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
+
+$warehouse = $this->getRaw( 'warehouse' );
+$router = $this->getController()->getControllerRouter();
+?>
+
+
+<?=$form->start()?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+
+		<?=$form->field( 'is_active' )?>
+		<?=$form->field( 'code' )?>
+		<?=$form->field( 'internal_name' )?>
+		<?=$form->field( 'internal_description' )?>
+		<?=$form->field( 'shops' )?>
+		<?=$form->field( 'address_street_no' )?>
+		<?=$form->field( 'address_country' )?>
+		<?=$form->field( 'address_town' )?>
+		<?=$form->field( 'address_zip' )?>
+
+	</div>
+</div>
+
+<?=$form->end()?>

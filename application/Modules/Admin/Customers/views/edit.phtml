@@ -1,0 +1,139 @@
+<?php
+namespace JetShopModule\Admin\Customers;
+
+use Jet\Locale;use JetShop\Customer as Customer;
+
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Customer     $customer
+ */
+
+
+$customer = $this->getRaw( 'customer' );
+
+$shop = $customer->getShop();
+
+$mailing_subscribe_events = $customer->getMailingSubscribeEventLog();
+?>
+
+
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<legend><?=Tr::_('Main data')?></legend>
+
+		<table class="table">
+			<tr>
+				<td style="width: 150px"><?=Tr::_('Shop:')?></td>
+				<td><?=$shop->getShopName()?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Registration:');?></td>
+				<td>
+					<?=Locale::getCurrentLocale()->formatDateAndTime($customer->getRegistrationDateTime())?><br>
+					<?=$customer->getRegistrationIp()?>
+				</td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('E-Mail:')?></td>
+				<td><a href="mailto:<?=$customer->getEmail()?>"><?=$customer->getEmail()?></a></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Name:')?></td>
+				<td><?=$customer->getName()?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Phone:')?></td>
+				<td><?=$shop->getPhonePrefix()?> <?=$customer->getPhoneNumber()?></td>
+			</tr>
+		</table>
+
+
+		<legend><?=Tr::_('Addresses')?></legend>
+		<fieldset>
+		<?php foreach($customer->getAddresses() as $address): ?>
+			<div class="card" style="width: 400px;height: 190px;float: left;margin: 10px;">
+				<div class="card-body">
+					<p class="card-text">
+						<?=AddressFormatter::format($customer->getShop(), $address) ?>
+					</p>
+				</div>
+			</div>
+		<?php endforeach; ?>
+
+		</fieldset>
+		<br/>
+
+		<legend><?=Tr::_('Orders')?></legend>
+		<fieldset>
+			<?php
+			//TODO:
+			?>
+		</fieldset>
+
+
+		<legend>
+			<?=Tr::_('Mailing subscribe')?>
+			<?php if($customer->getMailingSubscribed()): ?>
+				<div class="badge badge-success"><?=Tr::_('Subscribed')?></div>
+			<?php else: ?>
+				<div class="badge badge-danger"><?=Tr::_('Unsubscribed')?></div>
+			<?php endif; ?>
+		</legend>
+
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Date and time')?></th>
+				<th><?=Tr::_('Event')?></th>
+				<th><?=Tr::_('Event source')?></th>
+				<th><?=Tr::_('Comment')?></th>
+			</tr>
+			</thead>
+			<?php foreach($mailing_subscribe_events as $event): ?>
+			<tr>
+				<td style="width: 200px;"><?=Locale::getCurrentLocale()->formatDateAndTime($event->getDateTime())?></td>
+				<td style="width: 500px;">
+					<?=$event->getEventTxt()?><br>
+					<?=$event->getEventData()?>
+				</td>
+				<td style="width: 200px;">
+					<?=$event->getSource()?>
+				</td>
+				<td>
+					<?=nl2br($event->getComment())?>
+				</td>
+			</tr>
+			<?php endforeach; ?>
+		</table>
+
+		<legend><?=Tr::_('Loyalty program')?></legend>
+		<fieldset>
+			<?php
+			//TODO:
+			?>
+		</fieldset>
+
+		<legend><?=Tr::_('Change log')?></legend>
+		<fieldset>
+			<?php
+			//TODO:
+			?>
+		</fieldset>
+
+	</div>
+</div>
+

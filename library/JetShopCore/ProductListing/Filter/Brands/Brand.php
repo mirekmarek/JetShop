@@ -11,8 +11,6 @@ abstract class Core_ProductListing_Filter_Brands_Brand {
 
 	protected bool $is_disabled = false;
 
-	protected bool $is_forced = false;
-
 	protected array $product_ids = [];
 
 	protected ?int $_count = null;
@@ -46,16 +44,6 @@ abstract class Core_ProductListing_Filter_Brands_Brand {
 	public function setIsDisabled( bool $is_disabled ) : void
 	{
 		$this->is_disabled = $is_disabled;
-	}
-
-	public function isForced() : bool
-	{
-		return $this->is_forced;
-	}
-
-	public function setIsForced( bool $is_forced ) : void
-	{
-		$this->is_forced = $is_forced;
 	}
 
 	public function getProductIds() : array

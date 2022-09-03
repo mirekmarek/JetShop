@@ -1,0 +1,36 @@
+<?php
+namespace JetShopModule\Admin\Content\InfoPages;
+
+use JetShop\Content_InfoPage as ContentInfoPage;
+
+use Jet\Http_Request;
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View   $this
+ * @var ContentInfoPage       $content_info_page
+ */
+$content_info_page = $this->getRaw( 'content_info_page' );
+$router = $this->getController()->getControllerRouter();
+
+?>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+
+		<?=UI::button_goBack()?>
+		<p>
+			<?=Tr::_( 'Do you really want to delete this content info page?' );?>
+			<br/>
+			<a href="<?=$router->action('edit')->URI( $content_info_page->getId() );?>"
+			   style="font-weight: bolder;font-size: 20px;"><?=$content_info_page->getPageId();?> (<?=$content_info_page->getPageId();?>)</a>
+		</p>
+
+		<form action="<?=Http_Request::currentURI()?>" method="post">
+			<input type="hidden" name="delete" value="yes">
+			<?=UI::button_delete()->setType( 'submit' )?>
+		</form>
+	</div>
+</div>

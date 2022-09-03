@@ -43,9 +43,9 @@ abstract class Core_Property_Options extends Property
 		return new Property_Value_Options( $this );
 	}
 
-	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Properties_Property_Options
+	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property_Options
 	{
-		return new ProductListing_Filter_Properties_Property_Options( $listing, $this );
+		return new ProductListing_Filter_Params_Property_Options( $listing, $this );
 	}
 
 }

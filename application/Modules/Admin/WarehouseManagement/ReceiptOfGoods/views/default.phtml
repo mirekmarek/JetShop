@@ -1,0 +1,36 @@
+<?php
+namespace JetShopModule\Admin\WarehouseManagement\ReceiptOfGoods;
+
+use Jet\Form;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $add_form
+ */
+
+$tabs = $this->getRaw('tabs');
+?>
+<?=$tabs?>
+
+<div id="add_form_area" style="padding: 10px;">
+	<?php require 'add_form.phtml'; ?>
+</div>
+
+<div id="items_area" style="padding: 10px;">
+	<?php require 'items.phtml'; ?>
+</div>
+
+<script type="text/javascript">
+	let ReceiptOfGoods = {
+		addItem: function() {
+			JetAjaxForm.submit(
+				'add_form',
+				{
+					onSuccess: function (form, response_data) {
+					}
+				}
+			);
+		}
+	};
+</script>

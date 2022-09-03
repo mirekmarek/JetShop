@@ -155,4 +155,5 @@ return [
 	'- kind of product is not set -' => '',
 	'Change kind of product' => '',
 	'Change' => '',
+	'Flags' => '',
 ];

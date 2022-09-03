@@ -790,4 +790,15 @@ abstract class Core_Product extends DataModel {
 		return Product::fetch(['product'=>['id'=>$ids]]);
 	}
 
+	public static function getIdsByKind( KindOfProduct $kind ) : array
+	{
+		$_ids = Product::dataFetchCol(['id'], ['kind_of_product_id'=>$kind->getId()]);
+		$ids = [];
+		
+		foreach($_ids as $id) {
+			$ids[] = (int)$id;
+		}
+		
+		return $ids;
+	}
 }

@@ -25,6 +25,14 @@ trait Core_Product_Trait_Categories
 	 * @var Category[]
 	 */
 	protected array|null $_categories = null;
+	
+	/**
+	 * @return Product_Category[]
+	 */
+	public function getCategoriesAssoc() : array
+	{
+		return $this->categories;
+	}
 
 	/**
 	 * @return Category[]
@@ -49,7 +57,7 @@ trait Core_Product_Trait_Categories
 		return isset($this->categories[$category_id]);
 	}
 
-	public function addCategory( int $category_id ) : bool
+	public function addCategory( int $category_id, bool $auto_appended=false ) : bool
 	{
 		$category = Category::get( $category_id );
 		if(!$category) {
@@ -63,6 +71,7 @@ trait Core_Product_Trait_Categories
 		$_category = new Product_Category();
 		$_category->setProductId( $this->id );
 		$_category->setCategoryId( $category->getId() );
+		$_category->setAutoAppended( $auto_appended );
 
 		$this->categories[] = $_category;
 
@@ -72,10 +81,17 @@ trait Core_Product_Trait_Categories
 		return true;
 	}
 
-	public function removeCategory( int $category_id ) : bool
+	public function removeCategory( int $category_id, bool $force=false ) : bool
 	{
 
 		if(!isset($this->categories[$category_id])) {
+			return false;
+		}
+		
+		if(
+			$this->categories[$category_id]->getAutoAppended() &&
+			!$force
+		) {
 			return false;
 		}
 

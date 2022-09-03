@@ -18,8 +18,6 @@ abstract class Core_ProductListing_Filter_Flags_Flag {
 
 	protected bool $is_disabled = false;
 
-	protected bool $is_forced = false;
-
 	protected array $select_items = [];
 
 	protected array $product_ids = [];
@@ -71,16 +69,6 @@ abstract class Core_ProductListing_Filter_Flags_Flag {
 	public function setIsActive( bool $is_active ) : void
 	{
 		$this->is_active = $is_active;
-	}
-
-	public function isForced(): bool
-	{
-		return $this->is_forced;
-	}
-
-	public function setIsForced( bool $is_forced ) : void
-	{
-		$this->is_forced = $is_forced;
 	}
 
 	public function isDisabled(): bool

@@ -178,8 +178,11 @@ class Controller_Main extends MVC_Controller_Default
 		$tabs = [
 			'main'    => Tr::_( 'Main data' ),
 			'images'  => Tr::_( 'Images' ),
-			'filter'  => Tr::_( 'Auto append products' )
 		];
+		
+		if(static::$current_category->getKindOfProductId()) {
+			$tabs['filter'] = Tr::_( 'Auto append products' );
+		}
 
 		$tabs = UI::tabs(
 			$tabs,
@@ -346,7 +349,7 @@ class Controller_Main extends MVC_Controller_Default
 			$this->_editCategorySave();
 		}
 		
-		$this->output( 'category/edit/filter' );
+		$this->output( 'category/edit/auto-append-settings' );
 		
 	}
 	

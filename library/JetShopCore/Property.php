@@ -372,7 +372,7 @@ abstract class Core_Property extends DataModel {
 
 	abstract public function getValueInstance() : Property_Value|null;
 	
-	abstract public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Properties_Property|null;
+	abstract public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property|null;
 
 
 

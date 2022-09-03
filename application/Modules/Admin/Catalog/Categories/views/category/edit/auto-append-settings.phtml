@@ -1,0 +1,118 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\MVC_View;
+use JetShop\Brand;
+use JetShop\Property;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$category = Controller_Main::getCurrentCategory();
+$kind_of_product = $category->getKindOfProduct();
+
+$target_filter_form = $category->getAutoAppendProductFilterEditForm();
+$target_filter_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM=>1
+])
+?>
+<?=$this->render('lj_start')?>
+<?=$target_filter_form->start()?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?php if(!$target_filter_form->getIsReadonly()):?>
+			<?=UI::button_save()?>
+		<?php endif; ?>
+	</div>
+</div>
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+
+		<fieldset>
+			<legend><?=Tr::_('Property filter')?></legend>
+
+			<?php
+			foreach($kind_of_product->getAllProperties() as $property):
+				$field_prefix = '/properties/'.$property->getId();
+				?>
+				<fieldset>
+					<legend class="sub"><?=$property->getInternalName()?></legend>
+					<?php
+					switch($property->getType()):
+						case Property::PROPERTY_TYPE_BOOL:
+							echo $target_filter_form->field($field_prefix.'/selected');
+						break;
+						case Property::PROPERTY_TYPE_NUMBER:
+							echo $target_filter_form->field($field_prefix.'/min');
+							echo $target_filter_form->field($field_prefix.'/max');
+						break;
+						case Property::PROPERTY_TYPE_OPTIONS:
+							?>
+
+							<div class="row form-group">
+								<div class="col-md-1"></div>
+								<div class="col-md-8">
+									<div style="padding: 10px;">
+										<?php
+										foreach( $property->getOptions() as $option ):
+												?>
+												<div style="width: 250px;height: 30px;float: left;">
+													<?=$target_filter_form->field($field_prefix.'/option_'.$option->getId())->input()?>
+												</div>
+												<?php
+										endforeach;
+										?>
+									</div>
+									<div style="clear: both;margin-bottom: 20px;"></div>
+
+								</div>
+
+							</div>
+							<?php
+						break;
+					endswitch;
+
+			endforeach; ?>
+		</fieldset>
+
+
+		<fieldset>
+			<legend><?=Tr::_('Flags filter')?></legend>
+			
+				<?php foreach($target_filter_form->getFields() as $field):
+					if(str_starts_with($field->getName(),'/flags/')) {
+						echo $field;
+					}
+				endforeach; ?>
+		</fieldset>
+		
+		<fieldset>
+			<legend><?=Tr::_('Brand filter')?></legend>
+
+			<div class="row form-group">
+				<div class="col-md-1"></div>
+				<div class="col-md-8">
+					<div style="padding: 10px;">
+						<?php foreach( Brand::getList() as $brand ): ?>
+							<div style="width: 250px;height: 30px;float: left;">
+								<?=$target_filter_form->field( '/brands/'.$brand->getId() )->input()?>
+							</div>
+						<?php endforeach; ?>
+					</div>
+					<div style="clear: both;margin-bottom: 20px;"></div>
+
+				</div>
+
+			</div>
+		</fieldset>
+
+	</div>
+</div>
+
+<?=$target_filter_form->end()?>
+<?=$this->render('lj_end')?>

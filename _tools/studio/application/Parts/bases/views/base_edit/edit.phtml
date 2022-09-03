@@ -1,0 +1,170 @@
+<?php
+namespace JetStudio;
+
+use Jet\Locale;
+use Jet\Tr;
+use Jet\UI;
+use Jet\Form_Renderer;
+use Jet\UI_dialog;
+
+$base = Bases::getCurrentBase();
+
+if( !$base ) {
+	return;
+}
+
+$form = $base->getEditForm();
+
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 1
+] );
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 8
+] );
+
+
+$add_locale_form = $base->getAddLocaleForm();
+$sort_locales_form = $base->getSortLocalesForm();
+
+$sort_dialog = UI::dialog( 'locales_sort_dialog', Tr::_( 'Sort locales' ), UI_dialog::SIZE_LARGE );
+?>
+<?= $form->start() ?>
+
+<div class="container-fluid" id="main-edit-area">
+
+	<legend style="margin-top: 10px"><?= Tr::_( 'Base' ) ?> <span
+				style="font-weight: bolder"><?= $base->getName() ?></span> <span
+				style="color: #aaaaaa;font-size: 12px;"><?= $base->getId() ?></span></legend>
+
+
+	<?= Application::getGeneralView()->render( 'messages' ); ?>
+
+	<fieldset style="margin-bottom: 40px;">
+		<?= $form->field( 'name' ) ?>
+		<?= $form->field( 'is_default' ) ?>
+		<?= $form->field( 'is_secret' ) ?>
+		<?= $form->field( 'is_active' ) ?>
+		<?= $form->field( 'SSL_required' ) ?>
+		<?= $form->field( 'initializer' ) ?>
+	</fieldset>
+
+	<?php foreach( $base->getLocales() as $locale ): ?>
+		<fieldset style="margin-bottom: 40px;">
+			<legend>
+
+				<span style="padding-left: 30px;"><?= UI::flag( $locale ) ?></span>
+				<span style="padding-left: 10px;"><?= $locale->getName( Locale::getCurrentLocale() ) ?></span>
+				<span style="padding-left: 10px;font-size: 12px;"><?= $locale ?></span>
+				<span style="padding-left: 10px;font-size: 12px;"><?= $locale->getName( $locale ) ?></span>
+
+			</legend>
+
+			<?= $form->field( '/' . $locale . '/is_active' ) ?>
+			<?= $form->field( '/' . $locale . '/SSL_required' ) ?>
+			<?= $form->field( '/' . $locale . '/title' ) ?>
+
+			<div class="form-group row">
+				<div class="col-md-1">
+				</div>
+				<div class="col-md-5">
+					<label class="control-label"><?= Tr::_( 'URLs:' ); ?></label>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-11">
+					<table>
+						<?php for( $u = 0; $u < 100; $u++ ):
+							if( !$form->fieldExists( '/' . $locale . '/URLs/' . $u ) ) {
+								break;
+							}
+
+							$field = $form->field( '/' . $locale . '/URLs/' . $u );
+							$field->input()->addCustomCssStyle( 'width: 400px' );
+							?>
+							<tr>
+								<td></td>
+								<td style="padding-left: 15px;">
+									<div class="container" style="background-color: transparent">
+										<?= $field->row()->start() ?>
+										<?= $field->error() ?>
+										<div class="input-group">
+								<span class="input-group-prepend">
+									<span class="input-group-text"><?= $base->getSSLRequired() ? 'https://' : 'http://' ?></span>
+								</span>
+											<?= $field->input() ?>
+										</div>
+										<?= $field->row()->end() ?>
+									</div>
+								</td>
+							</tr>
+						<?php endfor; ?>
+
+					</table>
+				</div>
+			</div>
+
+
+			<div class="form-group row">
+				<div class="col-md-1">
+				</div>
+				<div class="col-md-5">
+					<label class="control-label"><?= Tr::_( 'Default Meta Tags:' ); ?></label>
+				</div>
+			</div>
+
+			<?=$form->field('/' . $locale . '/meta_tags')?>
+
+			<br>
+			<div class="form-group row">
+				<div class="col-md-1">
+				</div>
+				<div class="col-md-5">
+					<label class="control-label"><?= Tr::_( 'Parameters:' ); ?></label>
+				</div>
+			</div>
+			
+			<?=$form->field('/' . $locale . '/params')?>
+
+		</fieldset>
+
+	<?php endforeach; ?>
+
+</div>
+<?= $form->end() ?>
+
+
+<?= $add_locale_form->start() ?>
+<?= $add_locale_form->field( 'locale' ) ?>
+<?= $add_locale_form->end() ?>
+
+
+<?= $sort_dialog->start() ?>
+
+<div id="locales_sort_area">
+	<?php foreach( $base->getLocales() as $l ): ?>
+		<div class="list-group-item locale-sort-item" data-locale="<?= $l ?>">
+			<table>
+				<tr>
+					<td><span class="fa fa-arrows-v" style="font-size:16px;padding-right: 5px"></span></td>
+					<td style="padding: 5px;width: 20px;"><?= UI::flag( $l ) ?></td>
+
+					<td style="width: 80px;"><?= $l ?></td>
+					<td style="width: 200px;"><?= $l->getName( Locale::getCurrentLocale() ) ?></td>
+					<td style="width: 200px;"><?= $l->getName( $l ) ?></td>
+
+				</tr>
+			</table>
+		</div>
+	<?php endforeach; ?>
+</div>
+<?= $sort_dialog->footer() ?>
+
+<?= $sort_locales_form->start() ?>
+<?= $sort_locales_form->field( 'locales' ) ?>
+<?= UI::button_save() ?>
+<?= $sort_locales_form->end() ?>
+
+<?= $sort_dialog->end(); ?>
+

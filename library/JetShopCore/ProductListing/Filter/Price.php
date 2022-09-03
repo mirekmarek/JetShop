@@ -22,18 +22,23 @@ abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter_Ab
 	protected function init() : void
 	{
 	}
+	
+	public function initProductListing() : void
+	{
+	}
+	
+	public function initAutoAppendFilter( array &$target_filter ) : void
+	{
+	}
 
+	
 	abstract public function getFilterUrlParam() : string;
 
-	public function getTargetFilterEditForm( Form $form, array &$target_filter ) : void
+	public function getAutoAppendProductFilterEditForm( Form $form ) : void
 	{
 	}
 
-	public function catchTargetFilterEditForm( Form $form, array &$target_filter ) : void
-	{
-	}
-
-	public function initByTargetFilter( array &$target_filter ) : void
+	public function catchAutoAppendFilterEditForm( Form $form, array &$target_filter ) : void
 	{
 	}
 
@@ -59,11 +64,7 @@ abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter_Ab
 			$this->to = 0;
 		}
 	}
-
-	public function generateCategoryTargetUrl( array &$parts ) : void
-	{
-	}
-
+	
 	public function generateUrl( array &$parts ) : void
 	{
 		if(!$this->is_active) {
