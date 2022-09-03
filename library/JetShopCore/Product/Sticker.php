@@ -21,7 +21,6 @@ abstract class Core_Product_Sticker extends DataModel_Related_1toN
 		is_id: true,
 		is_key: true,
 		related_to: 'main.id',
-		form_field_type: false
 	)]
 	protected int $product_id = 0;
 

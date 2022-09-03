@@ -22,17 +22,14 @@ class Main extends Application_Module implements Category_ManageModuleInterface
 	const ACTION_UPDATE_CATEGORY = 'update_category';
 	const ACTION_DELETE_CATEGORY = 'delete_category';
 
-	public function getCategorySelectWhispererUrl( array $only_types=[], int $exclude_branch_id=0, bool $only_active=false ) : string
+	public function getCategorySelectWhispererUrl( int $exclude_branch_id=0, bool $only_active=false ) : string
 	{
-		$only_types = implode(',', $only_types);
-
 		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
 		if(!$page) {
 			return '';
 		}
 
 		return $page->getURL([], [
-			'only_types' => $only_types,
 			'exclude_branch_id' => $exclude_branch_id,
 			'only_active' => $only_active ? 1:0
 		]);
@@ -48,62 +45,8 @@ class Main extends Application_Module implements Category_ManageModuleInterface
 			$id
 		);
 	}
+	
 
-	public function getParametrizationEditUrl( int $id ) : string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_CATEGORY,
-			static::ACTION_UPDATE_CATEGORY,
-			static::ADMIN_MAIN_PAGE,
-			$id,
-			[
-				'page' => 'parametrization'
-			]
-		);
-	}
-
-	public function getParametrizationGroupEditUrl( int $category_id, int $group_id ) : string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_CATEGORY,
-			static::ACTION_UPDATE_CATEGORY,
-			static::ADMIN_MAIN_PAGE,
-			$category_id,
-			[
-				'group_id' => $group_id
-			]
-		);
-	}
-
-	public function getParametrizationPropertyEditUrl( int $category_id, int $group_id, int $property_id ) : string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_CATEGORY,
-			static::ACTION_UPDATE_CATEGORY,
-			static::ADMIN_MAIN_PAGE,
-			$category_id,
-			[
-				'group_id' => $group_id,
-				'property_id' => $property_id
-			]
-		);
-	}
-
-	public function getParametrizationOptionEditUrl( int $category_id, int $group_id, int $property_id, int $option_id ) : string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_CATEGORY,
-			static::ACTION_UPDATE_CATEGORY,
-			static::ADMIN_MAIN_PAGE,
-			$category_id,
-			[
-				'group_id' => $group_id,
-				'property_id' => $property_id,
-				'option_id' => $option_id
-			]
-		);
-
-	}
 
 	public static function getCurrentUserCanEditCategory() : bool
 	{

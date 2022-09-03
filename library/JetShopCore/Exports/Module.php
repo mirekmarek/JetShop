@@ -28,7 +28,7 @@ abstract class Core_Exports_Module extends Application_Module
 
 	abstract public function joinProductsAllowed() : bool;
 
-	public function handleCategorySettings( Category $category, Shops_Shop $shop ): string
+	public function handleKindOfProductSettings( KindOfProduct $kind_of_product, Shops_Shop $shop ): string
 	{
 		$content = new class extends MVC_Page_Content {
 			public function output( string $output ): void
@@ -38,14 +38,14 @@ abstract class Core_Exports_Module extends Application_Module
 		};
 
 		$content->setModuleName( $this->getModuleManifest()->getName() );
-		$content->setControllerAction( 'handleCategorySettings' );
+		$content->setControllerAction( 'handleKindOfProductSettings' );
 		$content->setParameter('shop', $shop);
-		$content->setParameter('category', $category);
+		$content->setParameter('kind_of_product', $kind_of_product);
 		$content->setParameter('export', $this);
 
 		$ns = $this->getModuleManifest()->getNamespace();
 
-		$controller = $ns.'Controller_handleCategorySettings';
+		$controller = $ns.'Controller_handleKindOfProductSettings';
 
 		$controller = new $controller( $content );
 		$controller->dispatch();

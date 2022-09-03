@@ -66,10 +66,8 @@ trait Controller_Main_Confirm {
 		$cash_desk = CashDesk::get();
 
 		$form = $cash_desk->getSpecialRequirementsForm();
-		if($form->catchInput() && $form->validate()) {
-			$form->catchData();
-		}
-
+		$form->catch();
+		
 		$response->response();
 	}
 

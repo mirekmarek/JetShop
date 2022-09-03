@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -87,7 +87,7 @@ class Db extends BaseObject
 	 *
 	 * @return Db_Backend_Interface
 	 */
-	public static function create( string $connection_name, array $connection_config_data ): Db_Backend_Interface
+	public static function createConnection( string $connection_name, array $connection_config_data ): Db_Backend_Interface
 	{
 		if( isset( static::$connections[$connection_name] ) ) {
 			return static::$connections[$connection_name];

@@ -17,38 +17,17 @@ use JetShop\Category;
 
 
 <?php if(Main::getCurrentUserCanEditCategory() ):
-	$dialog = UI::dialog('sort_categories', Tr::_('Sort categories'), 400);
+	$dialog = UI::dialog('sort_categories', Tr::_('Sort categories') );
 
-	$has_some_top_categories = false;
 	?>
 	<?=$dialog->start()?>
 	<div style="overflow: auto;">
 		<div class="sortable" id="categories-sort">
 			<?php foreach(Controller_Main::getCurrentNode()->getChildren() as $node):
-				if($node->getData()['type']!=Category::CATEGORY_TYPE_TOP) {
-					continue;
-				}
-				$has_some_top_categories = true;
 				?>
 				<div class="sortable-item" data-id="<?=$node->getId()?>">
 					<i class="property-option-move"></i>
-					<?=Category::renderIcon($node->getData()['type'], true)?>
-					<?=$node->getLabel()?>
-				</div>
-			<?php endforeach; ?>
-
-			<?php if( $has_some_top_categories ): ?>
-				<hr/>
-			<?php endif; ?>
-
-			<?php foreach(Controller_Main::getCurrentNode()->getChildren() as $node):
-				if($node->getData()['type']==Category::CATEGORY_TYPE_TOP) {
-					continue;
-				}
-				?>
-				<div class="sortable-item" data-id="<?=$node->getId()?>">
-					<i class="property-option-move"></i>
-					<?=Category::renderIcon($node->getData()['type'], true)?>
+					<?php //TODO: /*Category::renderIcon($node->getData()['type'], true)*/ ?>
 					<?=$node->getLabel()?>
 				</div>
 			<?php endforeach; ?>
@@ -80,14 +59,14 @@ use JetShop\Category;
 	} );
 
 	<?php if(Main::getCurrentUserCanEditCategory()): ?>
-	var sortCategories = {
+	const sortCategories = {
 		openDialog: function () {
 			sortCategories.setSort();
 			$('#sort_categories').modal('show');
 
 
 			$('#categories-sort').sortable({
-				stop: function() {
+				stop: function () {
 					sortCategories.setSort();
 				}
 
@@ -95,10 +74,10 @@ use JetShop\Category;
 
 		},
 
-		setSort: function() {
-			var values = [];
+		setSort: function () {
+			const values = [];
 
-			$('#categories-sort').find('.sortable-item').each( function(i, item) {
+			$('#categories-sort').find('.sortable-item').each(function (i, item) {
 				values.push($(item).data('id'));
 			});
 
@@ -108,5 +87,3 @@ use JetShop\Category;
 	};
 	<?php endif; ?>
 </script>
-
-<?=$this->render('param/sort');?>

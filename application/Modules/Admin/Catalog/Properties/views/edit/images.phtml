@@ -1,0 +1,37 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\UI;
+use JetShop\Property;
+use JetShop\Property_ShopData;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View   $this
+ * @var Property $property
+ * @var Form $form
+ */
+$property = $this->getRaw('property');
+
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+	
+	<?php
+	echo $this->getRaw('tabs');
+	
+	foreach(Shops::getList() as $shop):
+		echo $property->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$property->getEditForm()->getIsReadonly() );
+	endforeach;
+	?>
+	</div>
+</div>

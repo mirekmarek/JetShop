@@ -1,0 +1,75 @@
+<?php
+namespace JetShopModule\Admin\Catalog\PropertyGroups;
+
+use JetShop\PropertyGroup as PropertyGroup;
+
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var PropertyGroup     $property_group
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
+
+$property_group = $this->getRaw( 'property_group' );
+$router = $this->getController()->getControllerRouter();
+?>
+
+
+<?=$form->start()?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?php
+		echo $form->field('is_active');
+		echo $form->field('internal_name');
+		echo $form->field('internal_notes');
+		
+		
+		if($form->fieldExists('decimal_places')) {
+			echo $form->field('decimal_places');
+		}
+		
+		foreach(Shops::getList() as $shop):
+			$shop_key= $shop->getKey();
+			$shop_data = $property_group->getShopData( $shop );
+			
+			?>
+			<?=$shop_data->renderShopDataBlock_start()?>
+
+			<fieldset>
+				<legend class="sub"><?=Tr::_('Main data')?></legend>
+				<?php
+				echo $form->field('/shop_data/'.$shop_key.'/is_active');
+				echo $form->field('/shop_data/'.$shop_key.'/label');
+				echo $form->field('/shop_data/'.$shop_key.'/description');
+				
+				?>
+			</fieldset>
+			
+			<?=$shop_data->renderShopDataBlock_end()?>
+		<?php endforeach; ?>
+	</div>
+</div>
+
+<?=$form->end()?>

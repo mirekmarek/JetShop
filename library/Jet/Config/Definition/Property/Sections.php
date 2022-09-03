@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -79,49 +79,4 @@ class Config_Definition_Property_Sections extends Config_Definition_Property
 	protected function checkValue( mixed $value ): void
 	{
 	}
-
-	/**
-	 *
-	 * @param mixed $property_value
-	 *
-	 * @return Form_Field|null|Form_Field[]
-	 */
-	public function createFormField( mixed $property_value ): Form_Field|null|array
-	{
-		if( $this->getFormFieldType() === false ) {
-			return null;
-		}
-
-		/**
-		 * @var Config_Section[] $property_value
-		 */
-
-		$fields = [];
-
-		foreach( $property_value as $key => $section ) {
-
-			$form = $section->getCommonForm();
-
-			foreach( $form->getFields() as $field ) {
-				$prefix = '/' . $this->getName() . '/' . $key;
-
-				$field_name = $field->getName();
-
-				if( $field_name[0] == '/' ) {
-					$field_name = $prefix . $field_name;
-				} else {
-					$field_name = $prefix . '/' . $field_name;
-				}
-
-				$field->setName( $field_name );
-
-				$fields[] = $field;
-			}
-
-		}
-
-		return $fields;
-
-	}
-
 }

@@ -5,6 +5,7 @@ use Jet\Auth;
 use Jet\Tr;
 use Jet\Locale;
 use Jet\MVC;
+use Jet\UI_icon;
 
 ?>
 
@@ -31,7 +32,7 @@ use Jet\MVC;
 							<?php if( $item->getSeparatorBefore() ): ?>
 								<div class="dropdown-divider"></div>
 							<?php endif; ?>
-							<a class="dropdown-item" href="<?=$item->getUrl()?>"><?=UI::icon( $item->getIcon() )->setWidth( 20 )?> <?=$item->getLabel()?></a>
+							<a class="dropdown-item" href="<?=$item->getUrl()?>"><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE)?> <?=$item->getLabel()?></a>
 							<?php if( $item->getSeparatorAfter() ): ?>
 								<div class="dropdown-divider"></div>
 							<?php endif; ?>

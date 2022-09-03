@@ -2,7 +2,7 @@
 
 namespace JetStudio;
 
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\MVC_View;
 
@@ -15,11 +15,11 @@ $page = $this->getRaw( 'page' );
 
 $form = $page->getContentCreateForm();
 
-$form->setDefaultLabelWidth( [
-	Form::LJ_SIZE_MEDIUM => 3
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 3
 ] );
-$form->setDefaultFieldWidth( [
-	Form::LJ_SIZE_MEDIUM => 9
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 9
 ] );
 
 
@@ -133,26 +133,10 @@ $form_id = $form->getId();
 		     class="tab-pane fade<?= $selected_content_kind == Pages_Page_Content::CONTENT_KIND_CALLBACK ? ' show active' : '' ?>"
 		     style="padding-top: 10px;min-height: 400px;">
 			<?php
-			$class_field = $form->field( 'output_callback_class' );
-			$method_field = $form->field( 'output_callback_method' );
+			$form->field( 'output_callback' )->label()->setWidth([Form_Renderer::LJ_SIZE_MEDIUM=>1]);
+			$form->field( 'output_callback' )->container()->setWidth([Form_Renderer::LJ_SIZE_MEDIUM=>11]);
 			?>
-			<?= $class_field->row()->start() ?>
-			<?= $class_field->error() ?>
-			<div class="input-group">
-							<span class="input-group-prepend">
-								<span class="input-group-text"> </span>
-							</span>
-				<?= $class_field->input() ?>
-				<span class="input-group-prepend">
-								<span class="input-group-text">::</span>
-							</span>
-				<?= $method_field->input() ?>
-				<span class="input-group-append">
-								<span class="input-group-text">( Jet\MVC_Page $page, Jet\MVC_Page_Content $content )</span>
-							</span>
-			</div>
-			<?= $class_field->row()->end() ?>
-
+			<?=$form->field( 'output_callback' )?>
 		</div>
 
 	</div>

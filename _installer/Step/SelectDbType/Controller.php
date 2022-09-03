@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -9,11 +9,14 @@
 namespace JetApplication\Installer;
 
 use Exception;
+use Jet\Db_Backend_PDO_Config;
 use Jet\Form;
+use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Db_Config;
 use Jet\DataModel_Config;
 use Jet\Http_Headers;
+use Jet\Translator;
 use Jet\UI_messages;
 use Jet\Tr;
 use Jet\DataModel_Backend;
@@ -44,15 +47,15 @@ class Installer_Step_SelectDbType_Controller extends Installer_Step_Controller
 	public function main(): void
 	{
 
-		$db_type_field = new Form_Field_Select( 'type', 'Please database type: ' );
+		$db_type_field = new Form_Field_Select( 'type', 'Database type:' );
 		$db_type_field->setSelectOptions( DataModel_Backend::getBackendTypes( true ) );
 		$db_type_field->setDefaultValue( static::getSelectedBackendType()['type'] );
 		$db_type_field->setIsRequired( true );
 
 		$db_type_field->setErrorMessages(
 			[
-				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please database type',
-				Form_Field_Select::ERROR_CODE_EMPTY         => 'Please database type',
+				Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select database type',
+				Form_Field::ERROR_CODE_EMPTY         => 'Please select database type',
 			]
 		);
 
@@ -70,24 +73,21 @@ class Installer_Step_SelectDbType_Controller extends Installer_Step_Controller
 			$driver = static::getSelectedBackendType()['driver'];
 
 			$data_model_config = new DataModel_Config();
+			$data_model_config->setBackendType( static::getSelectedBackendType()['type'] );
+			
 			$db_config = new Db_Config();
+			$db_connection_config = new Db_Backend_PDO_Config();
+			$db_connection_config->setDriver( $driver );
+			$db_connection_config->setName('default');
+			$db_connection_config->initDefault();
+			$db_config->addConnection( $db_connection_config );
 
-			require Installer::getBasePath() . 'Classes/DbDriverConfig.php';
-			require Installer::getBasePath() . 'Classes/DbDriverConfig/' . $driver . '.php';
-
-			$class_name = __NAMESPACE__ . '\\Installer_DbDriverConfig_' . $driver;
-
-			/**
-			 * @var Installer_DbDriverConfig $driver_config
-			 */
-			$driver_config = new $class_name();
-			$driver_config->initialize( $db_config, $data_model_config );
 
 			try {
 				$db_config->saveConfigFile();
 				$data_model_config->saveConfigFile();
 			} catch( Exception $e ) {
-				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Tr::COMMON_DICTIONARY ) );
+				UI_messages::danger( Tr::_( 'Something went wrong: %error%', ['error' => $e->getMessage()], Translator::COMMON_DICTIONARY ) );
 				Http_Headers::reload();
 			}
 

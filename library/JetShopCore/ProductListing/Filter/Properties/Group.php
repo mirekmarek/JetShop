@@ -39,7 +39,7 @@ abstract class Core_ProductListing_Filter_Properties_Group {
 	 */
 	public function getProperties() : array
 	{
-		return $this->listing->properties()->getProperties( $this->group->getId() );
+		return $this->listing->params()->getProperties( $this->group->getId() );
 	}
 
 	public function disableNonRelevantFilters() : void

@@ -8,6 +8,8 @@
 namespace JetShopModule\Shop\CashDesk;
 
 use Jet\Form;
+use Jet\Form_Field;
+use Jet\Form_Renderer;
 use Jet\Form_Field_Input;
 use JetShop\CashDesk;
 use JetShop\CashDesk_Module;
@@ -124,24 +126,24 @@ class Main extends CashDesk_Module
 	public function updateBillingAddressForm( CashDesk $cash_desk, Form $form ) : void
 	{
 
-		$form->setDefaultLabelWidth([
-			Form::LJ_SIZE_MEDIUM => 2,
+		$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 2,
 		]);
 
-		$form->setDefaultFieldWidth([
-			Form::LJ_SIZE_MEDIUM => 8,
+		$form->renderer()->setDefaultFieldWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 8,
 		]);
 
 		$form->setAction('?action=customer_billing_address_send');
 
-		$form->tag()->addJsAction('onsubmit', "CashDesk.customer.billingAddress.confirm();return false;");
+		$form->renderer()->addJsAction('onsubmit', "CashDesk.customer.billingAddress.confirm();return false;");
 
 		foreach($form->getFields() as $field) {
 			$field->input()->addJsAction('onblur', "CashDesk.customer.billingAddress.sendField(this);");
 		}
 
 		$field = $form->getField('phone');
-		$field->setViewScript('field/phone');
+		$field->input()->setViewScript( 'field/phone' );
 
 		$shop = $cash_desk->getShop();
 
@@ -161,7 +163,7 @@ class Main extends CashDesk_Module
 		$reg_exp = $shop->getPhoneValidationRegExp();
 
 		if(!preg_match($reg_exp, $value_raw)) {
-			$field->setError( Form_Field_Input::ERROR_CODE_INVALID_FORMAT );
+			$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
 
 			return false;
 		}
@@ -173,17 +175,17 @@ class Main extends CashDesk_Module
 
 	public function updateDeliveryAddressForm( CashDesk $cash_desk, Form $form ) : void
 	{
-		$form->setDefaultLabelWidth([
-			Form::LJ_SIZE_MEDIUM => 2,
+		$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 2,
 		]);
 
-		$form->setDefaultFieldWidth([
-			Form::LJ_SIZE_MEDIUM => 8,
+		$form->renderer()->setDefaultFieldWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 8,
 		]);
 
 		$form->setAction('?action=customer_delivery_address_send');
 
-		$form->tag()->addJsAction('onsubmit', "CashDesk.customer.deliveryAddress.confirm();return false;");
+		$form->renderer()->addJsAction('onsubmit', "CashDesk.customer.deliveryAddress.confirm();return false;");
 
 		foreach($form->getFields() as $field) {
 			$field->input()->addJsAction('onblur', "CashDesk.customer.deliveryAddress.sendField(this);");

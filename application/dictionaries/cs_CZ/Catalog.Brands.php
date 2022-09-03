@@ -10,5 +10,5 @@ return [
 	'H1:' => '',
 	'Title:' => '',
 	'Keywords:' => '',
-	'Keywords words for internal fulltext:' => '',
+	'Keywords for internal fulltext:' => '',
 ];

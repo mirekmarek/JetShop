@@ -8,6 +8,8 @@ use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\DataModel_Fetch_Instances;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 
 #[DataModel_Definition(
 	name: 'suppliers',
@@ -21,14 +23,16 @@ abstract class Core_Supplier extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
-		form_field_type: false		
 	)]
 	protected int $id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Name:'		
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:',
 	)]
 	protected string $name = '';
 
@@ -153,8 +157,8 @@ abstract class Core_Supplier extends DataModel {
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->_add_form = $this->getCommonForm('add_form');
-			$this->_add_form->setCustomTranslatorNamespace( Supplier::getManageModuleName() );
+			$this->_add_form = $this->createForm('add_form');
+			$this->_add_form->setCustomTranslatorDictionary( Supplier::getManageModuleName() );
 		}
 
 		return $this->_add_form;
@@ -162,17 +166,7 @@ abstract class Core_Supplier extends DataModel {
 
 	public function catchAddForm() : bool
 	{
-		$add_form = $this->getAddForm();
-		if(
-			!$add_form->catchInput() ||
-			!$add_form->validate()
-		) {
-			return false;
-		}
-
-		$add_form->catchData();
-
-		return true;
+		return $this->getAddForm()->catch();
 	}
 
 
@@ -180,8 +174,8 @@ abstract class Core_Supplier extends DataModel {
 	public function getEditForm() : Form
 	{
 		if(!$this->_edit_form) {
-			$this->_edit_form = $this->getCommonForm('edit_form');
-			$this->_edit_form->setCustomTranslatorNamespace( Supplier::getManageModuleName() );
+			$this->_edit_form = $this->createForm('edit_form');
+			$this->_edit_form->setCustomTranslatorDictionary( Supplier::getManageModuleName() );
 		}
 
 		return $this->_edit_form;
@@ -189,19 +183,8 @@ abstract class Core_Supplier extends DataModel {
 
 	public function catchEditForm() : bool
 	{
-		$edit_form = $this->getEditForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
-		}
-
-		$edit_form->catchData();
-
-		return true;
+		return $this->getEditForm()->catch();
 	}
-
 	
 
 	public function afterAdd() : void

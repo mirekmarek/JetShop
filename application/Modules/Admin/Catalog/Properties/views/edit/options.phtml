@@ -1,0 +1,150 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetShop\Property;
+use JetShop\Property_Options_Option;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View   $this
+ * @var Property $property
+ * @var Property_Options_Option $new_option
+ * @var Form $form
+ */
+$property = $this->getRaw('property');
+
+$new_option = $this->getRaw('new_option');
+
+$router = $this->getController()->getControllerRouter();
+
+$add_form = $new_option->getAddForm();
+$add_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+	
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="width: 120px"></th>
+						<th style="width: 50px"><?=Tr::_('ID')?></th>
+						<th style="width: 250px"><?=Tr::_('Internal name')?></th>
+						<th><?=Tr::_('Internal notes')?></th>
+					</tr>
+				</thead>
+				<tbody class="sortable" id="sort_items">
+				<?php foreach($property->getOptions() as $option):
+					$edit_uri = $router->getAction('edit_property_option_main')->URI($option->getId());
+					?>
+					<tr class="sortable-item" data-id="<?=$option->getId()?>">
+						<td>
+							<i class="property-option-move"><?=UI::icon('up-down')?></i>
+							<?=UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);?>
+						</td>
+						<td><a href="<?=$edit_uri?>"><?=$option->getId()?></a></td>
+						<td><a href="<?=$edit_uri?>"><?=$option->getInternalName()?></a></td>
+						<td><?=nl2br($option->getInternalNotes())?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		
+		
+
+		<br><br>
+		<fieldset>
+			<legend><?=Tr::_('Create a new option')?></legend>
+		
+		<?php
+		echo $add_form->start();
+		
+		
+		echo $add_form->field('is_active');
+		echo $add_form->field('internal_name');
+		echo $add_form->field('internal_notes');
+		
+		
+		foreach(Shops::getList() as $shop):
+			$shop_key= $shop->getKey();
+			
+			$shop_data = $new_option->getShopData( $shop );
+			
+			$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$add_form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
+			$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
+			$add_form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
+			?>
+			<?=$shop_data->renderShopDataBlock_start()?>
+			<fieldset>
+				<legend class="sub"><?=Tr::_('Main data')?></legend>
+				
+				<?=$add_form->field('/shop_data/'.$shop_key.'/is_active')?>
+				<?=$add_form->field('/shop_data/'.$shop_key.'/filter_label')?>
+				<?=$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
+				<?=$add_form->field('/shop_data/'.$shop_key.'/url_param')?>
+				<?=$add_form->field('/shop_data/'.$shop_key.'/description')?>
+			</fieldset>
+			
+			
+			<?=$shop_data->renderShopDataBlock_end()?>
+		<?php endforeach; ?>
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<?=UI::button_save()?>
+				</div>
+			</div>
+			<?=$add_form->end();?>
+			<br><br>
+		</fieldset>
+	</div>
+</div>
+
+<?php if(!$property->getEditForm()->getIsReadonly()): ?>
+<form action="<?=Http_Request::currentURI(['action'=>'sort_options'])?>" method="post" id="sort_form">
+	<input type="hidden" name="sort_order" id="sort_order" />
+</form>
+
+<script type="text/javascript">
+
+	const optionSort = {
+		init: function () {
+			$('#sort_items').sortable({
+				stop: function () {
+					optionSort.setSort();
+				}
+			});
+		},
+
+		setSort: function () {
+			const values = [];
+
+			$('#sort_items').find('.sortable-item').each(function (i, item) {
+				values.push($(item).data('id'));
+			});
+
+			$('#sort_order').val(values.join('|'));
+			$('#sort_form').submit();
+
+		}
+	};
+
+	optionSort.init();
+</script>
+<?php endif; ?>

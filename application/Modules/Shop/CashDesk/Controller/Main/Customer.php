@@ -219,7 +219,7 @@ trait Controller_Main_Customer {
 			$response->error();
 		}
 
-		$field->catchData();
+		$field->catchFieldValue();
 
 
 		if($field->getValue() && !$field->getLastErrorCode()) {
@@ -241,30 +241,24 @@ trait Controller_Main_Customer {
 
 		$form = $cash_desk->getBillingAddressForm();
 
-		if(
-			!$form->catchInput() ||
-			!$form->validate()
-		) {
-			$response->error();
-		} else {
-			$form->catchData();
-
+		if( $form->catch() ) {
 			$cash_desk->setBillingAddressHasBeenSet(true);
-
+			
 			if($cash_desk->isDeliveryAddressDisabled()) {
 				$cash_desk->setCurrentStep( CashDesk::STEP_CONFIRM );
-
+				
 			} else {
 				$cash_desk->setDifferentDeliveryAddressHasBeenSet( false );
 				$cash_desk->setDeliveryAddressHasBeenSet( false );
-
+				
 				$response->addSnippet(
 					'cash_desk_delivery_address',
 					'customer/delivery_address'
 				);
-
+				
 			}
-
+		} else {
+			$response->error();
 		}
 
 		$response->addSnippet( 'cash_desk_billing_address', 'customer/billing_address' );
@@ -362,7 +356,7 @@ trait Controller_Main_Customer {
 			$response->error();
 		}
 
-		$field->catchData();
+		$field->catchFieldValue();
 
 
 		if($field->getValue() && !$field->getLastErrorCode()) {
@@ -384,16 +378,11 @@ trait Controller_Main_Customer {
 
 		$form = $cash_desk->getDeliveryAddressForm();
 
-		if(
-			!$form->catchInput() ||
-			!$form->validate()
-		) {
-			$response->error();
-		} else {
-			$form->catchData();
-
+		if( $form->catch() ) {
 			$cash_desk->setDeliveryAddressHasBeenSet(true);
 			$cash_desk->setCurrentStep( CashDesk::STEP_CONFIRM );
+		} else {
+			$response->error();
 		}
 
 		$response->addSnippet( 'cash_desk_delivery_address', 'customer/delivery_address' );
@@ -412,8 +401,6 @@ trait Controller_Main_Customer {
 		if( !$form->catch() ) {
 			$response->error();
 		} else {
-			$form->catchData();
-
 			$password = $form->field('password')->getValue();
 
 			if(!Auth::login( $cash_desk->getEmailAddress(), $password )) {

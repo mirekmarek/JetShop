@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,7 +11,7 @@ namespace Jet;
 /**
  *
  */
-#[Config_Definition(name: 'mailing')]
+#[Config_Definition]
 class Mailing_Config_Sender extends Config_Section
 {
 
@@ -22,11 +22,14 @@ class Mailing_Config_Sender extends Config_Section
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_label: 'E-mail:',
-		form_field_type: Form::TYPE_EMAIL,
-		form_field_error_messages: [
-			Form_Field_Email::ERROR_CODE_EMPTY          => 'Please enter valid email address',
-			Form_Field_Email::ERROR_CODE_INVALID_FORMAT => 'Please enter valid email address'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_EMAIL,
+		label: 'E-mail:',
+		is_required: true,
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY          => 'Please enter valid email address',
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Please enter valid email address'
 		]
 	)]
 	protected string $email = '';
@@ -36,9 +39,13 @@ class Mailing_Config_Sender extends Config_Section
 	 * @var string
 	 */
 	#[Config_Definition(
-		form_field_label: 'Name:',
 		type: Config::TYPE_STRING,
 		is_required: false
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:',
+		is_required: false,
 	)]
 	protected string $name = '';
 

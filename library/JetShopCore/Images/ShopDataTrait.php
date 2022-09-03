@@ -206,7 +206,7 @@ trait Core_Images_ShopDataTrait {
 			if($ok!==null) {
 				$entity = $this->getImageEntity();
 
-				AJAX::formResponse($ok, [
+				AJAX::operationResponse($ok, [
 					'image_'.$entity.'_'.$image_class.'_'.$shop->getKey() => $this->renderImageWidget_Image( $image_class, true ),
 					'system-messages-area' => '',
 				]);

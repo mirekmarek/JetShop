@@ -27,7 +27,6 @@ abstract class Core_Order extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected int $id = 0;
 
@@ -37,7 +36,6 @@ abstract class Core_Order extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
-		form_field_type: false
 	)]
 	protected string $key = '';
 
@@ -45,7 +43,6 @@ abstract class Core_Order extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $import_source = '';
 
@@ -53,7 +50,6 @@ abstract class Core_Order extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $import_remote_id = '';
 
@@ -61,7 +57,6 @@ abstract class Core_Order extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $ip_address = '';
 
@@ -73,7 +68,6 @@ abstract class Core_Order extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $customer_id = 0;
 
@@ -1013,7 +1007,7 @@ abstract class Core_Order extends DataModel {
 	}
 
 	/**
-	 * @return iterable
+	 * @return Order[]
 	 */
 	public static function getList() : iterable
 	{

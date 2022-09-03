@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -17,15 +17,15 @@ class Auth extends BaseObject
 
 	/**
 	 *
-	 * @var ?Auth_Controller_Interface
+	 * @var Auth_Controller_Interface
 	 */
-	protected static ?Auth_Controller_Interface $controller = null;
+	protected static Auth_Controller_Interface $controller;
 
 	/**
 	 *
-	 * @return Auth_Controller_Interface|null
+	 * @return Auth_Controller_Interface
 	 */
-	public static function getController(): Auth_Controller_Interface|null
+	public static function getController(): Auth_Controller_Interface
 	{
 		return static::$controller;
 	}

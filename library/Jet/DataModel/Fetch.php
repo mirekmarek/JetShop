@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,7 +11,7 @@ namespace Jet;
 /**
  *
  */
-abstract class DataModel_Fetch extends BaseObject implements BaseObject_Interface_Serializable_JSON, Data_Paginator_DataSource
+abstract class DataModel_Fetch extends BaseObject implements BaseObject_Interface_Serializable_JSON, Data_Paginator_DataSource, BaseObject_Interface_ArrayEmulator
 {
 
 	/**
@@ -150,6 +150,7 @@ abstract class DataModel_Fetch extends BaseObject implements BaseObject_Interfac
 	{
 		return $this->getCount();
 	}
+	
 
 	/**
 	 * @param mixed $offset
@@ -190,13 +191,7 @@ abstract class DataModel_Fetch extends BaseObject implements BaseObject_Interfac
 
 		return $this->_get( $this->data[$offset] );
 	}
-
-	/**
-	 * @param mixed $item
-	 *
-	 * @return DataModel|DataModel_Related_1toN|DataModel_Related_1to1|DataModel_IDController
-	 */
-	abstract protected function _get( mixed $item ): DataModel|DataModel_Related_1toN|DataModel_Related_1to1|DataModel_IDController;
+	
 
 	/**
 	 * @param int $offset
@@ -208,7 +203,14 @@ abstract class DataModel_Fetch extends BaseObject implements BaseObject_Interfac
 		$this->_fetch();
 		unset( $this->data[$offset] );
 	}
-
+	
+	/**
+	 * @param mixed $item
+	 *
+	 * @return DataModel|DataModel_Related_1toN|DataModel_Related_1to1|DataModel_IDController
+	 */
+	abstract protected function _get( mixed $item ): DataModel|DataModel_Related_1toN|DataModel_Related_1to1|DataModel_IDController;
+	
 	/**
 	 * @return DataModel|DataModel_Related_1toN|DataModel_Related_1to1|DataModel_IDController
 	 * @see Iterator

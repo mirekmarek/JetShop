@@ -1,0 +1,36 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetShop\Property;
+
+/**
+ * @var MVC_View   $this
+ * @var Property[] $result
+ */
+
+$result = $this->getRaw('result');
+
+if($result):
+	$i=0;
+	foreach( $result as $property ):
+		$i++;
+		?><span
+		data-id="<?=$property->getId()?>"
+		data-name="<?=$property->getInternalName()?>"
+		data-url="<?=$property->getEditURL()?>"
+		class="search-whisperer-item<?=$i==1?' search-whisperer-item-selected':''?>"
+		<?php if(!$property->isActive() || !$property->getShopData()->isActive()):?>
+		style="text-decoration: line-through"
+	<?php endif; ?>
+		><?=$property->getInternalName()?></span><?php
+	endforeach;
+else:
+	?>
+	<span class="search-whisperer-message">
+		<?=Tr::_('... sorry, not found ...')?>
+	</span>
+<?php
+endif;
+

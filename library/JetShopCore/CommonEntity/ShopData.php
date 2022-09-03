@@ -4,9 +4,10 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_PropertyFilter;
 use Jet\DataModel_Related_1toN;
 use Jet\Form;
+use Jet\Form_Field;
+use Jet\Form_Definition;
 use Jet\MVC;
 use Jet\MVC_View;
 
@@ -25,7 +26,10 @@ abstract class Core_CommonEntity_ShopData extends DataModel_Related_1toN
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
-		form_field_label: 'Is active'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is active'
 	)]
 	protected bool $is_active = true;
 
@@ -83,12 +87,12 @@ abstract class Core_CommonEntity_ShopData extends DataModel_Related_1toN
 
 	}
 
-	public function getForm( string $form_name, array|DataModel_PropertyFilter|null $property_filter = null ) : Form
+	public function createForm( string $form_name, array $only_fields=[], array $exclude_fields=[]   ) : Form
 	{
 		if(!Shops::exists( $this->getShopKey() )) {
 			return new Form($form_name, []);
 		}
 
-		return parent::getForm( $form_name, $property_filter );
+		return parent::createForm( $form_name, $only_fields, $exclude_fields );
 	}
 }

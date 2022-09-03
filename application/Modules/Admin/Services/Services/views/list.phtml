@@ -34,7 +34,7 @@ $c_edit->setRenderer(
 
 	}
 );
-$c_edit->setCssStyle( 'width:200px;' );
+$c_edit->addCustomCssStyle( 'width:200px;' );
 
 $grid->getColumn( 'internal_name' )->setRenderer(
 	function( Services_Service $item ) use ( $router ) {
@@ -53,7 +53,7 @@ $grid->getColumn( 'code' )->setRenderer(
 		<?php
 	}
 );
-$grid->getColumn( 'code' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'code' )->addCustomCssStyle( 'width:200px;' );
 
 $grid->getColumn( 'group' )->setRenderer(
 	function( Services_Service $item ) {
@@ -62,7 +62,7 @@ $grid->getColumn( 'group' )->setRenderer(
 		<?php
 	}
 );
-$grid->getColumn( 'group' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'group' )->addCustomCssStyle( 'width:200px;' );
 
 
 $grid->getColumn( 'kind' )->setRenderer(
@@ -72,7 +72,7 @@ $grid->getColumn( 'kind' )->setRenderer(
 		<?php
 	}
 );
-$grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'kind' )->addCustomCssStyle( 'width:200px;' );
 
 ?>
 
@@ -85,7 +85,7 @@ $grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
 	<?php endif; ?>
 
 	<div class="col-md-3 col-sm-12">
-		<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
+		<?= $filter_form->field( 'search' )->input() ?>
 	</div>
 	<div class="col-md-4 col-sm-12">
 	</div>

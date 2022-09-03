@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -13,69 +13,13 @@ namespace Jet;
  */
 class Form extends BaseObject
 {
-	const LJ_SIZE_EXTRA_SMALL = 'xs';
-	const LJ_SIZE_SMALL = 'sm';
-	const LJ_SIZE_MEDIUM = 'md';
-	const LJ_SIZE_LARGE = 'lg';
-
-
 	const METHOD_POST = 'POST';
 	const METHOD_GET = 'GET';
 
 	const ENCTYPE_URL_ENCODED = 'application/x-www-form-urlencoded';
 	const ENCTYPE_FORM_DATA = 'multipart/form-data';
 	const ENCTYPE_TEXT_PLAIN = 'text/plain';
-
-	const TYPE_HIDDEN = 'Hidden';
-
-	const TYPE_INPUT = 'Input';
-
-	const TYPE_INT = 'Int';
-	const TYPE_FLOAT = 'Float';
-	const TYPE_RANGE = 'Range';
-
-	const TYPE_DATE = 'Date';
-	const TYPE_DATE_TIME = 'DateTime';
-	const TYPE_MONTH = 'Month';
-	const TYPE_WEEK = 'Week';
-	const TYPE_TIME = 'Time';
-
-	const TYPE_EMAIL = 'Email';
-	const TYPE_TEL = 'Tel';
-
-	const TYPE_URL = 'Url';
-	const TYPE_SEARCH = 'Search';
-
-	const TYPE_COLOR = 'Color';
-
-	const TYPE_SELECT = 'Select';
-	const TYPE_MULTI_SELECT = 'MultiSelect';
-
-	const TYPE_CHECKBOX = 'Checkbox';
-	const TYPE_RADIO_BUTTON = 'RadioButton';
-
-	const TYPE_TEXTAREA = 'Textarea';
-	const TYPE_WYSIWYG = 'WYSIWYG';
-
-	const TYPE_REGISTRATION_USER_NAME = 'RegistrationUsername';
-	const TYPE_REGISTRATION_EMAIL = 'RegistrationEmail';
-	const TYPE_REGISTRATION_PASSWORD = 'RegistrationPassword';
-	const TYPE_PASSWORD = 'Password';
-
-	const TYPE_FILE = 'File';
-	const TYPE_FILE_IMAGE = 'FileImage';
-
-
-	/**
-	 * @var string
-	 */
-	protected string $start_view_script = '';
-
-	/**
-	 * @var string
-	 */
-	protected string $end_view_script = '';
-
+	
 	/**
 	 *
 	 * @var string $name
@@ -92,8 +36,8 @@ class Form extends BaseObject
 	 * @var string $name
 	 */
 	protected string $id = '';
+	
 	/**
-	 * POST (default) or GET
 	 *
 	 * @var string
 	 */
@@ -165,7 +109,7 @@ class Form extends BaseObject
 	/**
 	 * @var string|null
 	 */
-	protected string|null $custom_translator_namespace = null;
+	protected string|null $custom_translator_dictionary = null;
 
 	/**
 	 * @var Locale|null
@@ -178,69 +122,10 @@ class Form extends BaseObject
 	protected bool $is_readonly = false;
 
 	/**
-	 * @var ?string
+	 * @var ?Form_Renderer_Form
 	 */
-	protected string|null $views_dir = null;
-
-	/**
-	 * @var array
-	 */
-	protected array $default_label_width = [self::LJ_SIZE_MEDIUM => 4];
-
-	/**
-	 * @var array
-	 */
-	protected array $default_field_width = [self::LJ_SIZE_MEDIUM => 8];
-
-	/**
-	 * @var ?Form_Renderer_Pair
-	 */
-	protected ?Form_Renderer_Pair $_form_tag = null;
-
-	/**
-	 * @var ?Form_Renderer_Single
-	 */
-	protected ?Form_Renderer_Single $_message_tag = null;
-
-	/**
-	 * @return string
-	 */
-	public function getStartViewScript(): string
-	{
-		if( !$this->start_view_script ) {
-			$this->start_view_script = SysConf_Jet_Form_DefaultViews::get('Form', 'start');
-		}
-		return $this->start_view_script;
-	}
-
-	/**
-	 * @param string $start_view_script
-	 */
-	public function setStartViewScript( string $start_view_script ): void
-	{
-		$this->start_view_script = $start_view_script;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getEndViewScript(): string
-	{
-		if( !$this->end_view_script ) {
-			$this->end_view_script = SysConf_Jet_Form_DefaultViews::get('Form', 'end');
-		}
-
-		return $this->end_view_script;
-	}
-
-	/**
-	 * @param string $end_view_script
-	 */
-	public function setEndViewScript( string $end_view_script ): void
-	{
-		$this->end_view_script = $end_view_script;
-	}
-
+	protected ?Form_Renderer_Form $_renderer = null;
+	
 
 	/**
 	 * constructor
@@ -297,6 +182,32 @@ class Form extends BaseObject
 		}
 
 		return $this->fields;
+	}
+	
+	/**
+	 * @param string $field_name
+	 * @return array
+	 */
+	public function getSubFormPrefixes( string $field_name ) : array
+	{
+		if(!str_ends_with($field_name, '/')) {
+			$field_name .= '/';
+		}
+		
+		$prefixes = [];
+		
+		foreach( $this->fields as $name=>$field ) {
+			if(!str_starts_with($name, $field_name )) {
+				continue;
+			}
+			
+			$name = substr($name, strlen($field_name));
+			$name = explode('/', $name);
+			
+			$prefixes[$name[0]] = $field_name.$name[0].'/';
+		}
+		
+		return $prefixes;
 	}
 
 	/**
@@ -476,47 +387,12 @@ class Form extends BaseObject
 	}
 
 	/**
-	 * @return array
-	 */
-	public function getDefaultLabelWidth(): array
-	{
-		return $this->default_label_width;
-	}
-
-	/**
-	 * @param array $default_label_width
-	 */
-	public function setDefaultLabelWidth( array $default_label_width ): void
-	{
-		$this->default_label_width = $default_label_width;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getDefaultFieldWidth(): array
-	{
-		return $this->default_field_width;
-	}
-
-	/**
-	 * @param array $default_field_width
-	 */
-	public function setDefaultFieldWidth( array $default_field_width ): void
-	{
-		$this->default_field_width = $default_field_width;
-	}
-
-
-	/**
 	 * @param Form_Field $field
 	 */
 	public function addField( Form_Field $field ): void
 	{
 		$field->setForm( $this );
-
 		$key = $field->getName();
-		$field->setForm( $this );
 		$this->fields[$key] = $field;
 
 	}
@@ -565,16 +441,6 @@ class Form extends BaseObject
 
 	/**
 	 * @param string $name
-	 * @param Form_Field $field
-	 */
-	public function setField( string $name, Form_Field $field ): void
-	{
-		$this->fields[$name] = $field;
-		$field->setForm( $this );
-	}
-
-	/**
-	 * @param string $name
 	 *
 	 * @return bool
 	 */
@@ -598,6 +464,10 @@ class Form extends BaseObject
 					);
 				}
 			}
+
+			foreach($field->getErrorMessages() as $code=>$message) {
+				$this->_($message);
+			}
 		}
 	}
 
@@ -605,12 +475,12 @@ class Form extends BaseObject
 	 * catch values from input ($_POST is default)
 	 * and return true if the form has been sent ...
 	 *
-	 * @param array|null $input_data
+	 * @param Data_Array|array|null $input_data
 	 * @param bool $force_catch
 	 *
 	 * @return bool
 	 */
-	public function catchInput( array|null $input_data = null, bool $force_catch = false ): bool
+	public function catchInput( Data_Array|array|null $input_data = null, bool $force_catch = false ): bool
 	{
 
 		$this->is_valid = false;
@@ -661,9 +531,15 @@ class Form extends BaseObject
 		$this->is_valid = true;
 		$this->validation_errors = [];
 		foreach( $this->fields as $field ) {
-			if( !$field->validate() ) {
+			$field->validate();
+		}
+
+		foreach( $this->fields as $field ) {
+			if(!$field->isValid()) {
 				$this->is_valid = false;
-				$this->validation_errors[$field->getName()] = $field->getLastErrorMessage();
+				foreach($field->getAllErrors() as $error) {
+					$this->validation_errors[] = $error;
+				}
 			}
 		}
 
@@ -706,19 +582,11 @@ class Form extends BaseObject
 	}
 
 	/**
-	 * @return array
+	 * @return Form_ValidationError[]
 	 */
 	public function getValidationErrors(): array
 	{
 		return $this->validation_errors;
-	}
-
-	/**
-	 * @return Data_Array
-	 */
-	public function getRawData(): Data_Array
-	{
-		return $this->raw_data;
 	}
 
 	/**
@@ -736,7 +604,7 @@ class Form extends BaseObject
 		foreach( $this->fields as $key => $field ) {
 			if(
 				$field->getIsReadonly() ||
-				!$field->getHasValue()
+				!$field->hasValue()
 			) {
 				continue;
 			}
@@ -753,14 +621,14 @@ class Form extends BaseObject
 	 *
 	 * @return bool
 	 */
-	public function catchData(): bool
+	public function catchFieldValues(): bool
 	{
 		if( !$this->is_valid ) {
 			return false;
 		}
 
 		foreach( $this->fields as $field ) {
-			$field->catchData();
+			$field->catchFieldValue();
 		}
 
 		return true;
@@ -772,7 +640,7 @@ class Form extends BaseObject
 			$this->catchInput() &&
 			$this->validate()
 		) {
-			$this->catchData();
+			$this->catchFieldValues();
 			return true;
 		}
 
@@ -794,10 +662,10 @@ class Form extends BaseObject
 			return $phrase;
 		}
 		if( $this->do_not_translate_texts ) {
-			return $phrase;
+			return Data_Text::replaceData($phrase, $data);
 		}
 
-		return Tr::_( $phrase, $data, $this->custom_translator_namespace, $this->custom_translator_locale );
+		return Tr::_( $phrase, $data, $this->custom_translator_dictionary, $this->custom_translator_locale );
 	}
 
 	/**
@@ -819,17 +687,17 @@ class Form extends BaseObject
 	/**
 	 * @return null|string
 	 */
-	public function getCustomTranslatorNamespace(): null|string
+	public function getCustomTranslatorDictionary(): null|string
 	{
-		return $this->custom_translator_namespace;
+		return $this->custom_translator_dictionary;
 	}
 
 	/**
-	 * @param null|string $custom_translator_namespace
+	 * @param null|string $custom_translator_dictionary
 	 */
-	public function setCustomTranslatorNamespace( null|string $custom_translator_namespace ): void
+	public function setCustomTranslatorDictionary( null|string $custom_translator_dictionary ): void
 	{
-		$this->custom_translator_namespace = $custom_translator_namespace;
+		$this->custom_translator_dictionary = $custom_translator_dictionary;
 	}
 
 	/**
@@ -859,49 +727,17 @@ class Form extends BaseObject
 	}
 
 	/**
-	 * @return string
+	 * @return Form_Renderer_Form
 	 */
-	public function getViewsDir(): string
+	public function renderer(): Form_Renderer_Form
 	{
-		if( !$this->views_dir ) {
-			$this->views_dir = SysConf_Jet_Form::getDefaultViewsDir();
-		}
-
-		return $this->views_dir;
-	}
-
-	/**
-	 * @param string $views_dir
-	 */
-	public function setViewsDir( string $views_dir ): void
-	{
-		$this->views_dir = $views_dir;
-	}
-
-	/**
-	 * @return MVC_View
-	 */
-	public function getView(): MVC_View
-	{
-		return Factory_MVC::getViewInstance( $this->getViewsDir() );
-	}
-
-
-	/**
-	 * @return Form_Renderer_Pair
-	 */
-	public function tag(): Form_Renderer_Pair
-	{
-		if( !$this->_form_tag ) {
+		if( !$this->_renderer ) {
 			$this->checkFieldsHasErrorMessages();
 
-			$this->_form_tag = Factory_Form::gerRendererPairInstance( $this );
-
-			$this->_form_tag->setViewScriptStart( $this->getStartViewScript() );
-			$this->_form_tag->setViewScriptEnd( $this->getEndViewScript() );
+			$this->_renderer = Factory_Form::getRendererFormTagInstance(  $this );
 		}
 
-		return $this->_form_tag;
+		return $this->_renderer;
 	}
 
 	/**
@@ -909,7 +745,7 @@ class Form extends BaseObject
 	 */
 	public function start(): string
 	{
-		return $this->tag()->start();
+		return $this->renderer()->start();
 	}
 
 	/**
@@ -917,21 +753,16 @@ class Form extends BaseObject
 	 */
 	public function end(): string
 	{
-		return $this->_form_tag->end();
+		return $this->renderer()->end();
 	}
 
 	/**
 	 *
-	 * @return Form_Renderer_Single
+	 * @return Form_Renderer_Form_Message
 	 */
-	public function message(): Form_Renderer_Single
+	public function message(): Form_Renderer_Form_Message
 	{
-		if( !$this->_message_tag ) {
-			$this->_message_tag = Factory_Form::gerRendererSingleInstance( $this );
-			$this->_message_tag->setViewScript( 'message' );
-		}
-
-		return $this->_message_tag;
+		return $this->renderer()->message();
 	}
 
 

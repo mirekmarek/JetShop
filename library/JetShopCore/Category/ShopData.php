@@ -5,6 +5,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Tr;
 
 /**
@@ -26,124 +28,132 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 		type: DataModel::TYPE_INT,
 		is_id: true,
 		related_to:  'main.id',
-		form_field_type:  false
 	)]
 	protected int $category_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label:  'Name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:'
 	)]
 	protected string $name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label:  'Alternative name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Alternative name:'
 	)]
 	protected string $second_name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		form_field_type:  Form::TYPE_WYSIWYG,
 		max_len: 65536,
-		form_field_label:  'Description:'
+	)]
+	#[Form_Definition(
+		type:  Form_Field::TYPE_WYSIWYG,
+		label:  'Description:'
 	)]
 	protected string $description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label:  'H1:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'H1:'
 	)]
 	protected string $seo_h1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label:  'Title:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Title:'
 	)]
 	protected string $seo_title = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label:  'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description:'
 	)]
 	protected string $seo_description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label:  'Keywords:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Keywords:'
 	)]
 	protected string $seo_keywords = '';
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-		form_field_label:  'Disable canonical URL'
-	)]
-	protected bool $seo_disable_canonical = false;
-
-	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 512,
-		form_field_type:  false
 	)]
 	protected string $URL_path_part = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_label:  'Keywords words for internal fulltext:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Keywords for internal fulltext:'
 	)]
 	protected string $internal_fulltext_keywords = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_main = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_pictogram = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999999,
-		form_field_type: false
 	)]
 	protected string $product_ids = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type:  false
 	)]
 	protected int $visible_products_count = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type:  false
 	)]
 	protected int $nested_visible_products_count = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_type:  false
 	)]
 	protected string $path = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_type:  false
 	)]
 	protected string $children = '';
 
@@ -155,33 +165,10 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_type:  false
 	)]
 	protected string $all_children = '';
 
 
-	protected function _getProperty( string $property ) : mixed
-	{
-		$category = Category::get($this->category_id);
-
-		if(
-			!$this->{$property} &&
-			(
-				$category->getType()==Category::CATEGORY_TYPE_LINK ||
-				$category->getType()==Category::CATEGORY_TYPE_VIRTUAL
-			)
-		) {
-			$target = $category->getTargetCategory();
-			if($target) {
-				$shop_data = $target->getShopData( $this->getShop() );
-
-				return $shop_data->{$property};
-			}
-		}
-
-		return $this->{$property};
-
-	}
 
 	public function getVisibleProductsCount() : int
 	{
@@ -195,7 +182,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getName() : string
 	{
-		return $this->_getProperty( 'name' );
+		return $this->name;
 	}
 
 	public function setName( string $name ) : void
@@ -206,7 +193,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getSecondName() : string
 	{
-		return $this->_getProperty( 'second_name' );
+		return $this->second_name;
 	}
 
 	public function setSecondName( string $second_name ) : void
@@ -216,7 +203,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getDescription() : string
 	{
-		return $this->_getProperty( 'description' );
+		return $this->description;
 	}
 
 	public function setDescription( string $description ) : void
@@ -226,7 +213,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getSeoH1() : string
 	{
-		return $this->_getProperty( 'seo_h1' );
+		return $this->seo_h1;
 	}
 
 	public function setSeoH1( string $seo_h1 ) : void
@@ -236,7 +223,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getSeoTitle() : string
 	{
-		return $this->_getProperty( 'seo_title' );
+		return $this->seo_title;
 	}
 
 	public function setSeoTitle( string $seo_title ) : void
@@ -246,7 +233,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getSeoDescription() : string
 	{
-		return $this->_getProperty( 'seo_description' );
+		return $this->seo_description;
 	}
 
 	public function setSeoDescription( string $seo_description ) : void
@@ -256,22 +243,12 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getSeoKeywords() : string
 	{
-		return $this->_getProperty( 'seo_keywords' );
+		return $this->seo_keywords;
 	}
 
 	public function setSeoKeywords( string $seo_keywords ) : void
 	{
 		$this->seo_keywords = $seo_keywords;
-	}
-
-	public function isSeoDisableCanonical() : bool
-	{
-		return $this->seo_disable_canonical;
-	}
-
-	public function setSeoDisableCanonical( bool $seo_disable_canonical ) : void
-	{
-		$this->seo_disable_canonical = $seo_disable_canonical;
 	}
 
 	public function getInternalFulltextKeywords() : string
@@ -340,7 +317,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function getImage( string $image_class ) : string
 	{
-		return $this->_getProperty('image_'.$image_class);
+		return $this->{'image_'.$image_class};
 	}
 
 	public function setImageMain( string $image_main ) : void
@@ -389,15 +366,6 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 		$img = $this->{$property_name};
 
 		$category = Category::get($this->category_id);
-		if(
-			!$img &&
-			(
-				$category->getType()==Category::CATEGORY_TYPE_LINK ||
-				$category->getType()==Category::CATEGORY_TYPE_VIRTUAL
-			)
-		) {
-			return null;
-		}
 
 		if(!isset($this->image_delete_forms[$image_class])) {
 

@@ -1,0 +1,15 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\MVC_View;
+use Jet\UI;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$form_id = Controller_Main::getCurrentCategory()->getEditForm()->getId();
+
+$category = Controller_Main::getCurrentCategory();
+?>
+<?=UI::button_save()->setOnclick("$('#$form_id').submit();")?>

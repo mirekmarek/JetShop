@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,13 +11,12 @@ namespace Jet;
 /**
  *
  */
-class UI_dialog extends BaseObject
+class UI_dialog extends UI_Renderer_Pair
 {
-
-	/**
-	 * @var string
-	 */
-	protected string $id = '';
+	const SIZE_SMALL = 'small';
+	const SIZE_DEFAULT = 'default';
+	const SIZE_LARGE = 'large';
+	const SIZE_EXTRA_LARGE = 'extra_large';
 
 	/**
 	 * @var string
@@ -25,68 +24,39 @@ class UI_dialog extends BaseObject
 	protected string $title = '';
 
 	/**
-	 * @var int
-	 */
-	protected int $width = 0;
-
-	/**
 	 * @var string
 	 */
-	protected string $view_script_start = '';
+	protected string $size = self::SIZE_DEFAULT;
 
 	/**
 	 * @var string
 	 */
 	protected string $view_script_footer = '';
 
-	/**
-	 * @var string
-	 */
-	protected string $view_script_end = '';
-
 
 	/**
 	 *
 	 * @param string $id
 	 * @param string $title
-	 * @param int $width
+	 * @param string $size
 	 */
-	public function __construct( string $id, string $title, int $width )
+	public function __construct( string $id, string $title, string $size=self::SIZE_DEFAULT )
 	{
 		$this->id = $id;
 		$this->title = $title;
-		$this->width = $width;
+		$this->size = $size;
+		$this->view_script_start = SysConf_Jet_UI_DefaultViews::get('dialog', 'start');
+		$this->view_script_footer = SysConf_Jet_UI_DefaultViews::get('dialog', 'footer');
+		$this->view_script_end = SysConf_Jet_UI_DefaultViews::get('dialog', 'end');
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getViewScriptStart(): string
-	{
-		if( !$this->view_script_start ) {
-			$this->view_script_start = SysConf_Jet_UI_DefaultViews::get('dialog', 'start');
-		}
 
-		return $this->view_script_start;
-	}
-
-	/**
-	 * @param string $view_script_start
-	 */
-	public function setViewScriptStart( string $view_script_start ): void
-	{
-		$this->view_script_start = $view_script_start;
-	}
 
 	/**
 	 * @return string
 	 */
 	public function getViewScriptFooter(): string
 	{
-		if( !$this->view_script_footer ) {
-			$this->view_script_footer = SysConf_Jet_UI_DefaultViews::get('dialog', 'footer');
-		}
-
 		return $this->view_script_footer;
 	}
 
@@ -101,68 +71,17 @@ class UI_dialog extends BaseObject
 	/**
 	 * @return string
 	 */
-	public function getViewScriptEnd(): string
-	{
-		if( !$this->view_script_end ) {
-			$this->view_script_end = SysConf_Jet_UI_DefaultViews::get('dialog', 'end');
-		}
-
-		return $this->view_script_end;
-	}
-
-	/**
-	 * @param string $view_script_end
-	 */
-	public function setViewScriptEnd( string $view_script_end ): void
-	{
-		$this->view_script_end = $view_script_end;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getId(): string
-	{
-		return $this->id;
-	}
-
-	/**
-	 * @return string
-	 */
 	public function getTitle(): string
 	{
 		return $this->title;
 	}
 
 	/**
-	 * @return int
-	 */
-	public function getWidth(): int
-	{
-		return $this->width;
-	}
-
-
-	/**
-	 * @return MVC_View
-	 */
-	public function getView(): MVC_View
-	{
-
-		$view = UI::getView();
-		$view->setVar( 'element', $this );
-
-		return $view;
-
-	}
-
-
-	/**
 	 * @return string
 	 */
-	public function start(): string
+	public function getSize(): string
 	{
-		return $this->getView()->render( $this->getViewScriptStart() );
+		return $this->size;
 	}
 
 	/**
@@ -171,14 +90,6 @@ class UI_dialog extends BaseObject
 	public function footer(): string
 	{
 		return $this->getView()->render( $this->getViewScriptFooter() );
-	}
-
-	/**
-	 * @return string
-	 */
-	public function end(): string
-	{
-		return $this->getView()->render( $this->getViewScriptEnd() );
 	}
 
 }

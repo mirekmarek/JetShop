@@ -1,0 +1,38 @@
+<?php
+namespace JetShopModule\Admin\Catalog\KindsOfProduct;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\UI;
+use JetShop\Property;
+use JetShop\Property_ShopData;
+use JetShop\Shops;
+use JetShop\KindOfProduct;
+
+/**
+ * @var MVC_View   $this
+ * @var KindOfProduct $kind_of_product
+ * @var Form $form
+ */
+$kind_of_product = $this->getRaw('kind_of_product');
+
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+	
+	<?php
+	echo $this->getRaw('tabs');
+	
+	foreach(Shops::getList() as $shop):
+		echo $kind_of_product->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$kind_of_product->getEditForm()->getIsReadonly() );
+	endforeach;
+	?>
+	</div>
+</div>

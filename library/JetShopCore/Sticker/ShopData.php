@@ -3,7 +3,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Tr;
 
 #[DataModel_Definition(
@@ -23,98 +24,110 @@ abstract class Core_Sticker_ShopData extends CommonEntity_ShopData implements Im
 		type: DataModel::TYPE_ID,
 		is_id: true,
 		related_to: 'main.code',
-		form_field_type: false
 	)]
 	protected string $sticker_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:'
 	)]
 	protected string $name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Alternative name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Alternative name:'
 	)]
 	protected string $second_name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		form_field_type: Form::TYPE_WYSIWYG,
 		max_len: 65536,
-		form_field_label: 'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Description:'
 	)]
 	protected string $description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label: 'H1:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'H1:'
 	)]
 	protected string $seo_h1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label: 'Title:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Title:'
 	)]
 	protected string $seo_title = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label: 'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description:'
 	)]
 	protected string $seo_description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label: 'Keywords:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Keywords:'
 	)]
 	protected string $seo_keywords = '';
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Disable canonical URL'
-	)]
-	protected bool $seo_disable_canonical = false;
-
-	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $url_param = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_label: 'Keywords words for internal fulltext:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Keywords for internal fulltext:'
 	)]
 	protected string $internal_fulltext_keywords = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_pictogram_filter = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_pictogram_product_detail = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_pictogram_product_listing = '';
 

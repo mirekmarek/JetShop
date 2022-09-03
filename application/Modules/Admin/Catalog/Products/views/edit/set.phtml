@@ -1,7 +1,7 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
@@ -19,11 +19,11 @@ $edit_form = $product->getSetSetupForm();
 $add_form = $product->getSetAddItemForm();
 
 
-$edit_form->setDefaultLabelWidth([
-		Form::LJ_SIZE_MEDIUM => 2
+$edit_form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
 ]);
-$edit_form->setDefaultFieldWidth([
-	Form::LJ_SIZE_MEDIUM => 5
+$edit_form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 5
 ]);
 
 $edit_form->field('set_strategy')->input()->addJsAction('onchange', 'toggleSetDiscount(this.options[this.selectedIndex].value)');

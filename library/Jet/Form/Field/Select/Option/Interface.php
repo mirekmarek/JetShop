@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -34,5 +34,15 @@ interface Form_Field_Select_Option_Interface
 	 * @return string
 	 */
 	public function getSelectOptionCssClass(): string;
-
+	
+	/**
+	 * @return string
+	 */
+	public function getSelectOptionCss(): string;
+	
+	/**
+	 * @return string
+	 */
+	public function __toString(): string;
+	
 }

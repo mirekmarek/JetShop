@@ -5,6 +5,7 @@ use Jet\Tr;
 use JetShop\Delivery_Deadline;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\UI;
 use JetShop\Shops;
 
@@ -15,8 +16,8 @@ use JetShop\Shops;
  */
 $form = $this->getRaw( 'form' );
 
-$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 1 ] );
-$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 4 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
 
 $delivery_deadline = $this->getRaw('delivery_deadline');
 ?>

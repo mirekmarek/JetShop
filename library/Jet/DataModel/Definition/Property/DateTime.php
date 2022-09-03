@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -18,10 +18,6 @@ class DataModel_Definition_Property_DateTime extends DataModel_Definition_Proper
 	 */
 	protected string $type = DataModel::TYPE_DATE_TIME;
 
-	/**
-	 * @var string|bool
-	 */
-	protected string|bool $form_field_type = Form::TYPE_DATE_TIME;
 
 	/**
 	 * @param mixed &$value
@@ -60,5 +56,5 @@ class DataModel_Definition_Property_DateTime extends DataModel_Definition_Proper
 
 		return (string)$property;
 	}
-
+	
 }

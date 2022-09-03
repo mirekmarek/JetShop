@@ -5,6 +5,7 @@ use JetShop\Delivery_Class;
 use Jet\UI;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Form_Renderer;
 
 /**
  * @var MVC_View $this
@@ -14,8 +15,8 @@ use Jet\Form;
 $form = $this->getRaw( 'form' );
 
 $form->setAutocomplete( false );
-$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 1 ] );
-$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 4 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
 
 
 

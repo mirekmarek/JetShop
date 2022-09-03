@@ -36,8 +36,10 @@ abstract class Core_ProductListing_Filter_Properties_Property_Bool extends Produ
 			$target_filter['properties'][$p_id]['selected'] = false;
 		}
 
-		$disable_filter = new Form_Field_Checkbox('/properties/'.$p_id.'/disable_filter', Tr::_('Disable filter'), $target_filter['properties'][$p_id]['disable_filter']);
-		$selected = new Form_Field_Checkbox('/properties/'.$p_id.'/selected', $this->property->getShopData()->getLabel(), $target_filter['properties'][$p_id]['selected']);
+		$disable_filter = new Form_Field_Checkbox('/properties/'.$p_id.'/disable_filter', Tr::_('Disable filter'));
+		$disable_filter->setDefaultValue( $target_filter['properties'][$p_id]['disable_filter'] );
+		$selected = new Form_Field_Checkbox('/properties/'.$p_id.'/selected', $this->property->getShopData()->getLabel() );
+		$selected->setDefaultValue( $target_filter['properties'][$p_id]['selected'] );
 
 
 		$form->addField( $disable_filter );
@@ -178,7 +180,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Bool extends Produ
 		if($this->_count===null) {
 			$property_id = $this->getProperty()->getId();
 
-			$ids = $this->listing->properties()->internalGetFilteredProductIdsWithoutProperty(
+			$ids = $this->listing->params()->internalGetFilteredProductIdsWithoutProperty(
 				$this->filtered_ids,
 				$property_id
 			);

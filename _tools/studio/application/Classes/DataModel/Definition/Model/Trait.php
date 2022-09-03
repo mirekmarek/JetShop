@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -19,6 +19,9 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\IO_File;
 use Jet\Tr;
+use Jet\DataModel_IDController_AutoIncrement;
+use Jet\DataModel_IDController_UniqueString;
+use Jet\DataModel_IDController_Passive;
 
 /**
  */
@@ -422,44 +425,90 @@ trait DataModel_Definition_Model_Trait
 		if( !$this->__edit_form ) {
 
 
-			$model_name_field = new Form_Field_Input( 'model_name', 'Model name:', $this->model_name );
+			$model_name_field = new Form_Field_Input( 'model_name', 'Model name:' );
+			$model_name_field->setDefaultValue( $this->model_name );
 			$model_name_field->setIsRequired( true );
 			$model_name_field->setErrorMessages( [
-				Form_Field_Input::ERROR_CODE_EMPTY          => 'Please enter DataModel name',
-				Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid DataModel name format'
+				Form_Field::ERROR_CODE_EMPTY          => 'Please enter DataModel name',
+				Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid DataModel name format'
 			] );
-			$model_name_field->setCatcher( function( $value ) {
+			$model_name_field->setFieldValueCatcher( function( $value ) {
 				$this->setModelName( $value );
 			} );
-			$model_name_field->setValidator( function( Form_Field_Input $field ) {
-				/**
-				 * @var DataModel_Definition_Model_Interface $this
-				 */
-				return DataModels::checkModelName( $field, $this );
-			} );
+			$model_name_field->setValidationRegexp('/^[a-z0-9_]{2,}$/i');
 
 
-			$database_table_name_field = new Form_Field_Input( 'database_table_name', 'Table name:', $this->database_table_name );
-			$database_table_name_field->setCatcher( function( $value ) {
+			$database_table_name_field = new Form_Field_Input( 'database_table_name', 'Table name:' );
+			$database_table_name_field->setDefaultValue( $this->database_table_name );
+			$database_table_name_field->setFieldValueCatcher( function( $value ) {
 				$this->setDatabaseTableName( $value );
 			} );
 			$database_table_name_field->setErrorMessages( [
-				Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid DataModel table name name format'
+				Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid DataModel table name name format',
+				'data_model_table_is_not_unique' => 'DataModel with the same table name already exists',
 			] );
 			$database_table_name_field->setValidator( function( Form_Field_Input $field ) {
-				/**
-				 * @var DataModel_Definition_Model_Interface $this
-				 */
-				return DataModels::checkTableName( $field, $this );
+
+
+				$name = $field->getValue();
+
+				if( !$name ) {
+					return true;
+				}
+
+
+				if(
+					!preg_match( '/^[a-z0-9_]{2,}$/i', $name ) ||
+					str_contains( $name, '__' )
+				) {
+					$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
+
+					return false;
+				}
+
+				$exists = false;
+
+				$m_class = DataModels::getClass($this->getClassName());
+
+				foreach( DataModels::getClasses() as $class ) {
+					if(
+						$class->isDescendantOf( $m_class ) ||
+						$m_class->isDescendantOf($class)
+					) {
+						continue;
+					}
+
+					$m = $class->getDefinition();
+
+					if(
+						$class->getFullClassName() != $this->getClassName() &&
+						(
+							$m->getDatabaseTableName() == $name ||
+							$m->getModelName() == $name
+						)
+					) {
+						$exists = true;
+						break;
+					}
+				}
+
+				if( $exists ) {
+					$field->setError('data_model_table_is_not_unique');
+
+					return false;
+				}
+
+				return true;
 			} );
 
 
-			$id_controller_class_field = new Form_Field_Select( 'id_controller_class', 'ID controller class: ', $this->getIDControllerClassName() );
+			$id_controller_class_field = new Form_Field_Select( 'id_controller_class', 'ID controller class: ' );
+			$id_controller_class_field->setDefaultValue( $this->getIDControllerClassName() );
 			$id_controller_class_field->setIsReadonly( true );
 			$id_controller_class_field->setErrorMessages( [
-				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select ID controller class'
+				Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select ID controller class'
 			] );
-			$id_controller_class_field->setCatcher( function( $value ) {
+			$id_controller_class_field->setFieldValueCatcher( function( $value ) {
 				$this->setIDControllerClassName( $value );
 			} );
 			$id_controller_class_field->setSelectOptions(
@@ -485,8 +534,9 @@ trait DataModel_Definition_Model_Trait
 			if(
 				$this instanceof DataModel_Definition_Model_Related_1toN
 			) {
-				$default_order_by_field = new Form_Field_Hidden( 'default_order_by', '', implode( '|', $this->getDefaultOrderBy() ) );
-				$default_order_by_field->setCatcher( function( $value ) {
+				$default_order_by_field = new Form_Field_Hidden( 'default_order_by', '' );
+				$default_order_by_field->setDefaultValue( implode( '|', $this->getDefaultOrderBy() ) );
+				$default_order_by_field->setFieldValueCatcher( function( $value ) {
 					if( !$value ) {
 						$value = [];
 					} else {
@@ -521,7 +571,7 @@ trait DataModel_Definition_Model_Trait
 			return false;
 		}
 
-		$form->catchData();
+		$form->catchFieldValues();
 
 		return true;
 	}
@@ -886,41 +936,60 @@ trait DataModel_Definition_Model_Trait
 
 		$type = new Form_Field_Hidden( 'type', '' );
 
-		$namespace = new Form_Field_Select( 'namespace', Tr::_( 'Namespace:' ), '' );
+		$namespace = new Form_Field_Select( 'namespace', Tr::_( 'Namespace:' ) );
 		$namespace->setIsRequired( true );
 		$namespace->setErrorMessages( [
-			Form_Field_Select::ERROR_CODE_EMPTY         => Tr::_( 'Please select namespace' ),
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => Tr::_( 'Please select namespace' )
+			Form_Field::ERROR_CODE_EMPTY         => Tr::_( 'Please select namespace' ),
+			Form_Field::ERROR_CODE_INVALID_VALUE => Tr::_( 'Please select namespace' )
 		] );
 		$namespace->setSelectOptions( DataModels::getNamespaces() );
 
 
-		$class_name = new Form_Field_Input( 'class_name', Tr::_( 'Class name:' ), '' );
+		$class_name = new Form_Field_Input( 'class_name', Tr::_( 'Class name:' ) );
 		$class_name->setIsRequired( true );
 		$class_name->setErrorMessages( [
-			Form_Field_Input::ERROR_CODE_EMPTY          => Tr::_( 'Please enter DataModel class name' ),
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Invalid DataModel class name format' )
+			Form_Field::ERROR_CODE_EMPTY          => Tr::_( 'Please enter DataModel class name' ),
+			Form_Field::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Invalid DataModel class name format' ),
+			'data_model_class_is_not_unique'            => Tr::_( 'DataModel with the same class name already exists' ),
 		] );
 		$class_name->setValidator( function( Form_Field_Input $field ) {
-			return DataModels::checkClassName( $field );
+			$name = $field->getValue();
+
+			if(
+				!preg_match( '/^[a-z0-9_]{2,}$/i', $name ) ||
+				str_contains( $name, '__' )
+			) {
+				$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
+
+				return false;
+			}
+
+			foreach( DataModels::getClasses() as $class ) {
+
+				if( $class->getFullClassName() == $name ) {
+					$field->setError( 'data_model_class_is_not_unique' );
+
+					return false;
+				}
+			}
+
+			return true;
 		} );
 
 
-		$model_name = new Form_Field_Input( 'model_name', Tr::_( 'Model name:' ), '' );
+		$model_name = new Form_Field_Input( 'model_name', Tr::_( 'Model name:' ) );
 		$model_name->setErrorMessages( [
-			Form_Field_Input::ERROR_CODE_EMPTY          => Tr::_( 'Please enter DataModel name' ),
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Invalid DataModel name format' )
+			Form_Field::ERROR_CODE_EMPTY          => Tr::_( 'Please enter DataModel name' ),
+			Form_Field::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Invalid DataModel name format' )
 		] );
 		$model_name->setIsRequired( true );
-		$model_name->setValidator( function( Form_Field_Input $field ) {
-			return DataModels::checkModelName( $field );
-		} );
+		$model_name->setValidationRegexp('/^[a-z0-9_]{2,}$/i');
 
 
-		$script_path = new Form_Field_Input( 'script_path', Tr::_( 'Script path:' ), '' );
+		$script_path = new Form_Field_Input( 'script_path', Tr::_( 'Script path:' ) );
 		$script_path->setErrorMessages( [
-			Form_Field_Input::ERROR_CODE_EMPTY          => Tr::_( 'Please enter valid script path' ),
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Please enter valid script path' )
+			Form_Field::ERROR_CODE_EMPTY          => Tr::_( 'Please enter valid script path' ),
+			Form_Field::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Please enter valid script path' )
 		] );
 		$script_path->setIsRequired( true );
 
@@ -929,22 +998,23 @@ trait DataModel_Definition_Model_Trait
 			$namespace->setDefaultValue( $current_class->getNamespace() );
 		}
 
-		$id_controller_class = new Form_Field_Select( 'id_controller_class', Tr::_( 'ID controller class: ' ), '' );
+		$id_controller_class = new Form_Field_Select( 'id_controller_class', Tr::_( 'ID controller class: ' ) );
 		$id_controller_class->setErrorMessages( [
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => Tr::_( 'Please select ID controller class' )
+			Form_Field::ERROR_CODE_INVALID_VALUE => Tr::_( 'Please select ID controller class' )
 		] );
-		$id_controller_class->setCatcher( function( $value ) {
+		$id_controller_class->setFieldValueCatcher( function( $value ) {
 			$this->setIDControllerClassName( $value );
 		} );
 		$id_controller_class->setSelectOptions(
 			DataModels::getIDControllers()
 		);
 
-		$id_property_name = new Form_Field_Input( 'id_property_name', 'ID property name:', 'id' );
+		$id_property_name = new Form_Field_Input( 'id_property_name', 'ID property name:' );
+		$id_property_name->setDefaultValue( 'id' );
 		$id_property_name->setIsRequired( true );
 		$id_property_name->setErrorMessages( [
-			Form_Field_Input::ERROR_CODE_EMPTY          => 'Please enter property name',
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid property name format'
+			Form_Field::ERROR_CODE_EMPTY          => 'Please enter property name',
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid property name format'
 		] );
 		$id_property_name->setValidator( function( Form_Field_Input $field ) {
 			return DataModel_Definition_Property::checkPropertyNameFormat( $field );
@@ -970,11 +1040,11 @@ trait DataModel_Definition_Model_Trait
 	{
 		$fields = static::getCreateForm_mainFields();
 
-		$create_form = new Form( 'create_data_model_form_Main', $fields );
+		$create_form = new Form( 'create_data_model_form_'.DataModel::MODEL_TYPE_MAIN, $fields );
 		$create_form->setDoNotTranslateTexts( true );
 		$create_form->setAction( DataModels::getActionUrl( 'model/add' ) );
 
-		$create_form->field( 'type' )->setDefaultValue( 'Main' );
+		$create_form->field( 'type' )->setDefaultValue( DataModel::MODEL_TYPE_MAIN );
 
 		return $create_form;
 	}
@@ -1002,7 +1072,8 @@ trait DataModel_Definition_Model_Trait
 				$label = Tr::_( 'Relation %name% property name:', ['name' => $current_model->getModelName() . '.' . $id_property->getName()] );
 				$default_value = $current_model->getModelName() . '_' . $id_property->getName();
 
-				$fields[$name] = new Form_Field_Input( $name, $label, $default_value );
+				$fields[$name] = new Form_Field_Input( $name, $label );
+				$fields[$name]->setDefaultValue( $default_value );
 				$related_fields[] = $name;
 			}
 
@@ -1013,7 +1084,8 @@ trait DataModel_Definition_Model_Trait
 				$label = Tr::_( 'Relation %name% property name:', ['name' => $main_definition->getModelName() . '.' . $id_property->getName()] );
 				$default_value = $main_definition->getModelName() . '_' . $id_property->getName();
 
-				$fields[$name] = new Form_Field_Input( $name, $label, $default_value );
+				$fields[$name] = new Form_Field_Input( $name, $label );
+				$fields[$name]->setDefaultValue( $default_value );
 				$related_fields[] = $name;
 			}
 
@@ -1026,7 +1098,8 @@ trait DataModel_Definition_Model_Trait
 				$label = Tr::_( 'Relation %name% property name:', ['name' => $current_model->getModelName() . '.' . $id_property->getName()] );
 				$default_value = $current_model->getModelName() . '_' . $id_property->getName();
 
-				$fields[$name] = new Form_Field_Input( $name, $label, $default_value );
+				$fields[$name] = new Form_Field_Input( $name, $label );
+				$fields[$name]->setDefaultValue( $default_value );
 				$related_fields[] = $name;
 			}
 		}
@@ -1036,8 +1109,8 @@ trait DataModel_Definition_Model_Trait
 
 			$field->setIsRequired( true );
 			$field->setErrorMessages( [
-				Form_Field_Input::ERROR_CODE_EMPTY          => Tr::_( 'Please enter property name' ),
-				Form_Field_Input::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Invalid property name format' )
+				Form_Field::ERROR_CODE_EMPTY          => Tr::_( 'Please enter property name' ),
+				Form_Field::ERROR_CODE_INVALID_FORMAT => Tr::_( 'Invalid property name format' )
 			] );
 			$field->setValidator( function( Form_Field_Input $field ) {
 				return DataModel_Definition_Property::checkPropertyNameFormat( $field );
@@ -1096,15 +1169,15 @@ trait DataModel_Definition_Model_Trait
 
 
 		switch( $id_controller_class ) {
-			case 'Jet\DataModel_IDController_AutoIncrement':
+			case DataModel_IDController_AutoIncrement::class:
 				$id_property = new DataModel_Definition_Property_IdAutoIncrement( $model->getClassName(), $id_property_name );
 				$id_controller_option = 'id_property_name';
 				break;
-			case 'Jet\DataModel_IDController_UniqueString':
+			case DataModel_IDController_UniqueString::class:
 				$id_property = new DataModel_Definition_Property_Id( $model->getClassName(), $id_property_name );
 				$id_controller_option = 'id_property_name';
 				break;
-			case 'Jet\DataModel_IDController_Passive':
+			case DataModel_IDController_Passive::class:
 				$id_property = new DataModel_Definition_Property_Id( $model->getClassName(), $id_property_name );
 				$id_controller_option = '';
 				break;

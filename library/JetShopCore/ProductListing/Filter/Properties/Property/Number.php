@@ -84,9 +84,12 @@ abstract class Core_ProductListing_Filter_Properties_Property_Number extends Pro
 		}
 
 
-		$disable_filter = new Form_Field_Checkbox('/properties/'.$p_id.'/disable_filter', Tr::_('Disable filter'), $target_filter['properties'][$p_id]['disable_filter']);
-		$min = new Form_Field_Float('/properties/'.$p_id.'/min', 'minimum:', $target_filter['properties'][$p_id]['min']);
-		$max = new Form_Field_Float('/properties/'.$p_id.'/max', 'maximum:', $target_filter['properties'][$p_id]['max']);
+		$disable_filter = new Form_Field_Checkbox('/properties/'.$p_id.'/disable_filter', Tr::_('Disable filter') );
+		$disable_filter->setDefaultValue( $target_filter['properties'][$p_id]['disable_filter'] );
+		$min = new Form_Field_Float('/properties/'.$p_id.'/min', 'minimum:' );
+		$min->setDefaultValue( $target_filter['properties'][$p_id]['min'] );
+		$max = new Form_Field_Float('/properties/'.$p_id.'/max', 'maximum:' );
+		$max->setDefaultValue( $target_filter['properties'][$p_id]['max'] );
 
 		$form->addField($disable_filter);
 		$form->addField($min);

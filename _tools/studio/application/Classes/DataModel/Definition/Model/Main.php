@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -10,6 +10,8 @@ namespace JetStudio;
 
 use Jet\DataModel_Definition_Model_Main as Jet_DataModel_Definition_Model_Main;
 use Jet\Form;
+use Jet\DataModel;
+use Jet\DataModel_IDController_AutoIncrement;
 
 /**
  */
@@ -22,13 +24,13 @@ class DataModel_Definition_Model_Main extends Jet_DataModel_Definition_Model_Mai
 	/**
 	 * @var string
 	 */
-	protected string $internal_type = DataModels::MODEL_TYPE_MAIN;
+	protected string $internal_type = DataModel::MODEL_TYPE_MAIN;
 
 	/**
 	 *
 	 * @var string
 	 */
-	protected string $id_controller_class = 'Jet\DataModel_IDController_AutoIncrement';
+	protected string $id_controller_class = DataModel_IDController_AutoIncrement::class;
 
 
 	/**
@@ -76,6 +78,7 @@ class DataModel_Definition_Model_Main extends Jet_DataModel_Definition_Model_Mai
 		$model = $this;
 
 		$class->addUse( new ClassCreator_UseClass( 'Jet', 'Form' ) );
+		$class->addUse( new ClassCreator_UseClass( 'Jet', 'Form_Field' ) );
 
 
 		$_form_edit = new ClassCreator_Class_Property( '_form_edit', 'Form', 'Form' );
@@ -89,7 +92,7 @@ class DataModel_Definition_Model_Main extends Jet_DataModel_Definition_Model_Mai
 		$getEditForm = $class->createMethod( 'getEditForm' );
 		$getEditForm->setReturnType( 'Form' );
 		$getEditForm->line( 1, 'if(!$this->_form_edit) {' );
-		$getEditForm->line( 2, '$this->_form_edit = $this->getCommonForm(\'edit_form\');' );
+		$getEditForm->line( 2, '$this->_form_edit = $this->createForm(\'edit_form\');' );
 		$getEditForm->line( 1, '}' );
 		$getEditForm->line( 1, '' );
 		$getEditForm->line( 1, 'return $this->_form_edit;' );
@@ -102,7 +105,7 @@ class DataModel_Definition_Model_Main extends Jet_DataModel_Definition_Model_Mai
 		$getAddForm = $class->createMethod( 'getAddForm' );
 		$getAddForm->setReturnType( 'Form' );
 		$getAddForm->line( 1, 'if(!$this->_form_add) {' );
-		$getAddForm->line( 2, '$this->_form_add = $this->getCommonForm(\'add_form\');' );
+		$getAddForm->line( 2, '$this->_form_add = $this->createForm(\'add_form\');' );
 		$getAddForm->line( 1, '}' );
 		$getAddForm->line( 1, '' );
 		$getAddForm->line( 1, 'return $this->_form_add;' );
@@ -118,14 +121,16 @@ class DataModel_Definition_Model_Main extends Jet_DataModel_Definition_Model_Mai
 		$get->setReturnType( 'static|null' );
 		$get->line( 1, 'return static::load( $id );' );
 
+		$class->addUse( new ClassCreator_UseClass('Jet', 'DataModel_Fetch_Instances') );
+		
 		$getList = $class->createMethod( 'getList' );
 		$getList->setIsStatic( true );
 		$getList->setReturnType( 'iterable' );
+		$getList->setReturnTypeNoInspection( true );
+		$getList->setReturnTypeForDoc( 'static[]|DataModel_Fetch_Instances' );
 		$getList->line( 1, '$where = [];' );
 		$getList->line( 1, '' );
-		$getList->line( 1, '$list = static::fetchInstances( $where );' );
-		$getList->line( 1, '' );
-		$getList->line( 1, 'return $list;' );
+		$getList->line( 1, 'return static::fetchInstances( $where );' );
 
 		foreach( $model->getProperties() as $property ) {
 			if(

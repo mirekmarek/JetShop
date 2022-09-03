@@ -18,13 +18,13 @@ if($result):
 		$i++;
 		?><span
 			data-id="<?=$category->getId()?>"
-			data-name="<?=$category->_getPathName()?>"
+			data-name="<?=$category->getPathName()?>"
 			data-url="<?=$category->getEditURL()?>"
 			class="search-whisperer-item<?=$i==1?' search-whisperer-item-selected':''?>"
 			<?php if(!$category->getShopData()->isActive()):?>
 			style="text-decoration: line-through"
 			<?php endif; ?>
-		><?=$category->_getPathName()?></span><?php
+		><?=$category->getPathName()?></span><?php
 	endforeach;
 else:
 	?>

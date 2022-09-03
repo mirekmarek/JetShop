@@ -2,8 +2,8 @@
 
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
@@ -46,20 +46,20 @@ class Controller_Main extends MVC_Controller_Default
 	 *
 	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getControllerRouter(): MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
-				function($id) {
-					return (bool)($this->role = Role::get($id));
+				function( $id ) {
+					return (bool)($this->role = Role::get( $id ));
 				},
 				[
-					'listing'=> Main::ACTION_GET_ROLE,
-					'view'   => Main::ACTION_GET_ROLE,
-					'add'    => Main::ACTION_ADD_ROLE,
-					'edit'   => Main::ACTION_UPDATE_ROLE,
-					'delete' => Main::ACTION_DELETE_ROLE,
+					'listing' => Main::ACTION_GET_ROLE,
+					'view'    => Main::ACTION_GET_ROLE,
+					'add'     => Main::ACTION_ADD_ROLE,
+					'edit'    => Main::ACTION_UPDATE_ROLE,
+					'delete'  => Main::ACTION_DELETE_ROLE,
 				]
 			);
 		}
@@ -71,7 +71,7 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 * @param string $current_label
 	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
+	protected function _setBreadcrumbNavigation( string $current_label = '' ): void
 	{
 		UI_module::initBreadcrumb();
 
@@ -83,15 +83,14 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function listing_Action() : void
+	public function listing_Action(): void
 	{
 		$this->_setBreadcrumbNavigation();
 
 		$listing = new Listing();
-		$listing->setDefaultSort( 'name' );
 		$listing->handle();
 
-		$this->view->setVar( 'filter_form', $listing->filter_getForm());
+		$this->view->setVar( 'filter_form', $listing->getFilterForm() );
 		$this->view->setVar( 'grid', $listing->getGrid() );
 
 		$this->output( 'list' );
@@ -100,7 +99,7 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function add_Action() : void
+	public function add_Action(): void
 	{
 		$this->_setBreadcrumbNavigation( Tr::_( 'Create a new Role' ) );
 
@@ -110,51 +109,53 @@ class Controller_Main extends MVC_Controller_Default
 
 		if( $role->catchAddForm() ) {
 			$role->save();
+
 			Logger::success(
-				'role_created',
-				'Role '.$role->getName().' ('.$role->getId().') created',
-				$role->getId(),
-				$role->getName(),
-				$role
+				event: 'rest_role_created',
+				event_message: 'Role created',
+				context_object_id: $role->getId(),
+				context_object_name: $role->getName(),
+				context_object_data: $role
 			);
 
 			UI_messages::success(
-				Tr::_( 'Role <b>%ROLE_NAME%</b> has been created', [ 'ROLE_NAME' => $role->getName() ] )
+				Tr::_( 'Role <b>%ROLE_NAME%</b> has been created', ['ROLE_NAME' => $role->getName()] )
 			);
 
-			Http_Headers::reload( ['id'=>$role->getId()], ['action'] );
+			Http_Headers::reload( ['id' => $role->getId()], ['action'] );
 		}
 
 
 		$this->view->setVar( 'has_access', true );
 		$this->view->setVar( 'form', $form );
-		$this->view->setVar( 'available_privileges_list', Role::getAvailablePrivilegesList() );
+		$this->view->setVar( 'available_privileges_list', array_keys(Role::getAvailablePrivilegesList()) );
 
 		$this->output( 'edit' );
 	}
 
 	/**
 	 */
-	public function edit_Action() : void
+	public function edit_Action(): void
 	{
 		$role = $this->role;
 
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit role <b>%ROLE_NAME%</b>', [ 'ROLE_NAME' => $role->getName() ] ) );
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit role <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] ) );
 
 		$form = $role->getEditForm();
 
 		if( $role->catchEditForm() ) {
 			$role->save();
+
 			Logger::success(
-				'role_updated',
-				'Role '.$role->getName().' ('.$role->getId().') updated',
-				$role->getId(),
-				$role->getName(),
-				$role
+				event: 'rest_role_updated',
+				event_message: 'Role updated',
+				context_object_id: $role->getId(),
+				context_object_name: $role->getName(),
+				context_object_data: $role
 			);
 
 			UI_messages::success(
-				Tr::_( 'Role <b>%ROLE_NAME%</b> has been updated', [ 'ROLE_NAME' => $role->getName() ] )
+				Tr::_( 'Role <b>%ROLE_NAME%</b> has been updated', ['ROLE_NAME' => $role->getName()] )
 			);
 
 			Http_Headers::reload();
@@ -162,7 +163,7 @@ class Controller_Main extends MVC_Controller_Default
 
 		$this->view->setVar( 'form', $form );
 		$this->view->setVar( 'role', $role );
-		$this->view->setVar( 'available_privileges_list', Role::getAvailablePrivilegesList() );
+		$this->view->setVar( 'available_privileges_list', array_keys(Role::getAvailablePrivilegesList()) );
 
 		$this->output( 'edit' );
 	}
@@ -170,12 +171,12 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function view_Action() : void
+	public function view_Action(): void
 	{
 		$role = $this->role;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Role detail <b>%ROLE_NAME%</b>', [ 'ROLE_NAME' => $role->getName() ] )
+			Tr::_( 'Role detail <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] )
 		);
 
 		$form = $role->getEditForm();
@@ -183,7 +184,7 @@ class Controller_Main extends MVC_Controller_Default
 		$this->view->setVar( 'has_access', false );
 		$this->view->setVar( 'form', $form );
 		$this->view->setVar( 'role', $role );
-		$this->view->setVar( 'available_privileges_list', Role::getAvailablePrivilegesList() );
+		$this->view->setVar( 'available_privileges_list', array_keys(Role::getAvailablePrivilegesList()) );
 
 		$form->setIsReadonly();
 
@@ -194,27 +195,30 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function delete_action() : void
+	public function delete_action(): void
 	{
 		$role = $this->role;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete role <b>%ROLE_NAME%</b>', [ 'ROLE_NAME' => $role->getName() ] )
+			Tr::_( 'Delete role <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] )
 		);
 
-		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
+		if( Http_Request::POST()->getString( 'delete' ) == 'yes' ) {
 			$role->delete();
 
 			Logger::success(
-				'role_deleted',
-				'Role '.$role->getName().' ('.$role->getId().') deleted',
-				$role->getId(),
-				$role->getName(),
-				$role
+				event: 'rest_role_deleted',
+				event_message: 'Role deleted',
+				context_object_id: $role->getId(),
+				context_object_name: $role->getName(),
+				context_object_data: $role
 			);
 
-			UI_messages::info( Tr::_( 'Role <b>%ROLE_NAME%</b> has been deleted', [ 'ROLE_NAME' => $role->getName() ] ) );
-			Http_Headers::reload([], ['action', 'id']);
+			UI_messages::info( Tr::_( 'Role <b>%ROLE_NAME%</b> has been deleted', ['ROLE_NAME' => $role->getName()] ) );
+			Http_Headers::reload( [], [
+				'action',
+				'id'
+			] );
 		}
 
 

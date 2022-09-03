@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -17,13 +17,8 @@ class Form_Field_Checkbox extends Form_Field
 	/**
 	 * @var string
 	 */
-	protected string $_type = Form::TYPE_CHECKBOX;
-
-	/**
-	 * @var array
-	 */
-	protected array $error_messages = [];
-
+	protected string $_type = Form_Field::TYPE_CHECKBOX;
+	
 
 	/**
 	 * @param Data_Array $data
@@ -42,22 +37,17 @@ class Form_Field_Checkbox extends Form_Field
 		$data->set( $this->_name, $this->_value );
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function checkValueIsNotEmpty(): bool
-	{
-		return true;
-	}
-
 
 	/**
 	 * @return bool
 	 */
 	public function validate(): bool
 	{
-		$this->setIsValid();
+		if(!$this->validate_validator()) {
+			return false;
+		}
 
+		$this->setIsValid();
 		return true;
 	}
 

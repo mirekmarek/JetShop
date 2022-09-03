@@ -3,9 +3,6 @@ namespace JetShopModule\Admin\Catalog\Suppliers;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
-use Jet\Form;
-use Jet\Form_Field_Search;
-use Jet\Http_Request;
 
 use JetShop\Supplier;
 
@@ -20,48 +17,14 @@ class Listing extends Data_Listing {
 		'name'       => ['title' => 'Name'],
 	];
 
-	protected array $filters = [
-		'search',
-	];
-
-	protected string $search = '';
-
 	protected function getList() : DataModel_Fetch_Instances
 	{
 		return Supplier::getList();
 	}
-
-	protected function filter_search_catchGetParams() : void
+	
+	
+	protected function initFilters(): void
 	{
-		$this->search = Http_Request::GET()->getString('search');
-		$this->setGetParam('search', $this->search);
+		$this->filters['search'] = new Listing_Filter_Search( $this );
 	}
-
-	public function filter_search_catchForm( Form $form ) : void
-	{
-		$value = $form->field('search')->getValue();
-
-		$this->search = $value;
-		$this->setGetParam('search', $value);
-	}
-
-	protected function filter_search_getForm( Form $form ) : void
-	{
-		$search = new Form_Field_Search('search', '', $this->search);
-		$form->addField($search);
-	}
-
-	protected function filter_search_getWhere() : void
-	{
-		if(!$this->search) {
-			return;
-		}
-
-		$search = '%'.$this->search.'%';
-		$this->filter_addWhere([
-			'name *'   => $search,
-		]);
-
-	}
-
 }

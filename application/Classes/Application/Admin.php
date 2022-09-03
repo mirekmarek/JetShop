@@ -114,7 +114,7 @@ class Application_Admin
 				'max_file_uploads' => Locale::getCurrentLocale()->formatInt(IO_File::getMaxFileUploads())
 			], Tr::COMMON_DICTIONARY) )->toString();
 
-			AJAX::formResponse(false, [
+			AJAX::operationResponse(false, [
 				'system-messages-area' => $error_message
 			]);
 

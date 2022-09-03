@@ -3,7 +3,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Data_DateTime;
 
 #[DataModel_Definition(
@@ -17,211 +18,246 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 		type: DataModel::TYPE_INT,
 		is_id: true,
 		related_to: 'main.id',
-		form_field_type: false
 	)]
 	protected int $product_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:'
 	)]
 	protected string $name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Name of variant:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name of variant:'
 	)]
 	protected string $variant_name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		form_field_type: Form::TYPE_WYSIWYG,
 		max_len: 65536,
-		form_field_label: 'Short description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Short description:'
 	)]
 	protected string $short_description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		form_field_type: Form::TYPE_WYSIWYG,
 		max_len: 65536,
-		form_field_label: 'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Description:'
 	)]
 	protected string $description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label: 'H1:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'H1:'
 	)]
 	protected string $seo_h1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label: 'Title:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Title:'
 	)]
 	protected string $seo_title = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label: 'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description:'
 	)]
 	protected string $seo_description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label: 'Keywords:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Keywords:'
 	)]
 	protected string $seo_keywords = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 512,
-		form_field_type: false
 	)]
 	protected string $URL_path_part = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_label: 'Keywords words for internal fulltext:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Keywords for internal fulltext:'
 	)]
 	protected string $internal_fulltext_keywords = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_0 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_2 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_3 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_4 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_5 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_6 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_7 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_8 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_9 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_label: 'Tax rate:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Tax rate:'
 	)]
 	protected float $vat_rate = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_label: 'Standard price:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Standard price:'
 	)]
 	protected float $standard_price = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_label: 'Action price:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Action price:'
 	)]
 	protected float $action_price = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_label: 'Action price valid from:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Action price valid from:'
 	)]
 	protected Data_DateTime|null $action_price_valid_from = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_label: 'Action price valid till:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Action price valid till:'
 	)]
 	protected Data_DateTime|null $action_price_valid_till = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_label: 'Sale price:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Sale price:'
 	)]
 	protected float $sale_price = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_type: false
 	)]
 	protected float $final_price = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_type: false
 	)]
 	protected float $discount_percentage = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
-		form_field_label: 'Reset sale after sold out'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Reset sale after sold out'
 	)]
 	protected bool $reset_sale_after_sold_out = false;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
-		form_field_label: 'Deactivate product after sold out'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Deactivate product after sold out'
 	)]
 	protected bool $deactivate_product_after_sold_out = false;
 
@@ -229,9 +265,11 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_label: 'Delivery term:',
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [Delivery_Deadline::class, 'getScope']
+	)]
+	#[Form_Definition(
+		label: 'Delivery term:',
+		type: Form_Field::TYPE_SELECT,
+		select_options_creator: [Delivery_Deadline::class, 'getScope']
 	)]
 	protected string $delivery_term_code = '';
 
@@ -239,40 +277,41 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_label: 'Delivery class:',
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [Delivery_Class::class, 'getScope']
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Delivery class:',
+		select_options_creator: [Delivery_Class::class, 'getScope']
 	)]
 	protected string $delivery_class_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE,
-		form_field_label: 'Availability date:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE,
+		label: 'Availability date:'
 	)]
 	protected Data_DateTime|null $date_available = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $stock_status = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $review_count = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $review_rank = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $question_count = 0;
 

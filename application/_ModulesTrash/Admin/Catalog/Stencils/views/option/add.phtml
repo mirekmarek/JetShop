@@ -1,0 +1,74 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Stencils;
+
+use Jet\MVC_View;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use JetShop\Shops;
+use JetShop\Stencil;
+use JetShop\Stencil_Option;
+
+/**
+ * @var MVC_View          $this
+ * @var Stencil           $stencil
+ * @var Stencil_Option    $new_option
+ */
+$stencil = $this->getRaw( 'stencil' );
+$new_option = $this->getRaw('new_option');
+
+$form = $new_option->getAddForm();
+
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
+
+?>
+
+
+<?=$form->start()?>
+
+	<div class="row toolbar" id="main-toolbar">
+		<div class="col-md-12">
+			<?=UI::button_goBack()->setUrl( $stencil->getEditURL() )?>
+
+			<?=UI::button_save()?>
+		</div>
+	</div>
+
+	<div class="row">
+
+		<div class="col-md-12" id="main-col">
+
+
+			<?php foreach(Shops::getList() as $shop):
+				$shop_key = $shop->getKey();
+
+				$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
+				$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
+				$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
+
+				$shop_data = $new_option->getShopData( $shop );
+				?>
+				<?=$shop_data->renderShopDataBlock_start()?>
+
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+
+					<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/filter_label')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/url_param')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+				</fieldset>
+
+				<fieldset>
+					<legend class="sub"><?=Tr::_('SEO')?></legend>
+					<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
+				</fieldset>
+				<?=$shop_data->renderShopDataBlock_end()?>
+			<?php endforeach; ?>
+
+		</div>
+	</div>
+
+<?=$form->end()?>

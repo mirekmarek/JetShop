@@ -1,6 +1,7 @@
 <?php
 use Jet\Navigation_MenuSet;
 use Jet\UI;
+use Jet\UI_icon;
 
 ?>
 <div class="col-md-12 main-col">
@@ -20,7 +21,7 @@ use Jet\UI;
 						<?php if( $item->getSeparatorBefore() ): ?>
 							<hr/><?php endif; ?>
 						<a href="<?=$item->getUrl()?>">
-							<?=UI::icon( $item->getIcon() )->setWidth( 35 )->setSize( 25 )?>
+							<?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?>
 							<span style="position: relative;top:-5px"><?=$item->getLabel()?></span>
 						</a>
 						<?php if( $item->getSeparatorAfter() ): ?>

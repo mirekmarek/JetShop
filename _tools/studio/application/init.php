@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -43,6 +43,8 @@ SysConf_Jet_Form::setDefaultViewsDir( __DIR__.'/views/form/' );
 
 AccessControl::handle();
 
+Project::setApplicationNamespace('JetShop');
+SysConf_Jet_Modules::setModuleRootNamespace('JetShopModule');
 SysConf_Jet_Modules::setActivatedModulesListFilePath( ProjectConf_Path::getData().'activated_modules_list.php' );
 SysConf_Jet_Modules::setInstalledModulesListFilePath( ProjectConf_Path::getData().'installed_modules_list.php' );
 
@@ -50,7 +52,6 @@ SysConf_Jet_Modules::setInstalledModulesListFilePath( ProjectConf_Path::getData(
 Config::setBeTolerant(true);
 SysConf_Path::setConfig( ProjectConf_Path::getConfig() );
 
-Project::setApplicationNamespace('JetApplication');
 
 $property_definition_class_names = [
 	DataModel::TYPE_ID               => DataModel_Definition_Property_Id::class,
@@ -70,9 +71,9 @@ foreach($property_definition_class_names as $type=>$class_name) {
 }
 
 $model_definition_class_names = [
-	'Main'         => DataModel_Definition_Model_Main::class,
-	'Related_1to1' => DataModel_Definition_Model_Related_1to1::class,
-	'Related_1toN' => DataModel_Definition_Model_Related_1toN::class,
+	DataModel::MODEL_TYPE_MAIN         => DataModel_Definition_Model_Main::class,
+	DataModel::MODEL_TYPE_RELATED_1TO1 => DataModel_Definition_Model_Related_1to1::class,
+	DataModel::MODEL_TYPE_RELATED_1TON => DataModel_Definition_Model_Related_1toN::class,
 ];
 
 foreach($model_definition_class_names as $type=>$class_name) {

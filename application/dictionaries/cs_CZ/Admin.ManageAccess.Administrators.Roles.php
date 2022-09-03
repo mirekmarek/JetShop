@@ -20,4 +20,6 @@ return [
 	'ID' => '',
 	'Create a new Role' => '',
 	'Role <b>%ROLE_NAME%</b> has been updated' => '',
+	'Please enter ID' => '',
+	'Sorry, but ID %ID% is used.' => '',
 ];

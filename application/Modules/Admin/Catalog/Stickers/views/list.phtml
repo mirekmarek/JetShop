@@ -35,7 +35,7 @@ $c_edit->setRenderer(
 
 	}
 );
-$c_edit->setCssStyle( 'width:180px;' );
+$c_edit->addCustomCssStyle( 'width:180px;' );
 
 
 $grid->getColumn( 'internal_name' )->setRenderer(
@@ -47,7 +47,7 @@ $grid->getColumn( 'internal_name' )->setRenderer(
 	}
 );
 
-$grid->getColumn( 'code' )->setCssStyle( 'width:220px;' );
+$grid->getColumn( 'code' )->addCustomCssStyle( 'width:220px;' );
 $grid->getColumn( 'code' )->setRenderer(
 	function( Sticker $item ) use ( $router ) {
 		$edit_uri = $router->action('edit')->URI( $item->getCode() );
@@ -68,7 +68,7 @@ $grid->getColumn( 'code' )->setRenderer(
 		<?php endif; ?>
 	</div>
 	<div class="col-xs-7 col-md-3">
-		<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
+		<?= $filter_form->field( 'search' )->input() ?>
 	</div>
 </div>
 <?=$filter_form->end()?>

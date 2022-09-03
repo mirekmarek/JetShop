@@ -7,11 +7,11 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
+use Jet\Form_Field;
+use Jet\Form_Definition;
 use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
 use Jet\Mailing_Email_Template;
-use Jet\Tr;
-use Jet\Form_Field_Tel;
 use Jet\DataModel_Query;
 
 
@@ -37,7 +37,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected int $id = 0;
 
@@ -45,18 +44,21 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		type: DataModel::TYPE_STRING,
 		do_not_export: true,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $password = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label: 'E-mail',
-		form_field_is_required: true,
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter e-mail address',
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Please enter e-mail address'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'E-mail',
+		is_required: true,
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter e-mail address',
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Please enter e-mail address',
+			'is_registered' => 'Sorry, but e-mail %EMAIL% is registered.',
 		]
 	)]
 	protected string $email = '';
@@ -64,50 +66,71 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'First name'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'First name',
 	)]
 	protected string $first_name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Surname'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Surname'
 	)]
 	protected string $surname = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label: 'Description'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description'
 	)]
 	protected string $description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Password is valid'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Password is valid',
 	)]
 	protected bool $password_is_valid = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_label: 'Password is valid till',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Password is valid till',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
 		]
 	)]
 	protected ?Data_DateTime $password_is_valid_till = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'User is blocked'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'User is blocked',
 	)]
 	protected bool $user_is_blocked = false;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_label: 'User is blocked till',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'User is blocked till',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
 		]
 	)]
 	protected ?Data_DateTime $user_is_blocked_till = null;
@@ -117,7 +140,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_type: false
 	)]
 	protected ?Data_DateTime $registration_date_time = null;
 
@@ -127,7 +149,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_type: false
 	)]
 	protected string $registration_IP = '';
 
@@ -137,11 +158,13 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 20,
-		form_field_type: 'Tel',
-		form_field_label: 'Phone number:',
-		form_field_error_messages: [
-			Form_Field_Tel::ERROR_CODE_EMPTY => 'Please enter phone number',
-			Form_Field_Tel::ERROR_CODE_INVALID_FORMAT => 'Please enter phone number'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEL,
+		label: 'Phone number:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter phone number',
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Please enter phone number'
 		]
 	)]
 	protected string $phone_number = '';
@@ -151,7 +174,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_type: false
 	)]
 	protected bool $mailing_subscribed = false;
 
@@ -160,7 +182,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $loyalty_program_points = 0;
 
@@ -171,7 +192,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
-		form_field_type: false
 	)]
 	protected string $oauth_service = '';
 
@@ -182,7 +202,6 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
-		form_field_type: false
 	)]
 	protected string $oauth_key = '';
 
@@ -222,7 +241,12 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	{
 		return static::load( $id );
 	}
-
+	
+	/**
+	 * @param string|null $role_id
+	 * @param string $search
+	 * @return static[]
+	 */
 	public static function getList( string|null $role_id = null, string $search='' ) : iterable
 	{
 		$where = [];
@@ -528,18 +552,14 @@ abstract class Core_Customer extends DataModel implements Auth_User_Interface
 	public function _getForm() : Form
 	{
 
-		$form = $this->getCommonForm();
+		$form = $this->createForm('');
 
 		$form->getField( 'email' )->setValidator(
 			function( Form_Field_Input $field ) {
 				$email = $field->getValue();
 
 				if( $this->usernameExists( $email ) ) {
-					$field->setCustomError(
-						Tr::_(
-							'Sorry, but e-mail %EMAIL% is registered.', [ 'EMAIL' => $email ]
-						)
-					);
+					$field->setError( 'is_registered', [ 'EMAIL' => $email ] );
 
 					return false;
 				}

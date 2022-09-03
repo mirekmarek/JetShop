@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -15,11 +15,6 @@ use ReflectionClass;
  */
 class Config_Definition_Config extends BaseObject
 {
-	/**
-	 *
-	 */
-	const BASE_PROPERTY_DEFINITION_CLASS_NAME = 'Config_Definition_Property';
-
 	/**
 	 * @var string
 	 */
@@ -46,22 +41,6 @@ class Config_Definition_Config extends BaseObject
 	protected array $properties_definition = [];
 
 	/**
-	 * @param array $data
-	 *
-	 * @return static
-	 */
-	public static function __set_state( array $data ): static
-	{
-		$i = new static();
-
-		foreach( $data as $key => $val ) {
-			$i->{$key} = $val;
-		}
-
-		return $i;
-	}
-
-	/**
 	 * @param string $class_name
 	 *
 	 * @throws Config_Exception
@@ -76,7 +55,7 @@ class Config_Definition_Config extends BaseObject
 
 		$this->class_reflection = new ReflectionClass( $class_name );
 
-		$this->class_arguments = Attributes::getClassArguments( $this->class_reflection, 'Jet\Config_Definition' );
+		$this->class_arguments = Attributes::getClassDefinition( $this->class_reflection, Config_Definition::class );
 
 		$this->name = $this->getClassArgument( 'name' );
 		if( !$this->name ) {
@@ -86,7 +65,7 @@ class Config_Definition_Config extends BaseObject
 			);
 		}
 
-		$properties_definition_data = Attributes::getPropertiesDefinition( $this->class_reflection, 'Jet\Config_Definition' );
+		$properties_definition_data = Attributes::getClassPropertyDefinition( $this->class_reflection, Config_Definition::class );
 
 		if(
 		!$properties_definition_data
@@ -109,11 +88,11 @@ class Config_Definition_Config extends BaseObject
 
 			}
 
-			$class_name = __NAMESPACE__ . '\\' . static::BASE_PROPERTY_DEFINITION_CLASS_NAME . '_' . $definition_data['type'];
+			$definition_class_name = Factory_Config::getPropertyDefinitionClassName( $definition_data['type'] );
 
 			unset( $definition_data['type'] );
 
-			$property = new $class_name( $class_name, $property_name, $definition_data );
+			$property = new $definition_class_name( $this->class_name, $property_name, $definition_data );
 
 			$this->properties_definition[$property_name] = $property;
 		}

@@ -8,8 +8,7 @@ $category = Controller_Main::getCurrentCategory();
 
 if(
 	!$category ||
-	!$category->getId() ||
-	Controller_Main::getCurrentParamGroup()
+	!$category->getId()
 ) {
 	return;
 }

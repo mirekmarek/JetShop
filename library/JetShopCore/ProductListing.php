@@ -60,12 +60,12 @@ abstract class Core_ProductListing
 	public function init() : void
 	{
 		$this->cache = new ProductListing_Cache( $this );
-		$properties = new ProductListing_Filter_Properties( $this );
+		$params = new ProductListing_Filter_Params( $this );
 		$brands = new ProductListing_Filter_Brands( $this );
 		$flags = new ProductListing_Filter_Flags( $this );
 		$price = new ProductListing_Filter_Price( $this );
 
-		$this->filters[$properties->getKey()] = $properties;
+		$this->filters[$params->getKey()] = $params;
 		$this->filters[$brands->getKey()] = $brands;
 		$this->filters[$flags->getKey()] = $flags;
 		$this->filters[$price->getKey()] = $price;
@@ -140,10 +140,10 @@ abstract class Core_ProductListing
 
 
 
-	public function properties() : ProductListing_Filter_Properties
+	public function params() : ProductListing_Filter_Params
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['properties'];
+		return $this->filters['params'];
 	}
 
 	public function brands() : ProductListing_Filter_Brands
@@ -217,7 +217,7 @@ abstract class Core_ProductListing
 		return $this->shop;
 	}
 
-	public function getTargetFilterEditForm( array &$target_filter ) : Form
+	public function getAutoAppendProductFilterEditForm( array &$target_filter ) : Form
 	{
 		if( !$this->_target_filter_edit_form ) {
 			$this->_target_filter_edit_form = new Form( 'target_filter_edit_form', [] );
@@ -234,9 +234,9 @@ abstract class Core_ProductListing
 		return $this->_target_filter_edit_form;
 	}
 
-	public function catchTargetFilterEditForm( array &$target_filter ) : bool
+	public function catchAutoAppendProductFilterEditForm( array &$target_filter ) : bool
 	{
-		$form = $this->getTargetFilterEditForm( $target_filter );
+		$form = $this->getAutoAppendProductFilterEditForm( $target_filter );
 		if( !$form->catchInput() || !$form->validate() ) {
 			return false;
 		}

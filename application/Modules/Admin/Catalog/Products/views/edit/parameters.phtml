@@ -1,0 +1,74 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Form_Field_MultiSelect;
+use Jet\MVC_View;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$product = Controller_Main::getCurrentProduct();
+
+$form = $product->getParametersEditForm();
+
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
+
+$kind = $product->getKind();
+?>
+
+
+<?=$form->start()?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+		<?php endif; ?>
+
+		<?=$this->render('edit/preview_button');?>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+		<?php if($kind): ?>
+		<br>
+		<div class="form-group row">
+			<div class="col-md-1"><?=Tr::_('Kind of product:')?></div>
+			<div class="col-md-8"><a href="<?=$kind->getEditURL()?>"><b><?=$kind->getInternalName()?></b></a></div>
+		</div>
+		<br>
+		<?php foreach($kind->getAllProperties() as $property ):
+				$prefix = '/'.$property->getId().'/';
+				
+				$value = $form->field($prefix.'value');
+				$information_in_not_available = $form->field($prefix.'information_in_not_available');
+				
+				if($value instanceof Form_Field_MultiSelect) {
+					$value->input()->addCustomCssStyle('height:300px');
+				}
+				
+				$value->setLabel( '<a href="'.$property->getEditURL().'" target="_blank">'.$value->getLabel().'</a>');
+				
+				echo $value;
+				
+				
+				?>
+				<div style="opacity: 0.3;position: relative;top: -13px;">
+					<?=$information_in_not_available?>
+				</div>
+				<?php endforeach; ?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<?=$form->end()?>

@@ -6,6 +6,7 @@ use JetShop\Sticker;
 use JetShop\Sticker_ShopData;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 
@@ -16,8 +17,8 @@ use Jet\UI;
  */
 $form = $this->getRaw( 'form' );
 
-$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
-$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
 
 $sticker = $this->getRaw( 'sticker' );
 
@@ -44,10 +45,8 @@ $tabs = UI::tabsJS('sticker_tabs', [
 
 	<div class="col-md-12" id="main-col">
 
-		<?=$tabs?>
-
-		<?=$tabs->contentStart()?>
-			<?=$tabs->getTab('tab_main')->contentStart()?>
+		<?=$tabs->start()?>
+			<?=$tabs->getTab('tab_main')->content()->start()?>
 				<?=$form->start()?>
 				<?=$form->field( 'internal_name' )?>
 				<?=$form->field( 'code' )?>
@@ -80,15 +79,15 @@ $tabs = UI::tabsJS('sticker_tabs', [
 					<?=$shop_data->renderShopDataBlock_end()?>
 				<?php endforeach; ?>
 				<?=$form->end()?>
-			<?=$tabs->getTab('tab_main')->contentEnd()?>
-			<?=$tabs->getTab('tab_images')->contentStart()?>
+			<?=$tabs->getTab('tab_main')->content()->end()?>
+			<?=$tabs->getTab('tab_images')->content()->start()?>
 				<?php
 				foreach(Shops::getList() as $shop):
 					echo $sticker->getShopData( $shop )->renderImageWidgets( Sticker_ShopData::getImageClasses(), !$form->getIsReadonly() );
 				endforeach;
 				?>
-			<?=$tabs->getTab('tab_images')->contentEnd()?>
-		<?=$tabs->contentEnd()?>
+			<?=$tabs->getTab('tab_images')->content()->end()?>
+		<?=$tabs->end()?>
 
 
 

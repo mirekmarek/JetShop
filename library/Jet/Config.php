@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -18,20 +18,7 @@ namespace Jet;
  * Properties:
  *           #[Config_Definition(
  *              type: Config::TYPE_*,
- *
- *              description: 'Some description ...',
  *              is_required: true,
- *
- *
- *              form_field_type: Form::TYPE_*,
- *                  - (optional, default: autodetect)
- *              form_field_label: 'Some form filed label:',
- *              form_field_options: ['option1' => 'Option 1', 'option2' => 'Option 1', 'option3'=>'Option 3' ]
- *                  - optional
- *              form_field_error_messages: [Form_Field_*::ERROR_CODE_* => 'Message' ]
- *              form_field_get_select_options_callback: callable
- *                  - optional
- *             )]
  *
  */
 
@@ -39,8 +26,9 @@ namespace Jet;
 /**
  *
  */
-abstract class Config extends BaseObject
+abstract class Config extends BaseObject implements Form_Definition_Interface
 {
+	use Form_Definition_Trait;
 
 	const TYPE_STRING = 'String';
 	const TYPE_BOOL = 'Bool';
@@ -158,112 +146,13 @@ abstract class Config extends BaseObject
 	 */
 	public function getPropertiesDefinition(): array
 	{
-		if( $this->properties_definition !== null ) {
-			return $this->properties_definition;
+		if( $this->properties_definition === null ) {
+			$this->properties_definition = $this->getDefinition()->getPropertiesDefinition();
 		}
 
-		$definition = $this->getDefinition()->getPropertiesDefinition();
-
-		foreach( $definition as $property ) {
-			$property->setConfiguration( $this );
-		}
-
-		$this->properties_definition = $definition;
-
-		return $definition;
+		return $this->properties_definition;
 	}
-
-
-	/**
-	 * @param string $form_name
-	 *
-	 * @return Form
-	 */
-	public function getCommonForm( string $form_name = '' ): Form
-	{
-		$properties_list = $this->getCommonFormPropertiesList();
-
-		if( !$form_name ) {
-			$form_name = str_replace( '\\', '_', get_class( $this ) );
-		}
-
-		return $this->getForm( $form_name, $properties_list );
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getCommonFormPropertiesList(): array
-	{
-		$definition = $this->getPropertiesDefinition();
-		$properties_list = [];
-
-		foreach( $definition as $property_name => $property_definition ) {
-			if( $property_definition->getFormFieldType() === false ) {
-				continue;
-			}
-
-			$properties_list[] = $property_name;
-		}
-
-		return $properties_list;
-
-	}
-
-	/**
-	 *
-	 * @param string $form_name
-	 * @param array $properties_list
-	 *
-	 * @return Form
-	 * @throws DataModel_Exception
-	 */
-	protected function getForm( string $form_name, array $properties_list ): Form
-	{
-		$properties_definition = $this->getPropertiesDefinition();
-
-		$form_fields = [];
-
-		foreach( $properties_list as $property_name ) {
-
-			$property_definition = $properties_definition[$property_name];
-			$property = &$this->{$property_name};
-
-
-			if( ($field_creator_method_name = $property_definition->getFormFieldCreatorMethodName()) ) {
-				$created_field = $this->{$field_creator_method_name}( $property_definition );
-			} else {
-				$created_field = $property_definition->createFormField( $property );
-			}
-
-			if( !$created_field ) {
-				continue;
-			}
-
-
-			if( is_array( $created_field ) ) {
-
-				foreach( $created_field as $field ) {
-					$form_fields[] = $field;
-				}
-
-			} else {
-				$created_field->setCatcher(
-					function( $value ) use ( $property_definition, &$property ) {
-						$property_definition->catchFormField( $this, $property, $value );
-					}
-				);
-
-				$form_fields[] = $created_field;
-
-			}
-
-
-		}
-
-		return new Form( $form_name, $form_fields );
-	}
-
+	
 	/**
 	 *
 	 * @return array

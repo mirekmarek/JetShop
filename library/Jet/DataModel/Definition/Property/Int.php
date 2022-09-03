@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -19,11 +19,6 @@ class DataModel_Definition_Property_Int extends DataModel_Definition_Property
 	protected string $type = DataModel::TYPE_INT;
 
 	/**
-	 * @var string|bool
-	 */
-	protected string|bool $form_field_type = Form::TYPE_INT;
-
-	/**
 	 * @param array $definition_data
 	 *
 	 */
@@ -35,14 +30,6 @@ class DataModel_Definition_Property_Int extends DataModel_Definition_Property
 		}
 
 		parent::setUp( $definition_data );
-
-		if( $this->form_field_min_value !== null ) {
-			$this->form_field_min_value = (int)$this->form_field_min_value;
-		}
-		if( $this->form_field_max_value !== null ) {
-			$this->form_field_max_value = (int)$this->form_field_max_value;
-		}
-
 	}
 
 	/**
@@ -52,4 +39,5 @@ class DataModel_Definition_Property_Int extends DataModel_Definition_Property
 	{
 		$value = (int)$value;
 	}
+	
 }

@@ -19,7 +19,7 @@ return [
 	'URL parameter:' => '',
 	'Description:' => '',
 	'SEO' => '',
-	'Keywords words for internal fulltext:' => '',
+	'Keywords for internal fulltext:' => '',
 	'Please upload image' => '',
 	'Name:' => '',
 	'View stencils' => '',
@@ -27,4 +27,5 @@ return [
 	'Update stencil' => '',
 	'Delete stencil' => '',
 	'Catalog stencils management' => '',
+	'File is too large' => '',
 ];

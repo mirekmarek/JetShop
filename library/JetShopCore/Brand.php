@@ -8,6 +8,8 @@ use Jet\Form;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Application_Module;
 use Jet\DataModel_Fetch_Instances;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 
 #[DataModel_Definition(
 	name: 'brands',
@@ -22,14 +24,17 @@ abstract class Core_Brand extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected int $id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Name:'
+		
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:'
 	)]
 	protected string $name = '';
 
@@ -40,6 +45,7 @@ abstract class Core_Brand extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Brand_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 	protected ?Form $_add_form = null;
@@ -207,8 +213,8 @@ abstract class Core_Brand extends DataModel {
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->_add_form = $this->getCommonForm('add_form');
-			$this->_add_form->setCustomTranslatorNamespace( Brand::getManageModuleName() );
+			$this->_add_form = $this->createForm('add_form');
+			$this->_add_form->setCustomTranslatorDictionary( Brand::getManageModuleName() );
 		}
 
 		return $this->_add_form;
@@ -217,24 +223,15 @@ abstract class Core_Brand extends DataModel {
 	public function catchAddForm() : bool
 	{
 		$add_form = $this->getAddForm();
-		if(
-			!$add_form->catchInput() ||
-			!$add_form->validate()
-		) {
-			return false;
-		}
-
-		$add_form->catchData();
-
-		return true;
+		return $add_form->catch();
 	}
 
 
 	public function getEditForm() : Form
 	{
 		if(!$this->_edit_form) {
-			$this->_edit_form = $this->getCommonForm('edit_form');
-			$this->_edit_form->setCustomTranslatorNamespace( Brand::getManageModuleName() );
+			$this->_edit_form = $this->createForm('edit_form');
+			$this->_edit_form->setCustomTranslatorDictionary( Brand::getManageModuleName() );
 		}
 
 		return $this->_edit_form;
@@ -243,16 +240,7 @@ abstract class Core_Brand extends DataModel {
 	public function catchEditForm() : bool
 	{
 		$edit_form = $this->getEditForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
-		}
-
-		$edit_form->catchData();
-
-		return true;
+		return $edit_form->catch();
 	}
 
 	public function afterAdd() : void
@@ -271,9 +259,9 @@ abstract class Core_Brand extends DataModel {
 
 	public function actualizeReferences() : void
 	{
-		$products = Product::fetchData(['id'], [ 'brand_id'=>$this->id ], '', 'fetchCol');
+		$products = Product::dataFetchCol(select:['id'], where:[ 'brand_id'=>$this->id ]);
 		if($products) {
-			$categories = Product_Category::fetchData(['category_id'], ['product_id'=>$products], '', 'fetchCol' );
+			$categories = Product_Category::dataFetchCol(select:['category_id'], where:['product_id'=>$products] );
 
 
 			foreach($categories as $id) {

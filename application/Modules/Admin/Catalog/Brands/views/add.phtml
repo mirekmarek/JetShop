@@ -4,6 +4,7 @@ namespace JetShopModule\Admin\Catalog\Brands;
 use JetShop\Brand;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 use JetShop\Shops;
@@ -15,8 +16,8 @@ use JetShop\Shops;
  */
 $form = $this->getRaw( 'form' );
 
-$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
-$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
 
 $brand = $this->getRaw( 'brand' );
 

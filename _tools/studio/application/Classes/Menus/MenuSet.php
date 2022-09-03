@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -10,6 +10,7 @@ namespace JetStudio;
 
 use Jet\Exception;
 use Jet\Form;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
 use Jet\Navigation_Menu;
 use Jet\Http_Request;
@@ -37,7 +38,7 @@ class Menus_MenuSet extends Navigation_MenuSet
 	 */
 	public function __construct( string $name = '' )
 	{
-		$this->translator_namespace = false;
+		$this->translator_dictionary = false;
 
 		if( $name ) {
 			$this->setName( $name );
@@ -113,10 +114,10 @@ class Menus_MenuSet extends Navigation_MenuSet
 	{
 		if( !static::$create_form ) {
 
-			$menu_set_name = new Form_Field_Input( 'menu_set_name', 'Menu set name:', '' );
+			$menu_set_name = new Form_Field_Input( 'menu_set_name', 'Menu set name:' );
 			$menu_set_name->setIsRequired( true );
 			$menu_set_name->setErrorMessages( [
-				Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter menu set name',
+				Form_Field::ERROR_CODE_EMPTY => 'Please enter menu set name',
 			] );
 
 			$fields = [
@@ -165,9 +166,10 @@ class Menus_MenuSet extends Navigation_MenuSet
 	{
 		if( !$this->__edit_form ) {
 
-			$menu_set_name = new Form_Field_Input( 'menu_set_name', 'Menu set name:', $this->getName() );
+			$menu_set_name = new Form_Field_Input( 'menu_set_name', 'Menu set name:' );
+			$menu_set_name->setDefaultValue( $this->getName() );
 			$menu_set_name->setIsReadonly( true );
-			$menu_set_name->setCatcher( function( $name ) {
+			$menu_set_name->setFieldValueCatcher( function( $name ) {
 			} );
 
 			$form = new Form( 'menu_set_edit_form', [$menu_set_name] );
@@ -192,7 +194,7 @@ class Menus_MenuSet extends Navigation_MenuSet
 			return false;
 		}
 
-		$form->catchData();
+		$form->catchFieldValues();
 
 		$items_sort = Http_Request::POST()->getRaw( 'items_sort', [] );
 		$i = 0;
@@ -209,16 +211,16 @@ class Menus_MenuSet extends Navigation_MenuSet
 
 	/**
 	 * @param string $name
-	 * @param string|null|bool $translator_namespace
+	 * @param string|null|bool $translator_dictionary
 	 *
 	 * @return Menus_MenuSet
 	 */
-	public static function get( string $name, string|null|bool $translator_namespace = null ): Menus_MenuSet
+	public static function get( string $name, string|null|bool $translator_dictionary = null ): Menus_MenuSet
 	{
-		$translator_namespace = false;
+		$translator_dictionary = false;
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::get( $name, $translator_namespace );
+		return parent::get( $name, $translator_dictionary );
 	}
 
 	/**

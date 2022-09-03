@@ -20,7 +20,7 @@ return [
 	'H1:' => '',
 	'Title:' => '',
 	'Keywords:' => '',
-	'Keywords words for internal fulltext:' => '',
+	'Keywords for internal fulltext:' => '',
 	'View brands' => '',
 	'Add new brand' => '',
 	'Update brand' => '',
@@ -29,4 +29,5 @@ return [
 	'Brand <b>%NAME%</b> has been updated' => '',
 	'Delete brand <b>%NAME%</b>' => '',
 	'Do you really want to delete this brand?' => '',
+	'File is too large' => '',
 ];

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -13,14 +13,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\Form_Field_MultiSelect;
-use Jet\Form_Field_RegistrationPassword;
-use Jet\Form_Field_Select;
+use Jet\Form_Field_Password;
 use Jet\Data_DateTime;
 use Jet\Locale;
 use Jet\Mailing_Email_Template;
-use Jet\Tr;
 
 /**
  *
@@ -39,23 +38,25 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-		form_field_type: false
+		is_id: true
 	)]
 	protected int $id = 0;
 
 	/**
 	 * @var string
-	 */
+	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		form_field_is_required: true,
 		is_key: true,
-		is_unique: true,
-		form_field_label: 'Username',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter username'
+		max_len: 100,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Username',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter username',
+			'exists' => 'Sorry, but username %USERNAME% is registered.'
 		]
 	)]
 	protected string $username = '';
@@ -67,8 +68,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 		type: DataModel::TYPE_STRING,
 		do_not_export: true,
 		max_len: 255,
-		is_key: true,
-		form_field_type: false,
+		is_key: true
 	)]
 	protected string $password = '';
 
@@ -76,8 +76,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 * @var bool
 	 */
 	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-		form_field_type: false
+		type: DataModel::TYPE_BOOL
 	)]
 	protected bool $is_superuser = false;
 
@@ -87,12 +86,16 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_label: 'E-mail',
-		form_field_is_required: true,
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY          => 'Please enter e-mail address',
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Please enter e-mail address'
-		])]
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_EMAIL,
+		label: 'E-mail',
+		is_required: true,
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY          => 'Please enter e-mail address',
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Please enter e-mail address'
+		]
+	)]
 	protected string $email = '';
 
 	/**
@@ -100,13 +103,16 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_LOCALE,
-		form_field_label: 'Locale',
-		form_field_is_required: true,
-		form_field_error_messages: [
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select locale',
-			Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select locale'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Locale',
+		is_required: true,
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select locale',
+			Form_Field::ERROR_CODE_EMPTY         => 'Please select locale'
 		],
-		form_field_get_select_options_callback: [
+		select_options_creator: [
 			self::class,
 			'getLocales'
 		],
@@ -119,7 +125,10 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'First name'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'First name'
 	)]
 	protected string $first_name = '';
 
@@ -129,7 +138,10 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Surname'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Surname',
 	)]
 	protected string $surname = '';
 
@@ -139,7 +151,10 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_label: 'Description'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description',
 	)]
 	protected string $description = '';
 
@@ -148,7 +163,10 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Password is valid'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Password is valid',
 	)]
 	protected bool $password_is_valid = true;
 
@@ -157,9 +175,12 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_label: 'Password is valid till',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Password is valid till',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
 		]
 	)]
 	protected ?Data_DateTime $password_is_valid_till = null;
@@ -169,7 +190,10 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'User is blocked'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'User is blocked',
 	)]
 	protected bool $user_is_blocked = false;
 
@@ -178,9 +202,12 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_label: 'User is blocked till',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'User is blocked till',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid date format'
 		]
 	)]
 	protected ?Data_DateTime $user_is_blocked_till = null;
@@ -191,6 +218,18 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Auth_Administrator_User_Roles::class
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_MULTI_SELECT,
+		default_value_getter_name: 'getRoleIds',
+		label: 'Roles',
+		select_options_creator: [
+			Auth_Administrator_Role::class,
+			'getList'
+		],
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select role',
+		]
 	)]
 	protected array $roles = [];
 
@@ -573,6 +612,16 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 
 		return $roles;
 	}
+	
+	
+	/**
+	 * @return array
+	 */
+	public function getRoleIds() : array
+	{
+		return array_keys($this->getRoles());
+	}
+	
 
 	/**
 	 * @param array $role_ids
@@ -581,7 +630,9 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	{
 		foreach($this->roles as $r) {
 			if(!in_array($r->getRoleId(), $role_ids)) {
-				$r->delete();
+				if($r->getIsSaved()) {
+					$r->delete();
+				}
 				unset($this->roles[$r->getRoleId()]);
 			}
 		}
@@ -600,7 +651,9 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 				$new_item->setRoleId($role->getId());
 
 				$this->roles[$role->getId()] = $new_item;
-				$new_item->save();
+				if($this->getIsSaved()) {
+					$new_item->save();
+				}
 			}
 		}
 
@@ -803,7 +856,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	 *
 	 * @return bool
 	 */
-	public function verifyPasswordStrength( string $password ): bool
+	public static function verifyPasswordStrength( string $password ): bool
 	{
 		if( strlen( $password ) < 5 ) {
 			return false;
@@ -821,19 +874,8 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 	public function _getForm(): Form
 	{
 
-		$form = $this->getCommonForm();
-
-		$roles = new Form_Field_MultiSelect( 'roles', 'Roles', array_keys($this->roles) );
-		$roles->setSelectOptions( Auth_Administrator_Role::getList() );
-		$roles->setCatcher( function( $value ) {
-			$this->setRoles( $value );
-		} );
-		$roles->setErrorMessages( [
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => "Please select role",
-		] );
-		$form->addField( $roles );
-
-		$form->removeField( 'password' );
+		$form = $this->createForm('user_edit');
+		
 
 		if( $this->getIsNew() ) {
 			$form->getField( 'password_is_valid' )->setDefaultValue( false );
@@ -852,12 +894,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 				}
 
 				if( static::usernameExists( $username ) ) {
-					$field->setCustomError(
-						Tr::_(
-							'Sorry, but username %USERNAME% is registered.', ['USERNAME' => $username]
-						)
-					);
-
+					$field->setError('exists', ['USERNAME' => $username]);
 					return false;
 				}
 
@@ -890,19 +927,25 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 
 		$form->getField( 'locale' )->setDefaultValue( Locale::getCurrentLocale() );
 
-		$pwd = new Form_Field_RegistrationPassword(name: 'password', label: 'Password', is_required: true);
-		$pwd->setPasswordConfirmationLabel( 'Confirm password' );
+		$pwd = new Form_Field_Password( name: 'password', label: 'Password' );
+		$pwd->setIsRequired( true );
 		$pwd->setErrorMessages([
-			Form_Field_RegistrationPassword::ERROR_CODE_EMPTY           => 'Please enter password',
-			Form_Field_RegistrationPassword::ERROR_CODE_CHECK_EMPTY     => 'Please enter confirm password',
-			Form_Field_RegistrationPassword::ERROR_CODE_CHECK_NOT_MATCH => 'Passwords do not match'
+			Form_Field::ERROR_CODE_EMPTY           => 'Please enter password',
 		]);
 
-		$pwd->setCatcher(function($value) {
+		$pwd->setFieldValueCatcher(function( $value) {
 			$this->setPassword($value);
 		});
-
 		$form->addField($pwd);
+
+		$pwd_check = $pwd->generateCheckField(
+			field_name: 'password_check',
+			field_label: 'Confirm password',
+			error_message_empty: 'Please enter confirm password',
+			error_message_not_match: 'Passwords do not match'
+		);
+		$form->addField($pwd_check);
+
 
 		return $form;
 	}
@@ -917,11 +960,6 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 		if( !$this->_form_edit ) {
 			$form = $this->_getForm();
 			$form->setName( '_user' );
-
-			if( $form->fieldExists( 'password' ) ) {
-				$form->removeField( 'password' );
-			}
-
 
 			$this->_form_edit = $form;
 		}

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -18,6 +18,7 @@ use Jet\MVC_Layout;
 use Jet\MVC_View;
 use Jet\SysConf_Path;
 use Jet\Tr;
+use Jet\Translator;
 use Jet\UI_messages;
 
 /**
@@ -109,32 +110,37 @@ class Application extends Jet_Application
 	{
 		return [
 			'bases'         => [
-				'label' => Tr::_( 'Bases', [], Tr::COMMON_DICTIONARY ),
+				'label' => Tr::_( 'Bases', [], Translator::COMMON_DICTIONARY ),
 				'icon'  => 'compass',
 				'class' => 'Bases',
 			],
 			'pages'         => [
-				'label' => Tr::_( 'Pages', [], Tr::COMMON_DICTIONARY ),
+				'label' => Tr::_( 'Pages', [], Translator::COMMON_DICTIONARY ),
 				'icon'  => 'file-code',
 				'class' => 'Pages',
 			],
 			'data_model'    => [
-				'label' => Tr::_( 'DataModel', [], Tr::COMMON_DICTIONARY ),
+				'label' => Tr::_( 'DataModel', [], Translator::COMMON_DICTIONARY ),
 				'icon'  => 'database',
 				'class' => 'DataModels',
 			],
+			'forms'    => [
+				'label' => Tr::_( 'Forms', [], Translator::COMMON_DICTIONARY ),
+				'icon'  => 'pencil-ruler',
+				'class' => 'Forms',
+			],
 			'menus'         => [
-				'label' => Tr::_( 'Menus', [], Tr::COMMON_DICTIONARY ),
+				'label' => Tr::_( 'Menus', [], Translator::COMMON_DICTIONARY ),
 				'icon'  => 'sitemap',
 				'class' => 'Menus',
 			],
 			'modules'       => [
-				'label' => Tr::_( 'Modules', [], Tr::COMMON_DICTIONARY ),
+				'label' => Tr::_( 'Modules', [], Translator::COMMON_DICTIONARY ),
 				'icon'  => 'boxes',
 				'class' => 'Modules',
 			],
 			'module_wizard' => [
-				'label' => Tr::_( 'Module wizard', [], Tr::COMMON_DICTIONARY ),
+				'label' => Tr::_( 'Module wizard', [], Translator::COMMON_DICTIONARY ),
 				'icon'  => 'magic',
 				'class' => 'ModuleWizards',
 			],
@@ -255,7 +261,7 @@ class Application extends Jet_Application
 		$error_message = Tr::_( 'Something went wrong!<br/><br/>%error%',
 			[
 				'error' => $e->getMessage()
-			], Tr::COMMON_DICTIONARY );
+			], Translator::COMMON_DICTIONARY );
 
 		if( $form ) {
 			$form->setCommonMessage( UI_messages::createDanger( $error_message ) );

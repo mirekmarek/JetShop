@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -132,9 +132,9 @@ class DataModel_Query extends BaseObject
 	}
 
 	/**
-	 * @return DataModel_Query_Select
+	 * @return ?DataModel_Query_Select
 	 */
-	public function getSelect(): DataModel_Query_Select
+	public function getSelect(): ?DataModel_Query_Select
 	{
 		return $this->select;
 	}

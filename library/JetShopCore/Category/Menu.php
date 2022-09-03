@@ -70,8 +70,7 @@ abstract class Core_Category_Menu
 
 		$menu_item->setCategoryId( $data['id'] );
 		$menu_item->setParentCategoryId( $data['parent_id'] );
-
-		$menu_item->setCategoryType( $data['type'] );
+		
 		$menu_item->setPriority( $data['priority'] );
 		$menu_item->setLabel( $data['name'] );
 
@@ -99,12 +98,11 @@ abstract class Core_Category_Menu
 		];
 
 
-		$data = Category::fetchData(
-			[
+		$data = Category::dataFetchAll(
+			select: [
 				'id' => 'id',
 				'parent_id' => 'parent_id',
 				'priority' => 'priority',
-				'type' => 'type',
 
 				'name' => 'categories_shop_data.name',
 				'second_name' => 'categories_shop_data.second_name',
@@ -114,8 +112,8 @@ abstract class Core_Category_Menu
 				'visible_products_count' => 'categories_shop_data.visible_products_count',
 				'nested_visible_products_count' => 'categories_shop_data.nested_visible_products_count',
 			],
-			$where,
-			$sort
+			where: $where,
+			order_by: $sort
 		);
 
 
@@ -133,12 +131,11 @@ abstract class Core_Category_Menu
 
 	/**
 	 * @param int $parent_id
-	 * @param string $type
 	 * @param ?Shops_Shop $shop
 	 *
 	 * @return Category_Menu_Item[]
 	 */
-	public static function getItems( int $parent_id, string $type='', ?Shops_Shop $shop = null ) : array
+	public static function getItems( int $parent_id,?Shops_Shop $shop = null ) : array
 	{
 
 		$all = static::getAllItems($shop);
@@ -146,16 +143,6 @@ abstract class Core_Category_Menu
 		$res = [];
 
 		foreach($all as $item) {
-
-			if(
-				$item->getParentCategoryId()!=$parent_id||
-				(
-					$type &&
-					$type!=$item->getCategoryType()
-				)
-			) {
-				continue;
-			}
 
 			$res[$item->getCategoryId()] = $item;
 		}

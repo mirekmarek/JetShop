@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -19,7 +19,7 @@ class AJAX
 	 * @param array $http_headers
 	 * @param int $http_code
 	 */
-	public static function response( mixed $response_data, array $http_headers = [], int $http_code = 200 ): void
+	public static function commonResponse( mixed $response_data, array $http_headers = [], int $http_code = 200 ): void
 	{
 		if( ob_get_level() ) {
 			ob_end_clean();
@@ -38,7 +38,7 @@ class AJAX
 	 * @param array $snippets
 	 * @param array $data
 	 */
-	public static function formResponse( bool $success, array $snippets = [], array $data = [] ): void
+	public static function operationResponse( bool $success, array $snippets = [], array $data = [] ): void
 	{
 
 		$response = [
@@ -48,7 +48,7 @@ class AJAX
 		];
 
 
-		static::response( $response );
+		static::commonResponse( $response );
 	}
 
 }

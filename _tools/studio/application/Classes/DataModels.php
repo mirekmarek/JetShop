@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -10,7 +10,7 @@ namespace JetStudio;
 
 use Jet\Autoloader;
 use Jet\BaseObject;
-use Jet\Form_Field_Input;
+use Jet\DataModel;
 use Jet\Http_Request;
 use Jet\SysConf_URI;
 use Jet\Tr;
@@ -33,18 +33,13 @@ class DataModels extends BaseObject implements Application_Part
 		DataModel_IDController_Passive::class       => 'Passive',
 	];
 
-	const MODEL_TYPE_MAIN = 'Main';
-
-	const MODEL_TYPE_RELATED_1TON = 'Related_1toN';
-	const MODEL_TYPE_RELATED_1TO1 = 'Related_1to1';
-
 
 	/**
 	 * @var array
 	 */
 	protected static array $types = [
-		self::MODEL_TYPE_RELATED_1TON => 'Related DataModel 1toN',
-		self::MODEL_TYPE_RELATED_1TO1 => 'Related DataModel 1to1',
+		DataModel::MODEL_TYPE_RELATED_1TON => 'Related DataModel 1toN',
+		DataModel::MODEL_TYPE_RELATED_1TO1 => 'Related DataModel 1to1',
 
 	];
 
@@ -436,150 +431,6 @@ class DataModels extends BaseObject implements Application_Part
 		return $types;
 	}
 
-	/**
-	 * @param Form_Field_Input $field
-	 * @param DataModel_Definition_Model_Interface|null $model
-	 *
-	 * @return bool
-	 */
-	public static function checkModelName( Form_Field_Input $field, ?DataModel_Definition_Model_Interface $model = null ): bool
-	{
-		$name = $field->getValue();
-
-		if( !$name ) {
-			$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
-			return false;
-		}
-
-		if( !preg_match( '/^[a-z0-9_]{2,}$/i', $name ) ) {
-			$field->setError( Form_Field_Input::ERROR_CODE_INVALID_FORMAT );
-
-			return false;
-		}
-
-		return true;
-
-	}
-
-
-	/**
-	 * @param Form_Field_Input $field
-	 * @param DataModel_Definition_Model_Interface|null $model
-	 *
-	 * @return bool
-	 */
-	public static function checkClassName( Form_Field_Input $field, ?DataModel_Definition_Model_Interface $model = null ): bool
-	{
-		$name = $field->getValue();
-
-		if( !$name ) {
-			$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
-			return false;
-		}
-
-		if(
-			!preg_match( '/^[a-z0-9_]{2,}$/i', $name ) ||
-			str_contains( $name, '__' )
-		) {
-			$field->setError( Form_Field_Input::ERROR_CODE_INVALID_FORMAT );
-
-			return false;
-		}
-
-		foreach( DataModels::getClasses() as $class ) {
-
-			if( $class->getFullClassName() == $name ) {
-				$field->setCustomError(
-					Tr::_( 'DataModel with the same class name already exists' ),
-					'data_model_class_is_not_unique'
-				);
-
-				return false;
-			}
-		}
-
-		return true;
-
-	}
-
-
-	/**
-	 * @param Form_Field_Input $field
-	 * @param DataModel_Definition_Model_Interface|null $model
-	 *
-	 * @return bool
-	 */
-	public static function checkTableName( Form_Field_Input $field, ?DataModel_Definition_Model_Interface $model = null ): bool
-	{
-		$name = $field->getValue();
-
-		if( !$name ) {
-			return true;
-		}
-
-
-		if(
-			!preg_match( '/^[a-z0-9_]{2,}$/i', $name ) ||
-			str_contains( $name, '__' )
-		) {
-			$field->setError( Form_Field_Input::ERROR_CODE_INVALID_FORMAT );
-
-			return false;
-		}
-
-		$exists = false;
-
-		if( $model ) {
-			$m_class = DataModels::getClass($model->getClassName());
-
-			foreach( DataModels::getClasses() as $class ) {
-				if(
-					$class->isDescendantOf( $m_class ) ||
-					$m_class->isDescendantOf($class)
-				) {
-					continue;
-				}
-
-				$m = $class->getDefinition();
-
-				if(
-					$class->getFullClassName() != $model->getClassName() &&
-					(
-						$m->getDatabaseTableName() == $name ||
-						$m->getModelName() == $name
-					)
-				) {
-					$exists = true;
-					break;
-				}
-			}
-		} else {
-			foreach( DataModels::getClasses() as $class ) {
-				$m = $class->getDefinition();
-
-				if(
-					$m->getDatabaseTableName() == $name ||
-					$m->getModelName() == $name
-				) {
-					$exists = true;
-					break;
-				}
-			}
-
-		}
-
-		if( $exists ) {
-			$field->setCustomError(
-				Tr::_( 'DataModel with the same table name already exists' ),
-				'data_model_table_is_not_unique'
-			);
-
-			return false;
-		}
-
-		return true;
-
-	}
 
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -22,18 +22,21 @@ class DataModel_Config extends Config
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [
-			'DataModel_Config',
-			'getBackendTypesList'
-		],
-		form_field_label: 'Default backend type: ',
-		form_field_error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please select backend type',
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select backend type'
-		]
 	)]
-	protected string $backend_type = 'MySQL';
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Default backend type: ',
+		select_options_creator: [
+			DataModel_Backend::class,
+			'getAvlBackendTypes'
+		],
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please select backend type',
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select backend type'
+		]
+		
+	)]
+	protected string $backend_type = DataModel_Backend::TYPE_MYSQL;
 
 
 	/**
@@ -47,34 +50,7 @@ class DataModel_Config extends Config
 	)]
 	protected DataModel_Backend_Config $backend_config;
 
-
-	/**
-	 * @return array
-	 */
-	public static function getBackendTypesList(): array
-	{
-		return static::getAvailableHandlersList( __DIR__ . '/Backend/' );
-	}
-
-	/**
-	 *
-	 * @param string $base_directory
-	 *
-	 * @return array
-	 */
-	public static function getAvailableHandlersList( string $base_directory ): array
-	{
-		$res = IO_Dir::getSubdirectoriesList( $base_directory );
-		foreach( $res as $path => $dir ) {
-			if( $dir == 'Config' ) {
-				unset( $res[$path] );
-			}
-		}
-
-		return array_combine( $res, $res );
-	}
-
-
+	
 	/**
 	 * @return string
 	 */

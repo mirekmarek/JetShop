@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -20,17 +20,21 @@ class DataModel_Backend_MySQL_Config extends DataModel_Backend_Config
 	 */
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
+		is_required: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Connection - read: ',
 		is_required: true,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [
+		select_options_creator: [
 			DataModel_Backend_MySQL_Config::class,
 			'getDbConnectionsList'
 		],
-		form_field_label: 'Connection - read: ',
-		form_field_error_messages: [
-			Form_Field::ERROR_CODE_EMPTY                     => 'Please select database connection',
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select database connection'
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY         => 'Please select database connection',
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select database connection'
 		]
+		
 	)]
 	protected string $connection_read = '';
 
@@ -41,15 +45,18 @@ class DataModel_Backend_MySQL_Config extends DataModel_Backend_Config
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		is_required: true,
+		label: 'Connection - write: ',
+		select_options_creator: [
 			DataModel_Backend_MySQL_Config::class,
 			'getDbConnectionsList'
 		],
-		form_field_label: 'Connection - write: ',
-		form_field_error_messages: [
-			Form_Field::ERROR_CODE_EMPTY                     => 'Please select database connection',
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select database connection'
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY         => 'Please select database connection',
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select database connection'
 		]
 	)]
 	protected string $connection_write = '';
@@ -61,8 +68,12 @@ class DataModel_Backend_MySQL_Config extends DataModel_Backend_Config
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_label: 'Engine: ',
-		form_field_error_messages: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Engine: ',
+		is_required: true,
+		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please enter table engine'
 		]
 	)]
@@ -75,8 +86,12 @@ class DataModel_Backend_MySQL_Config extends DataModel_Backend_Config
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_label: 'Default charset: ',
-		form_field_error_messages: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Default charset: ',
+		is_required: true,
+		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please enter charset'
 		]
 	)]
@@ -89,10 +104,15 @@ class DataModel_Backend_MySQL_Config extends DataModel_Backend_Config
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_label: 'Default collate: ',
-		form_field_error_messages: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Default collate: ',
+		is_required: true,
+		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please enter default collate'
 		]
+		
 	)]
 	protected string $collate = 'utf8_general_ci';
 

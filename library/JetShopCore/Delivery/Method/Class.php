@@ -30,7 +30,6 @@ abstract class Core_Delivery_Method_Class extends DataModel_Related_1toN
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected string $class_code = '';
 

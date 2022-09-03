@@ -37,8 +37,8 @@ class Navigation_Menu extends Core_Navigation_Menu {
 				'categories_shop_data.nested_visible_products_count >' => 0
 			];
 
-			$data = Category::fetchData(
-				[
+			$data = Category::dataFetchAll(
+				select: [
 					'id' => 'id',
 					'parent_id' => 'parent_id',
 					'priority' => 'priority',
@@ -49,11 +49,9 @@ class Navigation_Menu extends Core_Navigation_Menu {
 					'URL_path_part' => 'categories_shop_data.URL_path_part',
 					'image_pictogram' => 'categories_shop_data.image_pictogram',
 					'image_main' => 'categories_shop_data.image_main',
-					'type' => 'type',
-					'target_category_id' => 'target_category_id',
 				],
-				$where,
-				'priority'
+				where: $where,
+				order_by: 'priority'
 			);
 
 
@@ -76,47 +74,16 @@ class Navigation_Menu extends Core_Navigation_Menu {
 	{
 		$d = $node->getData();
 
-		if($d['target_category_id']) {
-			$target_node = $this->getTree()->getNode( $d['target_category_id'] );
 
-			if(!$target_node) {
-				return false;
-			}
-		}
-
-
-		$target = null;
-
-		if($d['target_category_id']) {
-			$target = $this->__tree->getNode( $d['target_category_id']);
-		}
-
-		$t_d = $target?->getData();
 
 		$menu_item = new Navigation_Menu_Item( $this );
 
 		$name = $d['second_name'];
 		if(!$name) {
 			$name = $d['name'];
-
-			if(!$name) {
-				if($t_d) {
-					$name = $t_d['second_name'];
-					if(!$name) {
-						$name = $t_d['name'];
-					}
-
-				}
-			}
 		}
 
 		$image = $d[$image_key];
-		if(
-			!$image &&
-			$t_d
-		) {
-			$image = $t_d[$image_key];
-		}
 
 		$menu_item->setId( $node->getId() );
 		$menu_item->setLabel( $name );
@@ -141,7 +108,6 @@ class Navigation_Menu extends Core_Navigation_Menu {
 
 			$d = $node->getData();
 			if(
-				$d['type']!=Category::CATEGORY_TYPE_TOP ||
 				!$d['children']
 			) {
 				continue;
@@ -189,7 +155,6 @@ class Navigation_Menu extends Core_Navigation_Menu {
 			}
 			$d = $node->getData();
 			if(
-				$d['type']!=Category::CATEGORY_TYPE_TOP ||
 				!$d['children']
 			) {
 				continue;

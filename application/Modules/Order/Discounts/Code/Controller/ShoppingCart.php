@@ -80,7 +80,7 @@ class Controller_ShoppingCart extends MVC_Controller_Default
 			$view = 'shopping_cart/form';
 		}
 
-		AJAX::formResponse($ok, [
+		AJAX::operationResponse($ok, [
 			'discount_code_area' => $this->view->render($view)
 		]);
 

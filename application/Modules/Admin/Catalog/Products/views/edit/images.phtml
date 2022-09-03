@@ -17,7 +17,7 @@ $product = Controller_Main::getCurrentProduct();
 
 ?>
 
-<style type="text/css">
+<style>
 	.images_area>div {
 		float: left;
 	}
@@ -192,7 +192,7 @@ $product = Controller_Main::getCurrentProduct();
 
 
 <?php
-$delete_dialog = new UI_dialog('delete_image_confirm', Tr::_('Do you really want to delete those images?'), 650);
+$delete_dialog = new UI_dialog('delete_image_confirm', Tr::_('Do you really want to delete those images?'), UI_dialog::SIZE_LARGE );
 
 echo $delete_dialog->start();
 	?>

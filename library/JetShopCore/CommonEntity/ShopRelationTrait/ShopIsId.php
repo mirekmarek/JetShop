@@ -13,7 +13,6 @@ trait Core_CommonEntity_ShopRelationTrait_ShopIsId {
 		max_len: 100,
 		is_key: true,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected string $shop_code = '';
 
@@ -21,7 +20,6 @@ trait Core_CommonEntity_ShopRelationTrait_ShopIsId {
 		type: DataModel::TYPE_LOCALE,
 		is_key: true,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected ?Locale $locale = null;
 

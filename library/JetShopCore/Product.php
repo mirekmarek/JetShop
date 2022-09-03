@@ -6,6 +6,8 @@ use Jet\DataModel;
 use Jet\Data_DateTime;
 use Jet\DataModel_Definition;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Form_Field_Date;
 use Jet\Form_Field_Select;
@@ -16,7 +18,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 
 #[DataModel_Definition(
-	name: 'products',
+	name: 'product',
 	database_table_name: 'products',
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
 	id_controller_options: ['id_property_name'=>'id']
@@ -26,7 +28,7 @@ abstract class Core_Product extends DataModel {
 	use Product_Trait_Set;
 	use Product_Trait_Variants;
 	use Product_Trait_Categories;
-	use Product_Trait_Parametrization;
+	use Product_Trait_Parameters;
 	use Product_Trait_Stickers;
 
 	protected static string $manage_module_name = 'Admin.Catalog.Products';
@@ -51,14 +53,22 @@ abstract class Core_Product extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $type = Product::PRODUCT_TYPE_REGULAR;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	protected int $kind_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Is active',
 		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is active',
 	)]
 	protected bool $is_active = true;
 
@@ -66,7 +76,10 @@ abstract class Core_Product extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_label: 'EAN:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'EAN:'
 	)]
 	protected string $ean = '';
 
@@ -74,7 +87,10 @@ abstract class Core_Product extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_label: 'Internal code:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Internal code:'
 	)]
 	protected string $internal_code = '';
 
@@ -82,50 +98,49 @@ abstract class Core_Product extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $erp_id = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
-		form_field_type: false
 	)]
 	protected ?Data_DateTime $added_date_time = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_label: 'Brand:',
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [Brand::class,'getScope']
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Brand:',
+		select_options_creator: [Brand::class,'getScope']
 	)]
 	protected int $brand_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_label: 'Supplier:',
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [Supplier::class,'getScope']
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Supplier:',
+		select_options_creator: [Supplier::class,'getScope']
 	)]
 	protected int $supplier_id = 0;
 
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $review_count = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $review_rank = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $question_count = 0;
 
@@ -137,6 +152,7 @@ abstract class Core_Product extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Product_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 
@@ -255,6 +271,38 @@ abstract class Core_Product extends DataModel {
 	{
 		$this->type = $type;
 	}
+	
+	public function getKindId(): int
+	{
+		return $this->kind_id;
+	}
+	
+	public function setKindId( int $kind_id ): void
+	{
+		if($kind_id==$this->kind_id) {
+			return;
+		}
+		
+		$this->kind_id = $kind_id;
+		
+		$this->save();
+		
+		if($this->type==Product::PRODUCT_TYPE_VARIANT_MASTER) {
+			foreach($this->getVariants() as $v) {
+				$v->setKindId( $kind_id );
+			}
+		}
+		//TODO: sync
+	}
+	
+	public function getKind() : ?KindOfProduct
+	{
+		if($this->kind_id) {
+			return KindOfProduct::get($this->kind_id);
+		}
+		
+		return null;
+	}
 
 	public function isActive() : bool
 	{
@@ -372,12 +420,13 @@ abstract class Core_Product extends DataModel {
 		foreach(Shops::getList() as $shop) {
 			$shop_key = $shop->getKey();
 
-			$vat_rate = new Form_Field_Select('/shop_data/'.$shop_key.'/vat_rate', 'VAT rate:', $this->getShopData($shop)->getVatRate() );
+			$vat_rate = new Form_Field_Select('/shop_data/'.$shop_key.'/vat_rate', 'VAT rate:' );
+			$vat_rate->setDefaultValue( $this->getShopData($shop)->getVatRate() );
 
 			$vat_rate->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid date'
 			]);
-			$vat_rate->setCatcher(function( $value ) use ($shop) {
+			$vat_rate->setFieldValueCatcher(function( $value ) use ($shop) {
 				$this->getShopData($shop)->setVatRate( $value );
 			});
 			$vat_rate->setSelectOptions( Shops::getVatRatesScope( $shop ) );
@@ -409,15 +458,15 @@ abstract class Core_Product extends DataModel {
 			]);
 		}
 
-		$form->setCustomTranslatorNamespace( Product::getManageModuleName() );
+		$form->setCustomTranslatorDictionary( Product::getManageModuleName() );
 
 	}
 
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->_add_form = $this->getCommonForm('add_form');
-			$this->_add_form->setCustomTranslatorNamespace( Brand::getManageModuleName() );
+			$this->_add_form = $this->createForm('add_form');
+			$this->_add_form->setCustomTranslatorDictionary( Brand::getManageModuleName() );
 
 			$this->_setupForm( $this->_add_form );
 
@@ -445,8 +494,8 @@ abstract class Core_Product extends DataModel {
 	public function getEditForm() : Form
 	{
 		if(!$this->_edit_form) {
-			$this->_edit_form = $this->getCommonForm('edit_form');
-			$this->_edit_form->setCustomTranslatorNamespace( Brand::getManageModuleName() );
+			$this->_edit_form = $this->createForm('edit_form');
+			$this->_edit_form->setCustomTranslatorDictionary( Brand::getManageModuleName() );
 
 
 			$this->_setupForm( $this->_edit_form );
@@ -485,8 +534,8 @@ abstract class Core_Product extends DataModel {
 			$this->shop_data[$shop_key]->generateURLPathPart();
 			$this->shop_data[$shop_key]->save();
 		}
-
-		Fulltext::update_Product_afterAdd( $this );
+		
+		Fulltext_Index_Internal_Product::addIndex( $this );
 
 	}
 
@@ -498,7 +547,7 @@ abstract class Core_Product extends DataModel {
 		$this->actualizeSetItem();
 		$this->actualizeVariant();
 
-		Fulltext::update_Product_afterUpdate( $this );
+		Fulltext_Index_Internal_Product::updateIndex( $this );
 	}
 
 	public function afterDelete() : void
@@ -508,8 +557,8 @@ abstract class Core_Product extends DataModel {
 		 */
 		$this->actualizeSetItem();
 		$this->actualizeVariant();
-
-		Fulltext::update_Product_afterDelete( $this );
+		
+		Fulltext_Index_Internal_Product::deleteIndex( $this );
 
 		foreach($this->getCategories() as $c) {
 			Category::addSyncCategory( $c->getId() );
@@ -697,7 +746,7 @@ abstract class Core_Product extends DataModel {
 		$view->setVar('name', $name);
 		$view->setVar('only_active', $only_active);
 
-		return $view->render('selectProductWidget');
+		return $view->render('select-product-widget');
 	}
 
 	public function renderActiveState() : string
@@ -729,5 +778,16 @@ abstract class Core_Product extends DataModel {
 		return $this->getFullName($shop).$codes;
 	}
 
+	public static function getByKind( KindOfProduct $kind ) : array
+	{
+		$ids = Product::dataFetchCol(['id'], ['kind_id'=>$kind->getId()]);
+
+		if(!$ids) {
+			return [];
+		}
+		
+		
+		return Product::fetch(['product'=>['id'=>$ids]]);
+	}
 
 }

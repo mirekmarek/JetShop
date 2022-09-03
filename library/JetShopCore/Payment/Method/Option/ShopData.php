@@ -3,6 +3,8 @@ namespace JetShop;
 
 use Jet\DataModel_Definition;
 use Jet\DataModel;
+use Jet\Form_Field;
+use Jet\Form_Definition;
 use Jet\Tr;
 
 /**
@@ -26,7 +28,6 @@ abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData
 		max_len: 50,
 		is_id: true,
 		related_to: 'main.code',
-		form_field_type: false
 	)]
 	protected string $payment_method_code = '';
 
@@ -37,7 +38,6 @@ abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData
 		max_len: 50,
 		is_id: true,
 		related_to: 'parent.code',
-		form_field_type: false
 	)]
 	protected string $option_code = '';
 
@@ -45,22 +45,27 @@ abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		form_field_label: 'Filter label:',
 		max_len: 255
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Filter label:',
 	)]
 	protected string $title = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		form_field_label: 'Description:',
 		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description:',
 	)]
 	protected string $description = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $priority = 0;
 
@@ -68,21 +73,18 @@ abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_icon1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_icon2 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $image_icon3 = '';
 

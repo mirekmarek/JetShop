@@ -58,20 +58,8 @@ $form = $product->getEditForm();
 								<?=UI::button_delete(' ')->setType('submit')?>
 							</form>
 						<?php endif; ?>
-						<?php if($category->getId()==$product->getMainCategoryId()): ?>
-							<b class="info"><?=Tr::_('Main category')?></b>
-						<?php else: ?>
-							<?php if( !$form->getIsReadonly() ): ?>
-							<form method="post" style="display: inline-block">
-								<input type="hidden" name="action" value="set_main_category"/>
-								<input type="hidden" name="category_id" value="<?=$category->getId()?>"/>
-								<?=UI::button(Tr::_('Set as main category'))->setClass('default')->setType('submit')?>
-							</form>
-							<?php endif; ?>
-						<?php endif; ?>
-
 					</td>
-					<td><a href="<?=$category->getEditURL()?>" target="_blank"><?=$category->_getPathName()?></a></td>
+					<td><a href="<?=$category->getEditURL()?>" target="_blank"><?=$category->getPathName()?></a></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

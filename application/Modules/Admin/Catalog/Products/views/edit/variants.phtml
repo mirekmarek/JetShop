@@ -2,9 +2,10 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\MVC_View;
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_dialog;
 use JetShop\Product;
 use JetShop\Shops;
 
@@ -18,15 +19,15 @@ $product = Controller_Main::getCurrentProduct();
 
 $setup_form = $product->getVariantSetupForm();
 
-$setup_form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
-$setup_form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 10 ] );
+$setup_form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$setup_form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 10 ] );
 $setup_form->field('variant_control_property_ids')->input()->addCustomCssStyle('height:400px;');
 
 $new_variant = $this->getRaw('new_variant');
 $add_form = $new_variant->getAddVariantForm();
 
-$add_form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
-$add_form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 10 ] );
+$add_form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$add_form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 10 ] );
 
 
 $variants_update_form = $product->getUpdateVariantsForm();
@@ -35,8 +36,8 @@ $variants = $product->getVariants();
 
 $variant_control_properties = $product->getVariantControlProperties();
 
-$setup_dialog = UI::dialog('variant_setup_dialog', Tr::_('Setup variant behavior'), 800);
-$add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), 800);
+$setup_dialog = UI::dialog('variant_setup_dialog', Tr::_('Setup variant behavior'), UI_dialog::SIZE_LARGE);
+$add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::SIZE_LARGE);
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">

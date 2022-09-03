@@ -2,8 +2,8 @@
 
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
@@ -13,20 +13,19 @@ use Jet\DataModel_Fetch_Instances;
 use JetShop\Auth_Administrator_Role as Role;
 
 use Jet\Data_Listing;
-use Jet\Data_Listing_Filter_search;
+use Jet\Data_Listing_Filter_Search;
 
 /**
  *
  */
-class Listing extends Data_Listing {
-
-	use Data_Listing_Filter_search;
+class Listing extends Data_Listing
+{
 
 	/**
 	 * @var array
 	 */
 	protected array $grid_columns = [
-		'_edit_'     => [
+		'_edit_'      => [
 			'title'         => '',
 			'disallow_sort' => true
 		],
@@ -36,36 +35,39 @@ class Listing extends Data_Listing {
 	];
 
 	/**
-	 * @var array
+	 * @var string
 	 */
-	protected array $filters = [
-		'search'
-	];
+	protected string $default_sort = 'name';
+
+	/**
+	 *
+	 */
+	protected function initFilters(): void
+	{
+		$this->filters['search'] = new class($this) extends Data_Listing_Filter_Search {
+			public function generateWhere(): void
+			{
+				if( $this->search ) {
+					$search = '%' . $this->search . '%';
+					$this->listing->addWhere( [
+						'name *'        => $search,
+						'OR',
+						'description *' => $search,
+					] );
+				}
+
+			}
+		};
+	}
+
 
 	/**
 	 * @return Role[]|DataModel_Fetch_Instances
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	protected function getList() : DataModel_Fetch_Instances
+	protected function getList(): DataModel_Fetch_Instances
 	{
 		return Role::getList();
 	}
 
-	/**
-	 *
-	 */
-	protected function filter_search_getWhere() : void
-	{
-		if(!$this->search) {
-			return;
-		}
-
-		$search = '%'.$this->search.'%';
-		$this->filter_addWhere([
-			'name *' => $search,
-			'OR',
-			'description *' => $search,
-		]);
-
-	}
 }

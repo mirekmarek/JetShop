@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -13,10 +13,8 @@ use ReflectionObject;
 /**
  *
  */
-abstract class DataModel_Definition_Property extends BaseObject implements Form_Field_Definition_Interface
+abstract class DataModel_Definition_Property extends BaseObject
 {
-	use Form_Field_Definition_Trait;
-
 
 	/**
 	 * @var string
@@ -77,24 +75,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 	 */
 	protected array $backend_options = [];
 
-
-	/**
-	 * @param array $data
-	 *
-	 * @return static
-	 */
-	public static function __set_state( array $data ): static
-	{
-
-		$i = new static( $data['data_model_class_name'], $data['name'] );
-
-		foreach( $data as $key => $val ) {
-			$i->{$key} = $val;
-		}
-
-		return $i;
-	}
-
 	/**
 	 * @param string $data_model_class_name
 	 * @param string $name
@@ -130,13 +110,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 
 				$this->{$key} = $val;
 			}
-
-			if( $this->is_id ) {
-				if( !isset( $definition_data['form_field_type'] ) ) {
-					$this->form_field_type = Form::TYPE_HIDDEN;
-				}
-			}
-
 		}
 
 	}
@@ -287,14 +260,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 		return $this->is_id;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function getCanBeFormField(): bool
-	{
-		return true;
-	}
-
 
 	/**
 	 * @return int|null
@@ -361,30 +326,6 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 	/**
 	 * @return string
 	 */
-	public function getFormFieldName(): string
-	{
-		return $this->name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormFieldContextClassName(): string
-	{
-		return $this->data_model_class_name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormFieldContextPropertyName(): string
-	{
-		return $this->name;
-	}
-
-	/**
-	 * @return string
-	 */
 	public function getType(): string
 	{
 		return $this->type;
@@ -411,6 +352,5 @@ abstract class DataModel_Definition_Property extends BaseObject implements Form_
 	public function getAllRelatedPropertyDefinitions( array &$related_definitions ): void
 	{
 	}
-
-
+	
 }

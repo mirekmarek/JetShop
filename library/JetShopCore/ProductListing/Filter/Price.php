@@ -107,12 +107,12 @@ abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter_Ab
 		} else {
 			$this->price_map = [];
 
-			$data = Product_ShopData::fetchData(
-				[
+			$data = Product_ShopData::dataFetchAll(
+				select: [
 					'product_id',
 					'final_price'
 				],
-				[
+				where: [
 					'product_id'=>$initial_product_ids,
 					'AND',
 					$this->listing->getShop()->getWhere()

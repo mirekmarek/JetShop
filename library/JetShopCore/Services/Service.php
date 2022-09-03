@@ -10,9 +10,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form;
+use Jet\Form_Field;
+use Jet\Form_Definition;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
-use Jet\Tr;
 
 /**
  *
@@ -32,11 +33,14 @@ abstract class Core_Services_Service extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Code:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Code:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
+			'code_used' => 'Service with the same name already exists',
 		]
 	)]
 	protected string $code = '';
@@ -48,8 +52,10 @@ abstract class Core_Services_Service extends DataModel
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
-		form_field_type: 'Input',
-		form_field_label: 'Group:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Group:'
 	)]
 	protected string $group = '';
 
@@ -59,11 +65,13 @@ abstract class Core_Services_Service extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Internal name:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter internal name'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Internal name:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter internal name'
 		]
 	)]
 	protected string $internal_name = '';
@@ -74,8 +82,10 @@ abstract class Core_Services_Service extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_type: 'Input',
-		form_field_label: 'Internal description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Internal description:'
 	)]
 	protected string $internal_description = '';
 
@@ -86,11 +96,13 @@ abstract class Core_Services_Service extends DataModel
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 255,
-		form_field_type: 'Select',
-		form_field_is_required: true,
-		form_field_label: 'Kind:',
-		form_field_get_select_options_callback: [Services_Kind::class, 'getScope'],
-		form_field_error_messages: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		is_required: true,
+		label: 'Kind:',
+		select_options_creator: [Services_Kind::class, 'getScope'],
+		error_messages: [
 			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select kind',
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select kind'
 		]
@@ -105,6 +117,7 @@ abstract class Core_Services_Service extends DataModel
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Services_Service_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 	/**
@@ -154,7 +167,7 @@ abstract class Core_Services_Service extends DataModel
 	public function getEditForm() : Form
 	{
 		if(!$this->_form_edit) {
-			$this->_form_edit = $this->getCommonForm('edit_form');
+			$this->_form_edit = $this->createForm('edit_form');
 			$this->_form_edit->getField('code')->setIsReadonly(true);
 		}
 
@@ -175,23 +188,21 @@ abstract class Core_Services_Service extends DataModel
 	public function getAddForm() : Form
 	{
 		if(!$this->_form_add) {
-			$this->_form_add = $this->getCommonForm('add_form');
+			$this->_form_add = $this->createForm('add_form');
 
 			$code = $this->_form_add->getField('code');
 
 			$code->setValidator(function( Form_Field_Input $field ) {
 				$value = $field->getValue();
 				if(!$value) {
-					$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
+					$field->setError( Form_Field::ERROR_CODE_EMPTY );
 					return false;
 				}
 
 				$exists = Services_Service::get($value);
 
 				if($exists) {
-					$field->setCustomError(
-						Tr::_('Service with the same name already exists')
-					);
+					$field->setError( 'code_used' );
 
 					return false;
 				}
@@ -221,7 +232,7 @@ abstract class Core_Services_Service extends DataModel
 	}
 
 	/**
-	 * @return iterable
+	 * @return static[]
 	 */
 	public static function getList() : iterable
 	{
@@ -361,5 +372,20 @@ abstract class Core_Services_Service extends DataModel
 
 		return static::$scope[$kind];
 	}
-
+	
+	public static function getDeliveryServicesScope() : array
+	{
+		return static::getScope( Services_Kind::KIND_DELIVERY );
+	}
+	
+	public static function getPaymentServicesScope() : array
+	{
+		return static::getScope( Services_Kind::KIND_PAYMENT );
+	}
+	
+	public static function getOtherServicesScope() : array
+	{
+		return static::getScope( Services_Kind::KIND_OTHER );
+	}
+	
 }

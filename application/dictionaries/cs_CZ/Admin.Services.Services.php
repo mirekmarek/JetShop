@@ -44,4 +44,5 @@ return [
 	'Update service' => '',
 	'Delete service' => '',
 	'Admin.Services.Services' => '',
+	'Service with the same name already exists' => '',
 ];

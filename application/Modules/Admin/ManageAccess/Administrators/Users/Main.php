@@ -1,10 +1,11 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetShopModule\Admin\ManageAccess\Administrators\Users;
 
 use Jet\Application_Module;
@@ -20,7 +21,6 @@ class Main extends Application_Module
 	const ACTION_ADD_USER = 'add_user';
 	const ACTION_UPDATE_USER = 'update_user';
 	const ACTION_DELETE_USER = 'delete_user';
-
 
 
 }

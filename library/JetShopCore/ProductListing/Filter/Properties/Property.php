@@ -7,7 +7,7 @@ abstract class Core_ProductListing_Filter_Properties_Property {
 
 	protected ?ProductListing $listing = null;
 
-	protected ?Parametrization_Property $property = null;
+	protected ?Property $property = null;
 
 	protected bool $is_active = false;
 
@@ -15,13 +15,13 @@ abstract class Core_ProductListing_Filter_Properties_Property {
 
 	protected bool $is_forced = false;
 
-	public function __construct( ProductListing $listing, Parametrization_Property $property )
+	public function __construct( ProductListing $listing, Property $property )
 	{
 		$this->listing = $listing;
 		$this->property = $property;
 	}
 
-	public function getProperty() : Parametrization_Property
+	public function getProperty() : Property
 	{
 		return $this->property;
 	}

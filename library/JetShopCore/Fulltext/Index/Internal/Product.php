@@ -42,6 +42,11 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 	{
 		$this->product_is_active = $product_is_active;
 	}
+	
+	public static function getWordClassName() : string
+	{
+		return Fulltext_Index_Internal_Product_Word::class;
+	}
 
 	/**
 	 * @param array $texts
@@ -51,7 +56,7 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 	 */
 	public function collectWords( array $texts, callable $index_word_setup ) : array
 	{
-		return $this->_collectWords( $texts, __NAMESPACE__.'\\Fulltext_Index_Internal_Product_Word', $index_word_setup );
+		return $this->_collectWords( $texts, $index_word_setup );
 	}
 
 	/**
@@ -78,9 +83,9 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 			$shop = Shops::getCurrent();
 		}
 
-		$sql_query_where = [];
+		$where = [];
 		if($only_active) {
-			$sql_query_where[] = "product_is_active=1";
+			$where['product_is_active'] = true;
 		}
 
 		/** @noinspection PhpStatementHasEmptyBodyInspection */
@@ -112,7 +117,7 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 		}
 
 		if(!$ids) {
-			$ids = static::searchObjectIds( $shop, $search_string, implode(' AND ', $sql_query_where) );
+			$ids = static::searchObjectIds( $shop, $search_string, $where );
 		}
 
 
@@ -141,5 +146,49 @@ abstract class Core_Fulltext_Index_Internal_Product extends Fulltext_Index {
 
 		return $result;
 	}
-
+	
+	public static function addIndex( Product $product ) : void
+	{
+		foreach( Shops::getList() as $shop ) {
+			$shop_data = $product->getShopData( $shop );
+			
+			$internal_index = new Fulltext_Index_Internal_Product();
+			$internal_index->setShop( $shop );
+			$internal_index->setObjectId( $product->getId() );
+			$internal_index->setProductType( $product->getType() );
+			$internal_index->setProductIsActive( $product->isActive() && $shop_data->isActive() );
+			
+			$words = $internal_index->collectWords(
+				[
+					$shop_data->getName(),
+					$shop_data->getVariantName(),
+					$shop_data->getSeoH1(),
+					$shop_data->getSeoTitle(),
+					$shop_data->getSeoKeywords(),
+					$shop_data->getInternalFulltextKeywords()
+				],
+				function( Fulltext_Index_Internal_Product_Word $word ) use ($product, $shop_data) {
+					$word->setProductType( $product->getType() );
+					$word->setProductIsActive( $shop_data->isActive() );
+				}
+			);
+			
+			$internal_index->save();
+			foreach( $words as $word ) {
+				$word->save();
+			}
+		}
+	}
+	
+	public static function deleteIndex( Product $product ) : void
+	{
+		Fulltext_Index_Internal_Product::deleteRecord( $product->getId() );
+	}
+	
+	public static function updateIndex( Product $product ) : void
+	{
+		Fulltext_Index_Internal_Product::deleteIndex( $product );
+		Fulltext_Index_Internal_Product::addIndex( $product );
+	}
+	
 }

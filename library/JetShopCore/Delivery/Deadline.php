@@ -8,7 +8,8 @@ use Jet\DataModel_IDController_Passive;
 use Jet\Form;
 use Jet\Application_Module;
 use Jet\DataModel_Fetch_Instances;
-use Jet\Form_Field_Input;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 
 #[DataModel_Definition(
 	name: 'delivery_deadline',
@@ -24,11 +25,13 @@ abstract class Core_Delivery_Deadline extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Code:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Code:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code'
 		]
 	)]
 	protected string $code = '';
@@ -36,7 +39,10 @@ abstract class Core_Delivery_Deadline extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_label: 'Internal name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Internal name:'
 	)]
 	protected string $internal_name = '';
 
@@ -46,8 +52,10 @@ abstract class Core_Delivery_Deadline extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
-		form_field_type: 'Input',
-		form_field_label: 'Internal description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Internal description:'
 	)]
 	protected string $internal_description = '';
 
@@ -58,6 +66,7 @@ abstract class Core_Delivery_Deadline extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Delivery_Deadline_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 
@@ -178,8 +187,8 @@ abstract class Core_Delivery_Deadline extends DataModel {
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->_add_form = $this->getCommonForm('add_form');
-			$this->_add_form->setCustomTranslatorNamespace( Delivery_Deadline::getManageModuleName() );
+			$this->_add_form = $this->createForm('add_form');
+			$this->_add_form->setCustomTranslatorDictionary( Delivery_Deadline::getManageModuleName() );
 		}
 
 		return $this->_add_form;
@@ -187,25 +196,15 @@ abstract class Core_Delivery_Deadline extends DataModel {
 
 	public function catchAddForm() : bool
 	{
-		$add_form = $this->getAddForm();
-		if(
-			!$add_form->catchInput() ||
-			!$add_form->validate()
-		) {
-			return false;
-		}
-
-		$add_form->catchData();
-
-		return true;
+		return $this->getAddForm()->catch();
 	}
 
 
 	public function getEditForm() : Form
 	{
 		if(!$this->_edit_form) {
-			$this->_edit_form = $this->getCommonForm('edit_form');
-			$this->_edit_form->setCustomTranslatorNamespace( Delivery_Deadline::getManageModuleName() );
+			$this->_edit_form = $this->createForm('edit_form');
+			$this->_edit_form->setCustomTranslatorDictionary( Delivery_Deadline::getManageModuleName() );
 		}
 
 		return $this->_edit_form;
@@ -213,17 +212,7 @@ abstract class Core_Delivery_Deadline extends DataModel {
 
 	public function catchEditForm() : bool
 	{
-		$edit_form = $this->getEditForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
-		}
-
-		$edit_form->catchData();
-
-		return true;
+		return $this->getEditForm()->catch();
 	}
 
 

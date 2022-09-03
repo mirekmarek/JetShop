@@ -48,7 +48,8 @@ $showCategory = function( Data_Tree_Node $node ) {
 		}
 	}
 
-	$icon = Category::renderIcon($node->getData()['type'], true);
+	//$icon = Category::renderIcon($node->getData()['type'], true);
+	$icon = '';
 
 	if($selected):
 		?>
@@ -113,14 +114,7 @@ $showCategory = function( Data_Tree_Node $node ) {
 		</ul>
 	<?php else:
 		foreach($current_node->getChildren() as $node):
-			if($node->getData()['type']==Category::CATEGORY_TYPE_TOP) {
-				$showCategory( $node );
-			}
-		endforeach;
-		foreach($current_node->getChildren() as $node):
-			if($node->getData()['type']!=Category::CATEGORY_TYPE_TOP) {
-				$showCategory( $node );
-			}
+			$showCategory( $node );
 		endforeach;
 	endif; ?>
 </ul>

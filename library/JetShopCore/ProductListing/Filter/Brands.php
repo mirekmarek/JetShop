@@ -34,8 +34,11 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 	{
 		foreach(Brand::getList() as $brand) {
 			$b_id = $brand->getId();
-
-			$form->addField( new Form_Field_Checkbox('/brands/'.$b_id, $brand->getShopData()->getName(), !empty($target_filter['brands'][$b_id])  ) );
+			
+			$field = new Form_Field_Checkbox('/brands/'.$b_id, $brand->getShopData()->getName()  );
+			$field->setDefaultValue( !empty($target_filter['brands'][$b_id]) );
+			
+			$form->addField( $field );
 		}
 	}
 
@@ -147,7 +150,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 		$map = $this->listing->cache()->get( static::CACHE_KEY );
 
 		if($map===null) {
-			$data = Product::fetchData(['id', 'brand_id'], ['id'=>$initial_product_ids]);
+			$data = Product::dataFetchAll(select:['id', 'brand_id'], where:['id'=>$initial_product_ids]);
 
 			$map = [];
 			foreach($data as $d) {

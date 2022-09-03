@@ -1,0 +1,97 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_dialog;
+use JetShop\KindOfProduct;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$category = Controller_Main::getCurrentCategory();
+$form = $category->getEditForm();
+$form->renderer()->setDefaultLabelWidth([Form_Renderer::LJ_SIZE_MEDIUM=>2]);
+$form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
+
+$editable = !$form->getIsReadonly();
+?>
+<?=$this->render('lj_start')?>
+
+<div class="form-group row">
+	<label class="col-form-label col-md-2"><?=Tr::_('Kind of product:')?></label>
+	<div class="col-md-8" style="padding-top: 8px;">
+		<?php if(($kind=$category->getKindOfProduct())):
+			?><a href="<?=$kind->getEditURL()?>"><b><?=$kind->getInternalName()?></b></a><?php
+		else:
+			?><b><?=Tr::_('- kind of product is not set -')?></b><?php
+		endif; ?>
+		<?php if($editable): ?>
+			&nbsp;&nbsp;
+			<a href="#" onclick="$('#change_kind_of_product_dialog').modal('show');"><?=Tr::_('Change kind of product')?></a>
+		<?php endif; ?>
+	</div>
+</div>
+
+<?=$form->start();?>
+		<?php foreach(Shops::getList() as $shop):
+			$shop_key = $shop->getKey();
+			$shop_data = $category->getShopData( $shop );
+			?>
+			<?=$shop_data->renderShopDataBlock_start()?>
+
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+
+					<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
+
+					<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+				</fieldset>
+
+				<fieldset>
+					<legend class="sub"><?=Tr::_('SEO')?></legend>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
+				</fieldset>
+			<?=$shop_data->renderShopDataBlock_end()?>
+		<?php endforeach; ?>
+
+<?=$form->end();?>
+
+<?=$this->render('lj_end')?>
+	
+	
+	
+	
+	
+	
+<?php if($editable): ?>
+	<form action="<?=Http_Request::currentURI(['action'=>'change_kind_of_product'])?>" method="post">
+		<input type="hidden" name="kind_of_product_id" id="kind_of_product_id" value="0"/>
+		<?php
+		$change_kind_of_product_dialog = UI::dialog('change_kind_of_product_dialog', Tr::_('Change kind of product'), UI_dialog::SIZE_DEFAULT);
+		
+		echo $change_kind_of_product_dialog->start();
+		?>
+		<table>
+			<tr>
+				<td style="width: 450px;"><?=KindOfProduct::renderSelectKindOfProductWidget("$('#kind_of_product_id').val(selected_item.id);", $category->getKindOfProductId())?></td>
+			</tr>
+		</table>
+		<?php
+		echo $change_kind_of_product_dialog->footer();
+		echo UI::button_save(Tr::_('Change'));
+		echo $change_kind_of_product_dialog->end();
+		?>
+	</form>
+<?php endif; ?>

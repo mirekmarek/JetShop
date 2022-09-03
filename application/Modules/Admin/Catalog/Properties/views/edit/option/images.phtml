@@ -1,0 +1,37 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Categories;
+
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI;
+use JetShop\Property_Options_Option;
+use JetShop\Property_ShopData;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View   $this
+ * @var Property_Options_Option $option
+ * @var Form $form
+ */
+$option = $this->getRaw('option');
+
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id']))?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		
+		<?php
+		echo $this->getRaw('tabs');
+		
+		foreach(Shops::getList() as $shop):
+			echo $option->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$option->getEditForm()->getIsReadonly() );
+		endforeach;
+		?>
+	</div>
+</div>

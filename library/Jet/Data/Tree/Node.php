@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -16,7 +16,8 @@ use JsonSerializable;
  */
 class Data_Tree_Node extends BaseObject implements BaseObject_Interface_IteratorCountable, BaseObject_Interface_Serializable_JSON, Form_Field_Select_Option_Interface
 {
-
+	use Form_Field_Select_Option_Trait;
+	
 	/**
 	 *
 	 * @var ?Data_Tree
@@ -94,16 +95,6 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	protected ?int $_max_depth = null;
 
 	/**
-	 * @var string
-	 */
-	protected string $select_option_css_style = '';
-
-	/**
-	 * @var string
-	 */
-	protected string $select_option_css_class = '';
-
-	/**
 	 * @var ?array
 	 */
 	protected ?array $_all_children_ids = null;
@@ -126,7 +117,7 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	 * @throws Data_Tree_Exception
 	 *
 	 */
-	public function appendChild( Data_Tree_Node $node ): void
+	public function _appendChild( Data_Tree_Node $node ): void
 	{
 
 		$id = $node->getId();
@@ -178,7 +169,7 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	/**
 	 * @param string $parent_id
 	 */
-	public function setParentId( string $parent_id ): void
+	public function _setParentId( string $parent_id ): void
 	{
 		$this->real_parent_id = $parent_id;
 		$this->parent_id = $parent_id;
@@ -193,14 +184,6 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	}
 
 	/**
-	 * @param string $real_parent_id
-	 */
-	public function setRealParentId( string $real_parent_id ): void
-	{
-		$this->real_parent_id = $real_parent_id;
-	}
-
-	/**
 	 *
 	 * @return Data_Tree_Node|null
 	 */
@@ -212,7 +195,7 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	/**
 	 * @param Data_Tree_Node $_parent
 	 */
-	public function setParent( Data_Tree_Node $_parent ): void
+	public function _setParent( Data_Tree_Node $_parent ): void
 	{
 		$this->_parent = $_parent;
 		$this->parent_id = $_parent->getId();
@@ -244,7 +227,7 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	/**
 	 * @param bool $is_root
 	 */
-	public function setIsRoot( bool $is_root ): void
+	public function _setIsRoot( bool $is_root ): void
 	{
 		$this->is_root = $is_root;
 	}
@@ -260,7 +243,7 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 	/**
 	 * @param bool $is_orphan
 	 */
-	public function setIsOrphan( bool $is_orphan ): void
+	public function _setIsOrphan( bool $is_orphan ): void
 	{
 		$this->is_orphan = $is_orphan;
 	}
@@ -661,42 +644,5 @@ class Data_Tree_Node extends BaseObject implements BaseObject_Interface_Iterator
 		}
 
 	}
-
-	//- Form_Field_Select_Option_Interface --------------------------------------------------------
-	//- Form_Field_Select_Option_Interface --------------------------------------------------------
-	//- Form_Field_Select_Option_Interface --------------------------------------------------------
-	//- Form_Field_Select_Option_Interface --------------------------------------------------------
-	//- Form_Field_Select_Option_Interface --------------------------------------------------------
-
-	/**
-	 * @return string
-	 */
-	public function getSelectOptionCssStyle(): string
-	{
-		return $this->select_option_css_style;
-	}
-
-	/**
-	 * @param string $css_style
-	 */
-	public function setSelectOptionCssStyle( string $css_style ): void
-	{
-		$this->select_option_css_style = $css_style;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSelectOptionCssClass(): string
-	{
-		return $this->select_option_css_class;
-	}
-
-	/**
-	 * @param string $css_class
-	 */
-	public function setSelectOptionCssClass( string $css_class ): void
-	{
-		$this->select_option_css_class = $css_class;
-	}
+	
 }

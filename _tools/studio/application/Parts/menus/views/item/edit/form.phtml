@@ -2,7 +2,7 @@
 namespace JetStudio;
 
 use Jet\Tr;
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\MVC_View;
 use Jet\UI;
 
@@ -16,11 +16,11 @@ $item = $this->getRaw( 'item' );
 $form = $item->getEditForm();
 
 
-$form->setDefaultLabelWidth( [
-	Form::LJ_SIZE_MEDIUM => 2
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
 ] );
-$form->setDefaultFieldWidth( [
-	Form::LJ_SIZE_MEDIUM => 6
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 6
 ] );
 
 $tabs = UI::tabsJS( 'create_menu_item_target_tabs', [
@@ -41,11 +41,9 @@ $tabs = UI::tabsJS( 'create_menu_item_target_tabs', [
 <?= $form->field( 'separator_before' ) ?>
 <?= $form->field( 'separator_after' ) ?>
 
-<?= $tabs ?>
+<?= $tabs->start() ?>
 
-<?= $tabs->contentStart() ?>
-
-<?= $tabs->tab( 'tab_direct_mvc' )->contentStart() ?>
+<?= $tabs->tab( 'tab_direct_mvc' )->content()->start() ?>
 <?= $form->field( 'base_id' ) ?>
 <?= $form->field( 'page_id' ) ?>
 <?= $form->field( 'locale' ) ?>
@@ -88,10 +86,10 @@ $tabs = UI::tabsJS( 'create_menu_item_target_tabs', [
 	</div>
 </div>
 
-<?= $tabs->tab( 'tab_direct_mvc' )->contentEnd() ?>
-<?= $tabs->tab( 'tab_direct_link' )->contentStart() ?>
+<?= $tabs->tab( 'tab_direct_mvc' )->content()->end() ?>
+<?= $tabs->tab( 'tab_direct_link' )->content()->start() ?>
 <?= $form->field( 'URL' ) ?>
-<?= $tabs->tab( 'tab_direct_link' )->contentEnd() ?>
-<?= $tabs->contentEnd() ?>
+<?= $tabs->tab( 'tab_direct_link' )->content()->end() ?>
+<?= $tabs->end() ?>
 
 <?= $form->end() ?>

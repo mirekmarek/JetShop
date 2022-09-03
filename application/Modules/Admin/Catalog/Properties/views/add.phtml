@@ -1,0 +1,84 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Properties;
+
+use Jet\Tr;
+use JetShop\Property as Properties;
+
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Properties     $property
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
+
+$property = $this->getRaw( 'property' );
+$router = $this->getController()->getControllerRouter();
+?>
+
+
+<?=$form->start()?>
+
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()?>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?php
+		echo $form->field('is_active');
+		echo $form->field('internal_name');
+		echo $form->field('internal_notes');
+		
+		
+		if($form->fieldExists('decimal_places')) {
+			echo $form->field('decimal_places');
+		}
+		
+		foreach(Shops::getList() as $shop):
+			$shop_key= $shop->getKey();
+			$shop_data = $property->getShopData( $shop );
+			
+			$form->field('/shop_data/'.$shop_key.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."')");
+			$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
+			?>
+		<?=$shop_data->renderShopDataBlock_start()?>
+
+		<fieldset>
+			<legend class="sub"><?=Tr::_('Main data')?></legend>
+			<?php
+			echo $form->field('/shop_data/'.$shop_key.'/is_active');
+			echo $form->field('/shop_data/'.$shop_key.'/label');
+			echo $form->field('/shop_data/'.$shop_key.'/description');
+			
+			if($form->fieldExists('/shop_data/'.$shop_key.'/bool_yes_description')) {
+				echo $form->field('/shop_data/'.$shop_key.'/bool_yes_description');
+			}
+			
+			echo $form->field('/shop_data/'.$shop_key.'/url_param');
+			echo $form->field('/shop_data/'.$shop_key.'/units');
+			?>
+		</fieldset>
+
+		<?=$shop_data->renderShopDataBlock_end()?>
+		<?php endforeach; ?>
+
+	</div>
+</div>
+
+<?=$form->end()?>

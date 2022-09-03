@@ -171,4 +171,12 @@ return [
 	'Class <strong>%class%</strong> has been created' => '',
 	'Main DataModel:' => '',
 	'Parent DataModel:' => '',
+	'Property with the same name already exists' => '',
+	'DataModel with the same class name already exists' => '',
+	'Invalid key name format' => '',
+	'Key with the same name already exists' => '',
+	'Invalid DataModel table name name format' => '',
+	'DataModel with the same table name already exists' => '',
+	'Create / update database table' => '',
+	'Help text:' => '',
 ];

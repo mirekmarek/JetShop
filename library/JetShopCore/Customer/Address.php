@@ -8,6 +8,8 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 
 /**
  *
@@ -29,7 +31,9 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
-		form_field_type: 'Hidden'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_HIDDEN
 	)]
 	protected int $id = 0;
 
@@ -39,7 +43,6 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $customer_id = 0;
 
@@ -49,8 +52,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_type: 'Input',
-		form_field_label: 'Company name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Company name:'
 	)]
 	protected string $company_name = '';
 
@@ -60,8 +65,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
-		form_field_type: 'Input',
-		form_field_label: 'Company id:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Company id:'
 	)]
 	protected string $company_id = '';
 
@@ -71,8 +78,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
-		form_field_type: 'Input',
-		form_field_label: 'Company VAT id:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Company VAT id:'
 	)]
 	protected string $company_vat_id = '';
 
@@ -82,8 +91,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_type: 'Input',
-		form_field_label: 'First name:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'First name:'
 	)]
 	protected string $first_name = '';
 
@@ -93,8 +104,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
-		form_field_type: 'Input',
-		form_field_label: 'Surname:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Surname:'
 	)]
 	protected string $surname = '';
 
@@ -104,8 +117,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_label: 'Address - street and number:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Address - street and number:'
 	)]
 	protected string $address_street_no = '';
 
@@ -115,8 +130,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
-		form_field_type: 'Input',
-		form_field_label: 'Address - zip:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Address - zip:'
 	)]
 	protected string $address_zip = '';
 
@@ -126,8 +143,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_label: 'Address - country:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Address - country:'
 	)]
 	protected string $address_country = '';
 
@@ -137,8 +156,10 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_label: 'Address - town:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Address - town:'
 	)]
 	protected string $address_town = '';
 
@@ -149,7 +170,6 @@ abstract class Core_Customer_Address extends DataModel
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
-		form_field_type: false
 	)]
 	protected string $hash = '';
 
@@ -159,7 +179,6 @@ abstract class Core_Customer_Address extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected bool $is_default = false;
 

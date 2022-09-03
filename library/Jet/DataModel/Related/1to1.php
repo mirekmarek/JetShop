@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -19,7 +19,7 @@ abstract class DataModel_Related_1to1 extends DataModel_Related
 	 */
 	public static function dataModelDefinitionType(): string
 	{
-		return 'Related_1to1';
+		return DataModel::MODEL_TYPE_RELATED_1TO1;
 	}
 
 

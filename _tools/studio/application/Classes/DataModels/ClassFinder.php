@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -92,6 +92,7 @@ class DataModels_ClassFinder
 		$files = IO_Dir::getList( $dir, '*.php', false, true );
 
 		foreach( $files as $path => $name ) {
+
 			$file_data = IO_File::read( $path );
 
 			if( !str_contains( $file_data, 'DataModel' ) ) {
@@ -108,15 +109,15 @@ class DataModels_ClassFinder
 
 				$reflection = new ReflectionClass( $full_name );
 
-				$parent_class = $reflection->getParentClass();
-
-				if( !$parent_class ) {
-					continue;
+				$is_dm = false;
+				foreach($this->parent_classes as $dm_class) {
+					if($reflection->isSubclassOf($dm_class)) {
+						$is_dm = true;
+						break;
+					}
 				}
-
-				$parent = $reflection->getParentClass()->getName();
-
-				if( !in_array( $parent, $this->parent_classes ) ) {
+				
+				if(!$is_dm) {
 					continue;
 				}
 

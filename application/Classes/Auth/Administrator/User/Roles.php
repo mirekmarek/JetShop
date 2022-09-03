@@ -1,10 +1,11 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetShop;
 
 use Jet\DataModel;
@@ -35,7 +36,6 @@ class Auth_Administrator_User_Roles extends DataModel_Related_1toN
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected string $role_id = '';
 
@@ -116,10 +116,9 @@ class Auth_Administrator_User_Roles extends DataModel_Related_1toN
 	 */
 	public static function getRoleUsers( string $id ) : iterable
 	{
-		$ids = static::fetchData(
+		$ids = static::dataFetchCol(
 			select:['user_id'],
-			where: ['role_id'=>$id],
-			fetch_method: 'fetchCol'
+			where: ['role_id'=>$id]
 		);
 
 		if(!$ids) {

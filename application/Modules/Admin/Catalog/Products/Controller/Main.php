@@ -98,9 +98,9 @@ class Controller_Main extends MVC_Controller_Default
 					return static::$current_product && $selected_tab=='categories';
 				} );
 
-			$this->router->addAction('edit_parametrization', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_parameters', Main::ACTION_UPDATE_PRODUCT)
 				->setResolver( function() use ($action, $selected_tab) {
-					return static::$current_product && $selected_tab=='parametrization';
+					return static::$current_product && $selected_tab=='parameters';
 				} );
 
 			$this->router->addAction('edit_images', Main::ACTION_UPDATE_PRODUCT)
@@ -139,7 +139,7 @@ class Controller_Main extends MVC_Controller_Default
 		$_tabs = [
 			'main'             => Tr::_('Main data'),
 			'categories'       => Tr::_('Categories'),
-			'parametrization'  => Tr::_('Parametrization'),
+			'parameters'       => Tr::_('Parameters'),
 			'images'           => Tr::_('Images'),
 			'variants'         => Tr::_('Variants'),
 			'set'              => Tr::_('Set'),
@@ -208,7 +208,7 @@ class Controller_Main extends MVC_Controller_Default
 		$listing = new Listing();
 		$listing->handle();
 
-		$this->view->setVar( 'filter_form', $listing->filter_getForm());
+		$this->view->setVar( 'filter_form', $listing->getFilterForm());
 		$this->view->setVar( 'grid', $listing->getGrid() );
 		$this->view->setVar( 'listing', $listing );
 
@@ -219,9 +219,31 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function edit_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
-
 		$product = static::getCurrentProduct();
+		$this->_setBreadcrumbNavigation();
+		
+		$GET = Http_Request::GET();
+		
+		if($GET->exists('action')) {
+			$action = $GET->getString('action');
+			if($action=='change_kind_of_product') {
+				$product->setKindId( Http_Request::POST()->getInt('kind_of_product_id') );
+				Logger::success(
+					'product_updated',
+					'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
+					$product->getId(),
+					$product->getAdminTitle(),
+					$product
+				);
+				
+				UI_messages::success(
+					Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
+				);
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['action']);
+		}
+
 
 		if( $product->catchEditForm() ) {
 
@@ -283,7 +305,7 @@ class Controller_Main extends MVC_Controller_Default
 			if($updated) {
 				$product->save();
 
-				AJAX::response(
+				AJAX::commonResponse(
 					[
 						'result' => 'ok',
 						'snippets' => [
@@ -437,11 +459,6 @@ class Controller_Main extends MVC_Controller_Default
 						$updated = true;
 					}
 					break;
-				case 'set_main_category':
-					if($product->setMainCategory( $POST->getInt('category_id') )) {
-						$updated = true;
-					}
-					break;
 			}
 
 			if($updated) {
@@ -470,13 +487,13 @@ class Controller_Main extends MVC_Controller_Default
 		$this->output( 'edit/categories' );
 	}
 
-	public function edit_parametrization_Action() : void
+	public function edit_parameters_Action() : void
 	{
 		$this->_setBreadcrumbNavigation();
 
 		$product = static::getCurrentProduct();
 
-		if( $product->catchParametrizationEditForm() ) {
+		if( $product->catchParametersEditForm() ) {
 
 			$product->save();
 			$product->syncVariants();
@@ -497,7 +514,7 @@ class Controller_Main extends MVC_Controller_Default
 			Http_Headers::reload();
 		}
 
-		$this->output( 'edit/parametrization' );
+		$this->output( 'edit/parameters' );
 	}
 
 

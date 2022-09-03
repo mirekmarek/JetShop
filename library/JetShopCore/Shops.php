@@ -253,7 +253,7 @@ class Core_Shops {
 
 
 
-	public static function generateURLPathPart( string $name, string $type='', int|null $id=null, ?Shops_Shop $shop=null ) : string
+	public static function generateURLPathPart( string $name, string $type='', string|int|null $id=null, ?Shops_Shop $shop=null ) : string
 	{
 
 		//TODO: move somewhere else ...

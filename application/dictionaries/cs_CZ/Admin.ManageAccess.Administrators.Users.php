@@ -31,4 +31,5 @@ return [
 	'Delete user' => '',
 	'Administrator users management' => '',
 	'Password has been re-generated' => '',
+	'Sorry, but username %USERNAME% is registered.' => '',
 ];

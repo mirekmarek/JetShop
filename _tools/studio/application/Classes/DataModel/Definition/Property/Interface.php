@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -67,19 +67,7 @@ interface DataModel_Definition_Property_Interface
 	 * @return bool|DataModel_Definition_Property_Interface
 	 */
 	public function catchEditForm(): bool|DataModel_Definition_Property_Interface;
-
-
-	/**
-	 *
-	 */
-	public function showEditForm(): void;
-
-	/**
-	 *
-	 */
-	public function showEditFormFields(): void;
-
-
+	
 	/**
 	 * @return string
 	 */
@@ -149,6 +137,7 @@ interface DataModel_Definition_Property_Interface
 	 * @param bool $is_unique
 	 */
 	public function setIsUnique( bool $is_unique ): void;
+
 
 	/**
 	 * @return bool

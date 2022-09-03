@@ -1,18 +1,18 @@
-var UI = {
-	mainToolbarPin: function() {
-		var main_toolbar = document.getElementById("main-toolbar");
-		if(!main_toolbar) {
+const UI = {
+	mainToolbarPin: function () {
+		const main_toolbar = document.getElementById("main-toolbar");
+		if (!main_toolbar) {
 			return;
 		}
-		var main_col = document.getElementById("main-col");
-		var main_toolbar_initial_offset = main_toolbar.offsetTop;
-		var main_toolbar_height = main_toolbar.offsetHeight;
-		var main_col_initial_padding_top = main_col.style.paddingTop;
+		const main_col = document.getElementById("main-col");
+		const main_toolbar_initial_offset = main_toolbar.offsetTop;
+		const main_toolbar_height = main_toolbar.offsetHeight;
+		const main_col_initial_padding_top = main_col.style.paddingTop;
 
-		window.onscroll = function() {
+		window.onscroll = function () {
 			if (window.pageYOffset > main_toolbar_initial_offset) {
 				main_toolbar.classList.add("main-toolbar-sticky");
-				main_col.style.paddingTop = main_toolbar_height+'px';
+				main_col.style.paddingTop = main_toolbar_height + 'px';
 			} else {
 				main_toolbar.classList.remove("main-toolbar-sticky");
 				main_col.style.paddingTop = main_col_initial_padding_top;
@@ -51,23 +51,23 @@ JetAjaxForm.defaultHandlers = {
 };
 
 
-var urlPathPart = {
-	afterNameChanged: function( name, url_path_part_input_id, shop_key ) {
+const urlPathPart = {
+	afterNameChanged: function (name, url_path_part_input_id, shop_key) {
 
 		$.ajax({
-			url: "?action=generate_url_path_part&name="+encodeURIComponent(name)+'&shop_key='+shop_key,
+			url: "?action=generate_url_path_part&name=" + encodeURIComponent(name) + '&shop_key=' + shop_key,
 			dataType: 'json',
-			success: function( data ){
-				$('#'+url_path_part_input_id).val(data.url_path_part);
+			success: function (data) {
+				$('#' + url_path_part_input_id).val(data.url_path_part);
 			}
 		});
 	},
 
-	afterPathPartChanged: function( input, shop_key ) {
+	afterPathPartChanged: function (input, shop_key) {
 		$.ajax({
-			url: "?action=generate_url_path_part&name="+encodeURIComponent(input.value)+'&shop_key='+shop_key,
+			url: "?action=generate_url_path_part&name=" + encodeURIComponent(input.value) + '&shop_key=' + shop_key,
 			dataType: 'json',
-			success: function( data ){
+			success: function (data) {
 				input.value = data.url_path_part;
 			}
 		});

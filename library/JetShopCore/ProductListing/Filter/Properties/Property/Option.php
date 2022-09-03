@@ -4,9 +4,9 @@ namespace JetShop;
 
 abstract class Core_ProductListing_Filter_Properties_Property_Option
 {
-	protected ProductListing_Filter_Properties_Property_Options|ProductListing_Filter_Properties_Property_StencilOptions|null $filter_property = null;
+	protected ProductListing_Filter_Properties_Property_Options|null $filter_property = null;
 
-	protected Parametrization_Property_Option|Stencil_Option|null $option = null;
+	protected Property_Options_Option|null $option = null;
 
 	protected array $product_ids = [];
 
@@ -19,19 +19,19 @@ abstract class Core_ProductListing_Filter_Properties_Property_Option
 	protected int|null $_count = null;
 
 	public function __construct(
-		ProductListing_Filter_Properties_Property_Options|ProductListing_Filter_Properties_Property_StencilOptions$filter_property,
-		Parametrization_Property_Option|Stencil_Option $option
+		ProductListing_Filter_Properties_Property_Options $filter_property,
+		Property_Options_Option $option
 	) {
 		$this->filter_property = $filter_property;
 		$this->option = $option;
 	}
 
-	public function getFilterProperty() : ProductListing_Filter_Properties_Property_Options|ProductListing_Filter_Properties_Property_StencilOptions
+	public function getFilterProperty() : ProductListing_Filter_Properties_Property_Options
 	{
 		return $this->filter_property;
 	}
 
-	public function getOption() : Parametrization_Property_Option
+	public function getOption() : Property_Options_Option
 	{
 		return $this->option;
 	}
@@ -89,7 +89,7 @@ abstract class Core_ProductListing_Filter_Properties_Property_Option
 			$initial_product_ids = $this->product_ids;
 
 
-			$ids = $this->filter_property->getListing()->properties()->internalGetFilteredProductIdsWithoutProperty(
+			$ids = $this->filter_property->getListing()->params()->internalGetFilteredProductIdsWithoutProperty(
 				$initial_product_ids,
 				$property_id
 			);

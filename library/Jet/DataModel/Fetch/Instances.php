@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -12,7 +12,7 @@ namespace Jet;
  *
  *
  */
-class DataModel_Fetch_Instances extends DataModel_Fetch implements Data_Paginator_DataSource, BaseObject_Interface_ArrayEmulator
+class DataModel_Fetch_Instances extends DataModel_Fetch
 {
 
 	/**
@@ -25,10 +25,6 @@ class DataModel_Fetch_Instances extends DataModel_Fetch implements Data_Paginato
 	 */
 	protected ?array $_instances = null;
 
-	/**
-	 * @var array
-	 */
-	protected array $_where = [];
 
 	/**
 	 * @return array|DataModel_PropertyFilter
@@ -50,11 +46,6 @@ class DataModel_Fetch_Instances extends DataModel_Fetch implements Data_Paginato
 					$this->data_model_definition, $load_filter
 				);
 			}
-
-			$this->query->setSelect(
-				DataModel_PropertyFilter::getQuerySelect( $this->data_model_definition, $load_filter )
-			);
-
 		}
 
 		$this->load_filter = $load_filter;
@@ -70,32 +61,57 @@ class DataModel_Fetch_Instances extends DataModel_Fetch implements Data_Paginato
 		}
 
 		$this->data = [];
+		$this->_instances = [];
 
-		$l = DataModel_Backend::get( $this->data_model_definition )->fetchAll( $this->query );
+		$ids = DataModel_Backend::get( $this->data_model_definition )->fetchAll( $this->query );
 
-		$this->_where = [];
-		foreach( $l as $item ) {
-			$l_id = clone $this->empty_id_instance;
+		$where = [];
+		foreach( $ids as $id_data ) {
+			$id = clone $this->empty_id_instance;
 
-			$where = [];
-			foreach( $l_id->getPropertyNames() as $k ) {
-				$l_id->setValue( $k, $item[$k] );
+			$id_where = [];
+			foreach( $id->getPropertyNames() as $k ) {
+				$id->setValue( $k, $id_data[$k] );
 
-				if($where) {
-					$where[] = 'AND';
+				if($id_where) {
+					$id_where[] = 'AND';
 				}
-				$where[$k] = $item[$k];
+				$id_where[$k] = $id_data[$k];
 			}
 
-			if($this->_where) {
-				$this->_where[] = 'OR';
+			if($where) {
+				$where[] = 'OR';
 			}
-			$this->_where[] = $where;
+			$where[] = $id_where;
 
-			$i_id_str = (string)$l_id;
+			$id_str = (string)$id;
 
-			$this->data[$i_id_str] = $i_id_str;
+			$this->data[$id_str] = $id_str;
 		}
+
+		if(!$this->data) {
+			return;
+		}
+
+		/**
+		 * @var DataModel $class_name
+		 */
+		$class_name = $this->data_model_definition->getClassName();
+		$model_name = $this->data_model_definition->getModelName();
+
+		$this->_instances = $class_name::fetch(
+			where_per_model: [
+				$model_name => $where
+			],
+			item_key_generator: function( $item ) {
+				/**
+				 * @var DataModel $item
+				 */
+				return $item->getIDController()->toString();
+			},
+			load_filter: $this->load_filter
+		);
+
 	}
 
 	/**
@@ -103,9 +119,11 @@ class DataModel_Fetch_Instances extends DataModel_Fetch implements Data_Paginato
 	 */
 	public function toArray(): array
 	{
+		$this->_fetch();
+
 		$result = [];
 
-		foreach( $this as $key => $val ) {
+		foreach( $this->_instances as $key => $val ) {
 			$result[$key] = $val->jsonSerialize();
 		}
 
@@ -119,32 +137,7 @@ class DataModel_Fetch_Instances extends DataModel_Fetch implements Data_Paginato
 	 */
 	protected function _get( mixed $item ): DataModel|DataModel_Related_1toN|DataModel_Related_1to1
 	{
-
-		if( $this->_instances === null ) {
-
-			/**
-			 * @var DataModel $class_name
-			 */
-			$class_name = $this->data_model_definition->getClassName();
-			$model_name = $this->data_model_definition->getModelName();
-
-			$this->_instances = $class_name::fetch(
-				[
-					$model_name => $this->_where
-				],
-				null,
-				function( $item ) {
-					/**
-					 * @var DataModel $item
-					 */
-					return $item->getIDController()->toString();
-				},
-				$this->load_filter
-			);
-		}
-
 		return $this->_instances[$item];
 	}
-
 
 }

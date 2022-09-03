@@ -2,6 +2,7 @@
 namespace JetShopModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\MVC_View;
 use Jet\UI;
@@ -13,10 +14,10 @@ use JetShop\Product;
  */
 
 $add_form = $this->getRaw('add_form');
-$add_form->setDefaultLabelWidth([Form::LJ_SIZE_MEDIUM=>1]);
-$add_form->setDefaultFieldWidth([Form::LJ_SIZE_MEDIUM=>4]);
+$add_form->renderer()->setDefaultLabelWidth([Form_Renderer::LJ_SIZE_MEDIUM=>1]);
+$add_form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>4]);
 
-$add_form->tag()->addJsAction('onsubmit', 'ReceiptOfGoods.addItem();return false;');
+$add_form->renderer()->addJsAction('onsubmit', 'ReceiptOfGoods.addItem();return false;');
 ?>
 
 <?=$add_form->start();?>

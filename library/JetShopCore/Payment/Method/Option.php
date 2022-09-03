@@ -3,10 +3,11 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\DataModel;
 use Jet\DataModel_Related_1toN;
 use Jet\Form_Field_Input;
-use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'payment_methods_options',
@@ -24,10 +25,13 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		is_id: true,
 		max_len: 255,
-		form_field_type: Form::TYPE_INPUT,
-		form_field_label: 'Code:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Code:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
+			'code_used' => 'This code is already used',
 		]
 	)]
 	protected string $code = '';
@@ -36,7 +40,6 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
 		is_key: true,
-		form_field_type: false,
 		related_to: 'main.code'
 	)]
 	protected string $payment_method_code = '';
@@ -48,6 +51,7 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_Option_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 
@@ -103,19 +107,14 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$form = $this->getCommonForm('option_add_form');
+			$form = $this->createForm('option_add_form');
 
 			$form->field('code')->setValidator(function( Form_Field_Input $field ) {
-				if(!$field->checkValueIsNotEmpty()) {
-					return false;
-				}
-
 				$code = $field->getValue();
-
-
+				
 				foreach( Payment_Method::get($this->payment_method_code)->getOptions() as $option ) {
 					if($option->getCode()==$code) {
-						$field->setCustomError(Tr::_('This code is already used'));
+						$field->setError('code_used');
 						return false;
 					}
 				}
@@ -132,20 +131,13 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 	public function catchAddForm() : bool
 	{
 		$form = $this->getAddForm();
-
-		if(!$form->catchInput() || !$form->validate()) {
-			return false;
-		}
-
-		$form->catchData();
-
-		return true;
+		return $form->catch();
 	}
 
 	public function getEditForm() : Form
 	{
 		if(!$this->_edit_form) {
-			$form = $this->getCommonForm('option_edit_form_'.$this->code);
+			$form = $this->createForm('option_edit_form_'.$this->code);
 
 			$form->field('code')->setIsReadonly(true);
 
@@ -157,15 +149,7 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 
 	public function catchEditForm() : bool
 	{
-		$form = $this->getEditForm();
-
-		if(!$form->catchInput() || !$form->validate()) {
-			return false;
-		}
-
-		$form->catchData();
-
-		return true;
+		return $this->getEditForm()->catch();
 	}
 
 	public function getDescription( ?Shops_Shop $shop=null ) : string

@@ -43,7 +43,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_INT,
 		is_id: true,
 		related_to: 'main.id',
-		form_field_type: false
 	)]
 	protected int $order_id = 0;
 
@@ -52,7 +51,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected int $id = 0;
 
@@ -60,7 +58,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $type = '';
 
@@ -68,7 +65,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $sub_type = '';
 
@@ -76,7 +72,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $code = '';
 
@@ -84,21 +79,18 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $sub_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $product_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected bool $available = false;
 
@@ -157,7 +149,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 64,
-		form_field_type: false
 	)]
 	protected string $warehouse_code = '';
 

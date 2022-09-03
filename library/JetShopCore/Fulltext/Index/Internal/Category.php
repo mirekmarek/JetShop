@@ -11,27 +11,10 @@ use Jet\DataModel_Definition;
 abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true
-	)]
-	protected string $category_type = '';
-
-	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true
 	)]
 	protected bool $category_is_active = false;
-
-	public function getCategoryType() : string
-	{
-		return $this->category_type;
-	}
-
-	public function setCategoryType( string $category_type ) : void
-	{
-		$this->category_type = $category_type;
-	}
 
 	public function getCategoryIsActive() : bool
 	{
@@ -42,6 +25,11 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 	{
 		$this->category_is_active = $category_is_active;
 	}
+	
+	public static function getWordClassName() : string
+	{
+		return Fulltext_Index_Internal_Category_Word::class;
+	}
 
 	/**
 	 * @param array $texts
@@ -50,7 +38,7 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 	 */
 	public function collectWords( array $texts, callable $index_word_setup ) : array
 	{
-		return $this->_collectWords( $texts, __NAMESPACE__.'\\Fulltext_Index_Internal_Category_Word', $index_word_setup );
+		return $this->_collectWords( $texts, $index_word_setup );
 	}
 
 	/**
@@ -68,21 +56,20 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 			$shop = Shops::getCurrent();
 		}
 
-		$sql_query_where = [];
+		$where = [];
 
 		if($only_types) {
-			foreach( $only_types as $i=>$type ) {
-				$only_types[$i] = addslashes($type);
-			}
-
-			$sql_query_where[] = "category_type IN ('".implode("', '", $only_types)."')";
+			$where['category_type'] = $only_types;
 		}
 
 		if($only_active) {
-			$sql_query_where[] = "category_is_active=1";
+			if($where) {
+				$where[] = 'AND';
+			}
+			$where['category_is_active'] = true;
 		}
 
-		$ids = static::searchObjectIds( $shop, $search_string, implode(' AND ', $sql_query_where) );
+		$ids = static::searchObjectIds( $shop, $search_string, $where );
 
 		if(!$ids) {
 			return [];
@@ -111,5 +98,52 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 
 		return $result;
 	}
-
+	
+	
+	public static function addIndex( Category $category ) : void
+	{
+		foreach( Shops::getList() as $shop ) {
+			
+			$shop_data = $category->getShopData( $shop );
+			
+			$internal_index = new Fulltext_Index_Internal_Category();
+			$internal_index->setShop( $shop );
+			$internal_index->setObjectId( $category->getId() );
+			$internal_index->setCategoryIsActive( $shop_data->isActive() );
+			
+			$words = $internal_index->collectWords(
+				[
+					$shop_data->getName(),
+					$shop_data->getSecondName(),
+					$shop_data->getSeoH1(),
+					$shop_data->getSeoTitle(),
+					$shop_data->getSeoKeywords(),
+					$shop_data->getInternalFulltextKeywords()
+				],
+				function( Fulltext_Index_Internal_Category_Word $word ) use ($category, $shop_data) {
+					$word->setCategoryIsActive( $shop_data->isActive() );
+				}
+			);
+			
+			$internal_index->save();
+			foreach( $words as $word ) {
+				$word->save();
+			}
+			
+			//TODO: index for e-shop
+		}
+	}
+	
+	public static function deleteIndex( Category $category ) : void
+	{
+		Fulltext_Index_Internal_Category::deleteRecord( $category->getId() );
+	}
+	
+	public static function updateIndex( Category $category ) : void
+	{
+		static::deleteIndex( $category );
+		static::addIndex( $category );
+	}
+	
+	
 }

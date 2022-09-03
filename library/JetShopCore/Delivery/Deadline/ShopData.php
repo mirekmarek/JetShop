@@ -7,6 +7,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Tr;
 
 /**
@@ -31,28 +33,24 @@ abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData imp
 	#[DataModel_Definition(
 		related_to: 'main.code',
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $delivery_deadline_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_icon1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_icon2 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_icon3 = '';
 
@@ -62,8 +60,10 @@ abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData imp
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_label: 'Title:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Title:'
 	)]
 	protected string $title = '';
 
@@ -73,8 +73,10 @@ abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData imp
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
-		form_field_type: 'WYSIWYG',
-		form_field_label: 'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Description:'
 	)]
 	protected string $description = '';
 
@@ -84,8 +86,10 @@ abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData imp
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_type: 'WYSIWYG',
-		form_field_label: 'Short description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Short description:'
 	)]
 	protected string $description_short = '';
 
@@ -94,8 +98,10 @@ abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData imp
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: 'Int',
-		form_field_label: 'Delay business days - optimistic:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Delay business days - optimistic:'
 	)]
 	protected int $delay_business_days_optimistic = 0;
 
@@ -104,8 +110,10 @@ abstract class Core_Delivery_Deadline_ShopData extends CommonEntity_ShopData imp
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: 'Int',
-		form_field_label: 'Delay business days - pessimistic:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Delay business days - pessimistic:'
 	)]
 	protected int $delay_business_days_pessimistic = 0;
 

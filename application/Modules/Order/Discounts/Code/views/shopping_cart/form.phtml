@@ -1,7 +1,7 @@
 <?php
 namespace JetShopModule\Order\Discounts\Code;
 
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
@@ -17,16 +17,16 @@ $module = $this->getRaw('module');
 
 $form = $module->getUseCodeForm();
 
-$form->setDefaultLabelWidth([
-	Form::LJ_SIZE_MEDIUM => 0
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 0
 ]);
-$form->setDefaultFieldWidth([
-	Form::LJ_SIZE_MEDIUM => 10
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 10
 ]);
 
 $code_f = $form->field('code');
 
-$form->tag()->addJsAction('onsubmit', 'DiscountCode.submit();return false;');
+$form->renderer()->addJsAction('onsubmit', 'DiscountCode.submit();return false;');
 ?>
 
 <?=$form->start()?>

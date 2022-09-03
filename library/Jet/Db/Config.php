@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -21,18 +21,22 @@ class Db_Config extends Config
 	 * @var string
 	 */
 	#[Config_Definition(
-		form_field_label: 'Default connection:',
 		type: Config::TYPE_STRING,
-		description: 'Connection name default value for Db::get() / Db::getConnection()',
 		is_required: true,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [
-			'Db_Config',
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		help_text: 'Connection name default value for Db::get() / Db::getConnection()',
+		is_required: true,
+		
+		label: 'Default connection:',
+		select_options_callback_creator: [
+			Db_Config::class,
 			'getConnectionsList'
 		],
-		form_field_error_messages: [
+		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please select default connection',
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select default connection'
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select default connection'
 		]
 	)]
 	protected string $default_connection_name = 'default';
@@ -71,7 +75,7 @@ class Db_Config extends Config
 			$connections[$name] = $name;
 		}
 
-		return array_combine( $connections, $connections );
+		return $connections;
 	}
 
 	/**
@@ -116,13 +120,12 @@ class Db_Config extends Config
 
 
 	/**
-	 * @param string $connection_name
 	 * @param Db_Backend_Config $connection_configuration
 	 *
 	 */
-	public function addConnection( string $connection_name, Db_Backend_Config $connection_configuration ): void
+	public function addConnection( Db_Backend_Config $connection_configuration ): void
 	{
-		$this->connections[$connection_name] = $connection_configuration;
+		$this->connections[$connection_configuration->getName()] = $connection_configuration;
 	}
 
 	/**
@@ -139,9 +142,9 @@ class Db_Config extends Config
 	/**
 	 * @param array $data
 	 *
-	 * @return Db_Backend_Config|Db_Backend_PDO_Config
+	 * @return Db_Backend_Config
 	 */
-	public function connectionConfigCreator( array $data ): Db_Backend_Config|Db_Backend_PDO_Config
+	public function connectionConfigCreator( array $data ): Db_Backend_Config
 	{
 		return Factory_Db::getBackendConfigInstance( $data );
 	}

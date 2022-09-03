@@ -18,7 +18,7 @@ if($cash_desk->getCurrentStep()!=CashDesk::STEP_CONFIRM) {
 $special_requirements_form = $cash_desk->getSpecialRequirementsForm();
 $special_requirements_form->setAction('?action=confirm_save_special_requirements');
 
-$special_requirements_form->tag()->addJsAction('onsubmit', 'CashDesk.confirm.saveSpecialRequirement();return false;');
+$special_requirements_form->renderer()->addJsAction('onsubmit', 'CashDesk.confirm.saveSpecialRequirement();return false;');
 
 $special_requirements_form->field('special_requirements')->input()->addJsAction('onchange', 'CashDesk.confirm.saveSpecialRequirement();');
 ?>

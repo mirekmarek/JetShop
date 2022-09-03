@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -17,11 +17,6 @@ class DataModel_Definition_Property_CustomData extends DataModel_Definition_Prop
 	 * @var string
 	 */
 	protected string $type = DataModel::TYPE_CUSTOM_DATA;
-
-	/**
-	 * @var string|bool
-	 */
-	protected string|bool $form_field_type = Form::TYPE_MULTI_SELECT;
 
 	/**
 	 * @param array $definition_data
@@ -63,4 +58,5 @@ class DataModel_Definition_Property_CustomData extends DataModel_Definition_Prop
 			$value = [$value];
 		}
 	}
+	
 }

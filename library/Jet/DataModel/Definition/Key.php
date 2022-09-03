@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -30,18 +30,6 @@ class DataModel_Definition_Key extends BaseObject
 	 * @var array
 	 */
 	protected array $property_names = [];
-
-
-	/**
-	 * @param array $data
-	 *
-	 * @return static
-	 */
-	public static function __set_state( array $data ): static
-	{
-		return new static( $data['name'], $data['type'], $data['property_names'] );
-
-	}
 
 	/**
 	 * @param string $name

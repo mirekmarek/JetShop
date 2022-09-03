@@ -3,6 +3,7 @@ namespace JetShop;
 
 use Jet\MVC_View;
 use Jet\UI;
+use Jet\UI_icon;
 use Jet\UI_messages;
 use Jet\Form;
 
@@ -50,7 +51,7 @@ $image_thb_url = $shop_data->getImageThumbnailUrl( $image_class, 190, 190 )
 <?php else: ?>
 	<div class="image-thumbnail" style="width:200px;height:200px;display: flex;">
 		<div style="opacity: 10%;margin:auto;">
-		<?=UI::icon('image')->setSize(100)?>
+		<?=UI::icon('image')->setSize(UI_icon::SIZE_EXTRA_LARGE)?>
 		</div>
 	</div>
 <?php endif; ?>

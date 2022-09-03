@@ -1,10 +1,11 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetShop;
 
 use Jet\DataModel;
@@ -34,14 +35,13 @@ class Auth_RESTClient_User_Roles extends DataModel_Related_1toN
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected string $role_id = '';
 
 	/**
-	 * @var Auth_RESTCLient_Role|null
+	 * @var Auth_RESTClient_Role|null
 	 */
-	protected ?Auth_RESTCLient_Role $_role = null;
+	protected ?Auth_RESTClient_Role $_role = null;
 
 	public function getArrayKeyValue(): string
 	{
@@ -83,12 +83,12 @@ class Auth_RESTClient_User_Roles extends DataModel_Related_1toN
 
 
 	/**
-	 * @return Auth_RESTCLient_Role|null
+	 * @return Auth_RESTClient_Role|null
 	 */
-	public function getRole() : Auth_RESTCLient_Role|null
+	public function getRole() : Auth_RESTClient_Role|null
 	{
 		if(!$this->_role) {
-			$this->_role = Auth_RESTCLient_Role::get($this->role_id);
+			$this->_role = Auth_RESTClient_Role::get($this->role_id);
 		}
 		return $this->_role;
 	}
@@ -112,10 +112,9 @@ class Auth_RESTClient_User_Roles extends DataModel_Related_1toN
 	 */
 	public static function getRoleUsers( string $id ) : iterable
 	{
-		$ids = static::fetchData(
+		$ids = static::dataFetchCol(
 			select:['user_id'],
-			where: ['role_id'=>$id],
-			fetch_method: 'fetchCol'
+			where: ['role_id'=>$id]
 		);
 		if(!$ids) {
 			return [];

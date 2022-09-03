@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -30,7 +30,7 @@ class Config_Definition_Config_Section extends Config_Definition_Config
 		$this->class_name = $class_name;
 		$this->class_reflection = new ReflectionClass( $class_name );
 
-		$properties_definition_data = Attributes::getPropertiesDefinition( $this->class_reflection, 'Jet\Config_Definition' );
+		$properties_definition_data = Attributes::getClassPropertyDefinition( $this->class_reflection, Config_Definition::class );
 
 		if( !$properties_definition_data ) {
 			throw new Config_Exception(
@@ -53,11 +53,11 @@ class Config_Definition_Config_Section extends Config_Definition_Config
 
 			}
 
-			$class_name = __NAMESPACE__ . '\\' . static::BASE_PROPERTY_DEFINITION_CLASS_NAME . '_' . $definition_data['type'];
+			$definition_class_name = Factory_Config::getPropertyDefinitionClassName( $definition_data['type'] );
 
 			unset( $definition_data['type'] );
 
-			$property = new $class_name( $class_name, $property_name, $definition_data );
+			$property = new $definition_class_name( $this->class_name, $property_name, $definition_data );
 
 			$this->properties_definition[$property_name] = $property;
 

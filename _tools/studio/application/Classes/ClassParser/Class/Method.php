@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -169,6 +169,7 @@ class ClassParser_Class_Method extends ClassParser_Class_Element
 				}
 
 				switch( $token->id ) {
+					case T_CATCH:
 					case T_STRING:
 						if( !$searching_for_param_declaration ) {
 							$method->name = $token->text;

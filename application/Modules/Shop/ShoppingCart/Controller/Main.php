@@ -77,7 +77,7 @@ class Controller_Main extends MVC_Controller_Default
 		if(($new_item = $cart->addItem( $product_id, $product_gty, $error_message ))) {
 			$this->view->setVar('new_item', $new_item);
 
-			AJAX::response([
+			AJAX::commonResponse([
 				'ok' => true,
 				'snippets' => [
 					'shopping_cart_popup_content' => $this->view->render('popup_content'),
@@ -86,7 +86,7 @@ class Controller_Main extends MVC_Controller_Default
 			]);
 		}
 
-		AJAX::response([
+		AJAX::commonResponse([
 			'ok' => false,
 			'error_message' => $error_message
 		]);
@@ -100,7 +100,7 @@ class Controller_Main extends MVC_Controller_Default
 
 		$cart->removeItem( $GET->getInt('remove') );
 
-		AJAX::response([
+		AJAX::commonResponse([
 			'ok' => true,
 			'snippets' => [
 				'shopping_cart' => $this->view->render('shopping_cart_page/items')
@@ -116,7 +116,7 @@ class Controller_Main extends MVC_Controller_Default
 
 		$cart->setQuantity( $GET->getInt('set_qty'), $GET->getInt('gty') );
 
-		AJAX::response([
+		AJAX::commonResponse([
 			'ok' => true,
 			'snippets' => [
 				'shopping_cart' => $this->view->render('shopping_cart_page/items')

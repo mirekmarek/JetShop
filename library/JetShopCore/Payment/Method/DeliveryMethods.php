@@ -29,7 +29,6 @@ abstract class Core_Payment_Method_DeliveryMethods extends DataModel_Related_1to
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected string $delivery_method_code = '';
 

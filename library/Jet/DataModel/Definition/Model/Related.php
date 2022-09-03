@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -364,7 +364,7 @@ abstract class DataModel_Definition_Model_Related extends DataModel_Definition_M
 
 			$reflection = new ReflectionClass( $class_name );
 
-			$properties_definition_data = Attributes::getPropertiesDefinition( $reflection, 'Jet\DataModel_Definition' );
+			$properties_definition_data = Attributes::getClassPropertyDefinition( $reflection, DataModel_Definition::class );
 
 			if( !$properties_definition_data ) {
 				throw new DataModel_Exception(
@@ -405,12 +405,7 @@ abstract class DataModel_Definition_Model_Related extends DataModel_Definition_M
 
 		$parent_id_property_data['is_key'] = true;
 		$parent_id_property_data['is_id'] = true;
-
-
-		if( isset( $property_definition_data['form_field_type'] ) ) {
-			$parent_id_property_data['form_field_type'] = $property_definition_data['form_field_type'];
-		}
-
+		
 		$this_id_property = Factory_DataModel::getPropertyDefinitionInstance(
 			$this->class_name,
 			$property_name,

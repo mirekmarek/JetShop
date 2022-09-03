@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -12,18 +12,31 @@ namespace Jet;
 /**
  *
  */
-class UI_button extends UI_BaseElement
+class UI_button extends UI_Renderer_Single
 {
-
-	const SIZE_LARGE = 'lg';
-	const SIZE_NORMAL = 'normal';
+	const TYPE_BUTTON = 'button';
+	const TYPE_SUBMIT = 'submit';
+	const TYPE_RESET = 'reset';
+	
+	const CLASS_PRIMARY = 'primary';
+	const CLASS_SECONDARY = 'secondary';
+	const CLASS_SUCCESS = 'success';
+	const CLASS_DANGER = 'danger';
+	const CLASS_WARNING = 'warning';
+	const CLASS_INFO = 'info';
+	const CLASS_LIGHT = 'light';
+	const CLASS_DARK = 'dark';
+	const CLASS_LINK = 'link';
+	
 	const SIZE_SMALL = 'sm';
+	const SIZE_NORMAL = 'normal';
+	const SIZE_LARGE = 'lg';
 	const SIZE_EXTRA_SMALL = 'xs';
 
 	/**
 	 * @var string
 	 */
-	protected string $type = 'button';
+	protected string $type = self::TYPE_BUTTON;
 
 	/**
 	 * @var string
@@ -57,21 +70,9 @@ class UI_button extends UI_BaseElement
 	public function __construct( string $label )
 	{
 		$this->label = $label;
+		$this->view_script = SysConf_Jet_UI_DefaultViews::get('button' );
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getViewScript(): string
-	{
-		if( !$this->view_script ) {
-			$this->view_script = SysConf_Jet_UI_DefaultViews::get('button' );
-		}
-
-		return $this->view_script;
-	}
-
-
+	
 	/**
 	 * @param string $label
 	 *
@@ -177,9 +178,9 @@ class UI_button extends UI_BaseElement
 	 *
 	 * @return $this
 	 */
-	public function setOnclick( string $onclick ): static
+	public function setOnClick( string $onclick ): static
 	{
-		$this->setJsAction( 'onclick', $onclick );
+		$this->addJsAction( 'onclick', $onclick );
 
 		return $this;
 	}
@@ -204,6 +205,4 @@ class UI_button extends UI_BaseElement
 	{
 		return $this->url;
 	}
-
-
 }

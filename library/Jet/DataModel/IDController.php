@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -48,36 +48,6 @@ abstract class DataModel_IDController extends BaseObject
 
 		if( $options ) {
 			$this->setOptions( $options );
-		}
-
-	}
-
-	/**
-	 * @param array|string|int $id_data
-	 *
-	 * @throws DataModel_IDController_Exception
-	 */
-	public function init( array|string|int $id_data ): void
-	{
-
-		$given_id_keys = [];
-		if( !is_array( $id_data ) ) {
-			foreach( $this->values as $key => $val ) {
-				$this->values[$key] = $id_data;
-				$given_id_keys[] = $key;
-				break;
-			}
-		} else {
-			foreach( $this->values as $key => $val ) {
-				if( isset( $id_data[$key] ) ) {
-					$this->values[$key] = $id_data[$key];
-					$given_id_keys[] = $key;
-				}
-			}
-		}
-
-		if( ($missing_keys = array_diff( array_keys( $this->values ), $given_id_keys )) ) {
-			throw new DataModel_IDController_Exception( 'ID value missing: ' . implode( ', ', $missing_keys ) );
 		}
 
 	}

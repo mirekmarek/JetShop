@@ -4,6 +4,7 @@ namespace JetShopModule\Admin\Catalog\Suppliers;
 use JetShop\Supplier;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\UI;
 
 /**
@@ -13,8 +14,8 @@ use Jet\UI;
  */
 $form = $this->getRaw( 'form' );
 
-$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
-$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
 
 $supplier = $this->getRaw( 'supplier' );
 ?>

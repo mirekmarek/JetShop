@@ -3,21 +3,17 @@ namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Http_Request;
 use Jet\MVC_View;
-use Jet\Tr;
 use Jet\UI;
-use Jet\UI_tabs;
 use JetShop\Category;
 
 /**
  * @var MVC_View $this
- * @var UI_tabs  $tabs
  */
 
 $category = Controller_Main::getCurrentCategory();
 
 $toolbar = $this->getRaw('toolbar');
 
-$tabs = $this->getRaw('tabs');
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-2">
@@ -39,29 +35,19 @@ $tabs = $this->getRaw('tabs');
 	</div>
 	<div class="col-md-10">
 		<?php if(Main::getCurrentUserCanEditCategory()):
-			if(!Controller_Main::getCurrentParamGroup()):
+			
 				if( Category::getFilter_selectedSort()==Category::SORT_PRIORITY ):
 					echo UI::button('Sort categories')->setOnclick('sortCategories.openDialog()').'&nbsp;&nbsp;';
 				endif;
 
 				if(
-					Main::getCurrentUserCanCreateCategory() &&
-					($types = Category::getAllowedCreateTypes( Controller_Main::getCurrentCategory() ))
+					Main::getCurrentUserCanCreateCategory()
 				): ?>
-					<div class="dropdown">
-						<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<?=Tr::_('Create new ...')?>
-						</button>
-
-						<div class="dropdown-menu" style="padding: 10px;">
-							<?php foreach($types as $type=>$label): ?>
-								<a class="dropdown-item" href="<?=Http_Request::currentURI(['action' => 'create_'.$type], ['group_id', 'property_id', 'option_id'])?>" ><?=$label?></a>
-							<?php endforeach; ?>
-						</div>
-					</div>&nbsp;&nbsp;&nbsp;
+					<?=UI::button_create('Create a new Category')->setUrl( Http_Request::currentURI(['action' => 'create'], ['group_id', 'property_id', 'option_id']))?>
+					&nbsp;&nbsp;&nbsp;
 				<?php
 				endif;
-			endif;
+			
 
 
 			if($toolbar):
@@ -78,34 +64,5 @@ $tabs = $this->getRaw('tabs');
 	<div class="col-2 tree">
 		<?=$this->render('tree')?>
 	</div>
-<?php
-$col = 10;
-if(
-	$category &&
-	$category->getType()==Category::CATEGORY_TYPE_REGULAR
-):
-	if(
-		$tabs->getSelectedTabId()=='parametrization' ||
-		Controller_Main::getCurrentParamGroup() ||
-		Controller_Main::getCurrentParamProperty() ||
-		Controller_Main::getCurrentParamPropertyOption()
-	):
-		$col = 8;
-		?>
-		<div class="col-2 tree-sub">
-			<?=$this->render('param/tree')?>
-		</div>
-		<?php
-	endif;
-	if($tabs->getSelectedTabId()=='exports'):
-		$col = 8;
-		?>
-		<div class="col-2 tree-sub">
-			<?=$this->render('exports/list')?>
-		</div>
-	<?php
-	endif;
-endif; ?>
-
-<div class="col-<?=$col?>">
-	<?=$tabs?>
+	<div class="col-10">
+		<?=$this->getRaw('tabs')?>

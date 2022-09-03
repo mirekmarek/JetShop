@@ -35,7 +35,7 @@ $c_edit->setRenderer(
 
 	}
 );
-$c_edit->setCssStyle( 'width:180px;' );
+$c_edit->addCustomCssStyle( 'width:180px;' );
 
 
 $grid->getColumn( 'name' )->setRenderer(
@@ -47,7 +47,7 @@ $grid->getColumn( 'name' )->setRenderer(
 	}
 );
 
-$grid->getColumn( 'id' )->setCssStyle( 'width:120px;' );
+$grid->getColumn( 'id' )->addCustomCssStyle( 'width:120px;' );
 $grid->getColumn( 'id' )->setRenderer(
 	function( Supplier $item ) use ( $router ) {
 		$edit_uri = $router->action('edit')->URI( $item->getId() );
@@ -68,7 +68,7 @@ $grid->getColumn( 'id' )->setRenderer(
 		<?php endif; ?>
 	</div>
 	<div class="col-xs-7 col-md-3">
-		<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
+		<?= $filter_form->field( 'search' )->input() ?>
 	</div>
 </div>
 <?=$filter_form->end()?>

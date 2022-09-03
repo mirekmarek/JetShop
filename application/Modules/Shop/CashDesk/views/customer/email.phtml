@@ -1,7 +1,7 @@
 <?php
 namespace JetShop;
 
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 
@@ -9,14 +9,14 @@ $cash_desk = CashDesk::get();
 
 $form = $cash_desk->getSetEMailForm();
 
-$form->tag()->addJsAction('onsubmit', 'CashDesk.customer.email.set();return false;');
+$form->renderer()->addJsAction('onsubmit', 'CashDesk.customer.email.set();return false;');
 
-$form->setDefaultLabelWidth([
-		Form::LJ_SIZE_MEDIUM => '3'
+$form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => '3'
 ]);
 
-$form->setDefaultFieldWidth([
-	Form::LJ_SIZE_MEDIUM => '9'
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => '9'
 ]);
 
 ?>

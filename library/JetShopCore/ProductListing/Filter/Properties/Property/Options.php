@@ -78,16 +78,20 @@ abstract class Core_ProductListing_Filter_Properties_Property_Options extends Pr
 		if(!array_key_exists('options', $target_filter['properties'][$p_id])) {
 			$target_filter['properties'][$p_id]['options'] = [];
 		}
-
-		$form->addField(new Form_Field_Checkbox('/properties/'.$p_id.'/disable_filter', Tr::_('Disable filter'), $target_filter['properties'][$p_id]['disable_filter']));
+		
+		$field = new Form_Field_Checkbox('/properties/'.$p_id.'/disable_filter', Tr::_('Disable filter'));
+		$field->setDefaultValue( $target_filter['properties'][$p_id]['disable_filter'] );
+		$form->addField( $field );
 
 		foreach($this->property->getOptions() as $option) {
 			$o_id = $option->getId();
 			if(!isset($target_filter['properties'][$p_id]['options'][$o_id])) {
 				$target_filter['properties'][$p_id]['options'][$o_id] = false;
 			}
-
-			$form->addField(new Form_Field_Checkbox('/properties/'.$p_id.'/option_'.$o_id, $option->getShopData()->getFilterLabel(), $target_filter['properties'][$p_id]['options'][$o_id]));
+			
+			$field = new Form_Field_Checkbox('/properties/'.$p_id.'/option_'.$o_id, $option->getShopData()->getFilterLabel() );
+			$field->setDefaultValue( $target_filter['properties'][$p_id]['options'][$o_id] );
+			$form->addField($field);
 
 		}
 

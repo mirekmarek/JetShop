@@ -1,10 +1,11 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetShopModule\Admin\ManageAccess\Administrators\Users;
 
 use Jet\Logger;
@@ -40,33 +41,36 @@ class Controller_Main extends MVC_Controller_Default
 	 *
 	 * @return MVC_Controller_Router_AddEditDelete
 	 */
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getControllerRouter(): MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
-				function($id) {
-					return (bool)($this->user = User::get($id));
+				function( $id ) {
+					return (bool)($this->user = User::get( $id ));
 				},
 				[
-					'listing'=> Main::ACTION_GET_USER,
-					'view'   => Main::ACTION_GET_USER,
-					'add'    => Main::ACTION_ADD_USER,
-					'edit'   => Main::ACTION_UPDATE_USER,
-					'delete' => Main::ACTION_DELETE_USER,
+					'listing' => Main::ACTION_GET_USER,
+					'view'    => Main::ACTION_GET_USER,
+					'add'     => Main::ACTION_ADD_USER,
+					'edit'    => Main::ACTION_UPDATE_USER,
+					'delete'  => Main::ACTION_DELETE_USER,
 				]
 			);
 
-			$this->router->addAction('reset_password', Main::ACTION_UPDATE_USER)
+			$this->router->addAction( 'reset_password', Main::ACTION_UPDATE_USER )
 				->setResolver( function() {
 					return (
-						Http_Request::GET()->getString('action')=='reset_password' &&
-						($this->user = User::get(Http_Request::GET()->getInt('id')))
+						Http_Request::GET()->getString( 'action' ) == 'reset_password' &&
+						($this->user = User::get( Http_Request::GET()->getInt( 'id' ) ))
 					);
 				} )
-				->setURICreator( function($id) {
-					return Http_Request::currentURI(['id'=>$id, 'action'=>'reset_password']);
-				});
+				->setURICreator( function( $id ) {
+					return Http_Request::currentURI( [
+						'id' => $id,
+						'action' => 'reset_password'
+					] );
+				} );
 		}
 
 		return $this->router;
@@ -75,7 +79,7 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 * @param string $current_label
 	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
+	protected function _setBreadcrumbNavigation( string $current_label = '' ): void
 	{
 		UI_module::initBreadcrumb();
 
@@ -87,14 +91,14 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function listing_Action() : void
+	public function listing_Action(): void
 	{
 		$this->_setBreadcrumbNavigation();
 
 		$listing = new Listing();
 		$listing->handle();
 
-		$this->view->setVar( 'filter_form', $listing->filter_getForm());
+		$this->view->setVar( 'filter_form', $listing->getFilterForm() );
 		$this->view->setVar( 'grid', $listing->getGrid() );
 
 		$this->output( 'list' );
@@ -103,7 +107,7 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function add_Action() : void
+	public function add_Action(): void
 	{
 		$this->_setBreadcrumbNavigation( Tr::_( 'Create a new User' ) );
 
@@ -118,20 +122,21 @@ class Controller_Main extends MVC_Controller_Default
 			$user->save();
 
 			Logger::success(
-				'user_created',
-				'User '.$user->getUsername().' ('.$user->getId().') created',
-				$user->getId(),
-				$user->getName(),
-				$user
+				event: 'admin_user_created',
+				event_message: 'User created',
+				context_object_id: $user->getId(),
+				context_object_name: $user->getUsername(),
+				context_object_data: $user
 			);
+
 
 			$user->sendWelcomeEmail( $password );
 
 			UI_messages::success(
-				Tr::_( 'User <b>%USERNAME%</b> has been created', [ 'USERNAME' => $user->getUsername() ] )
+				Tr::_( 'User <b>%USERNAME%</b> has been created', ['USERNAME' => $user->getUsername()] )
 			);
 
-			Http_Headers::reload( ['id'=>$user->getId()], ['action'] );
+			Http_Headers::reload( ['id' => $user->getId()], ['action'] );
 		}
 
 		$this->view->setVar( 'form', $form );
@@ -144,12 +149,12 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function reset_password_Action() : void
+	public function reset_password_Action(): void
 	{
 		$user = $this->user;
 
 		$user->resetPassword();
-		UI_messages::success( Tr::_( 'Password has been re-generated', [ 'USERNAME' => $user->getUsername() ] ) );
+		UI_messages::success( Tr::_( 'Password has been re-generated', ['USERNAME' => $user->getUsername()] ) );
 		Http_Headers::reload( [], ['action'] );
 
 	}
@@ -157,27 +162,29 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function edit_Action() : void
+	public function edit_Action(): void
 	{
 		$user = $this->user;
 
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit user account <b>%USERNAME%</b>', [ 'USERNAME' => $user->getUsername() ] ) );
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit user account <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] ) );
 
 		$form = $user->getEditForm();
 
 		if( $user->catchEditForm() ) {
 
 			$user->save();
+
+
 			Logger::success(
-				'user_updated',
-				'User '.$user->getUsername().' ('.$user->getId().') updated',
-				$user->getId(),
-				$user->getName(),
-				$user
+				event: 'admin_user_updated',
+				event_message: 'User updated',
+				context_object_id: $user->getId(),
+				context_object_name: $user->getUsername(),
+				context_object_data: $user
 			);
 
 			UI_messages::success(
-				Tr::_( 'User <b>%USERNAME%</b> has been updated', [ 'USERNAME' => $user->getUsername() ] )
+				Tr::_( 'User <b>%USERNAME%</b> has been updated', ['USERNAME' => $user->getUsername()] )
 			);
 
 			Http_Headers::reload();
@@ -193,12 +200,12 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function view_Action() : void
+	public function view_Action(): void
 	{
 		$user = $this->user;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'User account detail <b>%USERNAME%</b>', [ 'USERNAME' => $user->getUsername() ] )
+			Tr::_( 'User account detail <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] )
 		);
 
 		$form = $user->getEditForm();
@@ -215,29 +222,33 @@ class Controller_Main extends MVC_Controller_Default
 	/**
 	 *
 	 */
-	public function delete_Action() : void
+	public function delete_Action(): void
 	{
 		$user = $this->user;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete user account <b>%USERNAME%</b>', [ 'USERNAME' => $user->getUsername() ] )
+			Tr::_( 'Delete user account <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] )
 		);
 
-		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
+		if( Http_Request::POST()->getString( 'delete' ) == 'yes' ) {
 			$user->delete();
+
 			Logger::success(
-				'user_deleted',
-				'User '.$user->getUsername().' ('.$user->getId().') deleted',
-				$user->getId(),
-				$user->getName(),
-				$user
+				event: 'admin_user_deleted',
+				event_message: 'User deleted',
+				context_object_id: $user->getId(),
+				context_object_name: $user->getUsername(),
+				context_object_data: $user
 			);
 
 			UI_messages::info(
-				Tr::_( 'User <b>%USERNAME%</b> has been deleted', [ 'USERNAME' => $user->getUsername() ] )
+				Tr::_( 'User <b>%USERNAME%</b> has been deleted', ['USERNAME' => $user->getUsername()] )
 			);
 
-			Http_Headers::reload([], ['action', 'id']);
+			Http_Headers::reload( [], [
+				'action',
+				'id'
+			] );
 		}
 
 

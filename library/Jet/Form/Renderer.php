@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -13,17 +13,12 @@ namespace Jet;
  */
 abstract class Form_Renderer extends BaseObject
 {
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $form = null;
-
-	/**
-	 * @var ?Form_Field
-	 */
-	protected ?Form_Field $field = null;
-
+	const LJ_SIZE_EXTRA_SMALL = 'xs';
+	const LJ_SIZE_SMALL = 'sm';
+	const LJ_SIZE_MEDIUM = 'md';
+	const LJ_SIZE_LARGE = 'lg';
+	
+	
 	/**
 	 * @var array
 	 */
@@ -50,27 +45,76 @@ abstract class Form_Renderer extends BaseObject
 	protected array|null $width = null;
 
 	/**
-	 * @var array
-	 */
-	protected array $custom_data_attributes = [];
-
-	/**
 	 * @var ?callable
 	 */
-	public $width_css_classes_creator = null;
-
-
+	protected $width_css_classes_creator = null;
+	
 	/**
-	 * Form_RendererTag constructor.
-	 *
-	 * @param Form $form
-	 * @param Form_Field|null $field
+	 * @var array
 	 */
-	public function __construct( Form $form, Form_Field $field = null )
+	protected array $data_attributes = [];
+	
+	/**
+	 * @var array
+	 */
+	protected array $custom_tag_attributes = [];
+	
+	
+	/**
+	 * @var array
+	 */
+	protected array $_tag_attributes = [];
+	
+	/**
+	 * @var ?string
+	 */
+	protected string|null $view_dir = null;
+	
+	/**
+	 * @var MVC_View|null
+	 */
+	protected ?MVC_View $view = null;
+	
+	
+	
+	
+	/**
+	 * @return string
+	 */
+	public function getViewDir(): string
 	{
-		$this->form = $form;
-		$this->field = $field;
+		return $this->view_dir;
 	}
+	
+	/**
+	 * @param string $views_dir
+	 */
+	public function setViewDir( string $views_dir ): void
+	{
+		$this->view_dir = $views_dir;
+		
+		$this->view?->setScriptsDir( $this->view_dir );
+		
+	}
+	
+	
+	/**
+	 * @return MVC_View
+	 */
+	public function getView(): MVC_View
+	{
+		if(!$this->view) {
+			$this->view = Factory_MVC::getViewInstance( $this->getViewDir() );
+			
+			$this->view->setVar( 'renderer', $this );
+			
+		}
+		
+		return $this->view;
+	}
+	
+	
+	
 
 	/**
 	 * @return array|null
@@ -104,25 +148,6 @@ abstract class Form_Renderer extends BaseObject
 		$this->width_css_classes_creator = $width_css_classes_creator;
 	}
 
-
-
-	/**
-	 * @return Form
-	 */
-	public function getForm(): Form
-	{
-		return $this->form;
-	}
-
-	/**
-	 * @return Form_Field
-	 */
-	public function getField(): Form_Field
-	{
-		return $this->field;
-	}
-
-
 	/**
 	 * @param string $event
 	 * @param string $handler_code
@@ -145,29 +170,15 @@ abstract class Form_Renderer extends BaseObject
 
 
 	/**
-	 * @param bool $as_string
 	 *
-	 * @return array|string
+	 * @return array
 	 */
-	public function getJsActions( bool $as_string = true ): array|string
+	public function getJsActions(): array
 	{
-		if( $as_string ) {
-			if(!$this->js_actions) {
-				return '';
-			}
-
-			$js_actions = [''];
-
-			foreach( $this->js_actions as $vent => $handler ) {
-				$js_actions[] = $vent . '="' . $handler . '"';
-			}
-
-			return implode( ' ', $js_actions );
-		}
-
 		return $this->js_actions;
 
 	}
+	
 
 	/**
 	 * @param string $base_css_class
@@ -194,53 +205,50 @@ abstract class Form_Renderer extends BaseObject
 	}
 
 	/**
-	 * @param bool $as_string
 	 *
-	 * @return array|string
+	 * @return array
 	 */
-	public function getBaseCssClasses( bool $as_string = true ): array|string
+	public function getBaseCssClasses(): array
 	{
-		if( $as_string ) {
-			return $this->base_css_class;
+		if(!$this->base_css_class) {
+			return [];
 		}
-
+		
 		return explode( ' ', $this->base_css_class );
 	}
 
 	/**
-	 * @param bool $as_string
 	 *
-	 * @return array|string
+	 * @return array
 	 */
-	public function getCustomCssClasses( bool $as_string = true ): array|string
+	public function getCustomCssClasses(): array
 	{
-		if( $as_string ) {
-			return implode( ' ', $this->custom_css_classes );
-		}
-
 		return $this->custom_css_classes;
 	}
 
 	/**
-	 * @param bool $as_string
 	 *
-	 * @return array|string
+	 * @return array
 	 */
-	public function getWidthCssClasses( bool $as_string = true ): array|string
+	public function getWidthCssClasses(): array
 	{
 		$css_classes = [];
 
 		$class_creator = $this->getWidthCssClassesCreator();
 
 
-		if( $class_creator && $this->width ) {
-			foreach( $this->width as $size => $width ) {
-				$css_classes[] = $class_creator( $size, $width );
+		if( $class_creator && ($width=$this->getWidth()) ) {
+			foreach( $width as $size => $w ) {
+				$_classes = $class_creator( $size, $w );
+				if($_classes) {
+					$_classes = explode(' ', $_classes);
+					foreach($_classes as $class) {
+						if($class) {
+							$css_classes[] = $class;
+						}
+					}
+				}
 			}
-		}
-
-		if( $as_string ) {
-			return implode( ' ', $css_classes );
 		}
 
 		return $css_classes;
@@ -249,28 +257,16 @@ abstract class Form_Renderer extends BaseObject
 
 
 	/**
-	 * @param bool $as_string
 	 *
-	 * @return array|string
+	 * @return array
 	 */
-	public function getCssClasses( bool $as_string = true ): array|string
+	public function getCssClasses(): array
 	{
-		$css_classes = array_merge(
-			$this->getBaseCssClasses( false ),
-			$this->getWidthCssClasses( false ),
-			$this->getCustomCssClasses( false )
+		return array_merge(
+			$this->getBaseCssClasses(),
+			$this->getWidthCssClasses(),
+			$this->getCustomCssClasses()
 		);
-
-
-		if( $as_string ) {
-			if(!$css_classes) {
-				return '';
-			}
-
-			return ' class="'.implode( ' ', $css_classes ).'"';
-		}
-
-		return $css_classes;
 	}
 
 	/**
@@ -286,113 +282,168 @@ abstract class Form_Renderer extends BaseObject
 	}
 
 	/**
-	 * @param bool $as_string
-	 *
-	 * @return array|string
+	 * @return array
 	 */
-	public function getCssStyles( bool $as_string = true ): array|string
+	public function getCssStyles(): array
 	{
-		if( $as_string ) {
-			if(!$this->custom_css_styles) {
-				return '';
-			}
-			return ' style="'.implode( ';', $this->custom_css_styles ).'"';
-		}
-
 		return $this->custom_css_styles;
 	}
-
-	public function addCustomDataAttribute( $attr, $value ) : static
+	
+	/**
+	 * @param string $attr
+	 * @param string $value
+	 * @return $this
+	 */
+	public function setDataAttribute( string $attr, string $value ) : static
 	{
-		$this->custom_data_attributes[$attr] = $value;
+		$this->data_attributes[$attr] = $value;
 
 		return $this;
 	}
-
-	public function getCustomDataAttributes( bool $as_string = true ) : array|string
+	
+	/**
+	 * @param string $attr
+	 * @return $this
+	 */
+	public function unsetDataAttribute( string $attr ) : static
 	{
-		if($as_string) {
-			if(!$this->custom_data_attributes) {
-				return '';
-			}
-
-			$attrs = [''];
-
-			foreach($this->custom_data_attributes as $attr=>$value) {
-				$attrs[] = 'data-'.$attr.'="'.addslashes(Data_Text::htmlSpecialChars($value)).'"';
-			}
-
-			return implode(' ', $attrs);
+		if(isset( $this->data_attributes[$attr])) {
+			unset( $this->data_attributes[$attr]);
 		}
-
-		return $this->custom_data_attributes;
+		
+		return $this;
 	}
-
-	public function getMainTagAttributes() : string
+	
+	/**
+	 * @return array
+	 */
+	public function getDataAttributes() : array
 	{
+		return $this->data_attributes;
+	}
+	
+	
+	
+	/**
+	 * @param string $attr
+	 * @param string $value
+	 *
+	 * @return $this
+	 */
+	public function setCustomTagAttribute( string $attr, string $value ) : static
+	{
+		$this->custom_tag_attributes[$attr] = $value;
+		
+		return $this;
+	}
+	
+	/**
+	 * @param string $attr
+	 *
+	 * @return $this
+	 */
+	public function unsetCustomTagAttribute( string $attr ) : static
+	{
+		if(isset($this->custom_tag_attributes[$attr])) {
+			unset($this->custom_tag_attributes[$attr]);
+		}
+		
+		return $this;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getCustomTagAttributes(): array
+	{
+		return $this->custom_tag_attributes;
+	}
+	
+	
+	/**
+	 *
+	 */
+	protected function generateTagAttributes_Standard() : void
+	{
+	}
+	
+	
+	/**
+	 *
+	 */
+	protected function generateTagAttributes_CssClasses() : void
+	{
+		$classes = $this->getCssClasses();
+		if($classes) {
+			$this->_tag_attributes['class'] = implode(' ', $classes);
+		}
+	}
+	
+	/**
+	 *
+	 */
+	protected function generateTagAttributes_CssStyles() : void
+	{
+		$styles = $this->getCssStyles();
+		if($styles) {
+			$this->_tag_attributes['style'] = implode(';', $styles);
+		}
+	}
+	
+	/**
+	 *
+	 */
+	protected function generateTagAttributes_JsActions() : void
+	{
+		foreach( $this->getJsActions() as $event => $handler ) {
+			$this->_tag_attributes[$event] = $handler;
+		}
+	}
+	
+	/**
+	 *
+	 */
+	protected function generateTagAttributes_CustomDataAttributes() : void
+	{
+		foreach( $this->getDataAttributes() as $attr=> $value) {
+			$this->_tag_attributes['data-'.$attr] = addslashes(Data_Text::htmlSpecialChars($value));
+		}
+	}
+	
+	
+	
+	/**
+	 * @return array
+	 */
+	public function generateTagAttributes() : array
+	{
+		$this->_tag_attributes = [];
+		
+		$this->generateTagAttributes_Standard();
+		$this->generateTagAttributes_CssClasses();
+		$this->generateTagAttributes_CssStyles();
+		$this->generateTagAttributes_JsActions();
+		$this->generateTagAttributes_CustomDataAttributes();
+		
+		foreach($this->custom_tag_attributes as $key=>$val) {
+			$this->_tag_attributes[$key] = $val;
+		}
+		
+		return $this->_tag_attributes;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function renderTagAttributes() : string
+	{
+		$attributes = $this->generateTagAttributes();
 		$res = '';
-		$res .= $this->getCssClasses();
-		$res .= $this->getCssStyles();
-		$res .= $this->getJsActions();
-		$res .= $this->getCustomDataAttributes();
-
-		return $res;
-	}
-
-	public function getStdInputFieldAttributes( string $type ) : array
-	{
-		$field = $this->getField();
-
-		$attrs = [
-			'type' => $type,
-			'name' => $field->getTagNameValue(),
-			'id' => $field->getId(),
-			'value' => $field->getValue()
-		];
-
-		if( $field->getPlaceholder() ) {
-			$attrs['placeholder'] = Data_Text::htmlSpecialChars( $field->getPlaceholder() );
-		}
-		if( $field->getIsReadonly() ) {
-			$attrs['readonly'] = 'readonly';
-		}
-		if( $field->getIsRequired() ) {
-			$attrs['required'] = 'required';
-		}
-		if( $field->getValidationRegexp() ) {
-			$attrs['pattern'] = $field->getValidationRegexp();
-		}
-
-		return $attrs;
-	}
-
-	public function renderAttributes( array $attributes ) : string
-	{
-		$res = $this->getMainTagAttributes();
-
 		foreach($attributes as $attr=>$value) {
 			$res .= ' '.$attr.'="'.$value.'"';
 		}
 
 		return $res;
-	}
-
-	/**
-	 * @return MVC_View
-	 */
-	public function getView(): MVC_View
-	{
-
-		$view = $this->field
-			?
-			$this->field->getView()
-			:
-			$this->form->getView();
-
-		$view->setVar( 'element', $this );
-
-		return $view;
-
 	}
 
 

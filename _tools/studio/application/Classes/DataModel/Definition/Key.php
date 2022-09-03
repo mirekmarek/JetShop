@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -14,10 +14,10 @@ use Jet\DataModel_Definition_Key as Jet_DataModel_Definition_Key;
 use Jet\DataModel_Definition_Property_CustomData;
 use Jet\DataModel_Definition_Property_DataModel;
 use Jet\Form;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_MultiSelect;
 use Jet\Form_Field_Select;
-use Jet\Tr;
 
 /**
  *
@@ -138,14 +138,14 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 		$name = $field->getValue();
 
 		if( !$name ) {
-			$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
+			$field->setError( Form_Field::ERROR_CODE_EMPTY );
 			return false;
 		}
 
 		if(
 		!preg_match( '/^[a-z0-9_]{2,}$/i', $name )
 		) {
-			$field->setError( Form_Field_Input::ERROR_CODE_INVALID_FORMAT );
+			$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
 
 			return false;
 		}
@@ -171,10 +171,7 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 				$exists
 			)
 		) {
-			$field->setCustomError(
-				Tr::_( 'Key with the same name already exists' ),
-				'key_is_not_unique'
-			);
+			$field->setError( 'key_is_not_unique' );
 
 			return false;
 		}
@@ -205,31 +202,32 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 				}
 			}
 
-			$name_field = new Form_Field_Input( 'name', 'Key name:', '' );
+			$name_field = new Form_Field_Input( 'name', 'Key name:' );
 			$name_field->setIsRequired( true );
 			$name_field->setErrorMessages( [
-				Form_Field_Input::ERROR_CODE_EMPTY          => 'Please enter key name',
-				Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid key name format',
+				Form_Field::ERROR_CODE_EMPTY          => 'Please enter key name',
+				Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid key name format',
+				'key_is_not_unique'                         => 'Key with the same name already exists',
 			] );
 			$name_field->setValidator( function( Form_Field_Input $field ) {
 				return DataModel_Definition_Key::checkKeyName( $field );
 			} );
 
 
-			$type_field = new Form_Field_Select( 'type', 'Key type:', '' );
+			$type_field = new Form_Field_Select( 'type', 'Key type:' );
 			$type_field->setSelectOptions( static::getTypes() );
 			$type_field->setIsRequired( true );
 			$type_field->setErrorMessages( [
-				Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select key type',
-				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select key type',
+				Form_Field::ERROR_CODE_EMPTY         => 'Please select key type',
+				Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select key type',
 			] );
 
-			$properties_field = new Form_Field_MultiSelect( 'properties', 'Properties:', '' );
+			$properties_field = new Form_Field_MultiSelect( 'properties', 'Properties:' );
 			$properties_field->setSelectOptions( $properties );
 			$properties_field->setIsRequired( true );
 			$properties_field->setErrorMessages( [
-				Form_Field_MultiSelect::ERROR_CODE_EMPTY         => 'Please select some property',
-				Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select some property',
+				Form_Field::ERROR_CODE_EMPTY         => 'Please select some property',
+				Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select some property',
 			] );
 
 			$fields = [
@@ -289,13 +287,15 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 				$properties[$property->getName()] = $property->getName();
 			}
 
-			$name_field = new Form_Field_Input( 'name', 'Key name:', $this->getName() );
+			$name_field = new Form_Field_Input( 'name', 'Key name:' );
+			$name_field->setDefaultValue( $this->getName() );
 			$name_field->setIsRequired( true );
 			$name_field->setErrorMessages( [
-				Form_Field_Input::ERROR_CODE_EMPTY          => 'Please enter key name',
-				Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Invalid key name format',
+				Form_Field::ERROR_CODE_EMPTY          => 'Please enter key name',
+				Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid key name format',
+				'key_is_not_unique'                         => 'Key with the same name already exists',
 			] );
-			$name_field->setCatcher( function( $value ) {
+			$name_field->setFieldValueCatcher( function( $value ) {
 				$this->setName( $value );
 			} );
 			$old_name = $this->getName();
@@ -303,25 +303,28 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 				return DataModel_Definition_Key::checkKeyName( $field, $old_name );
 			} );
 
-			$type_field = new Form_Field_Select( 'type', 'Key type:', $this->getType() );
+			$type_field = new Form_Field_Select( 'type', 'Key type:' );
+			$type_field->setDefaultValue( $this->getType() );
+			
 			$type_field->setSelectOptions( static::getTypes() );
 			$type_field->setIsRequired( true );
 			$type_field->setErrorMessages( [
-				Form_Field_Select::ERROR_CODE_EMPTY         => 'Please select key type',
-				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select key type',
+				Form_Field::ERROR_CODE_EMPTY         => 'Please select key type',
+				Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select key type',
 			] );
-			$type_field->setCatcher( function( $value ) {
+			$type_field->setFieldValueCatcher( function( $value ) {
 				$this->setType( $value );
 			} );
 
-			$properties_field = new Form_Field_MultiSelect( 'properties', 'Properties:', $this->getPropertyNames() );
+			$properties_field = new Form_Field_MultiSelect( 'properties', 'Properties:' );
+			$properties_field->setDefaultValue( $this->getPropertyNames() );
 			$properties_field->setSelectOptions( $properties );
 			$properties_field->setIsRequired( true );
 			$properties_field->setErrorMessages( [
-				Form_Field_MultiSelect::ERROR_CODE_EMPTY         => 'Please select some property',
-				Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select some property',
+				Form_Field::ERROR_CODE_EMPTY         => 'Please select some property',
+				Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select some property',
 			] );
-			$properties_field->setCatcher( function( $value ) {
+			$properties_field->setFieldValueCatcher( function( $value ) {
 				$this->setPropertyNames( $value );
 			} );
 
@@ -354,7 +357,7 @@ class DataModel_Definition_Key extends Jet_DataModel_Definition_Key
 			return false;
 		}
 
-		$form->catchData();
+		$form->catchFieldValues();
 
 		return true;
 	}

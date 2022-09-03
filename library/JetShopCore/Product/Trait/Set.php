@@ -5,6 +5,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Exception;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Int;
 use Jet\Form_Field_Select;
@@ -19,7 +21,6 @@ trait Core_Product_Trait_Set {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Product_SetItem::class,
-		form_field_type: false
 	)]
 	protected array $set_items = [];
 
@@ -29,13 +30,15 @@ trait Core_Product_Trait_Set {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_label: 'How to handle set:',
-		form_field_get_select_options_callback: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'How to handle set:',
+		select_options_creator: [
 			self::class,
 			'getSetStrategyScope'
 		],
-		form_field_error_messages: [
+		error_messages: [
 			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select set strategy',
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select set strategy'
 		]
@@ -47,8 +50,10 @@ trait Core_Product_Trait_Set {
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_type: Form::TYPE_FLOAT,
-		form_field_label: 'Set discount:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Set discount:'
 	)]
 	protected float $set_discount = 0.0;
 
@@ -169,7 +174,7 @@ trait Core_Product_Trait_Set {
 	public function getSetSetupForm() : Form
 	{
 		if(!$this->_set_setup_form) {
-			$this->_set_setup_form = $this->getForm('set_setup_form', [
+			$this->_set_setup_form = $this->createForm(form_name: 'set_setup_form', only_fields: [
 				'set_strategy',
 				'set_discount',
 			]);
@@ -177,12 +182,14 @@ trait Core_Product_Trait_Set {
 			foreach($this->getSetItems() as $set_item) {
 
 
-				$count = new Form_Field_Int('/p'.$set_item->getItemProductId().'/count', 'Count', $set_item->getCount() );
-				$count->setCatcher( function(int $value) use ($set_item) : void {
+				$count = new Form_Field_Int('/p'.$set_item->getItemProductId().'/count', 'Count' );
+				$count->setDefaultValue( $set_item->getCount() );
+				$count->setFieldValueCatcher( function(int $value) use ($set_item) : void {
 					$set_item->setCount($value);
 				} );
-				$sort_order = new Form_Field_Int('/p'.$set_item->getItemProductId().'/sort_order', 'Sort order', $set_item->getSortOrder() );
-				$sort_order->setCatcher( function(int $value) use ($set_item) : void {
+				$sort_order = new Form_Field_Int('/p'.$set_item->getItemProductId().'/sort_order', 'Sort order' );
+				$sort_order->setDefaultValue( $set_item->getSortOrder() );
+				$sort_order->setFieldValueCatcher( function(int $value) use ($set_item) : void {
 					$set_item->setSortOrder( $value );
 				} );
 

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -17,12 +17,12 @@ class Debug_Profiler_Run_SQLQueryData
 	/**
 	 * @var string
 	 */
-	protected string $block_id = "";
+	protected string $block_id = '';
 
 	/**
 	 * @var string
 	 */
-	protected string $query = "";
+	protected string $query = '';
 
 	/**
 	 * @var array

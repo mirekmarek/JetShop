@@ -43,8 +43,6 @@ trait Controller_Main_Product
 				static::$product->hasCategory( $category_id )
 			) {
 				static::$category = Category::get( $category_id );
-			} else {
-				static::$category = static::$product->getMainCategory();
 			}
 
 			if(
@@ -142,34 +140,4 @@ trait Controller_Main_Product
 	}
 
 }
-
-/*
-Tr::setCurrentDictionary('product');
-
-$layout = Application_Shop::getDefaultLayout();
-$view = Application_Shop::getDefaultView();
-
-$product = Product::get( Http_Request::GET()->getInt('id') );
-
-
-if(!$product->isActive()) {
-	$view_script = 'product/non-active';
-} else {
-	$view_script = 'product/'.$product->getType();
-
-}
-
-$main_category = $product->getMainCategory();
-
-if($main_category ) {
-	Navigation_Breadcrumb::setByCategory( $main_category );
-}
-
-Navigation_Breadcrumb::addURL(
-	$product->getFullName(),
-	$product->getURL()
-);
-
-echo Application_Shop::output( $view_script );
- */
 

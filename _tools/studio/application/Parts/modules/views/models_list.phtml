@@ -4,26 +4,29 @@ namespace JetStudio;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_icon;
 
 
 $showIcons = function( Modules_Manifest $module ) {
-	?>
-	<?php if( $module->isMandatory() ): ?>
-		<span class="badge badge-info"><?= UI::icon( 'exclamation-triangle' )->setTitle( Tr::_( 'Is mandatory' ) ) ?></span>
-	<?php endif; ?>
-
-	<?php if( $module->isInstalled() ): ?>
-		<span class="badge badge-success"><?= UI::icon( 'check' )->setTitle( Tr::_( 'Is installed' ) ) ?></span>
-	<?php else: ?>
-		<span class="badge badge-danger"><?= UI::icon( 'times' )->setTitle( Tr::_( 'Is not installed' ) ) ?></span>
-	<?php endif; ?>
-
-	<?php if( $module->isActivated() ): ?>
-		<span class="badge badge-success"><?= UI::icon( 'check' )->setTitle( Tr::_( 'Is activated' ) ) ?></span>
-	<?php else: ?>
-		<span class="badge badge-danger"><?= UI::icon( 'times' )->setTitle( Tr::_( 'Is not activated' ) ) ?></span>
-	<?php endif; ?>
-	<?php
+	if( $module->isMandatory() ):
+		echo UI::badge(UI_badge::INFO, UI::icon( 'exclamation-triangle' )->setTitle( Tr::_( 'Is mandatory' ) )->setSize(UI_icon::SIZE_SMALL) );
+	endif;
+	
+	if( $module->isInstalled() ):
+		echo UI::badge(UI_badge::SUCCESS,  UI::icon( 'check' )->setTitle( Tr::_( 'Is installed' ) )->setSize(UI_icon::SIZE_SMALL)  );
+	else:
+		echo UI::badge(UI_badge::DANGER,  UI::icon( 'times' )->setTitle( Tr::_( 'Is not installed' ) )->setSize(UI_icon::SIZE_SMALL)  );
+	endif;
+	
+	echo '&nbsp;';
+	
+	if( $module->isActivated() ):
+		echo UI::badge(UI_badge::SUCCESS,  UI::icon( 'check' )->setTitle( Tr::_( 'Is activated' ) )->setSize(UI_icon::SIZE_SMALL)  );
+	else:
+		echo UI::badge(UI_badge::DANGER,  UI::icon( 'times' )->setTitle( Tr::_( 'Is not activated' ) )->setSize(UI_icon::SIZE_SMALL)  );
+	endif;
+	
 };
 ?>
 <table class="table table-striped">
@@ -37,9 +40,9 @@ $showIcons = function( Modules_Manifest $module ) {
 			</td>
 			<td>
 
-				<?php if( !Modules::getCurrentMenuItem() && !Modules::getCurrentPage() ): ?>
-					<b class="badge badge-info" style="font-size: 20px;"><?= $module->getName() ?></b>
-				<?php else: ?>
+				<?php if( !Modules::getCurrentMenuItem() && !Modules::getCurrentPage() ):
+					echo UI::badge(UI_badge::INFO, $module->getName())->addCustomCssStyle('font-size: 20px;');
+				else: ?>
 					<a href="<?= Http_Request::currentURI( [], [
 						'menu_item',
 						'page',

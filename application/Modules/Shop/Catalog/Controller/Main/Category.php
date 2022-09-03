@@ -154,7 +154,7 @@ trait Controller_Main_Category
 			'state' => $listing->getStateData()
 		];
 
-		AJAX::response( $response );
+		AJAX::commonResponse( $response );
 
 	}
 

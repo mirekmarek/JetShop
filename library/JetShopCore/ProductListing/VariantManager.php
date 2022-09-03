@@ -34,14 +34,14 @@ abstract class Core_ProductListing_VariantManager
 		if($cache_rec!==null) {
 			$this->map = $cache_rec;
 		} else {
-			$map = Product::fetchData(
-				[
+			$map = Product::dataFetchAll(
+				select: [
 					'id',
 					'type',
 					'variant_master_product_id',
 					'variant_ids'
 				],
-				[
+				where: [
 					'id' => $initial_product_ids,
 					'AND',
 					'type' => [Product::PRODUCT_TYPE_VARIANT_MASTER, Product::PRODUCT_TYPE_VARIANT]

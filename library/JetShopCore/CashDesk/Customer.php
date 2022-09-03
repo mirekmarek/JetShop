@@ -3,10 +3,10 @@ namespace JetShop;
 
 use Jet\Data_DateTime;
 use Jet\Form;
+use Jet\Form_Field;
 use Jet\Form_Field_Email;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Password;
-use Jet\Form_Field_RegistrationPassword;
 use Jet\Http_Request;
 use Jet\Session;
 
@@ -42,13 +42,15 @@ trait Core_CashDesk_Customer
 	public function getSetEMailForm() : Form
 	{
 		if(!$this->mail_form) {
-			$email = new Form_Field_Email('email', 'E-mail:', $this->getEmailAddress(), true);
+			$email = new Form_Field_Email('email', 'E-mail:');
+			$email->setIsRequired(true);
+			$email->setDefaultValue( $this->getEmailAddress() );
 			$email->setErrorMessages([
 				Form_Field_Email::ERROR_CODE_EMPTY => 'Please enter your e-mail address',
 				Form_Field_Email::ERROR_CODE_INVALID_FORMAT => 'Invalid e-mail address format. Please check it.'
 			]);
 
-			$email->setCatcher(function($value) {
+			$email->setFieldValueCatcher(function($value) {
 				$this->setEmailHasBeenSet($value);
 			});
 
@@ -61,14 +63,7 @@ trait Core_CashDesk_Customer
 
 	public function catchSetEMailForm() : bool
 	{
-		$form = $this->getSetEMailForm();
-
-		if( !$form->catchInput() || !$form->validate() ) {
-			return false;
-		}
-		$form->catchData();
-
-		return true;
+		return $this->getSetEMailForm()->catch();
 	}
 
 
@@ -110,22 +105,26 @@ trait Core_CashDesk_Customer
 	public function getSetPasswordForm() : Form
 	{
 		if(!$this->set_password_form) {
-			$password = new Form_Field_RegistrationPassword('password', 'Password:', '', true);
-			$password->setPasswordConfirmationLabel('Confirm password:');
-			
+			$password = new Form_Field_Password('password', 'Password:');
+			$password->setIsRequired(true);
 			$password->setErrorMessages([
-				Form_Field_RegistrationPassword::ERROR_CODE_EMPTY => 'Please enter password',
-				Form_Field_RegistrationPassword::ERROR_CODE_CHECK_EMPTY => 'Please confirm password',
-				Form_Field_RegistrationPassword::ERROR_CODE_CHECK_NOT_MATCH => 'Password confirmation does not match',
-
+				Form_Field::ERROR_CODE_EMPTY => 'Please enter password',
 			]);
+			
+			$password_confirm = $password->generateCheckField(
+				'password_confirm',
+				'Confirm password:',
+				'Please confirm password',
+				'Password confirmation does not match'
+			);
+			
+			
 
-			$password->setCatcher(function($value) {
-
+			$password->setFieldValueCatcher(function($value) {
 				$this->setPassword( $value );
 			});
 
-			$this->set_password_form = new Form('registration_set_password_form', [$password]);
+			$this->set_password_form = new Form('registration_set_password_form', [$password, $password_confirm]);
 			$this->set_password_form->setAction('?action=customer_set_password');
 		}
 
@@ -134,14 +133,7 @@ trait Core_CashDesk_Customer
 
 	public function catchSetPasswordForm() : bool
 	{
-		$form = $this->getSetPasswordForm();
-
-		if( !$form->catchInput() || !$form->validate() ) {
-			return false;
-		}
-		$form->catchData();
-
-		return true;
+		return $this->getSetPasswordForm()->catch();
 	}
 
 
@@ -185,15 +177,17 @@ trait Core_CashDesk_Customer
 		 * @var CashDesk $this
 		 */
 		if(!$this->billing_address_form) {
-			$this->billing_address_form = $this->getBillingAddress()->getCommonForm('cash_desk_customer_billing_address_form');
+			$this->billing_address_form = $this->getBillingAddress()->createForm('cash_desk_customer_billing_address_form');
 
 
-			$phone = new Form_Field_Input('phone', 'Phone number:', $this->getPhone(), true);
+			$phone = new Form_Field_Input('phone', 'Phone number:');
+			$phone->setDefaultValue( $this->getPhone() );
+			$phone->setIsRequired( true );
 			$phone->setErrorMessages([
-				Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter your phone number',
-				Form_Field_Input::ERROR_CODE_INVALID_FORMAT => 'Please enter your phone number'
+				Form_Field::ERROR_CODE_EMPTY => 'Please enter your phone number',
+				Form_Field::ERROR_CODE_INVALID_FORMAT => 'Please enter your phone number'
 			]);
-			$phone->setCatcher(function($value) {
+			$phone->setFieldValueCatcher(function($value) {
 				$this->setPhone($value);
 			});
 
@@ -208,17 +202,17 @@ trait Core_CashDesk_Customer
 			} else {
 				$this->billing_address_form->field('address_town')->setIsRequired(true);
 				$this->billing_address_form->field('address_town')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => "Please enter town"
+					Form_Field::ERROR_CODE_EMPTY => "Please enter town"
 				]);
 
 				$this->billing_address_form->field('address_zip')->setIsRequired(true);
 				$this->billing_address_form->field('address_zip')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => "Please enter ZIP"
+					Form_Field::ERROR_CODE_EMPTY => "Please enter ZIP"
 				]);
 
 				$this->billing_address_form->field('address_street_no')->setIsRequired(true);
 				$this->billing_address_form->field('address_street_no')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => "Please enter street and number"
+					Form_Field::ERROR_CODE_EMPTY => "Please enter street and number"
 				]);
 			}
 
@@ -229,21 +223,21 @@ trait Core_CashDesk_Customer
 
 				$this->billing_address_form->field('company_name')->setIsRequired(true);
 				$this->billing_address_form->field('company_name')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter company name'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter company name'
 				]);
 
 				$this->billing_address_form->field('company_id')->setIsRequired(true);
 				$this->billing_address_form->field('company_id')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter company ID'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter company ID'
 				]);
 			} else {
 				$this->billing_address_form->field('first_name')->setIsRequired(true);
 				$this->billing_address_form->field('first_name')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter first name'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter first name'
 				]);
 				$this->billing_address_form->field('surname')->setIsRequired(true);
 				$this->billing_address_form->field('surname')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter surname'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter surname'
 				]);
 
 			}
@@ -371,21 +365,21 @@ trait Core_CashDesk_Customer
 		 * @var CashDesk $this
 		 */
 		if(!$this->delivery_address_form) {
-			$this->delivery_address_form = $this->getDeliveryAddress()->getCommonForm('cash_desk_customer_delivery_address_form');
+			$this->delivery_address_form = $this->getDeliveryAddress()->createForm('cash_desk_customer_delivery_address_form');
 
 			$this->delivery_address_form->field('address_town')->setIsRequired(true);
 			$this->delivery_address_form->field('address_town')->setErrorMessages([
-				Form_Field_Input::ERROR_CODE_EMPTY => "Please enter town"
+				Form_Field::ERROR_CODE_EMPTY => "Please enter town"
 			]);
 
 			$this->delivery_address_form->field('address_zip')->setIsRequired(true);
 			$this->delivery_address_form->field('address_zip')->setErrorMessages([
-				Form_Field_Input::ERROR_CODE_EMPTY => "Please enter ZIP"
+				Form_Field::ERROR_CODE_EMPTY => "Please enter ZIP"
 			]);
 
 			$this->delivery_address_form->field('address_street_no')->setIsRequired(true);
 			$this->delivery_address_form->field('address_street_no')->setErrorMessages([
-				Form_Field_Input::ERROR_CODE_EMPTY => "Please enter street and number"
+				Form_Field::ERROR_CODE_EMPTY => "Please enter street and number"
 			]);
 
 
@@ -395,17 +389,17 @@ trait Core_CashDesk_Customer
 
 				$this->delivery_address_form->field('company_name')->setIsRequired(true);
 				$this->delivery_address_form->field('company_name')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter company name'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter company name'
 				]);
 
 			} else {
 				$this->delivery_address_form->field('first_name')->setIsRequired(true);
 				$this->delivery_address_form->field('first_name')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter first name'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter first name'
 				]);
 				$this->delivery_address_form->field('surname')->setIsRequired(true);
 				$this->delivery_address_form->field('surname')->setErrorMessages([
-					Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter surname'
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter surname'
 				]);
 
 			}
@@ -420,7 +414,8 @@ trait Core_CashDesk_Customer
 	public function getLoginForm() : Form
 	{
 		if(!$this->login_form) {
-			$password = new Form_Field_Password('password', 'Password:', '', true);
+			$password = new Form_Field_Password('password', 'Password:' );
+			$password->setIsRequired(true);
 			$password->setErrorMessages([
 				Form_Field_Password::ERROR_CODE_EMPTY => 'Please enter your password',
 			]);

@@ -26,7 +26,6 @@ abstract class Core_Delivery_Class_Method extends DataModel_Related_1toN
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: false
 	)]
 	protected string $method_code = '';
 

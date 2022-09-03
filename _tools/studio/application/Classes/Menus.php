@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -228,6 +228,10 @@ class Menus extends BaseObject implements Application_Part
 	 */
 	public static function getSet( string $name ): Menus_MenuSet|null
 	{
+		if(!Menus_MenuSet::exists($name)) {
+			return null;
+		}
+
 		return Menus_MenuSet::get( $name );
 	}
 

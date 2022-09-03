@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -24,6 +24,7 @@ class Mailing_Config extends Config
 		type: Config::TYPE_SECTIONS,
 		section_creator_method_name: 'createSenderConfigInstance'
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array|null $senders = null;
 
 

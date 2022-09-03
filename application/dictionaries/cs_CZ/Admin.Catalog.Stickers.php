@@ -25,7 +25,7 @@ return [
 	'H1:' => '',
 	'Title:' => '',
 	'Keywords:' => '',
-	'Keywords words for internal fulltext:' => '',
+	'Keywords for internal fulltext:' => '',
 	'Code' => '',
 	'Internal name' => '',
 	'Please enter code' => '',
@@ -37,4 +37,6 @@ return [
 	'Delete sticker <b>%NAME%</b>' => '',
 	'Do you really want to delete this sticker?' => '',
 	'Sticker <b>%NAME%</b> has been deleted' => '',
+	'File is too large' => '',
+	'Sticker <b>%NAME%</b> has been updated' => '',
 ];

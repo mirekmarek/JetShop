@@ -10,15 +10,13 @@ namespace JetShopModule\Admin\Delivery\Methods;
 use JetShop\Delivery_Method;
 
 use Jet\Data_Listing;
-use Jet\Data_Listing_Filter_search;
 use Jet\DataModel_Fetch_Instances;
 
 /**
  *
  */
 class Listing extends Data_Listing {
-
-	use Data_Listing_Filter_search;
+	
 
 	/**
 	 * @var array
@@ -44,13 +42,6 @@ class Listing extends Data_Listing {
 	];
 
 	/**
-	 * @var string[]
-	 */
-	protected array $filters = [
-		'search',
-	];
-
-	/**
 	 * @return Delivery_Method[]|DataModel_Fetch_Instances
 	 * @noinspection PhpDocSignatureInspection
 	 */
@@ -58,20 +49,9 @@ class Listing extends Data_Listing {
 	{
 		return Delivery_Method::getList();
 	}
-
-	/**
-	 *
-	 */
-	protected function filter_search_getWhere() : void
+	
+	protected function initFilters(): void
 	{
-		if(!$this->search) {
-			return;
-		}
-
-		$search = '%'.$this->search.'%';
-		$this->filter_addWhere([
-			'internal_name *'   => $search,
-		]);
-
+		$this->filters['search'] = new Listing_Filter_Search( $this );
 	}
 }

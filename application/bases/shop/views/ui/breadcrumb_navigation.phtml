@@ -1,0 +1,51 @@
+<?php
+
+use Jet\MVC;
+use Jet\MVC_View;
+use Jet\Navigation_Breadcrumb;
+use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ */
+$items = Navigation_Breadcrumb::getItems();
+?>
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb">
+		<?php foreach( MVC::getBase()->getLocales() as $locale ): ?>
+			<li style="margin-right: 20px;">
+				<?php if( $locale->toString() == MVC::getLocale()->toString() ): ?>
+					<span class="badge badge-info"><?= UI::flag( $locale ) ?>&nbsp;<?= $locale->getLanguageName( $locale ) ?></span>
+				<?php else:
+					$eq_page = MVC::getPage( locale: $locale );
+					if( !$eq_page ) {
+						$eq_page = MVC::getPage( page_id: MVC::HOMEPAGE_ID, locale: $locale );
+					}
+					?>
+					<a href="<?= $eq_page->getURL() ?>"><?= UI::flag( $locale ) ?>
+						&nbsp;<?= $locale->getLanguageName( $locale ) ?></a>
+				<?php endif; ?>
+			</li>
+		<?php endforeach; ?>
+		
+		<?php foreach( $items as $item ): ?>
+			<?php if( $item->getIsActive() ): ?>
+				<li class="breadcrumb-item active">
+					<?php if( !$item->getIsLast() ): ?>
+						<a href="<?= $item->getURL(); ?>"><?= $item->getTitle(); ?></a>
+					<?php else: ?>
+						<?= $item->getTitle(); ?>
+					<?php endif; ?>
+				</li>
+			<?php else: ?>
+				<li class="breadcrumb-item">
+					<?php if( !$item->getIsLast() ): ?>
+						<a href="<?= $item->getURL(); ?>"><?= $item->getTitle(); ?></a>
+					<?php else: ?>
+						<?= $item->getTitle(); ?>
+					<?php endif; ?>
+				</li>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	</ol>
+</nav>

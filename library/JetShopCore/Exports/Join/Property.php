@@ -28,7 +28,6 @@ abstract class Core_Exports_Join_Property extends DataModel
 		type: DataModel::TYPE_ID,
 		is_id: true,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $export_code = '';
 
@@ -39,7 +38,6 @@ abstract class Core_Exports_Join_Property extends DataModel
 		type: DataModel::TYPE_INT,
 		is_id: true,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $property_id = 0;
 
@@ -50,7 +48,6 @@ abstract class Core_Exports_Join_Property extends DataModel
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
-		form_field_type: false
 	)]
 	protected string $export_property_id = '';
 

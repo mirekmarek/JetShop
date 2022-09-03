@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -14,36 +14,26 @@ namespace Jet;
  */
 class UI
 {
-
+	
 	/**
 	 * @var string
 	 */
-	protected static string $translator_namespace = Tr::COMMON_DICTIONARY;
-
-
-	/**
-	 * @return MVC_View
-	 */
-	public static function getView(): MVC_View
-	{
-		return Factory_MVC::getViewInstance( SysConf_Jet_UI::getViewsDir() );
-	}
-
-
+	protected static string $translator_dictionary = Translator::COMMON_DICTIONARY;
+	
 	/**
 	 * @return string
 	 */
-	public static function getTranslatorNamespace(): string
+	public static function getTranslatorDictionary(): string
 	{
-		return static::$translator_namespace;
+		return static::$translator_dictionary;
 	}
 
 	/**
-	 * @param string $translator_namespace
+	 * @param string $translator_dictionary
 	 */
-	public static function setTranslatorNamespace( string $translator_namespace ): void
+	public static function setTranslatorDictionary( string $translator_dictionary ): void
 	{
-		static::$translator_namespace = $translator_namespace;
+		static::$translator_dictionary = $translator_dictionary;
 	}
 
 	/**
@@ -54,7 +44,7 @@ class UI
 	 */
 	public static function _( string $text, array $data = [] ): string
 	{
-		return Tr::_( $text, $data, static::getTranslatorNamespace() );
+		return Tr::_( $text, $data, static::getTranslatorDictionary() );
 	}
 
 	/**
@@ -131,13 +121,13 @@ class UI
 	/**
 	 * @param string $id
 	 * @param string $title
-	 * @param int $width
+	 * @param string $size
 	 *
 	 * @return UI_dialog
 	 */
-	public static function dialog( string $id, string $title, int $width ): UI_dialog
+	public static function dialog( string $id, string $title, string $size=UI_dialog::SIZE_DEFAULT ): UI_dialog
 	{
-		return new UI_dialog( $id, $title, $width );
+		return new UI_dialog( $id, $title, $size );
 	}
 
 	/**
@@ -197,16 +187,26 @@ class UI
 	{
 		return new UI_tabsJS( $id, $tabs, $selected_tab_id );
 	}
-
-
+	
 	/**
-	 * @param string $name
-	 * @param string $value
-	 *
-	 * @return UI_searchField
+	 * @param string $type
+	 * @param string $text
+	 * @return UI_badge
 	 */
-	public static function searchField( string $name, string $value ): UI_searchField
+	public static function badge( string $type, string $text ): UI_badge
 	{
-		return new UI_searchField( $name, $value );
+		return new UI_badge( $type, $text );
+	}
+	
+	/**
+	 * @param Data_Tree $data
+	 * @return UI_tree
+	 */
+	public static function tree( Data_Tree $data ) : UI_tree
+	{
+		$tree = new UI_tree();
+		$tree->setData( $data );
+		
+		return $tree;
 	}
 }

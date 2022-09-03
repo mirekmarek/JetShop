@@ -26,14 +26,12 @@ abstract class Core_Fulltext_Dictionary extends DataModel implements JsonSeriali
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $note = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $words = '';
 

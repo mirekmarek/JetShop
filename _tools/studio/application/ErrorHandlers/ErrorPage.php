@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -40,7 +40,7 @@ class ErrorHandler_ErrorPage extends Debug_ErrorHandler_Handler
 			$error->isFatal() &&
 			Debug::getOutputIsHTML()
 		) {
-			if( class_exists( 'Jet\ErrorPages', false ) ) {
+			if( class_exists( ErrorPages::class, false ) ) {
 				if( ErrorPages::display( 500 ) ) {
 					$this->displayed = true;
 				}

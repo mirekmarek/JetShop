@@ -17,8 +17,11 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 	{
 		foreach($this->flags as $flag) {
 			$id = $flag->getId();
-
-			$form->addField(new Form_Field_Checkbox('/flags/'.$id, $flag->getLabel(), !empty($target_filter['flags'][$id])  ));
+			
+			$field = new Form_Field_Checkbox('/flags/'.$id, $flag->getLabel() );
+			$field->setDefaultValue( !empty($target_filter['flags'][$id]) );
+			
+			$form->addField( $field );
 		}
 	}
 
@@ -203,9 +206,9 @@ abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Ab
 				}
 			}
 
-			$data = Product_ShopData::fetchData(
-				$select_items,
-				[
+			$data = Product_ShopData::dataFetchAll(
+				select: $select_items,
+				where: [
 					'product_id'=>$initial_product_ids,
 					'AND',
 					$this->listing->getShop()->getWhere()

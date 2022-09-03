@@ -64,7 +64,8 @@ abstract class Core_ProductListing_Sort {
 			$selected = $target_filter['sort_order'];
 		}
 
-		$sort = new Form_Field_Select('sort_order', Tr::_('Sort order: ', [], Category::getManageModuleName()), $selected);
+		$sort = new Form_Field_Select('sort_order', Tr::_('Sort order: ', [], Category::getManageModuleName()) );
+		$sort->setDefaultValue( $selected );
 
 		$select_options = [
 			'' => Tr::_('- default -', [], Category::getManageModuleName())

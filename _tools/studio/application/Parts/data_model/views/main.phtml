@@ -2,8 +2,10 @@
 
 namespace JetStudio;
 
+use Jet\DataModel;
 use Jet\UI;
 use Jet\Tr;
+use Jet\UI_dialog;
 use Jet\UI_messages;
 
 if( ($problematic_classes = DataModels::getProblematicClasses()) ) {
@@ -37,17 +39,17 @@ $allow_to_create_related = (
 
 	<div class="row toolbar" id="main-toolbar">
 
-		<div class="col-md-1" style="padding: 0px;">
+		<div class="col-md-1" style="padding: 0;">
 			<div class="dropdown">
 				<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
 				        aria-expanded="false">
 					<?= UI::icon( 'plus' ) ?> <?= Tr::_( 'Create a new DataModel' ) ?>
 				</button>
 				<div class="dropdown-menu" style="padding: 10px;">
-					<a class="dropdown-item" href="#" onclick="DataModel.create.openDialog('Main');">Main</a>
+					<a class="dropdown-item" href="#" onclick="DataModel.create.openDialog('<?=DataModel::MODEL_TYPE_MAIN?>');">Main</a>
 					<?php if( $allow_to_create_related ): ?>
-						<a class="dropdown-item" href="#" onclick="DataModel.create.openDialog('1toN');">1toN</a>
-						<a class="dropdown-item" href="#" onclick="DataModel.create.openDialog('1to1');">1to1</a>
+						<a class="dropdown-item" href="#" onclick="DataModel.create.openDialog('<?=DataModel::MODEL_TYPE_RELATED_1TON?>');">1toN</a>
+						<a class="dropdown-item" href="#" onclick="DataModel.create.openDialog('<?=DataModel::MODEL_TYPE_RELATED_1TO1?>');">1to1</a>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -55,26 +57,23 @@ $allow_to_create_related = (
 		<div class="col-md-3 text-right" style="padding: 0 10px 0 0;">
 			<?php if( DataModels::getCurrentModel() ): ?>
 				<?= UI::button_create( Tr::_( 'Property' ) )
-					->setOnclick( 'DataModel.property.create.openDialog()' )
-					->setIcon( 'plus' )
-					->setClass( 'success' );
+					->setOnClick( 'DataModel.property.create.openDialog()' )
+					->setIcon( 'plus' );
 				?>
 
 				<?= UI::button_create( Tr::_( 'External relation' ) )
-					->setOnclick( 'DataModel.relation.create.openDialog()' )
-					->setIcon( 'plus' )
-					->setClass( 'success' );
+					->setOnClick( 'DataModel.relation.create.openDialog()' )
+					->setIcon( 'plus' );
 				?>
 
 				<?= UI::button_create( Tr::_( 'Key' ) )
-					->setOnclick( 'DataModel.key.create.openDialog()' )
-					->setIcon( 'plus' )
-					->setClass( 'success' );
+					->setOnClick( 'DataModel.key.create.openDialog()' )
+					->setIcon( 'plus' );
 				?>
 
 			<?php endif; ?>
 		</div>
-		<div class="col-md-8" style="padding: 0px">
+		<div class="col-md-8" style="padding: 0">
 			<?php if( $what_to_edit ): ?>
 				<?= Application::getView()->render( $what_to_edit . '/edit/toolbar' ); ?>
 			<?php endif; ?>
@@ -83,7 +82,7 @@ $allow_to_create_related = (
 
 	<div class="row" id="main-col">
 		<?php if( $class ): ?>
-			<div class="col-md-4" style="padding: 0px;">
+			<div class="col-md-4" style="padding: 0;">
 				<?= Application::getView()->render( 'list' ); ?>
 			</div>
 			<div class="col-md-8" style="padding: 10px">
@@ -112,11 +111,11 @@ $allow_to_create_related = (
 	</div>
 
 
-<?= Application::getView()->render( 'model/create/Main/dialog' ); ?>
+<?= Application::getView()->render( 'model/create/'.DataModel::MODEL_TYPE_MAIN.'/dialog' ); ?>
 
 <?php if( $allow_to_create_related ): ?>
-	<?= Application::getView()->render( 'model/create/1toN/dialog' ); ?>
-	<?= Application::getView()->render( 'model/create/1to1/dialog' ); ?>
+	<?= Application::getView()->render( 'model/create/'.DataModel::MODEL_TYPE_RELATED_1TON.'/dialog' ); ?>
+	<?= Application::getView()->render( 'model/create/'.DataModel::MODEL_TYPE_RELATED_1TO1.'/dialog' ); ?>
 <?php endif; ?>
 
 <?= Application::getView()->render( 'property/create/dialog' ); ?>
@@ -125,17 +124,17 @@ $allow_to_create_related = (
 <?= Application::getView()->render( 'relation/create/dialog' ); ?>
 
 	<?php
-$dialog_SQL_create = UI::dialog( 'dialog_SQL_create', Tr::_( 'SQL - create' ), 800 );
+$dialog_SQL_create = UI::dialog( 'dialog_SQL_create', Tr::_( 'SQL - create' ), UI_dialog::SIZE_LARGE );
 echo $dialog_SQL_create->start();
 ?><textarea id="SQL_create_result" style="width: 100%;height: 400px;"></textarea><?php
 echo $dialog_SQL_create->end();
 
-$dialog_SQL_update = UI::dialog( 'dialog_SQL_update', Tr::_( 'SQL - update' ), 800 );
+$dialog_SQL_update = UI::dialog( 'dialog_SQL_update', Tr::_( 'SQL - update' ), UI_dialog::SIZE_LARGE );
 echo $dialog_SQL_update->start();
 ?><textarea id="SQL_update_result" style="width: 100%;height: 400px;"></textarea><?php
 echo $dialog_SQL_update->end();
 
-$dialog_class_source = UI::dialog( 'dialog_class_source', Tr::_( 'Class source code' ), 800 );
+$dialog_class_source = UI::dialog( 'dialog_class_source', Tr::_( 'Class source code' ), UI_dialog::SIZE_LARGE );
 echo $dialog_class_source->start();
 ?><textarea id="class_source_result" style="width: 100%;height: 400px;"></textarea><?php
 echo $dialog_class_source->end();

@@ -39,7 +39,7 @@ $c_edit->setRenderer(
 
 	}
 );
-$c_edit->setCssStyle( 'width:180px;' );
+$c_edit->addCustomCssStyle( 'width:180px;' );
 
 
 $grid->getColumn( 'products_shop_data.name' )->setRenderer(
@@ -104,7 +104,7 @@ $grid->getColumn( 'products_shop_data.name' )->setRenderer(
 	}
 );
 
-$grid->getColumn( 'id' )->setCssStyle( 'width:120px;' );
+$grid->getColumn( 'id' )->addCustomCssStyle( 'width:120px;' );
 $grid->getColumn( 'id' )->setRenderer(
 	function( Product $item ) use ( $router ) {
 		$edit_uri = $router->action('edit')->URI( $item->getId() );
@@ -185,15 +185,15 @@ $grid->getColumn( 'id' )->setRenderer(
 					<tr>
 						<td></td>
 						<td style="padding: 5px;">
-							<?php foreach($listing->filter_categories_getSelected() as $c_id=>$category): ?>
-								<?=UI::button(' '.$category->_getPathName())->setIcon('trash')->setClass('info')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnclick("productFilter.removeCategory({$c_id})")?>
+							<?php foreach($listing->getFilter_categories()->getSelected() as $c_id=>$category): ?>
+								<?=UI::button(' '.$category->getPathName())->setIcon('trash')->setClass('info')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnclick("productFilter.removeCategory({$c_id})")?>
 							<?php endforeach; ?>
 						</td>
 					</tr>
 				</table>
 			</div>
 			<div class="col-xs-12 col-sm-12 col-md-3">
-				<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
+				<?= $filter_form->field( 'search' )->input() ?>
 			</div>
 			<div class="col-xs-12 col-sm-12 col-md-3">
 				<?php

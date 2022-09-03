@@ -47,8 +47,8 @@ if( !$listing->filterIsActive() ) {
 	<?php
 	endif;
 
-	if(($active_properties=$listing->properties()->getActiveProperties())):
-		foreach ($listing->properties()->getActiveProperties() as $active_property):
+	if(($active_properties=$listing->params()->getActiveProperties())):
+		foreach ( $listing->params()->getActiveProperties() as $active_property):
 			echo $active_property->renderSelectedFilterItem();
 		endforeach;
 	endif;

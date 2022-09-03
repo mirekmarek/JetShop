@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,58 +11,80 @@ namespace Jet;
 /**
  *
  */
-class Form_Field_Select extends Form_Field
+class Form_Field_Select extends Form_Field implements Form_Field_Part_Select_Interface
 {
-	const ERROR_CODE_INVALID_VALUE = 'invalid_value';
-
+	use Form_Field_Part_Select_Trait;
+	
 	/**
 	 * @var string
 	 */
-	protected string $_type = Form::TYPE_SELECT;
-
+	protected string $_type = Form_Field::TYPE_SELECT;
+	
 	/**
 	 * @var array
 	 */
 	protected array $error_messages = [
-		self::ERROR_CODE_EMPTY         => '',
-		self::ERROR_CODE_INVALID_VALUE => '',
+		Form_Field::ERROR_CODE_EMPTY        => '',
+		Form_Field::ERROR_CODE_INVALID_VALUE => '',
 	];
-
+	
+	/**
+	 * @return bool
+	 */
+	protected function validate_required(): bool
+	{
+		if(
+			$this->is_required &&
+			$this->_value === '' &&
+			array_key_exists('', $this->getSelectOptions())
+		) {
+			$this->setError( Form_Field::ERROR_CODE_EMPTY );
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	protected function validate_value(): bool
+	{
+		if( !isset( $this->getSelectOptions()[$this->_value] ) ) {
+			$this->setError( Form_Field::ERROR_CODE_INVALID_VALUE );
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * @return bool
 	 */
 	public function validate(): bool
 	{
-
-		$options = $this->select_options;
-
-		if( !isset( $options[$this->_value] ) ) {
-
-			$this->setError( self::ERROR_CODE_INVALID_VALUE );
-
+		if(
+			!$this->validate_required() ||
+			!$this->validate_value() ||
+			!$this->validate_validator()
+		) {
 			return false;
 		}
-
+		
 		$this->setIsValid();
-
 		return true;
 	}
-
+	
 	/**
-	 * @return array
+	 * @param string $option_key
+	 *
+	 * @return bool
 	 */
-	public function getRequiredErrorCodes(): array
+	public function optionIsSelected( string $option_key ) : bool
 	{
-		$codes = [];
-
-		$codes[] = self::ERROR_CODE_INVALID_VALUE;
-
-		if( $this->is_required ) {
-			$codes[] = self::ERROR_CODE_EMPTY;
-		}
-
-
-		return $codes;
+		return $option_key == $this->getValue();
 	}
-
+	
 }

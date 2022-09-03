@@ -31,12 +31,12 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 		$this->map = $this->listing->cache()->get( static::CACHE_KEY );
 
 		if($this->map===null) {
-			$data = Product_ShopData::fetchData(
-				[
+			$data = Product_ShopData::dataFetchAll(
+				select: [
 					'product_id',
 					'final_price'
 				],
-				[
+				where: [
 					'product_id'=>$initial_product_ids,
 					'AND',
 					$this->listing->getShop()->getWhere()

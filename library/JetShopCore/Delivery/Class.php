@@ -10,9 +10,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\Form_Field_MultiSelect;
-use Jet\Tr;
+
 
 
 /**
@@ -34,11 +35,13 @@ abstract class Core_Delivery_Class extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Code:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Code:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code'
 		]
 	)]
 	protected string $code = '';
@@ -49,11 +52,13 @@ abstract class Core_Delivery_Class extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Internal name:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter internal name'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Internal name:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter internal name'
 		]
 	)]
 	protected string $internal_name = '';
@@ -64,8 +69,10 @@ abstract class Core_Delivery_Class extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
-		form_field_type: 'Input',
-		form_field_label: 'Internal description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Internal description:'
 	)]
 	protected string $internal_description = '';
 
@@ -75,11 +82,19 @@ abstract class Core_Delivery_Class extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Delivery_Class_Method::class,
-		form_field_creator_method_name: 'createMethodsInputField',
 	)]
-
+	#[Form_Definition(
+		type: Form_Field::TYPE_MULTI_SELECT,
+		label: 'Methods:',
+		default_value_getter_name: 'getDeliveryMethodCodes',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select delivery method'
+		],
+		select_options_creator: [Delivery_Method::class, 'getScope'],
+		
+	)]
 	protected array $delivery_methods = [];
-
+	
 
 	protected static ?array $scope = null;
 
@@ -113,30 +128,13 @@ abstract class Core_Delivery_Class extends DataModel
 	public function getEditForm() : Form
 	{
 		if(!$this->_form_edit) {
-			$this->_form_edit = $this->getCommonForm('edit_form');
+			$this->_form_edit = $this->createForm('edit_form');
 			$this->_form_edit->getField('code')->setIsReadonly(true);
 		}
 		
 		return $this->_form_edit;
 	}
-
-	public function createMethodsInputField() : Form_Field_MultiSelect
-	{
-		$input = new Form_Field_MultiSelect('delivery_methods', 'Methods:', $this->getDeliveryMethodCodes());
-
-		$input->setErrorMessages([
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select delivery method'
-		]);
-
-		$input->setSelectOptions(Delivery_Method::getScope());
-
-		$input->setCatcher( function($value) {
-			$this->setDeliveryMethods( $value );
-		} );
-
-		return $input;
-	}
-
+	
 
 	/**
 	 * @return bool
@@ -152,23 +150,25 @@ abstract class Core_Delivery_Class extends DataModel
 	public function getAddForm() : Form
 	{
 		if(!$this->_form_add) {
-			$this->_form_add = $this->getCommonForm('add_form');
+			$this->_form_add = $this->createForm('add_form');
 
 			$code = $this->_form_add->getField('code');
+			$code->setErrorMessages([
+				Form_Field::ERROR_CODE_EMPTY => 'Please add code',
+				'exists' => 'Delivery class with the same name already exists'
+			]);
 
 			$code->setValidator(function( Form_Field_Input $field ) {
 				$value = $field->getValue();
 				if(!$value) {
-					$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
+					$field->setError( Form_Field::ERROR_CODE_EMPTY );
 					return false;
 				}
 
 				$exists = Delivery_Class::get($value);
 
 				if($exists) {
-					$field->setCustomError(
-						Tr::_('Delivery class with the same name already exists')
-					);
+					$field->setError('exists');
 
 					return false;
 				}

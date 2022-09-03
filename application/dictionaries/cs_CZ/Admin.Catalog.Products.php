@@ -23,7 +23,7 @@ return [
 	'H1:' => '',
 	'Title:' => '',
 	'Keywords:' => '',
-	'Keywords words for internal fulltext:' => '',
+	'Keywords for internal fulltext:' => '',
 	'Price' => '',
 	'VAT rate:' => '',
 	'Standard price:' => '',
@@ -105,4 +105,8 @@ return [
 	'Set discount:' => '',
 	'Remove' => '',
 	'Set items' => '',
+	'Kind of product:' => '',
+	'- kind of product is not set -' => '',
+	'Change kind of product' => '',
+	'Change' => '',
 ];

@@ -6,19 +6,17 @@ use Jet\DataModel;
 use Jet\Data_Tree;
 use Jet\DataModel_Definition;
 use Jet\Form;
-use Jet\Form_Field_Hidden;
-use Jet\Form_Field_Select;
+use Jet\Form_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\MVC;
 use Jet\Session;
 use Jet\Tr;
 use Jet\MVC_View;
-use Jet\UI;
 use Jet\UI_icon;
 use Jet\Application_Module;
 
 #[DataModel_Definition(
-	name: 'categories',
+	name: 'category',
 	database_table_name: 'categories',
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
 	id_controller_options: ['id_property_name'=>'id']
@@ -28,34 +26,6 @@ abstract class Core_Category extends DataModel {
 
 	const SORT_NAME = 'name';
 	const SORT_PRIORITY = 'priority';
-
-	const PARAMETER_STRATEGY_TAKES_OVER_FROM_PARENT = 'takes_over_from_parent';
-	const PARAMETER_STRATEGY_TAKES_OVER_FROM_OTHER_CATEGORY = 'takes_over_from_other_category';
-	const PARAMETER_STRATEGY_INHERITED_FROM_PARENT = 'inherited_from_parent';
-	const PARAMETER_STRATEGY_INHERITED_FROM_OTHER_CATEGORY = 'inherited_from_other_category';
-	const PARAMETER_STRATEGY_DEFINES = 'defines';
-
-
-	const CATEGORY_TYPE_REGULAR = 'regular';
-	const CATEGORY_TYPE_TOP     = 'top';
-	const CATEGORY_TYPE_VIRTUAL = 'virtual';
-	const CATEGORY_TYPE_LINK    = 'link';
-
-	protected static array $category_type_options = [
-		Category::CATEGORY_TYPE_REGULAR => 'Regular category',
-		Category::CATEGORY_TYPE_TOP     => 'Top category',
-		Category::CATEGORY_TYPE_VIRTUAL => 'Virtual category',
-		Category::CATEGORY_TYPE_LINK    => 'Link',
-
-	];
-
-	protected static array $parameter_strategy_options = [
-		Category::PARAMETER_STRATEGY_DEFINES                          => 'Defines its own set of parameters',
-		Category::PARAMETER_STRATEGY_TAKES_OVER_FROM_PARENT           => 'Takes a parameters from the parent completely',
-		Category::PARAMETER_STRATEGY_TAKES_OVER_FROM_OTHER_CATEGORY   => 'Takes a parameters from another category completely',
-		Category::PARAMETER_STRATEGY_INHERITED_FROM_PARENT            => 'Inherits parameters from the parent (additional / custom parameters can be defined)',
-		Category::PARAMETER_STRATEGY_INHERITED_FROM_OTHER_CATEGORY    => 'Inherits parameters from another category (additional / custom parameters can be defined)',
-	];
 
 
 	#[DataModel_Definition(
@@ -67,74 +37,49 @@ abstract class Core_Category extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $parent_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_type: false
 	)]
 	protected string $path = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_type: false
 	)]
 	protected string $children = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
-		form_field_type: false
 	)]
 	protected string $all_children = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $priority = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-		form_field_type: false
-	)]
-	protected string $type = Category::CATEGORY_TYPE_REGULAR;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_label: 'Parameter strategy:',
-		form_field_get_select_options_callback: [ Category::class,'getParameterStrategyOptions']
-	)]
-	protected string $parameter_strategy = Category::PARAMETER_STRATEGY_DEFINES;
-
+	
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true
 	)]
-	protected int $parameter_inherited_category_id = 0;
+	protected int $kind_of_product_id = 0;
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true,
-		form_field_type: Form::TYPE_HIDDEN
+		type: DataModel::TYPE_BOOL
 	)]
-	protected int $target_category_id = 0;
-
-	protected Category|null $_link_target_category = null;
-
+	protected bool $auto_append_products = false;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_CUSTOM_DATA,
-		form_field_type: false
 	)]
-	protected array $target_filter = [];
+	protected array $auto_append_products_filter = [];
 
 	/**
 	 * @var Category_ShopData[]
@@ -143,40 +88,10 @@ abstract class Core_Category extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Category_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
-	/**
-	 * @var Parametrization_Group[]
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Parametrization_Group::class,
-		form_field_type: false
-	)]
-	protected array $parametrization_groups = [];
-
-	/**
-	 *
-	 * @var Parametrization_Group[]
-	 */
-	protected array|null $_parametrization_groups = null;
-
-	/**
-	 * @var Parametrization_Property[]
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Parametrization_Property::class,
-		form_field_type: false
-	)]
-	protected array $parametrization_properties = [];
-
-	/**
-	 * @var Parametrization_Property[]
-	 */
-	protected array|null $_parametrization_properties = null;
-
-
+	
 	/**
 	 * @var Data_Tree[]
 	 */
@@ -188,9 +103,7 @@ abstract class Core_Category extends DataModel {
 
 	protected ?Form $_edit_form = null;
 
-	protected Form|null|bool $_target_filter_edit_form = null;
-
-	protected ?Form $_parametrization_strategy_form = null;
+	protected Form|null|bool $_auto_append_product_filter_edit_form = null;
 
 	protected ?ProductListing $_product_listing = null;
 
@@ -216,28 +129,7 @@ abstract class Core_Category extends DataModel {
 		return Application_Modules::moduleInstance( Category::getManageModuleName() );
 	}
 
-	public static function getCategoryTypeOptions() : array
-	{
-		$options = [];
-
-		foreach( self::$category_type_options as $option=>$label ) {
-			$options[$option] = Tr::_($label, [], Category::getManageModuleName() );
-		}
-
-		return $options;
-	}
-
-	public static function getParameterStrategyOptions() : array
-	{
-		$types = [];
-
-		foreach( self::$parameter_strategy_options as $option=>$label ) {
-			$types[$option] = Tr::_($label, [], Category::getManageModuleName() );
-		}
-
-		return $types;
-	}
-
+	
 	public static function getFilterSession() : Session
 	{
 		if(!Category::$filter_session) {
@@ -350,18 +242,16 @@ abstract class Core_Category extends DataModel {
 				$where['categories_shop_data.is_active'] = true;
 			}
 
-			$data = Category::fetchData(
-				[
+			$data = Category::dataFetchAll(
+				select:[
 					'id' => 'id',
 					'parent_id' => 'parent_id',
 					'priority' => 'priority',
 					'name' => 'categories_shop_data.name',
 					'is_active' => 'categories_shop_data.is_active',
-					'type' => 'type',
-					'target_category_id' => 'target_category_id',
 				],
-				$where,
-				$sort
+				where: $where,
+				order_by: $sort
 			);
 
 
@@ -524,7 +414,7 @@ abstract class Core_Category extends DataModel {
 
 	protected static ?array $_names = null;
 
-	public function _getPathName( bool $as_array=false, ?Shops_Shop $shop=null , string $path_str_glue=' / ' ) : array|string
+	public function getPathName( bool $as_array=false, ?Shops_Shop $shop=null , string $path_str_glue=' / ' ) : array|string
 	{
 
 		if(!$shop) {
@@ -536,7 +426,7 @@ abstract class Core_Category extends DataModel {
 		if(static::$_names===null) {
 			static::$_names = [];
 
-			$names = Category_ShopData::fetchData(['category_id', 'name', 'shop_code', 'locale'], []);
+			$names = Category_ShopData::dataFetchAll( select: ['category_id', 'name', 'shop_code', 'locale'] );
 
 			foreach($names as $n) {
 				$category_id = (int)$n['category_id'];
@@ -672,11 +562,6 @@ abstract class Core_Category extends DataModel {
 		return $this->getShopData($shop)->getSeoKeywords();
 	}
 
-	public function isSeoDisableCanonical( ?Shops_Shop $shop=null  ) : bool
-	{
-		return $this->getShopData($shop)->isSeoDisableCanonical();
-	}
-
 	public function getURL( ?Shops_Shop $shop=null  ) : string
 	{
 		return $this->getShopData($shop)->getURL();
@@ -721,8 +606,8 @@ abstract class Core_Category extends DataModel {
 
 		$listing = new ProductListing( $shop );
 		$listing->setCategory( $category );
-		if($this->type==Category::CATEGORY_TYPE_VIRTUAL) {
-			$listing->initByTargetFilter( $this->target_filter );
+		if($this->auto_append_products_filter) {
+			$listing->initByTargetFilter( $this->auto_append_products_filter );
 		} else {
 			$listing->init();
 		}
@@ -742,94 +627,20 @@ abstract class Core_Category extends DataModel {
 	{
 		return Category::getCategoryEditURL( $this->id );
 	}
-
-	public function getParametrizationEditUrl() : string
-	{
-		return Category::getManageModule()->getParametrizationEditUrl( $this->id );
-	}
-
-	public function getParametrizationGroupEditUrl( int $group_id ) : string
-	{
-		return Category::getManageModule()->getParametrizationGroupEditUrl( $this->id, $group_id );
-	}
-
-	public function getParametrizationPropertyEditUrl( int $group_id, int $property_id ) : string
-	{
-		return Category::getManageModule()->getParametrizationPropertyEditUrl( $this->id, $group_id, $property_id );
-	}
-
-	public function getParametrizationOptionEditUrl( int $group_id, int $property_id, int $option_id ) : string
-	{
-		return Category::getManageModule()->getParametrizationOptionEditUrl( $this->id, $group_id, $property_id, $option_id );
-	}
-
+	
 	public static function getCategoryEditURL( int $id ) : string
 	{
 		return Category::getManageModule()->getCategoryEditUrl( $id );
 	}
-
-	public function getType() : string
+	
+	public function getAutoAppendProductsFilter() : array
 	{
-		return $this->type;
+		return $this->auto_append_products_filter;
 	}
 
-	public function getTypeTitle() : string
+	public function setAutoAppendProductsFilter( array $auto_append_products_filter ) : void
 	{
-		return Tr::_( Category::$category_type_options[$this->type], [], Category::getManageModuleName() );
-	}
-
-	public function setType( string $type ) : void
-	{
-		$this->type = $type;
-	}
-
-	public function getParameterStrategy() : string
-	{
-		return $this->parameter_strategy;
-	}
-
-	public function setParameterStrategy( string $parameter_strategy ) : void
-	{
-		$this->parameter_strategy = $parameter_strategy;
-	}
-
-	public function getParameterInheritedCategoryId() : int
-	{
-		return $this->parameter_inherited_category_id;
-	}
-
-	public function setParameterInheritedCategoryId( int $parameter_inherited_category_id ) : void
-	{
-		$this->parameter_inherited_category_id = $parameter_inherited_category_id;
-	}
-
-	public function getTargetCategoryId() : int
-	{
-		return $this->target_category_id;
-	}
-
-	public function setTargetCategoryId( int $target_category_id ) : void
-	{
-		$this->target_category_id = $target_category_id;
-	}
-
-	public function getTargetCategory() : Category|null
-	{
-		if(!$this->_link_target_category) {
-			$this->_link_target_category = Category::get($this->target_category_id);
-		}
-
-		return $this->_link_target_category;
-	}
-
-	public function getTargetFilter() : array
-	{
-		return $this->target_filter;
-	}
-
-	public function setTargetFilter( array $target_filter ) : void
-	{
-		$this->target_filter = $target_filter;
+		$this->auto_append_products_filter = $auto_append_products_filter;
 	}
 
 
@@ -866,139 +677,69 @@ abstract class Core_Category extends DataModel {
 	{
 		$this->priority = $priority;
 	}
+	
+	/**
+	 * @return int
+	 */
+	public function getKindOfProductId(): int
+	{
+		return $this->kind_of_product_id;
+	}
+	
+	public function setKindOfProductId( int $kind_of_product_id ): void
+	{
+		if($this->kind_of_product_id == $kind_of_product_id) {
+			return;
+		}
+		$this->kind_of_product_id = $kind_of_product_id;
+		
+		$this->save();
+		//TODO:
+		
+	}
+	
+	public function getKindOfProduct() : ?KindOfProduct
+	{
+		if($this->kind_of_product_id) {
+			return KindOfProduct::get($this->kind_of_product_id);
+		}
+		
+		return null;
+	}
+	
+	public function getAutoAppendProducts(): bool
+	{
+		return $this->auto_append_products;
+	}
+	
+	public function setAutoAppendProducts( bool $auto_append_products ): void
+	{
+		$this->auto_append_products = $auto_append_products;
+	}
+	
+	
 
 	public function getShopData( ?Shops_Shop $shop=null ) : Category_ShopData
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
-
-	public static function getAllowedCreateTypes( Category $parent_category=null ) : array
-	{
-
-		if(
-			$parent_category &&
-			$parent_category->getEditForm()->getIsReadonly()
-		) {
-			return [];
-		}
-
-		$types = [
-			Category::CATEGORY_TYPE_REGULAR  => Tr::_('regular category', [], Category::getManageModuleName() ),
-			Category::CATEGORY_TYPE_TOP      => Tr::_('top category', [], Category::getManageModuleName() ),
-			Category::CATEGORY_TYPE_VIRTUAL  => Tr::_('virtual category', [], Category::getManageModuleName() ),
-			Category::CATEGORY_TYPE_LINK     => Tr::_('link', [], Category::getManageModuleName() )
-		];
-
-		if($parent_category) {
-			switch($parent_category->getType()) {
-				case Category::CATEGORY_TYPE_REGULAR:
-					break;
-				case Category::CATEGORY_TYPE_TOP:
-					unset($types[Category::CATEGORY_TYPE_REGULAR]);
-					break;
-				case Category::CATEGORY_TYPE_VIRTUAL:
-					unset($types[Category::CATEGORY_TYPE_REGULAR]);
-					unset($types[Category::CATEGORY_TYPE_TOP]);
-					break;
-				case Category::CATEGORY_TYPE_LINK:
-					$types = [];
-					break;
-			}
-		}
-
-		return $types;
-	}
-
+	
 
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->_add_form = $this->{"getAddForm_{$this->type}"}();
-			$this->_add_form->setCustomTranslatorNamespace( Category::getManageModuleName() );
+			$this->_add_form = $this->createForm('add_form');
+			$this->_add_form->setCustomTranslatorDictionary( Category::getManageModuleName() );
 		}
 
 		return $this->_add_form;
 	}
 
 
-	public function getAddForm_regular() : Form
-	{
-		$form = $this->getCommonForm('add_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('parameter_inherited_category_id');
-		$form->removeField('target_category_id');
-
-		foreach( Shops::getList() as $shop ) {
-			$form->removeField('/shop_data/'.$shop->getKey().'/seo_disable_canonical');
-		}
-
-		return $form;
-	}
-
-	public function getAddForm_top() : Form
-	{
-		$form = $this->getCommonForm('add_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('parameter_inherited_category_id');
-		$form->removeField('target_category_id');
-
-		foreach( Shops::getList() as $shop ) {
-			$form->removeField('/shop_data/'.$shop->getKey().'/seo_disable_canonical');
-		}
-
-		return $form;
-	}
-
-	public function getAddForm_virtual() : Form
-	{
-		$form = $this->getCommonForm('add_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('parameter_inherited_category_id');
-
-		return $form;
-	}
-
-	public function getAddForm_link() : Form
-	{
-		$form = $this->getCommonForm('add_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('parameter_inherited_category_id');
-
-		foreach( Shops::getList() as $shop ) {
-			$shop_key = $shop->getKey();
-
-			$form->removeField('/shop_data/'.$shop_key.'/seo_disable_canonical');
-			$form->removeField('/shop_data/'.$shop_key.'/description');
-			$form->removeField('/shop_data/'.$shop_key.'/seo_disable_canonical');
-			$form->removeField('/shop_data/'.$shop_key.'/seo_h1');
-			$form->removeField('/shop_data/'.$shop_key.'/seo_title');
-			$form->removeField('/shop_data/'.$shop_key.'/seo_description');
-			$form->removeField('/shop_data/'.$shop_key.'/seo_keywords');
-			$form->removeField('/shop_data/'.$shop_key.'/internal_fulltext_keywords');
-		}
-
-
-
-		return $form;
-	}
 
 	public function catchAddForm() : bool
 	{
-		$add_form = $this->getAddForm();
-		if(
-			!$add_form->catchInput() ||
-			!$add_form->validate()
-		) {
-			return false;
-		}
-
-		$add_form->catchData();
-
-		return true;
+		return $this->getAddForm()->catch();
 	}
 
 
@@ -1007,164 +748,43 @@ abstract class Core_Category extends DataModel {
 	{
 
 		if(!$this->_edit_form) {
-			$this->_edit_form = $this->{"getEditForm_{$this->type}"}();
-			$this->_edit_form->setCustomTranslatorNamespace( Category::getManageModuleName() );
+			$this->_edit_form = $this->createForm('edit_form');
+			$this->_edit_form->setCustomTranslatorDictionary( Category::getManageModuleName() );
 		}
 
 		return $this->_edit_form;
 	}
-
-	public function getEditForm_regular() : Form
-	{
-		$form = $this->getCommonForm('edit_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('target_category_id');
-
-		foreach( Shops::getList() as $shop ) {
-			$form->removeField('/shop_data/'.$shop->getKey().'/seo_disable_canonical');
-		}
-
-		return $form;
-	}
-
-	public function getEditForm_top() : Form
-	{
-		$form = $this->getCommonForm('edit_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('target_category_id');
-
-		foreach( Shops::getList() as $shop ) {
-			$form->removeField('/shop_data/'.$shop->getKey().'/seo_disable_canonical');
-		}
-
-		return $form;
-	}
-
-	public function getEditForm_virtual() : Form
-	{
-		$form = $this->getCommonForm('edit_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('parameter_inherited_category_id');
-
-		return $form;
-	}
-
-	public function getEditForm_link() : Form
-	{
-		$form = $this->getCommonForm('edit_form');
-
-		$form->removeField('parameter_strategy');
-		$form->removeField('parameter_inherited_category_id');
-
-		return $form;
-	}
-
-
+	
 	public function catchEditForm() : bool
 	{
-		$edit_form = $this->getEditForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
-		}
-
-		$edit_form->catchData();
-
-		return true;
+		return $this->getEditForm()->catch();
 	}
 
 
-	public function getTargetFilterEditForm() : Form|bool
+	public function getAutoAppendProductFilterEditForm() : Form|bool
 	{
-		if($this->_target_filter_edit_form===null) {
+		if($this->_auto_append_product_filter_edit_form===null) {
 
-			$target_category = $this->getTargetCategory();
+			$listing = new ProductListing();
+			$listing->setCategory( $this );
+			$listing->init();
 
-			if($target_category) {
-				$listing = new ProductListing();
-				$listing->setCategory( $target_category );
-				$listing->init();
-
-				$this->_target_filter_edit_form = $listing->getTargetFilterEditForm( $this->target_filter );
-			} else {
-				$this->_target_filter_edit_form = false;
-			}
+			$this->_auto_append_product_filter_edit_form = $listing->getAutoAppendProductFilterEditForm( $this->auto_append_products_filter );
 
 		}
 
-		return $this->_target_filter_edit_form;
+		return $this->_auto_append_product_filter_edit_form;
 	}
 
-	public function catchTargetFilterEditForm() : bool
+	public function catchAutoAppendProductFilterEditForm() : bool
 	{
-		$target_category = $this->getTargetCategory();
-		if(!$target_category) {
-			return false;
-		}
-
 		$listing = new ProductListing();
-		$listing->setCategory( $target_category );
+		$listing->setCategory( $this );
 		$listing->init();
 
-		return $listing->catchTargetFilterEditForm( $this->target_filter );
+		return $listing->catchAutoAppendProductFilterEditForm( $this->auto_append_products_filter );
 	}
-
-	public function getParametrizationStrategyForm() : Form
-	{
-		if(!$this->_parametrization_strategy_form) {
-
-			$parameter_strategy = new Form_Field_Select('parameter_strategy', 'Parameter strategy:', $this->parameter_strategy);
-			$parameter_strategy->setErrorMessages([
-				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select strategy',
-			]);
-
-			$options = [];
-			foreach(Category::$parameter_strategy_options as $option=>$label) {
-				$options[$option] = Tr::_($label);
-			}
-			$parameter_strategy->setSelectOptions( $options );
-
-			$parameter_strategy->setCatcher( function($value) {
-				$this->parameter_strategy = $value;
-			} );
-
-			$parameter_inherited_category_id = new Form_Field_Hidden('parameter_inherited_category_id', '', $this->parameter_inherited_category_id );
-			$parameter_inherited_category_id->setCatcher( function($value) {
-				$this->parameter_inherited_category_id = $value;
-			} );
-
-			$form = new Form('parametrization_strategy_form', [
-				$parameter_strategy,
-				$parameter_inherited_category_id
-			]);
-
-			$this->_parametrization_strategy_form = $form;
-		}
-
-		return $this->_parametrization_strategy_form;
-	}
-
-	public function catchParametrizationStrategyForm() : bool
-	{
-		$form = $this->getParametrizationStrategyForm();
-		if(!$form->catchInput() || !$form->validate()) {
-			return false;
-		}
-
-		$form->catchData();
-
-		return true;
-	}
-
-
-
-
-
+	
 
 	public function afterAdd() : void
 	{
@@ -1177,31 +797,31 @@ abstract class Core_Category extends DataModel {
 
 		Category::resetTree();
 		Category::actualizeTreeData();
-
-		Fulltext::update_Category_afterAdd( $this );
+		
+		Fulltext_Index_Internal_Category::addIndex( $this );
 	}
 
 	public function afterUpdate() : void
 	{
-		Fulltext::update_Category_afterUpdate( $this );
+		Fulltext_Index_Internal_Category::updateIndex( $this );
 
 		Category::actualizeTreeData();
 		Category::syncCategories();
 
-		$this->actualizeReferences();
 		$this->actualizeProductsList();
 	}
 
 	public function afterDelete() : void
 	{
-		Fulltext::update_Category_afterDelete( $this );
+		Fulltext_Index_Internal_Category::deleteIndex( $this );
 
-		$this->actualizeReferences();
 		$this->actualizeProductsList();
 	}
 
 	public function actualizeProductsList() : void
 	{
+		//TODO:
+		/*
 		switch($this->type) {
 			case Category::CATEGORY_TYPE_REGULAR:
 				$this->actualizeProductsList_regular();
@@ -1216,6 +836,7 @@ abstract class Core_Category extends DataModel {
 				$this->actualizeProductsList_link();
 				break;
 		}
+		*/
 	}
 
 	protected function actualizeProductsList_regular() : void
@@ -1251,6 +872,7 @@ abstract class Core_Category extends DataModel {
 
 	protected function actualizeProductsList_virtual() : void
 	{
+		/*
 		$target_category = $this->getTargetCategory();
 		if(!$target_category) {
 			foreach( Shops::getList() as $shop ) {
@@ -1271,259 +893,9 @@ abstract class Core_Category extends DataModel {
 			$ids = $listing->getFilteredProductIds();
 			$this->getShopData($shop)->setProductIds( $ids, true );
 		}
+		*/
 	}
 
-	protected function actualizeProductsList_top() : void
-	{
-	}
-
-	protected function actualizeProductsList_link() : void
-	{
-
-		$target_category = $this->getTargetCategory();
-		if(!$target_category) {
-			foreach( Shops::getList() as $shop ) {
-				$this->getShopData($shop)->setProductIds( [], true );
-			}
-			return;
-		}
-
-		foreach( Shops::getList() as $shop ) {
-			$listing = new ProductListing( $shop );
-			$listing->setCategory( $target_category );
-			$listing->initByTargetFilter( $this->target_filter );
-
-			$listing->prepare( $target_category->getShopData($shop)->getProductIds() );
-
-			$ids = $listing->getFilteredProductIds();
-			$this->getShopData($shop)->setProductIds( $ids, true );
-
-		}
-
-	}
-
-	public function actualizeReferences() : void
-	{
-		switch($this->type) {
-			case Category::CATEGORY_TYPE_REGULAR:
-				foreach($this->getReferences() as $r) {
-					if($r->getType()==Category::CATEGORY_TYPE_LINK) {
-						$r->actualizeLinkTargetUrl();
-					}
-				}
-			break;
-			case Category::CATEGORY_TYPE_LINK:
-				$this->actualizeLinkTargetUrl();
-			break;
-			case Category::CATEGORY_TYPE_VIRTUAL:
-				break;
-			/** @noinspection PhpDuplicateSwitchCaseBodyInspection */
-			case Category::CATEGORY_TYPE_TOP:
-			break;
-		}
-	}
-
-	public function actualizeLinkTargetUrl() : void
-	{
-		if($this->type!=Category::CATEGORY_TYPE_LINK) {
-			return;
-		}
-
-		$target = $this->getTargetCategory();
-		if(!$target) {
-			return;
-		}
-
-
-		foreach( Shops::getList() as $shop ) {
-			$listing = new ProductListing( $shop );
-			$listing->setCategory( $target );
-			$listing->initByTargetFilter( $this->target_filter );
-
-			$target_url = $listing->generateCategoryTargetUrl();
-
-			$this->getShopData($shop)->setURLPathPart( $target_url, true );
-		}
-
-	}
-
-	/**
-	 * @return Parametrization_Group[]
-	 */
-	public function getParametrizationGroups() : array
-	{
-		if($this->_parametrization_groups==null) {
-			$this->_parametrization_groups = [];
-
-			if(
-				($inherited_category = $this->getParamInheritedCategory())
-			) {
-				foreach($inherited_category->getParametrizationGroups() as $group ) {
-					$group = clone $group;
-					$group->setIsInherited(true);
-					$this->_parametrization_groups[ $group->getId() ] = $group;
-				}
-			}
-
-
-			if( $this->getCanDefineProperties() ) {
-				foreach( $this->parametrization_groups  as $group ) {
-					$this->_parametrization_groups[ $group->getId() ] = $group;
-				}
-			}
-
-		}
-
-		return $this->_parametrization_groups;
-	}
-
-	public function getParametrizationGroup( int $id ) : Parametrization_Group|null
-	{
-		$this->getParametrizationGroups();
-
-		if( !isset($this->_parametrization_groups[$id]) ) {
-			return null;
-		}
-
-		return $this->_parametrization_groups[$id];
-	}
-
-	public function addParametrizationGroup( Parametrization_Group $group ) : void
-	{
-		$priority = 0;
-		foreach( $this->parametrization_groups as $_g ) {
-			if($_g->getPriority()>$priority) {
-				$priority = $_g->getPriority();
-			}
-		}
-		$priority++;
-		$group->setPriority( $priority );
-		$this->parametrization_groups[] = $group;
-	}
-
-
-	/**
-	 *
-	 * @param int|null $group_id
-	 *
-	 * @return Parametrization_Property[]
-	 */
-	public function getParametrizationProperties( int|null $group_id=null ) : array
-	{
-		if($this->_parametrization_properties==null) {
-			$this->_parametrization_properties = [];
-
-			if( ($inherited_category = $this->getParamInheritedCategory()) ) {
-				foreach($inherited_category->getParametrizationProperties() as $property ) {
-					$property = clone $property;
-					$property->setIsInherited(true);
-					$this->_parametrization_properties[ $property->getId() ] = $property;
-				}
-			}
-
-
-			if( $this->getCanDefineProperties() ) {
-				foreach( $this->parametrization_properties  as $property ) {
-
-					$group = $this->getParametrizationGroup($property->getGroupId());
-					if(!$group) {
-						continue;
-					}
-
-					$this->_parametrization_properties[ $property->getId() ] = $property;
-				}
-			}
-
-		}
-
-
-
-		if(!$group_id) {
-			return $this->_parametrization_properties;
-		}
-
-		$properties = [];
-		foreach($this->_parametrization_properties as $id=>$property) {
-			if($property->getGroupId()==$group_id) {
-				$properties[$id] = $property;
-			}
-		}
-
-		return $properties;
-	}
-
-	public function getParametrizationProperty( int $id ) : Parametrization_Property|null
-	{
-		$this->getParametrizationProperties();
-		if( !isset($this->_parametrization_properties[$id]) ) {
-			return null;
-		}
-
-		return $this->_parametrization_properties[$id];
-	}
-
-	public function addParametrizationProperty( int $group_id, Parametrization_Property $property ) : void
-	{
-		$group = $this->getParametrizationGroup($group_id);
-		if(!$group) {
-			return;
-		}
-
-		$priority = 0;
-		foreach( $this->parametrization_properties as $_p ) {
-			if(
-				$_p->getGroupId()==$group_id &&
-				$_p->getPriority()>$priority
-			) {
-				$priority = $_p->getPriority();
-			}
-		}
-
-		$priority++;
-		$property->setPriority( $priority );
-
-		$this->parametrization_properties[] = $property;
-	}
-
-
-	public function getParamInheritedCategoryId() : int
-	{
-
-		if(
-			$this->parameter_strategy == Category::PARAMETER_STRATEGY_TAKES_OVER_FROM_PARENT ||
-			$this->parameter_strategy == Category::PARAMETER_STRATEGY_INHERITED_FROM_PARENT
-		) {
-			return $this->parent_id;
-		}
-
-		if(
-			$this->parameter_strategy == Category::PARAMETER_STRATEGY_TAKES_OVER_FROM_OTHER_CATEGORY ||
-			$this->parameter_strategy == Category::PARAMETER_STRATEGY_INHERITED_FROM_OTHER_CATEGORY
-		) {
-			return $this->parameter_inherited_category_id;
-		}
-
-		return 0;
-	}
-
-	public function getParamInheritedCategory() : Category|null
-	{
-		$id = $this->getParamInheritedCategoryId();
-		if(!$id) {
-			return null;
-		}
-
-		return Category::get($id);
-	}
-
-	public function getCanDefineProperties() : bool
-	{
-		return in_array( $this->parameter_strategy, [
-			Category::PARAMETER_STRATEGY_DEFINES,
-			Category::PARAMETER_STRATEGY_INHERITED_FROM_OTHER_CATEGORY,
-			Category::PARAMETER_STRATEGY_INHERITED_FROM_PARENT
-		] );
-	}
 
 
 	public static function renderSelectCategoryWidget( string $on_select,
@@ -1540,29 +912,14 @@ abstract class Core_Category extends DataModel {
 		$view->setVar('name', $name);
 		$view->setVar('only_active', $only_active);
 
-		return $view->render('selectCategoryWidget');
+		return $view->render('select-category-widget');
 	}
 
 
-	/**
-	 *
-	 * @return Category[]
-	 */
-	public function getReferences() : array
-	{
-
-		$res = [];
-		if($this->type==Category::CATEGORY_TYPE_REGULAR) {
-			foreach(static::fetchInstances(['target_category_id'=>$this->id]) as $cat) {
-				$res[] = $cat;
-			}
-		}
-
-		return $res;
-	}
 
 	public static function renderIcon( string $type, bool $no_icon_for_regular=false ) : string|UI_icon
 	{
+		/*
 		switch($type) {
 			case Category::CATEGORY_TYPE_REGULAR:
 				if($no_icon_for_regular) {
@@ -1589,6 +946,9 @@ abstract class Core_Category extends DataModel {
 
 
 		return UI::icon( $cat_icon )->setTitle( $cat_icon_title );
+		*/
+		//TODO:
+		return '';
 	}
 
 	public static function addSyncCategory( int $id ) : void
@@ -1607,55 +967,20 @@ abstract class Core_Category extends DataModel {
 
 		foreach( static::$sync_categories as $id ) {
 			$category = Category::get( $id );
-			$sync_categories[$id] = $category;
-
-			if($category->getType()==Category::CATEGORY_TYPE_REGULAR) {
-				foreach($category->getReferences() as $r) {
-					$sync_categories[$r->getId()] = $r;
-				}
-			}
+			$category->actualizeProductsList();
 		}
-
-
-		foreach( $sync_categories as $category ) {
-			if($category->getType()==Category::CATEGORY_TYPE_REGULAR) {
-				$category->actualizeReferences();
-				$category->actualizeProductsList();
-			}
-		}
-
-		foreach( $sync_categories as $category ) {
-			if($category->getType()==Category::CATEGORY_TYPE_VIRTUAL) {
-				$category->actualizeReferences();
-				$category->actualizeProductsList();
-			}
-		}
-
-		foreach( $sync_categories as $category ) {
-			if($category->getType()==Category::CATEGORY_TYPE_LINK) {
-				$category->actualizeReferences();
-				$category->actualizeProductsList();
-			}
-		}
-
-		foreach( $sync_categories as $category ) {
-			if($category->getType()==Category::CATEGORY_TYPE_TOP) {
-				$category->actualizeReferences();
-				$category->actualizeProductsList();
-			}
-		}
-
+		
 
 		Category::actualizeTreeData();
 
 		foreach( Shops::getList() as $shop ) {
-			$data = Category::fetchData(
-				[
+			$data = Category::dataFetchAll(
+				select: [
 					'id' => 'id',
 					'product_ids' => 'categories_shop_data.product_ids',
 					'all_children' => 'categories_shop_data.all_children'
 				],
-				[
+				where: [
 					$shop->getWhere('categories_shop_data.'),
 					'AND',
 					'categories_shop_data.is_active' => true,
@@ -1719,5 +1044,16 @@ abstract class Core_Category extends DataModel {
 		}
 
 	}
+	
+	public static function getByKindOfProduct( KindOfProduct $kind ) : array
+	{
+		$ids = Category::dataFetchCol(['id'], ['kind_of_product_id'=>$kind->getId()]);
 
+		if(!$ids) {
+			return [];
+		}
+		
+		return Category::fetch(['category'=>['id'=>$ids]]);
+	}
+	
 }

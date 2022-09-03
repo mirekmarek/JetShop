@@ -8,8 +8,9 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form;
 use Jet\DataModel_Fetch_Instances;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'stickers',
@@ -25,11 +26,14 @@ abstract class Core_Sticker extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Code:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Code:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
+			'code_used' => 'Sticker with the same name already exists',
 		]
 	)]
 	protected string $code = '';
@@ -37,11 +41,13 @@ abstract class Core_Sticker extends DataModel {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Internal name:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter internal name'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Internal name:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter internal name'
 		]
 	)]
 	protected string $internal_name = '';
@@ -53,6 +59,7 @@ abstract class Core_Sticker extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Sticker_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 	/**
@@ -211,24 +218,17 @@ abstract class Core_Sticker extends DataModel {
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->_add_form = $this->getCommonForm('add_form');
-			$this->_add_form->setCustomTranslatorNamespace( Sticker::getManageModuleName() );
+			$this->_add_form = $this->createForm('add_form');
+			$this->_add_form->setCustomTranslatorDictionary( Sticker::getManageModuleName() );
 
 			$code = $this->_add_form->getField('code');
 
 			$code->setValidator(function( Form_Field_Input $field ) {
 				$value = $field->getValue();
-				if(!$value) {
-					$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
-					return false;
-				}
-
 				$exists = Sticker::get($value);
 
 				if($exists) {
-					$field->setCustomError(
-						Tr::_('Sticker with the same name already exists')
-					);
+					$field->setError('code_used');
 
 					return false;
 				}
@@ -243,24 +243,14 @@ abstract class Core_Sticker extends DataModel {
 
 	public function catchAddForm() : bool
 	{
-		$add_form = $this->getAddForm();
-		if(
-			!$add_form->catchInput() ||
-			!$add_form->validate()
-		) {
-			return false;
-		}
-
-		$add_form->catchData();
-
-		return true;
+		return $this->getAddForm()->catch();
 	}
 
 	public function getEditForm() : Form
 	{
 		if(!$this->_edit_form) {
-			$this->_edit_form = $this->getCommonForm('edit_form');
-			$this->_edit_form->setCustomTranslatorNamespace( Sticker::getManageModuleName() );
+			$this->_edit_form = $this->createForm('edit_form');
+			$this->_edit_form->setCustomTranslatorDictionary( Sticker::getManageModuleName() );
 			$this->_edit_form->getField('code')->setIsReadonly(true);
 		}
 
@@ -269,17 +259,7 @@ abstract class Core_Sticker extends DataModel {
 
 	public function catchEditForm() : bool
 	{
-		$edit_form = $this->getEditForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
-		}
-
-		$edit_form->catchData();
-
-		return true;
+		return $this->getEditForm()->catch();
 	}
 
 	public function afterAdd() : void
@@ -298,10 +278,10 @@ abstract class Core_Sticker extends DataModel {
 
 	public function actualizeReferences() : void
 	{
-		$products = Product_Sticker::fetchData(['product_id'], [ 'sticker_code'=>$this->code ], '', 'fetchCol');
+		$products = Product_Sticker::dataFetchCol(select: ['product_id'], where:[ 'sticker_code'=>$this->code ]);
 
 		if($products) {
-			$categories = Product_Category::fetchData(['category_id'], ['product_id'=>$products], '', 'fetchCol' );
+			$categories = Product_Category::dataFetchCol(select: ['category_id'], where: ['product_id'=>$products]);
 
 
 			foreach($categories as $id) {

@@ -81,7 +81,7 @@ class Controller_Main_Response {
 		}
 
 
-		AJAX::response($response);
+		AJAX::commonResponse($response);
 
 	}
 }

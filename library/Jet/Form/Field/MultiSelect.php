@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,73 +11,23 @@ namespace Jet;
 /**
  *
  */
-class Form_Field_MultiSelect extends Form_Field
+class Form_Field_MultiSelect extends Form_Field implements Form_Field_Part_Select_Interface
 {
-	const ERROR_CODE_INVALID_VALUE = 'invalid_value';
-
+	use Form_Field_Part_Select_Trait;
+	
 	/**
 	 * @var string
 	 */
-	protected string $_type = Form::TYPE_MULTI_SELECT;
+	protected string $_type = Form_Field::TYPE_MULTI_SELECT;
 
 	/**
 	 * @var array
 	 */
 	protected array $error_messages = [
-		self::ERROR_CODE_EMPTY         => '',
-		self::ERROR_CODE_INVALID_VALUE => '',
+		Form_Field::ERROR_CODE_EMPTY         => '',
+		Form_Field::ERROR_CODE_INVALID_VALUE => '',
 	];
-
-	/**
-	 * Validates values
-	 *
-	 * @return bool
-	 */
-	public function validate(): bool
-	{
-		$options = $this->select_options;
-		if( !$this->_value ) {
-			$this->_value = [];
-		}
-
-		if( !is_array( $this->_value ) ) {
-			$this->_value = [$this->_value];
-		}
-
-		foreach( $this->_value as $item ) {
-			if( !isset( $options[$item] ) ) {
-				$this->setError( self::ERROR_CODE_INVALID_VALUE );
-
-				return false;
-			}
-		}
-
-
-		$this->setIsValid();
-
-		return true;
-	}
-
-
-	/**
-	 *
-	 * @return bool
-	 */
-	public function checkValueIsNotEmpty(): bool
-	{
-		if(
-			!$this->_value &&
-			$this->is_required
-		) {
-			$this->setError( self::ERROR_CODE_EMPTY );
-
-			return false;
-		}
-
-		return true;
-	}
-
-
+		
 	/**
 	 *
 	 * @param Data_Array $data
@@ -86,10 +36,10 @@ class Form_Field_MultiSelect extends Form_Field
 	{
 		$this->_value = null;
 		$this->_has_value = true;
-
+		
 		if( $data->exists( $this->_name ) ) {
 			$this->_value_raw = $data->getRaw( $this->_name );
-
+			
 			if( is_array( $this->_value_raw ) ) {
 				if( !empty( $this->_value_raw ) ) {
 					$this->_value = [];
@@ -105,23 +55,96 @@ class Form_Field_MultiSelect extends Form_Field
 			$this->_value = [];
 		}
 	}
-
-
+	
+	
 	/**
-	 * @return array
+	 * @return bool
 	 */
-	public function getRequiredErrorCodes(): array
+	protected function validate_required(): bool
 	{
-		$codes = [];
-
-		$codes[] = self::ERROR_CODE_INVALID_VALUE;
-
-		if( $this->is_required ) {
-			$codes[] = self::ERROR_CODE_EMPTY;
+		if(
+			$this->is_required &&
+			!$this->_value
+		) {
+			$this->setError( Form_Field::ERROR_CODE_EMPTY );
+			
+			return false;
 		}
-
-
-		return $codes;
+		
+		return true;
 	}
-
+	
+	/**
+	 * @return bool
+	 */
+	protected function validate_value(): bool
+	{
+		$options = $this->getSelectOptions();
+		
+		foreach( $this->_value as $item ) {
+			if( !isset( $options[$item] ) ) {
+				$this->setError( Form_Field::ERROR_CODE_INVALID_VALUE );
+				
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	/**
+	 * Validates values
+	 *
+	 * @return bool
+	 */
+	public function validate(): bool
+	{
+		if(
+			!$this->validate_required() ||
+			!$this->validate_value() ||
+			!$this->validate_validator()
+		) {
+			return false;
+		}
+		
+		$this->setIsValid();
+		return true;
+	}
+	
+	/**
+	 * @param string $option_key
+	 *
+	 * @return bool
+	 */
+	public function optionIsSelected( string $option_key ) : bool
+	{
+		$value = $this->getValue();
+		
+		if(
+			is_array( $value ) &&
+			!empty( $value )
+		) {
+			foreach( $value as $val_in ) {
+				if( $option_key == (string)$val_in ) {
+					return true;
+				}
+			}
+		} else {
+			if( $option_key == $value ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	/**
+	 * @return string
+	 */
+	public function getTagNameValue() : string
+	{
+		return parent::getTagNameValue().'[]';
+	}
 }

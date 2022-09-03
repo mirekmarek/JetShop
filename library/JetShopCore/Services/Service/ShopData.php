@@ -7,9 +7,10 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form_Definition;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use Jet\Form;
+use Jet\Form_Field;
 
 /**
  *
@@ -33,28 +34,24 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	#[DataModel_Definition(
 		related_to: 'main.code',
 		is_key: true,
-		form_field_type: false
 	)]
 	protected string $service_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_icon1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_icon2 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type:  false
 	)]
 	protected string $image_icon3 = '';
 
@@ -64,8 +61,10 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_label: 'Title:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Title:'
 	)]
 	protected string $title = '';
 
@@ -75,8 +74,10 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
-		form_field_type: 'WYSIWYG',
-		form_field_label: 'Description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Description:'
 	)]
 	protected string $description = '';
 
@@ -86,8 +87,10 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_type: 'WYSIWYG',
-		form_field_label: 'Short description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Short description:'
 	)]
 	protected string $description_short = '';
 
@@ -96,8 +99,10 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: 'Int',
-		form_field_label: 'Priority:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Priority:'
 	)]
 	protected int $priority = 0;
 
@@ -106,8 +111,10 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_type: 'Float',
-		form_field_label: 'Default price:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Default price:'
 	)]
 	protected float $default_price = 0.0;
 
@@ -116,9 +123,11 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
-		form_field_type: 'Float',
-		form_field_label: 'VAT rate:',
-		form_field_creator_method_name: 'createVatRateInputField'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'VAT rate:',
+		creator: ['this','createVatRateInputField']
 	)]
 	protected float $vat_rate = 0.0;
 
@@ -127,8 +136,10 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_type: Form::TYPE_CHECKBOX,
-		form_field_label: 'Discount is not allowed'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Discount is not allowed'
 	)]
 	protected bool $discount_is_not_allowed = false;
 
@@ -328,7 +339,8 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	{
 		$shop = $this->getShop();
 
-		$input = new Form_Field_Select('vat_rate', 'VAT rate:', !$this->getIsSaved() ? $shop->getDefaultVatRate()  : $this->vat_rate);
+		$input = new Form_Field_Select('vat_rate', 'VAT rate:' );
+		$input->setDefaultValue( !$this->getIsSaved() ? $shop->getDefaultVatRate()  : $this->vat_rate );
 
 		$input->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select VAT rate',

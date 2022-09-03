@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,7 +11,7 @@ namespace Jet;
 /**
  *
  */
-#[Config_Definition(name: 'db')]
+#[Config_Definition]
 abstract class Db_Backend_Config extends Config_Section
 {
 	/**
@@ -20,22 +20,24 @@ abstract class Db_Backend_Config extends Config_Section
 	 */
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		description: 'PDO driver',
 		is_required: true,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Driver',
+		help_text: 'PDO driver',
+		is_required: true,
+		select_options_creator: [
 			self::class,
 			'getDrivers'
 		],
-		form_field_label: 'Driver',
-		form_field_error_messages: [
+		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please select driver',
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select driver'
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select driver'
 		]
 	)]
-	protected string $driver = 'mysql';
-
-
+	protected string $driver = Db::DRIVER_MYSQL;
+	
 	/**
 	 *
 	 * @var string
@@ -43,13 +45,100 @@ abstract class Db_Backend_Config extends Config_Section
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
 		is_required: true,
-		form_field_label: 'Connection name',
-		form_field_error_messages: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Connection name',
+		is_required: true,
+		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please enter connection name'
 		]
 	)]
 	protected string $name = 'default';
-
+	
+	/**
+	 *
+	 * @var string
+	 */
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+		is_required: false
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Username:',
+		is_required: false
+	)]
+	protected string $username = '';
+	
+	/**
+	 *
+	 * @var string
+	 */
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+		is_required: false
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_PASSWORD,
+		label: 'Password:',
+		is_required: false
+	)]
+	protected string $password = '';
+	
+	/**
+	 *
+	 * @var string
+	 */
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+		is_required: false
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Database:',
+		is_required: false
+	)]
+	protected string $dbname = '';
+	
+	/**
+	 *
+	 * @var string
+	 */
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+		is_required: false
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Host:',
+		is_required: false
+	)]
+	protected string $host = '';
+	
+	/**
+	 *
+	 * @var int
+	 */
+	#[Config_Definition(
+		type: Config::TYPE_INT,
+		is_required: false
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Port:',
+		is_required: false
+	)]
+	protected int $port = 0;
+	
+	
+	/**
+	 * @return array
+	 */
+	public static function getDrivers(): array
+	{
+		return [];
+	}
 
 	/**
 	 * @return string
@@ -66,15 +155,8 @@ abstract class Db_Backend_Config extends Config_Section
 	{
 		$this->name = $name;
 	}
-
-	/**
-	 * @return array
-	 */
-	public static function getDrivers(): array
-	{
-		return [];
-	}
-
+	
+	
 	/**
 	 * @param string $driver
 	 */
@@ -91,6 +173,157 @@ abstract class Db_Backend_Config extends Config_Section
 	{
 		return $this->driver;
 	}
+	
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getUsername(): string
+	{
+		return $this->username;
+	}
+	
+	/**
+	 * @param string $username
+	 */
+	public function setUsername( string $username ): void
+	{
+		$this->username = $username;
+	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getPassword(): string
+	{
+		return $this->password;
+	}
+	
+	/**
+	 * @param string $password
+	 */
+	public function setPassword( string $password ): void
+	{
+		$this->password = $password;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getDbname(): string
+	{
+		return $this->dbname;
+	}
+	
+	/**
+	 * @param string $dbname
+	 */
+	public function setDbname( string $dbname ): void
+	{
+		$this->dbname = $dbname;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getHost(): string
+	{
+		return $this->host;
+	}
+	
+	/**
+	 * @param string $host
+	 */
+	public function setHost( string $host ): void
+	{
+		$this->host = $host;
+	}
+	
+	/**
+	 * @return int
+	 */
+	public function getPort(): int
+	{
+		return $this->port;
+	}
+	
+	/**
+	 * @param int $port
+	 */
+	public function setPort( int $port ): void
+	{
+		$this->port = $port;
+	}
 
-
+	
+	/**
+	 * @return array
+	 */
+	public function toArray(): array
+	{
+		$res = [
+			'driver' => $this->driver,
+			'name' => $this->name,
+		];
+		
+		$entries = $this->getEntriesSchema();
+		
+		foreach($entries as $key=>$val) {
+			$res[$key] = $this->{$key};
+		}
+		
+		return $res;
+	}
+	
+	
+	/**
+	 *
+	 */
+	public function initDefault() : void
+	{
+		$entries = $this->getEntriesSchema();
+		
+		foreach($entries as $key=>$val) {
+			$this->{$key} = $val;
+		}
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getEntriesSchema() : array
+	{
+		$method = $this->driver.'_getEntriesSchema';
+		
+		if(!method_exists($this, $method)) {
+			$method = 'another_getEntriesSchema';
+		}
+		
+		return $this->{$method}();
+	}
+	
+	/**
+	 * @param string $form_name
+	 * @param array $only_fields
+	 * @param array $exclude_fields
+	 * @return Form
+	 * @throws Form_Definition_Exception
+	 */
+	public function createForm( string $form_name, array $only_fields=[], array $exclude_fields=[]  ): Form
+	{
+		$form = parent::createForm($form_name, $only_fields, $exclude_fields);
+		
+		$entries = $this->getEntriesSchema();
+		
+		foreach($form->getFields() as $field) {
+			if(!isset($entries[$field->getName()])) {
+				$form->removeField( $field->getName() );
+			}
+		}
+		
+		return $form;
+	}
+	
 }

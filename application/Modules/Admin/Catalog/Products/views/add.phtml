@@ -3,6 +3,7 @@ namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 use Jet\Http_Request;
@@ -18,8 +19,8 @@ $product = $this->getRaw( 'product' );
 
 $form = $product->getAddForm();
 
-$form->setDefaultLabelWidth( [ Form::LJ_SIZE_MEDIUM => 2 ] );
-$form->setDefaultFieldWidth( [ Form::LJ_SIZE_MEDIUM => 8 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
 
 
 

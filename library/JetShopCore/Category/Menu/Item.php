@@ -22,16 +22,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 
 	use CommonEntity_ShopRelationTrait_ShopIsId;
 
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 255,
-		form_field_type: false
-	)]
-	protected string $category_type = '';
 
 	/**
 	 * @var int
@@ -40,7 +30,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 		type: DataModel::TYPE_INT,
 		is_id: true,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $category_id = 0;
 
@@ -50,7 +39,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $parent_category_id = 0;
 
@@ -59,7 +47,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $priority = 0;
 
@@ -69,7 +56,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $label = '';
 
@@ -79,7 +65,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $URL = '';
 
@@ -89,7 +74,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: false
 	)]
 	protected string $icon_URL = '';
 
@@ -98,7 +82,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $visible_products_count = 0;
 
@@ -107,7 +90,6 @@ abstract class Core_Category_Menu_Item extends DataModel
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		form_field_type: false
 	)]
 	protected int $nested_visible_products_count = 0;
 
@@ -198,23 +180,7 @@ abstract class Core_Category_Menu_Item extends DataModel
 	{
 		return $this->icon_URL;
 	}
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setCategoryType( string $value ) : void
-	{
-		$this->category_type = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCategoryType() : string
-	{
-		return $this->category_type;
-	}
+	
 
 	/**
 	 * @param int $value

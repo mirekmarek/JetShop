@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -15,65 +15,17 @@ use PDO;
  */
 class Db_Backend_PDO_Config extends Db_Backend_Config
 {
-	/**
-	 *
-	 * @var string
-	 */
+	
+	use Db_Backend_PDO_Config_mysql;
+	use Db_Backend_PDO_Config_sqlite;
+	use Db_Backend_PDO_Config_another;
+	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		description: 'PDO driver',
-		is_required: true,
-		form_field_type: Form::TYPE_SELECT,
-		form_field_get_select_options_callback: [
-			self::class,
-			'getDrivers'
-		],
-		form_field_label: 'Driver',
-		form_field_error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please select driver',
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select driver'
-		]
+		is_required: false,
 	)]
-	protected string $driver = 'mysql';
-
-
-	/**
-	 *
-	 * @var string
-	 */
-	#[Config_Definition(
-		type: Config::TYPE_STRING,
-		is_required: true,
-		form_field_label: 'DSN',
-		form_field_error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter connection DSN'
-		]
-	)]
-	protected string $DSN = '';
-
-	/**
-	 *
-	 * @var string
-	 */
-	#[Config_Definition(
-		form_field_label: 'Username',
-		type: Config::TYPE_STRING,
-		is_required: false
-	)]
-	protected string $username = '';
-
-	/**
-	 *
-	 * @var string
-	 */
-	#[Config_Definition(
-		form_field_type: Form::TYPE_PASSWORD,
-		form_field_label: 'Password',
-		type: Config::TYPE_STRING,
-		is_required: false
-	)]
-	protected string $password = '';
-
+	protected string $dsn = '';
+	
 	/**
 	 * @return array
 	 */
@@ -83,39 +35,13 @@ class Db_Backend_PDO_Config extends Db_Backend_Config
 
 		return array_combine( $drivers, $drivers );
 	}
-
+	
 	/**
-	 *
-	 * @return string
+	 * @param string $dsn
 	 */
-	public function getUsername(): string
+	public function setDsn( string $dsn ) : void
 	{
-		return $this->username;
-	}
-
-	/**
-	 * @param string $username
-	 */
-	public function setUsername( string $username ): void
-	{
-		$this->username = $username;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getPassword(): string
-	{
-		return $this->password;
-	}
-
-	/**
-	 * @param string $password
-	 */
-	public function setPassword( string $password ): void
-	{
-		$this->password = $password;
+		$this->dsn = $dsn;
 	}
 
 	/**
@@ -123,15 +49,31 @@ class Db_Backend_PDO_Config extends Db_Backend_Config
 	 */
 	public function getDsn(): string
 	{
-		return $this->driver . ':' . $this->DSN;
-	}
+		if(!$this->dsn) {
+			$method = $this->driver.'_getDnsEntries';
+			
+			if(!method_exists($this, $method)) {
+				return '';
+			}
+			
+			$entries =  $this->{$method}();
+			$dsn = [];
+			
+			foreach($entries as $key=>$val ) {
+				if($val) {
+					if(is_int($key)) {
+						$dsn[] = $val;
+						
+					} else {
+						$dsn[] = $key.'='.$val;
+					}
+				}
+			}
 
-	/**
-	 * @param string $DSN
-	 */
-	public function setDSN( string $DSN ): void
-	{
-		$this->DSN = $DSN;
+			$this->dsn = $this->driver.':'.implode(';', $dsn);
+		}
+		
+		return $this->dsn;
 	}
-
+	
 }

@@ -58,7 +58,7 @@ trait Controller_Main_Delivery {
 			$only_method_codes = explode(',', $GET->getString('only_methods'));
 		}
 
-		AJAX::response( Delivery_PersonalTakeover_Place::getMapData( only_method_codes: $only_method_codes ) );
+		AJAX::commonResponse( Delivery_PersonalTakeover_Place::getMapData( only_method_codes: $only_method_codes ) );
 	}
 
 	public function personal_takeover_show_place_Action(): void

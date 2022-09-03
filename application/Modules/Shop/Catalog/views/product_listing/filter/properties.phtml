@@ -10,7 +10,7 @@ use Jet\MVC_View;
 
 $listing = $this->getRaw('listing');
 
-$filter_properties = $listing->properties();
+$filter_properties = $listing->params();
 $filter_brands = $listing->brands();
 
 $filter_groups = [];

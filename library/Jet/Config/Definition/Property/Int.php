@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -28,11 +28,6 @@ class Config_Definition_Property_Int extends Config_Definition_Property
 	protected int|null $max_value = null;
 
 	/**
-	 * @var string|bool
-	 */
-	protected string|bool $form_field_type = Form::TYPE_INT;
-
-	/**
 	 * @param ?array $definition_data
 	 *
 	 * @throws Config_Exception
@@ -40,18 +35,6 @@ class Config_Definition_Property_Int extends Config_Definition_Property
 	public function setUp( ?array $definition_data = null ): void
 	{
 		parent::setUp( $definition_data );
-
-		if( $this->min_value !== null ) {
-			$this->form_field_min_value = $this->min_value;
-		}
-
-		if( $this->max_value !== null ) {
-			$this->form_field_max_value = $this->max_value;
-		}
-
-		if( $this->form_field_type === null ) {
-			$this->form_field_type = Form::TYPE_INT;
-		}
 	}
 
 	/**
@@ -68,7 +51,6 @@ class Config_Definition_Property_Int extends Config_Definition_Property
 	public function setMinValue( int $min_value ): void
 	{
 		$this->min_value = $min_value;
-		$this->form_field_min_value = $this->min_value;
 	}
 
 	/**
@@ -85,7 +67,6 @@ class Config_Definition_Property_Int extends Config_Definition_Property
 	public function setMaxValue( int $max_value ): void
 	{
 		$this->max_value = $max_value;
-		$this->form_field_max_value = $this->max_value;
 	}
 
 	/**

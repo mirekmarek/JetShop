@@ -191,9 +191,10 @@ trait Core_CashDesk_Confirm {
 	public function getSpecialRequirementsForm() : Form
 	{
 		if(!$this->comment_form) {
-			$comment = new Form_Field_Textarea('special_requirements', '', $this->getSpecialRequirements());
+			$comment = new Form_Field_Textarea('special_requirements', '');
+			$comment->setDefaultValue( $this->getSpecialRequirements() );
 			$comment->setPlaceholder(Tr::_('Do you have any special requests?'));
-			$comment->setCatcher(function($value) {
+			$comment->setFieldValueCatcher(function($value) {
 				$this->setSpecialRequirements($value);
 			});
 

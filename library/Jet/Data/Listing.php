@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -40,19 +40,15 @@ abstract class Data_Listing extends BaseObject
 	protected string $default_sort = '';
 
 	/**
-	 * @var string
-	 */
-	protected string $sort = '';
-
-	/**
 	 * @var array
 	 */
 	protected array $grid_columns = [];
 
 	/**
-	 * @var array
+	 * @var string
 	 */
-	protected array $grid_columns_schema = [];
+	protected string $sort = '';
+
 
 	/**
 	 * @var ?UI_dataGrid
@@ -65,11 +61,22 @@ abstract class Data_Listing extends BaseObject
 	protected ?array $filter_where = null;
 
 	/**
+	 * @var Data_Listing_Filter[]
+	 */
+	protected array $filters = [];
+
+	/**
 	 *
 	 */
 	public function __construct()
 	{
+		$this->initFilters();
 	}
+
+	/**
+	 *
+	 */
+	abstract protected function initFilters() : void;
 
 	/**
 	 * @return string
@@ -93,12 +100,20 @@ abstract class Data_Listing extends BaseObject
 	 */
 	public function handle(): void
 	{
-		$this->filter_catchGetParams();
+		$this->catchGetParams();
 		$this->pagination_catchGetParams();
 		$this->sort_catchGetParams();
 
-		$this->filter_catchForm();
+		$this->catchFilterForm();
 
+	}
+
+	/**
+	 * @param array $grid_columns
+	 */
+	public function setGridColumns( array $grid_columns ): void
+	{
+		$this->grid_columns = $grid_columns;
 	}
 
 	/**
@@ -109,55 +124,33 @@ abstract class Data_Listing extends BaseObject
 		return $this->grid_columns;
 	}
 
+
+
 	/**
-	 * @param array $grid_columns_schema
+	 * @param string $parameter
+	 * @param mixed $value
 	 */
-	public function setGridColumnsSchema( array $grid_columns_schema ): void
+	public function setGetParam( string $parameter, mixed $value ): void
 	{
-		$this->grid_columns_schema = $grid_columns_schema;
+		$this->get_param_values[$parameter] = $value;
 	}
 
 	/**
-	 * @return array
+	 * @param string $parameter
 	 */
-	public function getGridColumnsSchema(): array
+	public function unsetGetParam( string $parameter ): void
 	{
-		if( !$this->grid_columns_schema ) {
-			$this->grid_columns_schema = array_keys( $this->getGridColumns() );
-		}
-
-		return $this->grid_columns_schema;
-	}
-
-
-	/**
-	 * @param string $p
-	 * @param mixed $v
-	 */
-	protected function setGetParam( string $p, mixed $v ): void
-	{
-		$this->get_param_values[$p] = $v;
-	}
-
-	/**
-	 * @param string $p
-	 */
-	protected function unsetGetParam( string $p ): void
-	{
-		unset( $this->get_param_values[$p] );
+		unset( $this->get_param_values[$parameter] );
 	}
 
 
 	/**
-	 * @param array|null $get_params
 	 *
 	 * @return string
 	 */
-	protected function getURI( array $get_params = null ): string
+	public function getURI(): string
 	{
-		if( $get_params === null ) {
-			$get_params = $this->get_param_values;
-		}
+		$get_params = $this->get_param_values;
 
 		foreach( $get_params as $k => $v ) {
 			if( !$v ) {
@@ -172,14 +165,14 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 * @return Form
 	 */
-	public function filter_getForm(): Form
+	public function getFilterForm(): Form
 	{
 		if( !$this->filter_form ) {
 			$this->filter_form = new Form( 'filter_form', [] );
 			$this->filter_form->setAction( $this->getURI() );
 
 			foreach( $this->filters as $filter ) {
-				$this->{"filter_{$filter}_getForm"}( $this->filter_form );
+				$filter->generateFormFields( $this->filter_form );
 			}
 		}
 
@@ -189,16 +182,16 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 *
 	 */
-	public function filter_catchForm(): void
+	protected function catchFilterForm(): void
 	{
-		$form = $this->filter_getForm();
+		$form = $this->getFilterForm();
 
 		if(
 			$form->catchInput() &&
 			$form->validate()
 		) {
 			foreach( $this->filters as $filter ) {
-				$this->{"filter_{$filter}_catchForm"}( $form );
+				$filter->catchForm( $form );
 			}
 
 			$this->pagination_setPageNo( 1 );
@@ -212,29 +205,18 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 *
 	 */
-	public function filter_catchGetParams(): void
+	protected function catchGetParams(): void
 	{
 		foreach( $this->filters as $filter ) {
-			$this->{"filter_{$filter}_catchGetParams"}();
+			$filter->catchGetParams();
 		}
-	}
-
-	/**
-	 *
-	 */
-	protected function filter_setupWhere(): void
-	{
-		foreach( $this->filters as $filter ) {
-			$this->{"filter_{$filter}_setupWhere"}();
-		}
-
 	}
 
 
 	/**
 	 * @param array $where
 	 */
-	public function filter_addWhere( array $where ): void
+	public function addWhere( array $where ): void
 	{
 		if( $this->filter_where ) {
 			$this->filter_where[] = 'AND';
@@ -246,13 +228,13 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 * @return array
 	 */
-	public function filter_getWhere(): array
+	public function getWhere(): array
 	{
 		if( $this->filter_where === null ) {
 			$this->filter_where = [];
 
 			foreach( $this->filters as $filter ) {
-				$this->{"filter_{$filter}_getWhere"}( $this->filter_form );
+				$filter->generateWhere();
 			}
 
 		}
@@ -263,7 +245,7 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 * @param int $page_no
 	 */
-	public function pagination_setPageNo( int $page_no ): void
+	protected function pagination_setPageNo( int $page_no ): void
 	{
 		$this->pagination_page_no = $page_no;
 		$this->setGetParam( SysConf_Jet_Data_Listing::getPaginationPageNoGetParam(), $page_no );
@@ -272,7 +254,7 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 * @param int $items_per_page
 	 */
-	public function pagination_setItemsPerPage( int $items_per_page ): void
+	protected function pagination_setItemsPerPage( int $items_per_page ): void
 	{
 
 		if( $items_per_page > SysConf_Jet_Data_Listing::getPaginationMaxItemsPerPage() ) {
@@ -325,7 +307,7 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 * @param string $sort_by
 	 */
-	public function sort_setSort( string $sort_by ): void
+	protected function sort_setSort( string $sort_by ): void
 	{
 		$sort_column = $sort_by;
 
@@ -362,7 +344,7 @@ abstract class Data_Listing extends BaseObject
 	/**
 	 * @return string
 	 */
-	protected function getSortBy(): string
+	protected function sort_getSortBy(): string
 	{
 		return $this->sort ? : $this->default_sort;
 	}
@@ -413,8 +395,8 @@ abstract class Data_Listing extends BaseObject
 	{
 		$list = $this->getList();
 
-		$list->getQuery()->setWhere( $this->filter_getWhere() );
-		$list->getQuery()->setOrderBy( $this->getSortBy() );
+		$list->getQuery()->setWhere( $this->getWhere() );
+		$list->getQuery()->setOrderBy( $this->sort_getSortBy() );
 
 		return $list;
 	}
@@ -424,10 +406,13 @@ abstract class Data_Listing extends BaseObject
 	 */
 	protected function getGrid_createColumns(): void
 	{
-		foreach( $this->getGridColumnsSchema() as $column_id ) {
-			$column_definition = $this->getGridColumns()[$column_id];
+		foreach( $this->getGridColumns() as $column_id=>$column_definition ) {
 
-			$column = $this->grid->addColumn( $column_id, Tr::_( $column_definition['title'] ) );
+			$column = $this->grid->addColumn(
+				$column_id,
+				Tr::_( $column_definition['title'] )
+			);
+
 			if( !empty( $column_definition['disallow_sort'] ) ) {
 				$column->setAllowSort( false );
 			}
@@ -448,7 +433,7 @@ abstract class Data_Listing extends BaseObject
 
 			$this->grid->setPaginator( $this->getGrid_createPaginator() );
 			$this->grid->setSortUrlCreator( $this->getGrid_getSortURLCreator() );
-			$this->grid->setSortBy( $this->getSortBy() );
+			$this->grid->setSortBy( $this->sort_getSortBy() );
 			$this->grid->setData( $this->getGrid_prepareList() );
 
 		}

@@ -11,10 +11,11 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Exception;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\Form_Field_MultiSelect;
 use Jet\Form_Field_Select;
-use Jet\Tr;
+
 
 /**
  *
@@ -35,11 +36,13 @@ abstract class Core_Payment_Method extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Code:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter code'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Code:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code'
 		]
 	)]
 	protected string $code = '';
@@ -50,11 +53,13 @@ abstract class Core_Payment_Method extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
-		form_field_type: 'Input',
-		form_field_is_required: true,
-		form_field_label: 'Internal name:',
-		form_field_error_messages: [
-			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter internal name'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		is_required: true,
+		label: 'Internal name:',
+		error_messages: [
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter internal name'
 		]
 	)]
 	protected string $internal_name = '';
@@ -65,8 +70,10 @@ abstract class Core_Payment_Method extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
-		form_field_type: 'Input',
-		form_field_label: 'Internal description:'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Internal description:'
 	)]
 	protected string $internal_description = '';
 
@@ -77,11 +84,13 @@ abstract class Core_Payment_Method extends DataModel
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 255,
-		form_field_type: 'Select',
-		form_field_is_required: true,
-		form_field_label: 'Kind:',
-		form_field_get_select_options_callback: [Payment_Kind::class, 'getScope'],
-		form_field_error_messages: [
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		is_required: true,
+		label: 'Kind:',
+		select_options_creator: [Payment_Kind::class, 'getScope'],
+		error_messages: [
 			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select kind',
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select kind'
 		]
@@ -96,6 +105,7 @@ abstract class Core_Payment_Method extends DataModel
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_ShopData::class
 	)]
+	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 
@@ -105,10 +115,19 @@ abstract class Core_Payment_Method extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_DeliveryMethods::class,
-		form_field_creator_method_name: 'createDeliveryMethodInputField',
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_MULTI_SELECT,
+		is_required: true,
+		label: 'Delivery methods:',
+		default_value_getter_name: 'getDeliveryMethodsCodes',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select delivery method',
+			Form_Field::ERROR_CODE_EMPTY => 'Please select delivery method'
+		],
+		select_options_creator: [Delivery_Method::class, 'getScope'],
 	)]
 	protected array $delivery_methods = [];
-
 
 	/**
 	 * @var Payment_Method_Services[]
@@ -116,7 +135,15 @@ abstract class Core_Payment_Method extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_Services::class,
-		form_field_creator_method_name: 'createServicesInputField',
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_MULTI_SELECT,
+		default_value_getter_name: 'getServicesCodes',
+		label: 'Services:',
+		error_messages: [
+			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select service',
+		],
+		select_options_creator: [Services_Service::class, 'getPaymentServicesScope'],
 	)]
 	protected array $services = [];
 
@@ -126,7 +153,6 @@ abstract class Core_Payment_Method extends DataModel
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_Option::class,
-		form_field_type: false
 	)]
 	protected array $options = [];
 
@@ -196,7 +222,7 @@ abstract class Core_Payment_Method extends DataModel
 	public function getEditForm() : Form
 	{
 		if(!$this->_form_edit) {
-			$this->_form_edit = $this->getCommonForm('edit_form');
+			$this->_form_edit = $this->createForm('edit_form');
 			$this->_form_edit->getField('code')->setIsReadonly(true);
 		}
 
@@ -217,23 +243,25 @@ abstract class Core_Payment_Method extends DataModel
 	public function getAddForm() : Form
 	{
 		if(!$this->_form_add) {
-			$this->_form_add = $this->getCommonForm('add_form');
+			$this->_form_add = $this->createForm('add_form');
 
 			$code = $this->_form_add->getField('code');
+			$code->setErrorMessages([
+				Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
+				'exists' =>  'Payment method with the same name already exists'
+			]);
 
 			$code->setValidator(function( Form_Field_Input $field ) {
 				$value = $field->getValue();
 				if(!$value) {
-					$field->setError( Form_Field_Input::ERROR_CODE_EMPTY );
+					$field->setError( Form_Field::ERROR_CODE_EMPTY );
 					return false;
 				}
 
 				$exists = Payment_Method::get($value);
 
 				if($exists) {
-					$field->setCustomError(
-						Tr::_('Payment method with the same name already exists')
-					);
+					$field->setError('exists');
 
 					return false;
 				}
@@ -263,7 +291,7 @@ abstract class Core_Payment_Method extends DataModel
 	}
 
 	/**
-	 * @return iterable
+	 * @return static[]
 	 */
 	public static function getList() : iterable
 	{
@@ -434,28 +462,7 @@ abstract class Core_Payment_Method extends DataModel
 
 		return $res;
 	}
-
-	public function createDeliveryMethodInputField() : Form_Field_MultiSelect
-	{
-		$input = new Form_Field_MultiSelect('delivery_methods', 'Delivery methods:', $this->getDeliveryMethodsCodes(), true );
-
-		$input->setErrorMessages([
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select delivery method',
-			Form_Field_MultiSelect::ERROR_CODE_EMPTY => 'Please select delivery method'
-		]);
-
-		$input->setSelectOptions(Delivery_Method::getScope());
-
-		$input->setCatcher( function($value) {
-			$this->setDeliveryMethods( $value );
-		} );
-
-		return $input;
-	}
-
-
-
-
+	
 
 
 
@@ -505,24 +512,7 @@ abstract class Core_Payment_Method extends DataModel
 
 		return $res;
 	}
-
-	public function createServicesInputField() : Form_Field_MultiSelect
-	{
-		$input = new Form_Field_MultiSelect('services', 'Services:', $this->getServicesCodes() );
-
-		$input->setErrorMessages([
-			Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Please select service',
-		]);
-
-		$input->setSelectOptions( Services_Service::getScope( Services_Kind::KIND_PAYMENT ) );
-
-		$input->setCatcher( function($value) {
-			$this->setServices( $value );
-		} );
-
-		return $input;
-	}
-
+	
 	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
 	{
 		$shd = $this->getShopData($cash_desk->getShop());

@@ -15,4 +15,8 @@ return [
 	'Discount %D%% for delivery price' => '',
 	'Discount %D%% for products price' => '',
 	'Discount %D%% for payment price' => '',
+	'The discount code will not be active until the future' => '',
+	'The discount code is no longer valid' => '',
+	'The discount code has been already used' => '',
+	'The minimum order value must be at least %MIN%' => '',
 ];

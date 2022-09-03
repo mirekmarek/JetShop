@@ -1,11 +1,13 @@
 <?php
 return [
-	'vendor' => 'Miroslav Marek <mirek.marek@web-jet.cz>',
-	'label' => 'REST clients users management',
+	'vendor'      => 'Miroslav Marek',
+	'label'       => 'REST clients users management',
 	'description' => '',
+
+
 	'ACL_actions' => [
-		'get_user' => 'Get user data',
-		'add_user' => 'Add new user',
+		'get_user'    => 'Get user data',
+		'add_user'    => 'Add new user',
 		'update_user' => 'Update user',
 		'delete_user' => 'Delete user',
 	],

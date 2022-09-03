@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -17,11 +17,6 @@ class DataModel_Definition_Property_Date extends DataModel_Definition_Property
 	 * @var string
 	 */
 	protected string $type = DataModel::TYPE_DATE;
-
-	/**
-	 * @var string|bool
-	 */
-	protected string|bool $form_field_type = Form::TYPE_DATE;
 
 	/**
 	 * @param mixed $value
@@ -40,9 +35,11 @@ class DataModel_Definition_Property_Date extends DataModel_Definition_Property
 		if( !is_object( $value ) ) {
 			$value = new Data_DateTime( $value );
 			$value->setTime( 0, 0 );
+			$value->setOnlyDate(true);
 		} else {
 			if( !$value instanceof Data_DateTime ) {
 				$value = new Data_DateTime();
+				$value->setOnlyDate(true);
 			}
 		}
 	}
@@ -65,5 +62,5 @@ class DataModel_Definition_Property_Date extends DataModel_Definition_Property
 
 		return (string)$property;
 	}
-
+	
 }

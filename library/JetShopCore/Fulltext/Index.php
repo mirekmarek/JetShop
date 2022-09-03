@@ -4,7 +4,6 @@ use Jet\Data_Text;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use Jet\Db;
 
 #[DataModel_Definition(
 	name: '',
@@ -50,16 +49,6 @@ abstract class Core_Fulltext_Index extends DataModel {
 		$this->words = $words;
 	}
 
-	public static function getIndexDatabaseTableName() : string
-	{
-		return DataModel::getDataModelDefinition( get_called_class() )->getDatabaseTableName();
-	}
-
-	public static function getIndexWordsDatabaseTableName() : string
-	{
-		return DataModel::getDataModelDefinition( get_called_class().'_Word' )->getDatabaseTableName();
-	}
-
 	/**
 	 * @param array $texts
 	 * @param callable $index_word_setup
@@ -67,16 +56,18 @@ abstract class Core_Fulltext_Index extends DataModel {
 	 * @return Fulltext_Index_Internal_Category_Word[]
 	 */
 	abstract public function collectWords( array $texts, callable $index_word_setup ) : array;
+	
+	abstract public static function getWordClassName() : string;
 
 	/**
 	 * @param array $texts
-	 * @param string $word_class_name
 	 * @param callable $index_word_setup
 	 *
 	 * @return Fulltext_Index_Word[]
 	 */
-	protected function _collectWords( array $texts, string $word_class_name, callable $index_word_setup) : array
+	protected function _collectWords( array $texts, callable $index_word_setup) : array
 	{
+		$word_class_name = static::getWordClassName();
 		$words = Fulltext_Dictionary::collectWords( $this->getShop(), $texts );
 		$this->words = implode(' ', $words);
 
@@ -104,31 +95,35 @@ abstract class Core_Fulltext_Index extends DataModel {
 	 */
 	public static function deleteRecord( int $object_id ) : void
 	{
-		$class = get_called_class();
-
 		/**
-		 * @var Fulltext_Index $class
+		 * @var DataModel $word_class
 		 */
-		$table_index = $class::getIndexDatabaseTableName();
-		$table_index_words = $class::getIndexWordsDatabaseTableName();
-
-		$db = Db::get();
-		$db->execute( "DELETE FROM $table_index WHERE object_id=".$object_id );
-		$db->execute( "DELETE FROM $table_index_words WHERE object_id=".$object_id );
+		$word_class = static::getWordClassName();
+		
+		$words = $word_class::fetchInstances(['object_id'=>$object_id]);
+		foreach($words as $w) {
+			$w->delete();
+		}
+		
+		$index = static::fetchInstances(['object_id'=>$object_id]);
+		foreach($index as $i) {
+			$i->delete();;
+		}
+		
 	}
 
 
 	/**
 	 * @param Shops_Shop $shop
 	 * @param string $search_string
-	 * @param string $sql_query_where
+	 * @param array $where
 	 *
 	 * @return array
 	 */
 	public static function searchObjectIds(
 		Shops_Shop $shop,
 		string $search_string,
-		string $sql_query_where
+		array $where
 	) : array {
 
 		$search_string = Fulltext_Index::tidySearchString( $search_string );
@@ -141,47 +136,42 @@ abstract class Core_Fulltext_Index extends DataModel {
 		if(!$query) {
 			return [];
 		}
+		
+		/**
+		 * @var DataModel $word_class
+		 */
+		$word_class = static::getWordClassName();
 
-		$table = static::getIndexWordsDatabaseTableName();
-
-		if($sql_query_where) {
-			$sql_query_where = " AND ($sql_query_where)";
+		if($where) {
+			$where = " AND ($where)";
 		}
-
-		//TODO: SQL!
-			$sql_query_where .= " AND shop_code='".addslashes($shop->getShopCode())."' AND locale='".addslashes($shop->getLocale())."'";
-
+		
 		$sql_query = [];
 		$matches = [];
+		
+		$base_where = [
+			'shop_code' => $shop->getShopCode(),
+			'AND',
+			'locale' => $shop->getLocale(),
+		];
+		
+		if($where) {
+			$base_where[] = 'AND';
+			$base_where[] = $where;
+		}
 
 		foreach( $query as $q_string ) {
-			$matches[$q_string] = [];
+			
+			$_where = $base_where;
+			$_where[] = 'AND';
+			$_where['word*'] = $q_string.'%';
 
-
-			$sql_q_string = addslashes( $q_string );
-
-			$q = "SELECT '$sql_q_string' as word, object_id as id FROM $table WHERE
-						word LIKE '$sql_q_string%' 
-						$sql_query_where
-					";
-
-
-			$sql_query[] = $q;
+			$matches[$q_string] = $word_class::dataFetchCol(
+				select:['object_id'],
+				where: $_where
+			);
 		}
-
-		$sql_query = implode( "\nUNION\n", $sql_query );
-
-		$q_r = Db::get()->fetchAll( $sql_query );
-
-		foreach( $q_r as $r ) {
-			$word = $r['word'];
-			$id = (int)$r['id'];
-
-			//if(!in_array($id, $matches[$word]))
-			{
-				$matches[$word][$id] = $id;
-			}
-		}
+		
 
 		$ids = [];
 

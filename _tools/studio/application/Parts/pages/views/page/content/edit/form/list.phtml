@@ -5,7 +5,7 @@ namespace JetStudio;
 use Jet\MVC_Layout;
 use Jet\Tr;
 use Jet\UI;
-use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\UI_button;
 use Jet\MVC_View;
 
@@ -17,11 +17,11 @@ use Jet\MVC_View;
 $page = $this->getRaw( 'page' );
 
 $form = $page->getEditForm_content();
-$form->setDefaultLabelWidth( [
-	Form::LJ_SIZE_MEDIUM => 3
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
 ] );
-$form->setDefaultFieldWidth( [
-	Form::LJ_SIZE_MEDIUM => 7
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 7
 ] );
 
 /**
@@ -123,7 +123,7 @@ if( !$delete_content_action_creator ) {
 			<div class="card">
 				<div class="card-header" data-toggle="collapse"
 				     data-target="#content_<?= $base_id ?>_<?= $page_id ?>_<?= $i ?>">
-					<table width="100%">
+					<table style="width: 100%">
 						<tr>
 							<td style="width: 100px"><?= $content->getOutputPositionOrder() ?>.</td>
 
@@ -146,7 +146,7 @@ if( !$delete_content_action_creator ) {
 										<?php endif; ?>
 									</td>
 									<td>
-										<table border="0">
+										<table>
 											<tr>
 												<td><?= $label ?></td>
 												<td>&nbsp;&nbsp;->&nbsp;&nbsp;</td>
@@ -163,7 +163,7 @@ if( !$delete_content_action_creator ) {
 									?>
 									<td style="width: 200px;"><b><?= Tr::_( 'Controller class: ' ) ?></b></td>
 									<td>
-										<table border="0">
+										<table>
 											<tr>
 												<td><?= $content->getControllerClass() ?></td>
 												<td>&nbsp;&nbsp;->&nbsp;&nbsp;</td>
@@ -192,8 +192,8 @@ if( !$delete_content_action_creator ) {
 									break;
 
 							} ?>
-							<td align="right">
-								<?= UI::button_delete( Tr::_( 'Delete this content' ) )->setOnclick( $delete_content_action_creator( $i ) )->setSize( UI_button::SIZE_EXTRA_SMALL ) ?>
+							<td style="text-align: right">
+								<?= UI::button_delete( Tr::_( 'Delete this content' ) )->setOnClick( $delete_content_action_creator( $i ) )->setSize( UI_button::SIZE_EXTRA_SMALL ) ?>
 							</td>
 						</tr>
 					</table>
@@ -209,7 +209,7 @@ if( !$delete_content_action_creator ) {
 					?>
 					<hr/>
 					<div class="form-group row">
-						<label class="col-md-3 control-label"><?= Tr::_( 'Parameters:' ) ?></label>
+						<label class="col-md-2 control-label"><?= Tr::_( 'Parameters:' ) ?></label>
 						<div class="col-md-7">
 							<?php
 							$i = 0;
@@ -266,24 +266,7 @@ if( !$delete_content_action_creator ) {
 
 							break;
 						case Pages_Page_Content::CONTENT_KIND_CALLBACK:
-							$class_field = $form->field( $f_prefix . 'output_callback_class' );
-							$method_field = $form->field( $f_prefix . 'output_callback_method' );
-							?>
-							<div style="width: 1000px;margin: 10px;">
-								<?= $class_field->row()->start() ?>
-								<?= $class_field->error() ?>
-								<?= $method_field->error() ?>
-								<div class="input-group">
-									<span class="input-group-prepend">
-									</span>
-									<?= $class_field->input() ?>
-									<span class="input-group-prepend"><span class="input-group-text">::</span></span>
-									<?= $method_field->input() ?>
-									<span class="input-group-append"><span class="input-group-text">( Jet\MVC_Page $page, Jet\MVC_Page_Content $content )</span></span>
-								</div>
-								<?= $class_field->row()->end() ?>
-							</div>
-							<?php
+							echo $form->field( $f_prefix . 'output_callback' );
 							break;
 
 					} ?>
@@ -298,9 +281,9 @@ if( !$delete_content_action_creator ) {
 <?php endforeach; ?>
 
 	<?php
-$form->setDefaultLabelWidth( [
-	Form::LJ_SIZE_MEDIUM => 2
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
 ] );
-$form->setDefaultFieldWidth( [
-	Form::LJ_SIZE_MEDIUM => 6
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_MEDIUM => 6
 ] );

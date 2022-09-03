@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -10,19 +10,64 @@ namespace Jet;
 
 use Iterator;
 use JsonSerializable;
+use ReflectionClass;
 
 /**
  *
  */
 abstract class Form_Field extends BaseObject implements JsonSerializable
 {
-
+	
+	const TYPE_HIDDEN = 'Hidden';
+	
+	const TYPE_INPUT = 'Input';
+	
+	const TYPE_INT = 'Int';
+	const TYPE_FLOAT = 'Float';
+	const TYPE_RANGE = 'Range';
+	
+	const TYPE_DATE = 'Date';
+	const TYPE_DATE_TIME = 'DateTime';
+	const TYPE_MONTH = 'Month';
+	const TYPE_WEEK = 'Week';
+	const TYPE_TIME = 'Time';
+	
+	const TYPE_EMAIL = 'Email';
+	const TYPE_TEL = 'Tel';
+	
+	const TYPE_URL = 'Url';
+	const TYPE_SEARCH = 'Search';
+	
+	const TYPE_COLOR = 'Color';
+	
+	const TYPE_SELECT = 'Select';
+	const TYPE_MULTI_SELECT = 'MultiSelect';
+	
+	const TYPE_CHECKBOX = 'Checkbox';
+	const TYPE_RADIO_BUTTON = 'RadioButton';
+	
+	const TYPE_TEXTAREA = 'Textarea';
+	const TYPE_WYSIWYG = 'WYSIWYG';
+	
+	const TYPE_PASSWORD = 'Password';
+	
+	const TYPE_FILE = 'File';
+	const TYPE_FILE_IMAGE = 'FileImage';
+	
+	
 	use Form_Field_Trait_Validation;
 	use Form_Field_Trait_Render;
 
 	const ERROR_CODE_EMPTY = 'empty';
 	const ERROR_CODE_INVALID_FORMAT = 'invalid_format';
+	const ERROR_CODE_INVALID_VALUE = 'invalid_value';
+	const ERROR_CODE_OUT_OF_RANGE = 'out_of_range';
+	const ERROR_CODE_FILE_IS_TOO_LARGE = 'file_is_too_large';
+	const ERROR_CODE_DISALLOWED_FILE_TYPE = 'disallowed_file_type';
+	const ERROR_CODE_CHECK_NOT_MATCH = 'check_not_match';
+	const ERROR_CODE_WEAK_PASSWORD = 'weak_password';
 
+	
 	/**
 	 * @var string
 	 */
@@ -68,6 +113,16 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	 * @var string
 	 */
 	protected string $label = '';
+	
+	/**
+	 * @var string
+	 */
+	protected string $help_text = '';
+	
+	/**
+	 * @var array
+	 */
+	protected array $help_data = [];
 
 	/**
 	 * @var string
@@ -88,33 +143,34 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	/**
 	 * @var callable
 	 */
-	protected $catcher;
-
+	protected $field_value_catcher;
+	
+	
 	/**
-	 * Options for Select, MultiSelect, RadioButtons and so on ...
-	 *
-	 * @var array
+	 * @var Form_Definition_FieldOption[][]
 	 */
-	protected array $select_options = [];
+	protected static array $field_options_definition = [];
 
-
+	
 	/**
 	 *
 	 * @param string $name
 	 * @param string $label
-	 * @param mixed $default_value
-	 * @param bool $is_required
 	 */
-	public function __construct( string $name, string $label = '', mixed $default_value = '', bool $is_required = false )
+	public function __construct( string $name, string $label = '' )
 	{
-
 		$this->_name = $name;
-		$this->default_value = $default_value;
 		$this->label = $label;
-		$this->setIsRequired( $is_required );
-		$this->setDefaultValue( $default_value );
 	}
-
+	
+	/**
+	 * @return string
+	 */
+	public function getType() : string
+	{
+		return $this->_type;
+	}
+	
 	/**
 	 * @return Form
 	 */
@@ -151,15 +207,11 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	 *
 	 * to: object[property][sub_property]
 	 *
-	 * @param string|null $name
-	 *
 	 * @return string
 	 */
-	public function getTagNameValue( ?string $name = null ): string
+	public function getTagNameValue(): string
 	{
-		if( !$name ) {
-			$name = $this->getName();
-		}
+		$name = $this->getName();
 
 		if( $name[0] != '/' ) {
 			return $name;
@@ -213,43 +265,18 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	 */
 	public function setDefaultValue( mixed $default_value ): void
 	{
-
 		$this->default_value = $default_value;
-
-		if( $default_value instanceof DataModel_IDController ) {
-			$default_value = $default_value->toString();
-		}
-
+		
 		if(
-			is_array( $default_value ) ||
-			(
-				is_object( $default_value ) &&
-				$default_value instanceof Iterator
-			)
+			is_object( $default_value ) &&
+			$default_value instanceof Iterator
 		) {
 			$this->_value = [];
 			foreach( $default_value as $k => $v ) {
-				if(
-					is_object( $v ) &&
-					$v instanceof DataModel
-				) {
-					/**
-					 * @var DataModel $v
-					 */
-					$v = $v->getIDController()->toString();
-				}
-				if( is_array( $v ) ) {
-					$v = $k;
-				}
-
-				$this->_value[] = trim( Data_Text::htmlSpecialChars( (string)$v ) );
+				$this->_value[$k] = $v;
 			}
 		} else {
-			if( is_string( $default_value ) ) {
-				$this->_value = trim( Data_Text::htmlSpecialChars( $default_value ) );
-			} else {
-				$this->_value = $default_value;
-			}
+			$this->_value = $default_value;
 		}
 
 		$this->_value_raw = $default_value;
@@ -272,6 +299,40 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	{
 		$this->label = $label;
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getHelpText(): string
+	{
+		return $this->_( $this->help_text, $this->help_data );
+	}
+	
+	/**
+	 * @param string $help_text
+	 */
+	public function setHelpText( string $help_text ): void
+	{
+		$this->help_text = $help_text;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getHelpData(): array
+	{
+		return $this->help_data;
+	}
+	
+	/**
+	 * @param mixed $help_data
+	 */
+	public function setHelpData( array $help_data ): void
+	{
+		$this->help_data = $help_data;
+	}
+	
+	
 
 
 	/**
@@ -307,57 +368,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	{
 		$this->is_required = (bool)$required;
 	}
-
-
-	/**
-	 * Set field options (parameters)
-	 *
-	 * @param array $options
-	 *
-	 * @throws Form_Exception
-	 */
-	public function setOptions( array $options ): void
-	{
-		foreach( $options as $o_k => $o_v ) {
-			if( !$this->objectHasProperty( $o_k ) ) {
-				throw new Form_Exception( 'Unknown form field option: ' . $o_k );
-			}
-
-			$this->{$o_k} = $o_v;
-		}
-	}
-
-	/**
-	 * Options for Select, MultiSelect and so on ...
-	 *
-	 * @return array
-	 */
-	public function getSelectOptions(): array
-	{
-		return $this->select_options;
-	}
-
-	/**
-	 * Options for Select, MultiSelect and so on ...
-	 *
-	 * @param array|Iterator $options
-	 */
-	public function setSelectOptions( array|Iterator $options ): void
-	{
-		if( is_object( $options ) ) {
-
-			$_o = $options;
-			$options = [];
-
-			foreach( $_o as $k => $v ) {
-				$options[$k] = $v;
-			}
-		}
-
-		$this->select_options = $options;
-	}
-
-
+	
 	/**
 	 * @return bool
 	 */
@@ -378,28 +389,28 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	/**
 	 * @return callable|null
 	 */
-	public function getCatcher(): callable|null
+	public function getFieldValueCatcher(): callable|null
 	{
-		return $this->catcher;
+		return $this->field_value_catcher;
 	}
 
 	/**
-	 * @param callable $catcher
+	 * @param callable $field_value_catcher
 	 */
-	public function setCatcher( callable $catcher ): void
+	public function setFieldValueCatcher( callable $field_value_catcher ): void
 	{
-		$this->catcher = $catcher;
+		$this->field_value_catcher = $field_value_catcher;
 	}
 
 	/**
 	 *
 	 */
-	public function catchData(): void
+	public function catchFieldValue(): void
 	{
 		if(
 			$this->getIsReadonly() ||
-			!$this->getHasValue() ||
-			!($catcher = $this->getCatcher())
+			!$this->hasValue() ||
+			!($catcher = $this->getFieldValueCatcher())
 		) {
 			return;
 		}
@@ -411,7 +422,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	 *
 	 * @return bool
 	 */
-	public function getHasValue(): bool
+	public function hasValue(): bool
 	{
 		return $this->_has_value;
 	}
@@ -496,5 +507,27 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 			$this->_value = $this->default_value;
 		}
 	}
+	
+	/**
+	 * @return Form_Definition_FieldOption[]
+	 */
+	public static function getFieldOptionsDefinition() : array
+	{
+		$class = static::class;
+		
+		if(!array_key_exists($class, static::$field_options_definition)) {
+			$properties = Attributes::getClassPropertyDefinition( new ReflectionClass($class), Form_Definition_FieldOption::class );
+			static::$field_options_definition[$class] = [];
+			
+			foreach($properties as $option_name=>$def_data) {
+				static::$field_options_definition[$class][$option_name] = new Form_Definition_FieldOption();
+				static::$field_options_definition[$class][$option_name]->setup($class, $option_name, $def_data);
+				
+			}
 
+			
+		}
+		return static::$field_options_definition[$class];
+	}
+	
 }

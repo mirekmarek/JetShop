@@ -6,7 +6,7 @@ use Jet\UI;
 
 $form = Main::getLoginForm();
 
-$form->tag()->addJsAction('onsubmit', 'CustomerLogin.login();return false;');
+$form->renderer()->addJsAction('onsubmit', 'CustomerLogin.login();return false;');
 ?>
 <?=$form->start()?>
 	<?=$form->getCommonMessage()?>

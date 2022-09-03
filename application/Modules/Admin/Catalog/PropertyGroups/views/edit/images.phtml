@@ -1,0 +1,38 @@
+<?php
+namespace JetShopModule\Admin\Catalog\PropertyGroups;
+
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\UI;
+use JetShop\PropertyGroup;
+use JetShop\PropertyGroup_ShopData;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View   $this
+ * @var PropertyGroup $property
+ * @var Form $form
+ */
+$property_group = $this->getRaw( 'property_group' );
+
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+	
+	<?php
+	echo $this->getRaw('tabs');
+	
+	foreach(Shops::getList() as $shop):
+		echo $property_group->getShopData( $shop )->renderImageWidgets( PropertyGroup_ShopData::getImageClasses(), !$property_group->getEditForm()->getIsReadonly() );
+	endforeach;
+	?>
+	</div>
+</div>

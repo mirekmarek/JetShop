@@ -4,8 +4,9 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\Form_Field_MultiSelect;
 
 trait Core_Product_Trait_Variants
 {
@@ -17,54 +18,50 @@ trait Core_Product_Trait_Variants
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
-		form_field_type: false
 	)]
 	protected int $variant_master_product_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 512,
-		form_field_type: false
 	)]
 	protected string $variant_ids = '';
 
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 512,
-		form_field_type: false
-	)]
-	protected string $variant_control_property_ids = '';
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Synchronize categories'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Synchronize categories'
 	)]
 	protected bool $variant_sync_categories = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Synchronize descriptions'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Synchronize descriptions'
 	)]
 	protected bool $variant_sync_descriptions = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Synchronize stickers'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Synchronize stickers'
 	)]
 	protected bool $variant_sync_stickers = true;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
-		form_field_label: 'Synchronize prices'
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Synchronize prices'
 	)]
 	protected bool $variant_sync_prices = true;
-
-
-	/**
-	 * @var Parametrization_Property[]
-	 */
-	protected array|null $variant_control_properties = null;
 
 	protected ?Form $_variant_setup_form = null;
 
@@ -83,54 +80,6 @@ trait Core_Product_Trait_Variants
 		$this->variant_master_product_id = $variant_master_product_id;
 	}
 
-	public function getVariantControlPropertyIds() : array
-	{
-		if(!$this->variant_control_property_ids) {
-			return [];
-		} else {
-			return explode(',', $this->variant_control_property_ids);
-		}
-	}
-
-	/**
-	 * @return Parametrization_Property[]
-	 */
-	public function getVariantControlProperties() : array
-	{
-		if($this->variant_control_properties===null) {
-			$variant_control_property_ids = $this->getVariantControlPropertyIds();
-			foreach($this->getCategories() as $category) {
-				foreach($category->getParametrizationProperties() as $property) {
-					if(
-						$property->isVariantSelector() &&
-						!in_array($property->getId(), $variant_control_property_ids)
-					) {
-						$variant_control_property_ids[] = $property->getId();
-					}
-				}
-			}
-
-			$this->variant_control_properties = [];
-
-			foreach($this->getCategories() as $category) {
-				foreach($category->getParametrizationProperties() as $property) {
-					if(
-					in_array($property->getId(), $variant_control_property_ids)
-					) {
-						$this->variant_control_properties[$property->getId()] = $property;
-					}
-				}
-			}
-		}
-
-		return $this->variant_control_properties;
-
-	}
-
-	public function setVariantControlPropertyIds( array $variant_control_property_ids ) : void
-	{
-		$this->variant_control_property_ids = implode(',', $variant_control_property_ids);
-	}
 
 	public function isVariantSyncCategories() : bool
 	{
@@ -176,35 +125,12 @@ trait Core_Product_Trait_Variants
 	public function getVariantSetupForm() : Form
 	{
 		if(!$this->_variant_setup_form) {
-			$this->_variant_setup_form = $this->getForm('variant_setup_form', [
+			$this->_variant_setup_form = $this->createForm(form_name: 'variant_setup_form', only_fields: [
 				'variant_sync_categories',
 				'variant_sync_descriptions',
 				'variant_sync_stickers',
 				'variant_sync_prices',
 			]);
-
-
-			$variant_control_property_ids = new Form_Field_MultiSelect('variant_control_property_ids', 'Distinguish variants by:', $this->getVariantControlPropertyIds());
-			$variant_control_property_ids->setCatcher(function($value) {
-				$this->setVariantControlPropertyIds($value);
-			});
-			$variant_control_property_ids->setErrorMessages([
-				Form_Field_MultiSelect::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-			]);
-
-			$properties = [];
-
-			foreach($this->getCategories() as $category) {
-				foreach($category->getParametrizationProperties() as $property) {
-					$properties[$property->getId()] = $property->getGroup()->getShopData()->getLabel().' - '.$property->getShopData()->getLabel();
-				}
-			}
-
-
-			$variant_control_property_ids->setSelectOptions( $properties );
-
-
-			$this->_variant_setup_form->addField($variant_control_property_ids);
 		}
 
 		return $this->_variant_setup_form;
@@ -213,20 +139,15 @@ trait Core_Product_Trait_Variants
 	public function catchVariantSetupForm() : bool
 	{
 		$edit_form = $this->getVariantSetupForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
+		if( $edit_form->catch() ) {
+			foreach($this->getCategories() as $c) {
+				Category::addSyncCategory( $c->getId() );
+			}
+			
+			return true;
 		}
-
-		$edit_form->catchData();
-
-		foreach($this->getCategories() as $c) {
-			Category::addSyncCategory( $c->getId() );
-		}
-
-		return true;
+		
+		return false;
 	}
 
 
@@ -234,7 +155,7 @@ trait Core_Product_Trait_Variants
 	{
 
 		if(!$this->_variant_add_form) {
-			$this->_variant_add_form = $this->getCommonForm('variant_add_form');
+			$this->_variant_add_form = $this->createForm('variant_add_form');
 
 			foreach($this->_variant_add_form->getFields() as $field) {
 				$keep = false;
@@ -269,17 +190,12 @@ trait Core_Product_Trait_Variants
 	public function catchAddVariantForm( Product $new_variant ) : bool
 	{
 		$edit_form = $new_variant->getAddVariantForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
+		if( $edit_form->catch() ) {
+			$this->addVariant( $new_variant );
+			
+			return true;
 		}
-
-		$edit_form->catchData();
-
-		$this->addVariant( $new_variant );
-
+		
 		return true;
 	}
 
@@ -288,41 +204,20 @@ trait Core_Product_Trait_Variants
 		if(!$this->_update_variants_form) {
 			$fields = [];
 
-			$variant_control_properties = $this->getVariantControlProperties();
-
 			foreach($this->getVariants() as $variant) {
 
 				foreach(Shops::getList() as $shop) {
-					$variant_name = new Form_Field_Input('/'.$variant->getId().'/'.$shop->getKey().'/variant_name', 'Variant name', $variant->getShopData($shop)->getVariantName() );
+					$variant_name = new Form_Field_Input('/'.$variant->getId().'/'.$shop->getKey().'/variant_name', 'Variant name' );
+					$variant_name->setDefaultValue( $variant->getShopData($shop)->getVariantName() );
 
-					$variant_name->setCatcher( function( $value ) use ($variant, $shop) {
+					$variant_name->setFieldValueCatcher( function( $value ) use ($variant, $shop) {
 						$variant->getShopData(  $shop )->setVariantName( $value );
 					} );
 
 					$fields[] = $variant_name;
 
 				}
-
-
-				foreach($variant_control_properties as $property) {
-					$property_id = $property->getId();
-
-
-					if(!isset($variant->parametrization_values[$property_id])) {
-						$pv = new Product_ParametrizationValue();
-						$variant->parametrization_values[$property_id] = $pv;
-					} else {
-						$pv = $variant->parametrization_values[$property_id];
-					}
-
-					$pv->setProperty( $property );
-
-					foreach( $pv->getValueEditForm()->getFields() as $field ) {
-						$field->setName('/'.$variant->getId().'/'.$property->getId().'/'.$field->getName());
-						$fields[] = $field;
-					}
-				}
-
+				
 			}
 
 			$this->_update_variants_form = new Form('update_variants_form', $fields);
@@ -335,24 +230,19 @@ trait Core_Product_Trait_Variants
 	public function catchUpdateVariantsForm(): bool
 	{
 		$edit_form = $this->getUpdateVariantsForm();
-		if(
-			!$edit_form->catchInput() ||
-			!$edit_form->validate()
-		) {
-			return false;
-		}
-
-		$edit_form->catchData();
-
-		foreach($this->getVariants() as $variant) {
-			$variant->save();
-
-			foreach($variant->getCategories() as $c) {
-				Category::addSyncCategory( $c->getId() );
+		if( $edit_form->catch() ) {
+			foreach($this->getVariants() as $variant) {
+				$variant->save();
+				
+				foreach($variant->getCategories() as $c) {
+					Category::addSyncCategory( $c->getId() );
+				}
 			}
+			
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 
@@ -483,19 +373,19 @@ trait Core_Product_Trait_Variants
 
 		$skip_properties = $this->getVariantControlPropertyIds();
 
-		foreach($this->parametrization_values as $pv) {
+		foreach( $this->parameters as $pv) {
 			$p_id = $pv->getPropertyId();
 			if(in_array($p_id, $skip_properties)) {
 				continue;
 			}
 
-			if(!isset($variant->parametrization_values[$p_id])) {
-				$variant->parametrization_values[$p_id] = new Product_ParametrizationValue();
-				$variant->parametrization_values[$p_id]->setPropertyId( $pv->getPropertyId() );
+			if(!isset( $variant->parameters[$p_id])) {
+				$variant->parameters[$p_id] = new Product_Parameter();
+				$variant->parameters[$p_id]->setPropertyId( $pv->getPropertyId() );
 			}
-
-			$variant->parametrization_values[$p_id]->setRawValue( $pv->getRawValue() );
-			$variant->parametrization_values[$p_id]->setInformationIsNotAvailable( $pv->isInformationIsNotAvailable() );
+			
+			$variant->parameters[$p_id]->setRawValue( $pv->getRawValue() );
+			$variant->parameters[$p_id]->setInformationIsNotAvailable( $pv->isInformationIsNotAvailable() );
 		}
 
 

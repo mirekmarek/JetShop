@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -34,6 +34,6 @@ trait DataModel_Trait_Definition
 	 */
 	public static function dataModelDefinitionType(): string
 	{
-		return 'Main';
+		return DataModel::MODEL_TYPE_MAIN;
 	}
 }

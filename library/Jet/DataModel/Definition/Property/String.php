@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -23,11 +23,6 @@ class DataModel_Definition_Property_String extends DataModel_Definition_Property
 	 * @var int
 	 */
 	protected int $max_len = 255;
-
-	/**
-	 * @var string|bool
-	 */
-	protected string|bool $form_field_type = Form::TYPE_INPUT;
 
 	/**
 	 * @param array $definition_data
@@ -60,22 +55,4 @@ class DataModel_Definition_Property_String extends DataModel_Definition_Property
 	{
 		return $this->max_len;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormFieldType(): string
-	{
-
-		if( $this->form_field_type != Form::TYPE_INPUT ) {
-			return $this->form_field_type;
-		}
-
-		if( $this->max_len <= 255 ) {
-			return Form::TYPE_INPUT;
-		} else {
-			return Form::TYPE_TEXTAREA;
-		}
-	}
-
 }

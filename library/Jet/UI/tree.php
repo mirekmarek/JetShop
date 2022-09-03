@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -12,14 +12,9 @@ namespace Jet;
 /**
  *
  */
-class UI_tree extends BaseObject
+class UI_tree extends UI_Renderer_Single
 {
-
-	/**
-	 * @var ?string
-	 */
-	protected ?string $view_script = null;
-
+	
 	/**
 	 * @var ?Data_Tree
 	 */
@@ -56,28 +51,11 @@ class UI_tree extends BaseObject
 	protected $renderer_normal;
 
 
-
-	/**
-	 * @return string
-	 */
-	public function getViewScript(): string
+	public function __construct()
 	{
-		if( !$this->view_script ) {
-			$this->view_script = SysConf_Jet_UI_DefaultViews::get('tree');
-		}
-
-		return $this->view_script;
+		$this->view_script = SysConf_Jet_UI_DefaultViews::get('tree');
 	}
-
-
-	/**
-	 * @param string $view_script
-	 */
-	public function setViewScript( string $view_script ): void
-	{
-		$this->view_script = $view_script;
-	}
-
+	
 	/**
 	 * @param Data_Tree_Node $node
 	 *
@@ -293,41 +271,6 @@ class UI_tree extends BaseObject
 	public function setRendererOpened( callable $renderer ): void
 	{
 		$this->renderer_opened = $renderer;
-	}
-
-	/**
-	 * @return MVC_View
-	 */
-	public function getView(): MVC_View
-	{
-		$view = UI::getView();
-		$view->setVar( 'tree', $this );
-
-		return $view;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function __toString(): string
-	{
-		return $this->toString();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function toString(): string
-	{
-		return $this->render();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function render(): string
-	{
-		return $this->getView()->render( $this->getViewScript() );
 	}
 
 }

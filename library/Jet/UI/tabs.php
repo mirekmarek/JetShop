@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -11,7 +11,7 @@ namespace Jet;
 /**
  *
  */
-class UI_tabs extends UI_BaseElement
+class UI_tabs extends UI_Renderer_Single
 {
 
 	/**
@@ -48,22 +48,11 @@ class UI_tabs extends UI_BaseElement
 		foreach( $this->tabs as $id => $tab ) {
 			$tab->setIsSelected( $id == $this->selected_tab_id );
 		}
+		$this->view_script = SysConf_Jet_UI_DefaultViews::get('tabs');
 
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getViewScript(): string
-	{
-		if( !$this->view_script ) {
-			$this->view_script = SysConf_Jet_UI_DefaultViews::get('tabs');
-		}
-
-		return $this->view_script;
-	}
-
-
+	
 	/**
 	 * @param string $id
 	 *

@@ -103,7 +103,7 @@ const ProductListing = {
 		properties: {
 			_deactivate: function() {
 				if(ProductListing.state['properties']) {
-					for( var property_id in  ProductListing.state.properties) {
+					for(let property_id in  ProductListing.state.properties) {
 						if(ProductListing.state.properties[property_id]['options']!==undefined) {
 							ProductListing.state.properties[property_id] = {
 								is_active: false,
@@ -143,9 +143,9 @@ const ProductListing = {
 				{
 					$('#filter_option_'+property_id+'_'+option_id).attr('checked', false);
 
-					var new_options = [];
-					for(var c=0;c<ProductListing.state.properties[property_id].options.length;c++) {
-						var _id = ProductListing.state.properties[property_id].options[c];
+					const new_options = [];
+					for(let c=0; c<ProductListing.state.properties[property_id].options.length; c++) {
+						const _id = ProductListing.state.properties[property_id].options[c];
 						if(_id!=option_id) {
 							new_options.push(_id);
 						}
@@ -160,7 +160,7 @@ const ProductListing = {
 
 				toggle: function( property_id, option_id )
 				{
-					var selected = ProductListing.state.properties[property_id].options.includes( option_id );
+					const selected = ProductListing.state.properties[property_id].options.includes(option_id);
 
 					if(selected) {
 						ProductListing.filter.properties.option.disable( property_id, option_id );
@@ -276,7 +276,7 @@ const ProductListing = {
 			toggleBrand: function( brand_id )
 			{
 
-				var selected = ProductListing.state.brands.active.includes( brand_id );
+				const selected = ProductListing.state.brands.active.includes(brand_id);
 
 				if(selected) {
 					ProductListing.filter.brands.disable( brand_id );
@@ -290,9 +290,9 @@ const ProductListing = {
 			{
 				$( '#filter_brand_'+brand_id ).attr('checked', false);
 
-				var new_active = [];
-				for(var c=0;c<ProductListing.state.brands.active.length;c++) {
-					var _id = ProductListing.state.brands.active[c];
+				const new_active = [];
+				for(let c=0; c<ProductListing.state.brands.active.length; c++) {
+					const _id = ProductListing.state.brands.active[c];
 					if(_id!=brand_id) {
 						new_active.push(_id);
 					}
@@ -392,9 +392,9 @@ const ProductListing = {
 			{
 				$('#filter_flag_'+flag_id ).attr('checked', false);
 
-				var new_active = [];
-				for(var c=0;c<ProductListing.state.flags.active.length;c++) {
-					var _id = ProductListing.state.flags.active[c];
+				const new_active = [];
+				for(let c=0; c<ProductListing.state.flags.active.length; c++) {
+					const _id = ProductListing.state.flags.active[c];
 					if(_id!=flag_id) {
 						new_active.push(_id);
 					}
@@ -408,7 +408,7 @@ const ProductListing = {
 
 			toggle: function( flag_id )
 			{
-				var selected = ProductListing.state.flags.active.includes( flag_id );
+				const selected = ProductListing.state.flags.active.includes(flag_id);
 
 				if(selected) {
 					ProductListing.filter.flags.disable( flag_id );

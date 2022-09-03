@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -16,32 +16,14 @@ class Form_Field_Hidden extends Form_Field
 	/**
 	 * @var string
 	 */
-	protected string $_type = Form::TYPE_HIDDEN;
-
-	/**
-	 * @var array
-	 */
-	protected array $error_messages = [
-		self::ERROR_CODE_EMPTY          => '',
-		self::ERROR_CODE_INVALID_FORMAT => '',
-	];
-
+	protected string $_type = Form_Field::TYPE_HIDDEN;
+	
 	/**
 	 * @return array
 	 */
 	public function getRequiredErrorCodes(): array
 	{
-		$codes = [];
-
-		if( $this->is_required ) {
-			$codes[] = self::ERROR_CODE_EMPTY;
-		}
-
-		if( $this->validation_regexp ) {
-			$codes[] = self::ERROR_CODE_INVALID_FORMAT;
-		}
-
-		return $codes;
+		return [];
 	}
 
 	/**
@@ -50,5 +32,18 @@ class Form_Field_Hidden extends Form_Field
 	public function render(): string
 	{
 		return (string)$this->input();
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function validate(): bool
+	{
+		if(!$this->validate_validator()) {
+			return false;
+		}
+		
+		$this->setIsValid();
+		return true;
 	}
 }

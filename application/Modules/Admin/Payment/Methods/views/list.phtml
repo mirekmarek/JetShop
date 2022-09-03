@@ -35,9 +35,9 @@ $c_edit->setRenderer(
 
 	}
 );
-$c_edit->setCssStyle( 'width:200px;' );
+$c_edit->addCustomCssStyle( 'width:200px;' );
 
-$grid->getColumn( 'code' )->setCssStyle( 'width:120px;' );
+$grid->getColumn( 'code' )->addCustomCssStyle( 'width:120px;' );
 
 $grid->getColumn( 'internal_name' )->setRenderer(
 	function( Payment_Method $item ) use ( $router ) {
@@ -47,7 +47,7 @@ $grid->getColumn( 'internal_name' )->setRenderer(
 		<?php
 	}
 );
-$grid->getColumn( 'internal_name' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'internal_name' )->addCustomCssStyle( 'width:200px;' );
 
 $grid->getColumn( 'code' )->setRenderer(
 	function( Payment_Method $item ) use ( $router ) {
@@ -63,7 +63,7 @@ $grid->getColumn( 'kind' )->setRenderer(
 		echo $item->getKindTitle();
 	}
 );
-$grid->getColumn( 'kind' )->setCssStyle( 'width:200px;' );
+$grid->getColumn( 'kind' )->addCustomCssStyle( 'width:200px;' );
 
 $grid->getColumn( 'services' )->setRenderer(
 	function( Payment_Method $item ) use ( $router ) {
@@ -72,7 +72,7 @@ $grid->getColumn( 'services' )->setRenderer(
 		}
 	}
 );
-$grid->getColumn( 'services' )->setCssStyle( 'width:350px;' );
+$grid->getColumn( 'services' )->addCustomCssStyle( 'width:350px;' );
 
 
 $grid->getColumn( 'delivery_methods' )->setRenderer(
@@ -82,7 +82,7 @@ $grid->getColumn( 'delivery_methods' )->setRenderer(
 		}
 	}
 );
-$grid->getColumn( 'delivery_methods' )->setCssStyle( 'width:350px;' );
+$grid->getColumn( 'delivery_methods' )->addCustomCssStyle( 'width:350px;' );
 
 
 $grid->getColumn( 'status' )->setRenderer(
@@ -104,7 +104,7 @@ $grid->getColumn( 'status' )->setRenderer(
 		echo '</table>';
 	}
 );
-$grid->getColumn( 'status' )->setCssStyle('width:250px;');
+$grid->getColumn( 'status' )->addCustomCssStyle('width:250px;');
 
 ?>
 
@@ -117,7 +117,7 @@ $grid->getColumn( 'status' )->setCssStyle('width:250px;');
 	<?php endif; ?>
 
 	<div class="col-md-3 col-sm-12">
-		<?=UI::searchField( 'search', $filter_form->field('search')->getValue() )?>
+		<?= $filter_form->field( 'search' )->input() ?>
 	</div>
 	<div class="col-md-4 col-sm-12">
 	</div>

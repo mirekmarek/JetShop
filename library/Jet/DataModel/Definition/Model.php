@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -81,23 +81,6 @@ abstract class DataModel_Definition_Model extends BaseObject
 	 */
 	protected array $relations = [];
 
-
-	/**
-	 * @param array $data
-	 *
-	 * @return static
-	 */
-	public static function __set_state( array $data ): static
-	{
-		$i = new static();
-
-		foreach( $data as $key => $val ) {
-			$i->{$key} = $val;
-		}
-
-		return $i;
-	}
-
 	/**
 	 *
 	 * @param string $data_model_class_name (optional)
@@ -139,7 +122,14 @@ abstract class DataModel_Definition_Model extends BaseObject
 		$this->class_name = $data_model_class_name;
 		$this->class_reflection = new ReflectionClass( $data_model_class_name );
 
-		$this->class_arguments = Attributes::getClassArguments( $this->class_reflection, 'Jet\DataModel_Definition' );
+		$this->class_arguments = Attributes::getClassDefinition(
+			$this->class_reflection,
+			DataModel_Definition::class,
+			[
+				'key' => 'keys',
+				'relation' => 'relations'
+			]
+		);
 
 
 		$this->model_name = $this->_getModelNameDefinition();
@@ -274,7 +264,7 @@ abstract class DataModel_Definition_Model extends BaseObject
 
 		$reflection = $class_name ? new ReflectionClass( $class_name ) : $this->class_reflection;
 
-		$properties_definition_data = Attributes::getPropertiesDefinition( $reflection, 'Jet\DataModel_Definition' );
+		$properties_definition_data = Attributes::getClassPropertyDefinition( $reflection, DataModel_Definition::class );
 
 		if(
 		!$properties_definition_data

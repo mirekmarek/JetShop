@@ -273,15 +273,19 @@ abstract class Core_Images
 		 * @var Form_Field_FileImage $image_field
 		 */
 		$image_field = $form->getField('image');
+		
+		$images = $image_field->getValidFiles();
 
-		Images::uploadImage(
-			$image_field->getTmpFilePath(),
-			$shop,
-			$entity,
-			$object_id,
-			$image_class,
-			$object_property
-		);
+		foreach($images as $image) {
+			Images::uploadImage(
+				$image->getTmpFilePath(),
+				$shop,
+				$entity,
+				$object_id,
+				$image_class,
+				$object_property
+			);
+		}
 
 		return true;
 	}

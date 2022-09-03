@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
@@ -83,12 +83,8 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getDictionaries()                                 => [
-				'is_required'  => true,
-				'is_writeable' => false,
-			],
 			SysConf_Path::getConfig()                                       => [
-				'is_required'  => false,
+				'is_required'  => true,
 				'is_writeable' => false,
 			],
 		];

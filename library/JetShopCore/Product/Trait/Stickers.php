@@ -14,7 +14,6 @@ trait Core_Product_Trait_Stickers
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Product_Sticker::class,
-		form_field_type: false
 	)]
 	protected array $stickers = [];
 
@@ -90,8 +89,9 @@ trait Core_Product_Trait_Stickers
 		foreach(Sticker::getList() as $sticker) {
 			$s_code = $sticker->getCode();
 
-			$field = new Form_Field_Checkbox('/sticker/'.$s_code, $sticker->getInternalName(), isset($this->stickers[$s_code]) );
-			$field->setCatcher( function( $value ) {
+			$field = new Form_Field_Checkbox('/sticker/'.$s_code, $sticker->getInternalName() );
+			$field->setDefaultValue( isset($this->stickers[$s_code]) );
+			$field->setFieldValueCatcher( function( $value ) {
 				if($value) {
 					$this->addSticker($value);
 				} else {
