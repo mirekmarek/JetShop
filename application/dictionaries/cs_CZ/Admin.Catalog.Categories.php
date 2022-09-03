@@ -156,4 +156,8 @@ return [
 	'Change kind of product' => '',
 	'Change' => '',
 	'Flags' => '',
+	'Activate auto append products' => '',
+	'Auto append deactivated' => '',
+	'Auto append activated' => '',
+	'Deactivate auto append products' => '',
 ];

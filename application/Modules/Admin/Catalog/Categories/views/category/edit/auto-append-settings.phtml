@@ -2,9 +2,12 @@
 namespace JetShopModule\Admin\Catalog\Categories;
 
 use Jet\Form_Renderer;
+use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI;
 use Jet\MVC_View;
+use Jet\UI_badge;
+use Jet\UI_button;
 use JetShop\Brand;
 use JetShop\Property;
 
@@ -22,11 +25,21 @@ $target_filter_form->renderer()->setDefaultLabelWidth([
 ?>
 <?=$this->render('lj_start')?>
 <?=$target_filter_form->start()?>
-<div class="row toolbar" id="main-toolbar">
+<div class="row toolbar">
 	<div class="col-md-12">
-		<?php if(!$target_filter_form->getIsReadonly()):?>
-			<?=UI::button_save()?>
-		<?php endif; ?>
+		<?php if(!$target_filter_form->getIsReadonly()):
+			if($category->getAutoAppendProducts()):
+				?>
+				<?=UI::badge(UI_badge::SUCCESS, Tr::_('Auto append activated'))?>
+				<?=UI::button(Tr::_('Deactivate auto append products'))->setClass(UI_button::CLASS_DANGER)->setUrl(Http_Request::currentURI(['deactivate'=>1]))?>
+				<?php
+			else:
+				?>
+				<?=UI::badge(UI_badge::DANGER, Tr::_('Auto append deactivated'))?>
+				<?=UI::button(Tr::_('Activate auto append products'))->setClass(UI_button::CLASS_SUCCESS)->setUrl(Http_Request::currentURI(['activate'=>1]))?>
+				<?php
+			endif;
+		endif; ?>
 	</div>
 </div>
 <div class="row">

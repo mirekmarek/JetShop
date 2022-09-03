@@ -7,6 +7,6 @@ use Jet\DataModel_Definition;
  *
  */
 #[DataModel_Definition]
-class Property_Value_Bool extends Core_Property_Value_Bool
+class Property_Bool_Value extends Core_Property_Bool_Value
 {
 }

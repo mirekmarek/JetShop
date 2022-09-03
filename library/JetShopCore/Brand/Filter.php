@@ -1,7 +1,7 @@
 <?php
 namespace JetShop;
 
-abstract class Core_ProductListing_Filter_Brands_Brand {
+abstract class Core_Brand_Filter {
 
 	protected ?ProductListing $listing = null;
 

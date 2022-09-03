@@ -6,7 +6,7 @@ use Jet\Form_Field_Checkbox;
 /**
  *
  */
-abstract class Core_ProductListing_Filter_Params_Property_Bool extends ProductListing_Filter_Params_Property
+abstract class Core_Property_Bool_Filter extends Property_Filter
 {
 
 	protected array $filtered_ids = [];

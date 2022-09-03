@@ -3,38 +3,38 @@ namespace JetShop;
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
 
-abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_Abstract {
+abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter {
 	const CACHE_KEY = 'f_brands';
 
 	protected string $key = 'brands';
 
 	/**
-	 * @var ProductListing_Filter_Brands_Brand[]
+	 * @var Brand_Filter[]
 	 */
-	protected array $brands = [];
+	protected array $brand_filters;
 	
 	public function initProductListing() : void
 	{
-		$this->brands = [];
+		$this->brand_filters = [];
 		
 		foreach(Brand::getAll() as $brand) {
 			if(!$brand->getShopData($this->shop)->isActive()) {
 				continue;
 			}
 			
-			$this->brands[$brand->getId()] = new ProductListing_Filter_Brands_Brand( $this->listing, $brand );
+			$this->brand_filters[$brand->getId()] = new Brand_Filter( $this->listing, $brand );
 		}
 	}
 	
 	public function initAutoAppendFilter( array &$target_filter ) : void
 	{
-		$this->brands = [];
+		$this->brand_filters = [];
 		
 		foreach(Brand::getAll() as $brand) {
-			$this->brands[$brand->getId()] = new ProductListing_Filter_Brands_Brand( $this->listing, $brand );
+			$this->brand_filters[$brand->getId()] = new Brand_Filter( $this->listing, $brand );
 		}
 		
-		foreach( $this->brands as $b_id=>$filter ) {
+		foreach( $this->brand_filters as $b_id=> $filter ) {
 			
 			if(isset($target_filter['brands'][$b_id])) {
 				$filter->setIsActive(true);
@@ -52,7 +52,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 
 	public function getAutoAppendProductFilterEditForm( Form $form ) : void
 	{
-		foreach($this->brands as $b_id=>$b) {
+		foreach( $this->brand_filters as $b_id=> $b) {
 			
 			$field = new Form_Field_Checkbox('/brands/'.$b_id, $b->getBrand()->getShopData()->getName()  );
 			$field->setDefaultValue( $b->isActive() );
@@ -77,7 +77,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 	public function getStateData( array &$state_data ) : void
 	{
 		$active = [];
-		foreach( $this->brands as $id=>$filter ) {
+		foreach( $this->brand_filters as $id=> $filter ) {
 
 			if($filter->isActive()) {
 				$active[] = $id;
@@ -91,7 +91,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 	{
 		$active = $state_data['brands']['active'];
 
-		foreach( $this->brands as $id=>$filter ) {
+		foreach( $this->brand_filters as $id=> $filter ) {
 			$filter->setIsActive( in_array($id, $active) );
 		}
 	}
@@ -99,7 +99,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 	public function generateUrl( array &$parts ) : void
 	{
 		$brands = [];
-		foreach( $this->brands as $brand ) {
+		foreach( $this->brand_filters as $brand ) {
 			if( $brand->isActive() ) {
 				$brands[] = $brand->getBrand()->getShopData($this->shop)->getUrlParam();
 			}
@@ -121,7 +121,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 				$brands = explode('_', $part)[1];
 				$brands = explode('+', $brands);
 
-				foreach( $this->brands as $brand ) {
+				foreach( $this->brand_filters as $brand ) {
 
 					$url_param = $brand->getBrand()->getShopData($this->shop)->getUrlParam();
 
@@ -162,15 +162,15 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 
 
 		foreach($map as $brand_id=>$product_ids) {
-			if(isset($this->brands[$brand_id])) {
-				$this->brands[$brand_id]->setProductIds( $product_ids );
+			if(isset( $this->brand_filters[$brand_id])) {
+				$this->brand_filters[$brand_id]->setProductIds( $product_ids );
 			}
 		}
 	}
 
 	public function filterIsActive() : bool
 	{
-		foreach($this->brands as $b) {
+		foreach( $this->brand_filters as $b) {
 			if($b->isActive() ) {
 				return true;
 			}
@@ -184,7 +184,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 		if($this->filtered_product_ids===null) {
 			$this->filtered_product_ids = [];
 
-			foreach($this->brands as $b) {
+			foreach( $this->brand_filters as $b) {
 				if($b->isActive() ) {
 					$this->filtered_product_ids = array_merge(
 						$this->filtered_product_ids,
@@ -198,20 +198,20 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 	}
 
 	/**
-	 * @return ProductListing_Filter_Brands_Brand[]
+	 * @return Brand_Filter[]
 	 */
-	public function getBrands() : array
+	public function getBrandFilters() : array
 	{
-		return $this->brands;
+		return $this->brand_filters;
 	}
 
 	/**
-	 * @return ProductListing_Filter_Brands_Brand[]
+	 * @return Brand_Filter[]
 	 */
 	public function getActiveBrands() : array
 	{
 		$brands = [];
-		foreach( $this->brands as $brand ) {
+		foreach( $this->brand_filters as $brand ) {
 			if($brand->isActive()) {
 				$brands[$brand->getBrand()->getId()] = $brand;
 			}
@@ -222,7 +222,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 
 	public function disableNonRelevantFilters() : void
 	{
-		foreach($this->brands as $brand)
+		foreach( $this->brand_filters as $brand)
 		{
 			if(!$brand->getCount()) {
 				$brand->setIsDisabled(true);
@@ -232,7 +232,7 @@ abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter_A
 
 	public function resetCount() : void
 	{
-		foreach($this->brands as $brand)
+		foreach( $this->brand_filters as $brand)
 		{
 			$brand->resetCount();
 		}

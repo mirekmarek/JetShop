@@ -110,6 +110,7 @@ abstract class Core_Property extends DataModel {
 
 	protected Form|null $_edit_form = null;
 	
+	protected ?Property_Filter $filter = null;
 	
 	/**
 	 * @var Property[]
@@ -372,7 +373,10 @@ abstract class Core_Property extends DataModel {
 
 	abstract public function getValueInstance() : Property_Value|null;
 	
-	abstract public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property|null;
+	
+	abstract public function initFilter( ProductListing $listing ) : void;
+	
+	abstract public function filter() : Property_Filter;
 
 
 

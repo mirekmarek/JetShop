@@ -11,7 +11,6 @@ abstract class Core_Property_Options extends Property
 		$form = parent::generateAddForm();
 
 		$form->removeField('decimal_places');
-		$form->removeField('stencil_id');
 
 		foreach( Shops::getList() as $shop ) {
 			$shop_key = $shop->getKey();
@@ -27,7 +26,6 @@ abstract class Core_Property_Options extends Property
 		$form = parent::generateEditForm();
 
 		$form->removeField('decimal_places');
-		$form->removeField('stencil_id');
 
 		foreach( Shops::getList() as $shop ) {
 			$shop_key = $shop->getKey();
@@ -38,14 +36,24 @@ abstract class Core_Property_Options extends Property
 		return $form;
 	}
 
-	public function getValueInstance() : Property_Value_Options
+	public function getValueInstance() : Property_Options_Value
 	{
-		return new Property_Value_Options( $this );
+		return new Property_Options_Value( $this );
 	}
-
-	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property_Options
+	
+	public function initFilter( ProductListing $listing ): void
 	{
-		return new ProductListing_Filter_Params_Property_Options( $listing, $this );
+		$this->filter = new Property_Options_Filter( $listing, $this );
+		
+		foreach($this->options as $option) {
+			$option->initFilter( $listing, $this );
+		}
+	}
+	
+	public function filter() : Property_Options_Filter
+	{
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->filter;
 	}
 
 }

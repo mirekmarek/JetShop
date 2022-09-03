@@ -3,7 +3,7 @@ namespace JetShop;
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
 
-abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter_Abstract {
+abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter {
 	const CACHE_KEY = 'f_flags';
 
 	protected string $key = 'flags';

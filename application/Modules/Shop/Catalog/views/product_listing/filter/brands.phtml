@@ -13,13 +13,13 @@ $listing = $this->getRaw('listing');
 
 $filter_brands = $listing->brands();
 
-if(!$filter_brands->getBrands()) {
+if(!$filter_brands->getBrandFilters()) {
 	return;
 }
 ?>
 <h4><?=Tr::_('Značka')?></h4>
 <?php
-foreach( $filter_brands->getBrands() as $listing_brand ):
+foreach( $filter_brands->getBrandFilters() as $listing_brand ):
 	if($listing_brand->isDisabled()) {
 		continue;
 	}

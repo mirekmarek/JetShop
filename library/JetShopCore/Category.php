@@ -776,7 +776,8 @@ abstract class Core_Category extends DataModel {
 	
 	public function handleAutoAppendProduct() : void
 	{
-	
+		//TODO:
+		die();
 	}
 	
 
@@ -1003,4 +1004,31 @@ abstract class Core_Category extends DataModel {
 		return Category::fetch(['category'=>['id'=>$ids]]);
 	}
 	
+	
+	public function deactivateAutoAppendProducts() : bool
+	{
+		if(!$this->auto_append_products) {
+			return false;
+		}
+		
+		$this->auto_append_products = false;
+		
+		$this->handleAutoAppendProduct();
+		
+		return true;
+	}
+	
+	public function activateAutoAppendProducts() : bool
+	{
+		if($this->auto_append_products) {
+			return false;
+		}
+		
+		$this->auto_append_products = true;
+		$this->save();
+		
+		$this->handleAutoAppendProduct();
+		
+		return true;
+	}
 }

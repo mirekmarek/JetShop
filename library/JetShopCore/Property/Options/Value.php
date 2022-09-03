@@ -5,7 +5,7 @@ use Jet\Form_Field;
 use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_MultiSelect;
 
-abstract class Core_Property_Value_Options extends Property_Value
+abstract class Core_Property_Options_Value extends Property_Value
 {
 
 	public function getValueEditForm( Product_Parameter $product_value ) : Form

@@ -7,15 +7,14 @@ use Jet\UI;
 /**
  * @var MVC_View   $this
  */
-$category = Controller_Main::getCurrentCategory();
 
-$form = $category->getEditForm();
+$category = Controller_Main::getCurrentCategory();
+$form = $category->getAutoAppendProductFilterEditForm();
 
 if($form->getIsReadonly()) {
 	return;
 }
 
 $form_id = $form->getId();
-
 ?>
 <?=UI::button_save()->setOnclick("$('#$form_id').submit();")?>

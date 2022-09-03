@@ -2,7 +2,7 @@
 namespace JetShop;
 use Jet\Form;
 
-abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter_Abstract {
+abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter {
 	const CACHE_KEY = 'f_price';
 
 	protected string $key = 'price';

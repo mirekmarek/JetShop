@@ -8,7 +8,7 @@ abstract class Core_ProductListing
 	use ProductListing_AutoAppendProductFilter;
 	
 	protected static array $filter_list = [
-		ProductListing_Filter_Params::class,
+		ProductListing_Filter_Properties::class,
 		ProductListing_Filter_Brands::class,
 		ProductListing_Filter_Flags::class,
 		ProductListing_Filter_Price::class,
@@ -30,7 +30,7 @@ abstract class Core_ProductListing
 
 
 	/**
-	 * @var ProductListing_Filter_Abstract[]
+	 * @var ProductListing_Filter[]
 	 */
 	protected array $filters = [];
 
@@ -57,7 +57,7 @@ abstract class Core_ProductListing
 		
 		foreach(ProductListing::$filter_list as $class_name ) {
 			/**
-			 * @var ProductListing_Filter_Abstract $filter
+			 * @var ProductListing_Filter $filter
 			 */
 			$filter = new $class_name( $this );
 			$this->filters[$filter->getKey()] = $filter;
@@ -122,7 +122,7 @@ abstract class Core_ProductListing
 
 
 	/**
-	 * @return ProductListing_Filter_Abstract[]
+	 * @return ProductListing_Filter[]
 	 */
 	public function getFilters() : array
 	{
@@ -142,7 +142,7 @@ abstract class Core_ProductListing
 
 
 
-	public function params() : ProductListing_Filter_Params
+	public function params() : ProductListing_Filter_Properties
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $this->filters['params'];

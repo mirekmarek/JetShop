@@ -107,7 +107,7 @@ abstract class Core_Fulltext_Index extends DataModel {
 		
 		$index = static::fetchInstances(['object_id'=>$object_id]);
 		foreach($index as $i) {
-			$i->delete();;
+			$i->delete();
 		}
 		
 	}

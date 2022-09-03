@@ -6,7 +6,7 @@ use Jet\Form_Field_Float;
 /**
  *
  */
-abstract class Core_ProductListing_Filter_Params_Property_Number extends ProductListing_Filter_Params_Property
+abstract class Core_Property_Number_Filter extends Property_Filter
 {
 	protected float $filter_min = 0.0;
 

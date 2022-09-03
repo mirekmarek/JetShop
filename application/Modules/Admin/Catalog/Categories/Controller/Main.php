@@ -349,6 +349,36 @@ class Controller_Main extends MVC_Controller_Default
 			$this->_editCategorySave();
 		}
 		
+		$GET = Http_Request::GET();
+		
+		if($GET->exists('deactivate')) {
+			$category->deactivateAutoAppendProducts();
+			Logger::success(
+				event: 'category_updated.auto_append_deactivated',
+				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated - auto append deactivated',
+				context_object_id: $category->getId(),
+				context_object_name: $category->getPathName(),
+				context_object_data: $category
+			);
+			
+			Http_Headers::reload(unset_GET_params: ['deactivate']);
+		}
+		
+		if($GET->exists('activate')) {
+			$category->activateAutoAppendProducts();
+			Logger::success(
+				event: 'category_updated.auto_append_activated',
+				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated - auto append activated',
+				context_object_id: $category->getId(),
+				context_object_name: $category->getPathName(),
+				context_object_data: $category
+			);
+			
+			Http_Headers::reload(unset_GET_params: ['activate']);
+		}
+		
+		$this->view->setVar('toolbar', 'category/edit/auto-append-settings/toolbar');
+		
 		$this->output( 'category/edit/auto-append-settings' );
 		
 	}

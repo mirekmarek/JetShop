@@ -13,7 +13,6 @@ abstract class Core_Property_Bool extends Property
 		$form = parent::generateAddForm();
 
 		$form->removeField('decimal_places');
-		$form->removeField('stencil_id');
 
 		return $form;
 	}
@@ -24,19 +23,24 @@ abstract class Core_Property_Bool extends Property
 		$form = parent::generateEditForm();
 
 		$form->removeField('decimal_places');
-		$form->removeField('stencil_id');
 
 		return $form;
 	}
 
-	public function getValueInstance() : Property_Value_Bool
+	public function getValueInstance() : Property_Bool_Value
 	{
-		return new Property_Value_Bool( $this );
+		return new Property_Bool_Value( $this );
 	}
-
-	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property_Bool
+	
+	public function initFilter( ProductListing $listing ): void
 	{
-		return new ProductListing_Filter_Params_Property_Bool( $listing, $this );
+		$this->filter = new Property_Bool_Filter( $listing, $this );
+	}
+	
+	public function filter() : Property_Bool_Filter
+	{
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->filter;
 	}
 
 }

@@ -11,8 +11,6 @@ abstract class Core_Property_Number extends Property
 	{
 		$form = parent::generateAddForm();
 
-		$form->removeField('stencil_id');
-
 		foreach( Shops::getList() as $shop ) {
 			$form->removeField('/shop_data/'.$shop->getKey().'/bool_yes_description');
 		}
@@ -24,8 +22,6 @@ abstract class Core_Property_Number extends Property
 	{
 		$form = parent::generateEditForm();
 
-		$form->removeField('stencil_id');
-
 		foreach( Shops::getList() as $shop ) {
 			$form->removeField('/shop_data/'.$shop->getKey().'/bool_yes_description');
 		}
@@ -33,14 +29,20 @@ abstract class Core_Property_Number extends Property
 		return $form;
 	}
 
-	public function getValueInstance() : Property_Value_Number
+	public function getValueInstance() : Property_Number_Value
 	{
-		return new Property_Value_Number( $this );
+		return new Property_Number_Value( $this );
 	}
-
-	public function getFilterInstance( ProductListing $listing ) : ProductListing_Filter_Params_Property_Number
+	
+	public function initFilter( ProductListing $listing ): void
 	{
-		return new ProductListing_Filter_Params_Property_Number( $listing, $this );
+		$this->filter = new Property_Number_Filter( $listing, $this );
+	}
+	
+	public function filter() : Property_Number_Filter
+	{
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->filter;
 	}
 	
 }
