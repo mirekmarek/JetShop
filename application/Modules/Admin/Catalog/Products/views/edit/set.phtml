@@ -36,7 +36,7 @@ $edit_form->field('set_strategy')->input()->addJsAction('onchange', 'toggleSetDi
 <?=$edit_form->start()?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
-		<?=UI::button_goBack()?>
+		<?=$this->render('edit/nav_button');?>
 
 		<?php if( !$edit_form->getIsReadonly() ): ?>
 			<?=UI::button_save()?>
@@ -52,8 +52,6 @@ $edit_form->field('set_strategy')->input()->addJsAction('onchange', 'toggleSetDi
 			</div>
 
 		<?php endif; ?>
-
-		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

@@ -1,0 +1,23 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;use Jet\UI_dataGrid;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View     $this
+ * @var UI_dataGrid  $grid
+ * @var Listing      $listing
+ */
+$grid = $this->getRaw( 'grid' );
+$listing = $this->getRaw('listing');
+
+//TODO:
+?>
+<div class="toolbar">
+	<?=UI::button(Tr::_('Select all'))->setOnClick("$('.select_product').attr('checked', true)")->setIcon('square-check')?>
+	<?=UI::button(Tr::_('Unselect all'))->setOnClick("$('.select_product').attr('checked', false)")->setIcon('square-xmark')?>
+	<?=UI::button(Tr::_('Perform operation'))->setOnClick("")->setClass(UI_button::CLASS_SUCCESS)->setIcon('gear');?>
+</div>

@@ -137,7 +137,7 @@ abstract class Core_Property_Bool_Filter extends Property_Filter
 		if($this->_count===null) {
 			$property_id = $this->getProperty()->getId();
 
-			$ids = $this->listing->params()->internalGetFilteredProductIdsWithoutProperty(
+			$ids = $this->listing->properties()->internalGetFilteredProductIdsWithoutProperty(
 				$this->filtered_ids,
 				$property_id
 			);

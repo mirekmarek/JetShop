@@ -8,7 +8,7 @@ use Jet\DataModel_Related_1toN;
 
 
 #[DataModel_Definition(
-	name: 'products_categories',
+	name: 'product_category',
 	database_table_name: 'products_categories',
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Product::class
@@ -58,6 +58,11 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 	{
 		return $this->category_id;
 	}
+	
+	public function getCategory() : Category
+	{
+		return Category::get($this->category_id);
+	}
 
 	public function setCategoryId( int $category_id ) : void
 	{
@@ -73,6 +78,18 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 	{
 		$this->auto_appended = $auto_appended;
 	}
-
 	
+	
+	/**
+	 * @param int $category_id
+	 * @return Product_Category[]
+	 */
+	public static function getAutoAppendedByCategory( int $category_id ) : array
+	{
+		return static::fetch(['product_category'=>[
+			'category_id' => $category_id,
+			'AND',
+			'auto_appended' => true
+		]]);
+	}
 }

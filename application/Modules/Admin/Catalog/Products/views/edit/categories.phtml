@@ -4,6 +4,7 @@ namespace JetShopModule\Admin\Catalog\Products;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_badge;
 use JetShop\Category;
 
 /**
@@ -21,7 +22,7 @@ $form = $product->getEditForm();
 
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
-		<?=UI::button_goBack()?>
+		<?=$this->render('edit/nav_button');?>
 
 		<?php if( !$form->getIsReadonly() ): ?>
 			<div style="display: inline-block;margin-top: -20px;">
@@ -35,8 +36,6 @@ $form = $product->getEditForm();
 			</div>
 
 		<?php endif; ?>
-
-		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 
@@ -47,17 +46,23 @@ $form = $product->getEditForm();
 
 		<table class="table table-striped">
 			<tbody>
-			<?php foreach($product->getCategories() as $category): ?>
+			<?php foreach($product->getCategoriesAssoc() as $ca):
+				$category = $ca->getCategory();
+				?>
 				<tr>
-					<td style="width: 300px;">
-
-						<?php if( !$form->getIsReadonly() ): ?>
+					<td style="width: 100px;">
+						<?php if($ca->getAutoAppended()):
+							echo UI::badge(UI_badge::INFO, Tr::_('Auto appended'));
+						else:
+							if( !$form->getIsReadonly() ): ?>
 							<form method="post" style="display: inline-block">
 								<input type="hidden" name="action" value="remove_category"/>
 								<input type="hidden" name="category_id" value="<?=$category->getId()?>"/>
 								<?=UI::button_delete(' ')->setType('submit')?>
 							</form>
-						<?php endif; ?>
+							<?php
+							endif;
+						endif; ?>
 					</td>
 					<td><a href="<?=$category->getEditURL()?>" target="_blank"><?=$category->getPathName()?></a></td>
 				</tr>

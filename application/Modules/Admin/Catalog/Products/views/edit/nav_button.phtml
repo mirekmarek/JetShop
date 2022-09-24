@@ -10,10 +10,28 @@ use JetShop\Shops;
 
 /**
  * @var MVC_View $this
+ * @var Listing $listing
+ * @var Controller_Main $controller
  */
 $product = Controller_Main::getCurrentProduct();
+$controller = $this->controller;
+$listing = $controller->getListing();
 
+
+$prev_url = $listing->getPrevProductEditUrl( $product->getId() );
+$next_url = $listing->getNextProductEditUrl( $product->getId() );
 ?>
+
+<?=UI::button_goBack()?>
+&nbsp;&nbsp;&nbsp;
+<?php if($prev_url): ?>
+	<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+<?php endif; ?>
+<?php if($next_url): ?>
+	<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+<?php endif; ?>
+&nbsp;&nbsp;&nbsp;
+
 <div class="dropdown">
 	<button class="btn btn-light dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		<?=UI::icon('eye');?>
@@ -28,12 +46,14 @@ $product = Controller_Main::getCurrentProduct();
 </div>
 
 <div style="display: inline-block">
-<?php if($product->getType()==Product::PRODUCT_TYPE_VARIANT):
-	$variant_master = Product::get($product->getVariantMasterProductId());
-	?>
-	<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
+	<?php if($product->getType()==Product::PRODUCT_TYPE_VARIANT):
+		$variant_master = Product::get($product->getVariantMasterProductId());
+		?>
+		<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
 		'URL' => $variant_master->getEditURL(),
 		'NAME' => $variant_master->getAdminTitle()
 	]))->setCloseable(false)?>
-<?php endif; ?>
+	<?php endif; ?>
 </div>
+
+&nbsp;&nbsp;&nbsp;

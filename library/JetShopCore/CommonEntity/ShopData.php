@@ -16,7 +16,7 @@ use Jet\MVC_View;
  *
  */
 #[DataModel_Definition(
-	database_table_name: 'categories_shop_data',
+	database_table_name: 'category_shop_data',
 	id_controller_class: DataModel_IDController_Passive::class,
 )]
 abstract class Core_CommonEntity_ShopData extends DataModel_Related_1toN

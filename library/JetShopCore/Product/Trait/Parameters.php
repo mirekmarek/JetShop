@@ -79,7 +79,13 @@ trait Core_Product_Trait_Parameters
 			foreach($this->getCategories() as $c) {
 				Category::addSyncCategory( $c->getId() );
 			}
-
+			
+			$this->save();
+			$this->syncVariants();
+			$this->getKind()->actualizeAutoAppend();
+			
+			Category::syncCategories();
+			
 			return true;
 		}
 		

@@ -142,10 +142,10 @@ abstract class Core_ProductListing
 
 
 
-	public function params() : ProductListing_Filter_Properties
+	public function properties() : ProductListing_Filter_Properties
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['params'];
+		return $this->filters['properties'];
 	}
 
 	public function brands() : ProductListing_Filter_Brands

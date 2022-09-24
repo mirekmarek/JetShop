@@ -2,6 +2,7 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\Application_Module;
+use Jet\Session;
 use JetShop\Admin_Module_Trait;
 use JetShop\Auth_Administrator_Role;
 use JetShop\Product_ManageModuleInterface;
@@ -12,6 +13,8 @@ use Jet\MVC;
 class Main extends Application_Module implements Product_ManageModuleInterface
 {
 	use Admin_Module_Trait;
+	
+	const SESSION_NS = 'Admin.Catalog.Products';
 
 	const ADMIN_MAIN_PAGE = 'products';
 
@@ -19,6 +22,9 @@ class Main extends Application_Module implements Product_ManageModuleInterface
 	const ACTION_ADD_PRODUCT = 'add_product';
 	const ACTION_UPDATE_PRODUCT = 'update_product';
 	const ACTION_DELETE_PRODUCT = 'delete_product';
+	
+	const CATEGORY_MODE_TREE = 'tree';
+	const CATEGORY_MODE_MULTIPLE = 'multiple';
 
 	public function getProductSelectWhispererUrl( array $filter=[], bool $only_active=false ) : string
 	{
@@ -52,5 +58,21 @@ class Main extends Application_Module implements Product_ManageModuleInterface
 	public static function getCurrentUserCanCreateProduct() : bool
 	{
 		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_ADD_PRODUCT );
+	}
+	
+	public static function getCategoryMode() : string
+	{
+		return (new Session(static::SESSION_NS))->getValue('category_mode', static::CATEGORY_MODE_MULTIPLE);
+	}
+	
+	public static function setCategoryMode( string $mode ) : void
+	{
+		if(in_array($mode, [
+			static::CATEGORY_MODE_MULTIPLE,
+			static::CATEGORY_MODE_TREE
+		])) {
+			(new Session(static::SESSION_NS))->setValue('category_mode', $mode );
+		}
+		
 	}
 }

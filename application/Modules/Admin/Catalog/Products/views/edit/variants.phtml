@@ -41,7 +41,7 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
-		<?=UI::button_goBack()?>
+		<?=$this->render('edit/nav_button');?>
 
 		<?php if(!$setup_form->getIsReadonly()): ?>
 			<?=UI::button(Tr::_('Setup variant behavior'))->setOnclick("$('#variant_setup_dialog').modal('show')")->setIcon('cogs');?>
@@ -54,8 +54,6 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 		<?php if($variants && !$variants_update_form->getIsReadonly()): ?>
 			<?=UI::button_save()->setOnclick("$('#".$variants_update_form->getId()."').submit()");?>
 		<?php endif; ?>
-
-		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

@@ -35,7 +35,7 @@ class Listing_Filter_Categories extends Data_Listing_Filter
 		if($this->categories) {
 			
 			$items = Product_Category::fetch([
-				'products_categories' => [
+				'product_category' => [
 					'category_id' => $this->categories
 				]
 			]);
@@ -96,6 +96,23 @@ class Listing_Filter_Categories extends Data_Listing_Filter
 			$this->listing->setGetParam('categories', '');
 		}
 		
+	}
+	
+	public function getCurrentCategoryId() : int
+	{
+		if(!$this->categories) {
+			return 0;
+		}
+		
+		return $this->categories[0];
+	}
+	
+	public function getCategoryUrl( int $id ) : string
+	{
+		return Http_Request::currentURI(
+			set_GET_params: ['categories'=>$id],
+			unset_GET_params: ['id']
+		);
 	}
 
 }

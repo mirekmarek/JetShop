@@ -47,7 +47,7 @@ trait Core_ProductListing_AutoAppendProductFilter
 		if(!$kind) {
 			return [];
 		}
-		
+
 		$filter_rules = $this->category->getAutoAppendProductsFilter();
 		if(!$filter_rules) {
 			return [];
@@ -60,6 +60,7 @@ trait Core_ProductListing_AutoAppendProductFilter
 			return [];
 		}
 		
+		
 		foreach( $this->filters as $filter ) {
 			$filter->initAutoAppendFilter( $filter_rules );
 		}
@@ -69,8 +70,10 @@ trait Core_ProductListing_AutoAppendProductFilter
 		}
 		
 		$id_map = [];
+		$some_filter_is_active = false;
 		foreach( $this->filters as $filter ) {
 			if( $filter->filterIsActive() ) {
+				$some_filter_is_active = true;
 				
 				$ids = $filter->getFilteredProductIds();
 				
@@ -80,6 +83,11 @@ trait Core_ProductListing_AutoAppendProductFilter
 				
 				$id_map[] = $ids;
 			}
+		}
+		
+		
+		if(!$some_filter_is_active) {
+			return $product_ids;
 		}
 		
 		return $this->idMapIntersect($id_map);

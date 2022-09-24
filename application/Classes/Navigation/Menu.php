@@ -30,11 +30,11 @@ class Navigation_Menu extends Core_Navigation_Menu {
 	{
 		if(!$this->__tree) {
 			$where = [
-				Shops::getCurrent()->getWhere('categories_shop_data.'),
+				Shops::getCurrent()->getWhere('category_shop_data.'),
 				'AND',
-				'categories_shop_data.is_active' => true,
+				'category_shop_data.is_active' => true,
 				'AND',
-				'categories_shop_data.nested_visible_products_count >' => 0
+				'category_shop_data.nested_visible_products_count >' => 0
 			];
 
 			$data = Category::dataFetchAll(
@@ -42,13 +42,13 @@ class Navigation_Menu extends Core_Navigation_Menu {
 					'id' => 'id',
 					'parent_id' => 'parent_id',
 					'priority' => 'priority',
-					'name' => 'categories_shop_data.name',
-					'second_name' => 'categories_shop_data.second_name',
-					'is_active' => 'categories_shop_data.is_active',
-					'children' => 'categories_shop_data.children',
-					'URL_path_part' => 'categories_shop_data.URL_path_part',
-					'image_pictogram' => 'categories_shop_data.image_pictogram',
-					'image_main' => 'categories_shop_data.image_main',
+					'name' => 'category_shop_data.name',
+					'second_name' => 'category_shop_data.second_name',
+					'is_active' => 'category_shop_data.is_active',
+					'children' => 'category_shop_data.children',
+					'URL_path_part' => 'category_shop_data.URL_path_part',
+					'image_pictogram' => 'category_shop_data.image_pictogram',
+					'image_main' => 'category_shop_data.image_main',
 				],
 				where: $where,
 				order_by: 'priority'

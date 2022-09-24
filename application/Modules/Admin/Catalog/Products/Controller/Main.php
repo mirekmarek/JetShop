@@ -36,6 +36,8 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?MVC_Controller_Router $router = null;
 
 	protected static ?Product $current_product = null;
+	
+	protected ?Listing $listing = null;
 
 
 	public function getControllerRouter() : MVC_Controller_Router
@@ -175,10 +177,49 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		return self::$current_product;
 	}
+	
+	public function getListing() : Listing
+	{
+		if(!$this->listing) {
+			$this->listing = new Listing();
+			$this->listing->handle();
+		}
+		
+		return $this->listing;
+	}
 
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		UI_module::initBreadcrumb();
+		
+		if(Main::getCategoryMode()==Main::CATEGORY_MODE_TREE) {
+
+			$tree = Category::getTree();
+			$filter = $this->getListing()->getFilter_categories();
+			
+			$current_cat_id = $filter->getCurrentCategoryId();
+			
+			if(
+				( $current_node = $tree->getNode( $filter->getCurrentCategoryId() ) )
+			) {
+
+				foreach( $current_node->getPath() as $node ) {
+					if(!$node->getId()) {
+						continue;
+					}
+					
+					$label = $node->getLabel();
+					
+					if(!$label) {
+						$label = '???';
+					}
+					
+					Navigation_Breadcrumb::addURL( $label, $filter->getCategoryUrl( $node->getId() ) );
+					
+				}
+			
+			}
+		}
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
@@ -186,15 +227,6 @@ class Controller_Main extends MVC_Controller_Default
 			$product = static::getCurrentProduct();
 
 			if($product) {
-				Navigation_Breadcrumb::reset();
-
-				$page = MVC::getPage();
-				Navigation_Breadcrumb::addURL(
-					UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle(),
-					Http_Request::currentURI([], ['id'])
-				);
-
-
 				Navigation_Breadcrumb::addURL( $product->getAdminTitle() );
 			}
 		}
@@ -202,11 +234,16 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function listing_Action() : void
 	{
+		$GET = Http_Request::GET();
+		if($GET->exists('set_category_mode')) {
+			Main::setCategoryMode( $GET->getString('set_category_mode') );
+			Http_Headers::reload(unset_GET_params: ['set_category_mode', 'categories']);
+		}
+		
 
 		$this->_setBreadcrumbNavigation();
 
-		$listing = new Listing();
-		$listing->handle();
+		$listing = $this->getListing();
 
 		$this->view->setVar( 'filter_form', $listing->getFilterForm());
 		$this->view->setVar( 'grid', $listing->getGrid() );
@@ -265,7 +302,9 @@ class Controller_Main extends MVC_Controller_Default
 
 			Http_Headers::reload();
 		}
-
+		
+		$this->view->setVar('listing', $this->getListing());
+		
 		$this->output( 'edit/main' );
 	}
 
@@ -494,11 +533,6 @@ class Controller_Main extends MVC_Controller_Default
 		$product = static::getCurrentProduct();
 
 		if( $product->catchParametersEditForm() ) {
-
-			$product->save();
-			$product->syncVariants();
-			Category::syncCategories();
-
 			Logger::success(
 				'product_updated',
 				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',

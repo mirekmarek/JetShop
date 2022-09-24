@@ -13,7 +13,7 @@ use Jet\Tr;
  *
  */
 #[DataModel_Definition(
-	name: 'categories_shop_data',
+	name: 'category_shop_data',
 	database_table_name: 'categories_shop_data',
 	parent_model_class: Category::class,
 )]

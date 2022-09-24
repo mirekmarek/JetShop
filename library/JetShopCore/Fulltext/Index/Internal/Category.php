@@ -77,12 +77,12 @@ abstract class Core_Fulltext_Index_Internal_Category extends Fulltext_Index {
 
 		$result = Category::fetch(
 			where_per_model: [
-				'categories' => ['id' => $ids],
-				'categories_shop_data' => Shops::getCurrent()->getWhere()
+				'category' => ['id' => $ids],
+				'category_shop_data' => Shops::getCurrent()->getWhere()
 			],
 			load_filter: [
-				'categories.*',
-				'categories_shop_data.*'
+				'category.*',
+				'category_shop_data.*'
 			]
 		);
 

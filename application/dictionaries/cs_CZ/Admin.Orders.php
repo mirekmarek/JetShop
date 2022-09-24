@@ -9,4 +9,5 @@ return [
 	'Get order data' => '',
 	'Update order' => '',
 	'Admin.Orders' => '',
+	'Search ...' => '',
 ];

@@ -174,7 +174,6 @@ abstract class Core_Property_Options_Filter extends Property_Filter
 	public function prepareFilter( array $data_map ) : void
 	{
 		$map = [];
-		
 		foreach($data_map as $p_id=>$_option_ids) {
 			foreach($_option_ids as $option_ids) {
 				$option_ids = explode(',', $option_ids);
@@ -186,14 +185,14 @@ abstract class Core_Property_Options_Filter extends Property_Filter
 						$map[$o_id] = [];
 					}
 					
-					$map[$o_id][$p_id] = true;
+					$map[$o_id][] = $p_id;
 				}
 			}
 		}
 		
 		foreach($map as $option_id=>$product_ids) {
-			if(isset($this->filter_options[$option_id])) {
-				$this->filter_options[$option_id]->setProductIds( array_keys($product_ids) );
+			if(($option=$this->property->getOption($option_id))) {
+				$option->filter()->setProductIds( $product_ids );
 			}
 		}
 	}
@@ -235,7 +234,7 @@ abstract class Core_Property_Options_Filter extends Property_Filter
 			foreach($this->property->getOptions() as $o) {
 				if($o->filter()->isSelected() ) {
 					$ids = $o->filter()->getProductIds();
-					
+
 					$this->filtered_product_ids = array_merge(
 						$this->filtered_product_ids,
 						$ids

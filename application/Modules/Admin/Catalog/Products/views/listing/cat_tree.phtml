@@ -1,0 +1,94 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Data_Tree_Node;
+use Jet\UI;
+use Jet\MVC_View;
+use JetShop\Category;
+
+/**
+ * @var MVC_View               $this
+ * @var Listing      $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$filter = $listing->getFilter_categories();
+
+$current_category_id = $filter->getCurrentCategoryId();
+
+$tree = Category::getTree();
+$current_node = $tree->getNode( $current_category_id );
+
+
+
+$showCategory = function( Data_Tree_Node $node ) use ($current_category_id, $filter) {
+	$is_active = $node->getData()['is_active'];
+	if(Category::getFilter_onlyActive() && !$is_active ) {
+		return;
+	}
+	
+	$tree_icon = 'file';
+	
+	$selected = $node->getId()==$current_category_id;
+	
+	
+	if($node->getHasChildren()) {
+		$tree_icon = 'folder';
+		
+		if($selected) {
+			$tree_icon = 'folder-open';
+		}
+	}
+	
+	$text_decoration = 'none';
+	
+	if(!$is_active) {
+		$text_decoration = 'line-through';
+	}
+	
+	$name = $node->getLabel();
+	if(!$name) {
+		$name = Category::get( $node->getId() )->getShopData()->getName();
+		if(!$name) {
+			$name = '???';
+		}
+	}
+	
+	if($selected):
+		?>
+		<li class="selected" style="text-decoration: <?=$text_decoration?>;">
+			<span class="icon"><?=UI::icon($tree_icon)?></span>
+			<?=$name?>
+		</li>
+	<?php
+	else:
+		?>
+		<li style="text-decoration: <?=$text_decoration?>;">
+			<a href="<?=$filter->getCategoryUrl($node->getId())?>">
+				<span class="icon"><?=UI::icon($tree_icon)?></span>
+				<?=$name?>
+			</a>
+		</li>
+	<?php
+	endif;
+};
+?>
+<ul>
+	<?php if( $current_category_id ): ?>
+		<li><a href="<?=$filter->getCategoryUrl($current_node->getParentId())?>">..</a></li>
+		<?php $showCategory( $current_node ); ?>
+		
+		<ul>
+			<?php
+			foreach($current_node->getChildren() as $node):
+				$showCategory( $node );
+			endforeach;
+			?>
+		</ul>
+	<?php else:
+		foreach($current_node->getChildren() as $node):
+			$showCategory( $node );
+		endforeach;
+	endif; ?>
+</ul>

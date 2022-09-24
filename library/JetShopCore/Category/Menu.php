@@ -90,11 +90,11 @@ abstract class Core_Category_Menu
 		$sort = 'priority';
 
 		$where = [
-			$shop->getWhere('categories_shop_data.'),
+			$shop->getWhere('category_shop_data.'),
 			'AND',
-			'categories_shop_data.is_active'=>true,
+			'category_shop_data.is_active'=>true,
 			'AND',
-			'categories_shop_data.nested_visible_products_count >' => 0
+			'category_shop_data.nested_visible_products_count >' => 0
 		];
 
 
@@ -104,13 +104,13 @@ abstract class Core_Category_Menu
 				'parent_id' => 'parent_id',
 				'priority' => 'priority',
 
-				'name' => 'categories_shop_data.name',
-				'second_name' => 'categories_shop_data.second_name',
-				'URL_path_part' => 'categories_shop_data.URL_path_part',
-				'image_main' => 'categories_shop_data.image_main',
-				'image_pictogram' => 'categories_shop_data.image_pictogram',
-				'visible_products_count' => 'categories_shop_data.visible_products_count',
-				'nested_visible_products_count' => 'categories_shop_data.nested_visible_products_count',
+				'name' => 'category_shop_data.name',
+				'second_name' => 'category_shop_data.second_name',
+				'URL_path_part' => 'category_shop_data.URL_path_part',
+				'image_main' => 'category_shop_data.image_main',
+				'image_pictogram' => 'category_shop_data.image_pictogram',
+				'visible_products_count' => 'category_shop_data.visible_products_count',
+				'nested_visible_products_count' => 'category_shop_data.nested_visible_products_count',
 			],
 			where: $where,
 			order_by: $sort

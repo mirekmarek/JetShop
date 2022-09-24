@@ -5,6 +5,7 @@ use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\Data_Tree;
 use Jet\DataModel_Definition;
+use Jet\DataModel_Query_Select_Item_Expression;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
@@ -235,11 +236,11 @@ abstract class Core_Category extends DataModel {
 				Category::SORT_PRIORITY => 'priority',
 			};
 
-			$where = $shop->getWhere('categories_shop_data.');
+			$where = $shop->getWhere('category_shop_data.');
 
 			if($only_active) {
 				$where[] = 'AND';
-				$where['categories_shop_data.is_active'] = true;
+				$where['category_shop_data.is_active'] = true;
 			}
 
 			$data = Category::dataFetchAll(
@@ -247,8 +248,8 @@ abstract class Core_Category extends DataModel {
 					'id' => 'id',
 					'parent_id' => 'parent_id',
 					'priority' => 'priority',
-					'name' => 'categories_shop_data.name',
-					'is_active' => 'categories_shop_data.is_active',
+					'name' => 'category_shop_data.name',
+					'is_active' => 'category_shop_data.is_active',
 				],
 				where: $where,
 				order_by: $sort
@@ -684,11 +685,19 @@ abstract class Core_Category extends DataModel {
 		if($this->kind_of_product_id == $kind_of_product_id) {
 			return;
 		}
+		$old_kind = $this->kind_of_product_id ? KindOfProduct::get($this->kind_of_product_id) : null;
+		$new_kind = $kind_of_product_id ? KindOfProduct::get($kind_of_product_id) : null;
+		
 		$this->kind_of_product_id = $kind_of_product_id;
 		
-		$this->save();
-		//TODO:
+		Category::updateData(['kind_of_product_id'=>$this->kind_of_product_id], ['id'=>$this->id]);
 		
+		Category::addSyncCategory( $this->id );
+		
+		$old_kind?->actualizeAutoAppend();
+		$new_kind?->actualizeAutoAppend();
+		
+		Category::syncCategories();
 	}
 	
 	public function getKindOfProduct() : ?KindOfProduct
@@ -776,8 +785,40 @@ abstract class Core_Category extends DataModel {
 	
 	public function handleAutoAppendProduct() : void
 	{
-		//TODO:
-		die();
+		$auto_appended = Product_Category::getAutoAppendedByCategory( $this->id );
+		
+		foreach($auto_appended as $apc) {
+			$apc->delete();
+		}
+		
+		if($this->auto_append_products) {
+			$product_ids = $this->getProductListing()->getAutoAppendProductIds();
+			
+			foreach($product_ids as $p_id) {
+				$exists = (int)Product_Category::dataFetchOne(
+					select: ['cnt'=>new DataModel_Query_Select_Item_Expression('count(*)')],
+					where: [
+						'category_id' => $this->id,
+						'AND',
+						'product_id' => $p_id
+					]
+				);
+				
+				if($exists>0) {
+					continue;
+				}
+				
+				$p_c = new Product_Category();
+				$p_c->setCategoryId( $this->id );
+				$p_c->setProductId( $p_id );
+				$p_c->setAutoAppended( true );
+				
+				$p_c->save();
+			}
+			
+		}
+		
+		Category::addSyncCategory($this->id);
 	}
 	
 
@@ -925,13 +966,13 @@ abstract class Core_Category extends DataModel {
 			$data = Category::dataFetchAll(
 				select: [
 					'id' => 'id',
-					'product_ids' => 'categories_shop_data.product_ids',
-					'all_children' => 'categories_shop_data.all_children'
+					'product_ids' => 'category_shop_data.product_ids',
+					'all_children' => 'category_shop_data.all_children'
 				],
 				where: [
-					$shop->getWhere('categories_shop_data.'),
+					$shop->getWhere('category_shop_data.'),
 					'AND',
-					'categories_shop_data.is_active' => true,
+					'category_shop_data.is_active' => true,
 				]
 			);
 
@@ -970,9 +1011,6 @@ abstract class Core_Category extends DataModel {
 
 				$nested_visible_products_count = count( $p_ids );
 
-				if($id==70) {
-					var_dump( $visible_products_count, $nested_visible_products_count);
-				}
 
 				Category_ShopData::updateData(
 					[
@@ -993,6 +1031,11 @@ abstract class Core_Category extends DataModel {
 
 	}
 	
+	/**
+	 * @param KindOfProduct $kind
+	 *
+	 * @return Category[]
+	 */
 	public static function getByKindOfProduct( KindOfProduct $kind ) : array
 	{
 		$ids = Category::dataFetchCol(['id'], ['kind_of_product_id'=>$kind->getId()]);
@@ -1001,7 +1044,14 @@ abstract class Core_Category extends DataModel {
 			return [];
 		}
 		
-		return Category::fetch(['category'=>['id'=>$ids]]);
+		$list = [];
+		
+		foreach($ids as $id) {
+			$id = (int)$id;
+			$list[$id] = Category::get($id);
+		}
+		
+		return $list;
 	}
 	
 	
@@ -1010,10 +1060,12 @@ abstract class Core_Category extends DataModel {
 		if(!$this->auto_append_products) {
 			return false;
 		}
-		
+
 		$this->auto_append_products = false;
+		static::updateData(['auto_append_products'=>$this->auto_append_products], ['id'=>$this->id]);
 		
 		$this->handleAutoAppendProduct();
+		Category::syncCategories();
 		
 		return true;
 	}
@@ -1025,10 +1077,12 @@ abstract class Core_Category extends DataModel {
 		}
 		
 		$this->auto_append_products = true;
-		$this->save();
+		static::updateData(['auto_append_products'=>$this->auto_append_products], ['id'=>$this->id]);
 		
 		$this->handleAutoAppendProduct();
+		Category::syncCategories();
 		
 		return true;
 	}
+
 }

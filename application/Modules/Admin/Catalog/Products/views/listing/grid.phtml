@@ -1,0 +1,23 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\UI_dataGrid;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View     $this
+ * @var UI_dataGrid  $grid
+ * @var Listing      $listing
+ */
+$grid = $this->getRaw( 'grid' );
+$listing = $this->getRaw('listing');
+
+
+require 'grid/cell_renderers.phtml';
+
+
+$grid->footer()->setPrepend( $this->render('listing/grid/footer') );
+?>
+<form>
+<?=$grid->render();?>
+</form>

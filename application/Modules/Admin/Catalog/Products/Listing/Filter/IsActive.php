@@ -86,7 +86,7 @@ class Listing_Filter_IsActive extends Data_Listing_Filter
 			if($this->is_active_per_shop[$code]!='0') {
 				$this->listing->setGetParam('is_active_'.$code, $this->is_active_per_shop[$code]);
 			} else {
-				$this->listing->setGetParam('is_active_'.$code, '');
+				$this->listing->unsetGetParam('is_active_'.$code);
 			}
 		}
 	}

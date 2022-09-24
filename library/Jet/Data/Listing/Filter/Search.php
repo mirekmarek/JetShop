@@ -50,6 +50,7 @@ abstract class Data_Listing_Filter_Search extends Data_Listing_Filter
 	{
 		$search = new Form_Field_Search( 'search', '' );
 		$search->setDefaultValue( $this->search );
+		$search->setPlaceholder(Tr::_('Search ...'));
 		$form->addField( $search );
 	}
 

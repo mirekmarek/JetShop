@@ -39,6 +39,8 @@ class Listing_Filter_ProductType extends Data_Listing_Filter
 		$this->product_type = $form->field('product_type')->getValue();
 		if($this->product_type) {
 			$this->listing->setGetParam('product_type', $this->product_type);
+		} else {
+			$this->listing->unsetGetParam('product_type');
 		}
 	}
 	

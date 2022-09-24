@@ -26,13 +26,11 @@ $kind = $product->getKind();
 
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
-		<?=UI::button_goBack()?>
+		<?=$this->render('edit/nav_button');?>
 
 		<?php if( !$form->getIsReadonly() ): ?>
 			<?=UI::button_save()?>
 		<?php endif; ?>
-
-		<?=$this->render('edit/preview_button');?>
 	</div>
 </div>
 

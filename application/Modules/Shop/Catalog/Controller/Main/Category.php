@@ -45,50 +45,35 @@ trait Controller_Main_Category
 			if(!static::$category->isActive()) {
 				$this->router->setDefaultAction('category_not_active');
 			} else {
-				switch(static::$category->getType()) {
-					case Category::CATEGORY_TYPE_VIRTUAL:
-					case Category::CATEGORY_TYPE_REGULAR:
-
-						if( static::$category->getVisibleProductsCount( )) {
-
-							$listing = static::$category->getProductListing();
-							$listing->disableNonRelevantFilters();
-
-							if($path) {
-								$listing->parseFilterUrl( $path );
-
-								$qs = !empty($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '';
-
-								$valid_url = $listing->generateUrl(true).$qs;
-
-								if($valid_url!=Http_Request::currentURL()) {
-									MVC::getRouter()->setIsRedirect( $valid_url, Http_Headers::CODE_301_MOVED_PERMANENTLY );
-									return;
-								}
-
-								MVC::getRouter()->setUsedUrlPath($category_URL_path.'/'.implode('/', $path));
-							}
-
-
-							$GET = Http_Request::GET();
-							if($GET->exists('set_filter')) {
-								$this->router->setDefaultAction('category_listing_set_filter');
-							} else {
-								$this->router->setDefaultAction('category_listing');
-							}
-
-						} else {
-							$this->router->setDefaultAction('category_signpost');
-
+				if(static::$category->getVisibleProductsCount()) {
+					$listing = static::$category->getProductListing();
+					$listing->disableNonRelevantFilters();
+					
+					if($path) {
+						$listing->parseFilterUrl( $path );
+						
+						$qs = !empty($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '';
+						
+						$valid_url = $listing->generateUrl(true).$qs;
+						
+						if($valid_url!=Http_Request::currentURL()) {
+							MVC::getRouter()->setIsRedirect( $valid_url, Http_Headers::CODE_301_MOVED_PERMANENTLY );
+							return;
 						}
-						break;
-					case Category::CATEGORY_TYPE_TOP:
-						$this->router->setDefaultAction('category_top');
-						break;
-					case Category::CATEGORY_TYPE_LINK:
-						MVC::getRouter()->setIsRedirect( static::$category->getTargetCategory()->getURL(), Http_Headers::CODE_302_MOVED_TEMPORARY );
-						break;
-
+						
+						MVC::getRouter()->setUsedUrlPath($category_URL_path.'/'.implode('/', $path));
+					}
+					
+					
+					$GET = Http_Request::GET();
+					if($GET->exists('set_filter')) {
+						$this->router->setDefaultAction('category_listing_set_filter');
+					} else {
+						$this->router->setDefaultAction('category_listing');
+					}
+					
+				} else {
+					$this->router->setDefaultAction('category_signpost');
 				}
 			}
 		} else {
@@ -168,17 +153,6 @@ trait Controller_Main_Category
 
 		$this->output('category/signpost');
 
-	}
-
-	public function category_top_Action() : void
-	{
-		Navigation_Breadcrumb::setByCategory( static::$category );
-
-		Tr::setCurrentDictionary('category.top');
-
-		$this->view->setVar('category', static::$category);
-
-		$this->output('category/top');
 	}
 
 }

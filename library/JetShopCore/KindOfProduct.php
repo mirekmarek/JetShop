@@ -244,6 +244,14 @@ abstract class Core_KindOfProduct extends DataModel
 		return static::fetchInstances( $where );
 	}
 	
+	public static function getScope() : array
+	{
+		return KindOfProduct::dataFetchPairs( select: [
+			'id',
+			'internal_name'
+		], order_by: ['internal_name']);
+	}
+	
 	/**
 	 * @return int
 	 */
@@ -780,4 +788,12 @@ abstract class Core_KindOfProduct extends DataModel
 		return true;
 	}
 	
+	public function actualizeAutoAppend() : void
+	{
+		$categories = Category::getByKindOfProduct( $this );
+		foreach($categories as $id=>$category) {
+			$category->handleAutoAppendProduct();
+			Category::addSyncCategory( $id );
+		}
+	}
 }

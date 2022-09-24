@@ -4,7 +4,9 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\Data_DateTime;
+use Jet\DataModel_Backend;
 use Jet\DataModel_Definition;
+use Jet\DataModel_Query;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
@@ -236,6 +238,34 @@ abstract class Core_Product extends DataModel {
 
 		return $list;
 	}
+	
+	public static function getIdsList( array $where, array|string $order_by ) : array
+	{
+		$def = Product::getDataModelDefinition();
+		
+		if($where) {
+			$where[] = 'AND';
+		}
+		
+		$where[] = [
+			'products_shop_data.shop_code' => Shops::getCurrent()->getShopCode(),
+			'AND',
+			'products_shop_data.locale' => Shops::getCurrent()->getLocale()
+		];
+		
+		$query = new DataModel_Query( $def );
+		$query->setSelect( $def->getIdProperties() );
+		$query->setWhere( $where );
+		$query->setOrderBy( $order_by );
+		$backend = DataModel_Backend::get( $def );
+		
+		$ids = $backend->fetchCol( $query );
+		foreach($ids as $i=>$id) {
+			$ids[$i] = (int)$id;
+		}
+		
+		return $ids;
+	}
 
 	/**
 	 *
@@ -246,7 +276,7 @@ abstract class Core_Product extends DataModel {
 	public static function getListByCategory( int $category_id ) : DataModel_Fetch_Instances|array
 	{
 		return static::fetchInstances( [
-			'products_categories.category_id' => $category_id
+			'product_category.category_id' => $category_id
 		] );
 
 	}
@@ -283,6 +313,9 @@ abstract class Core_Product extends DataModel {
 			return;
 		}
 		
+		$old_kind = $this->kind_id ? KindOfProduct::get($this->kind_id) : null;
+		$new_kind = $kind_id ? KindOfProduct::get($kind_id) : null;
+		
 		$this->kind_id = $kind_id;
 		
 		$this->save();
@@ -292,7 +325,11 @@ abstract class Core_Product extends DataModel {
 				$v->setKindId( $kind_id );
 			}
 		}
-		//TODO: sync
+		
+		$old_kind?->actualizeAutoAppend();
+		$new_kind?->actualizeAutoAppend();
+		
+		Category::syncCategories();
 	}
 	
 	public function getKind() : ?KindOfProduct
@@ -792,13 +829,13 @@ abstract class Core_Product extends DataModel {
 
 	public static function getIdsByKind( KindOfProduct $kind ) : array
 	{
-		$_ids = Product::dataFetchCol(['id'], ['kind_of_product_id'=>$kind->getId()]);
+		$_ids = Product::dataFetchCol(['id'], ['kind_id'=>$kind->getId()]);
 		$ids = [];
 		
 		foreach($_ids as $id) {
 			$ids[] = (int)$id;
 		}
-		
+
 		return $ids;
 	}
 }

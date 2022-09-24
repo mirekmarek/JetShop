@@ -39,4 +39,5 @@ return [
 	'Get customer data' => '',
 	'Update customer' => '',
 	'Admin.Customers' => '',
+	'Search ...' => '',
 ];

@@ -81,7 +81,7 @@ abstract class Core_Property_Options_Option_Filter
 			$initial_product_ids = $this->product_ids;
 			
 			
-			$ids = $this->listing->params()->internalGetFilteredProductIdsWithoutProperty(
+			$ids = $this->listing->properties()->internalGetFilteredProductIdsWithoutProperty(
 				$initial_product_ids,
 				$property_id
 			);
