@@ -1,0 +1,69 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI_messages;
+use JetShop\Product;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ * @var Listing $listing
+ */
+
+$item = $this->getRaw('item');
+$listing = $this->getRaw('listing');
+
+
+$edit_uri = $listing->getProductEditUrl($item);
+?>
+<?=$item->renderActiveState()?>
+<a href="<?=$edit_uri;?>"><?=$item->getAdminTitle();?></a>
+
+<?php if($item->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER): ?>
+	<br>
+	<table>
+		<thead>
+		<tr>
+			<th colspan="2"><?=Tr::_('Variants')?></th>
+		</tr>
+		</thead>
+		<?php foreach($item->getVariants() as $variant): ?>
+			<tr>
+				<td><?=$variant->renderActiveState() ?></td>
+				<td><a href="<?=$variant->getEditURL()?>"><?=$variant->getAdminTitle()?></a></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+<?php endif; ?>
+
+<?php if( $item->getType()==Product::PRODUCT_TYPE_SET ): ?>
+<br>
+<table>
+	<thead>
+	<tr>
+		<th colspan="2"><?=Tr::_('Set items')?></th>
+	</tr>
+	</thead>
+	<?php foreach($item->getSetItems() as $set_item):
+		$set_item_product = Product::get($set_item->getItemProductId());
+		
+		if(!$set_item_product) {
+			?>
+			<tr>
+				<td></td>
+				<td><?=UI_messages::createDanger(Tr::_('Unknown product %ID%', ['ID'=>$set_item->getItemProductId()]))->setCloseable(false)?></td>
+			</tr>
+			<?php
+			continue;
+		}
+		
+		?>
+		<tr>
+			<td><?=$set_item_product->renderActiveState()?></td>
+			<td><a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a></td>
+		</tr>
+	<?php endforeach; ?>
+</table>
+<?php endif; ?>

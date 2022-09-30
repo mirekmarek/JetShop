@@ -59,7 +59,7 @@ abstract class Core_Product_Category extends DataModel_Related_1toN
 		return $this->category_id;
 	}
 	
-	public function getCategory() : Category
+	public function getCategory() : ?Category
 	{
 		return Category::get($this->category_id);
 	}

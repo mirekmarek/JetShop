@@ -122,4 +122,10 @@ return [
 	'Perform operation' => '',
 	'- Not set -' => '',
 	'Please select kind of product' => '',
+	'Unknown category ID %ID%' => '',
+	'Export' => '',
+	'xlsx' => '',
+	'XLSX' => '',
+	'To XLSX' => '',
+	'To CSV' => '',
 ];

@@ -2,7 +2,6 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 
-use Jet\AJAX;
 use Jet\Logger;
 use Jet\MVC_Controller_Router;
 use Jet\UI;
@@ -20,12 +19,10 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
 use Jet\UI_tabs;
-use JetShop\Application_Admin;
 use JetShop\Category;
 use JetShop\Fulltext_Index_Internal_Product;
 use JetShop\Product;
 
-use JetShop\Shops;
 use JetShopModule\Admin\UI\Main as UI_module;
 
 /**
@@ -33,6 +30,15 @@ use JetShopModule\Admin\UI\Main as UI_module;
  */
 class Controller_Main extends MVC_Controller_Default
 {
+	use Controller_Main_Edit_Main;
+	use Controller_Main_Edit_Images;
+	use Controller_Main_Edit_Parameters;
+	use Controller_Main_Edit_Categories;
+	use Controller_Main_Edit_Variants;
+	use Controller_Main_Edit_Set;
+
+	use Controller_Main_Listing_Export;
+	
 	protected ?MVC_Controller_Router $router = null;
 
 	protected static ?Product $current_product = null;
@@ -77,7 +83,11 @@ class Controller_Main extends MVC_Controller_Default
 			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
 				return $GET->exists('whisper');
 			});
-
+			
+			$this->router->addAction( 'export' )->setResolver(function() use ($GET) {
+				return $GET->exists('export');
+			});
+			
 
 			$this->router->addAction('add', Main::ACTION_ADD_PRODUCT)
 				->setResolver( function() use ($action) {
@@ -87,7 +97,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURL(['action'=>'add'], ['id']);
 				});
 
-			$this->router->addAction('edit', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_main', Main::ACTION_UPDATE_PRODUCT)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='main';
 				} )
@@ -254,303 +264,7 @@ class Controller_Main extends MVC_Controller_Default
 
 	}
 
-	public function edit_Action() : void
-	{
-		$product = static::getCurrentProduct();
-		$this->_setBreadcrumbNavigation();
-		
-		$GET = Http_Request::GET();
-		
-		if($GET->exists('action')) {
-			$action = $GET->getString('action');
-			if($action=='change_kind_of_product') {
-				$product->setKindId( Http_Request::POST()->getInt('kind_of_product_id') );
-				Logger::success(
-					'product_updated',
-					'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-					$product->getId(),
-					$product->getAdminTitle(),
-					$product
-				);
-				
-				UI_messages::success(
-					Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-				);
-			}
-			
-			Http_Headers::reload(unset_GET_params: ['action']);
-		}
-
-
-		if( $product->catchEditForm() ) {
-
-			$product->save();
-			$product->syncVariants();
-			Category::syncCategories();
-
-			Logger::success(
-				'product_updated',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-
-			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-			);
-
-			Http_Headers::reload();
-		}
-		
-		$this->view->setVar('listing', $this->getListing());
-		
-		$this->output( 'edit/main' );
-	}
-
-
-
-	public function edit_images_Action() : void
-	{
-		$this->_setBreadcrumbNavigation();
-
-		$GET = Http_Request::GET();
-
-		if($GET->exists('action')) {
-			$product = static::getCurrentProduct();
-			$shop = Shops::get( $GET->getString('shop_key') );
-
-			$shop_data = $product->getShopData($shop);
-			$this->view->setVar('shop', $shop );
-
-			$updated = false;
-			switch($GET->getString('action')) {
-				case 'upload':
-					Application_Admin::handleUploadTooLarge();
-
-					$shop_data->uploadImages();
-					$updated = true;
-					break;
-				case 'delete':
-					$shop_data->deleteImages( explode(',', $GET->getString('images')) );
-					$updated = true;
-					break;
-				case 'save_sort':
-					$shop_data->sortImages( explode(',', $GET->getString('images')) );
-					$updated = true;
-					break;
-			}
-
-			if($updated) {
-				$product->save();
-
-				AJAX::commonResponse(
-					[
-						'result' => 'ok',
-						'snippets' => [
-							'images_'.$shop->getKey() => $this->view->render('edit/images/list')
-						]
-
-					]
-				);
-
-			}
-		}
-
-
-
-		$this->output( 'edit/images' );
-
-	}
-
-
-	public function edit_variants_Action() : void
-	{
-		$this->_setBreadcrumbNavigation();
-
-		$product = static::getCurrentProduct();
-
-		$updated = false;
-		$sync = false;
-
-		if( $product->catchVariantSetupForm() ) {
-			$updated = true;
-			$sync = true;
-		}
-
-
-		$new_variant = new Product();
-
-		if( $product->catchAddVariantForm( $new_variant ) ) {
-			$updated = true;
-		}
-
-		if( $product->catchUpdateVariantsForm() ) {
-			$updated = true;
-		}
-
-
-		if($updated) {
-			$product->save();
-			if($sync) {
-				$product->syncVariants();
-			}
-			Category::syncCategories();
-
-			Logger::success(
-				'product_updated',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-
-			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-			);
-
-			Http_Headers::reload();
-		}
-
-
-		$this->view->setVar('new_variant', $new_variant);
-
-		//TODO: it's shit ... revision needed
-
-		$this->output( 'edit/variants' );
-	}
-
-	public function edit_set_Action() : void
-	{
-		$this->_setBreadcrumbNavigation();
-
-		$product = static::getCurrentProduct();
-
-		$updated = false;
-
-		if($product->catchSetAddItemForm()) {
-			$updated = true;
-		}
-
-		if($product->catchSetSetupForm()) {
-			$updated = true;
-		}
-
-		$GET = Http_Request::GET();
-
-		if($GET->getInt('remove_item')) {
-			$product->removeSetItem($GET->getInt('remove_item'));
-			$updated = true;
-		}
-
-		if($updated) {
-			$product->save();
-
-			Category::syncCategories();
-
-			Logger::success(
-				'product_updated',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-
-			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-			);
-
-			Http_Headers::reload([], ['remove_item']);
-		}
-
-		$this->output( 'edit/set' );
-	}
-
-
-
-	public function edit_categories_Action() : void
-	{
-		$this->_setBreadcrumbNavigation();
-
-		$product = static::getCurrentProduct();
-
-		$allowed = true;
-		if(
-			$product->getType()==Product::PRODUCT_TYPE_VARIANT &&
-			($master=Product::get($product->getVariantMasterProductId())) &&
-			$master->isVariantSyncCategories()
-		) {
-			$allowed = false;
-		}
-
-		if($allowed) {
-			$POST = Http_Request::POST();
-
-			$updated = false;
-			switch($POST->getString('action')) {
-				case 'add_category':
-					if($product->addCategory( $POST->getInt('category_id') )) {
-						$updated = true;
-					}
-					break;
-				case 'remove_category':
-					if($product->removeCategory( $POST->getInt('category_id') )) {
-						$updated = true;
-					}
-					break;
-			}
-
-			if($updated) {
-				$product->save();
-				$product->syncVariants();
-				Category::syncCategories();
-
-				Logger::success(
-					'product_updated',
-					'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-					$product->getId(),
-					$product->getAdminTitle(),
-					$product
-				);
-
-				UI_messages::success(
-					Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-				);
-
-				Http_Headers::reload();
-			}
-		} else {
-			$product->getEditForm()->setIsReadonly();
-		}
-
-		$this->output( 'edit/categories' );
-	}
-
-	public function edit_parameters_Action() : void
-	{
-		$this->_setBreadcrumbNavigation();
-
-		$product = static::getCurrentProduct();
-
-		if( $product->catchParametersEditForm() ) {
-			Logger::success(
-				'product_updated',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-
-			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-			);
-
-			Http_Headers::reload();
-		}
-
-		$this->output( 'edit/parameters' );
-	}
-
+	
 
 	public function add_Action() : void
 	{

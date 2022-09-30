@@ -79,6 +79,19 @@ $listing = $this->getRaw('listing');
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-3" style="padding-bottom: 10px;">
 				<?=UI::button_create('')->setUrl($router->getAction('add')->URI())->setClass('success')?>
+
+				<?php if($listing->getWhere()): ?>
+				<div class="dropdown">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="export-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<?=Tr::_('Export')?>
+					</button>
+					<div class="dropdown-menu" aria-labelledby="export-menu">
+						<?php foreach(Listing::getExportTypes() as $type=>$title): ?>
+							<a class="dropdown-item" href="<?=Http_Request::currentURI(['export'=>$type])?>"><?=$title?></a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<div class="row">

@@ -13,9 +13,6 @@ $grid = $this->getRaw( 'grid' );
 $listing = $this->getRaw('listing');
 
 
-require 'grid/cell_renderers.phtml';
-
-
 $grid->footer()->setPrepend( $this->render('listing/grid/footer') );
 ?>
 <form>

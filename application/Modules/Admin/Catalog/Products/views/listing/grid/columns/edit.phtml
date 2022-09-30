@@ -1,0 +1,17 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use JetShop\Product;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ * @var Listing $listing
+ */
+
+$item = $this->getRaw('item');
+$listing = $this->getRaw('listing')
+
+?>
+<input type="checkbox" class="checkbox select_product" value="<?=$item->getId()?>" name="products[]"/>
