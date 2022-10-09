@@ -32,7 +32,7 @@ class Listing_Column_Name extends Listing_Column
 	{
 		$headers = [];
 		
-		foreach(Shops::getList() as $shop ) {
+		foreach(Shops::getListSorted() as $shop ) {
 			$headers[] = 'Name - '.$shop->getShopName();
 		}
 		
@@ -43,7 +43,7 @@ class Listing_Column_Name extends Listing_Column
 	{
 		$data = [];
 		
-		foreach(Shops::getList() as $shop ) {
+		foreach(Shops::getListSorted() as $shop ) {
 			$data[] = $item->getShopData($shop)->getName();
 		}
 		

@@ -1,9 +1,12 @@
 <?php
 namespace JetShop;
 
+use Jet\Http_Headers;
+use Jet\Http_Request;
 use Jet\Locale;
 use Jet\Data_Text;
 use Jet\MVC;
+use Jet\Session;
 
 
 class Core_Shops {
@@ -14,7 +17,39 @@ class Core_Shops {
 	 * @var Shops_Shop[]|null
 	 */
 	protected static ?array $_list = null;
+	
+	const CURR_SHOP_SESSION = 'current_shop';
+	const CURR_SHOP_SESSION_KEY = 'key';
+	const CURR_SHOP_GET_PARAM = 'select_shop';
 
+	public static function handleCurrentAdminShop() : void
+	{
+		$all_shops = array_keys(Shops::getList());
+		$default_shop = Shops::getDefault();
+		
+		$session = new Session( Shops::CURR_SHOP_SESSION );
+		$current_shop_key = $session->getValue(Shops::CURR_SHOP_SESSION_KEY, '');
+		if(!in_array($current_shop_key, $all_shops)) {
+			$current_shop_key = $default_shop->getKey();
+			$session->setValue(Shops::CURR_SHOP_SESSION_KEY, $current_shop_key);
+		}
+		
+		
+		$GET = Http_Request::GET();
+		if($GET->exists(Shops::CURR_SHOP_GET_PARAM)) {
+			$current_shop_key = $GET->getString(
+				key:Shops::CURR_SHOP_GET_PARAM,
+				default_value: $default_shop->getKey(),
+				valid_values: $all_shops
+			);
+			
+			$session->setValue(Shops::CURR_SHOP_SESSION_KEY, $current_shop_key);
+			
+			Http_Headers::reload(unset_GET_params: [Shops::CURR_SHOP_GET_PARAM]);
+		}
+		
+		Shops::setCurrent( Shops::get($current_shop_key) );
+	}
 
 	public static function getCurrent() : Shops_Shop
 	{
@@ -67,12 +102,34 @@ class Core_Shops {
 					static::$_list[$key] = $shop;
 				}
 			}
-
-			//TODO: sort - for administration etc.
 		}
 
 		return static::$_list;
 	}
+	
+	public static function getListSorted() : array
+	{
+		$current = Shops::getCurrent();
+		$_list = static::getList();
+		
+		$other = [];
+		foreach($_list as $sh) {
+			if($sh->getKey()!=$current->getKey()) {
+				$other[$sh->getKey()]=$sh;
+			}
+		}
+		
+		uasort( $other, function( Shops_Shop $a, Shops_Shop $b ) {
+			return strcmp( $a->getShopName(), $b->getShopName() );
+		});
+		
+		$list = [];
+		$list[$current->getKey()] = $current;
+		$list += $other;
+		
+		return $list;
+	}
+	
 
 	public static function getScope() : array
 	{

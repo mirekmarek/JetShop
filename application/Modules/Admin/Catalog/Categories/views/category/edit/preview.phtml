@@ -13,8 +13,8 @@ if(
 	return;
 }
 ?>
-<?php if(count(Shops::getList())<2): ?>
-	<?php foreach(Shops::getList() as $shop): ?>
+<?php if(count(Shops::getListSorted())<2): ?>
+	<?php foreach(Shops::getListSorted() as $shop): ?>
 		<a href="<?=$category->getURL($shop)?>" target="_blank"><?=UI::icon('eye')?></a>
 	<?php endforeach; ?>
 <?php else: ?>
@@ -24,7 +24,7 @@ if(
 		</button>
 
 		<div class="dropdown-menu" style="padding: 10px;">
-			<?php foreach(Shops::getList() as $shop): ?>
+			<?php foreach(Shops::getListSorted() as $shop): ?>
 			<a class="dropdown-item" href="<?=$category->getURL($shop)?>" target="_blank"><?=$shop->getShopName()?></a>
 			<?php endforeach; ?>
 		</div>

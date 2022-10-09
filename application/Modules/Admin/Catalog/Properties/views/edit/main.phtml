@@ -49,7 +49,7 @@ echo $form->start();
 			}
 			
 			
-			foreach(Shops::getList() as $shop):
+			foreach(Shops::getListSorted() as $shop):
 				$shop_key = $shop->getKey();
 				$shop_data = $property->getShopData( $shop );
 				

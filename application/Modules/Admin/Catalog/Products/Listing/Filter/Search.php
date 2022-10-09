@@ -1,10 +1,53 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Data_Listing_Filter_Search;
+use Jet\Form;
+use Jet\Form_Field_Search;
+use Jet\Http_Request;
+use Jet\Tr;
 use JetShop\Fulltext_Index_Internal_Product;
 
-class Listing_Filter_Search extends Data_Listing_Filter_Search {
+class Listing_Filter_Search extends Listing_Filter {
+	
+	/**
+	 * @var string
+	 */
+	protected string $search = '';
+	
+	public function getKey(): string
+	{
+		return static::SEARCH;
+	}
+	
+	/**
+	 *
+	 */
+	public function catchGetParams(): void
+	{
+		$this->search = Http_Request::GET()->getString( 'search' );
+		$this->listing->setGetParam( 'search', $this->search );
+	}
+	
+	/**
+	 * @param Form $form
+	 */
+	public function catchForm( Form $form ): void
+	{
+		$this->search = $form->field( 'search' )->getValue();
+		
+		$this->listing->setGetParam( 'search', $this->search );
+	}
+	
+	/**
+	 * @param Form $form
+	 */
+	public function generateFormFields( Form $form ): void
+	{
+		$search = new Form_Field_Search( 'search', '' );
+		$search->setDefaultValue( $this->search );
+		$search->setPlaceholder(Tr::_('Search ...'));
+		$form->addField( $search );
+	}
 	
 	/**
 	 *

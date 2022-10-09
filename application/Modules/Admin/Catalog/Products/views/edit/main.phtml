@@ -77,7 +77,7 @@ $editable = !$form->getIsReadonly();
 			<?=$form->field('/sticker/'.$sticker->getCode())?>
 		<?php endforeach; ?>
 
-		<?php foreach(Shops::getList() as $shop):
+		<?php foreach(Shops::getListSorted() as $shop):
 			$shop_key = $shop->getKey();
 
 			$shop_data = $product->getShopData( $shop );

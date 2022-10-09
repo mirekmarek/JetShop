@@ -46,7 +46,7 @@ $delivery_deadline = $this->getRaw('delivery_deadline');
 		<?=$form->field( 'internal_description' )?>
 
 
-		<?php foreach(Shops::getList() as $shop):
+		<?php foreach(Shops::getListSorted() as $shop):
 			$shop_key= $shop->getKey();
 
 			$shop_data = $delivery_deadline->getShopData( $shop );

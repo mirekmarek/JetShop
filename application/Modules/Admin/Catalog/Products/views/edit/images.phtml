@@ -133,7 +133,7 @@ $product = Controller_Main::getCurrentProduct();
 	};
 
 	$(document).ready(function () {
-		<?php foreach(Shops::getList() as $shop): ?>
+		<?php foreach(Shops::getListSorted() as $shop): ?>
 		ImagesHandler.initSort('<?=$shop->getKey()?>');
 		<?php endforeach; ?>
 	})
@@ -149,7 +149,7 @@ $product = Controller_Main::getCurrentProduct();
 	<div class="col-md-12">
 		<?=$this->getRaw('tabs')?>
 
-	<?php foreach(Shops::getList() as $shop):
+	<?php foreach(Shops::getListSorted() as $shop):
 		$shop_data = $product->getShopData($shop);
 		$shop_key = $shop->getKey();
 		$this->setVar('shop', $shop );

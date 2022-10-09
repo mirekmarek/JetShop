@@ -81,7 +81,7 @@ $add_form->renderer()->setDefaultLabelWidth([
 		echo $add_form->field('internal_notes');
 		
 		
-		foreach(Shops::getList() as $shop):
+		foreach(Shops::getListSorted() as $shop):
 			$shop_key= $shop->getKey();
 			
 			$shop_data = $new_option->getShopData( $shop );

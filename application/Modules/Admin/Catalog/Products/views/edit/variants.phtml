@@ -92,7 +92,7 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 					</td>
 					<td nowrap="">
 						<table>
-						<?php foreach(Shops::getList() as $shop):
+						<?php foreach(Shops::getListSorted() as $shop):
 							$shop_key = $shop->getKey();
 							$shop_name = $shop->getShopName(); ?>
 							<tr>
@@ -149,7 +149,7 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 	<?=$add_form->field('ean')?>
 	<?=$add_form->field('internal_code')?>
 
-	<?php foreach(Shops::getList() as $shop):
+	<?php foreach(Shops::getListSorted() as $shop):
 		$shop_key = $shop->getKey();
 
 		$shop_data = $product->getShopData( $shop );

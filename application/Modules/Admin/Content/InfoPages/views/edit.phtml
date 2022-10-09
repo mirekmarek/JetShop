@@ -23,7 +23,7 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 5 ] 
 
 $URLs = [];
 $base_URL = '';
-foreach( Shops::getList() as $shop ) {
+foreach( Shops::getListSorted() as $shop ) {
 	$URL = MVC::getBase($shop->getBaseId())->getHomepage($shop->getLocale())->getURL();
 	$URLs[$shop->getKey()] = $URL;
 

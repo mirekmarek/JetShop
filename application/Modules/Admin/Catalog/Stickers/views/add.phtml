@@ -44,7 +44,7 @@ $sticker = $this->getRaw( 'sticker' );
 		<?=$form->field( 'internal_name' )?>
 		<?=$form->field( 'code' )?>
 
-		<?php foreach(Shops::getList() as $shop):
+		<?php foreach(Shops::getListSorted() as $shop):
 			$shop_key = $shop->getKey();
 
 			$shop_data = $sticker->getShopData( $shop );

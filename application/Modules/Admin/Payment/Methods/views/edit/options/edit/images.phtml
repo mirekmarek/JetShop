@@ -38,7 +38,7 @@ $image_classes = Payment_Method_Option_ShopData::getImageClasses();
 
 			<?=$this->getRaw('option_tabs')?>
 			<?php
-			foreach(Shops::getList() as $shop):
+			foreach(Shops::getListSorted() as $shop):
 				echo $option->getShopData( $shop )->renderImageWidgets( $image_classes, !$option->getEditForm()->getIsReadonly() );
 			endforeach;
 			?>

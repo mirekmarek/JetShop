@@ -88,7 +88,7 @@ $grid->getColumn( 'delivery_methods' )->addCustomCssStyle( 'width:350px;' );
 $grid->getColumn( 'status' )->setRenderer(
 	function( Payment_Method $item ) {
 		echo '<table>';
-		foreach(Shops::getList() as $shop) {
+		foreach(Shops::getListSorted() as $shop) {
 			$sd = $item->getShopData($shop);
 
 			echo '<tr style="background-color: transparent; border: none;"><td style="padding: 5px;border: none;">'.$shop->getShopName().':</td>';

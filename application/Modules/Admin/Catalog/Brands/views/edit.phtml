@@ -51,7 +51,7 @@ $tabs = UI::tabsJS('brand_tabs', [
 				<?=$form->start()?>
 				<?=$form->field( 'name' )?>
 
-				<?php foreach(Shops::getList() as $shop):
+				<?php foreach(Shops::getListSorted() as $shop):
 					$shop_key = $shop->getKey();
 
 					$shop_data = $brand->getShopData( $shop );
@@ -82,7 +82,7 @@ $tabs = UI::tabsJS('brand_tabs', [
 			<?=$tabs->getTab('tab_main')->content()->end()?>
 			<?=$tabs->getTab('tab_images')->content()->start()?>
 				<?php
-				foreach(Shops::getList() as $shop):
+				foreach(Shops::getListSorted() as $shop):
 					echo $brand->getShopData( $shop )->renderImageWidgets( Brand_ShopData::getImageClasses(), !$form->getIsReadonly() );
 				endforeach;
 				?>

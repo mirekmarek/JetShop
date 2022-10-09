@@ -200,9 +200,21 @@ class Controller_Main extends MVC_Controller_Default
 
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		$page = MVC::getPage();
 		
-		if(Main::getCategoryMode()==Main::CATEGORY_MODE_TREE) {
+		Navigation_Breadcrumb::reset();
+		
+		Navigation_Breadcrumb::addURL(
+			UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle(),
+			Http_Request::currentURI(unset_GET_params: ['id'])
+		);
+
+		
+		$listing = $this->getListing();
+		$c_filter = $listing->getFilter_categories();
+
+		
+		if($c_filter->getMode()==Listing_Filter_Categories::MODE_TREE ) {
 
 			$tree = Category::getTree();
 			$filter = $this->getListing()->getFilter_categories();
@@ -244,13 +256,6 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function listing_Action() : void
 	{
-		$GET = Http_Request::GET();
-		if($GET->exists('set_category_mode')) {
-			Main::setCategoryMode( $GET->getString('set_category_mode') );
-			Http_Headers::reload(unset_GET_params: ['set_category_mode', 'categories']);
-		}
-		
-
 		$this->_setBreadcrumbNavigation();
 
 		$listing = $this->getListing();

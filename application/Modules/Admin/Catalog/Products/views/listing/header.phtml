@@ -1,0 +1,53 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Form;
+use Jet\Http_Request;
+
+use Jet\UI_dataGrid;
+use Jet\UI;
+
+use Jet\Tr;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View     $this
+ * @var UI_dataGrid  $grid
+ * @var Form         $filter_form
+ * @var Listing      $listing
+ */
+$grid = $this->getRaw( 'grid' );
+$router = $this->getController()->getControllerRouter();
+$filter_form = $this->getRaw( 'filter_form' );
+$listing = $this->getRaw('listing');
+?>
+
+
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-3" style="padding-bottom: 10px;">
+		<?=UI::button_create('')->setUrl($router->getAction('add')->URI())->setClass('success')?>
+
+		<?php if($listing->getWhere()): ?>
+		<div class="dropdown">
+			<button class="btn btn-secondary dropdown-toggle" type="button" id="export-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<?=Tr::_('Export')?>
+			</button>
+			<div class="dropdown-menu" aria-labelledby="export-menu">
+				<?php foreach($listing->getExportTypes() as $type=>$title): ?>
+					<a class="dropdown-item" href="<?=Http_Request::currentURI(['export'=>$type])?>"><?=$title?></a>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php endif; ?>
+	</div>
+</div>
+
+<?php require 'header/filter.phtml'; ?>
+
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+	
+	</div>
+</div>
+
+

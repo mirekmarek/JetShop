@@ -2,7 +2,6 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\Data_Listing;
-use Jet\Data_Listing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
@@ -11,7 +10,7 @@ use JetShop\Product_ShopData;
 use JetShop\Shops;
 
 
-class Listing_Filter_IsActive extends Data_Listing_Filter
+class Listing_Filter_IsActive extends Listing_Filter
 {
 	protected int $is_active_general = 0;
 	
@@ -20,12 +19,18 @@ class Listing_Filter_IsActive extends Data_Listing_Filter
 	public function __construct( Data_Listing $listing )
 	{
 		parent::__construct( $listing );
-		foreach(Shops::getList() as $code => $shop) {
+		foreach(Shops::getListSorted() as $code => $shop) {
 			if(!array_key_exists($code, $this->is_active_per_shop)) {
 				$this->is_active_per_shop[$code] = '0';
 			}
 		}
 	}
+	
+	public function getKey(): string
+	{
+		return static::IS_ACTIVE;
+	}
+	
 	
 	public function catchGetParams(): void
 	{
@@ -34,7 +39,7 @@ class Listing_Filter_IsActive extends Data_Listing_Filter
 			$this->listing->setGetParam('is_active_general', $this->is_active_general);
 		}
 		
-		foreach(Shops::getList() as $code => $shop) {
+		foreach(Shops::getListSorted() as $code => $shop) {
 			$this->is_active_per_shop[$code] = Http_Request::GET()->getString('is_active_'.$code, '0', ['0', '1', '-1']);
 			
 			if($this->is_active_per_shop[$code]!='0') {
@@ -81,7 +86,7 @@ class Listing_Filter_IsActive extends Data_Listing_Filter
 			$this->listing->setGetParam('is_active_general', '');
 		}
 		
-		foreach(Shops::getList() as $code => $shop) {
+		foreach(Shops::getListSorted() as $code => $shop) {
 			$this->is_active_per_shop[$code] = $form->field('is_active_'.$code)->getValue();
 			if($this->is_active_per_shop[$code]!='0') {
 				$this->listing->setGetParam('is_active_'.$code, $this->is_active_per_shop[$code]);

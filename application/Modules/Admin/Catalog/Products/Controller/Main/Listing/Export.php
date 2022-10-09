@@ -11,9 +11,10 @@ trait Controller_Main_Listing_Export
 {
 	public function export_Action() : void
 	{
-		$types = array_keys(Listing::getExportTypes());
-		
 		$listing = $this->getListing();
+		
+		$types = array_keys( $listing->getExportTypes() );
+		
 		$listing->export(
 			Http_Request::GET()->getString(
 				key: 'export',

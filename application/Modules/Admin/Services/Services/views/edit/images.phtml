@@ -30,7 +30,7 @@ $service = $this->getRaw( 'service' );
 		<?=$this->getRaw('tabs')?>
 
 		<?php if(!$service->getIsNew()):
-			foreach(Shops::getList() as $shop):
+			foreach(Shops::getListSorted() as $shop):
 				echo $service->getShopData( $shop )->renderImageWidgets( Services_Service_ShopData::getImageClasses(), !$service->getEditForm()->getIsReadonly() );
 			endforeach;
 		endif; ?>

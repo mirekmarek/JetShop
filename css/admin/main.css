@@ -318,3 +318,12 @@ h4.inherited {
 .active b {
 	padding-left: 2px;
 }
+
+.table-plain tr,
+.table-plain tr:hover,
+.table-plain td {
+	background-color:transparent;
+	border:none;
+	padding: 5px;
+	margin: 0px;
+}

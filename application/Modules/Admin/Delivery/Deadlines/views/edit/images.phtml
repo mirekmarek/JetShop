@@ -29,7 +29,7 @@ $delivery_deadline = $this->getRaw( 'delivery_deadline' );
 		<?=$this->getRaw('tabs')?>
 
 		<?php if(!$delivery_deadline->getIsNew()): ?>
-			<?php foreach(Shops::getList() as $shop):
+			<?php foreach(Shops::getListSorted() as $shop):
 				echo $delivery_deadline->getShopData( $shop )->renderImageWidgets( Delivery_Method_ShopData::getImageClasses(), !$delivery_deadline->getEditForm()->getIsReadonly() );
 			endforeach; ?>
 		<?php endif; ?>

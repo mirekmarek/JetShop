@@ -43,7 +43,7 @@ $brand = $this->getRaw( 'brand' );
 		<?=$form->field( 'name' )?>
 
 		<?php
-		foreach(Shops::getList() as $shop):
+		foreach(Shops::getListSorted() as $shop):
 			$shop_key = $shop->getKey();
 
 			$shop_data = $brand->getShopData( $shop );

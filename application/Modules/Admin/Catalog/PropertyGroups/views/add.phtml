@@ -50,7 +50,7 @@ $router = $this->getController()->getControllerRouter();
 			echo $form->field('decimal_places');
 		}
 		
-		foreach(Shops::getList() as $shop):
+		foreach(Shops::getListSorted() as $shop):
 			$shop_key= $shop->getKey();
 			$shop_data = $property_group->getShopData( $shop );
 			

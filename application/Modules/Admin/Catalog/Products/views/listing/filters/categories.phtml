@@ -1,0 +1,96 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetShop\Category;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Categories $filter
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+?>
+
+<?=$filter_form->field('categories')?>
+
+	<script>
+		let productFilter = {
+			addCategory: function( id )
+			{
+				let categories = document.getElementById('filter_form__categories');
+
+				let new_value = '';
+				if(categories.value.length) {
+					new_value = categories.value.split(',');
+					if(!new_value.includes(id)) {
+						new_value.push(id);
+					}
+
+					new_value = new_value.join(',');
+
+				} else {
+					new_value = id;
+				}
+
+				categories.value = new_value;
+
+				document.getElementById('filter_form').submit();
+			},
+
+			removeCategory: function( id )
+			{
+				let categories = document.getElementById('filter_form__categories');
+
+				let new_value = '';
+				if(categories.value.length) {
+					new_value = categories.value.split(',');
+					let _new_value = [];
+					for(let i=0;i<new_value.length;i++) {
+						if(new_value[i]!=id) {
+							_new_value.push(new_value[i]);
+						}
+					}
+					new_value = _new_value.join(',');
+				}
+
+				categories.value = new_value;
+
+				document.getElementById('filter_form').submit();
+
+			}
+		};
+	</script>
+
+
+<?php
+if( $filter->getMode()==Listing_Filter_Categories::MODE_TREE ): ?>
+	<?=UI::button(Tr::_('Switch to multiple mode'))->setIcon('list-check')->setUrl( $filter->getModeUrl( Listing_Filter_Categories::MODE_MULTIPLE ) )?>
+<?php
+endif;
+if( $filter->getMode()==Listing_Filter_Categories::MODE_MULTIPLE ): ?>
+	<table style="width: 100%">
+		<tr>
+			<td style="width: 250px;"><?=UI::button(Tr::_('Switch to tree mode'))->setIcon('folder-tree')->setUrl( $filter->getModeUrl( Listing_Filter_Categories::MODE_TREE ) )?></td>
+			<td style="width: 50px;"><?=Tr::_('Category:')?></td>
+			<td><?=Category::renderSelectCategoryWidget("productFilter.addCategory(selected_item.id)")?></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="padding: 5px;" colspan="2">
+				<?php foreach($filter->getSelected() as $c_id=>$category): ?>
+					<div style="float: left;margin: 2px;">
+						<?=UI::button(' '.$category->getPathName())->setIcon('trash')->setClass('info')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnclick("productFilter.removeCategory({$c_id})")?>
+					</div>
+				
+				<?php endforeach; ?>
+			</td>
+		</tr>
+	</table>
+<?php endif;

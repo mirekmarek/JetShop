@@ -41,7 +41,7 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] 
 		<br/>
 		<?=$form->field('code')?>
 
-		<?php foreach(Shops::getList() as $shop):
+		<?php foreach(Shops::getListSorted() as $shop):
 			$shop_key = $shop->getKey();
 			$shop_data = $new_option->getShopData( $shop );
 			?>

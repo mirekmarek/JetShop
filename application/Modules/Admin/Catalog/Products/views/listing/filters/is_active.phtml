@@ -1,0 +1,32 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetShop\Shops;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_IsActive $filter
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+?>
+<table class="badge badge-<?=match((string)$filter_form->field('is_active_general')->getValue()) {'0'=>'light', '-1'=>'danger', '1'=>'success' }?>">
+	<tr>
+		<td style="width: 150px;"><?=Tr::_('Is active - general')?></td>
+		<td style="width: 100px;"><?=$filter_form->field('is_active_general')->input()->addJsAction('onchange', 'this.form.submit()')?></td>
+	</tr>
+</table>
+<?php foreach(Shops::getListSorted() as $code=>$shop): ?>
+	<table class="badge badge-<?=match((string)$filter_form->field('is_active_'.$code)->getValue()) {'0'=>'light', '-1'=>'danger', '1'=>'success' }?>">
+		<tr>
+			<td style="width: 150px;"><?=Tr::_('Is active - '.$shop->getShopName())?></td>
+			<td style="width: 100px;"><?=$filter_form->field('is_active_'.$code)->input()->addJsAction('onchange', 'this.form.submit()')?></td>
+		</tr>
+	</table>
+<?php endforeach; ?>
+

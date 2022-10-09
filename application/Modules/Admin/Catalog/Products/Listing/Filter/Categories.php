@@ -1,21 +1,33 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Data_Listing_Filter;
 use Jet\Form_Field_Hidden;
 use Jet\Form;
 use Jet\Http_Request;
 use JetShop\Category;
 use JetShop\Product_Category;
 
-class Listing_Filter_Categories extends Data_Listing_Filter
+class Listing_Filter_Categories extends Listing_Filter
 {
+	
+	const MODE_TREE = 'tree';
+	const MODE_MULTIPLE = 'multiple';
+	
+	const DEFAULT_MODE = self::MODE_TREE;
+	
 	protected array $categories = [];
 	
+	protected ?string $mode = null;
+	
+	public function getKey(): string
+	{
+		return static::CATEGORIES;
+	}
 	
 	public function catchGetParams(): void
 	{
 		$this->categoriesSet( Http_Request::GET()->getString('categories') );
+		$this->getMode();
 	}
 	
 	public function generateFormFields( Form $form ): void
@@ -114,5 +126,32 @@ class Listing_Filter_Categories extends Data_Listing_Filter
 			unset_GET_params: ['id']
 		);
 	}
-
+	
+	public function getMode() : string
+	{
+		if($this->mode===null) {
+			$this->mode = Http_Request::GET()->getString(
+				key: 'category_mode',
+				default_value: static::DEFAULT_MODE,
+				valid_values: [
+					static::MODE_TREE,
+					static::MODE_MULTIPLE
+				]
+			);
+			
+			if($this->mode==static::DEFAULT_MODE) {
+				$this->listing->unsetGetParam('category_mode');
+			} else {
+				$this->listing->setGetParam('category_mode', $this->mode);
+			}
+			
+		}
+		
+		return $this->mode;
+	}
+	
+	public function getModeUrl( string $mode ) : string
+	{
+		return Http_Request::currentURI(['category_mode'=>$mode]);
+	}
 }

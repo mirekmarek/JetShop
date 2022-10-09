@@ -30,7 +30,7 @@ $payment_method = $this->getRaw( 'payment_method' );
 		<?=$this->getRaw('tabs')?>
 
 		<?php if(!$payment_method->getIsNew()):
-			foreach(Shops::getList() as $shop):
+			foreach(Shops::getListSorted() as $shop):
 				echo $payment_method->getShopData( $shop )->renderImageWidgets( Payment_Method_ShopData::getImageClasses(), $payment_method->getEditForm()->getIsReadonly() );
 			endforeach;
 		endif; ?>

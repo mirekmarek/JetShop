@@ -53,17 +53,12 @@ class Application_Admin
 		Logger::setLogger( new Logger_Admin() );
 		Auth::setController( new Auth_Controller_Admin() );
 
-		//TODO: select default shop ...
-		//TODO: sort shops ...
-
-		$default_shop = Shops::getDefault();
-		Shops::setCurrent( $default_shop );
+		Shops::handleCurrentAdminShop();
 
 		SysConf_Jet_UI::setViewsDir( $router->getBase()->getViewsPath() . 'ui/' );
 		SysConf_Jet_Form::setDefaultViewsDir( $router->getBase()->getViewsPath() . 'form/' );
 		SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
-
-
+		
 	}
 
 	/**

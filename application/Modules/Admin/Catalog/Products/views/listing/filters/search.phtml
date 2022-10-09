@@ -1,0 +1,16 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Search $filter
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+
+echo $filter_form->field( 'search' )->input();

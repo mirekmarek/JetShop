@@ -46,7 +46,7 @@ $kind_of_product = $this->getRaw('kind_of_product');
 	<div class="col-md-2">
 		<ul class="list-group">
 			<?php foreach($modules as $module):
-				foreach(Shops::getList() as $shop):
+				foreach(Shops::getListSorted() as $shop):
 					if(!$module->isAllowedForShop($shop)):
 						continue;
 					endif;

@@ -30,7 +30,7 @@ $kind_of_product = $this->getRaw('kind_of_product');
 	<?php
 	echo $this->getRaw('tabs');
 	
-	foreach(Shops::getList() as $shop):
+	foreach(Shops::getListSorted() as $shop):
 		echo $kind_of_product->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$kind_of_product->getEditForm()->getIsReadonly() );
 	endforeach;
 	?>

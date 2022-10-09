@@ -6,28 +6,52 @@ use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
 
 use Jet\Http_Request;
+use Jet\Tr;
 use JetShop\Product;
+use JetShop\Shops;
 
 class Listing extends Data_Listing
 {
-	const EXPORT_TYPE_XLSX = 'xlsx';
-	const EXPORT_TYPE_CSV = 'csv';
 	
-	const EXPORT_LIMIT = 500;
+	protected string $default_sort = 'name';
 	
-	use Listing_Export;
 	
-	protected ?array $all_ids = null;
+	protected static array $all_filters_classes = [
+		Listing_Filter_Search::class,
+		Listing_Filter_Categories::class,
+		Listing_Filter_ProductType::class,
+		Listing_Filter_ProductKind::class,
+		Listing_Filter_IsActive::class
+	];
+	
+	protected static array $all_columns_classes = [
+		Listing_Column_Edit::class,
+		Listing_Column_ID::class,
+		Listing_Column_Name::class,
+	];
+	
+	protected static array $all_exports_classes = [
+		Listing_Export_CSV::class,
+		Listing_Export_XLSX::class
+	];
 	
 	/**
 	 * @var Listing_Column[]
 	 */
 	protected array $all_columns = [];
 	
+	/**
+	 * @var Listing_Export[]
+	 */
+	protected array $exports = [];
+	
+	protected ?array $all_ids = null;
+	
 	public function __construct()
 	{
 		parent::__construct();
 		$this->initColumns();
+		$this->initExports();
 	}
 	
 	protected function getList(): DataModel_Fetch_Instances
@@ -37,25 +61,28 @@ class Listing extends Data_Listing
 	
 	protected function initFilters(): void
 	{
-		$this->filters['search'] = new Listing_Filter_Search( $this );
-		$this->filters['categories'] = new Listing_Filter_Categories( $this );
-		$this->filters['product_type'] = new Listing_Filter_ProductType( $this );
-		$this->filters['product_kind'] = new Listing_Filter_ProductKind( $this );
-		$this->filters['is_active'] = new Listing_Filter_IsActive( $this );
+		foreach(static::$all_filters_classes as $class) {
+			$filter = new $class( $this );
+			$this->filters[$filter->getKey()] = $filter;
+		}
 	}
 	
 	protected function initColumns(): void
 	{
-		$column = new Listing_Column_Edit( $this );
-		$this->all_columns[$column->getKey()] = $column;
-		
-		$column = new Listing_Column_ID( $this );
-		$this->all_columns[$column->getKey()] = $column;
-		
-		$column = new Listing_Column_Name( $this );
-		$this->all_columns[$column->getKey()] = $column;
-		
+		foreach(static::$all_columns_classes as $class) {
+			$column = new $class( $this );
+			$this->all_columns[$column->getKey()] = $column;
+		}
 	}
+	
+	protected function initExports(): void
+	{
+		foreach(static::$all_exports_classes as $class) {
+			$column = new $class( $this );
+			$this->exports[$column->getKey()] = $column;
+		}
+	}
+	
 	
 	public function getVisibleColumnsSchema(): array
 	{
@@ -139,6 +166,30 @@ class Listing extends Data_Listing
 		return '';
 	}
 	
+	/**
+	 * @return array
+	 */
+	public function getWhere(): array
+	{
+		if( $this->filter_where === null ) {
+			
+			$this->filter_where = [
+				[
+					'products_shop_data.shop_code' => Shops::getCurrent()->getShopCode(),
+					'AND',
+					'products_shop_data.locale' => Shops::getCurrent()->getLocale()
+				]
+			];
+			
+			foreach( $this->filters as $filter ) {
+				$filter->generateWhere();
+			}
+			
+		}
+		return $this->filter_where;
+	}
+	
+	
 	
 	/**
 	 * @return DataModel_Fetch_Instances
@@ -146,6 +197,7 @@ class Listing extends Data_Listing
 	protected function getGrid_prepareList(): DataModel_Fetch_Instances
 	{
 		$list = $this->getList();
+		
 		
 		$list->getQuery()->setWhere( $this->getWhere() );
 		
@@ -157,36 +209,21 @@ class Listing extends Data_Listing
 		return $list;
 	}
 	
-	
-	public function getFilter_search(): Listing_Filter_Search
+	public function getFilter( string $key ) : Listing_Filter
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['search'];
+		return $this->filters[$key];
 	}
+	
 	
 	public function getFilter_categories(): Listing_Filter_Categories
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $this->filters['categories'];
 	}
-	
-	public function getFilter_product_type(): Listing_Filter_ProductType
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['product_type'];
-	}
-	
-	public function getFilter_product_kind(): Listing_Filter_ProductKind
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['product_kind'];
-	}
-	
-	public function getFilter_is_active(): Listing_Filter_IsActive
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['is_active'];
-	}
+
+
+
 	
 	public function getAllIds(): array
 	{
@@ -235,5 +272,29 @@ class Listing extends Data_Listing
 	public function getProductEditUrl( Product $item ): string
 	{
 		return Http_Request::currentURI( ['id' => $item->getId()] );
+	}
+	
+	/**
+	 * @return Listing_Export[]
+	 */
+	public function getExports() : array
+	{
+		return $this->exports;
+	}
+	
+	public function export( string $type ) : void
+	{
+		$this->exports[$type]->export();
+	}
+	
+	public function getExportTypes() : array
+	{
+		$res = [];
+		
+		foreach($this->exports as $export) {
+			$res[$export->getKey()] = Tr::_($export->getTitle());
+		}
+		
+		return $res;
 	}
 }

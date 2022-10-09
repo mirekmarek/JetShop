@@ -51,7 +51,7 @@ $tabs = UI::tabsJS('sticker_tabs', [
 				<?=$form->field( 'internal_name' )?>
 				<?=$form->field( 'code' )?>
 
-				<?php foreach(Shops::getList() as $shop):
+				<?php foreach(Shops::getListSorted() as $shop):
 					$shop_key = $shop->getKey();
 
 					$shop_data = $sticker->getShopData( $shop );
@@ -82,7 +82,7 @@ $tabs = UI::tabsJS('sticker_tabs', [
 			<?=$tabs->getTab('tab_main')->content()->end()?>
 			<?=$tabs->getTab('tab_images')->content()->start()?>
 				<?php
-				foreach(Shops::getList() as $shop):
+				foreach(Shops::getListSorted() as $shop):
 					echo $sticker->getShopData( $shop )->renderImageWidgets( Sticker_ShopData::getImageClasses(), !$form->getIsReadonly() );
 				endforeach;
 				?>

@@ -128,4 +128,6 @@ return [
 	'XLSX' => '',
 	'To XLSX' => '',
 	'To CSV' => '',
+	'to XLSX' => '',
+	'to CSV' => '',
 ];

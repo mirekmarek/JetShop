@@ -5,10 +5,12 @@ use Jet\MVC_View;
 
 /**
  * @var MVC_View     $this
+ * @var Listing      $listing
  */
+$listing = $this->getRaw('listing');
 ?>
 
-<?php if(Main::getCategoryMode()==Main::CATEGORY_MODE_TREE): ?>
+<?php if( $listing->getFilter_categories()->getMode()==Listing_Filter_Categories::MODE_TREE ): ?>
 <div class="row">
 	<div class="col-md-2 tree">
 		<?php require 'listing/cat_tree.phtml'; ?>
@@ -16,7 +18,7 @@ use Jet\MVC_View;
 	<div class="col-md-10">
 		<div class="row toolbar" id="main-toolbar">
 			<div class="container-fluid">
-				<?php require 'listing/filter.phtml'; ?>
+				<?php require 'listing/header.phtml'; ?>
 			</div>
 		</div>
 
@@ -32,10 +34,10 @@ use Jet\MVC_View;
 
 <?php endif; ?>
 
-<?php if(Main::getCategoryMode()==Main::CATEGORY_MODE_MULTIPLE): ?>
+<?php if( $listing->getFilter_categories()->getMode()==Listing_Filter_Categories::MODE_MULTIPLE ): ?>
 	<div class="row toolbar" id="main-toolbar">
 		<div class="container-fluid">
-			<?php require 'listing/filter.phtml'; ?>
+			<?php require 'listing/header.phtml'; ?>
 		</div>
 	</div>
 

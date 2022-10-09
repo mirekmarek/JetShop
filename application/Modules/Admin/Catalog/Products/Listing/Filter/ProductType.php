@@ -1,7 +1,6 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Data_Listing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
@@ -9,9 +8,15 @@ use Jet\Tr;
 use JetShop\Product;
 
 
-class Listing_Filter_ProductType extends Data_Listing_Filter
+class Listing_Filter_ProductType extends Listing_Filter
 {
 	protected string $product_type = '';
+	
+	
+	public function getKey(): string
+	{
+		return static::PRODUCT_TYPE;
+	}
 	
 	public function catchGetParams(): void
 	{

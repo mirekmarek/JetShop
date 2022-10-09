@@ -30,7 +30,7 @@ $property_group = $this->getRaw( 'property_group' );
 	<?php
 	echo $this->getRaw('tabs');
 	
-	foreach(Shops::getList() as $shop):
+	foreach(Shops::getListSorted() as $shop):
 		echo $property_group->getShopData( $shop )->renderImageWidgets( PropertyGroup_ShopData::getImageClasses(), !$property_group->getEditForm()->getIsReadonly() );
 	endforeach;
 	?>

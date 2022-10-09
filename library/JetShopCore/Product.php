@@ -232,8 +232,18 @@ abstract class Core_Product extends DataModel {
 	 */
 	public static function getList( array $where=[] ) : DataModel_Fetch_Instances|array
 	{
+		if($where) {
+			$where[] = 'AND';
+		}
+		
+		$where[] = [
+			'products_shop_data.shop_code' => Shops::getCurrent()->getShopCode(),
+			'AND',
+			'products_shop_data.locale' => Shops::getCurrent()->getLocale()
+		];
+		
 		$list = static::fetchInstances( $where );
-
+		
 		$list->getQuery()->setOrderBy( 'products_shop_data.name' );
 
 		return $list;
@@ -258,7 +268,7 @@ abstract class Core_Product extends DataModel {
 		$query->setWhere( $where );
 		$query->setOrderBy( $order_by );
 		$backend = DataModel_Backend::get( $def );
-		
+		$backend->createSelectQuery( $query );
 		$ids = $backend->fetchCol( $query );
 		foreach($ids as $i=>$id) {
 			$ids[$i] = (int)$id;

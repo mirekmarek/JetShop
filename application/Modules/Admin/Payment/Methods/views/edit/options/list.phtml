@@ -38,7 +38,7 @@ $payment_method = $this->getRaw( 'payment_method' );
 				<td style="width: 300px;"><a href="<?=$edit_url?>"><?=$option->getTitle()?></a></td>
 				<td>
 					<table>
-						<?php foreach(Shops::getList() as $shop):
+						<?php foreach(Shops::getListSorted() as $shop):
 							$sd = $option->getShopData($shop);
 							?>
 						<tr style="background-color: transparent;">

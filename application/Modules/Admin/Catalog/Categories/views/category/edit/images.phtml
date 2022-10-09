@@ -14,7 +14,7 @@ $category = Controller_Main::getCurrentCategory();
 $image_classes = Category_ShopData::getImageClasses();
 
 echo $this->render('lj_start');
-	foreach(Shops::getList() as $shop):
+	foreach(Shops::getListSorted() as $shop):
 		echo $category->getShopData( $shop )->renderImageWidgets( $image_classes, !$category->getEditForm()->getIsReadonly() );
 	endforeach;
 echo $this->render('lj_end');

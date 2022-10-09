@@ -39,7 +39,7 @@ $editable = !$form->getIsReadonly();
 </div>
 
 <?=$form->start();?>
-		<?php foreach(Shops::getList() as $shop):
+		<?php foreach(Shops::getListSorted() as $shop):
 			$shop_key = $shop->getKey();
 			$shop_data = $category->getShopData( $shop );
 			?>

@@ -29,7 +29,7 @@ $option = $this->getRaw('option');
 		<?php
 		echo $this->getRaw('tabs');
 		
-		foreach(Shops::getList() as $shop):
+		foreach(Shops::getListSorted() as $shop):
 			echo $option->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$option->getEditForm()->getIsReadonly() );
 		endforeach;
 		?>

@@ -1,18 +1,22 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Data_Listing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetShop\KindOfProduct;
-use JetShop\Product;
 
 
-class Listing_Filter_ProductKind extends Data_Listing_Filter
+class Listing_Filter_ProductKind extends Listing_Filter
 {
 	protected string $product_kind = '';
+	
+	
+	public function getKey(): string
+	{
+		return static::PRODUCT_KIND;
+	}
 	
 	public function catchGetParams(): void
 	{

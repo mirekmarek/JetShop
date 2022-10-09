@@ -26,7 +26,7 @@ class Data_Listing_Filter_Shop extends Data_Listing_Filter{
 		]);
 		$options = [0=>Tr::_('- all -')];
 		
-		foreach(Shops::getList() as $shop) {
+		foreach(Shops::getListSorted() as $shop) {
 			$options[$shop->getKey()] = $shop->getShopName();
 		}
 		$field->setSelectOptions( $options );

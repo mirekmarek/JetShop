@@ -30,7 +30,7 @@ $delivery_method = $this->getRaw( 'delivery_method' );
 		<?=$this->getRaw('tabs')?>
 
 		<?php if(!$delivery_method->getIsNew()):
-			foreach(Shops::getList() as $shop):
+			foreach(Shops::getListSorted() as $shop):
 				echo $delivery_method->getShopData( $shop )->renderImageWidgets( Delivery_Method_ShopData::getImageClasses(), $delivery_method->getEditForm()->getIsReadonly() );
 			endforeach;
 		endif; ?>
