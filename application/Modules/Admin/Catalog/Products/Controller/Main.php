@@ -211,13 +211,13 @@ class Controller_Main extends MVC_Controller_Default
 
 		
 		$listing = $this->getListing();
-		$c_filter = $listing->getFilter_categories();
+		$c_filter = $listing->getFilter(Listing_Filter::CATEGORIES);
 
 		
 		if($c_filter->getMode()==Listing_Filter_Categories::MODE_TREE ) {
 
 			$tree = Category::getTree();
-			$filter = $this->getListing()->getFilter_categories();
+			$filter = $this->getListing()->getFilter(Listing_Filter::CATEGORIES);
 			
 			$current_cat_id = $filter->getCurrentCategoryId();
 			
@@ -257,6 +257,15 @@ class Controller_Main extends MVC_Controller_Default
 	public function listing_Action() : void
 	{
 		$this->_setBreadcrumbNavigation();
+		
+		$schema = Listing_Schema::getSelectedSchemaDefinition();
+		if($schema->catchUpdateSchemaForm()) {
+			Http_Headers::movedTemporary( $schema->getURL() );
+		}
+		
+		if( $new_schema=Listing_Schema::catchAddSchemaForm() ) {
+			Http_Headers::movedTemporary( $new_schema->getURL() );
+		}
 
 		$listing = $this->getListing();
 

@@ -10,10 +10,9 @@ use Jet\MVC_View;
 $listing = $this->getRaw('listing');
 ?>
 
-<?php if( $listing->getFilter_categories()->getMode()==Listing_Filter_Categories::MODE_TREE ): ?>
 <div class="row">
 	<div class="col-md-2 tree">
-		<?php require 'listing/cat_tree.phtml'; ?>
+		<?=$listing->getFilter( Listing_Filter::CATEGORIES )->renderForm()?>
 	</div>
 	<div class="col-md-10">
 		<div class="row toolbar" id="main-toolbar">
@@ -30,23 +29,3 @@ $listing = $this->getRaw('listing');
 		</div>
 	</div>
 </div>
-
-
-<?php endif; ?>
-
-<?php if( $listing->getFilter_categories()->getMode()==Listing_Filter_Categories::MODE_MULTIPLE ): ?>
-	<div class="row toolbar" id="main-toolbar">
-		<div class="container-fluid">
-			<?php require 'listing/header.phtml'; ?>
-		</div>
-	</div>
-
-
-	<div class="row" id="main-col">
-		<div class="col-md-12">
-			<?php require 'listing/grid.phtml'; ?>
-		</div>
-	</div>
-<?php endif; ?>
-
-

@@ -1,0 +1,23 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI_messages;
+use JetShop\Price;
+use JetShop\Product;
+use JetShop\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ * @var Listing $listing
+ */
+
+$item = $this->getRaw('item');
+$listing = $this->getRaw('listing');
+
+?>
+<?php foreach(Shops::getListSorted() as $shop): ?>
+<?=$shop->getShopName()?>: <b><?=Price::formatWithCurrency($item->getShopData($shop)->getFinalPrice(), $shop )?><br></b>
+<?php endforeach; ?>

@@ -107,6 +107,9 @@ class Core_Shops {
 		return static::$_list;
 	}
 	
+	/**
+	 * @return Shops_Shop[]
+	 */
 	public static function getListSorted() : array
 	{
 		$current = Shops::getCurrent();

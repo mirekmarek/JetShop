@@ -5,27 +5,27 @@ namespace JetShopModule\Admin\Catalog\Products;
 use JetShop\Product;
 use JetShop\Shops;
 
-class Listing_Column_Name extends Listing_Column
+class Listing_Column_FinalPrice extends Listing_Column
 {
 	
 	public static function getKey(): string
 	{
-		return 'name';
+		return 'final_price';
 	}
 	
 	public function getOrderByAsc(): array|string
 	{
-		return '+products_shop_data.name';
+		return '+products_shop_data.final_price';
 	}
 	
 	public function getOrderByDesc(): array|string
 	{
-		return '-products_shop_data.name';
+		return '-products_shop_data.final_price';
 	}
 
 	public static function getTitle(): string
 	{
-		return 'Name';
+		return 'Price';
 	}
 	
 	public function getExportHeader(): null|string|array
@@ -33,7 +33,7 @@ class Listing_Column_Name extends Listing_Column
 		$headers = [];
 		
 		foreach(Shops::getListSorted() as $shop ) {
-			$headers[] = 'Name - '.$shop->getShopName();
+			$headers[] = 'Price - '.$shop->getShopName();
 		}
 		
 		return $headers;
@@ -44,7 +44,7 @@ class Listing_Column_Name extends Listing_Column
 		$data = [];
 		
 		foreach(Shops::getListSorted() as $shop ) {
-			$data[] = $item->getShopData($shop)->getName();
+			$data[] = $item->getShopData($shop)->getFinalPrice();
 		}
 		
 		return $data;

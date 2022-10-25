@@ -8,12 +8,12 @@ use JetShop\Product;
 class Listing_Column_ID extends Listing_Column
 {
 	
-	public function getKey(): string
+	public static function getKey(): string
 	{
 		return 'id';
 	}
 	
-	public function getTitle(): string
+	public static function getTitle(): string
 	{
 		return 'ID';
 	}

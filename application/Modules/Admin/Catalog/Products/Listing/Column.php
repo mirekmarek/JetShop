@@ -16,9 +16,9 @@ abstract class Listing_Column extends BaseObject
 		$this->listing = $listing;
 	}
 	
-	abstract public function getKey(): string;
+	abstract public static function getKey(): string;
 	
-	abstract public function getTitle(): string;
+	abstract public static function getTitle(): string;
 	
 	public function isMandatory() : bool
 	{

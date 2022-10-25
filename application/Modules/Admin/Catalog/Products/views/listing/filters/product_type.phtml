@@ -17,22 +17,22 @@ $filter_form = $listing->getFilterForm();
 $field = $filter_form->field( 'product_type' );
 
 $field->input()->addJsAction( 'onchange', 'this.form.submit()' );
-$field->label()->addCustomCssClass( 'text-right' );
+//$field->label()->addCustomCssClass( 'text-right' );
 
 
 
 $field->label()->setWidth([
 	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
-	Form_Renderer::LJ_SIZE_SMALL => 3,
-	Form_Renderer::LJ_SIZE_MEDIUM => 4,
-	Form_Renderer::LJ_SIZE_LARGE => 4,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 12,
+	Form_Renderer::LJ_SIZE_LARGE => 12,
 ]);
 
 $field->input()->setWidth([
 	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
-	Form_Renderer::LJ_SIZE_SMALL => 8,
-	Form_Renderer::LJ_SIZE_MEDIUM => 7,
-	Form_Renderer::LJ_SIZE_LARGE => 8,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 12,
+	Form_Renderer::LJ_SIZE_LARGE => 12,
 
 ]);
 

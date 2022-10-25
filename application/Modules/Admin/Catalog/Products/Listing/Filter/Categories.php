@@ -1,7 +1,6 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-use Jet\Form_Field_Hidden;
 use Jet\Form;
 use Jet\Http_Request;
 use JetShop\Category;
@@ -32,14 +31,10 @@ class Listing_Filter_Categories extends Listing_Filter
 	
 	public function generateFormFields( Form $form ): void
 	{
-		$categories = new Form_Field_Hidden('categories', '');
-		$categories->setDefaultValue( $this->categories ? implode(',', $this->categories):'' );
-		$form->addField($categories);
 	}
 	
 	public function catchForm( Form $form ): void
 	{
-		$this->categoriesSet( $form->field('categories')->getValue() );
 	}
 	
 	public function generateWhere(): void
@@ -74,7 +69,7 @@ class Listing_Filter_Categories extends Listing_Filter
 	/**
 	 * @return Category[]
 	 */
-	public function getSelected() : array
+	public function getSelectedCategories() : array
 	{
 		if(!$this->categories) {
 			return [];
@@ -93,6 +88,10 @@ class Listing_Filter_Categories extends Listing_Filter
 		
 	}
 	
+	public function getSelectedCategoryIds( bool $as_string ) : array|string
+	{
+		return $as_string ? implode(',', $this->categories) : $this->categories;
+	}
 	
 	protected function categoriesSet( string $categories )
 	{
@@ -154,4 +153,5 @@ class Listing_Filter_Categories extends Listing_Filter
 	{
 		return Http_Request::currentURI(['category_mode'=>$mode]);
 	}
+	
 }

@@ -8,12 +8,13 @@ use JetShop\Category;
 
 /**
  * @var MVC_View               $this
- * @var Listing      $listing
+ * @var Listing_Filter_Categories $filter
  */
 
-$listing = $this->getRaw('listing');
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
 
-$filter = $listing->getFilter_categories();
+$filter = $listing->getFilter(Listing_Filter::CATEGORIES);
 
 $current_category_id = $filter->getCurrentCategoryId();
 

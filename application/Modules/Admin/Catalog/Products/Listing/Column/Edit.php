@@ -7,7 +7,7 @@ use Jet\UI_dataGrid_column;
 class Listing_Column_Edit extends Listing_Column
 {
 	
-	public function getKey(): string
+	public static function getKey(): string
 	{
 		return 'edit';
 	}
@@ -22,7 +22,7 @@ class Listing_Column_Edit extends Listing_Column
 		return true;
 	}
 	
-	public function getTitle(): string
+	public static function getTitle(): string
 	{
 		return '';
 	}

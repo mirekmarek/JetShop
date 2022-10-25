@@ -2,33 +2,22 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\Form;
-use Jet\Http_Request;
 
-use Jet\UI_dataGrid;
-use Jet\UI;
-
-use Jet\Tr;
 use Jet\MVC_View;
 
 /**
  * @var MVC_View     $this
- * @var UI_dataGrid  $grid
  * @var Form         $filter_form
  * @var Listing      $listing
  */
-$grid = $this->getRaw( 'grid' );
-$router = $this->getController()->getControllerRouter();
 $filter_form = $this->getRaw( 'filter_form' );
 $listing = $this->getRaw('listing');
 ?>
 
 
 <?=$filter_form->start()?>
-	<div class="row" style="padding-bottom: 10px;">
-		<div class="col-12 col-sm-6 col-lg-3">
-			<?=$listing->getFilter( Listing_Filter::CATEGORIES )->renderForm()?>
-		</div>
-		<div class="col-12 col-sm-6 col-lg-3">
+	<div class="row">
+		<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-5">
 			<?=$listing->getFilter( Listing_Filter::SEARCH )->renderForm()?>
 		</div>
 	</div>

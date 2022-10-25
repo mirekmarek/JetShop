@@ -28,6 +28,7 @@ class Listing extends Data_Listing
 		Listing_Column_Edit::class,
 		Listing_Column_ID::class,
 		Listing_Column_Name::class,
+		Listing_Column_FinalPrice::class,
 	];
 	
 	protected static array $all_exports_classes = [
@@ -84,11 +85,46 @@ class Listing extends Data_Listing
 	}
 	
 	
+	/**
+	 * @return Listing_Column[]
+	 */
+	public function getAllColumns() : array
+	{
+		return $this->all_columns;
+	}
+	
 	public function getVisibleColumnsSchema(): array
 	{
-		//TODO:
-		return array_keys( $this->all_columns );
+		$mandatory = [];
+		foreach($this->getAllColumns() as $col ) {
+			if($col->isMandatory()) {
+				$mandatory[] = $col->getKey();
+			}
+		}
+		
+		return array_merge($mandatory, Listing_Schema::getCurrentColSchema());
 	}
+	
+	/**
+	 * @return Listing_Column[]
+	 */
+	public function getNotVisibleColumns(): array
+	{
+		$res = [];
+		
+		$visible = $this->getVisibleColumnsSchema();
+		
+		foreach( $this->all_columns as $column ) {
+			if(in_array($column->getKey(), $visible)) {
+				continue;
+			}
+			
+			$res[$column->getKey()] = $column;
+		}
+		
+		return $res;
+	}
+
 	
 	/**
 	 * @return Listing_Column[]
@@ -214,16 +250,6 @@ class Listing extends Data_Listing
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $this->filters[$key];
 	}
-	
-	
-	public function getFilter_categories(): Listing_Filter_Categories
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['categories'];
-	}
-
-
-
 	
 	public function getAllIds(): array
 	{
