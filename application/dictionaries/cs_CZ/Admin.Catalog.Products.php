@@ -140,4 +140,8 @@ return [
 	'Save as new schema' => '',
 	'Please enter name' => '',
 	'Update current schema' => '',
+	'Categorize products' => '',
+	'Select category:' => '',
+	'Categorize' => '',
+	'Please select category' => '',
 ];

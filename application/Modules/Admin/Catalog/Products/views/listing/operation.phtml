@@ -1,0 +1,47 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\Http_Request;
+use Jet\MVC;
+use Jet\MVC_View;
+use Jet\Tr;use JetShop\Product;
+
+/**
+ * @var MVC_View     $this
+ * @var Listing      $listing
+ * @var Listing_Operation $operation
+ * @var Product[] $products
+ */
+$listing = $this->getRaw('listing');
+$operation = $this->getRaw('operation');
+$products = $this->getRaw('products');
+
+$GET = Http_Request::GET();
+?>
+<h2><?=Tr::_($operation->getTitle())?></h2>
+
+<table class="table table-striped">
+	<tbody>
+	<?php foreach($products as $p): ?>
+		<tr>
+			<td><a href="<?=$p->getEditURL()?>"><?=$p->getInternalName()?></a></td>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>
+
+<form action="<?=MVC::getPage()->getURL()?>" method="get" id="listing_operation_form">
+	<?php foreach($GET->getRawData() as $key=>$val):
+		if($key=='p') {
+			continue;
+		}
+		?>
+		<input type="hidden" name="<?=$key?>" value="<?=$GET->getString($key)?>">
+	<?php endforeach; ?>
+	<?php foreach($products as $p): ?>
+	<input type="hidden" name="p[]" value="<?=$p->getId()?>">
+	<?php endforeach; ?>
+	<input type="hidden" name="listing_operation_confirm" value="1">
+
+<?php require 'operations/'.$operation->getKey().'.phtml'; ?>
+</form>

@@ -2,6 +2,7 @@
 namespace JetShopModule\Admin\Catalog\Products;
 
 use Jet\BaseObject;
+use JetShop\Product;
 
 abstract class Listing_Operation extends BaseObject
 {
@@ -16,5 +17,11 @@ abstract class Listing_Operation extends BaseObject
 	
 	abstract public function getTitle(): string;
 	
+	abstract public function isPrepared(): bool;
+	
+	/**
+	 * @param Product[] $products
+	 */
+	abstract public function perform( array $products ): void;
 
 }

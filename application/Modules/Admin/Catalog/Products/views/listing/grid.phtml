@@ -1,6 +1,8 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
+use Jet\Http_Request;
+use Jet\MVC;
 use Jet\UI_dataGrid;
 use Jet\MVC_View;
 
@@ -14,7 +16,13 @@ $listing = $this->getRaw('listing');
 
 
 $grid->footer()->setPrepend( $this->render('listing/grid/footer') );
+
+$GET = Http_Request::GET();
 ?>
-<form>
+<form action="<?=MVC::getPage()->getURL()?>" method="get" id="listing_operation_form">
+	<?php foreach($GET->getRawData() as $key=>$val): ?>
+	<input type="hidden" name="=<?=$key?>" value="<?=$GET->getString($key)?>">
+	<?php endforeach; ?>
+	<input type="hidden" name="listing_operation" value="" id="listing_operation">
 <?=$grid->render();?>
 </form>

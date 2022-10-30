@@ -79,7 +79,11 @@ class Controller_Main extends MVC_Controller_Default
 
 
 			$this->router->setDefaultAction(  'listing', Main::ACTION_GET_PRODUCT  );
-
+			
+			$this->router->addAction( 'listing_operation' )->setResolver(function() use ($GET) {
+				return $GET->exists('listing_operation');
+			});
+			
 			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
 				return $GET->exists('whisper');
 			});
@@ -206,7 +210,12 @@ class Controller_Main extends MVC_Controller_Default
 		
 		Navigation_Breadcrumb::addURL(
 			UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle(),
-			Http_Request::currentURI(unset_GET_params: ['id'])
+			Http_Request::currentURI(unset_GET_params: [
+				'id',
+				'listing_operation',
+				'p',
+				'listing_operation_confirm'
+			])
 		);
 
 		
@@ -366,4 +375,60 @@ class Controller_Main extends MVC_Controller_Default
 		Application::end();
 	}
 
+	public function listing_operation_Action() : void
+	{
+		$GET = Http_Request::GET();
+		
+		$returnRedirect = function() {
+			Http_Headers::reload(unset_GET_params: [
+				'listing_operation',
+				'p',
+				'listing_operation_confirm'
+			]);
+		};
+		
+		$listing = $this->getListing();
+		$operation = $GET->getString('listing_operation');
+		if(!$listing->operationExists($operation)) {
+			$returnRedirect();
+		}
+		
+		$products = [];
+		$p_ids = $GET->getRaw('p');
+		
+		foreach($p_ids as $p_id) {
+			$p_id = (int)$p_id;
+			if($p_id>0) {
+				$product = Product::get( $p_id );
+				if($product) {
+					$products[$p_id] = $product;
+				}
+			}
+		}
+		
+		if(!$products) {
+			$returnRedirect();
+		}
+		
+		$operation = $listing->operation($operation);
+		
+		$this->_setBreadcrumbNavigation(
+			Tr::_($operation->getTitle())
+		);
+		
+		if(
+			$GET->exists('listing_operation_confirm') &&
+			$operation->isPrepared()
+		) {
+			$operation->perform( $products );
+			$returnRedirect();
+		}
+		
+		
+		$this->view->setVar('listing', $listing);
+		$this->view->setVar('operation', $operation);
+		$this->view->setVar('products', $products);
+		$this->output( 'listing/operation' );
+
+	}
 }

@@ -36,6 +36,10 @@ class Listing extends Data_Listing
 		Listing_Export_XLSX::class
 	];
 	
+	protected static array $all_operations_classes = [
+		Listing_Operation_Categorize::class
+	];
+	
 	/**
 	 * @var Listing_Column[]
 	 */
@@ -46,6 +50,11 @@ class Listing extends Data_Listing
 	 */
 	protected array $exports = [];
 	
+	/**
+	 * @var Listing_Operation[]
+	 */
+	protected array $operations = [];
+	
 	protected ?array $all_ids = null;
 	
 	public function __construct()
@@ -53,6 +62,7 @@ class Listing extends Data_Listing
 		parent::__construct();
 		$this->initColumns();
 		$this->initExports();
+		$this->initOperations();
 	}
 	
 	protected function getList(): DataModel_Fetch_Instances
@@ -84,6 +94,13 @@ class Listing extends Data_Listing
 		}
 	}
 	
+	protected function initOperations(): void
+	{
+		foreach(static::$all_operations_classes as $class) {
+			$column = new $class( $this );
+			$this->operations[$column->getKey()] = $column;
+		}
+	}
 	
 	/**
 	 * @return Listing_Column[]
@@ -322,5 +339,23 @@ class Listing extends Data_Listing
 		}
 		
 		return $res;
+	}
+	
+	/**
+	 * @return Listing_Operation[]
+	 */
+	public function getOperations() : array
+	{
+		return $this->operations;
+	}
+	
+	public function operationExists( string $operation ) : bool
+	{
+		return isset( $this->operations[$operation] );
+	}
+	
+	public function operation( string $operation ) : Listing_Operation
+	{
+		return $this->operations[$operation];
 	}
 }
