@@ -29,4 +29,5 @@ return [
 	'Update delivery deadline' => '',
 	'Delete delivery deadline' => '',
 	'Catalog delivery deadlines management' => '',
+	'Search ...' => '',
 ];

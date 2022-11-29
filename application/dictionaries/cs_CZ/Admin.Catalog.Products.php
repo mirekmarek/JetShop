@@ -144,4 +144,9 @@ return [
 	'Select category:' => '',
 	'Categorize' => '',
 	'Please select category' => '',
+	'Uncategorize products' => '',
+	'Uncategorize' => '',
+	'Please select some category' => '',
+	'Information is not available' => '',
+	'Name of variant' => '',
 ];

@@ -37,7 +37,8 @@ class Listing extends Data_Listing
 	];
 	
 	protected static array $all_operations_classes = [
-		Listing_Operation_Categorize::class
+		Listing_Operation_Categorize::class,
+		Listing_Operation_Uncategorize::class,
 	];
 	
 	/**

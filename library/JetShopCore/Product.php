@@ -27,6 +27,8 @@ use Jet\Tr;
 
 )]
 abstract class Core_Product extends DataModel {
+	
+	use Product_Trait_Images;
 	use Product_Trait_Set;
 	use Product_Trait_Variants;
 	use Product_Trait_Categories;
@@ -762,21 +764,6 @@ abstract class Core_Product extends DataModel {
 	public function getURL( ?Shops_Shop $shop=null ): string
 	{
 		return $this->getShopData($shop)->getURL();
-	}
-
-	public function getImage( int $i = 0, ?Shops_Shop $shop=null  ): string
-	{
-		return $this->getShopData($shop)->getImage( $i );
-	}
-
-	public function getImageUrl( int $i = 0, ?Shops_Shop $shop=null  ): string
-	{
-		return $this->getShopData($shop)->getImageUrl( $i );
-	}
-
-	public function getImageThumbnailUrl( int $max_w, int $max_h, int $i=0, ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getImageThumbnailUrl( $max_w, $max_h, $i );
 	}
 
 	public static function renderSelectProductWidget( string $on_select,

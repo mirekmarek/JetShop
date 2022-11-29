@@ -31,6 +31,10 @@ trait Core_Product_Trait_Categories
 	 */
 	public function getCategoriesAssoc() : array
 	{
+		if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+			return $this->getVariantMasterProduct()->getCategoriesAssoc();
+		}
+		
 		return $this->categories;
 	}
 
@@ -39,6 +43,10 @@ trait Core_Product_Trait_Categories
 	 */
 	public function getCategories() : array
 	{
+		if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+			return $this->getVariantMasterProduct()->getCategories();
+		}
+		
 		if($this->_categories===null) {
 			$this->_categories = [];
 			foreach($this->categories as $c) {
@@ -54,11 +62,19 @@ trait Core_Product_Trait_Categories
 
 	public function hasCategory( int $category_id ) : bool
 	{
+		if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+			return $this->getVariantMasterProduct()->hasCategory( $category_id );
+		}
+		
 		return isset($this->categories[$category_id]);
 	}
 
 	public function addCategory( int $category_id, bool $auto_appended=false ) : bool
 	{
+		if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+			return false;
+		}
+		
 		$category = Category::get( $category_id );
 		if(!$category) {
 			return false;
@@ -72,9 +88,10 @@ trait Core_Product_Trait_Categories
 		$_category->setProductId( $this->id );
 		$_category->setCategoryId( $category->getId() );
 		$_category->setAutoAppended( $auto_appended );
+		$_category->save();
 
 		$this->categories[] = $_category;
-
+		
 		Category::addSyncCategory( $category_id );
 
 
@@ -83,6 +100,9 @@ trait Core_Product_Trait_Categories
 
 	public function removeCategory( int $category_id, bool $force=false ) : bool
 	{
+		if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+			return false;
+		}
 
 		if(!isset($this->categories[$category_id])) {
 			return false;
@@ -94,12 +114,13 @@ trait Core_Product_Trait_Categories
 		) {
 			return false;
 		}
-
+		
+		$this->categories[$category_id]->delete();
 		unset($this->categories[$category_id]);
 		if( $this->_categories ) {
 			unset($this->_categories[$category_id]);
 		}
-
+		
 		Category::addSyncCategory( $category_id );
 
 		return true;

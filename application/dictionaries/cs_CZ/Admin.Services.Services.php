@@ -45,4 +45,5 @@ return [
 	'Delete service' => '',
 	'Admin.Services.Services' => '',
 	'Service with the same name already exists' => '',
+	'Search ...' => '',
 ];

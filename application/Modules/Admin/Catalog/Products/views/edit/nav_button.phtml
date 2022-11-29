@@ -47,7 +47,7 @@ $next_url = $listing->getNextProductEditUrl( $product->getId() );
 
 <div style="display: inline-block">
 	<?php if($product->getType()==Product::PRODUCT_TYPE_VARIANT):
-		$variant_master = Product::get($product->getVariantMasterProductId());
+		$variant_master = $product->getVariantMasterProduct();
 		?>
 		<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
 		'URL' => $variant_master->getEditURL(),

@@ -1,0 +1,120 @@
+<style>
+	.images_area>div {
+		float: left;
+	}
+</style>
+
+<script type="text/javascript">
+	let ImageHandler = function( product_id, suffix ) {
+
+		this.delete_images = null;
+		this.suffix = suffix ? suffix : '';
+		this.product_id = product_id;
+
+		const handler = this;
+
+		this._handleResponse = function( response ) {
+
+			for(let el_id in response['snippets']) {
+				document.getElementById(el_id).innerHTML = response['snippets'][el_id];
+			}
+
+			handler.initSort();
+		};
+
+		this.initSort = function() {
+			$('#images_list'+handler.suffix)['sortable']({
+				revert: true,
+				stop: function() {
+					handler.saveSort();
+				}
+			});
+		};
+
+		this.saveSort = function() {
+			let images = [];
+
+			$('#images_list'+this.suffix).find('.image-thumbnail').each(function ( i, image ) {
+				images.push( $(image).data('image') );
+			});
+
+			$.ajax({
+				url: '?id='+handler.product_id+'&page=images&action=save_sort&suffix='+handler.suffix+'&images='+images.join(','),
+				dataType: "json",
+				success: function( response ) {
+					handler._handleResponse(response);
+				}
+			});
+		};
+
+		this.deleteImage = function( image, url ) {
+			handler._delete([{
+				image: image,
+				url: url
+			}]);
+		};
+
+		this.deleteImages = function()
+		{
+			let images = [];
+			
+			$('#images_list'+handler.suffix+' .select_image_checkbox').each( function(i, checkbox) {
+				if(checkbox.checked) {
+					images.push( {
+						image: checkbox.value,
+						url: checkbox.dataset.url
+					} );
+				}
+			});
+
+			if(images.length) {
+				handler._delete(images);
+			}
+		};
+
+		this._delete = function( images ) {
+
+			handler.delete_images = images;
+
+			let html = '';
+			for(let i=0;i<images.length;i++) {
+				let image = images[i];
+
+				html += '<div class="image-thumbnail" style="float:left;width: 180px;height: 180px;background-image: url('+image.url+');background-size: 170px auto;"></div>';
+			}
+
+			$('#image_delete_confirm_area'+handler.suffix).html( html );
+
+			$('#delete_image_confirm'+handler.suffix).modal('show');
+		};
+
+		this.deleteConfirm = function () {
+			let images = [];
+			for(let i=0; i<handler.delete_images.length;i++) {
+				images.push(encodeURIComponent(handler.delete_images[i].image));
+			}
+
+			$.ajax({
+				url: '?id='+handler.product_id+'&page=images&action=delete&suffix='+handler.suffix+'&images='+images.join(','),
+				dataType: "json",
+				success: function( response ) {
+					handler._handleResponse(response);
+				}
+			});
+			$('#delete_image_confirm'+handler.suffix).modal('hide');
+
+		};
+
+
+		this.upload = function() {
+			JetAjaxForm.submitMultiUpload(
+				'upload_form'+handler.suffix,
+				'images',
+			);
+		};
+
+		handler.initSort();
+	};
+	
+	let ImageHandlers = {};
+</script>

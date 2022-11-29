@@ -5,9 +5,13 @@ const UI = {
 			return;
 		}
 		const main_col = document.getElementById("main-col");
+		if(!main_col) {
+			return;
+		}
+
 		const main_toolbar_initial_offset = main_toolbar.offsetTop;
 		const main_toolbar_height = main_toolbar.offsetHeight;
-		const main_col_initial_padding_top = main_col.style.paddingTop;
+		const main_col_initial_padding_top = main_col.style['paddingTop'];
 
 		window.onscroll = function () {
 			if (window.pageYOffset > main_toolbar_initial_offset) {

@@ -12,7 +12,6 @@ namespace Jet;
 use Jet\Form;
 use Jet\Form_Field_Search;
 use Jet\Http_Request;
-use JetShop\Product;
 
 /**
  *
@@ -49,6 +48,5 @@ abstract class Data_Listing_Filter
 	 *
 	 */
 	abstract public function generateWhere() : void;
-	
-	
+
 }

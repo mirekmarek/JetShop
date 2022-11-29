@@ -24,6 +24,7 @@ trait Core_Product_Trait_Parameters
 
 			$fields = [];
 			$enable_only = null;
+			$disable = null;
 			
 			$properties = [];
 			$kind = $this->getKind();
@@ -32,6 +33,11 @@ trait Core_Product_Trait_Parameters
 				
 				if($this->getType()==Product::PRODUCT_TYPE_VARIANT) {
 					$enable_only = array_keys($kind->getVariantSelectorProperties());
+				}
+				
+				if($this->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER) {
+					$disable = array_keys($kind->getVariantSelectorProperties());
+				
 				}
 			}
 			
@@ -57,6 +63,13 @@ trait Core_Product_Trait_Parameters
 					) {
 						$field->setIsReadonly(true);
 					}
+					if(
+						$disable!==null &&
+						in_array($property_id, $disable)
+					) {
+						$field->setIsReadonly(true);
+					}
+					
 					$fields[] = $field;
 				}
 			}
@@ -81,7 +94,6 @@ trait Core_Product_Trait_Parameters
 			}
 			
 			$this->save();
-			$this->syncVariants();
 			$this->getKind()->actualizeAutoAppend();
 			
 			Category::syncCategories();

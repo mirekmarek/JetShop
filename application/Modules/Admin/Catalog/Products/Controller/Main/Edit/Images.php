@@ -1,11 +1,9 @@
 <?php
 namespace JetShopModule\Admin\Catalog\Products;
 
-
 use Jet\AJAX;
 use Jet\Http_Request;
 use JetShop\Application_Admin;
-use JetShop\Shops;
 
 /**
  *
@@ -21,25 +19,25 @@ trait Controller_Main_Edit_Images
 		
 		if($GET->exists('action')) {
 			$product = static::getCurrentProduct();
-			$shop = Shops::get( $GET->getString('shop_key') );
+			$suffix = $GET->getString('suffix');
 			
-			$shop_data = $product->getShopData($shop);
-			$this->view->setVar('shop', $shop );
+			$this->view->setVar('product', $product);;
+			$this->view->setVar('suffix', $suffix);
 			
 			$updated = false;
 			switch($GET->getString('action')) {
 				case 'upload':
 					Application_Admin::handleUploadTooLarge();
 					
-					$shop_data->uploadImages();
+					$product->uploadImages();
 					$updated = true;
 					break;
 				case 'delete':
-					$shop_data->deleteImages( explode(',', $GET->getString('images')) );
+					$product->deleteImages( explode(',', $GET->getString('images')) );
 					$updated = true;
 					break;
 				case 'save_sort':
-					$shop_data->sortImages( explode(',', $GET->getString('images')) );
+					$product->sortImages( explode(',', $GET->getString('images')) );
 					$updated = true;
 					break;
 			}
@@ -51,7 +49,7 @@ trait Controller_Main_Edit_Images
 					[
 						'result' => 'ok',
 						'snippets' => [
-							'images_'.$shop->getKey() => $this->view->render('edit/images/list')
+							'images_list'.$suffix => $this->view->render('edit/images/list')
 						]
 					
 					]

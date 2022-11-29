@@ -25,5 +25,4 @@ require __DIR__.'/Init/Installation.php';
 
 require __DIR__.'/config/JetShop.php';
 
-
 Application::runMVC();

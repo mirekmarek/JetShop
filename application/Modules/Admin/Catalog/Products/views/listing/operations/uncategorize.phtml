@@ -1,0 +1,48 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetShop\Product;
+
+/**
+ * @var MVC_View     $this
+ * @var Listing      $listing
+ * @var Listing_Operation_Uncategorize $operation
+ * @var Product[] $products
+ */
+$listing = $this->getRaw('listing');
+$operation = $this->getRaw('operation');
+$products = $this->getRaw('products');
+
+$error = $operation->getErrorMessage();
+?>
+
+
+<input type="hidden" name="category_id" id="category_id">
+
+<?php if($error): ?>
+	<?=UI_messages::createDanger($error)?>
+<?php endif; ?>
+
+<label><?=Tr::_('Select category:')?></label>
+
+<table class="table table-striped">
+	<?php foreach($operation->getCategories() as $category): ?>
+	<tr>
+		<td>
+			<label>
+				<input type="checkbox" name="category_id[]" value="<?=$category->getId()?>"/>
+				<a href="<?=$category->getEditURL()?>"><?=$category->getPathName()?></a>
+			</label>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>
+
+<br>
+<?=UI::button_save(Tr::_('Uncategorize'))?>
+<br><br><br><br><br><br><br><br><br><br>
+

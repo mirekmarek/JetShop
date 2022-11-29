@@ -17,7 +17,7 @@ $tabs = $this->getRaw('tabs');
 $product = Controller_Main::getCurrentProduct();
 
 if($product->getType()==Product::PRODUCT_TYPE_VARIANT):
-	$master = Product::get($product->getVariantMasterProductId());
+	$master = $product->getVariantMasterProduct();
 
 	if($master) {
 		echo UI_messages::createWarning( Tr::_('Is variant of %MASTER%', [

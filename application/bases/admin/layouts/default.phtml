@@ -17,24 +17,7 @@ require_once 'parts/init_libs.php';
 <body>
 <script type="text/javascript">
 	$(document).ready(function () {
-		const main_toolbar = document.getElementById("main-toolbar");
-		if(!main_toolbar) {
-			return;
-		}
-		const main_col = document.getElementById("main-col");
-		const main_toolbar_initial_offset = main_toolbar.offsetTop;
-		const main_toolbar_height = main_toolbar.offsetHeight;
-		const main_col_initial_padding_top = main_col.style.paddingTop;
-
-		window.onscroll = function() {
-			if (window.pageYOffset > main_toolbar_initial_offset) {
-				main_toolbar.classList.add("main-toolbar-sticky");
-				main_col.style.paddingTop = main_toolbar_height+'px';
-			} else {
-				main_toolbar.classList.remove("main-toolbar-sticky");
-				main_col.style.paddingTop = main_col_initial_padding_top;
-			}
-		};
+		UI.mainToolbarPin();
 	});
 </script>
 <jet_module module="Admin.UI" action="main_menu"/>

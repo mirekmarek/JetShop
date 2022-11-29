@@ -412,6 +412,8 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$operation = $listing->operation($operation);
 		
+		$operation->init( $products );
+		
 		$this->_setBreadcrumbNavigation(
 			Tr::_($operation->getTitle())
 		);
@@ -420,8 +422,9 @@ class Controller_Main extends MVC_Controller_Default
 			$GET->exists('listing_operation_confirm') &&
 			$operation->isPrepared()
 		) {
-			$operation->perform( $products );
-			$returnRedirect();
+			$operation->perform();
+			
+			$operation->returnRedirect();
 		}
 		
 		

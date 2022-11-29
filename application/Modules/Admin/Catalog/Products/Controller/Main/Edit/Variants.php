@@ -29,13 +29,6 @@ trait Controller_Main_Edit_Variants
 		
 		//TODO: it's shit ... revision needed
 		
-		/*
-		if( $product->catchVariantSetupForm() ) {
-			$updated = true;
-			$sync = true;
-		}
-		
-		
 		$new_variant = new Product();
 		
 		if( $product->catchAddVariantForm( $new_variant ) ) {
@@ -45,6 +38,10 @@ trait Controller_Main_Edit_Variants
 		if( $product->catchUpdateVariantsForm() ) {
 			$updated = true;
 		}
+		
+		/*
+		
+		
 		
 		
 		if($updated) {
@@ -68,9 +65,9 @@ trait Controller_Main_Edit_Variants
 			
 			Http_Headers::reload();
 		}
+		*/
 		
 		$this->view->setVar('new_variant', $new_variant);
-		*/
 		
 		
 		$this->output( 'edit/variants' );

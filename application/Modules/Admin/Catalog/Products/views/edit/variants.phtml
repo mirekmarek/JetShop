@@ -17,11 +17,6 @@ use JetShop\Shops;
 $product = Controller_Main::getCurrentProduct();
 
 
-$setup_form = $product->getVariantSetupForm();
-
-$setup_form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
-$setup_form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 10 ] );
-$setup_form->field('variant_control_property_ids')->input()->addCustomCssStyle('height:400px;');
 
 $new_variant = $this->getRaw('new_variant');
 $add_form = $new_variant->getAddVariantForm();
@@ -34,18 +29,16 @@ $variants_update_form = $product->getUpdateVariantsForm();
 
 $variants = $product->getVariants();
 
-$variant_control_properties = $product->getVariantControlProperties();
+$variant_control_properties = $product->getKind()?->getVariantSelectorProperties();
 
-$setup_dialog = UI::dialog('variant_setup_dialog', Tr::_('Setup variant behavior'), UI_dialog::SIZE_LARGE);
 $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::SIZE_LARGE);
 ?>
+<?php require 'images/js.phtml'; ?>
+
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
 		<?=$this->render('edit/nav_button');?>
 
-		<?php if(!$setup_form->getIsReadonly()): ?>
-			<?=UI::button(Tr::_('Setup variant behavior'))->setOnclick("$('#variant_setup_dialog').modal('show')")->setIcon('cogs');?>
-		<?php endif; ?>
 
 		<?php if(!$add_form->getIsReadonly()): ?>
 			<?=UI::button_create('Add variant')->setOnclick("$('#variant_add_dialog').modal('show')")?>
@@ -68,27 +61,44 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 			<legend><?=Tr::_('Variants')?></legend>
 
 			<?=$variants_update_form->start()?>
-			<table class="table table-striped">
 				<?php foreach($variants as $variant): ?>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getShopData()->getName()?></a></th>
+					<th><?=Tr::_('Name of variant')?></th>
+					
+					<?php
+					if($variant_control_properties):
+						foreach($variant_control_properties as $property): ?>
+							<th>
+								<a href="<?=$property->getEditURL()?>" target="_blank"><?=$property->getInternalName()?></a>
+							</th>
+						<?php
+						endforeach;
+					endif;
+					?>
+					<th></th>
+
+				</tr>
+				</thead>
 				<tr>
 					<td nowrap="">
 						<table>
 							<tr>
-								<td colspan="2"><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getShopData()->getName()?></a></td>
-							</tr>
-							<tr>
 								<td><?=Tr::_('Internal code:')?></td>
-								<td><?=$variant->getInternalCode()?></td>
+								<td><a href="<?=$property->getEditURL()?>" target="_blank"><?=$variant->getInternalCode()?></a></td>
 							</tr>
 							<tr>
 								<td><?=Tr::_('EAN:')?></td>
-								<td><?=$variant->getEan()?></td>
+								<td><a href="<?=$property->getEditURL()?>" target="_blank"><?=$variant->getEan()?></a></td>
 							</tr>
 							<tr>
 								<td><?=Tr::_('ID:')?></td>
-								<td><?=$variant->getId()?></td>
+								<td><a href="<?=$property->getEditURL()?>" target="_blank"><?=$variant->getId()?></a></td>
 							</tr>
 						</table>
+						
 					</td>
 					<td nowrap="">
 						<table>
@@ -104,42 +114,39 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 						</table>
 					</td>
 
-					<?php foreach($variant_control_properties as $property): ?>
+					<?php
+					if($variant_control_properties):
+						foreach($variant_control_properties as $property): ?>
 						<td>
 							<?=$variants_update_form->field('/'.$variant->getId().'/'.$property->getId().'/value')->input()->addCustomCssStyle('width:400px;')?>
 							<div style="opacity: 0.3;position: relative;top: -5px;width: 300px;">
 							<?=$variants_update_form->field('/'.$variant->getId().'/'.$property->getId().'/information_in_not_available')->input()?>
 							</div>
 						</td>
-					<?php endforeach; ?>
+					<?php
+						endforeach;
+					endif;
+					?>
 
 					<td width="100%">
 
 					</td>
 				</tr>
-				<?php endforeach; ?>
 			</table>
+			<?php
+			$this->setVar('product', $variant);
+			$this->setVar('suffix', 'variant_'.$variant->getId());
+			require 'images/edit.phtml';
+			?>
+				<br><br><br>
+			<?php endforeach; ?>
+			
 			<?=$variants_update_form->end()?>
 		</fieldset>
 		<br/>
 		<?php endif; ?>
 	</div>
 </div>
-
-<?php if(!$setup_form->getIsReadonly()): ?>
-<?=$setup_form->start()?>
-<?=$setup_dialog->start()?>
-	<?=$setup_form->field('variant_sync_categories')?>
-	<?=$setup_form->field('variant_sync_descriptions')?>
-	<?=$setup_form->field('variant_sync_stickers')?>
-	<?=$setup_form->field('variant_sync_prices')?>
-	<?=$setup_form->field('variant_control_property_ids')?>
-
-<?=$setup_dialog->footer()?>
-	<?=UI::button_save()?>
-<?=$setup_dialog->end()?>
-<?=$setup_form->end()?>
-<?php endif; ?>
 
 
 <?php if(!$add_form->getIsReadonly()): ?>

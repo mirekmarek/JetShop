@@ -12,21 +12,21 @@ use JetShop\Shops_Shop;
  * @var Shops_Shop $shop
  * @var Form $images_form
  * @var Form $image_delete_form
+ * @var Product $product
  */
 
-$product = Controller_Main::getCurrentProduct();
-$shop = $this->getRaw('shop');
-$shop_data = $product->getShopData( $shop );
+$product = $this->getRaw('product');
+$suffix = $this->getString('suffix');
 
 for( $i=0; $i<Product::$max_image_count; $i++ ):
-	$image = $shop_data->getImage( $i );
+	$image = $product->getImageRaw( $i );
 
 	if(!$image) {
 		continue;
 	}
 
-	$url = $shop_data->getImageUrl( $i );
-	$thb_url = $shop_data->getImageThumbnailUrl(150,150, $i);
+	$url = $product->getImageUrlRaw( $i );
+	$thb_url = $product->getImageThumbnailUrlRaw(150,150, $i);
 
 	?>
 
@@ -37,7 +37,7 @@ for( $i=0; $i<Product::$max_image_count; $i++ ):
 			</div>
 		</div>
 		<div style="width: 180px;height: 55px;padding: 5px;">
-			<table width="100%">
+			<table style="width: 100%">
 				<tr>
 					<td style="width: 30px;">
 						<?=UI::icon('exchange-alt')?>
@@ -45,8 +45,8 @@ for( $i=0; $i<Product::$max_image_count; $i++ ):
 					<td style="width: 30px;">
 						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
 					</td>
-					<td align="right" style="padding-right: 5px;">
-						<a href="javascript:ImagesHandler.deleteImage('<?=$shop->getKey()?>', '<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+					<td style="padding-right: 5px; text-align: right">
+						<a href="javascript:ImageHandlers['<?=$suffix?>'].deleteImage('<?=$i?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
 					</td>
 				</tr>
 			</table>

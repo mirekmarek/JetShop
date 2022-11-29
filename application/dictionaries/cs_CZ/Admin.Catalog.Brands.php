@@ -30,4 +30,5 @@ return [
 	'Delete brand <b>%NAME%</b>' => '',
 	'Do you really want to delete this brand?' => '',
 	'File is too large' => '',
+	'Search ...' => '',
 ];

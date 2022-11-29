@@ -1,0 +1,59 @@
+<?php
+namespace JetShopModule\Admin\Catalog\Products;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\UI;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+/**
+ * @var MVC_View $this
+ * @var Form $images_form
+ * @var Form $image_delete_form
+ */
+
+$product = $this->getRaw('product');
+$suffix = $this->getRaw('suffix');
+?>
+
+<div style="background-color: #f0f0f0;border-radius: 5px;margin: 10px;padding: 10px;">
+	<div class="images_area" id="images_list<?=$suffix?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
+		<?php
+		require 'list.phtml';
+		?>
+	</div>
+</div>
+
+<table style="width: 100%">
+	<tr>
+		<td>
+			<form id="upload_form<?=$suffix?>" action="?id=<?=$product->getId()?>&page=images&suffix=<?=$suffix?>&action=upload">
+				<div class="btn btn-light btn-upload">
+					<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images' )?></span>
+					<input type="file" multiple id="upload_files" name="images[]" class="upload-button" onchange="ImageHandlers['<?=$suffix?>'].upload();">
+				</div>
+			</form>
+		</td>
+		<td style="padding: 10px; text-align: right">
+			<?=UI::button_delete(Tr::_('Delete selected images'))->setOnclick("ImageHandlers['$suffix'].deleteImages();")?>
+		</td>
+	</tr>
+</table>
+
+<?php
+$delete_dialog = new UI_dialog('delete_image_confirm'.$suffix, Tr::_('Do you really want to delete those images?'), UI_dialog::SIZE_LARGE );
+
+echo $delete_dialog->start();
+	?>
+	<div id="image_delete_confirm_area<?=$suffix?>" style="height: 250px;overflow: auto">
+	
+	</div>
+	<?php
+echo $delete_dialog->footer();
+	echo UI::button_delete()->setOnclick("ImageHandlers['$suffix'].deleteConfirm();");
+echo $delete_dialog->end();
+?>
+
+<script type="text/javascript">
+	ImageHandlers['<?=$suffix?>'] = new ImageHandler(<?=$product->getId()?>, '<?=$suffix?>');
+</script>

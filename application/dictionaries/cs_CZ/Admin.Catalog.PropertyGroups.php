@@ -22,4 +22,5 @@ return [
 	'It is mot possible tp delete this property group.' => '',
 	'It is used by following kinds of product:' => '',
 	'Property Group <b>%ITEM_NAME%</b> has been deleted' => '',
+	'Search ...' => '',
 ];

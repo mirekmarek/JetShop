@@ -161,6 +161,7 @@ class UI_dataGrid extends UI_Renderer_Single
 		return $creator( $column_name, $desc );
 	}
 	
+	
 	/**
 	 * @param string $name
 	 *
@@ -170,7 +171,8 @@ class UI_dataGrid extends UI_Renderer_Single
 	{
 		return isset($this->columns[$name]);
 	}
-
+	
+	
 	/**
 	 * @param string $name
 	 *

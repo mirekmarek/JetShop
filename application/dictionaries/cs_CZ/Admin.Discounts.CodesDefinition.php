@@ -54,4 +54,5 @@ return [
 	'Update discounts_code' => '',
 	'Delete discounts_code' => '',
 	'Admin.Discounts.CodesDefinition' => '',
+	'Search ...' => '',
 ];

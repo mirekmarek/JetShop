@@ -39,4 +39,5 @@ return [
 	'Sticker <b>%NAME%</b> has been deleted' => '',
 	'File is too large' => '',
 	'Sticker <b>%NAME%</b> has been updated' => '',
+	'Search ...' => '',
 ];

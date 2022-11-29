@@ -30,4 +30,5 @@ return [
 	'Update delivery_class' => '',
 	'Delete delivery_class' => '',
 	'Delivery classes administration' => '',
+	'Search ...' => '',
 ];

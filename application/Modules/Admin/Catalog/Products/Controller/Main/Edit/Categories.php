@@ -25,11 +25,7 @@ trait Controller_Main_Edit_Categories
 		$product = static::getCurrentProduct();
 		
 		$allowed = true;
-		if(
-			$product->getType()==Product::PRODUCT_TYPE_VARIANT &&
-			($master=Product::get($product->getVariantMasterProductId())) &&
-			$master->isVariantSyncCategories()
-		) {
+		if( $product->getType()==Product::PRODUCT_TYPE_VARIANT ) {
 			$allowed = false;
 		}
 		
@@ -51,8 +47,6 @@ trait Controller_Main_Edit_Categories
 			}
 			
 			if($updated) {
-				$product->save();
-				$product->syncVariants();
 				Category::syncCategories();
 				
 				Logger::success(

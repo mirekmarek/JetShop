@@ -4,7 +4,6 @@ namespace JetShopModule\Admin\Catalog\Products;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetShop\Category;
-use JetShop\Product;
 
 
 class Listing_Operation_Categorize extends Listing_Operation
@@ -24,13 +23,24 @@ class Listing_Operation_Categorize extends Listing_Operation
 		return 'Categorize products';
 	}
 	
-	public function isPrepared(): bool
+	public function getOperationGetParams(): array
 	{
+		return ['category_id'];
+	}
+	
+	public function init( array $products ): void
+	{
+		parent::init( $products );
+		
 		$category_id = Http_Request::GET()->getInt('category_id');
 		if($category_id) {
 			$this->category = Category::get($category_id);
 		}
 		
+	}
+	
+	public function isPrepared(): bool
+	{
 		if(!$this->category) {
 			$this->error_message = Tr::_('Please select category');
 			
@@ -58,21 +68,16 @@ class Listing_Operation_Categorize extends Listing_Operation
 	
 	
 	
-	/**
-	 * @param Product[] $products
-	 */
-	public function perform( array $products ): void
+	public function perform(): void
 	{
 		$cat_id = $this->category->getId();
 		
-		foreach($products as $p) {
+		foreach($this->products as $p) {
 			if(!$p->hasCategory( $cat_id )) {
 				$p->addCategory( $cat_id );
-				$p->save();
 			}
 		}
 		
 		Category::syncCategories();
 	}
-	
 }

@@ -54,4 +54,5 @@ return [
 	'Not Active' => '',
 	'Discount is not allowed' => '',
 	'Confirmation e-mail info text:' => '',
+	'Search ...' => '',
 ];
