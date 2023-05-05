@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Delivery\Methods;
+namespace JetApplicationModule\Admin\Delivery\Methods;
 
-use JetShop\Delivery_Method;
+use JetApplication\Delivery_Method;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

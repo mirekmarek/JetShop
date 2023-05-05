@@ -5,12 +5,12 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Content\InfoPages;
+namespace JetApplicationModule\Admin\Content\InfoPages;
 
-use JetShop\Content_InfoPage as ContentInfoPage;
+use JetApplication\Content_InfoPage as ContentInfoPage;
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
-use JetShop\Data_Listing_Filter_Shop;
+use JetApplication\Data_Listing_Filter_Shop;
 
 /**
  *

@@ -1,5 +1,5 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 trait Shop_Module_Trait {
 

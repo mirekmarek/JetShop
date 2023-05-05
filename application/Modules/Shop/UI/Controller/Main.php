@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\UI;
+namespace JetApplicationModule\Shop\UI;
 
 use Jet\MVC_Controller_Default;
 

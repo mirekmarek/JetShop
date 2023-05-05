@@ -5,13 +5,13 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Delivery\Methods;
+namespace JetApplicationModule\Admin\Delivery\Methods;
 
 use Jet\Application_Module;
 use Jet\Auth;
-use JetShop\Admin_Module_Trait;
-use JetShop\Auth_Administrator_Role;
-use JetShop\Delivery_Method_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Auth_Administrator_Role;
+use JetApplication\Delivery_Method_ManageModuleInterface;
 
 /**
  *

@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Debug;
 use Jet\Debug_ErrorHandler_Handler;

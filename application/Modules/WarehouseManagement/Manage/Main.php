@@ -5,15 +5,15 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\WarehouseManagement\Manage;
+namespace JetApplicationModule\WarehouseManagement\Manage;
 
-use JetShop\Order;
-use JetShop\Order_Item;
-use JetShop\Product;
-use JetShop\Shops;
-use JetShop\WarehouseManagement_Item;
-use JetShop\WarehouseManagement_ManageModule;
-use JetShop\WarehouseManagement_Warehouse;
+use JetApplication\Order;
+use JetApplication\Order_Item;
+use JetApplication\Product;
+use JetApplication\Shops;
+use JetApplication\WarehouseManagement_Item;
+use JetApplication\WarehouseManagement_ManageModule;
+use JetApplication\WarehouseManagement_Warehouse;
 
 /**
  *

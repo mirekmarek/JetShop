@@ -1,6 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
+use JetShop\Core_ProductListing_AutoAppendProductFilter;
 
 trait ProductListing_AutoAppendProductFilter
 {

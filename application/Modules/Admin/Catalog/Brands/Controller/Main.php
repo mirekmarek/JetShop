@@ -1,5 +1,5 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Brands;
+namespace JetApplicationModule\Admin\Catalog\Brands;
 
 
 use Jet\Logger;
@@ -13,11 +13,11 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShop\Application_Admin;
-use JetShop\Brand;
+use JetApplication\Application_Admin;
+use JetApplication\Brand;
 
-use JetShop\Shops;
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplication\Shops;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

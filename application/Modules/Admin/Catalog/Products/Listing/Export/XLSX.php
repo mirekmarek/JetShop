@@ -1,8 +1,8 @@
 <?php
 
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
-use JetShop\XLSXWriter;
+use JetApplication\XLSXWriter;
 
 class Listing_Export_XLSX extends Listing_Export
 {

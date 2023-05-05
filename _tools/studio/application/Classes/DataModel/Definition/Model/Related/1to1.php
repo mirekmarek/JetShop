@@ -36,7 +36,7 @@ class DataModel_Definition_Model_Related_1to1 extends Jet_DataModel_Definition_M
 	public static function getCreateForm(): Form
 	{
 		if( !static::$create_form ) {
-			static::$create_form = DataModel_Definition_Model_Trait::getCreateForm_Related( DataModel::MODEL_TYPE_RELATED_1TO1 );
+			static::$create_form = static::getCreateForm_Related( DataModel::MODEL_TYPE_RELATED_1TO1 );
 		}
 
 		return static::$create_form;
@@ -56,14 +56,20 @@ class DataModel_Definition_Model_Related_1to1 extends Jet_DataModel_Definition_M
 			return false;
 		}
 
-		$class = DataModel_Definition_Model_Trait::catchCreateForm_createClass( $form );
+		$class = static::catchCreateForm_createClass( $form );
 
 		$model = new DataModel_Definition_Model_Related_1to1();
 		$model->setClass( $class );
 
-		DataModel_Definition_Model_Trait::catchCreateForm_modelMainSetup( $form, $model );
-		DataModel_Definition_Model_Trait::catchCreateForm_relatedModelSetup( $form, $model );
-
+		static::catchCreateForm_modelMainSetup( $form, $model );
+		static::catchCreateForm_relatedModelSetup( $form, $model );
+		
+		$relation_property_name = $form->field('relation_property_name')->getValue();
+		
+		if( !$model->create($relation_property_name) ) {
+			return false;
+		}
+		
 		return $model;
 	}
 

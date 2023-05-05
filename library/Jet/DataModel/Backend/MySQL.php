@@ -13,7 +13,8 @@ namespace Jet;
  */
 class DataModel_Backend_MySQL extends DataModel_Backend
 {
-
+	use DataModel_Backend_Trait_Fetch;
+	
 	/**
 	 * @var array
 	 */
@@ -1202,11 +1203,6 @@ class DataModel_Backend_MySQL extends DataModel_Backend
 		$data = $this->getDbRead()->fetchCol(
 			$this->createSelectQuery( $query )
 		);
-
-		if( !is_array( $data ) ) {
-			return $data;
-		}
-
 
 		foreach( $data as $i => $d ) {
 			foreach( $query->getSelect() as $item ) {

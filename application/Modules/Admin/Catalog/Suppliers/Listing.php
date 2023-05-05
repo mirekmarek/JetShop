@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Suppliers;
+namespace JetApplicationModule\Admin\Catalog\Suppliers;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
 
-use JetShop\Supplier;
+use JetApplication\Supplier;
 
 class Listing extends Data_Listing {
 

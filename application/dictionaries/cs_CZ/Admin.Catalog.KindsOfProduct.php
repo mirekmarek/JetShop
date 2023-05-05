@@ -52,4 +52,5 @@ return [
 	'It is used by following categories:' => '',
 	'Kind of Product <b>%ITEM_NAME%</b> has been deleted' => '',
 	'Edit kind of product <b>%ITEM_NAME%</b> - hidden properties settings' => '',
+	'Skládací' => '',
 ];

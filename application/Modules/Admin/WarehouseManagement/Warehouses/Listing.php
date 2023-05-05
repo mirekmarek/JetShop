@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\WarehouseManagement\Warehouses;
+namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
-use JetShop\WarehouseManagement_Warehouse as Warehouse;
+use JetApplication\WarehouseManagement_Warehouse as Warehouse;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

@@ -92,7 +92,6 @@ class DataModels_ClassFinder
 		$files = IO_Dir::getList( $dir, '*.php', false, true );
 
 		foreach( $files as $path => $name ) {
-
 			$file_data = IO_File::read( $path );
 
 			if( !str_contains( $file_data, 'DataModel' ) ) {
@@ -108,7 +107,8 @@ class DataModels_ClassFinder
 				}
 
 				$reflection = new ReflectionClass( $full_name );
-
+				
+				
 				$is_dm = false;
 				foreach($this->parent_classes as $dm_class) {
 					if($reflection->isSubclassOf($dm_class)) {

@@ -9,6 +9,7 @@
 namespace Jet;
 
 use PDO;
+use PDOException;
 use PDOStatement;
 
 /**
@@ -76,7 +77,11 @@ class Db_Backend_PDO implements Db_Backend_Interface
 
 		$statement = $this->statements[$q_hash];
 
-		$statement->execute( $query_params );
+		try {
+			$statement->execute( $query_params );
+		} catch( PDOException $e ) {
+			throw new Db_Exception( $e->getMessage()."\n\nSQL query:\n\n".$query );
+		}
 
 		return $statement;
 	}
@@ -170,7 +175,6 @@ class Db_Backend_PDO implements Db_Backend_Interface
 		/**
 		 * @var array $res
 		 */
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$res =  $this->query( $query, $query_data, function( PDOStatement $stn ) {
 			return $stn->fetchAll( PDO::FETCH_ASSOC );
 		} );
@@ -191,7 +195,6 @@ class Db_Backend_PDO implements Db_Backend_Interface
 		/**
 		 * @var array $res
 		 */
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$res =  $this->query( $query, $query_data, function( PDOStatement $stn ) use ($key_column) {
 			$result = [];
 
@@ -223,7 +226,6 @@ class Db_Backend_PDO implements Db_Backend_Interface
 		/**
 		 * @var array $res
 		 */
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$res =  $this->query( $query, $query_data, function( PDOStatement $stn ) use ($column) {
 			$result = [];
 
@@ -254,7 +256,6 @@ class Db_Backend_PDO implements Db_Backend_Interface
 		/**
 		 * @var array $res
 		 */
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$res =  $this->query( $query, $query_data, function( PDOStatement $stn ) use ($key_column, $value_column) {
 			$result = [];
 
@@ -335,6 +336,16 @@ class Db_Backend_PDO implements Db_Backend_Interface
 
 	public function lastInsertId( string $name = null ): string
 	{
-		return $this->pdo->lastInsertId( $name );
+		try {
+			return $this->pdo->lastInsertId( $name );
+		} catch( PDOException $e ) {
+			return false;
+		}
+		
+	}
+	
+	public function quoteString( string $string ): string
+	{
+		return $this->pdo->quote( $string );
 	}
 }

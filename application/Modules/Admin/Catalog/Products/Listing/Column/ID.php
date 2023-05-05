@@ -1,9 +1,9 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 
 use Jet\UI_dataGrid_column;
-use JetShop\Product;
+use JetApplication\Product;
 
 class Listing_Column_ID extends Listing_Column
 {

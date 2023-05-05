@@ -9,7 +9,6 @@
 namespace JetStudio;
 
 use Jet\Autoloader_Loader;
-use Jet\SysConf_Path;
 
 /**
  *
@@ -30,16 +29,9 @@ class Autoloader_ProjectClasses extends Autoloader_Loader
 		if( $root_namespace != Project::getApplicationNamespace() ) {
 			return false;
 		}
-		
-		if(str_starts_with($class_name, 'Core_')) {
-			$class_name = str_replace( '_', DIRECTORY_SEPARATOR, substr($class_name, 4) );
-			
-			return SysConf_Path::getLibrary() . 'JetShopCore/' . $class_name . '.php';
-		} else {
-			$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
-			
-			return ProjectConf_Path::getApplicationClasses() . $class_name . '.php';
-		}
 
+		$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
+
+		return ProjectConf_Path::getApplicationClasses() . $class_name . '.php';
 	}
 }

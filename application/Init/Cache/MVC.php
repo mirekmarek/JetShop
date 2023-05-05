@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\MVC_Cache;
 use Jet\SysConf_Path;

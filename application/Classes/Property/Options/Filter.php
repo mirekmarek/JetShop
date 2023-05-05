@@ -1,6 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
+use JetShop\Core_Property_Options_Filter;
 
 /**
  *

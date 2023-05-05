@@ -98,15 +98,8 @@ class Application_Module_Manifest extends BaseObject
 	 *
 	 * @throws Application_Modules_Exception
 	 */
-	protected function checkManifestData( array $manifest_data )
+	protected function checkManifestData( array $manifest_data ) : void
 	{
-		if( !is_array( $manifest_data ) ) {
-			throw new Application_Modules_Exception(
-				'Manifest data must be array (Module: \'' . $this->_name . '\')',
-				Application_Modules_Exception::CODE_MANIFEST_NONSENSE
-			);
-		}
-
 		if( empty( $manifest_data['label'] ) ) {
 			throw new Application_Modules_Exception(
 				'Module label not set! (\'label\' array key does not exist, or is empty) (Module: \'' . $this->_name . '\')',
@@ -121,7 +114,7 @@ class Application_Module_Manifest extends BaseObject
 	 *
 	 * @throws Application_Modules_Exception
 	 */
-	protected function setupProperties( array $manifest_data )
+	protected function setupProperties( array $manifest_data ) : void
 	{
 
 		foreach( $manifest_data as $key => $val ) {

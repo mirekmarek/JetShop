@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Autoloader_Loader;
 use Jet\Application_Modules;

@@ -234,12 +234,12 @@ trait DataModel_Definition_Property_Trait
 		) {
 			$type = $form->field( 'type' )->getValue();
 
-			$class_name = __NAMESPACE__ . '\\DataModel_Definition_Property_' . $type;
+			$class_name = __NAMESPACE__ . '\\DataModels_Property_' . $type;
 
 			/**
 			 * @var DataModel_Definition_Property_Interface $new_property ;
 			 */
-			$new_property = new $class_name( $this->getDataModelClassName(), $this->getName() );
+			$new_property = new $class_name();
 			$new_property->setName( $this->getName() );
 			$new_property->setIsId( $this->getIsId() );
 			$new_property->setIsKey( $this->getIsKey() );
@@ -504,7 +504,7 @@ trait DataModel_Definition_Property_Trait
 				] = explode( ':', $this->getRelatedToClassName() );
 			}
 
-			$related_to_model = DataModels::getClass( $to_model_class_name )->getDefinition();
+			$related_to_model = DataModels::getClass( $to_model_class_name )?->getDefinition();
 			if( $related_to_model ) {
 				$related_to_property = $related_to_model->getProperty( $this->getRelatedToPropertyName() );
 

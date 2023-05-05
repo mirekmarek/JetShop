@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Product_Trait_Images;
 
 trait Product_Trait_Images
 {

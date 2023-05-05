@@ -1,13 +1,13 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Categories;
+namespace JetApplicationModule\Admin\Catalog\Categories;
 
 
 use Jet\AJAX;
 use Jet\Logger;
 use Jet\MVC_Controller_Router;
-use JetShop\Application_Admin;
-use JetShop\Category;
-use JetShop\Fulltext_Index_Internal_Category;
+use JetApplication\Application_Admin;
+use JetApplication\Category;
+use JetApplication\Fulltext_Index_Internal_Category;
 
 use Jet\MVC_Controller_Default;
 
@@ -21,9 +21,9 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Data_Tree_Node;
 
-use JetShop\Shops;
+use JetApplication\Shops;
 use Jet\Application;
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 
 /**

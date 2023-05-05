@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_CommonEntity_ShopRelationTrait_ShopIsId;
 
 trait CommonEntity_ShopRelationTrait_ShopIsId
 {

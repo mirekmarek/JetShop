@@ -1,11 +1,11 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetShop\KindOfProduct;
+use JetApplication\KindOfProduct;
 
 
 class Listing_Filter_ProductKind extends Listing_Filter

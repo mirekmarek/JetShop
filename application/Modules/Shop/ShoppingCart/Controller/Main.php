@@ -5,14 +5,14 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\ShoppingCart;
+namespace JetApplicationModule\Shop\ShoppingCart;
 
 use Jet\AJAX;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
-use JetShop\ShoppingCart;
+use JetApplication\ShoppingCart;
 
 /**
  *

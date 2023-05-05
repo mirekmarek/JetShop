@@ -5,13 +5,13 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Services\Services;
+namespace JetApplicationModule\Admin\Services\Services;
 
 use Jet\Application_Module;
 use Jet\Auth;
-use JetShop\Admin_Module_Trait;
-use JetShop\Auth_Administrator_Role;
-use JetShop\Services_Service_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Auth_Administrator_Role;
+use JetApplication\Services_Service_ManageModuleInterface;
 
 /**
  *

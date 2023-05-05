@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Categories;
+namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\Application_Module;
-use JetShop\Admin_Module_Trait;
-use JetShop\Auth_Administrator_Role;
-use JetShop\Category_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Auth_Administrator_Role;
+use JetApplication\Category_ManageModuleInterface;
 use Jet\Auth;
 use Jet\MVC;
 

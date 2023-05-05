@@ -5,15 +5,15 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Auth;
 use Jet\Data_Array;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetShop\CashDesk;
-use JetShop\Customer;
+use JetApplication\CashDesk;
+use JetApplication\Customer;
 
 trait Controller_Main_Customer {
 

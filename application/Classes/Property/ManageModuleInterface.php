@@ -1,6 +1,8 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
-interface Property_ManageModuleInterface extends Core_Property_ManageModuleInterface{
+use JetShop\Core_Property_ManageModuleInterface;
+
+interface Property_ManageModuleInterface extends Core_Property_ManageModuleInterface {
 
 }

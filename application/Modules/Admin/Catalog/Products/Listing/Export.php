@@ -1,10 +1,10 @@
 <?php
 
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Application;
 use Jet\BaseObject;
-use JetShop\Product;
+use JetApplication\Product;
 
 abstract class Listing_Export extends BaseObject
 {

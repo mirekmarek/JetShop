@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
@@ -21,7 +21,7 @@ use Jet\Session;
 
 use Jet\Data_DateTime;
 
-use JetShop\Auth_Administrator_User as Administrator;
+use JetApplication\Auth_Administrator_User as Administrator;
 
 
 /**

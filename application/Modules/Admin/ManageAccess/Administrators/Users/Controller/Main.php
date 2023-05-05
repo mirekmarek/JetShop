@@ -6,10 +6,10 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\Administrators\Users;
+namespace JetApplicationModule\Admin\ManageAccess\Administrators\Users;
 
 use Jet\Logger;
-use JetShop\Auth_Administrator_User as User;
+use JetApplication\Auth_Administrator_User as User;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -19,7 +19,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

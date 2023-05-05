@@ -7,10 +7,10 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\Administrators\Roles;
+namespace JetApplicationModule\Admin\ManageAccess\Administrators\Roles;
 
 use Jet\Logger;
-use JetShop\Auth_Administrator_Role as Role;
+use JetApplication\Auth_Administrator_Role as Role;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 
@@ -23,7 +23,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

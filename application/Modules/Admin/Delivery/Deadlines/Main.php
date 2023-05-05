@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Delivery\Deadlines;
+namespace JetApplicationModule\Admin\Delivery\Deadlines;
 
-use JetShop\Admin_Module_Trait;
-use JetShop\Delivery_Deadline_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Delivery_Deadline_ManageModuleInterface;
 use Jet\Application_Module;
-use JetShop\Auth_Administrator_Role;
+use JetApplication\Auth_Administrator_Role;
 use Jet\Auth;
 
 class Main extends Application_Module implements Delivery_Deadline_ManageModuleInterface

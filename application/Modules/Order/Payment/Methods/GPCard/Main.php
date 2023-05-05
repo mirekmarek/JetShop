@@ -5,11 +5,11 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Order\Payment\Methods\GPCard;
+namespace JetApplicationModule\Order\Payment\Methods\GPCard;
 
-use JetShop\CashDesk;
-use JetShop\Order;
-use JetShop\Payment_Method_Module;
+use JetApplication\CashDesk;
+use JetApplication\Order;
+use JetApplication\Payment_Method_Module;
 
 /**
  *

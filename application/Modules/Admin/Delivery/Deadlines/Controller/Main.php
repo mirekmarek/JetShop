@@ -1,5 +1,5 @@
 <?php
-namespace JetShopModule\Admin\Delivery\Deadlines;
+namespace JetApplicationModule\Admin\Delivery\Deadlines;
 
 
 use Jet\Logger;
@@ -16,11 +16,11 @@ use Jet\Navigation_Breadcrumb;
 
 use Jet\UI_tabs;
 
-use JetShop\Shops;
-use JetShop\Application_Admin;
-use JetShop\Delivery_Deadline;
+use JetApplication\Shops;
+use JetApplication\Application_Admin;
+use JetApplication\Delivery_Deadline;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

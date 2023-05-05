@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Content\InfoPages;
+namespace JetApplicationModule\Admin\Content\InfoPages;
 
 use Jet\Application_Module;
 

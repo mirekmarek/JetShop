@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Delivery\Deadlines;
+namespace JetApplicationModule\Admin\Delivery\Deadlines;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
 
-use JetShop\Delivery_Deadline;
+use JetApplication\Delivery_Deadline;
 
 class Listing extends Data_Listing {
 

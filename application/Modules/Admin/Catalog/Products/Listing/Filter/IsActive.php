@@ -1,13 +1,13 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Data_Listing;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetShop\Product_ShopData;
-use JetShop\Shops;
+use JetApplication\Product_ShopData;
+use JetApplication\Shops;
 
 
 class Listing_Filter_IsActive extends Listing_Filter

@@ -5,13 +5,13 @@
  * @license
  * @author
  */
-namespace JetShopModule\Admin\Customers;
+namespace JetApplicationModule\Admin\Customers;
 
 
 use Jet\Application_Modules;
 use Jet\MVC_View;
-use JetShop\Customer_Address;
-use JetShop\Shops_Shop;
+use JetApplication\Customer_Address;
+use JetApplication\Shops_Shop;
 
 /**
  *

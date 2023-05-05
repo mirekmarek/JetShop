@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\Login;
+namespace JetApplicationModule\Shop\Login;
 
 use Jet\Application_Module;
 use Jet\Form_Field_Email;
@@ -13,7 +13,7 @@ use Jet\Form_Field_Password;
 use Jet\MVC;
 use Jet\MVC_Page_Interface;
 use Jet\MVC_View;
-use JetShop\Customer_AuthController_Interface;
+use JetApplication\Customer_AuthController_Interface;
 use Jet\Form;
 
 /**

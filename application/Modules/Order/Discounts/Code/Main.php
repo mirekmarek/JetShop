@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Order\Discounts\Code;
+namespace JetApplicationModule\Order\Discounts\Code;
 
 use Jet\Form;
 use Jet\Form_Field;
@@ -13,18 +13,19 @@ use Jet\Form_Field_Input;
 use Jet\MVC_Page_Content;
 use Jet\Session;
 use Jet\Tr;
-use JetShop\CashDesk;
-use JetShop\Discounts_Code;
-use JetShop\Discounts_Module;
-use JetShop\Order;
-use JetShop\Order_Item;
+
+use JetApplication\CashDesk;
+use JetApplication\Discounts_Code;
+use JetApplication\Discounts_Module;
+use JetApplication\Order;
+use JetApplication\Order_Item;
 
 /**
  *
  */
 class Main extends Discounts_Module
 {
-	const ORDER_ITEM_CODE = 'DiscountCode';
+	public const ORDER_ITEM_CODE = 'DiscountCode';
 
 	protected ?Session $session = null;
 
@@ -169,13 +170,13 @@ class Main extends Discounts_Module
 		return [$discount];
 	}
 
-	protected function setDiscount_delivery_amount( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_delivery_amount( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D% for delivery price', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_DELIVERY_AMOUNT );
 	}
 
-	protected function setDiscount_delivery_percentage( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_delivery_percentage( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D%% for delivery price', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_DELIVERY_PERCENT );
@@ -187,32 +188,32 @@ class Main extends Discounts_Module
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_PAYMENT_AMOUNT );
 	}
 
-	protected function setDiscount_payment_percentage( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_payment_percentage( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D%% for payment price', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_PAYMENT_PERCENT );
 	}
 
-	protected function setDiscount_products_amount( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_products_amount( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D% for products price', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_PRODUCTS_AMOUNT );
 	}
 	
 
-	protected function setDiscount_products_percentage( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_products_percentage( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D%% for products price', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_PRODUCTS_PERCENT );
 	}
 
-	protected function setDiscount_order_percentage( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_order_percentage( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D% for order amount', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_TOTAL_PERCENT );
 	}
 
-	protected function setDiscount_order_amount( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_order_amount( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D%% for order amount', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_TOTAL_AMOUNT );

@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Auth_Role_Privilege_Interface;
 use Jet\DataModel;

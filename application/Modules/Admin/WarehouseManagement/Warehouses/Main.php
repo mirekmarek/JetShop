@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\WarehouseManagement\Warehouses;
+namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
 use Jet\Application_Module;
 

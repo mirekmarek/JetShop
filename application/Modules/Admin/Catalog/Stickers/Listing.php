@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Stickers;
+namespace JetApplicationModule\Admin\Catalog\Stickers;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
 
-use JetShop\Sticker;
+use JetApplication\Sticker;
 
 class Listing extends Data_Listing {
 

@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\Catalog\Suppliers;
+namespace JetApplicationModule\Admin\Catalog\Suppliers;
 
 use Jet\Data_Listing_Filter_Search;
 

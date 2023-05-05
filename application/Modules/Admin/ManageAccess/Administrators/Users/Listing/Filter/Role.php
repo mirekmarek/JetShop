@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\Administrators\Users;
+namespace JetApplicationModule\Admin\ManageAccess\Administrators\Users;
 
 use Jet\Data_Listing_Filter;
 use Jet\Form;
@@ -15,7 +15,7 @@ use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
 
-use JetShop\Auth_Administrator_Role as Role;
+use JetApplication\Auth_Administrator_Role as Role;
 
 
 class Listing_Filter_Role extends Data_Listing_Filter {

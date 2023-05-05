@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Http_Headers;
 use Jet\MVC;
@@ -13,10 +13,10 @@ use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
 use Jet\MVC_View;
-use JetShop\CashDesk;
-use JetShop\Order;
-use JetShop\ShoppingCart;
-use JetShop\Shops;
+use JetApplication\CashDesk;
+use JetApplication\Order;
+use JetApplication\ShoppingCart;
+use JetApplication\Shops;
 
 /**
  *

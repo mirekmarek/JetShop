@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\Payment\Methods;
+namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Data_Listing_Filter_Search;
 

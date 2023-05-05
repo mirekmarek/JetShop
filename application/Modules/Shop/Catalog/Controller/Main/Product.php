@@ -5,16 +5,16 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\Catalog;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\ErrorPages;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC;
 use Jet\Tr;
-use JetShop\Category;
-use JetShop\Navigation_Breadcrumb;
-use JetShop\Product;
+use JetApplication\Category;
+use JetApplication\Navigation_Breadcrumb;
+use JetApplication\Product;
 
 /**
  *

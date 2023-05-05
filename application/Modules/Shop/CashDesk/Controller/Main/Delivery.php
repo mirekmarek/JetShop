@@ -5,14 +5,14 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\AJAX;
 use Jet\Application;
 use Jet\Http_Request;
-use JetShop\CashDesk;
-use JetShop\Delivery_PersonalTakeover_Place;
-use JetShop\Shops;
+use JetApplication\CashDesk;
+use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Shops;
 
 trait Controller_Main_Delivery {
 

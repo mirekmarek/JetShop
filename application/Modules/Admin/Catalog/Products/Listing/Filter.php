@@ -1,10 +1,10 @@
 <?php
 
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Data_Listing_Filter;
 use Jet\MVC_View;
-use JetShop\Product;
+use JetApplication\Product;
 
 abstract class Listing_Filter extends Data_Listing_Filter
 {

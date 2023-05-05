@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Logger;
 use Jet\MVC;

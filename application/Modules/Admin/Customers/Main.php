@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Customers;
+namespace JetApplicationModule\Admin\Customers;
 
 use Jet\Application_Module;
 

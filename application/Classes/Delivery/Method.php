@@ -1,7 +1,8 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\DataModel_Definition;
+use JetShop\Core_Delivery_Method;
 
 #[DataModel_Definition]
 class Delivery_Method extends Core_Delivery_Method {

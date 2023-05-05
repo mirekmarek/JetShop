@@ -5,9 +5,9 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
-use JetShop\CashDesk;
+use JetApplication\CashDesk;
 
 class Config {
 

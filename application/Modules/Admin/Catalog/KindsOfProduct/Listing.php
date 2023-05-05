@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Catalog\KindsOfProduct;
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
-use JetShop\KindOfProduct;
+use JetApplication\KindOfProduct;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

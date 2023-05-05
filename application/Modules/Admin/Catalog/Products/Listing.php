@@ -1,14 +1,14 @@
 <?php
 
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
 
 use Jet\Http_Request;
 use Jet\Tr;
-use JetShop\Product;
-use JetShop\Shops;
+use JetApplication\Product;
+use JetApplication\Shops;
 
 class Listing extends Data_Listing
 {

@@ -26,7 +26,24 @@ use Jet\UI;
 
 <script type="text/javascript">
 	$(document).ready(function () {
-		UI.mainToolbarPin();
+		const main_toolbar = document.getElementById("main-toolbar");
+		if(!main_toolbar) {
+			return;
+		}
+		const main_col = document.getElementById("main-col");
+		const main_toolbar_initial_offset = main_toolbar.offsetTop;
+		const main_toolbar_height = main_toolbar.offsetHeight;
+		const main_col_initial_padding_top = main_col.style.paddingTop;
+
+		window.onscroll = function() {
+			if (window.scrollY > main_toolbar_initial_offset) {
+				main_toolbar.classList.add("main-toolbar-sticky");
+				main_col.style.paddingTop = main_toolbar_height+'px';
+			} else {
+				main_toolbar.classList.remove("main-toolbar-sticky");
+				main_col.style.paddingTop = main_col_initial_padding_top;
+			}
+		};
 	});
 </script>
 
@@ -51,9 +68,6 @@ use Jet\UI;
 								<div style="display: inline-block;width: 250px;"><?=$base->getName()?></div>
 								<?php foreach( $base->getLocales() as $locale ):
 									$hp = $base->getHomepage($locale);
-									if(!$hp) {
-										continue;
-									}
 									?>
 								<div style="display: inline-block;width: 100px;">
 									<a href="<?=$hp->getURL()?>" target="_blank"><?=UI::flag($locale)?> <?=$locale->getLanguageName($locale)?></a>
@@ -110,7 +124,7 @@ use Jet\UI;
 		<jet_layout_main_position/>
 	</div>
 
-	<?=Application::getGeneralView()->render('dialog/select_locale');?>
+	<?=Application_UI::dialog_selectLocale()?>
 
 
 	<div id="__progress__">

@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Orders;
+namespace JetApplicationModule\Admin\Orders;
 
-use JetShop\Order as Order;
+use JetApplication\Order as Order;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

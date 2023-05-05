@@ -5,12 +5,12 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Catalog\PropertyGroups;
+namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
 use Jet\Application_Module;
 use Jet\MVC;
-use JetShop\Admin_Module_Trait;
-use JetShop\PropertyGroup_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\PropertyGroup_ManageModuleInterface;
 
 /**
  *

@@ -6,10 +6,10 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\RESTClients\Users;
+namespace JetApplicationModule\Admin\ManageAccess\RESTClients\Users;
 
 use Jet\DataModel_Fetch_Instances;
-use JetShop\Auth_RESTClient_User as User;
+use JetApplication\Auth_RESTClient_User as User;
 
 use Jet\Data_Listing;
 

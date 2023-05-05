@@ -1,6 +1,6 @@
 <?php
 use Jet\Tr;
-use JetShop\ShoppingCart;
+use JetApplication\ShoppingCart;
 ?>
 <a class="btn btn-info" href="<?= ShoppingCart::getCartPageURL()?>"><?= Tr::_('Shopping cart'); ?></a>
 <a class="btn btn-info" onclick="CashDesk.delivery.back();return false;"><?= Tr::_('Delivery'); ?></a>

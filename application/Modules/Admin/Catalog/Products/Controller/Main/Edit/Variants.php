@@ -1,5 +1,5 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 
 use Jet\Logger;
@@ -8,8 +8,8 @@ use Jet\UI_messages;
 use Jet\Http_Headers;
 use Jet\Tr;
 
-use JetShop\Category;
-use JetShop\Product;
+use JetApplication\Category;
+use JetApplication\Product;
 
 /**
  *

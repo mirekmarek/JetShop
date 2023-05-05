@@ -5,7 +5,9 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Customer_AuthController;
 
 /**
  *

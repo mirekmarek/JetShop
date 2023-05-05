@@ -5,15 +5,15 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Order\Delivery\Pricing;
+namespace JetApplicationModule\Order\Delivery\Pricing;
 
-use JetShop\CashDesk;
-use JetShop\Delivery_Method;
-use JetShop\Delivery_Pricing_Module;
-use JetShop\Delivery_Pricing_PriceInfo;
-use JetShop\Discounts;
-use JetShop\Order_Item;
-use JetShop\Price;
+use JetApplication\CashDesk;
+use JetApplication\Delivery_Method;
+use JetApplication\Delivery_Pricing_Module;
+use JetApplication\Delivery_Pricing_PriceInfo;
+use JetApplication\Discounts;
+use JetApplication\Order_Item;
+use JetApplication\Price;
 
 /**
  *

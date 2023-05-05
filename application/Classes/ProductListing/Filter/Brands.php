@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_ProductListing_Filter_Brands;
 
 class ProductListing_Filter_Brands extends Core_ProductListing_Filter_Brands {
 

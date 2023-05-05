@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\Orders;
+namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Data_Listing_Filter_Search;
 

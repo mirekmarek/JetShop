@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\WarehouseManagement\ReceiptOfGoods;
+namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 use Jet\AJAX;
 use Jet\Data_DateTime;
@@ -16,9 +16,9 @@ use Jet\Session;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
-use JetShop\WarehouseManagement_Item_Event;
-use JetShop\WarehouseManagement_Item_Event_Type;
-use JetShop\WarehouseManagement_Warehouse;
+use JetApplication\WarehouseManagement_Item_Event;
+use JetApplication\WarehouseManagement_Item_Event_Type;
+use JetApplication\WarehouseManagement_Warehouse;
 
 /**
  *

@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Delivery_Class_ManageModuleInterface;
 
 interface Delivery_Class_ManageModuleInterface extends Core_Delivery_Class_ManageModuleInterface{
 

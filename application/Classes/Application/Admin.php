@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\AJAX;
 use Jet\Http_Request;
@@ -96,7 +96,7 @@ class Application_Admin
 
 	}
 
-	public static function handleUploadTooLarge()
+	public static function handleUploadTooLarge() : void
 	{
 		if( Http_Request::postMaxSizeExceeded() ) {
 			$error_message = 'You are uploading too large files<br/>'

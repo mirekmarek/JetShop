@@ -5,13 +5,13 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Services\Services;
+namespace JetApplicationModule\Admin\Services\Services;
 
 use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
-use JetShop\Application_Admin;
-use JetShop\Services_Service;
+use JetApplication\Application_Admin;
+use JetApplication\Services_Service;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -21,9 +21,9 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShop\Services_Service_ShopData;
-use JetShop\Shops;
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplication\Services_Service_ShopData;
+use JetApplication\Shops;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

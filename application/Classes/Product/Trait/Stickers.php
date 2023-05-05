@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Product_Trait_Stickers;
 
 trait Product_Trait_Stickers
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\BaseObject;
 use Jet\MVC_View;
 use Jet\UI_dataGrid_column;
-use JetShop\Product;
+use JetApplication\Product;
 
 abstract class Listing_Column extends BaseObject
 {

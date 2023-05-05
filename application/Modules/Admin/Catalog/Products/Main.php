@@ -1,11 +1,11 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Application_Module;
 use Jet\Session;
-use JetShop\Admin_Module_Trait;
-use JetShop\Auth_Administrator_Role;
-use JetShop\Product_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Auth_Administrator_Role;
+use JetApplication\Product_ManageModuleInterface;
 use Jet\Auth;
 use Jet\MVC;
 

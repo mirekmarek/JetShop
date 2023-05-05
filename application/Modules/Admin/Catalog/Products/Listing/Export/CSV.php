@@ -1,5 +1,5 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 class Listing_Export_CSV extends Listing_Export
 {

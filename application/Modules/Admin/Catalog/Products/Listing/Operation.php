@@ -1,9 +1,9 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\BaseObject;
 use Jet\Http_Headers;
-use JetShop\Product;
+use JetApplication\Product;
 
 abstract class Listing_Operation extends BaseObject
 {

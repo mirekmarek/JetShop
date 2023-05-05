@@ -5,11 +5,11 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Discounts\CodesDefinition;
+namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 
-use JetShop\Data_Listing_Filter_Shop;
-use JetShop\Discounts_Code as DiscountsCode;
+use JetApplication\Data_Listing_Filter_Shop;
+use JetApplication\Discounts_Code as DiscountsCode;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

@@ -5,11 +5,11 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Order\Delivery\Methods\PersonalTakeover\CeskaPostaBalikovna;
+namespace JetApplicationModule\Order\Delivery\Methods\PersonalTakeover\CeskaPostaBalikovna;
 
-use JetShop\Delivery_Method_Module_PersonalTakeover;
-use JetShop\Delivery_PersonalTakeover_Place;
-use JetShop\Shops_Shop;
+use JetApplication\Delivery_Method_Module_PersonalTakeover;
+use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Shops_Shop;
 use SimpleXMLElement;
 
 /**

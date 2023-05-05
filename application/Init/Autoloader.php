@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Autoloader;
 use Jet\SysConf_Path;
@@ -24,9 +24,11 @@ Autoloader::initialize();
 require SysConf_Path::getApplication() . 'Autoloaders/Jet.php';
 Autoloader_Jet::register();
 
+require SysConf_Path::getApplication() . 'Autoloaders/JetShop.php';
+Autoloader_JetShop::register();
+
 require SysConf_Path::getApplication() . 'Autoloaders/ApplicationClasses.php';
 Autoloader_ApplicationClasses::register();
-
 
 require SysConf_Path::getApplication() . 'Autoloaders/ApplicationModules.php';
 Autoloader_ApplicationModules::register();

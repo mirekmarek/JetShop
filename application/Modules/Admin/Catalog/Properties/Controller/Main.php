@@ -5,14 +5,14 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Catalog\Properties;
+namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Application;
 use Jet\MVC_Controller_Router;
 use Jet\UI;
-use JetShop\Application_Admin;
-use JetShop\Fulltext_Index_Internal_Property;
-use JetShop\Property;
+use JetApplication\Application_Admin;
+use JetApplication\Fulltext_Index_Internal_Property;
+use JetApplication\Property;
 
 use Jet\MVC_Controller_Default;
 use Jet\UI_messages;
@@ -21,8 +21,8 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Logger;
-use JetShop\Property_Options_Option;
-use JetShop\Shops;
+use JetApplication\Property_Options_Option;
+use JetApplication\Shops;
 
 /**
  *

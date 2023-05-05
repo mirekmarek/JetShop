@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShopModule\Admin\Login;
+namespace JetApplicationModule\Admin\Login;
 
 use Jet\Application_Module;
 
@@ -17,7 +17,7 @@ use Jet\Form_Field_Password;
 use Jet\Form_Field;
 
 
-use JetShop\Auth_Administrator_User as Administrator;
+use JetApplication\Auth_Administrator_User as Administrator;
 
 
 /**

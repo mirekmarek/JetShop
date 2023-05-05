@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Form;
 use Jet\Http_Request;
-use JetShop\Category;
-use JetShop\Product_Category;
+use JetApplication\Category;
+use JetApplication\Product_Category;
 
 class Listing_Filter_Categories extends Listing_Filter
 {

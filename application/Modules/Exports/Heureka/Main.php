@@ -5,11 +5,11 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Exports\Heureka;
+namespace JetApplicationModule\Exports\Heureka;
 
-use JetShop\Exports_CategoriesCache;
-use JetShop\Exports_Module;
-use JetShop\Shops_Shop;
+use JetApplication\Exports_CategoriesCache;
+use JetApplication\Exports_Module;
+use JetApplication\Shops_Shop;
 use SimpleXMLElement;
 
 /**

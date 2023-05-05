@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Payment\Methods;
+namespace JetApplicationModule\Admin\Payment\Methods;
 
-use JetShop\Payment_Method;
+use JetApplication\Payment_Method;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

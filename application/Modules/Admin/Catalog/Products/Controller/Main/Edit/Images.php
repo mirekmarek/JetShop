@@ -1,9 +1,9 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\AJAX;
 use Jet\Http_Request;
-use JetShop\Application_Admin;
+use JetApplication\Application_Admin;
 
 /**
  *

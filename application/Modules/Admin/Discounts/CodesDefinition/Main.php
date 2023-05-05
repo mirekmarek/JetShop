@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Discounts\CodesDefinition;
+namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 use Jet\Application_Module;
 

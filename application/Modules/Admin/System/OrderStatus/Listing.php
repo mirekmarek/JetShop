@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\System\OrderStatus;
+namespace JetApplicationModule\Admin\System\OrderStatus;
 
-use JetShop\Order_Status as OrderStatus;
+use JetApplication\Order_Status as OrderStatus;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

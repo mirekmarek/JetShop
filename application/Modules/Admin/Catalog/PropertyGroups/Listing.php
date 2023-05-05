@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Catalog\PropertyGroups;
+namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
-use JetShop\PropertyGroup as PropertyGroup;
+use JetApplication\PropertyGroup as PropertyGroup;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

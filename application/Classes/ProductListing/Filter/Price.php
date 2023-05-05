@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_ProductListing_Filter_Price;
 
 class ProductListing_Filter_Price extends Core_ProductListing_Filter_Price {
 

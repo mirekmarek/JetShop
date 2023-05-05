@@ -1,11 +1,11 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Form;
 use Jet\Form_Field_Search;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetShop\Fulltext_Index_Internal_Product;
+use JetApplication\Fulltext_Index_Internal_Product;
 
 class Listing_Filter_Search extends Listing_Filter {
 	

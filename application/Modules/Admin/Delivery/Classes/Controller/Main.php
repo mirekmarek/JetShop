@@ -5,10 +5,10 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Delivery\Classes;
+namespace JetApplicationModule\Admin\Delivery\Classes;
 
 use Jet\Logger;
-use JetShop\Delivery_Class;
+use JetApplication\Delivery_Class;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -18,7 +18,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

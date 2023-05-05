@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\Administrators\Users;
+namespace JetApplicationModule\Admin\ManageAccess\Administrators\Users;
 
 use Jet\Application_Module;
 

@@ -5,10 +5,10 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\UI;
+namespace JetApplicationModule\Shop\UI;
 
 use Jet\Application_Module;
-use JetShop\Shop_Module_Trait;
+use JetApplication\Shop_Module_Trait;
 
 /**
  *

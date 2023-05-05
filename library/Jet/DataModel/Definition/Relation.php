@@ -77,7 +77,7 @@ abstract class DataModel_Definition_Relation extends BaseObject
 	/**
 	 * @param string $related_to_class_name
 	 */
-	public function setRelatedToClass( string $related_to_class_name )
+	public function setRelatedToClass( string $related_to_class_name ) : void
 	{
 		$this->related_data_model_class_name = $related_to_class_name;
 	}
@@ -124,7 +124,6 @@ abstract class DataModel_Definition_Relation extends BaseObject
 
 	/**
 	 * @return DataModel_Definition_Relation_Join_Condition[]|DataModel_Definition_Relation_Join_Item[]
-	 * @noinspection PhpDocSignatureInspection
 	 */
 	public function getJoinBy() : array
 	{

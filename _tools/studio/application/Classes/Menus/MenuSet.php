@@ -60,13 +60,13 @@ class Menus_MenuSet extends Navigation_MenuSet
 
 			$root_menu = $this->addMenu(
 				$id,
-				$item_data['label'],
+				$item_data['label']??'',
 				$item_data['icon']
 			);
 
 			if( isset( $item_data['items'] ) ) {
 				foreach( $item_data['items'] as $menu_item_id => $menu_item_data ) {
-					$label = $menu_item_data['label'];
+					$label = $menu_item_data['label']??'';
 					$menu_item = new Menus_Menu_Item( $menu_item_id, $label );
 					$menu_item->setData( $menu_item_data );
 
@@ -217,10 +217,8 @@ class Menus_MenuSet extends Navigation_MenuSet
 	 */
 	public static function get( string $name, string|null|bool $translator_dictionary = null ): Menus_MenuSet
 	{
-		$translator_dictionary = false;
-
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::get( $name, $translator_dictionary );
+		return parent::get( name: $name, translator_dictionary: false );
 	}
 
 	/**

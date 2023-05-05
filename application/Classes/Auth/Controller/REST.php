@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
@@ -17,7 +17,7 @@ use Jet\Data_DateTime;
 
 use Jet\Logger;
 
-use JetShop\Auth_RESTClient_User as RESTClient;
+use JetApplication\Auth_RESTClient_User as RESTClient;
 
 /**
  *

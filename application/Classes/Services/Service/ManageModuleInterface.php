@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Services_Service_ManageModuleInterface;
 
 interface Services_Service_ManageModuleInterface extends Core_Services_Service_ManageModuleInterface{
 

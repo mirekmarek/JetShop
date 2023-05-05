@@ -5,10 +5,10 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Http_Request;
-use JetShop\CashDesk;
+use JetApplication\CashDesk;
 
 trait Controller_Main_Payment {
 

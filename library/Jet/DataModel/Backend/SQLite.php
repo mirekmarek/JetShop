@@ -8,13 +8,13 @@
 
 namespace Jet;
 
-use SQLite3;
-
 /**
  *
  */
 class DataModel_Backend_SQLite extends DataModel_Backend
 {
+	use DataModel_Backend_Trait_Fetch;
+	
 	const PRIMARY_KEY_NAME = 'PRIMARY';
 	/**
 	 * @var array
@@ -60,8 +60,7 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		return in_array(
 			Db::DRIVER_SQLITE,
 			Db_Backend_PDO_Config::getDrivers()
-		) &&
-			class_exists( SQLite3::class, false );
+		);
 	}
 	
 	
@@ -501,8 +500,8 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		if( is_object( $value ) ) {
 			$value = (string)$value;
 		}
-
-		return "'" . SQLite3::escapeString( $value ) . "'";
+		
+		return $this->getDb()->quoteString( $value );
 	}
 
 	/**
@@ -1109,97 +1108,6 @@ class DataModel_Backend_SQLite extends DataModel_Backend
 		}
 
 		return $this->validateResultData( $query, $fetch_method, $data );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
-	 * @return mixed
-	 */
-	public function fetchAll( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchAll' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
-	 * @return mixed
-	 */
-	public function fetchAssoc( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchAssoc' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
-	 * @return mixed
-	 */
-	public function fetchPairs( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchPairs' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
-	 * @return mixed
-	 */
-	public function fetchRow( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchRow' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
-	 * @return mixed
-	 */
-	public function fetchOne( DataModel_Query $query ): mixed
-	{
-		return $this->_fetch( $query, 'fetchOne' );
-	}
-
-	/**
-	 * @param DataModel_Query $query
-	 *
-	 * @return array
-	 */
-	public function fetchCol( DataModel_Query $query ): array
-	{
-		$data = $this->getDb()->fetchCol(
-			$this->createSelectQuery( $query )
-		);
-
-		if( !is_array( $data ) ) {
-			return $data;
-		}
-
-
-		foreach( $data as $i => $d ) {
-			foreach( $query->getSelect() as $item ) {
-				/**
-				 * @var DataModel_Query_Select_Item $item
-				 * @var DataModel_Definition_Property $property
-				 */
-				$property = $item->getItem();
-
-				if( !($property instanceof DataModel_Definition_Property) ) {
-					continue;
-				}
-
-				if( $property->getMustBeSerializedBeforeStore() ) {
-					$data[$i] = $this->unserialize( $data[$i] );
-				}
-
-				$property->checkValueType( $data[$i] );
-
-				break;
-			}
-		}
-
-		return $data;
 	}
 
 	/**

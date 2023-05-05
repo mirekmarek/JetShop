@@ -5,10 +5,10 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Orders;
+namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Logger;
-use JetShop\Order as Order;
+use JetApplication\Order as Order;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -18,7 +18,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

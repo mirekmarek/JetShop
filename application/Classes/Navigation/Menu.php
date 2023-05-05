@@ -1,8 +1,9 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Data_Tree;
 use Jet\Data_Tree_Node;
+use JetShop\Core_Navigation_Menu;
 
 class Navigation_Menu extends Core_Navigation_Menu {
 

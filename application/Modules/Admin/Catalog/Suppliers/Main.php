@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Suppliers;
+namespace JetApplicationModule\Admin\Catalog\Suppliers;
 
-use JetShop\Admin_Module_Trait;
-use JetShop\Supplier_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Supplier_ManageModuleInterface;
 use Jet\Application_Module;
-use JetShop\Auth_Administrator_Role;
+use JetApplication\Auth_Administrator_Role;
 use Jet\Auth;
 
 /**

@@ -5,12 +5,12 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Catalog\KindsOfProduct;
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 use Jet\Application_Module;
 use Jet\MVC;
-use JetShop\Admin_Module_Trait;
-use JetShop\KindOfProduct_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\KindOfProduct_ManageModuleInterface;
 
 /**
  *

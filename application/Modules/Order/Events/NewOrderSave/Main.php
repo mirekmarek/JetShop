@@ -5,9 +5,9 @@
  * @license
  * @author
  */
-namespace JetShopModule\Order\Events\NewOrderSave;
+namespace JetApplicationModule\Order\Events\NewOrderSave;
 
-use JetShop\Order_Event_HandlerModule;
+use JetApplication\Order_Event_HandlerModule;
 
 /**
  *

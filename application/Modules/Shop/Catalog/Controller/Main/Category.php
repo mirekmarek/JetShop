@@ -5,7 +5,7 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\Catalog;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\ErrorPages;
 use Jet\Http_Headers;
@@ -13,8 +13,8 @@ use Jet\MVC;
 use Jet\Tr;
 use Jet\Http_Request;
 use Jet\AJAX;
-use JetShop\Category;
-use JetShop\Navigation_Breadcrumb;
+use JetApplication\Category;
+use JetApplication\Navigation_Breadcrumb;
 
 /**
  *

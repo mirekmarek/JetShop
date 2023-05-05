@@ -5,10 +5,10 @@
  * @license
  * @author
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\AJAX;
-use JetShop\CashDesk;
+use JetApplication\CashDesk;
 
 class Controller_Main_Response {
 

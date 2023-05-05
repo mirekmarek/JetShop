@@ -1,11 +1,9 @@
 <?php
-use Jet\SysConf_Jet_Modules;
+namespace JetApplication;
+
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
-use JetShop\Images;
-use JetShop\ImagesShared;
 
-SysConf_Jet_Modules::setModuleRootNamespace('JetShopModule');
 Images::setRootPath( SysConf_Path::getBase().'images/' );
 Images::setRootUrl( SysConf_URI::getBase().'images/' );
 ImagesShared::setRootPath( SysConf_Path::getBase().'images/' );

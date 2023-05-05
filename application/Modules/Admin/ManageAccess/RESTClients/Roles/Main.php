@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\RESTClients\Roles;
+namespace JetApplicationModule\Admin\ManageAccess\RESTClients\Roles;
 
 use Jet\Application_Module;
 

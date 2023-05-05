@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_ProductListing_Pagination;
 
 class ProductListing_Pagination extends Core_ProductListing_Pagination {
 

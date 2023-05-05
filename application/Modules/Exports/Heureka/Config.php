@@ -5,11 +5,11 @@
  * @license
  * @author
  */
-namespace JetShopModule\Exports\Heureka;
+namespace JetApplicationModule\Exports\Heureka;
 
 use Jet\BaseObject;
 use Jet\Exception;
-use JetShop\Shops_Shop;
+use JetApplication\Shops_Shop;
 
 class Config extends BaseObject {
 

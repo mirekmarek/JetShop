@@ -7,7 +7,9 @@
 /** @noinspection HtmlUnknownAttribute */
 /** @noinspection HtmlDeprecatedTag */
 
-namespace JetShop;
+namespace JetApplication;
+
+//TODO: presunout do knihovny
 
 use ZipArchive;
 /*
@@ -45,10 +47,7 @@ class XLSXWriter
 			//using date functions can kick out warning if this isn't set
 			date_default_timezone_set('UTC');
 		}
-		$this->addCellStyle($number_format='GENERAL', $style_string=null);
-		$this->addCellStyle($number_format='GENERAL', $style_string=null);
-		$this->addCellStyle($number_format='GENERAL', $style_string=null);
-		$this->addCellStyle($number_format='GENERAL', $style_string=null);
+		$this->addCellStyle( 'GENERAL', null);
 	}
 	
 	public function setTitle($title='') { $this->title=$title; }

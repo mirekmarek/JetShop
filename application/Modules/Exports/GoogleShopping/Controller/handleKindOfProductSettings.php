@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Exports\GoogleShopping;
+namespace JetApplicationModule\Exports\GoogleShopping;
 
 use Jet\Application;
 use Jet\Form;
@@ -16,12 +16,12 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetShop\Exports_Join_KindOfProduct;
-use JetShop\Exports_Join_Property;
-use JetShop\Exports_Join_Property_Option;
-use JetShop\KindOfProduct;
-use JetShop\Property;
-use JetShop\Shops_Shop;
+use JetApplication\Exports_Join_KindOfProduct;
+use JetApplication\Exports_Join_Property;
+use JetApplication\Exports_Join_Property_Option;
+use JetApplication\KindOfProduct;
+use JetApplication\Property;
+use JetApplication\Shops_Shop;
 
 /**
  *

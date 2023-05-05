@@ -5,13 +5,13 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Payment\Methods;
+namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Application_Module;
 use Jet\Auth;
-use JetShop\Admin_Module_Trait;
-use JetShop\Auth_Administrator_Role;
-use JetShop\Payment_Method_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Auth_Administrator_Role;
+use JetApplication\Payment_Method_ManageModuleInterface;
 
 /**
  *

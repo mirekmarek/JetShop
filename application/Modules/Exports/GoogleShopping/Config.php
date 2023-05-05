@@ -5,10 +5,10 @@
  * @license
  * @author
  */
-namespace JetShopModule\Exports\GoogleShopping;
+namespace JetApplicationModule\Exports\GoogleShopping;
 
 use Jet\BaseObject;
-use JetShop\Shops_Shop;
+use JetApplication\Shops_Shop;
 
 class Config extends BaseObject {
 

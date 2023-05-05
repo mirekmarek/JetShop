@@ -5,15 +5,15 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Catalog\KindsOfProduct;
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 use Jet\Application;
 use Jet\MVC_Controller_Router;
 use Jet\UI;
-use JetShop\Application_Admin;
-use JetShop\Exports;
-use JetShop\Fulltext_Index_Internal_KindOfProduct;
-use JetShop\KindOfProduct;
+use JetApplication\Application_Admin;
+use JetApplication\Exports;
+use JetApplication\Fulltext_Index_Internal_KindOfProduct;
+use JetApplication\KindOfProduct;
 
 use Jet\MVC_Controller_Default;
 use Jet\UI_messages;
@@ -22,7 +22,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Logger;
-use JetShop\Shops;
+use JetApplication\Shops;
 
 /**
  *

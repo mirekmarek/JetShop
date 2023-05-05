@@ -3,7 +3,7 @@
  * 
  */
 
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;

@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Autoloader_Loader;
 use Jet\SysConf_Path;
@@ -27,19 +27,13 @@ class Autoloader_ApplicationClasses extends Autoloader_Loader
 	 */
 	public function getScriptPath( string $root_namespace, string $namespace, string $class_name ): bool|string
 	{
-		if( $root_namespace != 'JetShop' ) {
+		if( $root_namespace != 'JetApplication' ) {
 			return false;
 		}
-
-		if(str_starts_with($class_name, 'Core_')) {
-			$class_name = str_replace( '_', DIRECTORY_SEPARATOR, substr($class_name, 4) );
-
-			return SysConf_Path::getLibrary() . 'JetShopCore/' . $class_name . '.php';
-		} else {
-			$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
-
-			return SysConf_Path::getApplication() . 'Classes/' . $class_name . '.php';
-		}
+		
+		$class_name = str_replace( '_', DIRECTORY_SEPARATOR, $class_name );
+		
+		return SysConf_Path::getApplication() . 'Classes/' . $class_name . '.php';
 
 	}
 }

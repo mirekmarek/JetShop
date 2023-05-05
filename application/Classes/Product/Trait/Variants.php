@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Product_Trait_Variants;
 
 trait Product_Trait_Variants
 {

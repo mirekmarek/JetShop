@@ -5,7 +5,7 @@
  * @license
  * @author
  */
-namespace JetShopModule\Exports\Heureka;
+namespace JetApplicationModule\Exports\Heureka;
 
 use Jet\BaseObject;
 use SimpleXMLElement;

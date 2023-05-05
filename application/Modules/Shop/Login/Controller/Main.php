@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\Login;
+namespace JetApplicationModule\Shop\Login;
 
 use Jet\AJAX;
 use Jet\Auth;

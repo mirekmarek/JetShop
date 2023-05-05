@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShopModule\Admin\Login;
+namespace JetApplicationModule\Admin\Login;
 
 use Jet\Logger;
 use Jet\Session;
@@ -18,7 +18,7 @@ use Jet\UI_messages;
 use Jet\Translator;
 
 
-use JetShop\Auth_Administrator_User as User;
+use JetApplication\Auth_Administrator_User as User;
 
 /**
  *

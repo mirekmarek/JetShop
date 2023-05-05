@@ -55,4 +55,5 @@ return [
 	'Delete discounts_code' => '',
 	'Admin.Discounts.CodesDefinition' => '',
 	'Search ...' => '',
+	'The discount code is no longer valid' => '',
 ];

@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\Catalog\Stickers;
+namespace JetApplicationModule\Admin\Catalog\Stickers;
 
 use Jet\Data_Listing_Filter_Search;
 

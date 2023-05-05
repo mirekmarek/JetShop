@@ -5,7 +5,7 @@
  * @license
  * @author
  */
-namespace JetShopModule\Exports\GoogleShopping;
+namespace JetApplicationModule\Exports\GoogleShopping;
 
 use Jet\BaseObject;
 

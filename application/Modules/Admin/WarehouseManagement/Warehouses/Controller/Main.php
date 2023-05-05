@@ -5,10 +5,10 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\WarehouseManagement\Warehouses;
+namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
 use Jet\Logger;
-use JetShop\WarehouseManagement_Warehouse as Warehouse;
+use JetApplication\WarehouseManagement_Warehouse as Warehouse;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -18,7 +18,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

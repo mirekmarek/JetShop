@@ -1,9 +1,9 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Http_Request;
 use Jet\Tr;
-use JetShop\Category;
+use JetApplication\Category;
 
 
 class Listing_Operation_Categorize extends Listing_Operation

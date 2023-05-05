@@ -1,9 +1,9 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use JetShop\Product;
-use JetShop\Shops;
+use JetApplication\Product;
+use JetApplication\Shops;
 
 class Listing_Column_FinalPrice extends Listing_Column
 {

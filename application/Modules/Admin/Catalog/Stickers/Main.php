@@ -1,9 +1,9 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Stickers;
+namespace JetApplicationModule\Admin\Catalog\Stickers;
 
-use JetShop\Sticker_ManageModuleInterface;
-use JetShop\Auth_Administrator_Role;
-use JetShop\Admin_Module_Trait;
+use JetApplication\Sticker_ManageModuleInterface;
+use JetApplication\Auth_Administrator_Role;
+use JetApplication\Admin_Module_Trait;
 
 use Jet\Application_Module;
 use Jet\Auth;

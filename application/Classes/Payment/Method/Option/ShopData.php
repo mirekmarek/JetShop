@@ -1,7 +1,8 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\DataModel_Definition;
+use JetShop\Core_Payment_Method_Option_ShopData;
 
 /**
  *

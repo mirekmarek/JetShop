@@ -5,11 +5,11 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Order\Delivery\Methods\PersonalTakeover\DPDPickup;
+namespace JetApplicationModule\Order\Delivery\Methods\PersonalTakeover\DPDPickup;
 
-use JetShop\Delivery_Method_Module_PersonalTakeover;
-use JetShop\Delivery_PersonalTakeover_Place;
-use JetShop\Shops_Shop;
+use JetApplication\Delivery_Method_Module_PersonalTakeover;
+use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Shops_Shop;
 
 /**
  *

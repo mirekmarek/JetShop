@@ -1,7 +1,8 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Tr;
+use JetShop\Core_ProductListing_Sort;
 
 class ProductListing_Sort extends Core_ProductListing_Sort {
 

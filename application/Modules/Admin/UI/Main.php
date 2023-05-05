@@ -5,7 +5,7 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShopModule\Admin\UI;
+namespace JetApplicationModule\Admin\UI;
 
 use Jet\Application_Module;
 use Jet\Navigation_Breadcrumb;

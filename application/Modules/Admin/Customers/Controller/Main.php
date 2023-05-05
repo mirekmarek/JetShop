@@ -5,16 +5,16 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Customers;
+namespace JetApplicationModule\Admin\Customers;
 
-use JetShop\Customer as Customer;
+use JetApplication\Customer as Customer;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

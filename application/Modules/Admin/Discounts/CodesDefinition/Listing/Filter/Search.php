@@ -6,7 +6,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\Discounts\CodesDefinition;
+namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 use Jet\Data_Listing_Filter_Search;
 

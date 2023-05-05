@@ -5,7 +5,7 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
 
 require __DIR__.'/config/Path.php';
 require __DIR__.'/config/Jet.php';

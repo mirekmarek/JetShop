@@ -5,18 +5,18 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Shop\CashDesk;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Form;
 use Jet\Form_Field;
 use Jet\Form_Renderer;
 use Jet\Form_Field_Input;
-use JetShop\CashDesk;
-use JetShop\CashDesk_Module;
-use JetShop\Delivery_Method;
-use JetShop\Payment_Method;
-use JetShop\Shop_Module_Trait;
-use JetShop\Shops_Shop;
+use JetApplication\CashDesk;
+use JetApplication\CashDesk_Module;
+use JetApplication\Delivery_Method;
+use JetApplication\Payment_Method;
+use JetApplication\Shop_Module_Trait;
+use JetApplication\Shops_Shop;
 
 /**
  *

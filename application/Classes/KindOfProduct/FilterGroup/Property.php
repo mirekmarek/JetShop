@@ -3,9 +3,10 @@
  * 
  */
 
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\DataModel_Definition;
+use JetShop\Core_KindOfProduct_FilterGroup_Property;
 
 /**
  *

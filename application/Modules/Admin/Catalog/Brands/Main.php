@@ -1,10 +1,10 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Brands;
+namespace JetApplicationModule\Admin\Catalog\Brands;
 
-use JetShop\Admin_Module_Trait;
-use JetShop\Brand_ManageModuleInterface;
+use JetApplication\Admin_Module_Trait;
+use JetApplication\Brand_ManageModuleInterface;
 use Jet\Application_Module;
-use JetShop\Auth_Administrator_Role;
+use JetApplication\Auth_Administrator_Role;
 use Jet\Auth;
 
 /**

@@ -6,7 +6,7 @@
  * @author  
  */
 
-namespace JetShopModule\Admin\Catalog\KindsOfProduct;
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 
 use Jet\Data_Listing_Filter_Search;

@@ -1,5 +1,7 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
+
+use JetShop\Core_Product_Trait_Categories;
 
 trait Product_Trait_Categories
 {

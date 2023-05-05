@@ -5,7 +5,7 @@
  * @license
  * @author
  */
-namespace JetShopModule\Order\Discounts\Code;
+namespace JetApplicationModule\Order\Discounts\Code;
 
 use Jet\AJAX;
 use Jet\Application;

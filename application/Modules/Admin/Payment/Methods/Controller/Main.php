@@ -5,13 +5,13 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Payment\Methods;
+namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
-use JetShop\Application_Admin;
-use JetShop\Payment_Method;
+use JetApplication\Application_Admin;
+use JetApplication\Payment_Method;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -21,10 +21,10 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShop\Payment_Method_Option;
-use JetShop\Payment_Method_ShopData;
-use JetShop\Shops;
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplication\Payment_Method_Option;
+use JetApplication\Payment_Method_ShopData;
+use JetApplication\Shops;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

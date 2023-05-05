@@ -5,9 +5,9 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\Services\Services;
+namespace JetApplicationModule\Admin\Services\Services;
 
-use JetShop\Services_Service;
+use JetApplication\Services_Service;
 
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;

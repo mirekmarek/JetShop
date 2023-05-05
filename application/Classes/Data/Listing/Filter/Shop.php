@@ -1,5 +1,5 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 use Jet\Data_Listing_Filter;
 use Jet\Form;

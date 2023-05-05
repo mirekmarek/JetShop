@@ -5,15 +5,15 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Exports\GoogleShopping;
+namespace JetApplicationModule\Exports\GoogleShopping;
 
-use JetShop\Exports_CategoriesCache;
-use JetShop\Exports_FileGenerator_XML;
-use JetShop\Exports_Module;
-use JetShop\Product;
-use JetShop\Product_ShopData;
-use JetShop\Shops_Shop;
-use JetShopModule\Exports\Heureka\HeurekaCategory;
+use JetApplication\Exports_CategoriesCache;
+use JetApplication\Exports_FileGenerator_XML;
+use JetApplication\Exports_Module;
+use JetApplication\Product;
+use JetApplication\Product_ShopData;
+use JetApplication\Shops_Shop;
+use JetApplicationModule\Exports\Heureka\HeurekaCategory;
 
 
 /**

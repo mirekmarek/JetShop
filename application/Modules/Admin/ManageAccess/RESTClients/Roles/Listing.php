@@ -7,10 +7,10 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetShopModule\Admin\ManageAccess\RESTClients\Roles;
+namespace JetApplicationModule\Admin\ManageAccess\RESTClients\Roles;
 
 use Jet\DataModel_Fetch_Instances;
-use JetShop\Auth_RESTClient_Role as Role;
+use JetApplication\Auth_RESTClient_Role as Role;
 
 use Jet\Data_Listing;
 use Jet\Data_Listing_Filter_Search;

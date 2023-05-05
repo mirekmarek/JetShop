@@ -1,5 +1,5 @@
 <?php
-namespace JetShopModule\Admin\Catalog\Stickers;
+namespace JetApplicationModule\Admin\Catalog\Stickers;
 
 
 use Jet\Logger;
@@ -13,11 +13,11 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetShop\Application_Admin;
-use JetShop\Shops;
-use JetShop\Sticker;
+use JetApplication\Application_Admin;
+use JetApplication\Shops;
+use JetApplication\Sticker;
 
-use JetShopModule\Admin\UI\Main as UI_module;
+use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *

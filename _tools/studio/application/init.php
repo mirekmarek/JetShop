@@ -43,8 +43,6 @@ SysConf_Jet_Form::setDefaultViewsDir( __DIR__.'/views/form/' );
 
 AccessControl::handle();
 
-Project::setApplicationNamespace('JetShop');
-SysConf_Jet_Modules::setModuleRootNamespace('JetShopModule');
 SysConf_Jet_Modules::setActivatedModulesListFilePath( ProjectConf_Path::getData().'activated_modules_list.php' );
 SysConf_Jet_Modules::setInstalledModulesListFilePath( ProjectConf_Path::getData().'installed_modules_list.php' );
 
@@ -52,6 +50,7 @@ SysConf_Jet_Modules::setInstalledModulesListFilePath( ProjectConf_Path::getData(
 Config::setBeTolerant(true);
 SysConf_Path::setConfig( ProjectConf_Path::getConfig() );
 
+Project::setApplicationNamespace('JetApplication');
 
 $property_definition_class_names = [
 	DataModel::TYPE_ID               => DataModel_Definition_Property_Id::class,

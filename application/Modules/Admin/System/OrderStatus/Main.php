@@ -5,7 +5,7 @@
  * @license  
  * @author  
  */
-namespace JetShopModule\Admin\System\OrderStatus;
+namespace JetApplicationModule\Admin\System\OrderStatus;
 
 use Jet\Application_Module;
 
