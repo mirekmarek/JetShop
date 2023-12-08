@@ -7,11 +7,9 @@
  */
 namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
-use Jet\Application;
+use Jet\Factory_MVC;
 use Jet\UI;
 use JetApplication\Application_Admin;
-use JetApplication\Fulltext_Index_Internal_PropertyGroup;
-use JetApplication\PropertyGroup;
 
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Default;
@@ -21,7 +19,6 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Logger;
-use JetApplication\Shops;
 
 /**
  *
@@ -29,15 +26,12 @@ use JetApplication\Shops;
 class Controller_Main extends MVC_Controller_Default
 {
 
-	/**
-	 * @var ?MVC_Controller_Router
-	 */
 	protected ?MVC_Controller_Router $router = null;
 
-	/**
-	 * @var ?PropertyGroup
-	 */
 	protected ?PropertyGroup $property_group = null;
+	
+	protected ?Listing $listing = null;
+	
 
 	/**
 	 *
@@ -56,6 +50,8 @@ class Controller_Main extends MVC_Controller_Default
 				$this->property_group = PropertyGroup::get( $property_group_id );
 				
 				if($this->property_group) {
+					$this->property_group->setEditable(Main::getCurrentUserCanEdit());
+					
 					$_tabs = [
 						'main'   => Tr::_( 'Main data' ),
 						'images' => Tr::_( 'Images' ),
@@ -78,18 +74,14 @@ class Controller_Main extends MVC_Controller_Default
 			}
 			
 			$this->router = new MVC_Controller_Router( $this );
-			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
-				return $GET->exists('whisper');
-			});
-			
-			$this->router->setDefaultAction('listing', Main::ACTION_GET_PROPERTY_GROUP);
+			$this->router->setDefaultAction('listing', Main::ACTION_GET);
 			$this->router->getAction('listing')->setResolver(function() use ($action) {
 				return (!$this->property_group && !$action) ;
 			});
 			
 			
 			
-			$this->router->addAction('add', Main::ACTION_ADD_PROPERTY_GROUP)
+			$this->router->addAction('add', Main::ACTION_ADD)
 				->setResolver(function() use ($action) {
 					return ($action=='add' && !$this->property_group);
 				})
@@ -97,7 +89,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['action' => 'add'], ['id', 'page'] );
 				});
 			
-			$this->router->addAction('delete', Main::ACTION_DELETE_PROPERTY_GROUP)
+			$this->router->addAction('delete', Main::ACTION_DELETE)
 				->setResolver(function() use ($action) {
 					return $this->property_group && $action=='delete';
 				})
@@ -106,7 +98,7 @@ class Controller_Main extends MVC_Controller_Default
 				});
 			
 			
-			$this->router->addAction('edit_main', Main::ACTION_UPDATE_PROPERTY_GROUP)
+			$this->router->addAction('edit_main', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->property_group && $selected_tab=='main' && $action=='';
 				})
@@ -114,7 +106,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id], ['page','action'] );
 				});
 			
-			$this->router->addAction('edit_images', Main::ACTION_UPDATE_PROPERTY_GROUP)
+			$this->router->addAction('edit_images', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->property_group && $selected_tab=='images' && $action=='';
 				})
@@ -127,19 +119,35 @@ class Controller_Main extends MVC_Controller_Default
 
 		return $this->router;
 	}
-
-
+	
+	
+	protected function getListing() : Listing
+	{
+		if(!$this->listing) {
+			$column_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
+		}
+		
+		return $this->listing;
+	}
+	
 	/**
 	 *
 	 */
 	public function listing_Action() : void
 	{
-		$listing = new Listing();
+		$listing = $this->getListing();
 		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
+		
+		$this->view->setVar( 'listing', $listing );
+		
 		$this->output( 'list' );
 	}
 
@@ -187,6 +195,8 @@ class Controller_Main extends MVC_Controller_Default
 	public function edit_main_Action() : void
 	{
 		$property_group = $this->property_group;
+		
+		$property_group->handleActivation();
 
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property group <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $property_group->getInternalName() ] ) );
 
@@ -223,20 +233,9 @@ class Controller_Main extends MVC_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		
 		$property_group = $this->property_group;
+		$property_group->handleImages();
 		
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property group <b>%ITEM_NAME%</b> - images', [ 'ITEM_NAME' => $property_group->getInternalName() ] ) );
-		
-		foreach(Shops::getList() as $shop) {
-			$property_group->getShopData( $shop )->catchImageWidget(
-				shop: $shop,
-				entity_name: 'property group image',
-				object_id: $property_group->getId(),
-				object_name: $property_group->getInternalName(),
-				upload_event: 'property_group_image_uploaded',
-				delete_event: 'property_group_image_deleted'
-			);
-		}
-		
 		
 		$this->view->setVar( 'property_group', $property_group );
 		$this->output( 'edit/images' );
@@ -280,22 +279,6 @@ class Controller_Main extends MVC_Controller_Default
 			$this->output( 'delete/not-possible' );
 		}
 		
-	}
-	
-	public function whisper_Action() : void
-	{
-		$GET = Http_Request::GET();
-		
-		
-		$result = Fulltext_Index_Internal_PropertyGroup::search(
-			search_string: $GET->getString('whisper'),
-			only_active: $GET->getBool('only_active'),
-		);
-		
-		$this->view->setVar('result', $result);
-		echo $this->view->render('search_whisperer_result');
-		
-		Application::end();
 	}
 	
 }

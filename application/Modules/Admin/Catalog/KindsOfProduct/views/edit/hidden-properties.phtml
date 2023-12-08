@@ -6,8 +6,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\KindOfProduct;
-use JetApplication\Property;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
@@ -38,7 +37,7 @@ $editable = !$form->getIsReadonly();
 					<tr>
 						<td style="padding-left: 30px;width: 100px;" nowrap=""><?=Tr::_('Add property: ')?></td>
 						<td style="width: 400px;" nowrap="">
-								<?=Property::renderSelectPropertyWidget( "location='".Http_Request::currentURI()."&add_property='+selected_item.id" )?>
+								<?=Admin_Managers::Property()->renderSelectWidget( "location='".Http_Request::currentURI()."&add_property='+selected_item.id" )?>
 						</td>
 						<td style="text-align: right;">
 						</td>
@@ -49,15 +48,13 @@ $editable = !$form->getIsReadonly();
 		
 		<div>
 			<ul class="list-group list-group-flush" id="properties">
-			<?php foreach( $kind_of_product->getHiddenProperties() as $p):
-				$property = $p->getProperty();
-					?>
+			<?php foreach( $kind_of_product->getHiddenProperties() as $p): ?>
 
 					<li class="list-group-item sortable-item property" data-id="<?=$p->getPropertyId()?>">
 						<?php if($editable): ?>
 							<?=UI::icon('up-down')?>
 						<?php endif; ?>
-						<a href="<?=$property->getEditURL()?>"><?=$property->getInternalName()?></a>
+						<?=Admin_Managers::Property()->showName( $p->getPropertyId() ) ?>
 						<?php if($editable): ?>
 							<div class="float-right">
 								<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL )->setUrl(Http_Request::currentURI(['remove_property' =>$p->getPropertyId()]))?>

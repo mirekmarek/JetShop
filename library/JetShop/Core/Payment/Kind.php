@@ -9,18 +9,17 @@ namespace JetShop;
 use Jet\Tr;
 
 use JetApplication\Payment_Kind;
-use JetApplication\Payment_Method;
 
 
 abstract class Core_Payment_Kind {
 
 
-	const KIND_COD = 'COD';
-	const KIND_ONLINE_PAYMENT = 'online_payment';
-	const KIND_CASH = 'cash';
-	const KIND_LOAN = 'loan';
-	const KIND_LOAN_ONLINE = 'loan_online';
-	const KIND_BANK_TRANSFER = 'bank_transfer';
+	public const KIND_COD = 'COD';
+	public const KIND_ONLINE_PAYMENT = 'online_payment';
+	public const KIND_CASH = 'cash';
+	public const KIND_LOAN = 'loan';
+	public const KIND_LOAN_ONLINE = 'loan_online';
+	public const KIND_BANK_TRANSFER = 'bank_transfer';
 
 
 
@@ -89,29 +88,29 @@ abstract class Core_Payment_Kind {
 
 			$COD = new Payment_Kind();
 			$COD->setCode( static::KIND_COD );
-			$COD->setTitle( Tr::_('COD', [], Payment_Method::getManageModuleName()) );
+			$COD->setTitle( Tr::_('COD') );
 
 			$online_payment = new Payment_Kind();
 			$online_payment->setCode( static::KIND_ONLINE_PAYMENT );
-			$online_payment->setTitle( Tr::_('Online payment', [], Payment_Method::getManageModuleName()) );
+			$online_payment->setTitle( Tr::_('Online payment') );
 			$online_payment->setModuleIsRequired( true );
 
 			$cash = new Payment_Kind();
 			$cash->setCode( static::KIND_CASH );
-			$cash->setTitle( Tr::_('Cash', [], Payment_Method::getManageModuleName()) );
+			$cash->setTitle( Tr::_('Cash') );
 
 			$loan = new Payment_Kind();
 			$loan->setCode( static::KIND_LOAN );
-			$loan->setTitle( Tr::_('Loan', [], Payment_Method::getManageModuleName()) );
+			$loan->setTitle( Tr::_('Loan') );
 
 			$loan_online = new Payment_Kind();
 			$loan_online->setCode( static::KIND_LOAN_ONLINE );
-			$loan_online->setTitle( Tr::_('Loan - online', [], Payment_Method::getManageModuleName()) );
+			$loan_online->setTitle( Tr::_('Loan - online') );
 			$loan_online->setModuleIsRequired( true );
 
 			$bank_transfer = new Payment_Kind();
 			$bank_transfer->setCode( static::KIND_BANK_TRANSFER );
-			$bank_transfer->setTitle( Tr::_('Bank transfer', [], Payment_Method::getManageModuleName()) );
+			$bank_transfer->setTitle( Tr::_('Bank transfer') );
 			$bank_transfer->setModuleIsRequired( true );
 
 			

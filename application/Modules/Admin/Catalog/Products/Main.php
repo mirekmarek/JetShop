@@ -1,57 +1,91 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\Tr;
 use Jet\Application_Module;
-use Jet\Session;
-use JetApplication\Admin_Module_Trait;
-use JetApplication\Auth_Administrator_Role;
-use JetApplication\Product_ManageModuleInterface;
-use Jet\Auth;
-use Jet\MVC;
+use Jet\Factory_MVC;
+use Jet\Translator;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Product;
+use JetApplication\Admin_Managers_Trait;
+use JetApplication\Product as Application_Product;
 
 
-class Main extends Application_Module implements Product_ManageModuleInterface
+class Main extends Application_Module implements Admin_Managers_Product
 {
-	use Admin_Module_Trait;
+	use Admin_Managers_Trait;
 
-	const ADMIN_MAIN_PAGE = 'products';
+	public const ADMIN_MAIN_PAGE = 'products';
 
-	const ACTION_GET_PRODUCT = 'get_product';
-	const ACTION_ADD_PRODUCT = 'add_product';
-	const ACTION_UPDATE_PRODUCT = 'update_product';
-	const ACTION_DELETE_PRODUCT = 'delete_product';
+	public const ACTION_GET = 'get_product';
+	public const ACTION_ADD = 'add_product';
+	public const ACTION_UPDATE = 'update_product';
+	public const ACTION_DELETE = 'delete_product';
 
-	public function getProductSelectWhispererUrl( array $filter=[], bool $only_active=false ) : string
+
+	
+	public function renderSelectWidget( string $on_select,
+	                                    int $selected_product_id=0,
+	                                    ?array $only_type_filter=null,
+	                                    ?bool $only_active_filter=null,
+	                                    string $name='select_product' ) : string
 	{
-		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
-		if(!$page) {
-			return '';
-		}
-
-		return $page->getURL([], [
-			'filter' => json_encode($filter),
-			'only_active' => $only_active ? 1:0
-		]);
-
-	}
-
-	public function getProductEditUrl( int $id ) : string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_PRODUCT,
-			static::ACTION_UPDATE_PRODUCT,
-			static::ADMIN_MAIN_PAGE,
-			$id
+		
+		$selected = $selected_product_id ? Product::get($selected_product_id) : null;
+		
+		return Admin_Managers::UI()->renderSelectEntityWidget(
+			name: $name,
+			caption: Tr::_('... select property ...', dictionary: $this->module_manifest->getName()),
+			on_select: $on_select,
+			object_class: Product::getEntityType(),
+			object_type_filter: $only_type_filter,
+			object_is_active_filter: $only_active_filter,
+			selected_entity_title: $selected?->getAdminTitle(),
+			selected_entity_edit_URL: $selected?->getEditURL()
 		);
 	}
 
-	public static function getCurrentUserCanEditProduct() : bool
+	
+	
+	public function renderActiveState( Application_Product $product ) : string
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_UPDATE_PRODUCT );
+		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		
+		$view->setVar('product', $product );
+		
+		return $view->render('active_state');
 	}
-
-	public static function getCurrentUserCanCreateProduct() : bool
+	
+	
+	public function getName( int $id ) : string
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_ADD_PRODUCT );
+		$p = Product::get( $id );
+		
+		return $p?$p->getAdminTitle():'';
 	}
+	
+	public function showName( int $id ): string
+	{
+		$res = '';
+		
+		Translator::setCurrentDictionaryTemporary(
+			$this->module_manifest->getName(),
+			function() use (&$res, $id) {
+				$product = Product::get($id);
+				
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				$view->setVar('id', $id);
+				
+				if($product) {
+					$view->setVar('product', $product);
+					$res = $view->render('show-name/known');
+				} else {
+					$res = $view->render('show-name/unknown');
+				}
+			}
+		);
+		
+		return $res;
+	}
+	
 }

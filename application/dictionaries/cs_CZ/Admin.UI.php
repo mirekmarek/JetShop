@@ -10,4 +10,9 @@ return [
 	'Expedition' => '',
 	'Content and marketing' => '',
 	'Warehouse management' => '',
+	'Not active' => '',
+	'Activate' => '',
+	'Completely activate' => '',
+	'Active' => '',
+	'Deactivate' => '',
 ];

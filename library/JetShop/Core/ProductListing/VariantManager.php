@@ -7,7 +7,7 @@ use JetApplication\Product;
 
 abstract class Core_ProductListing_VariantManager
 {
-	const CACHE_KEY = 'f_variants';
+	public const CACHE_KEY = 'f_variants';
 
 	protected ProductListing $listing;
 	protected Shops_Shop $shop;

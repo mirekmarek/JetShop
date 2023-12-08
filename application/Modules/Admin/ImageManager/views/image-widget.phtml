@@ -1,0 +1,52 @@
+<?php
+namespace JetApplicationModule\Admin\ImageManager;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\Tr;
+use Jet\Form;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $upload_form
+ * @var Image $image
+ */
+$image = $this->getRaw('image');
+
+$entity = $image->getEntity();
+$image_class = $image->getImageClass();
+$shop_key = $image->getShop()?->getKey();
+$editable = $this->getBool('editable');
+
+if($editable) {
+	$upload_form = $image->getUploadForm();
+} else {
+	$upload_form = false;
+}
+
+if($upload_form) {
+	$image_field = $upload_form->field('image');
+	$image_field->input()
+		->addJsAction('onchange', "Images.uploadImage(this.form.id)");
+}
+?>
+
+<div style="display: inline-block;">
+	<legend class="sub"><?=$image->getImageTitle()?></legend>
+
+	<div id="<?=$image->getHTMLElementId()?>">
+		<?=$this->render('image-widget/image')?>
+	</div>
+
+
+	<?php if($upload_form && !$upload_form->getIsReadonly()): ?>
+		<?=$upload_form->start()?>
+		<div class="btn btn-light btn-upload">
+			<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload image')?></span>
+			<?=$image_field->input()?>
+		</div>
+		<?=$upload_form->end()?>
+	<?php endif; ?>
+</div>
+
+

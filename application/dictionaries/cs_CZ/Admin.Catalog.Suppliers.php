@@ -12,4 +12,8 @@ return [
 	'Update supplier' => '',
 	'Delete supplier' => '',
 	'Catalog suppliers management' => '',
+	'Supplier <b>%NAME%</b> has been updated' => '',
+	'Internal name' => '',
+	'Supplier <b>%NAME%</b> has been created' => '',
+	'Internal name:' => '',
 ];

@@ -1,38 +1,32 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
+
 use Jet\Form;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Property;
-use JetApplication\Property_ShopData;
-use JetApplication\Shops;
-use JetApplication\KindOfProduct;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
- * @var KindOfProduct $kind_of_product
  * @var Form $form
  */
-$kind_of_product = $this->getRaw('kind_of_product');
 
+$image_manager = Admin_Managers::Image();
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
 		<?=UI::button_goBack()?>
-		
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-md-12" id="main-col">
-	
-	<?php
-	echo $this->getRaw('tabs');
-	
-	foreach(Shops::getListSorted() as $shop):
-		echo $kind_of_product->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$kind_of_product->getEditForm()->getIsReadonly() );
-	endforeach;
-	?>
+		
+		<?php
+		echo $this->getRaw('tabs');
+		echo $image_manager->renderStandardManagement();
+		?>
 	</div>
 </div>
+

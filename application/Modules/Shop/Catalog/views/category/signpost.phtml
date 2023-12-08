@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
 
@@ -10,7 +10,6 @@ use Jet\MVC_View;
 
 $category = $this->getRaw('category');
 
-$subcategories = Category_Menu::getItems( $category->getId() );
 ?>
 <h1><?=$category->getName()?></h1>
 <p><?=$category->getDescription()?></p>

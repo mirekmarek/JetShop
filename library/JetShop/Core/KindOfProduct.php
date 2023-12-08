@@ -5,24 +5,14 @@
 
 namespace JetShop;
 
-use Jet\Application_Module;
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_Fetch_Instances;
-use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Form;
-use Jet\Form_Field;
-use Jet\Form_Definition;
-use Jet\MVC;
-use Jet\MVC_View;
 
+use JetApplication\Entity_WithIDAndShopData;
 use JetApplication\KindOfProduct_FilterGroup;
 use JetApplication\KindOfProduct_DetailGroup;
 use JetApplication\KindOfProduct_HiddenProperty;
 use JetApplication\KindOfProduct_ShopData;
-use JetApplication\KindOfProduct_ManageModuleInterface;
-use JetApplication\Fulltext_Index_Internal_KindOfProduct;
 use JetApplication\KindOfProduct;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
@@ -30,8 +20,6 @@ use JetApplication\PropertyGroup;
 use JetApplication\Property;
 use JetApplication\KindOfProduct_FilterGroup_Property;
 use JetApplication\KindOfProduct_DetailGroup_Property;
-use JetApplication\Product;
-use JetApplication\Category;
 
 /**
  *
@@ -39,82 +27,9 @@ use JetApplication\Category;
 #[DataModel_Definition(
 	name: 'kind_of_product',
 	database_table_name: 'kind_of_product',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	]
 )]
-abstract class Core_KindOfProduct extends DataModel
+abstract class Core_KindOfProduct extends Entity_WithIDAndShopData
 {
-	
-	protected static string $manage_module_name = 'Admin.Catalog.KindsOfProduct';
-	
-	
-	/**
-	 * @var int
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true
-	)]
-	protected int $id = 0;
-	
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-	
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-		is_key: true
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_CHECKBOX,
-		label: 'Is active',
-		is_required: false,
-		error_messages: [
-		]
-	)]
-	protected bool $is_active = true;
-	
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal name:',
-		is_required: false,
-		error_messages: [
-		]
-	)]
-	protected string $internal_name = '';
-	
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		database_column_name: '65536',
-		max_len: 255
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Internal notes:',
-		is_required: false,
-		error_messages: [
-		]
-	)]
-	protected string $internal_notes = '';
 	
 	/**
 	 * @var KindOfProduct_FilterGroup[]
@@ -151,163 +66,8 @@ abstract class Core_KindOfProduct extends DataModel
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: KindOfProduct_ShopData::class
 	)]
-	#[Form_Definition(
-		is_sub_forms: true
-	)]
 	protected array $shop_data = [];
-	
-	public static function getManageModuleName() : string
-	{
-		return self::$manage_module_name;
-	}
-	
-	public static function getManageModule() : KindOfProduct_ManageModuleInterface|Application_Module
-	{
-		return Application_Modules::moduleInstance( KindOfProduct::getManageModuleName() );
-	}
-	
-	
-	public function __construct() {
-		parent::__construct();
-		
-		$this->afterLoad();
-	}
-	
-	public function afterLoad() : void
-	{
-		KindOfProduct_ShopData::checkShopData($this, $this->shop_data);
-	}
-	
-	public function afterAdd(): void
-	{
-		/**
-		 * @var KindOfProduct $this
-		 */
-		Fulltext_Index_Internal_KindOfProduct::addIndex( $this );
-	}
-	
-	public function afterUpdate(): void
-	{
-		/**
-		 * @var KindOfProduct $this
-		 */
-		Fulltext_Index_Internal_KindOfProduct::updateIndex( $this );
-	}
-	
-	public function afterDelete(): void
-	{
-		/**
-		 * @var KindOfProduct $this
-		 */
-		Fulltext_Index_Internal_KindOfProduct::deleteIndex( $this );
-	}
-	
-	
-	public function getEditForm() : Form
-	{
-		if(!$this->_form_edit) {
-			$this->_form_edit = $this->createForm('edit_form');
-		}
-		
-		return $this->_form_edit;
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-	
-	/**
-	 * @return Form
-	 */
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-			$this->_form_add = $this->createForm('add_form');
-		}
-		
-		return $this->_form_add;
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
-	
-	/**
-	 * @param int|string $id
-	 * @return static|null
-	 */
-	public static function get( int|string $id ) : static|null
-	{
-		return static::load( $id );
-	}
-	
-	/**
-	 * @noinspection PhpDocSignatureInspection
-	 * @return static[]|DataModel_Fetch_Instances
-	 */
-	public static function getList() : iterable
-	{
-		$where = [];
-		
-		return static::fetchInstances( $where );
-	}
-	
-	public static function getScope() : array
-	{
-		return KindOfProduct::dataFetchPairs( select: [
-			'id',
-			'internal_name'
-		], order_by: ['internal_name']);
-	}
-	
-	/**
-	 * @return int
-	 */
-	public function getId() : int
-	{
-		return $this->id;
-	}
-	
-	/**
-	 * @param string $value
-	 */
-	public function setInternalName( string $value ) : void
-	{
-		$this->internal_name = $value;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getInternalName() : string
-	{
-		return $this->internal_name;
-	}
-	
-	/**
-	 * @param string $value
-	 */
-	public function setInternalNotes( string $value ) : void
-	{
-		$this->internal_notes = $value;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getInternalNotes() : string
-	{
-		return $this->internal_notes;
-	}
-	
+
 	
 	/**
 	 * @return KindOfProduct_FilterGroup[]
@@ -342,22 +102,7 @@ abstract class Core_KindOfProduct extends DataModel
 		
 		return $this->detail_groups[$id];
 	}
-	
-	/**
-	 * @param bool $value
-	 */
-	public function setIsActive( bool $value ) : void
-	{
-		$this->is_active = $value;
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function isActive() : bool
-	{
-		return $this->is_active;
-	}
+
 	
 	public function getShopData( ?Shops_Shop $shop=null ) : KindOfProduct_ShopData
 	{
@@ -365,30 +110,6 @@ abstract class Core_KindOfProduct extends DataModel
 	}
 	
 	
-	public function getEditURL() : string
-	{
-		return KindOfProduct::getKindOfProductEditURL( $this->id );
-	}
-	
-	public static function getKindOfProductEditURL( int $id ) : string
-	{
-		return static::getManageModule()->getKindsOfProductEditUrl( $id );
-	}
-	
-	public static function renderSelectKindOfProductWidget( string $on_select,
-	                                                        int $selected_kind_of_product_id=0,
-	                                                        bool $only_active=false,
-	                                                        string $name='select_kind_of_product' ) : string
-	{
-		$view = new MVC_View( MVC::getBase()->getViewsPath() );
-		
-		$view->setVar('selected_kind_of_product_id', $selected_kind_of_product_id);
-		$view->setVar('on_select', $on_select);
-		$view->setVar('name', $name);
-		$view->setVar('only_active', $only_active);
-		
-		return $view->render('select-kind-of-product-widget');
-	}
 	
 	
 	public function addDetailPropertyGroup( int $group_id ) : bool
@@ -397,8 +118,7 @@ abstract class Core_KindOfProduct extends DataModel
 			return false;
 		}
 		
-		$group = PropertyGroup::get($group_id);
-		if(!$group) {
+		if(!PropertyGroup::exists($group_id)) {
 			return false;
 		}
 		
@@ -473,8 +193,7 @@ abstract class Core_KindOfProduct extends DataModel
 			return false;
 		}
 		
-		$group = PropertyGroup::get($group_id);
-		if(!$group) {
+		if(!PropertyGroup::exists($group_id)) {
 			return false;
 		}
 		
@@ -542,49 +261,41 @@ abstract class Core_KindOfProduct extends DataModel
 		return true;
 	}
 	
-	/**
-	 * @return Property[]
-	 */
-	public function getAllProperties() : array
+	public function getAllPropertyIds() : array
 	{
 		$properties = [];
 		
 		foreach($this->getDetailGroups() as $group) {
 			foreach($group->getProperties() as $p) {
-				$property = $p->getProperty();
-				$properties[$property->getId()] = $property;
+				$id = $p->getPropertyId();
+				$properties[$id] = $id;
 			}
 		}
 		
 		foreach($this->getFilterGroups() as $group) {
 			foreach($group->getProperties() as $p) {
-				$property = $p->getProperty();
-				if(!isset($properties[$property->getId()])) {
-					$properties[$property->getId()] = $property;
-				}
+				$id = $p->getPropertyId();
+				$properties[$id] = $id;
 			}
 		}
 		
 		foreach($this->hidden_properties as $p) {
-			$property = $p->getProperty();
-			$properties[$property->getId()] = $property;
+			$id = $p->getPropertyId();
+			$properties[$id] = $id;
 		}
 		
 		return $properties;
 	}
 	
-	/**
-	 * @return Property[]
-	 */
-	public function getVariantSelectorProperties() : array
+	public function getVariantSelectorPropertyIds() : array
 	{
 		$properties = [];
 		
 		foreach($this->getDetailGroups() as $group) {
 			foreach($group->getProperties() as $p) {
 				if($p->getIsVariantSelector()) {
-					$property = $p->getProperty();
-					$properties[$property->getId()] = $property;
+					$id = $p->getPropertyId();
+					$properties[$id] = $id;
 				}
 			}
 		}
@@ -683,7 +394,7 @@ abstract class Core_KindOfProduct extends DataModel
 			return [];
 		}
 		
-		return KindOfProduct::fetch(['kind_of_product'=>['id'=>$ids]]);
+		return static::fetch(['kind_of_product'=>['id'=>$ids]]);
 	}
 	
 	
@@ -709,15 +420,7 @@ abstract class Core_KindOfProduct extends DataModel
 			return [];
 		}
 		
-		return KindOfProduct::fetch(['kind_of_product'=>['id'=>$ids]]);
-	}
-	
-	public function isItPossibleToDelete( array|null &$used_by_products=[], array|null &$used_by_categories=[] ) : bool
-	{
-		$used_by_products = Product::getByKind( $this );
-		$used_by_categories = Category::getByKindOfProduct( $this );
-		
-		return count($used_by_products)==0 && count($used_by_categories)==0;
+		return static::fetch(['kind_of_product'=>['id'=>$ids]]);
 	}
 	
 	/**
@@ -734,8 +437,7 @@ abstract class Core_KindOfProduct extends DataModel
 			return false;
 		}
 		
-		$group = Property::get($property_id);
-		if(!$group) {
+		if(!Property::exists($property_id)) {
 			return false;
 		}
 		
@@ -804,12 +506,4 @@ abstract class Core_KindOfProduct extends DataModel
 		return true;
 	}
 	
-	public function actualizeAutoAppend() : void
-	{
-		$categories = Category::getByKindOfProduct( $this );
-		foreach($categories as $id=>$category) {
-			$category->handleAutoAppendProduct();
-			Category::addSyncCategory( $id );
-		}
-	}
 }

@@ -2,7 +2,6 @@
 namespace JetApplicationModule\Admin\Catalog\Suppliers;
 
 use Jet\Http_Request;
-use JetApplication\Supplier;
 
 use Jet\UI;
 use Jet\MVC_View;
@@ -25,7 +24,7 @@ $router = $this->getController()->getControllerRouter();
 			<?=Tr::_( 'Do you really want to delete this Supplier?' );?>
 			<br/>
 			<a href="<?=$router->action('edit')->URI( $supplier->getId() );?>"
-			   style="font-weight: bolder;font-size: 20px;"><?=$supplier->getName();?></a>
+			   style="font-weight: bolder;font-size: 20px;"><?=$supplier->getInternalName();?></a>
 		</p>
 
 		<form action="<?=Http_Request::currentURI()?>" method="post">

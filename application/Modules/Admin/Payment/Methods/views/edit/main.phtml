@@ -1,6 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Payment\Methods;
 
+use JetApplication\Admin_Managers;
 use JetApplication\Payment_Method;
 
 use Jet\UI;
@@ -8,7 +9,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\Tr;
-use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View $this
@@ -49,33 +50,28 @@ $form->field( 'services' )->input()->addCustomCssStyle('height: 200px');
 		<?=$form->field( 'delivery_methods' )?>
 		<?=$form->field( 'services' )?>
 		<?=$form->field( 'internal_description' )?>
-
-
-		<?php foreach(Shops::getListSorted() as $shop):
-			$shop_key= $shop->getKey();
-
-			$shop_data = $payment_method->getShopData( $shop );
-			?>
-			<?=$shop_data->renderShopDataBlock_start()?>
-
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Main data')?></legend>
-
-				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/discount_is_not_allowed')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/title')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/confirmation_email_info_text')?>
-
-
-			</fieldset>
-
-			<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
+		
+		<?php
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($payment_method, $form) : void {
+				?>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					
+					<?=$form->field('/shop_data/'.$shop_key.'/is_active_for_shop')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/discount_is_not_allowed')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/title')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/confirmation_email_info_text')?>
+				
+				
+				</fieldset>
+			<?php }); ?>
 	</div>
 </div>
 

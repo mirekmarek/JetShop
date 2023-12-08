@@ -5,11 +5,11 @@
 
 namespace JetShop;
 
-use JetApplication\CommonEntity_ShopRelationTrait;
 
-abstract class Core_Order_Notification
+use JetApplication\Entity_WithShopRelation;
+
+abstract class Core_Order_Notification extends Entity_WithShopRelation
 {
-	use CommonEntity_ShopRelationTrait;
 
 	protected int $customer_id = 0;
 

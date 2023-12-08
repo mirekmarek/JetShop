@@ -13,18 +13,31 @@ namespace Jet;
  */
 class Logger
 {
-	const EVENT_CLASS_SUCCESS = 'success';
-	const EVENT_CLASS_INFO = 'info';
-	const EVENT_CLASS_WARNING = 'warning';
-	const EVENT_CLASS_DANGER = 'danger';
-	const EVENT_CLASS_FAULT = 'fault';
-
+	public const EVENT_CLASS_SUCCESS = 'success';
+	public const EVENT_CLASS_INFO = 'info';
+	public const EVENT_CLASS_WARNING = 'warning';
+	public const EVENT_CLASS_DANGER = 'danger';
+	public const EVENT_CLASS_FAULT = 'fault';
+	
+	
+	/**
+	 * @var callable|null
+	 */
+	protected static $logger_provider = null;
 
 	/**
 	 * @var ?Logger_Interface
 	 */
 	protected static ?Logger_Interface $logger = null;
-
+	
+	
+	/**
+	 * @param callable $provider
+	 */
+	public static function setLoggerProvider( callable $provider ): void
+	{
+		static::$logger_provider = $provider;
+	}
 
 	/**
 	 * @param Logger_Interface $logger
@@ -39,6 +52,12 @@ class Logger
 	 */
 	public static function getLogger(): Logger_Interface|null
 	{
+		if(
+			!static::$logger &&
+			($provider=static::$logger_provider)
+		) {
+			static::$logger = $provider();
+		}
 		return static::$logger;
 	}
 

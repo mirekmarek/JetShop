@@ -44,8 +44,6 @@ trait Controller_Main_Edit_Set
 		if($updated) {
 			$product->save();
 			
-			Category::syncCategories();
-			
 			Logger::success(
 				'product_updated',
 				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',

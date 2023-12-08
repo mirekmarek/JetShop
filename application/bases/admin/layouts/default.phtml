@@ -1,6 +1,5 @@
 <?php
 use Jet\Tr;
-use Jet\UI;
 
 require_once 'parts/init_libs.php';
 ?>
@@ -42,22 +41,6 @@ require_once 'parts/init_libs.php';
 		<span class="sr-only"><?= Tr::_( 'Loading ...' ); ?></span>
 	</div>
 </div>
-
-<?php
-$dialog = UI::dialog('image_delete_confirm', Tr::_('Do you really want to delete this image?', [], Tr::COMMON_DICTIONARY) );
-
-echo $dialog->start();
-?>
-<div align="center">
-	<div class="image-thumbnail"  id="image_delete_confirm_thb" style="width:200px;height:200px;">
-	</div>
-</div>
-<?php
-echo $dialog->footer();
-echo UI::button( Tr::_('No', [], Tr::COMMON_DICTIONARY) )->setOnclick("Images.deleteImageReject();");
-echo UI::button_delete()->setOnclick("Images.deleteImageConfirm();");
-echo $dialog->end();
-?>
 
 
 </body>

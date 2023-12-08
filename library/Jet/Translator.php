@@ -13,8 +13,8 @@ namespace Jet;
  */
 class Translator extends BaseObject
 {
-
-	const COMMON_DICTIONARY = '_COMMON_';
+	
+	public const COMMON_DICTIONARY = '_COMMON_';
 
 	/**
 	 *
@@ -89,6 +89,22 @@ class Translator extends BaseObject
 	{
 		static::$current_dictionary = $current_dictionary;
 	}
+	
+	/**
+	 *
+	 * @param string $dictionary
+	 * @param callable $action
+	 */
+	public static function setCurrentDictionaryTemporary( string $dictionary, callable $action ): void
+	{
+		$current_dictionary = static::$current_dictionary;
+		static::$current_dictionary = $dictionary;
+		
+		$action();
+		
+		static::$current_dictionary  =$current_dictionary;
+	}
+	
 
 	/**
 	 *
@@ -206,5 +222,20 @@ class Translator extends BaseObject
 		return static::$dictionaries[$dictionary_key];
 	}
 
-
+	public static function installApplicationModuleDictionaries( Application_Module_Manifest $module ) : void
+	{
+		static::getBackend()->installApplicationModuleDictionaries( $module );
+	}
+	
+	
+	public static function collectApplicationModuleDictionaries( Application_Module_Manifest $module ) : void
+	{
+		static::getBackend()->collectApplicationModuleDictionaries( $module );
+	}
+	
+	public static function uninstallApplicationModuleDictionaries( Application_Module_Manifest $module ) : void
+	{
+		static::getBackend()->uninstallApplicationModuleDictionaries( $module );
+	}
+	
 }

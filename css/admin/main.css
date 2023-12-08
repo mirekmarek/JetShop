@@ -199,43 +199,6 @@ legend.sub {
 	margin-left: 5px;
 }
 
-.search-whisperer-item {
-	display: block;
-	padding: 5px;
-	cursor: pointer;
-}
-
-.search-whisperer-item-selected {
-	background-color: #191919;
-}
-
-.search-whisperer-area {
-	position: relative;
-}
-
-.search-whisperer-area div {
-	position:absolute;
-	left:1px;
-	top: 1px;
-	z-index: 999999;
-
-	background-color: #000000;
-	color: #ffffff;
-	padding: 10px;
-
-	height: 300px;
-	width: 700px;
-	overflow: auto;
-
-	display: none;
-}
-
-.search-whisperer-message {
-	display: block;
-	padding: 5px;
-	background-color: #7a1414;
-	color: #ffffff;
-}
 
 
 .sortable {

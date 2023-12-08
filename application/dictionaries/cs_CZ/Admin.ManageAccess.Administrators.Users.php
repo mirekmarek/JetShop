@@ -33,4 +33,9 @@ return [
 	'Password has been re-generated' => '',
 	'Sorry, but username %USERNAME% is registered.' => '',
 	'Search ...' => '',
+	'Yes' => '',
+	'No' => '',
+	'Is blocked' => '',
+	'Is blocked:' => '',
+	'User is not blocked' => '',
 ];

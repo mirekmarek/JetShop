@@ -8,6 +8,7 @@
 namespace JetShop;
 
 use Jet\Application_Module;
+use Jet\Auth_User_Interface;
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
 
@@ -30,9 +31,9 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	protected static string $login_module_name = 'Shop.Login';
 
 
-	const EVENT_LOGIN_FAILED = 'login_failed';
-	const EVENT_LOGIN_SUCCESS = 'login_success';
-	const EVENT_LOGOUT = 'logout';
+	public const EVENT_LOGIN_FAILED = 'login_failed';
+	public const EVENT_LOGIN_SUCCESS = 'login_success';
+	public const EVENT_LOGOUT = 'logout';
 
 	/**
 	 *
@@ -280,6 +281,10 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	{
 		return true;
 	}
-
+	
+	public function loginUser( Auth_User_Interface $user ): bool
+	{
+		return false;
+	}
 
 }

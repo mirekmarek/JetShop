@@ -149,4 +149,13 @@ return [
 	'Please select some category' => '',
 	'Information is not available' => '',
 	'Name of variant' => '',
+	'action-2023' => '',
+	'... select property ...' => '',
+	'Internal name:' => '',
+	'Internal notes:' => '',
+	'Categories' => '',
+	'In stock quantity:' => '',
+	'Length of delivery :' => '',
+	'Available from:' => '',
+	'Discount:' => '',
 ];

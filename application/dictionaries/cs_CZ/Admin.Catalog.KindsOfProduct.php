@@ -53,4 +53,7 @@ return [
 	'Kind of Product <b>%ITEM_NAME%</b> has been deleted' => '',
 	'Edit kind of product <b>%ITEM_NAME%</b> - hidden properties settings' => '',
 	'Skládací' => '',
+	'Main image' => '',
+	'Pictogram image' => '',
+	'... select kind of product ...' => '',
 ];

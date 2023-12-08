@@ -2,7 +2,6 @@
 namespace JetApplicationModule\Admin\Catalog\Brands;
 
 use Jet\Http_Request;
-use JetApplication\Brand;
 
 use Jet\UI;
 use Jet\MVC_View;
@@ -24,7 +23,7 @@ $router = $this->getController()->getControllerRouter();
 				<?=Tr::_( 'Do you really want to delete this brand?' );?>
 				<br/>
 				<a href="<?=$router->action('edit')->URI( $brand->getId() );?>"
-				   style="font-weight: bolder;font-size: 20px;"><?=$brand->getName();?></a>
+				   style="font-weight: bolder;font-size: 20px;"><?=$brand->getInternalName();?></a>
 			</p>
 
 

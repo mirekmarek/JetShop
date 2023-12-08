@@ -8,6 +8,7 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
 use Jet\Logger;
+use JetApplication\Admin_Managers;
 use JetApplication\WarehouseManagement_Warehouse as Warehouse;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
@@ -17,8 +18,6 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
-
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *
@@ -49,11 +48,11 @@ class Controller_Main extends MVC_Controller_Default
 					return (bool)($this->warehouse = Warehouse::get($id));
 				},
 				[
-					'listing'=> Main::ACTION_GET_WAREHOUSE,
-					'view'   => Main::ACTION_GET_WAREHOUSE,
-					'add'    => Main::ACTION_ADD_WAREHOUSE,
-					'edit'   => Main::ACTION_UPDATE_WAREHOUSE,
-					'delete' => Main::ACTION_DELETE_WAREHOUSE,
+					'listing'=> Main::ACTION_GET,
+					'view'   => Main::ACTION_GET,
+					'add'    => Main::ACTION_ADD,
+					'edit'   => Main::ACTION_UPDATE,
+					'delete' => Main::ACTION_DELETE,
 				]
 			);
 		}
@@ -66,7 +65,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		Admin_Managers::UI()->initBreadcrumb();
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );

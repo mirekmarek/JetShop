@@ -2,13 +2,12 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
+use Jet\Factory_MVC;
 use Jet\Logger;
 use Jet\MVC_Controller_Router;
 use Jet\UI;
 use Jet\UI_messages;
 
-
-use Jet\Application;
 
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
@@ -19,11 +18,6 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
 use Jet\UI_tabs;
-use JetApplication\Category;
-use JetApplication\Fulltext_Index_Internal_Product;
-use JetApplication\Product;
-
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *
@@ -58,6 +52,7 @@ class Controller_Main extends MVC_Controller_Default
 				$product = Product::get( $product_id );
 
 				if($product) {
+					$product->setEditable(Main::getCurrentUserCanEdit());
 					static::$current_product = $product;
 				}
 			}
@@ -78,14 +73,10 @@ class Controller_Main extends MVC_Controller_Default
 
 
 
-			$this->router->setDefaultAction(  'listing', Main::ACTION_GET_PRODUCT  );
+			$this->router->setDefaultAction(  'listing', Main::ACTION_GET  );
 			
 			$this->router->addAction( 'listing_operation' )->setResolver(function() use ($GET) {
 				return $GET->exists('listing_operation');
-			});
-			
-			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
-				return $GET->exists('whisper');
 			});
 			
 			$this->router->addAction( 'export' )->setResolver(function() use ($GET) {
@@ -93,7 +84,7 @@ class Controller_Main extends MVC_Controller_Default
 			});
 			
 
-			$this->router->addAction('add', Main::ACTION_ADD_PRODUCT)
+			$this->router->addAction('add', Main::ACTION_ADD)
 				->setResolver( function() use ($action) {
 					return $action=='add';
 				} )
@@ -101,40 +92,35 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURL(['action'=>'add'], ['id']);
 				});
 
-			$this->router->addAction('edit_main', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_main', Main::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='main';
 				} )
 				->setURICreator(function($id) {
 					return Http_Request::currentURL(['id'=>$id], ['action']);
 				});
-
-			$this->router->addAction('edit_categories', Main::ACTION_UPDATE_PRODUCT)
-				->setResolver( function() use ($action, $selected_tab) {
-					return static::$current_product && $selected_tab=='categories';
-				} );
-
-			$this->router->addAction('edit_parameters', Main::ACTION_UPDATE_PRODUCT)
+			
+			$this->router->addAction('edit_parameters', Main::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='parameters';
 				} );
 
-			$this->router->addAction('edit_images', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_images', Main::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='images';
 				} );
 
-			$this->router->addAction('edit_variants', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_variants', Main::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='variants';
 				} );
 
-			$this->router->addAction('edit_set', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_set', Main::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='set';
 				} );
 
-			$this->router->addAction('edit_exports', Main::ACTION_UPDATE_PRODUCT)
+			$this->router->addAction('edit_exports', Main::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return static::$current_product && $selected_tab=='exports';
 				} );
@@ -154,7 +140,6 @@ class Controller_Main extends MVC_Controller_Default
 
 		$_tabs = [
 			'main'             => Tr::_('Main data'),
-			'categories'       => Tr::_('Categories'),
 			'parameters'       => Tr::_('Parameters'),
 			'images'           => Tr::_('Images'),
 			'variants'         => Tr::_('Variants'),
@@ -195,7 +180,16 @@ class Controller_Main extends MVC_Controller_Default
 	public function getListing() : Listing
 	{
 		if(!$this->listing) {
-			$this->listing = new Listing();
+			$column_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
+			
 			$this->listing->handle();
 		}
 		
@@ -220,38 +214,8 @@ class Controller_Main extends MVC_Controller_Default
 
 		
 		$listing = $this->getListing();
-		$c_filter = $listing->getFilter(Listing_Filter::CATEGORIES);
-
+		$c_filter = $listing->filter(Listing_Filter_Categories::KEY);
 		
-		if($c_filter->getMode()==Listing_Filter_Categories::MODE_TREE ) {
-
-			$tree = Category::getTree();
-			$filter = $this->getListing()->getFilter(Listing_Filter::CATEGORIES);
-			
-			$current_cat_id = $filter->getCurrentCategoryId();
-			
-			if(
-				( $current_node = $tree->getNode( $filter->getCurrentCategoryId() ) )
-			) {
-
-				foreach( $current_node->getPath() as $node ) {
-					if(!$node->getId()) {
-						continue;
-					}
-					
-					$label = $node->getLabel();
-					
-					if(!$label) {
-						$label = '???';
-					}
-					
-					Navigation_Breadcrumb::addURL( $label, $filter->getCategoryUrl( $node->getId() ) );
-					
-				}
-			
-			}
-		}
-
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
 		} else {
@@ -300,7 +264,6 @@ class Controller_Main extends MVC_Controller_Default
 
 		if( $product->catchAddForm() ) {
 			$product->save();
-			Category::syncCategories();
 
 			Logger::success(
 				'product_created',
@@ -357,24 +320,7 @@ class Controller_Main extends MVC_Controller_Default
 
 		$this->output( 'delete-confirm' );
 	}
-
-	public function whisper_Action() : void
-	{
-		$GET = Http_Request::GET();
-
-
-		$result = Fulltext_Index_Internal_Product::search(
-			$GET->getString('whisper'),
-			$GET->getBool('only_active'),
-			json_decode($GET->getRaw('filter'))
-		);
-
-		$this->view->setVar('result', $result);
-		echo $this->view->render('search_whisperer_result');
-
-		Application::end();
-	}
-
+	
 	public function listing_operation_Action() : void
 	{
 		$GET = Http_Request::GET();

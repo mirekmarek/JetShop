@@ -1,60 +1,36 @@
 <?php
 namespace JetShop;
 
-use Jet\Application_Modules;
-use Jet\DataModel;
 use Jet\Data_Tree;
+use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_Query_Select_Item_Expression;
-use Jet\Form;
-use Jet\Form_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
-use Jet\MVC;
-use Jet\Session;
-use Jet\Tr;
-use Jet\MVC_View;
-use Jet\UI_icon;
-use Jet\Application_Module;
-
-use JetApplication\Category;
+use JetApplication\Category_Product;
 use JetApplication\Category_ShopData;
-use JetApplication\Cache;
+use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Product_ShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\ProductListing;
-use JetApplication\Product;
-use JetApplication\Product_Category;
-use JetApplication\Category_ManageModuleInterface;
-use JetApplication\Category_Menu;
-use JetApplication\KindOfProduct;
-use JetApplication\Fulltext_Index_Internal_Category;
 
 
 #[DataModel_Definition(
 	name: 'category',
 	database_table_name: 'categories',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: ['id_property_name'=>'id']
 )]
-abstract class Core_Category extends DataModel {
-	protected static string $manage_module_name = 'Admin.Catalog.Categories';
-
-	const SORT_NAME = 'name';
-	const SORT_PRIORITY = 'priority';
-
-
+abstract class Core_Category extends Entity_WithIDAndShopData {
+	
+	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true
+		type: DataModel::TYPE_INT,
+		is_key: true,
 	)]
-	protected int $id = 0;
+	protected int $root_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
 	)]
 	protected int $parent_id = 0;
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
@@ -71,30 +47,18 @@ abstract class Core_Category extends DataModel {
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
 	)]
-	protected string $all_children = '';
+	protected string $branch_children = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
 	protected int $priority = 0;
 	
-	
-	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true
 	)]
 	protected int $kind_of_product_id = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL
-	)]
-	protected bool $auto_append_products = false;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_CUSTOM_DATA,
-	)]
-	protected array $auto_append_products_filter = [];
 
 	/**
 	 * @var Category_ShopData[]
@@ -103,574 +67,88 @@ abstract class Core_Category extends DataModel {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Category_ShopData::class
 	)]
-	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
-
 	
 	/**
-	 * @var Data_Tree[]
+	 * @var Category_Product[]
 	 */
-	protected static array $tree = [];
-
-	protected static ?Session $filter_session = null;
-
-	protected ?Form $_add_form = null;
-
-	protected ?Form $_edit_form = null;
-
-	protected Form|null|bool $_auto_append_product_filter_edit_form = null;
-
-	protected ?ProductListing $_product_listing = null;
-
-	/**
-	 * @var Category[]
-	 */
-	protected ?array $_children = null;
-
-	/**
-	 * @var Category[]
-	 */
-	protected static array $loaded_items = [];
-
-	protected static array $sync_categories = [];
-
-	public static function getManageModuleName(): string
-	{
-		return self::$manage_module_name;
-	}
-
-	public static function getManageModule() : Category_ManageModuleInterface|Application_Module
-	{
-		return Application_Modules::moduleInstance( Category::getManageModuleName() );
-	}
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Category_Product::class
+	)]
+	protected array $products = [];
 
 	
-	public static function getFilterSession() : Session
-	{
-		if(!Category::$filter_session) {
-			Category::$filter_session = new Session('category_filter');
-		}
 
-		return Category::$filter_session;
-	}
-
-	public static function getFilter_selectedSort() : string
-	{
-		return Category::getFilterSession()->getValue('sort', Category::SORT_PRIORITY);
-	}
-
-	public static function setFilter_selectedSort( string $val ) : void
-	{
-		if(isset(Category::getSortScope()[$val])) {
-			Category::getFilterSession()->setValue('sort', $val);
-		}
-	}
-
-	public static function getFilter_onlyActive() : bool
-	{
-		return Category::getFilterSession()->getValue('only_active', false);
-	}
-
-	public static function setFilter_onlyActive( string $val ) : void
-	{
-		Category::getFilterSession()->setValue('only_active', (bool)$val);
-	}
-
-	public static function getSortScope() : array
-	{
-		$_scope = [
-			Category::SORT_PRIORITY => 'priority',
-			Category::SORT_NAME => 'name',
-		];
-
-		$scope = [];
-
-		foreach( $_scope as $option=>$label ) {
-			$scope[$option] = Tr::_($label, [], Category::getManageModuleName() );
-		}
-
-		return $scope;
-	}
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->afterLoad();
-	}
-
-	public function afterLoad() : void
-	{
-		Category_ShopData::checkShopData( $this, $this->shop_data );
-	}
-
-	public static function get( int $id ) : Category|null
-	{
-		if(isset(static::$loaded_items[$id])) {
-			return static::$loaded_items[$id];
-		}
-
-		$cache_key = 'category:'.$id;
-
-		static::$loaded_items[$id] = Cache::load( $cache_key );
-
-		if(!static::$loaded_items[$id]) {
-			static::$loaded_items[$id] = Category::load( $id );
-
-			Cache::save( $cache_key, static::$loaded_items[$id]);
-		}
-
-		return static::$loaded_items[$id];
-	}
-
-	public static function resetTree() : void
-	{
-		Category::$tree = [];
-	}
-
-	public static function getTree( ?Shops_Shop $shop=null , string|null $sort_order=null, bool|null $only_active=false ) : Data_Tree
-	{
-
-		if(!$shop) {
-			$shop = Shops::getCurrent();
-		}
-
-		if($sort_order===null) {
-			$sort_order = Category::getFilter_selectedSort();
-		}
-
-		$key = $shop->getKey().':'.($only_active?1:0).':'.$sort_order;
-
-
-
-		if(!isset(Category::$tree[$key])) {
-
-			$sort = match($sort_order) {
-				Category::SORT_NAME => 'name',
-				Category::SORT_PRIORITY => 'priority',
-			};
-
-			$where = $shop->getWhere('category_shop_data.');
-
-			if($only_active) {
-				$where[] = 'AND';
-				$where['category_shop_data.is_active'] = true;
-			}
-
-			$data = Category::dataFetchAll(
-				select:[
-					'id' => 'id',
-					'parent_id' => 'parent_id',
-					'priority' => 'priority',
-					'name' => 'category_shop_data.name',
-					'is_active' => 'category_shop_data.is_active',
-				],
-				where: $where,
-				order_by: $sort
-			);
-
-
-			$tree = new Data_Tree();
-			$tree->getRootNode()->setId(0);
-			$tree->getRootNode()->setLabel('Root');
-
-			$tree->setAdoptOrphans(true);
-
-			$tree->setData( $data );
-
-			Category::$tree[$key] = $tree;
-		}
-
-		return Category::$tree[$key];
-	}
-
-	public static function actualizeTreeData() : void
-	{
-		foreach( Shops::getList() as $shop ) {
-			$tree = Category::getTree( $shop, Category::SORT_PRIORITY );
-
-			foreach( $tree as $node ) {
-
-				$id = (int)$node->getId();
-
-				if( !$id ) {
-					continue;
-				}
-
-				$path = [];
-				$children = [];
-				$all_children = [];
-
-				foreach( $node->getPathFromRoot() as $p_node ) {
-					$p_id = (int)$p_node->getId();
-					if( !$p_id ) {
-						continue;
-					}
-
-					$path[] = $p_id;
-				}
-
-				foreach( $node->getChildren() as $p_node ) {
-					$p_id = (int)$p_node->getId();
-					if( !$p_id ) {
-						continue;
-					}
-
-					$children[] = $p_id;
-				}
-
-
-				foreach( $node->getAllChildrenIds() as $p_id ) {
-					$p_id = (int)$p_id;
-					if( !$p_id ) {
-						continue;
-					}
-
-					$all_children[] = $p_id;
-				}
-
-
-				$path = implode( ',', $path );
-				$children = implode( ',', $children );
-				$all_children = implode( ',', $all_children );
-
-				Category::updateData(
-					[
-						'path' => $path,
-						'children' => $children,
-						'all_children' => $all_children,
-					],
-					[
-						'id' => $id
-					]
-				);
-
-			}
-
-			break;
-		}
-
-
-		foreach( Shops::getList() as $shop ) {
-			$tree = Category::getTree( $shop, Category::SORT_PRIORITY, true );
-
-			foreach($tree as $node ) {
-
-				$id = (int)$node->getId();
-
-				if(!$id) {
-					continue;
-				}
-
-				$path = [];
-				$children = [];
-				$all_children = [];
-
-				foreach( $node->getPathFromRoot() as $p_node ) {
-					$p_id = (int)$p_node->getId();
-					if(!$p_id) {
-						continue;
-					}
-
-					$path[] = $p_id;
-				}
-
-				foreach( $node->getChildren() as $p_node ) {
-					$p_id = (int)$p_node->getId();
-					if(!$p_id) {
-						continue;
-					}
-
-					$children[] = $p_id;
-				}
-
-
-				foreach( $node->getAllChildrenIds() as $p_id ) {
-					$p_id = (int)$p_id;
-					if(!$p_id) {
-						continue;
-					}
-
-					$all_children[] = $p_id;
-				}
-
-
-				$path = implode(',', $path);
-				$children = implode(',', $children);
-				$all_children = implode(',', $all_children);
-
-				Category_ShopData::updateData(
-					[
-						'path' => $path,
-						'children' => $children,
-						'all_children' => $all_children,
-					],
-					[
-						'category_id' => $id,
-						'AND',
-						$shop->getWhere()
-					]
-				);
-
-			}
-		}
-
-		Category_Menu::generateAll();
-	}
-
-	public function getPath() : array
-	{
-		if(!$this->path) {
-			return [];
-		}
-
-		return explode(',', $this->path );
-	}
-
-	protected static ?array $_names = null;
-
-	public function getPathName( bool $as_array=false, ?Shops_Shop $shop=null , string $path_str_glue=' / ' ) : array|string
-	{
-
-		if(!$shop) {
-			$shop = Shops::getCurrent();
-		}
-
-		$result = [];
-
-		if(static::$_names===null) {
-			static::$_names = [];
-
-			$names = Category_ShopData::dataFetchAll( select: ['category_id', 'name', 'shop_code', 'locale'] );
-
-			foreach($names as $n) {
-				$category_id = (int)$n['category_id'];
-				$name = $n['name'];
-				$shop_key = $n['shop_code'].'_'.$n['locale'];
-
-				if(!isset(static::$_names[$shop_key])) {
-					static::$_names[$shop_key] = [];
-				}
-
-				static::$_names[$shop_key][$category_id] = $name;
-			}
-		}
-
-
-		$key = $shop->getKey();
-
-		foreach( $this->getPath() as $id ) {
-			$result[$id] = static::$_names[$key][$id] ?? '';
-		}
-
-		if($as_array) {
-			return $result;
-		} else {
-			return implode($path_str_glue, $result);
-		}
-	}
-	
-	public function getId() : int
-	{
-		return $this->id;
-	}
-
-	public function setId( int $id ) : void
-	{
-		$this->id = $id;
-	}
-
-	public function isVisible( ?Shops_Shop $shop=null  ) : bool
-	{
-		$shop_data = $this->getShopData( $shop );
-
-		if(
-			!$shop_data->isActive() ||
-			!$shop_data->getNestedVisibleProductsCount()
-		) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public function isActive( ?Shops_Shop $shop=null  ) : bool
-	{
-		return $this->getShopData($shop)->isActive();
-	}
-
-
-	/**
-	 *
-	 * @return Category[]
-	 */
-	public function _getChildren() : array
-	{
-		if($this->_children!==null) {
-			return $this->_children;
-		}
-
-		$this->_children = [];
-
-		$ch_ids = [];
-
-		if($this->children) {
-			$ch_ids = explode(',', $this->children);
-		}
-
-
-		foreach($ch_ids as $id) {
-			$ch_c = Category::get($id);
-			if( !$ch_c ) {
-				continue;
-			}
-
-			$this->_children[$ch_c->getId()] = $ch_c;
-		}
-
-
-		return $this->_children;
-	}
-
-	public function getNestedVisibleProductsCount( ?Shops_Shop $shop=null  ) : int
-	{
-		return $this->getShopData($shop)->getNestedVisibleProductsCount();
-	}
-
-	public function getVisibleProductsCount( ?Shops_Shop $shop=null  ) : int
-	{
-		return $this->getShopData($shop)->getVisibleProductsCount();
-	}
-
-	public function getName( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getName();
-	}
-
-	public function getSecondName( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getSecondName();
-	}
-
-	public function getDescription( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getDescription();
-	}
-
-	public function getSeoH1( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getSeoH1();
-	}
-
-	public function getSeoTitle( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getSeoTitle();
-	}
-
-	public function getSeoDescription( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getSeoDescription();
-	}
-
-	public function getSeoKeywords( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getSeoKeywords();
-	}
-
-	public function getURL( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getURL();
-	}
-
-	public function getURLPathPart( ?Shops_Shop $shop=null  ): string
-	{
-		return $this->getShopData($shop)->getURLPathPart();
-	}
-
-
-	public function getImageMainUrl( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getImageMainUrl();
-	}
-
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h, ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getImageMainThumbnailUrl( $max_w, $max_h );
-	}
-
-	public function getImagePictogramUrl( ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getImagePictogramUrl();
-	}
-
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h, ?Shops_Shop $shop=null  ) : string
-	{
-		return $this->getShopData($shop)->getImagePictogramThumbnailUrl( $max_w, $max_h );
-	}
-
-	public function getProductListing( ?Shops_Shop $shop=null , bool $use_singleton=true ) : ProductListing|null
-	{
-		if($use_singleton && $this->_product_listing ) {
-			return $this->_product_listing;
-		}
-
-		/**
-		 * @var Category $category
-		 */
-		$category = $this;
-
-		$listing = new ProductListing( $category, $shop );
-		$listing->prepareProductListing( $category->getShopData($shop)->getProductIds() );
-
-
-		if($use_singleton) {
-			$this->_product_listing = $listing;
-		}
-
-		return $listing;
-
-	}
-
-	public function getEditURL() : string
-	{
-		return Category::getCategoryEditURL( $this->id );
-	}
-	
-	public static function getCategoryEditURL( int $id ) : string
-	{
-		return Category::getManageModule()->getCategoryEditUrl( $id );
-	}
-	
-	public function getAutoAppendProductsFilter() : array
-	{
-		return $this->auto_append_products_filter;
-	}
-
-	public function setAutoAppendProductsFilter( array $auto_append_products_filter ) : void
-	{
-		$this->auto_append_products_filter = $auto_append_products_filter;
-	}
-
-
-	public function setParentId( int $parent_id, bool $update_priority=true ) : void
+	public function setParentId( int $parent_id, bool $update_priority=true, bool $save=true ) : void
 	{
 		$this->parent_id = $parent_id;
 
 		if($update_priority) {
-			$tree = Category::getTree();
+			$data = static::dataFetchAll(
+				select:[
+					'id' => 'id',
+					'parent_id' => 'parent_id',
+					'priority' => 'priority',
+					'name' => 'internal_name',
+					'is_active' => 'is_active',
+				],
+				order_by: 'priority'
+			);
+			
+			$tree = new Data_Tree();
+			$tree->getRootNode()->setLabel('Root');
+			$tree->setAdoptOrphans(true);
+			
+			$tree->setData( $data );
+			
+			
 
 			$this->priority = 1;
 			foreach( $tree->getNode( $parent_id )->getChildren() as $ch ) {
 				$ch_p = $ch->getData()['priority'];
 
 				if($ch_p>=$this->priority) {
-					$this->priority = $ch_p+1;
+					$this->setPriority( $ch_p+1 );
 				}
 			}
 		}
-
+		
+		foreach($this->shop_data as $sd) {
+			$sd->setParentId( $parent_id, false );
+			$sd->setPriority( $this->priority, false );
+		}
+		
+		if($save) {
+			$this->save();
+			
+			$old_root_id = $this->root_id;
+			
+			static::actualizeTreeData();
+			$new_root_id = static::dataFetchCol(['root_id'], ['id'=>$this]);
+			
+			static::actualizeProductAssoc( category_id: $old_root_id );
+			if($new_root_id!=$old_root_id) {
+				static::actualizeProductAssoc( category_id: $new_root_id );
+			}
+		}
+		
 	}
-
+	
+	public function activate(): void
+	{
+		parent::activate();
+		
+		static::actualizeBranchProductAssoc( $this->root_id );
+	}
+	
+	public function deactivate(): void
+	{
+		parent::deactivate();
+		
+		static::actualizeBranchProductAssoc( $this->root_id );
+	}
+	
 	public function getParentId() : int
 	{
 		return $this->parent_id;
@@ -681,9 +159,12 @@ abstract class Core_Category extends DataModel {
 		return $this->priority;
 	}
 
-	public function setPriority( int $priority ) : void
+	public function setPriority( int $priority, bool $save=true ) : void
 	{
 		$this->priority = $priority;
+		foreach($this->shop_data as $sd) {
+			static::updateData(data: ['priority'=>$this->priority], where: ['id'=>$this->id]);
+		}
 	}
 	
 	/**
@@ -696,407 +177,454 @@ abstract class Core_Category extends DataModel {
 	
 	public function setKindOfProductId( int $kind_of_product_id ): void
 	{
-		if($this->kind_of_product_id == $kind_of_product_id) {
-			return;
-		}
-		$old_kind = $this->kind_of_product_id ? KindOfProduct::get($this->kind_of_product_id) : null;
-		$new_kind = $kind_of_product_id ? KindOfProduct::get($kind_of_product_id) : null;
-		
 		$this->kind_of_product_id = $kind_of_product_id;
-		
-		Category::updateData(['kind_of_product_id'=>$this->kind_of_product_id], ['id'=>$this->id]);
-		
-		Category::addSyncCategory( $this->id );
-		
-		$old_kind?->actualizeAutoAppend();
-		$new_kind?->actualizeAutoAppend();
-		
-		Category::syncCategories();
-	}
-	
-	public function getKindOfProduct() : ?KindOfProduct
-	{
-		if($this->kind_of_product_id) {
-			return KindOfProduct::get($this->kind_of_product_id);
-		}
-		
-		return null;
-	}
-	
-	public function getAutoAppendProducts(): bool
-	{
-		return $this->auto_append_products;
-	}
-	
-	public function setAutoAppendProducts( bool $auto_append_products ): void
-	{
-		$this->auto_append_products = $auto_append_products;
+		$this->save();
 	}
 	
 	
-
 	public function getShopData( ?Shops_Shop $shop=null ) : Category_ShopData
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 	
-
-	public function getAddForm() : Form
-	{
-		if(!$this->_add_form) {
-			$this->_add_form = $this->createForm('add_form');
-			$this->_add_form->setCustomTranslatorDictionary( Category::getManageModuleName() );
-		}
-
-		return $this->_add_form;
-	}
-
-
-
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
-
-
-
-	public function getEditForm() : Form
-	{
-
-		if(!$this->_edit_form) {
-			$this->_edit_form = $this->createForm('edit_form');
-			$this->_edit_form->setCustomTranslatorDictionary( Category::getManageModuleName() );
-		}
-
-		return $this->_edit_form;
-	}
 	
-	public function catchEditForm() : bool
+	public static function actualizeTreeData() : void
 	{
-		return $this->getEditForm()->catch();
-	}
-
-
-	public function getAutoAppendProductFilterEditForm() : Form|bool
-	{
-		if($this->_auto_append_product_filter_edit_form===null) {
-
-			$listing = new ProductListing( $this );
-
-			$this->_auto_append_product_filter_edit_form = $listing->getAutoAppendProductFilterEditForm( $this->auto_append_products_filter );
-
-		}
-
-		return $this->_auto_append_product_filter_edit_form;
-	}
-
-	public function catchAutoAppendProductFilterEditForm() : bool
-	{
-		$listing = new ProductListing( $this );
-
-		return $listing->catchAutoAppendProductFilterEditForm( $this->auto_append_products_filter );
-	}
-	
-	public function handleAutoAppendProduct() : void
-	{
-		$auto_appended = Product_Category::getAutoAppendedByCategory( $this->id );
+		$active_categories = static::dataFetchAll(
+			select:[
+				'id' => 'id',
+				'parent_id' => 'parent_id',
+				'name' => 'internal_name',
+			],
+			order_by: 'priority'
+		);
 		
-		foreach($auto_appended as $apc) {
-			$apc->delete();
-		}
 		
-		if($this->auto_append_products) {
-			$product_ids = $this->getProductListing()->getAutoAppendProductIds();
-			
-			foreach($product_ids as $p_id) {
-				$exists = (int)Product_Category::dataFetchOne(
-					select: ['cnt'=>new DataModel_Query_Select_Item_Expression('count(*)')],
-					where: [
-						'category_id' => $this->id,
-						'AND',
-						'product_id' => $p_id
-					]
-				);
-				
-				if($exists>0) {
-					continue;
-				}
-				
-				$p_c = new Product_Category();
-				$p_c->setCategoryId( $this->id );
-				$p_c->setProductId( $p_id );
-				$p_c->setAutoAppended( true );
-				
-				$p_c->save();
-			}
-			
-		}
+		$tree = new Data_Tree();
+		$tree->getRootNode()->setLabel('Root');
 		
-		Category::addSyncCategory($this->id);
-	}
-	
-
-	public function afterAdd() : void
-	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_key = $shop->getKey();
-
-			$this->shop_data[$shop_key]->generateURLPathPart();
-			$this->shop_data[$shop_key]->save();
-		}
-
-		Category::resetTree();
-		Category::actualizeTreeData();
+		$tree->setIgnoreOrphans(true);
 		
-		Fulltext_Index_Internal_Category::addIndex( $this );
-	}
-
-	public function afterUpdate() : void
-	{
-		Fulltext_Index_Internal_Category::updateIndex( $this );
-
-		Category::actualizeTreeData();
-		Category::syncCategories();
-
-		$this->actualizeProductsList();
-	}
-
-	public function afterDelete() : void
-	{
-		Fulltext_Index_Internal_Category::deleteIndex( $this );
-
-		$this->actualizeProductsList();
-	}
-
-	public function actualizeProductsList() : void
-	{
-		$products = Product::getListByCategory( $this->id );
+		$tree->setData( $active_categories );
 		
-		$product_ids = [];
-		foreach( Shops::getList() as $shop ) {
-			$product_ids[$shop->getKey()] = [];
-		}
-		
-		foreach($products as $product) {
-			if(!$product->isActive()) {
+		foreach( $tree as $node ) {
+			if($node->getIsRoot()) {
 				continue;
 			}
 			
-			foreach( Shops::getList() as $shop ) {
-				if(
-					!$product->getShopData($shop)->isActive() ||
-					$product->getShopData($shop)->getFinalPrice()<=0
-				) {
+			$id = (int)$node->getId();
+			
+			$path = [];
+			$children = [];
+			$branch_children = [];
+			
+			foreach( $node->getPathFromRoot() as $p_node ) {
+				$p_id = (int)$p_node->getId();
+				if( !$p_id ) {
 					continue;
 				}
 				
-				$product_ids[$shop->getKey()][] = $product->getId();
+				$path[] = $p_id;
 			}
-		}
-		
-		foreach( Shops::getList() as $shop ) {
-			$this->getShopData($shop)->setProductIds( $product_ids[$shop->getKey()], true );
-		}
-	}
-
-
-
-	public static function renderSelectCategoryWidget( string $on_select,
-	                                                   int $selected_category_id=0,
-	                                                   int $exclude_branch_id=0,
-	                                                   bool $only_active=false,
-	                                                   string $name='select_category' ) : string
-	{
-		$view = new MVC_View( MVC::getBase()->getViewsPath() );
-
-		$view->setVar('selected_category_id', $selected_category_id);
-		$view->setVar('exclude_branch_id', $exclude_branch_id);
-		$view->setVar('on_select', $on_select);
-		$view->setVar('name', $name);
-		$view->setVar('only_active', $only_active);
-
-		return $view->render('select-category-widget');
-	}
-
-
-
-	public static function renderIcon( string $type, bool $no_icon_for_regular=false ) : string|UI_icon
-	{
-		/*
-		switch($type) {
-			case Category::CATEGORY_TYPE_REGULAR:
-				if($no_icon_for_regular) {
-					return '';
+			
+			foreach( $node->getChildren() as $p_node ) {
+				$p_id = (int)$p_node->getId();
+				if( !$p_id ) {
+					continue;
 				}
-				$cat_icon = 'folder';
-				$cat_icon_title = Tr::_('Regular category', [], Category::getManageModuleName());
-				break;
-			case Category::CATEGORY_TYPE_TOP:
-				$cat_icon = 'caret-square-up';
-				$cat_icon_title = Tr::_('TOP category', [], Category::getManageModuleName());
-				break;
-			case Category::CATEGORY_TYPE_VIRTUAL:
-				$cat_icon = 'magic';
-				$cat_icon_title = Tr::_('Virtual category', [], Category::getManageModuleName());
-				break;
-			case Category::CATEGORY_TYPE_LINK:
-				$cat_icon = 'external-link-alt';
-				$cat_icon_title = Tr::_('Link', [], Category::getManageModuleName());
-				break;
-			default:
-				return '';
-		}
-
-
-		return UI::icon( $cat_icon )->setTitle( $cat_icon_title );
-		*/
-		//TODO:
-		return '';
-	}
-
-	public static function addSyncCategory( int $id ) : void
-	{
-		if(!in_array($id, static::$sync_categories)) {
-			static::$sync_categories[] = $id;
-		}
-	}
-
-	public static function syncCategories() : void
-	{
-		/**
-		 * @var Category[] $sync_categories
-		 */
-		$sync_categories = [];
-
-		foreach( static::$sync_categories as $id ) {
-			$category = Category::get( $id );
-			$category->actualizeProductsList();
-		}
-		
-
-		Category::actualizeTreeData();
-
-		foreach( Shops::getList() as $shop ) {
-			$data = Category::dataFetchAll(
-				select: [
-					'id' => 'id',
-					'product_ids' => 'category_shop_data.product_ids',
-					'all_children' => 'category_shop_data.all_children'
+				
+				$children[] = $p_id;
+			}
+			
+			
+			foreach( $node->getAllChildrenIds() as $p_id ) {
+				$p_id = (int)$p_id;
+				if( !$p_id ) {
+					continue;
+				}
+				
+				$branch_children[] = $p_id;
+			}
+			
+			
+			$root_id = $path[0];
+			$path = implode( ',', $path );
+			$children = implode( ',', $children );
+			$branch_children = implode( ',', $branch_children );
+			
+			static::updateData(
+				[
+					'root_id' => $root_id,
+					'path' => $path,
+					'children' => $children,
+					'branch_children' => $branch_children,
 				],
-				where: [
-					$shop->getWhere('category_shop_data.'),
+				[
+					'id' => $id,
 					'AND',
-					'category_shop_data.is_active' => true,
+					[
+						'root_id !=' => $root_id,
+						'OR',
+						'path !=' => $path,
+						'OR',
+						'children !=' => $children,
+						'OR',
+						'branch_children !=' => $branch_children,
+					]
 				]
 			);
-
-
-			$ids_map = [];
-			foreach($data as $i=>$d) {
-				$id = (int)$d['id'];
-
-				if($d['product_ids']) {
-					$ids_map[$id] = explode(',', $d['product_ids']);
-				} else {
-					$ids_map[$id] = [];
-				}
-
-				if($d['all_children']) {
-					$data[$i]['all_children'] = explode(',', $d['all_children']);
-				} else {
-					$data[$i]['all_children'] = [];
-				}
-			}
-
-			foreach($data as $d) {
-				$id = (int)$d['id'];
-
-				$p_ids = $ids_map[$id];
-
-				$visible_products_count = count( $p_ids );
-
-				foreach( $d['all_children'] as $ch_id ) {
-					$ch_ids = $ids_map[$ch_id];
-
-					$p_ids = array_merge( $p_ids, $ch_ids );
-				}
-
-				$p_ids = array_unique($p_ids);
-
-				$nested_visible_products_count = count( $p_ids );
-
-
+			
+			
+			foreach( Shops::getList() as $shop ) {
+				$where = $shop->getWhere();
+				$where[] = 'AND';
+				$where['entity_id'] = $id;
+				$where[] = 'AND';
+				$where[] = [
+					'root_id !=' => $root_id,
+					'OR',
+					'path !=' => $path,
+					'OR',
+					'children !=' => $children,
+					'OR',
+					'branch_children !=' => $branch_children,
+				];
+				
 				Category_ShopData::updateData(
 					[
-						'visible_products_count' => $visible_products_count,
-						'nested_visible_products_count' => $nested_visible_products_count
+						'root_id' => $root_id,
+						'path' => $path,
+						'children' => $children,
+						'branch_children' => $branch_children,
 					],
-					[
-						'category_id' => $id,
-						'AND',
-						$shop->getWhere()
-					]
+					$where
 				);
-
-
 			}
-
+			
 		}
-
+		
+		
+		
+		
+		
+		foreach( Shops::getList() as $shop ) {
+			$active_categories = Category_ShopData::dataFetchAssoc(
+				select: [
+					'id' => 'entity_id',
+					'parent_id' => 'parent_id',
+					'name' => 'name',
+				],
+				where: Category_ShopData::getActiveQueryWhere( $shop )
+			);
+			
+			
+			$tree = new Data_Tree();
+			$tree->getRootNode()->setLabel( 'Root' );
+			
+			
+			$tree->setIgnoreOrphans( true );
+			
+			$tree->setData( $active_categories );
+			
+			$active_ids = [0];
+			
+			foreach( $tree as $node ) {
+				if( $node->getIsRoot() ) {
+					continue;
+				}
+				
+				
+				$id = (int)$node->getId();
+				$active_ids[] = $id;
+				
+				$branch_children = [];
+				
+				foreach( $node->getAllChildrenIds() as $p_id ) {
+					$p_id = (int)$p_id;
+					if( !$p_id ) {
+						continue;
+					}
+					
+					$branch_children[] = $p_id;
+				}
+				$branch_children = implode(',', $branch_children);
+				
+				$where = $shop->getWhere();
+				$where[] = 'AND';
+				$where['entity_id'] = $id;
+				$where[] = 'AND';
+				$where['active_branch_children !='] = $branch_children;
+				
+				Category_ShopData::updateData(
+					[
+						'active_branch_children' => $branch_children,
+					],
+					$where
+				);
+			}
+			
+			$non_active_categories = Category_ShopData::dataFetchCol(
+				select: [
+					'entity_id',
+				],
+				where: Category_ShopData::getNonActiveQueryWhere( $shop )
+			);
+			
+			if($non_active_categories) {
+				$where = $shop->getWhere();
+				$where[] = 'AND';
+				$where['entity_id'] = $non_active_categories;
+				$where[] = 'AND';
+				$where['active_branch_children !='] = '';
+				
+				Category_ShopData::updateData(
+					[
+						'active_branch_children' => '',
+					],
+					$where
+				);
+			}
+			
+		}
+			
+			
 	}
 	
-	/**
-	 * @param KindOfProduct $kind
-	 *
-	 * @return Category[]
-	 */
-	public static function getByKindOfProduct( KindOfProduct $kind ) : array
+	public function addProduct( int $product_id ) : void
 	{
-		$ids = Category::dataFetchCol(['id'], ['kind_of_product_id'=>$kind->getId()]);
-
-		if(!$ids) {
-			return [];
+		if(!isset($this->products[$product_id])) {
+			$this->products[$product_id] = new Category_Product();
+			$this->products[$product_id]->setCategoryId( $this->id );
+			$this->products[$product_id]->setProductId( $product_id );
+			$this->products[$product_id]->setPriority( count($this->products) );
+			$this->products[$product_id]->save();
 		}
 		
-		$list = [];
 		
-		foreach($ids as $id) {
-			$id = (int)$id;
-			$list[$id] = Category::get($id);
-		}
-		
-		return $list;
+		static::actualizeBranchProductAssoc( $this->root_id );
 	}
 	
-	
-	public function deactivateAutoAppendProducts() : bool
+	public function removeProduct( int $product_id ) : void
 	{
-		if(!$this->auto_append_products) {
-			return false;
+		if(!isset($this->products[$product_id])) {
+			return;
 		}
-
-		$this->auto_append_products = false;
-		static::updateData(['auto_append_products'=>$this->auto_append_products], ['id'=>$this->id]);
 		
-		$this->handleAutoAppendProduct();
-		Category::syncCategories();
+		$this->products[$product_id]->delete();
+		unset($this->products[$product_id]);
 		
-		return true;
+		$i = 0;
+		foreach($this->products as $p) {
+			$i++;
+			$p->setPriority( $i );
+			$p->save();
+		}
+		
+		static::actualizeBranchProductAssoc( $this->root_id );
 	}
 	
-	public function activateAutoAppendProducts() : bool
+	public function getProductIds() : array
 	{
-		if($this->auto_append_products) {
-			return false;
+		return array_keys($this->products);
+	}
+	
+	public static function actualizeProductAssoc( int $category_id=null, int $product_id=null ) : void
+	{
+		if($product_id) {
+			$category_ids = Category_Product::dataFetchCol(
+				select: ['category_id'],
+				where: ['product_id'=>$product_id]
+			);
+
+			$root_ids = static::dataFetchCol(select: ['root_id'], where: ['id'=>$category_ids]);
+			
+			$root_ids = array_unique($root_ids);
+			
+			foreach($root_ids as $root_id) {
+				static::actualizeBranchProductAssoc( $root_id );
+			}
+			
+			return;
 		}
 		
-		$this->auto_append_products = true;
-		static::updateData(['auto_append_products'=>$this->auto_append_products], ['id'=>$this->id]);
-		
-		$this->handleAutoAppendProduct();
-		Category::syncCategories();
-		
-		return true;
+		if($category_id) {
+			$root_category_id = static::dataFetchOne(select: ['root_id'], where: ['id'=>$category_id]);
+			
+			if($root_category_id) {
+				static::actualizeBranchProductAssoc( $root_category_id );
+			}
+		}
 	}
+	
+	public static function actualizeBranchProductAssoc( int $root_category_id ) : void
+	{
+		$branch_category_ids =
+			array_merge(
+				[$root_category_id],
+				explode(',', static::dataFetchOne( select:['branch_children'], where: ['id'=>$root_category_id] ))
+			);
 
+		$_category_products_map = Category_Product::dataFetchAll(
+			select: ['category_id', 'product_id'],
+			where: ['category_id'=>$branch_category_ids],
+			group_by:['category_id', 'priority']
+		);
+		
+		$category_products_map = [];
+		$all_product_ids = [];
+		foreach($_category_products_map as $m) {
+			$category_id = (int)$m['category_id'];
+			$product_id = (int)$m['product_id'];
+			if(!isset($category_products_map[$category_id])) {
+				$category_products_map[$category_id] = [];
+			}
+			
+			$category_products_map[$category_id][] = $product_id;
+			
+			if(!in_array($product_id, $all_product_ids)) {
+				$all_product_ids[] = $product_id;
+			}
+		}
+		
+		$active_products = [];
+		
+		if($all_product_ids) {
+			foreach( Shops::getList() as $shop ) {
+				$where = Product_ShopData::getActiveQueryWhere( $shop );
+				$where[] = 'AND';
+				$where[] = [
+					'entity_id' => $all_product_ids,
+				];
+				$active_products[$shop->getKey()] = Product_ShopData::dataFetchCol(
+					select: ['entity_id'],
+					where: $where
+				);
+			}
+		} else {
+			foreach( Shops::getList() as $shop ) {
+				$active_products[$shop->getKey()] = [];
+			}
+			
+		}
+		
+		
+		foreach( Shops::getList() as $shop ) {
+			$where = $shop->getWhere();
+			$where[] = 'AND';
+			$where['entity_id'] = $branch_category_ids;
+			
+			$_categories = Category_ShopData::dataFetchAll(
+				select: [
+					'entity_id',
+					
+					'entity_is_active',
+					'is_active_for_shop',
+					
+					'children',
+					'branch_children',
+					'active_branch_children',
+					
+					'product_ids',
+					'products_count',
+					
+					'branch_product_ids',
+					'branch_products_count',
+				],
+				where: $where
+			);
+			
+			$categories = [];
+			foreach( $_categories as $c ) {
+				$id = $c['entity_id'];
+				$c['is_active']              = ($c['entity_is_active'] && $c['is_active_for_shop']);
+				$c['children']               = $c['children'] ? explode(',', $c['children']) : [];
+				$c['branch_children']        = $c['branch_children'] ? explode(',', $c['branch_children']) : [];
+				$c['active_branch_children'] = $c['active_branch_children'] ? explode(',', $c['active_branch_children']) : [];
+				
+				if(isset($category_products_map[$id])) {
+					$c['new_product_ids'] = array_intersect( $category_products_map[$id], $active_products[$shop->getKey()] );
+					$c['new_products_count'] = count( $c['new_product_ids'] );
+				} else {
+					$c['new_product_ids'] = [];
+					$c['new_products_count'] = 0;
+				}
+				$c['new_branch_product_ids'] = [];
+				$c['new_branch_products_count'] = 0;
+				
+				
+				$categories[$id] = $c;
+			}
+			
+			foreach($categories as $id=>$c) {
+				$categories[$id]['new_branch_product_ids'] = $c['new_product_ids'];
+				
+				foreach( $categories[$id]['active_branch_children'] as $ch_id ) {
+					$categories[$id]['new_branch_product_ids'] = array_merge(
+						$categories[$id]['new_branch_product_ids'],
+						$categories[$ch_id]['new_product_ids']
+					);
+				}
+				
+				$categories[$id]['new_branch_product_ids'] = array_unique($categories[$id]['new_branch_product_ids']);
+				$categories[$id]['new_branch_products_count'] = count( $categories[$id]['new_branch_product_ids'] );
+			}
+			
+			foreach($categories as $id=>$c) {
+				
+				$c['new_product_ids'] = implode(',', $c['new_product_ids']);
+				$c['new_branch_product_ids'] = implode(',', $c['new_branch_product_ids']);
+				
+				if(
+					$c['new_product_ids']!=$c['product_ids'] ||
+					$c['new_branch_product_ids']!=$c['branch_product_ids']
+				) {
+					$where = $shop->getWhere();
+					$where[] = 'AND';
+					$where['entity_id'] = $id;
+					
+					Category_ShopData::updateData(
+						data: [
+							'product_ids'           => $c['new_product_ids'],
+							'branch_product_ids'    => $c['new_branch_product_ids'],
+							'products_count'        => $c['new_products_count'],
+							'branch_products_count' => $c['new_branch_products_count'],
+						],
+						where: $where
+					);
+				}
+			}
+		}
+	}
+	
+	public static function productActivated( int $product_id ) : void
+	{
+		static::actualizeProductAssoc( product_id: $product_id );
+	}
+	
+	
+	public static function productDeactivated( int $product_id ) : void
+	{
+		static::actualizeProductAssoc( product_id: $product_id );
+	}
+	
+	public static function productDeleted( int $product_id ) : void
+	{
+		$category_ids = Category_Product::dataFetchCol(select:['category_id'], where:['product_id'=>$product_id]);
+		
+		if(!$category_ids) {
+			return;
+		}
+		
+		$root_ids = static::dataFetchCol(select: ['root_id'], where: ['id'=>$category_ids]);
+		$root_ids = array_unique($root_ids);
+		
+		Category_Product::dataDelete([
+			'product_id' => $product_id
+		]);
+		
+		foreach($root_ids as $root_id) {
+			static::actualizeBranchProductAssoc( $root_id );
+		}
+		
+	}
 }

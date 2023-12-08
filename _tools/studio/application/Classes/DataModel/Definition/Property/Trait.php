@@ -122,7 +122,7 @@ trait DataModel_Definition_Property_Trait
 			} );
 			$old_name = $this->getName();
 			$name_field->setValidator( function( Form_Field_Input $field ) use ( $old_name ) {
-				return DataModel_Definition_Property::checkPropertyName( $field, $old_name );
+				return DataModel_Definition_Property::checkPropertyName( $field->getValue(), $field, $old_name );
 			} );
 			$name_field->setIsReadonly( true );
 
@@ -130,6 +130,7 @@ trait DataModel_Definition_Property_Trait
 			$type_field = new Form_Field_Select( 'type', 'Type:' );
 			$type_field->setDefaultValue( $this->getType() );
 			$type_field->setSelectOptions( DataModel_Definition_Property::getPropertyTypes() );
+			$type_field->setIsReadonly( true );
 			$type_field->setIsRequired( true );
 			$type_field->setErrorMessages( [
 				Form_Field::ERROR_CODE_EMPTY          => 'Please select property type',
@@ -228,26 +229,28 @@ trait DataModel_Definition_Property_Trait
 
 		$result = $this;
 
+		/*
 		if(
 			$form->fieldExists( 'type' ) &&
 			$form->field( 'type' )->getValue() != $this->getType()
 		) {
 			$type = $form->field( 'type' )->getValue();
 
-			$class_name = __NAMESPACE__ . '\\DataModels_Property_' . $type;
+			$class_name = DataModel_Definition_Property::class.'_'.$type;
 
-			/**
+			$model = DataModels::getCurrentModel();
+			
 			 * @var DataModel_Definition_Property_Interface $new_property ;
-			 */
-			$new_property = new $class_name();
+			$new_property = new $class_name( $model->getClass()->getClassName(), $form->field('name')->getValue() );
 			$new_property->setName( $this->getName() );
 			$new_property->setIsId( $this->getIsId() );
 			$new_property->setIsKey( $this->getIsKey() );
-
-			DataModels::getCurrentModel()->addProperty( $new_property );
+			
+			$model->addProperty( $new_property );
 
 			$result = $new_property;
 		}
+		*/
 
 		$form->catchFieldValues();
 
@@ -622,6 +625,7 @@ trait DataModel_Definition_Property_Trait
 			Application::handleError( $e );
 		}
 
+		
 		return $ok;
 	}
 
@@ -663,6 +667,7 @@ trait DataModel_Definition_Property_Trait
 			}
 
 			$parser->actualize_setUse( $created_class->getUse() );
+			
 
 			IO_File::write(
 				$class->getScriptPath(),
@@ -670,7 +675,6 @@ trait DataModel_Definition_Property_Trait
 			);
 
 			Cache::resetOPCache();
-
 
 		} catch( Exception $e ) {
 			$ok = false;

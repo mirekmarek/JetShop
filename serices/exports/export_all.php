@@ -1,5 +1,5 @@
 <?php
-namespace JetShop;
+namespace JetApplication;
 
 require __DIR__.'/../../application/bootstrap_service.php';
 

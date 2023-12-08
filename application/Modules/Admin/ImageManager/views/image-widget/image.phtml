@@ -1,0 +1,53 @@
+<?php
+namespace JetApplicationModule\Admin\ImageManager;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_icon;
+use Jet\UI_messages;
+use Jet\Form;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $upload_form
+ * @var Image $image
+ */
+$image = $this->getRaw('image');
+
+$editable = $this->getBool('editable');
+
+if($editable) {
+	$delete_form = $image->getDeleteForm();
+	$upload_form = $image->getUploadForm();
+} else {
+	$delete_form = null;
+	$upload_form = null;
+}
+
+
+$image_path = $image->getImage();
+
+$image_thb_url = $image->getThumbnailUrl( 190, 190 )
+?>
+<?php if($image_path):?>
+	<div class="image-thumbnail"  id="<?=$image->getHTMLElementId()?>_img" data-url="<?=$image_thb_url?>" style="width:200px;height:200px;background-image: url(<?=$image_thb_url?>);">
+		<?php if( $delete_form ): ?>
+		<?=$delete_form->start()?>
+		<?=UI::button_delete(' ')->setOnclick("Images.deleteImage(this.form.id, '{$image->getKey()}')")?>
+		<?=$delete_form->end()?>
+		<?php endif; ?>
+	</div>
+
+	<?php if(
+		$upload_form &&
+		$upload_form->getValidationErrors()
+	):
+		echo UI_messages::createDanger( $upload_form->field('image')->getLastErrorMessage() );
+	endif;
+else: ?>
+	<div class="image-thumbnail" style="width:200px;height:200px;display: flex;">
+		<div style="opacity: 10%;margin:auto;">
+		<?=UI::icon('image')->setSize(UI_icon::SIZE_EXTRA_LARGE)?>
+		</div>
+	</div>
+<?php endif; ?>

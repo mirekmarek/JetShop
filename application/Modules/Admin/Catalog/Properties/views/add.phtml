@@ -2,18 +2,18 @@
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Tr;
-use JetApplication\Property as Properties;
 
 use Jet\UI;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
-use JetApplication\Shops;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Properties     $property
+ * @var Property     $property
  */
 $form = $this->getRaw( 'form' );
 
@@ -41,7 +41,6 @@ $router = $this->getController()->getControllerRouter();
 <div class="row">
 	<div class="col-md-12" id="main-col">
 		<?php
-		echo $form->field('is_active');
 		echo $form->field('internal_name');
 		echo $form->field('internal_notes');
 		
@@ -49,35 +48,30 @@ $router = $this->getController()->getControllerRouter();
 		if($form->fieldExists('decimal_places')) {
 			echo $form->field('decimal_places');
 		}
-		
-		foreach(Shops::getListSorted() as $shop):
-			$shop_key= $shop->getKey();
-			$shop_data = $property->getShopData( $shop );
-			
-			$form->field('/shop_data/'.$shop_key.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."')");
-			$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
-			?>
-		<?=$shop_data->renderShopDataBlock_start()?>
+		?>
+		<?php
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($property, $form) : void {
+				$form->field('/shop_data/'.$shop_key.'/label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."')");
+				$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
 
-		<fieldset>
-			<legend class="sub"><?=Tr::_('Main data')?></legend>
-			<?php
-			echo $form->field('/shop_data/'.$shop_key.'/is_active');
-			echo $form->field('/shop_data/'.$shop_key.'/label');
-			echo $form->field('/shop_data/'.$shop_key.'/description');
-			
-			if($form->fieldExists('/shop_data/'.$shop_key.'/bool_yes_description')) {
-				echo $form->field('/shop_data/'.$shop_key.'/bool_yes_description');
-			}
-			
-			echo $form->field('/shop_data/'.$shop_key.'/url_param');
-			echo $form->field('/shop_data/'.$shop_key.'/units');
-			?>
-		</fieldset>
-
-		<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
-
+				?>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					<?php
+					echo $form->field('/shop_data/'.$shop_key.'/label');
+					echo $form->field('/shop_data/'.$shop_key.'/description');
+					
+					if($form->fieldExists('/shop_data/'.$shop_key.'/bool_yes_description')) {
+						echo $form->field('/shop_data/'.$shop_key.'/bool_yes_description');
+					}
+					
+					echo $form->field('/shop_data/'.$shop_key.'/url_param');
+					echo $form->field('/shop_data/'.$shop_key.'/units');
+					?>
+				</fieldset>
+			<?php }); ?>
 	</div>
 </div>
 

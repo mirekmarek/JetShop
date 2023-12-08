@@ -1,16 +1,6 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Logger;
-use Jet\UI_messages;
-
-use Jet\Http_Headers;
-use Jet\Http_Request;
-use Jet\Tr;
-
-use JetApplication\Category;
-use JetApplication\Product;
-
 
 /**
  *
@@ -24,48 +14,6 @@ trait Controller_Main_Edit_Categories
 		
 		$product = static::getCurrentProduct();
 		
-		$allowed = true;
-		if( $product->getType()==Product::PRODUCT_TYPE_VARIANT ) {
-			$allowed = false;
-		}
-		
-		if($allowed) {
-			$POST = Http_Request::POST();
-			
-			$updated = false;
-			switch($POST->getString('action')) {
-				case 'add_category':
-					if($product->addCategory( $POST->getInt('category_id') )) {
-						$updated = true;
-					}
-					break;
-				case 'remove_category':
-					if($product->removeCategory( $POST->getInt('category_id') )) {
-						$updated = true;
-					}
-					break;
-			}
-			
-			if($updated) {
-				Category::syncCategories();
-				
-				Logger::success(
-					'product_updated',
-					'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-					$product->getId(),
-					$product->getAdminTitle(),
-					$product
-				);
-				
-				UI_messages::success(
-					Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-				);
-				
-				Http_Headers::reload();
-			}
-		} else {
-			$product->getEditForm()->setIsReadonly();
-		}
 		
 		$this->output( 'edit/categories' );
 	}

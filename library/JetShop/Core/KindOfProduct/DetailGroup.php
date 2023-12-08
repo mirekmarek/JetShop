@@ -12,7 +12,6 @@ use Jet\DataModel_Related_1toN;
 
 use JetApplication\KindOfProduct;
 use JetApplication\KindOfProduct_DetailGroup_Property;
-use JetApplication\PropertyGroup;
 use JetApplication\Property;
 
 /**
@@ -79,11 +78,6 @@ abstract class Core_KindOfProduct_DetailGroup extends DataModel_Related_1toN
 		$this->group_id = $group_id;
 	}
 	
-	public function getGroup() : PropertyGroup
-	{
-		return PropertyGroup::get($this->group_id);
-	}
-	
 	public function getPriority(): int
 	{
 		return $this->priority;
@@ -100,8 +94,7 @@ abstract class Core_KindOfProduct_DetailGroup extends DataModel_Related_1toN
 			return false;
 		}
 		
-		$property = Property::get($property_id);
-		if(!$property) {
+		if(!Property::exists($property_id)) {
 			return false;
 		}
 		

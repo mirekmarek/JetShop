@@ -6,7 +6,7 @@ use JetApplication\Shops_Shop;
 use JetApplication\ProductListing_Sort_Option;
 
 abstract class Core_ProductListing_Sort {
-	const CACHE_KEY = 'sort';
+	public const CACHE_KEY = 'sort';
 
 	protected ProductListing $listing;
 	protected Shops_Shop $shop;

@@ -13,8 +13,8 @@ use Jet\Logger;
 use JetApplication\Auth_Administrator_Role as Role;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
-
 use Jet\MVC_Controller_Default;
+use Jet\MVC_View;
 
 use Jet\UI_messages;
 
@@ -23,85 +23,81 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetApplicationModule\Admin\UI\Main as UI_module;
-
 /**
  *
  */
 class Controller_Main extends MVC_Controller_Default
 {
-
-	/**
-	 * @var ?MVC_Controller_Router_AddEditDelete
-	 */
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
-	/**
-	 * @var ?Role
-	 */
 	protected ?Role $role = null;
+	
+	protected ?Listing $listing = null;
 
-
-	/**
-	 *
-	 * @return MVC_Controller_Router_AddEditDelete
-	 */
 	public function getControllerRouter(): MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function( $id ) {
+				controller: $this,
+				item_catcher: function( $id ) : bool {
 					return (bool)($this->role = Role::get( $id ));
 				},
-				[
-					'listing' => Main::ACTION_GET_ROLE,
-					'view'    => Main::ACTION_GET_ROLE,
-					'add'     => Main::ACTION_ADD_ROLE,
-					'edit'    => Main::ACTION_UPDATE_ROLE,
-					'delete'  => Main::ACTION_DELETE_ROLE,
+				actions_map: [
+					'listing' => Main::ACTION_GET,
+					'view'    => Main::ACTION_GET,
+					'add'     => Main::ACTION_ADD,
+					'edit'    => Main::ACTION_UPDATE,
+					'delete'  => Main::ACTION_DELETE,
 				]
 			);
 		}
 
 		return $this->router;
 	}
-
-
-	/**
-	 * @param string $current_label
-	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ): void
+	
+	protected function getListing() : Listing
 	{
-		UI_module::initBreadcrumb();
-
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
+		if(!$this->listing) {
+			$column_view = new MVC_View( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = new MVC_View( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
 		}
+		
+		return $this->listing;
 	}
-
-	/**
-	 *
-	 */
+	
+	
 	public function listing_Action(): void
 	{
-		$this->_setBreadcrumbNavigation();
-
-		$listing = new Listing();
+		
+		$listing = $this->getListing();
 		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm() );
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
+		
+		$this->view->setVar( 'listing', $listing );
+		
 		$this->output( 'list' );
 	}
+	
+	protected function handleListingOnDetail() : void
+	{
+		$listing = $this->getListing();
+		$listing->handle();
+		
+		$list_uri = $listing->getURI();
+		Navigation_Breadcrumb::getItems()[1]->setURL( $list_uri );
+		$this->view->setVar( 'list_url', $list_uri );
+	}
 
-	/**
-	 *
-	 */
 	public function add_Action(): void
 	{
-		$this->_setBreadcrumbNavigation( Tr::_( 'Create a new Role' ) );
+		$this->handleListingOnDetail();
+		Navigation_Breadcrumb::addURL( Tr::_( 'Create a new Role' ) );
 
 		$role = new Role();
 
@@ -137,9 +133,10 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function edit_Action(): void
 	{
+		$this->handleListingOnDetail();
 		$role = $this->role;
-
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit role <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] ) );
+		
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit role <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] ) );
 
 		$form = $role->getEditForm();
 
@@ -173,9 +170,10 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function view_Action(): void
 	{
+		$this->handleListingOnDetail();
 		$role = $this->role;
-
-		$this->_setBreadcrumbNavigation(
+		
+		Navigation_Breadcrumb::addURL(
 			Tr::_( 'Role detail <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] )
 		);
 
@@ -197,9 +195,10 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function delete_action(): void
 	{
+		$this->handleListingOnDetail();
 		$role = $this->role;
-
-		$this->_setBreadcrumbNavigation(
+		
+		Navigation_Breadcrumb::addURL(
 			Tr::_( 'Delete role <b>%ROLE_NAME%</b>', ['ROLE_NAME' => $role->getName()] )
 		);
 

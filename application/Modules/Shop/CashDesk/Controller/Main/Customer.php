@@ -133,7 +133,7 @@ trait Controller_Main_Customer {
 	}
 
 
-	public function customer_set_password_Action()
+	public function customer_set_password_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -148,7 +148,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_registration_back_Action()
+	public function customer_registration_back_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -160,7 +160,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_registration_do_not_register_Action()
+	public function customer_registration_do_not_register_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -176,7 +176,7 @@ trait Controller_Main_Customer {
 	}
 
 
-	public function customer_set_is_person_Action()
+	public function customer_set_is_person_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -187,7 +187,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_set_is_company_Action()
+	public function customer_set_is_company_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -198,7 +198,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_billing_address_catch_field_Action()
+	public function customer_billing_address_catch_field_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -233,7 +233,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_billing_address_send_Action()
+	public function customer_billing_address_send_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -267,7 +267,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_back_to_billing_address_Action()
+	public function customer_back_to_billing_address_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -284,7 +284,7 @@ trait Controller_Main_Customer {
 	}
 
 
-	public function customer_delivery_address_set_the_same_Action()
+	public function customer_delivery_address_set_the_same_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -303,7 +303,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_delivery_address_set_different_Action()
+	public function customer_delivery_address_set_different_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -318,7 +318,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_back_to_delivery_address_Action()
+	public function customer_back_to_delivery_address_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -335,7 +335,7 @@ trait Controller_Main_Customer {
 	}
 
 
-	public function customer_delivery_address_catch_field_Action()
+	public function customer_delivery_address_catch_field_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -370,7 +370,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_delivery_address_send_Action()
+	public function customer_delivery_address_send_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -390,7 +390,7 @@ trait Controller_Main_Customer {
 		$response->response();
 	}
 
-	public function customer_login_Action()
+	public function customer_login_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -417,7 +417,7 @@ trait Controller_Main_Customer {
 
 	}
 
-	public function customer_billing_address_select_Action()
+	public function customer_billing_address_select_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();
@@ -438,7 +438,7 @@ trait Controller_Main_Customer {
 
 	}
 
-	public function customer_delivery_address_select_Action()
+	public function customer_delivery_address_select_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = CashDesk::get();

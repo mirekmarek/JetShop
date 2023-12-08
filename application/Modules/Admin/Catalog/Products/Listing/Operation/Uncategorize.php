@@ -1,13 +1,15 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\DataListing_Operation;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Category;
 
 
-class Listing_Operation_Uncategorize extends Listing_Operation
+class Listing_Operation_Uncategorize extends DataListing_Operation
 {
+	public const KEY = 'uncategorize';
 	
 	/**
 	 * @var Category[]
@@ -23,12 +25,12 @@ class Listing_Operation_Uncategorize extends Listing_Operation
 	
 	public function getKey(): string
 	{
-		return 'uncategorize';
+		return static::KEY;
 	}
 	
 	public function getTitle(): string
 	{
-		return 'Uncategorize products';
+		return Tr::_('Uncategorize products');
 	}
 	
 	public function getOperationGetParams(): array
@@ -38,8 +40,6 @@ class Listing_Operation_Uncategorize extends Listing_Operation
 	
 	public function init( array $products ): void
 	{
-		parent::init( $products );
-		
 		$this->categories = [];
 		foreach($this->products as $product) {
 			foreach($product->getCategories() as $category) {
@@ -107,8 +107,6 @@ class Listing_Operation_Uncategorize extends Listing_Operation
 				$p->removeCategory($cat->getId());
 			}
 		}
-		
-		Category::syncCategories();
 	}
 	
 }

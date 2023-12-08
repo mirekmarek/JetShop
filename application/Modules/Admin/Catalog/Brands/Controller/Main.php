@@ -12,37 +12,38 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
+use Jet\Factory_MVC;
 
-use JetApplication\Application_Admin;
-use JetApplication\Brand;
-
-use JetApplication\Shops;
-use JetApplicationModule\Admin\UI\Main as UI_module;
+use JetApplication\Admin_Managers;
 
 /**
  *
  */
 class Controller_Main extends MVC_Controller_Default
 {
-
+	
 	protected ?Brand $brand = null;
 
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-
+	
+	protected ?Listing $listing = null;
+	
 	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
-					return (bool)($this->brand = Brand::get((int)$id));
+					$this->brand = Brand::get((int)$id);
+					$this->brand?->setEditable(Main::getCurrentUserCanEdit());
+					return (bool)($this->brand);
 				},
 				[
-					'listing'=> Main::ACTION_GET_BRAND,
-					'view'   => Main::ACTION_GET_BRAND,
-					'add'    => Main::ACTION_ADD_BRAND,
-					'edit'   => Main::ACTION_UPDATE_BRAND,
-					'delete' => Main::ACTION_DELETE_BRAND,
+					'listing'=> Main::ACTION_GET,
+					'view'   => Main::ACTION_GET,
+					'add'    => Main::ACTION_ADD,
+					'edit'   => Main::ACTION_GET,
+					'delete' => Main::ACTION_DELETE,
 				]
 			);
 		}
@@ -52,23 +53,40 @@ class Controller_Main extends MVC_Controller_Default
 
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		Admin_Managers::UI()->initBreadcrumb();
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
 	}
-
+	
+	protected function getListing() : Listing
+	{
+		if(!$this->listing) {
+			$column_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
+		}
+		
+		return $this->listing;
+	}
+	
+	/**
+	 *
+	 */
 	public function listing_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
-
-		$listing = new Listing();
+		$listing = $this->getListing();
 		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
+		
+		$this->view->setVar( 'listing', $listing );
+		
 		$this->output( 'list' );
 	}
 
@@ -86,14 +104,14 @@ class Controller_Main extends MVC_Controller_Default
 
 			Logger::success(
 				event: 'brand_created',
-				event_message: 'Brand \''.$brand->getName().'\' ('.$brand->getId().') created',
+				event_message: 'Brand \''.$brand->getInternalName().'\' ('.$brand->getId().') created',
 				context_object_id: $brand->getId(),
-				context_object_name: $brand->getName(),
+				context_object_name: $brand->getInternalName(),
 				context_object_data: $brand
 			);
 
 			UI_messages::success(
-				Tr::_( 'Brand <b>%NAME%</b> has been created', [ 'NAME' => $brand->getName() ] )
+				Tr::_( 'Brand <b>%NAME%</b> has been created', [ 'NAME' => $brand->getInternalName() ] )
 			);
 
 			Http_Headers::reload( ['id'=>$brand->getId()], ['action'] );
@@ -110,26 +128,12 @@ class Controller_Main extends MVC_Controller_Default
 	public function edit_Action() : void
 	{
 		$brand = $this->brand;
-
-		Application_Admin::handleUploadTooLarge();
-
-
-		foreach(Shops::getList() as $shop) {
-			$brand->getShopData( $shop )->catchImageWidget(
-				shop: $shop,
-				entity_name: 'Sticker',
-				object_id: $brand->getId(),
-				object_name: $brand->getName(),
-				upload_event: 'brand_image_uploaded',
-				delete_event: 'brand_image_deleted'
-			);
-		}
-
-
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit brand <b>%NAME%</b>', [ 'NAME' => $brand->getName() ] ) );
-
-
-
+		
+		$brand->handleActivation();
+		$brand->handleImages();
+		
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit brand <b>%NAME%</b>', [ 'NAME' => $brand->getInternalName() ] ) );
+		
 		$form = $brand->getEditForm();
 
 		if( $brand->catchEditForm() ) {
@@ -138,14 +142,14 @@ class Controller_Main extends MVC_Controller_Default
 
 			Logger::success(
 				event: 'brand_updated',
-				event_message: 'Brand \''.$brand->getName().'\' ('.$brand->getId().') updated',
+				event_message: 'Brand \''.$brand->getInternalName().'\' ('.$brand->getId().') updated',
 				context_object_id: $brand->getId(),
-				context_object_name: $brand->getName(),
+				context_object_name: $brand->getInternalName(),
 				context_object_data: $brand
 			);
 
 			UI_messages::success(
-				Tr::_( 'Brand <b>%NAME%</b> has been updated', [ 'NAME' => $brand->getName() ] )
+				Tr::_( 'Brand <b>%NAME%</b> has been updated', [ 'NAME' => $brand->getInternalName() ] )
 			);
 
 			Http_Headers::reload();
@@ -163,7 +167,7 @@ class Controller_Main extends MVC_Controller_Default
 		$brand = $this->brand;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Brand detail <b>%NAME%</b>', [ 'NAME' => $brand->getName() ] )
+			Tr::_( 'Brand detail <b>%NAME%</b>', [ 'NAME' => $brand->getInternalName() ] )
 		);
 
 		$form = $brand->getEditForm();
@@ -182,7 +186,7 @@ class Controller_Main extends MVC_Controller_Default
 		$brand = $this->brand;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete brand <b>%NAME%</b>', [ 'NAME' => $brand->getName() ] )
+			Tr::_( 'Delete brand <b>%NAME%</b>', [ 'NAME' => $brand->getInternalName() ] )
 		);
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
@@ -190,14 +194,14 @@ class Controller_Main extends MVC_Controller_Default
 
 			Logger::success(
 				event: 'brand_deleted',
-				event_message: 'Brand \''.$brand->getName().'\' ('.$brand->getId().') deleted',
+				event_message: 'Brand \''.$brand->getInternalName().'\' ('.$brand->getId().') deleted',
 				context_object_id: $brand->getId(),
-				context_object_name: $brand->getName(),
+				context_object_name: $brand->getInternalName(),
 				context_object_data: $brand
 			);
 
 			UI_messages::info(
-				Tr::_( 'Brand <b>%NAME%</b> has been deleted', [ 'NAME' => $brand->getName() ] )
+				Tr::_( 'Brand <b>%NAME%</b> has been deleted', [ 'NAME' => $brand->getInternalName() ] )
 			);
 
 			Http_Headers::reload([], ['action', 'id']);

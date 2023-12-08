@@ -1,14 +1,15 @@
 <?php
-
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use JetApplication\XLSXWriter;
+use Jet\DataListing_Export;
+use Jet\Tr;
+use XLSXWriter\XLSXWriter;
 
-class Listing_Export_XLSX extends Listing_Export
+class Listing_Export_XLSX extends DataListing_Export
 {
 	public function getTitle() : string
 	{
-		return 'to XLSX';
+		return Tr::_('to XLSX');
 	}
 	
 	public function getKey() : string

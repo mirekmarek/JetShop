@@ -5,7 +5,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_badge;
-use JetApplication\Category;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
@@ -29,7 +29,7 @@ $form = $product->getEditForm();
 				<table style="position: relative;top: 15px;">
 					<tr>
 						<td style="padding-left: 30px;font-weight: bolder;"><?=Tr::_('Add category: ')?></td>
-						<td style="width: 400px;"><?=Category::renderSelectCategoryWidget("$('#category_add_form__category_id').val(selected_item.id);$('#category_add_form').submit();" )?></td>
+						<td style="width: 400px;"><?=Admin_Managers::Category()->renderSelectWidget("$('#category_add_form__category_id').val(selected_item.id);$('#category_add_form').submit();" )?></td>
 					</tr>
 				</table>
 

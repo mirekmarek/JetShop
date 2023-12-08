@@ -8,6 +8,7 @@
 namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Logger;
+use JetApplication\Admin_Managers;
 use JetApplication\Order as Order;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
@@ -49,9 +50,9 @@ class Controller_Main extends MVC_Controller_Default
 					return (bool)($this->order = Order::get((int)$id));
 				},
 				[
-					'listing'=> Main::ACTION_GET_ORDER,
-					'view'   => Main::ACTION_GET_ORDER,
-					'edit'   => Main::ACTION_UPDATE_ORDER,
+					'listing'=> Main::ACTION_GET,
+					'view'   => Main::ACTION_GET,
+					'edit'   => Main::ACTION_UPDATE,
 				]
 			);
 		}
@@ -64,7 +65,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		Admin_Managers::UI()->initBreadcrumb();
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );

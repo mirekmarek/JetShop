@@ -27,7 +27,7 @@ abstract class Core_Order_Event_HandlerModule extends Application_Module
 	protected ?array $notifications = null;
 
 
-	public function init( Order_Event $event )
+	public function init( Order_Event $event ) : void
 	{
 		$this->event = $event;
 		$order = $event->getOrder();

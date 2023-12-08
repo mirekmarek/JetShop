@@ -13,20 +13,39 @@ namespace Jet;
  */
 class Auth extends BaseObject
 {
-
+	
+	/**
+	 * @var callable|null
+	 */
+	protected static $controller_provider = null;
 
 	/**
 	 *
-	 * @var Auth_Controller_Interface
+	 * @var Auth_Controller_Interface|null
 	 */
-	protected static Auth_Controller_Interface $controller;
-
+	protected static ?Auth_Controller_Interface $controller = null;
+	
+	/**
+	 * @param callable $provider
+	 */
+	public static function setControllerProvider( callable $provider ): void
+	{
+		static::$controller_provider = $provider;
+	}
+	
 	/**
 	 *
 	 * @return Auth_Controller_Interface
 	 */
 	public static function getController(): Auth_Controller_Interface
 	{
+		if(
+			!static::$controller &&
+			($provider = static::$controller_provider)
+		) {
+			static::$controller = $provider();
+		}
+		
 		return static::$controller;
 	}
 
@@ -57,6 +76,15 @@ class Auth extends BaseObject
 	public static function login( string $username, string $password ): bool
 	{
 		return static::getController()->login( $username, $password );
+	}
+
+	/**
+	 * @param Auth_User_Interface $user
+	 * @return bool
+	 */
+	public static function loginUser( Auth_User_Interface $user ): bool
+	{
+		return static::getController()->loginUser( $user );
 	}
 
 	/**

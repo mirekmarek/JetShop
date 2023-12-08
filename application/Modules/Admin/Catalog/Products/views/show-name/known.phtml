@@ -1,0 +1,12 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Product $product
+ */
+$product = $this->getRaw('product');
+?>
+<a href="<?=$product->getEditURL()?>"><?=$product->getAdminTitle()?></a>

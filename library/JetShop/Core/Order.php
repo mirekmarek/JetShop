@@ -4,9 +4,8 @@ namespace JetShop;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
 
-use JetApplication\CommonEntity_ShopRelationTrait;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Order_Item;
 use JetApplication\Delivery_Method;
 use JetApplication\Payment_Method;
@@ -18,10 +17,6 @@ use JetApplication\Order_Event;
 #[DataModel_Definition(
 	name: 'order',
 	database_table_name: 'orders',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	],
 	key: [
 		'name' => 'key',
 		'property_names' => [
@@ -30,15 +25,8 @@ use JetApplication\Order_Event;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Order extends DataModel {
-	use CommonEntity_ShopRelationTrait;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-	)]
-	protected int $id = 0;
-
+abstract class Core_Order extends Entity_WithShopRelation {
+	
 	/**
 	 * @var string
 	 */

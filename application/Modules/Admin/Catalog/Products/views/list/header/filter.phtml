@@ -1,0 +1,48 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Form;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View     $this
+ * @var Form         $filter_form
+ * @var Listing      $listing
+ */
+$filter_form = $this->getRaw( 'filter_form' );
+$listing = $this->getRaw('listing');
+?>
+
+
+<?=$filter_form->start()?>
+
+<div class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6">
+		<?=$listing->filter( Listing_Filter_Categories::KEY )->renderForm()?>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6">
+		<?=$listing->filter( Listing_Filter_Search::KEY )->renderForm()?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+	</div>
+</div>
+<div class="row">
+	<div class="col-12 col-lg-6 col-xl-5">
+		<?=$listing->filter( Listing_Filter_ProductKind::KEY )->renderForm()?>
+	</div>
+	<div class="col-12 col-lg-6 col-xl-5">
+		<?=$listing->filter( Listing_Filter_ProductType::KEY )->renderForm()?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+		<?=$listing->filter( Listing_Filter_IsActive::KEY )->renderForm()?>
+	</div>
+</div>
+<?=$filter_form->end()?>

@@ -1,0 +1,507 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\ImageManager;
+
+use Jet\Data_Image;
+use Jet\Exception;
+use Jet\Form;
+use Jet\Form_Field_FileImage;
+use Jet\IO_Dir;
+use Jet\IO_File;
+use Jet\Logger;
+use Jet\SysConf_Path;
+use Jet\SysConf_URI;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops_Shop;
+
+class Image {
+	
+	protected static string $thb_dir = '_thb';
+	
+	protected static ?string $root_path = null;
+	
+	protected static ?string $root_url = null;
+	
+	protected string $entity;
+	
+	protected string|int $object_id;
+	
+	protected string $image_class;
+	
+	protected string $image_title;
+	
+	protected ?Form $upload_form = null;
+	
+	protected ?Form $delete_form = null;
+	
+	/**
+	 * @var callable|null
+	 */
+	protected $image_property_getter;
+	
+	/**
+	 * @var callable|null
+	 */
+	protected $image_property_setter;
+	
+	protected ?Shops_Shop $shop;
+	
+	public static function getRootPath(): string
+	{
+		if(!static::$root_path) {
+			static::$root_path = SysConf_Path::getImages();
+		}
+		
+		return static::$root_path;
+	}
+	
+	public static function setRootPath( string $root_path ) : void
+	{
+		static::$root_path = $root_path;
+	}
+	
+	
+	public static function getThbDir() : string
+	{
+		return static::$thb_dir;
+	}
+	
+	public static function setThbDir( string $thb_dir ) : void
+	{
+		static::$thb_dir = $thb_dir;
+	}
+	
+	public static function getRootUrl() : string
+	{
+		if(!static::$root_url) {
+			static::$root_url = SysConf_URI::getImages();
+		}
+		
+		return static::$root_url;
+	}
+	
+	public static function setRootUrl( string $root_url ) : void
+	{
+		static::$root_url = $root_url;
+	}
+	
+	
+	
+	public function __construct(
+		string $entity,
+		string|int $object_id,
+		string $image_class,
+		string $image_title,
+		?callable $image_property_getter=null,
+		?callable $image_property_setter=null,
+		?Shops_Shop $shop=null,
+	) {
+		$this->entity = $entity;
+		$this->object_id = $object_id;
+		$this->image_class = $image_class;
+		$this->image_title = $image_title;
+		$this->image_property_getter = $image_property_getter;
+		$this->image_property_setter = $image_property_setter;
+		
+		$this->shop = $shop;
+	}
+	
+	public function getKey() : string
+	{
+		$key = $this->entity.'_'.$this->object_id;
+		
+		
+		if($this->image_class) {
+			$key .= '_'.$this->image_class;
+		}
+		
+		if($this->shop) {
+			$key .= '_'.$this->shop->getKey();
+		}
+
+		return $key;
+	}
+	
+	public function getImagePropertyGetter(): ?callable
+	{
+		return $this->image_property_getter;
+	}
+	
+	public function setImagePropertyGetter( ?callable $image_property_getter ): void
+	{
+		$this->image_property_getter = $image_property_getter;
+	}
+	
+	public function getImagePropertySetter(): ?callable
+	{
+		return $this->image_property_setter;
+	}
+	
+	public function setImagePropertySetter( ?callable $image_property_setter ): void
+	{
+		$this->image_property_setter = $image_property_setter;
+	}
+	
+	
+	
+	protected function calcNumericPath() : string
+	{
+		$object_id = $this->object_id;
+		
+		if(is_string($object_id)) {
+			return $object_id;
+		}
+		
+		$map = [];
+		
+		$numerical_order = 100000;
+		
+		$number = $object_id;
+		while( $numerical_order>=10 ) {
+			$c = floor($number/$numerical_order);
+			
+			$map[$numerical_order] = $c;
+			
+			$number = $number-($c*$numerical_order);
+			
+			$numerical_order = $numerical_order/10;
+		}
+		
+		return implode('/',$map);
+	}
+	
+	protected function _getDir() : string
+	{
+		$dir = '';
+		
+		if($this->shop) {
+			$dir .= $this->shop->getKey().'/';
+		}
+		
+		$dir .= $this->entity.'/';
+		
+		if($this->image_class) {
+			$dir .= $this->image_class.'/';
+		}
+		
+		$dir .= $this->calcNumericPath().'/';
+		
+		return $dir;
+	}
+	
+	
+	public function getThbRootDir() : string
+	{
+		
+		$dir = static::getThbDir().'/'.$this->_getDir();
+		
+		$full_path = static::getRootPath().$dir;
+		if(!IO_Dir::exists($full_path)) {
+			IO_Dir::create( $full_path );
+		}
+		
+		return $dir;
+	}
+	
+	public function getDirPath() : string
+	{
+		$dir = $this->_getDir();
+		
+		$full_path = static::getRootPath().$dir;
+
+		if(!IO_Dir::exists($full_path)) {
+			IO_Dir::create( $full_path );
+		}
+		
+		return $dir;
+	}
+	
+	public function upload( string $tmp_path ) : string
+	{
+		try {
+			$image = new Data_Image( $tmp_path );
+		} catch(Exception $e) {
+			return '';
+		}
+		
+
+		$target_path = $this->getDirPath().uniqid().uniqid().image_type_to_extension( $image->getImgType() );
+		
+		IO_File::moveUploadedFile( $tmp_path, static::getRootPath().$target_path );
+		
+		if( ($current_image = $this->getImage()) ) {
+			$this->delete();
+		}
+		
+		$this->setImage( $target_path );
+		
+		return $target_path;
+	}
+	
+	public function delete() : void
+	{
+		if( !($current_image = $this->getImage()) ) {
+			return;
+		}
+		
+		$thb_dir = static::getRootPath().$this->getThbRootDir();
+
+		
+		$shop = $this->shop;
+		$entity = $this->entity;
+		$image_class = $this->image_class;
+		
+		
+		
+		$thumbnails = IO_Dir::getFilesList( $thb_dir, '*__'.basename($current_image) );
+		
+		foreach( $thumbnails as $path=>$file_name ) {
+			IO_File::delete( $path );
+		}
+		
+		$path = static::getRootPath().$current_image;
+		if(IO_File::exists($path)) {
+			IO_File::delete( $path );
+		}
+		
+		$this->setImage('');
+	}
+	
+	public function getImage() : string
+	{
+		$getter = $this->image_property_getter;
+		if(!$getter) {
+			return '';
+		}
+		
+		return $getter() ? : '';
+	}
+	
+	public function setImage( string $value ) : void
+	{
+		$setter = $this->image_property_setter;
+		
+		if($setter) {
+			$setter( $value );
+		}
+	}
+	
+	public function getUrl() : string
+	{
+		if( !($current_image = $this->getImage()) ) {
+			return '';
+		}
+		
+		return static::getRootUrl().$current_image;
+	}
+	
+	public function getThumbnailUrl( int $max_w, int $max_h ) : string
+	{
+		
+		if( !($current_image = $this->getImage()) ) {
+			return '';
+		}
+		
+		
+		$thb_path = $this->getThbRootDir().$max_w.'x'.$max_h.'__'.basename($current_image);
+		
+		$thb_source_path = static::getRootPath().$current_image;
+		$thb_target_path = static::getRootPath().$thb_path;
+		
+		$url = static::getRootUrl().$thb_path;
+		
+		if(!IO_File::exists($thb_source_path)) {
+			return '';
+		}
+		
+		if(!IO_File::exists($thb_target_path)) {
+			$target_dir = dirname($thb_target_path);
+			if(!IO_Dir::exists($target_dir)) {
+				IO_Dir::create( $target_dir );
+			}
+			
+			$image = new Data_Image( $thb_source_path );
+			$image->createThumbnail( $thb_target_path, $max_w, $max_h );
+		}
+		
+		
+		return $url;
+	}
+	
+	
+	public function getUploadForm() : Form
+	{
+		if(!$this->upload_form) {
+			$image_field = new Form_Field_FileImage('image');
+			$image_field->setErrorMessages([
+				Form_Field_FileImage::ERROR_CODE_DISALLOWED_FILE_TYPE => 'Please upload image',
+				Form_Field_FileImage::ERROR_CODE_FILE_IS_TOO_LARGE => 'File is too large'
+			
+			]);
+			
+			
+			$form = new Form('image_upload_form_'.$this->getKey(), [
+				$image_field
+			]);
+			
+			$form->setCustomTranslatorDictionary( Admin_Managers::Image()->getModuleManifest()->getName() );
+			
+			$this->upload_form = $form;
+		}
+		
+		return $this->upload_form;
+	}
+	
+	public function catchUploadForm() : ?bool
+	{
+		$form = $this->getUploadForm();
+		
+		if(!$form->catchInput()) {
+			return null;
+		}
+		
+		if( !$form->validate() ) {
+			return false;
+		}
+		
+		/**
+		 * @var Form_Field_FileImage $image_field
+		 */
+		$image_field = $form->getField('image');
+		
+		$images = $image_field->getValidFiles();
+		
+		foreach($images as $image) {
+			$image = $this->upload( $image->getTmpFilePath() );
+			
+			if($image) {
+				if($this->shop) {
+					Logger::success(
+						event: 'image_uploaded:'.$this->entity.':'.$this->image_class,
+						event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' uploaded ('.$this->shop->getKey().')',
+						context_object_id: $this->object_id,
+						context_object_data: [
+							'entity'      => $this->entity,
+							'object_id'   => $this->object_id,
+							'image_class' => $this->image_class,
+							'shop'        => $this->shop->getKey(),
+							'image'       => $image
+						]
+					);
+				} else {
+					Logger::success(
+						event: 'image_uploaded:'.$this->entity.':'.$this->image_class,
+						event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' uploaded',
+						context_object_id: $this->object_id,
+						context_object_data: [
+							'entity'      => $this->entity,
+							'object_id'   => $this->object_id,
+							'image_class' => $this->image_class,
+							'image'       => $image
+						]
+					);
+				}
+			}
+
+			break;
+		}
+		
+		return true;
+	}
+	
+	
+	public function getDeleteForm() : Form
+	{
+		if(!$this->delete_form) {
+			$this->delete_form = new Form('image_delete_form_'.$this->getKey(), []);
+		}
+		
+		return $this->delete_form;
+		
+	}
+	
+	public function catchImageDeleteForm() : ?bool
+	{
+		$form = $this->getDeleteForm();
+		
+		if(!$form->catchInput()) {
+			return null;
+		}
+		
+		if( !$form->validate() ) {
+			return false;
+		}
+		
+		$image = $this->getImage();
+		
+		if($image) {
+			$this->delete();
+			
+			if($this->shop) {
+				Logger::success(
+					event: 'image_deleted:'.$this->entity.':'.$this->image_class,
+					event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' deleted ('.$this->shop->getKey().')',
+					context_object_id: $this->object_id,
+					context_object_data: [
+						'entity'      => $this->entity,
+						'object_id'   => $this->object_id,
+						'image_class' => $this->image_class,
+						'shop'        => $this->shop->getKey(),
+						'image'       => $image
+					]
+				);
+			} else {
+				Logger::success(
+					event: 'image_deleted:'.$this->entity.':'.$this->image_class,
+					event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' deleted',
+					context_object_id: $this->object_id,
+					context_object_data: [
+						'entity'      => $this->entity,
+						'object_id'   => $this->object_id,
+						'image_class' => $this->image_class,
+						'image'       => $image
+					]
+				);
+			}
+		}
+		
+		return true;
+	}
+
+	public function getEntity(): string
+	{
+		return $this->entity;
+	}
+	
+	public function getObjectId(): int|string
+	{
+		return $this->object_id;
+	}
+	
+	public function getImageClass(): string
+	{
+		return $this->image_class;
+	}
+	
+	public function getImageTitle(): string
+	{
+		return $this->image_title;
+	}
+	
+	public function getShop(): ?Shops_Shop
+	{
+		return $this->shop;
+	}
+	
+
+	public function getHTMLElementId() : string
+	{
+		return 'image_'.$this->getKey();
+	}
+	
+}

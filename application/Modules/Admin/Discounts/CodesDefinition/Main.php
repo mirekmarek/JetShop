@@ -14,12 +14,12 @@ use Jet\Application_Module;
  */
 class Main extends Application_Module
 {
-	const ADMIN_MAIN_PAGE = 'discounts-codes-definition';
+	public const ADMIN_MAIN_PAGE = 'discounts-codes-definition';
 
-	const ACTION_GET_DISCOUNTS_CODE = 'get_discounts_code';
-	const ACTION_ADD_DISCOUNTS_CODE = 'add_discounts_code';
-	const ACTION_UPDATE_DISCOUNTS_CODE = 'update_discounts_code';
-	const ACTION_DELETE_DISCOUNTS_CODE = 'delete_discounts_code';
+	public const ACTION_GET = 'get_discounts_code';
+	public const ACTION_ADD = 'add_discounts_code';
+	public const ACTION_UPDATE = 'update_discounts_code';
+	public const ACTION_DELETE = 'delete_discounts_code';
 
 
 

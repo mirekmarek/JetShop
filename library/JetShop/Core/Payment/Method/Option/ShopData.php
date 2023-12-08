@@ -1,19 +1,16 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel_Definition;
 use Jet\DataModel;
-use Jet\Form_Field;
+use Jet\DataModel_Definition;
 use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Tr;
-
-use JetApplication\Payment_Method_Option;
-use JetApplication\CommonEntity_ShopData;
-use JetApplication\Images_ShopDataInterface;
-use JetApplication\Images_ShopDataTrait;
+use JetApplication\Entity_WithCodeAndShopData_ShopData;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_ShopData;
+use JetApplication\Payment_Method_Option;
 use JetApplication\Payment_Method_Option_ShopData;
+use JetApplication\Payment_Method_ShopData;
 
 /**
  *
@@ -23,14 +20,12 @@ use JetApplication\Payment_Method_Option_ShopData;
 	database_table_name: 'payment_methods_options_shop_data',
 	parent_model_class: Payment_Method_Option::class
 )]
-abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
+abstract class Core_Payment_Method_Option_ShopData extends Entity_WithCodeAndShopData_ShopData {
 
-	const IMG_ICON1 = 'icon1';
-	const IMG_ICON2 = 'icon2';
-	const IMG_ICON3 = 'icon3';
+	public const  IMG_ICON1 = 'icon1';
+	public const  IMG_ICON2 = 'icon2';
+	public const  IMG_ICON3 = 'icon3';
 	
-	use Images_ShopDataTrait;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
@@ -161,9 +156,9 @@ abstract class Core_Payment_Method_Option_ShopData extends CommonEntity_ShopData
 	public static function getImageClasses() : array
 	{
 		return [
-			Payment_Method_Option_ShopData::IMG_ICON1 => Tr::_('Icon 1', [], Payment_Method::getManageModuleName() ),
-			Payment_Method_Option_ShopData::IMG_ICON2 => Tr::_('Icon 2', [], Payment_Method::getManageModuleName() ),
-			Payment_Method_Option_ShopData::IMG_ICON3 => Tr::_('Icon 3', [], Payment_Method::getManageModuleName() ),
+			Payment_Method_Option_ShopData::IMG_ICON1 => Tr::_('Icon 1' ),
+			Payment_Method_Option_ShopData::IMG_ICON2 => Tr::_('Icon 2' ),
+			Payment_Method_Option_ShopData::IMG_ICON3 => Tr::_('Icon 3' ),
 		];
 	}
 

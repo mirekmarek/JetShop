@@ -8,14 +8,12 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
 use Jet\Exception;
-use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 
+use JetApplication\Entity_WithCodeAndShopData;
 use JetApplication\Shops_Shop;
 use JetApplication\Delivery_Kind;
 use JetApplication\Delivery_Class;
@@ -27,8 +25,6 @@ use JetApplication\Delivery_Method_ShopData;
 use JetApplication\Services_Service;
 use JetApplication\Delivery_Method;
 use JetApplication\Shops;
-use JetApplication\Delivery_Method_ManageModuleInterface;
-use JetApplication\Sticker;
 use JetApplication\Delivery_PersonalTakeover_Place;
 use JetApplication\CashDesk;
 use JetApplication\Order;
@@ -40,34 +36,9 @@ use JetApplication\Order_Item;
 #[DataModel_Definition(
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
-	id_controller_class: DataModel_IDController_Passive::class,
 )]
-abstract class Core_Delivery_Method extends DataModel
+abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 {
-
-	protected static string $manage_module_name = 'Admin.Delivery.Methods';
-	protected static string $method_module_name_prefix = 'Order.Delivery.Methods.';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
-		is_id: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		is_required: true,
-		label: 'Code:',
-		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter code'
-		]
-	)]
-	protected string $code = '';
-
-	/**
-	 * @var string
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
@@ -87,36 +58,6 @@ abstract class Core_Delivery_Method extends DataModel
 		]
 	)]
 	protected string $kind = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		is_required: true,
-		label: 'Internal name:',
-		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter internal name'
-		]
-	)]
-	protected string $internal_name = '';
-
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 999999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal description:'
-	)]
-	protected string $internal_description = '';
 
 
 	/**
@@ -193,183 +134,8 @@ abstract class Core_Delivery_Method extends DataModel
 	)]
 	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
-
-	protected static ?array $scope = null;
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
-
-	/**
-	 * @return string
-	 */
-	public static function getManageModuleName(): string
-	{
-		return static::$manage_module_name;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	public static function setManageModuleName( string $name ): void
-	{
-		static::$manage_module_name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getMethodModuleNamePrefix(): string
-	{
-		return static::$method_module_name_prefix;
-	}
-
-	/**
-	 * @param string $method_module_name_prefix
-	 */
-	public static function setMethodModuleNamePrefix( string $method_module_name_prefix ): void
-	{
-		static::$method_module_name_prefix = $method_module_name_prefix;
-	}
-
-
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->afterLoad();
-	}
-
-	public function afterLoad() : void
-	{
-		Delivery_Method_ShopData::checkShopData( $this, $this->shop_data );
-	}
-
-
-	/**
-	 * @return Form
-	 */
-	public function getEditForm() : Form
-	{
-		if(!$this->_form_edit) {
-			$this->_form_edit = $this->createForm('edit_form');
-			$this->_form_edit->getField('code')->setIsReadonly(true);
-		}
-		
-		return $this->_form_edit;
-	}
-
-
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-			$this->_form_add = $this->createForm('add_form');
-
-			$code = $this->_form_add->getField('code');
-			$code->setErrorMessages([
-				'exists' => 'Delivery method with the same name already exists'
-			]);
-
-			$code->setValidator(function( Form_Field_Input $field ) {
-				$value = $field->getValue();
-				if(!$value) {
-					$field->setError( Form_Field::ERROR_CODE_EMPTY );
-					return false;
-				}
-
-				$exists = Delivery_Method::get($value);
-
-				if($exists) {
-					$field->setError('exists');
-
-					return false;
-				}
-
-				return true;
-			});
-		}
-		
-		return $this->_form_add;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
-
-	/**
-	 * @param string $code
-	 * @return static|null
-	 */
-	public static function get( string $code ) : static|null
-	{
-		return static::load( $code );
-	}
-
-	/**
-	 * @return Delivery_Method[]
-	 */
-	public static function getList() : iterable
-	{
-		$where = [];
-		
-		return static::fetchInstances( $where );
-	}
-
-	public static function getScope() : array
-	{
-		if(static::$scope===null) {
-			$list = Delivery_Method::getList();
-
-			static::$scope = [];
-
-			foreach($list as $item) {
-				static::$scope[$item->getCode()] = $item->getInternalName();
-			}
-		}
-
-		return static::$scope;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setCode( string $value ) : void
-	{
-		$this->code = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCode() : string
-	{
-		return $this->code;
-	}
-
-
+	
+	
 	/**
 	 * @param string $kind
 	 */
@@ -398,58 +164,9 @@ abstract class Core_Delivery_Method extends DataModel
 	}
 
 
-	/**
-	 * @param string $value
-	 */
-	public function setInternalDescription( string $value ) : void
-	{
-		$this->internal_description = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getInternalDescription() : string
-	{
-		return $this->internal_description;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setInternalName( string $value ) : void
-	{
-		$this->internal_name = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getInternalName() : string
-	{
-		return $this->internal_name;
-	}
-
-
 	public function getShopData( ?Shops_Shop $shop=null ) : Delivery_Method_ShopData
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
-	}
-
-
-	public function getEditURL() : string
-	{
-		return Delivery_Method::getDeliveryMethodEditURL( $this->getCode() );
-	}
-
-	public static function getDeliveryMethodEditURL( string $code ) : string
-	{
-		/**
-		 * @var Delivery_Method_ManageModuleInterface $module
-		 */
-		$module = Application_Modules::moduleInstance( Sticker::getManageModuleName() );
-
-		return $module->getDeliveryMethodEditURL( $code );
 	}
 
 	/**

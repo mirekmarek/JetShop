@@ -10,9 +10,9 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
 
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\CommonEntity_ShopRelationTrait;
 use JetApplication\Delivery_PersonalTakeover_Place_OpeningHours;
 use JetApplication\Delivery_PersonalTakeover_Place;
 use JetApplication\Delivery_Method;
@@ -24,15 +24,9 @@ use JetApplication\Delivery_Method;
 #[DataModel_Definition(
 	name: 'delivery_personal_takeover_place',
 	database_table_name: 'delivery_personal_takeover_places',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name'=>'id'
-	]
 )]
-class Core_Delivery_PersonalTakeover_Place extends DataModel
+class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 {
-	use CommonEntity_ShopRelationTrait;
-
 	/**
 	 * @var ?Form
 	 */

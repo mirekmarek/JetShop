@@ -11,7 +11,6 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 
 use JetApplication\KindOfProduct_FilterGroup;
-use JetApplication\Property;
 
 /**
  *
@@ -67,12 +66,7 @@ abstract class Core_KindOfProduct_FilterGroup_Property extends DataModel_Related
 	{
 		return $this->property_id;
 	}
-	
-	
-	public function getProperty() : Property
-	{
-		return Property::get($this->property_id);
-	}
+
 	
 	public function setKindOfProductId( int $kind_of_product_id ): void
 	{

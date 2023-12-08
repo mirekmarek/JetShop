@@ -1,7 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
-use JetApplication\KindOfProduct as KindOfProduct;
+use JetApplication\Admin_Managers;
 
 use Jet\UI;
 use Jet\MVC_View;
@@ -9,6 +9,7 @@ use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\Tr;
 use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View $this
@@ -41,30 +42,22 @@ $router = $this->getController()->getControllerRouter();
 <div class="row">
 	<div class="col-md-12" id="main-col">
 
+		<?=$form->field('internal_name');?>
+		<?=$form->field('internal_notes');?>
+		
 		<?php
-		echo $form->field('is_active');
-		echo $form->field('internal_name');
-		echo $form->field('internal_notes');
-		
-		foreach(Shops::getListSorted() as $shop):
-			$shop_key= $shop->getKey();
-			$shop_data = $kind_of_product->getShopData( $shop );
-			
-			?>
-			<?=$shop_data->renderShopDataBlock_start()?>
-
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Main data')?></legend>
-				<?php
-				echo $form->field('/shop_data/'.$shop_key.'/is_active');
-				echo $form->field('/shop_data/'.$shop_key.'/label');
-				echo $form->field('/shop_data/'.$shop_key.'/description');
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($kind_of_product, $form) : void {
 				?>
-			</fieldset>
-			
-			<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
-		
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					
+					<?=$form->field('/shop_data/'.$shop_key.'/label');?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description');?>
+				</fieldset>
+				
+			<?php }); ?>
 	</div>
 </div>
 

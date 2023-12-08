@@ -5,7 +5,6 @@
 
 namespace JetShop;
 
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
@@ -17,7 +16,6 @@ use Jet\Form_Field_Input;
 use JetApplication\Delivery_Class_Method;
 use JetApplication\Delivery_Class;
 use JetApplication\Delivery_Method;
-use JetApplication\Delivery_Class_ManageModuleInterface;
 use JetApplication\Delivery_Kind;
 
 /**
@@ -30,9 +28,6 @@ use JetApplication\Delivery_Kind;
 )]
 abstract class Core_Delivery_Class extends DataModel
 {
-
-	protected static string $manage_module_name = 'Admin.Delivery.Classes';
-
 	/**
 	 * @var string
 	 */
@@ -117,22 +112,6 @@ abstract class Core_Delivery_Class extends DataModel
 	 * @var Delivery_Class[]
 	 */
 	protected static array $loaded_items = [];
-	
-	/**
-	 * @return string
-	 */
-	public static function getManageModuleName(): string
-	{
-		return static::$manage_module_name;
-	}
-	
-	/**
-	 * @param string $manage_module_name
-	 */
-	public static function setManageModuleName( string $manage_module_name ): void
-	{
-		static::$manage_module_name = $manage_module_name;
-	}
 	
 	
 
@@ -264,23 +243,8 @@ abstract class Core_Delivery_Class extends DataModel
 	{
 		return $this->internal_description;
 	}
-
-	public function getEditURL() : string
-	{
-		return Delivery_Class::getDeliveryClassEditURL( $this->getCode() );
-	}
-
-	public static function getDeliveryClassEditURL( string $code ) : string
-	{
-		/**
-		 * @var Delivery_Class_ManageModuleInterface $module
-		 */
-		$module = Application_Modules::moduleInstance( Delivery_Class::getManageModuleName() );
-
-		return $module->getDeliveryClassEditURL( $code );
-	}
-
-
+	
+	
 	/**
 	 * @return Delivery_Kind[]
 	 */
@@ -326,16 +290,17 @@ abstract class Core_Delivery_Class extends DataModel
 
 
 
+	
 	public static function getScope() : array
 	{
 		if(static::$scope===null) {
-			$list = Delivery_Class::getList();
-
-			static::$scope = [];
-
-			foreach($list as $item) {
-				static::$scope[$item->getCode()] = $item->getInternalName();
-			}
+			
+			static::$scope = static::dataFetchPairs(
+				select: [
+					'code',
+					'internal_name'
+				], order_by: ['internal_name']);
+			
 		}
 
 		return static::$scope;

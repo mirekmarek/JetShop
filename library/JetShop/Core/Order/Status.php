@@ -5,8 +5,7 @@
 
 namespace JetShop;
 
-use Jet\Application_Module;
-use Jet\Application_Modules;
+
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
@@ -18,7 +17,6 @@ use Jet\Form_Field_Input;
 
 use JetApplication\Order_Status;
 use JetApplication\Order_Status_Kind;
-use JetApplication\Category;
 
 /**
  *
@@ -30,17 +28,6 @@ use JetApplication\Category;
 )]
 abstract class Core_Order_Status extends DataModel
 {
-	protected static string $manage_module_name = 'Admin.System.OrderStatus';
-	
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-	
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
 
 	/**
 	 * @var string
@@ -108,17 +95,7 @@ abstract class Core_Order_Status extends DataModel
 		]
 	)]
 	protected string $kind = '';
-
-	public static function getManageModuleName(): string
-	{
-		return static::$manage_module_name;
-	}
-
-	public static function getManageModule() : Application_Module
-	{
-		return Application_Modules::moduleInstance( Category::getManageModuleName() );
-	}
-
+	
 
 	/**
 	 * @return Form

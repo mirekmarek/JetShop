@@ -1,21 +1,18 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Categories;
+namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Form;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Property_Options_Option;
-use JetApplication\Property_ShopData;
-use JetApplication\Shops;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
- * @var Property_Options_Option $option
  * @var Form $form
  */
-$option = $this->getRaw('option');
 
+$image_manager = Admin_Managers::Image();
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
@@ -29,9 +26,7 @@ $option = $this->getRaw('option');
 		<?php
 		echo $this->getRaw('tabs');
 		
-		foreach(Shops::getListSorted() as $shop):
-			echo $option->getShopData( $shop )->renderImageWidgets( Property_ShopData::getImageClasses(), !$option->getEditForm()->getIsReadonly() );
-		endforeach;
+		echo $image_manager->renderStandardManagement();
 		?>
 	</div>
 </div>

@@ -9,7 +9,6 @@ use Jet\Form_Field_Input;
 use JetApplication\Product;
 use JetApplication\Shops;
 use JetApplication\Product_Parameter;
-use JetApplication\Sticker;
 
 
 trait Core_Product_Trait_Variants
@@ -46,7 +45,7 @@ trait Core_Product_Trait_Variants
 	
 	public function getVariantMasterProduct() : ?Product
 	{
-		return Product::get( $this->variant_master_product_id );
+		return static::get( $this->variant_master_product_id );
 	}
 
 	public function setVariantMasterProductId( int $variant_master_product_id ) : void
@@ -108,7 +107,7 @@ trait Core_Product_Trait_Variants
 		if(!$this->_update_variants_form) {
 			$fields = [];
 			
-			$variant_control_properties = $this->getKind()?->getVariantSelectorProperties();
+			$variant_control_properties = $this->getKind()?->getVariantSelectorPropertyIds();
 
 			foreach($this->getVariants() as $variant) {
 
@@ -190,7 +189,7 @@ trait Core_Product_Trait_Variants
 		if($this->_variants===null) {
 			$this->_variants=[];
 			foreach($this->getVariantIds() as $id) {
-				$p = Product::get($id);
+				$p = static::get($id);
 				if($p) {
 					$this->_variants[$p->getId()] = $p;
 				}
@@ -259,7 +258,7 @@ trait Core_Product_Trait_Variants
 		
 		
 		
-		$skip_properties = $this->getKind()?->getVariantSelectorProperties();
+		$skip_properties = $this->getKind()?->getVariantSelectorPropertyIds();
 		if(!$skip_properties) {
 			$skip_properties = [];
 		}
@@ -288,41 +287,6 @@ trait Core_Product_Trait_Variants
 		$variant->save();
 	}
 
-	protected function _setupForm_variants( Form $form ) : void
-	{
-		if($this->type!=Product::PRODUCT_TYPE_VARIANT) {
-			return;
-		}
-		
-		$this->_edit_form->field('brand_id')->setIsReadonly(true);
-		$this->_edit_form->field('supplier_id')->setIsReadonly(true);
-		
-		foreach(Shops::getList() as $shop) {
-			$shop_key = $shop->getKey();
-			
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/vat_rate')->setIsReadonly(true);
-		}
-		
-		
-		foreach(Shops::getList() as $shop) {
-			$shop_key = $shop->getKey();
-			
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/name')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/description')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/short_description')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_title')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_h1')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_description')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_keywords')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')->setIsReadonly(true);
-		}
-		
-		foreach(Sticker::getList() as $sticker) {
-			$this->_edit_form->field('/sticker/'.$sticker->getCode())->setIsReadonly(true);
-		}
-		
-
-	}
 
 	public function actualizeVariant() : void
 	{

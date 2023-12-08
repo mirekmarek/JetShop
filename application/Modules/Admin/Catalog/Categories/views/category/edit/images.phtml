@@ -2,19 +2,12 @@
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\MVC_View;
-use JetApplication\Category_ShopData;
-use JetApplication\Shops;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
  */
 
-$category = Controller_Main::getCurrentCategory();
-
-$image_classes = Category_ShopData::getImageClasses();
-
 echo $this->render('lj_start');
-	foreach(Shops::getListSorted() as $shop):
-		echo $category->getShopData( $shop )->renderImageWidgets( $image_classes, !$category->getEditForm()->getIsReadonly() );
-	endforeach;
+	echo Admin_Managers::Image()->renderStandardManagement();
 echo $this->render('lj_end');

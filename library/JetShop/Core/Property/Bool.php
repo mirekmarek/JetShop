@@ -1,8 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Form;
-
 use JetApplication\ProductListing;
 use JetApplication\Property;
 use JetApplication\Property_Bool_Value;
@@ -12,24 +10,6 @@ abstract class Core_Property_Bool extends Property
 {
 	protected string $type = Property::PROPERTY_TYPE_BOOL;
 
-	protected function generateAddForm() : Form
-	{
-		$form = parent::generateAddForm();
-
-		$form->removeField('decimal_places');
-
-		return $form;
-	}
-
-
-	protected function generateEditForm() : Form
-	{
-		$form = parent::generateEditForm();
-
-		$form->removeField('decimal_places');
-
-		return $form;
-	}
 
 	public function getValueInstance() : Property_Bool_Value
 	{

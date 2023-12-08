@@ -1,28 +1,30 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Product;
 
 
-class Listing_Filter_ProductType extends Listing_Filter
+class Listing_Filter_ProductType extends DataListing_Filter
 {
+	public const KEY = 'product_type';
+	
 	protected string $product_type = '';
 	
 	
 	public function getKey(): string
 	{
-		return static::PRODUCT_TYPE;
+		return static::KEY;
 	}
 	
-	public function catchGetParams(): void
+	public function catchParams(): void
 	{
 		$this->product_type = Http_Request::GET()->getString('product_type', '', array_keys(Product::getProductTypes()));
 		if($this->product_type) {
-			$this->listing->setGetParam('product_type', $this->product_type);
+			$this->listing->setParam('product_type', $this->product_type);
 		}
 	}
 	
@@ -43,9 +45,9 @@ class Listing_Filter_ProductType extends Listing_Filter
 	{
 		$this->product_type = $form->field('product_type')->getValue();
 		if($this->product_type) {
-			$this->listing->setGetParam('product_type', $this->product_type);
+			$this->listing->setParam('product_type', $this->product_type);
 		} else {
-			$this->listing->unsetGetParam('product_type');
+			$this->listing->unsetParam('product_type');
 		}
 	}
 	
@@ -55,7 +57,7 @@ class Listing_Filter_ProductType extends Listing_Filter
 			return;
 		}
 		
-		$this->listing->addWhere([
+		$this->listing->addFilterWhere([
 			'type'   => $this->product_type,
 		]);
 	}

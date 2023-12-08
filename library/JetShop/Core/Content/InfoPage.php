@@ -9,7 +9,6 @@ use Exception;
 use Jet\Data_Text;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Form_Definition;
@@ -20,8 +19,8 @@ use Jet\MVC;
 use Jet\MVC_Page_Interface;
 use Jet\UI_messages;
 
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops;
-use JetApplication\CommonEntity_ShopRelationTrait;
 use JetApplication\Content_InfoPage;
 
 /**
@@ -30,26 +29,9 @@ use JetApplication\Content_InfoPage;
 #[DataModel_Definition(
 	name: 'content_info_page',
 	database_table_name: 'content_info_page',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	]
 )]
-class Core_Content_InfoPage extends DataModel
+class Core_Content_InfoPage extends Entity_WithShopRelation
 {
-	use CommonEntity_ShopRelationTrait;
-
-	/**
-	 * @var int
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_HIDDEN
-	)]
-	protected int $id = 0;
 
 	/**
 	 * @var ?Form
@@ -253,7 +235,7 @@ class Core_Content_InfoPage extends DataModel
 
 		$value = str_replace( ' ', '-', $value );
 		$value = preg_replace( '/[^a-z0-9-]/i', '', $value );
-		$value = preg_replace( '~([-]{2,})~', '-', $value );
+		$value = preg_replace( '~(-{2,})~', '-', $value );
 
 		$field->setValue( $value );
 

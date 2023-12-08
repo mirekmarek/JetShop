@@ -8,7 +8,7 @@ use JetApplication\ProductListing_Filter_Flags_Flag;
 use JetApplication\Product_ShopData;
 
 abstract class Core_ProductListing_Filter_Flags extends ProductListing_Filter {
-	const CACHE_KEY = 'f_flags';
+	public const CACHE_KEY = 'f_flags';
 
 	protected string $key = 'flags';
 

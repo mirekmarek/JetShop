@@ -1,7 +1,7 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Properties;
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
-use JetApplication\KindOfProduct;
+use JetApplication\Admin_Managers;
 use JetApplication\Product;
 use JetApplication\Category;
 
@@ -28,7 +28,7 @@ $categories = $this->getRaw('categories');
 			<p>
 				<?=Tr::_( 'It is mot possible tp delete this kind of product.' );?>
 				<br/>
-				<a href="<?=$kind_of_product->getEditURL();?>" style="font-weight: bolder;font-size: 20px;"><?=$kind_of_product->getInternalName();?> (<?=$kind_of_product->getId();?>)</a>
+				<?=Admin_Managers::KindOfProduct()->showName( $kind_of_product->getId() )?>
 			</p>
 			
 			<?php if($products): ?>

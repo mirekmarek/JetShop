@@ -1,0 +1,86 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Categories $filter
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+
+?>
+
+
+<script>
+	let productFilter = {
+		addCategory: function( id )
+		{
+			let categories = document.getElementById('filter_form__categories');
+
+			let new_value = '';
+			if(categories.value.length) {
+				new_value = categories.value.split(',');
+				if(!new_value.includes(id)) {
+					new_value.push(id);
+				}
+
+				new_value = new_value.join(',');
+
+			} else {
+				new_value = id;
+			}
+
+			categories.value = new_value;
+
+			document.getElementById('filter_form').submit();
+		},
+
+		removeCategory: function( id )
+		{
+			let categories = document.getElementById('filter_form__categories');
+
+			let new_value = '';
+			if(categories.value.length) {
+				new_value = categories.value.split(',');
+				let _new_value = [];
+				for(let i=0;i<new_value.length;i++) {
+					if(new_value[i]!=id) {
+						_new_value.push(new_value[i]);
+					}
+				}
+				new_value = _new_value.join(',');
+			}
+
+			categories.value = new_value;
+
+			document.getElementById('filter_form').submit();
+
+		}
+	};
+</script>
+
+<?=$filter_form->field('categories') ?>
+
+<div class="badge badge-<?=$filter->getSelectedCategoryIds() ? 'danger':'light'?>" style="display: grid;grid-template-columns: 100px 1fr;grid;align-items: center">
+		<div style="padding: 5px;"><?=Tr::_('Categories')?></div>
+		<div style="text-align: left">
+			<div>
+				<?=Admin_Managers::Category()->renderSelectWidget("productFilter.addCategory(selected_item.id)")?>
+			</div>
+			
+			<?php foreach( $filter->getSelectedCategoryIds() as $c_id ): ?>
+				<div style="margin: 5px;display: inline-block;padding: 3px;">
+					<?=UI::button(' '.Admin_Managers::Category()->getName( $c_id ) )->setIcon('trash')->setClass('info')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnclick("productFilter.removeCategory({$c_id})")?>
+				</div>
+			<?php endforeach; ?>
+		</div>
+</div>

@@ -5,6 +5,7 @@
 
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\DataListing_Column;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
@@ -28,10 +29,12 @@ use Jet\Http_Request;
 )]
 class Listing_Schema extends DataModel
 {
-	const COLS_SEPARATOR = '|';
+	protected static Listing $listing;
 	
-	const SCHEMA_GET_PARAM = 'schema';
-	const SCHEMA_ID_GET_PARAM = 'schema_id';
+	public const  COLS_SEPARATOR = '|';
+	
+	public const  SCHEMA_GET_PARAM = 'schema';
+	public const  SCHEMA_ID_GET_PARAM = 'schema_id';
 	
 	/**
 	 * @var int
@@ -97,6 +100,16 @@ class Listing_Schema extends DataModel
 	
 	protected ?Form $update_schema_form = null;
 	
+	public static function getListing(): Listing
+	{
+		return self::$listing;
+	}
+	
+	public static function setListing( Listing $listing ): void
+	{
+		self::$listing = $listing;
+	}
+	
 
 	/**
 	 * @param int|string $id
@@ -123,9 +136,9 @@ class Listing_Schema extends DataModel
 				$default = new static();
 				$default->setName('Default');
 				$default->setCols( [
-					Listing_Column_ID::getKey(),
-					Listing_Column_Name::getKey(),
-					Listing_Column_FinalPrice::getKey()
+					Listing_Column_ID::KEY,
+					Listing_Column_Name::KEY,
+					Listing_Column_FinalPrice::KEY
 				] );
 				$default->setIsDefault(true);
 				$default->save();
@@ -209,7 +222,7 @@ class Listing_Schema extends DataModel
 		$schema = [];
 		$_schema = Http_Request::GET()->getString(static::SCHEMA_GET_PARAM);
 		if($_schema) {
-			$all_cols = (new Listing())->getAllColumns();
+			$all_cols = static::$listing->getColumns();
 			
 			$_schema = explode(static::COLS_SEPARATOR, $_schema);
 			
@@ -238,7 +251,7 @@ class Listing_Schema extends DataModel
 		return $list[$id];
 	}
 	
-	public static function getUrlWithCol( Listing_Column $col ) : string
+	public static function getUrlWithCol( DataListing_Column $col ) : string
 	{
 		$curr_schema = static::getCurrentColSchema();
 		$key = $col->getKey();
@@ -253,7 +266,7 @@ class Listing_Schema extends DataModel
 		
 	}
 	
-	public static function getUrlWithoutCol( Listing_Column $col ) : string
+	public static function getUrlWithoutCol( DataListing_Column $col ) : string
 	{
 		$curr_schema = static::getCurrentColSchema();
 		$key = $col->getKey();

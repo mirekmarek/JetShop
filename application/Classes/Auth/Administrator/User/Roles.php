@@ -118,7 +118,7 @@ class Auth_Administrator_User_Roles extends DataModel_Related_1toN
 	{
 		$ids = static::dataFetchCol(
 			select:['user_id'],
-			where: ['role_id'=>$id]
+			where: ['role_id'=>$id],
 		);
 
 		if(!$ids) {

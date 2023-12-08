@@ -6,8 +6,9 @@ use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_dialog;
-use JetApplication\Product;
+use JetApplication\Admin_Managers;
 use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View   $this
@@ -29,7 +30,7 @@ $variants_update_form = $product->getUpdateVariantsForm();
 
 $variants = $product->getVariants();
 
-$variant_control_properties = $product->getKind()?->getVariantSelectorProperties();
+$variant_control_properties = $product->getKind()?->getVariantSelectorPropertyIds();
 
 $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::SIZE_LARGE);
 ?>
@@ -72,7 +73,7 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 					if($variant_control_properties):
 						foreach($variant_control_properties as $property): ?>
 							<th>
-								<a href="<?=$property->getEditURL()?>" target="_blank"><?=$property->getInternalName()?></a>
+								<?=Admin_Managers::Property()->showName( $property->getId() )?>
 							</th>
 						<?php
 						endforeach;
@@ -87,15 +88,15 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 						<table>
 							<tr>
 								<td><?=Tr::_('Internal code:')?></td>
-								<td><a href="<?=$property->getEditURL()?>" target="_blank"><?=$variant->getInternalCode()?></a></td>
+								<td><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getInternalCode()?></a></td>
 							</tr>
 							<tr>
 								<td><?=Tr::_('EAN:')?></td>
-								<td><a href="<?=$property->getEditURL()?>" target="_blank"><?=$variant->getEan()?></a></td>
+								<td><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getEan()?></a></td>
 							</tr>
 							<tr>
 								<td><?=Tr::_('ID:')?></td>
-								<td><a href="<?=$property->getEditURL()?>" target="_blank"><?=$variant->getId()?></a></td>
+								<td><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getId()?></a></td>
 							</tr>
 						</table>
 						
@@ -155,17 +156,15 @@ $add_dialog = UI::dialog('variant_add_dialog', Tr::_('Add variant'), UI_dialog::
 
 	<?=$add_form->field('ean')?>
 	<?=$add_form->field('internal_code')?>
+	
+	<?php
+	Admin_Managers::UI()->renderShopDataBlocks(
+		form: $add_form,
+		renderer: function( Shops_Shop $shop, string $shop_key ) use ($add_form) : void {
+			?>
+			<?=$add_form->field('/shop_data/'.$shop_key.'/variant_name')?>
+		<?php }); ?>
 
-	<?php foreach(Shops::getListSorted() as $shop):
-		$shop_key = $shop->getKey();
-
-		$shop_data = $product->getShopData( $shop );
-		?>
-		<?=$shop_data->renderShopDataBlock_start()?>
-
-		<?=$add_form->field('/shop_data/'.$shop_key.'/variant_name')?>
-		<?=$shop_data->renderShopDataBlock_end()?>
-	<?php endforeach; ?>
 
 	<?=$add_dialog->footer()?>
 		<?=UI::button_save()?>

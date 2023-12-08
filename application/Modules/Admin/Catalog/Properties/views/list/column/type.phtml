@@ -1,0 +1,13 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Property $item
+ */
+
+$item = $this->getRaw('item');
+
+echo $item->getTypeTitle();

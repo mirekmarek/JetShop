@@ -8,14 +8,11 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use Jet\Form_Field;
-
+use JetApplication\Entity_WithCodeAndShopData_ShopData;
 use JetApplication\Services_Service;
-use JetApplication\CommonEntity_ShopData;
-use JetApplication\Images_ShopDataInterface;
-use JetApplication\Images_ShopDataTrait;
 use JetApplication\Services_Service_ShopData;
 
 /**
@@ -26,13 +23,12 @@ use JetApplication\Services_Service_ShopData;
 	database_table_name: 'services_shop_data',
 	parent_model_class: Services_Service::class,
 )]
-abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface
+abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData_ShopData
 {
-	use Images_ShopDataTrait;
 
-	const IMG_ICON1 = 'icon1';
-	const IMG_ICON2 = 'icon2';
-	const IMG_ICON3 = 'icon3';
+	public const  IMG_ICON1 = 'icon1';
+	public const  IMG_ICON2 = 'icon2';
+	public const  IMG_ICON3 = 'icon3';
 
 	/**
 	 * @var string
@@ -178,71 +174,41 @@ abstract class Core_Services_Service_ShopData extends CommonEntity_ShopData impl
 	public static function getImageClasses(): array
 	{
 		return [
-			Services_Service_ShopData::IMG_ICON1 => Tr::_('Icon 1', [], Services_Service::getManageModuleName() ),
-			Services_Service_ShopData::IMG_ICON2 => Tr::_('Icon 2', [], Services_Service::getManageModuleName() ),
-			Services_Service_ShopData::IMG_ICON3 => Tr::_('Icon 3', [], Services_Service::getManageModuleName() ),
+			Services_Service_ShopData::IMG_ICON1 => Tr::_('Icon 1' ),
+			Services_Service_ShopData::IMG_ICON2 => Tr::_('Icon 2' ),
+			Services_Service_ShopData::IMG_ICON3 => Tr::_('Icon 3' ),
 		];
 	}
 
 	public function setIcon1( string $image ) : void
 	{
-		$this->setImage( Services_Service_ShopData::IMG_ICON1, $image );
+		$this->image_icon1 = $image;
 	}
 
 	public function getIcon1() : string
 	{
-		return $this->getImage( Services_Service_ShopData::IMG_ICON1 );
+		return $this->image_icon1;
 	}
-
-	public function getIcon1Url() : string
-	{
-		return $this->getImageUrl( Services_Service_ShopData::IMG_ICON1 );
-	}
-
-	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Services_Service_ShopData::IMG_ICON1, $max_w, $max_h );
-	}
-
+	
 	public function setIcon2( string $image ) : void
 	{
-		$this->setImage( Services_Service_ShopData::IMG_ICON2, $image );
+		$this->image_icon2 = $image;
 	}
 
 	public function getIcon2() : string
 	{
-		return $this->getImage( Services_Service_ShopData::IMG_ICON2 );
-	}
-
-	public function getIcon2Url() : string
-	{
-		return $this->getImageUrl( Services_Service_ShopData::IMG_ICON2 );
-	}
-
-	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Services_Service_ShopData::IMG_ICON2, $max_w, $max_h );
+		return $this->image_icon2;
 	}
 
 
 	public function setIcon3( string $image ) : void
 	{
-		$this->setImage( Services_Service_ShopData::IMG_ICON3, $image );
+		$this->image_icon3  =$image;
 	}
 
 	public function getIcon3() : string
 	{
-		return $this->getImage( Services_Service_ShopData::IMG_ICON3 );
-	}
-
-	public function getIcon3Url() : string
-	{
-		return $this->getImageUrl( Services_Service_ShopData::IMG_ICON3 );
-	}
-
-	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Services_Service_ShopData::IMG_ICON3, $max_w, $max_h );
+		return $this->image_icon3;
 	}
 
 	/**

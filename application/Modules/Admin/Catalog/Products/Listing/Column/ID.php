@@ -2,20 +2,22 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
+use Jet\DataListing_Column;
+use Jet\Tr;
 use Jet\UI_dataGrid_column;
-use JetApplication\Product;
 
-class Listing_Column_ID extends Listing_Column
+class Listing_Column_ID extends DataListing_Column
 {
+	public const KEY = 'id';
 	
-	public static function getKey(): string
+	public function getKey(): string
 	{
-		return 'id';
+		return static::KEY;
 	}
 	
-	public static function getTitle(): string
+	public function getTitle(): string
 	{
-		return 'ID';
+		return Tr::_('ID');
 	}
 	
 	
@@ -29,8 +31,11 @@ class Listing_Column_ID extends Listing_Column
 		return 'ID';
 	}
 	
-	public function getExportData( Product $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
+		/**
+		 * @var Product $item
+		 */
 		return $item->getId();
 	}
 }

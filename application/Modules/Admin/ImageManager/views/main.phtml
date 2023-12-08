@@ -1,0 +1,50 @@
+<?php
+use Jet\Tr;
+use Jet\UI;
+?>
+<script>
+	const Images = {
+		delete_form_id: null,
+
+		uploadImage: function (form_id) {
+			JetAjaxForm.submit(form_id);
+		},
+
+		deleteImage: function (form_id, key ) {
+			Images.delete_form_id = form_id;
+
+			const img_url = $('#image_' + key + '_img' ).data('url');
+
+			$('#image_delete_confirm_thb').css('background-image', 'url(' + img_url + ')');
+
+			$('#image_delete_confirm').modal('show');
+
+		},
+
+		deleteImageConfirm: function () {
+			JetAjaxForm.submit(Images.delete_form_id);
+			$('#image_delete_confirm').modal('hide');
+		},
+
+		deleteImageReject: function () {
+			$('#image_delete_confirm').modal('hide');
+		}
+	};
+
+</script>
+
+<?php
+$dialog = UI::dialog('image_delete_confirm', Tr::_('Do you really want to delete this image?') );
+
+echo $dialog->start();
+?>
+<div align="center">
+	<div class="image-thumbnail"  id="image_delete_confirm_thb" style="width:200px;height:200px;">
+	</div>
+</div>
+<?php
+echo $dialog->footer();
+echo UI::button( Tr::_('No', [], Tr::COMMON_DICTIONARY) )->setOnclick("Images.deleteImageReject();");
+echo UI::button_delete()->setOnclick("Images.deleteImageConfirm();");
+echo $dialog->end();
+?>

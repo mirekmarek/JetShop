@@ -31,17 +31,8 @@ if( $e_index > count( $pages ) ) {
 	}
 }
 
-$prepend = $footer->getPrepend();
-$append = $footer->getAppend();
-
 ?>
-<?php if($prepend): ?>
-<tr>
-	<td colspan="<?= count( $grid->getColumns() ); ?>" style="padding: 0px;">
-		<?=$prepend?>
-	</td>
-</tr>
-<?php endif; ?>
+<?=$footer->getPrepend()?>
 <tr>
 	<td colspan="<?= count( $grid->getColumns() ); ?>">
 		<div style="float: right; padding: 5px;">
@@ -104,10 +95,5 @@ $append = $footer->getAppend();
 
 	</td>
 </tr>
-<?php if($append): ?>
-	<tr>
-		<td colspan="<?= count( $grid->getColumns() ); ?>" style="padding: 0px;">
-			<?=$append?>
-		</td>
-	</tr>
-<?php endif; ?>
+<?=$footer->getAppend()?>
+

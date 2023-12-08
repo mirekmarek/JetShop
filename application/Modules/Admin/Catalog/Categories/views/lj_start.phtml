@@ -4,7 +4,7 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Category;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View $this
@@ -12,44 +12,34 @@ use JetApplication\Category;
 
 $category = Controller_Main::getCurrentCategory();
 
+
 $toolbar = $this->getRaw('toolbar');
 
 ?>
+
+
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-2">
-		<div class="search-box">
-			<table>
-				<tr>
-					<td><?=UI::icon('search')?></td>
-					<td>
-						<input id="category_search_input" style="width: 250px;">
-						<div class="search-whisperer-area">
-							<div id="search_category_whisperer">
-							</div>
-						</div>
-					</td>
-				</tr>
-			</table>
+		<div>
+			<?php if(Main::getCurrentUserCanEdit()):
+				
+				if( Category::getFilter_selectedSort()==Category::SORT_PRIORITY ):
+					echo UI::button('Sort')->setOnclick('sortCategories.openDialog()').'&nbsp;&nbsp;';
+				endif;
+				
+				if(
+					Main::getCurrentUserCanCreate()
+				): ?>
+					<?=UI::button_create('Create')->setUrl( Http_Request::currentURI(['action' => 'create'], ['group_id', 'property_id', 'option_id']))?>
+					&nbsp;&nbsp;&nbsp;
+				<?php
+				endif;
+			endif; ?>
 		</div>
 
 	</div>
 	<div class="col-md-10">
-		<?php if(Main::getCurrentUserCanEditCategory()):
-			
-				if( Category::getFilter_selectedSort()==Category::SORT_PRIORITY ):
-					echo UI::button('Sort categories')->setOnclick('sortCategories.openDialog()').'&nbsp;&nbsp;';
-				endif;
-
-				if(
-					Main::getCurrentUserCanCreateCategory()
-				): ?>
-					<?=UI::button_create('Create a new Category')->setUrl( Http_Request::currentURI(['action' => 'create'], ['group_id', 'property_id', 'option_id']))?>
-					&nbsp;&nbsp;&nbsp;
-				<?php
-				endif;
-			
-
-
+		<?php if(Main::getCurrentUserCanEdit()):
 			if($toolbar):
 				echo $this->render($toolbar);
 			endif;
@@ -60,8 +50,35 @@ $toolbar = $this->getRaw('toolbar');
 		endif; ?>
 	</div>
 </div>
+
+<script>
+	function searchResult( id ) {
+		let URL = '<?=Http_Request::currentURI(['id'=>'ID'])?>';
+		URL = URL.replace('ID', id);
+		
+		location = URL;
+	}
+</script>
+
 <div class="row h-100" id="main-col" style="margin-top: -10px;">
 	<div class="col-2 tree">
+		
+		
+		<div class="toolbar">
+			<div style="display: grid;grid-template-columns: 30px 1fr;align-items: center">
+				<div style="text-align: center">
+				<?=UI::icon('search');?>
+				</div>
+				<div>
+				<?=Admin_Managers::FulltextSearch()->renderWhisperer(
+					name: 'search_category',
+					object_class: Category::getEntityType(),
+					on_select: "searchResult(selected_item.object_id)"
+				)?>
+				</div>
+			</div>
+		</div>
+		
 		<?=$this->render('tree')?>
 	</div>
 	<div class="col-10">

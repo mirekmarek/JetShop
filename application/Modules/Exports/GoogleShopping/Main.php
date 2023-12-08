@@ -183,9 +183,11 @@ class Main extends Exports_Module
 				$f->tagPair( 'g:additional_image_link', $sd->getImageUrl( 1 ) );
 			}
 
-			$f->tagPair( 'g:price', $sd->getStandardPrice() );
-			if( $sd->getActionPrice() ) {
-				$f->tagPair( 'g:sale_price', $sd->getActionPrice() );
+			if( $sd->getDiscountPercentage() ) {
+				$f->tagPair( 'g:price', $sd->getStandardPrice() );
+				$f->tagPair( 'g:sale_price', $sd->getPrice() );
+			} else {
+				$f->tagPair( 'g:price', $sd->getPrice() );
 			}
 
 

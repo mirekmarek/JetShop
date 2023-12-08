@@ -2,14 +2,16 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
+use Jet\DataListing_Column;
 use Jet\UI_dataGrid_column;
 
-class Listing_Column_Edit extends Listing_Column
+class Listing_Column_Edit extends DataListing_Column
 {
+	public const KEY = 'edit';
 	
-	public static function getKey(): string
+	public function getKey(): string
 	{
-		return 'edit';
+		return static::KEY;
 	}
 	
 	public function isMandatory(): bool
@@ -22,7 +24,7 @@ class Listing_Column_Edit extends Listing_Column
 		return true;
 	}
 	
-	public static function getTitle(): string
+	public function getTitle(): string
 	{
 		return '';
 	}

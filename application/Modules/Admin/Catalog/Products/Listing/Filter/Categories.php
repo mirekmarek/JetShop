@@ -1,18 +1,15 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\DataListing_Filter;
 use Jet\Form;
+use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
-use JetApplication\Category;
-use JetApplication\Product_Category;
+use JetApplication\Category_Product;
 
-class Listing_Filter_Categories extends Listing_Filter
+class Listing_Filter_Categories extends DataListing_Filter
 {
-	
-	const MODE_TREE = 'tree';
-	const MODE_MULTIPLE = 'multiple';
-	
-	const DEFAULT_MODE = self::MODE_TREE;
+	public const KEY = 'categories';
 	
 	protected array $categories = [];
 	
@@ -20,80 +17,56 @@ class Listing_Filter_Categories extends Listing_Filter
 	
 	public function getKey(): string
 	{
-		return static::CATEGORIES;
+		return static::KEY;
 	}
 	
-	public function catchGetParams(): void
+	public function catchParams(): void
 	{
 		$this->categoriesSet( Http_Request::GET()->getString('categories') );
-		$this->getMode();
 	}
 	
 	public function generateFormFields( Form $form ): void
 	{
+		$categories = new Form_Field_Hidden('categories');
+		$categories->setDefaultValue( $this->getSelectedCategoryIds(true) );
+		
+		$form->addField( $categories );
 	}
 	
 	public function catchForm( Form $form ): void
 	{
+		$this->categoriesSet( $form->field('categories')->getValue() );
 	}
 	
 	public function generateWhere(): void
 	{
 		if($this->categories) {
 			
-			$items = Product_Category::fetch([
-				'product_category' => [
-					'category_id' => $this->categories
-				]
-			]);
-			
-			$ids = [];
-			
-			foreach($items as $item) {
-				$ids[] = $item->getProductId();
-			}
+			$ids = Category_Product::dataFetchCol(
+				select: ['product_id'],
+				where: [
+						'category_id' => $this->categories
+					]
+			);
 			
 			if(!$ids) {
 				$ids = [0];
 			}
 			
 			
-			$this->listing->addWhere([
+			$this->listing->addFilterWhere([
 				'id'   => $ids,
 			]);
 		}
 	}
 	
 	
-	
-	/**
-	 * @return Category[]
-	 */
-	public function getSelectedCategories() : array
-	{
-		if(!$this->categories) {
-			return [];
-		}
-		
-		$res = [];
-		
-		foreach($this->categories as $id) {
-			$category = Category::get($id);
-			if($category) {
-				$res[$id] = $category;
-			}
-		}
-		
-		return $res;
-		
-	}
-	
-	public function getSelectedCategoryIds( bool $as_string ) : array|string
+	public function getSelectedCategoryIds( bool $as_string=false ) : array|string
 	{
 		return $as_string ? implode(',', $this->categories) : $this->categories;
 	}
 	
-	protected function categoriesSet( string $categories )
+	protected function categoriesSet( string $categories ) : void
 	{
 		if($categories) {
 			$this->categories = explode(',', $categories);
@@ -101,10 +74,12 @@ class Listing_Filter_Categories extends Listing_Filter
 				$this->categories[$i] = (int)$id;
 			}
 			
-			$this->listing->setGetParam('categories', implode(',', $this->categories));
+			$this->categories = array_unique($this->categories);
+			
+			$this->listing->setParam('categories', implode(',', $this->categories));
 		} else {
 			$this->categories = [];
-			$this->listing->setGetParam('categories', '');
+			$this->listing->setParam('categories', '');
 		}
 		
 	}
@@ -124,34 +99,6 @@ class Listing_Filter_Categories extends Listing_Filter
 			set_GET_params: ['categories'=>$id],
 			unset_GET_params: ['id']
 		);
-	}
-	
-	public function getMode() : string
-	{
-		if($this->mode===null) {
-			$this->mode = Http_Request::GET()->getString(
-				key: 'category_mode',
-				default_value: static::DEFAULT_MODE,
-				valid_values: [
-					static::MODE_TREE,
-					static::MODE_MULTIPLE
-				]
-			);
-			
-			if($this->mode==static::DEFAULT_MODE) {
-				$this->listing->unsetGetParam('category_mode');
-			} else {
-				$this->listing->setGetParam('category_mode', $this->mode);
-			}
-			
-		}
-		
-		return $this->mode;
-	}
-	
-	public function getModeUrl( string $mode ) : string
-	{
-		return Http_Request::currentURI(['category_mode'=>$mode]);
 	}
 	
 }

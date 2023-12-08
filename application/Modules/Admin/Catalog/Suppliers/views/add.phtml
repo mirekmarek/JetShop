@@ -1,7 +1,6 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Suppliers;
 
-use JetApplication\Supplier;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
@@ -35,7 +34,7 @@ $supplier = $this->getRaw( 'supplier' );
 	<div class="col-md-12" id="main-col">
 
 		<?=$form->start()?>
-		<?=$form->field( 'name' )?>
+		<?=$form->field( 'internal_name' )?>
 
 		<?=$form->end()?>
 

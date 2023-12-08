@@ -2,15 +2,17 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use JetApplication\Product;
+use Jet\DataListing_Column;
+use Jet\Tr;
 use JetApplication\Shops;
 
-class Listing_Column_FinalPrice extends Listing_Column
+class Listing_Column_FinalPrice extends DataListing_Column
 {
+	public const KEY = 'final_price';
 	
-	public static function getKey(): string
+	public function getKey(): string
 	{
-		return 'final_price';
+		return static::KEY;
 	}
 	
 	public function getOrderByAsc(): array|string
@@ -23,9 +25,9 @@ class Listing_Column_FinalPrice extends Listing_Column
 		return '-products_shop_data.final_price';
 	}
 
-	public static function getTitle(): string
+	public function getTitle(): string
 	{
-		return 'Price';
+		return Tr::_('Price');
 	}
 	
 	public function getExportHeader(): null|string|array
@@ -39,12 +41,15 @@ class Listing_Column_FinalPrice extends Listing_Column
 		return $headers;
 	}
 	
-	public function getExportData( Product $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
+		/**
+		 * @var Product $item
+		 */
 		$data = [];
 		
 		foreach(Shops::getListSorted() as $shop ) {
-			$data[] = $item->getShopData($shop)->getFinalPrice();
+			$data[] = $item->getShopData($shop)->getPrice();
 		}
 		
 		return $data;

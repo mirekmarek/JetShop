@@ -6,6 +6,7 @@ use Jet\MVC_View;
 use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
@@ -42,10 +43,10 @@ $kind = $product->getKind();
 		<br>
 		<div class="form-group row">
 			<div class="col-md-1"><?=Tr::_('Kind of product:')?></div>
-			<div class="col-md-8"><a href="<?=$kind->getEditURL()?>"><b><?=$kind->getInternalName()?></b></a></div>
+			<div class="col-md-8"><?=Admin_Managers::KindOfProduct()->showName($kind->getId())?></div>
 		</div>
 		<br>
-		<?php foreach($kind->getAllProperties() as $property ):
+		<?php foreach( $kind->getAllPropertyIds() as $property ):
 				$prefix = '/'.$property->getId().'/';
 				
 				$value = $form->field($prefix.'value');
@@ -55,7 +56,7 @@ $kind = $product->getKind();
 					$value->input()->addCustomCssStyle('height:300px');
 				}
 				
-				$value->setLabel( '<a href="'.$property->getEditURL().'" target="_blank">'.$value->getLabel().'</a>');
+				$value->setLabel( Admin_Managers::Property()->showName($property->getId()) );
 				
 				echo $value;
 				

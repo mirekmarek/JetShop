@@ -9,7 +9,7 @@ use JetApplication\ProductListing_Filter_Properties;
 
 
 abstract class Core_ProductListing_Filter_Properties extends ProductListing_Filter {
-	const CACHE_KEY = 'f_param';
+	public const  CACHE_KEY = 'f_param';
 
 	protected string $key = 'properties';
 
@@ -69,7 +69,7 @@ abstract class Core_ProductListing_Filter_Properties extends ProductListing_Filt
 			($category = $this->listing->getCategory()) &&
 			($kind = $category->getKindOfProduct())
 		) {
-			foreach($kind->getAllProperties() as $property) {
+			foreach( $kind->getAllPropertyIds() as $property) {
 				$property->initFilter( $this->listing );
 				
 				$this->property_filters[$property->getId()] = $property->filter();

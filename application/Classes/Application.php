@@ -22,7 +22,7 @@ class Application extends Jet_Application
 	/**
 	 * @param MVC_Router $router
 	 */
-	public static function initErrorPages( MVC_Router $router )
+	public static function initErrorPages( MVC_Router $router ) : void
 	{
 		SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
 	}

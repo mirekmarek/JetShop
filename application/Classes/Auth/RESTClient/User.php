@@ -18,6 +18,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field_Input;
 use Jet\Form_Field;
 use Jet\Data_DateTime;
+use Jet\Form_Field_Password;
 use Jet\Locale;
 use Jet\Mailing_Email_Template;
 
@@ -430,7 +431,7 @@ class Auth_RESTClient_User extends DataModel implements Auth_User_Interface
 	/**
 	 * @param string|Data_DateTime|null $till
 	 */
-	public function block( string|Data_DateTime|null $till = null )
+	public function block( string|Data_DateTime|null $till = null ) : void
 	{
 		$this->user_is_blocked = true;
 		if( !$till ) {
@@ -447,7 +448,7 @@ class Auth_RESTClient_User extends DataModel implements Auth_User_Interface
 	/**
 	 *
 	 */
-	public function unBlock()
+	public function unBlock() : void
 	{
 		$this->user_is_blocked = false;
 		$this->user_is_blocked_till = null;
@@ -738,7 +739,52 @@ class Auth_RESTClient_User extends DataModel implements Auth_User_Interface
 
 		return $form;
 	}
-
+	
+	/**
+	 *
+	 * @return Form
+	 */
+	public function getRegistrationForm(): Form
+	{
+		$form = $this->_getForm();
+		$form->setName( 'register_user' );
+		
+		foreach( $form->getFields() as $field ) {
+			if( !in_array( $field->getName(), [
+				'username',
+				'locale',
+				'email'
+			] ) ) {
+				$form->removeField( $field->getName() );
+			}
+		}
+		
+		$form->getField( 'locale' )->setDefaultValue( Locale::getCurrentLocale() );
+		
+		$pwd = new Form_Field_Password( name: 'password', label: 'Password' );
+		$pwd->setIsRequired( true );
+		$pwd->setErrorMessages([
+			Form_Field::ERROR_CODE_EMPTY           => 'Please enter password',
+		]);
+		
+		$pwd->setFieldValueCatcher(function( $value) {
+			$this->setPassword($value);
+		});
+		$form->addField($pwd);
+		
+		$pwd_check = $pwd->generateCheckField(
+			field_name: 'password_check',
+			field_label: 'Confirm password',
+			error_message_empty: 'Please enter confirm password',
+			error_message_not_match: 'Passwords do not match'
+		);
+		$form->addField($pwd_check);
+		
+		
+		return $form;
+	}
+	
+	
 	/**
 	 *
 	 * @return Form

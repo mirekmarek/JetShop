@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\Admin\FulltextSearch;
+
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View   $this
+ * @var Index[] $result
+ */
+
+$result = $this->getRaw('result');
+
+if($result):
+	$i=0;
+	foreach( $result as $item ):
+		$i++;
+		?><span
+		data-class="<?=$item->getObjectClass()?>"
+		data-id="<?=$item->getObjectId()?>"
+		data-title="<?=$item->getObjectTitle()?>"
+		data-active="<?=$item->getObjectIsActive()?>"
+		data-type="<?=$item->getObjectType()?>"
+		class="search-whisperer-item<?=$i==1?' search-whisperer-item-selected':''?>"
+		<?php if(!$item->getObjectIsActive()):?>
+		style="text-decoration: line-through"
+		<?php endif; ?>
+		><?=$item->getObjectTitle()?></span><?php
+	endforeach;
+else:
+	?>
+	<span class="search-whisperer-message">
+		<?=Tr::_('... sorry, not found ...')?>
+	</span>
+<?php
+endif;
+

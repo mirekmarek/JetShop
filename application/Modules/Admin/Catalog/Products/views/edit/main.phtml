@@ -2,19 +2,15 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Http_Request;
-use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_dialog;
-use JetApplication\KindOfProduct;
+use JetApplication\Admin_Managers;
 use JetApplication\Price;
-use JetApplication\Product;
-use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 use JetApplication\Sticker;
-use JetApplication\WarehouseManagement_Item;
-use JetApplication\WarehouseManagement_Warehouse;
 
 
 /**
@@ -52,11 +48,13 @@ $editable = !$form->getIsReadonly();
 		<?=$this->getRaw('tabs')?>
 
 		<br/>
+		<?=Admin_Managers::UI()->renderEntityActivation( $product, !$form->getIsReadonly() )?>
+		
 		<div class="form-group row">
 			<label class="col-form-label col-md-2"><?=Tr::_('Kind of product:')?></label>
 			<div class="col-md-8">
-				<?php if(($kind=$product->getKind())):
-					?><a href="<?=$kind->getEditURL()?>"><b><?=$kind->getInternalName()?></b></a><?php
+				<?php if(($kind_id=$product->getKindId())):
+					?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
 				else:
 					?><b><?=Tr::_('- kind of product is not set -')?></b><?php
 				endif; ?>
@@ -66,127 +64,121 @@ $editable = !$form->getIsReadonly();
 				<?php endif; ?>
 			</div>
 		</div>
-		<?=$form->field('is_active')?>
-		<?=$form->field('ean')?>
+		<?=$form->field('internal_name')?>
+		<?=$form->field('internal_notes')?>
 		<?=$form->field('internal_code')?>
+		<?=$form->field('ean')?>
 		<?=$form->field('brand_id')?>
 		<?=$form->field('supplier_id')?>
 
 		<legend class="sub"><?=Tr::_('Stickers')?></legend>
-		<?php foreach(Sticker::getList() as $sticker): ?>
-			<?=$form->field('/sticker/'.$sticker->getCode())?>
+		<?php foreach(Sticker::getScope() as $sticker_code=>$sticker_name): ?>
+			<?=$form->field('/sticker/'.$sticker_code)?>
 		<?php endforeach; ?>
-
-		<?php foreach(Shops::getListSorted() as $shop):
-			$shop_key = $shop->getKey();
-
-			$shop_data = $product->getShopData( $shop );
-			?>
-			<?=$shop_data->renderShopDataBlock_start()?>
-
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Main data')?></legend>
-
-				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
-
-				<?=$form->field('/shop_data/'.$shop_key.'/name')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/variant_name')?>
-				<?php
-				$form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle('height:600px');
+		
+		<?php
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($form, $product) : void {
 				?>
-				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/short_description')?>
-			</fieldset>
-
-			<fieldset>
-				<legend class="sub"><?=Tr::_('SEO')?></legend>
-				<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
-			</fieldset>
-
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Price')?></legend>
-
-				<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/standard_price')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/action_price')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/action_price_valid_from')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/action_price_valid_till')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/sale_price')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/reset_sale_after_sold_out')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/deactivate_product_after_sold_out')?>
-
-				<div class="row">
-					<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 20px;margin-top: -3px;"><?=Tr::_('Price:')?></label>
-					<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Price::formatWithCurrency($product->getShopData($shop)->getFinalPrice(), $shop )?></div>
-				</div>
-
-				<?php if($product->getShopData($shop)->getDiscountPercentage()>0): ?>
-					<div class="row" style="opacity: 0.5">
-						<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 15px;margin-top: -3px;"><?=Tr::_('Discount:')?></label>
-						<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$product->getShopData($shop)->getDiscountPercentage();?>%</div>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					
+					<?=Admin_Managers::UI()->renderEntityShopDataActivation( $product, $shop, !$form->getIsReadonly() )?>
+					
+					
+					<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/variant_name')?>
+					<?php
+					$form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle('height:600px');
+					?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/short_description')?>
+				</fieldset>
+				
+				<fieldset>
+					<legend class="sub"><?=Tr::_('SEO')?></legend>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
+				</fieldset>
+				
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Price')?></legend>
+					
+					<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/standard_price')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/price')?>
+					
+					<div class="row">
+						<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 20px;margin-top: -3px;"><?=Tr::_('Price:')?></label>
+						<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Price::formatWithCurrency($product->getShopData($shop)->getPrice(), $shop )?></div>
 					</div>
-				<?php endif; ?>
-
-			</fieldset>
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Availability')?></legend>
-
-				<?=$form->field('/shop_data/'.$shop_key.'/delivery_class_code')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/delivery_term_code')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/date_available')?>
-				<div class="row">
-					<label class="col-form-label col-md-2"><?=Tr::_('Stock status:')?></label>
-					<div class="col-md-8">
-						<table class="table table-striped">
-							<tr>
-								<td style="width: 150px;font-weight: bolder;"><?=Tr::_('Total available:')?></td>
-								<td style="font-weight: bolder;"><?=$product->getShopData($shop)->getStockStatus()?></td>
-							</tr>
-							<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
-								if(!$warehouse->hasShop($shop)) {
-									continue;
-								}
-
-								$item = WarehouseManagement_Item::get($warehouse->getCode(), $product->getId());
-								?>
+					
+					<?php if($product->getShopData($shop)->getDiscountPercentage()>0): ?>
+						<div class="row" style="opacity: 0.5">
+							<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 15px;margin-top: -3px;"><?=Tr::_('Discount:')?></label>
+							<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$product->getShopData($shop)->getDiscountPercentage();?>%</div>
+						</div>
+					<?php endif; ?>
+				
+				</fieldset>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Availability')?></legend>
+					
+					<?=$form->field('/shop_data/'.$shop_key.'/in_stock_qty')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/length_of_delivery')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/available_from')?>
+					
+					<?php
+					//TODO: to je vec sluzby spravy skladu
+					/*
+					<div class="row">
+						<label class="col-form-label col-md-2"><?=Tr::_('Stock status:')?></label>
+						<div class="col-md-8">
+							<table class="table table-striped">
 								<tr>
-									<td colspan="2">
-										<b><?=$warehouse->getInternalName()?></b>
-									</td>
+									<td style="width: 150px;font-weight: bolder;"><?=Tr::_('Total available:')?></td>
+									<td style="font-weight: bolder;"><?=$product->getShopData($shop)->getInStockQty()?></td>
 								</tr>
-
-								<tr>
-									<td><?=Tr::_('Available:')?></td>
-									<td><?=Locale::getCurrentLocale()->formatInt($item->getAvailable())?></td>
-								</tr>
-								<tr>
-									<td><?=Tr::_('In stock:')?></td>
-									<td><?=Locale::getCurrentLocale()->formatInt($item->getInStock())?></td>
-								</tr>
-								<tr>
-									<td><?=Tr::_('Blocked:')?></td>
-									<td><?=Locale::getCurrentLocale()->formatInt($item->getBlocked())?></td>
-								</tr>
-								<tr>
-									<td><?=Tr::_('Required:')?></td>
-									<td><?=Locale::getCurrentLocale()->formatInt($item->getRequired())?></td>
-								</tr>
-							<?php endforeach; ?>
-						</table>
+								<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+									if(!$warehouse->hasShop($shop)) {
+										continue;
+									}
+									
+									$item = WarehouseManagement_Item::get($warehouse->getCode(), $product->getId());
+									?>
+									<tr>
+										<td colspan="2">
+											<b><?=$warehouse->getInternalName()?></b>
+										</td>
+									</tr>
+									
+									<tr>
+										<td><?=Tr::_('Available:')?></td>
+										<td><?=Locale::getCurrentLocale()->formatInt($item->getAvailable())?></td>
+									</tr>
+									<tr>
+										<td><?=Tr::_('In stock:')?></td>
+										<td><?=Locale::getCurrentLocale()->formatInt($item->getInStock())?></td>
+									</tr>
+									<tr>
+										<td><?=Tr::_('Blocked:')?></td>
+										<td><?=Locale::getCurrentLocale()->formatInt($item->getBlocked())?></td>
+									</tr>
+									<tr>
+										<td><?=Tr::_('Required:')?></td>
+										<td><?=Locale::getCurrentLocale()->formatInt($item->getRequired())?></td>
+									</tr>
+								<?php endforeach; ?>
+							</table>
+						</div>
 					</div>
-				</div>
-			</fieldset>
-
-
-
-			<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
-
-
+					*/ ?>
+				</fieldset>
+			<?php }); ?>
 	</div>
 </div>
 
@@ -202,7 +194,7 @@ echo $change_kind_of_product_dialog->start();
 	?>
 <table>
 	<tr>
-		<td style="width: 450px;"><?=KindOfProduct::renderSelectKindOfProductWidget("$('#kind_of_product_id').val(selected_item.id);", $product->getKindId())?></td>
+		<td style="width: 450px;"><?=Admin_Managers::KindOfProduct()->renderSelectWidget("$('#kind_of_product_id').val(selected_item.id);", $product->getKindId())?></td>
 	</tr>
 </table>
 <?php

@@ -7,9 +7,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
 
-use JetApplication\CommonEntity_ShopRelationTrait_ShopIsId;
+use JetApplication\Entity_WithShopRelation_ShopIsID;
 use JetApplication\Shops_Shop;
 
 /**
@@ -18,12 +17,9 @@ use JetApplication\Shops_Shop;
 #[DataModel_Definition(
 	name: 'exports_join_kind_of_product',
 	database_table_name: 'exports_join_kind_of_product',
-	id_controller_class: DataModel_IDController_Passive::class
 )]
-abstract class Core_Exports_Join_KindOfProduct extends DataModel
+abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation_ShopIsID
 {
-
-	use CommonEntity_ShopRelationTrait_ShopIsId;
 
 	/**
 	 * @var string

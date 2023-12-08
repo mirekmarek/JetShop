@@ -9,7 +9,7 @@ use JetApplication\Brand;
 use JetApplication\Product;
 
 abstract class Core_ProductListing_Filter_Brands extends ProductListing_Filter {
-	const CACHE_KEY = 'f_brands';
+	public const CACHE_KEY = 'f_brands';
 
 	protected string $key = 'brands';
 

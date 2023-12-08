@@ -46,4 +46,10 @@ return [
 	'It is used by following kinds of product:' => '',
 	'Do you really want to delete this property?' => '',
 	'Property <b>%ITEM_NAME%</b> has been deleted' => '',
+	'Number' => '',
+	'Yes / No' => '',
+	'Options' => '',
+	'Main image' => '',
+	'Pictogram image' => '',
+	'... select property ...' => '',
 ];

@@ -23,4 +23,7 @@ return [
 	'It is used by following kinds of product:' => '',
 	'Property Group <b>%ITEM_NAME%</b> has been deleted' => '',
 	'Search ...' => '',
+	'Main image' => '',
+	'Pictogram image' => '',
+	'... select property group ...' => '',
 ];

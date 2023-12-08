@@ -1,62 +1,24 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Brands;
 
-use Jet\Form;
-use JetApplication\Brand;
-
-use Jet\UI_dataGrid;
 use Jet\UI;
-use Jet\UI_button;
 
 use Jet\Tr;
 use Jet\MVC_View;
 
 /**
- * @var MVC_View        $this
- * @var UI_dataGrid     $grid
- * @var Form            $filter_form
+ * @var MVC_View $this
+ * @var Listing  $listing
  */
-$grid = $this->getRaw( 'grid' );
-$filter_form = $this->getRaw( 'filter_form' );
 $router = $this->getController()->getControllerRouter();
 
-
-$c_edit = $grid->getColumn( '_edit_' );
-$c_edit->setRenderer(
-	function( Brand $item ) use ( $router ) {
-		if( ( $delete_uri = $router->action('delete')->URI( $item->getId() ) ) ):
-			echo UI::button_delete(' ')->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
-		endif;
-		echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		if( ( $edit_uri = $router->action('edit')->URI( $item->getId() ) ) ):
-			echo UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
-		endif;
-
-	}
-);
-$c_edit->addCustomCssStyle( 'width:180px;' );
+$listing = $this->getRaw( 'listing' );
+$grid = $listing->getGrid();
+$filter_form = $listing->getFilterForm();
 
 
-$grid->getColumn( 'name' )->setRenderer(
-	function( Brand $item ) use ( $router ) {
-		$edit_uri = $router->action('edit')->URI( $item->getId() );
-		?>
-		<a href="<?=$edit_uri;?>"><?=$item->getName();?></a>
-		<?php
-	}
-);
-
+$grid->getColumn( '_edit_' )->addCustomCssStyle( 'width:180px;' );
 $grid->getColumn( 'id' )->addCustomCssStyle( 'width:120px;' );
-$grid->getColumn( 'id' )->setRenderer(
-	function( Brand $item ) use ( $router ) {
-		$edit_uri = $router->action('edit')->URI( $item->getId() );
-		?>
-		<a href="<?=$edit_uri;?>"><?=$item->getId();?></a>
-		<?php
-	}
-);
-
-
 
 ?>
 <?=$filter_form->start()?>
@@ -67,7 +29,7 @@ $grid->getColumn( 'id' )->setRenderer(
 		<?php endif; ?>
 	</div>
 	<div class="col-xs-7 col-md-3">
-		<?= $filter_form->field( 'search' )->input() ?>
+		<?=$listing->filter(Listing_Filter_Search::KEY)->renderForm()?>
 	</div>
 </div>
 <?=$filter_form->end()?>

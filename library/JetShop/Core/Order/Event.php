@@ -8,10 +8,9 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Data_DateTime;
 
-use JetApplication\CommonEntity_ShopRelationTrait;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Order_Event_HandlerModule;
 use JetApplication\Order;
 use JetApplication\Order_event;
@@ -22,14 +21,9 @@ use JetApplication\Order_event;
 #[DataModel_Definition(
 	name: 'order_event',
 	database_table_name: 'orders_events',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	]
 )]
-class Core_Order_Event extends DataModel
+class Core_Order_Event extends Entity_WithShopRelation
 {
-	use CommonEntity_ShopRelationTrait;
 
 	protected static string $handler_module_name_prefix = 'Order.Events.';
 

@@ -1,63 +1,24 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Stickers;
 
-use Jet\Form;
-use JetApplication\Sticker;
-
-use Jet\UI_dataGrid;
 use Jet\UI;
-use Jet\UI_button;
 
 use Jet\Tr;
 use Jet\MVC_View;
 
 /**
- * @var MVC_View        $this
- * @var UI_dataGrid     $grid
- * @var Form            $filter_form
+ * @var MVC_View $this
+ * @var Listing  $listing
  */
-$grid = $this->getRaw( 'grid' );
-$filter_form = $this->getRaw( 'filter_form' );
 $router = $this->getController()->getControllerRouter();
 
+$listing = $this->getRaw( 'listing' );
+$grid = $listing->getGrid();
+$filter_form = $listing->getFilterForm();
 
 
-$c_edit = $grid->getColumn( '_edit_' );
-$c_edit->setRenderer(
-	function( Sticker $item ) use ( $router ) {
-		if( ( $delete_uri = $router->action('delete')->URI( $item->getCode() ) ) ):
-			echo UI::button_delete(' ')->setUrl( $delete_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
-		endif;
-		echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		if( ( $edit_uri = $router->action('edit')->URI( $item->getCode() ) ) ):
-			echo UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);
-		endif;
-
-	}
-);
-$c_edit->addCustomCssStyle( 'width:180px;' );
-
-
-$grid->getColumn( 'internal_name' )->setRenderer(
-	function( Sticker $item ) use ( $router ) {
-		$edit_uri = $router->action('edit')->URI( $item->getCode() );
-		?>
-		<a href="<?=$edit_uri;?>"><?=$item->getInternalName();?></a>
-		<?php
-	}
-);
-
+$grid->getColumn( '_edit_' )->addCustomCssStyle( 'width:180px;' );
 $grid->getColumn( 'code' )->addCustomCssStyle( 'width:220px;' );
-$grid->getColumn( 'code' )->setRenderer(
-	function( Sticker $item ) use ( $router ) {
-		$edit_uri = $router->action('edit')->URI( $item->getCode() );
-		?>
-		<a href="<?=$edit_uri;?>"><?=$item->getCode();?></a>
-		<?php
-	}
-);
-
-
 
 ?>
 <?=$filter_form->start()?>
@@ -68,7 +29,7 @@ $grid->getColumn( 'code' )->setRenderer(
 		<?php endif; ?>
 	</div>
 	<div class="col-xs-7 col-md-3">
-		<?= $filter_form->field( 'search' )->input() ?>
+		<?=$listing->filter(Listing_Filter_Search::KEY)->renderForm()?>
 	</div>
 </div>
 <?=$filter_form->end()?>

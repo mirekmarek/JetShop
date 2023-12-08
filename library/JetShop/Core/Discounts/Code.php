@@ -16,8 +16,8 @@ use Jet\Data_DateTime;
 use Jet\Form_Field_DateTime;
 use Jet\Tr;
 
-use JetApplication\CommonEntity_ShopRelationTrait;
 use JetApplication\Discounts_Code;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Order;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
@@ -31,24 +31,20 @@ use JetApplication\Discounts_Code_Usage;
 #[DataModel_Definition(
 	name: 'discounts_code',
 	database_table_name: 'discounts_codes',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: ['id_property_name'=>'id']
 )]
-class Core_Discounts_Code extends DataModel
+class Core_Discounts_Code extends Entity_WithShopRelation
 {
-	const DISCOUNT_TYPE_PRODUCTS_PERCENTAGE = 'products_percentage';
-	const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'products_amount';
+	public const DISCOUNT_TYPE_PRODUCTS_PERCENTAGE = 'products_percentage';
+	public const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'products_amount';
 
-	const DISCOUNT_TYPE_DELIVERY_PERCENTAGE = 'delivery_percentage';
-	const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'delivery_amount';
+	public const DISCOUNT_TYPE_DELIVERY_PERCENTAGE = 'delivery_percentage';
+	public const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'delivery_amount';
 
-	const DISCOUNT_TYPE_PAYMENT_PERCENTAGE = 'payment_percentage';
-	const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'payment_amount';
+	public const DISCOUNT_TYPE_PAYMENT_PERCENTAGE = 'payment_percentage';
+	public const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'payment_amount';
 	
-	const DISCOUNT_TYPE_ORDER_PERCENTAGE = 'order_percentage';
-	const DISCOUNT_TYPE_ORDER_AMOUNT = 'order_amount';
-
-	use CommonEntity_ShopRelationTrait;
+	public const DISCOUNT_TYPE_ORDER_PERCENTAGE = 'order_percentage';
+	public const DISCOUNT_TYPE_ORDER_AMOUNT = 'order_amount';
 
 	/**
 	 * @var ?Form

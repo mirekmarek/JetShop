@@ -3,17 +3,11 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_IDController_Passive;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\DataModel_IDController_Passive;
-use Jet\Tr;
-
 use JetApplication\Brand;
-use JetApplication\Brand_ShopData;
-use JetApplication\CommonEntity_ShopData;
-use JetApplication\Images_ShopDataInterface;
-use JetApplication\Images_ShopDataTrait;
-use JetApplication\Shops;
+use JetApplication\Entity_WithIDAndShopData_ShopData;
 
 /**
  *
@@ -24,22 +18,8 @@ use JetApplication\Shops;
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Brand::class
 )]
-abstract class Core_Brand_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
-
-	use Images_ShopDataTrait;
-
-	const IMG_LOGO = 'logo';
-	const IMG_BIG_LOGO = 'big_logo';
-	const IMG_TITLE = 'title';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_id: true,
-		related_to: 'main.id',
-	)]
-	protected int $brand_id = 0;
+abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 	
-	protected ?Brand $brand = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -234,87 +214,36 @@ abstract class Core_Brand_ShopData extends CommonEntity_ShopData implements Imag
 
 	public function generateUrlParam() : void
 	{
-		$this->url_param = Shops::generateURLPathPart( $this->name, '', 0, $this->getShop() );
+		$this->url_param = $this->_generateURLPathPart( $this->name );
 	}
-
-	public function getImageEntity() : string
-	{
-		return 'brand';
-	}
-
-	public function getImageObjectId() : int|string
-	{
-		return $this->brand_id;
-	}
-
-	public static function getImageClasses() : array
-	{
-		return [
-			Brand_ShopData::IMG_LOGO => Tr::_('Logo', [], Brand::getManageModuleName() ),
-			Brand_ShopData::IMG_BIG_LOGO => Tr::_('Big logo', [], Brand::getManageModuleName() ),
-			Brand_ShopData::IMG_TITLE => Tr::_('Title image', [], Brand::getManageModuleName() ),
-		];
-	}
-
+	
 	public function setImageLogo( string $image ) : void
 	{
-		$this->setImage( Brand_ShopData::IMG_LOGO, $image);
+		$this->image_logo = $image;
 	}
-
+	
 	public function getImageLogo() : string
 	{
-		return $this->getImage( Brand_ShopData::IMG_LOGO );
+		return $this->image_logo;
 	}
-
-	public function getImageLogoUrl() : string
-	{
-		return $this->getImageUrl( Brand_ShopData::IMG_LOGO );
-	}
-
-	public function getImageLogoThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Brand_ShopData::IMG_LOGO, $max_w, $max_h );
-	}
-
+	
 	public function setImageBigLogo( string $image ) : void
 	{
-		$this->setImage( Brand_ShopData::IMG_BIG_LOGO, $image);
+		$this->image_logo = $image;
 	}
-
+	
 	public function getImageBigLogo() : string
 	{
-		return $this->getImage( Brand_ShopData::IMG_BIG_LOGO );
+		return $this->image_big_logo;
 	}
-
-	public function getImageBigLogoUrl() : string
-	{
-		return $this->getImageUrl( Brand_ShopData::IMG_BIG_LOGO );
-	}
-
-	public function getImageBigLogoThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Brand_ShopData::IMG_BIG_LOGO, $max_w, $max_h );
-	}
-
+	
 	public function setImageTitle( string $image ) : void
 	{
-		$this->setImage( Brand_ShopData::IMG_TITLE, $image);
+		$this->image_title = $image;
 	}
-
+	
 	public function getImageTitle() : string
 	{
-		return $this->getImage( Brand_ShopData::IMG_TITLE );
+		return $this->image_title;
 	}
-
-	public function getImageTitleUrl() : string
-	{
-		return $this->getImageUrl( Brand_ShopData::IMG_TITLE );
-	}
-
-	public function getImageTitleThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Brand_ShopData::IMG_TITLE, $max_w, $max_h );
-	}
-
-
 }

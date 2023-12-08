@@ -8,10 +8,13 @@ return [
 	'icon' => '',
 	'menu_title' => 'Homepage',
 	'breadcrumb_title' => 'Homepage',
+	'order' => 0,
 	'is_secret' => false,
+	'layout_script_name' => 'default',
 	'http_headers' => [
 	],
-	'layout_script_name' => 'default',
+	'parameters' => [
+	],
 	'meta_tags' => [
 	],
 	'contents' => [
@@ -24,16 +27,6 @@ return [
 			'is_cacheable' => false,
 			'output_position' => '__main__',
 			'output_position_order' => 1,
-		],
-		[
-			'module_name' => 'Shop.Homepage',
-			'controller_name' => 'Main',
-			'controller_action' => 'default',
-			'parameters' => [
-			],
-			'is_cacheable' => false,
-			'output_position' => '__main__',
-			'output_position_order' => 2,
 		],
 	],
 ];

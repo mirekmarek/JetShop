@@ -26,7 +26,6 @@ use JetApplication\Services_Service;
 use JetApplication\Payment_Method;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\Payment_Method_ManageModuleInterface;
 use JetApplication\CashDesk;
 use JetApplication\Order_Item;
 use JetApplication\Payment_Method_Module;
@@ -42,9 +41,6 @@ use JetApplication\Order;
 )]
 abstract class Core_Payment_Method extends DataModel
 {
-	protected static string $manage_module_name = 'Admin.Payment.Methods';
-	protected static string $method_module_name_prefix = 'Order.Payment.Methods.';
-
 	/**
 	 * @var string
 	 */
@@ -184,38 +180,6 @@ abstract class Core_Payment_Method extends DataModel
 
 	protected static ?array $scope = null;
 
-	/**
-	 * @return string
-	 */
-	public static function getManageModuleName(): string
-	{
-		return static::$manage_module_name;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	public static function setManageModuleName( string $name ): void
-	{
-		static::$manage_module_name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getMethodModuleNamePrefix(): string
-	{
-		return static::$method_module_name_prefix;
-	}
-
-	/**
-	 * @param string $method_module_name_prefix
-	 */
-	public static function setMethodModuleNamePrefix( string $method_module_name_prefix ): void
-	{
-		static::$method_module_name_prefix = $method_module_name_prefix;
-	}
-
 
 
 	public function __construct()
@@ -227,7 +191,7 @@ abstract class Core_Payment_Method extends DataModel
 
 	public function afterLoad() : void
 	{
-		Payment_Method_ShopData::checkShopData( $this, $this->shop_data );
+		$this->checkShopData();
 	}
 
 
@@ -295,15 +259,7 @@ abstract class Core_Payment_Method extends DataModel
 	{
 		return $this->getAddForm()->catch();
 	}
-
-	/**
-	 * @param string $code
-	 * @return static|null
-	 */
-	public static function get( string $code ) : static|null
-	{
-		return static::load( $code );
-	}
+	
 
 	/**
 	 * @return static[]
@@ -398,32 +354,18 @@ abstract class Core_Payment_Method extends DataModel
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
-
-	public function getEditURL() : string
-	{
-		return Payment_Method::getPaymentMethodEditURL( $this->getCode() );
-	}
-
-	public static function getPaymentMethodEditURL( string $code ) : string
-	{
-		/**
-		 * @var Payment_Method_ManageModuleInterface $module
-		 */
-		$module = Application_Modules::moduleInstance( Payment_Method::getManageModuleName() );
-
-		return $module->getPaymentMethodEditURL( $code );
-	}
+	
 
 	public static function getScope() : array
 	{
 		if(static::$scope===null) {
-			$list = Payment_Method::getList();
+			
+			static::$scope = static::dataFetchPairs(
+				select: [
+					'code',
+					'internal_name'
+				], order_by: ['internal_name']);
 
-			static::$scope = [];
-
-			foreach($list as $item) {
-				static::$scope[$item->getCode()] = $item->getInternalName();
-			}
 		}
 
 		return static::$scope;

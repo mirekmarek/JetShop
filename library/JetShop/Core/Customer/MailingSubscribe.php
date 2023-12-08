@@ -7,9 +7,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
 
-use JetApplication\CommonEntity_ShopRelationTrait_ShopIsId;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops_Shop;
 use JetApplication\Customer_MailingSubscribe;
 use JetApplication\Customer_MailingSubscribe_Log;
@@ -20,12 +19,9 @@ use JetApplication\Customer_MailingSubscribe_Log;
 #[DataModel_Definition(
 	name: 'customer_mailing_subscribe',
 	database_table_name: 'customers_mailing_subscribe',
-	id_controller_class: DataModel_IDController_Passive::class,
 )]
-abstract class Core_Customer_MailingSubscribe extends DataModel
+abstract class Core_Customer_MailingSubscribe extends Entity_WithShopRelation
 {
-
-	use CommonEntity_ShopRelationTrait_ShopIsId;
 
 	/**
 	 * @var string
@@ -177,7 +173,7 @@ abstract class Core_Customer_MailingSubscribe extends DataModel
 
 	}
 
-	public static function changeMail( Shops_Shop $shop,string $old_email_address, string $new_mail_address, string $source, string $comment='' )
+	public static function changeMail( Shops_Shop $shop,string $old_email_address, string $new_mail_address, string $source, string $comment='' ) : void
 	{
 
 		$exists_reg = Customer_MailingSubscribe::get( $shop, $old_email_address );

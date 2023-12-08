@@ -279,7 +279,7 @@ class Core_WarehouseManagement_Item extends DataModel
 		return $this->required;
 	}
 
-	public function recalculate()
+	public function recalculate() : void
 	{
 
 		$this->available = 0;

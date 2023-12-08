@@ -9,13 +9,12 @@ namespace JetShop;
 use Jet\Tr;
 
 use JetApplication\Delivery_Kind;
-use JetApplication\Delivery_Method;
 
 abstract class Core_Delivery_Kind {
 
-	const KIND_E_DELIVERY = 'e-delivery';
-	const KIND_PERSONAL_TAKEOVER = 'personal-takeover';
-	const KIND_DELIVERY = 'delivery';
+	public const KIND_E_DELIVERY = 'e-delivery';
+	public const KIND_PERSONAL_TAKEOVER = 'personal-takeover';
+	public const KIND_DELIVERY = 'delivery';
 
 	protected string $code = '';
 
@@ -98,16 +97,16 @@ abstract class Core_Delivery_Kind {
 
 			$e_delivery = new Delivery_Kind();
 			$e_delivery->setCode( Delivery_Kind::KIND_E_DELIVERY );
-			$e_delivery->setTitle( Tr::_('e-Delivery', [], Delivery_Method::getManageModuleName()) );
+			$e_delivery->setTitle( Tr::_('e-Delivery') );
 
 			$personal_takeover = new Delivery_Kind();
 			$personal_takeover->setCode( Delivery_Kind::KIND_PERSONAL_TAKEOVER );
-			$personal_takeover->setTitle( Tr::_('Personal takeover', [], Delivery_Method::getManageModuleName()) );
+			$personal_takeover->setTitle( Tr::_('Personal takeover') );
 			$personal_takeover->setModuleIsRequired( true );
 
 			$delivery = new Delivery_Kind();
 			$delivery->setCode( Delivery_Kind::KIND_DELIVERY );
-			$delivery->setTitle( Tr::_('Delivery', [], Delivery_Method::getManageModuleName()) );
+			$delivery->setTitle( Tr::_('Delivery') );
 
 			static::$list[$delivery->getCode()] = $delivery;
 			static::$list[$personal_takeover->getCode()] = $personal_takeover;

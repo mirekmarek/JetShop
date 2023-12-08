@@ -1,13 +1,10 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
-
-use Jet\AJAX;
 use Jet\Logger;
 use Jet\MVC_Controller_Router;
+use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
-use JetApplication\Category;
-use JetApplication\Fulltext_Index_Internal_Category;
 
 use Jet\MVC_Controller_Default;
 
@@ -20,10 +17,6 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Data_Tree_Node;
-
-use JetApplication\Shops;
-use Jet\Application;
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 
 /**
@@ -51,6 +44,7 @@ class Controller_Main extends MVC_Controller_Default
 			$category_id = $GET->getInt('id');
 			if($category_id) {
 				static::$current_category = Category::get($category_id);
+				static::$current_category?->setEditable( Main::getCurrentUserCanEdit() );
 			}
 
 			$tabs = $this->_getEditTabs();
@@ -65,43 +59,32 @@ class Controller_Main extends MVC_Controller_Default
 
 			$action = $GET->getString('action');
 
-			$this->router->setDefaultAction(  'default', Main::ACTION_GET_CATEGORY  );
+			$this->router->setDefaultAction(  'default', Main::ACTION_GET  );
 
-			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
-				return $GET->exists('whisper');
-			});
-
-			$this->router->addAction( 'set_filter' )->setResolver(function() use ($GET) {
-				return $GET->exists('set_filter');
-			});
-
-			$this->router->addAction( 'generate_url_path_part' )->setResolver(function() use ($GET) {
-				return $GET->exists('generate_url_path_part');
-			});
 			
-			$this->router->addAction( 'category_add', Main::ACTION_ADD_CATEGORY )
-				->setResolver(function() use ($action) {
-					return ( $action=='create_category' );
+			$this->router->addAction( 'add', Main::ACTION_ADD )->setResolver(function() use ($action) {
+					return ( $action=='create' );
 				});
 			
-			$this->router->addAction( 'save_sort', Main::ACTION_GET_CATEGORY )->setResolver(function() use ($action, $selected_tab) {
+			$this->router->addAction( 'save_sort', Main::ACTION_GET )->setResolver(function() use ($action, $selected_tab) {
 				return $action=='save_sort';
 			});
 			
-			if(static::$current_category) {
-				$this->router->addAction( 'category_edit', Main::ACTION_GET_CATEGORY )->setResolver(function() use ($action, $selected_tab) {
-					return $selected_tab=='main';
-				});
-				
-				$this->router->addAction( 'category_edit_filter', Main::ACTION_UPDATE_CATEGORY )->setResolver(function() use ($action, $selected_tab) {
-					return $selected_tab=='filter';
-				});
-				
-				$this->router->addAction( 'category_edit_images', Main::ACTION_UPDATE_CATEGORY )->setResolver(function() use ($action, $selected_tab) {
-					return $selected_tab=='images';
-				});
-				
-			}
+			$this->router->addAction( 'edit', Main::ACTION_GET )
+				->setResolver(function() use ($action, $selected_tab) {
+					return static::$current_category && $selected_tab=='main';
+				})
+				->setURICreator(function( int $id ) : string {
+					return Http_Request::currentURI(['id'=>$id],['action']);
+				} );
+			
+			$this->router->addAction( 'edit_images', Main::ACTION_GET )->setResolver(function() use ($action, $selected_tab) {
+				return static::$current_category && $selected_tab=='images';
+			});
+			
+			$this->router->addAction( 'edit_products', Main::ACTION_GET )->setResolver(function() use ($action, $selected_tab) {
+				return static::$current_category && $selected_tab=='products';
+			});
 			
 		}
 
@@ -128,10 +111,14 @@ class Controller_Main extends MVC_Controller_Default
 
 		return self::$current_category->getId();
 	}
-
-	public static function getCurrentNode() : Data_Tree_Node
+	
+	/**
+	 * @deprecated
+	 * @return Data_Tree_Node|null
+	 */
+	public static function getCurrentNode() : ?Data_Tree_Node
 	{
-		return Category::getTree()->getNode( Controller_Main::getCurrentCategoryId() );
+		return Category::getTree()->getNode( Controller_Main::getCurrentCategoryId()?:'' );
 	}
 
 	public static function getCurrentAction() : string
@@ -142,9 +129,12 @@ class Controller_Main extends MVC_Controller_Default
 
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
-
-
+		Admin_Managers::UI()->initBreadcrumb();
+		
+		if(!static::getCurrentCategoryId()) {
+			return;
+		}
+		
 		$tree = Category::getTree();
 
 		$current_node = $tree->getNode( static::getCurrentCategoryId() );
@@ -160,8 +150,8 @@ class Controller_Main extends MVC_Controller_Default
 			if(!$label) {
 				$label = '???';
 			}
-
-			Navigation_Breadcrumb::addURL( $label, Category::getCategoryEditURL( $node->getId() ) );
+			
+			Navigation_Breadcrumb::addURL( $label, $this->getControllerRouter()->action('edit')->URI($node->getId()) );
 
 		}
 
@@ -176,13 +166,11 @@ class Controller_Main extends MVC_Controller_Default
 			return null;
 		}
 		$tabs = [
-			'main'    => Tr::_( 'Main data' ),
-			'images'  => Tr::_( 'Images' ),
+			'main'     => Tr::_( 'Main data' ),
+			'images'   => Tr::_( 'Images' ),
+			'products' => Tr::_( 'Products (%count%)', ['count'=>count(static::$current_category->getProductIds())] ),
 		];
 		
-		if(static::$current_category->getKindOfProductId()) {
-			$tabs['filter'] = Tr::_( 'Auto append products' );
-		}
 
 		$tabs = UI::tabs(
 			$tabs,
@@ -197,117 +185,43 @@ class Controller_Main extends MVC_Controller_Default
 
 
 
-
-	protected function _editCategorySave( bool $reload = true ) : void
-	{
-		$category = static::getCurrentCategory();
-		$category->save();
-		Logger::success(
-			event: 'category_updated',
-			event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated',
-			context_object_id: $category->getId(),
-			context_object_name: $category->getPathName(),
-			context_object_data: $category
-		);
-
-		UI_messages::success(
-			Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
-		);
-
-		if($reload) {
-			Http_Headers::reload();
-		}
-
-	}
-
+	
 
 
 
 	public function default_Action() : void
 	{
+		
 		$this->_setBreadcrumbNavigation();
 
 		$this->output( 'default' );
 	}
-
-	public function whisper_Action() : void
-	{
-		$GET = Http_Request::GET();
-
-		$only_types = $GET->getString('only_types');
-		if($only_types) {
-			$only_types = explode(',', $only_types);
-		} else {
-			$only_types = [];
-		}
-
-		$result = Fulltext_Index_Internal_Category::search(
-			$GET->getString('whisper'),
-			$only_types,
-			$GET->getBool('only_active'),
-			$GET->getInt('exclude_branch_id')
-		);
-
-		$this->view->setVar('result', $result);
-		echo $this->view->render('search_whisperer_result');
-
-		Application::end();
-	}
-
-	public function set_filter_Action() : void
-	{
-		$POST = Http_Request::POST();
-
-		Category::setFilter_onlyActive( $POST->getBool('only_active') );
-		Category::setFilter_selectedSort( $POST->getString('order_by') );
-
-		Http_Headers::reload([], ['set_filter']);
-	}
-
-
-	public function generate_url_path_part_Action() : void
-	{
-		$GET = Http_Request::GET();
-
-		AJAX::commonResponse([
-			'url_path_part' => Shops::generateURLPathPart( $GET->getString('generate_url_path_part'), '', 0, Shops::get( $GET->getString('shop_key') ) )
-		]);
-
-		Application::end();
-	}
 	
 	
-	
-	public function category_edit_Action()
+	public function edit_Action() : void
 	{
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit' ) );
 		$category = static::getCurrentCategory();
 		
-		$GET = Http_Request::GET();
-		if($GET->exists('action')) {
-			$action = $GET->getString('action');
-			if($action=='change_kind_of_product') {
-				$category->setKindOfProductId( Http_Request::POST()->getInt('kind_of_product_id') );
-				
-				Logger::success(
-					event: 'category_updated',
-					event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated',
-					context_object_id: $category->getId(),
-					context_object_name: $category->getPathName(),
-					context_object_data: $category
-				);
-				
-				UI_messages::success(
-					Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
-				);
-			}
-			
-			Http_Headers::reload(unset_GET_params: ['action']);
-		}
-		
+		$category->handleActivation();
 		
 		if( $category->catchEditForm() ) {
-			$this->_editCategorySave();
+			$category->save();
+			
+			Logger::success(
+				event: 'category_updated',
+				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated',
+				context_object_id: $category->getId(),
+				context_object_name: $category->getPathName(),
+				context_object_data: $category
+			);
+			
+			UI_messages::success(
+				Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
+			);
+			
+			Http_Headers::reload();
+			
 		}
 		
 		$this->view->setVar('toolbar', 'category/edit/main/toolbar');
@@ -316,80 +230,69 @@ class Controller_Main extends MVC_Controller_Default
 		$this->output( 'category/edit/main' );
 	}
 	
-	public function category_edit_images_Action() : void
+	public function edit_products_Action() : void
+	{
+		$this->_setBreadcrumbNavigation( Tr::_( 'Products' ) );
+		$category = static::getCurrentCategory();
+		
+		$_updated = function() use ($category) {
+			Logger::success(
+				event: 'category_updated',
+				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated',
+				context_object_id: $category->getId(),
+				context_object_name: $category->getPathName(),
+				context_object_data: $category
+			);
+			
+			UI_messages::success(
+				Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
+			);
+			
+		};
+		
+		$GET = Http_Request::GET();
+		if($GET->exists('action')) {
+			$action = $GET->getString('action');
+			if($action=='change_kind_of_product') {
+				$category->setKindOfProductId( Http_Request::POST()->getInt('kind_of_product_id') );
+				$_updated();
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['action']);
+		}
+		
+		if(($add_product_id=$GET->getInt('add_product'))) {
+			$category->addProduct( $add_product_id );
+			$_updated();
+			Http_Headers::reload(unset_GET_params: ['add_product']);
+		}
+		
+		if(($add_product_id=$GET->getInt('remove_product'))) {
+			$category->removeProduct( $add_product_id );
+			$_updated();
+			Http_Headers::reload(unset_GET_params: ['remove_product']);
+		}
+		
+		$this->output( 'category/edit/products' );
+	}
+	
+	public function edit_images_Action() : void
 	{
 		Application_Admin::handleUploadTooLarge();
 		
 		$this->_setBreadcrumbNavigation( Tr::_( 'Images' ) );
 		
 		$category = static::getCurrentCategory();
-		
-		foreach(Shops::getList() as $shop) {
-			$category->getShopData( $shop )->catchImageWidget(
-				shop: $shop,
-				entity_name: 'Category image',
-				object_id: $category->getId(),
-				object_name: $category->getPathName(),
-				upload_event: 'category_image_uploaded',
-				delete_event: 'category_image_deleted'
-			);
-		}
+		$category->handleImages();
 		
 		$this->output( 'category/edit/images' );
 	}
 	
-	
-	
-	public function category_edit_filter_Action()
-	{
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit - filter settings' ) );
-		$category = static::getCurrentCategory();
-		
-		if( $category->catchAutoAppendProductFilterEditForm() ) {
-			$this->_editCategorySave();
-		}
-		
-		$GET = Http_Request::GET();
-		
-		if($GET->exists('deactivate')) {
-			$category->deactivateAutoAppendProducts();
-			Logger::success(
-				event: 'category_updated.auto_append_deactivated',
-				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated - auto append deactivated',
-				context_object_id: $category->getId(),
-				context_object_name: $category->getPathName(),
-				context_object_data: $category
-			);
-			
-			Http_Headers::reload(unset_GET_params: ['deactivate']);
-		}
-		
-		if($GET->exists('activate')) {
-			$category->activateAutoAppendProducts();
-			Logger::success(
-				event: 'category_updated.auto_append_activated',
-				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated - auto append activated',
-				context_object_id: $category->getId(),
-				context_object_name: $category->getPathName(),
-				context_object_data: $category
-			);
-			
-			Http_Headers::reload(unset_GET_params: ['activate']);
-		}
-		
-		$this->view->setVar('toolbar', 'category/edit/auto-append-settings/toolbar');
-		
-		$this->output( 'category/edit/auto-append-settings' );
-		
-	}
-	
-	
-	
-	protected function category_add()
+	protected function add_Action() : void
 	{
 		$this->_setBreadcrumbNavigation( Tr::_( 'New category' ) );
 		$new_category = new Category();
-		$new_category->setParentId( static::getCurrentCategoryId() );
+		$new_category->setParentId( parent_id: static::getCurrentCategoryId(), update_priority: true, save: false );
 		
 		$this->_setBreadcrumbNavigation( Tr::_( '<b>Create new category</b>' ) );
 		
@@ -436,7 +339,6 @@ class Controller_Main extends MVC_Controller_Default
 			$priority++;
 			
 			$category->setPriority( $priority );
-			$category->save();
 			Logger::success(
 				event: 'category_priority_updated',
 				event_message: 'Category '.$category->getPathName().' ('.$category->getId().') priority updated',

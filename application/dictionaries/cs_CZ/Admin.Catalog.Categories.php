@@ -160,4 +160,13 @@ return [
 	'Auto append deactivated' => '',
 	'Auto append activated' => '',
 	'Deactivate auto append products' => '',
+	'Internal notes:' => '',
+	'Internal name:' => '',
+	'New category' => '',
+	'<b>Create new category</b>' => '',
+	'Products' => '',
+	'... select property ...' => '',
+	'... select category ...' => '',
+	'Set kind of product:' => '',
+	'Add product:' => '',
 ];

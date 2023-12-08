@@ -8,72 +8,49 @@
 
 namespace JetApplicationModule\Admin\ManageAccess\RESTClients\Users;
 
-use Jet\Data_Listing_Filter;
-use Jet\Form;
-use Jet\Form_Field;
+use Jet\DataListing_Filter_OptionSelect;
 use Jet\Form_Field_Select;
-use Jet\Http_Request;
 use Jet\Tr;
 
 use JetApplication\Auth_RESTClient_Role as Role;
 
 
-class Listing_Filter_Role extends Data_Listing_Filter {
-
-	/**
-	 * @var string
-	 */
-	protected string $role = '';
-
-
-	/**
-	 *
-	 */
-	public function catchGetParams(): void
+class Listing_Filter_Role extends DataListing_Filter_OptionSelect {
+	
+	public const KEY = 'role';
+	
+	public function getKey(): string
 	{
-		$this->role = Http_Request::GET()->getString( 'role' );
-		$this->listing->setGetParam( 'role', $this->role );
+		return static::KEY;
 	}
-
-	/**
-	 * @param Form $form
-	 */
-	public function generateFormFields( Form $form ): void
+	
+	public function getParamName() : string
 	{
-		$field = new Form_Field_Select( 'role', 'Role:' );
-		$field->setDefaultValue( $this->role );
-		$field->setErrorMessages( [
-			Form_Field::ERROR_CODE_INVALID_VALUE => ' '
-		] );
+		return 'role';
+	}
+	
+	public function getFormFieldLabel() : string
+	{
+		return 'Role:';
+	}
+	
+	protected function setFieldSelectOptions( Form_Field_Select $field ) : void
+	{
 		$options = [0 => Tr::_( '- all -' )];
-
+		
 		foreach( Role::getList() as $role ) {
 			$options[$role->getId()] = $role->getName();
 		}
 		$field->setSelectOptions( $options );
-
-
-		$form->addField( $field );
 	}
-
-	/**
-	 * @param Form $form
-	 */
-	public function catchForm( Form $form ): void
-	{
-		$this->role = $form->field( 'role' )->getValue();
-		$this->listing->setGetParam( 'role', $this->role );
-	}
-
-	/**
-	 *
-	 */
+	
 	public function generateWhere(): void
 	{
-		if( $this->role ) {
-			$this->listing->addWhere( [
-				'users_roles.role_id' => $this->role,
+		if( $this->selected_value ) {
+			$this->listing->addFilterWhere( [
+				'users_roles.role_id' => $this->selected_value,
 			] );
 		}
 	}
+	
 }

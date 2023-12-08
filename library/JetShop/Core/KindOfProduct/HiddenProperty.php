@@ -69,11 +69,6 @@ abstract class Core_KindOfProduct_HiddenProperty extends DataModel_Related_1toN
 		$this->property_id = $property_id;
 	}
 	
-	public function getProperty() : Property
-	{
-		return Property::get($this->property_id);
-	}
-	
 	public function getPriority(): int
 	{
 		return $this->priority;

@@ -1,5 +1,5 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Categories;
+namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Form;
 use Jet\Form_Renderer;
@@ -8,9 +8,9 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Property;
+use JetApplication\Admin_Managers;
 use JetApplication\Property_Options_Option;
-use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View   $this
@@ -75,35 +75,25 @@ $add_form->renderer()->setDefaultLabelWidth([
 		<?php
 		echo $add_form->start();
 		
-		
-		echo $add_form->field('is_active');
 		echo $add_form->field('internal_name');
 		echo $add_form->field('internal_notes');
 		
-		
-		foreach(Shops::getListSorted() as $shop):
-			$shop_key= $shop->getKey();
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $add_form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($new_option, $add_form) : void {
+				$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$add_form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
+				$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
+				$add_form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
+				?>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					<?=$add_form->field('/shop_data/'.$shop_key.'/filter_label')?>
+					<?=$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
+					<?=$add_form->field('/shop_data/'.$shop_key.'/url_param')?>
+					<?=$add_form->field('/shop_data/'.$shop_key.'/description')?>
+				</fieldset>
+			<?php }); ?>
 			
-			$shop_data = $new_option->getShopData( $shop );
-			
-			$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$add_form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
-			$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
-			$add_form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
-			?>
-			<?=$shop_data->renderShopDataBlock_start()?>
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Main data')?></legend>
-				
-				<?=$add_form->field('/shop_data/'.$shop_key.'/is_active')?>
-				<?=$add_form->field('/shop_data/'.$shop_key.'/filter_label')?>
-				<?=$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
-				<?=$add_form->field('/shop_data/'.$shop_key.'/url_param')?>
-				<?=$add_form->field('/shop_data/'.$shop_key.'/description')?>
-			</fieldset>
-			
-			
-			<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
 			<div class="row">
 				<div class="col-md-2"></div>
 				<div class="col-md-8">

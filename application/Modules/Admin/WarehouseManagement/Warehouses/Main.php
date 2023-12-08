@@ -14,12 +14,12 @@ use Jet\Application_Module;
  */
 class Main extends Application_Module
 {
-	const ADMIN_MAIN_PAGE = 'warehouses';
+	public const ADMIN_MAIN_PAGE = 'warehouses';
 
-	const ACTION_GET_WAREHOUSE = 'get_warehouse';
-	const ACTION_ADD_WAREHOUSE = 'add_warehouse';
-	const ACTION_UPDATE_WAREHOUSE = 'update_warehouse';
-	const ACTION_DELETE_WAREHOUSE = 'delete_warehouse';
+	public const ACTION_GET = 'get_warehouse';
+	public const ACTION_ADD = 'add_warehouse';
+	public const ACTION_UPDATE = 'update_warehouse';
+	public const ACTION_DELETE = 'delete_warehouse';
 
 
 

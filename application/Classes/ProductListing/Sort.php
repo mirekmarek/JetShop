@@ -10,11 +10,12 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 
 	public static function getAutoAppendProductFilterEditForm_SortOptionsScope() : array
 	{
+		//TODO: spatne
 		return [
-			'predefined'     => Tr::_('Predefined',     [], Category::getManageModuleName()),
-			'cheapest'       => Tr::_('Cheapest',       [], Category::getManageModuleName()),
-			'most_expensive' => Tr::_('Most expensive', [], Category::getManageModuleName()),
-			'reviews'        => Tr::_('By reviews',     [], Category::getManageModuleName()),
+			'predefined'     => Tr::_('Predefined'),
+			'cheapest'       => Tr::_('Cheapest'),
+			'most_expensive' => Tr::_('Most expensive'),
+			'reviews'        => Tr::_('By reviews'),
 		];
 	}
 
@@ -34,11 +35,11 @@ class ProductListing_Sort extends Core_ProductListing_Sort {
 		if($this->map===null) {
 			$data = Product_ShopData::dataFetchAll(
 				select: [
-					'product_id',
+					'entity_id',
 					'final_price'
 				],
 				where: [
-					'product_id'=>$initial_product_ids,
+					'entity_id'=>$initial_product_ids,
 					'AND',
 					$this->listing->getShop()->getWhere()
 				]

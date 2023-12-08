@@ -60,7 +60,7 @@ class Controller_ShoppingCart extends MVC_Controller_Default
 
 	}
 
-	public function use_code_Action()
+	public function use_code_Action() : void
 	{
 		/**
 		 * @var Main $module
@@ -86,7 +86,7 @@ class Controller_ShoppingCart extends MVC_Controller_Default
 
 	}
 
-	public function cancel_use_code_Action()
+	public function cancel_use_code_Action() : void
 	{
 		/**
 		 * @var Main $module

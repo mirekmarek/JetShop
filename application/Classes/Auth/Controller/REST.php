@@ -1,14 +1,17 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetApplication;
 
+use Jet\Auth_User_Interface;
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
+use Jet\Data_Text;
 use Jet\MVC_Page_Interface;
 
 use Jet\Debug;
@@ -17,21 +20,19 @@ use Jet\Data_DateTime;
 
 use Jet\Logger;
 
-use JetApplication\Auth_RESTClient_User as RESTClient;
-
 /**
  *
  */
 class Auth_Controller_REST extends BaseObject implements Auth_Controller_Interface
 {
-	const EVENT_LOGIN_FAILED = 'login_failed';
-	const EVENT_LOGIN_SUCCESS = 'login_success';
+	public const EVENT_LOGIN_FAILED = 'login_failed';
+	public const EVENT_LOGIN_SUCCESS = 'login_success';
 
 	/**
 	 *
-	 * @var ?Auth_RESTClient_User
+	 * @var Auth_RESTClient_User|null|bool
 	 */
-	protected ?Auth_RESTClient_User $current_user = null;
+	protected Auth_RESTClient_User|null|bool $current_user = null;
 
 	/**
 	 *
@@ -67,9 +68,9 @@ class Auth_Controller_REST extends BaseObject implements Auth_Controller_Interfa
 
 	/**
 	 *
-	 * @return RESTClient|bool
+	 * @return Auth_RESTClient_User|bool
 	 */
-	public function getCurrentUser(): RESTClient|bool
+	public function getCurrentUser(): Auth_RESTClient_User|bool
 	{
 
 		if( $this->current_user !== null ) {
@@ -98,24 +99,9 @@ class Auth_Controller_REST extends BaseObject implements Auth_Controller_Interfa
 		) {
 			$this->responseNotAuthorized( 'Please enter username and password' );
 		} else {
-			$user = RESTClient::getByIdentity( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] );
-
-			if( !$user ) {
-				Logger::warning(
-					event: static::EVENT_LOGIN_FAILED,
-					event_message: 'Login failed. Username: \'' . $_SERVER['PHP_AUTH_USER'] . '\'',
-					context_object_id: $_SERVER['PHP_AUTH_USER'],
-				);
-
-				$this->responseNotAuthorized( 'Invalid username or password' );
+			if($this->login( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] )) {
+				return $this->current_user;
 			}
-
-			/**
-			 * @var Auth_RESTClient_User $user
-			 */
-			$this->current_user = $user;
-
-			return $this->current_user;
 		}
 
 		return false;
@@ -146,10 +132,19 @@ class Auth_Controller_REST extends BaseObject implements Auth_Controller_Interfa
 	 */
 	public function login( string $username, string $password ): bool
 	{
-
-		$user = RESTClient::getByIdentity( $username, $password );
+		$user = Auth_RESTClient_User::getByIdentity( $username, $password );
 
 		if( !$user ) {
+			$this->current_user = false;
+
+			Logger::warning(
+				event: static::EVENT_LOGIN_FAILED,
+				event_message: 'Login failed. Username: \'' . Data_Text::htmlSpecialChars($_SERVER['PHP_AUTH_USER']) . '\'',
+				context_object_id: Data_Text::htmlSpecialChars($_SERVER['PHP_AUTH_USER']),
+			);
+
+			$this->responseNotAuthorized( 'Invalid username or password' );
+
 			return false;
 		}
 
@@ -157,7 +152,16 @@ class Auth_Controller_REST extends BaseObject implements Auth_Controller_Interfa
 
 		return true;
 	}
-
+	
+	
+	/**
+	 * @param Auth_User_Interface $user
+	 * @return bool
+	 */
+	public function loginUser( Auth_User_Interface $user ) : bool
+	{
+		return false;
+	}
 
 	/**
 	 * @param string $message

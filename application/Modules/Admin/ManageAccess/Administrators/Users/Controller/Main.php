@@ -12,14 +12,13 @@ use Jet\Logger;
 use JetApplication\Auth_Administrator_User as User;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\UI_messages;
 use Jet\MVC_Controller_Default;
+use Jet\MVC_View;
+use Jet\UI_messages;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
-
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *
@@ -27,38 +26,30 @@ use JetApplicationModule\Admin\UI\Main as UI_module;
 class Controller_Main extends MVC_Controller_Default
 {
 
-	/**
-	 * @var ?MVC_Controller_Router_AddEditDelete
-	 */
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
-	/**
-	 * @var ?User
-	 */
 	protected ?User $user = null;
-
-	/**
-	 *
-	 * @return MVC_Controller_Router_AddEditDelete
-	 */
+	
+	protected ?Listing $listing = null;
+	
 	public function getControllerRouter(): MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function( $id ) {
-					return (bool)($this->user = User::get( $id ));
+				controller: $this,
+				item_catcher: function( $id ) : bool {
+					return (bool)($this->user = User::get( (int)$id ));
 				},
-				[
-					'listing' => Main::ACTION_GET_USER,
-					'view'    => Main::ACTION_GET_USER,
-					'add'     => Main::ACTION_ADD_USER,
-					'edit'    => Main::ACTION_UPDATE_USER,
-					'delete'  => Main::ACTION_DELETE_USER,
+				actions_map: [
+					'listing' => Main::ACTION_GET,
+					'view'    => Main::ACTION_GET,
+					'add'     => Main::ACTION_ADD,
+					'edit'    => Main::ACTION_UPDATE,
+					'delete'  => Main::ACTION_DELETE,
 				]
 			);
 
-			$this->router->addAction( 'reset_password', Main::ACTION_UPDATE_USER )
+			$this->router->addAction( 'reset_password', Main::ACTION_UPDATE )
 				->setResolver( function() {
 					return (
 						Http_Request::GET()->getString( 'action' ) == 'reset_password' &&
@@ -71,37 +62,61 @@ class Controller_Main extends MVC_Controller_Default
 						'action' => 'reset_password'
 					] );
 				} );
+			
+			foreach($this->getListing()->getOperations() as $operation) {
+				$this->router->addAction( 'bulk_operation_'.$operation->getKey(), Main::ACTION_UPDATE  )
+					->setResolver(function() use ($operation) {
+						return Http_Request::GET()->getString( 'bulk_operation' ) == $operation->getKey();
+					})
+					->setURICreator( function() use ($operation) {
+						return Http_Request::currentURI( [
+							'bulk_operation' => $operation->getKey()
+						] );
+					} );
+			}
+			
 		}
 
 		return $this->router;
 	}
-
-	/**
-	 * @param string $current_label
-	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ): void
+	
+	protected function getListing() : Listing
 	{
-		UI_module::initBreadcrumb();
-
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
+		if(!$this->listing) {
+			$column_view = new MVC_View( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = new MVC_View( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
 		}
+		
+		return $this->listing;
 	}
+	
 
-	/**
-	 *
-	 */
 	public function listing_Action(): void
 	{
-		$this->_setBreadcrumbNavigation();
 
-		$listing = new Listing();
+		$listing = $this->getListing();
 		$listing->handle();
 
-		$this->view->setVar( 'filter_form', $listing->getFilterForm() );
-		$this->view->setVar( 'grid', $listing->getGrid() );
+		$this->view->setVar( 'listing', $listing );
 
 		$this->output( 'list' );
+	}
+	
+	protected function handleListingOnDetail() : void
+	{
+		$listing = $this->getListing();
+		$listing->handle();
+		
+		$list_uri = $listing->getURI();
+		Navigation_Breadcrumb::getItems()[1]->setURL( $list_uri );
+		$this->view->setVar( 'list_url', $list_uri );
 	}
 
 	/**
@@ -109,7 +124,8 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function add_Action(): void
 	{
-		$this->_setBreadcrumbNavigation( Tr::_( 'Create a new User' ) );
+		$this->handleListingOnDetail();
+		Navigation_Breadcrumb::addURL( Tr::_( 'Create a new User' ) );
 
 		$user = new User();
 
@@ -164,9 +180,10 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function edit_Action(): void
 	{
+		$this->handleListingOnDetail();
 		$user = $this->user;
-
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit user account <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] ) );
+		
+		Navigation_Breadcrumb::addURL( Tr::_( 'Edit user account <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] ) );
 
 		$form = $user->getEditForm();
 
@@ -202,9 +219,11 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function view_Action(): void
 	{
+		$this->handleListingOnDetail();
+		
 		$user = $this->user;
-
-		$this->_setBreadcrumbNavigation(
+		
+		Navigation_Breadcrumb::addURL(
 			Tr::_( 'User account detail <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] )
 		);
 
@@ -224,9 +243,11 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function delete_Action(): void
 	{
+		$this->handleListingOnDetail();
+		
 		$user = $this->user;
-
-		$this->_setBreadcrumbNavigation(
+		
+		Navigation_Breadcrumb::addURL(
 			Tr::_( 'Delete user account <b>%USERNAME%</b>', ['USERNAME' => $user->getUsername()] )
 		);
 
@@ -256,5 +277,36 @@ class Controller_Main extends MVC_Controller_Default
 
 		$this->output( 'delete-confirm' );
 	}
-
+	
+	public function bulk_operation_block_Action() : void
+	{
+		$listing = $this->getListing();
+		$listing->handle();
+		$listing->operation( Listing_Operation_Block::KEY )->perform();
+		
+		UI_messages::info(
+			Tr::_( 'The filtered users have been blocked' )
+		);
+		
+		
+		Http_Headers::reload( unset_GET_params: [
+			'bulk_operation'
+		] );
+	}
+	
+	public function bulk_operation_unblock_Action() : void
+	{
+		$listing = $this->getListing();
+		$listing->handle();
+		$listing->operation( Listing_Operation_Unblock::KEY )->perform();
+		
+		UI_messages::info(
+			Tr::_( 'The filtered users have been unblocked' )
+		);
+		
+		Http_Headers::reload( unset_GET_params: [
+			'bulk_operation'
+		] );
+	}
+	
 }

@@ -2,59 +2,52 @@
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Module_Trait;
-use JetApplication\Auth_Administrator_Role;
-use JetApplication\Category_ManageModuleInterface;
-use Jet\Auth;
-use Jet\MVC;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Trait;
+use JetApplication\Admin_Managers_Category;
 
 /**
  *
  */
-class Main extends Application_Module implements Category_ManageModuleInterface
+class Main extends Application_Module implements Admin_Managers_Category
 {
-	use Admin_Module_Trait;
+	use Admin_Managers_Trait;
 
-	const ADMIN_MAIN_PAGE = 'categories';
+	public const ADMIN_MAIN_PAGE = 'categories';
 
-	const ACTION_GET_CATEGORY = 'get_category';
-	const ACTION_ADD_CATEGORY = 'add_category';
-	const ACTION_UPDATE_CATEGORY = 'update_category';
-	const ACTION_DELETE_CATEGORY = 'delete_category';
+	public const ACTION_GET = 'get_category';
+	public const ACTION_ADD = 'add_category';
+	public const ACTION_UPDATE = 'update_category';
+	public const ACTION_DELETE = 'delete_category';
 
-	public function getCategorySelectWhispererUrl( int $exclude_branch_id=0, bool $only_active=false ) : string
+	
+	public function renderSelectWidget( string $on_select,
+                                       int $selected_category_id=0,
+                                       ?bool $only_active_filter=null,
+                                       string $name='select_category' ) : string
 	{
-		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
-		if(!$page) {
-			return '';
-		}
-
-		return $page->getURL([], [
-			'exclude_branch_id' => $exclude_branch_id,
-			'only_active' => $only_active ? 1:0
-		]);
-
-	}
-
-	public function getCategoryEditUrl( int $id ) : string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_CATEGORY,
-			static::ACTION_UPDATE_CATEGORY,
-			static::ADMIN_MAIN_PAGE,
-			$id
+		
+		$selected = $selected_category_id ? Category::get($selected_category_id) : null;
+		
+		return Admin_Managers::UI()->renderSelectEntityWidget(
+			name: $name,
+			caption: Tr::_('... select category ...', dictionary: $this->module_manifest->getName()),
+			on_select: $on_select,
+			object_class: Category::getEntityType(),
+			object_type_filter: null,
+			object_is_active_filter: $only_active_filter,
+			selected_entity_title: $selected?->getPathName(),
+			selected_entity_edit_URL: $selected?->getEditURL()
 		);
 	}
 	
-
-
-	public static function getCurrentUserCanEditCategory() : bool
+	public function getName( int $category_id ) : string
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_UPDATE_CATEGORY );
-	}
-
-	public static function getCurrentUserCanCreateCategory() : bool
-	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_ADD_CATEGORY );
+		$category = Category::get($category_id);
+		if(!$category) {
+			return '';
+		}
+		return $category->getPathName();
 	}
 }

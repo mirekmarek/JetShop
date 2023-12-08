@@ -1,5 +1,5 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Categories;
+namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Form;
 use Jet\Form_Renderer;
@@ -7,9 +7,9 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Property;
+use JetApplication\Admin_Managers;
 use JetApplication\Property_Options_Option;
-use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View   $this
@@ -43,8 +43,8 @@ echo $form->start();
 			<?=$this->getRaw('tabs')?>
 			<br>
 			
+			<?=Admin_Managers::UI()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
 			<?php
-			echo $form->field('is_active');
 			echo $form->field('internal_name');
 			echo $form->field('internal_notes');
 			
@@ -53,31 +53,25 @@ echo $form->start();
 			}
 			
 			
-			foreach(Shops::getListSorted() as $shop):
-				$shop_key= $shop->getKey();
 				
-				$shop_data = $option->getShopData( $shop );
-				
-				$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
-				$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
-				$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
-				
-				echo $shop_data->renderShopDataBlock_start();
-				?>
-				<fieldset>
-					<legend class="sub"><?=Tr::_('Main data')?></legend>
-					
-					<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/filter_label')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/url_param')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-				</fieldset>
-				
-				<?php
-				echo $shop_data->renderShopDataBlock_end();
-			endforeach;
-			?>
+			Admin_Managers::UI()->renderShopDataBlocks(
+				form: $form,
+				renderer: function( Shops_Shop $shop, string $shop_key ) use ($option, $form) : void {
+					$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
+					$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
+					$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
+					?>
+					<fieldset>
+						<legend class="sub"><?=Tr::_('Main data')?></legend>
+						
+						<?=Admin_Managers::UI()->renderEntityShopDataActivation( $option, $shop, !$form->getIsReadonly() )?>
+						
+						<?=$form->field('/shop_data/'.$shop_key.'/filter_label')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/url_param')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+					</fieldset>
+				<?php }); ?>
 		
 		</div>
 	</div>

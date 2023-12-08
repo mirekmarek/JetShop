@@ -20,28 +20,28 @@ use JetApplication\ShoppingCart_Item;
 )]
 abstract class Core_Order_Item extends DataModel_Related_1toN {
 
-	const ITEM_TYPE_PRODUCT = 'product';
-	const ITEM_TYPE_VIRTUAL_PRODUCT = 'virtual_product';
-	const ITEM_TYPE_SERVICE = 'service';
-	const ITEM_TYPE_GIFT = 'gift';
-	const ITEM_TYPE_PAYMENT = 'payment';
-	const ITEM_TYPE_DELIVERY = 'delivery';
-	const ITEM_TYPE_DISCOUNT = 'discount';
+	public const ITEM_TYPE_PRODUCT = 'product';
+	public const ITEM_TYPE_VIRTUAL_PRODUCT = 'virtual_product';
+	public const ITEM_TYPE_SERVICE = 'service';
+	public const ITEM_TYPE_GIFT = 'gift';
+	public const ITEM_TYPE_PAYMENT = 'payment';
+	public const ITEM_TYPE_DELIVERY = 'delivery';
+	public const ITEM_TYPE_DISCOUNT = 'discount';
 
-	const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'disc_products_amount';
-	const DISCOUNT_TYPE_PRODUCTS_PERCENT = 'disc_products_percent';
+	public const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'disc_products_amount';
+	public const DISCOUNT_TYPE_PRODUCTS_PERCENT = 'disc_products_percent';
 
-	const DISCOUNT_TYPE_SERVICE_AMOUNT = 'disc_service_amount';
-	const DISCOUNT_TYPE_SERVICE_PERCENT = 'disc_service_percent';
+	public const DISCOUNT_TYPE_SERVICE_AMOUNT = 'disc_service_amount';
+	public const DISCOUNT_TYPE_SERVICE_PERCENT = 'disc_service_percent';
 
-	const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'disc_delivery_amount';
-	const DISCOUNT_TYPE_DELIVERY_PERCENT = 'disc_delivery_percent';
+	public const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'disc_delivery_amount';
+	public const DISCOUNT_TYPE_DELIVERY_PERCENT = 'disc_delivery_percent';
 
-	const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'disc_payment_amount';
-	const DISCOUNT_TYPE_PAYMENT_PERCENT = 'disc_payment_percent';
+	public const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'disc_payment_amount';
+	public const DISCOUNT_TYPE_PAYMENT_PERCENT = 'disc_payment_percent';
 
-	const DISCOUNT_TYPE_TOTAL_AMOUNT = 'disc_total_amount';
-	const DISCOUNT_TYPE_TOTAL_PERCENT = 'disc_total_percent';
+	public const DISCOUNT_TYPE_TOTAL_AMOUNT = 'disc_total_amount';
+	public const DISCOUNT_TYPE_TOTAL_PERCENT = 'disc_total_percent';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

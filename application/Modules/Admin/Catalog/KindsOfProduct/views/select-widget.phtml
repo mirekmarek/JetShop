@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ */
+
+$selected_kind_of_product_id = $this->getInt('selected_kind_of_product_id');
+$selected_kind_of_product = KindOfProduct::get($selected_kind_of_product_id);
+$only_active = $this->getRaw('only_active');
+$name = $this->getString('name');
+$on_select = $this->getRaw('on_select');
+?>
+<div style="display: table;width: 100%">
+	<div style="display: table-row">
+		<div class="select_item_selected_area form-control" style="display: table-cell" onclick="<?=$name?>.startSelect()" id="<?=$name?>_selected_area">
+			<?php if($selected_kind_of_product): ?>
+				<?=$selected_kind_of_product->getInternalName()?>
+			<?php else: ?>
+				<?=Tr::_('... select kind of product ...', [], Tr::COMMON_DICTIONARY);?>
+			<?php endif; ?>
+		</div>
+		<div class="select_item_whisperer_area" style="display: none" id="<?=$name?>_whisperer_area">
+			<input id="<?=$name?>_input" style="width: 100%;" class="form-control">
+			<div class="search-whisperer-area">
+				<div id="<?=$name?>_whisperer">
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+

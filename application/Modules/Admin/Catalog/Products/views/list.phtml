@@ -10,22 +10,15 @@ use Jet\MVC_View;
 $listing = $this->getRaw('listing');
 ?>
 
-<div class="row">
-	<div class="col-md-2 tree">
-		<?=$listing->getFilter( Listing_Filter::CATEGORIES )->renderForm()?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="container-fluid">
+		<?php require 'list/header.phtml'; ?>
 	</div>
-	<div class="col-md-10">
-		<div class="row toolbar" id="main-toolbar">
-			<div class="container-fluid">
-				<?php require 'listing/header.phtml'; ?>
-			</div>
-		</div>
+</div>
 
 
-		<div class="row" id="main-col">
-			<div class="col-md-12">
-				<?php require 'listing/grid.phtml'; ?>
-			</div>
-		</div>
+<div class="row" id="main-col">
+	<div class="col-md-12">
+		<?php require 'list/grid.phtml'; ?>
 	</div>
 </div>

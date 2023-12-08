@@ -12,8 +12,8 @@ use Jet\Data_DateTime;
 use Jet\Http_Request;
 use Jet\Tr;
 
-use JetApplication\CommonEntity_ShopRelationTrait;
 use JetApplication\Customer_MailingSubscribe_Log;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops_Shop;
 
 /**
@@ -22,20 +22,14 @@ use JetApplication\Shops_Shop;
 #[DataModel_Definition(
 	name: 'customer_mailing_subscribe_log',
 	database_table_name: 'customers_mailing_subscribe_log',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	]
 )]
-abstract class Core_Customer_MailingSubscribe_Log extends DataModel
+abstract class Core_Customer_MailingSubscribe_Log extends Entity_WithShopRelation
 {
-	const EVENT_SUBSCRIBE = 'subscribe';
-	const EVENT_UNSUBSCRIBE = 'unsubscribe';
-	const EVENT_JOIN_MAIL_TO_CUSTOMER = 'join_mail_to_customer';
-	const EVENT_EMAIL_CHANGE = 'email_change';
-
-
-	use CommonEntity_ShopRelationTrait;
+	public const EVENT_SUBSCRIBE = 'subscribe';
+	public const EVENT_UNSUBSCRIBE = 'unsubscribe';
+	public const EVENT_JOIN_MAIL_TO_CUSTOMER = 'join_mail_to_customer';
+	public const EVENT_EMAIL_CHANGE = 'email_change';
+	
 
 	/**
 	 * @var int

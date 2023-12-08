@@ -8,49 +8,71 @@
 
 namespace JetApplicationModule\Admin\ManageAccess\Administrators\Users;
 
-use Jet\DataModel_Fetch_Instances;
 use JetApplication\Auth_Administrator_User as User;
 
-use Jet\Data_Listing;
+use Jet\DataModel_Fetch_Instances;
+use Jet\MVC_View;
+use Jet\DataListing;
+
 
 /**
  *
  */
-class Listing extends Data_Listing
+class Listing extends DataListing
 {
-
-	/**
-	 * @var array
-	 */
-	protected array $grid_columns = [
-		'_edit_'     => [
-			'title'         => '',
-			'disallow_sort' => true
-		],
-		'id'         => ['title' => 'ID'],
-		'username'   => ['title' => 'Username'],
-		'first_name' => ['title' => 'First name'],
-		'surname'    => ['title' => 'Surname'],
-	];
-
-
-	/**
-	 *
-	 */
-	protected function initFilters(): void
+	
+	protected MVC_View $column_view;
+	protected MVC_View $filter_view;
+	
+	
+	public function __construct( MVC_View $column_view, MVC_View $filter_view )
 	{
-		$this->filters['search'] = new Listing_Filter_Search($this);
-		$this->filters['role'] = new Listing_Filter_Role($this);
+		$this->column_view = $column_view;
+		$this->filter_view = $filter_view;
+		
+		$this->addColumn( new Listing_Column_Edit() );
+		$this->addColumn( new Listing_Column_ID() );
+		$this->addColumn( new Listing_Column_UserName() );
+		$this->addColumn( new Listing_Column_FirstName() );
+		$this->addColumn( new Listing_Column_Surname() );
+		$this->addColumn( new Listing_Column_IsBlocked() );
+		
+		
+		$this->addFilter( new Listing_Filter_Search() );
+		$this->addFilter( new Listing_Filter_Role() );
+		$this->addFilter( new Listing_Filter_IsBlocked() );
+		
+		$this->addOperation( new Listing_Operation_Block() );
+		$this->addOperation( new Listing_Operation_Unblock() );
+		
 	}
-
-
-	/**
-	 * @return User[]|DataModel_Fetch_Instances
-	 * @noinspection PhpDocSignatureInspection
-	 */
-	protected function getList(): DataModel_Fetch_Instances
+	
+	
+	protected function getItemList(): DataModel_Fetch_Instances
 	{
-		return User::getList();
+		return User::fetchInstances();
 	}
+	
+	protected function getIdList(): array
+	{
+		$ids = User::fetchIDs( $this->getFilterWhere() );
+		$ids->getQuery()->setOrderBy( $this->getQueryOrderBy() );
 
+		return $ids->toArray();
+	}
+	
+	public function getFilterView(): MVC_View
+	{
+		return $this->filter_view;
+	}
+	
+	public function getColumnView(): MVC_View
+	{
+		return $this->column_view;
+	}
+	
+	public function itemGetter( int|string $id ): mixed
+	{
+		return User::get( $id );
+	}
 }

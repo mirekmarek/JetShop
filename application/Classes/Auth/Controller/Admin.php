@@ -1,17 +1,19 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2011-2021 Miroslav Marek <mirek.marek@web-jet.cz>
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
 namespace JetApplication;
 
+use Jet\Auth_User_Interface;
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
 
-use Jet\Factory_MVC;
 use Jet\MVC;
+use Jet\Factory_MVC;
 use Jet\MVC_Page_Interface;
 
 use Jet\Application_Modules;
@@ -29,12 +31,12 @@ use JetApplication\Auth_Administrator_User as Administrator;
  */
 class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interface
 {
-	protected static string $login_module_name = 'Admin.Login';
-
-
-	const EVENT_LOGIN_FAILED = 'login_failed';
-	const EVENT_LOGIN_SUCCESS = 'login_success';
-	const EVENT_LOGOUT = 'logout';
+	public const LOGIN_FORM_MODULE_NAME = 'Admin.Login';
+	
+	
+	public const EVENT_LOGIN_FAILED = 'login_failed';
+	public const EVENT_LOGIN_SUCCESS = 'login_success';
+	public const EVENT_LOGOUT = 'logout';
 
 	/**
 	 *
@@ -42,28 +44,11 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 */
 	protected Administrator|bool|null $current_user = null;
 
-
-	/**
-	 * @return string
-	 */
-	public static function getLoginModuleName(): string
-	{
-		return self::$login_module_name;
-	}
-
-	/**
-	 * @param string $module_name
-	 */
-	public static function setLoginModuleName( string $module_name ): void
-	{
-		self::$login_module_name = $module_name;
-	}
-
 	/**
 	 *
 	 * @return bool
 	 */
-	public function checkCurrentUser() : bool
+	public function checkCurrentUser(): bool
 	{
 
 		$user = $this->getCurrentUser();
@@ -73,7 +58,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 
 		if( $user->isBlocked() ) {
 			$till = $user->isBlockedTill();
-			if( $till!==null&&$till<=Data_DateTime::now() ) {
+			if( $till !== null && $till <= Data_DateTime::now() ) {
 				$user->unBlock();
 				$user->save();
 			} else {
@@ -85,7 +70,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 			return false;
 		}
 
-		if( ( $pwd_valid_till = $user->getPasswordIsValidTill() )!==null&&$pwd_valid_till<=Data_DateTime::now() ) {
+		if( ($pwd_valid_till = $user->getPasswordIsValidTill()) !== null && $pwd_valid_till <= Data_DateTime::now() ) {
 			$user->setPasswordIsValid( false );
 			$user->save();
 
@@ -99,9 +84,9 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 *
 	 * @return Administrator|bool
 	 */
-	public function getCurrentUser() : Administrator|bool
+	public function getCurrentUser(): Administrator|bool
 	{
-		if( $this->current_user!==null ) {
+		if( $this->current_user !== null ) {
 			return $this->current_user;
 		}
 
@@ -111,7 +96,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 			$this->current_user = Administrator::get( $user_id );
 		}
 
-		if(!$this->current_user) {
+		if( !$this->current_user ) {
 			$this->current_user = false;
 		}
 
@@ -121,7 +106,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	/**
 	 * @return Session
 	 */
-	protected function getSession() : Session
+	protected function getSession(): Session
 	{
 		return new Session( 'auth_admin' );
 	}
@@ -130,7 +115,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	/**
 	 *
 	 */
-	public function handleLogin() : void
+	public function handleLogin(): void
 	{
 
 		$page = MVC::getPage();
@@ -143,12 +128,12 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 		if( $user ) {
 			if( $user->isBlocked() ) {
 				$action = 'is_blocked';
-			} else if( !$user->getPasswordIsValid() ) {
+			} elseif( !$user->getPasswordIsValid() ) {
 				$action = 'must_change_password';
 			}
 		}
 
-		$module = Application_Modules::moduleInstance( static::getLoginModuleName() );
+		$module = Application_Modules::moduleInstance( static::LOGIN_FORM_MODULE_NAME );
 
 
 		$page_content = [];
@@ -163,7 +148,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 		$page->setContent( $page_content );
 
 
-		$page->setLayoutScriptName('login');
+		$page->setLayoutScriptName( 'login' );
 
 
 		echo $page->render();
@@ -172,13 +157,15 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	/**
 	 *
 	 */
-	public function logout() : void
+	public function logout(): void
 	{
 		$user = $this->getCurrentUser();
 		if( $user ) {
 			Logger::info(
-				static::EVENT_LOGOUT, 'User has '.$user->getUsername().' (id:'.$user->getId().') logged off',
-				$user->getId(), $user->getName()
+				event: static::EVENT_LOGOUT,
+				event_message: 'User ' . $user->getUsername() . ' (id:' . $user->getId() . ') logged out',
+				context_object_id: $user->getId(),
+				context_object_name: $user->getName()
 			);
 		}
 
@@ -193,7 +180,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 *
 	 * @return bool
 	 */
-	public function login( string $username, string $password ) : bool
+	public function login( string $username, string $password ): bool
 	{
 
 		$user = Administrator::getByIdentity( $username, $password );
@@ -201,13 +188,12 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 		if( !$user ) {
 			Logger::warning(
 				event: static::EVENT_LOGIN_FAILED,
-				event_message: 'Login failed. Username: \''.$username.'\'',
-				context_object_id: $username
+				event_message: 'Login failed. Username: \'' . $username . '\'',
+				context_object_id: $username,
 			);
 
 			return false;
 		}
-
 
 
 		/**
@@ -219,15 +205,24 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 		$this->current_user = $user;
 
 		Logger::success(
-			static::EVENT_LOGIN_SUCCESS,
-			'User '.$user->getUsername().' (id:'.$user->getId().') has logged in',
-			$user->getId(),
-			$user->getName()
+			event: static::EVENT_LOGIN_SUCCESS,
+			event_message: 'User ' . $user->getUsername() . ' (id:' . $user->getId() . ') logged in',
+			context_object_id: $user->getId(),
+			context_object_name: $user->getName()
 		);
 
 		return true;
 	}
-
+	
+	
+	/**
+	 * @param Auth_User_Interface $user
+	 * @return bool
+	 */
+	public function loginUser( Auth_User_Interface $user ) : bool
+	{
+		return false;
+	}
 
 	/**
 	 *
@@ -236,7 +231,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 *
 	 * @return bool
 	 */
-	public function getCurrentUserHasPrivilege( string $privilege, mixed $value=null ) : bool
+	public function getCurrentUserHasPrivilege( string $privilege, mixed $value=null ): bool
 	{
 		$current_user = $this->getCurrentUser();
 
@@ -247,7 +242,7 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 			return false;
 		}
 
-		return $current_user->hasPrivilege($privilege, $value);
+		return $current_user->hasPrivilege( $privilege, $value );
 	}
 
 
@@ -257,9 +252,9 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 *
 	 * @return bool
 	 */
-	public function checkModuleActionAccess( string $module_name, string $action ) : bool
+	public function checkModuleActionAccess( string $module_name, string $action ): bool
 	{
-		return $this->getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, $module_name.':'.$action );
+		return $this->getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, $module_name . ':' . $action );
 	}
 
 
@@ -268,11 +263,10 @@ class Auth_Controller_Admin extends BaseObject implements Auth_Controller_Interf
 	 *
 	 * @return bool
 	 */
-	public function checkPageAccess( MVC_Page_Interface $page ) : bool
+	public function checkPageAccess( MVC_Page_Interface $page ): bool
 	{
 		return $this->getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_VISIT_PAGE, $page->getId() );
 	}
-
 
 
 }

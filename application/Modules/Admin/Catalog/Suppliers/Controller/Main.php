@@ -13,11 +13,10 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
+use Jet\Factory_MVC;
 
+use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
-use JetApplication\Supplier;
-
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *
@@ -28,21 +27,26 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
 	protected ?Supplier $supplier = null;
-
+	
+	protected ?Listing $listing = null;
+	
+	
 	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
-					return (bool)($this->supplier = Supplier::get((int)$id));
+					$this->supplier = Supplier::get((int)$id);
+					$this->supplier?->setEditable(Main::getCurrentUserCanEdit());
+					return (bool)($this->supplier);
 				},
 				[
-					'listing'=> Main::ACTION_GET_SUPPLIER,
-					'view'   => Main::ACTION_GET_SUPPLIER,
-					'add'    => Main::ACTION_ADD_SUPPLIER,
-					'edit'   => Main::ACTION_UPDATE_SUPPLIER,
-					'delete' => Main::ACTION_DELETE_SUPPLIER,
+					'listing'=> Main::ACTION_GET,
+					'view'   => Main::ACTION_GET,
+					'add'    => Main::ACTION_ADD,
+					'edit'   => Main::ACTION_UPDATE,
+					'delete' => Main::ACTION_DELETE,
 				]
 			);
 		}
@@ -52,26 +56,42 @@ class Controller_Main extends MVC_Controller_Default
 
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		Admin_Managers::UI()->initBreadcrumb();
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
 	}
-
+	
+	protected function getListing() : Listing
+	{
+		if(!$this->listing) {
+			$column_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
+		}
+		
+		return $this->listing;
+	}
+	
+	/**
+	 *
+	 */
 	public function listing_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
-
-		$listing = new Listing();
+		$listing = $this->getListing();
 		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
+		
+		$this->view->setVar( 'listing', $listing );
+		
 		$this->output( 'list' );
 	}
-
 	public function add_Action() : void
 	{
 		$this->_setBreadcrumbNavigation( Tr::_( 'Create a new supplier' ) );
@@ -85,14 +105,14 @@ class Controller_Main extends MVC_Controller_Default
 
 			Logger::success(
 				'supplier_created',
-				'Supplier '.$supplier->getName().' ('.$supplier->getId().') created',
+				'Supplier '.$supplier->getInternalName().' ('.$supplier->getId().') created',
 				$supplier->getId(),
-				$supplier->getName(),
+				$supplier->getInternalName(),
 				$supplier
 			);
 
 			UI_messages::success(
-				Tr::_( 'Supplier <b>%NAME%</b> has been created', [ 'NAME' => $supplier->getName() ] )
+				Tr::_( 'Supplier <b>%NAME%</b> has been created', [ 'NAME' => $supplier->getInternalName() ] )
 			);
 
 			Http_Headers::reload( ['id'=>$supplier->getId()], ['action'] );
@@ -112,7 +132,7 @@ class Controller_Main extends MVC_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 
 
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit supplier <b>%NAME%</b>', [ 'NAME' => $supplier->getName() ] ) );
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit supplier <b>%NAME%</b>', [ 'NAME' => $supplier->getInternalName() ] ) );
 
 
 
@@ -123,14 +143,14 @@ class Controller_Main extends MVC_Controller_Default
 			$supplier->save();
 			Logger::success(
 				'supplier_updated',
-				'Supplier '.$supplier->getName().' ('.$supplier->getId().') updated',
+				'Supplier '.$supplier->getInternalName().' ('.$supplier->getId().') updated',
 				$supplier->getId(),
-				$supplier->getName(),
+				$supplier->getInternalName(),
 				$supplier
 			);
 
 			UI_messages::success(
-				Tr::_( 'Supplier <b>%NAME%</b> has been updated', [ 'NAME' => $supplier->getName() ] )
+				Tr::_( 'Supplier <b>%NAME%</b> has been updated', [ 'NAME' => $supplier->getInternalName() ] )
 			);
 
 			Http_Headers::reload();
@@ -148,7 +168,7 @@ class Controller_Main extends MVC_Controller_Default
 		$supplier = $this->supplier;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Supplier detail <b>%NAME%</b>', [ 'NAME' => $supplier->getName() ] )
+			Tr::_( 'Supplier detail <b>%NAME%</b>', [ 'NAME' => $supplier->getInternalName() ] )
 		);
 
 		$form = $supplier->getEditForm();
@@ -167,21 +187,21 @@ class Controller_Main extends MVC_Controller_Default
 		$supplier = $this->supplier;
 
 		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete supplier <b>%NAME%</b>', [ 'NAME' => $supplier->getName() ] )
+			Tr::_( 'Delete supplier <b>%NAME%</b>', [ 'NAME' => $supplier->getInternalName() ] )
 		);
 
 		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 			$supplier->delete();
 			Logger::success(
 				'supplier_deleted',
-				'Supplier '.$supplier->getName().' ('.$supplier->getId().') deleted',
+				'Supplier '.$supplier->getInternalName().' ('.$supplier->getId().') deleted',
 				$supplier->getId(),
-				$supplier->getName(),
+				$supplier->getInternalName(),
 				$supplier
 			);
 
 			UI_messages::info(
-				Tr::_( 'Supplier <b>%NAME%</b> has been deleted', [ 'NAME' => $supplier->getName() ] )
+				Tr::_( 'Supplier <b>%NAME%</b> has been deleted', [ 'NAME' => $supplier->getInternalName() ] )
 			);
 
 			Http_Headers::reload([], ['action', 'id']);

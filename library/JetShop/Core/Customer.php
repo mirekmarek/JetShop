@@ -5,7 +5,6 @@ use Jet\Auth;
 use Jet\Auth_User_Interface;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Form;
 use Jet\Form_Field;
 use Jet\Form_Definition;
@@ -16,21 +15,17 @@ use Jet\DataModel_Query;
 
 use JetApplication\Customer_Address;
 use JetApplication\Customer;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops;
 use JetApplication\Customer_AuthController;
 use JetApplication\Customer_MailingSubscribe_Log;
 use JetApplication\Customer_MailingSubscribe;
 use JetApplication\Shops_Shop;
-use JetApplication\CommonEntity_ShopRelationTrait;
 
 
 #[DataModel_Definition(
 	name: 'customer',
 	database_table_name: 'customers',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	],
 	relation: [
 		'related_to_class_name' => Core_Customer_Address::class,
 		'join_by_properties' => [
@@ -39,16 +34,8 @@ use JetApplication\CommonEntity_ShopRelationTrait;
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 )]
-abstract class Core_Customer extends DataModel implements Auth_User_Interface
+abstract class Core_Customer extends Entity_WithShopRelation implements Auth_User_Interface
 {
-	use CommonEntity_ShopRelationTrait;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-	)]
-	protected int $id = 0;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		do_not_export: true,

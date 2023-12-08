@@ -126,7 +126,7 @@ trait Controller_Main_Delivery {
 		$response->response();
 	}
 
-	public function continue_to_payment_Action()
+	public function continue_to_payment_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -143,7 +143,7 @@ trait Controller_Main_Delivery {
 
 	}
 
-	public function back_to_delivery_Action()
+	public function back_to_delivery_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );

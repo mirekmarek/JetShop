@@ -5,7 +5,6 @@
 
 namespace JetShop;
 
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
@@ -20,7 +19,6 @@ use JetApplication\Shops_Shop;
 use JetApplication\Services_Kind;
 use JetApplication\Services_Service_ShopData;
 use JetApplication\Services_Service;
-use JetApplication\Services_Service_ManageModuleInterface;
 
 /**
  *
@@ -32,7 +30,6 @@ use JetApplication\Services_Service_ManageModuleInterface;
 )]
 abstract class Core_Services_Service extends DataModel
 {
-	protected static string $manage_module_name = 'Admin.Services.Services';
 
 	/**
 	 * @var string
@@ -127,45 +124,8 @@ abstract class Core_Services_Service extends DataModel
 	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
 
 	protected static ?array $scope = null;
-
-	/**
-	 * @return string
-	 */
-	public static function getManageModuleName(): string
-	{
-		return self::$manage_module_name;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	public static function setManageModuleName( string $name ): void
-	{
-		self::$manage_module_name = $name;
-	}
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->afterLoad();
-	}
-
-	public function afterLoad() : void
-	{
-		Services_Service_ShopData::checkShopData( $this, $this->shop_data );
-	}
 
 
 	/**
@@ -180,15 +140,7 @@ abstract class Core_Services_Service extends DataModel
 
 		return $this->_form_edit;
 	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
+	
 	/**
 	 * @return Form
 	 */
@@ -221,33 +173,7 @@ abstract class Core_Services_Service extends DataModel
 		return $this->_form_add;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
-
-	/**
-	 * @param string $code
-	 * @return static|null
-	 */
-	public static function get( string $code ) : static|null
-	{
-		return static::load( $code );
-	}
-
-	/**
-	 * @return static[]
-	 */
-	public static function getList() : iterable
-	{
-		$where = [];
-
-		return static::fetchInstances( $where );
-	}
-
+	
 
 	/**
 	 * @param string $value
@@ -329,22 +255,7 @@ abstract class Core_Services_Service extends DataModel
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
-
-	public function getEditURL() : string
-	{
-		return Services_Service::getServiceEditURL( $this->getCode() );
-	}
-
-	public static function getServiceEditURL( string $code ) : string
-	{
-		/**
-		 * @var Services_Service_ManageModuleInterface $module
-		 */
-		$module = Application_Modules::moduleInstance( Services_Service::getManageModuleName() );
-
-		return $module->getServiceEditURL( $code );
-	}
-
+	
 	/**
 	 * @param string $value
 	 */

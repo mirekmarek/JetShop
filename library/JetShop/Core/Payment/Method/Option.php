@@ -2,17 +2,14 @@
 namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\DataModel;
 use Jet\DataModel_Related_1toN;
-use Jet\Form_Field_Input;
 
 use JetApplication\Payment_Method_Option_ShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\Payment_Method;
 
 #[DataModel_Definition(
 	name: 'payment_methods_options',
@@ -21,7 +18,6 @@ use JetApplication\Payment_Method;
 	parent_model_class: Core_Payment_Method::class
 )]
 abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
-
 
 	/**
 	 * @var string
@@ -60,23 +56,6 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 	protected array $shop_data = [];
 
 
-	protected ?Form $_add_form = null;
-
-	protected ?Form $_edit_form = null;
-
-
-	public function __construct() {
-
-		parent::__construct();
-
-		$this->afterLoad();
-	}
-
-	public function afterLoad() : void
-	{
-		Payment_Method_Option_ShopData::checkShopData( $this, $this->shop_data );
-	}
-
 
 	public function isInherited() : bool
 	{
@@ -107,54 +86,6 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_Option_ShopData
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
-	}
-
-	public function getAddForm() : Form
-	{
-		if(!$this->_add_form) {
-			$form = $this->createForm('option_add_form');
-
-			$form->field('code')->setValidator(function( Form_Field_Input $field ) {
-				$code = $field->getValue();
-				
-				foreach( Payment_Method::get($this->payment_method_code)->getOptions() as $option ) {
-					if($option->getCode()==$code) {
-						$field->setError('code_used');
-						return false;
-					}
-				}
-
-				return true;
-			});
-			$this->_add_form = $form;
-		}
-
-		return $this->_add_form;
-	}
-
-
-	public function catchAddForm() : bool
-	{
-		$form = $this->getAddForm();
-		return $form->catch();
-	}
-
-	public function getEditForm() : Form
-	{
-		if(!$this->_edit_form) {
-			$form = $this->createForm('option_edit_form_'.$this->code);
-
-			$form->field('code')->setIsReadonly(true);
-
-			$this->_edit_form = $form;
-		}
-
-		return $this->_edit_form;
-	}
-
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
 	}
 
 	public function getDescription( ?Shops_Shop $shop=null ) : string

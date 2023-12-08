@@ -1,6 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
@@ -8,24 +9,26 @@ use Jet\Tr;
 use JetApplication\KindOfProduct;
 
 
-class Listing_Filter_ProductKind extends Listing_Filter
+class Listing_Filter_ProductKind extends DataListing_Filter
 {
+	public const KEY = 'product_kind';
+	
 	protected string $product_kind = '';
 	
 	
 	public function getKey(): string
 	{
-		return static::PRODUCT_KIND;
+		return static::KEY;
 	}
 	
-	public function catchGetParams(): void
+	public function catchParams(): void
 	{
 		$this->product_kind = Http_Request::GET()->getString('product_kind', '', array_keys(
 			['-1' => Tr::_('- Not set -')] +
 			KindOfProduct::getScope()
 		));
 		if($this->product_kind) {
-			$this->listing->setGetParam('product_kind', $this->product_kind);
+			$this->listing->setParam('product_kind', $this->product_kind);
 		}
 	}
 	
@@ -50,9 +53,9 @@ class Listing_Filter_ProductKind extends Listing_Filter
 		$this->product_kind = $form->field('product_kind')->getValue();
 
 		if($this->product_kind) {
-			$this->listing->setGetParam('product_kind', $this->product_kind);
+			$this->listing->setParam('product_kind', $this->product_kind);
 		} else {
-			$this->listing->unsetGetParam('product_kind');
+			$this->listing->unsetParam('product_kind');
 		}
 	}
 	
@@ -68,7 +71,7 @@ class Listing_Filter_ProductKind extends Listing_Filter
 			$id = 0;
 		}
 		
-		$this->listing->addWhere([
+		$this->listing->addFilterWhere([
 			'kind_id'   => $id,
 		]);
 	}

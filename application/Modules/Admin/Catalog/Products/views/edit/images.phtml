@@ -1,24 +1,14 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\MVC_View;
-use Jet\Form;
-use Jet\UI;
-use Jet\Tr;
-use Jet\UI_dialog;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View $this
- * @var Form $images_form
- * @var Form $image_delete_form
  */
 
-$product = Controller_Main::getCurrentProduct();
 
-$this->setVar('product', $product);
-$this->setVar('suffix', 'main');
 ?>
-
-<?php require 'images/js.phtml'; ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
 		<?=$this->render('edit/nav_button');?>
@@ -29,7 +19,7 @@ $this->setVar('suffix', 'main');
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
 		
-		<?php require 'images/edit.phtml'; ?>
+		<?=Admin_Managers::Image()->renderProductImageManagement();?>
 	</div>
 </div>
 

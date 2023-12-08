@@ -1,0 +1,15 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI_tabsJS_tab;
+use JetApplication\Shops_Shop;
+
+/**
+ * @var MVC_View $this
+ * @var Shops_Shop $shop
+ * @var UI_tabsJS_tab $tab
+ */
+
+$shop = $this->getRaw('shop');
+$tab = $this->getRaw('tab');
+
+echo $tab->content()->end();

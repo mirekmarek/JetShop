@@ -21,12 +21,12 @@ use JetApplication\Shops_Shop;
 
 abstract class Core_CashDesk
 {
-	const SESSION_NAME = 'cash_desk';
+	public const SESSION_NAME = 'cash_desk';
 
-	const STEP_DELIVERY = 'delivery';
-	const STEP_PAYMENT = 'payment';
-	const STEP_CUSTOMER = 'customer';
-	const STEP_CONFIRM = 'confirm';
+	public const STEP_DELIVERY = 'delivery';
+	public const STEP_PAYMENT = 'payment';
+	public const STEP_CUSTOMER = 'customer';
+	public const STEP_CONFIRM = 'confirm';
 
 
 	use CashDesk_Delivery;

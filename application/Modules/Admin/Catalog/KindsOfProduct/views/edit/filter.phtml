@@ -6,9 +6,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\KindOfProduct;
-use JetApplication\Property;
-use JetApplication\PropertyGroup;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
@@ -39,7 +37,7 @@ $editable = !$form->getIsReadonly();
 					<tr>
 						<td style="padding-left: 30px;width: 100px;" nowrap=""><?=Tr::_('Add group: ')?></td>
 						<td style="width: 400px;" nowrap="">
-								<?=PropertyGroup::renderSelectPropertyGroupWidget( "location='".Http_Request::currentURI()."&add_group='+selected_item.id" )?>
+								<?=Admin_Managers::PropertyGroup()->renderSelectWidget( "location='".Http_Request::currentURI()."&add_group='+selected_item.id" )?>
 						</td>
 						<td style="text-align: right;">
 							<?=UI::button(Tr::_('Apply detail settings'))->setUrl( Http_Request::currentURI(['apply_detail_settings'=>1]) )?>
@@ -50,15 +48,13 @@ $editable = !$form->getIsReadonly();
 		</div>
 		
 		<div id="groups">
-		<?php foreach( $kind_of_product->getFilterGroups() as $g):
-			$group = $g->getGroup();
-			?>
+		<?php foreach( $kind_of_product->getFilterGroups() as $g): ?>
 			<div class="card sortable-item group" style="margin-bottom: 15px;" data-id="<?=$g->getGroupId()?>">
 				<div class="card-header">
 					<?php if($editable): ?>
 						<?=UI::icon('up-down')?>
 					<?php endif ?>
-					<a href="<?=$group->getEditURL()?>"><?=$group->getInternalName()?></a>
+					<?=Admin_Managers::PropertyGroup()->showName($g->getGroupId())?>
 					<?php if($editable): ?>
 					<div class="float-right">
 						<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL )->setUrl(Http_Request::currentURI(['remove_group'=>$g->getGroupId()]))?>
@@ -71,7 +67,7 @@ $editable = !$form->getIsReadonly();
 							<tr>
 								<td style="padding-left: 30px;"><?=Tr::_('Add property: ')?></td>
 								<td style="width: 400px;">
-									<?=Property::renderSelectPropertyWidget(
+									<?=Admin_Managers::Property()->renderSelectWidget(
 										on_select: "location='".Http_Request::currentURI()."&group=".$g->getGroupId()."&add_property='+selected_item.id",
 										name: 'add_property_'.$g->getGroupId()
 									)?>
@@ -81,14 +77,12 @@ $editable = !$form->getIsReadonly();
 					<?php endif; ?>
 				</div>
 					<ul class="list-group list-group-flush" id="properties_<?=$g->getGroupId()?>">
-						<?php foreach( $g->getProperties() as $p):
-							$property = $p->getProperty();
-							?>
+						<?php foreach( $g->getProperties() as $p): ?>
 							<li class="list-group-item sortable-item property" data-id="<?=$p->getPropertyId()?>">
 								<?php if($editable): ?>
 									<?=UI::icon('up-down')?>
 								<?php endif; ?>
-								<a href="<?=$property->getEditURL()?>"><?=$property->getInternalName()?></a>
+								<?=Admin_Managers::Property()->showName($p->getPropertyId())?>
 								<?php if($editable): ?>
 									<div class="float-right">
 										<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL )->setUrl(Http_Request::currentURI(['remove_property' =>$p->getPropertyId(), 'group' =>$g->getGroupId()]))?>

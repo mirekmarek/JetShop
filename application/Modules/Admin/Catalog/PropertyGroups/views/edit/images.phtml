@@ -5,34 +5,28 @@ namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 use Jet\Form;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\PropertyGroup;
-use JetApplication\PropertyGroup_ShopData;
-use JetApplication\Shops;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
- * @var PropertyGroup $property
  * @var Form $form
  */
-$property_group = $this->getRaw( 'property_group' );
 
+$image_manager = Admin_Managers::Image();
 ?>
 <div class="row toolbar" id="main-toolbar">
 	<div class="col-md-12">
 		<?=UI::button_goBack()?>
-		
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-md-12" id="main-col">
-	
-	<?php
-	echo $this->getRaw('tabs');
-	
-	foreach(Shops::getListSorted() as $shop):
-		echo $property_group->getShopData( $shop )->renderImageWidgets( PropertyGroup_ShopData::getImageClasses(), !$property_group->getEditForm()->getIsReadonly() );
-	endforeach;
-	?>
+		
+		<?php
+		echo $this->getRaw('tabs');
+		echo $image_manager->renderStandardManagement();
+		?>
 	</div>
 </div>
+

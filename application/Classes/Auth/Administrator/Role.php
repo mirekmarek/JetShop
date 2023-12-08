@@ -12,6 +12,7 @@ namespace JetApplication;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_Passive;
 use Jet\Auth_Role_Interface;
 use Jet\Data_Forest;
@@ -19,6 +20,7 @@ use Jet\Data_Tree;
 use Jet\Form_Definition;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_MultiSelect;
+use Jet\Locale;
 use Jet\Tr;
 use Jet\MVC;
 use Jet\MVC_Page;
@@ -36,8 +38,8 @@ use Jet\Form_Field;
 class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 {
 
-	const PRIVILEGE_VISIT_PAGE = 'visit_page';
-	const PRIVILEGE_MODULE_ACTION = 'module_action';
+	public const PRIVILEGE_VISIT_PAGE = 'visit_page';
+	public const PRIVILEGE_MODULE_ACTION = 'module_action';
 
 
 	/**
@@ -125,7 +127,8 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 	 *
 	 * @param ?string $search
 	 *
-	 * @return Auth_Administrator_Role[]
+	 * @return static[]|DataModel_Fetch_Instances
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	public static function getList( ?string $search = '' ): iterable
 	{
@@ -152,7 +155,10 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 			] );
 
 		$list->getQuery()->setOrderBy( 'name' );
-
+		
+		/**
+		 * @var static[]|DataModel_Fetch_Instances $list
+		 */
 		return $list;
 	}
 
@@ -327,28 +333,42 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 	}
 
 	/**
-	 * @return string[]
+	 * @param bool $translate
+	 * @param Locale|null $translate_locale
+	 * @return Auth_AvailablePrivilegeProvider[]
 	 */
-	public static function getAvailablePrivilegesList(): array
+	public static function getAvailablePrivilegesList( bool $translate = true, ?Locale $translate_locale=null ): array
 	{
+		
+		$visit_page = new Auth_AvailablePrivilegeProvider(
+			privilege:      static::PRIVILEGE_VISIT_PAGE,
+			label:          'Administration sections',
+			options_getter: function() {
+				return static::getAclActionValuesList_Pages();
+			}
+		);
+		
+		$module_action = new Auth_AvailablePrivilegeProvider(
+			privilege:      static::PRIVILEGE_MODULE_ACTION,
+			label:          'Modules and actions',
+			options_getter:  function() use ($translate, $translate_locale) {
+				return static::getAclActionValuesList_ModulesActions( $translate, $translate_locale );
+			}
+		);
 
 		return [
-			static::PRIVILEGE_VISIT_PAGE => [
-				'label' => 'Administration sections',
-				'options_getter' => 'getAclActionValuesList_Pages'
-			],
-			static::PRIVILEGE_MODULE_ACTION => [
-				'label' => 'Modules and actions',
-				'options_getter' => 'getAclActionValuesList_ModulesActions'
-			],
+			$visit_page->getPrivilege() => $visit_page,
+			$module_action->getPrivilege() => $module_action
 		];
 	}
 
 
 	/**
+	 * @param bool $translate
+	 * @param Locale|null $translate_locale
 	 * @return Data_Forest
 	 */
-	public static function getAclActionValuesList_ModulesActions(): Data_Forest
+	public static function getAclActionValuesList_ModulesActions( bool $translate = true, ?Locale $translate_locale=null ): Data_Forest
 	{
 
 		$forest = new Data_Forest();
@@ -356,13 +376,13 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 		$modules = Application_Modules::activatedModulesList();
 
 		foreach( $modules as $module_name => $module_info ) {
-			if( str_ends_with($module_name, '.REST') ) {
+			if( !str_starts_with($module_name, 'Admin.') ) {
 				continue;
 			}
 
 			$module = Application_Modules::moduleInstance( $module_name );
 
-			$actions = $module->getModuleManifest()->getACLActions();
+			$actions = $module->getModuleManifest()->getACLActions( $translate, $translate_locale );
 
 			if( !$actions ) {
 				continue;
@@ -382,7 +402,12 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 
 
 			$tree = new Data_Tree();
-			$tree->getRootNode()->setLabel( Tr::_( $module_info->getLabel(), [], $module_info->getName() ) . ' (' . $module_name . ')' );
+			$tree->getRootNode()->setLabel(
+				$translate ?
+					Tr::_( text: $module_info->getLabel(), dictionary: $module_info->getName(), locale: $translate_locale ) . ' (' . $module_name . ')'
+					:
+					$module_info->getLabel() . ' (' . $module_name . ')'
+			);
 			$tree->getRootNode()->setId( $module_name );
 
 
@@ -471,10 +496,9 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 
 			$values = isset($this->privileges[$priv]) ? $this->privileges[$priv]->getValues() : [];
 
-			$field = new Form_Field_MultiSelect( '/privileges/'.$priv.'/values', $priv_data['label'] );
+			$field = new Form_Field_MultiSelect( '/privileges/'.$priv.'/values', $priv_data->getLabel() );
 			$field->setDefaultValue($values);
-
-			$field->setSelectOptions($this->{$priv_data['options_getter']}());
+			$field->setSelectOptions( $priv_data->getOptions() );
 
 			$field->setErrorMessages([
 				Form_Field::ERROR_CODE_INVALID_VALUE => 'Invalid value'

@@ -1,0 +1,35 @@
+<?php
+namespace JetApplicationModule\Admin\ImageManager;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Image;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;
+
+/**
+ * @var MVC_View   $this
+ * @var Admin_Managers_Image|Main $image_manager
+ */
+$image_manager = $this->getRaw('manager');
+$UI_manager = Admin_Managers::UI();
+
+if($image_manager->getShopSyncMode()):
+	foreach(Shops::getList() as $shop):
+		echo $image_manager->renderImageWidgets( $shop );
+		break;
+	endforeach;
+else:
+	echo '<br>';
+	Admin_Managers::UI()->renderShopDataBlocks(
+		inline_mode: true,
+		renderer: function( Shops_Shop $shop, string $shop_key ) use ($image_manager) : void {
+			echo $image_manager->renderImageWidgets( $shop );
+		});
+	
+endif;
+
+
+echo $image_manager->renderMain();
+?>
+<br><br><br>

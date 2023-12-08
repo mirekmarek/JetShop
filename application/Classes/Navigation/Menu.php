@@ -57,7 +57,6 @@ class Navigation_Menu extends Core_Navigation_Menu {
 
 
 			$tree = new Data_Tree();
-			$tree->getRootNode()->setId(0);
 			$tree->getRootNode()->setLabel('');
 
 			$tree->setAdoptOrphans(true);

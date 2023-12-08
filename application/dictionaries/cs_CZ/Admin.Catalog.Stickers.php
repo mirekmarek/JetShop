@@ -40,4 +40,6 @@ return [
 	'File is too large' => '',
 	'Sticker <b>%NAME%</b> has been updated' => '',
 	'Search ...' => '',
+	'Item with the same name already exists' => '',
+	'Internal notes:' => '',
 ];

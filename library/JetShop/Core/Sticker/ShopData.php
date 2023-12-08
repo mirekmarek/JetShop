@@ -5,35 +5,17 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Tr;
-
+use JetApplication\Entity_WithCodeAndShopData_ShopData;
 use JetApplication\Shops;
 use JetApplication\Sticker;
-use JetApplication\Sticker_ShopData;
-use JetApplication\CommonEntity_ShopData;
-use JetApplication\Images_ShopDataInterface;
-use JetApplication\Images_ShopDataTrait;
 
 #[DataModel_Definition(
 	name: 'stickers_shop_data',
 	database_table_name: 'stickers_shop_data',
 	parent_model_class: Sticker::class
 )]
-abstract class Core_Sticker_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
-
-	use Images_ShopDataTrait;
-
-	const IMG_PICTOGRAM_FILTER = 'pictogram_filter';
-	const IMG_PICTOGRAM_PRODUCT_DETAIL = 'pictogram_product_detail';
-	const IMG_PICTOGRAM_PRODUCT_LISTING = 'pictogram_product_listing';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
-		is_id: true,
-		related_to: 'main.code',
-	)]
-	protected string $sticker_code = '';
-
+abstract class Core_Sticker_ShopData extends Entity_WithCodeAndShopData_ShopData {
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
@@ -231,90 +213,48 @@ abstract class Core_Sticker_ShopData extends CommonEntity_ShopData implements Im
 
 	public function generateUrlParam() : void
 	{
-		if(!$this->sticker_code) {
+		if(!$this->entity_code) {
 			return;
 		}
 
-		$this->url_param = Shops::generateURLPathPart( $this->name, '', $this->sticker_code, $this->getShop() );
+		$this->url_param = $this->_generateURLPathPart( $this->name );
 	}
-
-	public function getImageEntity() : string
-	{
-		return 'sticker';
-	}
-
-	public function getImageObjectId() : int|string
-	{
-		return $this->sticker_code;
-	}
-
-	public static function getImageClasses() : array
-	{
-		return [
-			Sticker_ShopData::IMG_PICTOGRAM_FILTER => Tr::_('Pictogram - Filter', [], Sticker::getManageModuleName() ),
-			Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_DETAIL => Tr::_('Pictogram - Product detail', [], Sticker::getManageModuleName() ),
-			Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_LISTING => Tr::_('Pictogram - Product listing', [], Sticker::getManageModuleName() ),
-		];
-	}
-
+	
+	
+	
+	
+	
 	public function setImageFilter( string $image ) : void
 	{
-		$this->setImage( Sticker_ShopData::IMG_PICTOGRAM_FILTER, $image);
+		$this->image_pictogram_filter = $image;
 	}
-
+	
 	public function getImageFilter() : string
 	{
-		return $this->getImage( Sticker_ShopData::IMG_PICTOGRAM_FILTER );
+		return $this->image_pictogram_filter;
 	}
-
-	public function getImageFilterUrl() : string
-	{
-		return $this->getImageUrl( Sticker_ShopData::IMG_PICTOGRAM_FILTER );
-	}
-
-	public function getImageFilterThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Sticker_ShopData::IMG_PICTOGRAM_FILTER, $max_w, $max_h );
-	}
-
+	
+	
 	public function setImageProductDetail( string $image ) : void
 	{
-		$this->setImage( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_DETAIL, $image);
+		$this->image_pictogram_product_detail = $image;
 	}
-
+	
 	public function getImageProductDetail() : string
 	{
-		return $this->getImage( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_DETAIL );
+		return $this->image_pictogram_product_detail;
 	}
-
-	public function getImageProductDetailUrl() : string
-	{
-		return $this->getImageUrl( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_DETAIL );
-	}
-
-	public function getImageProductDetailThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_DETAIL, $max_w, $max_h );
-	}
-
+	
+	
 	public function setImageProductListing( string $image ) : void
 	{
-		$this->setImage( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_LISTING, $image);
+		$this->image_pictogram_product_listing = $image;
 	}
-
+	
 	public function getImageProductListing() : string
 	{
-		return $this->getImage( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_LISTING );
+		return $this->image_pictogram_product_listing;
 	}
-
-	public function getImageProductListingUrl() : string
-	{
-		return $this->getImageUrl( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_LISTING );
-	}
-
-	public function getImageProductListingThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Sticker_ShopData::IMG_PICTOGRAM_PRODUCT_LISTING, $max_w, $max_h );
-	}
+	
 	
 }

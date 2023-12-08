@@ -1,6 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Services\Services;
 
+use JetApplication\Admin_Managers;
 use JetApplication\Services_Service;
 
 use Jet\UI;
@@ -8,7 +9,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\Tr;
-use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View $this
@@ -39,36 +40,31 @@ $service = $this->getRaw( 'service' );
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
 		<br/>
-
+		<?=Admin_Managers::UI()->renderEntityActivation( $service, !$form->getIsReadonly() )?>
 		<?=$form->field( 'internal_name' )?>
 		<?=$form->field( 'code' )?>
 		<?=$form->field( 'group' )?>
 		<?=$form->field( 'kind' )?>
 		<?=$form->field( 'internal_description' )?>
-
-
-		<?php foreach(Shops::getListSorted() as $shop):
-			$shop_key= $shop->getKey();
-
-			$shop_data = $service->getShopData( $shop );
-			?>
-			<?=$shop_data->renderShopDataBlock_start()?>
-
-			<fieldset>
-				<legend class="sub"><?=Tr::_('Main data')?></legend>
-
-				<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/title')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-				<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
-
-			</fieldset>
-
-			<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
+		
+		<?php
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($service, $form) : void {
+				?>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					
+					<?=Admin_Managers::UI()->renderEntityShopDataActivation( $service, $shop, !$form->getIsReadonly() )?>
+					<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/title')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+					<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
+				
+				</fieldset>
+			<?php }); ?>
 	</div>
 </div>
 

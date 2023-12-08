@@ -1,0 +1,81 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI_messages;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ * @var Listing $listing
+ */
+
+$item = $this->getRaw('item');
+$listing = $this->getRaw('listing');
+
+
+$edit_uri = $listing->getProductEditUrl($item);
+?>
+<table class="table-plain<?php if(!$item->isActive()): ?> badge-danger<?php endif;?>">
+<?php foreach(Shops::getListSorted() as $shop): ?>
+<tr style="background-color: transparent">
+	<td>
+		<?php if($item->getShopData($shop)->isActive()):
+		?><span class="badge badge-success"><?=$shop->getShopName()?></span> <?php
+		else:
+		?><span class="badge badge-danger"><?=$shop->getShopName()?></span> <?php
+		endif; ?>
+	</td>
+	<td><a href="<?=$edit_uri;?>"><?=$item->getAdminTitle( $shop );?></a></td>
+</tr>
+<?php endforeach; ?>
+</table>
+
+<?php if($item->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER): ?>
+	<br>
+	<table>
+		<thead>
+		<tr>
+			<th colspan="2"><?=Tr::_('Variants')?></th>
+		</tr>
+		</thead>
+		<?php foreach($item->getVariants() as $variant): ?>
+			<tr>
+				<td><?=$variant->renderActiveState() ?></td>
+				<td><a href="<?=$variant->getEditURL()?>"><?=$variant->getAdminTitle()?></a></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+<?php endif; ?>
+
+<?php if( $item->getType()==Product::PRODUCT_TYPE_SET ): ?>
+<br>
+<table>
+	<thead>
+	<tr>
+		<th colspan="2"><?=Tr::_('Set items')?></th>
+	</tr>
+	</thead>
+	<?php foreach($item->getSetItems() as $set_item):
+		$set_item_product = Product::get($set_item->getItemProductId());
+		
+		if(!$set_item_product) {
+			?>
+			<tr>
+				<td></td>
+				<td><?=UI_messages::createDanger(Tr::_('Unknown product %ID%', ['ID'=>$set_item->getItemProductId()]))->setCloseable(false)?></td>
+			</tr>
+			<?php
+			continue;
+		}
+		
+		?>
+		<tr>
+			<td><?=$set_item_product->renderActiveState()?></td>
+			<td><a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a></td>
+		</tr>
+	<?php endforeach; ?>
+</table>
+<?php endif; ?>

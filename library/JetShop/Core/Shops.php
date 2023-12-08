@@ -4,7 +4,6 @@ namespace JetShop;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Locale;
-use Jet\Data_Text;
 use Jet\MVC;
 use Jet\Session;
 
@@ -21,9 +20,9 @@ class Core_Shops {
 	 */
 	protected static ?array $_list = null;
 	
-	const CURR_SHOP_SESSION = 'current_shop';
-	const CURR_SHOP_SESSION_KEY = 'key';
-	const CURR_SHOP_GET_PARAM = 'select_shop';
+	public const CURR_SHOP_SESSION = 'current_shop';
+	public const CURR_SHOP_SESSION_KEY = 'key';
+	public const CURR_SHOP_GET_PARAM = 'select_shop';
 
 	public static function handleCurrentAdminShop() : void
 	{
@@ -312,42 +311,5 @@ class Core_Shops {
 	{
 		return MVC::getBase(($shop ?:static::$current_shop)->getBaseId())->getViewsPath();
 	}
-
-
-
-
-	public static function generateURLPathPart( string $name, string $type='', string|int|null $id=null, ?Shops_Shop $shop=null ) : string
-	{
-
-		//TODO: move somewhere else ...
-		$name = Data_Text::removeAccents( $name );
-
-		$name = strtolower($name);
-		$name = preg_replace('/([^0-9a-zA-Z ])+/', '', $name);
-		$name = preg_replace( '/([[:blank:]])+/', '-', $name);
-
-
-		$min_len = 2;
-
-		$parts = explode('-', $name);
-		$valid_parts = array();
-		foreach( $parts as $value ) {
-
-			if (strlen($value) > $min_len) {
-				$valid_parts[] = $value;
-			}
-		}
-
-		$name = count($valid_parts) > 1 ? implode('-', $valid_parts) : $name;
-
-		if($type) {
-			return $name.'-'.$type.'-'.$id;
-		} else {
-			return $name;
-		}
-
-
-	}
-
-
+	
 }

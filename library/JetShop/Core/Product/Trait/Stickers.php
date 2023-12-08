@@ -3,8 +3,6 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Form;
-use Jet\Form_Field_Checkbox;
 
 use JetApplication\Product_Sticker;
 use JetApplication\Sticker;
@@ -87,24 +85,5 @@ trait Core_Product_Trait_Stickers
 		return true;
 	}
 
-	protected function _setupForm_stickers( Form $form ) : void
-	{
-		foreach(Sticker::getList() as $sticker) {
-			$s_code = $sticker->getCode();
-
-			$field = new Form_Field_Checkbox('/sticker/'.$s_code, $sticker->getInternalName() );
-			$field->setDefaultValue( isset($this->stickers[$s_code]) );
-			$field->setFieldValueCatcher( function( $value ) {
-				if($value) {
-					$this->addSticker($value);
-				} else {
-					$this->removeSticker($value);
-				}
-			} );
-
-			$form->addField( $field );
-		}
-
-	}
 
 }

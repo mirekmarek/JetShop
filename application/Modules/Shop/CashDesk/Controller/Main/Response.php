@@ -45,7 +45,7 @@ class Controller_Main_Response {
 		$this->data[$key] = $data;
 	}
 
-	public function response()
+	public function response() : void
 	{
 		$cash_desk = CashDesk::get();
 

@@ -20,6 +20,7 @@ trait Controller_Main_Edit_Main
 	{
 		$product = static::getCurrentProduct();
 		$this->_setBreadcrumbNavigation();
+		$product->handleActivation();
 		
 		$GET = Http_Request::GET();
 		
@@ -48,7 +49,6 @@ trait Controller_Main_Edit_Main
 			
 			$product->save();
 			$product->syncVariants();
-			Category::syncCategories();
 			
 			Logger::success(
 				'product_updated',

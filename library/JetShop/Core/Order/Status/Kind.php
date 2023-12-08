@@ -9,16 +9,15 @@ namespace JetShop;
 use Jet\Tr;
 
 use JetApplication\Order_Status_Kind;
-use JetApplication\Order_Status;
 
 abstract class Core_Order_Status_Kind {
 
-	const KIND_NEW = 'new';
-	const KIND_WAITING_FOR_PAYMENT = 'waiting_for_payment';
-	const KIND_BEING_PROCESSED = 'being_processed';
-	const KIND_IS_DISPATCHED = 'is_dispatched';
-	const KIND_CANCELLED = 'cancelled';
-	const KIND_RETURNED = 'returned';
+	public const KIND_NEW = 'new';
+	public const KIND_WAITING_FOR_PAYMENT = 'waiting_for_payment';
+	public const KIND_BEING_PROCESSED = 'being_processed';
+	public const KIND_IS_DISPATCHED = 'is_dispatched';
+	public const KIND_CANCELLED = 'cancelled';
+	public const KIND_RETURNED = 'returned';
 
 
 	protected string $code = '';
@@ -83,29 +82,29 @@ abstract class Core_Order_Status_Kind {
 
 			$new = new Order_Status_Kind();
 			$new->setCode( Order_Status_Kind::KIND_NEW );
-			$new->setTitle( Tr::_('New order', [], Order_Status::getManageModuleName()) );
+			$new->setTitle( Tr::_('New order') );
 
 
 			$waiting_for_payment = new Order_Status_Kind();
 			$waiting_for_payment->setCode( Order_Status_Kind::KIND_WAITING_FOR_PAYMENT );
-			$waiting_for_payment->setTitle( Tr::_('Waiting for payment', [], Order_Status::getManageModuleName()) );
+			$waiting_for_payment->setTitle( Tr::_('Waiting for payment') );
 
 
 			$being_processed = new Order_Status_Kind();
 			$being_processed->setCode( Order_Status_Kind::KIND_BEING_PROCESSED );
-			$being_processed->setTitle( Tr::_('Order is being processed', [], Order_Status::getManageModuleName()) );
+			$being_processed->setTitle( Tr::_('Order is being processed') );
 
 			$is_dispatched = new Order_Status_Kind();
 			$is_dispatched->setCode( Order_Status_Kind::KIND_IS_DISPATCHED );
-			$is_dispatched->setTitle( Tr::_('Order is dispatched', [], Order_Status::getManageModuleName()) );
+			$is_dispatched->setTitle( Tr::_('Order is dispatched' );
 
 			$cancelled = new Order_Status_Kind();
 			$cancelled->setCode( Order_Status_Kind::KIND_CANCELLED );
-			$cancelled->setTitle( Tr::_('Cancelled', [], Order_Status::getManageModuleName()) );
+			$cancelled->setTitle( Tr::_('Cancelled') );
 
 			$returned = new Order_Status_Kind();
 			$returned->setCode( Order_Status_Kind::KIND_RETURNED );
-			$returned->setTitle( Tr::_('Returned', [], Order_Status::getManageModuleName()) );
+			$returned->setTitle( Tr::_('Returned') );
 
 			static::$list[$new->getCode()] = $new;
 			static::$list[$waiting_for_payment->getCode()] = $waiting_for_payment;
@@ -120,6 +119,7 @@ abstract class Core_Order_Status_Kind {
 
 	public static function getScope() : array
 	{
+		
 		$list = Order_Status_Kind::getList();
 
 

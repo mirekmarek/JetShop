@@ -10,13 +10,12 @@ use Jet\Tr;
 
 use JetApplication\Payment_Kind;
 use JetApplication\Services_Kind;
-use JetApplication\Services_Service;
 
 abstract class Core_Services_Kind {
 
-	const KIND_DELIVERY = 'delivery';
-	const KIND_PAYMENT = 'payment';
-	const KIND_OTHER = 'other';
+	public const KIND_DELIVERY = 'delivery';
+	public const KIND_PAYMENT = 'payment';
+	public const KIND_OTHER = 'other';
 
 
 	protected string $code = '';
@@ -79,17 +78,18 @@ abstract class Core_Services_Kind {
 		if(static::$list===null) {
 			static::$list = [];
 
+			//TODO:
 			$delivery_service = new Services_Kind();
 			$delivery_service->setCode( Services_Kind::KIND_DELIVERY );
-			$delivery_service->setTitle( Tr::_('Delivery service', [], Services_Service::getManageModuleName()) );
+			$delivery_service->setTitle( Tr::_('Delivery service') );
 
 			$payment_service = new Services_Kind();
 			$payment_service->setCode( Services_Kind::KIND_PAYMENT );
-			$payment_service->setTitle( Tr::_('Payment service', [], Services_Service::getManageModuleName()) );
+			$payment_service->setTitle( Tr::_('Payment service') );
 
 			$other_service = new Services_Kind();
 			$other_service->setCode( Services_Kind::KIND_OTHER );
-			$other_service->setTitle( Tr::_('Other service', [], Services_Service::getManageModuleName()) );
+			$other_service->setTitle( Tr::_('Other service') );
 
 			
 			static::$list[$delivery_service->getCode()] = $delivery_service;

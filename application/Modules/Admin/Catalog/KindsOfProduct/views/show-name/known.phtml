@@ -1,0 +1,13 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\MVC_View;
+use JetApplicationModule\Admin\Catalog\KindsOfProduct\KindOfProduct;
+
+/**
+ * @var MVC_View $this
+ * @var KindOfProduct $kind_of_product
+ */
+$kind_of_product = $this->getRaw('kind_of_product');
+?>
+<a href="<?=$kind_of_product->getEditURL()?>"><?=$kind_of_product->getInternalName()?></a>

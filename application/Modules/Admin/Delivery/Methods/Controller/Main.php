@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Delivery\Methods;
 use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
+use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
 use JetApplication\Delivery_Method;
 
@@ -23,7 +24,6 @@ use Jet\Navigation_Breadcrumb;
 
 use JetApplication\Delivery_Method_ShopData;
 use JetApplication\Shops;
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *
@@ -54,11 +54,11 @@ class Controller_Main extends MVC_Controller_Default
 					return (bool)($this->delivery_method = Delivery_Method::get($id));
 				},
 				[
-					'listing'=> Main::ACTION_GET_DELIVERY_METHOD,
-					'view'   => Main::ACTION_GET_DELIVERY_METHOD,
-					'add'    => Main::ACTION_ADD_DELIVERY_METHOD,
-					'edit'   => Main::ACTION_UPDATE_DELIVERY_METHOD,
-					'delete' => Main::ACTION_DELETE_DELIVERY_METHOD,
+					'listing'=> Main::ACTION_GET,
+					'view'   => Main::ACTION_GET,
+					'add'    => Main::ACTION_ADD,
+					'edit'   => Main::ACTION_UPDATE,
+					'delete' => Main::ACTION_DELETE,
 				]
 			);
 
@@ -93,7 +93,7 @@ class Controller_Main extends MVC_Controller_Default
 				return true;
 			} );
 
-			$this->router->addAction('edit_images', Main::ACTION_UPDATE_DELIVERY_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('edit_images', Main::ACTION_UPDATE)->setResolver( function() use ($action) {
 				if(
 					!$this->delivery_method ||
 					$this->_getEditTabs()->getSelectedTabId()!='images' ||
@@ -105,7 +105,7 @@ class Controller_Main extends MVC_Controller_Default
 				return true;
 			} );
 
-			$this->router->addAction('view_images', Main::ACTION_GET_DELIVERY_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('view_images', Main::ACTION_GET)->setResolver( function() use ($action) {
 				if(
 					!$this->delivery_method ||
 					$this->_getEditTabs()->getSelectedTabId()!='images' ||
@@ -152,7 +152,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		Admin_Managers::UI()->initBreadcrumb();
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );

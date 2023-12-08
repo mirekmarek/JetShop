@@ -3,18 +3,11 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_Fetch_Instances;
-use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Tr;
-
 use JetApplication\Category;
-use JetApplication\CommonEntity_ShopData;
-use JetApplication\Images_ShopDataInterface;
-use JetApplication\Images_ShopDataTrait;
+use JetApplication\Entity_WithIDAndShopData_ShopData;
 use JetApplication\Shops;
-use JetApplication\Category_ShopData;
 
 /**
  *
@@ -24,20 +17,27 @@ use JetApplication\Category_ShopData;
 	database_table_name: 'categories_shop_data',
 	parent_model_class: Category::class,
 )]
-abstract class Core_Category_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface {
-
-	use Images_ShopDataTrait;
-
-	const IMG_MAIN = 'main';
-	const IMG_PICTOGRAM = 'pictogram';
-
+abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData {
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		is_id: true,
-		related_to:  'main.id',
+		is_key: true,
 	)]
-	protected int $category_id = 0;
-
+	protected int $priority = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $root_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $parent_id = 0;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
@@ -141,16 +141,22 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 		max_len: 999999999,
 	)]
 	protected string $product_ids = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 999999999,
+	)]
+	protected string $branch_product_ids = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
-	protected int $visible_products_count = 0;
+	protected int $products_count = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
-	protected int $nested_visible_products_count = 0;
+	protected int $branch_products_count = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -163,28 +169,78 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 		max_len: 65536,
 	)]
 	protected string $children = '';
-
-	/**
-	 * @var Category[]|DataModel_Fetch_Instances
-	 */
-	protected DataModel_Fetch_Instances|null|array $_children = null;
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536,
 	)]
-	protected string $all_children = '';
-
-
-
-	public function getVisibleProductsCount() : int
+	protected string $branch_children = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536,
+	)]
+	protected string $active_branch_children = '';
+	
+	
+	
+	public function activate(): void
 	{
-		return $this->visible_products_count;
+		parent::activate();
+		Category::actualizeBranchProductAssoc( $this->root_id );
+	}
+	
+	public function deactivate(): void
+	{
+		parent::deactivate();
+		Category::actualizeBranchProductAssoc( $this->root_id );
+	}
+	
+	
+	public function getPriority(): int
+	{
+		return $this->priority;
+	}
+	
+	public function setPriority( int $priority, bool $save=true ): void
+	{
+		$this->priority = $priority;
+		if($save) {
+			$where = Shops::get($this->shop_code)->getWhere();
+			$where[] = 'AND';
+			$where['entity_id'] = $this->entity_id;
+			
+			static::updateData(data: ['priority'=>$this->priority], where: $where);
+		}
+	}
+	
+	public function getParentId(): int
+	{
+		return $this->parent_id;
+	}
+	
+	public function setParentId( int $parent_id, bool $save=true  ): void
+	{
+		$this->parent_id = $parent_id;
+		if($save) {
+			$where = Shops::get($this->shop_code)->getWhere();
+			$where[] = 'AND';
+			$where['entity_id'] = $this->entity_id;
+			
+			static::updateData(data: ['parent_id'=>$this->parent_id], where: $where);
+		}
 	}
 
-	public function getNestedVisibleProductsCount() : int
+
+
+	public function getProductsCount() : int
 	{
-		return $this->nested_visible_products_count;
+		return $this->products_count;
+	}
+
+	public function getBranchProductsCount() : int
+	{
+		return $this->branch_products_count;
 	}
 
 	public function getName() : string
@@ -282,7 +338,7 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 					'URL_path_part'=>$URL_path_part
 				],
 				[
-					'category_id' => $this->category_id,
+					'entity_id' => $this->entity_id,
 					'AND',
 					$this->getShop()->getWhere()
 				]
@@ -297,93 +353,40 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 	public function generateURLPathPart() : void
 	{
-		if(!$this->category_id) {
+		if(!$this->entity_id) {
 			return;
 		}
 
-		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'c', $this->category_id, $this->getShop() );
+		$this->URL_path_part = $this->_generateURLPathPart( $this->name, 'c' );
 	}
 
-	public function getImageEntity() : string
-	{
-		return 'category';
-	}
+	
 
-	public function getImageObjectId() : int|string
-	{
-		return $this->category_id;
-	}
-
-	public static function getImageClasses() : array
-	{
-		return [
-			Category_ShopData::IMG_MAIN => Tr::_('Main image', [], Category::getManageModuleName() ),
-			Category_ShopData::IMG_PICTOGRAM => Tr::_('Pictogram image', [], Category::getManageModuleName() ),
-		];
-	}
-
-	public function getImage( string $image_class ) : string
-	{
-		return $this->{'image_'.$image_class};
-	}
-
+	
+	
+	
 	public function setImageMain( string $image_main ) : void
 	{
-		$this->setImage( Category_ShopData::IMG_MAIN, $image_main);
+		$this->image_main = $image_main;
 	}
 
 	public function getImageMain() : string
 	{
-		return $this->getImage(Category_ShopData::IMG_MAIN);
+		return $this->image_main;
 	}
 
-	public function getImageMainUrl() : string
-	{
-		return $this->getImageUrl(Category_ShopData::IMG_MAIN);
-	}
-
-	public function getImageMainThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Category_ShopData::IMG_MAIN, $max_w, $max_h );
-	}
 
 	public function setImagePictogram( string $image_pictogram ) : void
 	{
-		$this->setImage( Category_ShopData::IMG_PICTOGRAM, $image_pictogram );
+		$this->image_pictogram = $image_pictogram;
 	}
 
 	public function getImagePictogram() : string
 	{
-		return $this->getImage(Category_ShopData::IMG_PICTOGRAM);
+		return $this->image_pictogram;
 	}
 
-	public function getImagePictogramUrl() : string
-	{
-		return $this->getImageUrl(Category_ShopData::IMG_PICTOGRAM);
-	}
 
-	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl(Category_ShopData::IMG_PICTOGRAM, $max_w, $max_h);
-	}
-
-	public function getImageDeleteForm( string $image_class ) : Form|null
-	{
-		$property_name = 'image_'.$image_class;
-		$img = $this->{$property_name};
-
-		$category = Category::get($this->category_id);
-
-		if(!isset($this->image_delete_forms[$image_class])) {
-
-			$form = new Form('image_delete_'.$this->getImageEntity().'_'.$image_class.'_'.$this->getShopKey(), []);
-
-			$this->image_delete_forms[$image_class] = $form;
-		}
-
-		return $this->image_delete_forms[$image_class];
-
-	}
 
 	public function getProductIds() : array
 	{
@@ -402,19 +405,52 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 	public function setProductIds( array $product_ids, $save=false ) : void
 	{
 		$this->product_ids = implode(',', $product_ids);
-		$this->visible_products_count = count($product_ids);
+		$this->products_count = count($product_ids);
 
 		if($save) {
 			$this->updateData([
 				'product_ids' => $this->product_ids,
-				'visible_products_count' => $this->visible_products_count
+				'visible_products_count' => $this->products_count
 			],[
-				'category_id' => $this->category_id,
+				'entity_id' => $this->entity_id,
 				'AND',
 				$this->getShop()->getWhere()
 			]);
 		}
 	}
+	
+	
+	public function getBranchProductIds() : array
+	{
+		if(!$this->branch_product_ids) {
+			return [];
+		}
+		
+		return explode(',', $this->branch_product_ids);
+	}
+	
+	public function getBranchProductIdsRaw() : string
+	{
+		return $this->branch_product_ids;
+	}
+	
+	public function setBranchProductIds( array $product_ids, $save=false ) : void
+	{
+		$this->branch_product_ids = implode(',', $product_ids);
+		$this->branch_products_count = count($product_ids);
+		
+		if($save) {
+			$this->updateData([
+				'branch_product_ids' => $this->product_ids,
+				'branch_products_count' => $this->branch_products_count
+			],[
+				'entity_id' => $this->entity_id,
+				'AND',
+				$this->getShop()->getWhere()
+			]);
+		}
+	}
+	
 
 	public function getPath() : array
 	{
@@ -424,25 +460,20 @@ abstract class Core_Category_ShopData extends CommonEntity_ShopData implements I
 
 		return explode(',', $this->path );
 	}
-
-	/**
-	 *
-	 * @return Category[]|DataModel_Fetch_Instances
-	 */
-	public function getChildren() : DataModel_Fetch_Instances|array
+	
+	public function getChildren() : array
 	{
-		if($this->_children!==null) {
-			return $this->_children;
-		}
-
-		$this->_children = [];
-
-		if($this->children) {
-			$ch_ids = explode(',', $this->children);
-			$this->_children = Category::fetchInstances(['id'=>$ch_ids]);
-		}
-
-		return $this->_children;
+		return explode(',', $this->children);
+	}
+	
+	public function getBranchChildren(): array
+	{
+		return explode(',', $this->branch_children);
+	}
+	
+	public function getActiveBranchChildren(): array
+	{
+		return explode(',', $this->active_branch_children);
 	}
 
 }

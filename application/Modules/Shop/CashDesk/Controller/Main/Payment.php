@@ -75,7 +75,7 @@ trait Controller_Main_Payment {
 	}
 
 
-	public function continue_to_customer_Action()
+	public function continue_to_customer_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
@@ -92,7 +92,7 @@ trait Controller_Main_Payment {
 
 	}
 
-	public function back_to_payment_Action()
+	public function back_to_payment_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );

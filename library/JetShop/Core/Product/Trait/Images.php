@@ -1,249 +1,115 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel;
-use Jet\DataModel_Definition;
-
-use JetApplication\Product;
-use JetApplication\ImagesShared;
+use JetApplication\Product_Image;
 
 trait Core_Product_Trait_Images
 {
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_0 = '';
+	/**
+	 * @var Product_Image[]
+	 */
+	protected ?array $images = null;
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_1 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_2 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_3 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_4 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_5 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_6 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_7 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_8 = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	protected string $image_9 = '';
-
-	
-	public function getImageEntity() : string
+	/**
+	 * @return Product_Image[]
+	 */
+	public function getImages() : array
 	{
-		return 'product';
+		if( $this->images===null ) {
+			$this->images = Product_Image::getImages( $this->id );
+		}
+		
+		return $this->images;
 	}
 	
-	public function getImageObjectId() : int|string
+	public function getImage( int $index ) : ?Product_Image
 	{
-		return $this->id;
+		$this->getImages();
+		
+		return $this->images[$index]??null;
 	}
 	
-	public function getImage( int $i = 0 ) : string
+	public function getImageByKey( string $key ) : ?Product_Image
 	{
-		if(
-			!$this->{"image_{$i}"} &&
-			$this->type==Product::PRODUCT_TYPE_VARIANT
-		) {
-			$master = $this->getVariantMasterProduct();
-			if($master) {
-				return $master->getImage($i);
+		$this->getImages();
+		
+		foreach($this->images as $image) {
+			if($image->getKey()==$key) {
+				return $image;
 			}
 		}
 		
-		return $this->{"image_{$i}"};
+		return null;
 	}
 	
-	public function getImageRaw( int $i = 0 ) : string
+	public function deleteImage( string $key ) : ?Product_Image
 	{
-		return $this->{"image_{$i}"};
-	}
-	
-	public function getImageUrl( int $i = 0 ) : string
-	{
-		return ImagesShared::getUrl( $this->getImage( $i ) );
-	}
-	
-	public function getImageUrlRaw( int $i = 0 ) : string
-	{
-		return ImagesShared::getUrl( $this->getImageRaw( $i ) );
-	}
-	
-	public function getImageThumbnailUrl( int $max_w, int $max_h, int $i=0 ) : string
-	{
-		return ImagesShared::getThumbnailUrl( $this->getImage( $i ), $max_w, $max_h );
-	}
-	
-	public function getImageThumbnailUrlRaw( int $max_w, int $max_h, int $i=0 ) : string
-	{
-		return ImagesShared::getThumbnailUrl( $this->getImageRaw( $i ), $max_w, $max_h );
-	}
-	
-	
-	public function setImage( int $i, string $img ) : void
-	{
-		$this->{"image_{$i}"} = $img;
-	}
-	
-	
-	public function uploadImages() : void
-	{
-		$current_images = [];
+		$this->getImages();
 		
-		for( $i=0; $i<Product::$max_image_count; $i++ ) {
-			if($this->getImageRaw( $i )) {
-				$current_images[] = $this->getImageRaw( $i );
-			}
+		$deleted_image = $this->getImageByKey( $key );
+		if(!$deleted_image) {
+			return null;
 		}
 		
+		$index = $deleted_image->getImageIndex();
 		
-		$new_images = [];
-		foreach( $_FILES['images']['tmp_name'] as $tmp_name ) {
-			if(
-				!$tmp_name ||
-				!@getimagesize( $tmp_name )
-			) {
-				continue;
-			}
-			
-			$new_images[] = $tmp_name;
-			
-			if( (count($current_images)+count($new_images))>=Product::$max_image_count ) {
-				break;
-			}
-		}
+		$deleted_image->delete();
+		
+		unset( $this->images[$index] );
 		
 		$i = 0;
-		foreach( $current_images as $current_image ) {
-			$this->{"image_{$i}"} = $current_image;
-			$i++;
-		}
-		
-		foreach( $new_images as $new_image ) {
-			if($i>=Product::$max_image_count) {
-				break;
-			}
-			
-			ImagesShared::uploadImage(
-				$new_image,
-				'product',
-				$this->id,
-				'image',
-				$this->{"image_{$i}"}
-			);
+		foreach($this->images as $img) {
+			$img->setImageIndex( $i );
+			$img->save();
 			
 			$i++;
 		}
 		
+		return $deleted_image;
 	}
 	
-	public function deleteImages( array  $indexes ) : void
+	public function addImage( string $file ) : void
 	{
+		$this->getImages();
 		
-		foreach($indexes as $i) {
-			$i = (int)$i;
-			
-			$property = 'image_'.$i;
-			if(!property_exists($this, $property)) {
-				break;
-			}
-			
-			if(!$this->{$property} ) {
-				continue;
-			}
-			
-			ImagesShared::deleteImage( $this->{$property} );
-			
-			$this->{$property} = '';
-		}
+		$new_image = new Product_Image();
+		$new_image->setProductId( $this->getId() );
+		$new_image->setImageFile( $file );
+		$new_image->setImageIndex( count($this->images) );
+		$new_image->save();
 		
-		$current_images = [];
-		
-		for( $i=0; $i<Product::$max_image_count; $i++ ) {
-			if($this->getImageRaw( $i )) {
-				$current_images[] = $this->getImageRaw( $i );
-			}
-			
-			$this->{"image_{$i}"} = '';
-		}
-		
-		foreach($current_images as $i=>$image) {
-			$this->{"image_{$i}"} = $image;
-		}
-		
+		$this->images[] = $new_image;
 	}
 	
-	public function sortImages( array $indexes ) : void
+	public function sortImages( array $image_keys ) : void
 	{
+		$image_keys = array_unique($image_keys);
 		
-		$current_images = [];
+		$this->getImages();
 		
-		for( $i=0; $i<Product::$max_image_count; $i++ ) {
-			if($this->getImageRaw( $i )) {
-				$current_images[] = $this->getImageRaw( $i );
+		$sorted_images = [];
+		
+		foreach($image_keys as $image_key) {
+			$image = $this->getImageByKey( $image_key );
+			if(!$image) {
+				return;
 			}
+			$sorted_images [] = $image;
 		}
 		
-		if(count($indexes)!=count($current_images)) {
+		if(count($sorted_images)!=count($this->images)) {
 			return;
 		}
 		
 		
-		$images = [];
-		
-		foreach($indexes as $i) {
-			if(!isset($current_images[$i])) {
-				return;
-			}
-			
-			$images[] = $current_images[$i];
+		/**
+		 * @var Product_Image[] $sorted_images
+		 */
+		foreach($sorted_images as $i=>$image) {
+			$image->setImageIndex( $i );
+			$image->save();
 		}
 		
-		foreach($images as $i=>$image) {
-			$this->{"image_{$i}"} = $image;
-		}
-		
+		$this->images = $sorted_images;
 	}
-
 }

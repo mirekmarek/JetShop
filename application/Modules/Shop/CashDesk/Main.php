@@ -72,8 +72,8 @@ class Main extends CashDesk_Module
 		//TODO: is default
 
 		uasort($methods, function( Delivery_Method $a, Delivery_Method $b ) use ($cash_desk) {
-			$p_a = $cash_desk->getDeliveryPrice( $a )->getFinalPrice();
-			$p_b = $cash_desk->getDeliveryPrice( $b )->getFinalPrice();
+			$p_a = $cash_desk->getDeliveryPrice( $a )->getPrice();
+			$p_b = $cash_desk->getDeliveryPrice( $b )->getPrice();
 
 
 			if($p_a==$p_b) {

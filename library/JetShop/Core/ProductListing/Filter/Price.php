@@ -7,7 +7,7 @@ use JetApplication\ProductListing_Filter;
 use JetApplication\Product_ShopData;
 
 abstract class Core_ProductListing_Filter_Price extends ProductListing_Filter {
-	const CACHE_KEY = 'f_price';
+	public const  CACHE_KEY = 'f_price';
 
 	protected string $key = 'price';
 

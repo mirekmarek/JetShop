@@ -4,8 +4,8 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\MVC_View;
-use JetApplication\Category;
-use JetApplication\Shops;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View   $this
@@ -23,33 +23,36 @@ $form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
 <?=$this->render('lj_start')?>
 <br/>
 <?=$form->start();?>
-		<?php foreach(Shops::getListSorted() as $shop):
-			$shop_key = $shop->getKey();
-			$shop_data = $new_category->getShopData( $shop );
+
+<?=$form->field('internal_name'); ?>
+<?=$form->field('internal_notes'); ?>
+
+<?=$form->field('internal_name');?>
+<?=$form->field('internal_notes');?>
+
+	<?php
+	Admin_Managers::UI()->renderShopDataBlocks(
+		form: $form,
+		renderer: function( Shops_Shop $shop, string $shop_key ) use ($new_category, $form) : void {
 			?>
-			<?=$shop_data->renderShopDataBlock_start()?>
+			<fieldset>
+				<legend class="sub"><?=Tr::_('Main data')?></legend>
+				
+				<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+			</fieldset>
+			
+			<fieldset>
+				<legend class="sub"><?=Tr::_('SEO')?></legend>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+				<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
+			</fieldset>
+		<?php }); ?>
 
-				<fieldset>
-					<legend class="sub"><?=Tr::_('Main data')?></legend>
-
-					<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
-
-					<?=$form->field('/shop_data/'.$shop_key.'/name')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-				</fieldset>
-
-				<fieldset>
-					<legend class="sub"><?=Tr::_('SEO')?></legend>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
-				</fieldset>
-
-			<?=$shop_data->renderShopDataBlock_end()?>
-		<?php endforeach; ?>
 <?=$form->end();?>
 
 <?=$this->render('lj_end')?>

@@ -182,7 +182,7 @@ class Main extends Discounts_Module
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_DELIVERY_PERCENT );
 	}
 
-	protected function setDiscount_payment_amount( Order_Item $discount, Discounts_Code $used_code )
+	protected function setDiscount_payment_amount( Order_Item $discount, Discounts_Code $used_code ) : void
 	{
 		$discount->setTitle( Tr::_('Discount %D% for payment price', ['D'=>$used_code->getDiscount()]) );
 		$discount->setSubType( Order_Item::DISCOUNT_TYPE_PAYMENT_AMOUNT );

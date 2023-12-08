@@ -8,14 +8,11 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use Jet\Form_Field;
-
+use JetApplication\Entity_WithCodeAndShopData_ShopData;
 use JetApplication\Payment_Method;
-use JetApplication\CommonEntity_ShopData;
-use JetApplication\Images_ShopDataInterface;
-use JetApplication\Images_ShopDataTrait;
 use JetApplication\Payment_Method_ShopData;
 
 /**
@@ -26,13 +23,12 @@ use JetApplication\Payment_Method_ShopData;
 	database_table_name: 'payment_methods_shop_data',
 	parent_model_class: Payment_Method::class
 )]
-abstract class Core_Payment_Method_ShopData extends CommonEntity_ShopData implements Images_ShopDataInterface
+abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_ShopData
 {
-	use Images_ShopDataTrait;
 
-	const IMG_ICON1 = 'icon1';
-	const IMG_ICON2 = 'icon2';
-	const IMG_ICON3 = 'icon3';
+	public const  IMG_ICON1 = 'icon1';
+	public const  IMG_ICON2 = 'icon2';
+	public const  IMG_ICON3 = 'icon3';
 
 	/**
 	 * @var string
@@ -192,9 +188,9 @@ abstract class Core_Payment_Method_ShopData extends CommonEntity_ShopData implem
 	public static function getImageClasses(): array
 	{
 		return [
-			Payment_Method_ShopData::IMG_ICON1 => Tr::_('Icon 1', [], Payment_Method::getManageModuleName() ),
-			Payment_Method_ShopData::IMG_ICON2 => Tr::_('Icon 2', [], Payment_Method::getManageModuleName() ),
-			Payment_Method_ShopData::IMG_ICON3 => Tr::_('Icon 3', [], Payment_Method::getManageModuleName() ),
+			Payment_Method_ShopData::IMG_ICON1 => Tr::_('Icon 1' ),
+			Payment_Method_ShopData::IMG_ICON2 => Tr::_('Icon 2' ),
+			Payment_Method_ShopData::IMG_ICON3 => Tr::_('Icon 3' ),
 		];
 	}
 

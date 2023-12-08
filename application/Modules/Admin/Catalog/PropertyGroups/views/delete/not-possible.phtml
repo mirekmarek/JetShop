@@ -1,6 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
+use JetApplication\Admin_Managers;
 use JetApplication\KindOfProduct;
 use JetApplication\PropertyGroup;
 
@@ -32,7 +33,7 @@ $kinds = $this->getRaw('kinds');
 				<?=Tr::_( 'It is used by following kinds of product:' );?>
 				<ul>
 					<?php foreach($kinds as $kind): ?>
-						<li><a href="<?=$kind->getEditURL()?>"><?=$kind->getInternalName()?></a></li>
+						<li><?=Admin_Managers::KindOfProduct()->showName($kind->getId())?></li>
 					<?php endforeach; ?>
 				</ul>
 			</p>

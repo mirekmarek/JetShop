@@ -1,0 +1,46 @@
+<?php /** @noinspection BadExpressionStatementJS */
+namespace JetApplicationModule\Admin\FulltextSearch;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$name = $this->getString('name');
+$on_select = $this->getRaw('on_select');
+$w_URL = $this->getRaw('w_URL');
+?>
+<div class="select_item_whisperer_area">
+	<input id="<?=$name?>_input" style="width: 100%;" class="form-control">
+	<div class="search-whisperer-area">
+		<div id="<?=$name?>_whisperer">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready( function() {
+		Whisperers['<?=$name?>'] = new Whisperer(
+			'<?=$name?>_input',
+			'<?=$name?>_whisperer',
+			'<?=$w_URL?>&whisper='
+		);
+
+		Whisperers['<?=$name?>'].init();
+		Whisperers['<?=$name?>'].onItemSelect = function ( item_node ) {
+			let selected_item = {
+				object_class:     item_node.data('class'),
+				object_id:        item_node.data('id'),
+				object_title:     item_node.data('title'),
+				object_type:      item_node.data('type'),
+				object_is_active: item_node.data('active')
+			};
+
+
+			Whisperers['<?=$name?>'].hide();
+			
+			<?=$this->getRaw('on_select')?>
+		};
+		
+	} );
+</script>

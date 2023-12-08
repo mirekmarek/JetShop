@@ -108,7 +108,7 @@ class Controller_handleKindOfProductSettings extends MVC_Controller_Default
 		$param_fields = [];
 		$glue = [];
 		
-		foreach( $this->kind_of_product->getAllProperties() as $p_property ) {
+		foreach( $this->kind_of_product->getAllPropertyIds() as $p_property ) {
 
 				$p_g = Exports_Join_Property::get(
 					$this->export->getCode(),

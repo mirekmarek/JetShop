@@ -79,11 +79,6 @@ abstract class Core_KindOfProduct_FilterGroup extends DataModel_Related_1toN
 		$this->group_id = $group_id;
 	}
 	
-	public function getGroup() : PropertyGroup
-	{
-		return PropertyGroup::get($this->group_id);
-	}
-	
 	public function getPriority(): int
 	{
 		return $this->priority;

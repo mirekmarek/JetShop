@@ -7,13 +7,11 @@
  */
 namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
-use Jet\Application;
+use Jet\Factory_MVC;
 use Jet\MVC_Controller_Router;
 use Jet\UI;
 use JetApplication\Application_Admin;
 use JetApplication\Exports;
-use JetApplication\Fulltext_Index_Internal_KindOfProduct;
-use JetApplication\KindOfProduct;
 
 use Jet\MVC_Controller_Default;
 use Jet\UI_messages;
@@ -33,7 +31,9 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?MVC_Controller_Router $router = null;
 
 	protected ?KindOfProduct $kind_of_product = null;
-
+	
+	protected ?Listing $listing = null;
+	
 	/**
 	 *
 	 * @return MVC_Controller_Router
@@ -51,6 +51,7 @@ class Controller_Main extends MVC_Controller_Default
 				$this->kind_of_product = KindOfProduct::get($kind_id);
 				
 				if($this->kind_of_product) {
+					$this->kind_of_product->setEditable( Main::getCurrentUserCanEdit() );
 					
 					$_tabs = [
 						'main'    => Tr::_( 'Main data' ),
@@ -78,17 +79,14 @@ class Controller_Main extends MVC_Controller_Default
 			
 			
 			$this->router = new MVC_Controller_Router( $this );
-			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
-				return $GET->exists('whisper');
-			});
 			
-			$this->router->setDefaultAction('listing', Main::ACTION_GET_KIND_OF_PRODUCT);
+			$this->router->setDefaultAction('listing', Main::ACTION_GET);
 			
 			$this->router->getAction('listing')->setResolver(function() use ($action) {
 				return (!$this->kind_of_product && !$action) ;
 			});
 			
-			$this->router->addAction('add', Main::ACTION_ADD_KIND_OF_PRODUCT)
+			$this->router->addAction('add', Main::ACTION_ADD)
 				->setResolver(function() use ($action) {
 					return ($action=='add' && !$this->kind_of_product);
 				})
@@ -96,7 +94,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['action' => 'add'], ['id',  'page'] );
 				});
 			
-			$this->router->addAction('delete', Main::ACTION_DELETE_KIND_OF_PRODUCT)
+			$this->router->addAction('delete', Main::ACTION_DELETE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $action=='delete';
 				})
@@ -105,7 +103,7 @@ class Controller_Main extends MVC_Controller_Default
 				});
 			
 			
-			$this->router->addAction('edit_main', Main::ACTION_UPDATE_KIND_OF_PRODUCT)
+			$this->router->addAction('edit_main', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $selected_tab=='main';
 				})
@@ -113,7 +111,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id], [ 'page','action'] );
 				});
 			
-			$this->router->addAction('edit_images', Main::ACTION_UPDATE_KIND_OF_PRODUCT)
+			$this->router->addAction('edit_images', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $selected_tab=='images';
 				})
@@ -121,7 +119,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'images'], [ 'action'] );
 				});
 			
-			$this->router->addAction('edit_detail_settings', Main::ACTION_UPDATE_KIND_OF_PRODUCT)
+			$this->router->addAction('edit_detail_settings', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $selected_tab=='detail';
 				})
@@ -129,7 +127,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'detail'], [ 'action'] );
 				});
 			
-			$this->router->addAction('edit_filter_settings', Main::ACTION_UPDATE_KIND_OF_PRODUCT)
+			$this->router->addAction('edit_filter_settings', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $selected_tab=='filter';
 				})
@@ -138,7 +136,7 @@ class Controller_Main extends MVC_Controller_Default
 				});
 			
 			
-			$this->router->addAction('edit_hidden_properties_settings', Main::ACTION_UPDATE_KIND_OF_PRODUCT)
+			$this->router->addAction('edit_hidden_properties_settings', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $selected_tab=='hidden_p';
 				})
@@ -147,7 +145,7 @@ class Controller_Main extends MVC_Controller_Default
 				});
 			
 			
-			$this->router->addAction('edit_exports', Main::ACTION_UPDATE_KIND_OF_PRODUCT)
+			$this->router->addAction('edit_exports', Main::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->kind_of_product && $selected_tab=='exports';
 				})
@@ -163,19 +161,35 @@ class Controller_Main extends MVC_Controller_Default
 
 		return $this->router;
 	}
-
-
+	
+	
+	protected function getListing() : Listing
+	{
+		if(!$this->listing) {
+			$column_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
+		}
+		
+		return $this->listing;
+	}
+	
 	/**
 	 *
 	 */
 	public function listing_Action() : void
 	{
-		$listing = new Listing();
+		$listing = $this->getListing();
 		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
+		
+		$this->view->setVar( 'listing', $listing );
+		
 		$this->output( 'list' );
 	}
 
@@ -223,7 +237,9 @@ class Controller_Main extends MVC_Controller_Default
 	public function edit_main_Action() : void
 	{
 		$kind_of_product = $this->kind_of_product;
-
+		
+		$kind_of_product->handleActivation();
+		
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit kind of product <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $kind_of_product->getInternalName() ] ) );
 
 		$form = $kind_of_product->getEditForm();
@@ -259,19 +275,9 @@ class Controller_Main extends MVC_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		
 		$kind_of_product = $this->kind_of_product;
+		$kind_of_product->handleImages();
 		
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit kind of product <b>%ITEM_NAME%</b> - images', [ 'ITEM_NAME' => $kind_of_product->getInternalName() ] ) );
-		
-		foreach(Shops::getList() as $shop) {
-			$kind_of_product->getShopData( $shop )->catchImageWidget(
-				shop: $shop,
-				entity_name: 'kind_of_product image',
-				object_id: $kind_of_product->getId(),
-				object_name: $kind_of_product->getInternalName(),
-				upload_event: 'kind_of_product_image_uploaded',
-				delete_event: 'kind_of_product_image_deleted'
-			);
-		}
 		
 		
 		$this->view->setVar( 'kind_of_product', $kind_of_product );
@@ -684,21 +690,6 @@ class Controller_Main extends MVC_Controller_Default
 			
 		}
 
-	}
-	
-	public function whisper_Action() : void
-	{
-		$GET = Http_Request::GET();
-		
-		$result = Fulltext_Index_Internal_KindOfProduct::search(
-			search_string: $GET->getString('whisper'),
-			only_active: $GET->getBool('only_active')
-		);
-		
-		$this->view->setVar('result', $result);
-		echo $this->view->render('search_whisperer_result');
-		
-		Application::end();
 	}
 	
 }

@@ -1,7 +1,7 @@
 <?php
 return [
 	'vendor'      => 'Miroslav Marek',
-	'label'       => 'REST clients users management',
+	'label'       => 'Admin / User management / REST clients',
 	'description' => '',
 
 

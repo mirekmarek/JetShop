@@ -7,12 +7,10 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
-use Jet\Application;
+use Jet\Factory_MVC;
 use Jet\MVC_Controller_Router;
 use Jet\UI;
 use JetApplication\Application_Admin;
-use JetApplication\Fulltext_Index_Internal_Property;
-use JetApplication\Property;
 
 use Jet\MVC_Controller_Default;
 use Jet\UI_messages;
@@ -21,8 +19,6 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Logger;
-use JetApplication\Property_Options_Option;
-use JetApplication\Shops;
 
 /**
  *
@@ -35,7 +31,9 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?Property $property = null;
 	
 	protected ?Property_Options_Option $option = null;
-
+	
+	protected ?Listing $listing = null;
+	
 	/**
 	 *
 	 * @return MVC_Controller_Router
@@ -53,23 +51,26 @@ class Controller_Main extends MVC_Controller_Default
 				$this->property = Property::get( $property_id );
 				
 				if($this->property) {
-					$option_id = $GET->getInt( 'option_id' );
-					if($option_id) {
-						$this->option = $this->property->getOption( $option_id );
-					}
-					
+					$this->property->setEditable(Main::getCurrentUserCanEdit());
 					
 					$_tabs = [
 						'main'   => Tr::_( 'Main data' ),
 						'images' => Tr::_( 'Images' ),
 					];
 					
-					if(
-						!$this->option &&
-						$this->property->getType()==Property::PROPERTY_TYPE_OPTIONS
-					) {
-						$_tabs['options'] = Tr::_( 'Options' );
+					if($this->property->getType()==Property::PROPERTY_TYPE_OPTIONS) {
+						$option_id = $GET->getInt( 'option_id' );
+						if($option_id) {
+							$this->option = $this->property->getOption( $option_id );
+							$this->option?->setEditable(Main::getCurrentUserCanEdit());
+						}
+						
+						if( !$this->option ) {
+							$_tabs['options'] = Tr::_( 'Options' );
+						}
 					}
+					
+					
 					
 					$tabs = UI::tabs(
 						$_tabs,
@@ -90,11 +91,8 @@ class Controller_Main extends MVC_Controller_Default
 			
 			
 			$this->router = new MVC_Controller_Router( $this );
-			$this->router->addAction( 'whisper' )->setResolver(function() use ($GET) {
-				return $GET->exists('whisper');
-			});
 			
-			$this->router->setDefaultAction('listing', Main::ACTION_GET_PROPERTY);
+			$this->router->setDefaultAction('listing', Main::ACTION_GET);
 			
 			$this->router->getAction('listing')->setResolver(function() use ($action) {
 				return (!$this->property && !$action) ;
@@ -102,14 +100,14 @@ class Controller_Main extends MVC_Controller_Default
 			
 			
 			
-			$this->router->addAction('add_property', Main::ACTION_ADD_PROPERTY)
+			$this->router->addAction('add_property', Main::ACTION_ADD)
 				->setResolver(function() use ($action) {
 					return ($action=='add_property' && !$this->property);
 				})
 				->setURICreator(function( string $type=''  ) {
 					return Http_Request::currentURI( ['action' => 'add_property', 'type'=>$type], ['id', 'option_id', 'page'] );
 				});
-			$this->router->addAction('delete_property', Main::ACTION_DELETE_PROPERTY)
+			$this->router->addAction('delete_property', Main::ACTION_DELETE)
 				->setResolver(function() use ($action) {
 					return $this->property && !$this->option && $action=='delete';
 				})
@@ -117,7 +115,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id, 'action'=>'delete'], ['option_id', 'page'] );
 				});
 			
-			$this->router->addAction('edit_property_main', Main::ACTION_UPDATE_PROPERTY)
+			$this->router->addAction('edit_property_main', Main::ACTION_GET)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->property && !$this->option && $selected_tab=='main';
 				})
@@ -125,7 +123,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id], ['option_id', 'page','action'] );
 				});
 			
-			$this->router->addAction('edit_property_images', Main::ACTION_UPDATE_PROPERTY)
+			$this->router->addAction('edit_property_images', Main::ACTION_GET)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->property && !$this->option && $selected_tab=='images';
 				})
@@ -133,7 +131,7 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'images'], ['option_id', 'action'] );
 				});
 			
-			$this->router->addAction('edit_property_options', Main::ACTION_UPDATE_PROPERTY)
+			$this->router->addAction('edit_property_options', Main::ACTION_GET)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->property && !$this->option && $selected_tab=='options' && !$action;
 				})
@@ -141,20 +139,20 @@ class Controller_Main extends MVC_Controller_Default
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'properties'], ['option_id', 'action'] );
 				});
 			
-			$this->router->addAction('edit_property_options_sort', Main::ACTION_UPDATE_PROPERTY)
+			$this->router->addAction('edit_property_options_sort', Main::ACTION_GET)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->property && !$this->option && $selected_tab=='options' && $action=='sort_options';
 				});
 			
 			
-			$this->router->addAction('edit_property_option_main', Main::ACTION_UPDATE_PROPERTY)
+			$this->router->addAction('edit_property_option_main', Main::ACTION_GET)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->option && $selected_tab=='main' && !$action;
 				})
 				->setURICreator(function( int $id ) {
 					return Http_Request::currentURI( ['option_id'=>$id, 'page'=>'main'], ['action'] );
 				});
-			$this->router->addAction('edit_property_option_images', Main::ACTION_UPDATE_PROPERTY)
+			$this->router->addAction('edit_property_option_images', Main::ACTION_GET)
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->option && $selected_tab=='images' && !$action;
 				})
@@ -168,19 +166,36 @@ class Controller_Main extends MVC_Controller_Default
 
 		return $this->router;
 	}
-
-
+	
+	
+	
+	protected function getListing() : Listing
+	{
+		if(!$this->listing) {
+			$column_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/column/' );
+			$column_view->setController( $this );
+			$filter_view = Factory_MVC::getViewInstance( $this->view->getScriptsDir().'list/filter/' );
+			$filter_view->setController( $this );
+			
+			$this->listing = new Listing(
+				column_view: $column_view,
+				filter_view: $filter_view
+			);
+		}
+		
+		return $this->listing;
+	}
+	
 	/**
 	 *
 	 */
 	public function listing_Action() : void
 	{
-		$listing = new Listing();
+		$listing = $this->getListing();
 		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
+		
+		$this->view->setVar( 'listing', $listing );
+		
 		$this->output( 'list' );
 	}
 
@@ -195,11 +210,16 @@ class Controller_Main extends MVC_Controller_Default
 			die();
 		}
 		
-		Navigation_Breadcrumb::addURL( Tr::_( 'Create a new Property (%TYPE%)', ['TYPE'=>Property::getTypes()[$type]] ) );
-
 		$class_name = Property::class.'_'.$type;
 		
+		/**
+		 * @var Property $property
+		 */
 		$property = new $class_name();
+		
+		
+		Navigation_Breadcrumb::addURL( Tr::_( 'Create a new Property (%TYPE%)', ['TYPE'=>$property->getTypeTitle()] ) );
+		
 
 
 		$form = $property->getAddForm();
@@ -233,6 +253,8 @@ class Controller_Main extends MVC_Controller_Default
 	public function edit_property_main_Action() : void
 	{
 		$property = $this->property;
+		
+		$property->handleActivation();
 
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ) );
 
@@ -269,19 +291,9 @@ class Controller_Main extends MVC_Controller_Default
 		Application_Admin::handleUploadTooLarge();
 		
 		$property = $this->property;
+		$property->handleImages();
 		
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit property (%TYPE%) <b>%ITEM_NAME%</b> - images', [ 'ITEM_NAME' => $property->getInternalName(), 'TYPE'=>$property->getTypeTitle() ] ) );
-		
-		foreach(Shops::getList() as $shop) {
-			$property->getShopData( $shop )->catchImageWidget(
-				shop: $shop,
-				entity_name: 'property image',
-				object_id: $property->getId(),
-				object_name: $property->getInternalName(),
-				upload_event: 'property_image_uploaded',
-				delete_event: 'property_image_deleted'
-			);
-		}
 		
 		
 		$this->view->setVar( 'property', $property );
@@ -298,6 +310,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		if($new_option->catchAddForm()) {
 			$property->addOption( $new_option );
+			//TODO: okamzite aktivovat
 			
 			$property->save();
 			
@@ -396,17 +409,7 @@ class Controller_Main extends MVC_Controller_Default
 		);
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit option <b>%ITEM_NAME%</b> - images', [ 'ITEM_NAME' => $option->getInternalName() ] ) );
 		
-		foreach(Shops::getList() as $shop) {
-			$option->getShopData( $shop )->catchImageWidget(
-				shop: $shop,
-				entity_name: 'property option image',
-				object_id: $option->getId(),
-				object_name: $option->getInternalName(),
-				upload_event: 'property_option_image_uploaded',
-				delete_event: 'property_option_image_deleted'
-			);
-		}
-		
+		$option->handleImages();
 		
 		$this->view->setVar( 'property', $property );
 		$this->view->setVar( 'option', $option );
@@ -453,21 +456,4 @@ class Controller_Main extends MVC_Controller_Default
 
 
 	}
-	
-	public function whisper_Action() : void
-	{
-		$GET = Http_Request::GET();
-		
-		$result = Fulltext_Index_Internal_Property::search(
-			search_string: $GET->getString('whisper'),
-			only_active: $GET->getBool('only_active'),
-			only_type: $GET->getString('only_type')
-		);
-		
-		$this->view->setVar('result', $result);
-		echo $this->view->render('search_whisperer_result');
-		
-		Application::end();
-	}
-	
 }

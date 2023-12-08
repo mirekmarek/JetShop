@@ -41,4 +41,6 @@ return [
 	'... select kind of product ...' => '',
 	'Parameters' => '',
 	'Hidden properties setting' => '',
+	'Products' => '',
+	'Products (%count%)' => '',
 ];

@@ -8,44 +8,20 @@
 namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Application_Module;
-use Jet\Auth;
-use JetApplication\Admin_Module_Trait;
-use JetApplication\Auth_Administrator_Role;
-use JetApplication\Payment_Method_ManageModuleInterface;
+use JetApplication\Admin_Managers_Trait;
 
 /**
  *
  */
-class Main extends Application_Module implements Payment_Method_ManageModuleInterface
+class Main extends Application_Module
 {
-	use Admin_Module_Trait;
+	use Admin_Managers_Trait;
 
-	const ADMIN_MAIN_PAGE = 'payment-method';
+	public const ADMIN_MAIN_PAGE = 'payment-method';
 
-	const ACTION_GET_PAYMENT_METHOD = 'get_payment_method';
-	const ACTION_ADD_PAYMENT_METHOD = 'add_payment_method';
-	const ACTION_UPDATE_PAYMENT_METHOD = 'update_payment_method';
-	const ACTION_DELETE_PAYMENT_METHOD = 'delete_payment_method';
-
-
-	public function getPaymentMethodEditURL( string $id ): string
-	{
-		return $this->getEditUrl(
-			static::ACTION_GET_PAYMENT_METHOD,
-			static::ACTION_UPDATE_PAYMENT_METHOD,
-			static::ADMIN_MAIN_PAGE,
-			$id
-		);
-	}
-
-	public static function getCurrentUserCanEditPaymentMethod(): bool
-	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_UPDATE_PAYMENT_METHOD );
-	}
-
-	public static function getCurrentUserCanCreatePaymentMethod(): bool
-	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_ADD_PAYMENT_METHOD );
-	}
-
+	public const ACTION_GET = 'get_payment_method';
+	public const ACTION_ADD = 'add_payment_method';
+	public const ACTION_UPDATE = 'update_payment_method';
+	public const ACTION_DELETE = 'delete_payment_method';
+	
 }

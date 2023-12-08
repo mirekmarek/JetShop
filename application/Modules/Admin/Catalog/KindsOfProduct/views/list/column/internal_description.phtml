@@ -1,0 +1,13 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var KindOfProduct $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?= nl2br($item->getInternalNotes()); ?>

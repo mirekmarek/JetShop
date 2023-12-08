@@ -12,7 +12,6 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC;
 use Jet\Tr;
-use JetApplication\Category;
 use JetApplication\Navigation_Breadcrumb;
 use JetApplication\Product;
 
@@ -82,7 +81,7 @@ trait Controller_Main_Product
 		ErrorPages::handleNotFound();
 	}
 
-	protected function _initBreadcrumbNavigation()
+	protected function _initBreadcrumbNavigation() : void
 	{
 		if(static::$category) {
 			Navigation_Breadcrumb::setByCategory( static::$category );

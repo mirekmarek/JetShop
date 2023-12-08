@@ -63,7 +63,7 @@ if( !$listing->filterIsActive() ) {
 				?>
 				<div class="filter-item-option-box">
 					<a href="javascript:ProductListing.filter.brands.disable(<?= $id ?>);">&times;</a>
-					<?=$brand->getName() ?>
+					<?=$brand->getInternalName() ?>
 				</div>
 			<?php
 			endforeach; ?>

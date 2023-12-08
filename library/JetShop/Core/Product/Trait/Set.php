@@ -5,16 +5,14 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Exception;
 use Jet\Form;
-use Jet\Form_Definition;
-use Jet\Form_Field;
 use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Int;
-use Jet\Form_Field_Select;
 use Jet\Tr;
 
-use JetApplication\Shops;
 use JetApplication\Product_SetItem;
 use JetApplication\Product;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
 trait Core_Product_Trait_Set {
 
@@ -28,98 +26,12 @@ trait Core_Product_Trait_Set {
 	)]
 	protected array $set_items = [];
 
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'How to handle set:',
-		select_options_creator: [
-			self::class,
-			'getSetStrategyScope'
-		],
-		error_messages: [
-			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select set strategy',
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select set strategy'
-		]
-	)]
-	protected string $set_strategy = '';
-
-	/**
-	 * @var float
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_FLOAT,
-		label: 'Set discount:'
-	)]
-	protected float $set_discount = 0.0;
-
 
 	protected ?Form $_set_setup_form = null;
 
 	protected ?Form $_set_add_item_form = null;
-
-	public static function getSetStrategyScope() : array
-	{
-		return [
-			Product::SET_STRATEGY_CALCULATED     => Tr::_('Price is calculated', [], Product::getManageModuleName()),
-			Product::SET_STRATEGY_FIXED          => Tr::_('Price is fixed', [], Product::getManageModuleName()),
-			Product::SET_STRATEGY_DISCOUNT       => Tr::_('Price is calculated and discount is used', [], Product::getManageModuleName()),
-		];
-
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setSetStrategy( string $value ) : void
-	{
-		/**
-		 * @var Product $this
-		 */
-		$this->set_strategy = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSetStrategy() : string
-	{
-		/**
-		 * @var Product $this
-		 */
-		return $this->set_strategy;
-	}
-
-	/**
-	 * @param float $value
-	 */
-	public function setSetDiscount( float $value ) : void
-	{
-		/**
-		 * @var Product $this
-		 */
-		$this->set_discount = $value;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getSetDiscount() : float
-	{
-		/**
-		 * @var Product $this
-		 */
-		return $this->set_discount;
-	}
-
+	
+	
 	/**
 	 * @return Product_SetItem[]
 	 */
@@ -133,22 +45,19 @@ trait Core_Product_Trait_Set {
 
 	public function addSetItem( int $item_product_id ) : Product_SetItem
 	{
-		/**
-		 * @var Product $this
-		 */
 		if(isset( $this->set_items[$item_product_id])) {
 			return $this->set_items[$item_product_id];
 		}
 
-
-		$product = Product::get($item_product_id);
-		if(!$product) {
+		$product_type = static::getProductType( $item_product_id );
+		
+		if(!$product_type) {
 			throw new Exception('Unknown product '.$item_product_id);
 		}
 
 		if(
-			$product->getType() == Product::PRODUCT_TYPE_VARIANT_MASTER ||
-			$product->getType() == Product::PRODUCT_TYPE_SET
+			$product_type == static::PRODUCT_TYPE_VARIANT_MASTER ||
+			$product_type == static::PRODUCT_TYPE_SET
 		) {
 			throw new Exception('Product '.$item_product_id.' can\'t be added as a set item - unsupported product type');
 		}
@@ -178,10 +87,7 @@ trait Core_Product_Trait_Set {
 	public function getSetSetupForm() : Form
 	{
 		if(!$this->_set_setup_form) {
-			$this->_set_setup_form = $this->createForm(form_name: 'set_setup_form', only_fields: [
-				'set_strategy',
-				'set_discount',
-			]);
+			$this->_set_setup_form = $this->createForm(form_name: 'set_setup_form', only_fields: []);
 
 			foreach($this->getSetItems() as $set_item) {
 
@@ -224,27 +130,6 @@ trait Core_Product_Trait_Set {
 		return true;
 	}
 
-	protected function _setupForm_set( Form $form ) : void
-	{
-		$form->removeField('set_strategy');
-		$form->removeField('set_discount');
-
-		if($this->getSetStrategy()!=Product::SET_STRATEGY_FIXED) {
-			foreach( Shops::getList() as $shop ) {
-				$shop_key = $shop->getKey();
-
-				$form->field('/shop_data/'.$shop_key.'/vat_rate')->setIsReadonly(true);
-				$form->field('/shop_data/'.$shop_key.'/standard_price')->setIsReadonly(true);
-				$form->field('/shop_data/'.$shop_key.'/action_price')->setIsReadonly(true);
-				$form->field('/shop_data/'.$shop_key.'/action_price_valid_from')->setIsReadonly(true);
-				$form->field('/shop_data/'.$shop_key.'/action_price_valid_till')->setIsReadonly(true);
-				$form->field('/shop_data/'.$shop_key.'/sale_price')->setIsReadonly(true);
-				$form->field('/shop_data/'.$shop_key.'/reset_sale_after_sold_out')->setIsReadonly(true);
-
-
-			}
-		}
-	}
 
 	public function getSetAddItemForm() : Form
 	{
@@ -258,14 +143,14 @@ trait Core_Product_Trait_Set {
 					return false;
 				}
 
-				$product = Product::get($id);
-				if(!$product) {
+				$product_type = static::getProductType($id);
+				if(!$product_type) {
 					return false;
 				}
 
 				if(
-					$product->getType() == Product::PRODUCT_TYPE_VARIANT_MASTER ||
-					$product->getType() == Product::PRODUCT_TYPE_SET
+					$product_type == static::PRODUCT_TYPE_VARIANT_MASTER ||
+					$product_type == static::PRODUCT_TYPE_SET
 				) {
 					return false;
 				}
@@ -296,6 +181,8 @@ trait Core_Product_Trait_Set {
 
 	public function actualizeSet() : void
 	{
+		$set_items = $this->getSetItems();
+		
 		//TODO:
 	}
 

@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 use Jet\Logger;
 use Jet\UI;
 use Jet\UI_tabs;
+use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
 use JetApplication\Payment_Method;
 
@@ -24,7 +25,6 @@ use Jet\Navigation_Breadcrumb;
 use JetApplication\Payment_Method_Option;
 use JetApplication\Payment_Method_ShopData;
 use JetApplication\Shops;
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
 /**
  *
@@ -60,11 +60,11 @@ class Controller_Main extends MVC_Controller_Default
 					return (bool)($this->payment_method = Payment_Method::get($id));
 				},
 				[
-					'listing'=> Main::ACTION_GET_PAYMENT_METHOD,
-					'view'   => Main::ACTION_GET_PAYMENT_METHOD,
-					'add'    => Main::ACTION_ADD_PAYMENT_METHOD,
-					'edit'   => Main::ACTION_UPDATE_PAYMENT_METHOD,
-					'delete' => Main::ACTION_DELETE_PAYMENT_METHOD,
+					'listing'=> Main::ACTION_GET,
+					'view'   => Main::ACTION_GET,
+					'add'    => Main::ACTION_ADD,
+					'edit'   => Main::ACTION_UPDATE,
+					'delete' => Main::ACTION_DELETE,
 				]
 			);
 
@@ -99,7 +99,7 @@ class Controller_Main extends MVC_Controller_Default
 				return true;
 			} );
 
-			$this->router->addAction('edit_images', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('edit_images', Main::ACTION_UPDATE)->setResolver( function() use ($action) {
 				if(
 					!$this->payment_method ||
 					$this->_getEditTabs()->getSelectedTabId()!='images' ||
@@ -111,7 +111,7 @@ class Controller_Main extends MVC_Controller_Default
 				return true;
 			} );
 
-			$this->router->addAction('view_images', Main::ACTION_GET_PAYMENT_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('view_images', Main::ACTION_GET)->setResolver( function() use ($action) {
 				if(
 					!$this->payment_method ||
 					$this->_getEditTabs()->getSelectedTabId()!='images' ||
@@ -132,7 +132,7 @@ class Controller_Main extends MVC_Controller_Default
 				}
 			}
 
-			$this->router->addAction('options_list', Main::ACTION_GET_PAYMENT_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('options_list', Main::ACTION_GET)->setResolver( function() use ($action) {
 				if(
 					$this->payment_method_option ||
 					!$this->payment_method ||
@@ -146,7 +146,7 @@ class Controller_Main extends MVC_Controller_Default
 			} );
 
 
-			$this->router->addAction('options_create', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('options_create', Main::ACTION_UPDATE)->setResolver( function() use ($action) {
 				if(
 					!$this->payment_method ||
 					$this->_getEditTabs()->getSelectedTabId()!='options' ||
@@ -159,7 +159,7 @@ class Controller_Main extends MVC_Controller_Default
 			} );
 
 
-			$this->router->addAction('options_edit_main', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('options_edit_main', Main::ACTION_UPDATE)->setResolver( function() use ($action) {
 				if(
 					!$this->payment_method_option ||
 					$this->_getEditOptionTabs()->getSelectedTabId()!='main' ||
@@ -171,7 +171,7 @@ class Controller_Main extends MVC_Controller_Default
 				return true;
 			} );
 
-			$this->router->addAction('options_edit_images', Main::ACTION_UPDATE_PAYMENT_METHOD)->setResolver( function() use ($action) {
+			$this->router->addAction('options_edit_images', Main::ACTION_UPDATE)->setResolver( function() use ($action) {
 				if(
 					!$this->payment_method_option ||
 					$this->_getEditOptionTabs()->getSelectedTabId()!='images' ||
@@ -238,7 +238,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		UI_module::initBreadcrumb();
+		Admin_Managers::UI()->initBreadcrumb();
 
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
@@ -474,8 +474,9 @@ class Controller_Main extends MVC_Controller_Default
 	public function options_create_Action() : void
 	{
 		$payment_method = $this->payment_method;
-
-		UI_module::initBreadcrumb();
+		
+		Admin_Managers::UI()->initBreadcrumb();
+		
 		Navigation_Breadcrumb::addURL( Tr::_( 'Edit payment method <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $payment_method->getInternalName() ] ), Http_Request::currentURL([], ['action']) );
 		Navigation_Breadcrumb::addURL( Tr::_('New option') );
 
@@ -514,8 +515,9 @@ class Controller_Main extends MVC_Controller_Default
 
 		$payment_method = $this->payment_method;
 		$payment_method_option = $this->payment_method_option;
-
-		UI_module::initBreadcrumb();
+		
+		Admin_Managers::UI()->initBreadcrumb();
+		
 		Navigation_Breadcrumb::addURL(
 			Tr::_( 'Edit payment method <b>%NAME%</b>', [ 'NAME' => $payment_method->getInternalName() ] ),
 			Http_Request::currentURI([], ['action', 'option'])
@@ -558,8 +560,9 @@ class Controller_Main extends MVC_Controller_Default
 
 		$payment_method = $this->payment_method;
 		$payment_method_option = $this->payment_method_option;
-
-		UI_module::initBreadcrumb();
+		
+		Admin_Managers::UI()->initBreadcrumb();
+		
 		Navigation_Breadcrumb::addURL(
 			Tr::_( 'Edit payment method <b>%NAME%</b>', [ 'NAME' => $payment_method->getInternalName() ] ),
 			Http_Request::currentURI([], ['action', 'option'])

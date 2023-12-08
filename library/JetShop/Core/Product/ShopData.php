@@ -1,16 +1,15 @@
 <?php
 namespace JetShop;
 
+use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Data_DateTime;
-
-use JetApplication\Delivery_Class;
-use JetApplication\Delivery_Deadline;
+use Jet\Form_Field_Date;
+use JetApplication\Category;
+use JetApplication\Entity_WithIDAndShopData_ShopData;
 use JetApplication\Product;
-use JetApplication\CommonEntity_ShopData;
 use JetApplication\Shops;
 
 #[DataModel_Definition(
@@ -18,15 +17,8 @@ use JetApplication\Shops;
 	database_table_name: 'products_shop_data',
 	parent_model_class: Product::class
 )]
-abstract class Core_Product_ShopData extends CommonEntity_ShopData {
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_id: true,
-		related_to: 'main.id',
-	)]
-	protected int $product_id = 0;
-
+abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
@@ -122,7 +114,13 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 		label: 'Keywords for internal fulltext:'
 	)]
 	protected string $internal_fulltext_keywords = '';
-
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 9999999
+	)]
+	protected string $category_ids = '';
+	
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
@@ -138,7 +136,7 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_FLOAT,
-		label: 'Standard price:'
+		label: 'Standard price:',
 	)]
 	protected float $standard_price = 0.0;
 
@@ -147,41 +145,9 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_FLOAT,
-		label: 'Action price:'
+		label: 'Price:',
 	)]
-	protected float $action_price = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATE_TIME,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_DATE_TIME,
-		label: 'Action price valid from:'
-	)]
-	protected Data_DateTime|null $action_price_valid_from = null;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATE_TIME,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_DATE_TIME,
-		label: 'Action price valid till:'
-	)]
-	protected Data_DateTime|null $action_price_valid_till = null;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_FLOAT,
-		label: 'Sale price:'
-	)]
-	protected float $sale_price = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	protected float $final_price = 0.0;
+	protected float $price = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
@@ -189,63 +155,35 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 	protected float $discount_percentage = 0.0;
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-		is_key: true,
+		type: DataModel::TYPE_INT,
 	)]
 	#[Form_Definition(
-		type: Form_Field::TYPE_CHECKBOX,
-		label: 'Reset sale after sold out'
+		type: Form_Field::TYPE_INT,
+		label: 'Length of delivery :',
 	)]
-	protected bool $reset_sale_after_sold_out = false;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-		is_key: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_CHECKBOX,
-		label: 'Deactivate product after sold out'
-	)]
-	protected bool $deactivate_product_after_sold_out = false;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	#[Form_Definition(
-		label: 'Delivery term:',
-		type: Form_Field::TYPE_SELECT,
-		select_options_creator: [Delivery_Deadline::class, 'getScope']
-	)]
-	protected string $delivery_term_code = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'Delivery class:',
-		select_options_creator: [Delivery_Class::class, 'getScope']
-	)]
-	protected string $delivery_class_code = '';
+	protected int $length_of_delivery = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_DATE,
-		label: 'Availability date:'
+		label: 'Available from:',
+		error_messages: [
+			Form_Field_Date::ERROR_CODE_INVALID_FORMAT => 'Invalid date'
+		]
 	)]
-	protected Data_DateTime|null $date_available = null;
+	protected Data_DateTime|null $available_from = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
 	)]
-	protected int $stock_status = 0;
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'In stock quantity:',
+	)]
+	protected int $in_stock_qty = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -261,8 +199,31 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 		type: DataModel::TYPE_INT,
 	)]
 	protected int $question_count = 0;
-
-
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 20,
+	)]
+	protected string $set_discount_type = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	protected float $set_discount_value = 0.0;
+	
+	public function activate(): void
+	{
+		parent::activate();
+		Category::productActivated( product_id: $this->entity_id );
+	}
+	
+	public function deactivate(): void
+	{
+		parent::deactivate();
+		Category::productDeactivated( product_id: $this->entity_id );
+	}
+	
+	
 	public function getName() : string
 	{
 		return $this->name;
@@ -333,7 +294,19 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 	{
 		$this->variant_name = $variant_name;
 	}
-
+	public function getFullName(): string
+	{
+		$name = $this->getName();
+		$variant_name = $this->getVariantName();
+		
+		if($variant_name) {
+			return $name.' '.$variant_name;
+		}
+		
+		return $name;
+	}
+	
+	
 	public function getVatRate() : float
 	{
 		return $this->vat_rate;
@@ -353,127 +326,72 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 	public function setStandardPrice( float $standard_price ) : void
 	{
 		$this->standard_price = $standard_price;
+		$this->calcDiscount();
 	}
-
-	public function getActionPrice() : float
+	
+	public function getPrice(): float
 	{
-		return $this->action_price;
+		return $this->price;
 	}
-
-	public function setActionPrice( float $action_price ) : void
+	
+	public function setPrice( float $price ): void
 	{
-		$this->action_price = $action_price;
+		$this->price = $price;
+		$this->calcDiscount();
 	}
-
-	public function getActionPriceValidFrom() : Data_DateTime|null
+	
+	protected function calcDiscount() : void
 	{
-		return $this->action_price_valid_from;
+		if($this->standard_price>0) {
+			$this->discount_percentage = round(100-( ($this->price * 100) / $this->standard_price) );
+		} else {
+			$this->discount_percentage = 0;
+		}
 	}
-
-	public function setActionPriceValidFrom( Data_DateTime|null $action_price_valid_from ) : void
-	{
-		$this->action_price_valid_from = $action_price_valid_from;
-	}
-
-	public function getActionPriceValidTill() : Data_DateTime|null
-	{
-		return $this->action_price_valid_till;
-	}
-
-	public function setActionPriceValidTill( Data_DateTime|null $action_price_valid_till ) : void
-	{
-		$this->action_price_valid_till = $action_price_valid_till;
-	}
-
-	public function getSalePrice() : float
-	{
-		return $this->sale_price;
-	}
-
-	public function setSalePrice( float $sale_price ) : void
-	{
-		$this->sale_price = $sale_price;
-	}
-
-	public function getFinalPrice() : float
-	{
-		return $this->final_price;
-	}
-
-	public function setFinalPrice( float $final_price ) : void
-	{
-		$this->final_price = $final_price;
-	}
-
+	
 	public function getDiscountPercentage() : float
 	{
 		return $this->discount_percentage;
 	}
-
-	public function isResetSaleAfterSoldOut() : bool
+	
+	
+	public function getInStockQty() : int
 	{
-		return $this->reset_sale_after_sold_out;
+		return $this->in_stock_qty;
 	}
 
-	public function setResetSaleAfterSoldOut( bool $reset_sale_after_sold_out ) : void
+	public function setInStockQty( int $in_stock_qty ) : void
 	{
-		$this->reset_sale_after_sold_out = $reset_sale_after_sold_out;
-	}
-
-	public function isDeactivateProductAfterSoldOut() : bool
-	{
-		return $this->deactivate_product_after_sold_out;
-	}
-
-	public function setDeactivateProductAfterSoldOut( bool $deactivate_product_after_sold_out ) : void
-	{
-		$this->deactivate_product_after_sold_out = $deactivate_product_after_sold_out;
-	}
-
-	public function getDeliveryTermCode() : string
-	{
-		return $this->delivery_term_code;
-	}
-
-	public function setDeliveryTermCode( string $delivery_term_code ) : void
-	{
-		$this->delivery_term_code = $delivery_term_code;
-	}
-
-	public function getDeliveryClassCode(): string
-	{
-		return $this->delivery_class_code;
-	}
-
-	public function setDeliveryClassCode( string $delivery_class_code ): void
-	{
-		$this->delivery_class_code = $delivery_class_code;
-	}
-
-	public function getDateAvailable() : Data_DateTime|null
-	{
-		return $this->date_available;
-	}
-
-	public function setDateAvailable( Data_DateTime|null $date_available ) : void
-	{
-		$this->date_available = $date_available;
-	}
-
-	public function getStockStatus() : int
-	{
-		return $this->stock_status;
-	}
-
-	public function setStockStatus( int $stock_status ) : void
-	{
-		$this->stock_status = $stock_status;
+		$this->in_stock_qty = $in_stock_qty;
 	}
 
 	public function getSeoKeywords() : string
 	{
 		return $this->seo_keywords;
 	}
+	
+	public function getLengthOfDelivery(): int
+	{
+		return $this->length_of_delivery;
+	}
+	
+	public function setLengthOfDelivery( int $length_of_delivery ): void
+	{
+		$this->length_of_delivery = $length_of_delivery;
+	}
+	
+	public function getAvailableFrom(): ?Data_DateTime
+	{
+		return $this->available_from;
+	}
+	
+	public function setAvailableFrom( Data_DateTime|string|null $available_from ): void
+	{
+		$this->available_from = Data_DateTime::catchDateTime( $available_from );
+	}
+	
+	
+	
 
 	public function setSeoKeywords( string $seo_keywords ) : void
 	{
@@ -507,35 +425,51 @@ abstract class Core_Product_ShopData extends CommonEntity_ShopData {
 
 	public function generateURLPathPart() : void
 	{
-		if(!$this->product_id) {
+		if(!$this->entity_id) {
 			return;
 		}
 
-		$this->URL_path_part = Shops::generateURLPathPart( $this->name, 'p', $this->product_id, $this->getShop() );
+		$this->URL_path_part = $this->_generateURLPathPart( $this->name, 'p' );
 	}
-
-
-	public function actualizePrice() : void
+	
+	
+	public function setCategoryIds( array $value ) : void
 	{
-		$this->final_price = $this->standard_price;
-		$this->discount_percentage = 0;
-
-		if(
-			$this->action_price>0 &&
-			($this->action_price_valid_from===null || $this->action_price_valid_from<=Data_DateTime::now()) &&
-			($this->action_price_valid_till===null || $this->action_price_valid_till>=Data_DateTime::now())
-		) {
-			$this->final_price = $this->action_price;
-			$this->discount_percentage = round(100-( ($this->action_price * 100) / $this->standard_price), 2);
-		}
-
-		if($this->sale_price>0) {
-			$this->final_price = $this->sale_price;
-			$this->discount_percentage = round(100-( ($this->sale_price * 100) / $this->standard_price), 2);
+		$this->category_ids = implode(',', $value);
+	}
+	
+	public function getCategoryIds() : array
+	{
+		if(!$this->category_ids) {
+			return [];
 		}
 		
-		//TODO: variant
-		//TODO: set
+		return explode(',', $this->category_ids);
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getSetDiscountType(): string
+	{
+		return $this->set_discount_type;
+	}
+	
+	public function setSetDiscountType( string $set_discount_type ): void
+	{
+		$this->set_discount_type = $set_discount_type;
+	}
+	
+	public function getSetDiscountValue(): float
+	{
+		return $this->set_discount_value;
+	}
+	
+	public function setSetDiscountValue( float $set_discount_value ): void
+	{
+		$this->set_discount_value = $set_discount_value;
+	}
+	
+	
 	
 }

@@ -34,14 +34,14 @@ trait Core_Product_Trait_Parameters
 			$properties = [];
 			$kind = $this->getKind();
 			if($kind) {
-				$properties = $kind->getAllProperties();
+				$properties = $kind->getAllPropertyIds();
 				
 				if($this->getType()==Product::PRODUCT_TYPE_VARIANT) {
-					$enable_only = array_keys($kind->getVariantSelectorProperties());
+					$enable_only = array_keys($kind->getVariantSelectorPropertyIds());
 				}
 				
 				if($this->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER) {
-					$disable = array_keys($kind->getVariantSelectorProperties());
+					$disable = array_keys($kind->getVariantSelectorPropertyIds());
 				
 				}
 			}
@@ -94,14 +94,9 @@ trait Core_Product_Trait_Parameters
 		$edit_form = $this->getParametersEditForm();
 		
 		if($edit_form->catch()) {
-			foreach($this->getCategories() as $c) {
-				Category::addSyncCategory( $c->getId() );
-			}
 			
 			$this->save();
-			$this->getKind()->actualizeAutoAppend();
-			
-			Category::syncCategories();
+			//TODO: sync filters
 			
 			return true;
 		}

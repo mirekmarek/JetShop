@@ -4,7 +4,6 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Category;
 
 /**
  * @var MVC_View               $this
@@ -16,7 +15,7 @@ use JetApplication\Category;
 </div>
 
 
-<?php if(Main::getCurrentUserCanEditCategory() ):
+<?php if(Main::getCurrentUserCanEdit() ):
 	$dialog = UI::dialog('sort_categories', Tr::_('Sort categories') );
 
 	?>
@@ -42,23 +41,7 @@ use JetApplication\Category;
 <?php endif; ?>
 
 <script type="text/javascript">
-	$(document).ready( function() {
-		let whisperer = new Whisperer(
-			'category_search_input',
-			'search_category_whisperer',
-			'?whisper='
-		);
-
-		whisperer.init();
-
-		whisperer.onItemSelect = function ( item_node ) {
-			location = item_node.data('url');
-		};
-
-
-	} );
-
-	<?php if(Main::getCurrentUserCanEditCategory()): ?>
+	<?php if(Main::getCurrentUserCanEdit()): ?>
 	const sortCategories = {
 		openDialog: function () {
 			sortCategories.setSort();

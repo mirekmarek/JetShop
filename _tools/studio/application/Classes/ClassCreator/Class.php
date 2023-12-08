@@ -16,9 +16,9 @@ use Jet\BaseObject_Exception;
  */
 class ClassCreator_Class extends BaseObject
 {
-	const VISIBILITY_PUBLIC = 'public';
-	const VISIBILITY_PROTECTED = 'protected';
-	const VISIBILITY_PRIVATE = 'private';
+	public const VISIBILITY_PUBLIC = 'public';
+	public const VISIBILITY_PROTECTED = 'protected';
+	public const VISIBILITY_PRIVATE = 'private';
 
 	protected static string $indentation = "\t";
 	protected static string $nl = "\n";
@@ -359,7 +359,7 @@ class ClassCreator_Class extends BaseObject
 	public function addMethod( ClassCreator_Class_Method $method ): void
 	{
 		if( isset( $this->methods[$method->getName()] ) ) {
-			$this->addError( 'Method ' . $method->getName() . ' already defined' );
+			return;
 		}
 
 		$this->methods[$method->getName()] = $method;

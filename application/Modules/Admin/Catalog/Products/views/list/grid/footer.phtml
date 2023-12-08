@@ -1,0 +1,54 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dataGrid;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View     $this
+ * @var UI_dataGrid  $grid
+ * @var Listing      $listing
+ */
+$grid = $this->getRaw( 'grid' );
+$listing = $this->getRaw('listing');
+
+//TODO:
+?>
+<div class="toolbar">
+	<?=UI::button(Tr::_('Select all'))->setOnClick("ListingOperation.selectAll();")->setIcon('square-check')?>
+	<?=UI::button(Tr::_('Unselect all'))->setOnClick("ListingOperation.unSelectAll();")->setIcon('square-xmark')?>
+
+	<div class="dropdown">
+		<button class="btn btn-light dropdown-toggle bg-info" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('gear');?> <?=Tr::_('Perform operation')?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<?php foreach($listing->getOperations() as $operation): ?>
+				<div class="dropdown-item" style="padding-bottom: 10px;" onclick="ListingOperation.Perform('<?=$operation->getKey()?>')">
+					<?=Tr::_($operation->getTitle())?>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</div>
+
+<script>
+	const ListingOperation = {
+		selectAll: () => {
+			$('.select_product').attr('checked', true);
+		},
+		unSelectAll: () => {
+			$('.select_product').attr('checked', false);
+		},
+		Perform: (operation)=>{
+			if( $('.select_product').length<1 ) {
+				return;
+			}
+			
+			$('#listing_operation').val(operation);
+			$('#listing_operation_form').submit();
+		}
+	}
+</script>

@@ -12,7 +12,6 @@ use JetApplication\Order_Item;
 use JetApplication\Product;
 use JetApplication\Shops;
 use JetApplication\WarehouseManagement_Item;
-use JetApplication\WarehouseManagement_ManageModule;
 use JetApplication\WarehouseManagement_Warehouse;
 
 /**

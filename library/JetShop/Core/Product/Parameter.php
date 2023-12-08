@@ -52,7 +52,7 @@ abstract class Core_Product_Parameter extends DataModel_Related_1toN
 	/**
 	 * @param Property $property
 	 */
-	public function  setProperty( Property $property )
+	public function  setProperty( Property $property ) : void
 	{
 		$this->property = $property;
 		$this->property_id = $property->getId();

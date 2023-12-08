@@ -1,0 +1,26 @@
+<?php
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Entity_WithCodeAndShopData_ShopData;
+use JetApplication\Entity_WithIDAndShopData_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithCodeAndShopData_ShopData|Entity_WithIDAndShopData_ShopData $shop_data
+ */
+
+$shop_data = $this->getRaw('shop_data');
+?>
+<div style="padding: 10px;">
+	<?php if($shop_data->isActiveForShop()): ?>
+		<span class="btn btn-success"><?= UI::icon('check');?> <?=Tr::_('Active')?> </span>
+		<a href="<?= Http_Request::currentURI(['deactivate_entity_shop_data'=>$shop_data->getShopKey()])?>" class="btn btn-danger"><?=Tr::_('Deactivate')?></a>
+	<?php else: ?>
+		<span class="btn btn-danger"><?= UI::icon('circle-xmark');?> <?=Tr::_('Not active')?></span>
+		<a href="<?= Http_Request::currentURI(['activate_entity_shop_data'=>$shop_data->getShopKey()])?>" class="btn btn-success"><?=Tr::_('Activate')?></a>
+	<?php endif; ?>
+</div>
+
+

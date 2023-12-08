@@ -1,13 +1,15 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\DataListing_Operation;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Category;
 
 
-class Listing_Operation_Categorize extends Listing_Operation
+class Listing_Operation_Categorize extends DataListing_Operation
 {
+	public const KEY = 'categorize';
 	
 	protected ?Category $category = null;
 	
@@ -15,12 +17,12 @@ class Listing_Operation_Categorize extends Listing_Operation
 	
 	public function getKey(): string
 	{
-		return 'categorize';
+		return static::KEY;
 	}
 	
 	public function getTitle(): string
 	{
-		return 'Categorize products';
+		return Tr::_('Categorize products');
 	}
 	
 	public function getOperationGetParams(): array
@@ -30,8 +32,6 @@ class Listing_Operation_Categorize extends Listing_Operation
 	
 	public function init( array $products ): void
 	{
-		parent::init( $products );
-		
 		$category_id = Http_Request::GET()->getInt('category_id');
 		if($category_id) {
 			$this->category = Category::get($category_id);
@@ -78,6 +78,5 @@ class Listing_Operation_Categorize extends Listing_Operation
 			}
 		}
 		
-		Category::syncCategories();
 	}
 }

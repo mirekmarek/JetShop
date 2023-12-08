@@ -11,8 +11,8 @@ use Jet\DataModel_Related_1toN;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
+use JetApplication\Entity_WithShopRelation_ShopIsID_Trait;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplication\CommonEntity_ShopRelationTrait_ShopIsId;
 
 /**
  *
@@ -25,7 +25,7 @@ use JetApplication\CommonEntity_ShopRelationTrait_ShopIsId;
 )]
 class Core_WarehouseManagement_Warehouse_Shop extends DataModel_Related_1toN
 {
-	use CommonEntity_ShopRelationTrait_ShopIsId;
+	use Entity_WithShopRelation_ShopIsID_Trait;
 
 	/**
 	 * @var string

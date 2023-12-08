@@ -1,14 +1,13 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Stickers;
 
-use JetApplication\Shops;
-use JetApplication\Sticker;
-use JetApplication\Sticker_ShopData;
+use JetApplication\Admin_Managers;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View   $this
@@ -48,43 +47,42 @@ $tabs = UI::tabsJS('sticker_tabs', [
 		<?=$tabs->start()?>
 			<?=$tabs->getTab('tab_main')->content()->start()?>
 				<?=$form->start()?>
+					<?=Admin_Managers::UI()->renderEntityActivation( $sticker, !$form->getIsReadonly() )?>
+		
 				<?=$form->field( 'internal_name' )?>
 				<?=$form->field( 'code' )?>
-
-				<?php foreach(Shops::getListSorted() as $shop):
-					$shop_key = $shop->getKey();
-
-					$shop_data = $sticker->getShopData( $shop );
-					?>
-					<?=$shop_data->renderShopDataBlock_start()?>
-
-					<fieldset>
-						<legend class="sub"><?=Tr::_('Main data')?></legend>
-
-						<?=$form->field('/shop_data/'.$shop_key.'/is_active')?>
-
-						<?=$form->field('/shop_data/'.$shop_key.'/name')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-					</fieldset>
-
-					<fieldset>
-						<legend class="sub"><?=Tr::_('SEO')?></legend>
-						<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
-					</fieldset>
-					<?=$shop_data->renderShopDataBlock_end()?>
-				<?php endforeach; ?>
+				<?=$form->field( 'internal_notes' )?>
+		
+				<?php
+				Admin_Managers::UI()->renderShopDataBlocks(
+					form: $form,
+					renderer: function( Shops_Shop $shop, string $shop_key ) use ($sticker, $form) : void {
+						?>
+						<fieldset>
+							<legend class="sub"><?=Tr::_('Main data')?></legend>
+							<?=Admin_Managers::UI()->renderEntityShopDataActivation( $sticker, $shop, !$form->getIsReadonly() )?>
+							
+							<?=$form->field('/shop_data/'.$shop_key.'/name')?>
+							<?=$form->field('/shop_data/'.$shop_key.'/second_name')?>
+							<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+						</fieldset>
+						
+						<fieldset>
+							<legend class="sub"><?=Tr::_('SEO')?></legend>
+							<?=$form->field('/shop_data/'.$shop_key.'/seo_h1')?>
+							<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
+							<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
+							<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+							<?=$form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')?>
+						</fieldset>
+						
+					<?php }); ?>
+		
 				<?=$form->end()?>
 			<?=$tabs->getTab('tab_main')->content()->end()?>
 			<?=$tabs->getTab('tab_images')->content()->start()?>
 				<?php
-				foreach(Shops::getListSorted() as $shop):
-					echo $sticker->getShopData( $shop )->renderImageWidgets( Sticker_ShopData::getImageClasses(), !$form->getIsReadonly() );
-				endforeach;
+				echo Admin_Managers::Image()->renderStandardManagement();
 				?>
 			<?=$tabs->getTab('tab_images')->content()->end()?>
 		<?=$tabs->end()?>

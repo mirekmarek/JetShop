@@ -31,4 +31,7 @@ return [
 	'Do you really want to delete this brand?' => '',
 	'File is too large' => '',
 	'Search ...' => '',
+	'Internal name' => '',
+	'Internal name:' => '',
+	'Internal notes:' => '',
 ];

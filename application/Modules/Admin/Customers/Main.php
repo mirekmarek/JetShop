@@ -14,12 +14,12 @@ use Jet\Application_Module;
  */
 class Main extends Application_Module
 {
-	const ADMIN_MAIN_PAGE = 'customers';
+	public const ADMIN_MAIN_PAGE = 'customers';
 
-	const ACTION_GET_CUSTOMER = 'get_customer';
-	const ACTION_ADD_CUSTOMER = 'add_customer';
-	const ACTION_UPDATE_CUSTOMER = 'update_customer';
-	const ACTION_DELETE_CUSTOMER = 'delete_customer';
+	public const ACTION_GET = 'get_customer';
+	public const ACTION_ADD = 'add_customer';
+	public const ACTION_UPDATE = 'update_customer';
+	public const ACTION_DELETE = 'delete_customer';
 
 
 

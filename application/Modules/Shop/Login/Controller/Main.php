@@ -87,7 +87,7 @@ class Controller_Main extends MVC_Controller_Default
 		AJAX::operationResponse( $success, $snippets );
 	}
 
-	public function logout_Action()
+	public function logout_Action() : void
 	{
 		Auth::logout();
 

@@ -1,0 +1,55 @@
+<?php /** @noinspection BadExpressionStatementJS */
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ */
+
+$name = $this->getRaw('name');
+?>
+<div style="display: table;width: 100%">
+	<div style="display: table-row">
+		<div class="select_item_selected_area form-control" style="display: table-cell" onclick="<?=$name?>.startSelect()" id="<?=$name?>_selected_area">
+			<?php if($this->getRaw('selected_entity_title')): ?>
+				<a href="<?=$this->getRaw('selected_entity_edit_URL')?>"><?=$this->getRaw('selected_entity_title')?></a>
+			<?php else: ?>
+				<?=$this->getRaw('caption');?>
+			<?php endif; ?>
+		</div>
+		
+		<div style="display: none" id="<?=$name?>_whisperer_area">
+			<?=Admin_Managers::FulltextSearch()->renderWhisperer(
+				name: $name,
+				object_class: $this->getString('object_class'),
+				on_select: "{$name}.onSelect( selected_item );",
+				object_type_filter:  $this->getRaw('object_type_filter'),
+				object_is_active_filter: $this->getRaw('$object_is_active_filter')
+			);?>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	const <?=$name?> = {
+		startSelect: function() {
+			$('#<?=$name?>_selected_area').hide();
+			$('#<?=$name?>_whisperer_area').show();
+			$('#<?=$name?>_input').val('');
+			$('#<?=$name?>_input').focus();
+		},
+
+		onSelect: function(selected_item) {
+			selected_item.id = selected_item.object_id;
+			selected_item.name = selected_item.object_title;
+
+			$('#<?=$name?>_selected_area').html(selected_item.object_title);
+			$('#<?=$name?>_whisperer_area').hide();
+			$('#<?=$name?>_selected_area').show();
+			
+			<?=$this->getRaw('on_select')?>
+		}
+	};
+</script>

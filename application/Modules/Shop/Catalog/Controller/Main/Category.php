@@ -13,7 +13,6 @@ use Jet\MVC;
 use Jet\Tr;
 use Jet\Http_Request;
 use Jet\AJAX;
-use JetApplication\Category;
 use JetApplication\Navigation_Breadcrumb;
 
 /**
@@ -45,7 +44,9 @@ trait Controller_Main_Category
 			if(!static::$category->isActive()) {
 				$this->router->setDefaultAction('category_not_active');
 			} else {
-				if(static::$category->getVisibleProductsCount()) {
+				if(static::$category->getProductsCount()) {
+					//TODO:
+					/*
 					$listing = static::$category->getProductListing();
 					$listing->disableNonRelevantFilters();
 					
@@ -71,7 +72,7 @@ trait Controller_Main_Category
 					} else {
 						$this->router->setDefaultAction('category_listing');
 					}
-					
+					*/
 				} else {
 					$this->router->setDefaultAction('category_signpost');
 				}

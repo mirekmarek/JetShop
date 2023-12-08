@@ -7,6 +7,7 @@
  */
 namespace JetApplication;
 
+use Jet\Auth_User_Interface;
 use JetShop\Core_Customer_AuthController;
 
 /**

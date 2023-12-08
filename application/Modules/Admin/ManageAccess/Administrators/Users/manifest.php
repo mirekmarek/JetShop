@@ -1,7 +1,7 @@
 <?php
 return [
 	'vendor'      => 'Miroslav Marek',
-	'label'       => 'Administrator users management',
+	'label'       => 'Admin / User management / Administrators',
 	'description' => '',
 
 	'ACL_actions' => [
