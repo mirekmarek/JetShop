@@ -8,14 +8,11 @@ namespace JetShop;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\Exception;
-use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 
+use JetApplication\Entity_WithShopData;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method_ShopData;
 use JetApplication\Payment_Method_Option;
@@ -26,71 +23,14 @@ use JetApplication\Services_Service;
 use JetApplication\Payment_Method;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\CashDesk;
-use JetApplication\Order_Item;
-use JetApplication\Payment_Method_Module;
-use JetApplication\Order;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'payment_method',
-	database_table_name: 'payment_methods',
-	id_controller_class: DataModel_IDController_Passive::class,
+	database_table_name: 'payment_methods'
 )]
-abstract class Core_Payment_Method extends DataModel
+abstract class Core_Payment_Method extends Entity_WithShopData
 {
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
-		is_id: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		is_required: true,
-		label: 'Code:',
-		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter code'
-		]
-	)]
-	protected string $code = '';
 
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		is_required: true,
-		label: 'Internal name:',
-		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter internal name'
-		]
-	)]
-	protected string $internal_name = '';
-
-	/**
-	 * @var string
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 999999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Internal description:'
-	)]
-	protected string $internal_description = '';
-
-	/**
-	 * @var string
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
@@ -107,8 +47,25 @@ abstract class Core_Payment_Method extends DataModel
 		]
 	)]
 	protected string $kind = '';
-
-
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 255,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Backend module:',
+		select_options_creator: [Payment_Method::class, 'getModulesOptionsScope'],
+		error_messages: [
+			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select module',
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select module'
+		]
+	)]
+	protected string $backend_module_name = '';
+	
+	
 	/**
 	 * @var Payment_Method_ShopData[]
 	 */
@@ -116,7 +73,6 @@ abstract class Core_Payment_Method extends DataModel
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_ShopData::class
 	)]
-	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
 
 
@@ -129,9 +85,9 @@ abstract class Core_Payment_Method extends DataModel
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_MULTI_SELECT,
-		is_required: true,
+		is_required: false,
 		label: 'Delivery methods:',
-		default_value_getter_name: 'getDeliveryMethodsCodes',
+		default_value_getter_name: 'getDeliveryMethodsIds',
 		error_messages: [
 			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select delivery method',
 			Form_Field::ERROR_CODE_EMPTY => 'Please select delivery method'
@@ -149,7 +105,7 @@ abstract class Core_Payment_Method extends DataModel
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_MULTI_SELECT,
-		default_value_getter_name: 'getServicesCodes',
+		default_value_getter_name: 'getServicesIds',
 		label: 'Services:',
 		error_messages: [
 			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select service',
@@ -157,149 +113,21 @@ abstract class Core_Payment_Method extends DataModel
 		select_options_creator: [Services_Service::class, 'getPaymentServicesScope'],
 	)]
 	protected array $services = [];
-
+	
 	/**
 	 * @var Payment_Method_Option[]
 	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Payment_Method_Option::class,
-	)]
-	protected array $options = [];
-
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
-
-	protected static ?array $scope = null;
-
-
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->afterLoad();
-	}
-
-	public function afterLoad() : void
-	{
-		$this->checkShopData();
-	}
-
-
-	/**
-	 * @return Form
-	 */
-	public function getEditForm() : Form
-	{
-		if(!$this->_form_edit) {
-			$this->_form_edit = $this->createForm('edit_form');
-			$this->_form_edit->getField('code')->setIsReadonly(true);
-		}
-
-		return $this->_form_edit;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-			$this->_form_add = $this->createForm('add_form');
-
-			$code = $this->_form_add->getField('code');
-			$code->setErrorMessages([
-				Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
-				'exists' =>  'Payment method with the same name already exists'
-			]);
-
-			$code->setValidator(function( Form_Field_Input $field ) {
-				$value = $field->getValue();
-				if(!$value) {
-					$field->setError( Form_Field::ERROR_CODE_EMPTY );
-					return false;
-				}
-
-				$exists = Payment_Method::get($value);
-
-				if($exists) {
-					$field->setError('exists');
-
-					return false;
-				}
-
-				return true;
-			});
-		}
-
-		return $this->_form_add;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
+	protected ?array $options = null;
 	
-
-	/**
-	 * @return static[]
-	 */
-	public static function getList() : iterable
-	{
-		$where = [];
-
-		return static::fetchInstances( $where );
-	}
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setCode( string $value ) : void
-	{
-		$this->code = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCode() : string
-	{
-		return $this->code;
-	}
-
-
-	/**
-	 * @param string $kind
-	 */
-	public function setKindCode( string $kind ): void
+	public function setKind( string $kind ): void
 	{
 		$this->kind = $kind;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData($shop)->setKind($kind);
+		}
+		
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getKindCode(): string
 	{
 		return $this->kind;
@@ -315,200 +143,99 @@ abstract class Core_Payment_Method extends DataModel
 		$kind = $this->getKind();
 		return $kind ? $kind->getTitle() : '';
 	}
-
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setInternalDescription( string $value ) : void
+	
+	public function getBackendModuleName(): string
 	{
-		$this->internal_description = $value;
+		return $this->backend_module_name;
+	}
+	
+	public function setBackendModuleName( string $backend_module_name ): void
+	{
+		$this->backend_module_name = $backend_module_name;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData( $shop )->setBackendModuleName( $backend_module_name );
+		}
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getInternalDescription() : string
-	{
-		return $this->internal_description;
-	}
 
-	/**
-	 * @param string $value
-	 */
-	public function setInternalName( string $value ) : void
-	{
-		$this->internal_name = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getInternalName() : string
-	{
-		return $this->internal_name;
-	}
+	
 
 	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_ShopData
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 	
-
-	public static function getScope() : array
-	{
-		if(static::$scope===null) {
-			
-			static::$scope = static::dataFetchPairs(
-				select: [
-					'code',
-					'internal_name'
-				], order_by: ['internal_name']);
-
-		}
-
-		return static::$scope;
-	}
-
-
-
-
-	public function setDeliveryMethods( array $codes ) : void
+	
+	public function setDeliveryMethods( array $ids ) : void
 	{
 		foreach($this->delivery_methods as $r) {
-			if(!in_array($r->getDeliveryMethodCode(), $codes)) {
+			if(!in_array($r->getDeliveryMethodId(), $ids)) {
 				$r->delete();
-				unset($this->delivery_methods[$r->getDeliveryMethodCode()]);
+				unset($this->delivery_methods[$r->getDeliveryMethodId()]);
 			}
 		}
 
-		foreach( $codes as $code ) {
-			if( !($r = Delivery_Method::get( $code )) ) {
+		foreach( $ids as $id ) {
+			if( !Delivery_Method::exists( $id ) ) {
 				continue;
 			}
 
-			if(!isset($this->delivery_methods[$r->getCode()])) {
+			if(!isset($this->delivery_methods[$id])) {
 				$new_item = new Payment_Method_DeliveryMethods();
-				$new_item->setPaymentMethodCode($this->getCode());
-				$new_item->setDeliveryMethodCode($code);
+				if($this->id) {
+					$new_item->setPaymentMethodId($this->id);
+				}
+				$new_item->setDeliveryMethodId($id);
 
-				$this->delivery_methods[$code] = $new_item;
-				$new_item->save();
+				$this->delivery_methods[$id] = $new_item;
+				if($this->id) {
+					$new_item->save();
+				}
 			}
 		}
 	}
 
-	public function getDeliveryMethodsCodes() : array
+	public function getDeliveryMethodsIds() : array
 	{
-		return array_keys($this->getDeliveryMethods());
-	}
-
-	/**
-	 *
-	 * @return Delivery_Method[]
-	 */
-	public function getDeliveryMethods() : array
-	{
-		$res = [];
-		foreach($this->delivery_methods as $code=>$item) {
-			if(($item = $item->getDeliveryMethod())) {
-				$res[$code] = $item;
-			}
-		}
-
-		return $res;
+		return array_keys($this->delivery_methods);
 	}
 	
 
-
-
-
-	public function setServices( array $codes ) : void
+	public function setServices( array $ids ) : void
 	{
-		foreach($this->services as $r) {
-			if(!in_array($r->getServiceCode(), $codes)) {
+		foreach($this->services as $id=>$r) {
+			if(!in_array($id, $ids)) {
 				$r->delete();
-				unset($this->services[$r->getServiceCode()]);
+				unset($this->services[$id]);
 			}
 		}
-
-		foreach( $codes as $code ) {
-			if( !($r = Services_Service::get( $code )) ) {
-				continue;
-			}
-
-			if(!isset($this->services[$r->getCode()])) {
+		
+		foreach( $ids as $id ) {
+			
+			if(!isset($this->services[$id])) {
+				if( !Services_Service::exists( $id ) ) {
+					continue;
+				}
+				
 				$new_item = new Payment_Method_Services();
-				$new_item->setPaymentMethodCode($this->getCode());
-				$new_item->setServiceCode($code);
-
-				$this->services[$code] = $new_item;
-				$new_item->save();
+				if($this->id) {
+					$new_item->setPaymentMethodId( $this->id );
+				}
+				$new_item->setServiceId( $id );
+				
+				$this->services[$id] = $new_item;
+				if($this->id) {
+					$new_item->save();
+				}
 			}
 		}
 	}
 
-	public function getServicesCodes() : array
+	public function getServicesIds() : array
 	{
-		return array_keys($this->getServices());
-	}
-
-	/**
-	 *
-	 * @return Services_Service[]
-	 */
-	public function getServices() : array
-	{
-		$res = [];
-		foreach($this->services as $code=>$item) {
-			if(($item = $item->getService())) {
-				$res[$code] = $item;
-			}
-		}
-
-		return $res;
+		return array_keys($this->services);
 	}
 	
-	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
-	{
-		$shd = $this->getShopData($cash_desk->getShop());
-
-		$item = new Order_Item();
-		$item->setType( Order_Item::ITEM_TYPE_PAYMENT );
-		$item->setQuantity( 1 );
-		$item->setTitle( $shd->getTitle() );
-		$item->setCode( $this->getCode() );
-		$item->setItemAmount( $shd->getDefaultPrice() );
-		$item->setVatRate( $shd->getVatRate() );
-		$item->setDescription( $shd->getDescriptionShort() );
-
-		return $item;
-	}
-
-
-	/**
-	 * @return Payment_Method_Option[]
-	 */
-	public function getOptions() : iterable
-	{
-		return $this->options;
-	}
-
-
-	public function getOption( string $code ) : Payment_Method_Option|null
-	{
-		if(!isset($this->options[$code])) {
-			return null;
-		}
-
-		return $this->options[$code];
-	}
-
-	public function addOption( Payment_Method_Option $option ) : void
-	{
-		$this->options[$option->getCode()] = $option;
-	}
 
 	/**
 	 * @param Shops_Shop $shop
@@ -517,6 +244,8 @@ abstract class Core_Payment_Method extends DataModel
 	 */
 	public function getActiveOptions( Shops_Shop $shop ) : array
 	{
+		//TODO: refactor
+		
 		$res = [];
 
 		foreach($this->options as $option) {
@@ -543,55 +272,82 @@ abstract class Core_Payment_Method extends DataModel
 
 		return $res;
 	}
-
-	public function getModuleName() : string
+	
+	/**
+	 * @return Payment_Method_Option[]
+	 */
+	public function getOptions() : array
 	{
-		return Payment_Method::getMethodModuleNamePrefix().$this->getCode();
+		if($this->options===null) {
+			$this->options = Payment_Method_Option::getListForMethod( $this->id );
+		}
+		
+		return $this->options;
 	}
-
-	public function getModule(): ?Payment_Method_Module
+	
+	
+	public function addOption( Payment_Method_Option $option ) : void
 	{
-		$module_name = $this->getModuleName();
-
-		if(Application_Modules::moduleExists($module_name)) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */
-			return Application_Modules::moduleInstance( $module_name );
+		$this->getOptions();
+		
+		$option->setPriority( count($this->options)+1 );
+		$option->setMethodId( $this->id );
+		$option->save();
+		$this->options[$option->getId()] = $option;
+		
+		$option->activate();
+		foreach(Shops::getList() as $shop) {
+			if(!$option->getShopData($shop)->isActiveForShop()) {
+				$option->getShopData($shop)->activate();
+			}
 		}
-
-		if($this->getKind()->moduleIsRequired()) {
-			throw new Exception('Payment module '.$module_name.' is required, but mussing (is not activated)');
-		}
-
-		return null;
 	}
-
-	public function getOrderStatusCode( CashDesk $cash_desk ) : string
+	
+	
+	public function getOption( int $id ) : Payment_Method_Option|null
 	{
-
-		$payment_method_module = $this->getModule();
-
-		if(
-			$payment_method_module &&
-			($order_status_code = $payment_method_module->getOrderStatusCode( $cash_desk ) )
-		) {
-			return $order_status_code;
+		$this->getOptions();
+		
+		if(!isset($this->options[$id])) {
+			return null;
 		}
-
-		return $cash_desk->getShop()->getDefaultOrderStatusCode();
+		
+		return $this->options[$id];
 	}
-
-	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	
+	
+	public function sortOptions( array $sort ) : void
 	{
-		/**
-		 * @var Payment_Method $this
-		 */
-		$module = $this->getModule();
-
-		if($module) {
-			return $module->getOrderConfirmationEmailInfoText( $order, $this );
-		} else {
-			$shop = $order->getShop();
-			return $this->getShopData( $shop )->getConfirmationEmailInfoText();
+		$this->getOptions();
+		$i = 0;
+		foreach($sort as $id) {
+			if(isset($this->options[$id])) {
+				$i++;
+				$this->options[$id]->setPriority($i);
+				$this->options[$id]->save();
+			}
 		}
+	}
+	
+	public static function getModulesScope() : array
+	{
+		$scope = [''=>''];
+		
+		$modules = Application_Modules::activatedModulesList();
+		
+		foreach($modules as $manifest) {
+			if(!str_starts_with($manifest->getName(), 'Payment.')) {
+				continue;
+			}
+			
+			$scope[$manifest->getName()] = $manifest->getLabel().' ('.$manifest->getName().')';
+		}
+		
+		return $scope;
+	}
+	
+	public static function getModulesOptionsScope() : array
+	{
+		return [''=>'']+static::getModulesScope();
 	}
 }

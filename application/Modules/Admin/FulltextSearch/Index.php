@@ -192,7 +192,8 @@ class Index extends DataModel {
 
 			$matches[$q_string] = Index_Word::dataFetchCol(
 				select:['object_id'],
-				where: $_where
+				where: $_where,
+				raw_mode: true
 			);
 		}
 		
@@ -247,27 +248,7 @@ class Index extends DataModel {
 	
 	public static function addIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
 	{
-		$index = new static( $object->getAdminFulltextObjectClass() );
-		$index->setObjectId( $object->getAdminFulltextObjectId() );
-		$index->setObjectType( $object->getAdminFulltextObjectType() );
-		$index->setObjectTitle( $object->getAdminFulltextObjectTitle() );
-		$index->setObjectIsActive( $object->getAdminFulltextObjectIsActive() );
-		
-		$words = Dictionary::collectWords( $object->getAdminFulltextTexts() );
-		
-		$index->setWords( $words );
-		
-		$index->save();
-		
-		foreach( $words as $word ) {
-			$w = new Index_Word();
-			$w->setObjectId( $index->object_id );
-			$w->setObjectClass( $index->object_class );
-			$w->setWord( $word );
-			
-			$w->save();
-		}
-
+		static::updateIndex($object);
 	}
 	
 	public static function deleteIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
@@ -280,6 +261,7 @@ class Index extends DataModel {
 	
 	public static function updateIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
 	{
+		
 		$index = static::load([
 			'object_class' => $object->getAdminFulltextObjectClass(),
 			'AND',
@@ -287,7 +269,27 @@ class Index extends DataModel {
 		]);
 		
 		if(!$index) {
-			static::addIndex( $object );
+			$index = new static( $object->getAdminFulltextObjectClass() );
+			$index->setObjectId( $object->getAdminFulltextObjectId() );
+			$index->setObjectType( $object->getAdminFulltextObjectType() );
+			$index->setObjectTitle( $object->getAdminFulltextObjectTitle() );
+			$index->setObjectIsActive( $object->getAdminFulltextObjectIsActive() );
+			
+			$words = Dictionary::collectWords( $object->getAdminFulltextTexts() );
+			
+			$index->setWords( $words );
+			
+			$index->save();
+			
+			foreach( $words as $word ) {
+				$w = new Index_Word();
+				$w->setObjectId( $index->object_id );
+				$w->setObjectClass( $index->object_class );
+				$w->setWord( $word );
+				
+				$w->save();
+			}
+			
 			return;
 		}
 		

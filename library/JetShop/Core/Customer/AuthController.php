@@ -21,7 +21,7 @@ use Jet\Data_DateTime;
 
 use JetApplication\Customer;
 use JetApplication\Customer_AuthController_Interface;
-use JetApplication\CashDesk;
+use JetApplication\Shop_Managers;
 
 /**
  *
@@ -193,7 +193,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		$this->getSession()->unsetValue( 'user_id' );
 		$this->current_user = null;
 
-		CashDesk::get()->onCustomerLogout();
+		Shop_Managers::CashDesk()->onCustomerLogout();
 
 	}
 
@@ -226,16 +226,8 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		$session->setValue( 'user_id', $customer->getId() );
 
 		$this->current_user = $customer;
-
-		CashDesk::get()->onCustomerLogin();
-		/*
-		Logger::success(
-			static::EVENT_LOGIN_SUCCESS,
-			'Customer '.$customer->getUsername().' (id:'.$customer->getId().') has logged in',
-			$customer->getId(),
-			$customer->getName()
-		);
-		*/
+		
+		Shop_Managers::CashDesk()->onCustomerLogin();
 	}
 
 	/**

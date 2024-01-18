@@ -1,21 +1,124 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
-use JetApplication\CashDesk;
+use Jet\SysConf_URI;
 
 $cash_desk = CashDesk::get();
 
 
 ?>
+<style>
+	#cash_desk_overview {
+		padding: 20px;
+	}
+	
+	.method, .method-selected {
+		display: grid;
+		grid-template-columns: 20px 70px 1fr 150px;align-items: center;
+		padding: 10px;
+		border-radius: 5px;
+		margin: 15px;
+	}
+	
+	.method-selected {
+		background-color: #dcdbdb;
+	}
+
+	.option, .option-selected {
+		display: grid;
+		grid-template-columns: 20px 50px 1fr;align-items: center;
+		padding: 5px;
+		border-radius: 5px;
+		margin: 5px;
+	}
+
+	.option-selected {
+		background-color: #969696;
+	}
+	
+	
+	.method-has-been-selected {
+		display: grid;
+		grid-template-columns: 200px 1fr 1fr 100px;align-items: center
+	}
+	
+	.step-block {
+		background-color: #f8f9fa;
+		border: 1px solid #dedede;
+		border-radius: 5px;
+		padding: 10px;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	
+	.selected-contact {
+		display: grid;
+		grid-template-columns: 200px 300px 1fr;
+		margin-bottom: 20px;
+	}
+	
+	.step-title {
+		font-weight: bolder;
+		font-size: 1.2rem;
+	}
+	
+	.continue-button-area {
+		padding: 5px;
+		text-align: right;
+	}
+	
+	.price-standard {
+		text-decoration: line-through;
+	}
+	
+	.price-final {
+		font-weight: bolder;
+	}
+	
+	.method-icon {
+		padding: 5px;
+	}
+
+	.method-title {
+		padding: 5px;
+	}
+	
+	.method-title>div{
+		font-size: 0.8rem;
+	}
+	
+	.addresses {
+		display: grid;
+		padding-left: 10%;
+		padding-right: 10%;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-gap: 10px;
+	}
+	
+	.address {
+		padding: 10px;
+		background-color: #ffffff;
+		border: 1px solid #dedede;
+		border-radius: 5px;
+	}
+
+	.address-selected {
+		padding: 10px;
+		background-color: #bebebe;
+		border: 1px solid #dedede;
+		border-radius: 5px;
+	}
+	
+</style>
 <script type="text/javascript" src="//maps.google.com/maps/api/js?key=<?=Config::map_API_key($cash_desk)?>"></script>
-<script type="text/javascript" src="//developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+<script type="text/javascript" src="<?=SysConf_URI::getJs()?>GMmarkerclusterer.js"></script>
 
 
 <script type="text/javascript">
 	const CashDesk = {
 		step: '<?=$cash_desk->getCurrentStep()?>',
-		selected_delivery: '<?=$cash_desk->getSelectedDeliveryMethod()->getCode()?>',
-		selected_payment: '<?=$cash_desk->getSelectedPaymentMethod()->getCode()?>',
+		selected_delivery: '<?=$cash_desk->getSelectedDeliveryMethod()->getId()?>',
+		selected_payment: '<?=$cash_desk->getSelectedPaymentMethod()->getId()?>',
 		billing_address_editable: <?=$cash_desk->isBillingAddressEditable() ? 'true' : 'false'?>,
 		delivery_address_editable: <?=$cash_desk->isDeliveryAddressEditable() ? 'true' : 'false' ?>,
 
@@ -120,26 +223,32 @@ $cash_desk = CashDesk::get();
 			},
 
 			back: function() {
-				$('#cash_desk_delivery').slideUp();
-				$('#cash_desk_payment').slideUp();
-				$('#cash_desk_customer').slideUp();
-
-				CashDesk._request.doGet('?action=back_to_delivery', function () {
-					$('#cash_desk_delivery').slideDown();
-				} );
+				CashDesk.slideUp('cash_desk_confirm', function () {
+					CashDesk.slideUp('cash_desk_customer', function () {
+						CashDesk.slideUp('cash_desk_payment', function () {
+							CashDesk.slideUp('cash_desk_delivery', function () {
+								CashDesk._request.doGet('?action=back_to_delivery', function () {
+									CashDesk.slideDown('cash_desk_delivery');
+								});
+							});
+						});
+					});
+				});
 			},
 
 			continue: function() {
-				$('#cash_desk_delivery').slideUp();
-				$('#cash_desk_payment').hide();
-
-				CashDesk._request.doGet('?action=continue_to_payment', function () {
-					$('#cash_desk_delivery').slideDown();
-					$('#cash_desk_payment').slideDown();
+				CashDesk.slideUp('cash_desk_delivery', function () {
+					CashDesk._request.doGet('?action=continue_to_payment', function () {
+						CashDesk.slideDown('cash_desk_delivery', function () {
+							CashDesk.slideDown('cash_desk_payment');
+						});
+					});
+					
 				});
 			},
 
 			personalTakeover: {
+				
 				initialized: false,
 				map_instance: null,
 
@@ -158,6 +267,8 @@ $cash_desk = CashDesk::get();
 					}
 
 					$.get( '?action=personal_takeover_get_map_data', function( map_data ) {
+						map_data = JSON.parse(map_data);
+						
 						let map_instance = new google.maps.Map( document.getElementById('personal_takeover_map'),{});
 						let markers = {};
 
@@ -212,32 +323,39 @@ $cash_desk = CashDesk::get();
 				},
 
 				startSelection: function() {
+					$('#select_personal_takeover_place_dialog').modal('show');
+					setTimeout(function () {
+						$('#personal_takeover_map').height(
+							$('#select_personal_takeover_place_dialog__body').height()
+						);
+
+						$('#personal_takeover_map').width(
+							$('#select_personal_takeover_place_dialog__col').width()
+						);
+
+					}, 500);
+					
 					CashDesk.delivery.personalTakeover.init( function() {
-						$('#select_personal_takeover_place_dialog').modal('show');
-
-						setTimeout(function () {
-							$('#personal_takeover_map').height(
-								$('#select_personal_takeover_place_dialog__body').height()
-							);
-
-							$('#personal_takeover_map').width(
-								$('#select_personal_takeover_place_dialog__col').width()
-							);
-
-						}, 500);
 					} );
 				},
 
 				showPlace: function ( id ) {
-					$('#parsonal_takeover_place').load('?action=personal_takeover_show_place&id='+id);
+					$('#personal_takeover_place').load('?action=personal_takeover_show_place&id='+id, function () {
+						$('#select_personal_takeover_selected_place_dialog').modal('show');
+					});
 				},
 
 				selectPlace: function( method_code, place_code ) {
-					$('#select_personal_takeover_place_dialog').modal('hide');
 					setTimeout(function () {
 						CashDesk._request.doGet('?action=personal_takeover_select_place&method=' + method_code+'&place='+place_code);
-					}, 500);
+					}, 10);
+					
+					$('#select_personal_takeover_place_dialog').modal('hide');
+					$('#select_personal_takeover_selected_place_dialog').modal('hide');
+					
 				}
+				
+				
 			}
 		},
 
@@ -256,25 +374,36 @@ $cash_desk = CashDesk::get();
 
 
 			back: function() {
-				$('#cash_desk_payment').slideUp();
-				$('#cash_desk_customer').slideUp();
+				CashDesk.slideUp('cash_desk_confirm', function () {
+					CashDesk.slideUp('cash_desk_customer', function () {
+						CashDesk.slideUp('cash_desk_payment', function () {
+							CashDesk._request.doGet('?action=back_to_payment', function () {
+								CashDesk.slideDown('cash_desk_payment');
+							});
 
-				CashDesk._request.doGet('?action=back_to_payment', function () {
-					$('#cash_desk_payment').slideDown();
-				} );
+						});
+					});
+				});
+				
 			},
 
 			continue: function() {
-				$('#cash_desk_customer').hide();
+				CashDesk.slideUp('cash_desk_customer', function () {
+					CashDesk._request.doGet('?action=continue_to_customer',
+						function(response) {
+							CashDesk.slideUp('cash_desk_payment', function () {
+								CashDesk.slideDown('cash_desk_payment', function () {
+									CashDesk.slideDown('cash_desk_customer', function () {
+										if(response['is_ready']) {
+											CashDesk.slideDown('cash_desk_confirm', function () {});
+										}
+									});
+								});
+							}, null, true);
+						}
+					);
+				});
 
-				CashDesk._request.doGet('?action=continue_to_customer',
-					function() {
-						$('#cash_desk_payment').slideUp(500, function () {
-							$('#cash_desk_payment').slideDown();
-							$('#cash_desk_customer').slideDown();
-						}, null, true);
-					}
-				);
 			},
 
 			setPaymentOptions: function( method, callback ) {
@@ -289,9 +418,13 @@ $cash_desk = CashDesk::get();
 				set: function() {
 					CashDesk._request.doForm( 'cash_desk_set_email_form',
 						function(response) {
-							$('#cash_desk_customer').slideUp(500, function () {
+							CashDesk.slideUp('cash_desk_customer', function () {
 								CashDesk._request.applySnippets( response );
-								$('#cash_desk_customer').slideDown();
+								CashDesk.slideDown('cash_desk_customer', function () {
+									if(response['is_ready']) {
+										CashDesk.slideDown('cash_desk_confirm', function () {});
+									}
+								});
 							});
 						},
 						function(response) {
@@ -303,9 +436,41 @@ $cash_desk = CashDesk::get();
 				},
 
 				back: function() {
-					$('#cash_desk_customer').slideUp(500, function () {
-						CashDesk._request.doGet('?action=customer_back_to_set_email', function() {
-							$('#cash_desk_customer').slideDown();
+					CashDesk.slideUp('cash_desk_confirm', function () {
+						CashDesk.slideUp('cash_desk_customer', function () {
+							CashDesk._request.doGet('?action=customer_back_to_set_email', function() {
+								CashDesk.slideDown('cash_desk_customer');
+							});
+						});
+					});
+				}
+			},
+			
+			phone: {
+				set: function() {
+					CashDesk._request.doForm( 'cash_desk_set_phone_form',
+						function(response) {
+							CashDesk.slideUp('cash_desk_customer', function () {
+								CashDesk._request.applySnippets( response );
+								CashDesk.slideDown('cash_desk_customer', function () {
+									if(response['is_ready']) {
+										CashDesk.slideDown('cash_desk_confirm', function () {});
+									}
+								});
+							});
+						},
+						function(response) {
+							CashDesk._request.applySnippets( response );
+						},
+						true
+					);
+				},
+				back: function() {
+					CashDesk.slideUp('cash_desk_confirm', function () {
+						CashDesk.slideUp('cash_desk_customer', function () {
+							CashDesk._request.doGet('?action=customer_back_to_set_phone', function() {
+								CashDesk.slideDown('cash_desk_customer');
+							});
 						});
 					});
 				}
@@ -324,30 +489,11 @@ $cash_desk = CashDesk::get();
 				},
 
 				setIsPerson: function() {
-					let top = $('html, body').scrollTop();
+					CashDesk._request.doGet('?action=customer_set_is_person', function() {});
 
-					$('#cash_desk_billing_address').slideUp(500, function () {
-						CashDesk._request.doGet('?action=customer_set_is_person', function() {
-							$('#cash_desk_billing_address').slideDown(200, function() {
-								$('html, body').animate({
-									scrollTop: top
-								}, 200);
-							});
-						});
-					});
 				},
 				setIsCompany: function() {
-					let top = $('html, body').scrollTop();
-
-					$('#cash_desk_billing_address').slideUp(500, function () {
-						CashDesk._request.doGet('?action=customer_set_is_company', function() {
-							$('#cash_desk_billing_address').slideDown(200, function() {
-								$('html, body').animate({
-									scrollTop: top
-								}, 200);
-							});
-						});
-					});
+					CashDesk._request.doGet('?action=customer_set_is_company', function() {});
 				},
 
 				disableEdit: function() {
@@ -370,14 +516,22 @@ $cash_desk = CashDesk::get();
 				confirm: function() {
 					const onResponse = function( response ) {
 						if(response.ok) {
-							$('#cash_desk_delivery_address').hide();
+							CashDesk.slideUp('cash_desk_delivery_address', function () {
+								CashDesk.slideUp('cash_desk_billing_address', function () {
+									CashDesk._request.handleResponse(response);
 
-							$('#cash_desk_billing_address').slideUp(500, function () {
-								CashDesk._request.handleResponse(response);
-
-								$('#cash_desk_delivery_address').slideDown();
-								$('#cash_desk_billing_address').slideDown();
+									CashDesk.slideDown('cash_desk_delivery_address', function () {
+										CashDesk.slideDown('cash_desk_billing_address', function () {
+											if(response['is_ready']) {
+												CashDesk.slideDown('cash_desk_confirm', function () {});
+											}
+											
+										});
+									});
+								});
+								
 							});
+
 
 						}
 					};
@@ -386,13 +540,17 @@ $cash_desk = CashDesk::get();
 				},
 
 				back: function() {
-					$('#cash_desk_delivery_address').slideUp( 200 );
-
-					$('#cash_desk_billing_address').slideUp(500, function () {
-						$('#cash_desk_billing_address').slideDown();
-
-						CashDesk._request.doGet('?action=customer_back_to_billing_address');
+					CashDesk.slideUp('cash_desk_confirm', function () {
+						CashDesk.slideUp( 'cash_desk_delivery_address', function () {
+							CashDesk.slideUp('cash_desk_billing_address', function () {
+								CashDesk._request.doGet('?action=customer_back_to_billing_address', function () {
+									CashDesk.slideDown('cash_desk_billing_address');
+								});
+							});
+							
+						} );
 					});
+
 
 				}
 			},
@@ -402,18 +560,29 @@ $cash_desk = CashDesk::get();
 				form: null,
 
 				setTheSame: function() {
-					$('#cash_desk_delivery_address').slideUp(500, function () {
+					CashDesk.slideUp('cash_desk_delivery_address', function () {
 						CashDesk._request.doGet('?action=customer_delivery_address_set_the_same', function () {
-							$('#cash_desk_delivery_address').slideDown();
+							CashDesk.slideDown('cash_desk_delivery_address');
 						});
 					});
 					
 				},
 
+				setTheSameConfirm: function() {
+					CashDesk.slideUp('cash_desk_delivery_address', function () {
+						CashDesk._request.doGet('?action=customer_delivery_address_set_the_same_confirm', function () {
+							CashDesk.slideDown('cash_desk_delivery_address', function () {
+								CashDesk.slideDown('cash_desk_confirm');
+							});
+						});
+					});
+
+				},
+				
 				setDifferent: function() {
-					$('#cash_desk_delivery_address').slideUp(500, function () {
+					CashDesk.slideUp('cash_desk_delivery_address', function () {
 						CashDesk._request.doGet('?action=customer_delivery_address_set_different', function () {
-							$('#cash_desk_delivery_address').slideDown();
+							CashDesk.slideDown('cash_desk_delivery_address');
 						});
 					});
 
@@ -448,10 +617,12 @@ $cash_desk = CashDesk::get();
 				confirm: function() {
 					const onResponse = function( response ) {
 						if(response.ok) {
-							$('#cash_desk_delivery_address').slideUp(500, function () {
+							CashDesk.slideUp('cash_desk_delivery_address', function () {
 								CashDesk._request.handleResponse(response);
 
-								$('#cash_desk_delivery_address').slideDown();
+								CashDesk.slideDown('cash_desk_delivery_address', function () {
+									CashDesk.slideDown('cash_desk_confirm');
+								});
 							});
 						}
 					};
@@ -460,12 +631,14 @@ $cash_desk = CashDesk::get();
 				},
 
 				back: function() {
-					$('#cash_desk_delivery_address').slideUp(500, function () {
+					CashDesk.slideUp('cash_desk_confirm', function () {
+						CashDesk.slideUp('cash_desk_delivery_address', function () {
 
-						CashDesk._request.doGet('?action=customer_back_to_delivery_address', function () {
-							$('#cash_desk_delivery_address').slideDown();
+							CashDesk._request.doGet('?action=customer_back_to_delivery_address', function () {
+								CashDesk.slideDown('cash_desk_delivery_address');
+							});
+
 						});
-
 					});
 				}
 
@@ -478,10 +651,10 @@ $cash_desk = CashDesk::get();
 
 					CashDesk._request.doForm( 'cash_desk_login_form',
 						function(response) {
-							$('#cash_desk_customer').slideUp(400, function () {
+							CashDesk.slideUp('cash_desk_customer', function () {
 								CashDesk._request.applySnippets(response);
 
-								$('#cash_desk_customer').slideDown(400);
+								CashDesk.slideDown('cash_desk_customer');
 							});
 						},
 						function(response) {
@@ -494,19 +667,25 @@ $cash_desk = CashDesk::get();
 				},
 
 				continueWithoutRegistration: function() {
-					$('#cash_desk_customer').slideUp();
+					CashDesk.slideUp('cash_desk_customer');
 
 					CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
-						$('#cash_desk_customer').slideDown();
+						CashDesk.slideDown('cash_desk_customer');
 					});
 				},
 
 				setPassword: function() {
 					CashDesk._request.doForm('registration_set_password_form',
 						function( response ) {
-							$('#cash_desk_customer').slideUp(500, function() {
-								CashDesk._request.applySnippets(response);
-								$('#cash_desk_customer').slideDown();
+							CashDesk.slideUp('cash_desk_confirm', function () {
+								CashDesk.slideUp('cash_desk_customer', function() {
+									CashDesk._request.applySnippets(response);
+									CashDesk.slideDown('cash_desk_customer', function () {
+										if(response['is_ready']) {
+											CashDesk.slideDown('cash_desk_confirm', function () {});
+										}
+									});
+								});
 							});
 						},
 						function( response ) {
@@ -517,19 +696,23 @@ $cash_desk = CashDesk::get();
 				},
 
 				doNotRegister: function() {
-					$('#cash_desk_customer').slideUp();
-
-					CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
-						$('#cash_desk_customer').slideDown();
+					CashDesk.slideUp('cash_desk_customer', function () {
+						CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
+							CashDesk.slideDown('cash_desk_customer');
+						});
 					});
+
 				},
 
 				back: function() {
-					$('#cash_desk_customer').slideUp();
-
-					CashDesk._request.doGet('?action=customer_registration_back', function () {
-						$('#cash_desk_customer').slideDown();
+					CashDesk.slideUp('cash_desk_confirm', function () {
+						CashDesk.slideUp('cash_desk_customer', function () {
+							CashDesk._request.doGet('?action=customer_registration_back', function () {
+								CashDesk.slideDown('cash_desk_customer');
+							});
+						});
 					});
+
 				}
 			}
 
@@ -548,7 +731,7 @@ $cash_desk = CashDesk::get();
 
 			send: function() {
 
-				$('#cash_desk_order_send_button_area').fadeOut(200, function () {
+				$('#cash_desk_order_send_button_area').fadeOut('fast', function () {
 					CashDesk._request.doGet(
 						'?action=confirm_send',
 						function( response ) {
@@ -562,6 +745,15 @@ $cash_desk = CashDesk::get();
 				});
 			}
 		},
+		
+		slideUp: function (element_id, after) {
+			$('#'+element_id).slideUp('fast', after);
+		},
+
+		slideDown: function (element_id, after) {
+			$('#'+element_id).slideDown('fast', after);
+		},
+		
 
 		scrollTo: function(element_id) {
 			let header = $('header').outerHeight() + $('#cash_desk_status_bar_steps').outerHeight();

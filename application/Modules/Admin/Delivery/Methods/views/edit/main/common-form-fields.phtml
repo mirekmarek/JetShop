@@ -1,0 +1,17 @@
+<?php
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ */
+
+$form = $this->getRaw('form');
+?>
+<?=$form->field( 'kind' )?>
+<?=$form->field( 'delivery_classes' )?>
+<?=$form->field( 'backend_module_name' )?>
+<?=$form->field( 'payment_methods' )?>
+<?=$form->field( 'services' )?>
+

@@ -1,0 +1,91 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var KindOfProduct $kind_of_product
+ */
+
+$kind_of_product = $this->getRaw('kind_of_product');
+
+$form = $kind_of_product->getEditForm();
+
+$editable = !$form->getIsReadonly();
+$this->setVar('editable', $editable);
+
+$layout = $kind_of_product->getLayout( true );
+
+
+
+foreach($layout  as $k=>$v):
+	
+	if(is_array($v)):
+		$group_id = $k;
+		$properties = $kind_of_product->getProperties();
+		$group_name = Admin_Managers::PropertyGroup()->showName( $group_id );
+		
+		?>
+		<div class="card sortable-item group-start" style="margin-top: 20px;" data-id="<?=$group_id?>">
+			<div class="card-header">
+				<?php if($editable): ?>
+					<?=UI::icon('up-down')?>
+				<?php endif ?>
+				
+				<b><?=Tr::_('Group start');?></b> <?= $group_name?>
+				
+				<?php if($editable): ?>
+					<div class="float-right">
+						<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL )->setOnClick(
+							"removeGroup({$group_id})"
+						)?>
+					</div>
+				<?php endif; ?>
+			</div>
+		</div>
+		
+		<?php
+		
+		foreach($v as $property_id):
+			$this->setVar('property', $kind_of_product->getProperty( $property_id ));
+			$this->setVar('property_in_group', true);
+			
+			require 'property.phtml';
+		endforeach;
+		
+		?>
+		
+		<div class="card sortable-item group-end" style="margin-bottom: 20px;" data-id="<?=$group_id?>">
+			<div class="card-header">
+				<?php if($editable): ?>
+					<?=UI::icon('up-down')?>
+				<?php endif ?>
+				
+				<b><?=Tr::_('Group end');?></b> <?= $group_name?>
+			</div>
+		</div>
+	<?php
+	else:
+		$property = $kind_of_product->getProperty( $v );
+	
+		$this->setVar('property_in_group', false);
+		$this->setVar('property', $property);
+		
+		require 'property.phtml';
+	endif;
+ endforeach;
+?>
+
+
+<br><br>
+
+<?php if($editable): ?>
+	<script type="text/javascript">
+		sortLayout.init();
+	</script>
+<?php endif; ?>

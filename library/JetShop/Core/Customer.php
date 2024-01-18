@@ -208,11 +208,6 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 
 
-	protected ?Form $_form_add = null;
-
-	protected ?Form $_form_edit = null;
-
-
 	public function setPassword( string $password, bool $encrypt_password=true ): void
 	{
 		if( $password ) {
@@ -567,54 +562,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 		return $form;
 	}
-
-	public function getEditForm() : Form
-	{
-		if(!$this->_form_edit) {
-			$form = $this->_getForm();
-			$form->setName('_user');
-
-			if( $form->fieldExists( 'password' ) ) {
-				$form->removeField( 'password' );
-			}
-
-
-
-			$this->_form_edit = $form;
-		}
-
-		return $this->_form_edit;
-	}
-
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-
-			$form = $this->_getForm();
-			$form->setName('add_user');
-
-			if( $form->fieldExists( 'password' ) ) {
-				$form->removeField( 'password' );
-			}
-
-
-			$this->_form_add = $form;
-
-
-		}
-
-		return $this->_form_add;
-	}
-
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
+	
 
 
 	public function sendWelcomeEmail( string $password ) : void
@@ -849,7 +797,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		if($this->_addresses===null) {
 			$this->_addresses = [];
 
-			foreach(Customer_Address::getList() as $a) {
+			foreach( Customer_Address::getListForCustomer( $this->id ) as $a) {
 				$this->_addresses[$a->getId()] = $a;
 			}
 		}
@@ -859,21 +807,16 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 	public function getAddress( int $id ) : ?Customer_Address
 	{
-		$addresses = $this->getAddresses();
-
-		foreach($addresses as $adr) {
-			if($adr->getId()==$id) {
-				return $adr;
-			}
-		}
-
-		return null;
+		$this->getAddresses();
+		
+		return $this->_addresses[$id]??null;
 	}
 
 	public function hasAddress( Customer_Address $address ) : bool
 	{
+		$address->generateHash();
 		$a_hash = $address->getHash();
-
+		
 		foreach($this->getAddresses() as $a ) {
 			if($a->getHash()==$a_hash) {
 				return true;
@@ -885,21 +828,17 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 	public function addAddress( Customer_Address $address ) : void
 	{
-		$address = clone $address;
-
+		if($this->hasAddress($address)) {
+			return;
+		}
+		
 		$address->setCustomerId( $this->id );
 
 		$address->save();
-
-		$this->getAddresses();
-		$this->_addresses[$address->getId()] = $address;
+		
+		$this->_addresses = null;
 	}
-
-	public function setDefaultAddress( Customer_Address $address ) : void
-	{
-		Customer_Address::setDefaultAddress( $address );
-	}
-
+	
 	public function getDefaultAddress() : ?Customer_Address
 	{
 		foreach($this->getAddresses() as $address) {

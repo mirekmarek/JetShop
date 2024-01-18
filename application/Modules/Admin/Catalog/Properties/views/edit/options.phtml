@@ -17,8 +17,10 @@ use JetApplication\Shops_Shop;
  * @var Property $property
  * @var Property_Options_Option $new_option
  * @var Form $form
+ * @var Controller_Main $controller
  */
 $property = $this->getRaw('property');
+$controller = $this->getController();
 
 $new_option = $this->getRaw('new_option');
 
@@ -28,14 +30,13 @@ $add_form = $new_option->getAddForm();
 $add_form->renderer()->setDefaultLabelWidth([
 	Form_Renderer::LJ_SIZE_MEDIUM => 2
 ]);
-?>
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()?>
-	
-	</div>
-</div>
 
+Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
+	item: $property,
+	listing: $controller->getListing(),
+);
+
+?>
 <div class="row">
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
@@ -74,22 +75,18 @@ $add_form->renderer()->setDefaultLabelWidth([
 		
 		<?php
 		echo $add_form->start();
+		?>
+		<?=Admin_Managers::UI()->renderEntityFormCommonFields($add_form)?>
 		
-		echo $add_form->field('internal_name');
-		echo $add_form->field('internal_notes');
-		
+		<?php
 		Admin_Managers::UI()->renderShopDataBlocks(
 			form: $add_form,
 			renderer: function( Shops_Shop $shop, string $shop_key ) use ($new_option, $add_form) : void {
-				$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$add_form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
-				$add_form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
-				$add_form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
 				?>
 				<fieldset>
 					<legend class="sub"><?=Tr::_('Main data')?></legend>
 					<?=$add_form->field('/shop_data/'.$shop_key.'/filter_label')?>
 					<?=$add_form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
-					<?=$add_form->field('/shop_data/'.$shop_key.'/url_param')?>
 					<?=$add_form->field('/shop_data/'.$shop_key.'/description')?>
 				</fieldset>
 			<?php }); ?>
@@ -115,7 +112,7 @@ $add_form->renderer()->setDefaultLabelWidth([
 
 	const optionSort = {
 		init: function () {
-			$('#sort_items').sortable({
+			$('#sort_items')['sortable']({
 				stop: function () {
 					optionSort.setSort();
 				}

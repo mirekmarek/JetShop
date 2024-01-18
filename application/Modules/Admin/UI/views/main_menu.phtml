@@ -1,68 +1,108 @@
 <?php
+namespace JetApplicationModule\Admin\UI;
+
+use JetApplication\Shops;
 
 use Jet\Http_Request;
 use Jet\UI;
+use Jet\Navigation_Menu;
 use Jet\Navigation_MenuSet;
+use Jet\Navigation_Menu_Item;
+
 use Jet\Auth;
 use Jet\Tr;
 use Jet\Locale;
 use Jet\MVC;
-use Jet\UI_icon;
-use JetApplication\Shops;
+
 
 $shops = Shops::getListSorted();
 $current_shop = Shops::getCurrent();
+
+$showMenu = function( Navigation_Menu $menu, callable $separator_renderer, callable $item_renderer ) {
+	$separator_allowed = false;
+	
+	$count = count($menu->getItems());
+	$i=0;
+	foreach( $menu->getItems() as $item ) {
+		$i++;
+		$is_last = $i==$count;
+		
+		if( $item->getSeparatorBefore() ) {
+			if($separator_allowed) {
+				$separator_renderer();
+			}
+			
+			$separator_allowed = false;
+		}
+		
+		$item_renderer( $item );
+		$separator_allowed = true;
+		
+		if($is_last) {
+			break;
+		}
+		
+		if( $item->getSeparatorAfter() ) {
+			$separator_renderer();
+			$separator_allowed = false;
+		}
+	}
+}
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<a class="navbar-brand" href="<?=MVC::getPage( MVC::HOMEPAGE_ID )->getURLPath()?>">Jet Shop</a>
-
+	
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavBar" aria-controls="mainNavBar" aria-expanded="false" aria-label="">
 		<span class="navbar-toggler-icon"></span>
 	</button>
-
+	
 	<div class="collapse navbar-collapse" id="mainNavBar">
 		<ul class="nav navbar-nav">
-			<?php if(count($shops)>1): ?>
-				<li class="nav-item dropdown bg-secondary">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<?=$current_shop->getShopName()?> <span class="caret"></span>
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<?php foreach( $shops as $shop ): ?>
-							<a class="dropdown-item" href="<?=Http_Request::currentURI([Shops::CURR_SHOP_GET_PARAM =>$shop->getKey()])?>"><?=$shop->getShopName()?></a>
-						<?php endforeach; ?>
-					</div>
-				</li>
-			<?php endif; ?>
+			<li class="nav-item dropdown bg-secondary">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<?=$current_shop->getShopName()?> <span class="caret"></span>
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<?php foreach( $shops as $shop ): ?>
+						<a class="dropdown-item" href="<?=Http_Request::currentURI([Main::CURR_SHOP_GET_PARAM =>$shop->getKey()])?>"><?=$shop->getShopName()?></a>
+					<?php endforeach; ?>
+				</div>
+			</li>
 			
-			<?php foreach( Navigation_MenuSet::get('admin')->getMenus() as $menu ):
+			<?php foreach( Navigation_MenuSet::get( 'admin' )->getMenus() as $menu ):
 				if(!$menu->getItems()) {
 					continue;
 				}
 				?>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<?=$menu->getLabel()?> <span class="caret"></span>
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+					   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<?= $menu->getLabel() ?> <span class="caret"></span>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<?php foreach( $menu->getItems() as $item ): ?>
-							<?php if( $item->getSeparatorBefore() ): ?>
-								<div class="dropdown-divider"></div>
-							<?php endif; ?>
-							<a class="dropdown-item" href="<?=$item->getUrl()?>"><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE)?> <?=$item->getLabel()?></a>
-							<?php if( $item->getSeparatorAfter() ): ?>
-								<div class="dropdown-divider"></div>
-							<?php endif; ?>
-						<?php endforeach; ?>
+						<?php
+						$showMenu(
+							menu: $menu,
+							separator_renderer: function() {
+								?><div class="dropdown-divider"></div><?php
+							},
+							item_renderer: function( Navigation_Menu_Item $item) {
+								?><a class="dropdown-item" href="<?= $item->getUrl() ?>">
+								<div style="display: inline-block;width: 30px;"><?= UI::icon( $item->getIcon() ) ?></div>
+								
+								<?= $item->getLabel() ?></a><?php
+							}
+						);
+						?>
 					</div>
-
+				
 				</li>
 			<?php endforeach; ?>
 		</ul>
-
+		
 		<ul class="navbar-nav ml-auto">
-
+			
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span><?=UI::flag( Locale::getCurrentLocale() )?></span>
@@ -76,36 +116,32 @@ $current_shop = Shops::getCurrent();
 					<?php endforeach; ?>
 				</div>
 			</li>
-
+			
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<?=UI::icon( 'user' )?>
 					<?=Auth::getCurrentUser()->getUsername()?>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-
+					
 					<?php if(
 						MVC::getPage( 'change_password' ) &&
 						MVC::getPage( 'change_password' )->accessAllowed()
 					): ?>
 						<a class="dropdown-item"  href="<?=MVC::getPage( 'change_password' )->getURL()?>">
-								<?=UI::icon( 'cog' )?>
-								<?=Tr::_( 'Change password' )?>
-							</a>
+							<?=UI::icon( 'cog' )?>
+							<?=Tr::_( 'Change password' )?>
+						</a>
 						<div class="dropdown-divider"></div>
 					<?php endif; ?>
-
+					
 					<a class="dropdown-item"  href="<?=MVC::getPage( MVC::HOMEPAGE_ID )->getURL( [], [ 'logout' => 'logout' ] )?>">
-							<?=UI::icon( 'sign-out-alt' )?>
-							<?=Tr::_( 'Logout' )?>
+						<?=UI::icon( 'sign-out-alt' )?>
+						<?=Tr::_( 'Logout' )?>
 					</a>
 				</div>
 			</li>
-
+		
 		</ul>
 	</div>
 </nav>
-
-
-
-

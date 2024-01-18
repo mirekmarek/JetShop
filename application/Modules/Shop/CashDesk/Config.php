@@ -7,7 +7,6 @@
  */
 namespace JetApplicationModule\Shop\CashDesk;
 
-use JetApplication\CashDesk;
 
 class Config {
 

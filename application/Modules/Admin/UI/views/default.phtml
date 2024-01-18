@@ -1,37 +1,88 @@
 <?php
 use Jet\Navigation_MenuSet;
+use Jet\Navigation_Menu;
+use Jet\Navigation_Menu_Item;
 use Jet\UI;
 use Jet\UI_icon;
 
+
+
+$showMenu = function( Navigation_Menu $menu, callable $separator_renderer, callable $item_renderer ) {
+	$separator_allowed = false;
+	
+	$count = count($menu->getItems());
+	$i=0;
+	foreach( $menu->getItems() as $item ) {
+		$i++;
+		$is_last = $i==$count;
+		
+		if( $item->getSeparatorBefore() ) {
+			if($separator_allowed) {
+				$separator_renderer();
+			}
+			
+			$separator_allowed = false;
+		}
+		
+		$item_renderer( $item );
+		$separator_allowed = true;
+		
+		if($is_last) {
+			break;
+		}
+		
+		if( $item->getSeparatorAfter() ) {
+			$separator_renderer();
+			$separator_allowed = false;
+		}
+	}
+};
+
+$_menus = Navigation_MenuSet::get('admin')->getMenus();
+
+$menus = [];
+foreach($_menus as $menu) {
+	if($menu->getItems()) {
+		$menus[] = $menu;
+	}
+}
+
 ?>
 <div class="col-md-12 main-col">
-	<br/>
-	<div class="row">
-		<div class="col-md"></div>
-		<?php foreach( Navigation_MenuSet::get('admin')->getMenus() as $menu ):
-			if(!$menu->getItems()) {
-				continue;
-			}
-			?>
-			<div class="col-md">
-				<h3><?=$menu->getLabel()?></h3>
-				<hr/>
-				<?php foreach( $menu->getItems() as $item ): ?>
-					<div style="margin: 10px">
-						<?php if( $item->getSeparatorBefore() ): ?>
-							<hr/><?php endif; ?>
-						<a href="<?=$item->getUrl()?>">
-							<?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?>
-							<span style="position: relative;top:-5px"><?=$item->getLabel()?></span>
-						</a>
-						<?php if( $item->getSeparatorAfter() ): ?>
-							<hr/><?php endif; ?>
-					</div>
-				<?php endforeach; ?>
-
-			</div>
+	<br><br><br>
+	<div style="display: grid;grid-template-columns: 10% repeat(<?=count($menus)?>, 1fr) 10%">
+		<div></div>
+		<?php foreach( $menus as $menu ): ?>
+		<div style="padding-left: 10px;padding-right: 10px;">
+			<h5><?=$menu->getLabel()?></h5>
+			<div class="dropdown-divider"></div>
+		</div>
 		<?php endforeach; ?>
-		<div class="col-md"></div>
+		<div></div>
 	</div>
-
+	
+	<div style="display: grid;grid-template-columns: 10% repeat(<?=count($menus)?>, 1fr) 10%">
+		<div></div>
+	<?php foreach( $menus as $menu ): ?>
+		<div style="padding: 5px">
+		<?php $showMenu(
+			menu: $menu,
+			separator_renderer: function() {
+				?><div class="dropdown-divider"></div><?php
+			},
+			item_renderer: function( Navigation_Menu_Item $item) {
+				?>
+				<a href="<?=$item->getUrl()?>">
+					<div style="display: grid;grid-template-columns: 40px 1fr;align-items: center;margin: 10px;">
+						<div><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?></div>
+						<div><?=$item->getLabel()?></div>
+					</div>
+				</a>
+				<?php
+			}
+		); ?>
+		</div>
+	<?php endforeach; ?>
+		<div></div>
+	</div>
 </div>

@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\ProductListing;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$filter = $listing->getFilter()->getBasicFilter();
+if(!$filter->getIsActive()) {
+	return;
+}
+
+if($filter->getInStock()):
+	?>
+	<button
+		type="button"
+		onclick="listing.filter.basic.cancel('in_stock')"
+		class="btn btn-xs btn-info"
+	><i class="fa-regular fa-circle-xmark"></i> <?=Tr::_('In stock')?></button>
+	<?php
+endif;
+
+if($filter->getHasDiscount()):
+	?>
+	<button
+		type="button"
+		onclick="listing.filter.basic.cancel('has_discount')"
+		class="btn btn-xs btn-info"
+	><i class="fa-regular fa-circle-xmark"></i> <?=Tr::_('Has discount')?></button>
+<?php
+endif;

@@ -21,12 +21,21 @@ class Listing_Filter_ProductKind extends DataListing_Filter
 		return static::KEY;
 	}
 	
+	protected function getOptions() : array
+	{
+		$_options = KindOfProduct::getScope();
+		
+		$options =
+			[''=>Tr::_(' - all -')] +
+			['-1' => Tr::_('- Not set -')] +
+			$_options;
+		
+		return $options;
+	}
+	
 	public function catchParams(): void
 	{
-		$this->product_kind = Http_Request::GET()->getString('product_kind', '', array_keys(
-			['-1' => Tr::_('- Not set -')] +
-			KindOfProduct::getScope()
-		));
+		$this->product_kind = Http_Request::GET()->getString('product_kind', '', array_keys($this->getOptions()));
 		if($this->product_kind) {
 			$this->listing->setParam('product_kind', $this->product_kind);
 		}
@@ -34,10 +43,7 @@ class Listing_Filter_ProductKind extends DataListing_Filter
 	
 	public function generateFormFields( Form $form ): void
 	{
-		$options =
-			[''=>Tr::_(' - all -')] +
-			['-1' => Tr::_('- Not set -')] +
-			KindOfProduct::getScope();
+		$options = $this->getOptions();
 		
 		$product_kind = new Form_Field_Select('product_kind', 'Kind of product:' );
 		$product_kind->setDefaultValue( $this->product_kind );

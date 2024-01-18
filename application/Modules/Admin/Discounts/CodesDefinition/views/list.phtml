@@ -2,7 +2,6 @@
 namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 use Jet\Locale;
-use JetApplication\Discounts_Code as DiscountsCode;
 
 use Jet\UI;
 use Jet\UI_dataGrid;
@@ -122,12 +121,6 @@ $grid->getColumn('internal_description')->setRenderer(
 		<?= $filter_form->field( 'search' )->input() ?>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<table>
-			<tr>
-				<td><?=$filter_form->field('shop')->label()?></td>
-				<td><?=$filter_form->field('shop')->input()->addJsAction('onchange', 'this.form.submit()')?></td>
-			</tr>
-		</table>
 	</div>
 
 </div>

@@ -1,0 +1,17 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw('form');
+?>
+<?=$form->field( 'shops' )?>
+<?=$form->field( 'address_street_no' )?>
+<?=$form->field( 'address_country' )?>
+<?=$form->field( 'address_town' )?>
+<?=$form->field( 'address_zip' )?>
+

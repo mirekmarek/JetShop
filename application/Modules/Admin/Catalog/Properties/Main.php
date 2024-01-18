@@ -9,18 +9,20 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
+use Jet\Form;
 use Jet\Tr;
-use Jet\Translator;
+use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Property;
-use JetApplication\Admin_Managers_Trait;
+use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
+use JetApplication\Entity_WithShopData;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_Property
 {
-	use Admin_Managers_Trait;
+	use Admin_Entity_WithShopData_Manager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'properties';
 
@@ -50,29 +52,45 @@ class Main extends Application_Module implements Admin_Managers_Property
 		);
 		
 	}
+
 	
-	public function showName( int $id ): string
+	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
 	{
-		$res = '';
+		return new Property();
+	}
+	
+	public static function getEntityNameReadable() : string
+	{
+		return 'property';
+	}
+	
+	public function showType( string $type ) : string
+	{
+		$types = Property::getTypesScope();
+		if(!isset($types[$type])) {
+			return '';
+		}
 		
-		Translator::setCurrentDictionaryTemporary(
-			$this->module_manifest->getName(),
-			function() use (&$res, $id) {
-				$property = Property::get($id);
-				
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar('id', $id);
-				
-				if($property) {
-					$view->setVar('property', $property);
-					$res = $view->render('show-name/known');
-				} else {
-					$res = $view->render('show-name/unknown');
-				}
-			}
-		);
+		return $types[$type];
+	}
+	
+	public function renderProductPropertyEditFormField(
+		Form $form,
+		int $property_id,
+		string $form_field_name_prefix=''
+	) : string
+	{
+		$property = Property::get( $property_id );
+		if(!$property) {
+			return '';
+		}
 		
-		return $res;
+		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$view->setVar('property', $property);
+		$view->setVar('form', $form);
+		$view->setVar('prefix', $form_field_name_prefix.'/'.$property_id.'/');
+		
+		return $view->render('product-property-edit-form-field/'.$property->getType());
 	}
 	
 }

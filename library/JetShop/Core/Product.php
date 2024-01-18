@@ -9,7 +9,8 @@ use Jet\DataModel_IDController_AutoIncrement;
 
 use Jet\Form_Field_Select;
 use JetApplication\Category;
-use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Delivery_Class;
+use JetApplication\Entity_WithShopData;
 use JetApplication\KindOfProduct;
 
 use JetApplication\Product;
@@ -33,7 +34,9 @@ use JetApplication\Supplier;
 	id_controller_options: ['id_property_name'=>'id']
 
 )]
-abstract class Core_Product extends Entity_WithIDAndShopData {
+abstract class Core_Product extends Entity_WithShopData {
+	
+	//TODO: add product weight
 	
 	use Product_Trait_Images;
 	use Product_Trait_Set;
@@ -81,17 +84,6 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 		max_len: 100,
 		is_key: true,
 	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal code:'
-	)]
-	protected string $internal_code = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
 	protected string $erp_id = '';
 
 	#[DataModel_Definition(
@@ -101,7 +93,7 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	#[Form_Definition(
 		type: Form_Field::TYPE_SELECT,
 		label: 'Brand:',
-		select_options_creator: [Brand::class,'getScope'],
+		select_options_creator: [Brand::class,'getOptionsScope'],
 		error_messages: [
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]
@@ -115,12 +107,27 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	#[Form_Definition(
 		type: Form_Field::TYPE_SELECT,
 		label: 'Supplier:',
-		select_options_creator: [Supplier::class,'getScope'],
+		select_options_creator: [Supplier::class,'getOptionsScope'],
 		error_messages: [
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]
 	)]
 	protected int $supplier_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Delivery class:',
+		select_options_creator: [Delivery_Class::class,'getOptionsScope'],
+		error_messages: [
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+		]
+	)]
+	protected int $delivery_class_id = 0;
+	
 	
 	/**
 	 * @var Product_ShopData[]
@@ -155,9 +162,29 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 		return $this->type;
 	}
 	
+	public function isSet() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_SET;
+	}
+	
+	public function isVariant() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_VARIANT;
+	}
+	
+	public function isVariantMaster() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_VARIANT_MASTER;
+	}
+	
+	public function isRegular() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_REGULAR;
+	}
+	
 	public static function getProductType( int $product_id ) : ?string
 	{
-		$product_type = Product::dataFetchOne(select:['type'], where:['id'=>$product_id]);
+		$product_type = static::dataFetchOne(select:['type'], where:['id'=>$product_id]);
 		
 		return $product_type?:null;
 	}
@@ -165,6 +192,10 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	public function setType( string $type ) : void
 	{
 		$this->type = $type;
+		
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setType( $this->type );
+		}
 	}
 	
 	public function getKindId(): int
@@ -175,7 +206,27 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	public function setKindId( int $kind_id ): void
 	{
 		$this->kind_id = $kind_id;
+		
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setKindId( $this->kind_id );
+		}
+		
 	}
+	
+	public function getDeliveryClassId(): int
+	{
+		return $this->delivery_class_id;
+	}
+	
+	public function setDeliveryClassId( int $delivery_class_id ): void
+	{
+		$this->delivery_class_id = $delivery_class_id;
+		
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setDeliveryClassId( $this->delivery_class_id );
+		}
+	}
+	
 	
 
 	public function getEan() : string
@@ -186,16 +237,11 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	public function setEan( string $ean ) : void
 	{
 		$this->ean = $ean;
-	}
-
-	public function getInternalCode() : string
-	{
-		return $this->internal_code;
-	}
-
-	public function setInternalCode( string $internal_code ) : void
-	{
-		$this->internal_code = $internal_code;
+		
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setEan( $this->ean );
+		}
+		
 	}
 
 	public function getErpId() : string
@@ -206,6 +252,10 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	public function setErpId( string $erp_id ) : void
 	{
 		$this->erp_id = $erp_id;
+		
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setErpId( $this->erp_id );
+		}
 	}
 
 	public function getBrandId() : int
@@ -216,6 +266,9 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	public function setBrandId( int $brand_id ) : void
 	{
 		$this->brand_id = $brand_id;
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setBrandId( $this->brand_id );
+		}
 	}
 
 	public function getSupplierId() : int
@@ -226,6 +279,9 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 	public function setSupplierId( int $supplier_id ) : void
 	{
 		$this->supplier_id = $supplier_id;
+		foreach(Shops::getList() as $shop) {
+			$this->shop_data[$shop->getKey()]->setSupplierId( $this->supplier_id );
+		}
 	}
 
 
@@ -245,40 +301,10 @@ abstract class Core_Product extends Entity_WithIDAndShopData {
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
 	
-
-	public function getName( ?Shops_Shop $shop=null ) : string
-	{
-		return $this->getShopData($shop)->getName();
-	}
-
-	public function getDescription( ?Shops_Shop $shop=null ): string
-	{
-		return $this->getShopData($shop)->getDescription();
-	}
-
-	public function getSeoH1( ?Shops_Shop $shop=null ): string
-	{
-		return $this->getShopData($shop)->getSeoH1();
-	}
-
-	public function getSeoTitle( ?Shops_Shop $shop=null ): string
-	{
-		return $this->getShopData($shop)->getSeoTitle();
-	}
-
-	public function getSeoDescription( ?Shops_Shop $shop=null ): string
-	{
-		return $this->getShopData($shop)->getSeoDescription();
-	}
-
-	public function getShortDescription( ?Shops_Shop $shop=null ): string
-	{
-		return $this->getShopData($shop)->getShortDescription();
-	}
-
+	
 	public static function getIdsByKind( KindOfProduct $kind ) : array
 	{
-		$_ids = Product::dataFetchCol(['id'], ['kind_id'=>$kind->getId()]);
+		$_ids = static::dataFetchCol(['id'], ['kind_id'=>$kind->getId()]);
 		$ids = [];
 		
 		foreach($_ids as $id) {

@@ -11,18 +11,22 @@ use Jet\Application_Module;
 use Jet\Application_Module_Manifest;
 use Jet\Factory_MVC;
 use Jet\Form;
+use Jet\Http_Headers;
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Navigation_Breadcrumb;
 use Jet\MVC;
+use Jet\Session;
 use Jet\Translator;
 use Jet\UI;
 
 use JetApplication\Admin_Managers_UI;
-use JetApplication\Entity_WithCodeAndShopData;
-use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 
+use Closure;
 
 /**
  *
@@ -146,36 +150,140 @@ class Main extends Application_Module implements Admin_Managers_UI
 	}
 	
 	public function renderEntityActivation(
-		Entity_WithIDAndShopData|Entity_WithCodeAndShopData $entity,
-		bool $editable
+		Entity_Basic $entity,
+		bool $editable,
+		?Closure $deactivate_url_creator = null,
+		?Closure $activate_url_creator = null,
+		?Closure $activate_completely_url_creator = null
+		
 	) : string
 	{
 		$this->view->setVar('entity', $entity);
 		
-		return $this->render(
-			$editable ?
-			'entity-activation/editable'
-			:
-			'entity-activation/readonly'
-		);
+		if(!$editable) {
+			return $this->render( 'entity-activation/readonly' );
+		}
+		
+		if(!$deactivate_url_creator) {
+			$deactivate_url_creator = function () : string {
+				return Http_Request::currentURI(['deactivate_entity'=>1]);
+			};
+		}
+		if(!$activate_url_creator) {
+			$activate_url_creator = function () : string {
+				return Http_Request::currentURI(['activate_entity'=>1]);
+			};
+		}
+		if(!$activate_completely_url_creator) {
+			$activate_completely_url_creator = function () : string {
+				return Http_Request::currentURI(['activate_entity_completely'=>1]);
+			};
+		}
+		
+		$this->view->setVar('deactivate_url', $deactivate_url_creator() );
+		$this->view->setVar('activate_url', $activate_url_creator() );
+		
+		if($entity instanceof Entity_WithShopData) {
+			$this->view->setVar('activate_completely_url', $activate_completely_url_creator() );
+		}
+		
+		
+		
+		return $this->render( 'entity-activation/editable' );
+		
+		
 	}
 	
 	public function renderEntityShopDataActivation(
-		Entity_WithIDAndShopData|Entity_WithCodeAndShopData $entity,
+		Entity_WithShopData $entity,
 		Shops_Shop $shop,
-		bool $editable
+		bool $editable,
+		?Closure $deactivate_url_creator = null,
+		?Closure $activate_url_creator = null
 	) : string
 	{
+		
+		
 		$this->view->setVar('entity', $entity);
 		$this->view->setVar('shop_data', $entity->getShopData($shop));
 		$this->view->setVar('shop', $shop);
 		
-		return $this->render(
-			$editable ?
-				'entity-shop-data-activation/editable'
-				:
-				'entity-shop-data-activation/readonly'
-		);
+		if(!$editable) {
+			return $this->render( 'entity-shop-data-activation/readonly' );
+		}
+		
+		
+		if(!$deactivate_url_creator) {
+			$deactivate_url_creator = function () use ($shop) : string {
+				return Http_Request::currentURI(['deactivate_entity_shop_data'=>$shop->getKey()]);
+			};
+		}
+		if(!$activate_url_creator) {
+			$activate_url_creator = function () use ($shop) : string {
+				return Http_Request::currentURI(['activate_entity_shop_data'=>$shop->getKey()]);
+			};
+		}
+		
+		$this->view->setVar('deactivate_url', $deactivate_url_creator() );
+		$this->view->setVar('activate_url', $activate_url_creator() );
+		
+		return $this->render( 'entity-shop-data-activation/editable' );
 	}
 	
+	public function renderEntityFormCommonFields( Form $form ) : string
+	{
+		$this->view->setVar('form', $form);
+		
+		return $this->render( 'entity-form-common-fields' );
+		
+	}
+	
+	public function renderEntityToolbar( Form $form, ?callable $buttons_renderer=null ) : string
+	{
+		$this->view->setVar('form', $form);
+		$this->view->setVar('buttons_renderer', $buttons_renderer);
+		
+		return $this->render( 'entity-toolbar' );
+	}
+	
+	
+	public const CURR_SHOP_SESSION = 'current_shop';
+	public const CURR_SHOP_SESSION_KEY = 'key';
+	public const CURR_SHOP_GET_PARAM = 'select_shop';
+	
+
+	public function handleCurrentPreferredShop() : void
+	{
+		$all_shops = array_keys(Shops::getList());
+		$default_shop = Shops::getDefault();
+		
+		$session = new Session( static::CURR_SHOP_SESSION );
+		$current_shop_key = $session->getValue(static::CURR_SHOP_SESSION_KEY, '');
+		if(!in_array($current_shop_key, $all_shops)) {
+			$current_shop_key = $default_shop->getKey();
+			$session->setValue(static::CURR_SHOP_SESSION_KEY, $current_shop_key);
+		}
+		
+		
+		$GET = Http_Request::GET();
+		if($GET->exists(static::CURR_SHOP_GET_PARAM)) {
+			$current_shop_key = $GET->getString(
+				key:static::CURR_SHOP_GET_PARAM,
+				default_value: $default_shop->getKey(),
+				valid_values: $all_shops
+			);
+			
+			$session->setValue(static::CURR_SHOP_SESSION_KEY, $current_shop_key);
+			
+			Http_Headers::reload(unset_GET_params: [static::CURR_SHOP_GET_PARAM]);
+		}
+		
+		Shops::setCurrent( Shops::get($current_shop_key) );
+	}
+	
+	public function renderMainMenu() : string
+	{
+		return $this->render( 'main-menu' );
+	}
+
 }

@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use Jet\UI_dataGrid_column;
 
 class Listing_Column_Type extends DataListing_Column
 {
@@ -23,5 +24,11 @@ class Listing_Column_Type extends DataListing_Column
 	{
 		return Tr::_('Type');
 	}
+	
+	public function initializer( UI_dataGrid_column $column ) : void
+	{
+		$column->addCustomCssStyle( 'width:130px;' );
+	}
+	
 	
 }

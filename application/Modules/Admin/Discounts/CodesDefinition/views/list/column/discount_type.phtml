@@ -1,0 +1,35 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Discounts_Discount;
+
+/**
+ * @var MVC_View $this
+ * @var DiscountsCode $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=Discounts_Discount::getDiscountTypeScope()[$item->getDiscountType()];?><br>
+
+<b><?php
+switch($item->getDiscountType()) {
+	case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_PERCENTAGE:
+	case Discounts_Discount::DISCOUNT_TYPE_DELIVERY_PERCENTAGE:
+		echo Locale::float( $item->getDiscount() ).'%';
+		break;
+	case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
+	case Discounts_Discount::DISCOUNT_TYPE_DELIVERY_AMOUNT:
+		echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getShop(), $item->getDiscount() );
+		break;
+}
+?></b>

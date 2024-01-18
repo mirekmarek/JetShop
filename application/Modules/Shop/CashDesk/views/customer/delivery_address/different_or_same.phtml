@@ -1,21 +1,20 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Tr;
 use Jet\UI;
 
+$cash_desk = CashDesk::get();
 ?>
-<br/>
-<div class="card">
+<br>
+<span class="step-title"><?=Tr::_('Where should we send the goods?')?></span>
 
-	<div class="card-body bg-light">
-		<div class="title"><?=Tr::_('Where should we send the goods?')?></div>
-
-		<div class="options" style="padding-top: 10px;padding-bottom: 10px;">
-			<?=UI::button(Tr::_('To the same address'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSame();')->setClass('primary')?>
-			<?=UI::button(Tr::_('To another address'))->setOnclick('CashDesk.customer.deliveryAddress.setDifferent();')->setClass('primary')?>
-		</div>
-	</div>
+<div class="options" style="padding-top: 10px;padding-bottom: 10px;">
+	<?php if($cash_desk->hasDifferentDeliveryAddress()): ?>
+		<?=UI::button(Tr::_('To the same address'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSame();')->setClass('light')?>
+		<?=UI::button(Tr::_('To another address'))->setOnclick('CashDesk.customer.deliveryAddress.setDifferent();')->setClass('info')?>
+	<?php else: ?>
+		<?=UI::button(Tr::_('To the same address'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSame();')->setClass('info')?>
+		<?=UI::button(Tr::_('To another address'))->setOnclick('CashDesk.customer.deliveryAddress.setDifferent();')->setClass('light')?>
+	<?php endif; ?>
 </div>
-
-

@@ -1,0 +1,101 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Listing  $listing
+ */
+
+$listing = $this->getRaw( 'listing' );
+$entity_manager = $listing->getEntityManager();
+$grid = $listing->getGrid();
+$filter_form = $listing->getFilterForm();
+
+$filter_enabled = (bool)$listing->getFilterWhere();
+?>
+<style>
+	.listing-filter {
+		display: grid;
+		grid-template-columns: 150px 1fr;
+		margin: 10px;
+		align-items: center;
+	}
+	
+	.listing-filter-title {
+		font-weight: bolder;
+	}
+	
+	.listing-filter-form {
+		display: flex;
+		align-items: center;
+	}
+
+	.listing-filter-form>div {
+		padding: 5px;
+		padding-left: 10px;
+	}
+	
+	.listing-active-filter {
+		background-color: #b3bbc4;
+		padding: 10px;
+		border-radius: 5px;
+	}
+</style>
+<script>
+	const Filter = {
+		filter_visible: <?=json_encode($filter_enabled)?>,
+		
+		toggle: ()=>{
+			if(Filter.filter_visible) {
+				Filter.filter_visible = false;
+
+				$('#filter_caret_down').show();
+				$('#filter_caret_up').hide();
+
+				$('#filter').hide();
+
+			} else {
+				Filter.filter_visible = true;
+
+				$('#filter_caret_up').show();
+				$('#filter_caret_down').hide();
+
+				$('#filter').show();
+
+			}
+		},
+		
+		reset: ( element_ids, reset_value )=> {
+			for(let c=0;c<element_ids.length;c++) {
+				$('#'+element_ids[c]).val(reset_value);
+			}
+			
+			document.getElementById('<?=$filter_form->getId()?>').submit();
+		}
+	};
+</script>
+
+<div class="toolbar" style="display: grid;align-items: center;padding-left: 10px;">
+	<a href="" onclick="Filter.toggle();return false;">
+		<?=UI::icon('caret-down')->setId('filter_caret_down')->addCustomCssStyle('display:'.(!$filter_enabled?'':'none'))?>
+		<?=UI::icon('caret-up')->setId('filter_caret_up')->addCustomCssStyle('display:'.($filter_enabled?'':'none'))?>
+		<?=Tr::_('Filter')?>
+	</a>
+</div>
+
+<?=$filter_form->start()?>
+<div class="toolbar" id="filter" style="display: <?=$filter_enabled?'block':'none'?>">
+	<div>
+	<?php foreach($listing->getFilters() as $filter): ?>
+		<div>
+		<?=$filter->renderForm();?>
+		</div>
+	<?php endforeach; ?>
+	</div>
+</div>
+<?=$filter_form->end()?>
+

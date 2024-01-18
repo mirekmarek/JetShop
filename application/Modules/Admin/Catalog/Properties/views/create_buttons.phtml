@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI;
+
+?>
+<div class="dropdown">
+	<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<?= UI::icon( 'plus' ) ?> <?= Tr::_( 'Create' ) ?>
+	</button>
+	<div class="dropdown-menu" style="padding: 10px;">
+		<?php foreach( Property::getTypesScope() as $type=> $label): ?>
+			<a class="dropdown-item" href="<?=Http_Request::currentURI(['action'=>'add', 'type'=>$type], ['id', 'option_id', 'page'])?>" ><?=$label?></a>
+		<?php endforeach; ?>
+	</div>
+</div>

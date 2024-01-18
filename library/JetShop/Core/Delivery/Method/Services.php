@@ -13,11 +13,8 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 
 use JetApplication\Delivery_Method;
-use JetApplication\Services_Service;
 
-/**
- *
- */
+
 #[DataModel_Definition(
 	name: 'delivery_method_service',
 	database_table_name: 'delivery_methods_services',
@@ -26,64 +23,37 @@ use JetApplication\Services_Service;
 )]
 abstract class Core_Delivery_Method_Services extends DataModel_Related_1toN
 {
-	#[DataModel_Definition(related_to: 'main.code')]
-	protected string $delivery_method_code = '';
+	#[DataModel_Definition(related_to: 'main.id')]
+	protected int $delivery_method_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
 	)]
-	protected string $service_code = '';
-
-	protected Services_Service|null|bool $service = null;
+	protected string $service_id = '';
 
 	public function getArrayKeyValue(): string
 	{
-		return $this->service_code;
+		return $this->service_id;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getDeliveryMethodCode(): string
+	
+	public function getDeliveryMethodId(): int
 	{
-		return $this->delivery_method_code;
+		return $this->delivery_method_id;
 	}
-
-	/**
-	 * @param string $delivery_method_code
-	 */
-	public function setDeliveryMethodCode( string $delivery_method_code ): void
+	
+	public function setDeliveryMethodId( int $delivery_method_id ): void
 	{
-		$this->delivery_method_code = $delivery_method_code;
+		$this->delivery_method_id = $delivery_method_id;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getServiceCode(): string
+	
+	public function getServiceId(): int
 	{
-		return $this->service_code;
+		return $this->service_id;
 	}
-
-	/**
-	 * @param string $service_code
-	 */
-	public function setServiceCode( string $service_code ): void
+	
+	public function setServiceId( int $service_id ): void
 	{
-		$this->service_code = $service_code;
+		$this->service_id = $service_id;
 	}
-
-	public function getService() : ?Services_Service
-	{
-		if($this->service===null) {
-			$this->service = Services_Service::get($this->service_code);
-			if(!$this->service) {
-				$this->service = false;
-			}
-		}
-
-		return $this->service ? : null;
-	}
-
 }

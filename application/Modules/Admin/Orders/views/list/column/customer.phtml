@@ -1,0 +1,28 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Order $item
+ */
+
+$item = $this->getRaw('item');
+
+//TODO: customer edit link
+?>
+<?php if($item->getBillingCompanyName()): ?>
+<?=$item->getBillingCompanyName()?><br>
+<?php endif; ?>
+<?=$item->getBillingFirstName()?> <?=$item->getBillingSurname()?><br>
+<a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
+<?=$item->getPhone()?><br>
+<?=Admin_Managers::Customer()->showLink( $item->getCustomerId() )?>

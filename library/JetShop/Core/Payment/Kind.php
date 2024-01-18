@@ -20,15 +20,14 @@ abstract class Core_Payment_Kind {
 	public const KIND_LOAN = 'loan';
 	public const KIND_LOAN_ONLINE = 'loan_online';
 	public const KIND_BANK_TRANSFER = 'bank_transfer';
-
-
-
-
+	
 	protected string $code = '';
 
 	protected string $title = '';
 
 	protected bool $module_is_required = false;
+	
+	protected bool $is_online_payment = false;
 
 	/**
 	 * @var Payment_Kind[]|null
@@ -76,6 +75,18 @@ abstract class Core_Payment_Kind {
 
 		return $list[$code];
 	}
+	
+	public function isOnlinePayment(): bool
+	{
+		return $this->is_online_payment;
+	}
+	
+	public function setIsOnlinePayment( bool $is_online_payment ): void
+	{
+		$this->is_online_payment = $is_online_payment;
+	}
+	
+	
 
 
 	/**
@@ -94,6 +105,7 @@ abstract class Core_Payment_Kind {
 			$online_payment->setCode( static::KIND_ONLINE_PAYMENT );
 			$online_payment->setTitle( Tr::_('Online payment') );
 			$online_payment->setModuleIsRequired( true );
+			$online_payment->setIsOnlinePayment( true );
 
 			$cash = new Payment_Kind();
 			$cash->setCode( static::KIND_CASH );
@@ -102,11 +114,13 @@ abstract class Core_Payment_Kind {
 			$loan = new Payment_Kind();
 			$loan->setCode( static::KIND_LOAN );
 			$loan->setTitle( Tr::_('Loan') );
+			
 
 			$loan_online = new Payment_Kind();
 			$loan_online->setCode( static::KIND_LOAN_ONLINE );
 			$loan_online->setTitle( Tr::_('Loan - online') );
 			$loan_online->setModuleIsRequired( true );
+			$loan_online->setIsOnlinePayment( true );
 
 			$bank_transfer = new Payment_Kind();
 			$bank_transfer->setCode( static::KIND_BANK_TRANSFER );

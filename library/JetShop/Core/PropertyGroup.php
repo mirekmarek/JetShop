@@ -3,7 +3,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Entity_WithShopData;
 use JetApplication\PropertyGroup_ShopData;
 use JetApplication\Shops_Shop;
 use JetApplication\Shops;
@@ -12,7 +12,7 @@ use JetApplication\Shops;
 	name: 'property_group',
 	database_table_name: 'property_groups',
 )]
-abstract class Core_PropertyGroup extends Entity_WithIDAndShopData {
+abstract class Core_PropertyGroup extends Entity_WithShopData {
 	
 	/**
 	 * @var PropertyGroup_ShopData[]

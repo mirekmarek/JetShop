@@ -1,0 +1,27 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var callable|null $buttons_renderer
+ */
+$form = $this->getRaw('form');
+$buttons_renderer = $this->getRaw('buttons_renderer');
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+		
+		<?php if( !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
+			<?php
+			if($buttons_renderer):
+				$buttons_renderer();
+			endif;
+		endif; ?>
+	</div>
+</div>
+

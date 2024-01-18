@@ -1,0 +1,32 @@
+<?php
+namespace JetApplicationModule\Shop\CashDesk;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+$cash_desk = CashDesk::get();
+?>
+<div class="selected-contact">
+	<div><b><?=Tr::_('Your e-mail:')?></b></div>
+	<div>
+		<?=$cash_desk->getEmailAddress()?>
+	</div>
+	<div>
+		<?=UI::button(Tr::_('Change email'))->setOnclick("CashDesk.customer.email.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		<?php if( $cash_desk->getCustomerRegisterOrNotBeenSet() ): ?>
+		<?=UI::button(Tr::_('Change password'))->setOnclick("CashDesk.customer.registration.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		<?php endif; ?>
+	</div>
+</div>
+<?php if($cash_desk->getPhoneHasBeenSet()): ?>
+<div class="selected-contact">
+	<div><b><?=Tr::_('Phone:')?></b></div>
+	<div>
+		<?=$cash_desk->getPhone()?>
+	</div>
+	<div>
+		<?=UI::button(Tr::_('Change phone'))->setOnclick("CashDesk.customer.phone.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+</div>
+<?php endif; ?>

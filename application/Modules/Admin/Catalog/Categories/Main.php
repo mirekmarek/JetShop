@@ -3,16 +3,18 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\Application_Module;
 use Jet\Tr;
+use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Trait;
+use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
 use JetApplication\Admin_Managers_Category;
+use JetApplication\Entity_WithShopData;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_Category
 {
-	use Admin_Managers_Trait;
+	use Admin_Entity_WithShopData_Manager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'categories';
 
@@ -42,12 +44,15 @@ class Main extends Application_Module implements Admin_Managers_Category
 		);
 	}
 	
-	public function getName( int $category_id ) : string
+	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
 	{
-		$category = Category::get($category_id);
-		if(!$category) {
-			return '';
-		}
-		return $category->getPathName();
+		return new Category();
 	}
+	
+	public static function getEntityNameReadable() : string
+	{
+		return 'category';
+	}
+	
+
 }

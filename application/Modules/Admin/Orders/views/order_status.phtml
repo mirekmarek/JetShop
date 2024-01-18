@@ -1,0 +1,22 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\MVC_View;
+use JetApplication\Order_Status_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Order_Status_ShopData $status
+ */
+$status = $this->getRaw('status');
+?>
+<div class="order-status order-status-<?=$status->getKindCode()?>">
+	<div class="order-status-kind"><?=$status->getKindTitle()?></div>
+	<div class="order-status-title"><?=$status->getName()?></div>
+</div>

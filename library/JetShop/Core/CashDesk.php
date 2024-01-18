@@ -1,264 +1,182 @@
 <?php
 namespace JetShop;
 
-use Jet\Application_Module;
-use Jet\Application_Modules;
-use Jet\MVC;
-use Jet\MVC_Page_Interface;
-use Jet\Session;
 
-use JetApplication\CashDesk;
-use JetApplication\CashDesk_Delivery;
-use JetApplication\CashDesk_Payment;
-use JetApplication\CashDesk_Customer;
-use JetApplication\CashDesk_Confirm;
-use JetApplication\CashDesk_ProcessControl;
-use JetApplication\CashDesk_Order;
-use JetApplication\CashDesk_Module;
-use JetApplication\Shops;
+use JetApplication\Customer_Address;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Discounts_Discount;
+use JetApplication\Order;
+use JetApplication\Payment_Method_Option_ShopData;
+use JetApplication\Payment_Method_ShopData;
 use JetApplication\Shops_Shop;
-
-
-abstract class Core_CashDesk
-{
-	public const SESSION_NAME = 'cash_desk';
-
-	public const STEP_DELIVERY = 'delivery';
-	public const STEP_PAYMENT = 'payment';
-	public const STEP_CUSTOMER = 'customer';
-	public const STEP_CONFIRM = 'confirm';
-
-
-	use CashDesk_Delivery;
-	use CashDesk_Payment;
-	use CashDesk_Customer;
-	use CashDesk_Confirm;
-	use CashDesk_ProcessControl;
-	use CashDesk_Order;
-
-	protected static string $module_name = 'Shop.CashDesk';
-
-	protected static string $cash_desk_page_id = 'cash-desk';
-
-	protected static string $cash_desk_confirmation_page_id = 'cash-desk-confirmation';
-
-	protected static string $cash_desk_payment_page_id = 'cash-desk-payment';
-
-	protected static string $cash_desk_payment_problem_page_id = 'cash-desk-payment-problem';
-
-	protected static string $cash_desk_payment_success_page_id = 'cash-desk-payment-success';
-
-	protected static string $cash_desk_payment_notification_page_id = 'cash-desk-payment-notification';
-
-	protected static ?CashDesk $cash_desk = null;
-
-
-	protected ?Shops_Shop $shop = null;
-
-	protected ?Session $session = null;
-
-	protected bool $billing_address_editable = false;
-
-	protected bool $delivery_address_editable = false;
-
-
-	public static function getCashDeskPageId(): string
-	{
-		return static::$cash_desk_page_id;
-	}
-
-	public static function setCashDeskPageId( string $cash_desk_page_id ): void
-	{
-		static::$cash_desk_page_id = $cash_desk_page_id;
-	}
-
-	public static function getCashDeskPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-
-		return MVC::getPage(CashDesk::getCashDeskPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-
-	public static function getCashDeskPageURL(): string
-	{
-		return CashDesk::getCashDeskPage()->getURL();
-	}
-
-
-
-
-	public static function getCashDeskConfirmationPageId(): string
-	{
-		return self::$cash_desk_confirmation_page_id;
-	}
-
-	public static function setCashDeskConfirmationPageId( string $cash_desk_confirmation_page_id ): void
-	{
-		self::$cash_desk_confirmation_page_id = $cash_desk_confirmation_page_id;
-	}
-
-	public static function getCashDeskConfirmationPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-
-		return MVC::getPage(CashDesk::getCashDeskConfirmationPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-
-	public static function getCashDeskConfirmationPageURL(): string
-	{
-		return CashDesk::getCashDeskConfirmationPage()->getURL();
-	}
-
-
-
-
-
-	public static function getCashDeskPaymentPageId(): string
-	{
-		return self::$cash_desk_payment_page_id;
-	}
-
-	public static function setCashDeskPaymentPageId( string $cash_desk_payment_page_id ): void
-	{
-		self::$cash_desk_payment_page_id = $cash_desk_payment_page_id;
-	}
-
-	public static function getCashDeskPaymentPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-
-		return MVC::getPage(CashDesk::getCashDeskPaymentPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-
-	public static function getCashDeskPaymentPageURL(): string
-	{
-		return CashDesk::getCashDeskPaymentPage()->getURL();
-	}
-
-
-
-	public static function getCashDeskPaymentProblemPageId(): string
-	{
-		return self::$cash_desk_payment_problem_page_id;
-	}
-
-	public static function setCashDeskPaymentProblemPageId( string $cash_desk_payment_problem_page_id ): void
-	{
-		self::$cash_desk_payment_problem_page_id = $cash_desk_payment_problem_page_id;
-	}
-
-	public static function getCashDeskPaymentProblemPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-
-		return MVC::getPage(CashDesk::getCashDeskPaymentProblemPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-
-	public static function getCashDeskPaymentProblemPageURL(): string
-	{
-		return CashDesk::getCashDeskPaymentProblemPage()->getURL();
-	}
-
-
-
-
-	public static function getCashDeskPaymentSuccessPageId(): string
-	{
-		return self::$cash_desk_payment_success_page_id;
-	}
-
-	public static function setCashDeskPaymentSuccessPageId( string $cash_desk_payment_success_page_id ): void
-	{
-		self::$cash_desk_payment_success_page_id = $cash_desk_payment_success_page_id;
-	}
-
-	public static function getCashDeskPaymentSuccessPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-
-		return MVC::getPage(CashDesk::getCashDeskPaymentSuccessPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-
-	public static function getCashDeskPaymentSuccessPageURL(): string
-	{
-		return CashDesk::getCashDeskPaymentSuccessPage()->getURL();
-	}
-
-
-
-	public static function getCashDeskPaymentNotificationPageId(): string
-	{
-		return self::$cash_desk_payment_notification_page_id;
-	}
-
-	public static function setCashDeskPaymentNotificationPageId( string $cash_desk_payment_notification_page_id ): void
-	{
-		self::$cash_desk_payment_notification_page_id = $cash_desk_payment_notification_page_id;
-	}
-
-	public static function getCashDeskPaymentNotificationPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-
-		return MVC::getPage(CashDesk::getCashDeskPaymentNotificationPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-
-	public static function getCashDeskPaymentNotificationPageURL(): string
-	{
-		return CashDesk::getCashDeskPaymentNotificationPage()->getURL();
-	}
-
-
-
-
-
-
-
-
-
-
-	public static function getModuleName(): string
-	{
-		return static::$module_name;
-	}
-
-	public static function setModuleName( string $module_name ): void
-	{
-		static::$module_name = $module_name;
-	}
-
-
-	public static function get() : CashDesk
-	{
-		if(!static::$cash_desk) {
-			static::$cash_desk = new CashDesk( Shops::getCurrent() );
-		}
-
-		return static::$cash_desk;
-	}
-
-	public function __construct( Shops_Shop $shop )
-	{
-		$this->shop = $shop;
-	}
-
-	public function getShop() : Shops_Shop
-	{
-		return $this->shop;
-	}
-
-	protected function getSession() : Session
-	{
-		if(!$this->session) {
-			$this->session = new Session(CashDesk::SESSION_NAME);
-		}
-
-		return $this->session;
-	}
-
-	public function getModule() : CashDesk_Module|Application_Module
-	{
-		return Application_Modules::moduleInstance( CashDesk::getModuleName() );
-	}
-
+use JetApplication\CashDesk_Confirm_AgreeFlag;
+
+interface Core_CashDesk {
+	
+	public function getShop() : Shops_Shop;
+	
+	/**
+	 * @return Delivery_Method_ShopData[]
+	 */
+	public function getAvailableDeliveryMethods() : array;
+	
+	public function getDeliveryMethod( int $id ) : ?Delivery_Method_ShopData;
+	
+	public function getDefaultDeliveryMethod() : ?Delivery_Method_ShopData;
+	
+	public function getSelectedDeliveryMethod() : ?Delivery_Method_ShopData;
+	
+	public function selectDeliveryMethod( int $id ) : bool;
+	
+	public function selectPersonalTakeoverPlace( int $method_id, string $place_code ) : bool;
+	
+	public function getSelectedPersonalTakeoverPlace() : ?Delivery_PersonalTakeover_Place;
+	
+	
+	/**
+	 * @return Payment_Method_ShopData[]
+	 */
+	public function getAvailablePaymentMethods() : iterable;
+	
+	public function getDefaultPaymentMethod() : ?Payment_Method_ShopData;
+	
+	public function getSelectedPaymentMethod() : Payment_Method_ShopData;
+	
+	public function selectPaymentMethod( int $id ) : bool;
+	
+	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option_ShopData;
+	
+	public function selectPaymentMethodOption( string $option_code ) : bool;
+	
+	
+	public function getEmailAddress() : string;
+	
+	public function setEmailAddress( string $email ) : void;
+	
+	
+	public function setPassword( string $password ) : void;
+	
+	public function setNoRegistration( bool $state ) : void;
+	
+	public function getNoRegistration() : bool;
+	
+	public function getBillingAddress() : Customer_Address;
+	
+	public function setBillingAddress( Customer_Address $address ) : void;
+	
+	public function isCompanyOrder() : bool;
+	
+	public function setIsCompanyOrder( bool $state ) : void;
+	
+	public function getPhone() : string;
+	
+	public function setPhone( string $phone ) : void;
+	
+	public function hasDifferentDeliveryAddress() : bool;
+	
+	public function setHasDifferentDeliveryAddress( bool $state ) : void;
+	
+	public function getDeliveryAddress() : ?Customer_Address;
+	
+	public function setDeliveryAddress( Customer_Address $address ) : void;
+	
+	public function onCustomerLogin() : void;
+	
+	public function onCustomerLogout() : void;
+	
+	
+	
+	public function addAgreeFlag( CashDesk_Confirm_AgreeFlag $agree_flag ) : void;
+	
+	public function removeAgreeFlag( string $code ) : void;
+	
+	public function getAgreeFlag( string $code ) : ?CashDesk_Confirm_AgreeFlag;
+	
+	public function getAgreeFlagChecked( string $code ) : bool;
+	
+	/**
+	 * @return CashDesk_Confirm_AgreeFlag[]
+	 */
+	public function getAgreeFlags() : array;
+	
+	public function setAgreeFlagState( string $code, bool $state ) : void;
+	
+	
+	public function getSpecialRequirements() : string;
+	
+	public function setSpecialRequirements( string $comment ) : void;
+	
+	
+	
+	
+	
+	
+	public function isReady() : bool;
+	
+	public function isDone() : bool;
+	
+	
+	public function getCurrentStep(): string;
+	
+	public function setCurrentStep( string $step ): void;
+	
+	public function getEmailHasBeenSet() : bool;
+	
+	public function setEmailHasBeenSet( bool $state ) : void;
+	
+	
+	public function getPhoneHasBeenSet() : bool;
+	
+	public function setPhoneHasBeenSet( bool $state ) : void;
+	
+	
+	public function getCustomerRegisterOrNotBeenSet() : bool;
+	
+	public function setCustomerRegisterOrNotBeenSet( bool $state ) : void;
+	
+	public function getLoyaltyProgramSet() : bool;
+	
+	public function setLoyaltyProgramSet( bool $state ) : void;
+	
+	public function getBillingAddressHasBeenSet() : bool;
+	
+	public function setBillingAddressHasBeenSet( bool $state ) : void;
+	
+	public function getDifferentDeliveryAddressHasBeenSet() : bool;
+	
+	public function setDifferentDeliveryAddressHasBeenSet( bool $state ) : void;
+	
+	public function getDeliveryAddressHasBeenSet() : bool;
+	
+	public function setDeliveryAddressHasBeenSet( bool $state ) : void;
+	
+	
+	public function isBillingAddressEditable() : bool;
+	
+	public function setBillingAddressEditable( bool $state ) : void;
+	
+	public function isDeliveryAddressEditable() : bool;
+	
+	public function setDeliveryAddressEditable( bool $state ) : void;
+	
+	public function isDeliveryAddressDisabled() : bool;
+	
+	
+	/**
+	 * @return Discounts_Discount[]
+	 */
+	public function getDiscounts() : array;
+	
+	public function addDiscount( Discounts_Discount $discount ) : void;
+	
+	public function removeDiscount( Discounts_Discount $discount ) : void;
+	
+	
+	public function getOrder() : Order;
+	
+	public function saveOrder() : ?Order;
+	
+	public function afterOrderSave( Order $order ) : void;
+	
 }

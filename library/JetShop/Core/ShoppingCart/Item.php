@@ -1,8 +1,8 @@
 <?php
 namespace JetShop;
 
+use JetApplication\Product_ShopData;
 use JetApplication\ShoppingCart;
-use JetApplication\Product;
 
 abstract class Core_ShoppingCart_Item
 {
@@ -13,9 +13,9 @@ abstract class Core_ShoppingCart_Item
 
 	protected int $quantity = 0;
 
-	protected ?float $__forced_price_per_item = null;
-
 	protected string $check_error_message = '';
+	
+	protected ?Product_ShopData $product=null;
 
 	public function __construct( int $product_id, int $quantity )
 	{
@@ -38,9 +38,13 @@ abstract class Core_ShoppingCart_Item
 		return $this->product_id;
 	}
 
-	public function getProduct() : Product
+	public function getProduct() : ?Product_ShopData
 	{
-		return Product::get( $this->product_id );
+		if($this->product===null) {
+			$this->product = Product_ShopData::get( $this->product_id, $this->getCart()->getShop() );
+		}
+		
+		return $this->product;
 	}
 
 	public function getQuantity() : int
@@ -50,22 +54,14 @@ abstract class Core_ShoppingCart_Item
 
 	public function isValid() : bool
 	{
-		if(!$this->product_id) {
-			return false;
-		}
-
-		$product = Product::get( $this->product_id );
-		if(!$product) {
-			return false;
-		}
-
 		if(
-			!$product->isActive() ||
-			!$product->getShopData()->isActive()
+			!$this->product_id ||
+			!$this->getProduct() ||
+			!$this->getProduct()->isActive()
 		) {
 			return false;
 		}
-
+		
 		return true;
 	}
 
@@ -83,7 +79,7 @@ abstract class Core_ShoppingCart_Item
 
 	public function getAmount() : float|int
 	{
-		return $this->quantity * $this->getProduct()->getFinalPrice();
+		return $this->quantity * $this->getProduct()->getPrice();
 	}
 
 	public function getCheckErrorMessage() : string
@@ -95,26 +91,7 @@ abstract class Core_ShoppingCart_Item
 	{
 		$this->check_error_message = $check_error_message;
 	}
-
-	public function getForcedPricePerItem() : float
-	{
-		return $this->__forced_price_per_item;
-	}
-
-	public function setForcedPricePerItem( float $_forced_price_per_item ) : void
-	{
-		$this->__forced_price_per_item = $_forced_price_per_item;
-	}
-
-	public function getPricePerItem() : float
-	{
-		if($this->__forced_price_per_item!==null) {
-			return $this->__forced_price_per_item;
-		}
-
-		return $this->getProduct()->getFinalPrice( $this->__cart->getShop() );
-	}
-
+	
 	public function checkQuantity( int $quantity, bool $generate_error_message=false ) : bool
 	{
 		//TODO:

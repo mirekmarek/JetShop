@@ -1,0 +1,22 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Listing  $listing
+ */
+
+$listing = $this->getRaw( 'listing' );
+$entity_manager = $listing->getEntityManager();
+$grid = $listing->getGrid();
+
+
+?>
+
+<?php require 'list/buttons.phtml';?>
+<?php require 'list/filter.phtml';?>
+<?php require 'list/grid_schema.phtml';?>
+
+<?=$grid->render();?>

@@ -1,0 +1,23 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Customers;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use JetApplicationModule\Admin\Entity\Listing\Listing;
+
+/**
+ * @var MVC_View $this
+ * @var Listing $listing
+ * @var Customer $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+?>
+<?=Locale::dateAndTime( $item->getRegistrationDateTime() );?>

@@ -1,0 +1,70 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+use JetApplication\KindOfProduct_Property;
+
+/**
+ * @var MVC_View   $this
+ * @var KindOfProduct_Property $property
+ */
+
+$editable = $this->getBool('editable');
+$p = $this->getRaw('property');
+?>
+	
+	<div
+		class="list-group-item sortable-item property<?=$this->getBool('property_in_group')?' property-in-group':''?>"
+		data-id="<?=$p->getPropertyId()?>"
+		style="display: grid;grid-template-columns: 20px 200px 200px 170px 170px 170px 200px 1fr;align-items: center">
+		<div>
+			<?php if($editable): ?>
+				<?=UI::icon('up-down')?>
+			<?php endif; ?>
+		</div>
+		<div>
+			<?=Admin_Managers::Property()->showName( $p->getPropertyId() ) ?>
+		</div>
+		<div>
+			<?=Admin_Managers::Property()->showActiveState( $p->getPropertyId() ) ?>
+		</div>
+		<div>
+			<?=Admin_Managers::Property()->showType( $p->getPropertyType() ) ?>
+		</div>
+		
+		<div>
+			<?php if($p->canBeVariantSelector()): ?>
+				<?php if( $editable ): ?>
+					<label><input type="checkbox" <?=$p->getIsVariantSelector()?' checked':''?> onchange="setIsVariantMaster(<?=$p->getPropertyId()?> ,this.checked)"> <?=Tr::_('Is variant selector')?></label>
+				<?php else: ?>
+					<label><input type="checkbox" disabled <?=$p->getIsVariantSelector()?' checked':''?>> <?=Tr::_('Is variant selector')?></label>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
+		<div>
+			<?php if($p->canBeFilter()): ?>
+				<?php if( $editable ): ?>
+					<label><input type="checkbox" <?=$p->getUseInFilters()?' checked':''?> onchange="setUseInFilters(<?=$p->getPropertyId()?> ,this.checked)"> <?=Tr::_('Use in filters')?></label>
+				<?php else: ?>
+					<label><input type="checkbox" disabled <?=$p->getUseInFilters()?' checked':''?>> <?=Tr::_('Use in filters')?></label>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
+		<div>
+			<?php if( $editable ): ?>
+				<label><input type="checkbox" <?=$p->getShowOnProductDetail()?' checked':''?> onchange="setShowOnProductDetail(<?=$p->getPropertyId()?> ,this.checked)"> <?=Tr::_('Show on product detail')?></label>
+			<?php else: ?>
+				<label><input type="checkbox" disabled <?=$p->getShowOnProductDetail()?' checked':''?>> <?=Tr::_('Show on product detail')?></label>
+			<?php endif; ?>
+		</div>
+		
+		<div style="text-align: right">
+			<?php if($editable): ?>
+				<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL )->setOnClick( "removeProperty({$p->getGroupId()}, {$p->getPropertyId()})" )?>
+			<?php endif; ?>
+		</div>
+	</div>

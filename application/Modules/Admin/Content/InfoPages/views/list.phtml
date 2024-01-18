@@ -93,12 +93,6 @@ $grid->getColumn('is_active')->addCustomCssStyle('width:100px');
 		<?= $filter_form->field( 'search' )->input() ?>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<table>
-			<tr>
-				<td><?=$filter_form->field('shop')->label()?></td>
-				<td><?=$filter_form->field('shop')->input()->addJsAction('onchange', 'this.form.submit()')?></td>
-			</tr>
-		</table>
 	</div>
 
 </div>

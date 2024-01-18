@@ -26,7 +26,7 @@ require 'parts/init_libs.php';
 	<div class="container-fluid">
 		<div class="page-header card text-white bg-dark">
 			<div class="card-body">
-				<h1>JetShop!</h1>
+				<h1><a href="<?=MVC::getBase()->getHomepage()->getURL()?>">JetShop!</a></h1>
 				<small>JetShop Example</small>
 
 				<div class="float-right">
@@ -54,9 +54,6 @@ require 'parts/init_libs.php';
 		</div>
 	</div>
 
-	<script type="text/javascript">
-		ShoppingCart.base_URL = '<?=ShoppingCart::getCartPageURL()?>';
-	</script>
 	<jet_module module="Shop.ShoppingCart" action="cart_popup_dialog" is_cacheable="false" />
 </body>
 </html>

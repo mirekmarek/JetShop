@@ -1,0 +1,49 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\Form;
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Property;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ * @var Property[] $properties
+ */
+
+$form = $this->getRaw('form');
+$properties = $this->getRaw('properties');
+
+$property_manager = Admin_Managers::Property();
+?>
+
+<?php foreach($properties as $property): ?>
+	<fieldset>
+		<legend style="font-size: 0.8rem"><?=$property_manager->showName( $property->getId() )?></legend>
+		<?php
+		if($property->getType()==Property::PROPERTY_TYPE_OPTIONS):
+			?>
+			<div style="margin:10px;display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;align-items: center">
+				<?php
+				foreach($form->getFields() as $field):
+					if(!str_starts_with($field->getName(), '/property/'.$property->getId().'/')) {
+						continue;
+					}
+					?><div class="<?=$field->getValue()?'bg-info':''?>" style="margin: 2px;padding: 2px;"><?=$field->input()?></div><?php
+				endforeach;
+				?>
+			</div>
+			<?php
+		else:
+			foreach($form->getFields() as $field):
+				if(!str_starts_with($field->getName(), '/property/'.$property->getId().'/')) {
+					continue;
+				}
+				
+				echo $field;
+			endforeach;
+		endif;
+		?>
+	</fieldset>
+<?php endforeach; ?>

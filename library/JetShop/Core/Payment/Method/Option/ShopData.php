@@ -5,54 +5,30 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Tr;
-use JetApplication\Entity_WithCodeAndShopData_ShopData;
-use JetApplication\Payment_Method;
+use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Payment_Method_Option;
-use JetApplication\Payment_Method_Option_ShopData;
-use JetApplication\Payment_Method_ShopData;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'payment_methods_options_shop_data',
 	database_table_name: 'payment_methods_options_shop_data',
 	parent_model_class: Payment_Method_Option::class
 )]
-abstract class Core_Payment_Method_Option_ShopData extends Entity_WithCodeAndShopData_ShopData {
-
-	public const  IMG_ICON1 = 'icon1';
-	public const  IMG_ICON2 = 'icon2';
-	public const  IMG_ICON3 = 'icon3';
+abstract class Core_Payment_Method_Option_ShopData extends Entity_WithShopData_ShopData {
 	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-		is_id: true,
-		related_to: 'main.code',
+		type: DataModel::TYPE_INT,
+		is_key: true
 	)]
-	protected string $payment_method_code = '';
-
-	protected ?Payment_Method $payment_method = null;
+	protected int $method_id = 0;
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-		is_id: true,
-		related_to: 'parent.code',
-	)]
-	protected string $option_code = '';
-
-	protected ?Payment_Method_Option $option = null;
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
-		label: 'Filter label:',
+		label: 'Name:',
 	)]
 	protected string $title = '';
 
@@ -90,26 +66,15 @@ abstract class Core_Payment_Method_Option_ShopData extends Entity_WithCodeAndSho
 		max_len: 255,
 	)]
 	protected string $image_icon3 = '';
-
-
-	public function getPaymentMethodCode() : string
+	
+	public function getMethodId(): int
 	{
-		return $this->payment_method_code;
+		return $this->method_id;
 	}
-
-	public function getPaymentMethod() : Payment_Method
+	
+	public function setMethodId( int $method_id ): void
 	{
-		return $this->payment_method;
-	}
-
-	public function getOptionCode() : int
-	{
-		return $this->option_code;
-	}
-
-	public function getOption() : Payment_Method_Option
-	{
-		return $this->option;
+		$this->method_id = $method_id;
 	}
 
 	public function getTitle() : string
@@ -142,86 +107,67 @@ abstract class Core_Payment_Method_Option_ShopData extends Entity_WithCodeAndSho
 	{
 		$this->description = $description;
 	}
-
-	public function getImageEntity() : string
+	
+	/**
+	 * @return string
+	 */
+	public function getImageIcon1(): string
 	{
-		return 'payment_method_option';
+		return $this->image_icon1;
 	}
-
-	public function getImageObjectId() : int|string
+	
+	public function setImageIcon1( string $image_icon1 ): void
 	{
-		return $this->payment_method_code;
+		$this->image_icon1 = $image_icon1;
 	}
-
-	public static function getImageClasses() : array
+	
+	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ): string
 	{
-		return [
-			Payment_Method_Option_ShopData::IMG_ICON1 => Tr::_('Icon 1' ),
-			Payment_Method_Option_ShopData::IMG_ICON2 => Tr::_('Icon 2' ),
-			Payment_Method_Option_ShopData::IMG_ICON3 => Tr::_('Icon 3' ),
-		];
+		return $this->getImageThumbnailUrl( 'icon1', $max_w, $max_h );
 	}
-
-	public function setIcon1( string $image ) : void
+	
+	
+	public function getImageIcon2(): string
 	{
-		$this->setImage( Payment_Method_ShopData::IMG_ICON1, $image );
+		return $this->image_icon2;
 	}
-
-	public function getIcon1() : string
+	
+	public function setImageIcon2( string $image_icon2 ): void
 	{
-		return $this->getImage( Payment_Method_ShopData::IMG_ICON1 );
+		$this->image_icon2 = $image_icon2;
 	}
-
-	public function getIcon1Url() : string
+	
+	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ): string
 	{
-		return $this->getImageUrl( Payment_Method_ShopData::IMG_ICON1 );
+		return $this->getImageThumbnailUrl( 'icon2', $max_w, $max_h );
 	}
-
-	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ) : string
+	
+	
+	public function getImageIcon3(): string
 	{
-		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON1, $max_w, $max_h );
+		return $this->image_icon3;
 	}
-
-
-
-	public function setIcon2( string $image ) : void
+	
+	public function setImageIcon3( string $image_icon3 ): void
 	{
-		$this->setImage( Payment_Method_ShopData::IMG_ICON2, $image );
+		$this->image_icon3 = $image_icon3;
 	}
-
-	public function getIcon2() : string
+	
+	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ): string
 	{
-		return $this->getImage( Payment_Method_ShopData::IMG_ICON2 );
+		return $this->getImageThumbnailUrl( 'icon3', $max_w, $max_h );
 	}
-
-	public function getIcon2Url() : string
+	
+	
+	public static function getListForMethod( int $method_id ) : array
 	{
-		return $this->getImageUrl( Payment_Method_ShopData::IMG_ICON2 );
+		return static::fetch(
+			where_per_model: ['payment_methods_options_shop_data'=>['method_id'=>$method_id]],
+			item_key_generator: function( Core_Payment_Method_Option_ShopData $item ) : int
+			{
+				return $item->getId();
+			}
+		);
 	}
-
-	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON2, $max_w, $max_h );
-	}
-
-
-	public function setIcon3( string $image ) : void
-	{
-		$this->setImage( Payment_Method_ShopData::IMG_ICON3, $image );
-	}
-
-	public function getIcon3() : string
-	{
-		return $this->getImage( Payment_Method_ShopData::IMG_ICON3 );
-	}
-
-	public function getIcon3Url() : string
-	{
-		return $this->getImageUrl( Payment_Method_ShopData::IMG_ICON3 );
-	}
-
-	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON3, $max_w, $max_h );
-	}
+	
 }

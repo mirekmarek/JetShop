@@ -49,7 +49,7 @@ class Listing_Column_Name extends DataListing_Column
 		$data = [];
 		
 		foreach(Shops::getListSorted() as $shop ) {
-			$data[] = $item->getShopData($shop)->getName();
+			$data[] = $item->getShopData($shop)->getFullName();
 		}
 		
 		return $data;

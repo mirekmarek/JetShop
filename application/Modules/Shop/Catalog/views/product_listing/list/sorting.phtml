@@ -1,7 +1,8 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
+use JetApplication\ProductListing;
 
 /**
  * @var MVC_View $this
@@ -9,15 +10,15 @@ use Jet\MVC_View;
  */
 
 $listing = $this->getRaw('listing');
-
 ?>
-
-<div class="sorting">
-	<?php foreach($listing->sort()->getSortOptions() as $so):
-		if($so->isActive()): ?>
-			<span class="active" style="font-weight: bolder;"><?= $so->getLabel() ?></span>
+<div class="toolbar">
+	<?php foreach($listing->getSorters() as $sorter): ?>
+		<div style="display: inline-block;padding-left: 15px;padding-right: 15px;padding-top: 10px;padding-bottom: 5px;">
+		<?php if($sorter->getIsSelected()):?>
+			<b id="product_listing_selected_sorter" data-key="<?=$sorter->getKey()?>"><?=$sorter->getLabel()?></b>
 		<?php else: ?>
-			<a onclick="ProductListing.setSort('<?= $so->getId() ?>'); return false;"><?= $so->getLabel() ?></a>
-		<?php endif;
-	endforeach; ?>
+			<button type="button" class="btn btn-link" onclick="listing.sort('<?=$sorter->getKey()?>');"><?=$sorter->getLabel()?></button>
+		<?php endif; ?>
+		</div>
+	<?php endforeach; ?>
 </div>

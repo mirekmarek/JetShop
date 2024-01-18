@@ -68,19 +68,33 @@ $filter_form = $listing->getFilterForm();
 	};
 </script>
 
-<?=$filter_form->field('categories') ?>
+<?php
+$field = $filter_form->field('categories');
 
-<div class="badge badge-<?=$filter->getSelectedCategoryIds() ? 'danger':'light'?>" style="display: grid;grid-template-columns: 100px 1fr;grid;align-items: center">
-		<div style="padding: 5px;"><?=Tr::_('Categories')?></div>
-		<div style="text-align: left">
-			<div>
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Categories'),
+	form_fields: [$field],
+	is_active:   count($filter->getSelectedCategoryIds())>0,
+	renderer:    function() use ($field, $filter) {
+		?>
+		<?=$field->input()?>
+		
+		<div>
+			<div style="width: 300px;">
 				<?=Admin_Managers::Category()->renderSelectWidget("productFilter.addCategory(selected_item.id)")?>
 			</div>
 			
 			<?php foreach( $filter->getSelectedCategoryIds() as $c_id ): ?>
-				<div style="margin: 5px;display: inline-block;padding: 3px;">
-					<?=UI::button(' '.Admin_Managers::Category()->getName( $c_id ) )->setIcon('trash')->setClass('info')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnclick("productFilter.removeCategory({$c_id})")?>
+				<div style="margin: 3px;display: inline-block;padding: 3px;">
+					<?=UI::button(' '.Admin_Managers::Category()->getName( $c_id ) )
+						->setIcon('trash')
+						->setClass('light')
+						->setSize(UI_button::SIZE_EXTRA_SMALL)
+						->setOnclick("productFilter.removeCategory({$c_id})")?>
 				</div>
 			<?php endforeach; ?>
 		</div>
-</div>
+		<?php
+	}
+);

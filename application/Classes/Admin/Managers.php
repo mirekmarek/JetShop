@@ -51,6 +51,42 @@ class Admin_Managers {
 		return static::findManager( Admin_Managers_FulltextSearch::class );
 	}
 	
+	public static function EntityListing() : Admin_Managers_Entity_Listing|Application_Module
+	{
+		return static::findManager( Admin_Managers_Entity_Listing::class );
+	}
+	
+	public static function EntityEdit_WithShopData() : Admin_Managers_Entity_Edit_WithShopData|Application_Module
+	{
+		return static::findManager( Admin_Managers_Entity_Edit_WithShopData::class );
+	}
+	
+	public static function EntityEdit_Common() : Admin_Managers_Entity_Edit_Common|Application_Module
+	{
+		return static::findManager( Admin_Managers_Entity_Edit_Common::class );
+	}
+	
+	public static function ProductFilter() : Admin_Managers_ProductFilter|Application_Module
+	{
+		return static::findManager( Admin_Managers_ProductFilter::class );
+	}
+	
+	public static function PriceFormatter() : Admin_Managers_PriceFormatter|Application_Module
+	{
+		return static::findManager( Admin_Managers_PriceFormatter::class );
+	}
+	
+	
+	public static function Order() : Admin_Managers_Order|Application_Module
+	{
+		return static::findManager( Admin_Managers_Order::class );
+	}
+	
+	public static function Customer() : Admin_Managers_Customer|Application_Module
+	{
+		return static::findManager( Admin_Managers_Customer::class );
+	}
+	
 	public static function findManager( string $manager_interface, bool $service_is_mandatory=false ) : mixed
 	{
 		if( isset(static::$managers[$manager_interface]) ) {

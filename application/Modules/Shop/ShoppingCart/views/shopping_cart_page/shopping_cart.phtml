@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\Shop\ShoppingCart;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Discounts;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View $this
+ */
+
+$cart = Shop_Managers::ShoppingCart()->getCart();
+
+if($cart->getQuantity()<1):
+	echo $this->render('shopping_cart_page/empty');
+	return;
+endif;
+
+
+$dm_code = Discounts::Manager()->getActiveModule('Code');
+?>
+<br><br><br><br>
+	<div>
+		<?=$this->render('shopping_cart_page/items')?>
+	</div>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-8">
+			
+			</div>
+			<div class="col-md-4 text-right">
+				<?php if($dm_code): ?>
+					<?=$dm_code->ShoppingCart_handle()?>
+				<?php endif; ?>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-12 text-right">
+				<?=UI::button(Tr::_('Order'))->setUrl( Shop_Managers::CashDesk()->getCashDeskPageURL())->setClass('success')?>
+			</div>
+		</div>
+	</div>
+

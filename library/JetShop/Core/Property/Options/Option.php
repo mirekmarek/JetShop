@@ -4,14 +4,11 @@ use Jet\DataModel_Definition;
 use Jet\DataModel;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Property;
-use JetApplication\Property_Options_Option_Filter;
 use JetApplication\Property_Options_Option_ShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\ProductListing;
-use JetApplication\Property_Options;
 
 #[DataModel_Definition(
 	name: 'properties_options',
@@ -21,7 +18,7 @@ use JetApplication\Property_Options;
 	default_order_by: ['priority'],
 	parent_model_class: Property::class
 )]
-abstract class Core_Property_Options_Option extends Entity_WithIDAndShopData
+abstract class Core_Property_Options_Option extends Entity_WithShopData
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -35,7 +32,6 @@ abstract class Core_Property_Options_Option extends Entity_WithIDAndShopData
 	)]
 	protected int $priority = 0;
 	
-	protected Property_Options_Option_Filter $filter;
 	
 	/**
 	 * @var Property_Options_Option_ShopData[]
@@ -70,6 +66,9 @@ abstract class Core_Property_Options_Option extends Entity_WithIDAndShopData
 	public function setPriority( int $priority ): void
 	{
 		$this->priority = $priority;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData($shop)->setPriority( $priority );
+		}
 	}
 	
 	public function getPriority(): int
@@ -104,49 +103,6 @@ abstract class Core_Property_Options_Option extends Entity_WithIDAndShopData
 		$this->is_last = $is_last;
 	}
 	
-	
-	public function getFilterLabel( ?Shops_Shop $shop = null ): string
-	{
-		return $this->getShopData( $shop )->getFilterLabel();
-	}
-	
-	public function getProductDetailLabel( ?Shops_Shop $shop = null ): string
-	{
-		return $this->getShopData( $shop )->getProductDetailLabel();
-	}
-	
-	public function getUrlParam( ?Shops_Shop $shop = null ): string
-	{
-		return $this->getShopData( $shop )->getUrlParam();
-	}
-	
-	public function getDescription( ?Shops_Shop $shop = null ): string
-	{
-		return $this->getShopData( $shop )->getDescription();
-	}
-	
-	
-	public function getImageMain( ?Shops_Shop $shop = null ): string
-	{
-		return $this->getShopData( $shop )->getImageMain();
-	}
-	
-	public function getImagePictogram( ?Shops_Shop $shop = null ): string
-	{
-		return $this->getShopData( $shop )->getImagePictogram();
-	}
-	
-	
-	public function initFilter( ProductListing $listing, Property_Options $property ): void
-	{
-		/** @noinspection PhpParamsInspection */
-		$this->filter = new Property_Options_Option_Filter( $listing, $property, $this );
-	}
-	
-	public function filter() : Property_Options_Option_Filter
-	{
-		return $this->filter;
-	}
 	
 	public static function getListForProperty( int $property_id ) : array
 	{

@@ -1,9 +1,10 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\ShoppingCart;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Shop_Managers;
 
-$cart = ShoppingCart::get();
+$cart = Shop_Managers::ShoppingCart()->getCart();
 ?>
 <div class="dropdown" style="display: inline-block">
 	<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -18,20 +19,23 @@ $cart = ShoppingCart::get();
 						?>
 					<tr>
 						<td>
-							<img src="<?=$product->getImageThumbnailUrl(50, 50)?>"/>
+							<img src="<?=$product->getImgThumbnailUrl( 0, 50, 50)?>"/>
 						</td>
 						<td>
-							<a href="<?=$product->getURL()?>"><?=$product->getName()?></a>
+							<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a>
 						</td>
 						<td>
-							<span class="small"><?=$item->getQuantity()?>x <?=Price::formatWithCurrency($item->getPricePerItem())?></span><br/>
-							<b><?=Price::formatWithCurrency($item->getAmount())?></b>
+							<span class="small"><?=$item->getQuantity()?>x <?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice())?></span><br/>
+							<b><?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
 						</td>
 					</tr>
 					<?php endforeach; ?>
 				</table>
 
-				<?=UI::button()->setClass('success')->setUrl(ShoppingCart::getCartPageURL())->setLabel(Tr::_('Proceed to checkout'))?>
+				<?=UI::button()->setClass('success')->setUrl(
+						Shop_Managers::ShoppingCart()->getCartPageURL()
+					)->setLabel(Tr::_('Proceed to checkout')
+				)?>
 			<?php else: ?>
 				<b><?=Tr::_('Shopping cart is empty');?></b>
 			<?php endif; ?>

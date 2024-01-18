@@ -1,40 +1,36 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 
 use Jet\MVC_View;
+use JetApplication\Payment_Method_ShopData;
 
 /**
  * @var MVC_View $this
- * @var Payment_Method $payment_method
+ * @var Payment_Method_ShopData $method
  */
 
 $cash_desk = CashDesk::get();
-$payment_method = $this->getRaw('payment_method');
-$pm_shd = $payment_method->getShopData($cash_desk->getShop());
+$method = $this->getRaw('payment_method');
 
-$this->setVar('payment_method', $payment_method);
+$this->setVar('payment_method', $method);
 ?>
 
-<div class="card bg-white" onclick="CashDesk.payment.select('<?= $payment_method->getCode() ?>')">
-	<div class="card-body">
-		<h5 class="card-title">
-
-			<input type="radio" name="payment_method" onclick="setTimeout(function(){CashDesk.payment.select('<?= $payment_method->getCode() ?>')}, 10);return false;" />
-			<img src="<?=$pm_shd->getIcon1ThumbnailUrl(50, 50)?>" style="padding: 5px;">
-
-			<b><?= $pm_shd->getTitle() ?></b>
-
-			<span style="padding-left: 50px;">
-				<?=$this->render('payment/price')?>
-			</span>
-
-		</h5>
-
-		<div class="card-text">
-
-			<?= $pm_shd->getDescription() ?>
-		</div>
-
+<div class="method" onclick="CashDesk.payment.select('<?= $method->getId() ?>')">
+	<div>
+		<input type="radio" name="payment_method" onclick="setTimeout(function(){CashDesk.payment.select('<?= $method->getId() ?>')}, 10);return false;" />
 	</div>
+	<div class="method-icon">
+		<?php if(($img=$method->getIcon1ThumbnailUrl(50, 50))): ?>
+			<img src="<?=$img?>" style="padding: 5px;">
+		<?php endif; ?>
+	</div>
+	<div class="method-title">
+		<b><?= $method->getTitle() ?></b><br>
+		<div>
+			<?= $method->getDescription() ?>
+		</div>
+	</div>
+	
+	<?=$this->render('payment/price')?>
 </div>

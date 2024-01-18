@@ -1,0 +1,21 @@
+<?php
+
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplicationModule\Admin\Catalog\Categories\Category;
+
+?>
+<div class="toolbar" style="margin: 0px;">
+	<div style="display: grid;grid-template-columns: 30px 1fr;align-items: center">
+		<div style="text-align: center">
+			<?=UI::icon('search');?>
+		</div>
+		<div>
+			<?=Admin_Managers::FulltextSearch()->renderWhisperer(
+				name: 'search_category',
+				object_class: Category::getEntityType(),
+				on_select: "searchResult(selected_item.object_id)"
+			)?>
+		</div>
+	</div>
+</div>

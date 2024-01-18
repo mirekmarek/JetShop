@@ -8,7 +8,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation_ShopIsID;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops_Shop;
 
 /**
@@ -18,7 +18,7 @@ use JetApplication\Shops_Shop;
 	name: 'exports_join_kind_of_product',
 	database_table_name: 'exports_join_kind_of_product',
 )]
-abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation_ShopIsID
+abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation
 {
 
 	/**

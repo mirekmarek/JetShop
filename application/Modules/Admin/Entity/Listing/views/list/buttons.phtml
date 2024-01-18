@@ -1,0 +1,61 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Listing  $listing
+ */
+
+$listing = $this->getRaw( 'listing' );
+$entity_manager = $listing->getEntityManager();
+$grid = $listing->getGrid();
+
+$listing_manager = Admin_Managers::EntityListing();
+
+$add_uri_creator = $listing_manager->getCreateUriCreator();
+
+$add_uri = $add_uri_creator();
+
+if(!$entity_manager::getCurrentUserCanCreate() && !count($listing->getExportTypes())) {
+	?>
+	<br>
+	<?php
+	return;
+}
+
+?>
+<div class="row toolbar">
+	<?php
+	if( $entity_manager::getCurrentUserCanCreate() ):
+		if( ($create_btn_renderer=$listing_manager->getCreateBtnRenderer()) ):
+			echo $create_btn_renderer();
+		else:
+		?>
+		&nbsp;&nbsp;
+		<?=UI::button_create('')->setUrl( $add_uri )->setClass(UI_button::CLASS_SUCCESS)?>
+		<?php
+		endif;
+	endif; ?>
+	
+	<?php if(count($listing->getExportTypes())): ?>
+	&nbsp;&nbsp;
+	<div class="dropdown">
+		<button class="btn btn-secondary dropdown-toggle" type="button" id="export-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=Tr::_('Export')?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="export-menu">
+			<?php foreach($listing->getExportTypes() as $type=>$title): ?>
+				<a class="dropdown-item" href="<?=Http_Request::currentURI(['export'=>$type])?>"><?=$title?></a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php endif; ?>
+
+</div>

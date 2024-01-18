@@ -1111,11 +1111,7 @@ class Auth_Visitor_User extends DataModel implements Auth_User_Interface
 	public static function getLocales(): array
 	{
 		$locales = [];
-
-		foreach( Application_Web::getBase()->getLocales() as $locale_str => $locale ) {
-			$locales[$locale_str] = $locale->getName();
-		}
-
+		
 		return $locales;
 	}
 

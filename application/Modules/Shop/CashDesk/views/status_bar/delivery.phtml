@@ -1,8 +1,8 @@
 <?php
 use Jet\Tr;
-use JetApplication\ShoppingCart;
+use JetApplication\Shop_Managers;
 ?>
-<a class="btn btn-info" href="<?= ShoppingCart::getCartPageURL()?>"><?= Tr::_('Shopping cart'); ?></a>
+<a class="btn btn-info" href="<?= Shop_Managers::ShoppingCart()->getCartPageURL()?>"><?= Tr::_('Shopping cart'); ?></a>
 <div class="btn btn-primary"><?= Tr::_('Delivery'); ?></div>
 <div class="btn btn-light text-muted"><?= Tr::_('Payment'); ?></div>
 <div class="btn btn-light text-muted"><?= Tr::_('Registration'); ?></div>

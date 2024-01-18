@@ -32,10 +32,20 @@ class Controller_Main extends MVC_Controller_Default
 	public function default_Action() : void
 	{
 		$GET = Http_Request::GET();
+		
+		$warehouses = WarehouseManagement_Warehouse::getScope();
+		
+		if(!$warehouses) {
+			return;
+		}
 
-		$tabs = UI::tabs( WarehouseManagement_Warehouse::getScope(), function( $code ) {
-			return Http_Request::currentURL(['warehouse'=>$code]);
-		},  $GET->getString('warehouse'));
+		$tabs = UI::tabs(
+			tabs: $warehouses,
+			tab_url_creator: function( $code ) {
+				return Http_Request::currentURL(['warehouse'=>$code]);
+			},
+			selected_tab_id: $GET->getString('warehouse')
+		);
 
 		$warehouse_code = $tabs->getSelectedTabId();
 

@@ -3,6 +3,6 @@ namespace JetApplication;
 
 use JetShop\Core_CashDesk;
 
-class CashDesk extends Core_CashDesk {
+interface CashDesk extends Core_CashDesk {
 
 }

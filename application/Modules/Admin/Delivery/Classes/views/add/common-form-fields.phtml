@@ -1,0 +1,21 @@
+<?php
+use JetApplication\Entity_Basic;
+use JetApplication\Admin_Entity_Common_Interface;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+$form->field('delivery_methods')->input()->addCustomCssStyle('height: 400px');
+
+?>
+<?=$form->field( 'is_default' )?>
+<?=$form->field( 'delivery_methods' )?>

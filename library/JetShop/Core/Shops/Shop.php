@@ -30,7 +30,6 @@ abstract class Core_Shops_Shop  {
 	protected int $round_precision_without_VAT = 0;
 	protected int $round_precision_VAT = 0;
 	protected int $round_precision_with_VAT = 0;
-	protected string $default_order_status_code = '';
 
 	public static function init( MVC_Base_Interface $base ) : array
 	{
@@ -299,13 +298,12 @@ abstract class Core_Shops_Shop  {
 		$this->round_precision_with_VAT = $round_precision_with_VAT;
 	}
 
-	public function getDefaultOrderStatusCode(): string
+	
+	public function getURL( array $path_fragments = [], array $GET_params = [] ) : string
 	{
-		return $this->default_order_status_code;
+		$base = MVC::getBase( $this->getBaseId() );
+		
+		return $base->getHomepage( $this->getLocale() )->getURL( $path_fragments, $GET_params );
 	}
-
-	public function setDefaultOrderStatusCode( string $default_order_status_code ): void
-	{
-		$this->default_order_status_code = $default_order_status_code;
-	}
+	
 }

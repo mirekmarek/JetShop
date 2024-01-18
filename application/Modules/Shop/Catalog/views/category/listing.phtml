@@ -2,42 +2,23 @@
 namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
+use JetApplication\Category_ShopData;
 
 /**
  * @var MVC_View   $this
- * @var Category $category
+ * @var Category_ShopData $category
  */
 
 $category = $this->getRaw('category');
 
+$subcategories = $category->getChildren();
 ?>
 
-<div class="row">
-	<div class="col-md-3">
-		<div class="card bg-light">
-			<div class="card-body" id="product_listing_filter_area">
-				<?=$this->render('product_listing/filter')?>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-9" style="padding-top: 10px;padding-bottom: 20px;">
-		<h1><?=$category->getName()?></h1>
-		<p><?=$category->getDescription()?></p>
+<h1><?=$category->getName()?></h1>
+<p><?=$category->getDescription()?></p>
 
-		<?php foreach($subcategories as $item): ?>
-			<a href="<?=$item->getUrl()?>" style="font-size: 14px;font-weight: bolder"><?=$item->getLabel()?></a>
-			<br/>
-			<?php foreach($item->getChildren() as $s_item): ?>
-				<a href="<?=$s_item->getUrl()?>" style="font-size: 10px;"><?=$s_item->getLabel()?></a>
-			<?php endforeach; ?>
-			<br/>
-		<?php endforeach; ?>
+<?php foreach($subcategories as $item): ?>
+	<a href="<?=$item->getUrl()?>" style="font-size: 14px;font-weight: bolder"><?=$item->getName()?></a>
+<?php endforeach; ?>
 
-		<div id="product_listing_list_area">
-			<?=$this->render('product_listing/list')?>
-		</div>
-	</div>
-</div>
-
-
-<?=$this->render('product_listing/init')?>
+<?=$this->render('product_listing')?>

@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\MVC_View;
 use Jet\Tr;
@@ -9,20 +9,26 @@ use Jet\UI_button;
 $cash_desk = CashDesk::get();
 
 $payment_method = $cash_desk->getSelectedPaymentMethod();
-$pm_shd = $payment_method->getShopData($cash_desk->getShop());
 
 /**
  * @var MVC_View $this
  */
 $this->setVar('payment_method', $payment_method);
-?>
-<br/>
-<div class="card">
 
-	<div class="card-body bg-light">
-		<div><b><?= Tr::_('Payment method') ?></b></div>
-		<div><?= $pm_shd->getTitle() ?> </div>
-		<div><?=$this->render('payment/price')?></div>
+$option = $cash_desk->getSelectedPaymentMethodOption();
+?>
+
+<div class="method-has-been-selected">
+	<div><b><?= Tr::_('Payment method') ?></b></div>
+	<div>
 		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.payment.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		<?= $payment_method->getTitle() ?>
+		<?php if($option): ?>
+			- <?=$option->getTitle()?>
+		<?php endif; ?>
 	</div>
+	<div>
+	</div>
+	<div><?=$this->render('payment/price')?></div>
+	
 </div>

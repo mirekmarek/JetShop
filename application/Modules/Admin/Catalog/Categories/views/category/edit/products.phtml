@@ -5,94 +5,125 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Admin_Managers;
 use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
+ * @var Controller_Main $controller
  */
-$category = Controller_Main::getCurrentCategory();
+$controller = $this->controller;
+$category = $controller->getCurrentItem();
 $form = $category->getEditForm();
 $editable = !$form->getIsReadonly();
+$auto_append = $category->getAutoAppendProducts();
+
+$p_manager = Admin_Managers::Product();
+
 
 echo $this->render('lj_start');
 ?>
-<div class="toolbar">
-	<table>
-		<tr>
-			<td>
-				<?=Tr::_('Kind of product:')?>
-			</td>
-			<td>
-				<?php if(($kind_id=$category->getKindOfProductId())):
-					?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
-				else:
-					?><b><?=Tr::_('- kind of product is not set -')?></b><?php
-				endif; ?>
-			</td>
-			<?php if($editable): ?>
-			<td style="padding-left: 30px;">
-				<?=Tr::_('Set kind of product:')?>
-			</td>
-			<td>
-					<form action="<?=Http_Request::currentURI(['action'=>'change_kind_of_product'])?>" method="post">
-						<input type="hidden" name="kind_of_product_id" id="kind_of_product_id" value="0"/>
-						
-						<table>
-							<tr>
-								<td style="width: 300px;"><?=Admin_Managers::KindOfProduct()->renderSelectWidget(
-										"$('#kind_of_product_id').val(selected_item.id);",
-										$category->getKindOfProductId()
-									)?></td>
-								<td><?=UI::button_save(Tr::_('Change')); ?></td>
-							</tr>
-						</table>
-					</form>
-			</td>
-			<?php endif; ?>
-		</tr>
-	</table>
+
+<div style="display: grid;grid-template-columns: 150px 1fr;align-items: center" class="toolbar">
+	<div style="padding-left: 30px;">
+		<?=Tr::_('Kind of product:')?>
+	</div>
+	<div>
+		<?php if($editable): ?>
+			<form action="<?=Http_Request::currentURI(['action'=>'change_kind_of_product'])?>" method="post">
+				<input type="hidden" name="kind_of_product_id" id="kind_of_product_id" value="0"/>
+				
+
+				<div style="display: grid;grid-template-columns: 400px 150px;align-items: center">
+					<div>
+						<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
+							"$('#kind_of_product_id').val(selected_item.id);",
+							$category->getKindOfProductId()
+						)?>
+					</div>
+					<div><?=UI::button_save(Tr::_('Change')); ?></div>
+				</div>
+
+			</form>
+		<?php else:
+			if(($kind_id=$category->getKindOfProductId())):
+				?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
+			else:
+				?><b><?=Tr::_('- kind of product is not set -')?></b><?php
+			endif;
+		endif; ?>
+	</div>
 </div>
+
 
 <fieldset>
 	<legend><?=Tr::_('Products')?></legend>
 	
-	<?php if($editable): ?>
+	
 	<div class="toolbar">
-		<table>
-			<tr>
-				<td>
+		
+		<?php if(!$auto_append): ?>
+			<?php if($editable): ?>
+		
+			<div style="display: grid;grid-template-columns: 150px 300px 1fr;align-items: center">
+				<div style="padding-left: 20px;">
 					<?=UI::icon('plus')?>
 					<?=Tr::_('Add product:')?>
-				</td>
-				<td><?=Admin_Managers::Product()->renderSelectWidget(
+				</div>
+				<div>
+					<?=Admin_Managers::Product()->renderSelectWidget(
 					on_select: "location='".Http_Request::currentURI()."&add_product='+selected_item.id",
 					only_type_filter:[
 							Product::PRODUCT_TYPE_REGULAR,
 							Product::PRODUCT_TYPE_VARIANT_MASTER,
 							Product::PRODUCT_TYPE_SET
-					] )?></td>
-			</tr>
-		</table>
+					] )?>
+				</div>
+				<div style="padding-left: 40px;">
+					<?=UI::button(Tr::_('Add products by filter'))
+						->setClass(UI_button::CLASS_INFO)
+						->setOnClick("$('#manual_product_append_area').toggle()");
+					?>
+					<?=UI::button(Tr::_('Remove all products'))
+						->setUrl( Http_Request::currentURI(['action'=>'remove_all_products']) )
+						->setClass(UI_button::CLASS_DANGER)
+					?>
+					<?=UI::button(Tr::_('Enable auto append mode'))
+						->setUrl( Http_Request::currentURI(['action'=>'enable_auto_append_mode']) )
+						->setClass(UI_button::CLASS_SUCCESS)
+					?>
+				</div>
+			</div>
+			
+			<div id="manual_product_append_area" style="display: none">
+				<br>
+				<?=Admin_Managers::ProductFilter()->renderCategoryManualAppendFilterForm( $category ); ?>
+			</div>
+			
+			<?php endif; ?>
+		<?php else: ?>
+			<?=Admin_Managers::ProductFilter()->renderCategoryAutoAppendFilterForm( $category, $editable ); ?>
+		<?php endif; ?>
 	</div>
-	<?php endif; ?>
 	
 	<table class="table table-striped">
 		<thead>
 		<tr>
 			<th style="width: 30px;"></th>
+			<th style="width: 100px;"></th>
 			<th></th>
 		</tr>
 		</thead>
-		<?php
-		$p_manager = Admin_Managers::Product();
-		foreach($category->getProductIds() as $p_id): ?>
+		<?php foreach($category->getProductIds() as $p_id): ?>
 		<tr>
 			<td>
-				<?php if($editable): ?>
+				<?php if($editable && !$auto_append): ?>
 				<?=UI::button_delete(' ')->setUrl(Http_Request::currentURI(set_GET_params: ['remove_product'=>$p_id]))?>
 				<?php endif; ?>
 			</td>
+			
+			<td><?=$p_manager->showActiveState($p_id)?></td>
 			<td><?=$p_manager->showName($p_id)?></td>
 		</tr>
 		<?php endforeach; ?>

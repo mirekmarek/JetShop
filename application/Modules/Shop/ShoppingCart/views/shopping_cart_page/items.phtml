@@ -1,19 +1,17 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\ShoppingCart;
 
 use Jet\MVC_View;
 use Jet\UI;
 use Jet\UI_button;
+use JetApplication\Shop_Managers;
 
 /**
  * @var MVC_View $this
  */
 
-$cart = ShoppingCart::get();
+$cart = Shop_Managers::ShoppingCart()->getCart();
 
-if($cart->getQuantity()<1):
-	echo $this->render('shopping_cart_page/empty');
-endif;
 ?>
 <table class="table table-striped">
 	<?php foreach($cart->getItems() as $item):
@@ -21,10 +19,10 @@ endif;
 		?>
 		<tr>
 			<td style="width: 90px;">
-				<img src="<?=$product->getImageThumbnailUrl(90, 90)?>"/>
+				<img src="<?=$product->getImgThumbnailUrl(0, 90, 90)?>"/>
 			</td>
 			<td>
-				<a href="<?=$product->getURL()?>"><?=$product->getName()?></a>
+				<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a>
 			</td>
 			<td style="width: 30px">
 				<?=UI::button_delete(' ')->setOnclick('ShoppingCart.remove('.$product->getId().');')->setSize(UI_button::SIZE_SMALL)?>
@@ -33,21 +31,16 @@ endif;
 				<input type="number" step="1" value="<?=$item->getQuantity()?>" style="width: 50px;" onchange="ShoppingCart.setQty(<?=$product->getId()?>, this.value)">
 			</td>
 			<td style="width: 10%">
-				<span class="small"><?=Price::formatWithCurrency($item->getPricePerItem())?></span><br/>
+				<span class="small"><?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice())?></span><br/>
 			</td>
 			<td style="width: 10%">
-				<b><?=Price::formatWithCurrency($item->getAmount())?></b>
+				<b><?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
 			</td>
 		</tr>
 	<?php endforeach; ?>
 	<tfoot>
 		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td style="font-weight: bolder;font-size: 1.5rem"><?=Price::formatWithCurrency($cart->getAmount())?></td>
+			<td colspan="6" style="font-weight: bolder;text-align:right;font-size: 1.5rem"><?=Shop_Managers::PriceFormatter()->formatWithCurrency($cart->getAmount())?></td>
 		</tr>
 	</tfoot>
 </table>

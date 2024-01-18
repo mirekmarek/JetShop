@@ -3,8 +3,12 @@ namespace JetApplication;
 
 use Jet\Form;
 
+use Closure;
+
 interface Admin_Managers_UI
 {
+	public function handleCurrentPreferredShop();
+	
 	public function initBreadcrumb() : void;
 	
 	public function renderShopDataBlocks( ?Form $form=null, ?array $shops=null, bool $inline_mode=false, ?callable $renderer=null ) : void;
@@ -21,15 +25,28 @@ interface Admin_Managers_UI
 	) : string;
 	
 	
+
 	public function renderEntityActivation(
-		Entity_WithIDAndShopData|Entity_WithCodeAndShopData $entity,
-		bool $editable
+		Entity_Basic $entity,
+		bool $editable,
+		?Closure $deactivate_url_creator = null,
+		?Closure $activate_url_creator = null,
+		?Closure $activate_completely_url_creator = null
 	) : string;
 	
+
 	public function renderEntityShopDataActivation(
-		Entity_WithIDAndShopData|Entity_WithCodeAndShopData $entity,
+		Entity_WithShopData $entity,
 		Shops_Shop $shop,
-		bool $editable
+		bool $editable,
+		?Closure $deactivate_url_creator = null,
+		?Closure $activate_url_creator = null
 	) : string;
+	
+
+	public function renderEntityFormCommonFields( Form $form ) : string;
+	
+
+	public function renderEntityToolbar( Form $form, ?callable $buttons_renderer=null ) : string;
 	
 }

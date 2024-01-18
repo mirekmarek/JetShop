@@ -23,4 +23,4 @@ require __DIR__.'/Init/HTTPRequest.php';
 require __DIR__.'/config/JetShop.php';
 
 
-//TODO: select shop by argv
+Shops::determineByCliArg( $argv );

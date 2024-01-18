@@ -1,7 +1,8 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
+use JetApplication\ProductListing;
 
 /**
  * @var MVC_View $this
@@ -14,7 +15,7 @@ $products = $listing->getVisibleProducts();
 ?>
 
 <?=$this->render('product_listing/list/sorting');?>
-<div class="products">
+<div class="products" style="display: grid;grid-template-columns: repeat(4, 1fr)">
 	<?php
 	foreach ($products as $product):
 		$this->setVar('product', $product);

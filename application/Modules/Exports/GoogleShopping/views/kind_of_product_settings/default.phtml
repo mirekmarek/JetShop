@@ -88,7 +88,7 @@ $dialog = UI::dialog('select_google_category', Tr::_('Select Google category'));
 <h2><?=Tr::_('Parameters')?></h2>
 
 <?=$param_form->start()?>
-<?php foreach( $kind_of_product->getAllPropertyIds() as $p_property ):
+<?php foreach( $kind_of_product->getPropertyIds() as $p_property ):
 	
 		$field = $param_form->field( $p_property->getId() );
 

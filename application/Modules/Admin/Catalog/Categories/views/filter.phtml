@@ -1,0 +1,43 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Categories;
+
+use Jet\Tr;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View               $this
+ * @var Controller_Main $controller
+ */
+
+$controller = $this->controller;
+$current_node = $controller->getCurrentNode();
+
+?>
+<div class="sub-toolbar">
+	<form method="get">
+		<table>
+			<tr>
+				<td><?=Tr::_('Order by:')?></td>
+				<td>
+					<select name="sort" onchange="this.form.submit()" style="width: 100%">
+						<?php foreach($this->getRaw('sort_scope') as $val=>$label): ?>
+							<option value="<?=$val?>"<?=$val==$this->getString('sort') ? ' selected' : '' ?>><?=$label?></option>
+						<?php endforeach; ?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Is active:')?></td>
+				<td>
+					
+					<select name="active" onchange="this.form.submit()" style="width: 100%">
+						<?php foreach($this->getRaw('active_filter_scope') as $val=>$label): ?>
+							<option value="<?=$val?>"<?=$val==$this->getString('active_filter') ? ' selected' : '' ?>><?=$label?></option>
+						<?php endforeach; ?>
+					</select>
+				
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

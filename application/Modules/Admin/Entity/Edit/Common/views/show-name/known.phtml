@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Basic;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Entity_Basic;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ */
+$item = $this->getRaw('item');
+?>
+<a href="<?=$item->getEditURL()?>"><?=$item->getAdminTitle()?></a>

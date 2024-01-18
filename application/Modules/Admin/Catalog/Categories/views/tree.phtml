@@ -2,32 +2,28 @@
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\Data_Tree_Node;
-use Jet\Http_Request;
 use Jet\UI;
-use Jet\Tr;
 use Jet\MVC_View;
 
 /**
  * @var MVC_View               $this
+ * @var Controller_Main $controller
  */
 
-
-$current_node = Controller_Main::getCurrentNode();
+$controller = $this->controller;
+$current_node = $controller->getCurrentNode();
 
 $editURL = function( int $id ) : string
 {
 	return $this->getController()->getControllerRouter()->action('edit')->URI($id);
 };
 
-$showCategory = function( Data_Tree_Node $node ) use ($editURL) {
+$showCategory = function( Data_Tree_Node $node ) use ($editURL, $controller) {
 	$is_active = $node->getData()['is_active'];
-	if(Category::getFilter_onlyActive() && !$is_active ) {
-		return;
-	}
 
 	$tree_icon = 'file';
 
-	$selected = $node->getId()==Controller_Main::getCurrentCategoryId();
+	$selected = $node->getId()==$controller->getCurrentCategoryId();
 
 
 	if($node->getHasChildren()) {
@@ -68,32 +64,8 @@ $showCategory = function( Data_Tree_Node $node ) use ($editURL) {
 	endif;
 };
 ?>
-
-<div class="sub-toolbar">
-	<form action="?set_filter" method="post">
-	<table>
-		<tr>
-			<td><?=Tr::_('Order by:')?></td>
-			<td>
-				<select name="order_by" onchange="this.form.submit()">
-					<?php foreach(Category::getSortScope() as $sort=>$sort_name): ?>
-						<option value="<?=$sort?>"<?=$sort==Category::getFilter_selectedSort() ? ' selected' : '' ?>><?=$sort_name?></option>
-					<?php endforeach; ?>
-				</select>
-			</td>
-			<td style="padding-left: 10px">
-				<label>
-					<input type="checkbox" name="only_active" value="1" onchange="this.form.submit()" <?=Category::getFilter_onlyActive()?' checked': ''?>/>
-					<?=Tr::_('Only active')?>
-				</label>
-			</td>
-		</tr>
-	</table>
-	</form>
-</div>
-
 <ul>
-	<?php if( Controller_Main::getCurrentCategoryId() ): ?>
+	<?php if( $controller->getCurrentCategoryId() ): ?>
 		<li><a href="<?=$editURL((int)$current_node->getParentId())?>">..</a></li>
 		<?php $showCategory( $current_node ); ?>
 

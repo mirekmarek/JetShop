@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_ProductFilter_Filter_PropertyOptions_Option;
+
+class ProductFilter_Filter_PropertyOptions_Option extends Core_ProductFilter_Filter_PropertyOptions_Option
+{
+}

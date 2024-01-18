@@ -1,50 +1,46 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 
 use Jet\MVC_View;
-use Jet\Tr;
+use JetApplication\Delivery_Method_ShopData;
 
 /**
  * @var MVC_View $this
- * @var Delivery_Method $delivery_method
+ * @var Delivery_Method_ShopData $method
  */
 
 $cash_desk = CashDesk::get();
 
 $place = $cash_desk->getSelectedPersonalTakeoverPlace();
-$delivery_method = $cash_desk->getSelectedDeliveryMethod();
-$dm_shop_data = $delivery_method->getShopData($cash_desk->getShop());
+$method = $cash_desk->getSelectedDeliveryMethod();
 
-$this->setVar('delivery_method', $delivery_method);
+$this->setVar('delivery_method', $method);
 ?>
 
-<div class="card bg-white" onclick="CashDesk.delivery.personalTakeover.startSelection()">
-	<div class="card-body bg-info">
-		<h5 class="card-title">
+<div class="method" onclick="CashDesk.delivery.personalTakeover.startSelection()">
 
-			<input type="radio" name="delivery_method" checked onclick="setTimeout(function(){CashDesk.delivery.personalTakeover.startSelection()}, 10);return false;" />
-
-			<b><?=Tr::_('Personal takeover')?> - <?=$dm_shop_data->getTitle()?></b>
-
-			<span style="padding-left: 50px;">
-				<?=$this->render('delivery/price')?>
-			</span>
-
-		</h5>
-
-		<div class="card-text">
-			Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut tempus purus at lorem. Fusce consectetuer risus a nunc. Mauris suscipit, ligula sit amet pharetra semper, nibh ante cursus purus, vel sagittis velit mauris vel metus. Maecenas sollicitudin. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Nullam justo enim, consectetuer nec
-		</div>
-
-		<div class="card-text">
-			<br>
-			<b><?=Tr::_('Selected place:')?></b><br/>
-
+	<div>
+		<input type="radio" name="delivery_method" checked onclick="setTimeout(function(){CashDesk.delivery.personalTakeover.startSelection()}, 10);return false;" />
+	</div>
+	
+	<div class="method-icon">
+		<?php if(($img=$method->getIcon1ThumbnailUrl(50, 50))): ?>
+			<img src="<?=$img?>" style="padding: 5px;">
+		<?php endif; ?>
+	</div>
+	
+	<div class="method-title">
+		<b><?=$method->getTitle()?></b>
+		
+		<div>
 			<b><?=$place->getName()?></b><br>
 			<?=$place->getStreet()?><br>
 			<?=$place->getZip()?>  <?=$place->getTown()?>
-		</div>
 
+		</div>
 	</div>
+	
+	<?=$this->render('delivery/price')?>
+
 </div>

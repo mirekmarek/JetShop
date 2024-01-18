@@ -8,19 +8,19 @@
 namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 use Jet\Application_Module;
-use Jet\Factory_MVC;
 use Jet\Tr;
-use Jet\Translator;
+use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_KindOfProduct;
-use JetApplication\Admin_Managers_Trait;
+use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
+use JetApplication\Entity_WithShopData;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_KindOfProduct
 {
-	use Admin_Managers_Trait;
+	use Admin_Entity_WithShopData_Manager_Trait;
 	
 	
 	public const ADMIN_MAIN_PAGE = 'kind-of-product';
@@ -30,32 +30,6 @@ class Main extends Application_Module implements Admin_Managers_KindOfProduct
 	public const ACTION_UPDATE = 'update_kind_of_product';
 	public const ACTION_DELETE = 'delete_kind_of_product';
 	
-	
-	public function showName( int $id ): string
-	{
-		$res = '';
-		Translator::setCurrentDictionaryTemporary(
-			$this->module_manifest->getName(),
-			function() use (&$res, $id) {
-				$kind_of_product = KindOfProduct::get($id);
-				
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar('id', $id);
-				
-				if($kind_of_product) {
-					$view->setVar('kind_of_product', $kind_of_product);
-					$res = $view->render('show-name/known');
-				} else {
-					$res = $view->render('show-name/unknown');
-				}
-
-			}
-		);
-		
-		
-		
-		return $res;
-	}
 	
 	public function renderSelectWidget( string $on_select,
                                         int $selected_kind_of_product_id=0,
@@ -74,6 +48,16 @@ class Main extends Application_Module implements Admin_Managers_KindOfProduct
 			selected_entity_title: $selected?->getInternalName(),
 			selected_entity_edit_URL: $selected?->getEditURL()
 		);
+	}
+	
+	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
+	{
+		return new KindOfProduct();
+	}
+	
+	public static function getEntityNameReadable() : string
+	{
+		return 'kind of product';
 	}
 	
 }

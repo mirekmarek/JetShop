@@ -8,7 +8,6 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Http_Request;
-use JetApplication\CashDesk;
 
 trait Controller_Main_Payment {
 
@@ -52,6 +51,10 @@ trait Controller_Main_Payment {
 		$response->addSnippet( 'overview' );
 		$response->addSnippet( 'payment' );
 		$response->addSnippet( 'customer' );
+		
+		if($cash_desk->isReady()) {
+			$cash_desk->setCurrentStep( CashDesk::STEP_CONFIRM );
+		}
 
 		$response->response();
 	}

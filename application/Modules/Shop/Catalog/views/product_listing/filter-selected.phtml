@@ -1,0 +1,34 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\ProductListing;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+if(!$listing->getFilter()->isActive()) {
+	return;
+}
+?>
+<?=$this->render('product_listing/filter-selected/basic');?>
+<?=$this->render('product_listing/filter-selected/price');?>
+<?=$this->render('product_listing/filter-selected/properties');?>
+<?=$this->render('product_listing/filter-selected/brands');?>
+
+<div style="padding: 10px;">
+	<button
+		type="button"
+		onclick="listing.cancelFilter()"
+		class="btn btn-xs btn-danger"
+	>
+		<i class="fa-regular fa-circle-xmark"></i>
+		<?=Tr::_('Cancel filter')?>
+	</button>
+	
+</div>

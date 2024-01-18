@@ -1,5 +1,7 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
+
+use JetApplication\Customer;
 
 $cash_desk = CashDesk::get();
 
@@ -27,7 +29,11 @@ if(Customer::getCurrentCustomer()) {
 				require  'customer/registration/set_password.phtml';
 			}
 		} else {
-			require  'customer/registration.phtml';
+			if(!$cash_desk->getPhoneHasBeenSet()) {
+				require  'customer/registration/phone.phtml';
+			} else {
+				require  'customer/registration.phtml';
+			}
 		}
 	}
 }

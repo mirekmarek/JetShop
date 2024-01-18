@@ -1,0 +1,41 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Product $item
+ *
+ */
+$item = $this->getRaw('item');
+$form = $this->getRaw('form');
+
+$kind_id_field = $form->field('kind_of_product_id');
+
+$kind_id_field->input()->setCustomRenderer(function() use ($kind_id_field) {
+	?>
+	<div style="display:none;">
+		<?=$this->renderByView()?>
+	</div>
+	<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
+		on_select: "document.getElementById('{$kind_id_field->getId()}').value=selected_item.id",
+		selected_kind_of_product_id: $kind_id_field->getValue()?:0
+	);?>
+	<?php
+});
+?>
+
+<?=$kind_id_field?>
+
+<?=$form->field('ean')?>
+<?=$form->field('brand_id')?>
+<?=$form->field('supplier_id')?>
+<?=$form->field('delivery_class_id')?>
+
+
+

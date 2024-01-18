@@ -77,8 +77,7 @@ abstract class Core_Services_Kind {
 	{
 		if(static::$list===null) {
 			static::$list = [];
-
-			//TODO:
+			
 			$delivery_service = new Services_Kind();
 			$delivery_service->setCode( Services_Kind::KIND_DELIVERY );
 			$delivery_service->setTitle( Tr::_('Delivery service') );

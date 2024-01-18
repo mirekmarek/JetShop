@@ -15,4 +15,9 @@ return [
 	'Completely activate' => '',
 	'Active' => '',
 	'Deactivate' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
+	'Code:' => '',
+	'Internal description:' => '',
 ];

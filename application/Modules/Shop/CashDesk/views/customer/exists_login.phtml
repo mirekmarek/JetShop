@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Form_Renderer;
 use Jet\Tr;
@@ -17,39 +17,26 @@ $form->renderer()->setDefaultFieldWidth([
 
 $form->renderer()->addJsAction('onsubmit', 'CashDesk.customer.registration.login();return false;');
 ?>
-<br/>
-<div class="card">
 
-	<div class="card-body bg-light">
-		<h2 class="card-title"><?=Tr::_('Welcome back!')?></h2>
+<div class="step-title"><?=Tr::_('Welcome back!')?></div>
 
-		<?=Tr::_('Please log in. Maybe we have a loyalty discount for you :-)')?><br />
-		<br />
-		<?=Tr::_('Please enter a valid password for your <strong>%EMAIL% </strong> user account', ['EMAIL'=>$cash_desk->getEmailAddress()])?>
-		(<a href="#" onclick="CashDesk.customer.email.back();return false;"><?=Tr::_('change e-mail')?></a>)<br />
-		<br />
-		<br />
+<?=Tr::_('Please log in. Maybe we have a loyalty discount for you :-)')?><br />
+<br />
+<?=Tr::_('Please enter a valid password for your <strong>%EMAIL% </strong> user account', ['EMAIL'=>$cash_desk->getEmailAddress()])?>
+(<a href="#" onclick="CashDesk.customer.email.back();return false;"><?=Tr::_('change e-mail')?></a>)<br />
+<br />
+<br />
 
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-3"></div>
-				<div class="col-md-6">
-					<?=$form->start()?>
-					<?=$form->message()?>
-					<?=$form->field('password')?>
 
-					<div class="text-right">
-						<?=UI::button(Tr::_('Today I prefer to continue without logging in'))->setClass('link')->setOnclick('CashDesk.customer.registration.continueWithoutRegistration();')?>
-						<?=UI::button(Tr::_('I forget password ...'))->setClass('info')->setOnclick('CustomerLogin.passwordReset.start();')?>
-						<?=UI::button(Tr::_('Continue'))->setClass('primary')->setOnclick('CashDesk.customer.registration.login();')?>
-					</div>
-					<?=$form->end()?>
+<?=$form->start()?>
+<?=$form->message()?>
+<?=$form->field('password')?>
 
-				</div>
-				<div class="col-md-3"></div>
-			</div>
-
-		</div>
-
-	</div>
+<div class="continue-button-area">
+	<?=UI::button(Tr::_('Today I prefer to continue without logging in'))->setClass('link')->setOnclick('CashDesk.customer.registration.continueWithoutRegistration();')?>
+	<?=UI::button(Tr::_('I forget password ...'))->setClass('info')->setOnclick('CustomerLogin.passwordReset.start();')?>
+	<?=UI::button(Tr::_('Continue'))->setClass('primary')->setOnclick('CashDesk.customer.registration.login();')?>
 </div>
+<?=$form->end()?>
+
+

@@ -1,0 +1,15 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw('form');
+?>
+
+<?=$form->field('internal_name');?>
+<?=$form->field('internal_code');?>
+<?=$form->field('internal_notes');?>
+

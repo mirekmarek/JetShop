@@ -1,72 +1,76 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Form_Field_MultiSelect;
+
 use Jet\MVC_View;
 use Jet\Form_Renderer;
 use Jet\Tr;
-use Jet\UI;
 use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
+ * @var Product $product
  */
 
-$product = Controller_Main::getCurrentProduct();
+$product = $this->getRaw('item');
 
 $form = $product->getParametersEditForm();
+
+$this->setVar('form', $form);
 
 $form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
 $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
 
-$kind = $product->getKind();
-?>
+$property_manager = Admin_Managers::Property();
+
+require '_toolbar.phtml';
 
 
-<?=$form->start()?>
-
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=$this->render('edit/nav_button');?>
-
-		<?php if( !$form->getIsReadonly() ): ?>
-			<?=UI::button_save()?>
-		<?php endif; ?>
-	</div>
-</div>
-
-<div class="row">
-
-	<div class="col-md-12" id="main-col">
-		<?=$this->getRaw('tabs')?>
-		<?php if($kind): ?>
+$show = function( Product $product, string $main_prefix = '' ) use ($form, $property_manager) {
+	$kind = $product->getKindOfProduct();
+	if(!$kind) {
+		return;
+	}
+	
+	?>
 		<br>
 		<div class="form-group row">
 			<div class="col-md-1"><?=Tr::_('Kind of product:')?></div>
 			<div class="col-md-8"><?=Admin_Managers::KindOfProduct()->showName($kind->getId())?></div>
 		</div>
 		<br>
-		<?php foreach( $kind->getAllPropertyIds() as $property ):
-				$prefix = '/'.$property->getId().'/';
-				
-				$value = $form->field($prefix.'value');
-				$information_in_not_available = $form->field($prefix.'information_in_not_available');
-				
-				if($value instanceof Form_Field_MultiSelect) {
-					$value->input()->addCustomCssStyle('height:300px');
+		<?php
+		foreach( $kind->getPropertyIds() as $property_id ):
+			echo $property_manager->renderProductPropertyEditFormField($form, $property_id, $main_prefix);
+		endforeach;
+};
+?>
+
+<?=$form->start()?>
+
+<div class="row">
+
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+		
+		<?php if($product->isSet()):
+			foreach($product->getSetItems() as $set_item):
+				$set_item_product = Product::get( $set_item->getItemProductId() );
+			
+				if(!$set_item_product) {
+					continue;
 				}
-				
-				$value->setLabel( Admin_Managers::Property()->showName($property->getId()) );
-				
-				echo $value;
-				
-				
 				?>
-				<div style="opacity: 0.3;position: relative;top: -13px;">
-					<?=$information_in_not_available?>
-				</div>
-				<?php endforeach; ?>
-		<?php endif; ?>
+				<fieldset>
+					<legend><a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a></legend>
+				<?php $show( $set_item_product, '/set_item/'. $set_item_product->getId()  ); ?>
+				</fieldset>
+				<?php
+			endforeach;
+			
+		else:
+			$show( $product );
+		endif; ?>
 	</div>
 </div>
 

@@ -5,4 +5,9 @@ return [
 	'Otázky a odpovědi' => '',
 	'Naše cena:' => '',
 	'Koupit' => '',
+	'Price:' => '',
+	'Buy' => '',
+	'no' => '',
+	'Description' => '',
+	'Parameters' => '',
 ];

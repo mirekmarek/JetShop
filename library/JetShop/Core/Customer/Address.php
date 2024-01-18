@@ -219,9 +219,11 @@ abstract class Core_Customer_Address extends DataModel
 	/**
 	 * @return Customer_Address[]
 	 */
-	public static function getList() : iterable
+	public static function getListForCustomer( int $customer_id ) : iterable
 	{
-		$where = [];
+		$where = [
+			'customer_id' => $customer_id
+		];
 		
 		$list = static::fetchInstances( $where );
 		
@@ -428,12 +430,30 @@ abstract class Core_Customer_Address extends DataModel
 		$this->hash = $value;
 	}
 
-	/**
-	 * @param bool $value
-	 */
-	public function setIsDefault( bool $value ) : void
+	public function setIsDefault() : void
 	{
-		$this->is_default = $value;
+		$this->is_default = true;
+		
+		static::updateData(
+			[
+				'is_default' => true
+			],
+			[
+				'id' => $this->getId()
+			]
+		);
+		
+		static::updateData(
+			[
+				'is_default' => false
+			],
+			[
+				'customer_id' => $this->getCustomerId(),
+				'AND',
+				'id !=' => $this->getId(),
+			]
+		);
+		
 	}
 
 	/**
@@ -449,28 +469,5 @@ abstract class Core_Customer_Address extends DataModel
 	{
 		$this->generateHash();
 	}
-
-	public static function setDefaultAddress( Customer_Address $address ) : void
-	{
-		Customer_Address::updateData(
-			[
-				'is_default' => true
-			],
-			[
-				'id' => $address->getId()
-			]
-		);
-
-		Customer_Address::updateData(
-			[
-				'is_default' => false
-			],
-			[
-				'customer_id' => $address->getCustomerId(),
-				'AND',
-				'id !=' => $address->getId(),
-			]
-		);
-
-	}
+	
 }

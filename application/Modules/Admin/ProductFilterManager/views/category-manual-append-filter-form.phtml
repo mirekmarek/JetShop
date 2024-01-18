@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Property;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ * @var Property[] $properties
+ */
+
+$category = $this->getRaw('category');
+
+$form = $this->getRaw('form');
+$properties = $this->getRaw('properties');
+
+$form->renderer()
+	->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 2] )
+	->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 3] );
+
+?>
+
+<?=$form->start()?>
+
+<div id="container">
+<div  id="toolbar" class="toolbar">
+	<div style="padding: 2px;display: flex;align-items: center" class="toolbar" id="toolbar">
+		<div style="padding-left: 20px;padding-right: 20px;"><b><?=Tr::_('Append products by filter')?></b></div>
+		<div>
+			<?=UI::button_save( Tr::_('Append products') )?>
+		</div>
+		
+	</div>
+</div>
+
+<div id="form-area">
+	<?php require 'form/basic.phtml'; ?>
+	<?php require 'form/properties.phtml'; ?>
+	<?php require 'form/brands.phtml'; ?>
+</div>
+
+</div>
+
+<?=$form->end()?>
+
+<?php require 'js.phtml'; ?>

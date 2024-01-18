@@ -13,7 +13,6 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 
 use JetApplication\Delivery_Class;
-use JetApplication\Delivery_Method;
 
 /**
  *
@@ -27,52 +26,41 @@ use JetApplication\Delivery_Method;
 abstract class Core_Delivery_Class_Method extends DataModel_Related_1toN
 {
 	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
+		type: DataModel::TYPE_INT,
 		is_id: true,
+		is_key: true,
 	)]
-	protected string $method_code = '';
+	protected int $method_id = 0;
 
-	#[DataModel_Definition(related_to: 'main.code')]
-	protected string $class_code = '';
-
-	protected Delivery_Method|null|bool $method = null;
+	#[DataModel_Definition(
+		related_to: 'main.id',
+		is_id: true,
+		is_key: true,
+	)]
+	protected int $class_id = 0;
 
 	public function getArrayKeyValue(): string
 	{
-		return $this->method_code;
+		return $this->method_id;
 	}
 
-	public function getMethodCode(): string
+	public function getMethodId(): string
 	{
-		return $this->method_code;
+		return $this->method_id;
 	}
 
-	public function setMethodCode( string $method_code ): void
+	public function setMethodId( int $method_id ): void
 	{
-		$this->method_code = $method_code;
-		$this->method = null;
+		$this->method_id = $method_id;
 	}
 
-	public function getClassCode(): string
+	public function getClassId(): int
 	{
-		return $this->class_code;
+		return $this->class_id;
 	}
 
-	public function setClassCode( string $class_code ): void
+	public function setClassId( int $class_id ): void
 	{
-		$this->class_code = $class_code;
+		$this->class_id = $class_id;
 	}
-
-	public function getMethod() : ?Delivery_Method
-	{
-		if($this->method===null) {
-			$this->method = Delivery_Method::get($this->method_code);
-			if(!$this->method) {
-				$this->method = false;
-			}
-		}
-
-		return $this->method ? : null;
-	}
-
 }

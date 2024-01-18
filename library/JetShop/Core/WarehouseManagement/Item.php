@@ -212,7 +212,7 @@ class Core_WarehouseManagement_Item extends DataModel
 
 	public function getWarehouse() : WarehouseManagement_Warehouse
 	{
-		return WarehouseManagement_Warehouse::get($this->getWarehouseCode());
+		//TODO: return WarehouseManagement_Warehouse::get($this->getWarehouseCode());
 	}
 
 	/**

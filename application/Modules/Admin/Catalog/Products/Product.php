@@ -3,24 +3,26 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\DataModel_Definition;
 use Jet\Form;
-use Jet\Form_Field_Checkbox;
+use Jet\Form_Field;
+use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Admin_FulltextSearch_IndexDataProvider;
 use JetApplication\Admin_Managers;
+use JetApplication\KindOfProduct;
 use JetApplication\Shops;
 use Jet\DataModel_Fetch_Instances;
-use JetApplication\Admin_Entity_Interface;
-use JetApplication\Admin_Entity_Trait;
+use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Admin_Entity_WithShopData_Trait;
 
 use JetApplication\Product as Application_Product;
-use JetApplication\Sticker;
 
-#[DataModel_Definition(
-	force_class_name: Application_Product::class
-)]
-class Product extends Application_Product implements Admin_Entity_Interface, Admin_FulltextSearch_IndexDataProvider {
-	use Admin_Entity_Trait;
+#[DataModel_Definition]
+class Product extends Application_Product implements Admin_Entity_WithShopData_Interface {
+	use Admin_Entity_WithShopData_Trait;
+	
+	use Product_Parameters;
+	use Product_Variants;
+	use Product_Set;
 	
 
 	public static function getProductTypes() : array
@@ -52,18 +54,6 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 	
 	protected function _setupForm( Form $form ) : void
 	{
-		$form->field('brand_id')->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value'
-		]);
-		$form->field('supplier_id')->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select value'
-		]);
-		
-		$this->_setupForm_stickers( $form );
-		$this->_setupForm_set( $form );
-		$this->_setupForm_variants( $form );
-		
-		
 		
 		foreach(Shops::getList() as $shop) {
 			$shop_key = $shop->getKey();
@@ -77,7 +67,7 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 			$vat_rate->setFieldValueCatcher(function( $value ) use ($shop) {
 				$this->getShopData($shop)->setVatRate( $value );
 			});
-			$vat_rate->setSelectOptions( Shops::getVatRatesScope( $shop ) );
+			$vat_rate->setSelectOptions( $shop->getVatRatesScope() );
 			$vat_rate->setIsReadonly( $form->field('/shop_data/'.$shop_key.'/vat_rate')->getIsReadonly() );
 			
 			
@@ -87,67 +77,30 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 			
 		}
 		
-	}
-	
-	protected function _setupForm_stickers( Form $form ) : void
-	{
-		foreach(Sticker::getScope() as $s_code=>$sticker_internal_name) {
-			
-			$field = new Form_Field_Checkbox('/sticker/'.$s_code, $sticker_internal_name );
-			$field->setDefaultValue( isset($this->stickers[$s_code]) );
-			$field->setFieldValueCatcher( function( $value ) {
-				if($value) {
-					$this->addSticker($value);
-				} else {
-					$this->removeSticker($value);
-				}
-			} );
-			
-			$form->addField( $field );
-		}
+		$this->_setupForm_regular( $form );
+		$this->_setupForm_set( $form );
+		$this->_setupForm_variant( $form );
+		$this->_setupForm_variantMaster( $form );
 		
 	}
 	
-	protected function _setupForm_set( Form $form ) : void
+	protected function _setupForm_regular( Form $form ) : void
 	{
-	}
-	
-	
-	protected function _setupForm_variants( Form $form ) : void
-	{
-		if($this->type!=static::PRODUCT_TYPE_VARIANT) {
+		if(!$this->isRegular()) {
 			return;
 		}
+		$form->removeField('internal_name_of_variant');
 		
-		$this->_edit_form->field('brand_id')->setIsReadonly(true);
-		$this->_edit_form->field('supplier_id')->setIsReadonly(true);
 		
-		foreach(Shops::getList() as $shop) {
-			$shop_key = $shop->getKey();
+		foreach( Shops::getList() as $shop ) {
+			$form->field('/shop_data/'.$shop->getKey().'/standard_price')->setIsReadonly( true );
+			$form->field('/shop_data/'.$shop->getKey().'/price')->setIsReadonly( true );
 			
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/vat_rate')->setIsReadonly(true);
+			$form->removeField( '/shop_data/'.$shop->getKey().'/variant_name' );
 		}
-		
-		
-		foreach(Shops::getList() as $shop) {
-			$shop_key = $shop->getKey();
-			
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/name')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/description')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/short_description')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_title')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_h1')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_description')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/seo_keywords')->setIsReadonly(true);
-			$this->_edit_form->field('/shop_data/'.$shop_key.'/internal_fulltext_keywords')->setIsReadonly(true);
-		}
-		
-		foreach(Sticker::getScope() as $sticker_code=>$sticker_internal_name) {
-			$this->_edit_form->field('/sticker/'.$sticker_code)->setIsReadonly(true);
-		}
-		
-		
 	}
+	
+	
 	
 	
 	public function getAddForm() : Form
@@ -155,10 +108,35 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 		if(!$this->_add_form) {
 			$this->_add_form = $this->createForm('add_form');
 			
+			$kind_id_field = new Form_Field_Input( 'kind_of_product_id', 'Kind of product:' );
+			$kind_id_field->setDefaultValue( $this->kind_id );
+			$kind_id_field->setErrorMessages([
+				Form_Field::ERROR_CODE_EMPTY => 'Please select kind of product',
+			]);
+			$kind_id_field->setFieldValueCatcher( function( $value ) {
+				$this->setKindId( $value );
+			} );
+			$kind_id_field->setValidator( function() use ($kind_id_field) {
+				$kind_id = $kind_id_field->getValue();
+				if(
+					!$kind_id ||
+					!KindOfProduct::exists( $kind_id )
+				) {
+					$kind_id_field->setError(Form_Field::ERROR_CODE_EMPTY);
+					return false;
+				}
+				
+				
+				return true;
+			} );
+			
+			
+			$this->_add_form->addField( $kind_id_field );
+			
 			$this->_setupForm( $this->_add_form );
 			
 			foreach(Shops::getList() as $shop) {
-				$this->_add_form->field( '/shop_data/' . $shop->getKey() . '/vat_rate' )->setDefaultValue( Shops::getDefaultVatRate( $shop ) );
+				$this->_add_form->field( '/shop_data/' . $shop->getKey() . '/vat_rate' )->setDefaultValue( $shop->getDefaultVatRate() );
 			}
 		}
 		
@@ -201,11 +179,6 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 	
 	
 	
-	
-	
-	
-	
-	
 	public function afterAdd() : void
 	{
 		foreach( Shops::getList() as $shop ) {
@@ -221,17 +194,18 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 	
 	public function afterUpdate() : void
 	{
-		$this->actualizeSetItem();
-		$this->actualizeVariant();
-		
 		Admin_Managers::FulltextSearch()->updateIndex( $this );
+		
+		switch($this->getType()) {
+			case Product::PRODUCT_TYPE_REGULAR:         $this->actualizeSetItem(); break;
+			//case Product::PRODUCT_TYPE_VARIANT:         $this->actualizeVariant(); break;
+			case Product::PRODUCT_TYPE_VARIANT_MASTER:  $this->actualizeVariantMaster(); break;
+			case Product::PRODUCT_TYPE_SET:             $this->actualizeSet(); break;
+		}
 	}
 	
 	public function afterDelete() : void
 	{
-		$this->actualizeSetItem();
-		$this->actualizeVariant();
-		
 		Admin_Managers::FulltextSearch()->deleteIndex( $this );
 	}
 	
@@ -252,7 +226,17 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 			$codes = '';
 		}
 		
-		return $this->internal_name.$codes;
+		$internal_name = $this->internal_name;
+		
+		if($this->type==static::PRODUCT_TYPE_VARIANT) {
+			$internal_name.= ' / '.$this->getShopData()?->getVariantName();
+		}
+		
+		if($this->internal_name_of_variant) {
+			$internal_name .= ' - '.$this->internal_name_of_variant;
+		}
+		
+		return $internal_name.$codes;
 	}
 	
 	public function renderActiveState() : string
@@ -265,34 +249,22 @@ class Product extends Application_Product implements Admin_Entity_Interface, Adm
 		return Main::getEditUrl( $this->id );
 	}
 	
-	public function getAdminFulltextObjectClass(): string
-	{
-		return static::getEntityType();
-	}
-	
-	public function getAdminFulltextObjectId(): string
-	{
-		return $this->id;
-	}
-	
 	public function getAdminFulltextObjectType(): string
 	{
 		return $this->getType();
 	}
-	
-	public function getAdminFulltextObjectIsActive(): bool
-	{
-		return $this->isActive();
-	}
-	
-	public function getAdminFulltextObjectTitle(): string
-	{
-		return $this->getAdminTitle();
-	}
+
 	
 	public function getAdminFulltextTexts(): array
 	{
-		return [$this->internal_name, $this->internal_code, $this->ean];
+		return [$this->internal_name, $this->internal_code, $this->ean, $this->internal_name_of_variant];
 	}
+	
+	public function getVariantMasterProduct() : ?Product
+	{
+		return static::get( $this->variant_master_product_id );
+	}
+	
+	
 	
 }

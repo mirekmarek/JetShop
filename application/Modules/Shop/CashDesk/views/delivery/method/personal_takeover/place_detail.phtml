@@ -1,9 +1,11 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_PersonalTakeover_Place;
 
 /**
  * @var MVC_View $this
@@ -12,25 +14,45 @@ use Jet\UI;
 
 $place = $this->getRaw('place');
 
-$method = Delivery_Method::get( $place->getMethodCode() );
-$shd = $method->getShopData();
+$method = Delivery_Method_ShopData::get( $place->getMethodId(), $place->getShop() );
 
 $this->setVar('delivery_method', $method);
 ?>
 
-<h4><?=$place->getName()?></h4>
-<h6><?=$shd->getTitle()?></h6>
+<div style="display: flex;align-items: center;margin: 5px;">
+	<div>
+		<?php if($method->getIcon1()): ?>
+			<img src="<?=$method->getIcon1ThumbnailUrl(80, 80);?>">
+		<?php endif; ?>
+	</div>
 
-<div>
-	<?php if($shd->getIcon1()): ?>
-		<img src="<?=$shd->getIcon1ThumbnailUrl(80, 80);?>">
-	<?php endif; ?>
+	<div style="padding: 5px;padding-left: 10px;">
+		<b style="font-size: 1.2rem"><?=$method->getTitle()?></b><br>
+		<b><?=$place->getName()?></b>
+		<br>
+		<div>
+			<?=$place->getStreet()?><br/>
+			<?=$place->getZip()?> <?=$place->getTown()?><br/>
+		</div>
+	</div>
 </div>
-<br/>
-<div>
-	<?=$place->getStreet()?><br/>
-	<?=$place->getZip()?> <?=$place->getTown()?><br/>
+
+<?php if(count($place->getImages())): ?>
+<div style="width: 330px; height: 150px;overflow: auto">
+	<div style="display: grid;grid-template-columns: 150px 150px;grid-gap: 10px;">
+		<?php foreach($place->getImages() as $image): ?>
+			<div>
+				<a href="<?=$image?>" target="_blank">
+					<img src="<?=$image?>" style="max-width: 150px;height: auto;"/>
+				</a>
+			</div>
+		<?php endforeach; ?>
+	</div>
 </div>
+<?php endif; ?>
+
+
+
 <br/>
 <div>
 	<b><?=Tr::_('Opening hours:')?></b>
@@ -50,6 +72,10 @@ $this->setVar('delivery_method', $method);
 	</table>
 </div>
 
-<div class="text-right"><?=$this->render('delivery/price')?></div>
 
-<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPlace('{$place->getMethodCode()}', '{$place->getPlaceCode()}')")?>
+
+<div class="continue-button-area">
+	<div class="price"><?=$this->render('delivery/price')?></div>
+	
+	<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPlace('{$place->getMethodId()}', '{$place->getPlaceCode()}')")?>
+</div>

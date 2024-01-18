@@ -4,7 +4,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\PropertyGroup;
 
 #[DataModel_Definition(
@@ -12,7 +12,7 @@ use JetApplication\PropertyGroup;
 	database_table_name: 'property_groups_shop_data',
 	parent_model_class: PropertyGroup::class
 )]
-abstract class Core_PropertyGroup_ShopData extends Entity_WithIDAndShopData_ShopData
+abstract class Core_PropertyGroup_ShopData extends Entity_WithShopData_ShopData
 {
 
 	#[DataModel_Definition(

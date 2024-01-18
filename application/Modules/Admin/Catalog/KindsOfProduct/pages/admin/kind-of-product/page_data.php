@@ -1,7 +1,7 @@
 <?php
 return [
 	'id' => 'kind-of-product',
-	'name' => 'Kind of Product administration',
+	'name' => 'Kind of Product',
 	'is_active' => true,
 	'SSL_required' => false,
 	'title' => 'Kinds of Product',

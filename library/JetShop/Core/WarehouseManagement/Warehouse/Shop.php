@@ -5,64 +5,33 @@
 
 namespace JetShop;
 
+use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
-use Jet\Form_Definition;
-use Jet\Form_Field;
 
-use JetApplication\Entity_WithShopRelation_ShopIsID_Trait;
-use JetApplication\WarehouseManagement_Warehouse;
 
-/**
- *
- */
+use JetApplication\Entity_WithShopRelation;
+
 #[DataModel_Definition(
 	name: 'warehouse_shop',
-	database_table_name: 'whm_warehouses_shops',
-	parent_model_class: WarehouseManagement_Warehouse::class,
-	id_controller_class: DataModel_IDController_Passive::class
+	database_table_name: 'whm_warehouses_shops'
 )]
-class Core_WarehouseManagement_Warehouse_Shop extends DataModel_Related_1toN
+class Core_WarehouseManagement_Warehouse_Shop extends Entity_WithShopRelation
 {
-	use Entity_WithShopRelation_ShopIsID_Trait;
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
-		related_to: 'main.code',
+		type: DataModel::TYPE_INT,
 		is_key: true,
 	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_HIDDEN
-	)]
-	protected string $warehouse_code = '';
+	protected int $warehouse_id = 0;
 
-	public function getArrayKeyValue(): string
+	
+	public function setWarehouseId( int $value ) : void
 	{
-		return $this->getShop()->getKey();
+		$this->warehouse_id = $value;
 	}
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setWarehouseCode( string $value ) : void
+	
+	public function getWarehouseId() : string
 	{
-		$this->warehouse_code = $value;
-		
-		if( $this->getIsSaved() ) {
-			$this->setIsNew();
-		}
-		
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getWarehouseCode() : string
-	{
-		return $this->warehouse_code;
+		return $this->warehouse_id;
 	}
 }

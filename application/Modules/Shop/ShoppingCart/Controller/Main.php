@@ -12,6 +12,8 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
+use JetApplication\Shop_Managers;
+use JetApplication\Shop_Managers_ShoppingCart;
 use JetApplication\ShoppingCart;
 
 /**
@@ -20,10 +22,16 @@ use JetApplication\ShoppingCart;
 class Controller_Main extends MVC_Controller_Default
 {
 	protected ?MVC_Controller_Router $router = null;
+	
+	protected ShoppingCart $cart;
+	protected Shop_Managers_ShoppingCart $manager;
 
 	public function getControllerRouter(): MVC_Controller_Router_Interface|MVC_Controller_Router|null
 	{
 		if(!$this->router) {
+			$this->manager = Shop_Managers::ShoppingCart();
+			$this->cart = $this->manager->getCart();
+			
 			$this->router = new MVC_Controller_Router( $this );
 
 			$this->router->setDefaultAction('default');
@@ -70,11 +78,12 @@ class Controller_Main extends MVC_Controller_Default
 
 		$product_id = $GET->getInt('buy');
 		$product_gty = $GET->getInt('gty');
-
-		$cart = ShoppingCart::get();
+		
 
 		$error_message = '';
-		if(($new_item = $cart->addItem( $product_id, $product_gty, $error_message ))) {
+		if(($new_item = $this->cart->addItem( $product_id, $product_gty, $error_message ))) {
+			$this->manager->saveCart();
+			
 			$this->view->setVar('new_item', $new_item);
 
 			AJAX::commonResponse([
@@ -96,14 +105,13 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$GET = Http_Request::GET();
 
-		$cart = ShoppingCart::get();
-
-		$cart->removeItem( $GET->getInt('remove') );
+		$this->cart->removeItem( $GET->getInt('remove') );
+		$this->manager->saveCart();
 
 		AJAX::commonResponse([
 			'ok' => true,
 			'snippets' => [
-				'shopping_cart' => $this->view->render('shopping_cart_page/items')
+				'shopping_cart' => $this->view->render('shopping_cart_page/shopping_cart')
 			]
 		]);
 	}
@@ -111,15 +119,14 @@ class Controller_Main extends MVC_Controller_Default
 	public function set_qty_Action() : void
 	{
 		$GET = Http_Request::GET();
-
-		$cart = ShoppingCart::get();
-
-		$cart->setQuantity( $GET->getInt('set_qty'), $GET->getInt('gty') );
+		
+		$this->cart->setQuantity( $GET->getInt('set_qty'), $GET->getInt('gty') );
+		$this->manager->saveCart();
 
 		AJAX::commonResponse([
 			'ok' => true,
 			'snippets' => [
-				'shopping_cart' => $this->view->render('shopping_cart_page/items')
+				'shopping_cart' => $this->view->render('shopping_cart_page/shopping_cart')
 			]
 		]);
 	}

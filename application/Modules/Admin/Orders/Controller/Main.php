@@ -7,40 +7,26 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-use Jet\Logger;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Order as Order;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\UI_messages;
 use Jet\MVC_Controller_Default;
-use Jet\Http_Headers;
-use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-use JetApplicationModule\Admin\UI\Main as UI_module;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
-
-	/**
-	 * @var ?MVC_Controller_Router_AddEditDelete
-	 */
+	
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-
-	/**
-	 * @var ?Order
-	 */
 	protected ?Order $order = null;
+	
+	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
 
-	/**
-	 *
-	 * @return MVC_Controller_Router_AddEditDelete
-	 */
+
 	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
@@ -59,11 +45,8 @@ class Controller_Main extends MVC_Controller_Default
 
 		return $this->router;
 	}
-
-	/**
-	 * @param string $current_label
-	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
+	
+	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		Admin_Managers::UI()->initBreadcrumb();
 
@@ -71,125 +54,95 @@ class Controller_Main extends MVC_Controller_Default
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
 	}
+	
+	public function getListing() : Admin_Managers_Entity_Listing
+	{
+		if(!$this->listing_manager) {
+			$this->listing_manager = Admin_Managers::EntityListing();
+			$this->listing_manager->setUp(
+				$this->module
+			);
+			
+			$this->setupListing();
+		}
+		
+		return $this->listing_manager;
+	}
+	
+	public function setupListing() : void
+	{
+		$this->listing_manager->addColumn( new Listing_Column_Number() );
+		$this->listing_manager->addColumn( new Listing_Column_Customer() );
+		$this->listing_manager->addColumn( new Listing_Column_TotalAmount() );
+		$this->listing_manager->addColumn( new Listing_Column_Items() );
+		$this->listing_manager->addColumn( new Listing_Column_DatePurchased() );
+		$this->listing_manager->addColumn( new Listing_Column_StatusId() );
+		
+		$this->listing_manager->addFilter( new Listing_Filter_Status() );
+		$this->listing_manager->addFilter( new Listing_Filter_Delivery() );
+		$this->listing_manager->addFilter( new Listing_Filter_Payment() );
+		$this->listing_manager->addFilter( new Listing_Filter_DatePurchased() );
+		$this->listing_manager->addFilter( new Listing_Filter_Customer() );
 
-	/**
-	 *
-	 */
+		//TODO: filter product
+		//TODO: filter source
+		
+		
+		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
+			$search = '%'.$search.'%';
+		
+			//TODO: better search
+			return [
+				'id *'            => $search,
+				'OR',
+				'number *'            => $search,
+				'OR',
+				'email *' => $search,
+			];
+			
+		} );
+		
+		$this->listing_manager->setDefaultColumnsSchema([
+			'shop',
+			'number',
+			'customer',
+			'total_amount',
+			'items',
+			'date_purchased',
+			'status_id'
+		]);
+		
+	}
+	
 	public function listing_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
-
-		$listing = new Listing();
-		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
-		$this->output( 'list' );
+		$this->setBreadcrumbNavigation();
+		
+		$this->content->output( $this->getListing()->renderListing() );
 	}
 
-	/**
-	 *
-	 */
+
 	public function add_Action() : void
 	{
 	}
-
-	/**
-	 *
-	 */
+	
 	public function edit_Action() : void
 	{
 		$order = $this->order;
-
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit order <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $order->getId() ] ) );
-
-		/*
-		$form = $order->getEditForm();
-
-		if( $order->catchEditForm() ) {
-
-			$order->save();
-
-			Logger::success(
-				'order_updated',
-				'Order '.$order->getId().' updated',
-				$order->getId(),
-				$order->getId(),
-				$order
-			);
-
-			UI_messages::success(
-				Tr::_( 'Order <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $order->getId() ] )
-			);
-
-			Http_Headers::reload();
-		}
-
-		$this->view->setVar( 'form', $form );
-		*/
+		
+		$this->setBreadcrumbNavigation(
+			Tr::_( 'Order <b>%NUMBER%</b>', [ 'NUMBER' => $order->getNumber() ] )
+		);
+		
 		$this->view->setVar( 'order', $order );
-
+		$this->view->setVar('listing', $this->getListing());
 		$this->output( 'edit' );
 
 	}
-
-	/**
-	 *
-	 */
+	
 	public function view_Action() : void
 	{
-		$order = $this->order;
-
-		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Order detail <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $order->getId() ] )
-		);
-
-		/*
-		$form = $order->getEditForm();
-
-		$form->setIsReadonly();
-
-		$this->view->setVar( 'form', $form );
-		$this->view->setVar( 'order', $order );
-		*/
-
-		$this->output( 'edit' );
-
-	}
-
-	/**
-	 *
-	 */
-	public function delete_Action() : void
-	{
-		$order = $this->order;
-
-		$this->_setBreadcrumbNavigation(
-			Tr::_( 'Delete order  <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $order->getId() ] )
-		);
-
-		if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
-			$order->delete();
-			Logger::success(
-				'order_deleted',
-				'Order '.$order->getId().' deleted',
-				$order->getId(),
-				$order->getId(),
-				$order
-			);
-
-			UI_messages::info(
-				Tr::_( 'Order <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $order->getId() ] )
-			);
-
-			Http_Headers::reload([], ['action', 'id']);
-		}
-
-
-		$this->view->setVar( 'order', $order );
-
-		$this->output( 'delete-confirm' );
+		$this->edit_Action();
 	}
 
 }

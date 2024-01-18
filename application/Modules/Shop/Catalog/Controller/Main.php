@@ -11,7 +11,6 @@ use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Layout;
-use Jet\Tr;
 
 /**
  *
@@ -31,7 +30,7 @@ class Controller_Main extends MVC_Controller_Default
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router( $this );
 
-			//$this->router->setDefaultAction('homepage');
+			$this->router->setDefaultAction('homepage');
 
 			$main_router = MVC::getRouter();
 			$path = $main_router->getUrlPath();
@@ -72,8 +71,6 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function homepage_Action() : void
 	{
-		Tr::setCurrentDictionary('homepage');
-
 		MVC_Layout::getCurrentLayout()->setScriptName('homepage');
 
 		$this->output('homepage');

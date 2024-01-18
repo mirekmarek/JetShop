@@ -1,9 +1,9 @@
 <?php
 namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
+use JetApplication\Admin_Managers;
 use JetApplication\WarehouseManagement_Warehouse as Warehouse;
 
-use Jet\UI;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
@@ -22,27 +22,15 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] 
 $warehouse = $this->getRaw( 'warehouse' );
 $router = $this->getController()->getControllerRouter();
 ?>
-
-
 <?=$form->start()?>
 
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()?>
-
-		<?php if( !$form->getIsReadonly() ): ?>
-			<?=UI::button_save()?>
-		<?php endif; ?>
-	</div>
-</div>
+<?=Admin_Managers::UI()->renderEntityToolbar($form)?>
 
 <div class="row">
 	<div class="col-md-12" id="main-col">
-
+		
+		<?=Admin_Managers::UI()->renderEntityFormCommonFields($form)?>
 		<?=$form->field( 'is_active' )?>
-		<?=$form->field( 'code' )?>
-		<?=$form->field( 'internal_name' )?>
-		<?=$form->field( 'internal_description' )?>
 		<?=$form->field( 'shops' )?>
 		<?=$form->field( 'address_street_no' )?>
 		<?=$form->field( 'address_country' )?>

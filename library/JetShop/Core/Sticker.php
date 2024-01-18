@@ -5,7 +5,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 
-use JetApplication\Entity_WithCodeAndShopData;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Sticker_ShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
@@ -14,7 +14,7 @@ use JetApplication\Shops_Shop;
 	name: 'stickers',
 	database_table_name: 'stickers',
 )]
-abstract class Core_Sticker extends Entity_WithCodeAndShopData {
+abstract class Core_Sticker extends Entity_WithShopData {
 
 
 	#[DataModel_Definition(

@@ -1,0 +1,130 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\KindOfProduct;
+use JetApplication\Property_ShopData;
+use JetApplication\PropertyGroup_ShopData;
+use JetApplication\Product_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_ShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$kind_of_product_id = $product->getKindId();
+$kind_of_product = null;
+if( $kind_of_product_id ) {
+	$kind_of_product = KindOfProduct::load( $kind_of_product_id );
+}
+
+/**
+ * @var MVC_View $this
+ * @var Property_ShopData[] $properties
+ * @var PropertyGroup_ShopData[] $groups
+ */
+
+$showProperty = null;
+$layout = null;
+if($kind_of_product) {
+	$groups = [];
+	$properties = [];
+	
+	$layout = $kind_of_product->getProductDetailLayout( $groups, $properties );
+	
+	if($layout) {
+		$showProperty = function( $property_id ) use ($properties, $product) {
+			$property = $properties[$property_id];
+			$property->assocToProduct( $product->getEntityId() );
+			
+			$this->setVar('property', $property);
+			$v = $this->render('product/detail/parameters/'.$property->getType());
+			if(!$v) {
+				return;
+			}
+			?>
+			<tr>
+				<td nowrap=""><?=$property->getLabel()?>:</td>
+				<td style="width: 100%"><?=$v?></td>
+			</tr>
+			<?php
+		};
+	}
+	
+}
+
+
+$categories = $product->getCategories();
+
+$tabs = [
+	'description' => Tr::_('Description'),
+];
+
+if( $showProperty ) {
+	$tabs['parameters'] = Tr::_('Parameters');
+}
+
+if( $categories ) {
+	$tabs['categories'] = Tr::_('Categories');
+}
+
+$tabs = UI::tabsJS('product_params', $tabs);
+
+
+echo $tabs->start();
+echo $tabs->getTab('description')->content()->start();
+	echo $product->getDescription();
+echo $tabs->getTab('description')->content()->end();
+
+if($showProperty):
+echo $tabs->getTab('parameters')->content()->start();
+	?>
+	<table class="table table-striped">
+		<?php foreach($layout as $k=>$v):
+			if(is_array($v)):
+				$group_id = $k;
+				$property_ids = $v;
+				
+				$group = $groups[$group_id];
+				?>
+				<tr>
+					<td colspan="2"><b><?=$group->getLabel()?></b></td>
+				</tr>
+				<?php
+				foreach($v as $property_id):
+					$showProperty( $property_id );
+				endforeach;
+			else:
+				$showProperty( $v );
+			endif;
+		endforeach; ?>
+	</table>
+	<?php
+echo $tabs->getTab('parameters')->content()->end();
+endif;
+
+if($categories):
+	echo $tabs->getTab('categories')->content()->start();
+	?>
+	<table class="table table-striped">
+		<?php foreach($categories as $category): ?>
+		<tr>
+			<td>
+				<a href="<?=$category->getURL()?>">
+					<?=$category->getPathName()?>
+				</a>
+			</td>
+		</tr>
+		<?php endforeach; ?>
+	</table>
+	<?php
+	echo $tabs->getTab('categories')->content()->end();
+endif;
+
+echo $tabs->end();
+?>
+

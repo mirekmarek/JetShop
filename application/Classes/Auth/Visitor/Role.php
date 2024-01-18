@@ -13,7 +13,6 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Auth_Role_Interface;
 use Jet\Data_Forest;
-use Jet\Data_Tree;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
@@ -430,46 +429,7 @@ class Auth_Visitor_Role extends DataModel implements Auth_Role_Interface
 	{
 
 		$forest = new Data_Forest();
-
-
-		$base = Application_Web::getBase();
-		foreach( $base->getLocales() as $locale ) {
-
-			$homepage = $base->getHomepage( $locale );
-
-			$tree = new Data_Tree();
-			$tree->setAdoptOrphans( true );
-
-			$tree->getRootNode()->setId( $homepage->getKey() );
-			$tree->getRootNode()->setLabel(
-				$homepage->getBase()->getName() . ' (' . $homepage->getLocale()->getName() . ')' . ' - ' . $homepage->getName()
-			);
-
-			$pages = [];
-			foreach( $homepage->getChildren() as $page ) {
-				static::_getPagesTree( $page, $pages );
-			}
-
-			$tree->setData( $pages );
-
-			$forest->appendTree( $tree );
-		}
-
-
-		foreach( $forest as $node ) {
-			//$node->setLabel( $node->getLabel().' ('.$node->getId().')' );
-
-			if( $node->getIsRoot() ) {
-				$node->setSelectOptionCssStyle( 'font-weight:bolder;font-size:15px;padding: 3px;' );
-			} else {
-				$padding = 20 * $node->getDepth();
-				$node->setSelectOptionCssStyle(
-					'padding-left: ' . $padding . 'px;padding-top:2px; padding-bottom:2px; font-size:12px;'
-				);
-			}
-
-		}
-
+		
 		return $forest;
 	}
 

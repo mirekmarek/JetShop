@@ -9,8 +9,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\KindOfProduct;
+use JetApplication\KindOfProduct_Property;
 
 /**
  *
@@ -20,7 +21,7 @@ use JetApplication\KindOfProduct;
 	database_table_name: 'kind_of_product_shop_data',
 	parent_model_class: KindOfProduct::class,
 )]
-abstract class Core_KindOfProduct_ShopData extends Entity_WithIDAndShopData_ShopData
+abstract class Core_KindOfProduct_ShopData extends Entity_WithShopData_ShopData
 {
 	
 	#[DataModel_Definition(
@@ -100,5 +101,21 @@ abstract class Core_KindOfProduct_ShopData extends Entity_WithIDAndShopData_Shop
 	public function getImagePictogram() : string
 	{
 		return $this->image_pictogram;
+	}
+	
+	public static function getFilterablePropertyIds( array $kind_of_product_ids ) : array
+	{
+		$property_ids = KindOfProduct_Property::dataFetchCol(
+			select: ['property_id'],
+			where: [
+				'kind_of_product_id' => $kind_of_product_ids,
+				'AND',
+				'can_be_filter' => true
+			]
+		);
+		
+		$property_ids = array_unique( $property_ids );
+		
+		return $property_ids;
 	}
 }

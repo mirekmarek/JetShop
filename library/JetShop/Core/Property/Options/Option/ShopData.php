@@ -4,7 +4,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Property_Options_Option;
 
 #[DataModel_Definition(
@@ -12,7 +12,7 @@ use JetApplication\Property_Options_Option;
 	database_table_name: 'properties_options_shop_data',
 	parent_model_class: Property_Options_Option::class
 )]
-abstract class Core_Property_Options_Option_ShopData extends Entity_WithIDAndShopData_ShopData
+abstract class Core_Property_Options_Option_ShopData extends Entity_WithShopData_ShopData
 {
 	
 	#[DataModel_Definition(
@@ -21,6 +21,13 @@ abstract class Core_Property_Options_Option_ShopData extends Entity_WithIDAndSho
 		related_to: 'main.id',
 	)]
 	protected int $option_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $priority = 0;
+	
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -64,16 +71,6 @@ abstract class Core_Property_Options_Option_ShopData extends Entity_WithIDAndSho
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 999999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Keywords for internal fulltext:'
-	)]
-	protected string $internal_fulltext_keywords = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
 	protected string $image_main = '';
@@ -95,6 +92,18 @@ abstract class Core_Property_Options_Option_ShopData extends Entity_WithIDAndSho
 	{
 		$this->option_id = $option_id;
 	}
+	
+	public function getPriority(): int
+	{
+		return $this->priority;
+	}
+	
+	public function setPriority( int $priority ): void
+	{
+		$this->priority = $priority;
+	}
+	
+	
 
 	public function setOption( Property_Options_Option $option ) : void
 	{
@@ -108,7 +117,12 @@ abstract class Core_Property_Options_Option_ShopData extends Entity_WithIDAndSho
 
 	public function setFilterLabel( string $filter_label ) : void
 	{
+		if($this->filter_label==$filter_label) {
+			return;
+		}
 		$this->filter_label = $filter_label;
+		$this->url_param = $this->_generateURLParam( $this->filter_label );
+		
 	}
 
 	public function getProductDetailLabel() : string
@@ -140,16 +154,7 @@ abstract class Core_Property_Options_Option_ShopData extends Entity_WithIDAndSho
 	{
 		$this->description = $description;
 	}
-
-	public function getInternalFulltextKeywords() : string
-	{
-		return $this->internal_fulltext_keywords;
-	}
-
-	public function setInternalFulltextKeywords( string $internal_fulltext_keywords ) : void
-	{
-		$this->internal_fulltext_keywords = $internal_fulltext_keywords;
-	}
+	
 	
 	public function setImageMain( string $image_main ) : void
 	{

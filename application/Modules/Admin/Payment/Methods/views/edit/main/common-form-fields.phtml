@@ -1,0 +1,20 @@
+<?php
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ */
+
+$form = $this->getRaw('form');
+
+$form->field( 'delivery_methods' )->input()->addCustomCssStyle('height: 300px');
+$form->field( 'services' )->input()->addCustomCssStyle('height: 200px');
+?>
+
+<?=$form->field( 'kind' )?>
+<?=$form->field( 'backend_module_name' )?>
+<?=$form->field( 'delivery_methods' )?>
+<?=$form->field( 'services' )?>
+

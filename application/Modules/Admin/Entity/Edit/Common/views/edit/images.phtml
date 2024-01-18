@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\Common;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+?>
+
+<?php require 'toolbar.phtml'; ?>
+
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		
+		<?php
+		echo $this->getRaw('tabs');
+		echo Admin_Managers::Image()->renderStandardManagement();
+		?>
+	</div>
+</div>
+

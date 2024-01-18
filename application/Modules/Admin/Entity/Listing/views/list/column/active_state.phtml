@@ -1,0 +1,33 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Entity_WithShopData;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithShopData|Admin_Entity_WithShopData_Interface $item
+ * @var Listing_Column_ActiveState $col
+ */
+
+$col = $this->getRaw('column');
+$item = $this->getRaw('item');
+
+if($item->isActive()):
+	?><span class="badge badge-success"> <?=Tr::_('Active')?> </span> <?php
+else:
+	?><span class="badge badge-danger"><?=Tr::_('Inactive')?></span> <?php
+endif;
+
+if($col->isMultiShopMode()):
+	foreach(Shops::getListSorted() as $shop):
+		if($item->getShopData($shop)->isActiveForShop()):
+			?><span class="badge badge-success"><?=$shop->getShopName()?></span> <?php
+		else:
+			?><span class="badge badge-danger"><?=$shop->getShopName()?></span> <?php
+		endif;
+	endforeach;
+endif;

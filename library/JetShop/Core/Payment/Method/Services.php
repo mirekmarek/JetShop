@@ -26,52 +26,41 @@ use JetApplication\Services_Service;
 )]
 abstract class Core_Payment_Method_Services extends DataModel_Related_1toN
 {
-	#[DataModel_Definition(related_to: 'main.code')]
-	protected string $payment_method_code = '';
+	#[DataModel_Definition(related_to: 'main.id')]
+	protected string $payment_method_id = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
 	)]
-	protected string $service_code = '';
+	protected string $service_id = '';
 
 	protected Services_Service|null|bool $service = null;
 
 	public function getArrayKeyValue(): string
 	{
-		return $this->service_code;
+		return $this->service_id;
 	}
 
-	public function getPaymentMethodCode(): string
+	public function getPaymentMethodId(): int
 	{
-		return $this->payment_method_code;
+		return $this->payment_method_id;
 	}
 
-	public function setPaymentMethodCode( string $payment_method_code ): void
+	public function setPaymentMethodId( int $payment_method_id ): void
 	{
-		$this->payment_method_code = $payment_method_code;
+		$this->payment_method_id = $payment_method_id;
 	}
 
-	public function getServiceCode(): string
+	public function getServiceId(): int
 	{
-		return $this->service_code;
+		return $this->service_id;
 	}
 
-	public function setServiceCode( string $service_code ): void
+	public function setServiceId( int $service_id ): void
 	{
-		$this->service_code = $service_code;
+		$this->service_id = $service_id;
 	}
-
-	public function getService() : ?Services_Service
-	{
-		if($this->service===null) {
-			$this->service = Services_Service::get($this->service_code);
-			if(!$this->service) {
-				$this->service = false;
-			}
-		}
-
-		return $this->service ? : null;
-	}
+	
 
 }

@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\Discounts\Code;
+
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Discounts_Code;
+
+/**
+ * @var MVC_View   $this
+ * @var Discounts_Code|null $used_code
+ * @var Main $module
+ */
+
+$module = $this->getRaw('module');
+
+$form = $module->getUseCodeForm();
+
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 0
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 10
+]);
+
+$code_f = $form->field('code');
+
+$form->renderer()->addJsAction('onsubmit', 'DiscountCode.submit();return false;');
+?>
+
+<?=$form->start()?>
+	<?=$form->getCommonMessage()?>
+		<?php
+		echo $code_f->row()->start();
+			echo $code_f->container()->start();
+				echo $code_f->input();
+				echo $code_f->error();
+			echo $code_f->container()->end();
+			?>
+			<div class="col-md-2">
+				<?=UI::button(Tr::_('Use'))->setType('submit')?>
+			</div>
+			<?php
+		echo $code_f->row()->end();
+		?>
+<?=$form->end()?>

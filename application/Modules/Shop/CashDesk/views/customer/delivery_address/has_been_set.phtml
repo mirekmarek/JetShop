@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Tr;
 use Jet\UI;
@@ -9,14 +9,13 @@ $cash_desk = CashDesk::get();
 
 $da = $cash_desk->getDeliveryAddress();
 ?>
-<br/>
-<div class="card">
 
-	<div class="card-body bg-light">
+<div class="selected-contact">
+
 		<div><b><?= Tr::_('Delivery address') ?></b></div>
-
+	
+		<div>
 		<?php if($cash_desk->hasDifferentDeliveryAddress()): ?>
-			<div>
 				<?php if($cash_desk->isCompanyOrder()): ?>
 					<?=$da->getCompanyName()?><br>
 					<?=$da->getCompanyId()?><br>
@@ -26,13 +25,14 @@ $da = $cash_desk->getDeliveryAddress();
 				<?=$da->getFirstName()?> <?=$da->getSurname()?><br>
 				<?=$da->getAddressStreetNo()?><br/>
 				<?=$da->getAddressZip()?> <?=$da->getAddressTown()?>
-			</div>
 		<?php else: ?>
 			<?=Tr::_('Same address as the billing address')?>
 		<?php endif; ?>
+		</div>
 
 
-		<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.deliveryAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
-	</div>
+		<div>
+			<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.deliveryAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		</div>
 </div>
 

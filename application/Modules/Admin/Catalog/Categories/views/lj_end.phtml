@@ -1,54 +1,53 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 
 /**
  * @var MVC_View               $this
+ * @var Controller_Main $controller
  */
 
+$controller = $this->controller;
 ?>
-
 	</div>
 </div>
 
 
-<?php if(Main::getCurrentUserCanEdit() ):
+<?php if(Main::getCurrentUserCanEdit() && $this->getBool('allow_to_sort') ):
 	$dialog = UI::dialog('sort_categories', Tr::_('Sort categories') );
 
 	?>
 	<?=$dialog->start()?>
 	<div style="overflow: auto;">
 		<div class="sortable" id="categories-sort">
-			<?php foreach(Controller_Main::getCurrentNode()->getChildren() as $node):
+			<?php foreach($controller->getCurrentNode()->getChildren() as $node):
 				?>
 				<div class="sortable-item" data-id="<?=$node->getId()?>">
 					<i class="property-option-move"></i>
-					<?php //TODO: /*Category::renderIcon($node->getData()['type'], true)*/ ?>
 					<?=$node->getLabel()?>
 				</div>
 			<?php endforeach; ?>
 		</div>
 	</div>
 	<?=$dialog->footer()?>
-	<form action="?id=<?=Controller_Main::getCurrentCategoryId()?>&action=save_sort" method="post">
+	<form action="<?=Http_Request::currentURI(['action'=>'save_sort'])?>" method="post">
 		<input type="hidden" name="categories_sort_order" id="categories_sort_order" />
 		<?=UI::button_save()?>
 	</form>
 	<?=$dialog->end()?>
-<?php endif; ?>
 
 <script type="text/javascript">
-	<?php if(Main::getCurrentUserCanEdit()): ?>
 	const sortCategories = {
 		openDialog: function () {
 			sortCategories.setSort();
 			$('#sort_categories').modal('show');
 
 
-			$('#categories-sort').sortable({
+			$('#categories-sort')['sortable']({
 				stop: function () {
 					sortCategories.setSort();
 				}
@@ -68,5 +67,6 @@ use Jet\UI;
 
 		}
 	};
-	<?php endif; ?>
 </script>
+
+<?php endif; ?>

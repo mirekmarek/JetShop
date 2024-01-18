@@ -40,4 +40,13 @@ return [
 	'Update customer' => '',
 	'Admin.Customers' => '',
 	'Search ...' => '',
+	'Joined to customer' => '',
+	'Not active' => '',
+	'Active' => '',
+	'CSV' => '',
+	'XLSX' => '',
+	'Please select option' => '',
+	'Please enter name' => '',
+	'Unsubscribed' => '',
+	'Unregistered customer' => '',
 ];

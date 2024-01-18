@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\SetProductPrices;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View   $this
+ */
+?>
+<div style="padding-left: 170px;">
+<?php
+echo UI::button(Tr::_('Export'))
+	->setUrl(Http_Request::currentURI(set_GET_params: ['export'=>'export']))
+	->setClass(UI_button::CLASS_PRIMARY);
+?>
+</div>

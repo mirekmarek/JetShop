@@ -1,11 +1,11 @@
 <?php
 return [
-	'name' => 'Payment Method administration',
+	'name' => 'Payment Methods',
 	'is_active' => true,
-	'title' => 'Payment Method administration',
+	'title' => 'Payment Methods',
 	'icon' => 'money-check-alt',
-	'menu_title' => 'Payment Method administration',
-	'breadcrumb_title' => 'Payment Method administration',
+	'menu_title' => 'Payment Methods',
+	'breadcrumb_title' => 'Payment Methods',
 	'contents' => [
 		[
 			'controller_name' => 'Main',

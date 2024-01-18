@@ -7,8 +7,12 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
 
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Discounts_Discount;
 use JetApplication\Order;
 use JetApplication\Order_Item;
+use JetApplication\Order_Item_SetItem;
+use JetApplication\Payment_Method_ShopData;
 use JetApplication\ShoppingCart_Item;
 
 #[DataModel_Definition(
@@ -21,27 +25,12 @@ use JetApplication\ShoppingCart_Item;
 abstract class Core_Order_Item extends DataModel_Related_1toN {
 
 	public const ITEM_TYPE_PRODUCT = 'product';
-	public const ITEM_TYPE_VIRTUAL_PRODUCT = 'virtual_product';
 	public const ITEM_TYPE_SERVICE = 'service';
 	public const ITEM_TYPE_GIFT = 'gift';
 	public const ITEM_TYPE_PAYMENT = 'payment';
 	public const ITEM_TYPE_DELIVERY = 'delivery';
 	public const ITEM_TYPE_DISCOUNT = 'discount';
 
-	public const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'disc_products_amount';
-	public const DISCOUNT_TYPE_PRODUCTS_PERCENT = 'disc_products_percent';
-
-	public const DISCOUNT_TYPE_SERVICE_AMOUNT = 'disc_service_amount';
-	public const DISCOUNT_TYPE_SERVICE_PERCENT = 'disc_service_percent';
-
-	public const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'disc_delivery_amount';
-	public const DISCOUNT_TYPE_DELIVERY_PERCENT = 'disc_delivery_percent';
-
-	public const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'disc_payment_amount';
-	public const DISCOUNT_TYPE_PAYMENT_PERCENT = 'disc_payment_percent';
-
-	public const DISCOUNT_TYPE_TOTAL_AMOUNT = 'disc_total_amount';
-	public const DISCOUNT_TYPE_TOTAL_PERCENT = 'disc_total_percent';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -49,8 +38,6 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		related_to: 'main.id',
 	)]
 	protected int $order_id = 0;
-
-	protected ?Order $__order = null;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
@@ -77,7 +64,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		max_len: 100,
 		is_key: true,
 	)]
-	protected string $code = '';
+	protected string $item_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -90,7 +77,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_INT,
 		is_key: true,
 	)]
-	protected int $product_id = 0;
+	protected int $item_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -145,6 +132,7 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		type: DataModel::TYPE_DATE
 	)]
 	protected ?Data_DateTime $delivery_date = null;
+	
 
 	/**
 	 * @var string
@@ -155,22 +143,28 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		max_len: 64,
 	)]
 	protected string $warehouse_code = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $set_discount_amount = 0.0;
+	
+	/**
+	 * @var Order_Item_SetItem[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Order_Item_SetItem::class
+	)]
+	protected array $set_items = [];
 
+	
 	public function getArrayKeyValue(): string
 	{
 		return $this->id;
 	}
-
-	public function getOrder() : Order
-	{
-		return $this->__order;
-	}
-
-	public function setOrder( Order $_order ) : void
-	{
-		$this->__order = $_order;
-	}
-
+	
 
 	public function getType() : string
 	{
@@ -197,14 +191,14 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->sub_type = $sub_type;
 	}
 
-	public function getCode() : string
+	public function getItemCode() : string
 	{
-		return $this->code;
+		return $this->item_code;
 	}
 
-	public function setCode( string $code ) : void
+	public function setItemCode( string $item_code ) : void
 	{
-		$this->code = $code;
+		$this->item_code = $item_code;
 	}
 
 	public function getSubCode() : string
@@ -217,14 +211,14 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->sub_code = $sub_code;
 	}
 
-	public function getProductId() : string
+	public function getItemId() : string
 	{
-		return $this->product_id;
+		return $this->item_id;
 	}
 
-	public function setProductId( string $product_id ) : void
+	public function setItemId( string $item_id ) : void
 	{
-		$this->product_id = $product_id;
+		$this->item_id = $item_id;
 	}
 
 	public function isAvailable() : bool
@@ -278,6 +272,8 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->item_amount = $item_amount;
 		$this->total_amount = $item_amount*$this->quantity;
 	}
+	
+	
 
 	public function getVatRate() : float
 	{
@@ -298,6 +294,18 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	{
 		return $this->total_amount;
 	}
+	
+	public function getSetDiscountAmount(): float
+	{
+		return $this->set_discount_amount;
+	}
+	
+	public function setSetDiscountAmount( float $set_discount_amount ): void
+	{
+		$this->set_discount_amount = $set_discount_amount;
+	}
+	
+	
 
 	public function getDeliveryInfo() : string
 	{
@@ -329,28 +337,91 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 		$this->delivery_date = $delivery_date;
 	}
 
-	public function setDataByCartItem( ShoppingCart_Item $item, int $qty, bool $in_stock ) : void
+	public function setupByCartItem( ShoppingCart_Item $item, int $qty, bool $in_stock ) : void
 	{
 		$product = $item->getProduct();
 
-		$this->type = Order_Item::ITEM_TYPE_PRODUCT;
+		$this->setType( Order_Item::ITEM_TYPE_PRODUCT );
 
-		$this->product_id = $product->getId();
-		$this->title = $product->getFullName();
-		$this->code = $product->getInternalCode();
+		$this->setItemId( $product->getId() );
+		$this->setTitle( $product->getFullName() );
+		$this->setItemCode( $product->getInternalCode() );
+		$this->setAvailable( $in_stock );
 
-		$this->available = $in_stock;
-
-		$this->quantity = $qty;
-		$this->item_amount = $item->getPricePerItem();
-		$this->vat_rate = $product->getVatRate( $item->getCart()->getShop() );
-		$this->total_amount = $this->quantity * $this->item_amount;
+		$this->setQuantity( $qty );
+		$this->setItemAmount( $product->getPrice() );
+		$this->setVatRate( $product->getVatRate() );
+		
+		
+		if( $product->isSet() ) {
+			$set_discount = $product->getSetDiscountAmount();
+			$this->setSetDiscountAmount( $set_discount );
+			
+			foreach( $product->getSetItems() as $set_item ) {
+				$order_item_set_item = new Order_Item_SetItem();
+				$order_item_set_item->setupBySetItem( $product, $set_item, $qty, $in_stock );
+				$this->set_items[] = $order_item_set_item;
+			}
+		}
 
 
 		//TODO: $this->delivery_info = '';
 		//TODO: $this->delivery_delay = 0;
 		//TODO: $this->delivery_date = '';
 	}
+	
+	public function setupByDeliveryMethod( Delivery_Method_ShopData $delivery_method ) : void
+	{
+		$this->setType( Order_Item::ITEM_TYPE_DELIVERY );
+		$this->setItemId( $delivery_method->getId() );
+		$this->setItemCode( $delivery_method->getInternalCode() );
+		
+		$this->setAvailable( true );
+		$this->setQuantity( 1 );
+		
+		$this->setTitle( $delivery_method->getTitle() );
+		
+		$this->setItemAmount( $delivery_method->getPrice() );
+		$this->setVatRate( $delivery_method->getVatRate() );
+		
+		$this->setDescription( $delivery_method->getDescriptionShort() );
+		
+	}
+	
+	public function setupByPaymentMethod( Payment_Method_ShopData $payment_method ) : void
+	{
+		$this->setType( Order_Item::ITEM_TYPE_PAYMENT );
+		$this->setItemCode( $payment_method->getId() );
+		$this->setItemCode( $payment_method->getInternalCode() );
+		
+		$this->setAvailable( true );
+		$this->setQuantity( 1 );
+		
+		$this->setTitle( $payment_method->getTitle() );
+		
+		$this->setItemAmount( $payment_method->getPrice() );
+		$this->setVatRate( $payment_method->getVatRate() );
+		
+		$this->setDescription( $payment_method->getDescriptionShort() );
+		
+	}
+	
+	public function setupByDiscount( Discounts_Discount $discount ) : void
+	{
+		$this->setType( Order_Item::ITEM_TYPE_DISCOUNT );
+		$this->setSubType( $discount->getDiscountType() );
+		$this->setItemCode( $discount->getDiscountModule() );
+		$this->setSubCode( $discount->getDiscountContext() );
+		
+		$this->setAvailable( true );
+		$this->setQuantity( 1 );
+		
+		$this->setTitle( $discount->getDescription() );
+		$this->setItemAmount( $discount->getAmount() );
+		$this->setVatRate( $discount->getVatRate() );
+		
+	}
+	
 
 	/**
 	 * @param string $value
@@ -367,6 +438,15 @@ abstract class Core_Order_Item extends DataModel_Related_1toN {
 	{
 		return $this->warehouse_code;
 	}
+	
+	/**
+	 * @return Order_Item_SetItem[]
+	 */
+	public function getSetItems(): array
+	{
+		return $this->set_items;
+	}
 
+	
 
 }

@@ -1,8 +1,10 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
 use Jet\Tr;
+use JetApplication\Brand_ShopData;
+use JetApplication\ProductListing;
 
 /**
  * @var MVC_View $this
@@ -11,47 +13,80 @@ use Jet\Tr;
 
 $listing = $this->getRaw('listing');
 
-$filter_brands = $listing->brands();
-
-if(!$filter_brands->getBrandFilters()) {
+$initial_map = $listing->getInitialMap();
+$brand_ids = $initial_map->getBrandIds();
+if(!$brand_ids) {
 	return;
 }
+
+$filtered_map = $listing->getFilteredMap();
+
+$brands = Brand_ShopData::getActiveList( $brand_ids );
+
+
 ?>
-<h4><?=Tr::_('Značka')?></h4>
+<div style="display: grid;grid-template-columns: 200px 1fr;padding-bottom:10px;margin-bottom: 30px;border-bottom: 1px solid #c9c9c9;">
+	<div><b><?=Tr::_('Brand')?></b></div>
+	<div style="display: grid;grid-template-columns: repeat(5, 1fr)">
 <?php
-foreach( $filter_brands->getBrandFilters() as $listing_brand ):
-	if($listing_brand->isDisabled()) {
-		continue;
+foreach( $brands as $brand_id=>$brand ):
+	
+	$selected = $listing->getFilter()->getBrandsFilter()->getBrandSelected( $brand_id );
+	
+	if(!$selected) {
+		$count = $listing->getBrandCount( $brand_id );
+		$disabled = $count==0;
 	}
-
-	$brand = $listing_brand->getBrand();
-	$brand_id = $brand->getId();
-
-	$selected = $listing_brand->isActive();
-	$element_id = 'filter_brand_'.$brand_id;
-	$count = $listing_brand->getCount();
-	$label = $brand->getShopData()->getName();
+	
+	$label = $brand->getName();
+	
+	if($selected):
 	?>
-	<?php if(!$count && !$selected): ?>
-	<div class="item disabled">
-		<span><input type="checkbox" disabled="disabled" id="<?=$element_id;?>"></span>
-		<label for="<?=$element_id;?>"><?=$label;?> (<?=$count;?>)</label>
+	<div>
+		<label>
+			<input
+				type="checkbox"
+				class="lf-brand"
+				value="<?=$brand_id?>"
+				checked
+				onchange="listing.submitFilter()"
+			>
+			<?=$label;?>
+		</label>
 	</div>
-	<?php else:
-		if($selected):
-			$URL = $listing_brand->generateURLWithout();
+	<?php
+	else:
+		if($disabled):
 			?>
-			<div class="item selected" onclick="ProductListing.filter.brands.toggleBrand(<?=$brand_id?>); return false">
-				<span><input id="<?=$element_id;?>" type="checkbox" checked="checked"></span>
-				<label for="<?=$element_id;?>"><a href="<?=$URL;?>"><?=$label;?></a> (<?=$count;?>)</label>
+			<div>
+				<label>
+					<input
+						type="checkbox"
+						class="lf-brand"
+						value="<?=$brand_id?>"
+						disabled
+						onchange="listing.submitFilter()"
+					>
+					<?=$label;?>
+				</label>
 			</div>
-		<?php else:
-			$URL = $listing_brand->generateURLWith();
-			?>
-			<div class="item default" onclick="ProductListing.filter.brands.toggleBrand(<?=$brand_id?>);return false;">
-				<span><input id="<?=$element_id;?>" type="checkbox"></span>
-				<label for="<?=$element_id;?>"><a href="<?=$URL;?>"><?=$label;?></a> (<?=$count;?>)</label>
-			</div>
-		<?php endif;
-	endif;
+		<?php
+		else:
+		?>
+		<div>
+			<label>
+				<input
+					type="checkbox"
+					class="lf-brand"
+					value="<?=$brand_id?>"
+					onchange="listing.submitFilter()"
+				>
+				<?=$label;?> (<?=$count;?>)
+			</label>
+		</div>
+		<?php
+		endif;
+    endif;
 endforeach; ?>
+	</div>
+</div>

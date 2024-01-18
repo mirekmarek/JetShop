@@ -1,8 +1,8 @@
 <?php
 return [
-	'warehouse-management' => [
+	'system' => [
 		'warehouses' => [
-			'index' => 1000,
+			'index' => 103,
 			'separator_after' => true,
 			'page_id' => 'warehouses',
 		],

@@ -1,113 +1,286 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel;
-use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
-use Jet\Form;
+use JetApplication\Product_Parameter_InfoNotAvl;
+use JetApplication\Product_Parameter_Value;
+use JetApplication\Product_Parameter_TextValue;
+use JetApplication\Shops_Shop;
 
-use JetApplication\Product;
-use JetApplication\Property;
-
-#[DataModel_Definition(
-	name: 'products_parameters',
-	database_table_name: 'products_parameters',
-	id_controller_class: DataModel_IDController_Passive::class,
-	parent_model_class: Product::class
-)]
-abstract class Core_Product_Parameter extends DataModel_Related_1toN
-{
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_id: true,
-		is_key: true,
-		related_to: 'main.id',
-	)]
-	protected int $product_id = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_id: true,
-		is_key: true
-	)]
-	protected int $property_id = 0;
-
-	protected Property|null $property = null;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-		is_key: true
-	)]
-	protected string $value = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL
-	)]
-	protected bool $information_is_not_available = false;
-
-
-
+abstract class Core_Product_Parameter {
+	
+	protected int $product_id;
+	protected int $property_id;
+	
 	/**
-	 * @param Property $property
+	 * @var Product_Parameter_Value[][]
 	 */
-	public function  setProperty( Property $property ) : void
-	{
-		$this->property = $property;
-		$this->property_id = $property->getId();
-	}
-
-	public function getArrayKeyValue() : string
-	{
-		return $this->property_id;
-	}
-
-	public function getProductId() : int
-	{
-		return $this->product_id;
-	}
-
-	public function setProductId( int $product_id ) : void
+	protected static array $value_maps = [];
+	
+	/**
+	 * @var Product_Parameter_TextValue[][]
+	 */
+	protected static array $text_value_maps = [];
+	
+	/**
+	 * @var Product_Parameter_InfoNotAvl[][]
+	 */
+	protected static array $info_not_avl_maps = [];
+	
+	
+	public function __construct( int $product_id, int $property_id )
 	{
 		$this->product_id = $product_id;
-	}
-
-	public function getPropertyId() : int
-	{
-		return $this->property_id;
-	}
-
-	public function setPropertyId( int $property_id ) : void
-	{
 		$this->property_id = $property_id;
 	}
-
-	public function getRawValue() : string
+	
+	public function getPropertyValue() : ?Product_Parameter_Value
 	{
-		return $this->value;
+		return $this->getParameterValuesMap()[$this->property_id][0]??null;
 	}
-
-	public function setRawValue( string $value ) : void
+	
+	/**
+	 * @return Product_Parameter_Value[]|null
+	 */
+	public function getPropertyValues() : ?array
 	{
-		$this->value = $value;
+		$_values =  $this->getParameterValuesMap()[$this->property_id]??null;
+		
+		if(!$_values) {
+			return null;
+		}
+		
+		$values = [];
+		foreach($_values as $v) {
+			$values[$v->getValue()] = $v->getValue();
+		}
+		
+		return $values;
 	}
-
-	public function isInformationIsNotAvailable() : bool
+	
+	
+	public function getPropertyTextValue( Shops_Shop $shop ) : string
 	{
-		return $this->information_is_not_available;
+		$_values =  $this->getParameterTextValuesMap()[$this->property_id]??null;
+		
+		if(!$_values) {
+			return '';
+		}
+		
+		if(!isset($_values[$shop->getKey()])) {
+			return '';
+		}
+		
+		return $_values[$shop->getKey()]->getText();
 	}
-
-	public function setInformationIsNotAvailable( bool $information_is_not_available ) : void
+	
+	
+	public function setPropertyValue( ?int $value ) : bool
 	{
-		$this->information_is_not_available = $information_is_not_available;
+		$current_value = $this->getParameterValuesMap()[$this->property_id][0]??null;
+		
+		if($value===null) {
+			if($current_value) {
+				$current_value->delete();
+				static::$value_maps[$this->product_id][$this->property_id];
+				
+				return true;
+			}
+			
+			return false;
+		}
+		
+		if(!$current_value) {
+			$v = new Product_Parameter_Value();
+			$v->setProductId( $this->product_id );
+			$v->setPropertyId( $this->property_id );
+			$v->setValue( $value );
+			$v->save();
+			
+			static::$value_maps[$this->product_id][$this->property_id] = [$v];
+			
+			return true;
+		}
+		
+		if($current_value->getValue()!=$value) {
+			$current_value->setValue( $value );
+			$current_value->save();
+			
+			return true;
+		}
+		
+		return false;
 	}
-
-	public function getValueEditForm() : Form
+	
+	public function setPropertyValues( null|array $values ) : bool
 	{
-		return $this->property->getValueInstance()->getValueEditForm( $this );
+		$current_values =  $this->getParameterValuesMap()[$this->property_id]??null;
+		
+		$updated = false;
+		
+		if($values===null) {
+			
+			if($current_values) {
+				Product_Parameter_Value::dataDelete([
+					'product_id' => $this->product_id,
+					'AND',
+					'property_id' => $this->property_id
+				]);
+				
+				unset( static::$value_maps[$this->product_id][$this->property_id] );
+				
+				$updated = true;
+			}
+			
+			return $updated;
+		}
+		
+		if(!$current_values) {
+			static::$value_maps[$this->product_id][$this->property_id] = [];
+			
+			foreach($values as $new_value) {
+				$v = new Product_Parameter_Value();
+				$v->setProductId( $this->product_id );
+				$v->setPropertyId( $this->property_id );
+				$v->setValue( $new_value );
+				$v->save();
+				
+				static::$value_maps[$this->product_id][$this->property_id][] = $v;
+			}
+			
+			return true;
+		}
+		
+		$_current_values = [];
+		
+		foreach(static::$value_maps[$this->product_id][$this->property_id] as $i=>$current_value) {
+			$_current_values[] = $current_value->getValue();
+			if(!in_array($current_value->getValue(), $values)) {
+				$current_value->delete();
+				unset(static::$value_maps[$this->product_id][$this->property_id][$i]);
+				$updated = true;
+			}
+		}
+		
+		foreach($values as $new_value) {
+			if(!in_array($new_value, $_current_values)) {
+				$v = new Product_Parameter_Value();
+				$v->setProductId( $this->product_id );
+				$v->setPropertyId( $this->property_id );
+				$v->setValue( $new_value );
+				$v->save();
+				
+				static::$value_maps[$this->product_id][$this->property_id][] = $v;
+				
+			}
+		}
+		
+
+		return $updated;
 	}
+	
+	public function setPropertyTextValue( Shops_Shop $shop, string $text ) : bool
+	{
+		$current_value = $this->getParameterTextValuesMap()[$shop->getKey()]??null;
 
-
-
+		
+		if(!$current_value) {
+			$v = new Product_Parameter_TextValue();
+			$v->setProductId( $this->product_id );
+			$v->setPropertyId( $this->property_id );
+			$v->setShop( $shop );
+			$v->setText( $text );
+			$v->save();
+			
+			static::$text_value_maps[$this->product_id][$this->property_id][$shop->getKey()] = $v;
+			
+			return true;
+		}
+		
+		if($current_value->getText()!=$text) {
+			$current_value->setText( $text );
+			$current_value->save();
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	/**
+	 * @return Product_Parameter_Value[][]
+	 */
+	protected function getParameterValuesMap() : array
+	{
+		
+		$product_id = $this->product_id;
+		
+		if(!array_key_exists($product_id, static::$value_maps)) {
+			static::$value_maps[$product_id] = Product_Parameter_Value::get( $product_id );
+		}
+		
+		return static::$value_maps[$product_id];
+	}
+	
+	
+	/**
+	 * @return Product_Parameter_TextValue[][]
+	 */
+	protected function getParameterTextValuesMap() : array
+	{
+		
+		$product_id = $this->product_id;
+		
+		if(!array_key_exists($product_id, static::$text_value_maps)) {
+			static::$text_value_maps[$product_id] = Product_Parameter_TextValue::get( $product_id );
+		}
+		
+		return static::$text_value_maps[$product_id];
+	}
+	
+	
+	/**
+	 * @return Product_Parameter_InfoNotAvl[]
+	 */
+	protected function getInfoNotAvlMap() : array
+	{
+		
+		$product_id = $this->product_id;
+		
+		if(!array_key_exists($product_id, static::$info_not_avl_maps)) {
+			static::$info_not_avl_maps[$product_id] = Product_Parameter_InfoNotAvl::get( $product_id );
+		}
+		
+		return static::$info_not_avl_maps[$product_id];
+	}
+	
+	public function getInfoNotAvl() : bool
+	{
+		$this->getInfoNotAvlMap();
+		
+		return isset(static::$info_not_avl_maps[$this->product_id][$this->property_id]);
+	}
+	
+	public function setInfoNotAvl( bool $state ) : void
+	{
+		$this->getInfoNotAvlMap();
+		
+		if(!$state) {
+			if(isset(static::$info_not_avl_maps[$this->product_id][$this->property_id])) {
+				static::$info_not_avl_maps[$this->product_id][$this->property_id]->delete();
+				unset( static::$info_not_avl_maps[$this->product_id][$this->property_id] );
+			}
+		} else {
+			if(!isset(static::$info_not_avl_maps[$this->product_id][$this->property_id])) {
+				$v = new Product_Parameter_InfoNotAvl();
+				$v->setProductId( $this->product_id );
+				$v->setPropertyId($this->property_id);
+				$v->save();
+				static::$info_not_avl_maps[$this->product_id][$this->property_id] = $v;
+				
+			}
+			
+		}
+	}
+	
 }

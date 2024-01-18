@@ -1,40 +1,37 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Customer;
 
 $cash_desk = CashDesk::get();
 
 $customer = Customer::getCurrentCustomer();
 $billing_address_hash = $cash_desk->getBillingAddress()->getHash();
 ?>
-<div class="row" style="margin-bottom: 20px;">
-	<div class="col-md-2"></div>
-	<div class="col-md-10">
-		<?php foreach($customer->getAddresses() as $ba): ?>
-			<div class="card" style="width: 300px;height: 200px;margin:5px;float: left" onclick="CashDesk.customer.billingAddress.select(<?=$ba->getId()?>)">
-				<div class="card-body<?=$billing_address_hash==$ba->getHash()?' bg-info':''?>">
-					<p class="card-text">
-						<?php if($cash_desk->isCompanyOrder()): ?>
-							<?=$ba->getCompanyName()?><br>
-							<?=$ba->getCompanyId()?><br>
-							<?=$ba->getCompanyVatId()?><br>
-						<?php endif?>
+<div class="addresses">
+<?php foreach( $customer->getAddresses() as $address): ?>
 
-						<?=$ba->getFirstName()?> <?=$ba->getSurname()?><br>
-						<?=$ba->getAddressStreetNo()?><br/>
-						<?=$ba->getAddressZip()?> <?=$ba->getAddressTown()?>
+	<div class="<?=$billing_address_hash==$address->getHash()?'address-selected':'address'?>" onclick="CashDesk.customer.billingAddress.select(<?=$address->getId()?>)">
+			<?php if(
+				$cash_desk->isCompanyOrder() &&
+				$address->getCompanyName()
+			): ?>
+				<?=$address->getCompanyName()?><br>
+				<?=$address->getCompanyId()?><br>
+				<?=$address->getCompanyVatId()?><br>
+			<?php endif?>
 
-						<div class="text-right">
-							<?=UI::button(Tr::_('Select this address'))->setOnclick("CashDesk.customer.billingAddress.select({$ba->getId()}")->setClass('link')?>
-						</div>
-					</p>
-				</div>
+			<?=$address->getFirstName()?> <?=$address->getSurname()?><br>
+			<?=$address->getAddressStreetNo()?><br/>
+			<?=$address->getAddressZip()?> <?=$address->getAddressTown()?>
+
+			<div class="continue-button-area">
+				<?=UI::button(Tr::_('Select this address'))->setOnclick("CashDesk.customer.billingAddress.select({$address->getId()}")->setClass('link')?>
 			</div>
-
-		<?php endforeach; ?>
-
 	</div>
+
+<?php endforeach; ?>
 </div>

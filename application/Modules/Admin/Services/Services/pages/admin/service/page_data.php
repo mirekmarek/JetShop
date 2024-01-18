@@ -1,11 +1,11 @@
 <?php
 return [
-	'name' => 'Service administration',
+	'name' => 'Services',
 	'is_active' => true,
-	'title' => 'Service administration',
+	'title' => 'Services',
 	'icon' => 'plus',
-	'menu_title' => 'Service administration',
-	'breadcrumb_title' => 'Service administration',
+	'menu_title' => 'Services',
+	'breadcrumb_title' => 'Services',
 	'contents' => [
 		[
 			'controller_name' => 'Main',

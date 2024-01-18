@@ -26,13 +26,7 @@ class Core_Order_Event extends Entity_WithShopRelation
 {
 
 	protected static string $handler_module_name_prefix = 'Order.Events.';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-	)]
-	protected int $id = 0;
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -394,11 +388,12 @@ class Core_Order_Event extends Entity_WithShopRelation
 		return $this->handle();
 	}
 
-	public static function newEvent( int $order_id, string $event ) : Order_Event
+	public static function newEvent( Order $order, string $event ) : Order_Event
 	{
 		$e = new Order_Event();
 		$e->setEvent( $event );
-		$e->setOrderId( $order_id );
+		$e->setShop( $order->getShop() );
+		$e->setOrderId( $order->getId() );
 		$e->created_date_time = Data_DateTime::now();
 
 		return $e;

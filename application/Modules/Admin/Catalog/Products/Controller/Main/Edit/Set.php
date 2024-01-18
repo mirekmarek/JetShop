@@ -9,7 +9,6 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 
-use JetApplication\Category;
 
 /**
  *
@@ -20,9 +19,12 @@ trait Controller_Main_Edit_Set
 	
 	public function edit_set_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
+		$this->setBreadcrumbNavigation( Tr::_('Set') );
 		
-		$product = static::getCurrentProduct();
+		/**
+		 * @var Product $product
+		 */
+		$product = $this->current_item;
 		
 		$updated = false;
 		
@@ -59,6 +61,7 @@ trait Controller_Main_Edit_Set
 			Http_Headers::reload([], ['remove_item']);
 		}
 		
+		$this->view->setVar('item', $product);
 		$this->output( 'edit/set' );
 	}
 	

@@ -17,4 +17,34 @@ trait Admin_Entity_FulltextSearchIndexDataProvider_Trait {
 		Admin_Managers::FulltextSearch()->deleteIndex( $this );
 	}
 	
+	public function getAdminFulltextObjectClass(): string
+	{
+		return static::getEntityType();
+	}
+	
+	public function getAdminFulltextObjectId(): string
+	{
+		return $this->id;
+	}
+	
+	public function getAdminFulltextObjectType(): string
+	{
+		return '';
+	}
+	
+	public function getAdminFulltextObjectIsActive(): bool
+	{
+		return $this->isActive();
+	}
+	
+	public function getAdminFulltextObjectTitle(): string
+	{
+		return $this->getAdminTitle();
+	}
+	
+	public function getAdminFulltextTexts(): array
+	{
+		return [$this->getInternalName(), $this->getInternalCode()];
+	}
+	
 }

@@ -7,8 +7,6 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
@@ -19,11 +17,12 @@ use Jet\Tr;
 use JetApplication\Discounts_Code;
 use JetApplication\Entity_WithShopRelation;
 use JetApplication\Order;
+use JetApplication\Shop_Managers;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
-use JetApplication\ShoppingCart;
-use JetApplication\Price;
 use JetApplication\Discounts_Code_Usage;
+
+use JetApplication\Discounts_Discount;
 
 /**
  *
@@ -34,40 +33,12 @@ use JetApplication\Discounts_Code_Usage;
 )]
 class Core_Discounts_Code extends Entity_WithShopRelation
 {
-	public const DISCOUNT_TYPE_PRODUCTS_PERCENTAGE = 'products_percentage';
-	public const DISCOUNT_TYPE_PRODUCTS_AMOUNT = 'products_amount';
-
-	public const DISCOUNT_TYPE_DELIVERY_PERCENTAGE = 'delivery_percentage';
-	public const DISCOUNT_TYPE_DELIVERY_AMOUNT = 'delivery_amount';
-
-	public const DISCOUNT_TYPE_PAYMENT_PERCENTAGE = 'payment_percentage';
-	public const DISCOUNT_TYPE_PAYMENT_AMOUNT = 'payment_amount';
-	
-	public const DISCOUNT_TYPE_ORDER_PERCENTAGE = 'order_percentage';
-	public const DISCOUNT_TYPE_ORDER_AMOUNT = 'order_amount';
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
-
-	/**
-	 * @var int
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
 	)]
 	protected int $id = 0;
 
-	/**
-	 * @var string
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_key: true,
@@ -77,14 +48,12 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		is_required: true,
 		label: 'Code:',
 		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter code'
+			Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
+			'code_exists' => 'Code already exists'
 		]
 	)]
 	protected string $code = '';
 
-	/**
-	 * @var string
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
@@ -94,10 +63,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		label: 'Internal description:'
 	)]
 	protected string $internal_description = '';
-
-	/**
-	 * @var ?Data_DateTime
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
 	)]
@@ -111,9 +77,6 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 	)]
 	protected ?Data_DateTime $valid_from = null;
 
-	/**
-	 * @var ?Data_DateTime
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
 	)]
@@ -126,10 +89,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		]
 	)]
 	protected ?Data_DateTime $valid_till = null;
-
-	/**
-	 * @var float
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -138,10 +98,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		label: 'Minimal order amount:'
 	)]
 	protected float $minimal_order_amount = 0.0;
-
-	/**
-	 * @var int
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
@@ -150,18 +107,12 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		label: 'Number of codes available:'
 	)]
 	protected int $number_of_codes_available = 0;
-
-	/**
-	 * @var int
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
 	protected int $number_of_codes_used = 0;
-
-	/**
-	 * @var string
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
@@ -169,7 +120,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 	#[Form_Definition(
 		type: Form_Field::TYPE_SELECT,
 		select_options_creator: [
-			Discounts_Code::class,
+			Discounts_Discount::class,
 			'getDiscountTypeScope'
 		],
 		error_messages: [
@@ -179,10 +130,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		
 	)]
 	protected string $discount_type = '';
-
-	/**
-	 * @var float
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -191,64 +139,18 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		label: 'Discount amount:'
 	)]
 	protected float $discount = 0.0;
-
-
-	public static function getDiscountTypeScope(): array
+	
+	public static function codeExists( string $code, int $skip_id=0 ) : bool
 	{
-		return [
-			self::DISCOUNT_TYPE_PRODUCTS_PERCENTAGE => Tr::_( 'products -% discount' ),
-			self::DISCOUNT_TYPE_PRODUCTS_AMOUNT     => Tr::_( 'products - amount' ),
-
-			self::DISCOUNT_TYPE_DELIVERY_PERCENTAGE => Tr::_( 'delivery - % discount' ),
-			self::DISCOUNT_TYPE_DELIVERY_AMOUNT     => Tr::_( 'delivery - amount' ),
-
-			self::DISCOUNT_TYPE_PAYMENT_PERCENTAGE => Tr::_( 'payment - % discount' ),
-			self::DISCOUNT_TYPE_PAYMENT_AMOUNT     => Tr::_( 'payment - amount' ),
-			
-			self::DISCOUNT_TYPE_ORDER_PERCENTAGE => Tr::_( 'order- % discount' ),
-			self::DISCOUNT_TYPE_ORDER_AMOUNT     => Tr::_( 'order - amount' ),
-		];
+		return (bool)static::dataFetchCol(['id'], [
+			'code'=>$code,
+			'AND',
+			'id !=' => $skip_id
+		]);
 	}
 
-	/**
-	 * @return Form
-	 */
-	public function getEditForm(): Form
-	{
-		if( !$this->_form_edit ) {
-			$this->_form_edit = $this->createForm( 'edit_form' );
-		}
-
-		return $this->_form_edit;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm(): bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function getAddForm(): Form
-	{
-		if( !$this->_form_add ) {
-			$this->_form_add = $this->createForm( 'add_form' );
-		}
-
-		return $this->_form_add;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm(): bool
-	{
-		return $this->getAddForm()->catch();
-	}
+	
+	
 
 	/**
 	 * @param int|string $id
@@ -259,15 +161,15 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		return static::load( $id );
 	}
 
-	public static function getByCode( string $discount_code, ?Shops_Shop $shop=null ): static|null
+	public static function getByCode( string $discount_code, ?Shops_Shop $shop=null ): ?static
 	{
 		if(!$shop) {
 			$shop = Shops::getCurrent();
 		}
+		
+		$discount_code = strtolower($discount_code);
 
-		/**
-		 * @var Discounts_Code[] $codes
-		 */
+
 		$codes = static::fetch([
 			'discounts_code' => [
 				'code' => $discount_code,
@@ -284,9 +186,6 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 
 	}
 
-	/**
-	 * @return static[]
-	 */
 	public static function getList() : iterable
 	{
 		$where = [];
@@ -307,6 +206,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 	 */
 	public function setCode( string $value ) : void
 	{
+		$value = strtolower($value);
 		$this->code = $value;
 	}
 
@@ -463,9 +363,16 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 	{
 		return $this->discount;
 	}
+	
+	public function getDiscountPercentageMtp() : float
+	{
+		return -1*round( $this->discount / 100, 2);
+	}
 
 	public function isValid( ?string &$error_code='', ?array &$error_data=[] ) : bool
 	{
+		$error_data = [];
+		
 		$now = Data_DateTime::now();
 
 		$valid_from = $this->getValidFrom();
@@ -497,11 +404,11 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 
 		if(
 			$this->getMinimalOrderAmount()>0 &&
-			ShoppingCart::get()->getAmount()<$this->getMinimalOrderAmount()
+			Shop_Managers::ShoppingCart()->getCart()->getAmount()<$this->getMinimalOrderAmount()
 		) {
 			$error_code = 'under_min_value';
 			$error_data = [
-				'MIN' => Price::formatWithCurrency( $this->getMinimalOrderAmount() )
+				'MIN' => Shop_Managers::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
 			];
 
 			return false;

@@ -1,38 +1,34 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Customer;
 
 $cash_desk = CashDesk::get();
 
 $customer = Customer::getCurrentCustomer();
 $delivery_address_hash = $cash_desk->getDeliveryAddress()->getHash();
 ?>
-<div class="row" style="margin-bottom: 20px;">
-	<div class="col-md-2"></div>
-	<div class="col-md-10">
-		<?php foreach($customer->getAddresses() as $ba): ?>
-			<div class="card" style="width: 300px;height: 160px;margin:5px;float: left" onclick="CashDesk.customer.deliveryAddress.select(<?=$ba->getId()?>)">
-				<div class="card-body<?=$delivery_address_hash==$ba->getHash()?' bg-info':''?>">
-					<p class="card-text">
-						<?php if($cash_desk->isCompanyOrder()): ?>
-							<?=$ba->getCompanyName()?><br>
-						<?php endif?>
+<div class="addresses">
+<?php foreach( $customer->getAddresses() as $address): ?>
+	<div class="<?=$delivery_address_hash==$address->getHash()?'address-selected':'address'?>" onclick="CashDesk.customer.deliveryAddress.select(<?=$address->getId()?>)">
+		
+		<?php if(
+			$cash_desk->isCompanyOrder() &&
+			$address->getCompanyName()
+		): ?>
+			<?=$address->getCompanyName()?><br>
+		<?php endif?>
 
-						<?=$ba->getFirstName()?> <?=$ba->getSurname()?><br>
-						<?=$ba->getAddressStreetNo()?><br/>
-						<?=$ba->getAddressZip()?> <?=$ba->getAddressTown()?>
+		<?=$address->getFirstName()?> <?=$address->getSurname()?><br>
+		<?=$address->getAddressStreetNo()?><br/>
+		<?=$address->getAddressZip()?> <?=$address->getAddressTown()?>
 
-						<div class="text-right">
-							<?=UI::button(Tr::_('Select this address'))->setOnclick("CashDesk.customer.deliveryAddress.select({$ba->getId()}")->setClass('link')?>
-						</div>
-					</p>
-				</div>
-			</div>
-
-		<?php endforeach; ?>
-
+		<div class="continue-button-area">
+			<?=UI::button(Tr::_('Select this address'))->setOnclick("CashDesk.customer.deliveryAddress.select({$address->getId()}")->setClass('link')?>
+		</div>
 	</div>
+<?php endforeach; ?>
 </div>

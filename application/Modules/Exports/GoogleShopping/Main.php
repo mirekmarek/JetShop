@@ -48,7 +48,8 @@ class Main extends Exports_Module
 		$export_categories = [];
 
 		$data = file( Config::getCategoriesURL($shop) );
-		unset($data[0]);
+		/** @noinspection PhpAutovivificationOnFalseValuesInspection */
+		unset( $data[0]);
 
 		$map = [];
 
@@ -174,13 +175,13 @@ class Main extends Exports_Module
 
 			$f->tagStart( 'item' );
 
-			$f->tagPair( 'title', $sd->getName() );
+			$f->tagPair( 'title', $sd->getFullName() );
 			$f->tagPair( 'description', $sd->getDescription() );
 			$f->tagPair( 'link', $sd->getURL() );
 
-			$f->tagPair( 'g:image_link', $sd->getImageUrl() );
-			if( $sd->getImageUrl( 1 ) ) {
-				$f->tagPair( 'g:additional_image_link', $sd->getImageUrl( 1 ) );
+			$f->tagPair( 'g:image_link', $sd->getImgUrl(0) );
+			if( $sd->getImgUrl( 1 ) ) {
+				$f->tagPair( 'g:additional_image_link', $sd->getImgUrl( 1 ) );
 			}
 
 			if( $sd->getDiscountPercentage() ) {

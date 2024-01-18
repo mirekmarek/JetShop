@@ -13,9 +13,8 @@ use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
 use Jet\MVC_View;
-use JetApplication\CashDesk;
 use JetApplication\Order;
-use JetApplication\ShoppingCart;
+use JetApplication\Shop_Managers;
 use JetApplication\Shops;
 
 /**
@@ -68,6 +67,17 @@ class Controller_Main extends MVC_Controller_Default
 		}
 
 		if(!$this->router) {
+			if(
+				!CashDesk::get()->getDefaultDeliveryMethod() ||
+				!CashDesk::get()->getDefaultPaymentMethod()
+			) {
+				$this->router = new MVC_Controller_Router( $this );
+				
+				$this->router->setDefaultAction('error');
+				
+				return $this->router;
+			}
+			
 			$this->router = new MVC_Controller_Router( $this );
 
 			$this->router->setDefaultAction('default');
@@ -87,10 +97,10 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function default_Action() : void
 	{
-		$cart = ShoppingCart::get();
+		$cart = Shop_Managers::ShoppingCart()->getCart();
 		if(!$cart->getQuantity()) {
 			Http_Headers::movedTemporary(
-				ShoppingCart::getCartPage()->getURL()
+				Shop_Managers::ShoppingCart()->getCartPageURL()
 			);
 		}
 
@@ -101,18 +111,27 @@ class Controller_Main extends MVC_Controller_Default
 	public function payment_Action() : void
 	{
 		$payment_method = $this->order->getPaymentMethod();
+		
+		/**
+		 * @var Main $main;
+		 */
+		$main = $this->module;
 
-		$module = $payment_method->getModule();
+		$module = $payment_method->getBackendModule();
 		if(!$module) {
-			Http_Headers::movedTemporary( CashDesk::getCashDeskConfirmationPage()->getURL([$this->order->getKey()]) );
+			Http_Headers::movedTemporary( $main->getCashDeskConfirmationPage()->getURL([$this->order->getKey()]) );
 		}
 
-		if($module->handlePayment($this->order)) {
-			Http_Headers::movedTemporary( CashDesk::getCashDeskConfirmationPage()->getURL([$this->order->getKey()]) );
+		if($module->handlePayment($this->order, $payment_method)) {
+			Http_Headers::movedTemporary( $main->getCashDeskConfirmationPage()->getURL([$this->order->getKey()]) );
 		}
 
 	}
 
+	public function error_Action() : void
+	{
+		//TODO:
+	}
 
 	public function payment_problem_Action() : void
 	{

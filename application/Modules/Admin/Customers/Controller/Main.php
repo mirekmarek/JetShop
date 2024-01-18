@@ -8,6 +8,7 @@
 namespace JetApplicationModule\Admin\Customers;
 
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Customer as Customer;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
@@ -20,21 +21,12 @@ use Jet\Navigation_Breadcrumb;
  */
 class Controller_Main extends MVC_Controller_Default
 {
-
-	/**
-	 * @var ?MVC_Controller_Router_AddEditDelete
-	 */
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 
-	/**
-	 * @var ?Customer
-	 */
 	protected ?Customer $customer = null;
-
-	/**
-	 *
-	 * @return MVC_Controller_Router_AddEditDelete
-	 */
+	
+	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
+	
 	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
@@ -55,11 +47,9 @@ class Controller_Main extends MVC_Controller_Default
 
 		return $this->router;
 	}
-
-	/**
-	 * @param string $current_label
-	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
+	
+	
+	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		Admin_Managers::UI()->initBreadcrumb();
 
@@ -67,52 +57,75 @@ class Controller_Main extends MVC_Controller_Default
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
 	}
+	
+	public function getListing() : Admin_Managers_Entity_Listing
+	{
+		if(!$this->listing_manager) {
+			$this->listing_manager = Admin_Managers::EntityListing();
+			$this->listing_manager->setUp(
+				$this->module
+			);
+			
+			$this->setupListing();
+		}
+		
+		return $this->listing_manager;
+	}
+	
+	public function setupListing() : void
+	{
+		$this->listing_manager->addColumn( new Listing_Column_Email() );
+		$this->listing_manager->addColumn( new Listing_Column_Name() );
+		$this->listing_manager->addColumn( new Listing_Column_Phone() );
+		$this->listing_manager->addColumn( new Listing_Column_Registration() );
+		
+		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
+			$search = '%'.$search.'%';
+			
+			return [
+				'id *'            => $search,
+				'OR',
+				'email *' => $search,
+			];
+			
+		} );
+		
+		$this->listing_manager->setDefaultColumnsSchema([
+			'shop',
+			'id',
+			'email',
+			'name',
+			'phone_number',
+			'registration_date_time'
+		]);
 
-	/**
-	 *
-	 */
+	}
+	
+
 	public function listing_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
-
-		$listing = new Listing();
-		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
-		$this->output( 'list' );
+		$this->setBreadcrumbNavigation();
+		
+		$this->content->output( $this->getListing()->renderListing() );
 	}
 
 
-	/**
-	 *
-	 */
 	public function edit_Action() : void
 	{
 		$this->view_Action();
 	}
 
-	/**
-	 *
-	 */
 	public function view_Action() : void
 	{
 		$customer = $this->customer;
 
-		$this->_setBreadcrumbNavigation(
+		$this->setBreadcrumbNavigation(
 			Tr::_( 'Customer detail <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $customer->getEmail() ] )
 		);
 
-		$form = $customer->getEditForm();
-
-		$form->setIsReadonly();
-
-		$this->view->setVar( 'form', $form );
 		$this->view->setVar( 'customer', $customer );
 
 		$this->output( 'edit' );
-
 	}
 
 

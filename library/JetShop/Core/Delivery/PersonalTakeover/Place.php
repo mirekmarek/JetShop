@@ -7,15 +7,14 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Form;
 
+use JetApplication\Delivery_Method_ShopData;
 use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 use JetApplication\Delivery_PersonalTakeover_Place_OpeningHours;
 use JetApplication\Delivery_PersonalTakeover_Place;
-use JetApplication\Delivery_Method;
+
 
 
 /**
@@ -27,108 +26,83 @@ use JetApplication\Delivery_Method;
 )]
 class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 {
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_edit = null;
-
-	/**
-	 * @var ?Form
-	 */
-	protected ?Form $_form_add = null;
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true,
 	)]
 	protected int $id = 0;
 
-	/**
-	 * @var string
-	 */ 
+
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $method_id = 0;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
 	)]
-	protected string $method_code = '';
-
-	/**
-	 * @var string
-	 */
+	protected string $hash = '';
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 100,
 	)]
 	protected string $place_code = '';
-
-	/**
-	 * @var bool
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
 	)]
 	protected bool $is_active = true;
 
-	/**
-	 * @var string
-	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
 	protected string $name = '';
 
-	/**
-	 * @var string
-	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
 	protected string $street = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
 	protected string $town = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
 	protected string $zip = '';
-
-	/**
-	 * @var string
-	 */ 
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+	)]
+	protected string $country = '';
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
 	)]
 	protected string $latitude = '';
 
-	/**
-	 * @var string
-	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
 	)]
 	protected string $longitude = '';
-
-	/**
-	 * @var mixed
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_CUSTOM_DATA,
 	)]
@@ -143,10 +117,7 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 	)]
 	protected array $opening_hours = [];
 
-
-	/**
-	 * @param string $value
-	 */
+	
 	public function setPlaceCode( string $value ) : void
 	{
 		$this->place_code = $value;
@@ -157,48 +128,28 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 		
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getPlaceCode() : string
 	{
 		return $this->place_code;
 	}
-
-	/**
-	 * @return bool
-	 */
+	
 	public function isActive(): bool
 	{
 		return $this->is_active;
 	}
-
-	/**
-	 * @param bool $is_active
-	 */
+	
 	public function setIsActive( bool $is_active ): void
 	{
 		$this->is_active = $is_active;
 	}
 
-	/**
-	 * @return Form
-	 */
-	public function getEditForm() : Form
-	{
-		if(!$this->_form_edit) {
-			$this->_form_edit = $this->createForm('edit_form');
-		}
-		
-		return $this->_form_edit;
-	}
 
 	public function getKey() : string
 	{
-		return $this->method_code.':'.$this->place_code;
+		return $this->method_id.':'.$this->place_code;
 	}
 
-	public function getHash() : string
+	public function generateHash() : string
 	{
 		$hash = '';
 
@@ -221,57 +172,28 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 		foreach($this->opening_hours as $oh ) {
 			$hash .= $oh->getHash();
 		}
-
-		return md5( $hash );
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-			$this->_form_add = $this->createForm('add_form');
-		}
 		
-		return $this->_form_add;
+		$this->hash = md5( $hash );
+
+		return $this->hash;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
 
-	/**
-	 * @param int|string $id
-	 * @return static|null
-	 */
-	public static function get( int|string $id ) : static|null
+	public static function get( int $id ) : ?static
 	{
 		return static::load( $id );
 	}
 
-	public static function getPlace( Shops_Shop $shop, string $method_code, string $place_code ) : static|null
+	public static function getPlace( Delivery_Method_ShopData $method, string $place_code ) : static|null
 	{
 		/**
 		 * @var Delivery_PersonalTakeover_Place[] $list
 		 */
 		$list = static::fetch([
 			'delivery_personal_takeover_place' => [
-				$shop->getWhere(),
+				$method->getShop()->getWhere(),
 				'AND',
-				'method_code' => $method_code,
+				'method_id' => $method->getId(),
 				'AND',
 				'place_code' => $place_code
 			]
@@ -283,27 +205,65 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 
 		return $list[0];
 	}
-
+	
 	/**
+	 * @param Delivery_Method_ShopData $method
+	 * @param bool $only_active
+	 *
 	 * @return Delivery_PersonalTakeover_Place[]
 	 */
-	public static function getList() : iterable
+	public static function getListForMethod( Delivery_Method_ShopData $method, bool $only_active=false ) : iterable
 	{
-		$where = [];
+		$where = $method->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['method_id'] = $method->getId();
 		
-		$list = static::fetchInstances( $where );
+		if($only_active) {
+			$where[] = 'AND';
+			$where['is_active'] = true;
+		}
+		
+		$places = Delivery_PersonalTakeover_Place::fetch(['delivery_personal_takeover_place' => $where]);
+		
+		
+		$list = [];
+		foreach($places as $place) {
+			/**
+			 * @var Delivery_PersonalTakeover_Place $place
+			 */
+			$list[$place->getKey()] = $place;
+		}
 		
 		return $list;
 	}
+	
+	/**
+	 * @param Delivery_Method_ShopData $method
+	 *
+	 * @return array
+	 */
+	public static function getHashMapForMethod( Delivery_Method_ShopData $method ) : array
+	{
+		$where = $method->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['method_id'] = $method->getId();
+		
+		
+		return Delivery_PersonalTakeover_Place::dataFetchPairs(
+			select: ['hash', 'id'],
+			where: $where,
+		);
+	}
+	
+	
 
 	/**
 	 * @param Shops_Shop $shop
 	 * @param bool $only_active
-	 * @param string $only_method_code
 	 *
 	 * @return Delivery_PersonalTakeover_Place[]
 	 */
-	public static function getListForShop( Shops_Shop $shop, bool $only_active=true, string $only_method_code='' ) : iterable
+	public static function getListForShop( Shops_Shop $shop, bool $only_active=true ) : iterable
 	{
 		$where = $shop->getWhere();
 
@@ -311,12 +271,7 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 			$where[] = 'AND';
 			$where['is_active'] = true;
 		}
-
-		if($only_method_code) {
-			$where[] = 'AND';
-			$where['method_code'] = $only_method_code;
-		}
-
+		
 		$places = Delivery_PersonalTakeover_Place::fetch(['delivery_personal_takeover_place' => $where]);
 
 
@@ -331,35 +286,38 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 		return $list;
 	}
 
-	public static function getMapData( ?Shops_Shop $shop=null, array $only_method_codes = [] ) : array
+	public static function getMapData( ?Shops_Shop $shop=null, array $only_method_ids = [] ) : array
 	{
 		if(!$shop) {
 			$shop = Shops::getCurrent();
 		}
 
 		$select = [
-			'method_code',
+			'method_id',
 			'place_code',
 			'latitude',
 			'longitude'
 		];
-
-		$all_methods = Delivery_Method::getList();
+		
+		$all_methods = Delivery_Method_ShopData::fetchInstances( $shop->getWhere() );
 		$active_methods = [];
+		
+		$icons = [];
 
 		foreach( $all_methods as $method ) {
 			if(
 				$method->isPersonalTakeover() &&
-				$method->getShopData($shop)->isActive()
+				$method->isActive()
 			) {
-				$active_methods[] = $method->getCode();
+				$active_methods[] = $method->getId();
+				$icons[$method->getId()] = $method->getIcon2ThumbnailUrl( 60, 60 )?:'';
 			}
 		}
 
-		if(!$only_method_codes) {
-			$only_method_codes = $active_methods;
+		if(!$only_method_ids) {
+			$only_method_ids = $active_methods;
 		} else {
-			$only_method_codes = array_intersect($only_method_codes, $active_methods);
+			$only_method_ids = array_intersect($only_method_ids, $active_methods);
 		}
 
 		$where = [
@@ -370,26 +328,28 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 			'is_active' => true
 		];
 
-		if($only_method_codes) {
+		if($only_method_ids) {
 			$where[] = 'AND';
-			$where['method_code'] = $only_method_codes;
+			$where['method_id'] = $only_method_ids;
 		}
 
 		$places = Delivery_PersonalTakeover_Place::dataFetchAll(
 			select: $select,
-			where: $where
+			where: $where,
+			raw_mode: true
 		);
 
 		$map_data = [];
 
 		foreach($places as $place ) {
-			$id = $place['method_code'].':'.$place['place_code'];
+			$id = $place['method_id'].':'.$place['place_code'];
 
 			$latitude = (float)$place['latitude'];
 			$longitude = (float)$place['longitude'];
 
 			$map_data[$id] = [
 				'id' => $id,
+				'icon' => $icons[$place['method_id']]??'',
 				'latitude' => $latitude,
 				'longitude' => $longitude,
 			];
@@ -397,115 +357,82 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 
 		return $map_data;
 	}
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setMethodCode( string $value ) : void
+	
+	public function setMethodId( int $value ) : void
 	{
-		$this->method_code = $value;
+		$this->method_id = $value;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getMethodCode() : string
+	public function getMethodId() : int
 	{
-		return $this->method_code;
+		return $this->method_id;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setName( string $value ) : void
 	{
 		$this->name = $value;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getName() : string
 	{
 		return $this->name;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setStreet( string $value ) : void
 	{
 		$this->street = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getStreet() : string
 	{
 		return $this->street;
 	}
-
-	/**
-	 * @param string $value
-	 */
+	
 	public function setTown( string $value ) : void
 	{
 		$this->town = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getTown() : string
 	{
 		return $this->town;
 	}
-
-	/**
-	 * @param string $value
-	 */
+	
 	public function setZip( string $value ) : void
 	{
 		$this->zip = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getZip() : string
 	{
 		return $this->zip;
 	}
-
-	/**
-	 * @param string $value
-	 */
+	
+	public function getCountry(): string
+	{
+		return $this->country;
+	}
+	
+	public function setCountry( string $country ): void
+	{
+		$this->country = $country;
+	}
+	
 	public function setLatitude( string $value ) : void
 	{
 		$this->latitude = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getLatitude() : string
 	{
 		return $this->latitude;
 	}
-
-	/**
-	 * @param string $value
-	 */
+	
 	public function setLongitude( string $value ) : void
 	{
 		$this->longitude = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getLongitude() : string
 	{
 		return $this->longitude;
@@ -516,13 +443,16 @@ class Core_Delivery_PersonalTakeover_Place extends Entity_WithShopRelation
 	{
 		$this->images[] = $image;
 	}
-
-	/**
-	 * @return array
-	 */
+	
 	public function getImages() : array
 	{
-		return $this->images;
+		$_images = [];
+		foreach($this->images as $img) {
+			if($img) {
+				$_images[] = $img;
+			}
+		}
+		return $_images;
 	}
 
 

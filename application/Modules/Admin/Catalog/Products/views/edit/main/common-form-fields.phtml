@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Product $item
+ *
+ */
+$item = $this->getRaw('item');
+$form = $this->getRaw('form');
+$editable = !$form->getIsReadonly();
+?>
+<div class="form-group row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Kind of product:')?></label>
+	<div class="col-md-8">
+		<?php if(($kind_id=$item->getKindId())):
+			?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
+		else:
+			?><b><?=Tr::_('- kind of product is not set -')?></b><?php
+		endif; ?>
+	</div>
+</div>
+<?php if( $form->fieldExists('internal_name_of_variant') ): ?>
+	<?=$form->field('internal_name_of_variant')?>
+<?php endif; ?>
+
+<?=$form->field('ean')?>
+<?=$form->field('brand_id')?>
+<?=$form->field('supplier_id')?>
+<?=$form->field('delivery_class_id')?>
+

@@ -1,414 +1,445 @@
 <?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
 namespace JetShop;
 
-use Jet\MVC_View;
-
-use JetApplication\ProductListing_AutoAppendProductFilter;
-use JetApplication\ProductListing_Filter_Properties;
-use JetApplication\ProductListing_Filter_Brands;
-use JetApplication\ProductListing_Filter_Flags;
-use JetApplication\ProductListing_Filter_Price;
-use JetApplication\ProductListing_Cache;
-use JetApplication\Category;
-use JetApplication\Shops_Shop;
-use JetApplication\Product;
-use JetApplication\ProductListing_Filter;
-use JetApplication\ProductListing_Sort;
-use JetApplication\ProductListing_Pagination;
-use JetApplication\ProductListing_VariantManager;
+use Jet\Data_Paginator;
+use JetApplication\Product_ShopData;
+use JetApplication\ProductListing_Sorter;
+use JetApplication\ProductListing_Sorter_ByName;
+use JetApplication\ProductListing_Sorter_Default;
+use JetApplication\ProductListing_Sorter_HighestPrice;
+use JetApplication\ProductListing_Sorter_LowestPrice;
 use JetApplication\Shops;
-use JetApplication\ProductListing;
-
+use JetApplication\ProductFilter;
+use JetApplication\ProductListing_Map;
+use JetApplication\Shops_Shop;
 
 abstract class Core_ProductListing
 {
-	use ProductListing_AutoAppendProductFilter;
-	
-	protected static array $filter_list = [
-		ProductListing_Filter_Properties::class,
-		ProductListing_Filter_Brands::class,
-		ProductListing_Filter_Flags::class,
-		ProductListing_Filter_Price::class,
-	];
-	
-	protected ?ProductListing_Cache $cache = null;
-
-	protected ?Category $category = null;
-
-	protected ?string $base_URL = null;
-
-	protected string $base_URL_path_part = '';
-
 	protected Shops_Shop $shop;
-
-	protected ?array $initial_product_ids = null;
-
-	protected ?MVC_View $filter_view = null;
-
-
+	protected ProductFilter $filter;
+	protected ProductListing_Map $initial_map;
+	protected ProductListing_Map $filtered_map;
+	protected Data_Paginator $paginator;
+	protected bool $filter_is_active;
+	
+	protected array $filtered_products_ids;
+	protected array $visible_product_ids;
+	
+	protected ?int $category_id = null;
+	
 	/**
-	 * @var ProductListing_Filter[]
+	 * @var ProductListing_Sorter[]
 	 */
-	protected array $filters = [];
-
-	protected ?ProductListing_Sort $sort = null;
-
-	protected ?ProductListing_Pagination $pagination = null;
-
-	protected ?ProductListing_VariantManager $variant_manager = null;
-
-	protected ?array $filtered_product_ids = null;
-
-	public function __construct( Category $category, ?Shops_Shop $shop = null )
+	protected array $sorters = [];
+	
+	public function __construct( array $product_ids, ?Shops_Shop $shop=null )
 	{
-		if( !$shop ) {
+		if(!$shop) {
 			$shop = Shops::getCurrent();
 		}
 		$this->shop = $shop;
-		$this->category = $category;
 		
-		$this->base_URL_path_part = $category->getShopData( $this->shop )->getURLPathPart();
-		$this->base_URL = $category->getShopData( $this->shop )->getURL();
+		$this->initial_map = new ProductListing_Map($this , $product_ids );
 		
-		$this->cache = new ProductListing_Cache( $this );
+		$this->filter = new ProductFilter( Shops::getCurrent() );
+		$this->filter->setInitialProductIds( $this->initial_map->getProductIds() );
 		
-		foreach(ProductListing::$filter_list as $class_name ) {
-			/**
-			 * @var ProductListing_Filter $filter
-			 */
-			$filter = new $class_name( $this );
-			$this->filters[$filter->getKey()] = $filter;
-		}
-		
-		$this->sort = new ProductListing_Sort( $this );
-		$this->pagination = new ProductListing_Pagination( $this );
-		$this->variant_manager = new ProductListing_VariantManager( $this );
-
+		$this->initSorters();
 	}
-
-	public function getFilterView(): MVC_View
+	
+	public function initSorters() : void
 	{
-		return $this->filter_view;
-	}
-
-	public function setFilterView( MVC_View $filter_view ): void
-	{
-		$this->filter_view = $filter_view;
-	}
-
-
-	public function prepareProductListing( array $initial_product_ids ) : void
-	{
-		$this->initial_product_ids = [];
-		foreach( $initial_product_ids as $id ) {
-			$this->initial_product_ids[] = (int)$id;
-		}
+		$default = new ProductListing_Sorter_Default($this);
+		$this->sorters[$default->getKey()] = $default;
 		
-		foreach( $this->filters as $filter ) {
-			$filter->initProductListing();
-		}
+		$by_name = new ProductListing_Sorter_ByName($this);
+		$this->sorters[$by_name->getKey()] = $by_name;
 		
+		$lowest_price = new ProductListing_Sorter_LowestPrice($this);
+		$this->sorters[$lowest_price->getKey()] = $lowest_price;
 		
-		$this->cache->prepareFilter( $this->initial_product_ids );
+		$highest_price = new ProductListing_Sorter_HighestPrice($this);
+		$this->sorters[$highest_price->getKey()] = $highest_price;
 		
-		foreach( $this->filters as $filter ) {
-			$filter->prepareFilter( $this->initial_product_ids );
-		}
-
-		$this->variant_manager->prepareFilter( $this->initial_product_ids );
-		$this->sort->prepareFilter( $this->initial_product_ids );
-
+		$default->setIsSelected( true );
+		
 	}
-
-
-	public function resetFilter() : void
-	{
-		$this->filtered_product_ids = null;
-		foreach( $this->filters as $filter ) {
-			$filter->resetFilter();
-		}
-	}
-
-	public function resetCount() : void
-	{
-		$this->filtered_product_ids = null;
-		foreach( $this->filters as $filter ) {
-			$filter->resetCount();
-		}
-	}
-
-
+	
 	/**
-	 * @return ProductListing_Filter[]
+	 * @return ProductListing_Sorter[]
 	 */
-	public function getFilters() : array
+	public function getSorters(): array
 	{
-		return $this->filters;
+		return $this->sorters;
 	}
-
-	public function filterIsActive() : bool
+	
+	public function selectSorter( string $sorter_key ) : void
 	{
-		foreach($this->filters as $filter) {
-			if($filter->filterIsActive()) {
-				return true;
+		if(!isset($this->sorters[$sorter_key])) {
+			return;
+		}
+		
+		foreach($this->sorters as $sorter) {
+			$sorter->setIsSelected( $sorter->getKey()==$sorter_key );
+		}
+	}
+	
+	public function getSelectedSorter() : ?ProductListing_Sorter
+	{
+		foreach($this->sorters as $sorter) {
+			if( $sorter->getIsSelected() ) {
+				return $sorter;
 			}
 		}
-
-		return false;
+		
+		return null;
 	}
+	
+	
 
-
-
-	public function properties() : ProductListing_Filter_Properties
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['properties'];
-	}
-
-	public function brands() : ProductListing_Filter_Brands
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['brands'];
-	}
-
-	public function flags() : ProductListing_Filter_Flags
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['flags'];
-	}
-
-	public function price() : ProductListing_Filter_Price
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->filters['price'];
-	}
-
-	public function sort() : ProductListing_Sort
-	{
-		return $this->sort;
-	}
-
-	public function pagination() : ProductListing_Pagination
-	{
-		return $this->pagination;
-	}
-
-	public function cache() : ProductListing_Cache
-	{
-		return $this->cache;
-	}
-
-	public function getCategory() : Category
-	{
-		return $this->category;
-	}
-
-	public function getBaseURL() : string
-	{
-		return $this->base_URL;
-	}
-
-	public function setBaseURL( string $base_URL ) : void
-	{
-		$this->base_URL = $base_URL;
-	}
-
-	public function getBaseURLPathPart() : string
-	{
-		return $this->base_URL_path_part;
-	}
-
-	public function setBaseURLPathPart( string $base_URL_path_part ) : void
-	{
-		$this->base_URL_path_part = $base_URL_path_part;
-	}
-
-	public function getShop() : Shops_Shop
+	public function getShop(): Shops_Shop
 	{
 		return $this->shop;
 	}
+	
 
-
-	public function parseFilterUrl( array $parts ) : void
+	public function getCategoryId(): ?int
 	{
-		foreach($parts as $i=>$p) {
-			$parts[$i] = str_replace(' ', '+', $p);
-		}
-
-		foreach( $this->filters as $filter ) {
-			$filter->parseFilterUrl( $parts );
-		}
-
-		$this->sort->parseFilterUrl( $parts );
-		$this->pagination->parseFilterUrl( $parts );
-
+		return $this->category_id;
 	}
-
-	public function getStateData() : array
+	
+	public function setCategoryId( ?int $category_id ): void
 	{
-		$state_data = [];
-
-		foreach( $this->filters as $filter ) {
-			$filter->getStateData( $state_data );
-		}
-
-		$this->sort->getStateData( $state_data );
-		$this->pagination->getStateData( $state_data );
-
-		return $state_data;
+		$this->category_id = $category_id;
 	}
-
-	public function initByStateData( array $state_data ) : void
+	
+	
+	
+	public function initPaginator( int $current_page_no, int $items_per_page, callable $URL_creator ) : Data_Paginator
 	{
-		foreach( $this->filters as $filter ) {
-			$filter->initByStateData( $state_data );
-		}
-
-		$this->sort->initByStateData( $state_data );
-		$this->pagination->initByStateData( $state_data );
+		$this->paginator = new Data_Paginator( $current_page_no, $items_per_page, $URL_creator );
+		
+		return $this->paginator;
 	}
-
-	public function generateUrl( bool $with_page_no=false ) : string
+	
+	
+	
+	public function setupPriceFilter( float $price_min, float $price_max ) : void
 	{
-		$parts = [];
-
-		foreach( $this->filters as $filter ) {
-			$filter->generateUrl( $parts );
+		$limit_min = $this->initial_map->getMinPrice();
+		$limit_max = $this->initial_map->getMaxPrice();
+		
+		if($price_min<$limit_min) {
+			$price_min = $limit_min;
 		}
-
-		$this->sort->generateUrl( $parts );
-
-		if($with_page_no) {
-			$this->pagination->generateUrl( $parts );
+		
+		if($price_max>$limit_max) {
+			$price_max = $limit_max;
 		}
-
-
-		if( !$parts ) {
-			return $this->base_URL;
-		} else {
-			return $this->base_URL . '/' . implode( '/', $parts );
+		
+		if($price_min>=$price_max) {
+			$price_min = $limit_min;
+			$price_max = $limit_max;
 		}
-
+		
+		if($price_min>$limit_min) {
+			$this->filter->getPriceFilter()->setMinPrice( $price_min );
+		}
+		
+		if($price_max<$limit_max) {
+			$this->filter->getPriceFilter()->setMaxPrice( $price_max );
+		}
 	}
-
-	public function getFilteredProductIds() : array
+	
+	public function setProductOptionsFilter( array $rules ) : void
 	{
-		if( $this->filtered_product_ids === null ) {
-			$this->filtered_product_ids = $this->initial_product_ids;
-
-			$id_map = [];
-
-			foreach( $this->filters as $filter ) {
-				if( $filter->filterIsActive() ) {
-
-					$ids = $filter->getFilteredProductIds();
-
-					if( !count( $ids ) ) {
-						$this->filtered_product_ids = [];
-						return $this->filtered_product_ids;
-					}
-
-					$id_map[] = $ids;
-				}
+		$valid_rules = [];
+		$map = $this->initial_map->getPropertyOptionsMap();
+		
+		foreach($rules as $property_id=>$options) {
+			$property_id = (int)$property_id;
+			if(!isset($map[$property_id])) {
+				continue;
 			}
-
-			$this->filtered_product_ids = $this->idMapIntersect($id_map);
 			
-			$this->filtered_product_ids = $this->manageVariants( $this->filtered_product_ids );
-
-			$this->filtered_product_ids = $this->sort->sort( $this->filtered_product_ids );
-
-		}
-
-		return $this->filtered_product_ids;
-	}
-
-	public function manageVariants( array $filtered_product_ids ) : array
-	{
-		return $this->variant_manager->manage( $filtered_product_ids );
-	}
-
-	public function internalGetFilteredProductIds( array $initial_product_ids, string $exclude_filter_key, callable $custom_filter_handler=null ) : array
-	{
-		$id_map = [];
-		$id_map[] = $initial_product_ids;
-
-		foreach( $this->filters as $filter ) {
-
-			if( $filter->getKey()==$exclude_filter_key ) {
-				if($custom_filter_handler) {
-					$custom_filter_handler( $filter, $id_map );
+			$valid_rules[$property_id] = [];
+			foreach($options as $option_id) {
+				$option_id = (int)$option_id;
+				if(!isset($map[$property_id][$option_id])) {
+					continue;
 				}
-
-			} else {
-				if( $filter->filterIsActive() ) {
-					$ids = $filter->getFilteredProductIds();
-
-					if(!$ids) {
-						return [];
-					}
-
-					$id_map[] = $ids;
-				}
+				
+				$valid_rules[$property_id][] = $option_id;
+			}
+			
+			if(!$valid_rules[$property_id]) {
+				unset($valid_rules[$property_id]);
 			}
 		}
-
-
-
-		$id_map = $this->idMapIntersect($id_map);
-
-		return $this->manageVariants( $id_map );
-
+		
+		$filter = $this->filter->getPropertyOptionsFilter();
+		foreach($valid_rules as $property_id=>$selected_options) {
+			$filter->setSelectedOptions( $property_id, $selected_options );
+		}
 	}
-
+	
+	public function setNumbersFilter( array $rules ) : void
+	{
+		$valid_rules = [];
+		$map = $this->initial_map->getPropertyNumbersMap();
+		
+		foreach($rules as $property_id=>$rule) {
+			$property_id = (int)$property_id;
+			if(!isset($map[$property_id])) {
+				continue;
+			}
+			
+			$m_min = $this->getNumberMin( $property_id );
+			$m_max = $this->getNumberMax( $property_id );
+			
+			if( $rule['min']!==null ) {
+				$rule['min'] = (float)$rule['min'];
+				
+				if($rule['min']<$m_min) {
+					$rule['min'] = null;
+				}
+			}
+			
+			if( $rule['max']!==null ) {
+				$rule['max'] = (float)$rule['max'];
+				
+				if($rule['max']>$m_max) {
+					$rule['max'] = null;
+				}
+			}
+			
+			
+			$valid_rules[$property_id]=$rule;
+		}
+		
+		$filter = $this->filter->getPropertyNumberFilter();
+		foreach($valid_rules as $property_id=>$rule) {
+			$filter->addPropertyRule( $property_id, $rule['min'], $rule['max'] );
+		}
+		
+		
+	}
+	
+	public function setBrandFilter( array $selected_brands ) : void
+	{
+		$selected_brands_validated = array_intersect(
+			$this->initial_map->getBrandIds(),
+			$selected_brands
+		);
+		
+		if($selected_brands_validated) {
+			$this->filter->getBrandsFilter()->setSelectedBrands( $selected_brands_validated );
+		}
+		
+	}
+	
+	public function setBoolYesFilter( array $selected_yes ) : void
+	{
+		$_map  =$this->initial_map->getPropertyBoolMap();
+		$map = [];
+		foreach( $_map as $property_id=>$states ) {
+			if(!empty($states[1])) {
+				$map[] = $property_id;
+			}
+		}
+		
+		$selected_bools_validated = array_intersect(
+			$map,
+			$selected_yes
+		);
+		
+		if($selected_bools_validated) {
+			foreach($selected_bools_validated as $property_id) {
+				$this->filter->getPropertyBoolFilter()->addPropertyRule( $property_id, true );
+			}
+		}
+		
+	}
+	
+	
+	public function handle() : void
+	{
+		
+		if($this->filter->isActive()) {
+			$this->filtered_products_ids = $this->filter->filter();
+			$this->filtered_map = new ProductListing_Map(
+				$this,
+				$this->filtered_products_ids
+			);
+			$this->filter_is_active = true;
+		} else {
+			$this->filtered_products_ids = $this->filter->getInitialProductIds();
+			$this->filtered_map = clone $this->initial_map;
+			$this->filter_is_active = false;
+		}
+		
+		if($this->filtered_products_ids) {
+			$sorter = $this->getSelectedSorter();
+			if( $sorter ) {
+				$this->filtered_products_ids = $sorter->sort( $this->filtered_products_ids );
+			}
+			
+			$this->filtered_products_ids = array_unique( $this->filtered_products_ids );
+			
+			$this->paginator->setData( $this->filtered_products_ids );
+			
+			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+			$this->visible_product_ids = $this->paginator->getData();
+		} else {
+			$this->visible_product_ids = [];
+		}
+		
+		
+	}
+	
+	public function getFilter() : ProductFilter
+	{
+		return $this->filter;
+	}
+	
+	public function getInitialMap(): ProductListing_Map
+	{
+		return $this->initial_map;
+	}
+	
+	public function getFilteredMap(): ProductListing_Map
+	{
+		return $this->filtered_map;
+	}
+	
+	
+	public function getVisibleProductIDs() : array
+	{
+		return $this->visible_product_ids;
+	}
+	
 	/**
-	 * @return Product[]
+	 * @return Product_ShopData[]
 	 */
 	public function getVisibleProducts() : array
 	{
-		$ids = $this->pagination->getProductIds();
-
-		if(!$ids) {
-			return [];
-		}
-
-		$result = [];
-
-		foreach($ids as $id) {
-			$product = Product::get( $id );
-
-			$result[ $id ] = $product;
-		}
-
-		return $result;
+		return Product_ShopData::getActiveList( $this->getVisibleProductIDs(), $this->shop );
 	}
-
-	public function idMapIntersect( array $id_map ) : array
+	
+	public function getBrandCount( int $brand_id ) : int
 	{
+		$map = $this->initial_map->getBrandsMap();
+		if(
+			!isset($map[$brand_id]) ||
+			!count($map[$brand_id])
+		) {
+			return 0;
+		}
+		
+		if(!$this->filter_is_active) {
+			return count( $map[$brand_id] );
+		}
+		
+		$filtered_product_ids = $this->filter->getBrandsFilter()->getPreviousFilterResult();
+		if(!$filtered_product_ids) {
+			return 0;
+		}
+		
+		return count( array_intersect($filtered_product_ids, $map[$brand_id]) );
+	}
+	
+	public function getPropertyOptionCount( int $property_id, int $option_id ) : int
+	{
+		$map = $this->initial_map->getPropertyOptionsMap();
 
-		foreach($id_map as $ids) {
-			if(!$ids) {
-				return [];
+		if(
+			!isset($map[$property_id][$option_id]) ||
+			!count($map[$property_id][$option_id])
+		) {
+			return 0;
+		}
+		
+		$option_product_ids = $map[$property_id][$option_id];
+		
+		if(!$this->filter_is_active) {
+			return count($option_product_ids);
+		}
+		
+		$options_filter = $this->filter->getPropertyOptionsFilter();
+		$brands_filter = $this->filter->getBrandsFilter();
+		
+		$filtered_product_ids = [
+			$option_product_ids
+		];
+		
+		
+		if($options_filter->getIsActive()) {
+			$options_map = $this->initial_map->getPropertyOptionsMap();
+			
+			$by_other_options = $options_filter->getFilteredProductsWithoutProperty( $property_id );
+			
+			if($by_other_options) {
+				$filtered_product_ids[] = $by_other_options;
 			}
 		}
+		
+		if($brands_filter->getIsActive()) {
 
-		if(count($id_map)==0) {
-			return [];
+			$by_brand = [];
+			$brand_map = $this->initial_map->getBrandsMap();
+			
+			foreach($brands_filter->getSelectedBrandIds() as $brand_id ) {
+				$by_brand = array_merge( $by_brand, $brand_map[$brand_id]??[] );
+			}
+			
+			$filtered_product_ids[] = $by_brand;
 		}
-
-		if(count($id_map)==1) {
-			return $id_map[0];
+		
+		if(count($filtered_product_ids)==1) {
+			$filtered_product_ids[] = $options_filter->getPreviousFilterResult();
 		}
-
-		return call_user_func_array('array_intersect', $id_map);
+		
+		$filtered_product_ids = call_user_func_array('array_intersect', $filtered_product_ids);
+		
+		return count( $filtered_product_ids );
 	}
-
-	public function disableNonRelevantFilters() : void
+	
+	
+	public function getNumberMin( int $property_id ) : float
 	{
-		foreach( $this->filters as $filter ) {
-			$filter->disableNonRelevantFilters();
-		}
-
-		$this->resetCount();
+		$map = $this->initial_map->getPropertyNumbersMap();
+		return min( $map[$property_id]??[] );
 	}
+	
+	public function getNumberMax( int $property_id ) : float
+	{
+		$map = $this->initial_map->getPropertyNumbersMap();
+		return max( $map[$property_id]??[] );
+	}
+	
+	public function getInitialPropertyBoolCount( int $property_id, bool $value ) : int
+	{
+		$map = $this->initial_map->getPropertyBoolMap();
+		return count( $map[$property_id][$value?1:0]??[] );
+	}
+	
+	public function getFilteredPropertyBoolCount( int $property_id, bool $value ) : int
+	{
+		$map = $this->initial_map->getPropertyBoolMap();
+		return count( $map[$property_id][$value?1:0]??[] );
+	}
+	
+
+	public function getPaginator(): Data_Paginator
+	{
+		return $this->paginator;
+	}
+	
+	
 }

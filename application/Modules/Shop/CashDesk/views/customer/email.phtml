@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Form_Renderer;
 use Jet\Tr;
@@ -22,35 +22,12 @@ $form->renderer()->setDefaultFieldWidth([
 ?>
 
 
-<br/>
-<div class="card">
+<span class="step-title"><?=Tr::_("Please tell us your e-mail or log-in using your Google or Facebook account.")?></span>
+<?=$form->start()?>
+<?=$form->field('email')?>
 
-	<div class="card-body bg-light">
-
-
-		<h2 class="card-title"><?=Tr::_("Please tell us your e-mail or log-in using your Google or Facebook account.")?></h2>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-2 col-sm-0"></div>
-				<div class="col-md-8 col-sm-12">
-					<?=$form->start()?>
-					<?=$form->field('email')?>
-
-					<div class="text-right">
-						<?=UI::button('Continue')->setClass('primary')->setType('submit')?>
-					</div>
-					<?=$form->end()?>
-
-				</div>
-				<div class="col-md-2 col-sm-0"></div>
-			</div>
-		</div>
-		<br/>
-		<?php /*
-		<div class="sso">
-			<?= customer_SSO_Google::renderLoginButton('cash_desk.php') ?>
-			<?= customer_SSO_FB::renderLoginButton('cash_desk.php') ?>
-		</div>
-	    */ ?>
-	</div>
+<div class="continue-button-area">
+	<?=UI::button('Continue')->setClass('primary')->setType('submit')?>
 </div>
+<?=$form->end()?>
+

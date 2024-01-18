@@ -10,9 +10,7 @@ namespace JetApplicationModule\Shop\CashDesk;
 use Jet\AJAX;
 use Jet\Application;
 use Jet\Http_Request;
-use JetApplication\CashDesk;
 use JetApplication\Delivery_PersonalTakeover_Place;
-use JetApplication\Shops;
 
 trait Controller_Main_Delivery {
 
@@ -58,7 +56,7 @@ trait Controller_Main_Delivery {
 			$only_method_codes = explode(',', $GET->getString('only_methods'));
 		}
 
-		AJAX::commonResponse( Delivery_PersonalTakeover_Place::getMapData( only_method_codes: $only_method_codes ) );
+		AJAX::commonResponse( Delivery_PersonalTakeover_Place::getMapData( only_method_ids: $only_method_codes ) );
 	}
 
 	public function personal_takeover_show_place_Action(): void
@@ -73,11 +71,15 @@ trait Controller_Main_Delivery {
 			Application::end();
 		}
 
-		[$method_code, $place_code] = explode(':', $id);
+		[$method_id, $place_code] = explode(':', $id);
+		
+		$method = CashDesk::get()->getDeliveryMethod( $method_id );
+		if(!$method) {
+			Application::end();
+		}
 
 		$place = Delivery_PersonalTakeover_Place::getPlace(
-			Shops::getCurrent(),
-			$method_code,
+			$method,
 			$place_code
 		);
 

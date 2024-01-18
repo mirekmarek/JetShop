@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\WithShopData;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Entity_WithShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithShopData|Admin_Entity_WithShopData_Interface     $item
+ */
+$item = $this->getRaw('item');
+?>
+<a href="<?=$item->getEditURL()?>"><?=$item->getAdminTitle()?></a>

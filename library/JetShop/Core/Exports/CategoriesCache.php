@@ -10,16 +10,19 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
-use JetApplication\Entity_WithShopRelation_ShopIsID;
+use Jet\DataModel_IDController_Passive;
+use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops_Shop;
 
 #[DataModel_Definition(
 	name: 'exports_categories_cache',
 	database_table_name: 'exports_categories_cache',
+	id_controller_class: DataModel_IDController_Passive::class
+	
 )]
-abstract class Core_Exports_CategoriesCache extends Entity_WithShopRelation_ShopIsID
+abstract class Core_Exports_CategoriesCache extends Entity_WithShopRelation
 {
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
@@ -40,8 +43,8 @@ abstract class Core_Exports_CategoriesCache extends Entity_WithShopRelation_Shop
 		type: DataModel::TYPE_DATE_TIME,
 	)]
 	protected ?Data_DateTime $rec_created = null;
-
-
+	
+	
 	public static function get( string $export_code, Shops_Shop $shop, callable $getter ) : array
 	{
 		$rec = static::load( [

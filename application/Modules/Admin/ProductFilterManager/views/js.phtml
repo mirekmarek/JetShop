@@ -1,0 +1,57 @@
+<style>
+
+	.toolbar-sticky {
+		position: fixed;
+		top: 30px;
+		width: 100%;
+		z-index: 9999;
+	}
+
+</style>
+<script>
+	function toolbarPin() {
+		const container = document.getElementById("container");
+		const toolbar = document.getElementById("toolbar");
+		
+		if(
+			!container ||
+			!toolbar
+		) {
+			return;
+		}
+		
+		let pinned = false;
+
+		const toolbar_height = toolbar.offsetHeight;
+
+		addEventListener("scroll", (event) => {
+			let container_rect = container.getBoundingClientRect();
+			let new_pinned;
+			
+			if(
+				container_rect.y>30 ||
+				(container_rect.y+container_rect.height)<30
+			) {
+				new_pinned = false;
+			} else {
+				new_pinned = true;
+			}
+			
+			if(new_pinned!=pinned) {
+				pinned = new_pinned;
+				
+				if(pinned) {
+					container.style.paddingTop = toolbar_height+'px';
+					toolbar.classList.add("toolbar-sticky");
+				} else {
+					toolbar.classList.remove("toolbar-sticky");
+					container.style.paddingTop = '0px';
+				}
+			}
+			
+		});
+		
+	}
+
+	toolbarPin();
+</script>

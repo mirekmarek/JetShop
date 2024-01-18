@@ -7,194 +7,161 @@
  */
 namespace JetApplicationModule\Shop\CashDesk;
 
-use Jet\Form;
-use Jet\Form_Field;
-use Jet\Form_Renderer;
-use Jet\Form_Field_Input;
-use JetApplication\CashDesk;
-use JetApplication\CashDesk_Module;
-use JetApplication\Delivery_Method;
-use JetApplication\Payment_Method;
-use JetApplication\Shop_Module_Trait;
-use JetApplication\Shops_Shop;
+use Jet\Application_Module;
+use Jet\MVC;
+use Jet\MVC_Page_Interface;
+use JetApplication\Shop_Managers_CashDesk;
+use JetApplication\Shops;
+use JetApplication\CashDesk as Application_CashDesk;
 
 /**
  *
  */
-class Main extends CashDesk_Module
+class Main extends Application_Module implements Shop_Managers_CashDesk
 {
-	use Shop_Module_Trait;
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getViewsDir(): string
+	
+	protected static string $cash_desk_page_id = 'cash-desk';
+	
+	protected static string $cash_desk_confirmation_page_id = 'cash-desk-confirmation';
+	
+	protected static string $cash_desk_payment_page_id = 'cash-desk-payment';
+	
+	protected static string $cash_desk_payment_problem_page_id = 'cash-desk-payment-problem';
+	
+	protected static string $cash_desk_payment_success_page_id = 'cash-desk-payment-success';
+	
+	protected static string $cash_desk_payment_notification_page_id = 'cash-desk-payment-notification';
+	
+	public function get() : Application_CashDesk
 	{
-		return parent::getViewsDir();
-		//return $this->_getViewsDir('cash_desk');
+		return CashDesk::get();
 	}
-
-	public function sortDeliveryMethods( CashDesk $cash_desk, array &$delivery_methods ) : void
+	
+	public function getCashDeskPageId(): string
 	{
-		$shop = CashDesk::get()->getShop();
-
-		uasort( $delivery_methods, function( Delivery_Method $a, Delivery_Method $b ) use ($shop) {
-			$p_a = $a->getShopData($shop)->getPriority();
-			$p_b = $b->getShopData($shop)->getPriority();
-
-			if(!$p_a<$p_b) {
-				return -1;
-			}
-			if(!$p_a>$p_b) {
-				return 1;
-			}
-			return 0;
-		} );
-
+		return static::$cash_desk_page_id;
 	}
-
-	public function getDefaultDeliveryMethod( CashDesk $cash_desk, array $delivery_methods ) : ?Delivery_Method
+	
+	public function getCashDeskPage(): MVC_Page_Interface
 	{
-		$methods = [];
-
-		/**
-		 * @var Delivery_Method[] $delivery_methods
-		 */
-		foreach($delivery_methods as $delivery_method) {
-			if($delivery_method->isPersonalTakeover()) {
-				continue;
-			}
-
-			$methods[] = $delivery_method;
-		}
-
-		//TODO: is default
-
-		uasort($methods, function( Delivery_Method $a, Delivery_Method $b ) use ($cash_desk) {
-			$p_a = $cash_desk->getDeliveryPrice( $a )->getPrice();
-			$p_b = $cash_desk->getDeliveryPrice( $b )->getPrice();
-
-
-			if($p_a==$p_b) {
-				return 0;
-			}
-
-			if($p_a<$p_b) {
-				return -1;
-			}
-
-			return 1;
-		});
-
-		foreach($methods as $method) {
-			return $method;
-		}
-
-		return null;
+		$shop = Shops::getCurrent();
+		
+		return MVC::getPage($this->getCashDeskPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
-
-	public function sortPaymentMethods( CashDesk $cash_desk, array &$payment_methods ) : void
+	
+	public function getCashDeskPageURL(): string
 	{
-
-		$shop = CashDesk::get()->getShop();
-
-		uasort( $payment_methods, function( Payment_Method $a, Payment_Method $b ) use ($shop) {
-			$p_a = $a->getShopData($shop)->getPriority();
-			$p_b = $b->getShopData($shop)->getPriority();
-
-			if(!$p_a<$p_b) {
-				return -1;
-			}
-			if(!$p_a>$p_b) {
-				return 1;
-			}
-			return 0;
-		} );
-
+		return $this->getCashDeskPage()->getURL();
 	}
-
-	public function getDefaultPaymentMethod( CashDesk $cash_desk, array $payment_methods ) : ?Payment_Method
+	
+	
+	
+	
+	public function getCashDeskConfirmationPageId(): string
 	{
-		foreach($payment_methods as $payment_method) {
-			return $payment_method;
-		}
-
-		return null;
+		return self::$cash_desk_confirmation_page_id;
 	}
-
-	public function updateBillingAddressForm( CashDesk $cash_desk, Form $form ) : void
+	
+	public function getCashDeskConfirmationPage(): MVC_Page_Interface
 	{
-
-		$form->renderer()->setDefaultLabelWidth([
-			Form_Renderer::LJ_SIZE_MEDIUM => 2,
-		]);
-
-		$form->renderer()->setDefaultFieldWidth([
-			Form_Renderer::LJ_SIZE_MEDIUM => 8,
-		]);
-
-		$form->setAction('?action=customer_billing_address_send');
-
-		$form->renderer()->addJsAction('onsubmit', "CashDesk.customer.billingAddress.confirm();return false;");
-
-		foreach($form->getFields() as $field) {
-			$field->input()->addJsAction('onblur', "CashDesk.customer.billingAddress.sendField(this);");
-		}
-
-		$field = $form->getField('phone');
-		$field->input()->setViewScript( 'field/phone' );
-
-		$shop = $cash_desk->getShop();
-
-		$field->setValidator( function( Form_Field_Input $field ) use ($shop) {
-			return static::phoneValidator( $field, $shop );
-		} );
-
+		$shop = Shops::getCurrent();
+		
+		return MVC::getPage($this->getCashDeskConfirmationPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
-
-	public static function phoneValidator( Form_Field_Input $field, Shops_Shop $shop ) : bool
+	
+	public function getCashDeskConfirmationPageURL(): string
 	{
-		$value_raw = $field->getValueRaw();
-		$value_raw = preg_replace('/\D/', '', $value_raw);
-
-		$field->setValue($value_raw);
-
-		$reg_exp = $shop->getPhoneValidationRegExp();
-
-		if(!preg_match($reg_exp, $value_raw)) {
-			$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
-
-			return false;
-		}
-
-		return true;
-
+		return $this->getCashDeskConfirmationPage()->getURL();
 	}
-
-
-	public function updateDeliveryAddressForm( CashDesk $cash_desk, Form $form ) : void
+	
+	
+	
+	
+	
+	public function getCashDeskPaymentPageId(): string
 	{
-		$form->renderer()->setDefaultLabelWidth([
-			Form_Renderer::LJ_SIZE_MEDIUM => 2,
-		]);
-
-		$form->renderer()->setDefaultFieldWidth([
-			Form_Renderer::LJ_SIZE_MEDIUM => 8,
-		]);
-
-		$form->setAction('?action=customer_delivery_address_send');
-
-		$form->renderer()->addJsAction('onsubmit', "CashDesk.customer.deliveryAddress.confirm();return false;");
-
-		foreach($form->getFields() as $field) {
-			$field->input()->addJsAction('onblur', "CashDesk.customer.deliveryAddress.sendField(this);");
-		}
+		return self::$cash_desk_payment_page_id;
 	}
-
-
-	public function initAgreeFlags( CashDesk $cash_desk, array &$agree_flags ) : void
+	
+	public function getCashDeskPaymentPage(): MVC_Page_Interface
 	{
+		$shop = Shops::getCurrent();
+		
+		return MVC::getPage($this->getCashDeskPaymentPageId(), $shop->getLocale(), $shop->getBaseId());
 	}
-
+	
+	public function getCashDeskPaymentPageURL(): string
+	{
+		return $this->getCashDeskPaymentPage()->getURL();
+	}
+	
+	
+	
+	public function getCashDeskPaymentProblemPageId(): string
+	{
+		return self::$cash_desk_payment_problem_page_id;
+	}
+	
+	public function getCashDeskPaymentProblemPage(): MVC_Page_Interface
+	{
+		$shop = Shops::getCurrent();
+		
+		return MVC::getPage($this->getCashDeskPaymentProblemPageId(), $shop->getLocale(), $shop->getBaseId());
+	}
+	
+	public function getCashDeskPaymentProblemPageURL(): string
+	{
+		return $this->getCashDeskPaymentProblemPage()->getURL();
+	}
+	
+	
+	
+	
+	public function getCashDeskPaymentSuccessPageId(): string
+	{
+		return self::$cash_desk_payment_success_page_id;
+	}
+	
+	public function getCashDeskPaymentSuccessPage(): MVC_Page_Interface
+	{
+		$shop = Shops::getCurrent();
+		
+		return MVC::getPage($this->getCashDeskPaymentSuccessPageId(), $shop->getLocale(), $shop->getBaseId());
+	}
+	
+	public function getCashDeskPaymentSuccessPageURL(): string
+	{
+		return $this->getCashDeskPaymentSuccessPage()->getURL();
+	}
+	
+	
+	
+	public function getCashDeskPaymentNotificationPageId(): string
+	{
+		return self::$cash_desk_payment_notification_page_id;
+	}
+	
+	
+	public function getCashDeskPaymentNotificationPage(): MVC_Page_Interface
+	{
+		$shop = Shops::getCurrent();
+		
+		return MVC::getPage($this->getCashDeskPaymentNotificationPageId(), $shop->getLocale(), $shop->getBaseId());
+	}
+	
+	public function getCashDeskPaymentNotificationPageURL(): string
+	{
+		return static::getCashDeskPaymentNotificationPage()->getURL();
+	}
+	
+	public function onCustomerLogin(): void
+	{
+		CashDesk::get()->onCustomerLogin();
+	}
+	
+	public function onCustomerLogout(): void
+	{
+		CashDesk::get()->onCustomerLogout();
+	}
+	
 }

@@ -34,11 +34,6 @@ abstract class DataModel_Definition_Model extends BaseObject
 	 * @var string
 	 */
 	protected string $class_name = '';
-	
-	/**
-	 * @var string
-	 */
-	protected string $forced_class_name = '';
 
 	/**
 	 * @var ReflectionClass
@@ -135,10 +130,6 @@ abstract class DataModel_Definition_Model extends BaseObject
 				'relation' => 'relations'
 			]
 		);
-		
-		if(($force_class_name=$this->getClassArgument( 'force_class_name' ))) {
-			$this->forced_class_name = $force_class_name;
-		}
 		
 		
 		$this->model_name = $this->_getModelNameDefinition();
@@ -565,7 +556,7 @@ abstract class DataModel_Definition_Model extends BaseObject
 	 */
 	public function getRelations(): array
 	{
-		return DataModel_Relations::get( $this->forced_class_name ? : $this->class_name );
+		return DataModel_Relations::get( $this->class_name );
 	}
 
 }

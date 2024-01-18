@@ -1,0 +1,77 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\SetProductPrices;
+
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ * @var PriceList $price_list
+ */
+
+$form = $this->getRaw('form');
+
+$price_list = $this->getRaw('price_list');
+?>
+
+<?=$form->start()?>
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Import:')?></b></div>
+	
+	<div>
+		<?=$form->getCommonMessage()?>
+		<?=$form->field('price_list')->error()?>
+		<?=$form->field('price_list')->input()?>
+	</div>
+	<div>
+		<?=UI::button_save(Tr::_('Import'))?>
+	</div>
+</div>
+<?=$form->end()?>
+
+<?php if($price_list): ?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th><?=Tr::_('ID')?></th>
+		<th><?=Tr::_('EAN')?></th>
+		<th><?=Tr::_('Internal code')?></th>
+		<th><?=Tr::_('Name')?></th>
+		<th><?=Tr::_('Current price')?></th>
+		<th><?=Tr::_('New price')?></th>
+	</tr>
+	</thead>
+	<?php foreach($price_list->getItems() as $item): ?>
+	<tr>
+		<td><a href="<?=Admin_Managers::Product()->getEditURL($item->getId())?>"><?=$item->getId()?></a></td>
+		<td><?=$item->getEan()?></td>
+		<td><?=$item->getInternalCode()?></td>
+		<td><a href="<?=Admin_Managers::Product()->getEditURL($item->getId())?>"><?=$item->getName()?></a></td>
+		<td><?=$item->getPrice()?></td>
+		
+		<?php if($item->getNewPrice()===null): ?>
+		<td colspan="1" class="bg-danger">
+			<?=Tr::_('Item not in the price list')?>
+		</td>
+		<?php else: ?>
+		
+		<td class="bg-<?=$item->getPrice()==$item->getNewPrice()?'success':'info'?>"><?=$item->getNewPrice()?></td>
+		<?php endif; ?>
+	</tr>
+	<?php endforeach;?>
+</table>
+<br><br><br>
+
+<?php if(!$this->getBool('done')): ?>
+	<?=UI::button_save(Tr::_('Do it'))->setUrl( Http_Request::currentURI(set_GET_params: ['do_it'=>'do_it']) )?>
+<?php else: ?>
+	<?=UI_messages::createSuccess( Tr::_('Done!') )?>
+<?php endif; ?>
+
+<br><br><br>
+<?php endif; ?>

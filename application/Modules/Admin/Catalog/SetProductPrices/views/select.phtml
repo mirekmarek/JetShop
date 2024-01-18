@@ -1,0 +1,122 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\SetProductPrices;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI_tabs;
+use JetApplication\Brand;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;use JetApplicationModule\Admin\Suppliers\Supplier;
+
+/**
+ * @var MVC_View   $this
+ * @var UI_tabs $tabs
+ * @var ?Shops_Shop $selected_shop
+ */
+$tabs = $this->getRaw('tabs');
+
+$selected_shop = $this->getRaw('selected_shop')?:null;
+$selected_shop_key = $selected_shop?->getKey();
+
+$product_identifiers = $this->getRaw('product_identifiers');
+$product_identifier = $this->getString('product_identifier');
+
+$select_by_scope = $this->getRaw('select_by_scope');
+$select_by = $this->getString('select_by');
+?>
+
+<?=$tabs?>
+
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Shop:')?></b></div>
+	
+<?php foreach(Shops::getListSorted() as $shop):
+	if($shop->getKey()==$selected_shop_key): ?>
+		<div style="padding: 5px"><b class="btn btn-success"><?=$shop->getShopName()?></b></div>
+	<?php else:  ?>
+		<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['shop'=>$shop->getKey()], unset_GET_params: ['do_it', 'price_list'])?>" class="btn btn-light"><?=$shop->getShopName()?></a></div>
+	<?php endif;
+endforeach; ?>
+</div>
+
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Product identifier:')?></b></div>
+	
+	<?php foreach($product_identifiers as $idf=>$name):
+		if($product_identifier==$idf): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$name?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['product_identifier'=>$idf], unset_GET_params: ['do_it', 'price_list'])?>" class="btn btn-light"><?=$name?></a></div>
+		<?php endif;
+	endforeach; ?>
+</div>
+
+
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Select by:')?></b></div>
+	
+	<?php foreach($select_by_scope as $idf=>$name):
+		if($select_by==$idf): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$name?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['select_by'=>$idf], unset_GET_params: ['do_it', 'price_list'])?>" class="btn btn-light"><?=$name?></a></div>
+		<?php endif;
+	endforeach; ?>
+</div>
+
+<?php if($selected_shop_key && $product_identifier): ?>
+
+<?php if($select_by=='supplier'): ?>
+	<div style="display: flex;align-items: center;margin: 10px;">
+		<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Supplier:')?></b></div>
+		
+		<div>
+			<form method="get">
+				<input type="hidden" name="shop" value="<?=$selected_shop_key?>">
+				<input type="hidden" name="product_identifier" value="<?=$product_identifier?>">
+				<input type="hidden" name="select_by" value="<?=$select_by?>">
+				
+				<select name="supplier" onchange="this.form.submit()" class="form-control">
+					<option></option>
+					<?php foreach(Supplier::getScope() as $id=>$name):
+						if($id==$this->getInt('supplier_id')):
+							?><option value="<?=$id?>" selected><?=$name?></option><?php
+						else:
+							?><option value="<?=$id?>"><?=$name?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</form>
+		</div>
+	</div>
+<?php endif; ?>
+	
+	
+	<?php if($select_by=='brand'): ?>
+		<div style="display: flex;align-items: center;margin: 10px;">
+			<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Brand:')?></b></div>
+			
+			<div>
+				<form method="get">
+					<input type="hidden" name="shop" value="<?=$selected_shop_key?>">
+					<input type="hidden" name="product_identifier" value="<?=$product_identifier?>">
+					<input type="hidden" name="select_by" value="<?=$select_by?>">
+					
+					<select name="brand" onchange="this.form.submit()" class="form-control">
+						<option></option>
+						<?php foreach(Brand::getScope() as $id=>$name):
+							if($id==$this->getInt('brand_id')):
+								?><option value="<?=$id?>" selected><?=$name?></option><?php
+							else:
+								?><option value="<?=$id?>"><?=$name?></option><?php
+							endif;
+						endforeach; ?>
+					</select>
+				</form>
+			</div>
+		</div>
+	<?php endif; ?>
+
+
+<?php endif; ?>

@@ -1,0 +1,54 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Property $property
+ */
+
+$property = $this->getRaw('property');
+$form = $this->getRaw('form');
+$prefix = $this->getString('prefix');
+
+
+if(!$form->fieldExists($prefix.Shops::getDefault()->getKey())) {
+	return;
+}
+
+$default = $form->field($prefix.Shops::getDefault()->getKey());
+
+$default->setLabel(
+	'<a href="'.$property->getEditURL().'">'.$property->getInternalName().'</a><br>'
+	.Admin_Managers::Property()->renderActiveState( $property )
+);
+
+if( Shops::isMultiShopMode() ) {
+	$default->input()->setCustomRenderer( function() use ($form, $prefix) {
+		foreach(Shops::getListSorted() as $shop) {
+			if(!$form->fieldExists($prefix.$shop->getKey())) {
+				continue;
+			}
+			
+			$field = $form->field($prefix.$shop->getKey());
+			?>
+			<div style="padding-bottom: 5px;">
+				<div><?=UI::flag($shop->getLocale())?> <?=$shop->getShopName();?></div>
+				<div><?=$field->input()->renderByView();?></div>
+			</div>
+			<?php
+		}
+	} );
+}
+
+echo $default;
+?>
+<div style="opacity: 0.3;position: relative;top: -13px;">
+	<?=$form->field($prefix.'information_in_not_available')?>
+</div>

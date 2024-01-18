@@ -1,7 +1,7 @@
 <?php
 return [
 	'vendor'      => '',
-	'label'       => 'Catalog properites management',
+	'label'       => 'Catalog properties management',
 	'description' => '',
 	
 	'ACL_actions' => [

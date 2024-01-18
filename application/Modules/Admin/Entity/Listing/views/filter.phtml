@@ -1,0 +1,54 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\DataListing_Filter;
+use Jet\Form_Field;
+use Jet\MVC_View;
+use Jet\UI;
+
+
+/**
+ * @var MVC_View $this
+ * @var DataListing_Filter $filter
+ * @var Form_Field[] $form_fields
+ * @var callable $renderer
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+
+
+$title = $this->getRaw('title');
+$form_fields = $this->getRaw('form_fields');
+$is_active = $this->getBool('is_active');
+$renderer = $this->getRaw('$renderer');
+
+$form_field_ids = [];
+foreach( $form_fields as $field ) {
+	$form_field_ids[] = $field->getId();
+}
+
+$form_field_ids = implode("', '", $form_field_ids);
+
+$reset_value = $this->getRaw('reset_value');
+
+?>
+<div class="listing-filter <?=$is_active?'listing-active-filter':''?>">
+	<div class="listing-filter-title">
+		<?=$title?>
+	</div>
+	<div class="listing-filter-form">
+		
+		<?php if($is_active): ?>
+			<div><?=UI::button(' ')
+					->setOnClick("Filter.reset(['{$form_field_ids}'], '$reset_value')")
+					->setIcon('xmark')
+				?></div>
+		<?php endif; ?>
+		
+		<?php $renderer() ?>
+	
+	</div>
+</div>
+

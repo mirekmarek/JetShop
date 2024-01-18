@@ -1,0 +1,99 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\SetProductPrices;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var PriceList $price_list
+ */
+
+$form = $this->getRaw('form');
+
+$price_list = $this->getRaw('price_list');
+?>
+
+<?php if($price_list): ?>
+<br><br>
+<script>
+	function Round( number ) {
+		return number.toFixed(<?=$price_list->getShop()->getRoundPrecision_WithVAT()?>);
+	}
+	
+	function Decrease() {
+		let prc = $('#decrease').val()*1;
+		let mtp = (100-prc)/100;
+		
+		$('.new-price').each(function ( idx, element ) {
+			element.value = Round(element.value*mtp);
+		});
+	}
+
+	function Increase() {
+		let prc = $('#increase').val()*1;
+		let mtp = (100+prc)/100;
+
+		$('.new-price').each(function ( idx, element ) {
+			element.value = Round(element.value*mtp);
+		});
+	}
+	
+</script>
+<div class="card">
+	<div class="card-header"><b><?=Tr::_('Bulk price change')?></b></div>
+	<div class="card-body">
+		<table>
+			<tr>
+				<td><?=Tr::_('Decrease:')?></td>
+				<td><input type="number" value="10" id="decrease"></td>
+				<td>%&nbsp;&nbsp;&nbsp;</td>
+				<td><?=UI::button( Tr::_('Do it') )->setClass(UI_button::CLASS_DANGER)->setOnClick("Decrease()")?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Increase:')?></td>
+				<td><input type="number" value="10" id="increase"></td>
+				<td>%&nbsp;&nbsp;&nbsp;</td>
+				<td><?=UI::button( Tr::_('Do it') )->setClass(UI_button::CLASS_DANGER)->setOnClick("Increase()")?></td>
+			</tr>
+		</table>
+	</div>
+</div>
+<br><br>
+
+<form action="<?=Http_Request::currentURI()?>" method="post" novalidate>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('ID')?></th>
+			<th><?=Tr::_('EAN')?></th>
+			<th><?=Tr::_('Internal code')?></th>
+			<th><?=Tr::_('Name')?></th>
+			<th><?=Tr::_('Current price')?></th>
+			<th><?=Tr::_('New price')?></th>
+		</tr>
+		</thead>
+		<?php foreach($price_list->getItems() as $item): ?>
+			<tr>
+				<td><a href="<?=Admin_Managers::Product()->getEditURL($item->getId())?>"><?=$item->getId()?></a></td>
+				<td><?=$item->getEan()?></td>
+				<td><?=$item->getInternalCode()?></td>
+				<td><a href="<?=Admin_Managers::Product()->getEditURL($item->getId())?>"><?=$item->getName()?></a></td>
+				<td><?=$item->getPrice()?></td>
+				
+				<td><input type="number" class="new-price" name="new_prices[<?=$item->getProductIdentification()?>]" value="<?=$item->getNewPrice()?:$item->getPrice()?>"></td>
+			</tr>
+		<?php endforeach;?>
+	</table>
+	<br><br><br>
+	
+	<?=UI::button_save(Tr::_('Do it'))->setType(UI_button::TYPE_SUBMIT)?>
+</form>
+
+	<br><br><br>
+<?php endif; ?>
+

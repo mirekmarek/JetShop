@@ -41,7 +41,7 @@ class Main extends WarehouseManagement_ManageModule
 				continue;
 			}
 
-			$p_id = $item->getProductId();
+			$p_id = $item->getItemId();
 
 			foreach($warehouses as $warehouse_code=>$warehouse) {
 				$item = WarehouseManagement_Item::get($warehouse_code, $p_id);
@@ -101,3 +101,49 @@ class Main extends WarehouseManagement_ManageModule
 		}
 	}
 }
+
+
+	//TODO: warehouse management job
+	/*
+	<div class="row">
+		<label class="col-form-label col-md-2"><?=Tr::_('Stock status:')?></label>
+		<div class="col-md-8">
+			<table class="table table-striped">
+				<tr>
+					<td style="width: 150px;font-weight: bolder;"><?=Tr::_('Total available:')?></td>
+					<td style="font-weight: bolder;"><?=$product->getShopData($shop)->getInStockQty()?></td>
+				</tr>
+				<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+					if(!$warehouse->hasShop($shop)) {
+						continue;
+					}
+					
+					$item = WarehouseManagement_Item::get($warehouse->getCode(), $product->getId());
+					?>
+					<tr>
+						<td colspan="2">
+							<b><?=$warehouse->getInternalName()?></b>
+						</td>
+					</tr>
+					
+					<tr>
+						<td><?=Tr::_('Available:')?></td>
+						<td><?=Locale::getCurrentLocale()->formatInt($item->getAvailable())?></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('In stock:')?></td>
+						<td><?=Locale::getCurrentLocale()->formatInt($item->getInStock())?></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('Blocked:')?></td>
+						<td><?=Locale::getCurrentLocale()->formatInt($item->getBlocked())?></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('Required:')?></td>
+						<td><?=Locale::getCurrentLocale()->formatInt($item->getRequired())?></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+		</div>
+	</div>
+	*/

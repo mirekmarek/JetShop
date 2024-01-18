@@ -1,11 +1,11 @@
 <?php
 return [
-	'name' => 'Delivery Method administration',
+	'name' => 'Delivery Methods',
 	'is_active' => true,
-	'title' => 'Delivery Method administration',
+	'title' => 'Delivery Methods',
 	'icon' => 'truck-moving',
-	'menu_title' => 'Delivery Method administration',
-	'breadcrumb_title' => 'Delivery Method administration',
+	'menu_title' => 'Delivery Methods',
+	'breadcrumb_title' => 'Delivery Methods',
 	'contents' => [
 		[
 			'controller_name' => 'Main',

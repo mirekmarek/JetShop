@@ -3,17 +3,16 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Tr;
 use Jet\Application_Module;
-use Jet\Factory_MVC;
-use Jet\Translator;
+use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Product;
-use JetApplication\Admin_Managers_Trait;
-use JetApplication\Product as Application_Product;
+use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
+use JetApplication\Entity_WithShopData;
 
 
 class Main extends Application_Module implements Admin_Managers_Product
 {
-	use Admin_Managers_Trait;
+	use Admin_Entity_WithShopData_Manager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'products';
 
@@ -44,48 +43,16 @@ class Main extends Application_Module implements Admin_Managers_Product
 			selected_entity_edit_URL: $selected?->getEditURL()
 		);
 	}
-
 	
 	
-	public function renderActiveState( Application_Product $product ) : string
+	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		
-		$view->setVar('product', $product );
-		
-		return $view->render('active_state');
+		return new Product();
 	}
 	
-	
-	public function getName( int $id ) : string
+	public static function getEntityNameReadable() : string
 	{
-		$p = Product::get( $id );
-		
-		return $p?$p->getAdminTitle():'';
-	}
-	
-	public function showName( int $id ): string
-	{
-		$res = '';
-		
-		Translator::setCurrentDictionaryTemporary(
-			$this->module_manifest->getName(),
-			function() use (&$res, $id) {
-				$product = Product::get($id);
-				
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar('id', $id);
-				
-				if($product) {
-					$view->setVar('product', $product);
-					$res = $view->render('show-name/known');
-				} else {
-					$res = $view->render('show-name/unknown');
-				}
-			}
-		);
-		
-		return $res;
+		return 'product';
 	}
 	
 }

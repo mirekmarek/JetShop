@@ -1,0 +1,34 @@
+<?php
+namespace JetApplicationModule\Discounts\Code;
+
+use Jet\MVC_View;
+use JetApplication\Discounts_Code;
+
+/**
+ * @var MVC_View   $this
+ * @var Discounts_Code|null $used_code
+ * @var Main $module
+ */
+
+$module = $this->getRaw('module');
+$used_code = $this->getRaw('used_code');
+?>
+<div id="discount_code_area">
+	<?php
+	require 'shopping_cart/state.phtml';
+	?>
+</div>
+
+<script type="text/javascript">
+	const DiscountCode = {
+		submit: function() {
+			JetAjaxForm.submit('discount_code_use_form');
+		},
+
+		cancel: function( code ) {
+			$('#discount_code_area').load('?action=cancel_use_code', {
+				code: code
+			})
+		}
+	};
+</script>

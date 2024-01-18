@@ -1,13 +1,13 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 $cash_desk = CashDesk::get();
 
 if($cash_desk->getNoRegistration()):
 	require 'registration/no_registration.phtml';
-else:
-	require 'registration/register.phtml';
 endif;
+
+require 'registration/email_and_phone_has_been_set.phtml';
 ?>
 <div id="cash_desk_billing_address">
 	<?php require('billing_address.phtml'); ?>

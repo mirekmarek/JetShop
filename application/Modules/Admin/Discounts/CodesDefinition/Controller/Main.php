@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 use Jet\Logger;
 use JetApplication\Admin_Managers;
-use JetApplication\Discounts_Code as DiscountsCode;
+use JetApplication\Admin_Managers_Entity_Listing;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\UI_messages;
@@ -24,28 +24,28 @@ use Jet\Navigation_Breadcrumb;
  */
 class Controller_Main extends MVC_Controller_Default
 {
-
-	/**
-	 * @var ?MVC_Controller_Router_AddEditDelete
-	 */
+	
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-
-	/**
-	 * @var ?DiscountsCode
-	 */
+	
 	protected ?DiscountsCode $discounts_code = null;
-
-	/**
-	 *
-	 * @return MVC_Controller_Router_AddEditDelete
-	 */
+	
+	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
+	
+	
 	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
 	{
 		if( !$this->router ) {
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
-					return (bool)($this->discounts_code = DiscountsCode::get($id));
+					$this->discounts_code = DiscountsCode::get($id);
+					if(!$this->discounts_code) {
+						return false;
+					}
+					
+					$this->discounts_code->setEditable( Main::getCurrentUserCanEdit() );
+					
+					return true;
 				},
 				[
 					'listing'=> Main::ACTION_GET,
@@ -59,11 +59,8 @@ class Controller_Main extends MVC_Controller_Default
 
 		return $this->router;
 	}
-
-	/**
-	 * @param string $current_label
-	 */
-	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
+	
+	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		Admin_Managers::UI()->initBreadcrumb();
 
@@ -71,29 +68,61 @@ class Controller_Main extends MVC_Controller_Default
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
 	}
-
-	/**
-	 *
-	 */
+	
+	public function getListing() : Admin_Managers_Entity_Listing
+	{
+		if(!$this->listing_manager) {
+			$this->listing_manager = Admin_Managers::EntityListing();
+			$this->listing_manager->setUp(
+				$this->module
+			);
+			
+			$this->setupListing();
+		}
+		
+		return $this->listing_manager;
+	}
+	
+	public function setupListing() : void
+	{
+		$this->listing_manager->addColumn( new Listing_Column_Code() );
+		$this->listing_manager->addColumn( new Listing_Column_ValidFrom() );
+		$this->listing_manager->addColumn( new Listing_Column_ValidTill() );
+		$this->listing_manager->addColumn( new Listing_Column_InternalNotes() );
+		$this->listing_manager->addColumn( new Listing_Column_DiscountType() );
+		$this->listing_manager->addColumn( new Listing_Column_MinimalOrderAmount() );
+		
+		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
+			$search = '%'.$search.'%';
+			
+			return [
+				'code *' => $search,
+				'OR',
+				'internal_notes *' => $search,
+			];
+		} );
+		
+		$this->listing_manager->setDefaultColumnsSchema([
+			'edit',
+			'id',
+			'shop',
+			'code',
+			'status',
+			'internal_notes',
+		]);
+	}
+	
+	
 	public function listing_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
-
-		$listing = new Listing();
-		$listing->handle();
-
-		$this->view->setVar( 'filter_form', $listing->getFilterForm());
-		$this->view->setVar( 'grid', $listing->getGrid() );
-
-		$this->output( 'list' );
+		$this->setBreadcrumbNavigation();
+		
+		$this->content->output( $this->getListing()->renderListing() );
 	}
-
-	/**
-	 *
-	 */
+	
 	public function add_Action() : void
 	{
-		$this->_setBreadcrumbNavigation( Tr::_( 'Create a new Discounts Code' ) );
+		$this->setBreadcrumbNavigation( Tr::_( 'Create a new Discounts Code' ) );
 
 		$discounts_code = new DiscountsCode();
 
@@ -132,7 +161,7 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$discounts_code = $this->discounts_code;
 
-		$this->_setBreadcrumbNavigation( Tr::_( 'Edit discounts code <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $discounts_code->getCode() ] ) );
+		$this->setBreadcrumbNavigation( Tr::_( 'Edit discounts code <b>%ITEM_NAME%</b>', ['ITEM_NAME' => $discounts_code->getCode() ] ) );
 
 		$form = $discounts_code->getEditForm();
 
@@ -169,7 +198,7 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$discounts_code = $this->discounts_code;
 
-		$this->_setBreadcrumbNavigation(
+		$this->setBreadcrumbNavigation(
 			Tr::_( 'Discounts Code detail <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $discounts_code->getCode() ] )
 		);
 
@@ -191,7 +220,7 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$discounts_code = $this->discounts_code;
 
-		$this->_setBreadcrumbNavigation(
+		$this->setBreadcrumbNavigation(
 			Tr::_( 'Delete discounts code  <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $discounts_code->getCode() ] )
 		);
 

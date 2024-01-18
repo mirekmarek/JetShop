@@ -21,11 +21,7 @@ use Jet\MVC_Page_Content_Interface;
  */
 class Controller_Main extends MVC_Controller_Default
 {
-
-	/**
-	 *
-	 * @param  MVC_Page_Content_Interface $content
-	 */
+	
 	public function __construct( MVC_Page_Content_Interface $content )
 	{
 		parent::__construct( $content );
@@ -38,11 +34,7 @@ class Controller_Main extends MVC_Controller_Default
 			$this->logout_Action();
 		}
 	}
-
-
-	/**
-	 *
-	 */
+	
 	public function logout_Action() : void
 	{
 		Auth::logout();
@@ -50,33 +42,21 @@ class Controller_Main extends MVC_Controller_Default
 		Http_Headers::movedTemporary( MVC::getPage( MVC::HOMEPAGE_ID )->getURL() );
 	}
 
-	/**
-	 *
-	 */
 	public function default_Action() : void
 	{
 		$this->output( 'default' );
 	}
 
-	/**
-	 *
-	 */
 	public function breadcrumb_navigation_Action() : void
 	{
 		$this->output( 'breadcrumb_navigation' );
 	}
 
-	/**
-	 *
-	 */
 	public function messages_Action() : void
 	{
 		$this->output( 'messages' );
 	}
 
-	/**
-	 *
-	 */
 	public function main_menu_Action() : void
 	{
 		$this->output( 'main_menu' );

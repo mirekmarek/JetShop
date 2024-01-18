@@ -7,7 +7,6 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Data_DateTime;
 use Jet\Http_Request;
 use Jet\Tr;

@@ -1,0 +1,37 @@
+<?php
+use JetApplication\Shops_Shop;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Shops_Shop $shop
+ */
+$form = $this->getRaw('form');
+$shop = $this->getRaw('shop');
+$shop_key = $shop->getKey();
+
+
+?>
+<fieldset>
+	<legend class="sub"><?=Tr::_('Main data')?></legend>
+	<?php
+	echo $form->field('/shop_data/'.$shop_key.'/label');
+	echo $form->field('/shop_data/'.$shop_key.'/description');
+	
+	if($form->fieldExists('/shop_data/'.$shop_key.'/bool_yes_description')) {
+		echo $form->field('/shop_data/'.$shop_key.'/bool_yes_description');
+	}
+	
+	if($form->fieldExists('/shop_data/'.$shop_key.'/units')) {
+		echo $form->field( '/shop_data/' . $shop_key . '/units' );
+	}
+	if($form->fieldExists('/shop_data/'.$shop_key.'/url_param')) {
+		$form->field( '/shop_data/' . $shop_key . '/url_param' )->setIsReadonly(true);
+		echo $form->field( '/shop_data/' . $shop_key . '/url_param' );
+	}
+	?>
+</fieldset>

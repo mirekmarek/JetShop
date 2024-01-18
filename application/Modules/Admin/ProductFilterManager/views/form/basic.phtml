@@ -1,0 +1,30 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Property;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ * @var Property[] $properties
+ */
+
+$form = $this->getRaw('form');
+
+?>
+
+<fieldset>
+	<legend style="font-size: 0.8rem"><?=Tr::_('Basic')?></legend>
+	<?php
+	foreach($form->getFields() as $field):
+		if(!str_starts_with($field->getName(), '/basic/')) {
+			continue;
+		}
+		
+		echo $field;
+	endforeach;
+	?>
+</fieldset>

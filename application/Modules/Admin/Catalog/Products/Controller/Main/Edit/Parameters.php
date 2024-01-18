@@ -15,9 +15,14 @@ trait Controller_Main_Edit_Parameters
 {
 	public function edit_parameters_Action() : void
 	{
-		$this->_setBreadcrumbNavigation();
+		$this->setBreadcrumbNavigation( Tr::_('Parameters') );
 		
-		$product = static::getCurrentProduct();
+		/**
+		 * @var Product $product
+		 */
+		$product = $this->current_item;
+		
+		$this->view->setVar('item', $product);
 		
 		if( $product->catchParametersEditForm() ) {
 			Logger::success(

@@ -5,26 +5,38 @@
 
 namespace JetShop;
 
+use Jet\Application_Module;
+use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
+use JetApplication\Delivery_Kind;
 use JetApplication\Delivery_Method;
-use JetApplication\Entity_WithCodeAndShopData_ShopData;
+use JetApplication\Delivery_Method_Module;
+use JetApplication\Delivery_Method_PaymentMethods;
+use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Entity_WithShopData_ShopData;
+use JetApplication\Order;
+use JetApplication\Payment_Method_ShopData;
+
 
 #[DataModel_Definition(
 	name: 'delivery_method_shop_data',
 	database_table_name: 'delivery_methods_shop_data',
 	parent_model_class: Delivery_Method::class
 )]
-abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_ShopData
+abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopData
 {
-
-	public const  IMG_ICON1 = 'icon1';
-	public const  IMG_ICON2 = 'icon2';
-	public const  IMG_ICON3 = 'icon3';
-
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 255,
+	)]
+	protected string $kind = '';
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -101,6 +113,7 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 	)]
 	protected float $default_price = 0.0;
 	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -124,7 +137,51 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 	)]
 	protected bool $discount_is_not_allowed = false;
 	
-
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 255,
+	)]
+	protected string $backend_module_name = '';
+	
+	
+	
+	protected ?float $price = null;
+	
+	protected bool $enabled = true;
+	
+	public function getEnabled(): bool
+	{
+		return $this->enabled;
+	}
+	
+	public function setEnabled( bool $enabled ): void
+	{
+		$this->enabled = $enabled;
+	}
+	
+	public function setKind( string $code ): void
+	{
+		$this->kind = $code;
+	}
+	
+	public function getKindCode(): string
+	{
+		return $this->kind;
+	}
+	
+	public function getKind() : ?Delivery_Kind
+	{
+		return Delivery_Kind::get( $this->kind );
+	}
+	
+	public function getKindTitle() : string
+	{
+		$kind = $this->getKind();
+		return $kind ? $kind->getTitle() : '';
+	}
+	
+	
 	public function setIcon1( string $image ) : void
 	{
 		$this->image_icon1 = $image;
@@ -134,6 +191,14 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 	{
 		return $this->image_icon1;
 	}
+	
+	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon1', $max_w, $max_h );
+	}
+	
+	
+	
 	
 	public function setIcon2( string $image ) : void
 	{
@@ -145,6 +210,11 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 		return $this->image_icon2;
 	}
 	
+	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon2', $max_w, $max_h );
+	}
+	
 	
 	public function setIcon3( string $image ) : void
 	{
@@ -154,6 +224,11 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 	public function getIcon3() : string
 	{
 		return $this->image_icon3;
+	}
+	
+	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon3', $max_w, $max_h );
 	}
 	
 	public function setTitle( string $value ) : void
@@ -220,6 +295,20 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 	{
 		$this->vat_rate = $value;
 	}
+	
+	public function getPrice(): ?float
+	{
+		if($this->price===null) {
+			$this->price = $this->getDefaultPrice();
+		}
+		return $this->price;
+	}
+	
+	public function setPrice( float $price ): void
+	{
+		$this->price = $price;
+	}
+	
 
 	/**
 	 * @return float
@@ -254,5 +343,114 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithCodeAndShopData_
 	{
 		return $this->discount_is_not_allowed;
 	}
-
+	
+	public function isPersonalTakeover() : bool
+	{
+		return $this->kind == Delivery_Kind::KIND_PERSONAL_TAKEOVER;
+	}
+	
+	public function isEDelivery() : bool
+	{
+		return $this->kind == Delivery_Kind::KIND_E_DELIVERY;
+	}
+	
+	/**
+	 * @param bool $only_active
+	 * @return Delivery_PersonalTakeover_Place[]
+	 */
+	public function getPersonalTakeoverPlaces( bool $only_active=true ) : array
+	{
+		if(!$this->isPersonalTakeover()) {
+			return [];
+		}
+		
+		return Delivery_PersonalTakeover_Place::getListForMethod( $this, $only_active );
+		
+	}
+	
+	/**
+	 * @return Delivery_PersonalTakeover_Place[]
+	 */
+	public function getPersonalTakeoverPlaceHashMap() : array
+	{
+		if(!$this->isPersonalTakeover()) {
+			return [];
+		}
+		
+		return Delivery_PersonalTakeover_Place::getHashMapForMethod( $this );
+		
+	}
+	
+	
+	
+	public function getPersonalTakeoverPlace( string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
+	{
+		if(!$this->isPersonalTakeover()) {
+			return null;
+		}
+		
+		$place = Delivery_PersonalTakeover_Place::getPlace( $this, $place_code );
+		
+		if(!$place) {
+			return null;
+		}
+		
+		if($only_active && !$place->isActive()) {
+			return null;
+		}
+		
+		return $place;
+	}
+	
+	public function hasPersonalTakeoverPlace( string $place_code, $only_active=true ) : bool
+	{
+		return (bool)$this->getPersonalTakeoverPlace( $place_code, $only_active );
+	}
+	
+	public function getBackendModuleName(): string
+	{
+		return $this->backend_module_name;
+	}
+	
+	public function setBackendModuleName( string $backend_module_name ): void
+	{
+		$this->backend_module_name = $backend_module_name;
+	}
+	
+	public function getBackendModule() : null|Delivery_Method_Module|Application_Module
+	{
+		if(!$this->backend_module_name) {
+			return null;
+		}
+		
+		return Application_Modules::moduleInstance( $this->backend_module_name );
+	}
+	
+	/**
+	 * @return Payment_Method_ShopData[]
+	 */
+	public function getPaymentMethods() : array
+	{
+		$ids = Delivery_Method_PaymentMethods::dataFetchCol(
+			select:[
+				'payment_method_id'
+			],
+			where: [
+				'delivery_method_id' => $this->entity_id
+			]);
+		
+		return Payment_Method_ShopData::getActiveList( $ids );
+	}
+	
+	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	{
+		$module = $this->getBackendModule();
+		
+		if($module) {
+			return $module->getOrderConfirmationEmailInfoText( $order, $this );
+		} else {
+			return $this->getConfirmationEmailInfoText();
+		}
+	}
+	
 }

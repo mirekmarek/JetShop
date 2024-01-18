@@ -309,12 +309,17 @@ class Core_Content_InfoPage extends Entity_WithShopRelation
 			$page->setId( $this->getPageId() );
 			$page->setParentId( MVC::HOMEPAGE_ID );
 		}
-
+		
 		$page->setName( $this->getTitle() );
 		$page->setTitle( $this->getTitle() );
 		$page->setMenuTitle( $this->getMenuTitle() );
 		$page->setBreadcrumbTitle( $this->getBreadcrumbTitle() );
-		$page->setLayoutScriptName( 'default' );
+		$page->setRelativePathFragment( $this->getRelativePathFragment() );
+		if($this->custom_layout_script) {
+			$page->setLayoutScriptName( $this->custom_layout_script );
+		} else {
+			$page->setLayoutScriptName( 'default' );
+		}
 
 		$has_meta_description = false;
 		$has_meta_keywords = false;
@@ -354,10 +359,6 @@ class Core_Content_InfoPage extends Entity_WithShopRelation
 		}
 
 
-		if($this->custom_layout_script) {
-			$page->setLayoutScriptName( $this->custom_layout_script );
-		}
-		$page->setRelativePathFragment( $this->getRelativePathFragment() );
 
 		foreach($page->getContent() as $i=>$content) {
 			$page->removeContent( $i );
@@ -367,8 +368,12 @@ class Core_Content_InfoPage extends Entity_WithShopRelation
 		$content->setOutput( $this->getText() );
 		
 		$page->addContent( $content );
-
 		$page->setIsActive( $this->getIsActive() );
+		
+		//TODO: save
+		var_dump($page->getDataDirPath());
+		var_dump($page->getDataFilePath());
+		die();
 
 		try {
 			$page->saveDataFile();

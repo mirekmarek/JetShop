@@ -19,4 +19,9 @@ return [
 	'The discount code is no longer valid' => '',
 	'The discount code has been already used' => '',
 	'The minimum order value must be at least %MIN%' => '',
+	'The discount code has already been used' => '',
+	'e-Delivery' => '',
+	'Personal takeover' => '',
+	'Delivery' => '',
+	'Discount %D% for delivery price' => '',
 ];

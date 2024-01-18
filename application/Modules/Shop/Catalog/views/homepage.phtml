@@ -1,0 +1,29 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Category_ShopData;
+use JetApplicationModule\Admin\Catalog\Categories\Category;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$ids = array_unique(Category::dataFetchCol(['root_id']));
+
+$categories = Category_ShopData::getActiveList($ids);
+
+?>
+
+<?php foreach( $categories as $item):
+	if(!$item->getBranchProductsCount()) {
+		continue;
+	}
+	?>
+	<a href="<?=$item->getUrl()?>" style="font-size: 14px;font-weight: bolder"><?=$item->getName()?></a>
+	<br/>
+	<?php foreach( $item->getChildren() as $s_item): ?>
+		<a href="<?=$s_item->getUrl()?>" style="font-size: 10px;"><?=$s_item->getName()?></a>
+	<?php endforeach; ?>
+	<br/>
+<?php endforeach; ?>

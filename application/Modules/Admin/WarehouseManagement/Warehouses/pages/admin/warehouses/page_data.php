@@ -1,11 +1,11 @@
 <?php
 return [
-	'name' => 'Warehouses administration',
+	'name' => 'Warehouses',
 	'is_active' => true,
-	'title' => 'Warehouses administration',
+	'title' => 'Warehouses',
 	'icon' => 'warehouse',
-	'menu_title' => 'Warehouses administration',
-	'breadcrumb_title' => 'Warehouses administration',
+	'menu_title' => 'Warehouses',
+	'breadcrumb_title' => 'Warehouses',
 	'contents' => [
 		[
 			'controller_name' => 'Main',

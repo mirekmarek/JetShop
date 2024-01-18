@@ -3,10 +3,8 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Form;
 use Jet\Form_Renderer;
-use Jet\Http_Request;
 use Jet\Tr;
 use Jet\MVC_View;
-use Jet\UI;
 use JetApplication\Admin_Managers;
 use JetApplication\Property_Options_Option;
 use JetApplication\Shops_Shop;
@@ -28,15 +26,8 @@ $form->renderer()->setDefaultLabelWidth([
 echo $form->start();
 
 ?>
-	<div class="row toolbar" id="main-toolbar">
-		<div class="col-md-12">
-			<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id']))?>
-			
-			<?php if( !$form->getIsReadonly() ): ?>
-				<?=UI::button_save()?>
-			<?php endif; ?>
-		</div>
-	</div>
+<?=Admin_Managers::UI()->renderEntityToolbar($form)?>
+
 	
 	<div class="row">
 		<div class="col-md-12" id="main-col">
@@ -44,22 +35,13 @@ echo $form->start();
 			<br>
 			
 			<?=Admin_Managers::UI()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
+			<?=Admin_Managers::UI()->renderEntityFormCommonFields($form)?>
 			<?php
-			echo $form->field('internal_name');
-			echo $form->field('internal_notes');
 			
-			if($form->fieldExists('decimal_places')) {
-				echo $form->field('decimal_places');
-			}
-			
-			
-				
 			Admin_Managers::UI()->renderShopDataBlocks(
 				form: $form,
 				renderer: function( Shops_Shop $shop, string $shop_key ) use ($option, $form) : void {
-					$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "urlPathPart.afterNameChanged(this.value, '".$form->field('/shop_data/'.$shop_key.'/url_param')->getId()."', '".$shop_key."');");
-					$form->field('/shop_data/'.$shop_key.'/filter_label')->input()->addJsAction('onchange', "$('#".$form->field('/shop_data/'.$shop_key.'/product_detail_label')->getId()."').val(this.value);");
-					$form->field('/shop_data/'.$shop_key.'/url_param')->input()->addJsAction('onchange', "urlPathPart.afterPathPartChanged(this, '".$shop_key."')");
+					$form->field('/shop_data/'.$shop_key.'/url_param')->setIsReadonly(true);
 					?>
 					<fieldset>
 						<legend class="sub"><?=Tr::_('Main data')?></legend>
@@ -68,8 +50,8 @@ echo $form->start();
 						
 						<?=$form->field('/shop_data/'.$shop_key.'/filter_label')?>
 						<?=$form->field('/shop_data/'.$shop_key.'/product_detail_label')?>
-						<?=$form->field('/shop_data/'.$shop_key.'/url_param')?>
 						<?=$form->field('/shop_data/'.$shop_key.'/description')?>
+						<?=$form->field('/shop_data/'.$shop_key.'/url_param')?>
 					</fieldset>
 				<?php }); ?>
 		

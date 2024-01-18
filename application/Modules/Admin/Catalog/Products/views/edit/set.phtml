@@ -8,12 +8,17 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use JetApplication\Admin_Managers;
+use JetApplication\Shops_Shop;
 
 /**
  * @var MVC_View   $this
+ * @var Product $product
  */
 
-$product = Controller_Main::getCurrentProduct();
+$product = $this->getRaw('item');
+
+$editable = $product->isEditable();
+
 
 $edit_form = $product->getSetSetupForm();
 $add_form = $product->getSetAddItemForm();
@@ -26,40 +31,39 @@ $edit_form->renderer()->setDefaultFieldWidth([
 	Form_Renderer::LJ_SIZE_MEDIUM => 5
 ]);
 
+$product = $this->getRaw('item');
+
+require '_toolbar.phtml';
+
 ?>
-<?=$add_form->start()?>
-	<?=$add_form->field('product_id')?>
-<?=$add_form->end()?>
-
-<?=$edit_form->start()?>
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=$this->render('edit/nav_button');?>
-
-		<?php if( !$edit_form->getIsReadonly() ): ?>
-			<?=UI::button_save()?>
-
-			<div style="display: inline-block;margin-top: -20px;">
-				<table style="position: relative;top: 15px;">
-					<tr>
-						<td style="padding-left: 30px;font-weight: bolder;"><?=Tr::_('Add product: ')?></td>
-						<td style="width: 400px;"><?=Admin_Managers::Product()->renderSelectWidget(
-							on_select: "$('#set_add_item_form__product_id').val(selected_item.id);$('#set_add_item_form').submit();",
-							only_type_filter: [Product::PRODUCT_TYPE_REGULAR]
-						)?></td>
-					</tr>
-				</table>
-
-			</div>
-
-		<?php endif; ?>
-	</div>
-</div>
-
 <div class="row">
-
 	<div class="col-md-12" id="main-col">
 		<?=$this->getRaw('tabs')?>
+
+
+<?php if($editable): ?>
+	<?=$add_form->start()?>
+		<?=$add_form->field('product_id')?>
+	<?=$add_form->end()?>
+<?php endif; ?>
+
+<div class="toolbar">
+		<?php if( $editable ): ?>
+			<div style="display: grid;grid-template-columns: 200px 1fr;align-items: center">
+				<div style="text-align: right;font-weight: bolder;"><?=Tr::_('Add product: ')?></div>
+				<div style="width: 400px;"><?=Admin_Managers::Product()->renderSelectWidget(
+					on_select: "$('#set_add_item_form__product_id').val(selected_item.id);$('#set_add_item_form').submit();",
+					only_type_filter: [Product::PRODUCT_TYPE_REGULAR]
+				)?></div>
+			</div>
+		<?php endif; ?>
+	
+</div>
+
+<?=$edit_form->start()?>
+<div class="row">
+
+	<div class="col-md-12">
 
 
 		<table class="table table-striped">
@@ -103,15 +107,66 @@ $edit_form->renderer()->setDefaultFieldWidth([
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
+			<tfoot>
+			<tr>
+				<td></td>
+				<td>
+					<?php if($editable): ?>
+					<?=UI::button_save()?>
+					<?php endif; ?>
+				</td>
+			</tr>
+			</tfoot>
 		</table>
+		
+		<h3><?=Tr::_('Price settings')?></h3>
+		<?php Admin_Managers::UI()->renderShopDataBlocks(
+			form: $edit_form, inline_mode: true, renderer: function( Shops_Shop $shop ) use ($edit_form, $editable, $product) {
+				$edit_form->field('/set_price/'.$shop->getKey().'/discount_type')->label()->setWidth([
+					Form_Renderer::LJ_SIZE_MEDIUM => 2
+				]);
+				$edit_form->field('/set_price/'.$shop->getKey().'/discount_value')->label()->setWidth([
+					Form_Renderer::LJ_SIZE_MEDIUM => 2
+				]);
+				$edit_form->field('/set_price/'.$shop->getKey().'/discount_type')->input()->setWidth([
+					Form_Renderer::LJ_SIZE_MEDIUM => 2
+				]);
+				$edit_form->field('/set_price/'.$shop->getKey().'/discount_value')->input()->setWidth([
+					Form_Renderer::LJ_SIZE_MEDIUM => 2
+				]);
+				
+				?>
+				<div class="row" style="padding-bottom: 10px;">
+					<div class="col-md-2" style="font-weight: bolder"><?=Tr::_('Calculated price:')?></div>
+					<div class="col-md-2" style="font-weight: bolder">
+						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $product->getShopData($shop)->getCalculatedSetPrice() )?>
+					</div>
+				</div>
+			
+			<?=$edit_form->field('/set_price/'.$shop->getKey().'/discount_type');?>
+				<?=$edit_form->field('/set_price/'.$shop->getKey().'/discount_value');?>
+				<?php if($editable): ?>
+					<div class="row">
+						<div class="col-md-2"></div>
+						<div class="col-md-2">
+							<?=UI::button_save()?>
+						</div>
+					</div>
+				<?php endif; ?>
+				<div class="row" style="padding-top: 10px;">
+					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem"><?=Tr::_('Price:')?></div>
+					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem">
+						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $product->getShopData($shop)->getPrice() )?>
+					</div>
+				</div>
+				<br><br>
+			<?php
+		} ); ?>
+		
 	</div>
 </div>
 
 <?=$edit_form->end()?>
 
-<script type="text/javascript">
-	function toggleSetDiscount( selected_value )
-	{
-	}
-
-</script>
+	</div>
+</div>

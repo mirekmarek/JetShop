@@ -8,16 +8,70 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Date;
 use JetApplication\Category;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Category_Product;
+use JetApplication\Category_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Product;
-use JetApplication\Shops;
+use JetApplication\Product_PriceHistory;
+use JetApplication\Product_ShopData_Trait_Set;
+use JetApplication\Product_ShopData_Trait_Variants;
+use JetApplication\Product_ShopData_Trait_Images;
 
 #[DataModel_Definition(
 	name: 'products_shop_data',
 	database_table_name: 'products_shop_data',
 	parent_model_class: Product::class
 )]
-abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
+abstract class Core_Product_ShopData extends Entity_WithShopData_ShopData {
+	use Product_ShopData_Trait_Set;
+	use Product_ShopData_Trait_Variants;
+	use Product_ShopData_Trait_Images;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+	)]
+	protected string $type = Product::PRODUCT_TYPE_REGULAR;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	protected int $kind_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+	)]
+	protected string $ean = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+	)]
+	protected string $erp_id = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $brand_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $supplier_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $delivery_class_id = 0;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -28,16 +82,6 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 		label: 'Name:'
 	)]
 	protected string $name = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Name of variant:'
-	)]
-	protected string $variant_name = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -58,16 +102,6 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 		label: 'Description:'
 	)]
 	protected string $description = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'H1:'
-	)]
-	protected string $seo_h1 = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -105,23 +139,7 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 	)]
 	protected string $URL_path_part = '';
 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 999999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Keywords for internal fulltext:'
-	)]
-	protected string $internal_fulltext_keywords = '';
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 9999999
-	)]
-	protected string $category_ids = '';
-	
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -159,7 +177,7 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INT,
-		label: 'Length of delivery :',
+		label: 'Length of delivery:',
 	)]
 	protected int $length_of_delivery = 0;
 
@@ -200,27 +218,36 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 	)]
 	protected int $question_count = 0;
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 20,
-	)]
-	protected string $set_discount_type = '';
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	protected float $set_discount_value = 0.0;
+	protected ?array $category_ids = null;
+	
+	protected ?array $categories = null;
+	
 	
 	public function activate(): void
 	{
 		parent::activate();
-		Category::productActivated( product_id: $this->entity_id );
+		if($this->isVariant()) {
+			$master = Product::load( $this->getVariantMasterProductId() );
+			$master?->actualizeVariantMaster();
+			
+			Category::productActivated( product_id: $this->getVariantMasterProductId() );
+		} else {
+			Category::productActivated( product_id: $this->entity_id );
+		}
 	}
 	
 	public function deactivate(): void
 	{
 		parent::deactivate();
-		Category::productDeactivated( product_id: $this->entity_id );
+		if($this->isVariant()) {
+			$master = Product::load( $this->getVariantMasterProductId() );
+			$master?->actualizeVariantMaster();
+			
+			Category::productActivated( product_id: $this->getVariantMasterProductId() );
+		} else {
+			Category::productDeactivated( product_id: $this->entity_id );
+		}
 	}
 	
 	
@@ -228,11 +255,116 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 	{
 		return $this->name;
 	}
+	
+	public function getFullName() : string
+	{
+		$name = $this->name;
+		
+		if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+			$name .= ' / '.$this->variant_name;
+		}
+		
+		return $name;
+	}
 
 	public function setName( string $name ) : void
 	{
+		if($this->name==$name) {
+			return;
+		}
+		
 		$this->name = $name;
 		$this->generateURLPathPart();
+	}
+	
+	public function getType(): string
+	{
+		return $this->type;
+	}
+	
+	public function isSet() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_SET;
+	}
+	
+	public function isVariant() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_VARIANT;
+	}
+	
+	public function isVariantMaster() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_VARIANT_MASTER;
+	}
+	
+	public function isRegular() : bool
+	{
+		return $this->type==Product::PRODUCT_TYPE_REGULAR;
+	}
+	
+	public function setType( string $type ): void
+	{
+		$this->type = $type;
+	}
+	
+	public function getKindId(): int
+	{
+		return $this->kind_id;
+	}
+	
+	public function setKindId( int $kind_id ): void
+	{
+		$this->kind_id = $kind_id;
+	}
+	
+	public function getEan(): string
+	{
+		return $this->ean;
+	}
+	
+	public function setEan( string $ean ): void
+	{
+		$this->ean = $ean;
+	}
+	
+	public function getErpId(): string
+	{
+		return $this->erp_id;
+	}
+	
+	public function setErpId( string $erp_id ): void
+	{
+		$this->erp_id = $erp_id;
+	}
+	
+	public function getBrandId(): int
+	{
+		return $this->brand_id;
+	}
+	
+	public function setBrandId( int $brand_id ): void
+	{
+		$this->brand_id = $brand_id;
+	}
+	
+	public function getSupplierId(): int
+	{
+		return $this->supplier_id;
+	}
+	
+	public function setSupplierId( int $supplier_id ): void
+	{
+		$this->supplier_id = $supplier_id;
+	}
+	
+	public function getDeliveryClassId(): int
+	{
+		return $this->delivery_class_id;
+	}
+	
+	public function setDeliveryClassId( int $delivery_class_id ): void
+	{
+		$this->delivery_class_id = $delivery_class_id;
 	}
 
 	public function getDescription() : string
@@ -243,16 +375,6 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 	public function setDescription( string $description ) : void
 	{
 		$this->description = $description;
-	}
-
-	public function getSeoH1() : string
-	{
-		return $this->seo_h1;
-	}
-
-	public function setSeoH1( string $seo_h1 ) : void
-	{
-		$this->seo_h1 = $seo_h1;
 	}
 
 	public function getSeoTitle() : string
@@ -284,27 +406,6 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 	{
 		$this->short_description = $short_description;
 	}
-
-	public function getVariantName() : string
-	{
-		return $this->variant_name;
-	}
-
-	public function setVariantName( string $variant_name ) : void
-	{
-		$this->variant_name = $variant_name;
-	}
-	public function getFullName(): string
-	{
-		$name = $this->getName();
-		$variant_name = $this->getVariantName();
-		
-		if($variant_name) {
-			return $name.' '.$variant_name;
-		}
-		
-		return $name;
-	}
 	
 	
 	public function getVatRate() : float
@@ -334,10 +435,55 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 		return $this->price;
 	}
 	
+	/**
+	 * @return Product_PriceHistory[]
+	 */
+	public function getPriceHistory() : array
+	{
+		$where = $this->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['product_id'] = $this->getId();
+		$_history = Product_PriceHistory::fetchInstances( $where );
+		$_history->getQuery()->setOrderBy('-id');
+		
+		$history = [];
+		foreach($_history as $hi) {
+			$history[] = $hi;
+		}
+		
+		return $history;
+	}
+	
 	public function setPrice( float $price ): void
 	{
+		if($this->price==$price) {
+			return;
+		}
+		
 		$this->price = $price;
 		$this->calcDiscount();
+		$this->save();
+		
+		Product_PriceHistory::newRecord( $this );
+	}
+	
+	public function actualizePriceReferences() : void
+	{
+		switch($this->getType()) {
+			case Product::PRODUCT_TYPE_REGULAR:
+				foreach($this->getSetIds() as $set_id ) {
+					$set = static::get( $set_id, $this->getShop() );
+					
+					$set?->actualizeSet();
+				}
+				
+				break;
+			case Product::PRODUCT_TYPE_VARIANT:
+				$this->getVariantMasterProduct()?->actualizeVariantMaster();
+				
+				break;
+		}
+		
 	}
 	
 	protected function calcDiscount() : void
@@ -398,16 +544,6 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 		$this->seo_keywords = $seo_keywords;
 	}
 
-	public function getInternalFulltextKeywords() : string
-	{
-		return $this->internal_fulltext_keywords;
-	}
-
-	public function setInternalFulltextKeywords( string $internal_fulltext_keywords ) : void
-	{
-		$this->internal_fulltext_keywords = $internal_fulltext_keywords;
-	}
-
 	public function getURLPathPart() : string
 	{
 		return $this->URL_path_part;
@@ -420,7 +556,7 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->getShop(), [$this->URL_path_part] );
+		return $this->getShop()->getURL( [$this->URL_path_part] );
 	}
 
 	public function generateURLPathPart() : void
@@ -429,47 +565,52 @@ abstract class Core_Product_ShopData extends Entity_WithIDAndShopData_ShopData {
 			return;
 		}
 
-		$this->URL_path_part = $this->_generateURLPathPart( $this->name, 'p' );
+		$this->URL_path_part = $this->_generateURLPathPart( $this->getFullName(), 'p' );
+		
+		$where = $this->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['entity_id'] = $this->entity_id;
+		
+		static::updateData(
+			['URL_path_part'=>$this->URL_path_part],
+			$where
+		);
+		
 	}
 	
-	
-	public function setCategoryIds( array $value ) : void
+	public function afterAdd(): void
 	{
-		$this->category_ids = implode(',', $value);
+		$this->generateURLPathPart();
 	}
 	
 	public function getCategoryIds() : array
 	{
-		if(!$this->category_ids) {
-			return [];
+		if($this->category_ids===null) {
+			if($this->type==Product::PRODUCT_TYPE_VARIANT) {
+				$id = $this->variant_master_product_id;
+			} else {
+				$id = $this->entity_id;
+			}
+			
+			$this->category_ids = Category_Product::dataFetchCol(
+				select: ['category_id'],
+				where:['product_id'=>$id]
+			);
 		}
 		
-		return explode(',', $this->category_ids);
+		return $this->category_ids;
 	}
 	
 	/**
-	 * @return string
+	 * @return Category_ShopData[]
 	 */
-	public function getSetDiscountType(): string
+	public function getCategories() : array
 	{
-		return $this->set_discount_type;
+		if($this->categories===null) {
+			$this->categories = Category_ShopData::getActiveList( $this->getCategoryIds() );
+		}
+		
+		return $this->categories;
 	}
-	
-	public function setSetDiscountType( string $set_discount_type ): void
-	{
-		$this->set_discount_type = $set_discount_type;
-	}
-	
-	public function getSetDiscountValue(): float
-	{
-		return $this->set_discount_value;
-	}
-	
-	public function setSetDiscountValue( float $set_discount_value ): void
-	{
-		$this->set_discount_value = $set_discount_value;
-	}
-	
-	
 	
 }

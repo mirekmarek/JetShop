@@ -1,0 +1,135 @@
+<?php
+namespace JetApplicationModule\Admin\Payment\Methods;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops_Shop;
+
+/**
+ * @var MVC_View   $this
+ * @var PaymentMethod $method
+ * @var PaymentMethod_Option $new_option
+ * @var Form $form
+ * @var Controller_Main $controller
+ */
+$method = $this->getRaw('method');
+$controller = $this->getController();
+
+$new_option = $this->getRaw('new_option');
+
+$router = $this->getController()->getControllerRouter();
+
+$add_form = $new_option->getAddForm();
+$add_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+
+Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
+	item: $method,
+	listing: $controller->getListing(),
+);
+
+?>
+<div class="row">
+	<div class="col-md-12" id="main-col">
+		<?=$this->getRaw('tabs')?>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="width: 120px"></th>
+						<th style="width: 50px"><?=Tr::_('ID')?></th>
+						<th style="width: 250px"><?=Tr::_('Internal name')?></th>
+						<th><?=Tr::_('Internal notes')?></th>
+					</tr>
+				</thead>
+				<tbody class="sortable" id="sort_items">
+				<?php foreach( $method->getOptions() as $option):
+					$edit_uri = $router->getAction('edit_option_main')->URI($option->getId());
+					?>
+					<tr class="sortable-item" data-id="<?=$option->getId()?>">
+						<td>
+							<i class="option-move"><?=UI::icon('up-down')?></i>
+							<?=UI::button_edit()->setUrl( $edit_uri )->setSize( UI_button::SIZE_EXTRA_SMALL);?>
+						</td>
+						<td><a href="<?=$edit_uri?>"><?=$option->getId()?></a></td>
+						<td><a href="<?=$edit_uri?>"><?=$option->getInternalName()?></a></td>
+						<td><?=nl2br($option->getInternalNotes())?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		
+		
+
+		<br><br>
+		<fieldset>
+			<legend><?=Tr::_('Create a new option')?></legend>
+		
+		<?php
+		echo $add_form->start();
+		?>
+		<?=Admin_Managers::UI()->renderEntityFormCommonFields($add_form)?>
+		
+		<?php
+		Admin_Managers::UI()->renderShopDataBlocks(
+			form: $add_form,
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($new_option, $add_form) : void {
+				?>
+				<fieldset>
+					<legend class="sub"><?=Tr::_('Main data')?></legend>
+					<?=$add_form->field('/shop_data/'.$shop_key.'/title')?>
+					<?=$add_form->field('/shop_data/'.$shop_key.'/description')?>
+				</fieldset>
+			<?php }); ?>
+			
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<?=UI::button_save()?>
+				</div>
+			</div>
+			<?=$add_form->end();?>
+			<br><br>
+		</fieldset>
+	</div>
+</div>
+
+<?php if(!$method->getEditForm()->getIsReadonly()): ?>
+<form action="<?=Http_Request::currentURI(['action'=>'sort_options'])?>" method="post" id="sort_form">
+	<input type="hidden" name="sort_order" id="sort_order" />
+</form>
+
+<script type="text/javascript">
+
+	const optionSort = {
+		init: function () {
+			$('#sort_items')['sortable']({
+				stop: function () {
+					optionSort.setSort();
+				}
+			});
+		},
+
+		setSort: function () {
+			const values = [];
+
+			$('#sort_items').find('.sortable-item').each(function (i, item) {
+				values.push($(item).data('id'));
+			});
+
+			$('#sort_order').val(values.join('|'));
+			$('#sort_form').submit();
+
+		}
+	};
+
+	optionSort.init();
+</script>
+<?php endif; ?>

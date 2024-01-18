@@ -5,15 +5,19 @@
 
 namespace JetShop;
 
+use Jet\Application_Module;
+use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
-use Jet\Tr;
-use JetApplication\Entity_WithCodeAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
+use JetApplication\Order;
+use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_ShopData;
+use JetApplication\Payment_Method_Module;
+use JetApplication\Payment_Method_Option_ShopData;
 
 /**
  *
@@ -23,21 +27,15 @@ use JetApplication\Payment_Method_ShopData;
 	database_table_name: 'payment_methods_shop_data',
 	parent_model_class: Payment_Method::class
 )]
-abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_ShopData
+abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 {
-
-	public const  IMG_ICON1 = 'icon1';
-	public const  IMG_ICON2 = 'icon2';
-	public const  IMG_ICON3 = 'icon3';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
-		related_to: 'main.code',
+		type: DataModel::TYPE_STRING,
 		is_key: true,
+		max_len: 255,
 	)]
-	protected string $payment_method_code = '';
+	protected string $kind = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -56,10 +54,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		max_len: 255,
 	)]
 	protected string $image_icon3 = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -69,10 +64,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Title:'
 	)]
 	protected string $title = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
@@ -82,10 +74,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Description:'
 	)]
 	protected string $description = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
@@ -95,11 +84,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Short description:'
 	)]
 	protected string $description_short = '';
-
-
-	/**
-	 * @var string
-	 */
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
@@ -109,10 +94,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Confirmation e-mail info text:'
 	)]
 	protected string $confirmation_email_info_text = '';
-
-	/**
-	 * @var int
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
@@ -121,10 +103,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Priority:'
 	)]
 	protected int $priority = 0;
-
-	/**
-	 * @var float
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -133,10 +112,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Default price:'
 	)]
 	protected float $default_price = 0.0;
-
-	/**
-	 * @var float
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -146,10 +122,7 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		creator: ['this', 'createVatRateInputField']
 	)]
 	protected float $vat_rate = 0.0;
-
-	/**
-	 * @var bool
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 	)]
@@ -158,194 +131,127 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 		label: 'Discount is not allowed'
 	)]
 	protected bool $discount_is_not_allowed = false;
-
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 255,
+	)]
+	protected string $backend_module_name = '';
+	
 	/**
-	 * @param string $value
+	 * @var Payment_Method_Option_ShopData[]
 	 */
-	public function setPaymentMethodCode( string $value ) : void
+	protected ?array $options = null;
+	
+	
+	protected ?float $price = null;
+	
+	protected bool $enabled = true;
+	
+	public function getEnabled(): bool
 	{
-		$this->payment_method_code = $value;
+		return $this->enabled;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getPaymentMethodCode() : string
+	
+	public function setEnabled( bool $enabled ): void
 	{
-		return $this->payment_method_code;
+		$this->enabled = $enabled;
 	}
-
-	public function getImageEntity(): string
+	
+	public function setKind( string $code ): void
 	{
-		return 'payment_method';
+		$this->kind = $code;
 	}
-
-	public function getImageObjectId(): int|string
+	
+	public function getKindCode(): string
 	{
-		return $this->getPaymentMethodCode();
+		return $this->kind;
 	}
-
-	public static function getImageClasses(): array
+	
+	public function getKind() : ?Payment_Kind
 	{
-		return [
-			Payment_Method_ShopData::IMG_ICON1 => Tr::_('Icon 1' ),
-			Payment_Method_ShopData::IMG_ICON2 => Tr::_('Icon 2' ),
-			Payment_Method_ShopData::IMG_ICON3 => Tr::_('Icon 3' ),
-		];
+		return Payment_Kind::get( $this->kind );
 	}
-
-	public function setIcon1( string $image ) : void
+	
+	public function getKindTitle() : string
 	{
-		$this->setImage( Payment_Method_ShopData::IMG_ICON1, $image );
+		$kind = $this->getKind();
+		return $kind ? $kind->getTitle() : '';
 	}
-
-	public function getIcon1() : string
-	{
-		return $this->getImage( Payment_Method_ShopData::IMG_ICON1 );
-	}
-
-	public function getIcon1Url() : string
-	{
-		return $this->getImageUrl( Payment_Method_ShopData::IMG_ICON1 );
-	}
-
-	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON1, $max_w, $max_h );
-	}
-
-	public function setIcon2( string $image ) : void
-	{
-		$this->setImage( Payment_Method_ShopData::IMG_ICON2, $image );
-	}
-
-	public function getIcon2() : string
-	{
-		return $this->getImage( Payment_Method_ShopData::IMG_ICON2 );
-	}
-
-	public function getIcon2Url() : string
-	{
-		return $this->getImageUrl( Payment_Method_ShopData::IMG_ICON2 );
-	}
-
-	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON2, $max_w, $max_h );
-	}
-
-
-	public function setIcon3( string $image ) : void
-	{
-		$this->setImage( Payment_Method_ShopData::IMG_ICON3, $image );
-	}
-
-	public function getIcon3() : string
-	{
-		return $this->getImage( Payment_Method_ShopData::IMG_ICON3 );
-	}
-
-	public function getIcon3Url() : string
-	{
-		return $this->getImageUrl( Payment_Method_ShopData::IMG_ICON3 );
-	}
-
-	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ) : string
-	{
-		return $this->getImageThumbnailUrl( Payment_Method_ShopData::IMG_ICON3, $max_w, $max_h );
-	}
-
-	/**
-	 * @param string $value
-	 */
+	
+	
 	public function setTitle( string $value ) : void
 	{
 		$this->title = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getTitle() : string
 	{
 		return $this->title;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setDescription( string $value ) : void
 	{
 		$this->description = $value;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDescription() : string
 	{
 		return $this->description;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setDescriptionShort( string $value ) : void
 	{
 		$this->description_short = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getDescriptionShort() : string
 	{
 		return $this->description_short;
 	}
 
-	/**
-	 * @param int $value
-	 */
 	public function setPriority( int $value ) : void
 	{
 		$this->priority = $value;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getPriority() : int
 	{
 		return $this->priority;
 	}
 
-	/**
-	 * @param float $value
-	 */
 	public function setDefaultPrice( float $value ) : void
 	{
 		$this->default_price = $value;
 	}
-
-	/**
-	 * @return float
-	 */
+	
 	public function getDefaultPrice() : float
 	{
 		return $this->default_price;
 	}
+	
 
-	/**
-	 * @param float $value
-	 */
+	public function getPrice(): ?float
+	{
+		if($this->price===null) {
+			$this->price = $this->getDefaultPrice();
+		}
+		return $this->price;
+	}
+	
+	public function setPrice( float $price ): void
+	{
+		$this->price = $price;
+	}
+	
+	
+
 	public function setVatRate( float $value ) : void
 	{
 		$this->vat_rate = $value;
 	}
 
-	/**
-	 * @return float
-	 */
 	public function getVatRate() : float
 	{
 		return $this->vat_rate;
@@ -370,36 +276,117 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithCodeAndShopData_S
 
 		return $input;
 	}
-
-	/**
-	 * @param bool $value
-	 */
+	
 	public function setDiscountIsNotAllowed( bool $value ) : void
 	{
 		$this->discount_is_not_allowed = $value;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getDiscountIsNotAllowed() : bool
 	{
 		return $this->discount_is_not_allowed;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setConfirmationEmailInfoText( string $value ) : void
 	{
 		$this->confirmation_email_info_text = $value;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getConfirmationEmailInfoText() : string
 	{
 		return $this->confirmation_email_info_text;
 	}
+	
+	public function getBackendModuleName(): string
+	{
+		return $this->backend_module_name;
+	}
+	
+	public function setBackendModuleName( string $backend_module_name ): void
+	{
+		$this->backend_module_name = $backend_module_name;
+	}
+	
+	public function getBackendModule() : null|Payment_Method_Module|Application_Module
+	{
+		if(!$this->backend_module_name) {
+			return null;
+		}
+		
+		return Application_Modules::moduleInstance( $this->backend_module_name );
+	}
+	
+	public function setIcon1( string $image ) : void
+	{
+		$this->image_icon1 = $image;
+	}
+	
+	public function getIcon1() : string
+	{
+		return $this->image_icon1;
+	}
+	
+	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon1', $max_w, $max_h );
+	}
+	
+	
+	
+	
+	public function setIcon2( string $image ) : void
+	{
+		$this->image_icon2 = $image;
+	}
+	
+	public function getIcon2() : string
+	{
+		return $this->image_icon2;
+	}
+	
+	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon2', $max_w, $max_h );
+	}
+	
+	
+	public function setIcon3( string $image ) : void
+	{
+		$this->image_icon3 = $image;
+	}
+	
+	public function getIcon3() : string
+	{
+		return $this->image_icon3;
+	}
+	
+	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon3', $max_w, $max_h );
+	}
+	
+	/**
+	 * @return Payment_Method_Option_ShopData[]
+	 */
+	public function getOptions() : array
+	{
+		if($this->options===null) {
+			$this->options = Payment_Method_Option_ShopData::getListForMethod( $this->entity_id );
+		}
+		
+		return $this->options;
+	}
+	
+	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	{
+		$module = $this->getBackendModule();
+		
+		if($module) {
+			return $module->getOrderConfirmationEmailInfoText( $order, $this );
+		} else {
+			return $this->getConfirmationEmailInfoText();
+		}
+	}
+	
 }
+

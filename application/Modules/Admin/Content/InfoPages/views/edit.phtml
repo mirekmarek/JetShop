@@ -18,8 +18,8 @@ use JetApplication\Shops;
 $form = $this->getRaw( 'form' );
 
 $form->setAutocomplete( false );
-$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
-$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 5 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 6 ] );
 
 $URLs = [];
 $base_URL = '';
@@ -78,8 +78,10 @@ $page = $info_page->getPage();
 			<?=$relative_path_fragment->container()->start()?>
 			<div class="input-group">
 				<span class="input-group-prepend" style="font-weight: bolder"><span class="input-group-text" id="base_URL"><?=$base_URL?></span></span>
-				<?=$relative_path_fragment->input()?>
-				<?=$relative_path_fragment->error()?>
+				<div>
+					<?=$relative_path_fragment->input()?>
+					<?=$relative_path_fragment->error()?>
+				</div>
 			</div>
 			<?=$relative_path_fragment->container()->end()?>
 

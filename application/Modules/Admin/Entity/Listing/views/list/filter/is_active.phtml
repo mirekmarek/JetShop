@@ -1,0 +1,74 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\Form_Field;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_IsActive $filter
+ * @var Listing $listing
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+
+$show_filter = function( Form_Field $field, string $what ) {
+	?>
+	<div style="display: inline-block">
+		<div
+			class="badge badge-<?=match((string)$field->getValue()) {''=>'light', '-1'=>'danger', '1'=>'success' }?>"
+			style="display: grid;grid-template-columns: 70px 100px;align-items: center"
+		>
+			<div><?=$what?></div>
+			<div><?=$field->input()->addJsAction('onchange', 'this.form.submit()')?></div>
+		</div>
+	</div>
+	
+	<?php
+};
+
+$fields = [$filter_form->field('is_active_general')];
+
+$is_active = false;
+if($filter_form->field('is_active_general')->getValue()) {
+	$is_active = true;
+}
+
+if($filter->isMultiShopMode()) {
+	foreach(Shops::getListSorted() as $code=>$shop) {
+		$fields[] = $filter_form->field('is_active_'.$code);
+		if($filter_form->field('is_active_'.$code)->getValue()) {
+			$is_active = true;
+		}
+	}
+}
+
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Is active'),
+	form_fields: $fields,
+	is_active:   $is_active,
+	renderer:    function() use ($show_filter, $filter_form, $filter) {
+		$show_filter(
+			$filter_form->field('is_active_general'),
+			Tr::_('General')
+		);
+		
+		if( $filter->isMultiShopMode() ):
+			foreach(Shops::getListSorted() as $code=>$shop):
+				$show_filter(
+					$filter_form->field('is_active_'.$code),
+					$shop->getShopName()
+				);
+			
+			endforeach;
+		endif;
+	}
+);

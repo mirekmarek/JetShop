@@ -27,54 +27,40 @@ use JetApplication\Delivery_Method;
 )]
 abstract class Core_Payment_Method_DeliveryMethods extends DataModel_Related_1toN
 {
-	#[DataModel_Definition(related_to: 'main.code')]
-	protected string $payment_method_code = '';
+	#[DataModel_Definition(related_to: 'main.id')]
+	protected int $payment_method_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_id: true,
 	)]
-	protected string $delivery_method_code = '';
+	protected int $delivery_method_id = 0;
 
 	protected Delivery_Method|null|bool $delivery_method = null;
 
 	public function getArrayKeyValue(): string
 	{
-		return $this->delivery_method_code;
+		return $this->delivery_method_id;
 	}
 
-	public function getPaymentMethodCode(): string
+	public function getPaymentMethodId(): int
 	{
-		return $this->payment_method_code;
+		return $this->payment_method_id;
 	}
 
-	public function setPaymentMethodCode( string $payment_method_code ): void
+	public function setPaymentMethodId( int $payment_method_id ): void
 	{
-		$this->payment_method_code = $payment_method_code;
+		$this->payment_method_id = $payment_method_id;
 	}
 
-	public function getDeliveryMethodCode(): string
+	public function getDeliveryMethodId(): int
 	{
-		return $this->delivery_method_code;
+		return $this->delivery_method_id;
 	}
 
-	public function setDeliveryMethodCode( string $delivery_method_code ): void
+	public function setDeliveryMethodId( int $delivery_method_id ): void
 	{
-		$this->delivery_method_code = $delivery_method_code;
+		$this->delivery_method_id = $delivery_method_id;
 		$this->delivery_method = null;
 	}
-
-	public function getDeliveryMethod() : ?Delivery_Method
-	{
-		if($this->delivery_method===null) {
-			$this->delivery_method = Delivery_Method::get($this->delivery_method_code);
-			if(!$this->delivery_method) {
-				$this->delivery_method = false;
-			}
-		}
-
-		return $this->delivery_method ? : null;
-	}
-
-
 }

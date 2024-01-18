@@ -56,4 +56,13 @@ return [
 	'Admin.Discounts.CodesDefinition' => '',
 	'Search ...' => '',
 	'The discount code is no longer valid' => '',
+	'Please select option' => '',
+	'Code already exists' => '',
+	'Invalid value' => '',
+	'Delete discounts code  <b>%ITEM_NAME%</b>' => '',
+	'Do you really want to delete this discounts code?' => '',
+	'Discounts Code <b>%ITEM_NAME%</b> has been deleted' => '',
+	'Please enter name' => '',
+	'products - % discount' => '',
+	'order - % discount' => '',
 ];

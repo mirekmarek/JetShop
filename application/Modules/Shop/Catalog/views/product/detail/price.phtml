@@ -1,0 +1,33 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Product_ShopData;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product_ShopData $product
+ */
+
+$product = $this->getRaw('product');
+?>
+
+	<div style="display: flex;align-items: center">
+		<div style="font-size: 2rem;">
+			<?php if($product->getDiscountPercentage()):?>
+				<div style="font-size: 1.5rem;text-decoration: line-through"><?= Shop_Managers::PriceFormatter()->formatWithCurrency( $product->getStandardPrice() ) ?></div>
+			<?php endif; ?>
+			<b><?= Shop_Managers::PriceFormatter()->formatWithCurrency( $product->getPrice() ) ?></b>
+			
+			<?php if($product->getDiscountPercentage()):?>
+				<div>-<?=Locale::int($product->getDiscountPercentage())?>%</div>
+			<?php endif; ?>
+		</div>
+	</div>
+
+<?=UI::button(Tr::_('Add to cart'))->setOnclick('ShoppingCart.buy('.$product->getEntityId().',1);')->setClass('success')->setSize(UI_button::SIZE_SMALL)?>

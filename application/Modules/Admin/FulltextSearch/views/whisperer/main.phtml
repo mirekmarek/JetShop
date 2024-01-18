@@ -39,9 +39,11 @@
 
 </style>
 <script>
-	let Whisperers = {};
+if(!window['Whisperers']) {
+
+	window['Whisperers'] = {};
 	
-	const Whisperer = function (
+	window['Whisperer'] = function (
 		input_id,
 		whisperer_items_area_id,
 		data_request_url
@@ -313,5 +315,6 @@
 		};
 
 	};
+}
 
 </script>

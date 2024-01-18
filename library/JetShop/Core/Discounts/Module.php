@@ -18,13 +18,10 @@ abstract class Core_Discounts_Module extends Application_Module
 
 	abstract public function CashDesk_RegisteredCustomer_handle() : string;
 
-	/**
-	 * @var CashDesk $cash_desk
-	 *
-	 * @return Order_Item[]
-	 */
-	abstract public function getDiscounts( CashDesk $cash_desk ) : array;
-
+	abstract public function generateDiscounts( CashDesk $cash_desk ) : void;
+	
+	abstract public function checkDiscounts( CashDesk $cash_desk ) : void;
+	
 
 	abstract public function Order_saved( Order $order ) : void;
 

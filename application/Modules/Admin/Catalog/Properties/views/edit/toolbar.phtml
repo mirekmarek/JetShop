@@ -1,0 +1,16 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\MVC_View;use Jet\Tr;use Jet\UI_messages;
+
+/**
+ * @var MVC_View   $this
+ * @var Property $property
+ */
+$property = $this->getRaw('item');
+
+?>
+<div style="display: inline-block;padding-left: 30px;">
+<?=UI_messages::createInfo(Tr::_('Property type <b>%TYPE%</b>', [
+		'TYPE' => $property->getTypeTitle()
+]))->setCloseable(false)?></div>

@@ -10,7 +10,6 @@ namespace JetApplicationModule\Admin\Content\InfoPages;
 use JetApplication\Content_InfoPage as ContentInfoPage;
 use Jet\Data_Listing;
 use Jet\DataModel_Fetch_Instances;
-use JetApplication\Data_Listing_Filter_Shop;
 
 /**
  *
@@ -44,7 +43,6 @@ class Listing extends Data_Listing {
 	protected function initFilters(): void
 	{
 		$this->filters['search'] = new Listing_Filter_Search($this);
-		$this->filters['shop'] = new Data_Listing_Filter_Shop($this);
 	}
 
 	/**

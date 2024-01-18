@@ -1,0 +1,34 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\Form;
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Property $property
+ */
+
+$property = $this->getRaw('property');
+$form = $this->getRaw('form');
+$prefix = $this->getString('prefix');
+
+if(!$form->fieldExists($prefix.'value')) {
+	return;
+}
+
+$value = $form->field($prefix.'value');
+
+$value->setLabel(
+	'<a href="'.$property->getEditURL().'">'.$property->getInternalName().'</a><br>'
+	.Admin_Managers::Property()->renderActiveState( $property )
+);
+
+echo $value;
+
+?>
+<div style="opacity: 0.3;position: relative;top: -13px;">
+	<?=$form->field($prefix.'information_in_not_available')?>
+</div>

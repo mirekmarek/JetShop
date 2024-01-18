@@ -5,13 +5,14 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use JetApplication\Customer_Address;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Discounts;
 use JetApplication\Entity_WithShopRelation;
 use JetApplication\Order_Item;
-use JetApplication\Delivery_Method;
-use JetApplication\Payment_Method;
-use JetApplication\Price;
+use JetApplication\Order_Status_History;
+use JetApplication\Payment_Method_ShopData;
 use JetApplication\Order;
-use JetApplication\Discounts;
 use JetApplication\Order_Event;
 
 #[DataModel_Definition(
@@ -27,15 +28,20 @@ use JetApplication\Order_Event;
 )]
 abstract class Core_Order extends Entity_WithShopRelation {
 	
-	/**
-	 * @var string
-	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
 	)]
 	protected string $key = '';
-
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 50,
+	)]
+	protected string $number = '';
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
@@ -207,11 +213,10 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	protected bool $survey_disagreement = false;
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
+		type: DataModel::TYPE_INT,
 		is_key: true
 	)]
-	protected string $delivery_method_code = '';
+	protected int $delivery_method_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -221,11 +226,9 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	protected string $delivery_personal_takeover_place_code = '';
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-		is_key: true
+		type: DataModel::TYPE_INT
 	)]
-	protected string $payment_method_code = '';
+	protected int $payment_method_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -237,69 +240,37 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $product_price_without_discount = 0.0;
+	protected float $product_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $product_price = 0.0;
+	protected float $delivery_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $delivery_price_without_discount = 0.0;
+	protected float $payment_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $delivery_price = 0.0;
+	protected float $service_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $payment_price_without_discount = 0.0;
+	protected float $discount_amount = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $payment_price = 0.0;
+	protected float $total_amount = 0.0;
 
 	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT
+		type: DataModel::TYPE_INT,
 	)]
-	protected float $service_price_without_discount = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT
-	)]
-	protected float $service_price = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT
-	)]
-	protected float $discount = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT
-	)]
-	protected float $discount_percentage = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT
-	)]
-	protected float $total_price_without_discount = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT
-	)]
-	protected float $total_price = 0.0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true
-	)]
-	protected string $status_code = '';
+	protected int $status_id = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -315,6 +286,15 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		data_model_class: Order_Item::class
 	)]
 	protected array $items = [];
+	
+	/**
+	 * @var Order_Status_History[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Order_Status_History::class
+	)]
+	protected array $status_history = [];
 
 
 	public function getId() : int
@@ -327,6 +307,15 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->id = $id;
 	}
 
+	public function getNumber() : string
+	{
+		return $this->number;
+	}
+	
+	public function generateNumber() : void
+	{
+		$this->number = $this->id;
+	}
 
 
 	public function getImportSource() : string
@@ -617,19 +606,19 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->survey_disagreement = $survey_disagreement;
 	}
 
-	public function getDeliveryMethodCode() : string
+	public function getDeliveryMethodId() : int
 	{
-		return $this->delivery_method_code;
+		return $this->delivery_method_id;
 	}
 
-	public function getDeliveryMethod() : Delivery_Method
+	public function getDeliveryMethod() : Delivery_Method_ShopData
 	{
-		return Delivery_Method::get( $this->getDeliveryMethodCode() );
+		return Delivery_Method_ShopData::get( $this->getDeliveryMethodId(), $this->getShop() );
 	}
 
-	public function setDeliveryMethodCode( string $delivery_method_code ) : void
+	public function setDeliveryMethodId( int $delivery_method_id ) : void
 	{
-		$this->delivery_method_code = $delivery_method_code;
+		$this->delivery_method_id = $delivery_method_id;
 	}
 
 	public function getDeliveryPersonalTakeoverPlaceCode() : string
@@ -642,19 +631,19 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->delivery_personal_takeover_place_code = $delivery_personal_takeover_place_code;
 	}
 
-	public function getPaymentMethodCode() : string
+	public function getPaymentMethodId() : string
 	{
-		return $this->payment_method_code;
+		return $this->payment_method_id;
 	}
 
-	public function setPaymentMethodCode( string $payment_method_code ) : void
+	public function setPaymentMethodId( string $payment_method_id ) : void
 	{
-		$this->payment_method_code = $payment_method_code;
+		$this->payment_method_id = $payment_method_id;
 	}
 
-	public function getPaymentMethod() : Payment_Method
+	public function getPaymentMethod() : Payment_Method_ShopData
 	{
-		return Payment_Method::get( $this->getPaymentMethodCode() );
+		return Payment_Method_ShopData::get( $this->getPaymentMethodId(), $this->getShop() );
 	}
 
 	public function getPaymentMethodSpecification() : string
@@ -662,69 +651,40 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		return $this->payment_method_specification;
 	}
 
-	public function setPaymentMethodSpecification( string $payment_method_specification ) : void
+	public function setPaymentMethodSpecification( int $payment_method_specification ) : void
 	{
 		$this->payment_method_specification = $payment_method_specification;
 	}
-
-	public function getTotalPriceWithoutDiscount() : float
+	
+	public function getDiscountAmount() : float
 	{
-		return $this->total_price_without_discount;
+		return $this->discount_amount;
 	}
 
-	public function getDiscount() : float
+	public function getTotalAmount() : float
 	{
-		return $this->discount;
+		return $this->total_amount;
 	}
 
-	public function getTotalPrice() : float
+	public function getProductAmount() : float
 	{
-		return $this->total_price;
+		return $this->product_amount;
 	}
 
-	public function getProductPriceWithoutDiscount() : float
+	public function getDeliveryAmount() : float
 	{
-		return $this->product_price_without_discount;
+		return $this->delivery_amount;
 	}
 
-	public function getProductPrice() : float
+
+	public function getPaymentAmount() : float
 	{
-		return $this->product_price;
+		return $this->payment_amount;
 	}
 
-	public function getDeliveryPriceWithoutDiscount() : float
+	public function getServiceAmount() : float
 	{
-		return $this->delivery_price_without_discount;
-	}
-
-	public function getDeliveryPrice() : float
-	{
-		return $this->delivery_price;
-	}
-
-	public function getPaymentPriceWithoutDiscount() : float
-	{
-		return $this->payment_price_without_discount;
-	}
-
-	public function getPaymentPrice() : float
-	{
-		return $this->payment_price;
-	}
-
-	public function getServicePriceWithoutDiscount() : float
-	{
-		return $this->service_price_without_discount;
-	}
-
-	public function getServicePrice() : float
-	{
-		return $this->service_price;
-	}
-
-	public function getDiscountPercentage() : float
-	{
-		return $this->discount_percentage;
+		return $this->service_amount;
 	}
 
 	/**
@@ -740,16 +700,54 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->items[] = $item;
 	}
 
-	public function getStatusCode() : string
+	public function getStatusId() : string
 	{
-		return $this->status_code;
+		return $this->status_id;
 	}
 
-	public function setStatusCode( string $status_code ) : void
+	public function setStatus(
+		int $status_id,
+		bool $customer_notified,
+		string $comment,
+		string $administrator,
+		int $administrator_id,
+		bool $comment_is_visible_for_customer,
+		bool $save = false
+	) : Order_Status_History
 	{
-		$this->status_code = $status_code;
-		//TODO: history
+		$this->status_id = $status_id;
+		
+		$history_item = new Order_Status_History();
+		if($this->getId()) {
+			$history_item->setOrderId( $this->getId() );
+		}
+		$history_item->setDateAdded( Data_DateTime::now() );
+		$history_item->setStatusIs( $status_id );
+		$history_item->setCustomerNotified( $customer_notified );
+		$history_item->setComment( $comment );
+		$history_item->setAdministrator( $administrator );
+		$history_item->setAdministratorId( $administrator_id );
+		$history_item->setCommentIsVisibleForCustomer( $comment_is_visible_for_customer );
+		
+		$this->status_history[] = $history_item;
+		
+		if($this->getId() && $save) {
+			static::updateData(['status_id'=>$status_id], ['id'=>$this->id]);
+			$history_item->save();
+		}
+		
+		return $history_item;
 	}
+	
+	/**
+	 * @return Order_Status_History[]
+	 */
+	public function getStatusHistory(): array
+	{
+		return $this->status_history;
+	}
+	
+	
 
 	public function getAllItemsAvailable() : bool
 	{
@@ -768,210 +766,58 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	public function recalculate() : void
 	{
 
-		$this->total_price = 0.0;
-		$this->product_price = 0.0;
-		$this->service_price = 0.0;
-		$this->delivery_price = 0.0;
-		$this->payment_price = 0.0;
+		$this->total_amount = 0.0;
+		$this->product_amount = 0.0;
+		$this->service_amount = 0.0;
+		$this->delivery_amount = 0.0;
+		$this->payment_amount = 0.0;
 
 		$this->all_items_available = true;
 
-		foreach( $this->items as $discount_item ) {
+		foreach( $this->items as $order_item ) {
 			if(
 				(
-					$discount_item->getType()==Order_Item::ITEM_TYPE_PRODUCT ||
-					$discount_item->getType()==Order_Item::ITEM_TYPE_GIFT
+					$order_item->getType()==Order_Item::ITEM_TYPE_PRODUCT ||
+					$order_item->getType()==Order_Item::ITEM_TYPE_GIFT
 				)
 				&&
-				!$discount_item->isAvailable()
+				!$order_item->isAvailable()
 			) {
 				$this->all_items_available = false;
 			}
 
-			if($discount_item->getType()==Order_Item::ITEM_TYPE_DISCOUNT) {
-				continue;
-			}
+			$amount = $order_item->getTotalAmount();
 
-			$price = $discount_item->getTotalAmount();
+			$this->total_amount += $amount;
 
-			$this->total_price += $price;
-
-			switch($discount_item->getType()) {
+			switch($order_item->getType()) {
 				case Order_Item::ITEM_TYPE_GIFT:
 				break;
 				case Order_Item::ITEM_TYPE_PRODUCT:
-				case Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT:
-					$this->product_price += $price;
+					$this->product_amount += $amount;
 				break;
 				case Order_Item::ITEM_TYPE_SERVICE:
-					$this->service_price += $price;
+					$this->service_amount += $amount;
 				break;
 				case Order_Item::ITEM_TYPE_PAYMENT:
-					$this->payment_price += $price;
+					$this->payment_amount += $amount;
 				break;
 				case Order_Item::ITEM_TYPE_DELIVERY:
-					$this->delivery_price += $price;
+					$this->delivery_amount += $amount;
 				break;
+				case Order_Item::ITEM_TYPE_DISCOUNT:
+					$this->discount_amount += $amount;
+					break;
 
 			}
-
 		}
-
-		$this->total_price_without_discount = $this->total_price;
-		$this->product_price_without_discount = $this->product_price;
-		$this->service_price_without_discount = $this->service_price;
-		$this->delivery_price_without_discount = $this->delivery_price;
-		$this->payment_price_without_discount = $this->payment_price;
-
-		$this->recalculate_discounts();
 	}
 
-	protected function recalculate_discounts() : void
+	protected function generateKey() : void
 	{
-		$this->discount = 0.0;
-		$this->discount_percentage = 0.0;
-
-		$applyNominalDiscount = function( Order_Item $discount_item, float &$price  ) {
-			$discount = $discount_item->getItemAmount();
-
-			if($discount>$price) {
-				$discount = $price;
-			}
-
-			if($discount>$this->total_price) {
-				$discount = $this->total_price;
-			}
-
-			$price -= $discount;
-
-			$discount_item->setTotalAmount( $discount );
-
-			$this->discount += $discount;
-			$this->total_price -= $discount;
-		};
-
-		$applyPrcDiscount = function( Order_Item $discount_item, float &$price, float $orig_price  ) {
-			$discount = $discount_item->getItemAmount();
-			$discount = Price::round($orig_price * ($discount/100), $this->getShop() );
-
-			if($discount>$price) {
-				$discount = $price;
-			}
-
-			if($discount>$this->total_price) {
-				$discount = $this->total_price;
-			}
-
-			$price -= $discount;
-
-			$discount_item->setTotalAmount( $discount );
-
-			$this->discount += $discount;
-			$this->total_price -= $discount;
-		};
-
-
-		foreach( $this->items as $discount_item ) {
-			if($discount_item->getType()!=Order_Item::ITEM_TYPE_DISCOUNT) {
-				continue;
-			}
-
-			switch($discount_item->getSubType()) {
-				case Order_Item::DISCOUNT_TYPE_PRODUCTS_PERCENT:
-					$applyPrcDiscount(
-						$discount_item,
-						$this->product_price,
-						$this->product_price_without_discount
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
-					$applyNominalDiscount(
-						$discount_item,
-						$this->product_price
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_SERVICE_PERCENT:
-					$applyPrcDiscount(
-						$discount_item,
-						$this->service_price,
-						$this->service_price_without_discount
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_SERVICE_AMOUNT:
-					$applyNominalDiscount(
-						$discount_item,
-						$this->service_price
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_DELIVERY_PERCENT:
-					$applyPrcDiscount(
-						$discount_item,
-						$this->delivery_price,
-						$this->delivery_price_without_discount
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_DELIVERY_AMOUNT:
-					$applyNominalDiscount(
-						$discount_item,
-						$this->delivery_price
-					);
-					break;
-
-				case Order_Item::DISCOUNT_TYPE_PAYMENT_PERCENT:
-					$applyPrcDiscount(
-						$discount_item,
-						$this->payment_price,
-						$this->payment_price_without_discount
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_PAYMENT_AMOUNT:
-					$applyNominalDiscount(
-						$discount_item,
-						$this->payment_price
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_TOTAL_AMOUNT:
-				case Order_Item::DISCOUNT_TYPE_TOTAL_PERCENT:
-					continue 2;
-			}
-		}
-
-
-		foreach( $this->items as $discount_item ) {
-			if($discount_item->getType()!=Order_Item::ITEM_TYPE_DISCOUNT) {
-				continue;
-			}
-
-			switch($discount_item->getSubType()) {
-				case Order_Item::DISCOUNT_TYPE_TOTAL_AMOUNT:
-					$applyNominalDiscount(
-						$discount_item,
-						$this->total_price
-					);
-					break;
-				case Order_Item::DISCOUNT_TYPE_TOTAL_PERCENT:
-					$applyPrcDiscount(
-						$discount_item,
-						$this->total_price,
-						$this->total_price_without_discount
-					);
-					break;
-				default:
-					continue 2;
-			}
-		}
-
-
-		if($this->discount>0) {
-			$this->discount_percentage = (1-$this->total_price / $this->total_price_without_discount)*100;
-			$this->discount_percentage = round($this->discount_percentage, 3);
-		}
-
+		$this->key = md5( time().uniqid().uniqid() );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getKey() : string
 	{
 		return $this->key;
@@ -980,11 +826,23 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	public function beforeSave(): void
 	{
 		if($this->getIsNew()) {
-			$this->key = md5( time().uniqid().uniqid() );
+			$this->generateKey();
 		}
 	}
-
-
+	
+	public function afterAdd(): void
+	{
+		$this->generateNumber();
+		static::updateData(
+			[
+				'number'=>$this->number
+			],
+			[
+				'id'=>$this->id
+			]);
+	}
+	
+	
 	public static function get( int $id ) : static|null
 	{
 		return Order::load( $id );
@@ -1019,7 +877,8 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		/**
 		 * @var Order $this
 		 */
-		foreach(Discounts::getActiveModules() as $dm) {
+		
+		foreach(Discounts::Manager()->getActiveModules() as $dm) {
 			$dm->Order_saved( $this );
 		}
 
@@ -1029,8 +888,69 @@ abstract class Core_Order extends Entity_WithShopRelation {
 
 	public function event( string $event ) : Order_Event
 	{
-		$e = Order_Event::newEvent( $this->getId(), $event );
+		/**
+		 * @var Order $this
+		 */
+		$e = Order_Event::newEvent( $this, $event );
 
 		return $e;
 	}
+	
+	public function setBillingAddress( Customer_Address $address ) : void
+	{
+		$this->setBillingCompanyName( $address->getCompanyName() );
+		$this->setBillingCompanyId( $address->getCompanyId() );
+		$this->setBillingCompanyVatId( $address->getCompanyVatId() );
+		$this->setBillingFirstName( $address->getFirstName() );
+		$this->setBillingSurname( $address->getSurname() );
+		$this->setBillingAddressStreetNo( $address->getAddressStreetNo() );
+		$this->setBillingAddressTown( $address->getAddressTown() );
+		$this->setBillingAddressZip( $address->getAddressZip() );
+		$this->setBillingAddressCountry( $address->getAddressCountry() );
+	}
+	
+	public function getBillingAddress() : Customer_Address
+	{
+		$address = new Customer_Address();
+		
+		$address->setCompanyName( $this->getBillingCompanyName( ) );
+		$address->setCompanyId( $this->getBillingCompanyId( ) );
+		$address->setCompanyVatId( $this->getBillingCompanyVatId( ) );
+		$address->setFirstName( $this->getBillingFirstName( ) );
+		$address->setSurname( $this->getBillingSurname( ) );
+		$address->setAddressStreetNo( $this->getBillingAddressStreetNo( ) );
+		$address->setAddressTown( $this->getBillingAddressTown( ) );
+		$address->setAddressZip( $this->getBillingAddressZip( ) );
+		$address->setAddressCountry( $this->getBillingAddressCountry( ) );
+		
+		return $address;
+	}
+	
+	
+	public function setDeliveryAddress( Customer_Address $address ) : void
+	{
+		$this->setDeliveryCompanyName( $address->getCompanyName() );
+		$this->setDeliveryFirstName( $address->getFirstName() );
+		$this->setDeliverySurname( $address->getSurname() );
+		$this->setDeliveryAddressStreetNo( $address->getAddressStreetNo() );
+		$this->setDeliveryAddressTown( $address->getAddressTown() );
+		$this->setDeliveryAddressZip( $address->getAddressZip() );
+		$this->setDeliveryAddressCountry( $address->getAddressCountry() );
+	}
+	
+	public function getDeliveryAddress() : Customer_Address
+	{
+		$address = new Customer_Address();
+		
+		$address->setCompanyName( $this->getDeliveryCompanyName( ) );
+		$address->setFirstName( $this->getDeliveryFirstName( ) );
+		$address->setSurname( $this->getDeliverySurname( ) );
+		$address->setAddressStreetNo( $this->getDeliveryAddressStreetNo( ) );
+		$address->setAddressTown( $this->getDeliveryAddressTown( ) );
+		$address->setAddressZip( $this->getDeliveryAddressZip( ) );
+		$address->setAddressCountry( $this->getDeliveryAddressCountry( ) );
+		
+		return $address;
+	}
+	
 }

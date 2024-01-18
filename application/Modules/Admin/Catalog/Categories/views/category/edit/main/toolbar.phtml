@@ -6,8 +6,10 @@ use Jet\UI;
 
 /**
  * @var MVC_View   $this
+ * @var Controller_Main $controller
  */
-$category = Controller_Main::getCurrentCategory();
+$controller = $this->controller;
+$category = $this->controller->getCurrentItem();
 
 $form = $category->getEditForm();
 

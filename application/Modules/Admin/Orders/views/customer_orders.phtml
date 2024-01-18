@@ -1,0 +1,46 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Order[]     $orders
+ */
+
+$orders = $this->getRaw( 'orders' );
+?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th><?=Tr::_('Number')?></th>
+		<th><?=Tr::_('Amount')?></th>
+		<th><?=Tr::_('Items')?></th>
+		<th><?=Tr::_('Date purchased')?></th>
+		<th><?=Tr::_('Status')?></th>
+	</tr>
+	</thead>
+	<?php foreach($orders as $order): ?>
+	<tr>
+		<td><a href="<?=$order->getEditURL()?>"><?=$order->getNumber()?></a></td>
+		<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getShop(), $order->getTotalAmount() )?></td>
+		<td>
+			<ul>
+				<?php foreach($order->getItems() as $item): ?>
+					<li><?=$item->getTitle();?></li>
+				<?php endforeach;  ?>
+			</ul>
+		</td>
+		<td>
+			<?=Locale::dateAndTime( $order->getDatePurchased() );?>
+		</td>
+		<td>
+			<?=Admin_Managers::Order()->showOrderStatus( $order->getShop(), $order->getStatusId() )?>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>
+

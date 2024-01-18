@@ -1,45 +1,42 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 
 use Jet\MVC_View;
+use JetApplication\Payment_Method_ShopData;
 
 /**
  * @var MVC_View $this
- * @var Payment_Method $payment_method
+ * @var Payment_Method_ShopData $method
  */
 
 $cash_desk = CashDesk::get();
-$payment_method = $this->getRaw('payment_method');
-$pm_shd = $payment_method->getShopData($cash_desk->getShop());
+$method = $this->getRaw('payment_method');
 
-$this->setVar('payment_method', $payment_method);
+$this->setVar('payment_method', $method);
 
-$options = $payment_method->getActiveOptions( $cash_desk->getShop() );
+$options = $method->getOptions();
 ?>
 
-<div class="card bg-info">
-	<div class="card-body">
-		<h5 class="card-title">
+<div class="method-selected">
 
-			<input type="radio" name="payment_method" checked />
-			<img src="<?=$pm_shd->getIcon1ThumbnailUrl(50, 50)?>" style="padding: 5px;">
+	<div>
+		<input type="radio" name="payment_method" checked />
+	</div>
+	<div class="method-icon">
+		<?php if(($img=$method->getIcon1ThumbnailUrl(50, 50))): ?>
+			<img src="<?=$img?>" style="padding: 5px;">
+		<?php endif; ?>
+	</div>
+	<div class="method-title">
+		<b><?= $method->getTitle() ?></b>
 
-			<b><?= $pm_shd->getTitle() ?></b>
-
-			<span style="padding-left: 50px;">
-				<?=$this->render('payment/price')?>
-			</span>
-
-		</h5>
-
-		<div class="card-text">
-
-			<?= $pm_shd->getDescription() ?>
-
-
+		<div>
+			<?= $method->getDescription() ?>
+			
+			
 			<?php if($options):
-				$selected_option_code = $cash_desk->getSelectedPaymentMethodOption()->getCode();
+				$selected_option_id = $cash_desk->getSelectedPaymentMethodOption()->getId();
 				?>
 				<div>
 					<?php foreach($options as $option):
@@ -47,7 +44,7 @@ $options = $payment_method->getActiveOptions( $cash_desk->getShop() );
 						?>
 						<div style="padding: 5px;">
 							<?php
-							if($option->getCode()==$selected_option_code):
+							if($option->getId()==$selected_option_id):
 								require 'option/selected.phtml';
 							else:
 								require 'option/not-selected.phtml';
@@ -57,7 +54,10 @@ $options = $payment_method->getActiveOptions( $cash_desk->getShop() );
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
+			
 		</div>
-
 	</div>
+	
+	<?=$this->render('payment/price')?>
+
 </div>

@@ -1,13 +1,15 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\ShoppingCart;
 
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\ShoppingCart_Item;
+use JetApplication\Shop_Managers;
 
 /**
  * @var MVC_View $this
- * @var ShoppingCart_Item $new_item
+ * @var ShoppingCart_Item $item
  */
 
 $item = $this->getRaw('new_item');
@@ -18,7 +20,9 @@ $product = $item->getProduct();
 <table>
 	<tr>
 		<td rowspan="2">
-			<img src="<?=$product->getImageThumbnailUrl(100, 100)?>"/>
+			<?php if(($img=$product->getImgThumbnailUrl( 0, 100, 100))): ?>
+				<img src="<?=$img?>"/>
+			<?php endif; ?>
 		</td>
 		<td>
 			<a href="<?=$product->getURL()?>"><?=$product->getName()?></a>
@@ -30,5 +34,5 @@ $product = $item->getProduct();
 </table>
 
 <div class="modal-footer">
-	<?=UI::button()->setUrl(ShoppingCart::getCartPageURL())->setLabel(Tr::_('Proceed to checkout'))->setClass('success')?>
+	<?=UI::button()->setUrl( Shop_Managers::ShoppingCart()->getCartPageURL() )->setLabel(Tr::_('Proceed to checkout'))->setClass('success')?>
 </div>

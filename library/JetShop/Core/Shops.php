@@ -1,11 +1,9 @@
 <?php
 namespace JetShop;
 
-use Jet\Http_Headers;
-use Jet\Http_Request;
+
 use Jet\Locale;
 use Jet\MVC;
-use Jet\Session;
 
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
@@ -20,38 +18,6 @@ class Core_Shops {
 	 */
 	protected static ?array $_list = null;
 	
-	public const CURR_SHOP_SESSION = 'current_shop';
-	public const CURR_SHOP_SESSION_KEY = 'key';
-	public const CURR_SHOP_GET_PARAM = 'select_shop';
-
-	public static function handleCurrentAdminShop() : void
-	{
-		$all_shops = array_keys(Shops::getList());
-		$default_shop = Shops::getDefault();
-		
-		$session = new Session( Shops::CURR_SHOP_SESSION );
-		$current_shop_key = $session->getValue(Shops::CURR_SHOP_SESSION_KEY, '');
-		if(!in_array($current_shop_key, $all_shops)) {
-			$current_shop_key = $default_shop->getKey();
-			$session->setValue(Shops::CURR_SHOP_SESSION_KEY, $current_shop_key);
-		}
-		
-		
-		$GET = Http_Request::GET();
-		if($GET->exists(Shops::CURR_SHOP_GET_PARAM)) {
-			$current_shop_key = $GET->getString(
-				key:Shops::CURR_SHOP_GET_PARAM,
-				default_value: $default_shop->getKey(),
-				valid_values: $all_shops
-			);
-			
-			$session->setValue(Shops::CURR_SHOP_SESSION_KEY, $current_shop_key);
-			
-			Http_Headers::reload(unset_GET_params: [Shops::CURR_SHOP_GET_PARAM]);
-		}
-		
-		Shops::setCurrent( Shops::get($current_shop_key) );
-	}
 
 	public static function getCurrent() : Shops_Shop
 	{
@@ -64,14 +30,9 @@ class Core_Shops {
 		return static::$current_shop->getKey();
 	}
 
-	public static function setCurrent( Shops_Shop $shop, bool $init_system=false ) : void
+	public static function setCurrent( Shops_Shop $shop ) : void
 	{
 		static::$current_shop = $shop;
-
-		/** @noinspection PhpStatementHasEmptyBodyInspection */
-		if($init_system) {
-			//TODO:
-		}
 	}
 
 	public static function exists( string $key ) : bool
@@ -107,6 +68,11 @@ class Core_Shops {
 		}
 
 		return static::$_list;
+	}
+	
+	public static function isMultiShopMode() : bool
+	{
+		return count(static::getList())>1;
 	}
 	
 	/**
@@ -190,9 +156,6 @@ class Core_Shops {
 		return null;
 	}
 
-	/**
-	 * @return Shops_Shop|null
-	 */
 	public static function getDefault() : Shops_Shop|null
 	{
 		foreach(static::getList() as $shop) {
@@ -206,110 +169,7 @@ class Core_Shops {
 		}
 		return null;
 	}
-
-
-
-
-
-
-
-
-
-
-
-	public static function getName( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getShopName();
-	}
-
-	public static function getURL( ?Shops_Shop $shop = null, array $path_fragments = [], array $GET_params = [] ) : string
-	{
-		$shop = ($shop ?:static::$current_shop);
-
-		$base = MVC::getBase( $shop->getBaseId() );
-
-		return $base->getHomepage( $shop->getLocale() )->getURL( $path_fragments, $GET_params );
-	}
-
 	
-	public static function getCurrencySymbolLeft( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getCurrencySymbolLeft();
-	}
-
-	public static function getCurrencySymbolRight( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getCurrencySymbolRight();
-	}
-
-	public static function getCurrencyWithVatTxt( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getCurrencyWithVatTxt();
-	}
-
-	public static function getCurrencyWoVatTxt( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getCurrencyWoVatTxt();
-	}
-
-	public static function getCurrencyDecimalSeparator( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getCurrencyDecimalSeparator();
-	}
-
-	public static function getCurrencyThousandsSeparator( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getCurrencyThousandsSeparator();
-	}
-
-	public static function getCurrencyDecimalPlaces( ?Shops_Shop $shop = null ) : int
-	{
-		return ($shop ?:static::$current_shop)->getCurrencyDecimalPlaces();
-	}
-
-	public static function getVatRates( ?Shops_Shop $shop = null ) : array
-	{
-		return ($shop ?:static::$current_shop)->getVatRates();
-	}
-
-	public static function getVatRatesScope( ?Shops_Shop $shop = null ) : array
-	{
-		return ($shop ?:static::$current_shop)->getVatRatesScope();
-	}
-
-	public static function getDefaultVatRate( ?Shops_Shop $shop = null ) : int
-	{
-		return ($shop ?:static::$current_shop)->getDefaultVatRate();
-	}
-
-	public static function getPhoneValidationRegExp( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getPhoneValidationRegExp();
-	}
-
-	public static function getPhonePrefix( ?Shops_Shop $shop = null ) : string
-	{
-		return ($shop ?:static::$current_shop)->getPhonePrefix();
-	}
-
-	public static function getRoundPrecision_WithoutVAT( ?Shops_Shop $shop = null) : int
-	{
-		return ($shop ?:static::$current_shop)->getRoundPrecision_WithoutVAT();
-	}
-
-	public static function getRoundPrecision_VAT( ?Shops_Shop $shop = null) : int
-	{
-		return ($shop ?:static::$current_shop)->getRoundPrecision_VAT();
-	}
-
-	public static function getRoundPrecision_WithVAT( ?Shops_Shop $shop = null) : int|bool
-	{
-		return ($shop ?:static::$current_shop)->getRoundPrecision_WithVAT();
-	}
-
-	public static function getViewDir( ?Shops_Shop $shop = null ) : string
-	{
-		return MVC::getBase(($shop ?:static::$current_shop)->getBaseId())->getViewsPath();
-	}
 	
+
 }

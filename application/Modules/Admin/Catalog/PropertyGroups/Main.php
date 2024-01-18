@@ -8,19 +8,19 @@
 namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
 use Jet\Application_Module;
-use Jet\Factory_MVC;
 use Jet\Tr;
-use Jet\Translator;
+use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Trait;
+use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
 use JetApplication\Admin_Managers_PropertyGroup;
+use JetApplication\Entity_WithShopData;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_PropertyGroup
 {
-	use Admin_Managers_Trait;
+	use Admin_Entity_WithShopData_Manager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'property-group';
 
@@ -33,11 +33,11 @@ class Main extends Application_Module implements Admin_Managers_PropertyGroup
 	public function renderSelectWidget( string $on_select,
 	                                    int $selected_property_group_id=0,
 	                                    ?bool $only_active_filter=null,
-	                                    string $name='select_property' ) : string
+	                                    string $name='select_property_group' ) : string
 	{
 		
 		$selected = $selected_property_group_id ? PropertyGroup::get($selected_property_group_id) : null;
-		
+
 		return Admin_Managers::UI()->renderSelectEntityWidget(
 			name: $name,
 			caption: Tr::_('... select property group ...', dictionary: $this->module_manifest->getName()),
@@ -51,27 +51,15 @@ class Main extends Application_Module implements Admin_Managers_PropertyGroup
 		
 	}
 	
-	public function showName( int $id ): string
+	
+	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
 	{
-		$res = '';
-		
-		Translator::setCurrentDictionaryTemporary(
-			$this->module_manifest->getName(),
-			function() use (&$res, $id) {
-				$group = PropertyGroup::get($id);
-				
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar('id', $id);
-				
-				if($group) {
-					$view->setVar('group', $group);
-					$res = $view->render('show-name/known');
-				} else {
-					$res = $view->render('show-name/unknown');
-				}
-			}
-		);
-		
-		return $res;
+		return new PropertyGroup();
 	}
+	
+	public static function getEntityNameReadable() : string
+	{
+		return 'property group';
+	}
+	
 }

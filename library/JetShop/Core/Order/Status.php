@@ -8,15 +8,16 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\Form;
+
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
-use Jet\Form_Field_Input;
 
-use JetApplication\Order_Status;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Order_Status_Kind;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;
+use JetApplication\Order_Status_ShopData;
 
 /**
  *
@@ -24,58 +25,10 @@ use JetApplication\Order_Status_Kind;
 #[DataModel_Definition(
 	name: 'order_status',
 	database_table_name: 'order_statuses',
-	id_controller_class: DataModel_IDController_Passive::class
 )]
-abstract class Core_Order_Status extends DataModel
+abstract class Core_Order_Status extends Entity_WithShopData
 {
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
-		is_id: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		is_required: true,
-		label: 'Code:',
-		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
-			'code_used' => 'This code is already used'
-		]
-	)]
-	protected string $code = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal name:'
-	)]
-	protected string $internal_name = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 9999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal description:'
-	)]
-	protected string $internal_description = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
@@ -96,133 +49,108 @@ abstract class Core_Order_Status extends DataModel
 	)]
 	protected string $kind = '';
 	
-
-	/**
-	 * @return Form
-	 */
-	public function getEditForm() : Form
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is default'
+	)]
+	protected bool $is_default = false;
+	
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Order_Status_ShopData::class
+	)]
+	#[Form_Definition(is_sub_forms: true)]
+	protected array $shop_data = [];
+	
+	
+	public function getShopData( ?Shops_Shop $shop=null ) : Order_Status_ShopData
 	{
-		if(!$this->_form_edit) {
-			$this->_form_edit = $this->createForm('edit_form');
-			$this->_form_edit->field('code')->setIsReadonly(true);
-		}
-		
-		return $this->_form_edit;
+		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchEditForm() : bool
-	{
-		return $this->getEditForm()->catch();
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function getAddForm() : Form
-	{
-		if(!$this->_form_add) {
-			$this->_form_add = $this->createForm('add_form');
-			$this->_form_add->field('code')->setValidator(function(Form_Field_Input $field) {
-				$code = $field->getValue();
-
-				if(Order_Status::get( $code )) {
-					$field->setError('code_used');
-					return false;
-				}
-
-				return true;
-
-			});
-		}
-		
-		return $this->_form_add;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function catchAddForm() : bool
-	{
-		return $this->getAddForm()->catch();
-	}
-
-	/**
-	 * @param string $code
-	 * @return static|null
-	 */
-	public static function get( string $code ) : static|null
-	{
-		return static::load( $code );
-	}
-
-	/**
-	 * @return static[]
-	 */
-	public static function getList() : iterable
-	{
-		$where = [];
-		
-		$list = static::fetchInstances( $where );
-		
-		return $list;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCode() : string
-	{
-		return $this->code;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setInternalName( string $value ) : void
-	{
-		$this->internal_name = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getInternalName() : string
-	{
-		return $this->internal_name;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setInternalDescription( string $value ) : void
-	{
-		$this->internal_description = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getInternalDescription() : string
-	{
-		return $this->internal_description;
-	}
-
-	/**
-	 * @param string $value
-	 */
+	
+	
 	public function setKind( string $value ) : void
 	{
 		$this->kind = $value;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData( $shop )->setKind( $value );
+		}
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getKind() : string
+	
+	
+	public function getKindCode(): string
 	{
 		return $this->kind;
 	}
+	
+	public function getKind() : ?Order_Status_Kind
+	{
+		return Order_Status_Kind::get( $this->kind );
+	}
+	
+	public function getKindTitle() : string
+	{
+		$kind = $this->getKind();
+		return $kind ? $kind->getTitle() : '';
+	}
+	
+
+	public function isDefault(): bool
+	{
+		return $this->is_default;
+	}
+	
+	public function setIsDefault( bool $is_default ): void
+	{
+		if( $is_default==$this->is_default ) {
+			return;
+		}
+		
+		$this->is_default = $is_default;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData( $shop )->setIsDefault( $is_default );
+		}
+		
+		if($is_default) {
+			static::updateData(
+				data:[
+					'is_default' => false
+				],
+				where: [
+					'kind' => $this->kind,
+					'AND',
+					'id !=' => $this->id
+				]
+			);
+			
+			Order_Status_ShopData::updateData(
+				data:[
+					'is_default' => false
+				],
+				where: [
+					'kind' => $this->kind,
+					'AND',
+					'entity_id !=' => $this->id
+				]
+			);
+			
+		}
+		
+	}
+	
+	public static function getDefault( string $kind_code ) : ?static
+	{
+		return static::load([
+			'kind' => $kind_code,
+			'AND',
+			'is_default' => true
+		]);
+	}
+	
 }

@@ -1,8 +1,9 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Customer;
 
 $cash_desk = CashDesk::get();
 
@@ -19,55 +20,55 @@ if($cash_desk->getDeliveryAddressHasBeenSet()) {
 	return;
 }
 
-if(!$cash_desk->getDifferentDeliveryAddressHasBeenSet()) {
-	require 'delivery_address/different_or_same.phtml';
 
-	return;
-}
+require 'delivery_address/different_or_same.phtml';
 
-
-
-$form = $cash_desk->getDeliveryAddressForm();
-
-
-$cash_desk->setDeliveryAddressEditable( true );
-
-foreach($form->getFields() as $field) {
-	if($field->getValue() && !$field->getLastErrorCode()) {
-		$field->input()->addCustomCssClass('is-valid');
-	}
-}
+if(!$cash_desk->hasDifferentDeliveryAddress()):
 ?>
-<br/>
-<div class="card">
+	<div class="continue-button-area">
+		<?=UI::button(Tr::_('Continue'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSameConfirm();')->setClass('primary')?>
+	</div>
+<?php
 
-	<div class="card-body bg-light">
-		<?=$form->start()?>
+else:
 
-		<h2 class="card-title"><?=Tr::_('Delivery address')?></h2>
-
-
-		<?php
-		if( Customer::getCurrentCustomer() ) {
-			require 'delivery_address/select_address.phtml';
+	$form = $cash_desk->getDeliveryAddressForm();
+	
+	
+	$cash_desk->setDeliveryAddressEditable( true );
+	
+	foreach($form->getFields() as $field) {
+		if($field->getValue() && !$field->getLastErrorCode()) {
+			$field->input()->addCustomCssClass('is-valid');
 		}
-		?>
-
-
-
-		<?php if ($cash_desk->isCompanyOrder()): ?>
-			<div id="field_<?=$form->field('company_name')->getId()?>">
-				<?=$form->field('company_name')?>
-			</div>
-		<?php endif; ?>
-
-		<div id="field_<?=$form->field('first_name')->getId()?>">
-			<?=$form->field('first_name')?>
+	}
+	?>
+	<?=$form->start()?>
+	
+	<span class="step-title"><?=Tr::_('Delivery address')?></span>
+	
+	
+	<?php
+	if( Customer::getCurrentCustomer() ) {
+		require 'delivery_address/select_address.phtml';
+	}
+	?>
+	
+	<?php if ($cash_desk->isCompanyOrder()): ?>
+		<div id="field_<?=$form->field('company_name')->getId()?>">
+			<?=$form->field('company_name')?>
 		</div>
-		<div id="field_<?=$form->field('surname')->getId()?>">
-			<?=$form->field('surname')?>
-		</div>
-
+	<?php endif; ?>
+	
+	<div id="field_<?=$form->field('first_name')->getId()?>">
+		<?=$form->field('first_name')?>
+	</div>
+	<div id="field_<?=$form->field('surname')->getId()?>">
+		<?=$form->field('surname')?>
+	</div>
+	
+	<?php if ($cash_desk->isDeliveryAddressDisabled()): ?>
+	<div style="opacity: 0.5">
 		<div id="field_<?=$form->field('address_street_no')->getId()?>">
 			<?=$form->field('address_street_no')?>
 		</div>
@@ -77,13 +78,24 @@ foreach($form->getFields() as $field) {
 		<div id="field_<?=$form->field('address_zip')->getId()?>">
 			<?=$form->field('address_zip')?>
 		</div>
-
-		<div class="text-right">
-			<?=UI::button(Tr::_('Continue'))->setType('submit')->setClass('primary')?>
-		</div>
-
-		<?=$form->end()?>
 	</div>
-</div>
-
-
+<?php else: ?>
+	<div id="field_<?=$form->field('address_street_no')->getId()?>">
+		<?=$form->field('address_street_no')?>
+	</div>
+	<div id="field_<?=$form->field('address_town')->getId()?>">
+		<?=$form->field('address_town')?>
+	</div>
+	<div id="field_<?=$form->field('address_zip')->getId()?>">
+		<?=$form->field('address_zip')?>
+	</div>
+<?php endif; ?>
+	
+	<div class="continue-button-area">
+		<?=UI::button(Tr::_('Continue'))->setType('submit')->setClass('primary')?>
+	</div>
+	
+	<?=$form->end()?>
+	
+	<?php
+endif;

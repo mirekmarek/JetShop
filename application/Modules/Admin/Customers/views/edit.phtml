@@ -1,7 +1,9 @@
 <?php
 namespace JetApplicationModule\Admin\Customers;
 
-use Jet\Locale;use JetApplication\Customer as Customer;
+use Jet\Locale;
+use JetApplication\Admin_Managers;
+use JetApplication\Customer as Customer;
 
 use Jet\UI;
 use Jet\MVC_View;
@@ -68,7 +70,7 @@ $mailing_subscribe_events = $customer->getMailingSubscribeEventLog();
 			<div class="card" style="width: 400px;height: 190px;float: left;margin: 10px;">
 				<div class="card-body">
 					<p class="card-text">
-						<?=AddressFormatter::format($customer->getShop(), $address) ?>
+						<?=Admin_Managers::Customer()->formatAddress( $customer->getShop(), $address )?>
 					</p>
 				</div>
 			</div>
@@ -79,9 +81,7 @@ $mailing_subscribe_events = $customer->getMailingSubscribeEventLog();
 
 		<legend><?=Tr::_('Orders')?></legend>
 		<fieldset>
-			<?php
-			//TODO:
-			?>
+			<?=Admin_Managers::Order()->showOrdersOfCustomer( $customer )?>
 		</fieldset>
 
 

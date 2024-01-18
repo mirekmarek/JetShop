@@ -68,7 +68,7 @@ class Listing extends DataListing
 		return $this->column_view;
 	}
 	
-	public function itemGetter( int|string $id ): mixed
+	public function itemGetter( int|string $id ): ?User
 	{
 		return User::get( $id );
 	}

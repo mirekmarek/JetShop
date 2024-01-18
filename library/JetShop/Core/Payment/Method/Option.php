@@ -1,12 +1,9 @@
 <?php
 namespace JetShop;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
-use Jet\Form_Definition;
-use Jet\Form_Field;
 use Jet\DataModel;
-use Jet\DataModel_Related_1toN;
 
+use JetApplication\Entity_WithShopData;
 use JetApplication\Payment_Method_Option_ShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
@@ -14,37 +11,22 @@ use JetApplication\Shops_Shop;
 #[DataModel_Definition(
 	name: 'payment_methods_options',
 	database_table_name: 'payment_methods_options',
-	id_controller_class: DataModel_IDController_Passive::class,
-	parent_model_class: Core_Payment_Method::class
 )]
-abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
-
-	/**
-	 * @var string
-	 */ 
+abstract class Core_Payment_Method_Option extends Entity_WithShopData {
+	
+	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_id: true,
-		max_len: 255,
+		type: DataModel::TYPE_INT,
+		is_key: true
 	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Code:',
-		error_messages: [
-			Form_Field::ERROR_CODE_EMPTY => 'Please enter code',
-			'code_used' => 'This code is already used',
-		]
-	)]
-	protected string $code = '';
-
+	protected int $method_id = 0;
+	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
+		type: DataModel::TYPE_INT,
 		is_key: true,
-		related_to: 'main.code'
 	)]
-	protected string $payment_method_code = '';
-
+	protected int $priority = 0;
+	
 	/**
 	 * @var Payment_Method_Option_ShopData[]
 	 */
@@ -52,51 +34,53 @@ abstract class Core_Payment_Method_Option extends DataModel_Related_1toN {
 		type: DataModel::TYPE_DATA_MODEL,
 		data_model_class: Payment_Method_Option_ShopData::class
 	)]
-	#[Form_Definition(is_sub_forms: true)]
 	protected array $shop_data = [];
-
-
-
-	public function isInherited() : bool
+	
+	public function getMethodId(): int
 	{
-		return true;
+		return $this->method_id;
 	}
-
-	public function getPaymentMethodCode() : int
+	
+	public function setMethodId( int $method_id ): void
 	{
-		return $this->payment_method_code;
+		$this->method_id = $method_id;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData($shop)->setMethodId( $method_id );
+		}
 	}
-
-
-	public function getCode() : string
-	{
-		return $this->code;
-	}
-
-	public function setCode( string $code ) : void
-	{
-		$this->code = $code;
-	}
-
-	public function getArrayKeyValue() : string
-	{
-		return $this->code;
-	}
-
+	
 	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_Option_ShopData
 	{
 		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
 	}
-
-	public function getDescription( ?Shops_Shop $shop=null ) : string
+	
+	public function getPriority(): int
 	{
-		return $this->getShopData( $shop )->getDescription();
+		return $this->priority;
 	}
-
-	public function getTitle( ?Shops_Shop $shop=null ) : string
+	
+	public function setPriority( int $priority ): void
 	{
-		return $this->getShopData( $shop )->getTitle();
+		$this->priority = $priority;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData($shop)->setPriority( $priority );
+		}
+		
 	}
-
-
+	
+	
+	
+	public static function getListForMethod( int $method_id ) : array
+	{
+		$options = static::fetchInstances(['method_id'=>$method_id] );
+		$options->getQuery()->setOrderBy(['priority']);
+		
+		$res = [];
+		
+		foreach($options as $opt) {
+			$res[$opt->getId()] = $opt;
+		}
+		
+		return $res;
+	}
 }

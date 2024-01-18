@@ -51,28 +51,26 @@ return [
 				'vat_rates'        => '0,10,15,21',
 				'default_vat_rate' => 21,
 
-				'default_order_status_code' => 'new',
-
 			]
 		],
-		'en_US' => [
+		'sk_SK' => [
 			'is_active' => true,
 			'SSL_required' => false,
-			'title' => 'JetShop EN',
+			'title' => 'JetShop SK',
 			'URLs' => [
-				'en.jet-shop.lc/',
+				'sk.jet-shop.lc/',
 			],
 			'default_meta_tags' => [
 			],
 			'parameters' => [
-				'shop_code'    => 'en',
-				'shop_name'    => 'EN shop',
+				'shop_code'    => 'sk',
+				'shop_name'    => 'SK shop',
 
 				'currency_code'                => 'EUR',
 				'currency_symbol_left'         => '',
 				'currency_symbol_right'        => ' €',
-				'currency_with_vat_txt'        => '€ with VAT',
-				'currency_wo_vat_txt'          => '€ without VAT',
+				'currency_with_vat_txt'        => '€ s DP',
+				'currency_wo_vat_txt'          => '€ bez DPH',
 				'currency_decimal_separator'   => ',',
 				'currency_thousands_separator' => ' ',
 				'currency_decimal_places'      => 2,
@@ -81,14 +79,12 @@ return [
 				'phone_validation_reg_exp' => '/^([0-9]{9})$/',
 				'phone_prefix'             => '+007',
 
-				'round_precision_without_VAT' => 3,
+				'round_precision_without_VAT' => 2,
 				'round_precision_VAT'         => 2,
-				'round_precision_with_VAT'    => 2,
+				'round_precision_with_VAT'    => 1,
 
 				'vat_rates'        => '0,10,20',
 				'default_vat_rate' => 20,
-
-				'default_order_status_code' => 'new',
 
 			]
 		],

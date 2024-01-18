@@ -1,15 +1,12 @@
 <?php
-
-use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Entity_WithCodeAndShopData;
-use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Entity_WithShopData;
 
 /**
  * @var MVC_View $this
- * @var Entity_WithCodeAndShopData|Entity_WithIDAndShopData $entity
+ * @var Entity_WithShopData $entity
  */
 
 $entity = $this->getRaw('entity');
@@ -17,10 +14,12 @@ $entity = $this->getRaw('entity');
 <div style="padding: 10px;">
 <?php if($entity->isActive()): ?>
 	<span class="btn btn-success"><?= UI::icon('check');?> <?=Tr::_('Active')?></span>
-	<a href="<?= Http_Request::currentURI(['deactivate_entity'=>1])?>" class="btn btn-danger"><?=Tr::_('Deactivate')?></a>
+	<a href="<?= $this->getRaw('deactivate_url') ?>" class="btn btn-danger"><?=Tr::_('Deactivate')?></a>
 <?php else: ?>
 	<span class="btn btn-danger"><?= UI::icon('circle-xmark');?> <?=Tr::_('Not active')?></span>
-	<a href="<?= Http_Request::currentURI(['activate_entity'=>1])?>" class="btn btn-success"><?=Tr::_('Activate')?></a>
-	<a href="<?= Http_Request::currentURI(['activate_entity_completely'=>1])?>" class="btn btn-success"><?=Tr::_('Completely activate')?></a>
+	<a href="<?=  $this->getRaw('activate_url') ?>" class="btn btn-success"><?=Tr::_('Activate')?></a>
+<?php if($this->getRaw('activate_completely_url')): ?>
+	<a href="<?=  $this->getRaw('activate_completely_url') ?>" class="btn btn-success"><?=Tr::_('Completely activate')?></a>
+<?php endif; ?>
 <?php endif; ?>
 </div>

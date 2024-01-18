@@ -1,0 +1,15 @@
+<?php
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ */
+
+$form = $this->getRaw('form');
+
+if($form->fieldExists('decimal_places')) {
+	echo $form->field('decimal_places');
+}
+

@@ -5,15 +5,16 @@
 
 namespace JetShop;
 
+use Jet\Application_Module;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Exception;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 
-use JetApplication\Entity_WithCodeAndShopData;
+use JetApplication\Delivery_Method_Module;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Shops_Shop;
 use JetApplication\Delivery_Kind;
 use JetApplication\Delivery_Class;
@@ -25,19 +26,12 @@ use JetApplication\Delivery_Method_ShopData;
 use JetApplication\Services_Service;
 use JetApplication\Delivery_Method;
 use JetApplication\Shops;
-use JetApplication\Delivery_PersonalTakeover_Place;
-use JetApplication\CashDesk;
-use JetApplication\Order;
-use JetApplication\Order_Item;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
 )]
-abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
+abstract class Core_Delivery_Method extends Entity_WithShopData
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -70,13 +64,12 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 	#[Form_Definition(
 		type: Form_Field::TYPE_MULTI_SELECT,
 		label: 'Classes:',
-		is_required: true,
 		error_messages: [
 			Form_Field::ERROR_CODE_EMPTY => 'Please select delivery class',
 			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select delivery class'
 		],
-		default_value_getter_name: 'getDeliveryClassCodes',
-		select_option_creator: [Delivery_Class::class, 'getScope']
+		default_value_getter_name: 'getDeliveryClassIds',
+		select_options_creator: [Delivery_Class::class, 'getScope']
 	)]
 	protected array $delivery_classes = [];
 
@@ -92,13 +85,12 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 	#[Form_Definition(
 		type: Form_Field::TYPE_MULTI_SELECT,
 		label: 'Payment methods:',
-		is_required: true,
 		error_messages: [
 			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select payment method',
 			Form_Field::ERROR_CODE_EMPTY => 'Please select payment method'
 		],
-		default_value_getter_name: 'getPaymentMethodsCodes',
-		select_option_creator: [Payment_Method::class, 'getScope']
+		default_value_getter_name: 'getPaymentMethodsIds',
+		select_options_creator: [Payment_Method::class, 'getScope']
 	)]
 	protected array $payment_methods = [];
 
@@ -114,15 +106,31 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 	#[Form_Definition(
 		type: Form_Field::TYPE_MULTI_SELECT,
 		label: 'Services:',
-		is_required: false,
 		error_messages: [
 			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select service',
 		],
-		default_value_getter_name: 'getServicesCodes',
-		select_option_creator: [Services_Service::class, 'getDeliveryServicesScope']
+		default_value_getter_name: 'getServicesIds',
+		select_options_creator: [Services_Service::class, 'getDeliveryServicesScope']
 	)]
 	protected array $services = [];
 	
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 255,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Backend module:',
+		select_options_creator: [Delivery_Method::class, 'getModulesOptionsScope'],
+		error_messages: [
+			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select module',
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select module'
+		]
+	)]
+	protected string $backend_module_name = '';
 	
 
 	/**
@@ -137,11 +145,14 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 	
 	
 	/**
-	 * @param string $kind
+	 * @param string $code
 	 */
-	public function setKindCode( string $kind ): void
+	public function setKind( string $code ): void
 	{
-		$this->kind = $kind;
+		$this->kind = $code;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData($shop)->setKind($code);
+		}
 	}
 
 	/**
@@ -159,10 +170,32 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 
 	public function getKindTitle() : string
 	{
-		$kind = $this->getKind();
-		return $kind ? $kind->getTitle() : '';
+		return $this->getKind()?->getTitle()?:'';
 	}
-
+	
+	public function getBackendModuleName(): string
+	{
+		return $this->backend_module_name;
+	}
+	
+	public function setBackendModuleName( string $backend_module_name ): void
+	{
+		$this->backend_module_name = $backend_module_name;
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData( $shop )->setBackendModuleName( $backend_module_name );
+		}
+	}
+	
+	public function getBackendModule() : null|Delivery_Method_Module|Application_Module
+	{
+		if(!$this->backend_module_name) {
+			return null;
+		}
+		
+		return Application_Modules::moduleInstance( $this->backend_module_name );
+	}
+	
+	
 
 	public function getShopData( ?Shops_Shop $shop=null ) : Delivery_Method_ShopData
 	{
@@ -170,65 +203,43 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 	}
 
 	/**
-	 * @param array $codes
+	 * @param array $ids
 	 */
-	public function setDeliveryClasses( array $codes ) : void
+	public function setDeliveryClasses( array $ids ) : void
 	{
-		foreach($this->delivery_classes as $r) {
-			if(!in_array($r->getClassCode(), $codes)) {
+		foreach($this->delivery_classes as $id=>$r) {
+			if(!in_array($id, $ids)) {
 				$r->delete();
-				unset($this->delivery_classes[$r->getClassCode()]);
+				unset($this->delivery_classes[$id]);
 			}
 		}
 
-		foreach( $codes as $code ) {
-			if( !($r = Delivery_Class::get( $code )) ) {
-				continue;
-			}
+		foreach( $ids as $id ) {
 
-			if(!isset($this->delivery_classes[$r->getCode()])) {
+			if(!isset($this->delivery_classes[$id])) {
+				if( !Delivery_Class::exists( $id ) ) {
+					continue;
+				}
+				
 				$new_item = new Delivery_Method_Class();
-				$new_item->setMethodCode($this->getCode());
-				$new_item->setClassCode($code);
+				if($this->id) {
+					$new_item->setMethodId( $this->id );
+				}
+				$new_item->setClassId( $id );
 
-				$this->delivery_classes[$code] = $new_item;
-				$new_item->save();
+				$this->delivery_classes[$id] = $new_item;
+				if($this->id) {
+					$new_item->save();
+				}
 			}
 		}
 	}
 
-	/**
-	 *
-	 * @return array
-	 */
-	public function getDeliveryClassCodes() : array
+	public function getDeliveryClassIds() : array
 	{
-		$codes = [];
-
-		foreach($this->getDeliveryClasses() as $class) {
-			$codes[] = $class->getCode();
-		}
-
-		return $codes;
+		return array_keys($this->delivery_classes);
 	}
-
-	/**
-	 *
-	 * @return Delivery_Class[]
-	 */
-	public function getDeliveryClasses() : iterable
-	{
-		$res = [];
-
-		foreach( $this->delivery_classes as $code=>$rec ) {
-			$rec = $rec->getClass();
-			if($rec) {
-				$res[$code] = $rec;
-			}
-		}
-
-		return $res;
-	}
+	
 
 	public function isPersonalTakeover() : bool
 	{
@@ -239,86 +250,41 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 	{
 		return $this->kind == Delivery_Kind::KIND_E_DELIVERY;
 	}
+	
 
-
-	public function getPersonalTakeoverPlace( Shops_Shop $shop, string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
+	public function setPaymentMethods( array $ids ) : void
 	{
-		if(!$this->isPersonalTakeover()) {
-			return null;
-		}
-
-		$place = Delivery_PersonalTakeover_Place::getPlace( $shop, $this->code, $place_code );
-
-		if(!$place) {
-			return null;
-		}
-
-		if($only_active && !$place->isActive()) {
-			return null;
-		}
-
-		return $place;
-	}
-
-	public function hasPersonalTakeoverPlace( Shops_Shop $shop, string $place_code, $only_active=true ) : bool
-	{
-		return (bool)$this->getPersonalTakeoverPlace( $shop, $place_code, $only_active );
-	}
-
-
-
-
-
-
-
-
-
-
-	public function setPaymentMethods( array $codes ) : void
-	{
-		foreach($this->payment_methods as $r) {
-			if(!in_array($r->getPaymentMethodCode(), $codes)) {
+		foreach($this->payment_methods as $id=>$r) {
+			if(!in_array($id, $ids)) {
 				$r->delete();
-				unset($this->payment_methods[$r->getPaymentMethodCode()]);
+				unset($this->delivery_classes[$id]);
 			}
 		}
-
-		foreach( $codes as $code ) {
-			if( !($r = Payment_Method::get( $code )) ) {
-				continue;
-			}
-
-			if(!isset($this->payment_methods[$r->getCode()])) {
+		
+		foreach( $ids as $id ) {
+			
+			if(!isset($this->payment_methods[$id])) {
+				if( !Payment_Method::exists( $id ) ) {
+					continue;
+				}
+				
 				$new_item = new Delivery_Method_PaymentMethods();
-				$new_item->setDeliveryMethodCode($this->getCode());
-				$new_item->setPaymentMethodCode($code);
-
-				$this->payment_methods[$code] = $new_item;
-				$new_item->save();
+				if($this->id) {
+					$new_item->setDeliveryMethodId( $this->id );
+				}
+				$new_item->setPaymentMethodId( $id );
+				
+				$this->payment_methods[$id] = $new_item;
+				if($this->id) {
+					$new_item->save();
+				}
 			}
 		}
 	}
 
-	public function getPaymentMethodsCodes() : array
+	public function getPaymentMethodsIds() : array
 	{
-		return array_keys( $this->getPaymentMethods() );
-	}
-
-	/**
-	 *
-	 * @return Payment_Method[]
-	 */
-	public function getPaymentMethods() : iterable
-	{
-		$res = [];
-
-		foreach( $this->payment_methods as $code=>$item ) {
-			if(($item = $item->getPaymentMethod())) {
-				$res[$code] = $item;
-			}
-		}
-
-		return $res;
+		return array_keys( $this->payment_methods );
 	}
 
 
@@ -329,102 +295,62 @@ abstract class Core_Delivery_Method extends Entity_WithCodeAndShopData
 
 
 
-	public function setServices( array $codes ) : void
+	public function setServices( array $ids ) : void
 	{
-		foreach($this->services as $r) {
-			if(!in_array($r->getServiceCode(), $codes)) {
+		foreach($this->services as $id=>$r) {
+			if(!in_array($id, $ids)) {
 				$r->delete();
-				unset($this->services[$r->getServiceCode()]);
+				unset($this->services[$id]);
 			}
 		}
-
-		foreach( $codes as $code ) {
-			if( !($r = Payment_Method::get( $code )) ) {
-				continue;
-			}
-
-			if(!isset($this->services[$r->getCode()])) {
+		
+		foreach( $ids as $id ) {
+			
+			if(!isset($this->services[$id])) {
+				if( !Services_Service::exists( $id ) ) {
+					continue;
+				}
+				
 				$new_item = new Delivery_Method_Services();
-				$new_item->setDeliveryMethodCode($this->getCode());
-				$new_item->setServiceCode($code);
-
-				$this->services[$code] = $new_item;
-				$new_item->save();
+				if($this->id) {
+					$new_item->setDeliveryMethodId( $this->id );
+				}
+				$new_item->setServiceId( $id );
+				
+				$this->services[$id] = $new_item;
+				if($this->id) {
+					$new_item->save();
+				}
 			}
 		}
 	}
 
-	public function getServicesCodes() : array
+	public function getServicesIds() : array
 	{
-		return array_keys($this->getServices());
-	}
-
-	/**
-	 *
-	 * @return Services_Service[]
-	 */
-	public function getServices() : iterable
-	{
-		$res = [];
-		foreach($this->services as $code=>$item) {
-			if(($item = $item->getService())) {
-				$res[$code] = $item;
-			}
-		}
-
-		return $res;
+		return array_keys($this->services);
 	}
 	
-	public function getOrderItem( CashDesk $cash_desk ) : Order_Item
+	
+	public static function getModulesScope() : array
 	{
-		$shd = $this->getShopData($cash_desk->getShop());
-
-		$item = new Order_Item();
-		$item->setType( Order_Item::ITEM_TYPE_DELIVERY );
-		$item->setQuantity( 1 );
-		$item->setTitle( $shd->getTitle() );
-		$item->setCode( $this->getCode() );
-		$item->setItemAmount( $shd->getDefaultPrice() );
-		$item->setVatRate( $shd->getVatRate() );
-		$item->setDescription( $shd->getDescriptionShort() );
-
-		return $item;
-	}
-
-	public function getOrderConfirmationEmailInfoText( Order $order ) : string
-	{
-		/**
-		 * @var Delivery_Method $this
-		 */
-		$module = $this->getModule();
-
-		if($module) {
-			return $module->getOrderConfirmationEmailInfoText( $order, $this );
-		} else {
-			return $this->getShopData( $order->getShop() )->getConfirmationEmailInfoText();
+		$scope = [''=>''];
+		
+		$modules = Application_Modules::activatedModulesList();
+		
+		foreach($modules as $manifest) {
+			if(!str_starts_with($manifest->getName(), 'Delivery.')) {
+				continue;
+			}
+			
+			$scope[$manifest->getName()] = $manifest->getLabel().' ('.$manifest->getName().')';
 		}
+		
+		return $scope;
 	}
-
-	public function getModuleName() : string
+	
+	public static function getModulesOptionsScope() : array
 	{
-		return Delivery_Method::getMethodModuleNamePrefix().$this->getCode();
+		return [''=>'']+static::getModulesScope();
 	}
-
-	public function getModule(): null|Core_Delivery_Method_Module|Core_Delivery_Method_Module_PersonalTakeover
-	{
-		$module_name = $this->getModuleName();
-
-		if(Application_Modules::moduleExists($module_name)) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */
-			return Application_Modules::moduleInstance( $module_name );
-		}
-
-		if($this->getKind()->moduleIsRequired()) {
-			throw new Exception('Delivery module '.$module_name.' is required, but mussing (is not activated)');
-		}
-
-
-		return null;
-	}
-
+	
 }

@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ */
+
+$item = $this->getRaw('item');
+
+?>
+<?php foreach(Shops::getListSorted() as $shop): ?>
+<?=$shop->getShopName()?>: <b><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $item->getShopData($shop)->getPrice() )?><br></b>
+<?php endforeach; ?>

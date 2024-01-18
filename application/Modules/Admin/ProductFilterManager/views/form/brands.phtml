@@ -1,0 +1,31 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Property;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ * @var Property[] $properties
+ */
+
+$form = $this->getRaw('form');
+
+?>
+
+<fieldset>
+	<legend style="font-size: 0.8rem"><?=Tr::_('Brand')?></legend>
+	<div style="margin:10px;display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;align-items: center">
+	<?php
+	foreach($form->getFields() as $field):
+		if(!str_starts_with($field->getName(), '/brand/')) {
+			continue;
+		}
+		?>
+		<div class="<?=$field->getValue()?'bg-info':''?>" style="margin: 2px;padding: 2px;"><?=$field->input()?></div>
+	<?php endforeach; ?>
+	</div>
+</fieldset>

@@ -4,16 +4,31 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
+use JetApplication\Product_Parameter;
 use JetApplication\Property;
+use JetApplication\Property_Type;
 
 #[DataModel_Definition(
 	name: 'property_shop_data',
 	database_table_name: 'properties_shop_data',
 	parent_model_class: Property::class
 )]
-abstract class Core_Property_ShopData extends Entity_WithIDAndShopData_ShopData {
-
+abstract class Core_Property_ShopData extends Entity_WithShopData_ShopData {
+	
+	protected ?Property_Type $_type_instance = null;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100
+	)]
+	protected string $type = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+	)]
+	protected int $decimal_places = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -77,10 +92,33 @@ abstract class Core_Property_ShopData extends Entity_WithIDAndShopData_ShopData 
 	)]
 	protected string $units = '';
 	
+	public function getType(): string
+	{
+		return $this->type;
+	}
+	
+	public function setType( string $type ): void
+	{
+		$this->type = $type;
+	}
+	
+	public function getDecimalPlaces(): int
+	{
+		return $this->decimal_places;
+	}
+	
+	public function setDecimalPlaces( int $decimal_places ): void
+	{
+		$this->decimal_places = $decimal_places;
+	}
 
 	public function setLabel( string $label ) : void
 	{
+		if($this->label==$label) {
+			return;
+		}
 		$this->label = $label;
+		$this->url_param = $this->_generateURLParam( $this->label );
 	}
 
 	public function getLabel() : string
@@ -148,6 +186,47 @@ abstract class Core_Property_ShopData extends Entity_WithIDAndShopData_ShopData 
 		$this->image_pictogram = $image_pictogram;
 	}
 	
+	
+	public function getTypeInstance() : Property_Type
+	{
+		if(!$this->_type_instance) {
+			$class_name = Property_Type::class.'_'.$this->type;
+			
+			$this->_type_instance = new $class_name( $this );
+		}
+		
+		return $this->_type_instance;
+	}
+	
+	public function assocToProduct( int $product_id ) : void
+	{
+		$this->setProductParameter(
+			new Product_Parameter(
+				$product_id,
+				$this->getEntityId()
+			)
+		);
+	}
+	
+	public function getProductParameter(): ?Product_Parameter
+	{
+		return $this->getTypeInstance()->getProductParameterValue();
+	}
+	
+	public function setProductParameter( Product_Parameter $product_parameter ): void
+	{
+		$this->getTypeInstance()->setProductParameter( $product_parameter );
+	}
+	
+	public function getProductParameterValue() : mixed
+	{
+		return $this->getTypeInstance()->getProductParameterValue();
+	}
+	
+	public function getProductDetailDisplayValue() : mixed
+	{
+		return $this->getTypeInstance()->getProductDetailDisplayValue( $this->getShop() );
+	}
 	
 	
 }

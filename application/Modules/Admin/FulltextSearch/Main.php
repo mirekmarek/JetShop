@@ -69,7 +69,7 @@ class Main extends Application_Module implements Admin_Managers_FulltextSearch
 					$GET_params['active'] = $object_is_active_filter;
 				}
 				
-				$w_URL = $page->getURL(GET_params: $GET_params);
+				$w_URL = $page->getURLPath(GET_params: $GET_params);
 				
 				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 				

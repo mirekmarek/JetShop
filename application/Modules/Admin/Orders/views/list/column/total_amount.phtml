@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Order $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getShop(), $item->getTotalAmount() )?>

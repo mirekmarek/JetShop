@@ -1,8 +1,9 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Customer;
 
 $cash_desk = CashDesk::get();
 
@@ -23,81 +24,53 @@ foreach($form->getFields() as $field) {
 		$field->input()->addCustomCssClass('is-valid');
 	}
 }
+
 ?>
-<br/>
-<div class="card">
+<span class="step-title"><?=Tr::_('Billing address')?></span>
 
-	<div class="card-body bg-light">
-		<?=$form->start()?>
+<?php
+if( Customer::getCurrentCustomer() ) {
+	require 'billing_address/select_address.phtml';
+}
 
-		<h2 class="card-title"><?=Tr::_('Telephone contact')?></h2>
-
-		<div id="field_<?=$form->field('phone')->getId()?>">
-			<?=$form->field('phone')?>
-		</div>
-
-		<h2 class="card-title"><?=Tr::_('Billing address')?></h2>
+require 'billing_address/company_person_switch.phtml';
+?>
 
 
-		<?php
-		if( Customer::getCurrentCustomer() ) {
-			require 'billing_address/select_address.phtml';
-		}
+<?=$form->start()?>
 
-		require 'billing_address/company_person_switch.phtml';
-		?>
-
-
-
-		<?php if ($cash_desk->isCompanyOrder()): ?>
-			<div id="field_<?=$form->field('company_name')->getId()?>">
-				<?=$form->field('company_name')?>
-			</div>
-			<div id="field_<?=$form->field('company_id')->getId()?>">
-				<?=$form->field('company_id')?>
-			</div>
-			<div id="field_<?=$form->field('company_vat_id')->getId()?>">
-				<?=$form->field('company_vat_id')?>
-			</div>
-		<?php endif; ?>
-
-		<div id="field_<?=$form->field('first_name')->getId()?>">
-			<?=$form->field('first_name')?>
-		</div>
-		<div id="field_<?=$form->field('surname')->getId()?>">
-			<?=$form->field('surname')?>
-		</div>
-
-		<?php if ($cash_desk->isDeliveryAddressDisabled()): ?>
-			<div style="opacity: 0.5">
-				<div id="field_<?=$form->field('address_street_no')->getId()?>">
-					<?=$form->field('address_street_no')?>
-				</div>
-				<div id="field_<?=$form->field('address_town')->getId()?>">
-					<?=$form->field('address_town')?>
-				</div>
-				<div id="field_<?=$form->field('address_zip')->getId()?>">
-					<?=$form->field('address_zip')?>
-				</div>
-			</div>
-		<?php else: ?>
-			<div id="field_<?=$form->field('address_street_no')->getId()?>">
-				<?=$form->field('address_street_no')?>
-			</div>
-			<div id="field_<?=$form->field('address_town')->getId()?>">
-				<?=$form->field('address_town')?>
-			</div>
-			<div id="field_<?=$form->field('address_zip')->getId()?>">
-				<?=$form->field('address_zip')?>
-			</div>
-		<?php endif; ?>
-
-		<div class="text-right">
-			<?=UI::button(Tr::_('Continue'))->setType('submit')->setClass('primary')?>
-		</div>
-
-		<?=$form->end()?>
+<?php if ($cash_desk->isCompanyOrder()): ?>
+	<div id="field_<?=$form->field('company_name')->getId()?>">
+		<?=$form->field('company_name')?>
 	</div>
+	<div id="field_<?=$form->field('company_id')->getId()?>">
+		<?=$form->field('company_id')?>
+	</div>
+	<div id="field_<?=$form->field('company_vat_id')->getId()?>">
+		<?=$form->field('company_vat_id')?>
+	</div>
+<?php endif; ?>
+
+	<div id="field_<?=$form->field('first_name')->getId()?>">
+		<?=$form->field('first_name')?>
+	</div>
+	<div id="field_<?=$form->field('surname')->getId()?>">
+		<?=$form->field('surname')?>
+	</div>
+
+
+	<div id="field_<?=$form->field('address_street_no')->getId()?>">
+		<?=$form->field('address_street_no')?>
+	</div>
+	<div id="field_<?=$form->field('address_town')->getId()?>">
+		<?=$form->field('address_town')?>
+	</div>
+	<div id="field_<?=$form->field('address_zip')->getId()?>">
+		<?=$form->field('address_zip')?>
+	</div>
+
+<div class="continue-button-area">
+	<?=UI::button(Tr::_('Continue'))->setType('submit')->setClass('primary')?>
 </div>
 
-
+<?=$form->end()?>

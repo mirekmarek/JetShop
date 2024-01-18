@@ -5,7 +5,7 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Product;
+use JetApplication\Admin_Managers;
 use JetApplication\WarehouseManagement_Item_Event;
 
 /**
@@ -20,17 +20,12 @@ $count = 0;
 
 <table class="table table-striped">
 	<?php foreach($items as $i=>$item):
-		$product = Product::get($item->getProductId());
-		if(!$product) {
-			continue;
-		}
-
 		$count++;
 		?>
 	<tr>
 		<td style="width: 100px;"><?=UI::button_delete('')->setUrl(Http_Request::currentURI(['action'=>'delete','index'=>$i]))->setSize(UI_button::SIZE_SMALL)?></td>
 		<td style="width: 150px;"><?=$item->getCount()?>x</td>
-		<td><?=$product->getAdminTitle()?></td>
+		<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
 		<td><?=$item->getContextType()?> : <?=$item->getContext()?></td>
 		<td><?=$item->getPrice()?></td>
 	</tr>

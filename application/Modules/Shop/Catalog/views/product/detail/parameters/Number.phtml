@@ -1,0 +1,26 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use JetApplication\Property_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Property_ShopData $property
+ */
+
+$property = $this->getRaw('property');
+
+$value = $property->getProductDetailDisplayValue();
+
+if(!$value) {
+	return;
+}
+
+if(is_int( $value )):
+	echo Locale::int( $value ).' '.$property->getUnits();
+endif;
+if(is_float( $value )):
+	echo Locale::float( $value, 0, $property->getDecimalPlaces() ).' '.$property->getUnits();
+endif;

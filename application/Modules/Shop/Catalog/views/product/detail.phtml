@@ -1,0 +1,45 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Product;
+use JetApplication\Product_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_ShopData $product
+ */
+
+$product = $this->getRaw('product');
+?>
+<h1><?=$product->getFullName()?></h1>
+
+	<div style="display: grid;grid-template-columns: 2fr 3fr">
+		<div>
+			<?php require('detail/images.phtml'); ?>
+		</div>
+		
+		<div>
+			<?php
+			if(!$product->isActive()):
+				require 'detail/not-active.phtml';
+			else:
+				switch($product->getType()) {
+					case  Product::PRODUCT_TYPE_VARIANT_MASTER:
+						require 'detail/select-variant.phtml';
+						break;
+					case  Product::PRODUCT_TYPE_VARIANT:
+						require 'detail/select-variant.phtml';
+						require 'detail/price.phtml';
+						break;
+					default:
+						require 'detail/price.phtml';
+						break;
+						
+				}
+			endif;
+			?>
+		</div>
+	</div>
+	
+	<?php require('detail/parameters.phtml'); ?>

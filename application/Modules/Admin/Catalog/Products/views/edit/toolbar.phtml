@@ -1,0 +1,41 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\UI_messages;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ */
+
+$item = $this->getRaw('item');
+?>
+
+<div class="dropdown" style="margin-left: 30px;margin-right: 30px;">
+	<button class="btn btn-light dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<?=UI::icon('eye');?>
+	</button>
+	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+		<?php foreach( Shops::getListSorted() as $shop ): ?>
+			<div class="dropdown-item" style="padding-bottom: 10px;">
+				<a href="<?=$item->getShopData($shop)->getURL()?>" target="_blank"><?=$shop->getShopName()?></a>
+			</div>
+		<?php endforeach; ?>
+	</div>
+</div>
+
+<div style="display: inline-block">
+	<?php if($item->isVariant()):
+		$variant_master = $item->getVariantMasterProduct();
+		?>
+		<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
+		'URL' => $variant_master->getEditURL(),
+		'NAME' => $variant_master->getAdminTitle()
+	]))->setCloseable(false)?>
+	<?php endif; ?>
+</div>
+

@@ -33,7 +33,7 @@ $name = $this->getRaw('name');
 
 
 <script>
-	const <?=$name?> = {
+	window['<?=$name?>'] = {
 		startSelect: function() {
 			$('#<?=$name?>_selected_area').hide();
 			$('#<?=$name?>_whisperer_area').show();

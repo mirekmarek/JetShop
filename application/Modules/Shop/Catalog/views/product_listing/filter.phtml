@@ -1,18 +1,18 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
 
 /**
  * @var MVC_View $this
- * @var ProductListing $listing
  */
 
 ?>
 
+<form method="GET" onsubmit="return false;">
+	<?=$this->render('product_listing/filter/basic');?>
+	<?=$this->render('product_listing/filter/price');?>
+	<?=$this->render('product_listing/filter/properties');?>
+	<?=$this->render('product_listing/filter/brands');?>
+</form>
 
-<?=$this->render('product_listing/filter/price');?>
-<?=$this->render('product_listing/filter/flags');?>
-<?=$this->render('product_listing/filter/properties');?>
-<?=$this->render('product_listing/filter/brands');?>
-<?=$this->render('product_listing/filter/selected');?>

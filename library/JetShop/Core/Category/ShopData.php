@@ -1,23 +1,22 @@
 <?php
 namespace JetShop;
 
+use Jet\Data_Tree;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Category;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Shops;
+use JetApplication\Shops_Shop;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'category_shop_data',
 	database_table_name: 'categories_shop_data',
 	parent_model_class: Category::class,
 )]
-abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData {
+abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 	
 	
 	#[DataModel_Definition(
@@ -74,16 +73,6 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
-		label: 'H1:'
-	)]
-	protected string $seo_h1 = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
 		label: 'Title:'
 	)]
 	protected string $seo_title = '';
@@ -114,15 +103,6 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 	)]
 	protected string $URL_path_part = '';
 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 999999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Keywords for internal fulltext:'
-	)]
-	protected string $internal_fulltext_keywords = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -250,6 +230,9 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 
 	public function setName( string $name ) : void
 	{
+		if($this->name==$name) {
+			return;
+		}
 		$this->name = $name;
 		$this->generateURLPathPart();
 	}
@@ -272,16 +255,6 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 	public function setDescription( string $description ) : void
 	{
 		$this->description = $description;
-	}
-
-	public function getSeoH1() : string
-	{
-		return $this->seo_h1;
-	}
-
-	public function setSeoH1( string $seo_h1 ) : void
-	{
-		$this->seo_h1 = $seo_h1;
 	}
 
 	public function getSeoTitle() : string
@@ -314,16 +287,6 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 		$this->seo_keywords = $seo_keywords;
 	}
 
-	public function getInternalFulltextKeywords() : string
-	{
-		return $this->internal_fulltext_keywords;
-	}
-
-	public function setInternalFulltextKeywords( string $internal_fulltext_keywords ) : void
-	{
-		$this->internal_fulltext_keywords = $internal_fulltext_keywords;
-	}
-
 	public function getURLPathPart() : string
 	{
 		return $this->URL_path_part;
@@ -348,7 +311,7 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 
 	public function getURL() : string
 	{
-		return Shops::getURL( $this->getShop(), [$this->URL_path_part] );
+		return $this->getShop()->getURL( [$this->URL_path_part] );
 	}
 
 	public function generateURLPathPart() : void
@@ -356,13 +319,14 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 		if(!$this->entity_id) {
 			return;
 		}
-
-		$this->URL_path_part = $this->_generateURLPathPart( $this->name, 'c' );
+		
+		$this->setURLPathPart( $this->_generateURLPathPart( $this->name, 'c' ) );
 	}
 
-	
-
-	
+	public function afterAdd(): void
+	{
+		$this->generateURLPathPart();
+	}
 	
 	
 	public function setImageMain( string $image_main ) : void
@@ -461,19 +425,112 @@ abstract class Core_Category_ShopData extends Entity_WithIDAndShopData_ShopData 
 		return explode(',', $this->path );
 	}
 	
-	public function getChildren() : array
+	public function getChildrenIds() : array
 	{
 		return explode(',', $this->children);
 	}
 	
-	public function getBranchChildren(): array
+	public function getBranchChildrenIds(): array
 	{
 		return explode(',', $this->branch_children);
 	}
 	
-	public function getActiveBranchChildren(): array
+	public function getActiveBranchChildrenIds(): array
 	{
 		return explode(',', $this->active_branch_children);
 	}
+	
+	protected ?array $_children = null;
+	
+	/**
+	 * @return static[]
+	 */
+	public function getChildren() : array
+	{
+		if($this->_children===null) {
+			$this->_children = [];
+			
 
+			if( ($ids = $this->getChildrenIds()) ) {
+				$this->_children = static::getActiveList( $ids );
+			}
+		}
+		
+		return $this->_children;
+		
+	}
+
+	public static function getActiveList( array $ids, ?Shops_Shop $shop = null, array|string|null $order_by = null ): array
+	{
+		if(!$order_by) {
+			$order_by = ['priority'];
+		}
+		
+		$list = parent::getActiveList( $ids, $shop, $order_by );
+		foreach($list as $id=>$item) {
+			if(!$item->getBranchProductsCount()) {
+				unset($list[$id]);
+			}
+		}
+		
+		return $list;
+	}
+	
+	/**
+	 * @var Data_Tree[]
+	 */
+	protected static array $trees = [];
+	
+	public static function getTree( Shops_Shop $shop ) : Data_Tree
+	{
+		$key = $shop->getKey();
+		
+		if(!isset(static::$trees[$key])) {
+			
+			$where = static::getActiveQueryWhere();
+			
+			
+			$data = static::dataFetchAll(
+				select:[
+					'id' => 'entity_id',
+					'parent_id' => 'parent_id',
+					'name' => 'name',
+				],
+				where: $where,
+				order_by: ['priority', 'name']
+			);
+			
+			
+			$tree = new Data_Tree();
+			$tree->getRootNode()->setLabel('');
+			$tree->setIgnoreOrphans(true);
+			
+			$tree->setData( $data );
+			
+			static::$trees[$key] = $tree;
+		}
+		
+		
+		return static::$trees[$key];
+	}
+	
+	public function getPathName( bool $as_array=false, string $path_str_glue=' / ' ) : array|string
+	{
+		$result = [];
+		
+		$tree = static::getTree( $this->getShop() );
+		
+		foreach( $this->getPath() as $id ) {
+			$name = $tree->getNode($id)?->getLabel();
+			
+			$result[$id] = $name?:'';
+		}
+		
+		if($as_array) {
+			return $result;
+		} else {
+			return implode($path_str_glue, $result);
+		}
+	}
+	
 }

@@ -1,0 +1,19 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw('form');
+
+$form->field('delivery_methods')->input()->addCustomCssStyle('height: 400px');
+
+$is_default = $form->field('is_default');
+if($is_default->getValue()) {
+	$is_default->setIsReadonly(true);
+}
+?>
+<?=$form->field( 'is_default' )?>
+<?=$form->field( 'delivery_methods' )?>

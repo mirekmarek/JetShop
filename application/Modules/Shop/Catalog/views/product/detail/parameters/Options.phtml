@@ -1,0 +1,21 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Property_Options_Option_ShopData;
+use JetApplication\Property_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Property_ShopData $property
+ * @var Property_Options_Option_ShopData[] $value
+ */
+
+$property = $this->getRaw('property');
+
+$value = $property->getProductDetailDisplayValue();
+
+foreach($value as $option):
+	echo $option->getFilterLabel();
+	echo '<br>';
+endforeach;

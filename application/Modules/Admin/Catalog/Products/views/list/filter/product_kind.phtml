@@ -1,8 +1,9 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Form_Renderer;
 use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
 
 
 /**
@@ -10,29 +11,20 @@ use Jet\MVC_View;
  * @var Listing_Filter_ProductKind $filter
  */
 
+$listing = $this->getRaw( 'listing' );
 $filter = $this->getRaw('filter');
-$listing = $filter->getListing();
 $filter_form = $listing->getFilterForm();
-
 $field = $filter_form->field( 'product_kind' );
-
 $field->input()->addJsAction( 'onchange', 'this.form.submit()' );
 
-$field->label()->setWidth([
-	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
-	Form_Renderer::LJ_SIZE_SMALL => 12,
-	Form_Renderer::LJ_SIZE_MEDIUM => 12,
-	Form_Renderer::LJ_SIZE_LARGE => 12,
-]);
-
-$field->input()->setWidth([
-	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
-	Form_Renderer::LJ_SIZE_SMALL => 12,
-	Form_Renderer::LJ_SIZE_MEDIUM => 12,
-	Form_Renderer::LJ_SIZE_LARGE => 12,
-
-]);
-
-?>
-<?= $field ?>
-
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Kind of product'),
+	form_fields: [$field],
+	is_active:   $field->getValue(),
+	renderer:    function() use ($field) {
+		?>
+		<div><?= $field->input() ?></div>
+		<?php
+	}
+);

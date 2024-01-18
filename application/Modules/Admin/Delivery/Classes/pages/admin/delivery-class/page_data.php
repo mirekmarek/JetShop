@@ -1,11 +1,11 @@
 <?php
 return [
-	'name' => 'Delivery Class administration',
+	'name' => 'Delivery Classes',
 	'is_active' => true,
-	'title' => 'Delivery Class administration',
+	'title' => 'Delivery Classes',
 	'icon' => 'box',
-	'menu_title' => 'Delivery Class administration',
-	'breadcrumb_title' => 'Delivery Class administration',
+	'menu_title' => 'Delivery Classes',
+	'breadcrumb_title' => 'Delivery Classes',
 	'contents' => [
 		[
 			'controller_name' => 'Main',

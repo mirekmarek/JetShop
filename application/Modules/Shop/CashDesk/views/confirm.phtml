@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\MVC_View;
 use Jet\Tr;
@@ -22,29 +22,21 @@ $special_requirements_form->renderer()->addJsAction('onsubmit', 'CashDesk.confir
 
 $special_requirements_form->field('special_requirements')->input()->addJsAction('onchange', 'CashDesk.confirm.saveSpecialRequirement();');
 ?>
-<br/>
-<div class="card">
-	<div class="card-body bg-light">
-		<h2 class="card-title"><?=Tr::_('Almost done')?></h2>
+<span class="step-title"><?=Tr::_('Almost done')?></span>
 
-		<?=$special_requirements_form->start()?>
-			<?=$special_requirements_form->field('special_requirements')->input()->addCustomCssStyle('height:100px;')?>
-		<?=$special_requirements_form->end()?>
+<?=$special_requirements_form->start()?>
+	<?=$special_requirements_form->field('special_requirements')->input()->addCustomCssStyle('height:100px;')?>
+<?=$special_requirements_form->end()?>
+<br>
 
-		<br/>
+<?php foreach($cash_desk->getAgreeFlags() as $code=>$flag):
+	$this->setVar( 'flag', $flag );
+	?>
+<div id="agree_flag_area_<?=$code?>">
+	<?=$this->render('confirm/agree_flag')?>
+</div>
+<?php endforeach; ?>
 
-
-		<?php foreach($cash_desk->getAgreeFlags() as $code=>$flag):
-			$this->setVar( 'flag', $flag );
-			?>
-		<div id="agree_flag_area_<?=$code?>">
-			<?=$this->render('confirm/agree_flag')?>
-		</div>
-		<?php endforeach; ?>
-
-		<div class="text-right" id="cash_desk_order_send_button_area">
-			<?=UI::button(Tr::_('Send the order'))->setOnclick('CashDesk.confirm.send()')->setClass('success')?>
-		</div>
-
-	</div>
+<div class="continue-button-area" id="cash_desk_order_send_button_area">
+	<?=UI::button(Tr::_('Place order'))->setOnclick('CashDesk.confirm.send()')->setClass('success')?>
 </div>

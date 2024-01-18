@@ -1,0 +1,36 @@
+<?php
+namespace JetApplicationModule\Shop\CashDesk;
+
+use Jet\Tr;
+use Jet\UI;
+
+$cash_desk = CashDesk::get();
+
+$form = $cash_desk->getPhoneForm();
+
+require 'email_and_phone_has_been_set.phtml';
+
+$form->field('phone')->input()->setCustomRenderer(function() use ($cash_desk) {
+	?>
+	<div style="display: flex;align-items: center">
+		<div style="padding-right: 10px;"><?=$cash_desk->getShop()->getPhonePrefix()?></div>
+		<div><?=$this->renderByView();?></div>
+	</div>
+	<?php
+});
+
+?>
+
+<?=$form->start()?>
+
+	<span class="step-title"><?=Tr::_('Telephone contact')?></span>
+	
+	<div id="field_<?=$form->field('phone')->getId()?>">
+		<?=$form->field('phone')?>
+	</div>
+
+<div class="continue-button-area">
+	<?=UI::button('Continue')->setClass('primary')->setType('submit')?>
+</div>
+
+<?=$form->end()?>

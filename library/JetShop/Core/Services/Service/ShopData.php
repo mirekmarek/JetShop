@@ -10,10 +10,9 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
-use Jet\Tr;
-use JetApplication\Entity_WithCodeAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
+use JetApplication\Services_Kind;
 use JetApplication\Services_Service;
-use JetApplication\Services_Service_ShopData;
 
 /**
  *
@@ -23,21 +22,15 @@ use JetApplication\Services_Service_ShopData;
 	database_table_name: 'services_shop_data',
 	parent_model_class: Services_Service::class,
 )]
-abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData_ShopData
+abstract class Core_Services_Service_ShopData extends Entity_WithShopData_ShopData
 {
-
-	public const  IMG_ICON1 = 'icon1';
-	public const  IMG_ICON2 = 'icon2';
-	public const  IMG_ICON3 = 'icon3';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
-		related_to: 'main.code',
+		type: DataModel::TYPE_STRING,
 		is_key: true,
+		max_len: 255,
 	)]
-	protected string $service_code = '';
+	protected string $kind = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -56,10 +49,7 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		max_len: 255,
 	)]
 	protected string $image_icon3 = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -69,10 +59,7 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		label: 'Title:'
 	)]
 	protected string $title = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 99999,
@@ -82,10 +69,7 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		label: 'Description:'
 	)]
 	protected string $description = '';
-
-	/**
-	 * @var string
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 999999,
@@ -95,10 +79,7 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		label: 'Short description:'
 	)]
 	protected string $description_short = '';
-
-	/**
-	 * @var int
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
@@ -107,10 +88,7 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		label: 'Priority:'
 	)]
 	protected int $priority = 0;
-
-	/**
-	 * @var float
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -119,10 +97,8 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		label: 'Default price:'
 	)]
 	protected float $default_price = 0.0;
-
-	/**
-	 * @var float
-	 */ 
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
 	)]
@@ -132,10 +108,7 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		creator: ['this','createVatRateInputField']
 	)]
 	protected float $vat_rate = 0.0;
-
-	/**
-	 * @var bool
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 	)]
@@ -144,164 +117,84 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 		label: 'Discount is not allowed'
 	)]
 	protected bool $discount_is_not_allowed = false;
-
-	/**
-	 * @param string $value
-	 */
-	public function setServiceCode( string $value ) : void
+	
+	public function setKind( string $code ): void
 	{
-		$this->service_code = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getServiceCode() : string
-	{
-		return $this->service_code;
-	}
-
-	public function getImageEntity(): string
-	{
-		return 'service';
-	}
-
-	public function getImageObjectId(): int|string
-	{
-		return $this->getServiceCode();
-	}
-
-	public static function getImageClasses(): array
-	{
-		return [
-			Services_Service_ShopData::IMG_ICON1 => Tr::_('Icon 1' ),
-			Services_Service_ShopData::IMG_ICON2 => Tr::_('Icon 2' ),
-			Services_Service_ShopData::IMG_ICON3 => Tr::_('Icon 3' ),
-		];
-	}
-
-	public function setIcon1( string $image ) : void
-	{
-		$this->image_icon1 = $image;
-	}
-
-	public function getIcon1() : string
-	{
-		return $this->image_icon1;
+		$this->kind = $code;
 	}
 	
-	public function setIcon2( string $image ) : void
+	public function getKindCode(): string
 	{
-		$this->image_icon2 = $image;
+		return $this->kind;
 	}
-
-	public function getIcon2() : string
+	
+	public function getKind() : ?Services_Kind
 	{
-		return $this->image_icon2;
+		return Services_Kind::get( $this->kind );
 	}
-
-
-	public function setIcon3( string $image ) : void
+	
+	public function getKindTitle() : string
 	{
-		$this->image_icon3  =$image;
+		$kind = $this->getKind();
+		return $kind ? $kind->getTitle() : '';
 	}
-
-	public function getIcon3() : string
-	{
-		return $this->image_icon3;
-	}
-
-	/**
-	 * @param string $value
-	 */
+	
+	
 	public function setTitle( string $value ) : void
 	{
 		$this->title = $value;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getTitle() : string
 	{
 		return $this->title;
 	}
-
-	/**
-	 * @param string $value
-	 */
+	
 	public function setDescription( string $value ) : void
 	{
 		$this->description = $value;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDescription() : string
 	{
 		return $this->description;
 	}
-
-	/**
-	 * @param string $value
-	 */
+	
 	public function setDescriptionShort( string $value ) : void
 	{
 		$this->description_short = $value;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDescriptionShort() : string
 	{
 		return $this->description_short;
 	}
-
-	/**
-	 * @param int $value
-	 */
+	
 	public function setPriority( int $value ) : void
 	{
 		$this->priority = $value;
 	}
-
-	/**
-	 * @return int
-	 */
+	
 	public function getPriority() : int
 	{
 		return $this->priority;
 	}
-
-	/**
-	 * @param float $value
-	 */
+	
 	public function setDefaultPrice( float $value ) : void
 	{
 		$this->default_price = $value;
 	}
-
-	/**
-	 * @return float
-	 */
+	
 	public function getDefaultPrice() : float
 	{
 		return $this->default_price;
 	}
-
-	/**
-	 * @param float $value
-	 */
+	
 	public function setVatRate( float $value ) : void
 	{
 		$this->vat_rate = $value;
 	}
-
-	/**
-	 * @return float
-	 */
+	
 	public function getVatRate() : float
 	{
 		return $this->vat_rate;
@@ -326,20 +219,46 @@ abstract class Core_Services_Service_ShopData extends Entity_WithCodeAndShopData
 
 		return $input;
 	}
-
-	/**
-	 * @param bool $value
-	 */
+	
 	public function setDiscountIsNotAllowed( bool $value ) : void
 	{
 		$this->discount_is_not_allowed = $value;
 	}
-
-	/**
-	 * @return bool
-	 */
+	
 	public function getDiscountIsNotAllowed() : bool
 	{
 		return $this->discount_is_not_allowed;
 	}
+	
+	public function getImageIcon1(): string
+	{
+		return $this->image_icon1;
+	}
+	
+	public function setImageIcon1( string $image_icon1 ): void
+	{
+		$this->image_icon1 = $image_icon1;
+	}
+	
+	public function getImageIcon2(): string
+	{
+		return $this->image_icon2;
+	}
+	
+	public function setImageIcon2( string $image_icon2 ): void
+	{
+		$this->image_icon2 = $image_icon2;
+	}
+	
+	public function getImageIcon3(): string
+	{
+		return $this->image_icon3;
+	}
+	
+	public function setImageIcon3( string $image_icon3 ): void
+	{
+		$this->image_icon3 = $image_icon3;
+	}
+	
+	
 }

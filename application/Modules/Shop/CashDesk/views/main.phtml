@@ -1,49 +1,97 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\Tr;
+
+$cash_desk = CashDesk::get();
+
+$step = $cash_desk->getCurrentStep();
 ?>
 
 <div class="row">
 	<div class="col-md-8">
-		<div id="cash_desk_status_bar">
-			<?php require 'status_bar.phtml'; ?>
-		</div>
 	</div>
 </div>
 
 
-<div class="row">
-
-	<div class="col-md-8">
-		<div id="cash_desk_delivery">
+<div style="display: grid;grid-template-columns: 2fr 1fr">
+	<div>
+		<div id="cash_desk_status_bar">
+			<?php require 'status_bar.phtml'; ?>
+		</div>
+		
+		<div id="cash_desk_delivery" class="step-block">
 			<?php require 'delivery.phtml';?>
 		</div>
 
-		<div id="cash_desk_payment">
+		<div id="cash_desk_payment" class="step-block" <?php if($step==CashDesk::STEP_DELIVERY):?>style="display: none"<?php endif;?>>
 			<?php require 'payment.phtml';?>
 		</div>
 
-		<div id="cash_desk_customer">
+		<div id="cash_desk_customer" class="step-block" <?php if($step==CashDesk::STEP_DELIVERY || $step==CashDesk::STEP_PAYMENT ):?>style="display: none"<?php endif;?>>
 			<?php require 'customer.phtml';?>
 		</div>
 
-		<div id="cash_desk_confirm">
+		<div id="cash_desk_confirm" class="step-block" <?php if($step==CashDesk::STEP_DELIVERY || $step==CashDesk::STEP_PAYMENT || $step==CashDesk::STEP_CUSTOMER ):?>style="display: none"<?php endif;?>>
 			<?php require 'confirm.phtml';?>
 		</div>
 
 		<br/><br/><br/><br/><br/>
 	</div>
 
-	<div class="col-md-4">
-		<div id="cash_desk_overview">
-			<?php require 'overview.phtml';?>
-		</div>
+	<div id="cash_desk_overview">
+		<?php require 'overview.phtml';?>
+	</div>
 
+</div>
+
+
+<div class="modal fade" id="select_personal_takeover_place_dialog" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-full">
+		<div class="modal-content h-100">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel"><?=Tr::_('Selected personal takeover place')?></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="select_personal_takeover_place_dialog__body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-2" id="personal_takeover_filter">
+						
+						</div>
+						<div class="col-md-10" id="select_personal_takeover_place_dialog__col">
+							<div id="personal_takeover_map" style="width: 500px;height: 500px;"></div>
+						</div>
+					</div>
+				</div>
+			
+			</div>
+		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="select_personal_takeover_selected_place_dialog" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel"></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="personal_takeover_place">
+			
+			</div>
+		</div>
+	</div>
+</div>
+
+
 
 <?php
 require 'js.phtml';
 
-echo Customer_AuthController::getLoginModule()->renderResetPasswordDialog();
+//TODO: echo Customer_AuthController::getLoginModule()->renderResetPasswordDialog();
 ?>

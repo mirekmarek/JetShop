@@ -1,7 +1,10 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
+use JetApplication\ProductListing;
+use JetApplication\Property_Options_Option_ShopData;
+use JetApplication\Property_ShopData;
 
 /**
  * @var MVC_View $this
@@ -10,66 +13,34 @@ use Jet\MVC_View;
 
 $listing = $this->getRaw('listing');
 
-$category = $listing->getCategory();
-if(!$category) {
+$initial_map = $listing->getInitialMap();
+$property_ids = $initial_map->getPropertyIds();
+$option_ids = $initial_map->getPropertyOptionIds();
+if(!$property_ids) {
 	return;
 }
 
-$kind = $category->getKindOfProduct();
-if(!$kind) {
-	return;
-}
 
-$filter_properties = $listing->properties();
-$filter_brands = $listing->brands();
+$filtered_map = $listing->getFilteredMap();
+$properties = Property_ShopData::getActiveList( $property_ids );
+$property_options = Property_Options_Option_ShopData::getActiveList( $option_ids, order_by: ['priority'] );
 
-$filter_groups = [];
 
-foreach( $filter_properties->getGroups() as $group_id=>$property_group ) {
-	if( $property_group->isDisabled() ) {
+foreach($properties as $property):
+	/**
+	 * @var Property_ShopData $property
+	 */
+	
+	$this->setVar('property', $property);
+	$this->setVar('property_options', $property_options);
+
+	$filter = $this->render('product_listing/filter/properties/'.$property->getType());
+	if(!$filter) {
 		continue;
 	}
-	$group = $property_group->getGroup();
-
-	foreach( $property_group->getProperties() as $listing_property ) {
-		if( $listing_property->isDisabled() ) {
-			continue;
-		}
-
-		$filter_groups[$group_id] = $group->getLabel();
-
-		break;
-	}
-}
-
-
-foreach( $filter_properties->getGroups() as $group_id=>$property_group ):
-	if( $property_group->isDisabled() ) {
-		continue;
-	}
-	$group = $property_group->getGroup();
 	?>
-	<div>
-		<?php if ($group->getImagePictogram() || $group->getDescription()): ?>
-			<div class="group-description-content">
-				<?php if ($group->getImagePictogram()): ?>
-					<img src="<?=$group->getImagePictogramUrl()?>" />
-				<?php endif; ?>
-				<?php if ($group->getDescription()): ?>
-					<div class="desc-title"><?= $group->getLabel() ?></div>
-					<?= $group->getDescription() ?>
-				<?php endif; ?>
-			</div>
-		<?php endif; ?>
-		<div>
-			<?php foreach ($property_group->getProperties() as $listing_property):
-				if( $listing_property->isDisabled() ) {
-					continue;
-				}
-
-				echo $listing_property->renderFilterItem();
-			endforeach; ?>
-		</div>
+	<div style="display: grid;grid-template-columns: 200px 1fr;padding-bottom:10px;margin-bottom: 30px;border-bottom: 1px solid #c9c9c9;">
+		<div><b><?=$property->getLabel()?></b></div>
+		<?=$filter?>
 	</div>
-	<?php
-endforeach;
+<?php endforeach;

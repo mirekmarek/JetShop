@@ -68,7 +68,7 @@ let JetAjaxForm = {
 
 				if(JetAjaxForm.xhr.status === 200) {
 					let response;
-
+console.debug( JetAjaxForm.xhr.responseText );
 					try {
 						response = JSON.parse(JetAjaxForm.xhr.responseText);
 					} catch (e) {

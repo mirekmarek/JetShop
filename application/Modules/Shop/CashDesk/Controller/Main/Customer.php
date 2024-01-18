@@ -12,7 +12,6 @@ use Jet\Data_Array;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\CashDesk;
 use JetApplication\Customer;
 
 trait Controller_Main_Customer {
@@ -31,6 +30,15 @@ trait Controller_Main_Customer {
 		$this->router->addAction('customer_back_to_set_email')->setResolver(function() use ($action) {
 			return $action=='customer_back_to_set_email';
 		});
+		
+		$this->router->addAction('customer_set_phone')->setResolver(function() use ($action) {
+			return $action=='customer_set_phone';
+		});
+		
+		$this->router->addAction('customer_back_to_set_phone')->setResolver(function() use ($action) {
+			return $action=='customer_back_to_set_phone';
+		});
+		
 
 		$this->router->addAction('customer_set_password')->setResolver(function() use ($action) {
 			return $action=='customer_set_password';
@@ -67,6 +75,11 @@ trait Controller_Main_Customer {
 		$this->router->addAction('customer_delivery_address_set_the_same')->setResolver(function() use ($action) {
 			return $action=='customer_delivery_address_set_the_same';
 		});
+		
+		$this->router->addAction('customer_delivery_address_set_the_same_confirm')->setResolver(function() use ($action) {
+			return $action=='customer_delivery_address_set_the_same_confirm';
+		});
+		
 
 		$this->router->addAction('customer_delivery_address_set_different')->setResolver(function() use ($action) {
 			return $action=='customer_delivery_address_set_different';
@@ -131,7 +144,40 @@ trait Controller_Main_Customer {
 
 		$response->response();
 	}
-
+	
+	
+	public function customer_set_phone_Action() : void
+	{
+		
+		$response = new Controller_Main_Response( $this );
+		$cash_desk = CashDesk::get();
+		
+		$form = $cash_desk->getPhoneForm();
+		
+		if($form->catch()) {
+			$cash_desk->setPhone( $form->field('phone')->getValue() );
+		} else {
+			$response->error();
+		}
+		
+		$response->addSnippet('customer');
+		
+		$response->response();
+	}
+	
+	public function customer_back_to_set_phone_Action() : void
+	{
+		
+		$response = new Controller_Main_Response( $this );
+		$cash_desk = CashDesk::get();
+		
+		$cash_desk->setPhoneHasBeenSet( false );
+		
+		$response->addSnippet('customer');
+		
+		$response->response();
+	}
+	
 
 	public function customer_set_password_Action() : void
 	{
@@ -290,11 +336,9 @@ trait Controller_Main_Customer {
 		$cash_desk = CashDesk::get();
 
 		$cash_desk->setDifferentDeliveryAddressHasBeenSet(true);
-		$cash_desk->setDeliveryAddressHasBeenSet(true);
 
 		$cash_desk->setHasDifferentDeliveryAddress(false);
-
-		$cash_desk->setCurrentStep( CashDesk::STEP_CONFIRM );
+		
 
 		$response->addSnippet(
 			'cash_desk_delivery_address', 'customer/delivery_address'
@@ -302,6 +346,26 @@ trait Controller_Main_Customer {
 
 		$response->response();
 	}
+	
+	public function customer_delivery_address_set_the_same_confirm_Action() : void
+	{
+		$response = new Controller_Main_Response( $this );
+		$cash_desk = CashDesk::get();
+		
+		$cash_desk->setDifferentDeliveryAddressHasBeenSet(true);
+		
+		$cash_desk->setHasDifferentDeliveryAddress(false);
+		
+		$cash_desk->setDeliveryAddressHasBeenSet(true);
+		$cash_desk->setCurrentStep( CashDesk::STEP_CONFIRM );
+		
+		$response->addSnippet(
+			'cash_desk_delivery_address', 'customer/delivery_address'
+		);
+		
+		$response->response();
+	}
+	
 
 	public function customer_delivery_address_set_different_Action() : void
 	{

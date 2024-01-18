@@ -1,0 +1,57 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\Common;
+
+use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\Entity_Basic;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+$toolbar_renderer = $this->getRaw('toolbar_renderer');
+$listing = $this->getRaw('listing');
+
+$prev_url = $listing?->getPrevEditUrl( $item->getId() );
+$next_url = $listing?->getNextEditUrl( $item->getId() );
+
+?>
+<div class="row toolbar" id="main-toolbar">
+	<div class="col-md-12">
+		<?=UI::button_goBack()?>
+		
+		<div style="display: inline-block;padding-left: 10px;padding-right: 10px;">
+			<div style="width: 40px;display: inline-block;text-align: center">
+			<?php if($prev_url): ?>
+			<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+			<?php endif; ?>
+			</div>
+			
+			<div style="width: 40px;display: inline-block;text-align: center">
+			<?php if($next_url): ?>
+			<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+			<?php endif; ?>
+			</div>
+		</div>
+		
+		
+		<?php if( $form && !$form->getIsReadonly() ): ?>
+			<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
+			<?php
+		endif;
+		
+		if($toolbar_renderer):
+			$toolbar_renderer( $item, $form );
+		endif;
+		?>
+	</div>
+</div>

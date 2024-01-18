@@ -8,7 +8,6 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\AJAX;
-use JetApplication\CashDesk;
 
 class Controller_Main_Response {
 
@@ -54,6 +53,7 @@ class Controller_Main_Response {
 
 		$response = [
 			'ok' => $this->ok,
+			'is_ready' => $cash_desk->isReady(),
 			'step' => $cash_desk->getCurrentStep(),
 			'billing_address_editable' => $cash_desk->isBillingAddressEditable(),
 			'delivery_address_editable' => $cash_desk->isDeliveryAddressEditable(),
@@ -62,8 +62,8 @@ class Controller_Main_Response {
 			'errors' => $this->errors,
 		];
 
-		$response['selected_delivery'] = $cash_desk->getSelectedDeliveryMethod()->getCode();
-		//$response['selected_payment'] = $cash_desk->getSelectedPaymentMethod()->getCode();
+		$response['selected_delivery'] = $cash_desk->getSelectedDeliveryMethod()->getId();
+		$response['selected_payment'] = $cash_desk->getSelectedPaymentMethod()->getId();
 
 
 		foreach( $this->snippets as $id=>$view_script ) {

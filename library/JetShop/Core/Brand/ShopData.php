@@ -7,7 +7,7 @@ use Jet\DataModel_IDController_Passive;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Brand;
-use JetApplication\Entity_WithIDAndShopData_ShopData;
+use JetApplication\Entity_WithShopData_ShopData;
 
 /**
  *
@@ -18,7 +18,7 @@ use JetApplication\Entity_WithIDAndShopData_ShopData;
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Brand::class
 )]
-abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
+abstract class Core_Brand_ShopData extends Entity_WithShopData_ShopData {
 	
 
 	#[DataModel_Definition(
@@ -50,17 +50,7 @@ abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 		label: 'Description:'
 	)]
 	protected string $description = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'H1:',
-	)]
-	protected string $seo_h1 = '';
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -95,17 +85,12 @@ abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'URL parameter:',
+	)]
 	protected string $url_param = '';
 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 999999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Keywords for internal fulltext:'
-	)]
-	protected string $internal_fulltext_keywords = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -133,8 +118,11 @@ abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 
 	public function setName( string $name ) : void
 	{
+		if($this->name==$name) {
+			return;
+		}
 		$this->name = $name;
-		$this->generateUrlParam();
+		$this->url_param = $this->_generateURLParam( $this->name );
 	}
 
 	public function getSecondName() : string
@@ -155,16 +143,6 @@ abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 	public function setDescription( string $description ) : void
 	{
 		$this->description = $description;
-	}
-
-	public function getSeoH1() : string
-	{
-		return $this->seo_h1;
-	}
-
-	public function setSeoH1( string $seo_h1 ) : void
-	{
-		$this->seo_h1 = $seo_h1;
 	}
 
 	public function getSeoTitle() : string
@@ -197,24 +175,10 @@ abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 		$this->seo_keywords = $seo_keywords;
 	}
 
-	public function getInternalFulltextKeywords() : string
-	{
-		return $this->internal_fulltext_keywords;
-	}
-
-	public function setInternalFulltextKeywords( string $internal_fulltext_keywords ) : void
-	{
-		$this->internal_fulltext_keywords = $internal_fulltext_keywords;
-	}
 
 	public function getUrlParam() : string
 	{
 		return $this->url_param;
-	}
-
-	public function generateUrlParam() : void
-	{
-		$this->url_param = $this->_generateURLPathPart( $this->name );
 	}
 	
 	public function setImageLogo( string $image ) : void
@@ -229,7 +193,7 @@ abstract class Core_Brand_ShopData extends Entity_WithIDAndShopData_ShopData {
 	
 	public function setImageBigLogo( string $image ) : void
 	{
-		$this->image_logo = $image;
+		$this->image_big_logo = $image;
 	}
 	
 	public function getImageBigLogo() : string

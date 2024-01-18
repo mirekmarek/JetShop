@@ -1,23 +1,23 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\MVC_View;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Shop_Managers;
 
 /**
  * @var MVC_View $this
- * @var Delivery_Method $delivery_method
+ * @var Delivery_Method_ShopData $method
  */
 
 $cash_desk = CashDesk::get();
 
-$delivery_method = $this->getRaw('delivery_method');
+$method = $this->getRaw('delivery_method');
 
-$price_info = $cash_desk->getDeliveryPrice( $delivery_method );
 ?>
-<div style="display: inline-block">
-<?php if($price_info->isIsPromoPrice()):?>
-	<span style="text-decoration: line-through;font-size: 13px;"><?=Price::formatWithCurrency($price_info->getStandardPrice());?></span>
-	<br/>
-<?php endif; ?>
-	<b><?=Price::formatWithCurrency($price_info->getFinalPrice());?></b>
+<div class="price">
+	<?php if($method->getDefaultPrice()!=$method->getPrice()):?>
+		<div class="price-standard"><?=Shop_Managers::PriceFormatter()->formatWithCurrency($method->getDefaultPrice());?></div>
+	<?php endif; ?>
+	<div class="price-final"><?=Shop_Managers::PriceFormatter()->formatWithCurrency($method->getPrice());?></div>
 </div>

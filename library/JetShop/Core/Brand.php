@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\Brand_ShopData;
-use JetApplication\Entity_WithIDAndShopData;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 
@@ -12,7 +12,7 @@ use JetApplication\Shops_Shop;
 	name: 'brands',
 	database_table_name: 'brands',
 )]
-abstract class Core_Brand extends Entity_WithIDAndShopData {
+abstract class Core_Brand extends Entity_WithShopData {
 	
 	/**
 	 * @var Brand_ShopData[]
@@ -22,7 +22,6 @@ abstract class Core_Brand extends Entity_WithIDAndShopData {
 		data_model_class: Brand_ShopData::class
 	)]
 	protected array $shop_data = [];
-	
 	
 	public function getShopData( ?Shops_Shop $shop=null ) : Brand_ShopData
 	{

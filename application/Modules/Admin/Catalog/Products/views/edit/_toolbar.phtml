@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use JetApplication\Admin_Managers;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Controller_Main $controller
+ */
+$controller = $this->getController();
+
+echo Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
+	item: $this->getRaw('item'),
+	listing: $controller->getListing(),
+	form:  $this->getRaw('form'),
+	toolbar_renderer: function() {
+		require 'toolbar.phtml';
+	}
+);

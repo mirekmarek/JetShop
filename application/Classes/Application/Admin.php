@@ -53,7 +53,7 @@ class Application_Admin
 		Logger::setLogger( new Logger_Admin() );
 		Auth::setController( new Auth_Controller_Admin() );
 
-		Shops::handleCurrentAdminShop();
+		Admin_Managers::UI()->handleCurrentPreferredShop();
 
 		SysConf_Jet_UI::setViewsDir( $router->getBase()->getViewsPath() . 'ui/' );
 		SysConf_Jet_Form::setDefaultViewsDir( $router->getBase()->getViewsPath() . 'form/' );

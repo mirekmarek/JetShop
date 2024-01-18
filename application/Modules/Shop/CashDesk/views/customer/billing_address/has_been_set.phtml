@@ -1,5 +1,5 @@
 <?php
-namespace JetApplication;
+namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Tr;
 use Jet\UI;
@@ -10,25 +10,20 @@ $cash_desk = CashDesk::get();
 $ba = $cash_desk->getBillingAddress();
 ?>
 
-<br/>
-<div class="card">
-
-	<div class="card-body bg-light">
-		<div><b><?= Tr::_('Billing address') ?></b></div>
-
-		<div>
-			<?php if($cash_desk->isCompanyOrder()): ?>
-				<?=$ba->getCompanyName()?><br>
-				<?=$ba->getCompanyId()?><br>
-				<?=$ba->getCompanyVatId()?><br>
-			<?php endif?>
-
-			<?=$ba->getFirstName()?> <?=$ba->getSurname()?><br>
-			<?=$ba->getAddressStreetNo()?><br/>
-			<?=$ba->getAddressZip()?> <?=$ba->getAddressTown()?>
-		</div>
-
-		<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.billingAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+<div class="selected-contact">
+	<div><b><?= Tr::_('Billing address') ?></b></div>
+	<div>
+		<?php if($cash_desk->isCompanyOrder()): ?>
+			<?=$ba->getCompanyName()?><br>
+			<?=$ba->getCompanyId()?><br>
+			<?=$ba->getCompanyVatId()?><br>
+		<?php endif?>
+		
+		<?=$ba->getFirstName()?> <?=$ba->getSurname()?><br>
+		<?=$ba->getAddressStreetNo()?><br/>
+		<?=$ba->getAddressZip()?> <?=$ba->getAddressTown()?>
 	</div>
+	
+	<div><?=UI::button(Tr::_('Change billing address'))->setOnclick("CashDesk.customer.billingAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?></div>
 </div>
 
