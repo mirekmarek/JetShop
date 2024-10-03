@@ -1,0 +1,25 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+?>
+
+<h2><?=Tr::_('Validation code has expired')?></h2>
+
+<p><?=Tr::_('Sorry, but the deadline for entering the validation code has passed. If you want, we can send you a new code.')?></p>
+
+<?=$form->start()?>
+	<?=$form->field('email')?>
+	<div class="buttons">
+		<?= UI::button( Tr::_( 'Send me the reset code' ) )->setType( UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY); ?>
+	</div>
+<?=$form->end()?>

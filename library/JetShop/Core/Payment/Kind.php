@@ -6,28 +6,27 @@
 namespace JetShop;
 
 
-use Jet\Tr;
+use Jet\Autoloader;
+use Jet\IO_Dir;
 
 use JetApplication\Payment_Kind;
 
 
 abstract class Core_Payment_Kind {
-
-
-	public const KIND_COD = 'COD';
-	public const KIND_ONLINE_PAYMENT = 'online_payment';
-	public const KIND_CASH = 'cash';
-	public const KIND_LOAN = 'loan';
-	public const KIND_LOAN_ONLINE = 'loan_online';
-	public const KIND_BANK_TRANSFER = 'bank_transfer';
-	
-	protected string $code = '';
+	public const CODE = null;
 
 	protected string $title = '';
+	protected string $title_invoice = '';
 
 	protected bool $module_is_required = false;
 	
 	protected bool $is_online_payment = false;
+	
+	protected bool $is_cod = false;
+	
+	protected bool $allowed_for_invoices = true;
+	
+	protected string $alternative_kind_for_invoices = '';
 
 	/**
 	 * @var Payment_Kind[]|null
@@ -36,12 +35,7 @@ abstract class Core_Payment_Kind {
 
 	public function getCode(): string
 	{
-		return $this->code;
-	}
-
-	public function setCode( string $code ): void
-	{
-		$this->code = $code;
+		return static::CODE;
 	}
 
 	public function getTitle(): string
@@ -49,31 +43,35 @@ abstract class Core_Payment_Kind {
 		return $this->title;
 	}
 
-	public function setTitle( string $title ): void
+	protected function setTitle( string $title ): void
 	{
 		$this->title = $title;
 	}
+	
+	public function getTitleInvoice(): string
+	{
+		if(!$this->title_invoice) {
+			return $this->getTitle();
+		}
+		
+		return $this->title_invoice;
+	}
+	
+	public function setTitleInvoice( string $title_invoice ): void
+	{
+		$this->title_invoice = $title_invoice;
+	}
+	
+	
 
 	public function moduleIsRequired(): bool
 	{
 		return $this->module_is_required;
 	}
 
-	public function setModuleIsRequired( bool $module_is_required ): void
+	protected function setModuleIsRequired( bool $module_is_required ): void
 	{
 		$this->module_is_required = $module_is_required;
-	}
-
-
-
-	public static function get( string $code ) : ?Payment_Kind
-	{
-		$list = Payment_Kind::getList();
-		if(!isset($list[$code])) {
-			return null;
-		}
-
-		return $list[$code];
 	}
 	
 	public function isOnlinePayment(): bool
@@ -81,13 +79,62 @@ abstract class Core_Payment_Kind {
 		return $this->is_online_payment;
 	}
 	
-	public function setIsOnlinePayment( bool $is_online_payment ): void
+	protected function setIsOnlinePayment( bool $is_online_payment ): void
 	{
 		$this->is_online_payment = $is_online_payment;
 	}
 	
+	public function isCOD(): bool
+	{
+		return $this->is_cod;
+	}
 	
-
+	protected function setIsCOD( bool $is_cod ): void
+	{
+		$this->is_cod = $is_cod;
+	}
+	
+	public function isAllowedForInvoices(): bool
+	{
+		return $this->allowed_for_invoices;
+	}
+	
+	protected function setAllowedForInvoices( bool $allowed_for_invoices ): void
+	{
+		$this->allowed_for_invoices = $allowed_for_invoices;
+	}
+	
+	public function getAlternativeKindForInvoices(): ?Payment_Kind
+	{
+		if(!$this->alternative_kind_for_invoices) {
+			return null;
+		}
+		
+		return Payment_Kind::get($this->alternative_kind_for_invoices);
+	}
+	
+	public function setAlternativeKindForInvoices( ?Payment_Kind $alternative_kind_for_invoices ): void
+	{
+		if(!$alternative_kind_for_invoices) {
+			$this->alternative_kind_for_invoices = '';
+		} else {
+			$this->alternative_kind_for_invoices = $alternative_kind_for_invoices->getCode();
+		}
+		
+	}
+	
+	
+	
+	
+	public static function get( string $code ) : ?Payment_Kind
+	{
+		$list = Payment_Kind::getList();
+		if(!isset($list[$code])) {
+			return null;
+		}
+		
+		return $list[$code];
+	}
 
 	/**
 	 * @return Payment_Kind[]
@@ -96,47 +143,26 @@ abstract class Core_Payment_Kind {
 	{
 		if(static::$list===null) {
 			static::$list = [];
-
-			$COD = new Payment_Kind();
-			$COD->setCode( static::KIND_COD );
-			$COD->setTitle( Tr::_('COD') );
-
-			$online_payment = new Payment_Kind();
-			$online_payment->setCode( static::KIND_ONLINE_PAYMENT );
-			$online_payment->setTitle( Tr::_('Online payment') );
-			$online_payment->setModuleIsRequired( true );
-			$online_payment->setIsOnlinePayment( true );
-
-			$cash = new Payment_Kind();
-			$cash->setCode( static::KIND_CASH );
-			$cash->setTitle( Tr::_('Cash') );
-
-			$loan = new Payment_Kind();
-			$loan->setCode( static::KIND_LOAN );
-			$loan->setTitle( Tr::_('Loan') );
 			
-
-			$loan_online = new Payment_Kind();
-			$loan_online->setCode( static::KIND_LOAN_ONLINE );
-			$loan_online->setTitle( Tr::_('Loan - online') );
-			$loan_online->setModuleIsRequired( true );
-			$loan_online->setIsOnlinePayment( true );
-
-			$bank_transfer = new Payment_Kind();
-			$bank_transfer->setCode( static::KIND_BANK_TRANSFER );
-			$bank_transfer->setTitle( Tr::_('Bank transfer') );
-			$bank_transfer->setModuleIsRequired( true );
+			$path = substr( Autoloader::getScriptPath( Payment_Kind::class ), 0, -4).'/';
+			
+			$files = IO_Dir::getFilesList( $path, '*.php' );
+			
+			foreach($files as $file) {
+				$class_name = Payment_Kind::class.'_'.basename( $file, '.php' );
+				
+				static::add( new $class_name() );
+			}
 
 			
-			static::$list[$COD->getCode()] = $COD;
-			static::$list[$online_payment->getCode()] = $online_payment;
-			static::$list[$cash->getCode()] = $cash;
-			static::$list[$loan->getCode()] = $loan;
-			static::$list[$loan_online->getCode()] = $loan_online;
-			static::$list[$bank_transfer->getCode()] = $loan_online;
 		}
 
 		return static::$list;
+	}
+	
+	protected static function add( Payment_Kind $kind ) : void
+	{
+		static::$list[$kind->getCode()] = $kind;
 	}
 
 	public static function getScope() : array
@@ -152,4 +178,22 @@ abstract class Core_Payment_Kind {
 
 		return $res;
 	}
+	
+	
+	public static function getInvoiceScope() : array
+	{
+		$list = Payment_Kind::getList();
+		
+		
+		$res = [];
+		
+		foreach($list as $item) {
+			if($item->isAllowedForInvoices()) {
+				$res[$item->getCode()] = $item->getTitleInvoice();
+			}
+		}
+		
+		return $res;
+	}
+	
 }

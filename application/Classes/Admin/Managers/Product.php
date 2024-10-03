@@ -1,14 +1,9 @@
 <?php
 namespace JetApplication;
 
+use JetShop\Core_Admin_Managers_Product;
 
-interface Admin_Managers_Product extends Admin_Entity_WithShopData_Manager_Interface
+interface Admin_Managers_Product extends Core_Admin_Managers_Product
 {
-	
-	public function renderSelectWidget( string $on_select,
-	                                    int $selected_product_id=0,
-	                                    ?array $only_type_filter=null,
-	                                    ?bool $only_active_filter=null,
-	                                    string $name='select_product' ) : string;
-	
+
 }

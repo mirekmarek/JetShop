@@ -14,19 +14,15 @@ use JetApplication\Admin_Managers;
 
 $image_manager = Admin_Managers::Image();
 ?>
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id']))?>
-	</div>
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id']))?>
 </div>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		
 		<?php
 		echo $this->getRaw('tabs');
 		
 		echo $image_manager->renderStandardManagement();
 		?>
-	</div>
 </div>

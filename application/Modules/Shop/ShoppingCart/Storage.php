@@ -10,6 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Locale;
+use JetApplication\MeasureUnit;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Shops_Shop;
@@ -60,11 +61,29 @@ class Storage extends DataModel
 	protected int $product_id = 0;
 	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_id: true,
+		type: DataModel::TYPE_FLOAT,
 		is_key: true
 	)]
-	protected int $quantity = 0;
+	protected float $number_of_units = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 64
+	)]
+	protected string $measure_unit = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	protected int $auto_offer_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	protected int $selected_gift_id = 0;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -120,15 +139,50 @@ class Storage extends DataModel
 		return $this->product_id;
 	}
 	
-	public function setQuantity( int $value ): void
+	public function setNumberOfUnits( float $number_of_units, ?MeasureUnit $measure_unit ): void
 	{
-		$this->quantity = $value;
+		if($measure_unit) {
+			$number_of_units = $measure_unit->round($number_of_units);
+			$this->measure_unit = $measure_unit->getCode();
+		}
+		
+		$this->number_of_units = $number_of_units;
 	}
 	
-	public function getQuantity(): int
+	public function getNumberOfUnits(): float
 	{
-		return $this->quantity;
+		return $this->number_of_units;
 	}
+	
+	public function getMeasureUnit(): ?MeasureUnit
+	{
+		return MeasureUnit::get( $this->measure_unit );
+	}
+	
+	
+	public function getAutoOfferId(): int
+	{
+		return $this->auto_offer_id;
+	}
+	
+	public function setAutoOfferId( int $auto_offer_id ): void
+	{
+		$this->auto_offer_id = $auto_offer_id;
+	}
+	
+	
+
+	public function getSelectedGiftId(): int
+	{
+		return $this->selected_gift_id;
+	}
+	
+	public function setSelectedGiftId( int $selected_gift_id ): void
+	{
+		$this->selected_gift_id = $selected_gift_id;
+	}
+	
+	
 	
 	public function setCustomerId( int $value ): void
 	{
@@ -148,12 +202,14 @@ class Storage extends DataModel
 		
 		$now = Data_DateTime::now();
 		foreach( $cart->getItems() as $item ) {
-			$storage = new Storage();
+			$storage = new static();
 			$storage->setShop( $cart->getShop() );
 			$storage->setId( $cart->getId() );
 			
 			$storage->setProductId( $item->getProductId() );
-			$storage->setQuantity( $item->getQuantity() );
+			$storage->setNumberOfUnits( $item->getNumberOfUnits(), $item->getMeasureUnit() );
+			$storage->setAutoOfferId( $item->getAutoOfferId() );
+			$storage->setSelectedGiftId( $item->getSelectedGiftId() );
 			if( ($user = Auth::getCurrentUser()) ) {
 				$storage->setCustomerId( $user->getId() );
 			}
@@ -161,19 +217,29 @@ class Storage extends DataModel
 			$storage->save();
 		}
 		
+		Storage_SelectedGifts::saveCart( $cart );
 	}
 	
 	public static function loadCart( ShoppingCart $cart ): void
 	{
-		$_items = Storage::get( $cart->getId() );
+		$_items = static::get( $cart->getId() );
 		$items = [];
 		foreach($_items as $_item) {
-			$items[] = new ShoppingCart_Item(
+			$item = new ShoppingCart_Item(
 				$_item->getProductId(),
-				$_item->getQuantity()
+				$_item->getNumberOfUnits(),
+				$_item->getMeasureUnit(),
+				$_item->getSelectedGiftId()
 			);
+			
+			$item->setAutoOfferId( $_item->getAutoOfferId() );
+			
+			$items[] = $item;
+			
 		}
 		$cart->load( $items );
+		
+		Storage_SelectedGifts::loadCart( $cart );
 		
 	}
 }

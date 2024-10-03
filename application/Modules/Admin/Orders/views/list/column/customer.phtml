@@ -8,7 +8,10 @@
 namespace JetApplicationModule\Admin\Orders;
 
 use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
 use JetApplication\Admin_Managers;
+use JetApplication\CustomerBlacklist;
 
 /**
  * @var MVC_View $this
@@ -16,13 +19,17 @@ use JetApplication\Admin_Managers;
  */
 
 $item = $this->getRaw('item');
-
-//TODO: customer edit link
 ?>
 <?php if($item->getBillingCompanyName()): ?>
 <?=$item->getBillingCompanyName()?><br>
 <?php endif; ?>
-<?=$item->getBillingFirstName()?> <?=$item->getBillingSurname()?><br>
+<?=$item->getBillingFirstName()?> <?=$item->getBillingSurname()?> (<?=Admin_Managers::Customer()->showName( $item->getCustomerId() )?>)<br>
 <a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
 <?=$item->getPhone()?><br>
-<?=Admin_Managers::Customer()->showLink( $item->getCustomerId() )?>
+
+
+<?php if( CustomerBlacklist::customerIsBlacklisted( $item->getEmail() ) ): ?>
+	<div class="alert alert-danger" role="alert">
+		<?=UI::icon('skull-crossbones')?> <?=Tr::_('Customer is blacklisted')?>
+	</div>
+<?php endif; ?>

@@ -11,18 +11,19 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Data_DateTime;
-use Jet\Form_Field_DateTime;
-use Jet\Tr;
 
+use JetApplication\Discounts;
 use JetApplication\Discounts_Code;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_Marketing;
 use JetApplication\Order;
+use JetApplication\Pricelists;
 use JetApplication\Shop_Managers;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 use JetApplication\Discounts_Code_Usage;
 
 use JetApplication\Discounts_Discount;
+use JetApplicationModule\Discounts\Code\Main as DiscountModule;
 
 /**
  *
@@ -31,14 +32,8 @@ use JetApplication\Discounts_Discount;
 	name: 'discounts_code',
 	database_table_name: 'discounts_codes',
 )]
-class Core_Discounts_Code extends Entity_WithShopRelation
+class Core_Discounts_Code extends Entity_Marketing
 {
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-	)]
-	protected int $id = 0;
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_key: true,
@@ -53,42 +48,6 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		]
 	)]
 	protected string $code = '';
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 99999,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal description:'
-	)]
-	protected string $internal_description = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATE_TIME,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_DATE_TIME,
-		label: 'Valid from:',
-		error_messages: [
-			Form_Field_DateTime::ERROR_CODE_EMPTY          => 'Please enter date and time',
-			Form_Field_DateTime::ERROR_CODE_INVALID_FORMAT => 'Please enter date and time'
-		]
-	)]
-	protected ?Data_DateTime $valid_from = null;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATE_TIME,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_DATE_TIME,
-		label: 'Valid till:',
-		error_messages: [
-			Form_Field_DateTime::ERROR_CODE_EMPTY          => 'Please enter date and time',
-			Form_Field_DateTime::ERROR_CODE_INVALID_FORMAT => 'Please enter date and time'
-		]
-	)]
-	protected ?Data_DateTime $valid_till = null;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT,
@@ -139,6 +98,16 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		label: 'Discount amount:'
 	)]
 	protected float $discount = 0.0;
+
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Do not combine the code with other codes'
+	)]
+	protected bool $do_not_combine = false;
 	
 	public static function codeExists( string $code, int $skip_id=0 ) : bool
 	{
@@ -151,12 +120,7 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 
 	
 	
-
-	/**
-	 * @param int|string $id
-	 * @return static|null
-	 */
-	public static function get( int|string $id ): static|null
+	public static function get( int $id ): static|null
 	{
 		return static::load( $id );
 	}
@@ -201,140 +165,48 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		return $this->id;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setCode( string $value ) : void
 	{
 		$value = strtolower($value);
 		$this->code = $value;
 	}
-
-	/**
-	 * @return string
-	 */
+	
 	public function getCode() : string
 	{
 		return $this->code;
 	}
 
-	/**
-	 * @param string $value
-	 */
-	public function setInternalDescription( string $value ) : void
-	{
-		$this->internal_description = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getInternalDescription() : string
-	{
-		return $this->internal_description;
-	}
-
-	/**
-	 * @param Data_DateTime|string|null $value
-	 */
-	public function setValidFrom( Data_DateTime|string|null $value ) : void
-	{
-		if( $value===null ) {
-			$this->valid_from = null;
-			return;
-		}
-		
-		if( !( $value instanceof Data_DateTime ) ) {
-			$value = new Data_DateTime( (string)$value );
-		}
-		
-		$this->valid_from = $value;
-	}
-
-	/**
-	 * @return Data_DateTime|null
-	 */
-	public function getValidFrom() : Data_DateTime|null
-	{
-		return $this->valid_from;
-	}
-
-	/**
-	 * @param Data_DateTime|string|null $value
-	 */
-	public function setValidTill( Data_DateTime|string|null $value ) : void
-	{
-		if( $value===null ) {
-			$this->valid_till = null;
-			return;
-		}
-		
-		if( !( $value instanceof Data_DateTime ) ) {
-			$value = new Data_DateTime( (string)$value );
-		}
-		
-		$this->valid_till = $value;
-	}
-
-	/**
-	 * @return Data_DateTime|null
-	 */
-	public function getValidTill() : Data_DateTime|null
-	{
-		return $this->valid_till;
-	}
-
-	/**
-	 * @param float $value
-	 */
+	
 	public function setMinimalOrderAmount( float $value ) : void
 	{
 		$this->minimal_order_amount = $value;
 	}
-
-	/**
-	 * @return float
-	 */
+	
 	public function getMinimalOrderAmount() : float
 	{
 		return $this->minimal_order_amount;
 	}
-
-	/**
-	 * @param int $value
-	 */
+	
 	public function setNumberOfCodesAvailable( int $value ) : void
 	{
 		$this->number_of_codes_available = $value;
 	}
-
-	/**
-	 * @return int
-	 */
+	
 	public function getNumberOfCodesAvailable() : int
 	{
 		return $this->number_of_codes_available;
 	}
-
-	/**
-	 * @param int $value
-	 */
+	
 	public function setNumberOfCodesUsed( int $value ) : void
 	{
 		$this->number_of_codes_used = $value;
 	}
-
-	/**
-	 * @return int
-	 */
+	
 	public function getNumberOfCodesUsed() : int
 	{
 		return $this->number_of_codes_used;
 	}
 
-	/**
-	 * @param string $value
-	 */
 	public function setDiscountType( string $value ) : void
 	{
 		$this->discount_type = $value;
@@ -368,6 +240,22 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 	{
 		return -1*round( $this->discount / 100, 2);
 	}
+	
+	
+	public function getRelevantProductAmount() : float
+	{
+		
+		$cart = Shop_Managers::ShoppingCart()->getCart();
+		$amount = 0;
+		
+		foreach($cart->getItems() as $item) {
+			if( $this->isRelevant([ $item->getProductId() ]) ) {
+				$amount += $item->getProduct()->getPrice( Pricelists::getCurrent() ) * $item->getNumberOfUnits();
+			}
+		}
+		
+		return $amount;
+	}
 
 	public function isValid( ?string &$error_code='', ?array &$error_data=[] ) : bool
 	{
@@ -375,14 +263,13 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 		
 		$now = Data_DateTime::now();
 
-		$valid_from = $this->getValidFrom();
-		$valid_till = $this->getValidTill();
+		$valid_from = $this->getActiveFrom();
+		$valid_till = $this->getActiveTill();
 
 		if(
 			$valid_from &&
 			$valid_from>$now
 		) {
-			$error_message = Tr::_('The discount code will not be active until the future');
 			$error_code = 'future_code';
 			return false;
 		}
@@ -391,30 +278,69 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 			$valid_till &&
 			$valid_till<$now
 		) {
-			$error_message = Tr::_('The discount code is no longer valid');
 			$error_code = 'past_code';
 			return false;
 		}
+		
+		
+		if($this->getDoNotCombine()) {
+			/**
+			 * @var DiscountModule $module
+			 */
+			$module = Discounts::Manager()->getActiveModule('Code');
+			
+			$used_coupons = $module->getUsedCodesRaw();
+			
+			$i = array_search( $this->getId(), $used_coupons );
+			if($i!==false) {
+				unset($used_coupons[$i]);
+			}
+			
+			if( $used_coupons ) {
+				$error_code = 'do_not_combine';
+				
+				return false;
+			}
+		}
+		
 
 		if($this->getNumberOfCodesUsed()>=$this->getNumberOfCodesAvailable()) {
-			$error_message = Tr::_('The discount code has already been used');
 			$error_code = 'used';
 			return false;
 		}
-
-		if(
-			$this->getMinimalOrderAmount()>0 &&
-			Shop_Managers::ShoppingCart()->getCart()->getAmount()<$this->getMinimalOrderAmount()
-		) {
-			$error_code = 'under_min_value';
-			$error_data = [
-				'MIN' => Shop_Managers::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
-			];
-
+		
+		
+		$has_some_relevant_product = false;
+		
+		foreach( Shop_Managers::ShoppingCart()->getCart()->getItems() as $item ) {
+			if( $this->isRelevant( [$item->getProductId() ] ) ) {
+				$has_some_relevant_product = true;
+				break;
+			}
+		}
+		
+		
+		if( !$has_some_relevant_product ) {
+			$error_code = 'no_allowed_products_in_cart';
+			
 			return false;
 		}
+		
 
-
+		if( $this->getMinimalOrderAmount()>0 ) {
+			
+			$amount = $this->getRelevantProductAmount();
+			
+			if($amount<$this->getMinimalOrderAmount()) {
+				$error_code = 'under_min_value';
+				$error_data = [
+					'MIN' => Shop_Managers::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
+				];
+				
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
@@ -491,4 +417,23 @@ class Core_Discounts_Code extends Entity_WithShopRelation
 
 		$this->save();
 	}
+	
+	public function getAdminTitle(): string
+	{
+		return $this->getCode();
+	}
+
+	
+	public function getDoNotCombine(): bool
+	{
+		return $this->do_not_combine;
+	}
+	
+	public function setDoNotCombine( bool $do_not_combine ): void
+	{
+		$this->do_not_combine = $do_not_combine;
+	}
+	
+	
+	
 }

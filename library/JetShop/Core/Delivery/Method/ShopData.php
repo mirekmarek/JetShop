@@ -5,21 +5,34 @@
 
 namespace JetShop;
 
-use Jet\Application_Module;
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Form_Field_Select;
+use Jet\Form_Field_Float;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Carrier_Service;
+use JetApplication\Delivery_Class;
 use JetApplication\Delivery_Kind;
 use JetApplication\Delivery_Method;
-use JetApplication\Delivery_Method_Module;
+use JetApplication\Carrier;
 use JetApplication\Delivery_Method_PaymentMethods;
-use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Delivery_Method_Price;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Carrier_DeliveryPoint;
+use JetApplication\Entity_HasPrice_Interface;
+use JetApplication\Entity_HasPrice_Trait;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Order;
 use JetApplication\Payment_Method_ShopData;
+use JetApplication\Pricelists_Pricelist;
+use JetApplication\Product_ShopData;
+use JetApplication\Shops_Shop;
+use JetApplication\Timer_Action;
+use JetApplication\Timer_Action_SetPrice;
 
 
 #[DataModel_Definition(
@@ -27,14 +40,25 @@ use JetApplication\Payment_Method_ShopData;
 	database_table_name: 'delivery_methods_shop_data',
 	parent_model_class: Delivery_Method::class
 )]
-abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopData
+abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopData implements Entity_HasPrice_Interface
 {
+	use Entity_HasPrice_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 255,
 	)]
 	protected string $kind = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Length of delivery in working days:'
+	)]
+	protected int $length_of_delivery_in_working_days = 1;
 	
 	
 	#[DataModel_Definition(
@@ -109,24 +133,10 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_FLOAT,
-		label: 'Default price:'
+		label: 'Free delivery limit:'
 	)]
-	protected float $default_price = 0.0;
+	protected float $free_delivery_limit = 0.0;
 	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'VAT rate:',
-		error_messages: [
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select VAT rate',
-		],
-		creator: ['this', 'createVatRateInputField'],
-	)]
-	protected float $vat_rate = 0.0;
-
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -139,16 +149,45 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
+		is_key: true
+	)]
+	protected string $carrier_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 255,
 	)]
-	protected string $backend_module_name = '';
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Carrier service:',
+	)]
+	protected string $carrier_service_code = '';
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_CUSTOM_DATA
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_MULTI_SELECT,
+		label: 'Allowed delivery point types:',
+		is_required: false
+	)]
+	protected array $allowed_delivery_point_types = [];
 	
+	/**
+	 * @var Delivery_Method_Price[]
+	 */
+	protected array $default_price = [];
 	
-	protected ?float $price = null;
 	
 	protected bool $enabled = true;
+	
+	
+	public function getPriceEntity( Pricelists_Pricelist $pricelist ) : Delivery_Method_Price
+	{
+		return Delivery_Method_Price::get( $pricelist, $this->getId() );
+	}
+	
 	
 	public function getEnabled(): bool
 	{
@@ -231,6 +270,18 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 		return $this->getImageThumbnailUrl( 'icon3', $max_w, $max_h );
 	}
 	
+	public function getLengthOfDeliveryInWorkingDays(): int
+	{
+		return $this->length_of_delivery_in_working_days;
+	}
+	
+	public function setLengthOfDeliveryInWorkingDays( int $length_of_delivery_in_working_days ): void
+	{
+		$this->length_of_delivery_in_working_days = $length_of_delivery_in_working_days;
+	}
+	
+	
+	
 	public function setTitle( string $value ) : void
 	{
 		$this->title = $value;
@@ -281,58 +332,25 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 		return $this->priority;
 	}
 	
-	public function setDefaultPrice( float $value ) : void
-	{
-		$this->default_price = $value;
-	}
-
-	public function getDefaultPrice() : float
-	{
-		return $this->default_price;
-	}
-
-	public function setVatRate( float $value ) : void
-	{
-		$this->vat_rate = $value;
-	}
 	
-	public function getPrice(): ?float
-	{
-		if($this->price===null) {
-			$this->price = $this->getDefaultPrice();
-		}
-		return $this->price;
-	}
 	
-	public function setPrice( float $price ): void
+	public function getDefaultPrice( Pricelists_Pricelist $pricelist ) : float
 	{
-		$this->price = $price;
-	}
-	
-
-	/**
-	 * @return float
-	 */
-	public function getVatRate() : float
-	{
-		return $this->vat_rate;
-	}
-
-	public function createVatRateInputField( Form_Field_Select $input ) : Form_Field_Select
-	{
-		$shop = $this->getShop();
+		$code = $pricelist->getCode();
 		
-		$input->setDefaultValue( !$this->getIsSaved() ? $shop->getDefaultVatRate()  : $this->vat_rate );
-
-
-		$vat_rates = $shop->getVatRates();
-
-		$vat_rates = array_combine($vat_rates, $vat_rates);
-
-		$input->setSelectOptions($vat_rates);
-
-		return $input;
+		if(!isset($this->default_price[$code])) {
+			$this->default_price[$code] = clone $this->getPriceEntity( $pricelist );
+		}
+		return $this->default_price[$code]->getPrice();
 	}
+	
+	public function setPrice( Pricelists_Pricelist $pricelist, float $price ): void
+	{
+		$this->getDefaultPrice( $pricelist );
+		
+		$this->getPriceEntity( $pricelist )->setPrice( $price );
+	}
+
 
 	public function setDiscountIsNotAllowed( bool $value ) : void
 	{
@@ -342,6 +360,16 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 	public function getDiscountIsNotAllowed() : bool
 	{
 		return $this->discount_is_not_allowed;
+	}
+	
+	public function getFreeDeliveryLimit(): float
+	{
+		return $this->free_delivery_limit;
+	}
+	
+	public function setFreeDeliveryLimit( float $free_delivery_limit ): void
+	{
+		$this->free_delivery_limit = $free_delivery_limit;
 	}
 	
 	public function isPersonalTakeover() : bool
@@ -356,40 +384,46 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 	
 	/**
 	 * @param bool $only_active
-	 * @return Delivery_PersonalTakeover_Place[]
+	 * @return Carrier_DeliveryPoint[]
 	 */
-	public function getPersonalTakeoverPlaces( bool $only_active=true ) : array
+	public function getPersonalTakeoverDeliveryPoints( bool $only_active=true ) : array
 	{
 		if(!$this->isPersonalTakeover()) {
 			return [];
 		}
 		
-		return Delivery_PersonalTakeover_Place::getListForMethod( $this, $only_active );
-		
-	}
-	
-	/**
-	 * @return Delivery_PersonalTakeover_Place[]
-	 */
-	public function getPersonalTakeoverPlaceHashMap() : array
-	{
-		if(!$this->isPersonalTakeover()) {
+		$carrier = $this->getCarrier();
+		if(!$carrier) {
 			return [];
 		}
+		$locale = $this->getLocale();
+
 		
-		return Delivery_PersonalTakeover_Place::getHashMapForMethod( $this );
+		return Carrier_DeliveryPoint::getPointList(
+			carrier: $carrier,
+			only_types: $this->getAllowedDeliveryPointTypes(),
+			only_locale: $locale,
+			only_active: $only_active
+		);
 		
 	}
 	
-	
-	
-	public function getPersonalTakeoverPlace( string $place_code, $only_active=true ) : ?Delivery_PersonalTakeover_Place
+	public function getPersonalTakeoverDeliveryPoint( string $place_code, $only_active=true ) : ?Carrier_DeliveryPoint
 	{
 		if(!$this->isPersonalTakeover()) {
 			return null;
 		}
 		
-		$place = Delivery_PersonalTakeover_Place::getPlace( $this, $place_code );
+		$carrier = $this->getCarrier();
+		if(!$carrier) {
+			return null;
+		}
+		
+		
+		$place = Carrier_DeliveryPoint::getPoint(
+			$carrier,
+			$place_code
+		);
 		
 		if(!$place) {
 			return null;
@@ -402,29 +436,59 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 		return $place;
 	}
 	
-	public function hasPersonalTakeoverPlace( string $place_code, $only_active=true ) : bool
+	public function hasPersonalTakeoverDeliveryPoint( string $place_code, $only_active=true ) : bool
 	{
-		return (bool)$this->getPersonalTakeoverPlace( $place_code, $only_active );
+		return (bool)$this->getPersonalTakeoverDeliveryPoint( $place_code, $only_active );
 	}
 	
-	public function getBackendModuleName(): string
+	public function getCarrierCode(): string
 	{
-		return $this->backend_module_name;
+		return $this->carrier_code;
 	}
 	
-	public function setBackendModuleName( string $backend_module_name ): void
+	public function setCarrierCode( string $carrier_code ): void
 	{
-		$this->backend_module_name = $backend_module_name;
+		$this->carrier_code = $carrier_code;
 	}
 	
-	public function getBackendModule() : null|Delivery_Method_Module|Application_Module
+
+	public function getAllowedDeliveryPointTypes(): array
 	{
-		if(!$this->backend_module_name) {
+		return $this->allowed_delivery_point_types;
+	}
+
+	public function setAllowedDeliveryPointTypes( array $allowed_delivery_point_types ): void
+	{
+		$this->allowed_delivery_point_types = $allowed_delivery_point_types;
+	}
+	
+	
+	
+	public function getCarrier() : ?Carrier
+	{
+		if(!$this->carrier_code) {
 			return null;
 		}
 		
-		return Application_Modules::moduleInstance( $this->backend_module_name );
+		return Carrier::get($this->carrier_code);
 	}
+	
+	public function getCarrierServiceCode(): string
+	{
+		return $this->carrier_service_code;
+	}
+	
+	public function setCarrierServiceCode( string $carrier_service_code ): void
+	{
+		$this->carrier_service_code = $carrier_service_code;
+	}
+	
+	
+	public function getCarrierService(): ?Carrier_Service
+	{
+		return $this->getCarrier()?->getService( $this->carrier_service_code );
+	}
+	
 	
 	/**
 	 * @return Payment_Method_ShopData[]
@@ -444,13 +508,191 @@ abstract class Core_Delivery_Method_ShopData extends Entity_WithShopData_ShopDat
 	
 	public function getOrderConfirmationEmailInfoText( Order $order ) : string
 	{
-		$module = $this->getBackendModule();
+		return $this->getConfirmationEmailInfoText();
+	}
+	
+	/**
+	 * @return Timer_Action[]
+	 */
+	public function getAvailableTimerActions() : array
+	{
+		$actions = parent::getAvailableTimerActions();
 		
-		if($module) {
-			return $module->getOrderConfirmationEmailInfoText( $order, $this );
-		} else {
-			return $this->getConfirmationEmailInfoText();
+		$shop = $this->getShop();
+		
+		foreach($shop->getPricelists() as $pricelist) {
+			$set_price = new class( $shop, $pricelist, $this->getDefaultPrice( $pricelist ) ) extends Timer_Action_SetPrice {
+				public function perform( Entity_WithShopData $entity, mixed $action_context ): bool
+				{
+					/**
+					 * @var Delivery_Method $entity
+					 */
+					$p = $entity->getPriceEntity( $this->pricelist );
+					$p->setPrice( (float)$action_context );
+					$p->save();
+					
+					return true;
+				}
+			};
+			
+			$actions[$set_price->getKey()] = $set_price;
 		}
+		
+		
+		
+		$set_free_limit = new class( $shop, $this->free_delivery_limit ) extends Timer_Action {
+			protected Shops_Shop $shop;
+			protected float $free_delivery_limit;
+			
+			public function __construct( Shops_Shop $shop, float $free_delivery_limit ) {
+				$this->shop = $shop;
+				$this->free_delivery_limit = $free_delivery_limit;
+			}
+			
+			public function perform( Entity_WithShopData $entity, mixed $action_context ): bool
+			{
+				/**
+				 * @var Delivery_Method_ShopData $entity
+				 */
+				$entity->setFreeDeliveryLimit( (float)$action_context );
+				$entity->save();
+				
+				return true;
+			}
+			
+			public function getKey(): string
+			{
+				return 'set_free_limit:'.$this->shop->getKey();
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Set free limit');
+			}
+			
+			public function updateForm( Form $form ): void
+			{
+				$price = new Form_Field_Float('free_limit', 'Free limit:');
+				$price->setDefaultValue( $this->free_delivery_limit );
+				
+				$form->addField( $price );
+			}
+			
+			public function catchActionContextValue( Form $form ) : mixed
+			{
+				return $form->field('free_limit')->getValue();
+			}
+			
+			public function formatActionContextValue( mixed $action_context ) : string
+			{
+				return Admin_Managers::PriceFormatter()->formatWithCurrency(
+					$this->shop->getDefaultPricelist()->getCurrency(), (float)$action_context
+				);
+			}
+			
+		};
+		
+		$actions[$set_free_limit->getKey()] = $set_free_limit;
+		
+		
+		return $actions;
+	}
+	
+	
+	/**
+	 * @param Product_ShopData[] $products
+	 *
+	 * @return static[]
+	 */
+	public static function getAvailableByProducts( array $products ) : array
+	{
+		$delivery_classes = [];
+		$delivery_kinds = [];
+		
+		$default_delivery_class = Delivery_Class::getDefault();
+		
+		foreach($products as $product ) {
+			
+			$delivery_class_id = $product->getDeliveryClassId();
+			if(!$delivery_class_id) {
+				if(!$default_delivery_class) {
+					continue;
+				}
+				
+				$delivery_class_id = $default_delivery_class->getId();
+			}
+			
+			if(!isset($delivery_classes[$delivery_class_id])) {
+				$delivery_class = Delivery_Class::load( $delivery_class_id );
+				
+				$delivery_classes[$delivery_class_id] = $delivery_class;
+				
+				foreach($delivery_class->getKinds() as $kind ) {
+					$kind = $kind->getCode();
+					
+					if(!in_array($kind, $delivery_kinds)) {
+						$delivery_kinds[] = $kind;
+					}
+					
+				}
+			}
+		}
+		
+		$has_only_personal_takeover = false;
+		$has_only_e_delivery = null;
+		
+		
+		foreach( $delivery_classes as $delivery_class ) {
+			if($delivery_class->isPersonalTakeOverOnly()) {
+				$has_only_personal_takeover = true;
+			}
+			
+			if($delivery_class->isEDelivery()) {
+				if($has_only_e_delivery===null) {
+					$has_only_e_delivery = true;
+				}
+			} else {
+				$has_only_e_delivery = false;
+			}
+		}
+		
+		$available_delivery_methods = [];
+		
+		foreach($delivery_classes as $class ) {
+			$methods = Delivery_Method_ShopData::getActiveList( $class->getDeliveryMethodIds() );
+			
+			foreach( $methods as $method ) {
+				if(
+					$has_only_personal_takeover &&
+					$method->getKindCode()!=Delivery_Kind::KIND_PERSONAL_TAKEOVER
+				) {
+					//There is something what is available only as "personal take over item" in the order. So only personal takeover methods are allowed
+					continue;
+				}
+				
+				if(
+					$has_only_e_delivery &&
+					$method->getKindCode()!=Delivery_Kind::KIND_E_DELIVERY
+				) {
+					//There is something virtual and nothing else. So only e-delivery is allowed
+					continue;
+				}
+				
+				if(
+					!$has_only_e_delivery &&
+					$method->getKindCode()==Delivery_Kind::KIND_E_DELIVERY
+				) {
+					//There is something physical. So e-delivery is not allowed
+					continue;
+				}
+				
+				$available_delivery_methods[$method->getId()] = $method;
+				
+			}
+		}
+		
+		
+		return $available_delivery_methods;
 	}
 	
 }

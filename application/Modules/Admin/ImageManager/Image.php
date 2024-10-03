@@ -95,8 +95,8 @@ class Image {
 	public function __construct(
 		string $entity,
 		string|int $object_id,
-		string $image_class,
-		string $image_title,
+		string $image_class='',
+		string $image_title='',
 		?callable $image_property_getter=null,
 		?callable $image_property_setter=null,
 		?Shops_Shop $shop=null,

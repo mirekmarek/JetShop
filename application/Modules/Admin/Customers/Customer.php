@@ -8,41 +8,11 @@
 namespace JetApplicationModule\Admin\Customers;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_Entity_WithShopRelation_Interface;
 use JetApplication\Customer as Application_Customer;
 
-class Customer extends Application_Customer implements Admin_Entity_Common_Interface
+class Customer extends Application_Customer implements Admin_Entity_WithShopRelation_Interface
 {
-	
-	public function getAdminFulltextObjectClass(): string
-	{
-		return '';
-	}
-	
-	public function getAdminFulltextObjectId(): string
-	{
-		return '';
-	}
-	
-	public function getAdminFulltextObjectType(): string
-	{
-		return '';
-	}
-	
-	public function getAdminFulltextObjectIsActive(): bool
-	{
-		return false;
-	}
-	
-	public function getAdminFulltextObjectTitle(): string
-	{
-		return '';
-	}
-	
-	public function getAdminFulltextTexts(): array
-	{
-		return [];
-	}
 	
 	public function isEditable(): bool
 	{
@@ -56,16 +26,6 @@ class Customer extends Application_Customer implements Admin_Entity_Common_Inter
 	public function getEditURL(): string
 	{
 		return Main::getEditUrl( $this->id );
-	}
-	
-	public function getAdminTitle(): string
-	{
-		return $this->getName();
-	}
-	
-	public function isItPossibleToDelete(): bool
-	{
-		return false;
 	}
 	
 	public function getAddForm(): Form

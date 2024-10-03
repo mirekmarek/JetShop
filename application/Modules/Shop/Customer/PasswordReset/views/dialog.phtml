@@ -1,0 +1,16 @@
+<?php
+namespace JetApplicationModule\Shop\ShoppingCart;
+
+use Jet\UI;
+use Jet\Tr;
+use Jet\UI_icon;
+
+$title = UI::icon('user')->setSize(UI_icon::SIZE_NORMAL).' '.Tr::_( 'Password reset' );
+
+$dialog = UI::dialog('password_reset', $title);
+
+echo $dialog->start();
+?>
+	<div id="password_reset_area"></div>
+	<?php
+echo $dialog->end();

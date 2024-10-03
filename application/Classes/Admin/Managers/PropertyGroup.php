@@ -1,12 +1,9 @@
 <?php
 namespace JetApplication;
 
-interface Admin_Managers_PropertyGroup extends Admin_Entity_WithShopData_Manager_Interface
+use JetShop\Core_Admin_Managers_PropertyGroup;
+
+interface Admin_Managers_PropertyGroup extends Core_Admin_Managers_PropertyGroup
 {
-	
-	public function renderSelectWidget(
-                                     string $on_select,
-                                     int $selected_property_group_id=0,
-                                     ?bool $only_active_filter=null,
-                                     string $name='select_property_group' ) : string;
+
 }

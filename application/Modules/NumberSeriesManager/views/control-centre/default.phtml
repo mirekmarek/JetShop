@@ -1,0 +1,74 @@
+<?php
+namespace JetApplicationModule\NumberSeriesManager;
+
+use Jet\Form_Renderer_Field_Label;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Form[] $forms
+ */
+
+$forms = $this->getRaw('forms');
+$entities = $this->getRaw('entities');
+
+
+$showForm = function( Form $form ) : void
+{
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer_Field_Label::LJ_SIZE_MEDIUM => 2
+	]);
+	$form->renderer()->setDefaultLabelWidth([
+		Form_Renderer_Field_Label::LJ_SIZE_MEDIUM => 2
+	]);
+	
+	echo $form->start();
+	echo $form->field('counter_class');
+	echo $form->field('prefix');
+	echo $form->field('pad_length');
+	?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-2">
+			<?=UI::button_save()?>
+		</div>
+	</div>
+	<?php
+	echo $form->end();
+};
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+
+foreach($entities as $entity):
+	$e = $entity['entity'];
+	
+	if($entity['per_shop']):
+		foreach(Shops::getList() as $shop):
+			?>
+			<fieldset>
+				<legend><?=$entity['title']?> - <?=UI::flag($shop->getLocale())?> <?=$shop->getShopName()?></legend>
+				<?php $showForm( $forms[$e.'_'.$shop->getKey()] ); ?>
+			</fieldset>
+			<br><br>
+			<?php
+		endforeach;
+		continue;
+	endif;
+	
+	?>
+	
+	<fieldset>
+		<legend><?=$entity['title']?></legend>
+	<?php $showForm( $forms[$e] ); ?>
+	</fieldset>
+	<br><br>
+	
+	<?php
+endforeach;

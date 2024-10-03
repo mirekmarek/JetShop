@@ -24,7 +24,7 @@ echo Admin_Managers::EntityListing()->renderListingFilter(
 	is_active:   $field->getValue(),
 	renderer:    function() use ($field) {
 		?>
-		<div><?= $field->input() ?></div>
+		<?= $field->input() ?>
 		<?php
 	}
 );

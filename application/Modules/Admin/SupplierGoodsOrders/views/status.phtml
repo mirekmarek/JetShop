@@ -1,0 +1,30 @@
+<?php
+namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\Supplier_GoodsOrder;
+
+/**
+ * @var MVC_View $this
+ * @var Order $item
+ */
+
+$item = $this->getRaw('item');
+
+echo match ($item->getStatus()) {
+	Supplier_GoodsOrder::STATUS_PENDING
+	=> UI::badge( UI_badge::INFO, Tr::_( 'Pending' ) )->addCustomCssStyle( 'padding:10px' ),
+	Supplier_GoodsOrder::STATUS_PROBLEM_DURING_SENDING
+	=> UI::badge( UI_badge::DANGER, Tr::_( 'Problem during sending' ) )->addCustomCssStyle( 'padding:10px' ),
+	Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER
+	=> UI::badge( UI_badge::PRIMARY, Tr::_( 'Sent to the supplier' ) )->addCustomCssStyle( 'padding:10px' ),
+	Supplier_GoodsOrder::STATUS_GOODS_RECEIVED
+	=> UI::badge( UI_badge::SUCCESS, Tr::_( 'Received' ) )->addCustomCssStyle( 'padding:10px' ),
+	Supplier_GoodsOrder::STATUS_CANCELLED
+	=> UI::badge( UI_badge::DANGER, Tr::_( 'Cancelled' ) )->addCustomCssStyle( 'padding:10px' ),
+	default
+	=> $item->getStatus(),
+};

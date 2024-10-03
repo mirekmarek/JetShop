@@ -9,12 +9,13 @@ use Jet\Form_Renderer_Field_Label;
  */
 $r = $this->getRaw( 'renderer' );
 
-if( !$r->getBaseCssClasses() ) {
-	$r->setBaseCssClass( 'col-form-label' );
-}
+//if( !$r->getBaseCssClasses() ) {
+	//$r->setBaseCssClass( 'col-form-label' );
+//}
 
 $r->setWidthCssClassesCreator(function( $size, $width ) {
-	return 'col-' . $size . '-' . $width;
+	return '';
+	//return 'col-' . $size . '-' . $width;
 });
 
 $r->setCustomTagAttribute( 'for', $r->getField()->getId() );

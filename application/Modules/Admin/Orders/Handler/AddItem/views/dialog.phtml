@@ -1,0 +1,56 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+use Jet\UI_tabsJS;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form[] $forms
+ * @var Order $order
+ * @var UI_tabsJS $tabs
+ */
+
+$order = $this->getRaw('order');
+if(!$order->isEditable()) {
+	return;
+}
+
+
+$tabs = $this->getRaw('add_item_tabs');
+$forms = $this->getRaw('add_item_forms');
+$dialog = new UI_dialog( 'add_item_dialog', Tr::_('Add item'), UI_dialog::SIZE_LARGE );
+
+
+echo $dialog->start();
+
+echo $tabs->start();
+
+foreach($tabs->getTabs() as $tab):
+	$what = substr($tab->getId(),0, -4);
+	echo $tab->content()->start();
+		$form = $forms[$what];
+		$this->setVar('form', $form);
+		?>
+		<div id="form_area_<?=$what?>">
+		<?php require 'form/'.$what.'.phtml'; ?>
+		</div>
+		<?php
+	echo $tab->content()->end();
+endforeach;
+
+
+echo $tabs->end();
+
+echo $dialog->end();
+?>
+<script>
+	function addItem() {
+		$('#add_item_dialog').modal('show');
+	}
+</script>

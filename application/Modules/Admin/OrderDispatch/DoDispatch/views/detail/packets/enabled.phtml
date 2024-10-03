@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+
+$add_packet_form = $dispatch->getAddPacketForm();
+
+$add_packet_form->renderer()->addJsAction('onsubmit', 'addPacket();return false;');
+$add_packet_form->field('type')->input()->addJsAction('onchange', "this.form, this.options[this.selectedIndex].value");
+
+$acp_form = $dispatch->getAdditionalConsignmentParametersForm();
+?>
+<fieldset>
+	<legend><?=Tr::_('Consignment parameters')?></legend>
+	
+	<?php if( $dispatch->getCarrier()?->getAdditionalConsignmentParameters() ): ?>
+	<div class="card card-body" style="margin: 20px">
+		<?=$acp_form->start()?>
+		<?php foreach($dispatch->getCarrier()->getAdditionalConsignmentParameters() as $param):
+			$field = $acp_form->field($param->getCode());
+		
+			$field->setLabel( '<b>'.$param->getName().'</b><br><div style="font-size: 0.8rem">'.$param->getDescription().'</div>' );
+			$field->input()->addJsAction( 'onchange', "Packets.saveAdditionalConsignmentParameters();" );
+		
+			echo $field;
+		endforeach; ?>
+		<?=$acp_form->end()?>
+	</div>
+	<?php endif; ?>
+	
+	<div id="packet-list">
+		<?php require 'enabled/packet-list.phtml'; ?>
+	</div>
+	<div id="add-packet-form-area">
+		<?php require 'enabled/add-packet-form.phtml'; ?>
+	</div>
+</fieldset>

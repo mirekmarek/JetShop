@@ -1,0 +1,104 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+$dimension_units = $dispatch->getDimensionsUnits();
+$volume_units = $dispatch->getVolumeUnits();
+$weight_units = $dispatch->getWeightUnits();
+
+$carrier = $dispatch->getCarrier();
+$carrier_service = $dispatch->getCarrierService();
+
+$packet_types = $carrier_service?->getAvailablePackaging()??[];
+?>
+
+
+<?php foreach($dispatch->getPackets() as $packet_id=>$packet):
+	
+	$remove_form = $packet->getRemoveForm();
+	
+	$form = $packet->getForm();
+	$form->setIsReadonly();
+	
+	
+	?>
+	<?=$form->start()?>
+		<div class="packages-form-row">
+			<div>
+			</div>
+			<div>
+				<?=$form->field('type')->input()?>
+			</div>
+			
+			<?php if($form->fieldExists('weight')): ?>
+				<div><?=Tr::_('Weight:')?></div>
+				<div class="packages-field">
+					<div>
+						<?=$form->field('weight')->input()?>
+						<?=$form->field('weight')->error()?>
+					</div>
+					<div><?=$weight_units?></div>
+				</div>
+			<?php else: ?>
+				<div style="grid-column: span 2"></div>
+			<?php endif; ?>
+			
+			
+			
+			<?php if($form->fieldExists('size_w')): ?>
+				<div><?=Tr::_('Width:')?></div>
+				<div class="packages-field">
+					<div>
+						<?=$form->field('size_w')->input()?>
+						<?=$form->field('size_w')->error()?>
+					</div>
+					<div><?=$dimension_units?></div>
+				</div>
+			<?php else: ?>
+				<div style="grid-column: span 2"></div>
+			<?php endif; ?>
+			
+			<?php if($form->fieldExists('size_h')): ?>
+				<div><?=Tr::_('Height:')?></div>
+				<div class="packages-field">
+					<div>
+						<?=$form->field('size_h')->input()?>
+						<?=$form->field('size_h')->error()?>
+					</div>
+					<div><?=$dimension_units?></div>
+				</div>
+			<?php else: ?>
+				<div style="grid-column: span 2"></div>
+			<?php endif; ?>
+			
+			<?php if($form->fieldExists('size_l')): ?>
+				<div><?=Tr::_('Length:')?></div>
+				<div class="packages-field">
+					<div>
+						<?=$form->field('size_l')->input()?>
+						<?=$form->field('size_l')->error()?>
+					</div>
+					<div><?=$dimension_units?></div>
+				</div>
+			<?php else: ?>
+				<div style="grid-column: span 2"></div>
+			<?php endif; ?>
+
+			<div><?=Tr::_('Internal note:')?></div>
+			<div><?=$form->field('note')->input()?></div>
+			
+			
+			<div></div>
+		</div>
+	<?=$form->end()?>
+<?php endforeach; ?>

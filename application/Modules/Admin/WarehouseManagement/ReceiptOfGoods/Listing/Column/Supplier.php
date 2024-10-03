@@ -1,0 +1,55 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
+
+use Jet\DataListing_Column;
+use Jet\Tr;
+use JetApplicationModule\Admin\Suppliers\Supplier;
+
+class Listing_Column_Supplier extends DataListing_Column
+{
+	public const KEY = 'supplier';
+	
+	public function __construct()
+	{
+	}
+	
+	public function getKey(): string
+	{
+		return static::KEY;
+	}
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Supplier');
+	}
+	
+	public function getExportHeader(): null|string|array
+	{
+		return 'Supplier';
+	}
+	
+	public function getDisallowSort(): bool
+	{
+		return true;
+	}
+	
+	public function getExportData( mixed $item ): float|int|bool|string|array
+	{
+		/**
+		 * @var ReceiptOfGoods $item
+		 */
+		$supplier = Supplier::get( $item->getSupplierId() );
+		if(!$supplier) {
+			return '';
+		}
+		
+		//TODO:
+		return '';
+	}
+}

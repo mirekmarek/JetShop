@@ -93,7 +93,7 @@ abstract class Core_ProductFilter_Filter_Brands extends ProductFilter_Filter
 	
 	public function filter(): void
 	{
-		
+
 		$where = $this->product_filter->getShop()->getWhere();
 		
 		if( $this->previous_filter_result !== null ) {
@@ -103,7 +103,6 @@ abstract class Core_ProductFilter_Filter_Brands extends ProductFilter_Filter
 		
 		$where[] = 'AND';
 		$where[] = ['brand_id' => array_keys( $this->brands )];
-		
 		
 		$_map = Product_ShopData::dataFetchAll(
 			select: [

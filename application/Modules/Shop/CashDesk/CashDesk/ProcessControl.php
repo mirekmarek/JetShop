@@ -108,6 +108,7 @@ trait CashDesk_ProcessControl
 	{
 		if(!$state) {
 			$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			$this->getSession()->getValue('customer_register_or_not_been_set', false);
 		}
 		
 		$this->getSession()->setValue('phone_has_been_set', $state);
@@ -136,7 +137,9 @@ trait CashDesk_ProcessControl
 	public function setLoyaltyProgramSet( bool $state ) : void
 	{
 		if(!$state) {
-			$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
+				$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			}
 		}
 
 		$this->getSession()->setValue('loyalty_program_set', $state);
@@ -150,7 +153,9 @@ trait CashDesk_ProcessControl
 	public function setBillingAddressHasBeenSet( bool $state ) : void
 	{
 		if(!$state) {
-			$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
+				$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			}
 		}
 
 		$this->getSession()->setValue('billing_address_has_been_set', $state);
@@ -180,7 +185,9 @@ trait CashDesk_ProcessControl
 	public function setDeliveryAddressHasBeenSet( bool $state ) : void
 	{
 		if(!$state) {
-			$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
+				$this->setCurrentStep( CashDesk::STEP_CUSTOMER );
+			}
 		}
 
 		$this->getSession()->setValue('delivery_address_has_been_set', $state);

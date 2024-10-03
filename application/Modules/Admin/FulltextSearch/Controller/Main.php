@@ -31,7 +31,7 @@ class Controller_Main extends MVC_Controller_Default
 		$GET = Http_Request::GET();
 		
 		$result = Index::search(
-			object_class: $GET->getString('class'),
+			entity_type: $GET->getString('class'),
 			search_string: $GET->getString('whisper'),
 			object_type_filter:  $GET->exists('type') ? explode(',', $GET->getString('type')) : null,
 			object_is_active_filter: $GET->exists('active') ? $GET->getBool('active') : null

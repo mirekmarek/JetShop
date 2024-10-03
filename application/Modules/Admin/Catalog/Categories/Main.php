@@ -5,7 +5,7 @@ use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
+use JetApplication\Admin_EntityManager_WithShopData_Trait;
 use JetApplication\Admin_Managers_Category;
 use JetApplication\Entity_WithShopData;
 
@@ -14,7 +14,7 @@ use JetApplication\Entity_WithShopData;
  */
 class Main extends Application_Module implements Admin_Managers_Category
 {
-	use Admin_Entity_WithShopData_Manager_Trait;
+	use Admin_EntityManager_WithShopData_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'categories';
 
@@ -36,7 +36,7 @@ class Main extends Application_Module implements Admin_Managers_Category
 			name: $name,
 			caption: Tr::_('... select category ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,
-			object_class: Category::getEntityType(),
+			entity_type: Category::getEntityType(),
 			object_type_filter: null,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getPathName(),

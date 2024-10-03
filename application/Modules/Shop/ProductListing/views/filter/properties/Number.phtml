@@ -1,0 +1,63 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\ProductListing;
+use JetApplication\Property_Options_Option_ShopData;
+use JetApplication\Property_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ * @var Property_ShopData $property
+ * @var Property_Options_Option_ShopData[] $options
+ */
+
+$listing = $this->getRaw('listing');
+
+$initial_map = $listing->getInitialMap();
+$filtered_map = $listing->getFilteredMap();
+
+$property = $this->getRaw('property');
+$property_id = $property->getId();
+
+
+
+$min = $listing->getNumberMin( $property_id );
+$max = $listing->getNumberMax( $property_id );
+
+
+if($min==$max) {
+	return;
+}
+
+$filter_min = $min;
+$filter_max = $max;
+
+$number_filter = $listing->getFilter()->getPropertyNumberFilter();
+if($number_filter->getIsActive()) {
+	if($number_filter->getPropertyRuleMin($property_id)!==null) {
+		$filter_min = $number_filter->getPropertyRuleMin($property_id);
+	}
+	if($number_filter->getPropertyRuleMax($property_id)!==null) {
+		$filter_max = $number_filter->getPropertyRuleMax($property_id);
+	}
+	
+}
+
+
+$this->setVar('min', $min );
+$this->setVar('max', $max );
+$this->setVar('from', $filter_min );
+$this->setVar('to', $filter_max );
+$this->setVar('onChangeFrom', "document.getElementById('lf-n-min-{$property_id}').value=this.value;listing.submitFilter();");
+$this->setVar('onChangeTo', "document.getElementById('lf-n-max-{$property_id}').value=this.value;listing.submitFilter();");
+$this->setVar('units', ' '.$property->getUnits() );
+
+?>
+<?=$this->render('filter/slider')?>
+
+<div style="display: none;">
+	<input type="number" class="lf-number-min" id="lf-n-min-<?=$property_id?>" data-property="<?=$property_id?>" data-min="<?=$min?>" value="<?=$filter_min?>" onchange="listing.submitFilter()"><span><?=$property->getUnits()?></span>
+	<input type="number" class="lf-number-max" id="lf-n-max-<?=$property_id?>" data-property="<?=$property_id?>" data-max="<?=$max?>" value="<?=$filter_max?>" onchange="listing.submitFilter()"><span><?=$property->getUnits()?></span>
+</div>

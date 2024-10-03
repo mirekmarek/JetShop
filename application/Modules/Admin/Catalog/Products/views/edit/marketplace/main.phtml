@@ -1,0 +1,53 @@
+<?php
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_button;
+use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
+
+
+/**
+ * @var MVC_View   $this
+ * @var MarketplaceIntegration_Module_Controller_ProductSettings $controller
+ */
+
+$controller = $this->getController();
+
+$product = $controller->getProduct();
+$marketplace = $controller->getMarketplace();
+$shop = $controller->getShop();
+$editable = $controller->getEditable();
+$selling = $controller->getSelling();
+$category = $controller->getCategory();
+
+?>
+
+<?=$controller->getTabs()?>
+<br>
+<?php if($category): ?>
+	<div>
+		<b><?=$category->getCategoryId()?></b> <?=$category->getName()?>
+	</div>
+	
+	<div class="toolbar">
+	<span><?=$selling?
+			UI::badge(UI_badge::SUCCESS, 'Offered up in the marketplace')
+			:
+			UI::badge(UI_badge::DANGER, 'Not offered in the marketplace')
+		?></span>
+		&nbsp;&nbsp;&nbsp;
+		<?php if($editable):
+			if($selling):
+				echo UI::button( Tr::_('Stop selling'))->setClass(UI_button::CLASS_DANGER)->setUrl(Http_Request::currentURI(['stop_selling'=>'1']));
+			else:
+				echo UI::button( Tr::_('Start selling'))->setClass(UI_button::CLASS_SUCCESS)->setUrl(Http_Request::currentURI(['start_selling'=>'1']));
+			endif;
+			?>
+		<?php endif; ?>
+	</div>
+	
+	
+<?php endif; ?>

@@ -30,14 +30,10 @@ $add_form->renderer()->setDefaultLabelWidth([
 	Form_Renderer::LJ_SIZE_MEDIUM => 2
 ]);
 
-Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
-	item: $method,
-	listing: $controller->getListing(),
-);
+echo $this->controller->getEditorManager()->renderToolbar();
 
 ?>
-<div class="row">
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<?=$this->getRaw('tabs')?>
 
 			<table class="table table-striped">
@@ -75,10 +71,10 @@ Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
 		<?php
 		echo $add_form->start();
 		?>
-		<?=Admin_Managers::UI()->renderEntityFormCommonFields($add_form)?>
+		<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityFormCommonFields($add_form)?>
 		
 		<?php
-		Admin_Managers::UI()->renderShopDataBlocks(
+		Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 			form: $add_form,
 			renderer: function( Shops_Shop $shop, string $shop_key ) use ($new_option, $add_form) : void {
 				?>
@@ -98,7 +94,7 @@ Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
 			<?=$add_form->end();?>
 			<br><br>
 		</fieldset>
-	</div>
+
 </div>
 
 <?php if(!$method->getEditForm()->getIsReadonly()): ?>

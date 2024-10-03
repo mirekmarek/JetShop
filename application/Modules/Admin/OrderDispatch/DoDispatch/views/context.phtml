@@ -1,0 +1,15 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use JetApplication\Admin_Managers;
+use JetApplication\OrderDispatch;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View   $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+echo Admin_Managers::Context()->showContext( $dispatch->getContext() );

@@ -7,20 +7,21 @@
  */
 namespace JetApplicationModule\Admin\ProductFilterManager;
 
+use Jet\AJAX;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
+use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Select;
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Admin_Managers_ProductFilter;
-use JetApplication\Brand;
 use JetApplication\Category;
 use JetApplication\KindOfProduct;
 use JetApplication\ProductFilter;
 use JetApplication\Property;
-use JetApplication\Shops;
 
 
 class Main extends Application_Module implements Admin_Managers_ProductFilter
@@ -37,39 +38,87 @@ class Main extends Application_Module implements Admin_Managers_ProductFilter
 		return $view;
 	}
 	
-	protected function getCategoryAutoAppendFilterForm() : Form
+	public function init( ProductFilter $filter ) : Form
 	{
-		if(!$this->form) {
-			$this->filter = $this->category->getAutoAppendProductsFilter();
+		return Tr::setCurrentDictionaryTemporary(dictionary: $this->module_manifest->getName(), action: function() use ($filter) {
+			$GET = Http_Request::GET();
+			$POST = Http_Request::POST();
 			
-			$this->form = new Form('product_auto_append_form', []);
+			$this->form = new Form('product_filter_form', []);
 			
-			$this->getFilterForm_Basic();
-			$this->getFilterForm_Properties();
-			$this->getFilterForm_Brands();
+			$this->filter = $filter;
 			
-		}
-		
-		return $this->form;
-	}
-	
-	protected function getCategoryManualAppendFilterForm() : Form
-	{
-		if(!$this->form) {
-			$this->filter = new ProductFilter( Shops::getDefault() );
-			if($this->category->getKindOfProductId()) {
-				$this->filter->getBasicFilter()->setKindOfProductId( $this->category->getKindOfProductId() );
+			if($GET->exists('filter_kind_of_product_selected')) {
+				$this->filter->getBasicFilter()->setKindOfProductId( $GET->getInt('filter_kind_of_product_selected') );
 			}
 			
-			$this->form = new Form('product_manual_append_form', []);
+			if($POST->getInt('/basic/kins_of_product')) {
+				$this->filter->getBasicFilter()->setKindOfProductId( $POST->getInt('/basic/kins_of_product') );
+			}
 			
+			
+			$this->getFilterForm_Basic_KindOfProduct();
 			$this->getFilterForm_Basic();
 			$this->getFilterForm_Properties();
 			$this->getFilterForm_Brands();
+			$this->getFilterForm_Categories();
 			
-		}
+			if($GET->exists('filter_brands_render_selected')) {
+				$view = $this->initView();
+				$view->setVar('brand_ids', $GET->getString('filter_brands_render_selected'));
+				
+				AJAX::snippetResponse( $view->render('form/brands/selected') );
+			}
+			
+			if($GET->exists('filter_categories_render_selected')) {
+				$view = $this->initView();
+				$view->setVar('category_ids', $GET->getString('filter_categories_render_selected'));
+				
+				AJAX::snippetResponse( $view->render('form/categories/selected') );
+			}
+			
+			if($GET->exists('filter_kind_of_product_selected')) {
+				$view = $this->initView();
+				$view->setVar('properties', $this->properties);
+				$view->setVar('form', $this->form);
+				$view->setVar('editable', !$this->form->getIsReadonly());
+				
+				AJAX::snippetResponse( $view->render('form/properties') );
+			}
+			
+			
+			return $this->form;
+		});
+	}
+	
+
+	
+	
+	protected function getFilterForm_Basic_KindOfProduct() : void
+	{
+		$filter = $this->filter->getBasicFilter();
 		
-		return $this->form;
+		$in_stock = new Form_Field_Select('/basic/kins_of_product', 'Kind of product:');
+		$in_stock->setErrorMessages([
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => ' '
+		]);
+		$in_stock->setSelectOptions(
+			['' => Tr::_('- all -')]+
+			KindOfProduct::getScope()
+		);
+		
+		$in_stock->setDefaultValue( $filter->getKindOfProductId() );
+		$in_stock->setFieldValueCatcher( function( $value ) use ($filter) {
+			$value = (int)$value;
+			$value = $value?:null;
+			$filter->setKindOfProductId( $value );
+		} );
+		
+		$this->form->addField( $in_stock );
+		
+		
+		
+		
 	}
 	
 	
@@ -131,8 +180,6 @@ class Main extends Application_Module implements Admin_Managers_ProductFilter
 		
 		$this->form->addField( $has_discount );
 		
-		
-		
 	}
 	
 	protected function getFilterForm_Properties() : void
@@ -162,93 +209,78 @@ class Main extends Application_Module implements Admin_Managers_ProductFilter
 	
 	protected function getFilterForm_Brands() : void
 	{
-		$brands = [0=>Tr::_('- all -')]+Brand::getScope();
 		$filter = $this->filter->getBrandsFilter();
 		
-		foreach($brands as $id=>$label) {
-			if(!$id) {
-				continue;
+		$brands = new Form_Field_Hidden('/brand/selected_brands', '');
+		$brands->setDefaultValue( implode(',', $filter->getSelectedBrandIds()) );
+		$brands->setFieldValueCatcher(function( $value ) use ($filter) {
+			if(!$value) {
+				$filter->setSelectedBrands([]);
+			} else {
+				$filter->setSelectedBrands(explode(',', $value));
 			}
-			
-			$checked = new Form_Field_Checkbox('/brand/'.$id.'/checked', $label);
-			$checked->setDefaultValue( $filter->getBrandSelected( $id ) );
-			$checked->setFieldValueCatcher( function( $value ) use ($filter, $id) {
-				if($value) {
-					$filter->selectBrand($id);
-				} else {
-					$filter->unselectBrand($id);
-				}
-			} );
-			
-			$this->form->addField( $checked );
-		}
+		});
+		$this->form->addField( $brands );
+		
 	}
 	
-	public function renderCategoryAutoAppendFilterForm( Category $category, bool $editable ): string
+	public function getFilterForm_Categories() : void
 	{
-		$this->category = $category;
 		
-		$form = $this->getCategoryAutoAppendFilterForm();
+		$filter = $this->filter->getCategoriesFilter();
 		
-		if(!$editable) {
-			$form->setIsReadonly();
-		}
+		$categories = new Form_Field_Hidden('/categories/selected_categories', '');
+		$categories->setDefaultValue( implode(',', $filter->getCategoryIds()) );
+		$categories->setFieldValueCatcher(function( $value ) use ($filter) {
+			if(!$value) {
+				$filter->setCategoryIds([]);
+			} else {
+				$filter->setCategoryIds(explode(',', $value));
+			}
+		});
+		$this->form->addField( $categories );
 		
-		
-		
-		$view = $this->initView();
-		
-		$view->setVar('category', $category);
-		$view->setVar('editable', $editable);
-		$view->setVar('properties', $this->properties);
-		$view->setVar('form', $form);
-		
-		
-		return $view->render('category-auto-append-filter-form');
+		$branch_mode = new Form_Field_Checkbox('/categories/branch_mode', 'Include subcategories');
+		$branch_mode->setDefaultValue( $filter->getBranchMode() );
+		$branch_mode->setFieldValueCatcher(function( $value ) use ($filter) {
+			$filter->setBranchMode( (bool)$value );
+		});
+
+		$this->form->addField( $branch_mode );
 	}
 	
-	public function handleCategoryAutoAppendFilterForm( Category $category ): bool
+	
+	
+	
+	public function renderFilterForm() : string
 	{
-		$this->category = $category;
-		
-		if($this->getCategoryAutoAppendFilterForm()->catch()) {
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() {
+				$view = $this->initView();
+				$view->setVar('properties', $this->properties);
+				$view->setVar('form', $this->form);
+				$view->setVar('editable', !$this->form->getIsReadonly());
+				
+				return $view->render('filter-form');
+			}
+		);
+	}
+	
+	public function handleFilterForm(): bool
+	{
+		if($this->form->catch()) {
 			$this->filter->save();
 			return true;
 		}
 		
 		return false;
 	}
+
 	
-	
-	public function renderCategoryManualAppendFilterForm( Category $category ): string
+	public function getFilter() : ProductFilter
 	{
-		$this->category = $category;
-		
-		$form = $this->getCategoryManualAppendFilterForm();
-		
-		$view = $this->initView();
-		
-		$view->setVar('category', $category);
-		$view->setVar('properties', $this->properties);
-		$view->setVar('form', $form);
-		
-		return $view->render('category-manual-append-filter-form');
-	}
-	
-	public function handleCategoryManualAppendFilterForm( Category $category ): bool
-	{
-		$this->category = $category;
-		
-		if(!$this->getCategoryManualAppendFilterForm()->catch()) {
-			return false;
-		}
-		
-		$products = $this->filter->filter();
-		foreach($products as $product_id) {
-			$category->addProduct( $product_id );
-		}
-		
-		return true;
+		return $this->filter;
 	}
 	
 }

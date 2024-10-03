@@ -105,7 +105,7 @@ $editable = $this->getBool('editable');
 				});
 
 				$.ajax({
-					url: '<?=Http_Request::currentURI(['action'=>'save_sort'])?>&images='+images.join(','),
+					url: '<?=Http_Request::currentURI(['action'=>'sort_images'])?>&images='+images.join(','),
 					dataType: "json",
 					success: function( response ) {
 						handler._handleResponse(response);
@@ -161,7 +161,7 @@ $editable = $this->getBool('editable');
 				}
 
 				$.ajax({
-					url: '<?=Http_Request::currentURI(['action'=>'delete'])?>&images='+images.join(','),
+					url: '<?=Http_Request::currentURI(['action'=>'delete_images'])?>&images='+images.join(','),
 					dataType: "json",
 					success: function( response ) {
 						handler._handleResponse(response);

@@ -1,0 +1,79 @@
+<?php
+namespace JetApplicationModule\Shop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Carrier_DeliveryPoint;
+
+/**
+ * @var MVC_View $this
+ * @var Carrier_DeliveryPoint $point
+ * @var Delivery_Method_ShopData $method
+ */
+
+$point = $this->getRaw('point');
+$method = $this->getRaw('delivery_method');
+?>
+
+<div style="display: flex;align-items: center;margin: 5px;">
+	<div>
+		<?php if($method->getIcon1()): ?>
+			<img src="<?=$method->getIcon1ThumbnailUrl(80, 80);?>">
+		<?php endif; ?>
+	</div>
+
+	<div style="padding: 5px;padding-left: 10px;">
+		<b style="font-size: 1.2rem"><?=$method->getTitle()?></b><br>
+		<b><?=$point->getName()?></b>
+		<br>
+		<div>
+			<?=$point->getStreet()?><br/>
+			<?=$point->getZip()?> <?=$point->getTown()?><br/>
+		</div>
+	</div>
+</div>
+
+<?php if(count($point->getImages())): ?>
+<div style="width: 330px; height: 150px;overflow: auto">
+	<div style="display: grid;grid-template-columns: 150px 150px;grid-gap: 10px;">
+		<?php foreach( $point->getImages() as $image): ?>
+			<div>
+				<a href="<?=$image?>" target="_blank">
+					<img src="<?=$image?>" style="max-width: 150px;height: auto;"/>
+				</a>
+			</div>
+		<?php endforeach; ?>
+	</div>
+</div>
+<?php endif; ?>
+
+
+
+<br/>
+<div>
+	<b><?=Tr::_('Opening hours:')?></b>
+	<br/>
+	<table class="table">
+		<?php foreach( $point->getOpeningHours() as $oh): ?>
+		<tr>
+			<td><?=$oh->getDay()?></td>
+			<td><?=$oh->getOpen1()?></td>
+			<td><?=$oh->getClose1()?></td>
+			<td><?=$oh->getOpen2()?></td>
+			<td><?=$oh->getClose2()?></td>
+			<td><?=$oh->getOpen3()?></td>
+			<td><?=$oh->getClose3()?></td>
+		</tr>
+		<?php endforeach; ?>
+	</table>
+</div>
+
+
+
+<div class="continue-button-area">
+	<div class="price"><?=$this->render('delivery/price')?></div>
+	
+	<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPont('{$method->getId()}:{$point->getPointCode()}')")?>
+</div>

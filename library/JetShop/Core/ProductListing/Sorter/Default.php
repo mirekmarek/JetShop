@@ -32,17 +32,24 @@ abstract class Core_ProductListing_Sorter_Default extends ProductListing_Sorter
 			return $product_ids;
 		}
 		
-		$res = Category_Product::dataFetchCol(
-			select: ['product_id'],
+		$priorities = Category_Product::dataFetchAssoc(
+			select: ['product_id','priority'],
 			where: [
-				//'category_id' => $this->listing->getCategoryId(),
-				//'AND',
+				'category_id' => $this->listing->getCategoryId(),
+				'AND',
 				'product_id' => $product_ids,
 			],
 			order_by: ['priority'],
 			raw_mode: true
 		);
 		
-		return $res;
+		$map = [];
+		foreach($product_ids as $id) {
+			$map[$id] = $priorities[$id]['priority']??9999;
+		}
+		
+		asort( $map );
+		
+		return array_keys($map);
 	}
 }

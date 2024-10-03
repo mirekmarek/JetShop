@@ -1,0 +1,10 @@
+<?php
+namespace JetApplication;
+
+use Jet\DataModel_Definition;
+use JetShop\Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value;
+
+#[DataModel_Definition]
+class MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value
+{
+}

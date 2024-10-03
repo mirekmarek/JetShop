@@ -1,0 +1,25 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+echo UI::button(Tr::_('Get label'))
+	->setUrl( Http_Request::currentURI(['action'=>'get_label']) )
+	->setCustomTagAttribute('target', '_blank')
+	->setClass( UI_button::CLASS_SUCCESS )
+	->setIcon('tag');
+
+echo UI::button(Tr::_('Rollback - reopen and edit again'))->setUrl( Http_Request::currentURI(['action'=>'rollback']) );
+echo UI::button(Tr::_('Rollback - reopen and edit again (ignore errors)'))->setUrl( Http_Request::currentURI(['action'=>'rollback','ignore_error'=>true]) );

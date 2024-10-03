@@ -1,0 +1,174 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Data_Text;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI_messages;
+use JetApplication\Admin_Managers;
+use JetApplication\OrderDispatch;
+
+
+/**
+ * @var MVC_View   $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+$is_editable = $dispatch->isEditable();
+
+$packet_default_params = [];
+
+$our_note_form = $dispatch->getOurNoteForm();
+$our_note_form->field('our_note')->input()->addJsAction('onblur', "Notes.saveOurNoteForm();");
+
+$recipient_note_form = $dispatch->getRecipientNoteForm();
+$recipient_note_form->field('recipient_note')->input()->addJsAction('onblur', "Notes.saveRecipientNoteForm();");
+
+$driver_note_form = $dispatch->getDriverNoteForm();
+$driver_note_form->field('driver_note')->input()->addJsAction('onblur', "Notes.saveDriverNoteForm();");
+
+require 'detail/js.phtml';
+
+?>
+<div id="main-toolbar" class="toolbar">
+		<?=$this->render('detail/toolbar')?>
+</div>
+
+<div id="main-col">
+	
+	<?php
+	if($dispatch->getConsignmentCreateErrorMessage()) {
+		echo UI_messages::createDanger(
+			Tr::_('Problem during consignment creation: %error%', ['error'=>$dispatch->getConsignmentCreateErrorMessage()])
+		);
+	}
+	
+	foreach( UI_messages::get() as $message ):
+		echo $message;
+	endforeach;
+	?>
+	
+	<div style="display: grid;grid-template-columns: 200px 1fr;gap: 20px;margin: 20px;">
+		<div><?=Tr::_('Order dispatch:')?></div>
+		<div style="display: flex;align-items: center;gap: 10px;">
+			<div><?=$dispatch->getNumber()?></div>
+			<div>
+				<?php
+				require 'status.phtml';
+				?>
+			</div>
+		</div>
+		
+		<div><?=Tr::_('Context:')?></div>
+		<div>
+			<?php
+			require 'context.phtml';
+			?>
+		</div>
+		
+		
+		
+		<div><?=Tr::_('Recipient:');?></div>
+		<div>
+			<?=$dispatch->getRecipientFirstName()?><br>
+			<?=$dispatch->getRecipientStreet()?><br>
+			<?=$dispatch->getRecipientCountry()?><br>
+			<?=$dispatch->getRecipientZip()?> <?=$dispatch->getRecipientTown()?><br>
+			<?=Tr::_('Phone number: %phone%', ['phone'=>$dispatch->getRecipientPhone()])?><br>
+			<?=Tr::_('E-mail: <a href="mailto:%email%">%email%</a>', ['email'=>$dispatch->getRecipientEmail()])?>
+		</div>
+
+		<div><?=Tr::_('Carrier and carrier service:')?></div>
+		<div>
+			<b><?=$dispatch->getCarrier()?->getName()?> - <?=$dispatch->getCarrierService()?->getName()?></b>
+		</div>
+		
+		<?php if(($dp=$dispatch->getDeliveryPoint())): ?>
+			<div><?=Tr::_('Delivery point:')?></div>
+			<div>
+				<b><?=$dp->getPointCode()?></b><br>
+				<?=$dp->getName()?><br>
+				<?=$dp->getStreet()?><br>
+				<?=$dp->getZip()?> <?=$dp->getTown()?>
+			</div>
+		<?php endif; ?>
+		
+
+		<?php if($dispatch->getCod()):?>
+		<div><?=Tr::_('COD:')?></div>
+		<div>
+			<b><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $dispatch->getCodCurrency(), $dispatch->getCod() )?></b>
+		</div>
+		<?php endif; ?>
+		
+		<div><?=Tr::_('Our internal notes:')?></div>
+		<div>
+			<?php
+			$our_note_form->field('our_note')->input()->addCustomCssStyle("height: 300px");
+			?>
+			<?=$our_note_form->start()?>
+			<?=$our_note_form->field('our_note')->input()?>
+			<?=$our_note_form->end()?>
+		</div>
+		
+		<div><?=Tr::_('Note to recipient:<div style="font-size: 10px;">(if the carrier allows you to specify)</div>')?></div>
+		<div>
+			<?php if($is_editable): ?>
+				<?=$recipient_note_form->start()?>
+				<?=$recipient_note_form->field('recipient_note')->input()?>
+				<?=$recipient_note_form->end()?>
+			<?php else: ?>
+				<?=Data_Text::htmlSpecialChars( $dispatch->getRecipientNote() )?>
+			<?php endif; ?>
+		</div>
+		
+		<div><?=Tr::_('Note to drivers:<div style="font-size: 10px;">(if the carrier allows you to specify)</div>')?></div>
+		<div>
+			<?php if($is_editable): ?>
+				<?=$driver_note_form->start()?>
+				<?=$driver_note_form->field('driver_note')->input()?>
+				<?=$driver_note_form->end()?>
+			<?php else: ?>
+				<?=Data_Text::htmlSpecialChars( $dispatch->getDriverNote() )?>
+			<?php endif; ?>
+		</div>
+		
+		
+		<div><?=Tr::_('Items:')?></div>
+		<div>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th></th>
+						<th><?=Tr::_('EAN')?></th>
+						<th><?=Tr::_('Internal code')?></th>
+						<th><?=Tr::_('Name / Title')?></th>
+						<th><?=Tr::_('Sector')?></th>
+						<th><?=Tr::_('Rack')?></th>
+						<th><?=Tr::_('Position')?></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php foreach($dispatch->getItems() as $item): ?>
+					<tr>
+						<td><?=$item->getNumberOfUnits()?> <?=$item->getMeasureUnit()?->getName()?></td>
+						<td><?=$item->getEAN()?></td>
+						<td><?=$item->getInternalCode()?></td>
+						<td><?=$item->getTitle()?></td>
+						<td><?=$item->getWarehouseSector()?></td>
+						<td><?=$item->getWarehouseRack()?></td>
+						<td><?=$item->getWarehousePosition()?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<?=$this->render('detail/packets')?>
+
+	<br><br><br><br>
+</div>
+

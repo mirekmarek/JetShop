@@ -43,10 +43,19 @@ class Controller_Main_Response {
 	{
 		$this->data[$key] = $data;
 	}
+	
+	public function redirect( string $url ) : void
+	{
+		$response = [
+			'redirect' => $url
+		];
+		
+		AJAX::commonResponse( $response );
+	}
 
 	public function response() : void
 	{
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->controller->getCashDesk();
 
 		$this->addSnippet('confirm');
 		$this->addSnippet('status_bar');
@@ -78,6 +87,7 @@ class Controller_Main_Response {
 			} else {
 				$response['snippets'][$id] = $this->controller->getView()->render( $view_script );
 			}
+			
 		}
 
 

@@ -1,10 +1,15 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 ?>
 <br>
 <span class="step-title"><?=Tr::_('Where should we send the goods?')?></span>

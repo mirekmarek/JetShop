@@ -1,0 +1,65 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use JetApplication\Exports;
+use JetApplication\Exports_Module;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;
+
+
+/**
+ * @var MVC_View   $this
+ * @var Product $product
+ * @var Exports_Module $selected_export
+ * @var Shops_Shop $selected_export_shop
+ */
+
+$product = $this->getRaw('item');
+
+$modules = Exports::getExportModulesList();
+
+$selected_export = $this->getRaw('selected_export');
+$selected_export_shop = $this->getRaw('selected_export_shop');
+$selected_export_code = $this->getString('selected_export_code');
+$selected_export_shop_key = $this->getString('selected_export_shop_key');
+
+require '_toolbar.phtml';
+?>
+<div id="main-col">
+	
+	<?=$this->getRaw('tabs')?>
+	
+	<br>
+	<div style="display: grid;grid-template-columns: 2fr 10fr;gap: 10px;">
+		<div>
+			<ul class="list-group">
+				<?php foreach($modules as $module):
+					foreach(Shops::getListSorted() as $shop):
+						if(!$module->isAllowedForShop($shop)):
+							continue;
+						endif;
+						
+						$title = $module->getTitle().' - '.$shop->getShopName();
+						$link = Http_Request::currentURI(['export'=>$module->getCode(),'export_shop'=>$shop->getKey()]);
+						
+						if($module->getCode()==$selected_export_code && $shop->getKey()==$selected_export_shop_key):
+							?><li class="list-group-item active"><?=$title?></li><?php
+						else:
+							?><li class="list-group-item"><a href="<?=$link?>"><?=$title?></a></li><?php
+						endif;
+					endforeach;
+				endforeach; ?>
+			</ul>
+		</div>
+		<div>
+			<?php if($selected_export): ?>
+				<legend><?=$selected_export->getTitle()?> - <?=$selected_export_shop->getShopName()?></legend>
+				<?php $selected_export->handleProductSettings( $product, $selected_export_shop )?>
+			<?php endif; ?>
+		
+		</div>
+	</div>
+
+</div>

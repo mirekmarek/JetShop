@@ -1,0 +1,23 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\MVC_View;
+use JetApplicationModule\Admin\Entity\Listing\Listing;
+
+/**
+ * @var MVC_View $this
+ * @var Listing $listing
+ * @var StockCard $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+?>
+	<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getRack();?></a>
+<?php

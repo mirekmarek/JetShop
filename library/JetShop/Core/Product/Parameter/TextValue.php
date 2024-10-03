@@ -74,7 +74,7 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 	 * @param int $product_id
 	 * @return static[][]
 	 */
-	public static function get( int $product_id ): array
+	public static function getForProduct( int $product_id ): array
 	{
 		$data = static::fetch(
 			[

@@ -1,0 +1,21 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ */
+if($this->getBool('container')):
+	echo '<div id="wishlist_btn_'.$this->getInt('id').'">';
+endif;
+
+echo UI::button(' ')
+	->setIcon('heart')
+	->setClass( UI_button::CLASS_LIGHT )
+	->addCustomCssClass('product_listing_item_compare_button')
+	->setOnClick("Wishlist.select({$this->getInt('id')})");
+
+if($this->getBool('container')):
+	echo '</div>';
+endif;

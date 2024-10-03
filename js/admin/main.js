@@ -25,6 +25,50 @@ const UI = {
 	}
 };
 
+const Cookies = {
+	set: function (name, value, ttl, path) {
+
+		let expires = '';
+		if(ttl!==undefined) {
+			const d = new Date();
+
+			d.setTime(d.getTime() + (ttl*24*60*60*1000));
+
+			expires = ";expires="+ d.toUTCString();
+		}
+
+		let _path = '';
+		if(path!==undefined) {
+			_path = ';path='+path;
+		}
+
+
+		document.cookie = name + "=" + value + expires + _path;
+	},
+
+	get: function ( name ) {
+		name += "=";
+
+		let cookies = decodeURIComponent(document.cookie);
+
+		cookies = cookies.split(';');
+
+		for(let i = 0; i <cookies.length; i++) {
+			let cookie = cookies[i];
+
+			while (cookie.charAt(0) == ' ') {
+				cookie = cookie.substring(1);
+			}
+			if (cookie.indexOf(name) == 0) {
+				return cookie.substring(name.length, cookie.length);
+			}
+		}
+
+		return '';
+	}
+};
+
+
 JetAjaxForm.defaultHandlers = {
 	showProgressIndicator: function( form ) {
 		$('#__progress__').show();

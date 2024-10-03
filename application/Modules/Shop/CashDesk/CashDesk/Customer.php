@@ -13,7 +13,6 @@ use Jet\Session;
 
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Shops_Shop;
 
 
 trait CashDesk_Customer
@@ -29,6 +28,85 @@ trait CashDesk_Customer
 	protected ?Form $billing_address_form = null;
 
 	protected ?Form $delivery_address_form = null;
+	
+	
+	public function checkCurrentCustomer() : void
+	{
+		$session = $this->getSession();
+		
+		$current_customer_id = Customer::getCurrentCustomer()?->getId()?:0;
+		
+		$session_customer_id = $session->getValue('customer_id', 0 );
+		
+		if($current_customer_id==$session_customer_id) {
+			return;
+		}
+
+		$session->setValue('customer_id', $current_customer_id);
+		
+		if(!$current_customer_id) {
+			$this->onCustomerLogout();
+		} else {
+			$this->onCustomerLogin();
+		}
+	}
+
+	
+	public function onCustomerLogin() : void
+	{
+		$session = $this->getSession();
+		
+		$session->unsetValue('billing_address');
+		$session->unsetValue('delivery_address');
+		
+		if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
+			$this->setCurrentStep(CashDesk::STEP_CUSTOMER);
+		}
+		
+		$customer = Customer::getCurrentCustomer();
+		
+		$this->setBillingAddressHasBeenSet(false);
+		$this->setDeliveryAddressHasBeenSet(false);
+		
+		$this->setEmailAddress($customer->getEmail());
+		$this->setPhone($customer->getPhoneNumber());
+		
+
+		$default_address = $customer->getDefaultAddress();
+		
+		if($default_address) {
+			$this->setBillingAddress( clone $default_address );
+		}
+		
+		foreach($this->getAgreeFlags() as $flag) {
+			$flag->onCustomerLogin( $this );
+		}
+		
+	}
+	
+	public function onCustomerLogout() : void
+	{
+		$session = $this->getSession();
+		
+		$session->unsetValue('billing_address');
+		$session->unsetValue('delivery_address');
+		
+		if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
+			$this->setCurrentStep(CashDesk::STEP_CUSTOMER);
+		}
+		
+		$this->setEmailAddress('');
+		$this->setPhone('');
+		$this->setBillingAddressHasBeenSet(false);
+		$this->setDeliveryAddressHasBeenSet(false);
+		$this->setEmailHasBeenSet(false);
+		$this->setDifferentDeliveryAddressHasBeenSet(false);
+		
+		foreach($this->getAgreeFlags() as $flag) {
+			$flag->onCustomerLogout( $this );
+		}
+		
+	}
 	
 
 	public function getEmailAddress() : string
@@ -199,7 +277,7 @@ trait CashDesk_Customer
 			});
 			
 			$phone->setValidator( function( Form_Field_Input $field ) {
-				return static::phoneValidator( $field, $this->shop );
+				return static::phoneValidator( $field, $this->config );
 			} );
 			
 			
@@ -300,6 +378,11 @@ trait CashDesk_Customer
 
 		return $session->getValue('phone', '');
 	}
+	
+	public function getPhoneWithPrefix() : string
+	{
+		return $this->config->getPhonePrefix().$this->getPhone();
+	}
 
 	public function setPhone( string $phone ) : void
 	{
@@ -339,7 +422,7 @@ trait CashDesk_Customer
 		}
 
 		if($this->getSelectedDeliveryMethod()->isPersonalTakeover()) {
-			$place = $this->getSelectedPersonalTakeoverPlace();
+			$place = $this->getSelectedPersonalTakeoverDeliveryPoint();
 			$billing_address = $this->getBillingAddress();
 
 			$delivery_address = new Customer_Address();
@@ -466,69 +549,6 @@ trait CashDesk_Customer
 		return $this->getLoginForm()->catch();
 	}
 
-	public function onCustomerLogin() : void
-	{
-		/**
-		 * @var Session $session
-		 * @var Customer_Address $billing_address
-		 * @var CashDesk $this
-		 */
-		$session = $this->getSession();
-
-		$session->unsetValue('billing_address');
-		$session->unsetValue('delivery_address');
-
-		if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
-			$this->setCurrentStep(CashDesk::STEP_CUSTOMER);
-		}
-
-		$customer = Customer::getCurrentCustomer();
-
-		$this->setBillingAddressHasBeenSet(false);
-		$this->setDeliveryAddressHasBeenSet(false);
-		$this->setEmailAddress($customer->getEmail());
-		$this->setPhone($customer->getPhoneNumber());
-
-		$default_address = $customer->getDefaultAddress();
-
-		if($default_address) {
-			$this->setBillingAddress( $default_address );
-		}
-
-		foreach($this->getAgreeFlags() as $flag) {
-			$flag->onCustomerLogin( $this );
-		}
-
-	}
-
-	public function onCustomerLogout() : void
-	{
-		/**
-		 * @var Session $session
-		 * @var Customer_Address $billing_address
-		 * @var CashDesk $this
-		 */
-		$session = $this->getSession();
-
-		$session->unsetValue('billing_address');
-		$session->unsetValue('delivery_address');
-
-		if($this->getCurrentStep()==CashDesk::STEP_CONFIRM) {
-			$this->setCurrentStep(CashDesk::STEP_CUSTOMER);
-		}
-
-		$this->setEmailAddress('');
-		$this->setPhone('');
-		$this->setBillingAddressHasBeenSet(false);
-		$this->setDeliveryAddressHasBeenSet(false);
-		$this->setEmailHasBeenSet(false);
-		$this->setDifferentDeliveryAddressHasBeenSet(false);
-
-		foreach($this->getAgreeFlags() as $flag) {
-			$flag->onCustomerLogout( $this );
-		}
-
-	}
 
 
 	public function registerCustomer() : void
@@ -540,6 +560,23 @@ trait CashDesk_Customer
 
 		$customer = Customer::getCurrentCustomer();
 		if( $customer ) {
+			
+			
+			$updated = false;
+			if(!$customer->getPhoneNumber()) {
+				$customer->setPhoneNumber( $this->getPhoneWithPrefix() );
+				$updated = true;
+			}
+			if(!trim($customer->getName())) {
+				$customer->setFirstName( $this->getBillingAddress()->getFirstName() );
+				$customer->setSurname( $this->getBillingAddress()->getSurname() );
+				$updated = true;
+			}
+			
+			if($updated) {
+				$customer->save();
+			}
+			
 			return;
 		}
 
@@ -553,7 +590,7 @@ trait CashDesk_Customer
 		$customer->setShop($this->getShop());
 
 		$customer->setEmail( $this->getEmailAddress() );
-		$customer->setPhoneNumber( $this->getPhone() );
+		$customer->setPhoneNumber( $this->getPhoneWithPrefix() );
 
 		$customer->setFirstName( $billing_address->getFirstName() );
 		$customer->setSurname( $billing_address->getSurname() );
@@ -578,8 +615,10 @@ trait CashDesk_Customer
 				$this->getDeliveryAddress()
 			);
 		}
-
+		
 		Auth::loginUser( $customer );
+		$this->getSession()->setValue( 'customer_id', $customer->getId() );
+		
 	}
 
 
@@ -604,14 +643,14 @@ trait CashDesk_Customer
 	}
 	
 	
-	public static function phoneValidator( Form_Field_Input $field, Shops_Shop $shop ) : bool
+	public static function phoneValidator( Form_Field_Input $field, Config_PerShop $config ) : bool
 	{
 		$value_raw = $field->getValueRaw();
 		$value_raw = preg_replace('/\D/', '', $value_raw);
 		
 		$field->setValue($value_raw);
 		
-		$reg_exp = $shop->getPhoneValidationRegExp();
+		$reg_exp = $config->getPhoneValidationRegExp();
 		
 		if(!preg_match($reg_exp, $value_raw)) {
 			$field->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );

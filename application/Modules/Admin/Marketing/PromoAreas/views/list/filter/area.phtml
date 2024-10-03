@@ -1,0 +1,30 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\PromoAreas;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Area $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'area' );
+
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Area'),
+	form_fields: [$field],
+	is_active:   $filter->getArea()>0,
+	renderer:    function() use ($field) {
+		?>
+		<?= $field->input() ?>
+		<?php
+	}
+);

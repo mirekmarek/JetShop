@@ -21,8 +21,7 @@ class AJAX
 	 */
 	public static function commonResponse( mixed $response_data, array $http_headers = [], int $http_code = 200 ): void
 	{
-		while (ob_get_level())
-		{
+		while (ob_get_level()) {
 			ob_end_clean();
 		}
 
@@ -52,5 +51,16 @@ class AJAX
 
 		static::commonResponse( $response );
 	}
-
+	
+	public static function snippetResponse( string $snippet ) : void
+	{
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+		
+		echo $snippet;
+	
+		Application::end();
+		
+	}
 }

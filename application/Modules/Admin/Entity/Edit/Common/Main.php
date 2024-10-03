@@ -8,144 +8,189 @@
 namespace JetApplicationModule\Admin\Entity\Edit\Common;
 
 use Jet\Application_Module;
+use Jet\Application_Module_Manifest;
 use Jet\Factory_MVC;
 use Jet\Form;
-use Jet\Translator;
+use Jet\Http_Request;
+use Jet\MVC_View;
 use Jet\UI_tabs;
 use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_Entity_Interface;
 use JetApplication\Admin_Managers_Entity_Edit_Common;
 use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Entity_Basic;
+use JetApplication\Entity_Common;
+use Closure;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_Entity_Edit_Common
 {
+	protected Entity_Basic|Admin_Entity_Interface $item;
+	protected ?Admin_Managers_Entity_Listing $listing = null;
+	protected ?UI_tabs $tabs = null;
+	protected MVC_View $view;
+	
+	
+	public function __construct( Application_Module_Manifest $manifest )
+	{
+		parent::__construct( $manifest );
+		$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+	}
+	
+	protected function render( $script ) : string
+	{
+		return $this->view->render($script);
+	}
+	
+	public function init(
+		Entity_Basic|Admin_Entity_Interface $item,
+		?Admin_Managers_Entity_Listing      $listing = null,
+		?UI_tabs                            $tabs = null
+	): void
+	{
+		$this->item = $item;
+		$this->listing = $listing;
+		$this->tabs = $tabs;
+	}
+	
+	
 	public function renderToolbar(
-		Entity_Basic|Admin_Entity_Common_Interface $item,
-		?Admin_Managers_Entity_Listing                          $listing=null,
 		?Form                                                   $form = null,
 		?callable                                               $toolbar_renderer=null
 	) : string
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		
-		$view->setVar('item', $item);
-		$view->setVar('form', $form);
-		$view->setVar('listing', $listing);
+		$this->view->setVar('item', $this->item);
+		$this->view->setVar('form', $form);
+		$this->view->setVar('listing', $this->listing);
 
-		$view->setVar('toolbar_renderer', $toolbar_renderer);
+		$this->view->setVar('toolbar_renderer', $toolbar_renderer);
 		
-		return $view->render( 'edit/toolbar' );
+		return $this->render( 'edit/toolbar' );
 		
 	}
 
 	public function renderEditMain(
-		Entity_Basic|Admin_Entity_Common_Interface $item,
-		?UI_tabs                                                $tabs=null,
-		?Admin_Managers_Entity_Listing                          $listing=null,
 		?callable                                               $common_data_fields_renderer=null,
 		?callable                                               $toolbar_renderer=null
 	) : string
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$this->view->setVar('item', $this->item);
+		$this->view->setVar('listing', $this->listing);
+		$this->view->setVar('tabs', $this->tabs);
+		$this->view->setVar('form', $this->item->getEditForm());
+		$this->view->setVar('common_data_fields_renderer', $common_data_fields_renderer);
+		$this->view->setVar('toolbar_renderer', $toolbar_renderer);
 		
-		$view->setVar('item', $item);
-		$view->setVar('listing', $listing);
-		$view->setVar('tabs', $tabs);
-		$view->setVar('form', $item->getEditForm());
-		$view->setVar('common_data_fields_renderer', $common_data_fields_renderer);
-		$view->setVar('toolbar_renderer', $toolbar_renderer);
-		
-		return $view->render( 'edit/main' );
+		return $this->render( 'edit/main' );
 		
 	}
 	
 	public function renderEditImages(
-		Entity_Basic|Admin_Entity_Common_Interface $item,
-		?UI_tabs                                                $tabs=null,
-		?Admin_Managers_Entity_Listing                          $listing=null,
 		?callable                                               $toolbar_renderer=null
 	) : string
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$this->view->setVar('item', $this->item);
+		$this->view->setVar('listing', $this->listing);
+		$this->view->setVar('tabs', $this->tabs);
+		$this->view->setVar('toolbar_renderer', $toolbar_renderer);
 		
-		$view->setVar('item', $item);
-		$view->setVar('listing', $listing);
-		$view->setVar('tabs', $tabs);
-		$view->setVar('toolbar_renderer', $toolbar_renderer);
-		
-		return $view->render( 'edit/images' );
+		return $this->render( 'edit/images' );
 		
 	}
 	
 	public function renderAdd(
-		Entity_Basic|Admin_Entity_Common_Interface $item,
-		?UI_tabs $tabs=null,
 		?callable $common_data_fields_renderer=null,
 		?callable $shop_data_fields_renderer=null
 	) : string
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$this->view->setVar('item', $this->item);
+		$this->view->setVar('tabs', $this->tabs);
+		$this->view->setVar('form', $this->item->getAddForm());
+		$this->view->setVar('common_data_fields_renderer', $common_data_fields_renderer);
+		$this->view->setVar('shop_data_fields_renderer', $shop_data_fields_renderer);
 		
-		$view->setVar('item', $item);
-		$view->setVar('tabs', $tabs);
-		$view->setVar('form', $item->getAddForm());
-		$view->setVar('common_data_fields_renderer', $common_data_fields_renderer);
-		$view->setVar('shop_data_fields_renderer', $shop_data_fields_renderer);
-		
-		return $view->render( 'add' );
+		return $this->render( 'add' );
 		
 	}
 	
 	public function renderDeleteConfirm(
-		Entity_Basic|Admin_Entity_Common_Interface $item,
 		string $message
 	) : string
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$this->view->setVar('item', $this->item);
+		$this->view->setVar('message', $message);
 		
-		$view->setVar('item', $item);
-		$view->setVar('message', $message);
-		
-		return $view->render( 'delete/confirm' );
+		return $this->render( 'delete/confirm' );
 		
 	}
 	
 	public function renderDeleteNotPossible(
-		Entity_Basic|Admin_Entity_Common_Interface $item,
 		string $message,
 		?callable $reason_renderer=null
 	): string
 	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$this->view->setVar('item', $this->item);
+		$this->view->setVar('message', $message);
+		$this->view->setVar('reason_renderer', $reason_renderer);
 		
-		$view->setVar('item', $item);
-		$view->setVar('message', $message);
-		$view->setVar('reason_renderer', $reason_renderer);
-		
-		return $view->render( 'delete/not-possible' );
+		return $this->render( 'delete/not-possible' );
 	}
 	
-	public function renderShowName( int $id, Entity_Basic|Admin_Entity_Common_Interface $entity ): string
+	public function renderShowName( int $id, Entity_Common|Admin_Entity_Interface $entity ): string
 	{
-		return Translator::setCurrentDictionaryTemporary(
-			$this->module_manifest->getName(),
-			function() use ($id, $entity) {
-				$item = $entity::get($id);
-				
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar('id', $id);
-				
-				if($item) {
-					$view->setVar('item', $item);
-					return $view->render('show-name/known');
-				}
-				
-				return $view->render('show-name/unknown');
-			}
-		);
+		$item = $entity::get($id);
+		
+		$this->view->setVar('id', $id);
+		
+		if($item) {
+			$this->view->setVar('item', $item);
+			return $this->render('show-name/known');
+		}
+		
+		return $this->render('show-name/unknown');
 	}
+	
+	public function renderEntityActivation(
+		Entity_Common|Admin_Entity_Common_Interface $entity,
+		bool $editable,
+		?Closure $deactivate_url_creator = null,
+		?Closure $activate_url_creator = null
+	) : string
+	{
+		$this->view->setVar('entity', $entity);
+		
+		if(!$editable) {
+			return $this->render( 'entity-activation/readonly' );
+		}
+		
+		if(!$deactivate_url_creator) {
+			$deactivate_url_creator = function () : string {
+				return Http_Request::currentURI(['deactivate_entity'=>1]);
+			};
+		}
+		if(!$activate_url_creator) {
+			$activate_url_creator = function () : string {
+				return Http_Request::currentURI(['activate_entity'=>1]);
+			};
+		}
+		
+		$this->view->setVar('deactivate_url', $deactivate_url_creator() );
+		$this->view->setVar('activate_url', $activate_url_creator() );
+		
+		return $this->render( 'entity-activation/editable' );
+		
+		
+	}
+	
+	public function renderEntityFormCommonFields( Form $form ) : string
+	{
+		$this->view->setVar('form', $form);
+		
+		return $this->render( 'entity-form-common-fields' );
+		
+	}
+	
 	
 }

@@ -2,16 +2,20 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 ?>
 
 
-<div class="row" style="padding: 10px;">
-	<div class="col-md-2"></div>
-	<div class="col-md-8">
+<div style="margin: 20px;text-align: center;">
+	<div>
 		<?=Tr::_('I an shopping as a')?>
 
 		<?php if ($cash_desk->isCompanyOrder()): ?>

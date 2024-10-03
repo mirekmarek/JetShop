@@ -3,27 +3,73 @@ namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
 use JetApplication\Category_ShopData;
-use JetApplicationModule\Admin\Catalog\Categories\Category;
+use JetApplication\Content_InfoBox_ShopData;
+use JetApplication\Shop_Managers;
+use JetApplication\Shops;
+use JetApplication\Signpost_ShopData;
 
 /**
  * @var MVC_View   $this
  */
 
-$ids = array_unique(Category::dataFetchCol(['root_id']));
 
-$categories = Category_ShopData::getActiveList($ids);
+$signposts = Signpost_ShopData::getAllActive(
+	shop: Shops::getCurrent(),
+	order_by: ['priority']
+);
 
+$all_category_IDs = [];
+
+foreach( $signposts as $item) {
+	$ids = $item->getCategoryIds();
+	$all_category_IDs = array_merge( $all_category_IDs, $ids );
+}
+
+$all_category_IDs = array_unique($all_category_IDs);
+if(!$all_category_IDs) {
+	return;
+}
+
+
+$categories = Category_ShopData::getActiveList(
+	ids: $all_category_IDs,
+	shop:  Shops::getCurrent()
+);
+
+if(!$categories) {
+	return;
+}
+
+echo Shop_Managers::Banners()?->renderPosition('hp');
 ?>
+<?=Content_InfoBox_ShopData::getActiveByInternalCode('homepage')?->getText()?>
 
-<?php foreach( $categories as $item):
-	if(!$item->getBranchProductsCount()) {
-		continue;
-	}
-	?>
-	<a href="<?=$item->getUrl()?>" style="font-size: 14px;font-weight: bolder"><?=$item->getName()?></a>
-	<br/>
-	<?php foreach( $item->getChildren() as $s_item): ?>
-		<a href="<?=$s_item->getUrl()?>" style="font-size: 10px;"><?=$s_item->getName()?></a>
-	<?php endforeach; ?>
-	<br/>
+<div id="hp-signpost" class="categories">
+
+<?php foreach( $signposts as $item): ?>
+	<div class="category">
+		<div class="category-image">
+			<?php if($item->getImageMain()): ?>
+				<a href="<?=$item->getUrl()?>" ><img src="<?=$item->getImageMainThumbnailUrl(150, 150)?>"></a>
+			<?php endif; ?>
+		</div>
+
+		<div class="category-name">
+			<a href="<?=$item->getUrl()?>"><?=$item->getName()?></a>
+		</div>
+
+
+		<div class="category-subcategories">
+			<?php foreach( $item->getCategoryIds() as $c_id):
+				$category = $categories[$c_id]??null;
+				if(!$category) {
+					continue;
+				}
+				?>
+				<span class="category-subcategory"><a href="<?=$category->getURL()?>"><?=$category->getName();?></a></span>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
 <?php endforeach; ?>
+</div>

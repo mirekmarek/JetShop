@@ -10,47 +10,29 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_Entity_Common_Manager_Interface;
-use JetApplication\Admin_Entity_Common_Manager_Trait;
+use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithShopRelation_Trait;
 use JetApplication\Customer;
-use JetApplication\Entity_Basic;
 use JetApplication\Admin_Managers_Order;
-use JetApplication\Order_Status_ShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithShopRelation;
+use JetApplication\Order as Application_Order;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Entity_Common_Manager_Interface, Admin_Managers_Order
+class Main extends Application_Module implements Admin_EntityManager_WithShopRelation_Interface, Admin_Managers_Order
 {
-	use Admin_Entity_Common_Manager_Trait;
+	use Admin_EntityManager_WithShopRelation_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'orders';
 
 	public const ACTION_GET = 'get_order';
 	public const ACTION_UPDATE = 'update_order';
 	
-	public static function getName( int $id ): string
-	{
-		return Order::get($id)?->getAdminTitle();
-	}
-	
-	public static function showName( int $id ): string
-	{
-		$title = Order::get($id)?->getAdminTitle();
-		
-		return '<a href="'.static::getEditUrl($id).'">'.$title.'</a>';
-	}
-	
 	public static function showActiveState( int $id ): string
 	{
 		return '';
-	}
-	
-	public static function getCurrentUserCanEdit(): bool
-	{
-		return false;
 	}
 	
 	public static function getCurrentUserCanCreate(): bool
@@ -63,27 +45,28 @@ class Main extends Application_Module implements Admin_Entity_Common_Manager_Int
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_Basic|Admin_Entity_Common_Interface
+	public static function getEntityInstance(): Entity_WithShopRelation|Admin_Entity_WithShopRelation_Interface
 	{
 		return new Order();
 	}
 	
 	public static function getEntityNameReadable(): string
 	{
-		return 'customer';
+		return 'Order';
 	}
 	
-	public function showOrderStatus( Shops_Shop $shop, int $status_id ): string
+	public function showOrderStatus( Application_Order $order ): string
 	{
-		$status = Order_Status_ShopData::get( $status_id, $shop );
-		if(!$status) {
-			return '';
-		}
 		
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		$view->setVar('status', $status);
-		
-		return $view->render('order_status');
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($order) {
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				$view->setVar('order', $order );
+				
+				return $view->render('order_status');
+			}
+		);
 	}
 	
 	public function showOrdersOfCustomer( Customer $customer ) : string
@@ -104,4 +87,5 @@ class Main extends Application_Module implements Admin_Entity_Common_Manager_Int
 		);
 		
 	}
+	
 }

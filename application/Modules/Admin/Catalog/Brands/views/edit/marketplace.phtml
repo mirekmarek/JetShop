@@ -1,0 +1,67 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Brands;
+
+use Jet\Http_Request;
+use Jet\UI;
+use Jet\MVC_View;
+use JetApplication\MarketplaceIntegration;
+use JetApplication\MarketplaceIntegration_Module;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;
+
+/**
+ * @var MVC_View $this
+ * @var MarketplaceIntegration_Module $selected_mp
+ * @var Shops_Shop $selected_mp_shop
+ * @var Brand $brand
+ */
+
+$modules = MarketplaceIntegration::getActiveModules();
+
+$selected_mp = $this->getRaw('selected_mp');
+$selected_mp_shop = $this->getRaw('selected_mp_shop');
+$selected_mp_code = $this->getString('selected_mp_code');
+$selected_mp_shop_key = $this->getString('selected_mp_shop_key');
+
+$brand = $this->getRaw('brand');
+
+?>
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()?>
+</div>
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+
+	<br>
+	<div style="display: grid;grid-template-columns: 2fr 10fr;gap: 10px;">
+		<div>
+			<ul class="list-group">
+				<?php foreach($modules as $module):
+					foreach(Shops::getListSorted() as $shop):
+						if(
+							!$module->isAllowedForShop($shop) ||
+							!$module->hasBrandSettings()
+						):
+							continue;
+						endif;
+						
+						$title = $module->getTitle().' - '.$shop->getShopName();
+						$link = Http_Request::currentURI(['mp'=>$module->getCode(),'mp_shop'=>$shop->getKey()]);
+						
+						if($module->getCode()==$selected_mp_code && $shop->getKey()==$selected_mp_shop_key):
+							?><li class="list-group-item active"><?=$title?></li><?php
+						else:
+							?><li class="list-group-item"><a href="<?=$link?>"><?=$title?></a></li><?php
+						endif;
+					endforeach;
+				endforeach; ?>
+			</ul>
+		</div>
+		<div>
+			<?php if($selected_mp): ?>
+				<legend><?=$selected_mp->getTitle()?> - <?=$selected_mp_shop->getShopName()?></legend>
+				<?php $selected_mp->handleBrandSettings( $brand, $selected_mp_shop ) ?>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>

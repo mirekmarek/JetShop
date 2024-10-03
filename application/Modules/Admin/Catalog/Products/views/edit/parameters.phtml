@@ -18,8 +18,8 @@ $form = $product->getParametersEditForm();
 
 $this->setVar('form', $form);
 
-$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
-$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 6 ] );
 
 $property_manager = Admin_Managers::Property();
 
@@ -48,9 +48,7 @@ $show = function( Product $product, string $main_prefix = '' ) use ($form, $prop
 
 <?=$form->start()?>
 
-<div class="row">
-
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<?=$this->getRaw('tabs')?>
 		
 		<?php if($product->isSet()):
@@ -63,7 +61,7 @@ $show = function( Product $product, string $main_prefix = '' ) use ($form, $prop
 				?>
 				<fieldset>
 					<legend><a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a></legend>
-				<?php $show( $set_item_product, '/set_item/'. $set_item_product->getId()  ); ?>
+					<?php $show( $set_item_product, '/set_item/'. $set_item_product->getId()  ); ?>
 				</fieldset>
 				<?php
 			endforeach;
@@ -71,7 +69,6 @@ $show = function( Product $product, string $main_prefix = '' ) use ($form, $prop
 		else:
 			$show( $product );
 		endif; ?>
-	</div>
 </div>
 
 <?=$form->end()?>

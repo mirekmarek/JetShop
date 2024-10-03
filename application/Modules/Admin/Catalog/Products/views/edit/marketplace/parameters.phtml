@@ -1,0 +1,59 @@
+<?php
+
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
+
+
+/**
+ * @var MarketplaceIntegration_Module_Controller_ProductSettings $controller
+ * @var MVC_View   $this
+ * @var Form $params_form
+ */
+
+$controller = $this->getController();
+
+$product = $controller->getProduct();
+$marketplace = $controller->getMarketplace();
+$shop = $controller->getShop();
+$editable = $controller->getEditable();
+$category = $controller->getCategory();
+$params_form = $controller->getParametersForm();
+
+?>
+<?=$controller->getTabs()?>
+<br>
+<?php if($category): ?>
+	<div>
+		<b><?=$category->getCategoryId()?></b> <?=$category->getName()?>
+	</div>
+	
+	<div class="toolbar">
+		<?php if($editable): ?>
+			<?=UI::button( Tr::_('Actualize list of parameters'))->setClass(UI_button::CLASS_PRIMARY)->setUrl(Http_Request::currentURI(['actualize_list_of_parameters'=>'1']))?>
+		<?php endif; ?>
+	</div>
+	
+	
+	<?=$params_form->start();?>
+	
+	<div style="display: grid;grid-template-columns: 2fr 8fr;gap: 20px;">
+		<?php foreach($params_form->getFields() as $field): ?>
+			<div><?=$field->getLabel()?></div>
+			<div><?=$field->input()?><?=$field->error()?></div>
+		<?php endforeach; ?>
+		
+		<?php if($editable): ?>
+			<div style="position: fixed;right: 10px;bottom: 10px;">
+				<?=UI::button_save()?>
+			</div>
+		<?php endif; ?>
+	</div>
+	
+	<?php
+	echo $params_form->end();
+endif; ?>

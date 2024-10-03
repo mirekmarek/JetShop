@@ -1,0 +1,48 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Exports_Module_Controller_KindOfProductSettings;
+
+/**
+ * @var MVC_View $this
+ * @var Exports_Module_Controller_KindOfProductSettings $controller
+ */
+$controller = $this->getController();
+
+$categories = $controller->getExportCategories();
+
+$parent_id = $this->getString('dialog_selected_category');
+
+$selected_category = $categories[$parent_id] ?? null;
+
+?>
+<?php if($selected_category): ?>
+	<div class="toolbar">
+		<b><?=$selected_category->getCategoryId()?></b>
+		<?=implode(' / ',$selected_category->getFullName())?>
+		<?=UI::button('Select')
+			->setOnclick("CategorySelect.confirm('{$selected_category->getCategoryId()}', '{$selected_category->getName()}')")
+			->setClass(UI_button::CLASS_PRIMARY)
+		?>
+	</div>
+<?php endif; ?>
+
+<div style="display: grid;grid-template-columns: 80px 1fr;gap: 5px;">
+	<?php if($selected_category): ?>
+		<div></div>
+		<div><a href="#" onclick="CategorySelect.select('<?=$selected_category->getParentCategoryId()?>');return false"><?=UI::icon('folder')?> ..</a></div>
+	<?php endif; ?>
+
+	<?php foreach($categories as $cat):
+		if($cat->getParentCategoryId()!=$parent_id) {
+			continue;
+		}
+		?>
+	
+		<div><?=$cat->getCategoryId()?></div>
+		<div><a href="#" onclick="CategorySelect.select('<?=$cat->getCategoryId()?>');return false"><?=UI::icon('folder')?> <?=$cat->getName()?></a></div>
+
+	<?php endforeach; ?>
+</div>
+

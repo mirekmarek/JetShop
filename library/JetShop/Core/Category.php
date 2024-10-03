@@ -4,12 +4,16 @@ namespace JetShop;
 use Jet\Data_Tree;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_IDController_AutoIncrement;
+use JetApplication\Admin_Managers;
 use JetApplication\Category;
 use JetApplication\Category_Product;
 use JetApplication\Category_ShopData;
 use JetApplication\Entity_WithShopData;
+use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\Product_ShopData;
 use JetApplication\ProductFilter;
+use JetApplication\Shop_Managers;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 
@@ -17,12 +21,14 @@ use JetApplication\Shops_Shop;
 #[DataModel_Definition(
 	name: 'category',
 	database_table_name: 'categories',
+	id_controller_class: DataModel_IDController_AutoIncrement::class,
+	id_controller_options: [
+		'id_property_name' => 'id'
+	]
 )]
-abstract class Core_Category extends Entity_WithShopData {
+abstract class Core_Category extends Entity_WithShopData implements FulltextSearch_IndexDataProvider {
 	public const SORT_NAME = 'name';
 	public const SORT_PRIORITY = 'priority';
-
-	public const AUTO_APPEND_PRODUCT_FILTER_CONTEXT = 'category_auto_append';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -74,14 +80,7 @@ abstract class Core_Category extends Entity_WithShopData {
 	)]
 	protected array $shop_data = [];
 	
-	/**
-	 * @var Category_Product[]
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Category_Product::class
-	)]
-	protected array $products = [];
+	protected ?array $product_ids = null;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -124,7 +123,8 @@ abstract class Core_Category extends Entity_WithShopData {
 			}
 		}
 		
-		foreach($this->shop_data as $sd) {
+		foreach(Shops::getList() as $shop ) {
+			$sd = $this->getShopData( $shop );
 			$sd->setParentId( $parent_id, false );
 			$sd->setPriority( $this->priority, false );
 		}
@@ -181,8 +181,12 @@ abstract class Core_Category extends Entity_WithShopData {
 	public function setPriority( int $priority, bool $save=true ) : void
 	{
 		$this->priority = $priority;
-		foreach($this->shop_data as $sd) {
+		if($save) {
 			static::updateData(data: ['priority'=>$this->priority], where: ['id'=>$this->id]);
+		}
+		
+		foreach(Shops::getList() as $shop) {
+			$this->getShopData( $shop )->setPriority( $priority, $save );
 		}
 	}
 	
@@ -268,7 +272,8 @@ abstract class Core_Category extends Entity_WithShopData {
 	
 	public function getShopData( ?Shops_Shop $shop=null ) : Category_ShopData
 	{
-		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->_getShopData( $shop );
 	}
 	
 	
@@ -480,13 +485,16 @@ abstract class Core_Category extends Entity_WithShopData {
 	
 	public function addProduct( int $product_id ) : bool
 	{
-		if(!isset($this->products[$product_id])) {
-			$this->products[$product_id] = new Category_Product();
-			$this->products[$product_id]->setCategoryId( $this->id );
-			$this->products[$product_id]->setProductId( $product_id );
-			$this->products[$product_id]->setPriority( count($this->products) );
-			$this->products[$product_id]->save();
+		$this->getProductIds();
+		
+		if(!in_array($product_id, $this->product_ids)) {
+			$assoc = new Category_Product();
+			$assoc->setCategoryId( $this->id );
+			$assoc->setProductId( $product_id );
+			$assoc->setPriority( count($this->product_ids) );
+			$assoc->save();
 			
+			$this->product_ids = null;
 			return true;
 		}
 		
@@ -500,18 +508,34 @@ abstract class Core_Category extends Entity_WithShopData {
 	
 	public function removeProduct( int $product_id ) : bool
 	{
-		if(!isset($this->products[$product_id])) {
+		$this->getProductIds();
+		
+		if(!in_array($product_id, $this->product_ids )) {
 			return false;
 		}
 		
-		$this->products[$product_id]->delete();
-		unset($this->products[$product_id]);
+		Category_Product::dataDelete([
+			'category_id' => $this->id,
+			'AND',
+			'product_id' => $product_id
+		]);
+		
+		$this->product_ids = null;
+
+		$this->getProductIds();
 		
 		$i = 0;
-		foreach($this->products as $p) {
-			$i++;
-			$p->setPriority( $i );
-			$p->save();
+		foreach( $this->product_ids as $p_id) {
+			Category_Product::updateData(
+				data: [
+					'priority' => $i
+				],
+				where: [
+					'category_id' => $this->id,
+					'AND',
+					'product_id' => $p_id
+				]
+			);
 		}
 		
 		return true;
@@ -519,14 +543,10 @@ abstract class Core_Category extends Entity_WithShopData {
 	
 	public function removeAllProducts() : bool
 	{
-		if(!$this->products) {
-			return false;
-		}
-		
-		foreach( $this->products as $product_id=>$p ) {
-			$this->products[$product_id]->delete();
-			unset($this->products[$product_id]);
-		}
+		Category_Product::dataDelete([
+			'category_id' => $this->id
+		]);
+		$this->product_ids = null;
 		
 		return true;
 	}
@@ -534,7 +554,16 @@ abstract class Core_Category extends Entity_WithShopData {
 	
 	public function getProductIds() : array
 	{
-		return array_keys($this->products);
+		if($this->product_ids===null) {
+			$this->product_ids = Category_Product::dataFetchCol(
+				select: ['product_id'],
+				where: ['category_id'=>$this->id],
+				order_by: ['priority'],
+				raw_mode: true
+			);
+		}
+		
+		return $this->product_ids;
 	}
 	
 	public static function actualizeProductAssoc( int $category_id=null, int $product_id=null ) : void
@@ -706,17 +735,7 @@ abstract class Core_Category extends Entity_WithShopData {
 				}
 			}
 		}
-	}
-	
-	public static function productActivated( int $product_id ) : void
-	{
-		static::actualizeProductAssoc( product_id: $product_id );
-	}
-	
-	
-	public static function productDeactivated( int $product_id ) : void
-	{
-		static::actualizeProductAssoc( product_id: $product_id );
+		
 	}
 	
 	public static function productDeleted( int $product_id ) : void
@@ -795,10 +814,17 @@ abstract class Core_Category extends Entity_WithShopData {
 		$shop = Shops::getDefault();
 		
 		$filter = new ProductFilter( $shop );
-		$filter->setContextEntity( self::AUTO_APPEND_PRODUCT_FILTER_CONTEXT );
+		$filter->setContextEntity( Category::getEntityType() );
 		$filter->setContextEntityId( $this->id );
 		$filter->load();
-		$filter->getBasicFilter()->setKindOfProductId( $this->kind_of_product_id?:null );
+		
+		if(
+			$this->getKindOfProductId() &&
+			!$filter->getBasicFilter()->getKindOfProductId()
+		) {
+			$filter->getBasicFilter()->setKindOfProductId( $this->getKindOfProductId() );
+		}
+		
 		
 		return $filter;
 	}
@@ -829,6 +855,31 @@ abstract class Core_Category extends Entity_WithShopData {
 		
 	}
 	
+	public function sortProducts( array $product_ids ) : void
+	{
+		$p = 0;
+		foreach($product_ids as $p_id) {
+			$p_id = (int)$p_id;
+			
+			$where = [
+				'category_id' => $this->id,
+				'AND',
+				'product_id' => $p_id
+			];
+			
+			
+			$assoc = Category_Product::dataFetchAll(['category_id', 'product_id','priority'], $where );
+			if( $assoc ) {
+				Category_Product::updateData(
+					data:['priority'=>$p],
+					where: $where
+				);
+				$p++;
+			}
+		}
+		
+	}
+	
 	protected function generateURLPathPart() : void
 	{
 		foreach( Shops::getList() as $shop ) {
@@ -838,19 +889,24 @@ abstract class Core_Category extends Entity_WithShopData {
 		}
 	}
 	
-	public function afterAdd(): void
+	
+	
+	public function afterAdd() : void
 	{
 		static::$_names = null;
 		$this->generateURLPathPart();
 		static::actualizeTreeData();
+		
+		parent::afterAdd();
 	}
-	
 	
 	public function afterUpdate() : void
 	{
 		static::$_names = null;
 		parent::afterUpdate();
 		$this->generateURLPathPart();
+		
+		parent::afterUpdate();
 	}
 	
 	public function afterDelete() : void
@@ -858,6 +914,66 @@ abstract class Core_Category extends Entity_WithShopData {
 		static::$_names = null;
 		parent::afterDelete();
 		static::actualizeTreeData();
+		
+		parent::afterDelete();
+	}
+	
+	
+	
+	public function getFulltextObjectType(): string
+	{
+		return '';
+	}
+	
+	public function getFulltextObjectIsActive(): bool
+	{
+		return $this->isActive();
+	}
+	
+	public function getInternalFulltextObjectTitle(): string
+	{
+		return $this->getAdminTitle();
+	}
+	
+	public function getInternalFulltextTexts(): array
+	{
+		return [$this->getInternalName(), $this->getInternalCode()];
+	}
+	
+	public function getAdminTitle(): string
+	{
+		$code = $this->internal_code ? : $this->id;
+		
+		return $this->getPathName().' ('.$code.')';
+	}
+	
+	public function getShopFulltextTexts( Shops_Shop $shop ) : array
+	{
+		$shop_data = $this->getShopData( $shop );
+		if(
+			!$shop_data->isActive() ||
+			!$shop_data->getBranchProductsCount()
+		) {
+			return [];
+		}
+		
+		$texts = [];
+		$texts[] = $shop_data->getName();
+		$texts[] = $shop_data->getInternalCode();
+		
+		return $texts;
+	}
+	
+	public function updateFulltextSearchIndex() : void
+	{
+		Admin_Managers::FulltextSearch()->updateIndex( $this );
+		Shop_Managers::FulltextSearch()->updateIndex( $this );
+	}
+	
+	public function removeFulltextSearchIndex() : void
+	{
+		Admin_Managers::FulltextSearch()->deleteIndex( $this );
+		Shop_Managers::FulltextSearch()->deleteIndex( $this );
 	}
 	
 }

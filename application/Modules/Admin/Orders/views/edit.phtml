@@ -1,246 +1,90 @@
 <?php
 namespace JetApplicationModule\Admin\Orders;
 
-use Jet\Locale;
-use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Entity_Listing;
-
-use Jet\UI;
 use Jet\MVC_View;
-use JetApplication\Order_Item;
-use JetApplication\Shops;
-
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplication\Order;
 
 /**
  * @var MVC_View $this
  * @var Order     $order
- * @var Admin_Managers_Entity_Listing $listing
  */
 
 $order = $this->getRaw( 'order' );
-$listing = $this->getRaw('listing');
 
-$prev_url = $listing->getPrevEditUrl( $order->getId() );
-$next_url = $listing->getNextEditUrl( $order->getId() );
-
-$price_formatter = Admin_Managers::PriceFormatter();
-
-$product_manager = Admin_Managers::Product();
-
-
-$icons = [
-	Order_Item::ITEM_TYPE_PRODUCT  => UI::icon('box')->setTitle(Tr::_('Product')),
-	Order_Item::ITEM_TYPE_SERVICE  => UI::icon('handshake-angle')->setTitle(Tr::_('Service')),
-	Order_Item::ITEM_TYPE_GIFT     => UI::icon('hand-holding-heart')->setTitle(Tr::_('Gift')),
-	Order_Item::ITEM_TYPE_PAYMENT  => UI::icon('money-bills')->setTitle(Tr::_('Payment')),
-	Order_Item::ITEM_TYPE_DELIVERY => UI::icon('truck-ramp-box')->setTitle(Tr::_('Delivery')),
-	Order_Item::ITEM_TYPE_DISCOUNT => UI::icon('arrow-down')->setTitle(Tr::_('Discount')),
-];
+require 'edit/js.phtml';
+require 'edit/toolbar.phtml';
 
 ?>
-<div class="row toolbar" id="main-toolbar" style="display: flex;align-items: center">
-	<div>
-		<?=UI::button_goBack()?>
-	</div>
-	
-	<div style="padding-left:20px;width: 80px;text-align: center">
-		<?php if($prev_url): ?>
-			<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
-		<?php endif; ?>
-	</div>
-	
-	
-	<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
-		<b><?=$order->getNumber()?></b>
-	</div>
-	
-	<div style="width: 50px;text-align: center">
-		<?php if($next_url): ?>
-			<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
-		<?php endif; ?>
-	</div>
-
-</div>
-
 <div id="main-col">
-	<div style="padding: 10px;display: flex">
-		<div style="margin: 10px" class="card">
-			
-			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
-			<div class="card-body">
-			<table style="margin: 10px">
-				<?php if(Shops::isMultiShopMode()): ?>
-				<tr>
-					<td><b><?=Tr::_('Shop')?></b></td>
-					<td><?=$order->getShop()->getShopName()?></td>
-				</tr>
-				<?php endif; ?>
-				<tr>
-					<td nowrap=""><b><?=Tr::_('Purchase date and time:')?></b></td>
-					<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($order->getDatePurchased()) ?></td>
-				</tr>
-				<tr>
-					<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
-					<td nowrap="" style="padding: 3px"><?= $order->getIpAddress() ?></td>
-				</tr>
-				<tr>
-					<td><b><?=Tr::_('Delivery method:')?></b></td>
-					<td nowrap="" style="padding: 3px"><?=$order->getDeliveryMethod()->getTitle()?></td>
-				</tr>
-				<tr>
-					<td><b><?=Tr::_('Payment method:')?></b></td>
-					<td nowrap="" style="padding: 3px"><?=$order->getPaymentMethod()->getTitle()?></td>
-				</tr>
-			</table>
-			</div>
-		</div>
-		
-		<div style="margin: 10px;margin-left: 80px;" class="card">
-			<div class="card-header"><b><?=Tr::_('Customer')?></b></div>
-			<div class="card-body">
-				
-				<table>
-					<tr>
-						<td></td>
-						<td>
-							<?=Admin_Managers::Customer()->showLink( $order->getCustomerId() )?>
-							<br>
-						</td>
-					</tr>
-					<tr>
-						<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Phone:')?></td>
-						<td style="font-size: 1.2rem;font-weight: bolder"><?=$order->getPhone()?></td>
-					</tr>
-					<tr>
-						<td><?=Tr::_('e-mail:')?></td>
-						<td><a href="mailto:<?=$order->getEmail()?>"><u><?=$order->getEmail()?></u></a></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-						</td>
-					</tr>
-				</table>
-			
-			</div>
-		</div>
-		
-
-		<div style="margin: 10px;" class="card">
-			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
-			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $order->getShop(), $order->getDeliveryAddress() )?>
-			</div>
-		</div>
-		
-		<div style="margin: 10px;" class="card">
-			<div class="card-header"><b><?=Tr::_('Billing address')?></b></div>
-			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $order->getShop(), $order->getBillingAddress() )?>
-			</div>
-		</div>
-		<div style="margin: 10px;">
-		</div>
+	<div id="o_main" class="o_anchor"></div>
+	
+	<div class="o_section">
+		<?php require 'edit/main.phtml'; ?>
 	</div>
 
+	
+	<div style="position: relative;"><div id="o_items" class="o_anchor"></div></div>
+	
+	<fieldset class="o_section">
+		<legend><?=UI::icon('list')?> <?=Tr::_('Order items')?></legend>
+		<?php require 'edit/items.phtml';?>
+	</fieldset>
+
+	<div id="o_dispatch" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('boxes-packing')?> <?=Tr::_('Order dispatch')?></legend>
+		<?=Admin_Managers::OrderDispatch()->showDispatches( $order->getProvidesContext() )?>
+	</fieldset>
+
+	<div id="o_invoices" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('file-invoice-dollar')?> <?=Tr::_('Invoices')?></legend>
+		
+		<?=Admin_Managers::Invoice()->showOrderInvoices( $order )?>
+		<?=Admin_Managers::InvoiceInAdvance()->showOrderInvoices( $order )?>
+		<?=Admin_Managers::DeliveryNote()->showOrderInvoices( $order )?>
+		
+	</fieldset>
+
+	<div id="o_history" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('Order history')?></legend>
+		<div id="order-history">
+		<?php require 'edit/history.phtml';?>
+		</div>
+	</fieldset>
+
+	<div id="o_sent_emails" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></legend>
+		
+		<div id="sent-emails">
+			<?php require 'edit/sent-emails.phtml'; ?>
+		</div>
+	</fieldset>
+
+	
+
+	<br><br><br><br>
 </div>
 
-<fieldset style="padding: 10px;">
-	<legend><?=Tr::_('Order items')?></legend>
+<style>
+	.o_section {
+		padding: 10px;
+		margin-bottom: 50px;
+	}
 	
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th style="width: 20px;"></th>
-				<th style="width: 60px;"></th>
-				<th><?=Tr::_('Item')?></th>
-				<th style="width: 100px;"><?=Tr::_('VAT')?></th>
-				<th style="width: 200px;"><?=Tr::_('Price per item')?></th>
-				<th style="width: 200px;"><?=Tr::_('Total amount')?></th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php foreach( $order->getItems() as $item ): ?>
-			<tr>
-				<td align="center"><?=$icons[$item->getType()]?></td>
-				<td align="right"><b><?=$item->getQuantity() ?>&nbsp;x</b></td>
-				<td>
-					<?php if($item->getType()==Order_Item::ITEM_TYPE_PRODUCT): ?>
-						<a href="<?=$product_manager->getEditURL( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
-					<?php else: ?>
-						<?=$item->getTitle() ?>
-					<?php endif; ?>
-					
-					<?php if($set_items = $item->getSetItems()): ?>
-					<table>
-						<tbody>
-						<?php foreach($set_items as $set_item):?>
-						<tr>
-							<td><b><?=$set_item->getQuantity()?>&nbsp;x</b></td>
-							<td><a href="<?=$product_manager->getEditURL( $set_item->getItemId() )?>"><?=$set_item->getTitle()?></a></td>
-							<td><?=$set_item->getVatRate()?>%</td>
-							<td><?=$price_formatter->formatWithCurrency( $order->getShop(), $set_item->getItemAmount() )?></td>
-							<td><?=$price_formatter->formatWithCurrency( $order->getShop(), $set_item->getTotalAmount() )?></td>
-						</tr>
-						<?php endforeach; ?>
-						</tbody>
-						<tfoot>
-						<tr>
-							<td colspan="3"></td>
-							<td><i><?=Tr::_('Set discount:')?></i></td>
-							<td><i><?=$price_formatter->formatWithCurrency($order->getShop(), $item->getSetDiscountAmount())?></i></td>
-						</tr>
-						</tfoot>
-					</table>
-					<?php endif; ?>
-				</td>
-				<td><?=$item->getVatRate()?>%</td>
-				<td><?=$price_formatter->formatWithCurrency( $order->getShop(), $item->getItemAmount() )?></td>
-				<td><?=$price_formatter->formatWithCurrency( $order->getShop(), $item->getTotalAmount() )?></td>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-	
-	<div style="display: grid;grid-template-columns: 1fr 400px;">
-		<div>
-		
-		</div>
-		<div>
-			<table class="table table">
-				<tr>
-					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_PRODUCT]?></td>
-					<td><?=Tr::_('Products:')?></td>
-					<td style="width: 200px;"><?=$price_formatter->formatWithCurrency($order->getShop(), $order->getProductAmount())?></td>
-				</tr>
-				<tr>
-					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_SERVICE]?></td>
-					<td><?=Tr::_('Services:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getShop(), $order->getServiceAmount())?></td>
-				</tr>
-				<tr>
-					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_DELIVERY]?></td>
-					<td><?=Tr::_('Delivery:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getShop(), $order->getDeliveryAmount())?></td>
-				</tr>
-				<tr>
-					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_PAYMENT]?></td>
-					<td><?=Tr::_('Payment:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getShop(), $order->getPaymentAmount())?></td>
-				</tr>
-				<tr>
-					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_DISCOUNT]?></td>
-					<td><?=Tr::_('Discounts:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getShop(), $order->getDiscountAmount())?></td>
-				</tr>
-				<tr>
-					<td><?=UI::icon('calculator')?></td>
-					<td style="font-weight: bolder;font-size: 1.8"><?=Tr::_('Total amount:')?></td>
-					<td style="font-weight: bolder;font-size: 1.8"><?=$price_formatter->formatWithCurrency($order->getShop(), $order->getTotalAmount())?></td>
-				</tr>
-			</table>
-		</div>
-		
-	</div>
-</fieldset>
+	.o_anchor {
+		position: relative;
+		top: -80px;
+	}
+</style>
+
+<?php
+foreach(Handler::getHandlers() as $handler):
+	echo $handler->renderDialog();
+endforeach;
+?>

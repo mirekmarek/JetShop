@@ -10,5 +10,6 @@ return [
 		'add_payment_method' => 'Add new payment_method',
 		'update_payment_method' => 'Update payment_method',
 		'delete_payment_method' => 'Delete payment_method',
+		'set_price' => 'Set price',
 	],
 ];

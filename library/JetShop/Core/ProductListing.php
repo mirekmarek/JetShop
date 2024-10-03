@@ -8,12 +8,19 @@
 namespace JetShop;
 
 use Jet\Data_Paginator;
+use JetApplication\Availabilities;
+use JetApplication\Availabilities_Availability;
+use JetApplication\Pricelists;
+use JetApplication\Pricelists_Pricelist;
+use JetApplication\Product_Price;
 use JetApplication\Product_ShopData;
 use JetApplication\ProductListing_Sorter;
 use JetApplication\ProductListing_Sorter_ByName;
 use JetApplication\ProductListing_Sorter_Default;
 use JetApplication\ProductListing_Sorter_HighestPrice;
 use JetApplication\ProductListing_Sorter_LowestPrice;
+use JetApplication\Property_Options_Option_ShopData;
+use JetApplication\Property_ShopData;
 use JetApplication\Shops;
 use JetApplication\ProductFilter;
 use JetApplication\ProductListing_Map;
@@ -22,6 +29,9 @@ use JetApplication\Shops_Shop;
 abstract class Core_ProductListing
 {
 	protected Shops_Shop $shop;
+	protected Pricelists_Pricelist $pricelist;
+	protected Availabilities_Availability $availability;
+	
 	protected ProductFilter $filter;
 	protected ProductListing_Map $initial_map;
 	protected ProductListing_Map $filtered_map;
@@ -34,16 +44,43 @@ abstract class Core_ProductListing
 	protected ?int $category_id = null;
 	
 	/**
+	 * @var Property_ShopData[]
+	 */
+	protected array $properties = [];
+	
+	/**
+	 * @var Property_Options_Option_ShopData[]
+	 */
+	protected array $property_options = [];
+	
+	
+	/**
 	 * @var ProductListing_Sorter[]
 	 */
 	protected array $sorters = [];
 	
-	public function __construct( array $product_ids, ?Shops_Shop $shop=null )
+	public function __construct(
+		array $product_ids,
+		?Shops_Shop $shop=null,
+		?Pricelists_Pricelist $pricelist =null,
+		?Availabilities_Availability $availability=null
+	)
 	{
 		if(!$shop) {
 			$shop = Shops::getCurrent();
 		}
+		if( !$pricelist ) {
+			$pricelist = Pricelists::getCurrent();
+		}
+		if( !$availability ) {
+			$availability = Availabilities::getCurrent();
+		}
+		
+		
 		$this->shop = $shop;
+		
+		$this->pricelist = $pricelist;
+		$this->availability = $availability;
 		
 		$this->initial_map = new ProductListing_Map($this , $product_ids );
 		
@@ -108,6 +145,18 @@ abstract class Core_ProductListing
 		return $this->shop;
 	}
 	
+	public function getPricelist(): Pricelists_Pricelist
+	{
+		return $this->pricelist;
+	}
+	
+	public function getAvailability(): Availabilities_Availability
+	{
+		return $this->availability;
+	}
+	
+	
+	
 
 	public function getCategoryId(): ?int
 	{
@@ -135,24 +184,35 @@ abstract class Core_ProductListing
 		$limit_min = $this->initial_map->getMinPrice();
 		$limit_max = $this->initial_map->getMaxPrice();
 		
+		
 		if($price_min<$limit_min) {
 			$price_min = $limit_min;
 		}
-		
 		if($price_max>$limit_max) {
 			$price_max = $limit_max;
 		}
 		
-		if($price_min>=$price_max) {
+		if(
+			$price_min && $price_max &&
+			$price_min>=$price_max
+		) {
 			$price_min = $limit_min;
 			$price_max = $limit_max;
 		}
 		
-		if($price_min>$limit_min) {
+		
+		
+		if(
+			$price_min &&
+			$price_min>$limit_min
+		) {
 			$this->filter->getPriceFilter()->setMinPrice( $price_min );
 		}
 		
-		if($price_max<$limit_max) {
+		if(
+			$price_max &&
+			$price_max<$limit_max
+		) {
 			$this->filter->getPriceFilter()->setMaxPrice( $price_max );
 		}
 	}
@@ -273,6 +333,7 @@ abstract class Core_ProductListing
 		
 		if($this->filter->isActive()) {
 			$this->filtered_products_ids = $this->filter->filter();
+			$this->filtered_products_ids = array_unique( $this->filtered_products_ids );
 			$this->filtered_map = new ProductListing_Map(
 				$this,
 				$this->filtered_products_ids
@@ -280,17 +341,17 @@ abstract class Core_ProductListing
 			$this->filter_is_active = true;
 		} else {
 			$this->filtered_products_ids = $this->filter->getInitialProductIds();
+			$this->filtered_products_ids = array_unique( $this->filtered_products_ids );
 			$this->filtered_map = clone $this->initial_map;
 			$this->filter_is_active = false;
 		}
 		
 		if($this->filtered_products_ids) {
 			$sorter = $this->getSelectedSorter();
+			
 			if( $sorter ) {
 				$this->filtered_products_ids = $sorter->sort( $this->filtered_products_ids );
 			}
-			
-			$this->filtered_products_ids = array_unique( $this->filtered_products_ids );
 			
 			$this->paginator->setData( $this->filtered_products_ids );
 			
@@ -299,7 +360,15 @@ abstract class Core_ProductListing
 		} else {
 			$this->visible_product_ids = [];
 		}
+
 		
+		$initial_map = $this->getInitialMap();
+		$property_ids = $initial_map->getPropertyIds();
+		$option_ids = $initial_map->getPropertyOptionIds();
+		if($property_ids) {
+			$this->properties = Property_ShopData::getActiveList( $property_ids, order_by: ['-is_default_filter','filter_priority','label'] );
+			$this->property_options = Property_Options_Option_ShopData::getActiveList( $option_ids, order_by: ['priority','filter_label'] );
+		}
 		
 	}
 	
@@ -321,6 +390,8 @@ abstract class Core_ProductListing
 	
 	public function getVisibleProductIDs() : array
 	{
+		Product_Price::prefetch( $this->getPricelist(), $this->visible_product_ids );
+		
 		return $this->visible_product_ids;
 	}
 	
@@ -440,6 +511,23 @@ abstract class Core_ProductListing
 	{
 		return $this->paginator;
 	}
+	
+	/**
+	 * @return Property_ShopData[]
+	 */
+	public function getProperties(): array
+	{
+		return $this->properties;
+	}
+	
+	/**
+	 * @return Property_Options_Option_ShopData[]
+	 */
+	public function getPropertyOptions(): array
+	{
+		return $this->property_options;
+	}
+	
 	
 	
 }

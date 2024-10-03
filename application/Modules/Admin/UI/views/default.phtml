@@ -1,9 +1,21 @@
 <?php
+
+use Jet\Form;
 use Jet\Navigation_MenuSet;
 use Jet\Navigation_Menu;
 use Jet\Navigation_Menu_Item;
+use Jet\Tr;
 use Jet\UI;
 use Jet\UI_icon;
+use Jet\MVC_View;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Form $signatures_form
+ */
+
+$signatures_form = $this->getRaw('admin_signatures_form');
 
 
 
@@ -49,22 +61,14 @@ foreach($_menus as $menu) {
 
 ?>
 <div class="col-md-12 main-col">
-	<br><br><br>
-	<div style="display: grid;grid-template-columns: 10% repeat(<?=count($menus)?>, 1fr) 10%">
-		<div></div>
-		<?php foreach( $menus as $menu ): ?>
-		<div style="padding-left: 10px;padding-right: 10px;">
-			<h5><?=$menu->getLabel()?></h5>
-			<div class="dropdown-divider"></div>
-		</div>
-		<?php endforeach; ?>
-		<div></div>
-	</div>
-	
-	<div style="display: grid;grid-template-columns: 10% repeat(<?=count($menus)?>, 1fr) 10%">
-		<div></div>
+	<div style="display: grid;grid-template-columns: repeat(5, 1fr); gap: 20px;margin-top: 20px;margin-bottom: 30px;">
+
+
 	<?php foreach( $menus as $menu ): ?>
-		<div style="padding: 5px">
+		<div style="padding: 5px" class="card card-body shadow">
+			<h5 style="margin: 10px;"><?=$menu->getLabel()?></h5>
+			<div class="dropdown-divider"></div>
+			
 		<?php $showMenu(
 			menu: $menu,
 			separator_renderer: function() {
@@ -72,17 +76,38 @@ foreach($_menus as $menu) {
 			},
 			item_renderer: function( Navigation_Menu_Item $item) {
 				?>
-				<a href="<?=$item->getUrl()?>">
-					<div style="display: grid;grid-template-columns: 40px 1fr;align-items: center;margin: 10px;">
-						<div><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?></div>
-						<div><?=$item->getLabel()?></div>
-					</div>
-				</a>
+				
+				<div style="display: grid;grid-template-columns: 40px 1fr;align-items: center;margin: 10px;">
+					<div><a href="<?=$item->getUrl()?>" style="color: #363636"><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?></a></div>
+					<div><a href="<?=$item->getUrl()?>"><?=$item->getLabel()?></a></div>
+				</div>
 				<?php
 			}
 		); ?>
 		</div>
 	<?php endforeach; ?>
-		<div></div>
 	</div>
+	
+	<div class="card">
+		<div class="card-header"><?= Tr::_('Your signature')?></div>
+		<div class="card-body">
+			<div>
+				<?=$signatures_form->start()?>
+				
+				<?php foreach( Shops::getList() as $shop):
+					$signatures_form->field('/signature/'.$shop->getKey())->input()->addCustomCssStyle('height: 250px;')
+					?>
+					<?=$shop->getShopName()?>:
+					<?=$signatures_form->field('/signature/'.$shop->getKey())->input()?>
+					<br>
+				<?php endforeach; ?>
+				
+				<?=UI::button_save()?>
+				
+				<?=$signatures_form->end()?>
+			</div>
+			
+		</div>
+	</div>
+	<br><br><br>
 </div>

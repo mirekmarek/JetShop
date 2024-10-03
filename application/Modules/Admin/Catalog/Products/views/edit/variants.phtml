@@ -3,6 +3,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Form;
 use Jet\Http_Request;
+use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form_Renderer;
 use Jet\Tr;
@@ -10,6 +11,9 @@ use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_dialog;
 use JetApplication\Admin_Managers;
+use JetApplication\Availabilities;
+use JetApplication\Pricelists;
+use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 
 /**
@@ -40,19 +44,19 @@ if($new_variant) {
 
 $variants_update_form = $product->getUpdateVariantsForm();
 
-$variants_update_form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 12 ] );
-$variants_update_form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 12 ] );
+$variants_update_form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$variants_update_form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 3 ] );
 
 
 $variants = $product->getVariants();
 
 $kind = $product->getKindOfProduct();
 
-echo Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
-	item: $this->getRaw('item'),
-	listing: $controller->getListing(),
+echo $this->controller->getEditorManager()->renderToolbar(
 	form:  $variants_update_form,
-	toolbar_renderer: function() use ($add_form) {
+	toolbar_renderer: function() use ($add_form, $product) {
+		echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $product );
+		
 		if($add_form) {
 			echo '&nbsp;&nbsp;&nbsp;&nbsp;';
 			echo UI::button_create( Tr::_('Add new variant') )
@@ -80,78 +84,159 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 
 
 
-<div class="row">
-
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<?=$this->getRaw('tabs')?>
 		
 		<?php if($variants): ?>
 		<?=$variants_update_form->start()?>
 
 		<?php foreach($variants as $variant): ?>
-		<div class="card" style="margin: 40px;">
+		<div class="card shadow" style="margin: 40px;">
 			<div class="card-body">
-				<div style="display: grid;grid-template-columns: 500px 470px 500px;">
+
 					<div style="padding-right: 20px;">
-							<div style="padding: 5px"><?=Tr::_('ID:')?><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getId()?></a></div>
+						<div style="display: flex;align-items: center;gap: 5px;">
+							<div>
+								<?php echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $variant ); ?>
+							</div>
+							<div>
+								<?=Tr::_('ID:')?><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getId()?></a>
+							</div>
+							<div style="padding-left: 50px;">
+								<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityActivation(
+									entity: $variant,
+									editable: !$variants_update_form->getIsReadonly(),
+									deactivate_url_creator: function() use ($variant) : string {
+										return Http_Request::currentURI([
+											'deactivate_variant'=>$variant->getId()
+										]);
+									},
+									activate_url_creator: function() use ($variant) : string {
+										return Http_Request::currentURI([
+											'activate_variant'=>$variant->getId()
+										]);
+									},
+									activate_completely_url_creator: function() use ($variant) : string {
+										return Http_Request::currentURI([
+											'activate_variant_completely'=>$variant->getId()
+										]);
+									}
+								
+								);?>
+							</div>
+							
+						</div>
 						
+						<div>
 							<?=$variants_update_form->field('/'.$variant->getId().'/internal_name_of_variant')?>
 							<?=$variants_update_form->field('/'.$variant->getId().'/internal_code')?>
 							<?=$variants_update_form->field('/'.$variant->getId().'/ean')?>
+							<?=$variants_update_form->field('/'.$variant->getId().'/supplier_code')?>
 							<?=$variants_update_form->field('/'.$variant->getId().'/variant_priority')?>
+							
+						</div>
 					</div>
 					<div>
-						<?php Admin_Managers::UI()->renderShopDataBlocks(
+						
+						<?php /*Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 							form: $variants_update_form,
 							inline_mode: true,
 							renderer: function( Shops_Shop $shop, string $shop_key ) use ($variants_update_form, $variant) {
 								?>
 								<div style="padding: 5px;">
 									
-									<?=Admin_Managers::UI()->renderEntityShopDataActivation(
+									<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityShopDataActivation(
 										entity: $variant,
 										shop: $shop,
 										editable: !$variants_update_form->getIsReadonly(),
 										deactivate_url_creator: function() use ($variant, $shop) : string {
 											return Http_Request::currentURI([
-												'deactivate_variant'=>$variant->getId(),
+												'deactivate_variant_shop_data'=>$variant->getId(),
 												'shop'=>$shop->getKey()
 											]);
 										},
 										activate_url_creator: function() use ($variant, $shop) : string {
 											return Http_Request::currentURI([
-												'activate_variant'=>$variant->getId(),
+												'activate_variant_shop_data'=>$variant->getId(),
 												'shop'=>$shop->getKey()
 											]);
 										},
 										
 									);?>
-									
-								<?=$variants_update_form->field('/'.$variant->getId().'/shop_data/'.$shop_key.'/variant_name')?>
-								<?=$variants_update_form->field('/'.$variant->getId().'/shop_data/'.$shop_key.'/standard_price')?>
-								<?=$variants_update_form->field('/'.$variant->getId().'/shop_data/'.$shop_key.'/price')?>
-								<?=$variants_update_form->field('/'.$variant->getId().'/shop_data/'.$shop_key.'/in_stock_qty')?>
-								<?=$variants_update_form->field('/'.$variant->getId().'/shop_data/'.$shop_key.'/length_of_delivery')?>
-								<?=$variants_update_form->field('/'.$variant->getId().'/shop_data/'.$shop_key.'/available_from')?>
 								</div>
 								<?php
 							}
-						);?>
+						);*/ ?>
 					</div>
-					
+				
+				<div style="display: grid;grid-template-columns: 200px 1fr;gap: 10px;margin: 10px;">
+					<?php foreach(Shops::getListSorted() as $shop): ?>
+						<div><?=UI::flag($shop->getLocale())?> <?=$shop->getShopName()?></div>
+						<div style="display: flex;align-items: center;gap: 10px;">
+							<label><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop->getKey().'/variant_name')->getLabel()?></label>
+							<?=$variants_update_form->field('/'.$variant->getId().'/'.$shop->getKey().'/variant_name')->input()?>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<br><br>
+				
+				<div style="display: flex;gap: 10px;">
+					<?php foreach( Availabilities::getList()  as $availability): ?>
+						<fieldset>
+							<legend class="sub"><?=Tr::_('Availability')?> - <?=$availability->getName()?></legend>
+							
+							<table class="table table-striped">
+								<tr>
+									<td style="width: 200px;"><?=Tr::_('Number of available:');?></td>
+									<td><b><?=Locale::float( $variant->getInStockQty($availability) )?> <?=$variant->getKindOfProduct()?->getMeasureUnit()?->getName()?></b></td>
+								</tr>
+								<tr>
+									<td><?=Tr::_('Length of delivery:');?></td>
+									<td><b><?=Locale::int( $variant->getLengthOfDelivery($availability) )?></b></td>
+								</tr>
+								<tr>
+									<td><?=Tr::_('Available from:');?></td>
+									<td><?=Locale::date( $variant->getAvailableFrom($availability) )?></td>
+								</tr>
+							</table>
+						
+						</fieldset>
+					<?php endforeach; ?>
+				</div>
+
+				<div style="display: flex;gap: 10px;">
+					<?php foreach(Pricelists::getList() as $pricelist): ?>
+						<fieldset>
+							<legend class="sub"><?=Tr::_('Price')?> - <?=$pricelist->getName()?></legend>
+							
+							<div style="display: grid;grid-template-columns: 180px 180px;align-items: center">
+								<div style="font-weight: bolder;font-size: 20px;"><?=Tr::_('Price:')?></div>
+								<div style="font-weight: bolder;font-size: 25px;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $variant->getPrice( $pricelist ) )?></div>
+							
+							<?php if($variant->getDiscountPercentage( $pricelist )>0): ?>
+								<div style="opacity: 0.5;font-weight: bolder;font-size: 15px;"><?=Tr::_('Discount:')?></div>
+								<div style="opacity: 0.5;font-weight: bolder;font-size: 20px;"><?=$variant->getDiscountPercentage( $pricelist );?>%</div>
+							<?php endif; ?>
+							</div>
+						</fieldset>
+					<?php endforeach; ?>
+				
+				
+				</div>
+				
+				
 					<div style="padding: 10px;padding-left: 30px;">
 						<?php
 						$showPropertyEditForm( $product, '/'.$variant->getId(), $variants_update_form );
 						?>
 					</div>
-				</div>
+
 			</div>
 		</div>
 		<?php endforeach; ?>
 			
 		<?=$variants_update_form->end()?>
 		<?php endif; ?>
-	</div>
 </div>
 
 
@@ -165,16 +250,11 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 	<?=$add_form->field('internal_code')?>
 	
 	<?php
-	Admin_Managers::UI()->renderShopDataBlocks(
+	Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 		form: $add_form,
 		renderer: function( Shops_Shop $shop, string $shop_key ) use ($add_form) : void {
 			?>
 			<?=$add_form->field('/shop_data/'.$shop_key.'/variant_name')?>
-			<?=$add_form->field('/shop_data/'.$shop_key.'/standard_price')?>
-			<?=$add_form->field('/shop_data/'.$shop_key.'/price')?>
-			<?=$add_form->field('/shop_data/'.$shop_key.'/in_stock_qty')?>
-			<?=$add_form->field('/shop_data/'.$shop_key.'/length_of_delivery')?>
-			<?=$add_form->field('/shop_data/'.$shop_key.'/available_from')?>
 		<?php }); ?>
 	
 	

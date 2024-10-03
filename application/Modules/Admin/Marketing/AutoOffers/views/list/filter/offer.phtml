@@ -1,0 +1,43 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\AutoOffers;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Offer $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'offer' );
+
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Gift'),
+	form_fields: [$field],
+	is_active:   $filter->getOffer()>0,
+	renderer:    function() use ($field) {
+		?>
+		<script>
+			function filterOffer( id ) {
+				const input = document.getElementById('<?=$field->getId()?>');
+				input.value = id;
+				input.form.submit();
+			}
+		</script>
+		<div style="width: 400px;">
+			<?=Admin_Managers::Product()->renderSelectWidget(
+				"filterOffer(selected_item.id)",
+				$field->getValue()
+			)?>
+			<?= $field->input() ?>
+		</div>
+		<?php
+	}
+);

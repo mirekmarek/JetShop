@@ -1,0 +1,50 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\Banners;
+
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Banner   $item
+ */
+$item = $this->getRaw( 'item' );
+
+$group = $item->getGroup();
+$upload_form = $item->getUploadForm_MainImage();
+
+$image_field = $upload_form->field('image');
+
+$image_field->input()
+	->addJsAction('onchange', "JetAjaxForm.submit(this.form.id)");
+
+
+?>
+<div class="card card-body">
+	<h5><?=Tr::_('Main image')?></h5>
+	
+	<?php if($item->isEditable()): ?>
+		<?=$upload_form->start()?>
+		<div class="btn btn-light btn-upload">
+			<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload image')?></span>
+			<?=$image_field->input()?>
+		</div>
+		<?=$upload_form->end()?>
+	<?php endif; ?>
+	
+	<?php if($item->getImageMain()): ?>
+	
+	<img src="<?=$item->getImageMainURI()?>" style="width: <?=$group->getMainImageW()?>px;height: <?=$group->getMainImageH()?>px;"/>
+	
+	<?php if($item->isEditable()):
+			$delete_url = Http_Request::currentURI(['delete_media'=>'image_main']);
+			?>
+		<div style="margin:10px;">
+			<?=UI::button_delete(' ')->setOnClick("$('#image-main').load('{$delete_url}');")?>
+		</div>
+	<?php endif; ?>
+	<?php endif; ?>
+</div>

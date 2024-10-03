@@ -1,0 +1,24 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\Marketing;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Edit_Marketing;
+
+/**
+ * @var MVC_View   $this
+ * @var Admin_Managers_Entity_Edit_Marketing $edit_manager
+ */
+$edit_manager = $this->getRaw('edit_manager');
+
+echo $edit_manager->renderToolbar();
+?>
+
+
+<div id="main-col">
+	<?php
+	echo $this->getRaw('tabs');
+	echo Admin_Managers::Image()->renderStandardManagement();
+	?>
+</div>
+

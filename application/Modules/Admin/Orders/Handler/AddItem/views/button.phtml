@@ -1,0 +1,7 @@
+<?php
+
+use Jet\UI;
+use Jet\UI_button;
+
+?>
+<?=UI::button_create('Add item')->addCustomCssClass('dropdown-item')->setOnClick("addItem()")->setClass( UI_button::CLASS_SUCCESS )?>

@@ -24,6 +24,9 @@ $form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle
 ?>
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
+
+	
+	<?=$form->field('/shop_data/'.$shop_key.'/allow_to_order_when_sold_out')?>
 	
 	<?=$form->field('/shop_data/'.$shop_key.'/name')?>
 	<?php if($form->fieldExists('/shop_data/'.$shop_key.'/variant_name')): ?>
@@ -40,22 +43,28 @@ $form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle
 	<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
 </fieldset>
 
+<?php foreach($shop->getPricelists() as $pricelist): ?>
+
 <fieldset>
-	<legend class="sub"><?=Tr::_('Price')?></legend>
-	
-	<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/standard_price')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/price')?>
+	<legend class="sub"><?=Tr::_('Price')?> - <?=$pricelist->getName()?></legend>
+	<?php if( $item->isPhysicalProduct() ): ?>
+	<div class="row">
+		<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 18px;margin-top: -3px;"><?=Tr::_('VAT rate:')?></label>
+		<div class="col-md-8" style="font-weight: bolder;font-size: 20px;">
+			<?=$item->getVatRate( $pricelist )?>%
+		</div>
+	</div>
+	<?php endif; ?>
 	
 	<div class="row">
 		<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 20px;margin-top: -3px;"><?=Tr::_('Price:')?></label>
-		<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $item->getShopData($shop)->getPrice() )?></div>
+		<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $item->getShopData($shop)->getPrice( $pricelist ) )?></div>
 	</div>
 	
-	<?php if($item->getShopData($shop)->getDiscountPercentage()>0): ?>
+	<?php if($item->getShopData($shop)->getDiscountPercentage( $pricelist )>0): ?>
 		<div class="row" style="opacity: 0.5">
 			<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 15px;margin-top: -3px;"><?=Tr::_('Discount:')?></label>
-			<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$item->getShopData($shop)->getDiscountPercentage();?>%</div>
+			<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$item->getShopData($shop)->getDiscountPercentage( $pricelist );?>%</div>
 		</div>
 	<?php endif; ?>
 	
@@ -65,23 +74,44 @@ $form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle
 			<b><?=Tr::_('Price history:')?></b><br>
 			
 			<table class="table table-striped">
-			<?php foreach($item->getShopData($shop)->getPriceHistory() as $hi): ?>
+			<?php foreach($item->getPriceHistory( $pricelist ) as $hi): ?>
 			<tr>
 				<td style="width: 150px;"><?=Locale::dateAndTime( $hi->getDateTime() )?></td>
-				<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $hi->getPrice() )?></td>
+				<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $hi->getPrice() )?></td>
 			</tr>
 			<?php endforeach; ?>
 			</table>
 		</div>
 	</div>
-	
-	
 </fieldset>
-<fieldset>
-	<legend class="sub"><?=Tr::_('Availability')?></legend>
+<?php endforeach; ?>
+
+
+<?php foreach($shop->getAvailabilities() as $availability): ?>
+	<fieldset>
+		<legend class="sub"><?=Tr::_('Availability')?> - <?=$availability->getName()?></legend>
+		
+		<div class="row">
+			<div class="col-md-2 col-form-label" style="font-weight: bolder;"></div>
+			<div class="col-md-8">
+			
+				<table class="table table-striped">
+				<tr>
+					<td style="width: 200px;"><?=Tr::_('Available units:');?></td>
+					<td><b><?=Locale::float( $item->getShopData($shop)->getNumberOfAvailable($availability) )?> <?=$item->getKindOfProduct()?->getMeasureUnit()?->getName()?></b></td>
+				</tr>
+				<tr>
+					<td><?=Tr::_('Length of delivery:');?></td>
+					<td><b><?=Locale::int( $item->getShopData($shop)->getLengthOfDelivery($availability) )?></b></td>
+				</tr>
+				<tr>
+					<td><?=Tr::_('Available from:');?></td>
+					<td><?=Locale::date( $item->getShopData($shop)->getAvailableFrom($availability) )?></td>
+				</tr>
+			</table>
+			</div>
+		</div>
 	
-	<?=$form->field('/shop_data/'.$shop_key.'/in_stock_qty')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/length_of_delivery')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/available_from')?>
-	
-</fieldset>
+	</fieldset>
+<?php endforeach; ?>
+

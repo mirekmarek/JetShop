@@ -23,7 +23,11 @@ $add_uri_creator = $listing_manager->getCreateUriCreator();
 
 $add_uri = $add_uri_creator();
 
-if(!$entity_manager::getCurrentUserCanCreate() && !count($listing->getExportTypes())) {
+if(
+	!$entity_manager::getCurrentUserCanCreate() &&
+	!count($listing->getExportTypes()) &&
+	!$listing_manager->getCustomBtnRenderer()
+) {
 	?>
 	<br>
 	<?php
@@ -31,7 +35,7 @@ if(!$entity_manager::getCurrentUserCanCreate() && !count($listing->getExportType
 }
 
 ?>
-<div class="row toolbar">
+<div class="toolbar" id="main-toolbar">
 	<?php
 	if( $entity_manager::getCurrentUserCanCreate() ):
 		if( ($create_btn_renderer=$listing_manager->getCreateBtnRenderer()) ):
@@ -42,13 +46,18 @@ if(!$entity_manager::getCurrentUserCanCreate() && !count($listing->getExportType
 		<?=UI::button_create('')->setUrl( $add_uri )->setClass(UI_button::CLASS_SUCCESS)?>
 		<?php
 		endif;
-	endif; ?>
+	endif;
 	
-	<?php if(count($listing->getExportTypes())): ?>
+	if( ($custom_btn_renderer=$listing_manager->getCustomBtnRenderer()) ):
+		echo $custom_btn_renderer();
+	endif;
+	
+	
+	if(count($listing->getExportTypes())): ?>
 	&nbsp;&nbsp;
 	<div class="dropdown">
 		<button class="btn btn-secondary dropdown-toggle" type="button" id="export-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			<?=Tr::_('Export')?>
+			<?=Tr::_('Export', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?>
 		</button>
 		<div class="dropdown-menu" aria-labelledby="export-menu">
 			<?php foreach($listing->getExportTypes() as $type=>$title): ?>

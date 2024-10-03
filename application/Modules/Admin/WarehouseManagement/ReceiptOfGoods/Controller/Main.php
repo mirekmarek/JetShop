@@ -7,30 +7,84 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
-use Jet\AJAX;
-use Jet\Data_DateTime;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use Jet\MVC_Controller_Default;
-use Jet\Session;
 use Jet\Tr;
-use Jet\UI;
 use Jet\UI_messages;
-use JetApplication\WarehouseManagement_Item_Event;
-use JetApplication\WarehouseManagement_Item_Event_Type;
+use JetApplication\Supplier;
+use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_Warehouse;
+use JetApplication\Admin_EntityManager_Simple_Controller;
 
 /**
  *
  */
-class Controller_Main extends MVC_Controller_Default
+class Controller_Main extends Admin_EntityManager_Simple_Controller
 {
-
-	/**
-	 *
-	 */
-	public function default_Action() : void
+	
+	public function setupListing(): void
 	{
+		$this->listing_manager->addColumn( new Listing_Column_Number() );
+		$this->listing_manager->addColumn( new Listing_Column_Status() );
+		$this->listing_manager->addColumn( new Listing_Column_ReceiptDate() );
+		$this->listing_manager->addColumn( new Listing_Column_Supplier() );
+		$this->listing_manager->addColumn( new Listing_Column_Notes() );
+		$this->listing_manager->addColumn( new Listing_Column_Items() );
+		$this->listing_manager->addColumn( new Listing_Column_SuppliersBill() );
+		$this->listing_manager->addColumn( new Listing_Column_OrderNumber() );
+		
+		
+		
+		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
+		$this->listing_manager->addFilter( new Listing_Filter_Status() );
+		$this->listing_manager->addFilter( new Listing_Filter_ReceiptDate() );
+		
+		
+		$this->listing_manager->setDefaultColumnsSchema([
+			Listing_Column_Number::KEY,
+			Listing_Column_Supplier::KEY,
+			Listing_Column_Status::KEY,
+			Listing_Column_ReceiptDate::KEY,
+			Listing_Column_Notes::KEY,
+			Listing_Column_Items::KEY,
+			Listing_Column_OrderNumber::KEY,
+			Listing_Column_SuppliersBill::KEY,
+		]);
+		
+		$this->listing_manager->setSearchWhereCreator( function( string $search ): array {
+			$q = [];
+			$q['number'] = $search;
+			$q[] = 'OR';
+			$q['suppliers_bill_number'] = $search;
+			$q[] = 'OR';
+			$q['order_number'] = $search;
+			
+			return $q;
+		} );
+		
+		$this->listing_manager->setDefaultSort('-number');
+	}
+	
+	public function setupRouter( string $action, string $selected_tab ): void
+	{
+		parent::setupRouter( $action, $selected_tab );
+		
+		$this->router->addAction('cancel')->setResolver(function() use ($action) {
+			return $this->current_item && $action=='cancel';
+		});
+		
+		$this->router->addAction('done')->setResolver(function() use ($action) {
+			return $this->current_item && $action=='done';
+		});
+	}
+	
+	
+	public function add_Action() : void
+	{
+		$this->current_item = new ReceiptOfGoods();
+		
+		$this->setBreadcrumbNavigation( Tr::_('New Receipt Of Goods') );
+		
 		$GET = Http_Request::GET();
 		
 		$warehouses = WarehouseManagement_Warehouse::getScope();
@@ -38,109 +92,93 @@ class Controller_Main extends MVC_Controller_Default
 		if(!$warehouses) {
 			return;
 		}
-
-		$tabs = UI::tabs(
-			tabs: $warehouses,
-			tab_url_creator: function( $code ) {
-				return Http_Request::currentURL(['warehouse'=>$code]);
-			},
-			selected_tab_id: $GET->getString('warehouse')
-		);
-
-		$warehouse_code = $tabs->getSelectedTabId();
-
-
-
-		$new_item = new WarehouseManagement_Item_Event();
-		$new_item->setEvent( WarehouseManagement_Item_Event_Type::RECEIPT_OF_GOODS );
-		$new_item->setWarehouseCode( $warehouse_code );
-
-		$session = new Session('whm_receipt_of_goods_'.$warehouse_code);
-		$items = $session->getValue('items', []);
-		register_shutdown_function(function() use ($session, &$items) {
-			$session->setValue('items', $items);
-		});
-
-
-		$add_form = $new_item->getAddForm();
-		$this->view->setVar('add_form', $add_form);
-		$this->view->setVar('new_item', $new_item);
-		$this->view->setVar('tabs', $tabs);
-		$this->view->setVar('items', $items);
-
-
-		if($add_form->catchInput()) {
-			$ok = $add_form->validate();
-			$snippets = [];
-
-			$product_id = (int)$add_form->field('product_id')->getValue();
-
-			if(!$product_id) {
-				$ok = false;
-				$add_form->setCommonMessage( UI_messages::createDanger(Tr::_('Please select product')) );
+		
+		$warehouse_id = $GET->getString('warehouse', default_value:array_keys($warehouses)[0], valid_values: array_keys($warehouses) );
+		
+		
+		$order_number = $GET->getString('order');
+		$order = null;
+		$supplier_id = null;
+		$supplier = null;
+		
+		if($order_number) {
+			$order = Supplier_GoodsOrder::getByNumber( $order_number );
+			
+			if(
+				$order &&
+				!$GET->exists('warehouse')
+			) {
+				Http_Headers::reload(set_GET_params: ['order'=>$order->getNumber(), 'warehouse'=>$order->getDestinationWarehouseId()]);
 			}
-
-			if($ok) {
-				$add_form->catchFieldValues();
-
-				$context = $new_item->getContext();
-				$context_type = $new_item->getContextType();
-
-				$items[] = $new_item;
-
-				$new_item = new WarehouseManagement_Item_Event();
-				$new_item->setContext($context);
-				$new_item->setContextType($context_type);
-
-				$add_form = $new_item->getAddForm();
-				$this->view->setVar('add_form', $add_form);
-			}
-
-			$snippets['add_form_area'] = $this->view->render('add_form');
-
-			if($ok) {
-				$this->view->setVar('items', $items);
-				$snippets['items_area'] = $this->view->render('items');
-			}
-
-			AJAX::operationResponse($ok, $snippets);
 		}
-
-
-		if($GET->exists('action')) {
-
-			switch($GET->getString('action')) {
-				case 'delete':
-					$d_i = $GET->getInt('index');
-					$new_items = [];
-					foreach($items as $i=>$item) {
-						if($i!=$d_i) {
-							$new_items[] = $item;
-						}
-					}
-
-					$items = $new_items;
-					$this->view->setVar('items', $items);
-
-
-				break;
-				case 'done':
-
-					foreach($items as $item) {
-						$item->setIsNew();
-						$item->setDateTime( Data_DateTime::now() );
-						$item->save();
-					}
-
-					$items = [];
-				break;
-			}
-
-			Http_Headers::reload([], ['action', 'index']);
+		
+		$suppliers = array_keys(Supplier::getScope());
+		
+		if(!$order_number) {
+			$default_supplier_id = $suppliers[0];
+			$supplier_id = (int)Http_Request::GET()->getString('supplier', default_value: $default_supplier_id, valid_values: $suppliers );
+			$supplier = Supplier::load($supplier_id);
 		}
+		
+		
+		$this->view->setVar('warehouse_id', $warehouse_id);
+		$this->view->setVar('supplier_id', $supplier_id);
+		$this->view->setVar('order_number', $order_number);
+		$this->view->setVar('order', $order);
+		
+		if(
+			$supplier ||
+			$order
+		) {
+			
+			if($order) {
+				$this->current_item->prepareNewByOrder( $warehouse_id, $order );
+			} else {
+				$this->current_item->prepareNew( $warehouse_id, $supplier );
+			}
+			
+			if($this->current_item->catchAddForm()) {
+				$this->current_item->save();
+				
+				Http_Headers::reload(
+					set_GET_params: ['id'=>$this->current_item->getId()],
+					unset_GET_params: ['action']
+				);
+			}
+			
+			$this->view->setVar('rcp', $this->current_item);
+		}
+		
 
-
-		$this->output('default');
-
+		$this->output('add');
 	}
+	
+	public function done_Action() : void
+	{
+		/**
+		 * @var ReceiptOfGoods $order
+		 */
+		$order = $this->current_item;
+		
+		if($order->done()) {
+			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been completed', ['number'=>$order->getNumber()]) );
+		}
+		
+		Http_Headers::reload(unset_GET_params: ['action']);
+	}
+	
+	public function cancel_Action() : void
+	{
+		/**
+		 * @var ReceiptOfGoods $order
+		 */
+		$order = $this->current_item;
+		
+		if($order->cancel()) {
+			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been cancelled', ['number'=>$order->getNumber()]) );
+		}
+		
+		Http_Headers::reload(unset_GET_params: ['action']);
+	}
+	
 }

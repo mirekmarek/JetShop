@@ -1,0 +1,46 @@
+<?php
+
+use Jet\MVC;
+use JetApplication\Shops_Shop;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Shops_Shop $shop
+ */
+
+$shop = $this->getRaw('shop');
+$form = $this->getRaw('form');
+$shop_key = $shop->getKey();
+
+$base_URL = MVC::getBase($shop->getBaseId())->getHomepage($shop->getLocale())->getURL();
+?>
+<?=$form->field('/shop_data/'.$shop_key.'/title')?>
+<?=$form->field('/shop_data/'.$shop_key.'/menu_title')?>
+<?=$form->field('/shop_data/'.$shop_key.'/breadcrumb_title')?>
+<?=$form->field('/shop_data/'.$shop_key.'/meta_keywords')?>
+<?=$form->field('/shop_data/'.$shop_key.'/meta_description')?>
+<?=$form->field( '/shop_data/'.$shop_key.'/custom_layout_script' )?>
+<?php
+$relative_path_fragment = $form->field('/shop_data/'.$shop_key.'/relative_path_fragment');
+?>
+<?=$relative_path_fragment->row()->start()?>
+<?=$relative_path_fragment->label()?>
+
+<?=$relative_path_fragment->container()->start()?>
+<div class="input-group">
+	<span class="input-group-prepend" style="font-weight: bolder"><span class="input-group-text" id="base_URL"><?=$base_URL?></span></span>
+	<div style="width: 500px">
+		<?=$relative_path_fragment->input()?>
+		<?=$relative_path_fragment->error()?>
+	</div>
+</div>
+<?=$relative_path_fragment->container()->end()?>
+
+<?=$relative_path_fragment->row()->end()?>
+
+<?=$form->field('/shop_data/'.$shop_key.'/text')?>

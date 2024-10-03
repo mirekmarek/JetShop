@@ -1,0 +1,31 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Payment\Methods;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var PaymentMethod $item
+ */
+
+$item = $this->getRaw('item');
+
+foreach(Shops::getList() as $shop):
+	if($item->getShopData( $shop )->getFreePaymentLimit()==0) {
+		continue;
+	}
+	
+	echo $shop->getShopName().': '.Admin_Managers::PriceFormatter()->formatWithCurrency(
+		$shop->getDefaultPricelist()->getCurrency(),
+		$item->getShopData( $shop )->getFreePaymentLimit()
+	);
+	echo '<br>';
+endforeach;

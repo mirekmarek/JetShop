@@ -1,0 +1,242 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI_messages;
+use JetApplication\Admin_Managers;
+use JetApplication\Supplier;
+use JetApplication\Supplier_GoodsOrder;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $add_form
+ * @var ReceiptOfGoods $rcp
+ * @var Controller_Main $controller
+ * @var Supplier_GoodsOrder $order
+ */
+
+$selected_warehouse_id = $this->getInt('warehouse_id');
+$selected_supplier_id = $this->getInt('supplier_id');
+$controller = $this->getController();
+
+$selected_warehouse = WarehouseManagement_Warehouse::get( $selected_warehouse_id );
+
+$order_number = $this->getString('order_number');
+$order = $this->getRaw('order');
+
+$rcp = $this->getRaw('rcp');
+
+echo $controller->getEditorManager()->renderToolbar( $rcp?$rcp->getAddForm():null );
+?>
+<div id="main-col">
+
+
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Warehouse:')?></b></div>
+	
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+		if($warehouse->getId()==$selected_warehouse_id): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$warehouse->getAdminTitle()?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['warehouse'=>$warehouse->getId()], unset_GET_params: [])?>" class="btn btn-light"><?=$warehouse->getAdminTitle()?></a></div>
+		<?php endif;
+	endforeach; ?>
+</div>
+
+	<div class="card card-body" style="margin: 10px;">
+
+		<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 0.5fr 1fr 3fr">
+			<div style="font-weight: bolder;"><?= Tr::_('Order number:')?></div>
+			<div>
+				<input type="search" class="form-control" value="<?=$order_number?>" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['order'])?>&order='+encodeURIComponent(this.value)">
+			</div>
+			<div></div>
+			<?php if($order_number && !$rcp): ?>
+				<div style="font-weight: bolder;"></div>
+				<div>
+					<?=UI_messages::createDanger( Tr::_('Unknown order') )?>
+				</div>
+				<div></div>
+			<?php endif; ?>
+
+
+			<?php if(!$order_number): ?>
+			<div style="font-weight: bolder;"><?= Tr::_('Supplier:')?></div>
+			<div>
+				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
+					<?php foreach(Supplier::getScope() as $id=>$name):
+						if( $rcp?->getSupplierId()==$id ):
+							?><option value="<?=$id?>" selected><?=$name?></option><?php
+						else:
+							?><option value="<?=$id?>"><?=$name?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</div>
+			<div></div>
+			<?php endif; ?>
+			
+		</div>
+	</div>
+	
+
+<?php if($rcp):
+	$form = $rcp->getAddForm();
+	$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	?>
+
+<?=$form->start()?>
+	
+	<div class="card card-body" style="margin: 10px;">
+	<div class="row">
+		<div class="col-md-2" style="padding: 15px"><?=Tr::_('Supplier:')?></div>
+		<div class="col-md-2" style="font-weight: bolder;padding: 15px;"><?=Supplier::getScope()[$rcp->getSupplierId()]?></div>
+	</div>
+	<?=$form->field('currency_code')?>
+
+	<div class="row">
+		<div class="col-md-2" style="padding: 15px"><?=Tr::_('Warehouse currency:')?></div>
+		<div class="col-md-2" style="font-weight: bolder;padding: 15px;"><?=$selected_warehouse->getCurrency()->getCode()?></div>
+	</div>
+	
+	<?=$form->field('receipt_date')?>
+	<?=$form->field('suppliers_bill_type')?>
+	<?=$form->field('suppliers_bill_number')?>
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?=$form->getCommonMessage()?>
+
+		<h4><?=Tr::_('Items')?></h4>
+	
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Product name')?></th>
+				<th><?=Tr::_('EAN')?></th>
+				<th><?=Tr::_('Internal code')?></th>
+				<th><?=Tr::_('Supplier code')?></th>
+				
+				<th><?=Tr::_('Sector')?></th>
+				<th><?=Tr::_('Rack')?></th>
+				<th><?=Tr::_('Position')?></th>
+				
+				<th><?=Tr::_('Number of units')?></th>
+				<th></th>
+				<th><?=Tr::_('Price per unit')?></th>
+				<th><?=Tr::_('Total price')?></th>
+			</tr>
+			</thead>
+		<?php foreach($rcp->getItems() as $item):
+			$p_id = $item->getProductId();
+			?>
+		<tr style="<?php if(!$item->getUnitsReceived() && $order):?>opacity: 0.5<?php endif;?>">
+			<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
+			<td><?=$item->getProductEan()?></td>
+			<td><?=$item->getProductInternalCode()?></td>
+			<td><?=$item->getProductSupplierCode()?></td>
+			
+			<td><?=$form->field('/item_'.$p_id.'/sector')->input()?></td>
+			<td><?=$form->field('/item_'.$p_id.'/rack')->input()?></td>
+			<td><?=$form->field('/item_'.$p_id.'/position')->input()?></td>
+			
+			<td>
+				<?php
+				$input = $form->field('/item_'.$p_id.'/qty')->input();
+				$input->addJsAction('onchange', "calcItem({$p_id})");
+				$input->addCustomCssStyle("width: 150px;");
+				$input->addCustomCssClass('qty');
+				
+				echo $input;
+				?>
+			</td>
+			<td><?=$item->getMeasureUnit()?->getName();?></td>
+			<td>
+				<?php
+				$input = $form->field('/item_'.$p_id.'/price_per_unit')->input();
+				$input->addJsAction('onchange', "calcItem({$p_id})");
+				$input->addCustomCssStyle("width: 150px;");
+				$input->addCustomCssClass('price_per_unit');
+				
+				echo $input;
+				?>
+			</td>
+			<td>
+				<?php
+				$input = $form->field('/item_'.$p_id.'/total_price')->input();
+				$input->addCustomCssStyle("width: 150px;");
+				$input->addCustomCssClass('total_price');
+				
+				echo $input;
+				?>
+			</td>
+		</tr>
+		<?php endforeach; ?>
+		<tfoot>
+		<tr>
+			<td colspan="7"></td>
+			<td><input type="number" name="number_of_units" id="number_of_units" class="form-control" style="width: 150px;" readonly></td>
+			<td colspan="2"></td>
+			<td><input type="number" name="total_price" id="total_price" class="form-control" style="width: 150px;" readonly></td>
+		</tr>
+		</tfoot>
+		</table>
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?php
+		$form->field('notes')->label()->setWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 1
+		]);
+		$form->field('notes')->input()->setWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 10
+		]);
+		?>
+		<?=$form->field('notes')?>
+	</div>
+	
+<br><br><br>
+<?=$form->end()?>
+</div>
+
+	<script>
+		function calcItem( id ) {
+			let qty = $('#add_form_____item_'+id+'___qty').val();
+			let price_per_unit = $('#add_form_____item_'+id+'___price_per_unit').val();
+
+			$('#add_form_____item_'+id+'___total_price').val( qty*price_per_unit );
+
+			calcSum();
+		}
+
+		function calcSum() {
+			let total_number_of_units = 0.0;
+
+			$('.qty').each( function (index, element) {
+				total_number_of_units += element.value*1;
+			} );
+			$('#number_of_units').val( total_number_of_units );
+
+
+			let total_price = 0.0;
+
+			$('.total_price').each( function (index, element) {
+				total_price += element.value*1;
+			} );
+			$('#total_price').val( total_price );
+		}
+
+		calcSum();
+	</script>
+
+<?php endif; ?>

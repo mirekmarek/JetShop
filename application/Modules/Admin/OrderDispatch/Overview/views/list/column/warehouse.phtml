@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\OrderDispatch\Overview;
+
+use Jet\MVC_View;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View $this
+ * @var OrderDispatch $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=WarehouseManagement_Warehouse::getScope()[$item->getWarehouseId()]?>

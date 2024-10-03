@@ -1,0 +1,37 @@
+<script>
+	CashDesk.customer.phone = {
+		set: function() {
+			CashDesk._request.doForm( 'cash_desk_set_phone_form',
+				function(response) {
+					CashDesk.slideUp('cash_desk_customer', function () {
+						CashDesk._request.applySnippets( response );
+						CashDesk.slideDown('cash_desk_customer', function () {
+							if(response['is_ready']) {
+								CashDesk.slideDown('cash_desk_confirm', function () {
+									CashDesk.scrollTo('cash_desk_confirm');
+								});
+							} else {
+								CashDesk.scrollTo('cash_desk_customer');
+							}
+						});
+					});
+				},
+				function(response) {
+					CashDesk._request.applySnippets( response );
+				},
+				true
+			);
+		},
+		back: function() {
+			CashDesk.slideUp('cash_desk_confirm', function () {
+				CashDesk.slideUp('cash_desk_customer', function () {
+					CashDesk._request.doGet('?action=customer_back_to_set_phone', function() {
+						CashDesk.slideDown('cash_desk_customer', () => {
+							CashDesk.scrollTo('cash_desk_customer');
+						});
+					});
+				});
+			});
+		}
+	};
+</script>

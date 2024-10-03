@@ -2,13 +2,10 @@
 return [
 	'id' => 'shop',
 	'name' => 'Shop',
-	'base_path' => NULL,
-	'layouts_path' => NULL,
-	'views_path' => NULL,
 	'is_secret' => false,
 	'is_default' => true,
 	'is_active' => true,
-	'SSL_required' => false,
+	'SSL_required' => true,
 	'localized_data' => [
 		'cs_CZ' => [
 			'is_active' => true,
@@ -18,40 +15,19 @@ return [
 				'jet-shop.lc/',
 			],
 			'default_meta_tags' => [
-				[
-					'attribute' => 'aaa',
-					'attribute_value' => 'bbb',
-					'content' => 'ccc',
-				],
 			],
 			'parameters' => [
-				'shop_code'    => 'cz',
-				'shop_name'    => 'CZ shop',
-
+				'shop_code' => 'cz',
+				'shop_name' => 'CZ shop',
 				'is_default_shop' => true,
-
-
-				'currency_code'                => 'CZK',
-				'currency_symbol_left'         => '',
-				'currency_symbol_right'        => ',- Kč',
-				'currency_with_vat_txt'        => ',- Kč vč.DPH',
-				'currency_wo_vat_txt'          => ',- Kč bez DPH',
-				'currency_decimal_separator'   => ',',
-				'currency_thousands_separator' => ' ',
-				'currency_decimal_places'      => 0,
-
-
-				'phone_validation_reg_exp' => '/^([0-9]{9})$/',
-				'phone_prefix'             => '+420',
-
-				'round_precision_without_VAT' => 3,
-				'round_precision_VAT'         => 2,
-				'round_precision_with_VAT'    => 0,
-
-				'vat_rates'        => '0,10,15,21',
-				'default_vat_rate' => 21,
-
-			]
+				'pricelist_codes' => 'default_czk',
+				'default_pricelist_code' => 'default_czk',
+				'availability_codes' => 'default_cz',
+				'default_availability_code' => 'default_cz',
+				'use_template' => false,
+				'template_relative_dir' => 'default',
+				'default_warehouse_id' => '1',
+			],
 		],
 		'sk_SK' => [
 			'is_active' => true,
@@ -63,30 +39,83 @@ return [
 			'default_meta_tags' => [
 			],
 			'parameters' => [
-				'shop_code'    => 'sk',
-				'shop_name'    => 'SK shop',
-
-				'currency_code'                => 'EUR',
-				'currency_symbol_left'         => '',
-				'currency_symbol_right'        => ' €',
-				'currency_with_vat_txt'        => '€ s DP',
-				'currency_wo_vat_txt'          => '€ bez DPH',
-				'currency_decimal_separator'   => ',',
-				'currency_thousands_separator' => ' ',
-				'currency_decimal_places'      => 2,
-
-
-				'phone_validation_reg_exp' => '/^([0-9]{9})$/',
-				'phone_prefix'             => '+007',
-
-				'round_precision_without_VAT' => 2,
-				'round_precision_VAT'         => 2,
-				'round_precision_with_VAT'    => 1,
-
-				'vat_rates'        => '0,10,20',
-				'default_vat_rate' => 20,
-
-			]
+				'shop_code' => 'sk',
+				'shop_name' => 'SK shop',
+				'pricelist_codes' => 'default_eur',
+				'default_pricelist_code' => 'default_eur',
+				'availability_codes' => 'default_sk',
+				'default_availability_code' => 'default_sk',
+				'use_template' => false,
+				'template_relative_dir' => 'default',
+				'is_default_shop' => false,
+				'default_warehouse_id' => '2',
+			],
+		],
+		'de_DE' => [
+			'is_active' => true,
+			'SSL_required' => false,
+			'title' => '',
+			'URLs' => [
+				'de.jet-shop.lc/',
+			],
+			'default_meta_tags' => [
+			],
+			'parameters' => [
+				'shop_code' => 'sk',
+				'shop_name' => 'DE shop',
+				'is_default_shop' => false,
+				'pricelist_codes' => 'default_eur',
+				'default_pricelist_code' => 'default_eur',
+				'availability_codes' => 'default_sk',
+				'default_availability_code' => 'default_sk',
+				'use_template' => false,
+				'template_relative_dir' => 'default',
+				'default_warehouse_id' => '1',
+			],
+		],
+		'hu_HU' => [
+			'is_active' => true,
+			'SSL_required' => false,
+			'title' => '',
+			'URLs' => [
+				'hu.jet-shop.lc/',
+			],
+			'default_meta_tags' => [
+			],
+			'parameters' => [
+				'shop_code' => 'sk',
+				'shop_name' => 'HU shop',
+				'is_default_shop' => false,
+				'pricelist_codes' => 'default_eur',
+				'default_pricelist_code' => 'default_eur',
+				'availability_codes' => 'default_sk',
+				'default_availability_code' => 'default_cz',
+				'use_template' => false,
+				'template_relative_dir' => 'default',
+				'default_warehouse_id' => '2',
+			],
+		],
+		'pl_PL' => [
+			'is_active' => false,
+			'SSL_required' => false,
+			'title' => '',
+			'URLs' => [
+				'pl.jet-shop.lc/',
+			],
+			'default_meta_tags' => [
+			],
+			'parameters' => [
+				'shop_code' => 'sk',
+				'shop_name' => 'PL',
+				'is_default_shop' => false,
+				'pricelist_codes' => 'PL',
+				'default_pricelist_code' => 'PL',
+				'availability_codes' => 'PL',
+				'default_availability_code' => 'PL',
+				'default_warehouse_id' => '1',
+				'use_template' => true,
+				'template_relative_dir' => 'default',
+			],
 		],
 	],
 	'initializer' => [

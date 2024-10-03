@@ -1,0 +1,29 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\ProductListing;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+if(!$listing->getFilter()->isActive()) {
+	return;
+}
+?>
+<?=UI::button(Tr::_('Cancel filter'))->setIcon('circle-xmark')->setOnClick("listing.cancelFilter()")->setClass(UI_button::CLASS_LIGHT)?>
+
+<?=$this->render('filter-selected/basic');?>
+<?=$this->render('filter-selected/price');?>
+<?=$this->render('filter-selected/properties');?>
+<?=$this->render('filter-selected/brands');?>
+
+
+

@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\WarehouseManagement_StockCard;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View $this
+ * @var WarehouseManagement_StockCard $card
+ * @var Form $change_location_form
+ */
+
+$card = $this->getRaw('card');
+
+$warehouse = $card->getWarehouse();
+
+
+$m_unit = Product::getProductMeasureUnit( $card->getProductId() )?->getName();
+
+?>
+
+
+<div class="card card-body" style="padding: 10px;margin: 10px">
+	<div style="display: grid;grid-template-columns: 200px 1fr;align-items: center;gap: 10px;">
+		<div></div>
+		<div><b><?=Tr::_('Status')?></b></div>
+		
+		
+		<div><?=Tr::_('In stock:')?></div>
+		<div><?=Locale::float( $card->getInStock() )?> <?=$m_unit?></div>
+		
+		<div><?=Tr::_('Blocked:')?></div>
+		<div><?=Locale::float( $card->getBlocked() )?> <?=$m_unit?></div>
+		
+		<div><?=Tr::_('Available:')?></div>
+		<div><?=Locale::float( $card->getAvailable() )?> <?=$m_unit?></div>
+		
+		
+		<div><?=Tr::_('Total in:')?></div>
+		<div><?=Locale::float( $card->getTotalIn() )?> <?=$m_unit?></div>
+		
+		<div><?=Tr::_('Total out:')?></div>
+		<div><?=Locale::float( $card->getTotalOut() )?> <?=$m_unit?></div>
+		
+	</div>
+</div>
+

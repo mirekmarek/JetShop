@@ -1,0 +1,26 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$brand_ids = $this->getRaw('brand_ids');
+if(!$brand_ids) {
+	return;
+}
+
+$brand_ids = explode(',', $brand_ids);
+?>
+<table class="table table-striped">
+	<?php foreach($brand_ids as $id): ?>
+	<tr>
+		<td style="width: 20px;"><?=UI::button_delete(' ')->setOnClick("FilterEditBrands.remove({$id})")?></td>
+		<td><?=Admin_Managers::Brand()->showName( $id )?></td>
+	</tr>
+	<?php endforeach; ?>
+</table>

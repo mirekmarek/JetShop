@@ -1,0 +1,27 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+require __DIR__.'/toolbar/'.$dispatch->getStatus().'.phtml';
+
+echo UI::button(Tr::_('Goto next pending (alt+n)'))->setClass(UI_button::CLASS_INFO)->setOnClick("Control.nextPending();");
+?>
+<div style="display: inline-block;padding-left: 50px;" class="select_item_whisperer_area">
+	<input type="search" class="form-control" placeholder="<?=Tr::_('Search ... (shift+f)')?>" style="width: 300px" id="search_input" onkeyup="Search.search(this.value)">
+	<div class="search-whisperer-area">
+		<div id="search_whisperer">
+		</div>
+	</div>
+</div>

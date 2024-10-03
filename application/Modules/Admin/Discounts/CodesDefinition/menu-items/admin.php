@@ -1,6 +1,6 @@
 <?php
 return [
-	'content-and-marketing' => [
+	'marketing' => [
 		'discounts-codes-definition' => [
 			'index' => 200,
 			'separator_after' => true,

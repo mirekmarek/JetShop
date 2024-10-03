@@ -5,10 +5,11 @@ use Jet\Form;
 use Jet\Form_Field_Textarea;
 use Jet\Tr;
 
+use JetApplication\EMailMarketing;
 use JetApplication\Order;
 use JetApplication\Customer;
-use JetApplication\Customer_MailingSubscribe;
 use JetApplication\CashDesk_Confirm_AgreeFlag;
+use JetApplication\Shop_Pages;
 
 trait CashDesk_Confirm {
 
@@ -34,16 +35,19 @@ trait CashDesk_Confirm {
 
 	public function initMainAgreeFlags_terns() : void
 	{
-		$terms = new CashDesk_Confirm_AgreeFlag('terms', 'I agree with terms and conditions');
+		$terms = new CashDesk_Confirm_AgreeFlag('terms', Tr::_('I agree with <a href="%link%">terms and conditions</a>', [
+			'link' => Shop_Pages::TermsAndConditions()->getURL()
+		]));
+		
 		$terms->setIsMandatory(true);
-		$terms->setErrorMessage('To complete the order, it is necessary to agree to the terms and conditions');
+		$terms->setErrorMessage(Tr::_('To complete the order, it is necessary to agree to the terms and conditions'));
 		$this->addAgreeFlag($terms);
 	}
 
 
 	public function initMainAgreeFlags_survey_disagree() : void
 	{
-		$survey_disagree = new CashDesk_Confirm_AgreeFlag('survey_disagree', 'I disagree with the survey');
+		$survey_disagree = new CashDesk_Confirm_AgreeFlag('survey_disagree', Tr::_('I disagree with the survey'));
 		$survey_disagree->setOrderStateSetter( function( Order $order, bool $state ) {
 			$order->setSurveyDisagreement( !$state );
 		} );
@@ -52,39 +56,28 @@ trait CashDesk_Confirm {
 
 	public function initMainAgreeFlags_mailing_subscribe() : void
 	{
-		$mailing_subscribe = new CashDesk_Confirm_AgreeFlag('mailing_subscribe', 'I agree with newsletter registration');
+		$mailing_subscribe = new CashDesk_Confirm_AgreeFlag('mailing_subscribe', Tr::_('I agree with newsletter registration'));
 		$mailing_subscribe->setDefaultChecked(true);
 		$mailing_subscribe->setOrderStateSetter( function( Order $order, bool $state ) {
 			$order->setNewsletterAccepted( $state );
 		} );
 
 		$mailing_subscribe->setOnOrderSave(function( Order $order, bool $checked ) {
-			$mailing_subscribe_source = 'order:'.$order->getId();
-
-			$customer = Customer::getCurrentCustomer();
-			if( $customer ) {
-				if($checked) {
-					$customer->mailingSubscribe($mailing_subscribe_source);
-				} else {
-					$customer->mailingUnsubscribe($mailing_subscribe_source);
-				}
-
-				return;
-			}
+			$mailing_subscribe_source = 'order:'.$order->getNumber();
 
 			if($checked) {
-				Customer_MailingSubscribe::subscribe(
-					$order->getShop(),
-					$order->getEmail(),
-					$mailing_subscribe_source
+				EMailMarketing::SubscriptionManager()->subscribe(
+					shop: $order->getShop(),
+					email_address: $order->getEmail(),
+					source: $mailing_subscribe_source
 				);
-			} else {
-				Customer_MailingSubscribe::unsubscribe(
-					$order->getShop(),
-					$order->getEmail(),
-					$mailing_subscribe_source
+			} /* else {
+				EMailMarketing::MailingSubscriptionManager()->unsubscribe(
+					shop: $order->getShop(),
+					email_address: $order->getEmail(),
+					source: $mailing_subscribe_source
 				);
-			}
+			} */
 		});
 
 		$mailing_subscribe->setOnCustomerLogin( function( CashDesk $cash_desk, bool $checked ) use ($mailing_subscribe) {

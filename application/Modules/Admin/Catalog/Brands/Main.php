@@ -1,18 +1,23 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Brands;
 
-use JetApplication\Admin_Entity_WithShopData_Manager_Interface;
-use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
+use Jet\Factory_MVC;
+use Jet\Tr;
+use JetApplication\Admin_EntityManager_WithShopData_Interface;
+use JetApplication\Admin_EntityManager_WithShopData_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Admin_Managers;
 use JetApplication\Entity_WithShopData;
+use JetApplication\Admin_Managers_Brand;
+use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Entity_WithShopData_Manager_Interface
+class Main extends Application_Module implements Admin_EntityManager_WithShopData_Interface, Admin_Managers_Brand
 {
-	use Admin_Entity_WithShopData_Manager_Trait;
+	use Admin_EntityManager_WithShopData_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'brands';
 
@@ -31,4 +36,41 @@ class Main extends Application_Module implements Admin_Entity_WithShopData_Manag
 		return new Brand();
 	}
 	
+	public function renderSelectWidget( string $on_select,
+	                                    int $selected_brand_id=0,
+	                                    ?bool $only_active_filter=null,
+	                                    string $name='select_brand' ) : string
+	{
+		
+		$selected = $selected_brand_id ? Brand::get($selected_brand_id) : null;
+		
+		return Admin_Managers::UI()->renderSelectEntityWidget(
+			name: $name,
+			caption: Tr::_('... select brand ...', dictionary: $this->module_manifest->getName()),
+			on_select: $on_select,
+			entity_type: Brand::getEntityType(),
+			object_type_filter: null,
+			object_is_active_filter: $only_active_filter,
+			selected_entity_title: $selected?->getInternalName(),
+			selected_entity_edit_URL: $selected?->getEditURL()
+		);
+	}
+	
+	
+	public function renderMarketPlaceIntegrationForm( MarketplaceIntegration_Module_Controller_BrandSettings $controller ): string
+	{
+		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$view->setController( $controller );
+		
+		return $view->render('edit/marketplace/default');
+	}
+	
+	public function renderMarketPlaceIntegrationBrands( MarketplaceIntegration_Module_Controller_BrandSettings $controller, string $dialog_selected_brand ): string
+	{
+		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$view->setController( $controller );
+		$view->setVar('dialog_selected_brand', $dialog_selected_brand);
+		
+		return $view->render('edit/marketplace/dialog/brands');
+	}
 }

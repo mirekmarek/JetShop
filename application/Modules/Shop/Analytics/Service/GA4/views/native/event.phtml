@@ -1,0 +1,20 @@
+<?php
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$event = $this->getRaw('event');
+$event_data = $this->getRaw('event_data');
+
+if($event_data):
+?>
+
+<script>gtag('<?=$event?>', <?=json_encode($event_data)?>);</script>
+
+<?php else: ?>
+
+<script>gtag('<?=$event?>');</script>
+
+<?php endif;

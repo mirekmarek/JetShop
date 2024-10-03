@@ -1,0 +1,43 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI_tabsJS;
+use JetApplication\Shops_Shop;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Shops_Shop $shop
+ * @var UI_tabsJS $tabs
+ */
+
+$shop = $this->getRaw('shop');
+$tabs = $this->getRaw('tabs');
+
+if(Shops::isMultiShopMode()):
+	foreach( Shops::getList() as $shop) {
+		$tabs->tab( $shop->getKey() )->addJsAction('onclick', "UI_ShopBlock.onSelect('".$shop->getKey()."');");
+	}
+	
+	?>
+	<script>
+		
+		const UI_ShopBlock = {
+			onSelect: ( shop_key ) => {
+				Cookies.set('selected_shop_block_key', shop_key, undefined, '/');
+			},
+			
+			init: () => {
+				let tab = Cookies.get('selected_shop_block_key');
+
+				if(tab) {
+					$('.nav-tabs a[href="#' + tab + '"]').tab('show');
+				}
+			}
+		};
+		
+	</script>
+<?php
+endif;
+
+
+echo $tabs->start();

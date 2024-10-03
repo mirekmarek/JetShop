@@ -1,0 +1,113 @@
+<?php
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+use JetApplication\Admin_Managers;
+use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
+
+
+/**
+ * @var MVC_View   $this
+ * @var MarketplaceIntegration_Module_Controller_KindOfProductSettings $controller
+ */
+$controller = $this->getController();
+
+
+$kind_of_product = $controller->getKindOfProduct();
+$category_form = $controller->getCategoryForm();
+$category = $controller->getSelectedMarketplaceCategory();
+
+$category_form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 2] );
+$category_form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
+
+$dialog = UI::dialog('select_category', Tr::_('Select category'), UI_dialog::SIZE_EXTRA_LARGE);
+?>
+<script type="text/javascript">
+	let CategorySelect = {
+		openDialog: function() {
+			$('#select_category').modal('show');
+		},
+		select: function(id) {
+			$('#select_category_categories').load('<?=Http_Request::currentURI()?>&category='+id);
+		},
+
+		confirm: function (id, name) {
+			$('#cate_settings__category').val(id);
+			$('#selected_category_name').html(name);
+			$('#select_category').modal('hide');
+		}
+	};
+</script>
+
+<div class="toolbar">
+	<?=UI::button( Tr::_('Actualize list of categories'))->setClass(UI_button::CLASS_PRIMARY)->setUrl(Http_Request::currentURI(['actualize_list_of_categories'=>'1']))?>
+	<?php if($category): ?>
+		<?=UI::button( Tr::_('Actualize list of parameters'))->setClass(UI_button::CLASS_PRIMARY)->setUrl(Http_Request::currentURI(['actualize_list_of_parameters'=>'1']))?>
+	<?php endif; ?>
+</div>
+
+
+<h2><?=Tr::_('Category')?></h2>
+
+
+<?=$category_form->start()?>
+	<div class="row" style="display: flex;align-items: center;gap: 10px;margin: 20px;">
+		
+		<div>
+			<?=Tr::_('Category:')?>
+		</div>
+		<div>
+			<?=$category_form->field('category')->input()?>
+			<span id="selected_category_name" class="badge badge-light"><?=$category?->getName()?></span>
+		</div>
+		
+		<div>
+			<?=UI::button(Tr::_('Select category'))
+				->setIcon('folder-open')
+				->setClass('info')
+				->setSize(UI_button::SIZE_SMALL)
+				->setOnclick('CategorySelect.openDialog()')?>
+		</div>
+		
+		<?=UI::button_save()?>
+		
+	</div>
+<?=$category_form->end()?>
+
+	<div>
+		<?php if($category): ?>
+		<h4><?=Tr::_('Parameters')?></h4>
+		
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th style="width: 250px;"><?=Tr::_('ID')?></th>
+				<th style="width: 100px;"><?=Tr::_('Type')?></th>
+				<th style="width: 350px;"><?=Tr::_('Name')?></th>
+				<th style="width: 100px;"><?=Tr::_('Units')?></th>
+				<th></th>
+			</tr>
+			</thead>
+			<?php foreach($category->getParameters() as $param): ?>
+			<tr>
+				<td><?=$param->getMarketplaceParameterId()?></td>
+				<td><?=$param->getType()?></td>
+				<td><?=$param->getName()?></td>
+				<td><?=$param->getUnits()?></td>
+				<td></td>
+			</tr>
+			<?php endforeach; ?>
+		</table>
+		<?php endif; ?>
+	</div>
+
+<?=$dialog->start()?>
+	<div style="height: 400px;overflow: auto;" id="select_category_categories">
+		<?= Admin_Managers::KindOfProduct()->renderMarketPlaceIntegrationCategories( $controller, '' );?>
+	</div>
+<?=$dialog->end()?>
+

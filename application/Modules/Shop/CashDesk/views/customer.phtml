@@ -1,9 +1,14 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
 use JetApplication\Customer;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 
 if(

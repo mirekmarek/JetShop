@@ -24,10 +24,10 @@ $form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
 <br/>
 <?=$form->start();?>
 
-	<?=Admin_Managers::UI()->renderEntityFormCommonFields( $form );?>
+	<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityFormCommonFields( $form );?>
 
 	<?php
-	Admin_Managers::UI()->renderShopDataBlocks(
+	Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 		form: $form,
 		renderer: function( Shops_Shop $shop, string $shop_key ) use ($new_category, $form) : void {
 			?>

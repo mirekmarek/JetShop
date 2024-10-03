@@ -40,14 +40,14 @@ $icon_size = UI_icon::SIZE_SMALL;
 
 		$padding = ($node->getDepth()) * $icon_width;
 		?>
-		<div class="tree-row-container">
-			<div class="tree-row<?= $tree->getSelectedId() == $node->getId() ? ' selected' : '' ?>">
-				<div class="tree-row-icon-container" style="padding-left: <?= $padding; ?>px;">
-					<?= UI::icon( $icon )->setSize( $icon_size )?>
-				</div>
-				<div class="tree-row-node-container"><?= $display_callback( $node, $node->getData() ); ?></div>
+
+		<div class="tree-row tree-level-<?=$node->getDepth()?> <?= $tree->getSelectedId() == $node->getId() ? 'selected' : '' ?>">
+			<div class="tree-icon">
+				<?= UI::icon( $icon )->setSize( $icon_size )?>
 			</div>
+			<div class="tree-label"><?= $display_callback( $node, $node->getData() ); ?></div>
 		</div>
+
 
 	<?php endforeach; ?>
 </div>

@@ -51,6 +51,30 @@ abstract class Core_Product_SetItem extends DataModel_Related_1toN
 		type: DataModel::TYPE_INT
 	)]
 	protected int $sort_order = 0;
+	
+	
+	public static function getSetIds( int $regular_product_id ) : array
+	{
+		return static::dataFetchCol(
+			select: ['product_id'],
+			where: [
+				'item_product_id' => $regular_product_id
+			],
+			group_by: ['product_id'],
+			raw_mode: true
+		);
+	}
+	
+	/**
+	 * @param int $product_id
+	 * @return static[]
+	 */
+	public static function getProductSetItems( int $product_id ) : array
+	{
+		return static::fetch(['products_set_items'=>[
+			'product_id' => $product_id
+		]]);
+	}
 
 	public function getArrayKeyValue() : string
 	{

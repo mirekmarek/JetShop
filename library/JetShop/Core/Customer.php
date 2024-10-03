@@ -10,16 +10,14 @@ use Jet\Form_Field;
 use Jet\Form_Definition;
 use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
-use Jet\Mailing_Email_Template;
 use Jet\DataModel_Query;
 
 use JetApplication\Customer_Address;
 use JetApplication\Customer;
+use JetApplication\EMailMarketing;
 use JetApplication\Entity_WithShopRelation;
 use JetApplication\Shops;
-use JetApplication\Customer_AuthController;
-use JetApplication\Customer_MailingSubscribe_Log;
-use JetApplication\Customer_MailingSubscribe;
+use JetApplication\EMailMarketing_Subscribe;
 use JetApplication\Shops_Shop;
 
 
@@ -27,7 +25,7 @@ use JetApplication\Shops_Shop;
 	name: 'customer',
 	database_table_name: 'customers',
 	relation: [
-		'related_to_class_name' => Core_Customer_Address::class,
+		'related_to_class_name' => Customer_Address::class,
 		'join_by_properties' => [
 			'id' => 'customer_id'
 		],
@@ -164,14 +162,6 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		]
 	)]
 	protected string $phone_number = '';
-
-	/**
-	 * @var bool
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-	)]
-	protected bool $mailing_subscribed = false;
 
 	/**
 	 * @var int
@@ -346,11 +336,11 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		$old_email = $this->email;
 
 		$this->email = $new_email;
-		//TODO: log change ...
 		$this->save();
 
-		Customer_MailingSubscribe::changeMail($this->getShop(), $old_email, $new_email, $source, $comment);
-		//TODO: orders ...
+		EMailMarketing::SubscriptionManager()->changeMail(
+			$this->getShop(), $old_email, $new_email, $source, $comment
+		);
 	}
 
 
@@ -368,7 +358,14 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 	public function setFirstName( string $first_name ) : void
 	{
+		if($first_name==$this->first_name) {
+			return;
+		}
 		$this->first_name = $first_name;
+		
+		if(!$this->getIsNew()) {
+			$this->save();
+		}
 	}
 
 	public function getSurname() : string
@@ -378,7 +375,14 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 	public function setSurname( string $surname ) : void
 	{
+		if($surname==$this->surname) {
+			return;
+		}
+		
 		$this->surname = $surname;
+		if(!$this->getIsNew()) {
+			$this->save();
+		}
 	}
 
 	public function getDescription() : string
@@ -486,32 +490,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 			'username' => $username,
 		] ) );
 	}
-
-	public function resetPassword() : void
-	{
-
-		$password = static::generatePassword();
-
-		$this->setPassword( $password );
-		$this->setPasswordIsValid( false );
-		$this->save();
-
-		$email_template = new Mailing_Email_Template(
-			template_id: 'user_password_reset',
-			locale: $this->getLocale()
-		);
-
-		$email_template->setVar('user', $this);
-		$email_template->setVar('password', $password);
-
-
-		$email = $email_template->getEmail();
-		$email->setTo( $this->getEmail() );
-		$email->send();
-
-	}
-
-
+	
 	public static function generatePassword() : string
 	{
 		srand();
@@ -529,15 +508,6 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		}
 
 		return $password;
-	}
-
-	public function verifyPasswordStrength( string $password ) : bool
-	{
-		if( strlen( $password )<5 ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	public function _getForm() : Form
@@ -563,24 +533,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		return $form;
 	}
 	
-
-
-	public function sendWelcomeEmail( string $password ) : void
-	{
-		$email_template = new Mailing_Email_Template(
-			template_id: 'user_welcome',
-			locale: $this->getLocale()
-		);
-
-		$email_template->setVar('user', $this);
-		$email_template->setVar('password', $password);
-
-		$email = $email_template->getEmail();
-		$email->setTo( $this->getEmail() );
-		$email->send();
-
-	}
-
+	
 	/**
 	 * @param Data_DateTime|string|null $value
 	 */
@@ -627,7 +580,14 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 	 */
 	public function setPhoneNumber( string $value ) : void
 	{
+		if($value==$this->phone_number) {
+			return;
+		}
+		
 		$this->phone_number = $value;
+		if(!$this->getIsNew()) {
+			$this->save();
+		}
 	}
 
 	/**
@@ -637,57 +597,14 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 	{
 		return $this->phone_number;
 	}
-
-	public function mailingSubscribe( string $source, string $comment='' ) : void
-	{
-		if($this->mailing_subscribed) {
-			return;
-		}
-
-		Customer_MailingSubscribe::subscribe(
-			shop: $this->getShop(),
-			email_address: $this->getEmail(),
-			source: $source,
-			customer_id: $this->getId(),
-			comment: $comment
-		);
-
-		$this->mailing_subscribed = true;
-		$this->save();
-	}
-
-	/**
-	 * @return Customer_MailingSubscribe_Log[]
-	 */
-	public function getMailingSubscribeEventLog() : iterable
-	{
-		return Customer_MailingSubscribe_Log::getList( $this->getShop(), $this->getEmail() );
-	}
-
-	public function mailingUnsubscribe( string $source, string $comment='' ) : void
-	{
-		if(!$this->mailing_subscribed) {
-			return;
-		}
-
-		Customer_MailingSubscribe::unsubscribe(
-			shop: $this->getShop(),
-			email_address: $this->getEmail(),
-			source: $source,
-			customer_id: $this->getId(),
-			comment: $comment
-		);
-
-		$this->mailing_subscribed = false;
-		$this->save();
-	}
+	
 
 	/**
 	 * @return bool
 	 */
 	public function getMailingSubscribed() : bool
 	{
-		return $this->mailing_subscribed;
+		return (bool)EMailMarketing_Subscribe::get( $this->getShop(), $this->email );
 	}
 
 	/**
@@ -740,17 +657,11 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 	public static function getCurrentCustomer() : ?Customer
 	{
+		/**
+		 * @var ?Customer $user
+		 */
 		$user = Auth::getCurrentUser();
-		if(
-			!($user instanceof Customer)
-		) {
-			return null;
-		}
-
-		if(
-			$user->isBlocked() ||
-			$user->getShop()->getKey()!=Shops::getCurrentKey()
-		) {
+		if(!$user) {
 			return null;
 		}
 
@@ -763,7 +674,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 			$shop = Shops::getCurrent();
 		}
 
-		$customers = Customer::fetch([
+		$customers = static::fetch([
 			'customer' => [
 				'email' => $email_address,
 				'AND',
@@ -777,18 +688,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 		return $customers[0];
 	}
-
-	public function login() : void
-	{
-		/**
-		 * @var Customer $this
-		 * @var Customer_AuthController $auth_controller
-		 */
-		$auth_controller = Auth::getController();
-
-		$auth_controller->loginCustomer( $this );
-	}
-
+	
 	/**
 	 * @return Customer_Address[]
 	 */
@@ -832,11 +732,17 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 			return;
 		}
 		
+		$address->setId( 0 );
 		$address->setCustomerId( $this->id );
 
 		$address->save();
 		
 		$this->_addresses = null;
+		
+		if(!$this->getDefaultAddress()) {
+			$address->setIsDefault();
+		}
+		
 	}
 	
 	public function getDefaultAddress() : ?Customer_Address
@@ -849,4 +755,24 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 
 		return null;
 	}
+	
+	public function getAdminTitle(): string
+	{
+		return $this->getName();
+	}
+	
+	public static function verifyPasswordStrength( string $password ): bool
+	{
+		return true;
+	}
+	
+	public static function getByOAuth( string $oauth_service, string $oauth_key ): static|null
+	{
+		return static::load( [
+			'oauth_service' => $oauth_service,
+			'AND',
+			'oauth_key' => $oauth_key
+		] );
+	}
+	
 }

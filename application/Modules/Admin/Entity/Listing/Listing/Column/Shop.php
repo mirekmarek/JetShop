@@ -28,13 +28,23 @@ class Listing_Column_Shop extends Listing_Column_Abstract
 	
 	public function initializer( UI_dataGrid_column $column ) : void
 	{
-		$column->addCustomCssStyle( 'width:150px;' );
+		$column->addCustomCssStyle( 'width:100px;' );
 	}
 	
 	
 	public function getExportHeader(): string
 	{
 		return Tr::_('Shop');
+	}
+	
+	public function getOrderByAsc(): array|string
+	{
+		return '+shop_code';
+	}
+	
+	public function getOrderByDesc(): array|string
+	{
+		return '-shop_code';
 	}
 	
 	public function getExportData( mixed $item ): string
@@ -44,6 +54,5 @@ class Listing_Column_Shop extends Listing_Column_Abstract
 		 */
 		return $item->getShopKey();
 	}
-	
 	
 }

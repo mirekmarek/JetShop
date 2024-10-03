@@ -1,0 +1,43 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+if(!$complaint->isEditable()) {
+	return;
+}
+$dialog = new UI_dialog( 'dispatch_new_goods_dialog', Tr::_('Done - accepted'), UI_dialog::SIZE_LARGE );
+
+echo $dialog->start();
+?>
+<div id="dispatch_new_goods_form_area">
+	<?php
+	require 'form.phtml';
+	?>
+</div>
+<?php
+echo $dialog->end();
+?>
+<script>
+	const DispatchNewGoods = {
+		send: () => {
+			JetAjaxForm.submit('dispatch_new_goods_form', {
+				onSuccess: () => {
+					location.reload();
+				}
+			})
+		}
+	};
+</script>

@@ -1,0 +1,27 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Content\InfoPages;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+
+ * @var InfoPage $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<div style="display: flex;align-items: center">
+	<div><?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $item )?></div>
+	<div style="padding-left: 10px;"><?=$item->getPageId();?></div>
+</div>
+
+
+<?php

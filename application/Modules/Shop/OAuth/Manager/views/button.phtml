@@ -1,0 +1,22 @@
+<?php
+namespace JetApplicationModule\Shop\OAuth\Manager;
+
+use Jet\MVC;
+use Jet\MVC_View;
+use JetApplication\Shop_OAuth_BackendModule;
+
+/**
+ * @var MVC_View   $this
+ * @var Shop_OAuth_BackendModule $module
+ */
+$module = $this->getRaw('module');
+?>
+
+<form method="post" action="<?=$module->getHandlerUrl()?>">
+	<input type="hidden" name="login" value=""/>
+	<input type="hidden" name="redirect_page_id" value="<?=MVC::getPage()->getId()?>"/>
+	<input type="hidden" name="path_fragments" value="<?=MVC::getRouter()->getUsedUrlPath()?>"/>
+	
+	<?=$module->_renderLoginButton()?>
+	
+</form>

@@ -17,10 +17,11 @@ $shop_key = $shop->getKey();
 ?>
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
-	
-	<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
+	<?=$form->field('/shop_data/'.$shop_key.'/length_of_delivery_in_working_days')?>
+	<?=$form->field('/shop_data/'.$shop_key.'/carrier_service_code')?>
+	<?=$form->field('/shop_data/'.$shop_key.'/allowed_delivery_point_types')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/discount_is_not_allowed')?>
+	<?=$form->field('/shop_data/'.$shop_key.'/free_delivery_limit')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/title')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/description')?>

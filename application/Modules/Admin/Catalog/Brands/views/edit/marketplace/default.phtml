@@ -1,0 +1,80 @@
+<?php
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+use JetApplication\Admin_Managers;
+use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
+
+
+/**
+ * @var MVC_View   $this
+ * @var MarketplaceIntegration_Module_Controller_BrandSettings $controller
+ */
+$controller = $this->getController();
+
+
+$brand = $controller->getBrand();
+$brand_form = $controller->getBrandForm();
+$selected_mp_brand = $controller->getSelectedMarketplaceBrand();
+
+$brand_form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 2] );
+$brand_form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
+
+$dialog = UI::dialog('select_brand', Tr::_('Select brad'), UI_dialog::SIZE_EXTRA_LARGE);
+?>
+<script type="text/javascript">
+	let BrandSelect = {
+		openDialog: function() {
+			$('#select_brand').modal('show');
+		},
+
+		select: function (id, name) {
+			$('#brand_settings__brand').val(id);
+			$('#selected_brand_name').html(name);
+			$('#select_brand').modal('hide');
+		}
+	};
+</script>
+
+<div class="toolbar">
+	<?=UI::button( Tr::_('Actualize list of brands'))->setClass(UI_button::CLASS_PRIMARY)->setUrl(Http_Request::currentURI(['actualize_list_of_brands'=>'1']))?>
+</div>
+
+
+<h2><?=Tr::_('Brand')?></h2>
+
+
+<?=$brand_form->start()?>
+	<div class="row" style="display: flex;align-items: center;gap: 10px;margin: 20px;">
+		
+		<div>
+			<?=Tr::_('Brand:')?>
+		</div>
+		<div>
+			<?=$brand_form->field('brand')->input()?>
+			<span id="selected_brand_name" class="badge badge-light"><?=$selected_mp_brand?->getName()?></span>
+		</div>
+		
+		<div>
+			<?=UI::button(Tr::_('Select brand'))
+				->setIcon('folder-open')
+				->setClass('info')
+				->setSize(UI_button::SIZE_SMALL)
+				->setOnclick('BrandSelect.openDialog()')?>
+		</div>
+		
+		<?=UI::button_save()?>
+		
+	</div>
+<?=$brand_form->end()?>
+
+<?=$dialog->start()?>
+	<div style="height: 400px;overflow: auto;" id="select_brand_categories">
+		<?= Admin_Managers::Brand()->renderMarketPlaceIntegrationBrands( $controller, '' );?>
+	</div>
+<?=$dialog->end()?>
+

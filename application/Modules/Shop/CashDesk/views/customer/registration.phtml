@@ -1,7 +1,13 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
-$cash_desk = CashDesk::get();
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 if($cash_desk->getNoRegistration()):
 	require 'registration/no_registration.phtml';

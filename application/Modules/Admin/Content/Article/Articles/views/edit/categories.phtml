@@ -1,0 +1,102 @@
+<?php
+namespace JetApplicationModule\Admin\Content\Article\Articles;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Controller_Main $controller
+ * @var Article $article
+ */
+$controller = $this->getController();
+$editable = $this->getBool( 'editable' );
+$article = $this->getRaw('item');
+
+echo $this->controller->getEditorManager()->renderToolbar(
+	toolbar_renderer: function() {
+		require 'toolbar.phtml';
+	}
+);
+
+$c_manager = Admin_Managers::Category();
+
+echo $this->getRaw('tabs');
+?>
+<div class="toolbar">
+	<?php if($editable): ?>
+		<div style="padding-left: 20px;">
+			<?=UI::icon('plus')?>
+			<?=Tr::_('Add category:')?>
+		</div>
+		<div style="width: 400px;">
+			<?=Admin_Managers::Category()->renderSelectWidget(
+				on_select: "location='".Http_Request::currentURI()."&add_category='+selected_item.id",
+			)?>
+		</div>
+	<?php endif; ?>
+</div>
+
+<div id="main-col">
+<div id="categories_sort_area">
+	<?php foreach( $article->getCategoryIds() as $c_id): ?>
+		<div
+			class="sort_item"
+			style="display: grid;grid-template-columns: 30px 200px 1fr 40px;align-items: center;gap: 5px;padding:5px;border-bottom: 1px solid #c9c9c9;"
+			data-id="<?=$c_id?>"
+		>
+			<div>
+				<?php if($editable):
+					echo UI::icon('arrows-v');
+				endif; ?>
+			
+			</div>
+			
+			<div><?=$c_manager->showActiveState($c_id)?></div>
+			<div><?=$c_manager->showName($c_id)?></div>
+			<div>
+				<?php if($editable): ?>
+					<?=UI::button_delete(' ')
+						->setUrl(Http_Request::currentURI(set_GET_params: ['remove_category'=>$c_id]))
+					?>
+				<?php endif; ?>
+			</div>
+		</div>
+	<?php endforeach; ?>
+</div>
+</div>
+
+<?php if($editable): ?>
+	<script>
+		const ArticleCategories = {
+			init: () => {
+				$('#categories_sort_area')['sortable']({
+					//revert: true,
+					stop: function() {
+
+						let items = [];
+
+						$('#categories_sort_area').find('.sort_item').each(function ( i, item ) {
+							items.push( $(item).data('id') );
+						});
+
+						items = items.join(',');
+
+						$.ajax({
+							url: '<?=Http_Request::currentURI(['sort_categories'=>''])?>'+items,
+							success: function( response ) {
+							}
+						});
+					}
+				});
+
+			}
+		};
+
+		ArticleCategories.init();
+	</script>
+
+<?php endif; ?>

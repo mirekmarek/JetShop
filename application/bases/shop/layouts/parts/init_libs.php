@@ -1,19 +1,33 @@
 <?php
 use Jet\MVC_Layout;
 use Jet\SysConf_URI;
+use JetApplication\Shop_Managers;
 
 /**
  * @var MVC_Layout $this
  */
 
-$this->requireMainCssFile( 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' );
-$this->requireMainCssFile( 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' );
-$this->requireMainCssFile( SysConf_URI::getCss().'flags.css' );
+Shop_Managers::MagicTags()?->init();
+
+
 $this->requireMainCssFile( SysConf_URI::getCss().'shop/main.css?v=1' );
 
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/btn.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/forms.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/dialog.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/breadcrumb.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/pagination.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/alerts.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/tabs.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/cards.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/table.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/availability.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/icon.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/ui/oauth.css?v=1' );
 
-$this->requireMainJavascriptFile( 'https://code.jquery.com/jquery-3.5.1.js' );
-$this->requireMainJavascriptFile( 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js' );
-$this->requireMainJavascriptFile( 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js' );
-$this->requireMainJavascriptFile( 'https://code.jquery.com/ui/1.11.4/jquery-ui.js' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/catalog.css?v=1' );
+$this->requireMainCssFile( SysConf_URI::getCss().'shop/cash-desk.css?v=1' );
+
+$this->requireMainJavascriptFile( SysConf_URI::getJs().'shop/ui.js?v=1' );
 $this->requireMainJavascriptFile( SysConf_URI::getJs().'JetAjaxForm.js?v=1' );
+

@@ -5,7 +5,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Logger;
 use JetApplication\Entity_Basic;
+use JetApplication\FulltextSearch_IndexDataProvider;
 
 #[DataModel_Definition]
 abstract class Core_Entity_Common extends Entity_Basic
@@ -52,6 +54,25 @@ abstract class Core_Entity_Common extends Entity_Basic
 	
 	
 	protected static array $scope = [];
+	
+	
+	protected static array $loaded_items = [];
+	
+	
+	public static function get( int $id ) : ?static
+	{
+		$key = get_called_class().':'.$id;
+		
+		if(!array_key_exists($key, static::$loaded_items)) {
+			$where['id'] = $id;
+			
+			static::$loaded_items[ $key ] = static::load( $where );
+		}
+		
+		
+		return static::$loaded_items[ $key ];
+	}
+	
 	
 	public function isActive() : bool
 	{
@@ -132,17 +153,88 @@ abstract class Core_Entity_Common extends Entity_Basic
 		return [0=>'']+static::getScope();
 	}
 	
+	
+	public function getAdminTitle() : string
+	{
+		$code = $this->internal_code?:$this->id;
+		
+		return $this->internal_name.' ('.$code.')';
+	}
+	
 	public function activate() : void
 	{
+		if($this->is_active) {
+			return;
+		}
+		
 		$this->is_active = true;
 		static::updateData(data: ['is_active'=>$this->is_active], where: ['id'=>$this->id]);
+		
+		$entity_type = $this->getEntityType();
+		
+		Logger::success(
+			event: 'entity_activated:'.$entity_type,
+			event_message: 'Entity '.$entity_type.' \''.$this->getInternalName().'\' ('.$this->id.') activated',
+			context_object_id: $this->id,
+			context_object_name: $this->getAdminTitle()
+		);
+		
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->updateFulltextSearchIndex();
+		}
+		
 	}
 	
 	public function deactivate() : void
 	{
+		if(!$this->is_active) {
+			return;
+		}
+		
 		$this->is_active = false;
 		static::updateData(data: ['is_active'=>$this->is_active], where: ['id'=>$this->id]);
-
+		
+		$entity_type = $this->getEntityType();
+		
+		Logger::success(
+			event: 'entity_deactivated:'.$entity_type,
+			event_message: 'Entity '.$entity_type.' \''.$this->getInternalName().'\' ('.$this->getId().') deactivated',
+			context_object_id: $this->getId(),
+			context_object_name: $this->getAdminTitle()
+		);
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->updateFulltextSearchIndex();
+		}
+	}
+	
+	public function afterAdd(): void
+	{
+		parent::afterAdd();
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->updateFulltextSearchIndex();
+		}
+	}
+	
+	public function afterUpdate(): void
+	{
+		parent::afterAdd();
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->updateFulltextSearchIndex();
+		}
+	}
+	
+	
+	public function afterDelete(): void
+	{
+		parent::afterAdd();
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->removeFulltextSearchIndex();
+		}
 	}
 	
 }

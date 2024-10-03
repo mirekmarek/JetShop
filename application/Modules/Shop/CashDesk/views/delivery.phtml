@@ -7,9 +7,9 @@ use Jet\MVC_View;
 
 /**
  * @var MVC_View $this
+ * @var CashDesk $cash_desk
  */
-
-$cash_desk = CashDesk::get();
+$cash_desk = $this->getRaw('cash_desk');
 
 if($cash_desk->getCurrentStep()!=CashDesk::STEP_DELIVERY):
 	require 'delivery/has_been_selected.phtml';

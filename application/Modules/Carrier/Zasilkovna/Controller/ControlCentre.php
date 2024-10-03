@@ -1,0 +1,52 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Carrier\Zasilkovna;
+
+use Exception;
+use Jet\Http_Headers;
+use Jet\Tr;
+use Jet\UI_messages;
+use JetApplication\Admin_ControlCentre_Module_Controller;
+
+class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
+
+	public function default_Action() : void
+	{
+		$shop = $this->getShop();
+		/**
+		 * @var Main $module
+		 */
+		$module = $this->getModule();
+		
+		$shop_config = $module->getShopConfig( $shop );
+		
+		$form = $shop_config->getForm( $module, $shop );
+		
+		if( $form->catch() ) {
+
+			$ok = true;
+			try {
+				$shop_config->saveConfigFile();
+			} catch( Exception $e ) {
+				$ok = false;
+				UI_messages::danger( Tr::_('Error during configuration saving: ').$e->getMessage(), context: 'CC' );
+			}
+			
+			if($ok) {
+				UI_messages::success( Tr::_('Configuration has been saved'), context: 'CC' );
+			}
+			
+			Http_Headers::reload();
+		}
+		
+		$this->view->setVar('config', $shop_config);
+		$this->view->setVar('form', $form);
+		
+		$this->output('control-centre/default');
+	}
+}

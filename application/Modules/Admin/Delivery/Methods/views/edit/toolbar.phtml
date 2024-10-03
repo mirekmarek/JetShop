@@ -1,0 +1,60 @@
+<?php
+namespace JetApplicationModule\Admin\Delivery\Methods;
+
+use Jet\Tr;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+use Jet\UI_tabs;
+use Jet\Form;
+use JetApplication\Delivery_Method;
+use JetApplication\Pricelists;
+
+/**
+ * @var MVC_View $this
+ * @var Delivery_Method $item
+ * @var UI_tabs $tabs
+ * @var Form $set_price_form
+ * @var Form $set_availability_form
+ */
+
+$item = $this->getRaw('item');
+$tabs = $this->getRaw('tabs');
+
+$set_price_form = $this->getRaw('set_price_form');
+
+if($set_price_form):
+	
+	echo UI::button( Tr::_('Set price'))
+		->setClass(UI_button::CLASS_DANGER)
+		->setOnClick("$('#set_price_dialog').modal('show')");
+	
+	
+	$set_price_dialog = UI::dialog('set_price_dialog', Tr::_('Set price'), UI_dialog::SIZE_DEFAULT );
+	
+	echo $set_price_dialog->start();
+	echo $set_price_form->start();
+	
+	foreach(Pricelists::getList() as $pricelist):
+		?>
+		<fieldset>
+			<?php if(count(Pricelists::getList())>1): ?>
+				<legend><?=$pricelist->getName()?></legend>
+			<?php endif; ?>
+			<?php
+			$field_name_prefix = '/'.$pricelist->getCode().'/';
+			
+			echo $set_price_form->field( $field_name_prefix.'vat_rate' );
+			echo $set_price_form->field( $field_name_prefix.'default_price' );
+			?>
+		</fieldset>
+	<?php endforeach;
+	
+	
+	echo $set_price_dialog->footer();
+	echo UI::button_save( Tr::_('Set') );
+	echo $set_price_form->end();
+	echo $set_price_dialog->end();
+endif;
+

@@ -9,18 +9,24 @@ trait CashDesk_Discounts
 	/**
 	 * @var Discounts_Discount[]
 	 */
-	protected array $discounts = [];
+	protected ?array $discounts = null;
 	
 	/**
 	 * @return Discounts_Discount[]
 	 */
-	public function getDiscounts() : array
+	public function getDiscounts( bool $reset = false ) : array
 	{
-		$this->discounts = [];
+		if($reset) {
+			$this->discounts = null;
+		}
 		
-		$d_manager = Discounts::Manager();
-		$d_manager->generateDiscounts( $this );
-		$d_manager->checkDiscounts( $this );
+		if($this->discounts===null) {
+			$this->discounts = [];
+			
+			$d_manager = Discounts::Manager();
+			$d_manager->generateDiscounts( $this );
+			$d_manager->checkDiscounts( $this );
+		}
 		
 		return $this->discounts;
 	}

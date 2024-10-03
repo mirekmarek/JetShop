@@ -805,15 +805,15 @@ class Auth_Visitor_User extends DataModel implements Auth_User_Interface
 		$this->setPasswordIsValid( false );
 		$this->save();
 
-		$email_template = new Mailing_Email_Template(
+		$EMail_TemplateText = new Mailing_Email_Template(
 			template_id: 'visitor/user_password_reset',
 			locale: $this->getLocale()
 		);
 
-		$email_template->setVar( 'user', $this );
-		$email_template->setVar( 'password', $password );
+		$EMail_TemplateText->setVar( 'user', $this );
+		$EMail_TemplateText->setVar( 'password', $password );
 
-		$email = $email_template->getEmail();
+		$email = $EMail_TemplateText->getEmail();
 		$email->setTo( $this->getEmail() );
 		$email->send();
 
@@ -1121,15 +1121,15 @@ class Auth_Visitor_User extends DataModel implements Auth_User_Interface
 	 */
 	public function sendWelcomeEmail( string $password ): void
 	{
-		$email_template = new Mailing_Email_Template(
+		$EMail_TemplateText = new Mailing_Email_Template(
 			template_id: 'visitor/user_welcome',
 			locale: $this->getLocale()
 		);
 
-		$email_template->setVar( 'user', $this );
-		$email_template->setVar( 'password', $password );
+		$EMail_TemplateText->setVar( 'user', $this );
+		$EMail_TemplateText->setVar( 'password', $password );
 
-		$email = $email_template->getEmail();
+		$email = $EMail_TemplateText->getEmail();
 		$email->setTo( $this->getEmail() );
 		$email->send();
 

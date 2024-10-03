@@ -2,7 +2,6 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use Jet\Logger;
 use Jet\UI_messages;
 
 use Jet\Http_Headers;
@@ -25,14 +24,7 @@ trait Controller_Main_Edit_Parameters
 		$this->view->setVar('item', $product);
 		
 		if( $product->catchParametersEditForm() ) {
-			Logger::success(
-				'product_updated',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-			
+
 			UI_messages::success(
 				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
 			);

@@ -1,0 +1,21 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\OrderDispatch\Overview;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var OrderDispatch $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=$item->getTrackingNumber()?>
+<br>
+<a href="<?=$item->getTrackingURL()?>" target="_blank"><?=$item->getTrackingURL()?></a>

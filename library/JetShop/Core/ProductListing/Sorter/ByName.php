@@ -28,9 +28,13 @@ abstract class Core_ProductListing_Sorter_ByName extends ProductListing_Sorter
 	
 	public function sort( array $product_ids ): array
 	{
+		$where = $this->listing->getShop()->getWhere();
+		
 		return Product_ShopData::dataFetchCol(
 			select: ['entity_id'],
 			where: [
+				$where,
+				'AND',
 				'entity_id' => $product_ids,
 			],
 			order_by: ['name'],

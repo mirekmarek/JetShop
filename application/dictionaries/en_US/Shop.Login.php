@@ -5,6 +5,8 @@ return [
 	'Please enter password' => '',
 	'E-mail' => '',
 	'Password' => '',
-	'I forget my password' => '',
 	'Reset password' => '',
+	'I forget my password' => '',
+	'Incorrect e-mail or password' => '',
+	'Sign out' => '',
 ];

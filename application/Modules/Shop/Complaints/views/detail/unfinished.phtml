@@ -1,0 +1,52 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use JetApplication\Complaint;
+use JetApplication\Product_ShopData;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $edit_form
+ * @var Product_ShopData $product
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+$edit_form = $this->getRaw('form');
+$product = $complaint->getProduct();
+$edit_form->field('problem_description')->input()->addCustomCssStyle('width:800px;height:300px');
+$edit_form->field('problem_description')->input()->addJsAction('onblur', "JetAjaxForm.submit(this.form.id)");
+
+?>
+<div class="card" style="margin: 10px;">
+	<div class="card-body">
+		<h5 class="card-title"><?=Tr::_('Finish complaint')?></h5>
+		
+		
+		<div style="display: grid;grid-template-columns: 60px 1fr;gap: 5px;margin: 10px;align-items: center;margin-bottom: 20px;">
+			<div>
+				<?php if($product->getImg(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+		</div>
+		
+		<?=$edit_form->start()?>
+		<div style="display: grid;;gap:10px;grid-template-columns: 800px;margin: 10px;">
+			<?=$edit_form->field('problem_description')?>
+		</div>
+		<?=$edit_form->end()?>
+		
+		<?=$this->render('detail/edit/images')?>
+		
+		<div id="finish-btn">
+			<?=$this->render('detail/unfinished/finish-btn');?>
+		</div>
+	</div>
+</div>
+
+

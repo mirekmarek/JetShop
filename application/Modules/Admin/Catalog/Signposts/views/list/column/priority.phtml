@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Signposts;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Signpost $item
+ */
+
+$item = $this->getRaw('item');
+
+echo $item->getPriority();

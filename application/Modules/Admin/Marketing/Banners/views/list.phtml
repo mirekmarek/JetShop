@@ -1,0 +1,173 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\Banners;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Marketing_BannerGroup;
+
+/**
+ * @var MVC_View  $this
+ * @var Banner[]  $list
+ * @var Marketing_BannerGroup $group
+ */
+
+$list = $this->getRaw('list');
+
+$group = $this->getRaw('selected_group');
+
+$editable = Main::getCurrentUserCanEdit();
+
+$showValidFrom = function( Banner $item ) {
+	if($item->isActiveByTimePlan()) {
+		$class = 'active';
+	} else {
+		if($item->isWaitingByTimePlan()) {
+			$class = 'waiting';
+		} else {
+			$class = 'expired';
+		}
+	}
+	
+	
+	if(!$item->getActiveFrom()):
+		?>
+		<div class="time-interval time-interval-<?=$class?>"><?=Tr::_('Unlimited')?></div>
+		<?php
+		return;
+	endif;
+	?>
+	<div class="time-interval time-interval-<?=$class?>"><?=Locale::dateAndTime( $item->getActiveFrom() )?></div>
+	<?php
+};
+
+$showValidTill = function( Banner $item ) {
+	if($item->isActiveByTimePlan()) {
+		$class = 'active';
+	} else {
+		if($item->isWaitingByTimePlan()) {
+			$class = 'waiting';
+		} else {
+			$class = 'expired';
+		}
+	}
+	
+	
+	if(!$item->getActiveTill()):
+		?>
+		<div class="time-interval time-interval-<?=$class?>"><?=Tr::_('Unlimited')?></div>
+		<?php
+		return;
+	endif;
+	?>
+	<div class="time-interval time-interval-<?=$class?>"><?=Locale::dateAndTime( $item->getActiveTill() )?></div>
+	<?php
+	
+};
+
+$media_size_mtp = 0.4;
+
+require 'select.phtml';
+?>
+<div class="toolbar">
+	<?php if(Main::getCurrentUserCanCreate()): ?>
+		<?=UI::button_create( Tr::_('Create') )->setClass(UI_button::CLASS_SUCCESS)->setUrl( Http_Request::currentURI(['create'=>1]) )?>
+	<?php endif; ?>
+</div>
+
+<div id="banners">
+	<?php foreach($list as $banner):
+		
+		$edit_URL = Http_Request::currentURI(set_GET_params: ['id'=>$banner->getId()]);
+		?>
+	<div class="sort_item card card-body"
+	     data-id="<?=$banner->getId()?>"
+	     style="display: grid;grid-template-columns: 20px 60px 200px 100px 250px 1fr 30px;align-items: center;margin: 10px;">
+		<div>
+			<?php if($editable):
+				echo UI::icon('arrows-v');
+			endif; ?>
+		</div>
+		
+		<div>
+			<a href="<?=$edit_URL?>"><?=$banner->getId()?></a>
+		</div>
+		<div>
+			<a href="<?=$edit_URL?>"><?=$banner->getAdminTitle()?></a>
+		</div>
+		<div>
+			<?php  if($banner->isActive()):
+				?><span class="badge badge-success"> <?=Tr::_('Active')?> </span> <?php
+			else:
+				?><span class="badge badge-danger"><?=Tr::_('Inactive')?></span> <?php
+			endif; ?>
+		</div>
+		<div>
+			<?php $showValidFrom($banner)?>
+			<?php $showValidTill($banner)?>
+		</div>
+		
+		<div style="padding: 10px;">
+			<?php if($banner->getImageMain()): ?>
+			<img src="<?=$banner->getImageMainURI()?>" style="width: <?=$group->getMainImageW()*$media_size_mtp?>px;height: <?=$group->getMobileImageH()*$media_size_mtp?>px;"/>
+			<?php endif; ?>
+			
+			<?php if($banner->getImageMobile()): ?>
+				<img src="<?=$banner->getImageMobileURI()?>" style="width: <?=$group->getMobileImageW()*$media_size_mtp?>px;height: <?=$group->getMobileImageH()*$media_size_mtp?>px;"/>
+			<?php endif; ?>
+			
+			<?php if($banner->getVideoMain()): ?>
+				<video style="width: <?=$group->getMainVideoW()*$media_size_mtp?>px;height: <?=$group->getMainVideoH()*$media_size_mtp?>px;" controls>
+					<source src="<?=$banner->getVideoMainURI()?>">
+				</video>
+			<?php endif; ?>
+			
+			<?php if($banner->getVideoMobile()): ?>
+				<video style="width: <?=$group->getMobileVideoW()*$media_size_mtp?>px;height: <?=$group->getMobileVideoH()*$media_size_mtp?>px;" controls>
+					<source src="<?=$banner->getVideoMobileURI()?>">
+				</video>
+			<?php endif; ?>
+			
+		</div>
+		
+		<div style="text-align: right">
+			<?php if(Main::getCurrentUserCanDelete()):?>
+			<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['id'=>$banner->getId(), 'action'=>'delete']) )?>
+			<?php endif; ?>
+		</div>
+	
+	</div>
+	<?php endforeach; ?>
+</div>
+	
+	
+	<?php if($editable): ?>
+	<script>
+		const Banners = {
+			init: () => {
+				$('#banners')['sortable']({
+					//revert: true,
+					stop: function() {
+
+						let items = [];
+
+						$('#banners').find('.sort_item').each(function ( i, item ) {
+							items.push( $(item).data('id') );
+						});
+
+						items = items.join(',');
+
+						fetch('<?=Http_Request::currentURI()?>&sort='+items);
+					}
+				});
+			}
+		};
+
+		Banners.init();
+	</script>
+
+<?php endif; ?>
+

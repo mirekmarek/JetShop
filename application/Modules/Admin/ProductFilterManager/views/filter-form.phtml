@@ -1,0 +1,56 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+?>
+
+	<div id="form-area">
+		<div class="card">
+			<div class="card-header"><?=Tr::_('Basic')?></div>
+			<div class="card-body">
+				<?php require 'form/basic.phtml'; ?>
+			</div>
+		</div>
+		
+		<br><br>
+
+		<div class="card">
+			<div class="card-header"><?=Tr::_('Brands')?></div>
+
+			<div class="card-body">
+				<?php require 'form/brands.phtml'; ?>
+			</div>
+		</div>
+
+		<br><br>
+
+		<div class="card">
+			<div class="card-header"><?=Tr::_('Categories')?></div>
+
+			<div class="card-body">
+				<?php require 'form/categories.phtml'; ?>
+			</div>
+		</div>
+
+		<br><br>
+		<div class="card">
+		<div class="card-header"><?=Tr::_('Properties')?></div>
+	
+		<div class="card-body" id="filter_form_properties">
+			<?php require 'form/properties.phtml'; ?>
+		</div>
+
+		<br><br><br><br><br><br>
+	</div>
+
+
+<?php require 'js.phtml'; ?>

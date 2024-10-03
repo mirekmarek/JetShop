@@ -1,0 +1,48 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+if(!$complaint->isEditable()) {
+	return;
+}
+
+$form = $this->getRaw('done_rejected_form');
+
+$dialog = new UI_dialog( 'reject_form_dialog', Tr::_('Reject'), UI_dialog::SIZE_LARGE );
+
+$form->field('comment')->input()->addCustomCssStyle("height:400px");
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+
+echo $dialog->start();
+echo $form->start();
+
+foreach($form->getFields() as $field) {
+	echo $field;
+}
+
+echo $dialog->footer();
+	echo UI::button_delete(Tr::_('Reject'))->setType(UI_button::TYPE_SUBMIT);
+echo $form->end();
+echo $dialog->end();

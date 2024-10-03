@@ -9,7 +9,6 @@ html, body {
 }
 
 .tree {
-	background-color: #484848;
 	padding: 0;
 }
 
@@ -19,12 +18,12 @@ html, body {
 }
 
 .tree ul ul {
-	padding-left: 25px;
+	padding-left: 35px;
 }
 
 
 .tree li {
-	color: #ffffff;
+	color: #000000;
 	list-style: none;
 	padding: 2px;
 }
@@ -34,31 +33,38 @@ html, body {
 }
 
 .tree a {
-	color: #ffffff;
+	color: #000000;
 }
 
 .tree li .icon {
 	display: inline-block;
-	width: 15px;
+	width: 25px;
 	color: #808080;
 }
 
-.tree-row-container {
-	display: table;
-}
 
 .tree-row {
-	display: table-row;
+	display: grid;
+	grid-template-columns: 20px 1fr;
+	gap: 2px;
+	align-items: center;
 }
 
-.tree-row-icon-container {
-	display: table-cell;
+.tree-level-0 {margin-left: 0px;}
+.tree-level-1 {margin-left: 20px;}
+.tree-level-2 {margin-left: 40px;}
+.tree-level-3 {margin-left: 60px;}
+.tree-level-4 {margin-left: 80px;}
+.tree-level-5 {margin-left: 100px;}
+.tree-level-6 {margin-left: 120px;}
+
+.tree-icon {
+	text-align: center;
 }
 
-.tree-row-node-container {
-	display: table-cell;
-}
+.tree-label {
 
+}
 .tree-node {
 }
 
@@ -73,9 +79,17 @@ html, body {
 .toolbar {
 	padding: 4px;
 	background-color: #f0f0f0;
-	margin-bottom: 10px;
 	min-height: 43px;
 	color: #000000;
+	width: 100%;
+	margin: none;
+	margin-bottom: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#column_schema_settings {
 }
 
 #main-toolbar {
@@ -85,7 +99,6 @@ html, body {
 .main-toolbar-sticky {
 	position: fixed;
 	top: 0;
-	width: 100%
 }
 
 .main-toolbar-sticky + .main-col {
@@ -94,8 +107,8 @@ html, body {
 .sub-toolbar {
 	margin-bottom: 5px;
 	padding: 5px;
-	background-color: #666666;
-	color: #ffffff;
+	background-color: #e8e8e8;
+	color: #000000;
 }
 
 .sub-toolbar select {
@@ -103,12 +116,9 @@ html, body {
 	border: none;
 }
 
-.sub-toolbar td {
-	padding-top: 5px;
-}
 
 .sub-toolbar option {
-	background-color: #666666;
+	background-color: #ffffff;
 }
 
 
@@ -123,9 +133,11 @@ html, body {
 }
 
 
-.main-col {
-	padding-left: 20px;
-	padding-right: 20px;
+#main-col {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 40px;
+	margin: 10px;
 }
 
 .toolbar .dropdown {
@@ -319,32 +331,102 @@ h4.inherited {
 	margin: 5px;
 }
 
-.order-status-kind {
-	font-weight: bolder;
-}
 
-.order-status-new {
-	background-color: #00ddc1;
-}
-.order-status-waiting_for_payment {
-	background-color: #ffaaaaaa;
-	color: #111111;
-}
-.order-status-paid {
-	background-color: #00ddc1;
-}
-.order-status-being_processed {
-	background-color: #00ddc1;
-}
-.order-status-is_dispatched {
-	background-color: #9faaFF;
-	color: #111111;
-}
-.order-status-cancelled {
-	background-color: #ffaaaaaa;
-	color: #111111;
-}
+.order-status-cancelled,
+.order-status-waiting_for_payment,
+.order-status-waiting_for_goods_to_be_stocked,
 .order-status-returned {
 	background-color: #ffaaaaaa;
 	color: #111111;
+	font-weight: bolder;
 }
+
+.order-status-dispatch_started {
+	background-color: #00ddc1;
+}
+
+.order-status-dispatched {
+	background-color: #9faaFF;
+	color: #111111;
+}
+
+.order-status-ready_for_dispatch {
+	background-color: #00ddc1;
+}
+
+.order-status-delivered {
+	background-color: #00ffc1;
+}
+
+
+
+
+
+.complaint-status {
+	padding: 5px;
+	margin: 5px;
+}
+
+.complaint-status-kind {
+	font-weight: bolder;
+}
+
+.complaint-status-new {
+	background-color: #00ddc1;
+}
+
+.complaint-status-incomplete {
+	background-color: #ffaaaaaa;
+	color: #111111;
+}
+
+.complaint-status-being_processed {
+	background-color: #00ddc1;
+}
+
+.complaint-status-done_accepted {
+	background-color: #9faaFF;
+	color: #111111;
+}
+.complaint-status-done_rejected {
+	background-color: #ffaaaaaa;
+	color: #111111;
+}
+
+
+
+
+
+
+
+.return-of-goods-status {
+	padding: 5px;
+	margin: 5px;
+}
+
+.return-of-goods-status-kind {
+	font-weight: bolder;
+}
+
+.return-of-goods-status-new {
+	background-color: #00ddc1;
+}
+
+.return-of-goods-status-incomplete {
+	background-color: #ffaaaaaa;
+	color: #111111;
+}
+
+.return-of-goods-status-being_processed {
+	background-color: #00ddc1;
+}
+
+.return-of-goods-status-done_accepted {
+	background-color: #9faaFF;
+	color: #111111;
+}
+.return-of-goods-status-done_rejected {
+	background-color: #ffaaaaaa;
+	color: #111111;
+}
+

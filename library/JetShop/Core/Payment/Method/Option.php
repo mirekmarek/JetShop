@@ -51,7 +51,8 @@ abstract class Core_Payment_Method_Option extends Entity_WithShopData {
 	
 	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_Option_ShopData
 	{
-		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->_getShopData( $shop );
 	}
 	
 	public function getPriority(): int

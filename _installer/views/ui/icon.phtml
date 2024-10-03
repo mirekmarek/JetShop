@@ -13,15 +13,19 @@ $res = '';
 
 $style = '';
 
-if( $i->getSize() ) {
-	$style .= 'font-size:' . $i->getSize() . 'px;';
-}
-if( $i->getWidth() ) {
-	$style .= 'width:' . $i->getWidth() . 'px;';
-}
-if( $i->getColor() ) {
-	$style .= 'color:' . $i->getColor() . ';';
-}
+$font_size = match($i->getSize()) {
+	UI_icon::SIZE_EXTRA_SMALL => 0.5,
+	UI_icon::SIZE_SMALL => 0.75,
+	UI_icon::SIZE_NORMAL => 1,
+	UI_icon::SIZE_LARGE => 1.5,
+	UI_icon::SIZE_EXTRA_LARGE => 2,
+	UI_icon::SIZE_ULTRA_LARGE => 3
+};
+
+
+$i->addCustomCssStyle( 'font-size:' . $font_size . 'rem;' );
+$i->setBaseCssClass('fa fa-'. $i->getIcon() );
+$i->setCustomTagAttribute('title', $i->getTitle());
 
 $tag = $i->getTag();
-?><<?= $tag ?> class="fa fa-<?= $i->getIcon() ?>" style="<?= $style ?>" title="<?= $i->getTitle() ?>" <?= $i->getJsActions() ?>></<?= $tag ?>>
+?><<?=$tag.$i->renderTagAttributes()?>></<?= $tag ?>>

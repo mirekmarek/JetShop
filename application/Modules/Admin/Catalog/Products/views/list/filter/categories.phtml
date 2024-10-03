@@ -26,7 +26,7 @@ $filter_form = $listing->getFilterForm();
 		{
 			let categories = document.getElementById('filter_form__categories');
 
-			let new_value = '';
+			let new_value;
 			if(categories.value.length) {
 				new_value = categories.value.split(',');
 				if(!new_value.includes(id)) {

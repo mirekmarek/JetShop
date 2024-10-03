@@ -1,0 +1,57 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Order;
+use JetApplication\Product_ShopData;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View   $this
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+
+$showProduct = function( Product_ShopData $product ) use ($order) {
+	
+	$complaints = Complaint::getByOrderItem( $order, $product->getId() );
+	?>
+	<tr>
+		<td>
+			<?php if(count($complaints)): ?>
+				<?php foreach($complaints as $complaint): ?>
+					<a href="<?=$complaint->getURL()?>"><?=$complaint->getNumber()?></a><br>
+				<?php endforeach; ?>
+				<br>
+				<?=UI::button( Tr::_('Initiate next complaint') )->setUrl(Http_Request::currentURL(['product_id'=>$product->getId()]))->setClass(UI_button::CLASS_LINK)?>
+			<?php else: ?>
+				<?=UI::button( Tr::_('Initiate a complaint') )->setUrl(Http_Request::currentURL(['product_id'=>$product->getId()]))->setClass(UI_button::CLASS_INFO)?>
+			<?php endif; ?>
+		</td>
+		<td>
+			<?php if($product->getImg(0)): ?>
+				<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 150, 150)?>"></a>
+			<?php endif; ?>
+		</td>
+		<td><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></td>
+	</tr>
+	<?php
+};
+?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th style="width: 220px;"></th>
+		<th style="width: 150px;"></th>
+		<th></th>
+	</tr>
+	</thead>
+	<?php foreach($order->getPhysicalProductOverview() as $item):
+		$showProduct( $item->getProduct() );
+	endforeach; ?>
+</table>

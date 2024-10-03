@@ -1,0 +1,73 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Events\Order\NewOrder;
+
+use JetApplication\EMail_TemplateProvider;
+use JetApplication\MarketplaceIntegration;
+use JetApplication\Order;
+use JetApplication\Order_Event_HandlerModule;
+use JetApplication\WarehouseManagement;
+
+/**
+ *
+ */
+class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
+{
+	
+	public function handleExternals(): bool
+	{
+		$res = MarketplaceIntegration::handleOrderEvent( $this->event );
+		if($res!==null) {
+			return $res;
+		}
+		
+		return true;
+	}
+
+	public function handleInternals(): bool
+	{
+		
+		WarehouseManagement::manageNewOrder( $this->order );
+		
+		$this->order->checkIsReady();
+
+		return true;
+	}
+	
+	public function sendNewOrderEmail( Order $order ) : bool
+	{
+		$template = new EMailTemplate();
+		$template->setOrder( $order );
+		$email = $template->createEmail( $order->getShop() );
+		
+		return $email->send();
+	}
+	
+	
+	public function sendNotifications(): bool
+	{
+		return $this->sendEMail( (new EMailTemplate()) );
+	}
+	
+	public function getEMailTemplates(): array
+	{
+		$template = new EMailTemplate();
+		
+		return [$template];
+	}
+	
+	public function getEventNameReadable(): string
+	{
+		return 'Order created';
+	}
+	
+	public function getEventStyle(): string
+	{
+		return 'background-color: #00b84b;color: #ffffff;';
+	}
+}

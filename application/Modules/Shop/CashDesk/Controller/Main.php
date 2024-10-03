@@ -7,12 +7,14 @@
  */
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\Exception;
 use Jet\Http_Headers;
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
 use Jet\MVC_View;
+use JetApplication\Shop_Pages;
 use JetApplication\Order;
 use JetApplication\Shop_Managers;
 use JetApplication\Shops;
@@ -30,18 +32,18 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?MVC_Controller_Router $router = null;
 
 	protected ?Order $order = null;
+	protected ?CashDesk $cash_desk = null;
 
 	public function getControllerRouter(): MVC_Controller_Router_Interface|MVC_Controller_Router|null
 	{
-
+		$this->cash_desk = $this->module->getCashDesk();
+		$this->view->setVar('cash_desk', $this->cash_desk);
+		
 		if(
 			in_array(
 				$this->content->getControllerAction(),
 				[
 					'payment',
-					'payment_problem',
-					'payment_success',
-					'payment_notification',
 					'confirmation',
 				]
 			)
@@ -67,9 +69,10 @@ class Controller_Main extends MVC_Controller_Default
 		}
 
 		if(!$this->router) {
+			
 			if(
-				!CashDesk::get()->getDefaultDeliveryMethod() ||
-				!CashDesk::get()->getDefaultPaymentMethod()
+				!$this->module->getCashDesk()->getDefaultDeliveryMethod() ||
+				!$this->module->getCashDesk()->getDefaultPaymentMethod()
 			) {
 				$this->router = new MVC_Controller_Router( $this );
 				
@@ -89,6 +92,14 @@ class Controller_Main extends MVC_Controller_Default
 		}
 		return $this->router;
 	}
+	
+
+	public function getCashDesk(): CashDesk
+	{
+		return $this->cash_desk;
+	}
+	
+	
 
 	public function getView() : MVC_View
 	{
@@ -98,9 +109,9 @@ class Controller_Main extends MVC_Controller_Default
 	public function default_Action() : void
 	{
 		$cart = Shop_Managers::ShoppingCart()->getCart();
-		if(!$cart->getQuantity()) {
+		if(!$cart->getNumberOfUnits()) {
 			Http_Headers::movedTemporary(
-				Shop_Managers::ShoppingCart()->getCartPageURL()
+				Shop_Pages::ShoppingCart()->getURL()
 			);
 		}
 
@@ -119,37 +130,38 @@ class Controller_Main extends MVC_Controller_Default
 
 		$module = $payment_method->getBackendModule();
 		if(!$module) {
-			Http_Headers::movedTemporary( $main->getCashDeskConfirmationPage()->getURL([$this->order->getKey()]) );
+			Http_Headers::movedTemporary( Shop_Pages::CashDeskConfirmation()->getURL([$this->order->getKey()]) );
 		}
+		
+		$result = $module->handlePayment($this->order, $payment_method);
+		
+		$this->view->setVar('order', $this->order );
 
-		if($module->handlePayment($this->order, $payment_method)) {
-			Http_Headers::movedTemporary( $main->getCashDeskConfirmationPage()->getURL([$this->order->getKey()]) );
+		if( $result===true ) {
+			$this->order->paid();
+			
+			$this->output('payment-result/paid');
+			return;
 		}
-
+		
+		if($result===false) {
+			$this->output('payment-result/not-paid');
+			return;
+		}
+		
+		$this->output('payment-result/error');
+		
 	}
 
 	public function error_Action() : void
 	{
-		//TODO:
+		if(!Shop_Managers::ShoppingCart()->getCart()->getNumberOfUnits()) {
+			Http_Headers::movedTemporary( Shop_Pages::ShoppingCart()->getURL() );
+		}
+
+		throw new Exception('Oder system configuration problem');
 	}
 
-	public function payment_problem_Action() : void
-	{
-		//TODO:
-		die();
-	}
-
-	public function payment_success_Action() : void
-	{
-		//TODO:
-		die();
-	}
-
-	public function payment_notification_Action() : void
-	{
-		//TODO:
-		die();
-	}
 
 
 	public function confirmation_Action() : void

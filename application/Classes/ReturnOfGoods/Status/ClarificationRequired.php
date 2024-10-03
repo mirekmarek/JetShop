@@ -1,0 +1,7 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_ReturnOfGoods_Status_ClarificationRequired;
+
+class ReturnOfGoods_Status_ClarificationRequired extends Core_ReturnOfGoods_Status_ClarificationRequired {
+}

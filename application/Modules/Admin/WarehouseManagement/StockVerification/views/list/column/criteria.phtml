@@ -1,0 +1,46 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\Supplier;
+use JetApplicationModule\Admin\Catalog\KindsOfProduct\KindOfProduct;
+
+/**
+ * @var MVC_View $this
+ * @var Verification $verification
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+
+$verification = $this->getRaw('item');
+?>
+<div style="display: grid;grid-template-columns: 150px 1fr; gap: 10px; align-items: center">
+	<?php if($verification->getCriteriaSupplierId()): ?>
+		<div><?=Tr::_('Supplier:')?></div>
+		<div style="font-weight: bolder;"><?= Supplier::getScope()[$verification->getCriteriaSupplierId()]?></div>
+	<?php endif; ?>
+	
+	<?php if($verification->getCriteriaKindOfProductId()): ?>
+		<div><?=Tr::_('Kind of product:')?></div>
+		<div style="font-weight: bolder;"><?= KindOfProduct::getScope()[$verification->getCriteriaKindOfProductId()]?></div>
+	<?php endif; ?>
+	
+	<?php if($verification->getCriteriaSector()): ?>
+		<div><?=Tr::_('Sector:')?></div>
+		<div style="font-weight: bolder;"><?=$verification->getCriteriaSector()?></div>
+	<?php endif; ?>
+	
+	<?php if($verification->getCriteriaRack()): ?>
+		<div><?=Tr::_('Rack:')?></div>
+		<div style="font-weight: bolder;"><?=$verification->getCriteriaRack()?></div>
+	<?php endif; ?>
+	
+	<?php if($verification->getCriteriaPosition()): ?>
+		<div><?=Tr::_('Position:')?></div>
+		<div style="font-weight: bolder;"><?=$verification->getCriteriaPosition()?></div>
+	<?php endif; ?>
+
+
+</div>
+

@@ -25,48 +25,14 @@ $p_manager = Admin_Managers::Product();
 echo $this->render('lj_start');
 ?>
 
-<div style="display: grid;grid-template-columns: 150px 1fr;align-items: center" class="toolbar">
-	<div style="padding-left: 30px;">
-		<?=Tr::_('Kind of product:')?>
-	</div>
-	<div>
-		<?php if($editable): ?>
-			<form action="<?=Http_Request::currentURI(['action'=>'change_kind_of_product'])?>" method="post">
-				<input type="hidden" name="kind_of_product_id" id="kind_of_product_id" value="0"/>
-				
-
-				<div style="display: grid;grid-template-columns: 400px 150px;align-items: center">
-					<div>
-						<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
-							"$('#kind_of_product_id').val(selected_item.id);",
-							$category->getKindOfProductId()
-						)?>
-					</div>
-					<div><?=UI::button_save(Tr::_('Change')); ?></div>
-				</div>
-
-			</form>
-		<?php else:
-			if(($kind_id=$category->getKindOfProductId())):
-				?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
-			else:
-				?><b><?=Tr::_('- kind of product is not set -')?></b><?php
-			endif;
-		endif; ?>
-	</div>
-</div>
 
 
-<fieldset>
-	<legend><?=Tr::_('Products')?></legend>
 	
-	
-	<div class="toolbar">
-		
+
+	<?php if($editable): ?>
 		<?php if(!$auto_append): ?>
-			<?php if($editable): ?>
 		
-			<div style="display: grid;grid-template-columns: 150px 300px 1fr;align-items: center">
+			<div class="toolbar" style="display: grid;grid-template-columns: 150px 300px 1fr;align-items: center">
 				<div style="padding-left: 20px;">
 					<?=UI::icon('plus')?>
 					<?=Tr::_('Add product:')?>
@@ -95,41 +61,95 @@ echo $this->render('lj_start');
 					?>
 				</div>
 			</div>
+
 			
-			<div id="manual_product_append_area" style="display: none">
-				<br>
-				<?=Admin_Managers::ProductFilter()->renderCategoryManualAppendFilterForm( $category ); ?>
+		<?php else: ?>
+			<div class="toolbar">
+					<?=UI::button(Tr::_('Disable auto append mode'))
+						->setUrl( Http_Request::currentURI(['action'=>'disable_auto_append_mode']) )
+						->setClass(UI_button::CLASS_DANGER)
+					?>
+			</div>
+
+		<?php endif; ?>
+
+	<div id="manual_product_append_area" class="card card-body" style="display: <?=$auto_append?'block':'none'?>">
+
+		<div  id="toolbar" class="toolbar">
+			<div style="padding-left: 20px;padding-right: 20px;"><b><?=Tr::_('Automatic product appending filter')?></b></div>
+			<div>
+				<?=UI::button_save( Tr::_('Save filter settings and append products') )->setOnClick("document.getElementById('{}').submit();")?>
+			</div>
+		</div>
+
+		<?=Admin_Managers::ProductFilter()->renderFilterForm(); ?>
+	</div>
+	<?php endif; ?>
+
+
+
+
+
+	<br>
+	<div id="products_sort_area" class="card card-body">
+		<?php foreach($category->getProductIds() as $p_id): ?>
+		<div
+			class="sort_item"
+			style="display: grid;grid-template-columns: 30px 200px 1fr 40px;align-items: center;gap: 5px;padding:5px;border-bottom: 1px solid #c9c9c9;background-color: #ffffff"
+			data-id="<?=$p_id?>"
+		>
+			<div>
+				<?php if($editable):
+					echo UI::icon('arrows-v');
+				endif; ?>
+				
 			</div>
 			
-			<?php endif; ?>
-		<?php else: ?>
-			<?=Admin_Managers::ProductFilter()->renderCategoryAutoAppendFilterForm( $category, $editable ); ?>
-		<?php endif; ?>
-	</div>
-	
-	<table class="table table-striped">
-		<thead>
-		<tr>
-			<th style="width: 30px;"></th>
-			<th style="width: 100px;"></th>
-			<th></th>
-		</tr>
-		</thead>
-		<?php foreach($category->getProductIds() as $p_id): ?>
-		<tr>
-			<td>
+			<div><?=$p_manager->showActiveState($p_id)?></div>
+			<div><?=$p_manager->showName($p_id)?></div>
+			<div>
 				<?php if($editable && !$auto_append): ?>
-				<?=UI::button_delete(' ')->setUrl(Http_Request::currentURI(set_GET_params: ['remove_product'=>$p_id]))?>
+					<?=UI::button_delete(' ')
+						->setUrl(Http_Request::currentURI(set_GET_params: ['remove_product'=>$p_id]))
+					?>
 				<?php endif; ?>
-			</td>
-			
-			<td><?=$p_manager->showActiveState($p_id)?></td>
-			<td><?=$p_manager->showName($p_id)?></td>
-		</tr>
+			</div>
+		</div>
 		<?php endforeach; ?>
-	</table>
-	
-</fieldset>
+	</div>
+	<br><br><br><br><br>
+
+<?php if($editable): ?>
+	<script>
+		const CategoryProducts = {
+			init: () => {
+				$('#products_sort_area')['sortable']({
+					//revert: true,
+					stop: function() {
+
+						let items = [];
+
+						$('#products_sort_area').find('.sort_item').each(function ( i, item ) {
+							items.push( $(item).data('id') );
+						});
+
+						items = items.join(',');
+
+						$.ajax({
+							url: '<?=Http_Request::currentURI(['action'=>'sort_products'])?>&products='+items,
+							success: function( response ) {
+							}
+						});
+					}
+				});
+
+			}
+		};
+
+		CategoryProducts.init();
+	</script>
+
+<?php endif; ?>
 
 <?php
 echo $this->render('lj_end');

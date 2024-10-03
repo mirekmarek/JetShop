@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Order $item
+ */
+
+$item = $this->getRaw('item');
+
+echo $item->getSupplierCompanyName();
+/*
+?>
+<div style="display: grid;grid-template-columns: 100px 1fr;gap: 10px;margin: 10px">
+	<div><?=Tr::_('Supplier:')?></div>
+	<div><b><?=$item->getSupplierCompanyName()?></b></div>
+	
+	<div><?=Tr::_('Address:')?></div>
+	<div>
+		<?=$item->getSupplierAddressStreetAndNo()?><br>
+		<?=$item->getSupplierAddressZip()?> <?=$item->getSupplierAddressTown()?><br>
+		<?=$item->getSupplierAddressCountry()?>
+	</div>
+	
+	<div><?=Tr::_('Phone:')?></div>
+	<div>
+		<?=$item->getSupplierPhone1()?><br>
+		<?=$item->getSupplierPhone2()?>
+	</div>
+	
+	<div><?=Tr::_('e-mail:')?></div>
+	<div>
+		<a href="mailto:<?=$item->getSupplierEmail1()?>"><?=$item->getSupplierEmail1()?></a><br>
+		<a href="mailto:<?=$item->getSupplierEmail2()?>"><?=$item->getSupplierEmail2()?></a>
+	</div>
+</div>
+
+*/

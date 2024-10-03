@@ -4,14 +4,16 @@ namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\MVC_View;
 use Jet\Tr;
+use Jet\UI;
+use Jet\UI_icon;
 use JetApplication\Delivery_Method_ShopData;
 
 /**
  * @var MVC_View $this
  * @var Delivery_Method_ShopData $delivery_method
+ * @var CashDesk $cash_desk
  */
-
-$cash_desk = CashDesk::get();
+$cash_desk = $this->getRaw('cash_desk');
 
 
 ?>
@@ -24,6 +26,7 @@ $cash_desk = CashDesk::get();
 	
 	
 	<div class="method-icon">
+		<?=UI::icon('personal-takeover')->setSize(UI_icon::SIZE_LARGE)?>
 	</div>
 	
 	<div class="method-title">

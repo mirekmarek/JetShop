@@ -1,0 +1,28 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\Form_Field_FileImage;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View  $this
+ * @var Complaint $complaint
+ * @var Form_Field_FileImage $img_field
+ */
+
+$complaint = $this->getRaw('complaint');
+?>
+<form action="<?=Http_Request::currentURI()?>" id="delete_image_form" method="post">
+	<input type="hidden" name="delete_image" value="">
+</form>
+<script>
+	function deleteImage( id ) {
+		document.getElementById('delete_image_form').elements['delete_image'].value = id;
+		JetAjaxForm.submit('delete_image_form');
+	}
+</script>
+<div id="complaint-images" style="width: 800px;margin: 10px">
+	<?=$this->render('detail/edit/images/list')?>
+</div>

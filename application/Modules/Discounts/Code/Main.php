@@ -20,7 +20,6 @@ use JetApplication\Discounts_Discount;
 use JetApplication\Discounts_Module;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\Round;
 use JetApplication\Shop_Managers;
 
 /**
@@ -48,8 +47,7 @@ class Main extends Discounts_Module
 	 */
 	public function getUsedCodes() : array
 	{
-		$session = $this->getSession();
-		$code_ids = $session->getValue('code_ids', []);
+		$code_ids = $this->getUsedCodesRaw();
 
 		if(!$code_ids) {
 			return [];
@@ -70,10 +68,23 @@ class Main extends Discounts_Module
 			$codes[$code->getId()] = $code;
 		}
 		
-		$session->setValue('code_ids', $valid_code_ids);
+		$this->getSession()->setValue('code_ids', $valid_code_ids);
 		
 		return $codes;
 	}
+	
+	public function getUsedCodesRaw() : array
+	{
+		$session = $this->getSession();
+		$code_ids = $session->getValue('code_ids', []);
+		
+		if(!$code_ids) {
+			return [];
+		}
+		
+		return $code_ids;
+	}
+	
 
 	public function useCode( Discounts_Code $code ) : void
 	{
@@ -122,6 +133,8 @@ class Main extends Discounts_Module
 				'past_code' => 'The discount code is no longer valid',
 				'used' => 'The discount code has been already used',
 				'under_min_value' => 'The minimum order value must be at least %MIN%',
+				'no_allowed_products_in_cart' => 'The discount code is only for certain products. Unfortunately you do not have such products in your cart.',
+				'do_not_combine' => 'Discount code cannot be combined with other codes.',
 			]);
 
 			$code_input->setValidator(function( Form_Field_Input $code_input ) {
@@ -188,19 +201,24 @@ class Main extends Discounts_Module
 				
 				case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_PERCENTAGE:
 					
-					$discount->setDescription( Tr::_('Discount %D%% for products price', [
-						'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
-					]) );
+					if($used_code->getRelevanceMode()!=Discounts_Code::RELEVANCE_MODE_ALL) {
+						$discount->setDescription( Tr::_('Discount %D%% for some of products price', [
+							'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
+						]) );
+					} else {
+						$discount->setDescription( Tr::_('Discount %D%% for products price', [
+							'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
+						]) );
+					}
 					
 					
-					$discount->setVatRate( $cash_desk->getShop()->getDefaultVatRate() );
+					$discount->setVatRate( $cash_desk->getPricelist()->getDefaultVatRate() );
 					
 					$discount->setAmount(
-						Round::round(
-							$cash_desk->getShop(),
-							Shop_Managers::ShoppingCart()->getCart()->getAmount()
-							*
-							$used_code->getDiscountPercentageMtp()
+						$cash_desk->getPricelist()->round(
+							$used_code->getRelevantProductAmount()
+								*
+									$used_code->getDiscountPercentageMtp()
 						)
 					);
 					
@@ -211,10 +229,13 @@ class Main extends Discounts_Module
 				case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
 					
 					$discount->setDescription( Tr::_('Discount %D% for products price', [
-						'D'=>Shop_Managers::PriceFormatter()->formatWithCurrency( $used_code->getDiscount(), $cash_desk->getShop() )
+						'D'=>Shop_Managers::PriceFormatter()->formatWithCurrency(
+							$used_code->getDiscount(),
+							$cash_desk->getPricelist()->getCurrency()
+						)
 					]) );
 					
-					$discount->setVatRate( $cash_desk->getShop()->getDefaultVatRate() );
+					$discount->setVatRate( $cash_desk->getPricelist()->getDefaultVatRate() );
 					
 					$discount->setAmount(
 						$used_code->getDiscount()
@@ -224,6 +245,10 @@ class Main extends Discounts_Module
 					break;
 				
 				case Discounts_Discount::DISCOUNT_TYPE_DELIVERY_PERCENTAGE:
+					$discount->setVatRate( $cash_desk->getSelectedDeliveryMethod()->getVatRate( $cash_desk->getPricelist() ) );
+					$discount->setAmount( 0 );
+					
+					
 					$discount->setDescription( Tr::_('Discount %D%% for delivery price', [
 						'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
 					]) );
@@ -233,21 +258,28 @@ class Main extends Discounts_Module
 							continue;
 						}
 						
+						$default_price = $method->getDefaultPrice( $cash_desk->getPricelist() );
+						
+						$discount_value = $cash_desk->getPricelist()->round( $default_price * $used_code->getDiscountPercentageMtp() );
+						
+						
 						$method->setPrice(
-							Round::round(
-								$cash_desk->getShop(),
-								$method->getDefaultPrice()
-								*
-								$used_code->getDiscountPercentageMtp()
-							)
+							$cash_desk->getPricelist(),
+							$default_price + $discount_value
 						);
 					}
 					
 					break;
 					
 				case Discounts_Discount::DISCOUNT_TYPE_DELIVERY_AMOUNT:
+					$discount->setVatRate( $cash_desk->getSelectedDeliveryMethod()->getVatRate( $cash_desk->getPricelist() ) );
+					$discount->setAmount( 0 );
+					
 					$discount->setDescription( Tr::_('Discount %D% for delivery price', [
-						'D'=>Shop_Managers::PriceFormatter()->formatWithCurrency( $used_code->getDiscount(), $cash_desk->getShop() )
+						'D'=>Shop_Managers::PriceFormatter()->formatWithCurrency(
+							$used_code->getDiscount(),
+							$cash_desk->getPricelist()->getCurrency()
+						)
 					]) );
 					
 					foreach($cash_desk->getAvailableDeliveryMethods() as $method) {
@@ -255,12 +287,15 @@ class Main extends Discounts_Module
 							continue;
 						}
 						
-						$price = $method->getDefaultPrice()-$used_code->getDiscount();
+						$price = $method->getDefaultPrice( $cash_desk->getPricelist() )-$used_code->getDiscount();
 						if($price<0) {
 							$price = 0;
 						}
 						
-						$method->setPrice( $price );
+						$method->setPrice(
+							$cash_desk->getPricelist(),
+							$price
+						);
 					}
 					
 					break;
@@ -280,7 +315,7 @@ class Main extends Discounts_Module
 	
 	
 	
-	public function Order_saved( Order $order ) : void
+	public function Order_newOrderCreated( Order $order ) : void
 	{
 		$codes = $this->getUsedCodes();
 		
@@ -338,5 +373,17 @@ class Main extends Discounts_Module
 	{
 		return '';
 	}
+	
+	public function isPossibleToAddCode() : bool
+	{
+		foreach($this->getUsedCodes() as $coupon) {
+			if($coupon->getDoNotCombine()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 
 }

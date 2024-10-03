@@ -12,6 +12,8 @@ use Jet\MVC_Layout;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\Http_Request;
+use Jet\UI;
+use Jet\UI_icon;
 
 /**
  *
@@ -22,6 +24,11 @@ abstract class Installer_Step_Controller
 	 * @var string
 	 */
 	protected string $name = '';
+	
+	/**
+	 * @var string
+	 */
+	protected string $icon = '';
 
 	/**
 	 * @var string
@@ -89,6 +96,30 @@ abstract class Installer_Step_Controller
 	{
 		return $this->name;
 	}
+	
+	/**
+	 * @param string $size
+	 *
+	 * @return string
+	 */
+	public function getIcon( string $size = UI_icon::SIZE_NORMAL ): string
+	{
+		if(!$this->icon) {
+			return '';
+		}
+		
+		return UI::icon($this->icon)->setSize( $size );
+	}
+	
+	/**
+	 * @param string $icon
+	 */
+	public function setIcon( string $icon ): void
+	{
+		$this->icon = $icon;
+	}
+	
+	
 
 	/**
 	 *
@@ -242,7 +273,7 @@ abstract class Installer_Step_Controller
 	 */
 	public function getLabel(): string
 	{
-		return Tr::_( $this->label, [], $this->name );
+		return Tr::_( text: $this->label, dictionary: $this->name );
 	}
 
 	/**
@@ -250,7 +281,7 @@ abstract class Installer_Step_Controller
 	 */
 	public function catchContinue(): void
 	{
-		if( Http_Request::POST()->exists( 'go' ) ) {
+		if( Http_Request::GET()->exists( 'go' ) ) {
 			Installer::goToNext();
 		}
 

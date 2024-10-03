@@ -17,7 +17,7 @@ use JetApplication\Shops_Shop;
  * @var KindOfProduct $kind_of_product
  */
 
-$modules = Exports::getActiveModules();
+$modules = Exports::getExportModulesList();
 
 $selected_exp = $this->getRaw('selected_exp');
 $selected_exp_shop = $this->getRaw('selected_exp_shop');
@@ -30,42 +30,40 @@ $kind_of_product = $this->getRaw('kind_of_product');
 
 
 ?>
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()?>
-	</div>
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()?>
 </div>
-<div class="row">
-	<div class="col-md-12" id="main-col">
-		<?=$this->getRaw('tabs')?>
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+	<br>
+	
+	<div style="display: grid;grid-template-columns: 2fr 10fr;gap: 10px;">
+		<div>
+			<ul class="list-group">
+				<?php foreach($modules as $module):
+					foreach(Shops::getListSorted() as $shop):
+						if(!$module->isAllowedForShop($shop)):
+							continue;
+						endif;
+						
+						$title = $module->getTitle().' - '.$shop->getShopName();
+						$link = Http_Request::currentURI(['exp'=>$module->getCode(),'exp_shop'=>$shop->getKey()]);
+						
+						if($module->getCode()==$selected_exp_code && $shop->getKey()==$selected_exp_shop_key):
+							?><li class="list-group-item active"><?=$title?></li><?php
+						else:
+							?><li class="list-group-item"><a href="<?=$link?>"><?=$title?></a></li><?php
+						endif;
+					endforeach;
+				endforeach; ?>
+			</ul>
+		</div>
+		<div>
+			<?php if($selected_exp): ?>
+				<legend><?=$selected_exp->getTitle()?> - <?=$selected_exp_shop->getShopName()?></legend>
+				<?php $selected_exp->handleKindOfProductSettings( $kind_of_product, $selected_exp_shop )?>
+			<?php endif; ?>
+		</div>
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-md-2">
-		<ul class="list-group">
-			<?php foreach($modules as $module):
-				foreach(Shops::getListSorted() as $shop):
-					if(!$module->isAllowedForShop($shop)):
-						continue;
-					endif;
-					
-					$title = $module->getTitle().' - '.$shop->getShopName();
-					$link = Http_Request::currentURI(['exp'=>$module->getCode(),'exp_shop'=>$shop->getKey()]);
-					
-					if($module->getCode()==$selected_exp_code && $shop->getKey()==$selected_exp_shop_key):
-						?><li class="list-group-item active"><?=$title?></li><?php
-					else:
-						?><li class="list-group-item"><a href="<?=$link?>"><?=$title?></a></li><?php
-					endif;
-				endforeach;
-			endforeach; ?>
-		</ul>
-	</div>
-	<div class="col-md-10" id="main-col">
-		<?php if($selected_exp): ?>
-			<legend><?=$selected_exp->getTitle()?> - <?=$selected_exp_shop->getShopName()?></legend>
-			<?=$selected_exp->handleKindOfProductSettings( $kind_of_product, $selected_exp_shop )?>
-		<?php endif; ?>
-	</div>
-</div>

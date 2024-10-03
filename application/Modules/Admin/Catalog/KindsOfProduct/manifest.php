@@ -5,9 +5,9 @@ return [
 	'description' => '',
 	
 	'ACL_actions' => [
-		'get_kind_of_product'    => 'Get kind_of_product data',
-		'add_kind_of_product'    => 'Add new kind_of_product',
-		'update_kind_of_product' => 'Update kind_of_product',
-		'delete_kind_of_product' => 'Delete kind_of_product',
+		'get_kind_of_product'    => 'Get kind of product data',
+		'add_kind_of_product'    => 'Add new kind of product',
+		'update_kind_of_product' => 'Update kind of product',
+		'delete_kind_of_product' => 'Delete kind of product',
 	],
 ];

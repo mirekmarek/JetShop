@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\OrderDispatch\Overview;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var OrderDispatch $item
+ */
+
+$item = $this->getRaw('item');
+
+echo Admin_Managers::Context()->showContext( $item->getContext() );

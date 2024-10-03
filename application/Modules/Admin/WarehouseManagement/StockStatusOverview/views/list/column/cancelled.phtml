@@ -1,0 +1,29 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplicationModule\Admin\Entity\Listing\Listing;
+
+/**
+ * @var MVC_View $this
+ * @var Listing $listing
+ * @var StockCard $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+
+if($item->getCancelled()):
+	echo UI::badge( UI_badge::SUCCESS, Tr::_('Cancelled') )->addCustomCssStyle('padding:10px');
+else:
+	echo UI::badge( UI_badge::SUCCESS, Tr::_('Active') )->addCustomCssStyle('padding:10px');
+endif;

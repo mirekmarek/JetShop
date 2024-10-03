@@ -1,10 +1,37 @@
 <?php
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Tr;
+use JetApplication\PropertyGroup;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View $this
  * @var Form $form
+ * @var PropertyGroup $item
  */
 $form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+$kind_of_product_ids = $item->getUsageKindOfProductIds();
+?>
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
+	
+	</div>
+	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+		<div class="card">
+			<div class="card-header"><?= Tr::_('Usage')?></div>
+			<div class="card-body">
+				<table class="table table-striped">
+					<?php foreach($kind_of_product_ids as $id): ?>
+						<tr>
+							<td><?= Admin_Managers::KindOfProduct()->showName( $id )?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 

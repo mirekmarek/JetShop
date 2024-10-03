@@ -1,0 +1,94 @@
+<?php
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+$image_field = $form->getField('image');
+$image_field->input()->addJsAction('onchange', "CommonImageManager.upload()");
+?>
+<style>
+	#common_image_manager_btn {
+		position: fixed;
+		top: 60px;
+		right: 0px;
+	}
+	
+	#common_image_manager {
+		position: fixed;
+		top: 60px;
+		right: 0px;
+		height: calc(100% - 70px);
+		width: 600px;
+		background-color: #333940;
+		z-index: 999999;
+		padding: 5px;
+	}
+	
+	#common_image_manager_images {
+		height: calc(100% - 70px);
+		width: 100%;
+		overflow: auto;
+		padding: 10px;
+		background-color: #ffffff;
+	}
+</style>
+<script>
+	const CommonImageManager = {
+		open: () => {
+			$('#common_image_manager').fadeIn();
+		},
+		
+		close: () => {
+			$('#common_image_manager').fadeOut();
+		},
+
+		upload: () => {
+			JetAjaxForm.submitMultiUpload(
+				'<?=$form->getId()?>',
+				'<?=$image_field->getName()?>',
+			);
+		},
+		
+		delete: ( file ) => {
+			$('#common_image_manager_images').load('<?=Http_Request::currentURI()?>&delete_image='+encodeURIComponent(file));
+		},
+
+		copyURL: function (id) {
+			const element = document.getElementById(id);
+
+			element.select();
+			element.setSelectionRange(0, 99999);
+
+			document.execCommand("copy");
+		}
+		
+		
+	};
+</script>
+<div id="common_image_manager_btn">
+	<?= UI::button( Tr::_('Images') )->setIcon('image')->setOnClick("CommonImageManager.open()")->setClass( UI_button::CLASS_SUCCESS)?>
+</div>
+<div id="common_image_manager" style="display: none;">
+	<div style="display: flex;align-items: center">
+		<div>
+			<?= UI::button('')->setIcon('xmark')->setOnClick("CommonImageManager.close()")?>
+		</div>
+		
+		<div id="common_image_manager_form">
+			<?php require 'common-image-manager/form.phtml'?>
+		</div>
+	</div>
+	
+	<div id="common_image_manager_images">
+		<?php require 'common-image-manager/images.phtml'?>
+	</div>
+</div>

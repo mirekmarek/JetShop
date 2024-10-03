@@ -2,30 +2,89 @@
 namespace JetApplicationModule\Admin\ProductFilterManager;
 
 use Jet\Form;
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Property;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View   $this
  * @var Form $form
- * @var Property[] $properties
  */
 
 $form = $this->getRaw('form');
 
-?>
 
-<fieldset>
-	<legend style="font-size: 0.8rem"><?=Tr::_('Brand')?></legend>
-	<div style="margin:10px;display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;align-items: center">
-	<?php
-	foreach($form->getFields() as $field):
-		if(!str_starts_with($field->getName(), '/brand/')) {
-			continue;
+$this->setVar('brand_ids', $form->field('/brand/selected_brands')->getValue() );
+
+?>
+<script>
+	const FilterEditBrands = {
+		add: ( selected_item )=> {
+			let input = $('#<?=$form->field('/brand/selected_brands')->getId()?>');
+			let current = input.val();
+
+			if(!current) {
+				current = [];
+			} else {
+				current = current.split(',');
+			}
+
+			if(!current.includes( selected_item.object_id )) {
+				current.push( selected_item.object_id );
+			}
+
+			current = current.join(',');
+
+			input.val(current);
+
+			$('#filter_selected_brands').load('<?=Http_Request::currentURI()?>&filter_brands_render_selected='+current);
+
+		},
+
+		remove: ( id ) => {
+			let input = $('#<?=$form->field('/brand/selected_brands')->getId()?>');
+			let current = input.val();
+
+			if(!current) {
+				current = [];
+			} else {
+				current = current.split(',');
+			}
+
+
+			let _new = [];
+
+			for( let i=0;i<current.length;i++ ) {
+				if(current[i]!=id) {
+					_new.push(current[i]);
+				}
+			}
+
+			_new = _new.join(',');
+
+			input.val(_new);
+
+			$('#filter_selected_brands').load('<?=Http_Request::currentURI()?>&filter_brands_render_selected='+_new);
+
 		}
-		?>
-		<div class="<?=$field->getValue()?'bg-info':''?>" style="margin: 2px;padding: 2px;"><?=$field->input()?></div>
-	<?php endforeach; ?>
+	};
+</script>
+	
+	<div>
+		<div style="padding: 5px;">
+			<?=$form->field('/brand/selected_brands');?>
+		</div>
+		
+		<?php if($this->getBool('editable')): ?>
+			<div style="display: flex;align-items: center;">
+				<div style="padding: 5px;"><?=Tr::_('Add brand:')?></div>
+				<div style="width: 400px"><?=Admin_Managers::Brand()->renderSelectWidget(on_select: "FilterEditBrands.add(selected_item);")?></div>
+			</div>
+		<?php endif; ?>
+	
 	</div>
-</fieldset>
+	
+	<div style="height: 300px;overflow: auto;border: 1px solid #c9c9c9;padding: 10px; margin: 10px;" id="filter_selected_brands">
+		<?php require 'brands/selected.phtml'; ?>
+	</div>

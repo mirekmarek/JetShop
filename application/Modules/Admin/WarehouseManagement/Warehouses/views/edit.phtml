@@ -24,20 +24,17 @@ $router = $this->getController()->getControllerRouter();
 ?>
 <?=$form->start()?>
 
-<?=Admin_Managers::UI()->renderEntityToolbar($form)?>
+<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityToolbar($form)?>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		
-		<?=Admin_Managers::UI()->renderEntityFormCommonFields($form)?>
+		<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityFormCommonFields($form)?>
 		<?=$form->field( 'is_active' )?>
 		<?=$form->field( 'shops' )?>
 		<?=$form->field( 'address_street_no' )?>
 		<?=$form->field( 'address_country' )?>
 		<?=$form->field( 'address_town' )?>
 		<?=$form->field( 'address_zip' )?>
-
-	</div>
 </div>
 
 <?=$form->end()?>

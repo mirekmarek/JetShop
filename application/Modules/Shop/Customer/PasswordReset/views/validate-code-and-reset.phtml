@@ -1,0 +1,38 @@
+<?php
+
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\Form_Renderer;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form ;
+ */
+$form = $this->getRaw( 'form' );
+
+$form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+$form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+
+?>
+
+<?= $form->start() ?>
+<div class="card-body">
+	<h2><?=Tr::_('Enter the code and new password')?></h2>
+	
+	<?= $form->getCommonMessage() ?>
+	
+	<p><?=Tr::_('A verification code has been sent to your email. Please enter it in this form.')?></p>
+	
+	<?= $form->field( 'code' ) ?>
+	<?= $form->field( 'new_password' ) ?>
+	
+	
+	<div class="buttons">
+		<?= UI::button( Tr::_( 'Reset password' ) )->setType( UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY); ?>
+	</div>
+</div>
+<?= $form->end() ?>

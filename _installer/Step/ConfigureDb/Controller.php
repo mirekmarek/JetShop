@@ -23,6 +23,7 @@ use Jet\Tr;
  */
 class Installer_Step_ConfigureDb_Controller extends Installer_Step_Controller
 {
+	protected string $icon = 'database';
 
 	/**
 	 * @var string
@@ -74,7 +75,7 @@ class Installer_Step_ConfigureDb_Controller extends Installer_Step_Controller
 	/**
 	 * @param Db_Backend_PDO_Config $connection_config
 	 */
-	protected function configure( Db_Backend_PDO_Config $connection_config )
+	protected function configure( Db_Backend_PDO_Config $connection_config ) : void
 	{
 		$form = $connection_config->createForm('connection_config');
 		

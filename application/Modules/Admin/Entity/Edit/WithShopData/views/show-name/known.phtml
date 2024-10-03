@@ -2,6 +2,7 @@
 namespace JetApplicationModule\Admin\Entity\WithShopData;
 
 use Jet\MVC_View;
+use Jet\UI;
 use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Entity_WithShopData;
 
@@ -11,4 +12,4 @@ use JetApplication\Entity_WithShopData;
  */
 $item = $this->getRaw('item');
 ?>
-<a href="<?=$item->getEditURL()?>"><?=$item->getAdminTitle()?></a>
+<?=$item->getAdminTitle()?> <a href="<?=$item->getEditURL()?>"><?=UI::icon('link')?></a>

@@ -79,7 +79,8 @@ abstract class Core_Property_Options_Option extends Entity_WithShopData
 	
 	public function getShopData( ?Shops_Shop $shop = null ): Property_Options_Option_ShopData
 	{
-		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->_getShopData( $shop );
 	}
 	
 	

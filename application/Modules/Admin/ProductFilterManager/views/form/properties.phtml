@@ -19,8 +19,9 @@ $property_manager = Admin_Managers::Property();
 ?>
 
 <?php foreach($properties as $property): ?>
-	<fieldset>
-		<legend style="font-size: 0.8rem"><?=$property_manager->showName( $property->getId() )?></legend>
+	<div>
+		<h5><?=$property_manager->showName( $property->getId() )?></h5>
+		<hr>
 		<?php
 		if($property->getType()==Property::PROPERTY_TYPE_OPTIONS):
 			?>
@@ -45,5 +46,6 @@ $property_manager = Admin_Managers::Property();
 			endforeach;
 		endif;
 		?>
-	</fieldset>
+	</div>
+	<br>
 <?php endforeach; ?>

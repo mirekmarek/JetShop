@@ -4,12 +4,14 @@ namespace JetApplicationModule\Shop\CashDesk;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Shop_Managers;
 
 /**
  * @var MVC_View $this
+ * @var CashDesk $cash_desk
  */
 
-$cash_desk = CashDesk::get();
+$cash_desk = $this->getRaw('cash_desk');
 
 if($cash_desk->getCurrentStep()!=CashDesk::STEP_CONFIRM) {
 	return;
@@ -40,3 +42,6 @@ $special_requirements_form->field('special_requirements')->input()->addJsAction(
 <div class="continue-button-area" id="cash_desk_order_send_button_area">
 	<?=UI::button(Tr::_('Place order'))->setOnclick('CashDesk.confirm.send()')->setClass('success')?>
 </div>
+
+<?=Shop_Managers::Analytics()?->addDeliveryInfo( $cash_desk )?>
+<?=Shop_Managers::Analytics()?->addPaymentInfo( $cash_desk )?>

@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Admin_Managers_Entity_Edit_WithShopRelation;
+
+interface Admin_Managers_Entity_Edit_WithShopRelation extends Core_Admin_Managers_Entity_Edit_WithShopRelation
+{
+}

@@ -4,14 +4,17 @@ return [
 	'name' => 'cash desk',
 	'is_active' => true,
 	'SSL_required' => false,
-	'title' => 'cash desk',
+	'title' => 'Pokladna',
 	'icon' => '',
-	'menu_title' => 'cash desk',
-	'breadcrumb_title' => 'cash desk',
+	'menu_title' => 'Pokladna',
+	'breadcrumb_title' => 'Pokladna',
+	'order' => 0,
 	'is_secret' => false,
+	'layout_script_name' => 'cash-desk',
 	'http_headers' => [
 	],
-	'layout_script_name' => 'cash-desk',
+	'parameters' => [
+	],
 	'meta_tags' => [
 	],
 	'contents' => [

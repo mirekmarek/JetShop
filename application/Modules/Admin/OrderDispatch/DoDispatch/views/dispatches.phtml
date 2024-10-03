@@ -1,0 +1,56 @@
+<?php
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_icon;
+use JetApplication\OrderDispatch;
+use Jet\Locale;
+
+/**
+ * @var MVC_View $this
+ * @var OrderDispatch[] $dispatches
+ */
+
+$dispatches = $this->getRaw('dispatches');
+
+if(!count($dispatches)) {
+	return;
+}
+
+?>
+<fieldset style="padding: 10px;">
+	<legend><?= UI::icon('truck-fast')->setSize( UI_icon::SIZE_LARGE)?> <?=Tr::_('Dispatches and packets')?></legend>
+	
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th></th>
+			<th><?=Tr::_('Date and time of creation')?></th>
+			<th><?=Tr::_('Day of dispatch')?></th>
+			<th><?=Tr::_('Status')?></th>
+			<th><?=Tr::_('Carrier')?></th>
+			<th><?=Tr::_('Carrier service')?></th>
+			<th><?=Tr::_('Consignment ID')?></th>
+			<th><?=Tr::_('Tracking Number')?></th>
+			<th><?=Tr::_('Tracking URL')?></th>
+		</tr>
+		</thead>
+	<?php foreach($dispatches as $dispatch):
+		$this->setVar('dispatch', $dispatch);
+		?>
+		<tr>
+			<td><?php require 'link.phtml'; ?></td>
+			<td><?=Locale::dateAndTime( $dispatch->getCreated() )?></td>
+			<td><?=Locale::date( $dispatch->getDispatchDate() )?></td>
+			<td><?php require 'status.phtml'; ?></td>
+			<td><?=$dispatch->getCarrier()?->getName()?></td>
+			<td><?=$dispatch->getCarrierService()?->getName() ?></td>
+			<td><?=$dispatch->getConsignmentId()?></td>
+			<td><?=$dispatch->getTrackingNumber()?></td>
+			<td><a href="<?=$dispatch->getTrackingURL()?>" target="_blank"><?=$dispatch->getTrackingURL()?></a></td>
+		</tr>
+	<?php endforeach; ?>
+	</table>
+</fieldset>
+<br><br>

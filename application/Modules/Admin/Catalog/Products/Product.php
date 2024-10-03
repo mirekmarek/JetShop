@@ -5,7 +5,6 @@ use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\Form_Field_Select;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\KindOfProduct;
@@ -23,6 +22,9 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 	use Product_Parameters;
 	use Product_Variants;
 	use Product_Set;
+	use Product_SetPrice;
+	use Product_SetAvailability;
+	
 	
 
 	public static function getProductTypes() : array
@@ -31,7 +33,7 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 			static::PRODUCT_TYPE_REGULAR        => Tr::_('Regular'),
 			static::PRODUCT_TYPE_VARIANT_MASTER => Tr::_('Variant master'),
 			static::PRODUCT_TYPE_VARIANT        => Tr::_('Variant'),
-			static::PRODUCT_TYPE_SET            => Tr::_('Set'),
+			static::PRODUCT_TYPE_SET            => Tr::_('Set of products'),
 		];
 		
 	}
@@ -55,28 +57,6 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 	protected function _setupForm( Form $form ) : void
 	{
 		
-		foreach(Shops::getList() as $shop) {
-			$shop_key = $shop->getKey();
-			
-			$vat_rate = new Form_Field_Select('/shop_data/'.$shop_key.'/vat_rate', 'VAT rate:' );
-			$vat_rate->setDefaultValue( $this->getShopData($shop)->getVatRate() );
-			
-			$vat_rate->setErrorMessages([
-				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid date'
-			]);
-			$vat_rate->setFieldValueCatcher(function( $value ) use ($shop) {
-				$this->getShopData($shop)->setVatRate( $value );
-			});
-			$vat_rate->setSelectOptions( $shop->getVatRatesScope() );
-			$vat_rate->setIsReadonly( $form->field('/shop_data/'.$shop_key.'/vat_rate')->getIsReadonly() );
-			
-			
-			$form->removeField('/shop_data/'.$shop_key.'/vat_rate');
-			$form->addField( $vat_rate );
-			
-			
-		}
-		
 		$this->_setupForm_regular( $form );
 		$this->_setupForm_set( $form );
 		$this->_setupForm_variant( $form );
@@ -93,9 +73,6 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 		
 		
 		foreach( Shops::getList() as $shop ) {
-			$form->field('/shop_data/'.$shop->getKey().'/standard_price')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/price')->setIsReadonly( true );
-			
 			$form->removeField( '/shop_data/'.$shop->getKey().'/variant_name' );
 		}
 	}
@@ -134,10 +111,6 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 			$this->_add_form->addField( $kind_id_field );
 			
 			$this->_setupForm( $this->_add_form );
-			
-			foreach(Shops::getList() as $shop) {
-				$this->_add_form->field( '/shop_data/' . $shop->getKey() . '/vat_rate' )->setDefaultValue( $shop->getDefaultVatRate() );
-			}
 		}
 		
 		return $this->_add_form;
@@ -178,67 +151,6 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 	
 	
 	
-	
-	public function afterAdd() : void
-	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_key = $shop->getKey();
-			
-			$this->shop_data[$shop_key]->generateURLPathPart();
-			$this->shop_data[$shop_key]->save();
-		}
-		
-		Admin_Managers::FulltextSearch()->addIndex( $this );
-		
-	}
-	
-	public function afterUpdate() : void
-	{
-		Admin_Managers::FulltextSearch()->updateIndex( $this );
-		
-		switch($this->getType()) {
-			case Product::PRODUCT_TYPE_REGULAR:         $this->actualizeSetItem(); break;
-			//case Product::PRODUCT_TYPE_VARIANT:         $this->actualizeVariant(); break;
-			case Product::PRODUCT_TYPE_VARIANT_MASTER:  $this->actualizeVariantMaster(); break;
-			case Product::PRODUCT_TYPE_SET:             $this->actualizeSet(); break;
-		}
-	}
-	
-	public function afterDelete() : void
-	{
-		Admin_Managers::FulltextSearch()->deleteIndex( $this );
-	}
-	
-	
-	public function getAdminTitle() : string
-	{
-		$codes = [];
-		if($this->getInternalCode()) {
-			$codes[] = $this->getInternalCode();
-		}
-		if($this->getEan()) {
-			$codes[] = $this->getEan();
-		}
-		
-		if($codes) {
-			$codes = ' ('.implode(', ', $codes).')';
-		} else {
-			$codes = '';
-		}
-		
-		$internal_name = $this->internal_name;
-		
-		if($this->type==static::PRODUCT_TYPE_VARIANT) {
-			$internal_name.= ' / '.$this->getShopData()?->getVariantName();
-		}
-		
-		if($this->internal_name_of_variant) {
-			$internal_name .= ' - '.$this->internal_name_of_variant;
-		}
-		
-		return $internal_name.$codes;
-	}
-	
 	public function renderActiveState() : string
 	{
 		return Admin_Managers::Product()->renderActiveState( $this );
@@ -248,23 +160,5 @@ class Product extends Application_Product implements Admin_Entity_WithShopData_I
 	{
 		return Main::getEditUrl( $this->id );
 	}
-	
-	public function getAdminFulltextObjectType(): string
-	{
-		return $this->getType();
-	}
-
-	
-	public function getAdminFulltextTexts(): array
-	{
-		return [$this->internal_name, $this->internal_code, $this->ean, $this->internal_name_of_variant];
-	}
-	
-	public function getVariantMasterProduct() : ?Product
-	{
-		return static::get( $this->variant_master_product_id );
-	}
-	
-	
 	
 }

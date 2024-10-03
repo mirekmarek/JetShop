@@ -1,0 +1,21 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
+
+use Jet\MVC_View;
+use JetApplication\Delivery_Method;
+
+
+
+/**
+ * @var MVC_View $this
+ * @var DeliveryFeeDiscount $item
+ */
+
+$item = $this->getRaw('item');
+echo Delivery_Method::getScope()[$item->getDeliveryMethodId()];

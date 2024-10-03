@@ -2,8 +2,9 @@
 namespace JetApplicationModule\Admin\ProductFilterManager;
 
 use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
 use Jet\MVC_View;
-use Jet\Tr;
 use JetApplication\Property;
 
 /**
@@ -14,17 +15,18 @@ use JetApplication\Property;
 
 $form = $this->getRaw('form');
 
-?>
+$form->getField('/basic/kins_of_product')->input()->addJsAction('onchange', "$('#filter_form_properties').load('".Http_Request::currentURI()."&filter_kind_of_product_selected='+this.value);");
 
-<fieldset>
-	<legend style="font-size: 0.8rem"><?=Tr::_('Basic')?></legend>
-	<?php
-	foreach($form->getFields() as $field):
-		if(!str_starts_with($field->getName(), '/basic/')) {
-			continue;
-		}
-		
-		echo $field;
-	endforeach;
-	?>
-</fieldset>
+foreach($form->getFields() as $field):
+	if(!str_starts_with($field->getName(), '/basic/')) {
+		continue;
+	}
+	
+	$field->label()->setWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 1
+	]);
+	
+	echo $field;
+endforeach;
+
+

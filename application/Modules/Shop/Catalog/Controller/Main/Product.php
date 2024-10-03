@@ -21,7 +21,7 @@ trait Controller_Main_Product
 
 	protected static ?Product_ShopData $product = null;
 
-	public function getControllerRouter_product( int $object_id, array $path ) : void
+	public function resolve_product( int $object_id, array $path ) : bool|string
 	{
 		MVC::getRouter()->setUsedUrlPath( $path[0]);
 
@@ -30,29 +30,22 @@ trait Controller_Main_Product
 		if(static::$product) {
 			if(static::$product->getURLPathPart()!=$path[0] ) {
 				MVC::getRouter()->setIsRedirect( static::$product->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
-
-				return;
+				return false;
 			}
 
 			$GET = Http_Request::GET();
-			/*
-			//TODO:
+			
 			if(
 				($category_id=$GET->getInt('c')) &&
-				static::$product->hasCategory( $category_id )
+				($category = static::$product->getCategories()[$category_id]??null)
 			) {
-				static::$category = Category::get( $category_id );
+				static::$category = $category;
 			}
-			*/
 			
-			$this->router->addAction('detail')->setResolver(function() {
-				return true;
-			});
 			
+			return 'product_detail';
 		} else {
-			$this->router->addAction('unknown')->setResolver(function() {
-				return true;
-			});
+			return 'unknown_product';
 		}
 	}
 
@@ -61,7 +54,7 @@ trait Controller_Main_Product
 		return static::$product;
 	}
 
-	public function unknown_Action() : void
+	public function unknown_product_Action() : void
 	{
 		ErrorPages::handleNotFound();
 	}
@@ -79,7 +72,7 @@ trait Controller_Main_Product
 
 
 
-	public function detail_Action(): void
+	public function product_detail_Action(): void
 	{
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();

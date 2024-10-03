@@ -4,7 +4,6 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use Jet\DataModel_Related_1toN;
 
 use JetApplication\Category;
 
@@ -13,14 +12,12 @@ use JetApplication\Category;
 	database_table_name: 'categories_products',
 	id_controller_class: DataModel_IDController_Passive::class,
 	default_order_by: ['priority'],
-	parent_model_class: Category::class
 )]
-abstract class Core_Category_Product extends DataModel_Related_1toN
+abstract class Core_Category_Product extends DataModel
 {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		related_to: 'main.id',
 		is_id: true,
 		is_key: true
 	)]

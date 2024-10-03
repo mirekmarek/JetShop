@@ -109,20 +109,24 @@ trait Controller_Main_Customer {
 		$this->router->addAction('customer_delivery_address_select')->setResolver(function() use ($action) {
 			return $action=='customer_delivery_address_select';
 		});
-
-
+		
+		$this->router->addAction('whisper_address')->setResolver(function() use ($action) {
+			return $action=='whisper_address';
+		});
+		
 	}
 
 	public function customer_set_email_Action() : void
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$form = $cash_desk->getSetEMailForm();
 
 		if($cash_desk->catchSetEMailForm()) {
 			$cash_desk->setEmailAddress( $form->field('email')->getValue() );
+			$cash_desk->setCustomerRegisterOrNotBeenSet( false );
 		} else {
 			$response->error();
 		}
@@ -136,7 +140,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setEmailHasBeenSet( false );
 
@@ -150,7 +154,7 @@ trait Controller_Main_Customer {
 	{
 		
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		
 		$form = $cash_desk->getPhoneForm();
 		
@@ -169,7 +173,7 @@ trait Controller_Main_Customer {
 	{
 		
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		
 		$cash_desk->setPhoneHasBeenSet( false );
 		
@@ -183,7 +187,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		if(!$cash_desk->catchSetPasswordForm()) {
 			$response->error();
@@ -198,7 +202,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setCustomerRegisterOrNotBeenSet(false);
 		$response->addSnippet('customer');
@@ -210,7 +214,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setNoRegistration(true);
 		$cash_desk->setCustomerRegisterOrNotBeenSet(true);
@@ -226,7 +230,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setIsCompanyOrder(false);
 		$response->addSnippet('customer');
@@ -237,7 +241,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setIsCompanyOrder(true);
 		$response->addSnippet('customer');
@@ -248,7 +252,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		$field_name = $GET->getString('field');
@@ -282,7 +286,7 @@ trait Controller_Main_Customer {
 	public function customer_billing_address_send_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 
 		$form = $cash_desk->getBillingAddressForm();
@@ -297,17 +301,12 @@ trait Controller_Main_Customer {
 				$cash_desk->setDifferentDeliveryAddressHasBeenSet( false );
 				$cash_desk->setDeliveryAddressHasBeenSet( false );
 				
-				$response->addSnippet(
-					'cash_desk_delivery_address',
-					'customer/delivery_address'
-				);
-				
 			}
 		} else {
 			$response->error();
 		}
-
-		$response->addSnippet( 'cash_desk_billing_address', 'customer/billing_address' );
+		
+		$response->addSnippet('customer');
 
 
 		$response->response();
@@ -316,15 +315,13 @@ trait Controller_Main_Customer {
 	public function customer_back_to_billing_address_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setBillingAddressHasBeenSet(false);
 		$cash_desk->setDifferentDeliveryAddressHasBeenSet(false);
 		$cash_desk->setDeliveryAddressHasBeenSet(false);
 
-		$response->addSnippet(
-			'cash_desk_billing_address', 'customer/billing_address'
-		);
+		$response->addSnippet( 'customer' );
 
 		$response->response();
 	}
@@ -333,16 +330,14 @@ trait Controller_Main_Customer {
 	public function customer_delivery_address_set_the_same_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setDifferentDeliveryAddressHasBeenSet(true);
 
 		$cash_desk->setHasDifferentDeliveryAddress(false);
 		
 
-		$response->addSnippet(
-			'cash_desk_delivery_address', 'customer/delivery_address'
-		);
+		$response->addSnippet( 'customer' );
 
 		$response->response();
 	}
@@ -350,7 +345,7 @@ trait Controller_Main_Customer {
 	public function customer_delivery_address_set_the_same_confirm_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		
 		$cash_desk->setDifferentDeliveryAddressHasBeenSet(true);
 		
@@ -359,9 +354,7 @@ trait Controller_Main_Customer {
 		$cash_desk->setDeliveryAddressHasBeenSet(true);
 		$cash_desk->setCurrentStep( CashDesk::STEP_CONFIRM );
 		
-		$response->addSnippet(
-			'cash_desk_delivery_address', 'customer/delivery_address'
-		);
+		$response->addSnippet( 'customer' );
 		
 		$response->response();
 	}
@@ -370,14 +363,12 @@ trait Controller_Main_Customer {
 	public function customer_delivery_address_set_different_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setDifferentDeliveryAddressHasBeenSet(true);
 		$cash_desk->setHasDifferentDeliveryAddress(true);
 
-		$response->addSnippet(
-			'cash_desk_delivery_address', 'customer/delivery_address'
-		);
+		$response->addSnippet( 'customer' );
 
 		$response->response();
 	}
@@ -385,14 +376,12 @@ trait Controller_Main_Customer {
 	public function customer_back_to_delivery_address_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setDeliveryAddressHasBeenSet(false);
 		$cash_desk->setDifferentDeliveryAddressHasBeenSet(false);
 
-		$response->addSnippet(
-			'cash_desk_delivery_address', 'customer/delivery_address'
-		);
+		$response->addSnippet( 'customer' );
 
 		$response->response();
 
@@ -403,7 +392,7 @@ trait Controller_Main_Customer {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		$field_name = $GET->getString('field');
@@ -437,7 +426,7 @@ trait Controller_Main_Customer {
 	public function customer_delivery_address_send_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 
 		$form = $cash_desk->getDeliveryAddressForm();
@@ -449,7 +438,7 @@ trait Controller_Main_Customer {
 			$response->error();
 		}
 
-		$response->addSnippet( 'cash_desk_delivery_address', 'customer/delivery_address' );
+		$response->addSnippet( 'customer' );
 
 		$response->response();
 	}
@@ -457,7 +446,7 @@ trait Controller_Main_Customer {
 	public function customer_login_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 
 		$form = $cash_desk->getLoginForm();
@@ -470,8 +459,6 @@ trait Controller_Main_Customer {
 			if(!Auth::login( $cash_desk->getEmailAddress(), $password )) {
 				$form->setCommonMessage( UI_messages::createDanger(Tr::_('Incorrect password')) );
 				$response->error();
-			} /** @noinspection PhpStatementHasEmptyBodyInspection */ else {
-				//TODO:
 			}
 		}
 
@@ -484,7 +471,7 @@ trait Controller_Main_Customer {
 	public function customer_billing_address_select_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		$customer = Customer::getCurrentCustomer();
@@ -493,7 +480,7 @@ trait Controller_Main_Customer {
 		$address = $customer->getAddress( $address_id );
 
 		if($address) {
-			$cash_desk->setBillingAddress( $address );
+			$cash_desk->setBillingAddress( clone $address );
 		}
 
 		$response->addSnippet('customer');
@@ -505,7 +492,7 @@ trait Controller_Main_Customer {
 	public function customer_delivery_address_select_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		$customer = Customer::getCurrentCustomer();
@@ -523,5 +510,8 @@ trait Controller_Main_Customer {
 
 	}
 
+	public function whisper_address_Action() : void
+	{
+	}
 }
 

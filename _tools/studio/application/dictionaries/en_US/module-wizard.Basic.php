@@ -14,4 +14,6 @@ return [
 	'Create' => '',
 	'Invalid module name format' => '',
 	'Module with the same name already exists' => '',
+	'Invalid value' => '',
+	'Please enter a value' => '',
 ];

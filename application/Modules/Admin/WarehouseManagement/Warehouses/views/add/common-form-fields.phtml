@@ -1,22 +1,26 @@
 <?php
-use JetApplication\Entity_Basic;
-use JetApplication\Admin_Entity_Common_Interface;
-
 use Jet\MVC_View;
 use Jet\Form;
 
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_Basic|Admin_Entity_Common_Interface     $item
  */
 
 $form = $this->getRaw('form');
-$item = $this->getRaw('item');
 ?>
-<?=$form->field( 'shops' )?>
+<?=$form->field( 'currency_code' )?>
+
+<?=$form->field( 'is_virtual' )?>
+
+<?=$form->field( 'address_name' )?>
 <?=$form->field( 'address_street_no' )?>
-<?=$form->field( 'address_country' )?>
 <?=$form->field( 'address_town' )?>
 <?=$form->field( 'address_zip' )?>
+<?=$form->field( 'address_country' )?>
 
+<?=$form->field( 'internal_email' )?>
+<?=$form->field( 'internal_phone' )?>
+
+<?=$form->field( 'public_email' )?>
+<?=$form->field( 'public_phone' )?>

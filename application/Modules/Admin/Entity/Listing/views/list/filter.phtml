@@ -2,8 +2,7 @@
 namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\MVC_View;
-use Jet\Tr;
-use Jet\UI;
+
 
 /**
  * @var MVC_View $this
@@ -79,16 +78,9 @@ $filter_enabled = (bool)$listing->getFilterWhere();
 	};
 </script>
 
-<div class="toolbar" style="display: grid;align-items: center;padding-left: 10px;">
-	<a href="" onclick="Filter.toggle();return false;">
-		<?=UI::icon('caret-down')->setId('filter_caret_down')->addCustomCssStyle('display:'.(!$filter_enabled?'':'none'))?>
-		<?=UI::icon('caret-up')->setId('filter_caret_up')->addCustomCssStyle('display:'.($filter_enabled?'':'none'))?>
-		<?=Tr::_('Filter')?>
-	</a>
-</div>
 
 <?=$filter_form->start()?>
-<div class="toolbar" id="filter" style="display: <?=$filter_enabled?'block':'none'?>">
+<div id="filter" style="display: <?=$filter_enabled?'block':'none'?>;margin-left: 50px;margin-right: 50px;margin-bottom: 50px;" class="card card-body shadow">
 	<div>
 	<?php foreach($listing->getFilters() as $filter): ?>
 		<div>

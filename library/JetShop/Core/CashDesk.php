@@ -2,19 +2,25 @@
 namespace JetShop;
 
 
+use JetApplication\Availabilities_Availability;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order;
 use JetApplication\Payment_Method_Option_ShopData;
 use JetApplication\Payment_Method_ShopData;
+use JetApplication\Pricelists_Pricelist;
 use JetApplication\Shops_Shop;
 use JetApplication\CashDesk_Confirm_AgreeFlag;
 
 interface Core_CashDesk {
 	
 	public function getShop() : Shops_Shop;
+	
+	public function getPricelist() : Pricelists_Pricelist;
+	
+	public function getAvailability() : Availabilities_Availability;
 	
 	/**
 	 * @return Delivery_Method_ShopData[]
@@ -29,9 +35,9 @@ interface Core_CashDesk {
 	
 	public function selectDeliveryMethod( int $id ) : bool;
 	
-	public function selectPersonalTakeoverPlace( int $method_id, string $place_code ) : bool;
+	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method_ShopData $method, Carrier_DeliveryPoint $point ) : bool;
 	
-	public function getSelectedPersonalTakeoverPlace() : ?Delivery_PersonalTakeover_Place;
+	public function getSelectedPersonalTakeoverDeliveryPoint() : ?Carrier_DeliveryPoint;
 	
 	
 	/**
@@ -177,6 +183,5 @@ interface Core_CashDesk {
 	
 	public function saveOrder() : ?Order;
 	
-	public function afterOrderSave( Order $order ) : void;
-	
+	public function reset() : void;
 }

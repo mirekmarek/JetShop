@@ -1,0 +1,30 @@
+<?php
+use Jet\Tr;
+use Jet\MVC_View;
+use JetApplication\Content_Article_ShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Content_Article_ShopData[] $articles
+ */
+
+$articles = $this->getRaw('articles');
+
+if(!$articles) {
+	return;
+}
+?>
+<br><br>
+<hr>
+<h4><?=Tr::_('Articles')?></h4>
+<div style="display: flex">
+	<?php foreach($articles as $article): ?>
+	<div>
+		<img src="<?=$article->getImageHeader1ThumbnailUrl(100,100)?>">
+		<a href="<?=$article->getURL()?>"><?=$article->getTitle()?></a>
+		
+		<div><?=$article->getPerex()?></div>
+	</div>
+	<?php endforeach; ?>
+	
+</div>

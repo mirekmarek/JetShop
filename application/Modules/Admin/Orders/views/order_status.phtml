@@ -8,15 +8,17 @@
 namespace JetApplicationModule\Admin\Orders;
 
 use Jet\MVC_View;
-use JetApplication\Order_Status_ShopData;
+use JetApplication\Order;
 
 /**
  * @var MVC_View $this
- * @var Order_Status_ShopData $status
+ * @var Order $order
  */
-$status = $this->getRaw('status');
+$order = $this->getRaw('order');
+
+$status = $order->getStatus();
 ?>
-<div class="order-status order-status-<?=$status->getKindCode()?>">
-	<div class="order-status-kind"><?=$status->getKindTitle()?></div>
-	<div class="order-status-title"><?=$status->getName()?></div>
+<div class="order-status order-status-<?=$status?->getCode()?>">
+	<?=$status?->getTitle()?>
 </div>
+

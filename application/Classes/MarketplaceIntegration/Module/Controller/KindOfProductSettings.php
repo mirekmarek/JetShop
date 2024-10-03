@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_MarketplaceIntegration_Module_Controller_KindOfProductSettings;
+
+abstract class MarketplaceIntegration_Module_Controller_KindOfProductSettings extends Core_MarketplaceIntegration_Module_Controller_KindOfProductSettings
+{
+}

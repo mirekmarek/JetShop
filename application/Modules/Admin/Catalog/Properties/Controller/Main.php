@@ -8,7 +8,7 @@
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Manager_Controller;
+use JetApplication\Admin_EntityManager_WithShopData_Controller;
 use JetApplication\Application_Admin;
 
 use Jet\UI_messages;
@@ -16,10 +16,9 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
-use Jet\Logger;
 use JetApplication\Entity_WithShopData;
 
-class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
+class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 {
 	protected ?Property_Options_Option $option = null;
 	
@@ -103,19 +102,23 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 	
 	public function setupListing() : void
 	{
-		$this->listing_manager->addColumn(
-			new Listing_Column_Type()
-		);
+		$this->listing_manager->addColumn( new Listing_Column_Type() );
+		$this->listing_manager->addColumn( new Listing_Column_IsFilter() );
+		$this->listing_manager->addColumn( new Listing_Column_IsDefaultFilter() );
+		$this->listing_manager->addColumn( new Listing_Column_FilterPriority() );
 		
-		$this->listing_manager->addFilter(
-			new Listing_Filter_Type()
-		);
+		$this->listing_manager->addFilter( new Listing_Filter_Type() );
+		$this->listing_manager->addFilter( new Listing_Filter_IsFilter() );
+		$this->listing_manager->addFilter( new Listing_Filter_IsDefaultFilter() );
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
 			'active_state',
-			'type',
 			'internal_name',
+			'type',
+			'is_filter',
+			'is_default_filter',
+			'filter_priority',
 			'internal_code',
 			'internal_notes',
 		]);
@@ -155,14 +158,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		if($new_option->catchAddForm()) {
 			$property->addOption( $new_option );
 			
-			Logger::success(
-				event: 'property_updated.option_added',
-				event_message: 'Property updated - option added',
-				context_object_id: $property->getId(),
-				context_object_name: $property->getInternalName(),
-				context_object_data: $property
-			);
-			
 			UI_messages::success(
 				Tr::_( 'Option <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $new_option->getInternalName() ] )
 			);
@@ -184,15 +179,7 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		$sort = explode('|', Http_Request::POST()->getString('sort_order'));
 		$property->sortOptions( $sort );
 		$property->save();
-		
-		Logger::success(
-			event: 'property_updated.options_sorted',
-			event_message: 'Property updated - options sorted',
-			context_object_id: $property->getId(),
-			context_object_name: $property->getInternalName(),
-			context_object_data: $property
-		);
-		
+
 		Http_Headers::reload(unset_GET_params: ['action']);
 		
 	}
@@ -217,14 +204,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		if( $option->catchEditForm() ) {
 			
 			$option->save();
-			
-			Logger::success(
-				event: 'property_updated.option_update',
-				event_message: 'Property updated - option updated',
-				context_object_id: $option->getId(),
-				context_object_name: $option->getInternalName(),
-				context_object_data: $option
-			);
 			
 			UI_messages::success(
 				Tr::_( 'Option <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $option->getInternalName() ] )

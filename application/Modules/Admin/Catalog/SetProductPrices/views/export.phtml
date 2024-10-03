@@ -11,10 +11,20 @@ use Jet\UI_button;
  * @var MVC_View   $this
  */
 ?>
-<div style="padding-left: 170px;">
-<?php
-echo UI::button(Tr::_('Export'))
-	->setUrl(Http_Request::currentURI(set_GET_params: ['export'=>'export']))
-	->setClass(UI_button::CLASS_PRIMARY);
-?>
+<div id="main-col">
+	
+	<?=$this->getRaw('tabs')?>
+
+	<div style="display: grid;grid-template-columns: 200px 1fr; align-items: center;gap: 10px;margin: 10px;">
+		<?=$this->render('select'); ?>
+		
+		<div></div>
+		<div>
+		<?php
+		echo UI::button(Tr::_('Export'))
+			->setUrl(Http_Request::currentURI(set_GET_params: ['export'=>'export']))
+			->setClass(UI_button::CLASS_PRIMARY);
+		?>
+		</div>
+	</div>
 </div>

@@ -73,12 +73,6 @@ abstract class Core_KindOfProduct_Property extends DataModel_Related_1toN
 	)]
 	protected bool $is_variant_selector = false;
 	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL
-	)]
-	protected bool $use_in_filters = false;
-	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL
 	)]
@@ -151,16 +145,6 @@ abstract class Core_KindOfProduct_Property extends DataModel_Related_1toN
 	public function getIsVariantSelector() : bool
 	{
 		return $this->is_variant_selector;
-	}
-	
-	public function getUseInFilters(): bool
-	{
-		return $this->use_in_filters;
-	}
-	
-	public function setUseInFilters( bool $use_in_filters ): void
-	{
-		$this->use_in_filters = $use_in_filters;
 	}
 	
 	public function getShowOnProductDetail(): bool

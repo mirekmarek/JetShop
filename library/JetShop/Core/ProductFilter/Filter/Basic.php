@@ -1,6 +1,8 @@
 <?php
 namespace JetShop;
 
+use JetApplication\Product_Availability;
+use JetApplication\Product_Price;
 use JetApplication\Product_ShopData;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Storage;
@@ -12,7 +14,6 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 	protected ?bool $has_discount = null;
 	protected ?bool $item_is_active = null;
 	
-	
 	public function getKey(): string
 	{
 		return 'basic';
@@ -22,6 +23,7 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 	public function __construct()
 	{
 	}
+	
 	
 	protected function actualizeIsActive() : void
 	{
@@ -93,25 +95,6 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 			$where['kind_id'] = $this->kind_of_product_id;
 		}
 		
-		if($this->in_stock!==null) {
-			$where[] = 'AND';
-			if($this->in_stock) {
-				$where['in_stock_qty >'] = 0;
-			} else {
-				$where['in_stock_qty'] = 0;
-			}
-		}
-		
-		if($this->has_discount!==null) {
-			$where[] = 'AND';
-			if($this->has_discount) {
-				$where['discount_percentage >'] = 0;
-			} else {
-				$where['discount_percentage'] = 0;
-			}
-		}
-		
-		
 		if($this->item_is_active!==null) {
 			$where[] = 'AND';
 			if($this->item_is_active) {
@@ -136,12 +119,28 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 	public function filter(): void
 	{
 		$where = $this->prepareWhere();
-		
-		$this->filter_result = Product_ShopData::dataFetchCol(
+		$basic_filter_result = Product_ShopData::dataFetchCol(
 			select: ['entity_id'],
 			where: $where,
 			raw_mode: true
 		);
+		
+		if(!$basic_filter_result) {
+			$this->filter_result = [];
+			return;
+		}
+		
+		
+		if($this->in_stock!==null) {
+			$basic_filter_result = Product_Availability::filterIsInStock( $this->getAvailability(), $this->in_stock, $basic_filter_result );
+		}
+		
+		if($this->has_discount!==null) {
+			$basic_filter_result = Product_Price::filterHasDiscount( $this->getPricelist(), $this->has_discount, $basic_filter_result );
+		}
+		
+		$this->filter_result = $basic_filter_result;
+		
 		
 	}
 	

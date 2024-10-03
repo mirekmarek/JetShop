@@ -1,0 +1,74 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\IO_File;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Files;
+use JetApplication\Product_KindOfFile_ShopData;
+use JetApplication\Product_ShopData;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Product_ShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+if($product->isVariant()) {
+	$product = $product->getVariantMasterProduct();
+}
+
+$files = $product->getFiles();
+
+if(!$files) {
+	return;
+}
+
+$kind_of_file_ids = [];
+foreach($files as $file) {
+	$k_id = $file->getKindOfFileId();
+	if(!in_array($k_id, $kind_of_file_ids)) {
+		$kind_of_file_ids[] = $k_id;
+	}
+}
+
+
+$kind_of_files = Product_KindOfFile_ShopData::getActiveList(
+	$kind_of_file_ids,
+	Shops::getCurrent()
+);
+
+$manager = Files::Manager();
+
+?>
+<div style="padding: 10px;">
+<b><?=Tr::_('Download files:')?></b>
+<div style="display: grid;grid-template-columns: 100px 400px 100px;align-items: center;gap: 10px;">
+	<?php foreach($files as $file):
+		$kind = $kind_of_files[$file->getKindOfFileId()]??null;
+		if(!$kind) {
+			continue;
+		}
+		$URL = $manager->getFileURL( $product, $file->getFile() );
+		$path = $manager->getFilePath( $product, $file->getFile() );
+		
+		if(!IO_File::exists( $path )) {
+			continue;
+		}
+		?>
+
+		<div style="overflow: hidden;">
+			<?php if($kind->getImageMain()): ?>
+			<img src="<?=$kind->getImageMainThumbnailURL(20,20)?>">
+			<?php endif; ?>
+			<?=$kind->getName()?>:
+		</div>
+		<div style="overflow: hidden"><a href="<?=$URL?>"><?=$file->getFile()?></a></div>
+		<dib>(<?=Locale::size( IO_File::getSize($path) )?>)</dib>
+
+	<?php endforeach; ?>
+</div>
+</div>

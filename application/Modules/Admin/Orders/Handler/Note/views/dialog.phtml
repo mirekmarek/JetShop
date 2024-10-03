@@ -1,0 +1,17 @@
+<?php
+
+use Jet\UI;
+use Jet\UI_dialog;
+
+require 'add-note/js.phtml';
+
+$dialog = UI::dialog('new-note-dialog', '', size: UI_dialog::SIZE_EXTRA_LARGE);
+
+?>
+<?=$dialog->start()?>
+<div id="new-note-form">
+	<?php
+	require 'add-note/form.phtml';
+	?>
+</div>
+<?=$dialog->end()?>

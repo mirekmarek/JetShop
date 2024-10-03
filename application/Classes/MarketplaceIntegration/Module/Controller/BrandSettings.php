@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_MarketplaceIntegration_Module_Controller_BrandSettings;
+
+abstract class MarketplaceIntegration_Module_Controller_BrandSettings extends Core_MarketplaceIntegration_Module_Controller_BrandSettings
+{
+}

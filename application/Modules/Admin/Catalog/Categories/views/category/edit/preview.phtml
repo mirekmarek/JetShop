@@ -1,8 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
-use Jet\UI;
-use JetApplication\Shops;
+use JetApplication\Admin_Managers;
 
 /**
  *
@@ -18,21 +17,5 @@ if(
 ) {
 	return;
 }
-?>
-<?php if(count(Shops::getListSorted())<2): ?>
-	<?php foreach(Shops::getListSorted() as $shop): ?>
-		<a href="<?=$category->getShopData($shop)->getURL()?>" target="_blank"><?=UI::icon('eye')?></a>
-	<?php endforeach; ?>
-<?php else: ?>
-	<div class="dropdown">
-		<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			<?=UI::icon('eye')?>
-		</button>
 
-		<div class="dropdown-menu" style="padding: 10px;">
-			<?php foreach(Shops::getListSorted() as $shop): ?>
-			<a class="dropdown-item" href="<?=$category->getShopData($shop)->getURL()?>" target="_blank"><?=$shop->getShopName()?></a>
-			<?php endforeach; ?>
-		</div>
-	</div>
-<?php endif; ?>
+echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $category );

@@ -1,0 +1,60 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\Locale;
+use Jet\Tr;
+use JetApplication\Product;
+use Jet\MVC_View;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View $this
+ * @var Product $product
+ */
+
+$product = $this->getRaw('product');
+
+$unit = $product->getKind()?->getMeasureUnit()?->getName();
+?>
+<div style="display: flex;gap: 20px">
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $wh):
+		$card = $wh->getCard( $product->getId() );
+		?>
+	<div>
+		<h5><?=$wh->getInternalName()?></h5>
+		
+		<table class="table table-striped">
+			<tr>
+				<td><?=Tr::_('In stock:')?></td>
+				<td><?=Locale::float( $card->getInStock() )?> <?=$unit?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Blocked:')?></td>
+				<td><?=Locale::float( $card->getBlocked() )?> <?=$unit?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Available:')?></td>
+				<td><?=Locale::float( $card->getAvailable() )?> <?=$unit?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('Ordered from supplier:')?></td>
+				<td><?=Locale::float( $card->getNumberOfOrderedSupplier() )?> <?=$unit?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('On the way from another warehouse:')?></td>
+				<td><?=Locale::float( $card->getNumberOnTheWayFromAnotherWarehouse() )?> <?=$unit?></td>
+			</tr>
+			<tr>
+				<td><?=Tr::_('On the way to another warehouse:')?></td>
+				<td><?=Locale::float( $card->getNumberOnTheWayToAnotherWarehouse() )?> <?=$unit?></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><a href="<?=Main::getStockCardDetailURL($card)?>"><?=Tr::_('More info')?></a></td>
+			</tr>
+		</table>
+		
+	</div>
+	<?php endforeach; ?>
+	
+</div>

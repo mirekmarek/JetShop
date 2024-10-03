@@ -7,26 +7,23 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_Passive;
+use JetApplication\Entity_Basic;
 
 #[DataModel_Definition(
 	name: 'product_images',
 	database_table_name: 'product_images',
-	id_controller_class: DataModel_IDController_Passive::class
 )]
-abstract class Core_Product_Image extends DataModel
+abstract class Core_Product_Image extends Entity_Basic
 {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		is_id: true,
 		is_key: true,
 	)]
 	protected string $product_id = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-		is_id: true,
 		is_key: true
 	)]
 	protected int $image_index = 0;
@@ -59,7 +56,7 @@ abstract class Core_Product_Image extends DataModel
 		$images = [];
 		
 		foreach($_images as $img) {
-			$images[$img->image_index] = $img;
+			$images[] = $img;
 		}
 		
 		return $images;
@@ -98,14 +95,5 @@ abstract class Core_Product_Image extends DataModel
 	public function __toString() : string
 	{
 		return $this->image_file;
-	}
-	
-	public function getKey() : string
-	{
-		if(!$this->key) {
-			$this->key = md5( $this->image_file );
-		}
-		
-		return $this->key;
 	}
 }

@@ -1,0 +1,36 @@
+<?php
+
+use Jet\Http_Request;
+
+?>
+<script>
+	const Print  = {
+		normal_HTML: '',
+
+		beforePrint: () => {
+			Print.normal_HTML = document.documentElement.innerHTML;
+
+			const xhr = new XMLHttpRequest();
+			xhr.open('GET', '<?=Http_Request::currentURI(['print'=>1])?>', false);
+			xhr.send(null);
+			if (xhr.status === 200) {
+				document.documentElement.innerHTML = xhr.responseText;
+			} else {
+				throw new Error('Request failed: ' + xhr.statusText);
+			}
+		},
+
+		afterPrint: () => {
+			document.documentElement.innerHTML = Print.normal_HTML;
+		}
+	};
+
+	window.addEventListener("beforeprint", (event) => {
+		Print.beforePrint();
+	});
+
+	window.addEventListener("afterprint", (event) => {
+		Print.afterPrint();
+	});
+
+</script>

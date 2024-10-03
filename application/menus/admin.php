@@ -4,30 +4,30 @@
 		'icon' => '',
 		'index' => 1,
 	],
-	'customers-and-orders' => [
-		'label' => 'Customers and orders',
+	'orders-and-customers' => [
+		'label' => 'Orders and Customers',
 		'icon' => '',
 		'index' => 2,
 	],
-	'statistics-and-reports' => [
-		'label' => 'Statistics and reports',
+	'goods-operations' => [
+		'label' => 'Goods operations',
 		'icon' => '',
-		'index' => 3,
+		'index' => 6,
 	],
-	'expedition' => [
-		'label' => 'Expedition',
-		'icon' => '',
-		'index' => 4,
-	],
-	'content-and-marketing' => [
-		'label' => 'Content and marketing',
+	'content' => [
+		'label' => 'Content',
 		'icon' => '',
 		'index' => 5,
 	],
-	'warehouse-management' => [
-		'label' => 'Warehouse management',
+	'marketing' => [
+		'label' => 'Marketing',
 		'icon' => '',
-		'index' => 6,
+		'index' => 5,
+	],
+	'logs-and-statistics' => [
+		'label' => 'Logs and statistics',
+		'icon' => '',
+		'index' => 3,
 	],
 	'system' => [
 		'label' => 'System',

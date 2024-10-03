@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint[] $complaints
+ */
+$complaints = $this->getRaw('complaints');
+?>
+
+<h5><?=Tr::_('Complaint')?></h5>
+<table>
+	<?php foreach($complaints  as $complaint ): ?>
+		<tr>
+			<td><?=Admin_Managers::Complaint()->showName( $complaint->getId() )?></td>
+			<td><?=Admin_Managers::Complaint()->showComplaintStatus( $complaint )?></td>
+		</tr>
+	<?php endforeach; ?>
+</table>

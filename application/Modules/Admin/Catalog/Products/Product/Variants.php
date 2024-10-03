@@ -3,6 +3,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 
 use Jet\Form;
+use Jet\Form_Field_Input;
 use Jet\Form_Field_Int;
 use JetApplication\Shops;
 
@@ -41,12 +42,6 @@ trait Product_Variants
 		
 		foreach( Shops::getList() as $shop ) {
 			$form->removeField('/shop_data/'.$shop->getKey().'/variant_name');
-
-			$form->field('/shop_data/'.$shop->getKey().'/standard_price')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/price')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/in_stock_qty')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/length_of_delivery')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/available_from')->setIsReadonly( true );
 		}
 	}
 	
@@ -70,11 +65,6 @@ trait Product_Variants
 				'internal_code',
 				'internal_name_of_variant',
 				'/shop_data/*/variant_name',
-				'/shop_data/*/standard_price',
-				'/shop_data/*/price',
-				'/shop_data/*/in_stock_qty',
-				'/shop_data/*/length_of_delivery',
-				'/shop_data/*/available_from',
 			]);
 			
 			
@@ -108,19 +98,10 @@ trait Product_Variants
 					'ean',
 					'internal_code',
 					'internal_name_of_variant',
+					'supplier_code',
 					'/shop_data/*/variant_name',
-					'/shop_data/*/standard_price',
-					'/shop_data/*/price',
-					'/shop_data/*/in_stock_qty',
-					'/shop_data/*/length_of_delivery',
-					'/shop_data/*/available_from',
 				]);
 				
-				
-				foreach( Shops::getList() as $shop ) {
-					$_form->field('/shop_data/'.$shop->getKey().'/standard_price')->setIsReadonly( true );
-					$_form->field('/shop_data/'.$shop->getKey().'/price')->setIsReadonly( true );
-				}
 				
 				
 				foreach($_form->getFields() as $field) {
@@ -154,6 +135,18 @@ trait Product_Variants
 						$field->setName('/'.$variant->getId().'/'.$property->getId().'/'.$field->getName());
 						$fields[] = $field;
 					}
+				}
+				
+				foreach( Shops::getListSorted() as $shop ) {
+					
+					$name_field = new Form_Field_Input('/'.$variant->getId().'/'.$shop->getKey().'/variant_name', 'Name:');
+					$name_field->setDefaultValue( $variant->getShopData( $shop )->getVariantName() );
+					$name_field->setFieldValueCatcher( function( $value ) use ($variant, $shop) {
+						$variant->getShopData( $shop )->setVariantName( $value );
+					} );
+					
+					$fields[] = $name_field;
+					
 				}
 				
 			}

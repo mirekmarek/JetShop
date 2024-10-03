@@ -35,6 +35,7 @@ class DataModel_Definition_Property_Locale extends Jet_DataModel_Definition_Prop
 
 	/**
 	 * @return mixed
+	 * @noinspection PhpMixedReturnTypeCanBeReducedInspection
 	 */
 	public function getDefaultValue() : mixed
 	{

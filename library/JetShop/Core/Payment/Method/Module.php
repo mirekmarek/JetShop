@@ -22,5 +22,7 @@ abstract class Core_Payment_Method_Module extends Application_Module
 	{
 		return $payment_method->getConfirmationEmailInfoText();
 	}
+	
+	abstract public function getPaymentMethodSpecificationList() : array;
 
 }

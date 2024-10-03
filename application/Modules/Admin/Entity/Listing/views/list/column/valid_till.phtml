@@ -1,0 +1,43 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Entity_Marketing;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_Marketing $item
+ */
+
+
+$item = $this->getRaw('item');
+
+if($item->isActiveByTimePlan()) {
+	$class = 'active';
+} else {
+	if($item->isWaitingByTimePlan()) {
+		$class = 'waiting';
+	} else {
+		$class = 'expired';
+	}
+}
+
+
+if(!$item->getActiveTill()):
+	?>
+	<div class="time-interval time-interval-<?=$class?>"><?=Tr::_('Unlimited', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></div>
+	<?php
+	return;
+endif;
+?>
+	<div class="time-interval time-interval-<?=$class?>"><?=Locale::dateAndTime( $item->getActiveTill() )?></div>
+<?php

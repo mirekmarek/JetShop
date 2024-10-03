@@ -19,4 +19,4 @@ use JetApplicationModule\Admin\Entity\Listing\Listing;
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 ?>
-<a href="<?=$item->getEditURL()?>"><?=$item->getCode()?></a>
+<a href="<?=$listing->getEditURL($item)?>"><?=$item->getCode()?></a>

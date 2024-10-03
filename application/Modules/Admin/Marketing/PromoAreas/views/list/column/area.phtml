@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Marketing\PromoAreas;
+
+use Jet\MVC_View;
+use JetApplication\Marketing_PromoAreaDefinition;
+
+
+/**
+ * @var MVC_View $this
+ * @var PromoArea $item
+ */
+
+$item = $this->getRaw('item');
+echo Marketing_PromoAreaDefinition::getScope()[$item->getPromoAreaId()];

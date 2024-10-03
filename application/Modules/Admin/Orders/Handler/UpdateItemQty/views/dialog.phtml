@@ -1,0 +1,186 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\Tr;
+use Jet\UI_dialog;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Order_Item;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+if(!$order->isEditable()) {
+	return;
+}
+
+$price_formatter = Admin_Managers::PriceFormatter();
+$product_manager = Admin_Managers::Product();
+$icons = Order_Item::getItemIcons();
+
+
+$select_dialog = new UI_dialog( 'update_item_qty_dialog', Tr::_('Adjust quantity / Remove item'), UI_dialog::SIZE_EXTRA_LARGE );
+
+echo $select_dialog->start();
+?>
+<div>
+<form method="post" action="<?=Http_Request::currentURI(set_GET_params: ['update_item_qty'=>1])?>" id="update_item_qty_form" onsubmit="updateItemQty.submit();return false;">
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th style="width: 20px;"></th>
+			<th style="width: 60px;"></th>
+			<th><?=Tr::_('Item')?></th>
+
+			<th><?=Tr::_('Available')?></th>
+			<th><?=Tr::_('Not available')?></th>
+
+			<th style="width: 200px"><?=Tr::_('New number of units')?></th>
+
+		</tr>
+		</thead>
+		<tbody>
+		<?php
+		$showItem = function( Order_Item $item ) use ($product_manager, $icons, $price_formatter, $order) {
+			?>
+			<tr id="item_<?=$item->getId()?>">
+				<td style="text-align: center"><?=$icons[$item->getType()]?></td>
+				<td style="text-align: right"><b><?=Locale::float($item->getNumberOfUnits()) ?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></b></td>
+				<td>
+					<?php if( $item->isPhysicalProduct() || $item->isVirtualProduct() ): ?>
+						<a href="<?=$product_manager->getEditURL( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
+					<?php else: ?>
+						<?=$item->getTitle() ?>
+					<?php endif; ?>
+				</td>
+				<td>
+					<?php if( $item->isPhysicalProduct() ): ?>
+						<?=$item->getNumberOfUnitsAvailable()?>&nbsp;<?=$item->getMeasureUnit()?->getName()?>
+					<?php endif; ?>
+				</td>
+				<td>
+					<?php if($item->isPhysicalProduct() && $item->getNumberOfUnitsNotAvailable()>0):?>
+
+						<b style="color: red"><?=$item->getNumberOfUnitsNotAvailable()?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></b><br>
+						
+						<?php
+						echo $item->getNotAvailableUnitsDeliveryTemInfo()?->getDeliveryInfoText();
+						echo '<br>';
+						echo Locale::date( $item->getNotAvailableUnitsPromisedDeliveryDate() );
+						?>
+					
+					<?php endif; ?>
+				</td>
+				<td>
+					<div style="display: grid;grid-template-columns: 1fr 20px;gap: 10px;align-items: center">
+						<input name="new_qty[<?=$item->getId()?>]" type="number" class="form-control" value="<?=$item->getNumberOfUnits()?>">
+						<div><?=$item->getMeasureUnit()?->getName()?></div>
+					</div>
+					
+				</td>
+
+			</tr>
+			<?php
+			
+			if($item->getSetItems()):
+				foreach($item->getSetItems() as $set_item):
+					?>
+					<tr style="opacity: 0.3">
+						<td style="text-align: center"></td>
+						<td style="text-align: right"><b><?=Locale::float($set_item->getNumberOfUnits()) ?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b></td>
+						<td>
+							<a href="<?=$product_manager->getEditURL( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
+						</td>
+						<td>
+							<?=$set_item->getNumberOfUnitsAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?>
+						</td>
+						<td>
+							<?php if($set_item->getNumberOfUnitsNotAvailable()>0):?>
+								<b style="color: red"><?=$set_item->getNumberOfUnitsNotAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b><br>
+								<?php
+								echo $set_item->getNotAvailableUnitsDeliveryTemInfo()?->getDeliveryInfoText();
+								echo '<br>';
+								echo Locale::date( $set_item->getNotAvailableUnitsPromisedDeliveryDate() );
+								?>
+							<?php endif; ?>
+						</td>
+						
+						<td></td>
+					</tr>
+				<?php
+				endforeach;
+			endif;
+		};
+		?>
+		
+		<?php
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_PRODUCT ||
+				$item->getType()==Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_GIFT ||
+				$item->getType()==Order_Item::ITEM_TYPE_VIRTUAL_GIFT
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_SERVICE
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		
+		?>
+		</tbody>
+	</table>
+</form>
+</div>
+<?php
+echo $select_dialog->footer();
+
+echo UI::button(Tr::_('Update'))
+	->setClass(UI_button::CLASS_DANGER)
+	->setType(UI_button::TYPE_SUBMIT)
+	->setOnClick( 'updateItemQty.submit()' )
+	->setId('delete_item_confirm_btn');
+
+echo $select_dialog->end();
+
+
+?>
+<script>
+	const updateItemQty = {
+		showDialog: () => {
+			$('#update_item_qty_dialog').modal('show');
+		},
+		submit: () => {
+			JetAjaxForm.submit('update_item_qty_form', {
+				onSuccess: ()=>{location.reload();
+			}});
+			return false;
+		}
+	};
+	
+</script>

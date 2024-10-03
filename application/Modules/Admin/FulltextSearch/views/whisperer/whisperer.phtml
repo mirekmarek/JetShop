@@ -29,7 +29,7 @@ $w_URL = $this->getRaw('w_URL');
 		Whisperers['<?=$name?>'].init();
 		Whisperers['<?=$name?>'].onItemSelect = function ( item_node ) {
 			let selected_item = {
-				object_class:     item_node.data('class'),
+				entity_type:      item_node.data('class'),
 				object_id:        item_node.data('id'),
 				object_title:     item_node.data('title'),
 				object_type:      item_node.data('type'),

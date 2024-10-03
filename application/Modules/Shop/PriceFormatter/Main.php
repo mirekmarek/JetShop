@@ -8,30 +8,30 @@
 namespace JetApplicationModule\Shop\PriceFormatter;
 
 use Jet\Application_Module;
+use JetApplication\Currencies;
+use JetApplication\Currencies_Currency;
 use JetApplication\Shop_Managers_PriceFormatter;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
 
 
 class Main extends Application_Module implements Shop_Managers_PriceFormatter
 {
 	
-	public function format( float $price, ?Shops_Shop $shop=null  ): string
+	public function format( float $price, ?Currencies_Currency $currency=null  ): string
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$currency = $currency?:Currencies::getCurrent();
 		
 		return number_format(
 			$price,
-			$shop->getCurrencyDecimalPlaces(),
-			$shop->getCurrencyDecimalSeparator(),
-			$shop->getCurrencyThousandsSeparator()
+			$currency->getDecimalPlaces(),
+			$currency->getDecimalSeparator(),
+			$currency->getThousandsSeparator()
 		);
 	}
 	
-	public function formatWithCurrency( float $price, ?Shops_Shop $shop=null  ): string
+	public function formatWithCurrency( float $price, ?Currencies_Currency $currency=null  ): string
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$currency = $currency?:Currencies::getCurrent();
 		
-		return $shop->getCurrencySymbolLeft().$this->format( $price ).$shop->getCurrencySymbolRight();
+		return $currency->getSymbolLeft().$this->format( $price ).' '.$currency->getSymbolRight();
 	}
 }

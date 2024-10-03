@@ -1,5 +1,6 @@
 <?php
 
+use Jet\IO_File;
 use Jet\UI_icon;
 use Jet\MVC_View;
 
@@ -13,19 +14,24 @@ $res = '';
 
 $style = '';
 
-$font_size = match($i->getSize()) {
-	UI_icon::SIZE_EXTRA_SMALL => 0.5,
-	UI_icon::SIZE_SMALL => 0.75,
-	UI_icon::SIZE_NORMAL => 1,
-	UI_icon::SIZE_LARGE => 1.5,
-	UI_icon::SIZE_EXTRA_LARGE => 2,
-	UI_icon::SIZE_ULTRA_LARGE => 3
-};
 
-
-$i->addCustomCssStyle( 'font-size:' . $font_size . 'rem;' );
-$i->setBaseCssClass('fa fa-'. $i->getIcon() );
+$i->setBaseCssClass('icon icon-'. $i->getSize() );
 $i->setCustomTagAttribute('title', $i->getTitle());
 
-$tag = $i->getTag();
-?><<?=$tag.$i->renderTagAttributes()?>></<?= $tag ?>>
+$icon = $i->getIcon();
+if( str_contains( $icon, '.' ) ){
+	return;
+}
+
+$icon_path = __DIR__.'/icons/'.$icon.'.svg';
+
+
+if(!IO_File::isReadable($icon_path)) {
+	echo 'missing icon:'.$icon;
+	return;
+}
+
+$svg_icon = IO_File::read( $icon_path );
+
+?>
+<span <?=$i->renderTagAttributes()?> style="background-image:url('data:image/svg+xml;base64,<?=base64_encode($svg_icon)?>');"></span>

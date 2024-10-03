@@ -1,0 +1,61 @@
+<?php
+namespace JetApplicationModule\EmailMarketing\MailingSubscriptionManager;
+
+use Jet\Locale;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\EMailMarketing_Subscribe;
+use JetApplication\EMailMarketing_Subscribe_Log;
+
+/**
+ * @var MVC_View $this
+ */
+
+
+
+$email = $this->getRaw('email');
+$shop = $this->getRaw('shop');
+
+$mailing_subscribe_events = EMailMarketing_Subscribe_Log::get(
+	$shop,
+	$email
+);
+
+$subscribed = (bool)EMailMarketing_Subscribe::get( $shop, $email );
+?>
+		
+<legend>
+	<?=Tr::_('Mailing subscribe')?>
+	<?php if($subscribed): ?>
+		<div class="badge badge-success"><?=Tr::_('Subscribed')?></div>
+	<?php else: ?>
+		<div class="badge badge-danger"><?=Tr::_('Unsubscribed')?></div>
+	<?php endif; ?>
+</legend>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th><?=Tr::_('Date and time')?></th>
+		<th><?=Tr::_('Event')?></th>
+		<th><?=Tr::_('Event source')?></th>
+		<th><?=Tr::_('Comment')?></th>
+	</tr>
+	</thead>
+	<?php foreach($mailing_subscribe_events as $event): ?>
+		<tr>
+			<td style="width: 200px;"><?=Locale::getCurrentLocale()->formatDateAndTime($event->getDateTime())?></td>
+			<td style="width: 500px;">
+				<?=$event->getEventTxt()?><br>
+				<?=$event->getEventData()?>
+			</td>
+			<td style="width: 200px;">
+				<?=$event->getSource()?>
+			</td>
+			<td>
+				<?=nl2br($event->getComment())?>
+			</td>
+		</tr>
+	<?php endforeach; ?>
+</table>

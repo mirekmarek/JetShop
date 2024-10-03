@@ -1,0 +1,44 @@
+<?php
+namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use Jet\Form;
+
+/**
+ * @var MVC_View   $this
+ * @var DiscountsCode $item
+ * @var Form $form
+ */
+
+$item = $this->getRaw('item');
+$form = $this->getRaw('filter_form');
+$editable = $item->isEditable();
+
+$p_manager = Admin_Managers::Product();
+
+echo $this->controller->getEditorManager()->renderToolbar();
+
+?>
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+	
+	<fieldset>
+		<legend><?=Tr::_('Filter')?></legend>
+		
+		
+		<?=$form->start();?>
+		<div class="toolbar">
+			<?=UI::button_save( Tr::_('Save filter settings') )?>
+		</div>
+		
+		<div>
+			<?=Admin_Managers::ProductFilter()->renderFilterForm(); ?>
+		</div>
+		<?=$form->end();?>
+		
+	</fieldset>
+
+</div>

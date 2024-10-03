@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\Admin_Managers;
+use JetApplication\WarehouseManagement_StockMovement;
+
+/**
+ * @var MVC_View $this
+ * @var WarehouseManagement_StockMovement $mv
+ */
+
+$mv = $this->getRaw('movement');
+?>
+<tr <?php if($mv->getCancelled()): ?>style="text-decoration: line-through"<?php endif;?> class="table-secondary">
+	<td>
+		<?=Locale::dateAndTime($mv->getDateTime())?>
+	</td>
+	<td>
+		<?=Admin_Managers::Context()->showContext($mv->getContext())?>
+	</td>
+	<td>
+		<?php
+		echo Tr::_('Blocking for transfer between warehouses');
+		
+		if($mv->getCancelled()):
+			echo '<br>';
+			echo UI::badge(
+				UI_badge::INFO,
+				Tr::_('Cancelled %date%', ['date'=>Locale::dateAndTime($mv->getCancelledDateTime())])
+			);
+		endif;
+		?>
+	</td>
+	<td>
+		<?=Locale::float($mv->getNumberOfUnits())?> <?=$mv->getMeasureUnit()?->getName()?>
+	</td>
+	<td>
+	</td>
+	<td>
+	</td>
+	<td>
+	</td>
+	<td>
+	</td>
+</tr>
+

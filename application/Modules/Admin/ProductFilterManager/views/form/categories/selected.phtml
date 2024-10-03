@@ -1,0 +1,26 @@
+<?php
+namespace JetApplicationModule\Admin\ProductFilterManager;
+
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$category_ids = $this->getRaw('category_ids');
+if(!$category_ids) {
+	return;
+}
+
+$category_ids = explode(',', $category_ids);
+?>
+<table class="table table-striped">
+	<?php foreach($category_ids as $id): ?>
+	<tr>
+		<td style="width: 20px;"><?=UI::button_delete(' ')->setOnClick("FilterEditCategories.remove({$id})")?></td>
+		<td><?=Admin_Managers::Category()->showName( $id )?></td>
+	</tr>
+	<?php endforeach; ?>
+</table>

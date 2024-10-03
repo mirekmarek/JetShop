@@ -1,0 +1,78 @@
+<script>
+	CashDesk.customer.billingAddress = {
+		whisperer: null,
+		form: null,
+
+		initEdit: function() {
+		},
+
+		setIsPerson: function() {
+			CashDesk._request.doGet('?action=customer_set_is_person', function() {});
+
+		},
+		setIsCompany: function() {
+			CashDesk._request.doGet('?action=customer_set_is_company', function() {});
+		},
+
+		disableEdit: function() {
+			CashDesk.customer.billingAddress.whisperer = null;
+		},
+
+		select: function( id ) {
+			CashDesk._request.doGet('?action=customer_billing_address_select&id='+id);
+		},
+
+		sendField: function( field ) {
+			let field_name = field.name;
+			let value = field.value;
+
+			CashDesk._request.doGet(
+				'?action=customer_billing_address_catch_field&field='+field_name+'&value='+encodeURIComponent(value)
+			);
+		},
+
+		confirm: function() {
+			const onResponse = function( response ) {
+				if(response.ok) {
+					CashDesk.slideUp('cash_desk_delivery_address', () => {
+						CashDesk.slideUp('cash_desk_billing_address', () => {
+							CashDesk._request.handleResponse(response);
+
+							CashDesk.slideDown('cash_desk_delivery_address', () => {
+								CashDesk.slideDown('cash_desk_billing_address', () => {
+									if(response['is_ready']) {
+										CashDesk.slideDown('cash_desk_confirm', () => {
+											CashDesk.scrollTo('cash_desk_confirm');
+										});
+									}
+								});
+							});
+						});
+
+					});
+
+
+				}
+			};
+
+			CashDesk._request.doForm( 'cash_desk_customer_billing_address_form', onResponse, null, true);
+		},
+
+		back: function() {
+			CashDesk.slideUp('cash_desk_confirm', () => {
+				CashDesk.slideUp( 'cash_desk_delivery_address', () => {
+					CashDesk.slideUp('cash_desk_billing_address', () => {
+						CashDesk._request.doGet('?action=customer_back_to_billing_address', () => {
+							CashDesk.slideDown('cash_desk_billing_address', () => {
+								CashDesk.scrollTo('cash_desk_billing_address');
+							});
+						});
+					});
+
+				} );
+			});
+
+
+		}
+	};
+</script>

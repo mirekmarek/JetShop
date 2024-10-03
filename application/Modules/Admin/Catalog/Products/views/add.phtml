@@ -29,18 +29,13 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] 
 
 <?=$form->start()?>
 
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()->setUrl(Http_Request::currentURI([], ['action']))?>
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()->setUrl(Http_Request::currentURI([], ['action']))?>
 
-			<?=UI::button_save()?>
-
-	</div>
+	<?=UI::button_save()?>
 </div>
 
-<div class="row">
-
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 
 
 		<?=$form->field('ean')?>
@@ -49,7 +44,7 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] 
 		<?=$form->field('supplier_id')?>
 		
 		<?php
-		Admin_Managers::UI()->renderShopDataBlocks(
+		Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( Shops_Shop $shop, string $shop_key ) use ($product, $form) : void {
 				?>
@@ -68,22 +63,7 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] 
 					<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
 				</fieldset>
 				
-				<fieldset>
-					<legend class="sub"><?=Tr::_('Price')?></legend>
-					
-					<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/standard_price')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/price')?>
-				</fieldset>
-				<fieldset>
-					<legend class="sub"><?=Tr::_('Availability')?></legend>
-					
-					<?=$form->field('/shop_data/'.$shop_key.'/in_stock_qty')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/length_of_delivery')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/available_from')?>
-				</fieldset>
 			<?php }); ?>
-	</div>
 </div>
 
 <?=$form->end()?>

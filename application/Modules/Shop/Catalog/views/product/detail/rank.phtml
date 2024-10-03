@@ -1,0 +1,16 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Product_ShopData;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product_ShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+
+echo Shop_Managers::ProductReviews()?->renderRank( $product );

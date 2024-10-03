@@ -1,0 +1,15 @@
+<?php
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ */
+
+?>
+<?=UI::button('Adjust quantity / Remove item')
+	->setIcon('pen-to-square')
+	->addCustomCssClass('dropdown-item')
+	->setClass( UI_button::CLASS_INFO )
+	->setOnClick("updateItemQty.showDialog();")?>

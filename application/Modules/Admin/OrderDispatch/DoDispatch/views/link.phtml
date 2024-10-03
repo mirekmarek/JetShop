@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\MVC;
+use Jet\MVC_View;
+use Jet\UI;use JetApplication\OrderDispatch;
+
+
+/**
+ * @var MVC_View   $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+$URL = MVC::getPage( Main::PAGE_ID )->getURL( GET_params: ['id'=>$dispatch->getId(), 'warehouse'=>$dispatch->getWarehouseId()] );
+?>
+<?=$dispatch->getNumber()?> <a href="<?=$URL?>"><?=UI::icon('link')?></a>

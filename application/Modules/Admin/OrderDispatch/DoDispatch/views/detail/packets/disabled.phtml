@@ -1,0 +1,41 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+$acp_form = $dispatch->getAdditionalConsignmentParametersForm();
+$acp_form->setIsReadonly();
+?>
+
+<fieldset>
+	<legend><?=Tr::_('Consignment parameters')?></legend>
+	
+	<?php if( $dispatch->getCarrier()?->getAdditionalConsignmentParameters() ): ?>
+		<div class="card card-body" style="margin: 20px">
+			<?=$acp_form->start()?>
+			<?php foreach($dispatch->getCarrier()->getAdditionalConsignmentParameters() as $param):
+				$field = $acp_form->field($param->getCode());
+				
+				$field->setLabel( '<b>'.$param->getName().'</b><br><div style="font-size: 0.8rem">'.$param->getDescription().'</div>' );
+				
+				echo $field;
+			endforeach; ?>
+			<?=$acp_form->end()?>
+		</div>
+	<?php endif; ?>
+	
+	
+	<div id="packet-list">
+		<?php require 'disabled/packet-list.phtml'; ?>
+	</div>
+</fieldset>
+

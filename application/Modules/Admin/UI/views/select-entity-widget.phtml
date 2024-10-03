@@ -22,7 +22,7 @@ $name = $this->getRaw('name');
 		<div style="display: none" id="<?=$name?>_whisperer_area">
 			<?=Admin_Managers::FulltextSearch()->renderWhisperer(
 				name: $name,
-				object_class: $this->getString('object_class'),
+				entity_type: $this->getString('entity_type'),
 				on_select: "{$name}.onSelect( selected_item );",
 				object_type_filter:  $this->getRaw('object_type_filter'),
 				object_is_active_filter: $this->getRaw('$object_is_active_filter')

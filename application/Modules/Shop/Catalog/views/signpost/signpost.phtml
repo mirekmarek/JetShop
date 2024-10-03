@@ -1,0 +1,65 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Category_ShopData;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ */
+
+$sp = $this->getRaw('signpost');
+
+$category_IDs = $sp->getCategoryIds();
+
+if(!$category_IDs) {
+	return;
+}
+
+
+$categories = Category_ShopData::getActiveList(
+	ids: $category_IDs,
+	shop:  Shops::getCurrent()
+);
+
+if(!$categories) {
+	return;
+}
+?>
+
+<div style="display: grid;grid-template-columns: 200px 1fr;">
+	<div>
+		<?php if($sp->getImageMain()): ?>
+			<img src="<?=$sp->getImageMainThumbnailUrl(150, 150)?>" style="max-width: 150px;height: auto">
+		<?php endif; ?>
+	</div>
+	<div>
+		<h1><?=$sp->getName()?></h1><br>
+		<?=$sp->getDescription(); ?>
+	</div>
+</div>
+
+
+<br>
+<div class="categories">
+	<?php foreach($sp->getCategoryIds() as $c_id):
+		$category = $categories[$c_id]??null;
+		if(!$category) {
+			continue;
+		}
+		?>
+		<div class="category">
+			<div class="category-image">
+				<?php if($category->getImageMain()): ?>
+					<a href="<?=$category->getUrl()?>" ><img src="<?=$category->getImageMainThumbnailUrl(150, 150)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div class="category-name">
+				<a href="<?=$category->getURL()?>"><?=$category->getName();?></a>
+			</div>
+		</div>
+	<?php endforeach; ?>
+</div>
+
+

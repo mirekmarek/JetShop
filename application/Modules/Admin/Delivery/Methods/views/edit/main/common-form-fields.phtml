@@ -1,6 +1,8 @@
 <?php
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Http_Request;
+use JetApplication\Shops;
 
 /**
  * @var MVC_View $this
@@ -8,10 +10,39 @@ use Jet\Form;
  */
 
 $form = $this->getRaw('form');
+$form->field( 'carrier_code' )->input()->addJsAction('onchange', 'reloadCarrierServices(this.options[this.selectedIndex].value);');
 ?>
+<!--suppress JSCheckFunctionSignatures -->
+<script>
+	async function reloadCarrierServices( carrier ) {
+		const set = ( field_id, options ) => {
+			const select = document.getElementById( field_id );
+
+			while (select.options.length > 0) {
+				select.remove(0);
+			}
+			for( let opt in options ) {
+				const option = new Option(options[opt], opt);
+				select.add( option );
+			}
+		};
+		
+		const _services = await fetch('<?=Http_Request::currentURI(['action' =>'get_carrier_services'])?>&carrier='+encodeURIComponent(carrier));
+		const services = await _services.json();
+		const _dp_types = await fetch('<?=Http_Request::currentURI(['action' =>'get_carrier_dp_types'])?>&carrier='+encodeURIComponent(carrier));
+		const dp_types = await _dp_types.json();
+		
+		
+		<?php foreach(Shops::getList() as $shop): ?>
+		set( '<?=$form->field('/shop_data/'.$shop->getKey().'/carrier_service_code')->getId()?>', services );
+		set( '<?=$form->field('/shop_data/'.$shop->getKey().'/allowed_delivery_point_types')->getId()?>', dp_types );
+		<?php endforeach; ?>
+
+	}
+</script>
+
 <?=$form->field( 'kind' )?>
 <?=$form->field( 'delivery_classes' )?>
-<?=$form->field( 'backend_module_name' )?>
+<?=$form->field( 'carrier_code' )?>
 <?=$form->field( 'payment_methods' )?>
-<?=$form->field( 'services' )?>
 

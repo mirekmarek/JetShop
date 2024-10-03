@@ -8,5 +8,7 @@ return [
 		'add_product' => 'Add new product',
 		'update_product' => 'Update product',
 		'delete_product' => 'Delete product',
+		'set_price' => 'Set price',
+		'set_availability' => 'Set availability',
 	],
 ];

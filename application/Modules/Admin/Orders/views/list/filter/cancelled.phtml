@@ -1,0 +1,30 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Cancelled $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'cancelled' );
+
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Cancelled'),
+	form_fields: [$field],
+	is_active:   $field->getValue(),
+	renderer:    function() use ($field) {
+		?>
+		<?= $field->input() ?>
+		<?php
+	}
+);

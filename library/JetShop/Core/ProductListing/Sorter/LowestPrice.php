@@ -9,7 +9,7 @@ namespace JetShop;
 
 
 use Jet\Tr;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_Price;
 use JetApplication\ProductListing_Sorter;
 
 abstract class Core_ProductListing_Sorter_LowestPrice extends ProductListing_Sorter
@@ -28,13 +28,6 @@ abstract class Core_ProductListing_Sorter_LowestPrice extends ProductListing_Sor
 	
 	public function sort( array $product_ids ): array
 	{
-		return Product_ShopData::dataFetchCol(
-			select: ['entity_id'],
-			where: [
-				'entity_id' => $product_ids,
-			],
-			order_by: ['+price'],
-			raw_mode: true
-		);
+		return Product_Price::orderAsc( $this->listing->getPricelist(), $product_ids );
 	}
 }

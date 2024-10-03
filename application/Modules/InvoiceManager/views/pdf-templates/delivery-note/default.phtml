@@ -1,0 +1,406 @@
+<?php /** @noinspection PhpUndefinedClassInspection */
+namespace JetApplicationModule\InvoiceManager;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\CompanyInfo;
+use JetApplication\DeliveryNote_Item;
+use JetApplication\DeliveryNote;
+use JetApplication\Order;
+use TCPDF;
+
+
+/**
+ * @var MVC_View $this
+ * @var DeliveryNote $invoice
+ * @var TCPDF $tcpdf
+ */
+$invoice = $this->getRaw('invoice');
+$company = CompanyInfo::get( $invoice->getShop() );
+$tcpdf = $this->getRaw('tcpdf');
+
+$tcpdf->setFont( 'dejavusans' );
+$tcpdf->setCellHeightRatio( 1.3 );
+
+$tcpdf->footer_generator = function( TCPDF $pdf, DeliveryNote $invoice ) {
+	$pdf->SetY(-15);
+	$pdf->SetFont('dejavusans', '', 7);
+	$pdf->setDrawColor( 50, 50, 50 );
+	$pdf->Cell(0, 6, '', "B1", false, 'L', 0, '', 0, false, 'T', 'M');
+	$pdf->Ln();
+	
+	$title = Tr::_('Delivery note %NUMBER%', ['NUMBER'=>$invoice->getNumber()]);
+	
+	
+	$pdf->Cell(0, 6, '  '.$title.'        '.$pdf->getAliasNumPage().'/'.$pdf->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
+	
+};
+
+
+$logo = $company->getLogoThbUrl( 70, 70 );
+//$stamp = $company->getStampAndSignatureThbUrl( 200, 80 );
+$stamp = '';
+
+$has_VAT = $invoice->hasVAT();
+
+
+$price_formatter = Admin_Managers::PriceFormatter();
+?>
+
+<table style="width: 100%;border-bottom: 0.5mm solid #c9c9c9;" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td style="width: 20%;height: 10mm;">
+			<?php if($logo): ?>
+			<img src="<?=$logo?>">
+			<?php endif; ?>
+		</td>
+		<td style="width: 80%;height: 10mm;text-align: right;vertical-align: middle;">
+			
+				<table cellpadding="4mm"><tr><td>
+				<b style="font-size: 6mm"><?=Tr::_('Delivery note %NUMBER%', ['NUMBER'=>$invoice->getNumber()])?></b>
+				</td></tr></table>
+			
+		</td>
+	</tr>
+</table>
+
+
+<table style="width: 100%;font-size: 3mm" cellspacing="2mm" cellpadding="3mm">
+	<tr>
+		<td style="width: 50%;border: 0.2mm solid black;">
+			<table cellspacing="2mm">
+				<tr>
+					<td><b style="font-size: 4mm;"><?=Tr::_('Issuer')?></b></td>
+				</tr>
+				<tr>
+					<td style="font-size: 3mm">
+						<b style="font-size: 4mm"><?=$invoice->getIssuerCompanyName()?></b><br>
+						<?=$invoice->getIssuerAddressStreetNo()?><br>
+						<?=$invoice->getIssuerAddressZip()?> <?=$invoice->getIssuerAddressTown()?>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('Company ID:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getIssuerCompanyId()?></td>
+							</tr>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('VAT ID:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getIssuerCompanyVatId()?></td>
+							</tr>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('Phone:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getIssuerPhone()?></td>
+							</tr>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('e-mail:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getIssuerEmail()?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td style="font-size: 3mm">
+						<?=$invoice->getIssuerInfo()?>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table>
+							<tr>
+								<td style="width: 30mm;font-size: 3mm"><?=Tr::_('Bank name:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getIssuerBankName()?></td>
+							</tr>
+							<tr>
+								<td style="width: 30mm;font-size: 3mm"><?=Tr::_('Account number:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getIssuerBankAccountNumber()?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td style="width: 50%;border: 0.2mm solid black;">
+			<table cellspacing="2mm">
+				<tr>
+					<td><b style="font-size: 4mm;"><?=Tr::_('Customer')?></b></td>
+				</tr>
+				<tr>
+					<td style="font-size: 3mm">
+						<b style="font-size: 4mm"><?=$invoice->getCustomerCompanyName()?></b><br>
+						<b style="font-size: 4mm"><?=$invoice->getCustomerFirstName()?> <?=$invoice->getCustomerSurname()?></b><br>
+						<?=$invoice->getCustomerAddressStreetNo()?><br>
+						<?=$invoice->getCustomerAddressZip()?> <?=$invoice->getCustomerAddressTown()?>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('Company ID:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getCustomerCompanyId()?></td>
+							</tr>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('VAT ID:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getCustomerCompanyVatId()?></td>
+							</tr>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('Phone:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getCustomerPhone()?></td>
+							</tr>
+							<tr>
+								<td style="width: 20mm;font-size: 3mm"><?=Tr::_('e-mail:')?></td>
+								<td style="width: 80mm;font-size: 3mm"><?=$invoice->getCustomerEmail()?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+			</table>
+		</td>
+	</tr>
+</table>
+
+<table style="width: 100%;" cellspacing="2mm">
+	<tr>
+		<td style="border: 0.1mm solid black;font-size: 3mm">
+
+			<table cellspacing="2mm">
+				<tr>
+					<td valign="top">
+						<table>
+							<?php if($invoice->getOrderId()): ?>
+								<tr>
+									<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
+									<td nowrap="" style="padding: 3px"><?=Order::get(  $invoice->getOrderId() )?->getNumber()?></td>
+								</tr>
+							<?php endif; ?>
+							
+							<tr>
+								<td><b><?=Tr::_('Payment method:')?></b></td>
+								<td nowrap="" style="padding: 3px"><?=$invoice->getPaymentKind()?->getTitleInvoice()?></td>
+							</tr>
+						</table>
+					</td>
+					<td valign="top">
+						<table>
+							<tr>
+								<td nowrap=""><b><?=Tr::_('Invoice date:')?></b></td>
+								<td nowrap="" style="padding: 3px"><?= Locale::date($invoice->getInvoiceDate()) ?></td>
+							</tr>
+							<tr>
+								<td nowrap=""><b><?=Tr::_('Due date:')?></b></td>
+								<td nowrap="" style="padding: 3px"><?= Locale::date($invoice->getDueDate()) ?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+
+
+			
+			
+		</td>
+	</tr>
+</table>
+
+
+<?php
+$price_col_width = '21mm';
+$item_col_width = '58mm';
+$units_col_width = '17mm';
+$vat_rate_col_width = '10mm';
+?>
+
+<b style="font-size: 4mm"><?=Tr::_('Invoice items')?></b>
+<br>
+
+		<table style="font-size: 2.5mm;border-bottom: 0.1mm solid black;" cellspacing="0mm" cellpadding="2mm">
+			<thead>
+			<tr>
+				<th style="width: <?=$item_col_width?>;font-weight: bolder;"><?=Tr::_('Item')?></th>
+				<th style="width: <?=$units_col_width?>;font-weight: bolder;"></th>
+				<th style="width: <?=$price_col_width;?>;font-weight: bolder;"><?=Tr::_('Price per item without VAT')?></th>
+
+				<th style="width: <?=$price_col_width?>;font-weight: bolder;">
+					<?php if($has_VAT): ?>
+						<?=Tr::_('VAT per item')?>
+					<?php endif; ?>
+				</th>
+
+				<th style="width: <?=$vat_rate_col_width?>;font-weight: bolder;"><?=Tr::_('VAT rate')?></th>
+
+				<th style="width: <?=$price_col_width?>;font-weight: bolder;">
+					<?php if($has_VAT): ?>
+						<?=Tr::_('Price per item with VAT')?>
+					<?php endif; ?>
+				</th>
+
+				<th style="width: <?=$price_col_width?>;font-weight: bolder;"><?=Tr::_('Total amount without VAT')?></th>
+
+				<th style="width: <?=$price_col_width?>;font-weight: bolder;">
+					<?php if($has_VAT): ?>
+						<?=Tr::_('Total amount with VAT')?>
+					<?php endif; ?>
+				</th>
+			</tr>
+			</thead>
+		</table>
+
+			<?php
+			$showItem = function( DeliveryNote_Item $item ) use ( $price_formatter, $invoice, $has_VAT, $price_col_width, $item_col_width, $units_col_width, $vat_rate_col_width) {
+				?>
+			<table style="font-size: 2.5mm;border-bottom: 0.1mm solid #c9c9c9;" cellspacing="0mm" cellpadding="2mm">
+
+				<tr style="border-bottom: 2px solid red">
+					<td style="width: <?=$item_col_width?>;"><?=$item->getTitle() ?></td>
+					<td style="width: <?=$units_col_width?>;"><?=Locale::float($item->getNumberOfUnits()) ?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></td>
+					<td style="width: <?=$price_col_width?>;"><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getPricePerUnitWithoutVat() )?></td>
+
+					<td style="width: <?=$price_col_width?>">
+						<?php if($has_VAT):
+							echo $price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $item->getPricePerUnitVat() );
+						endif; ?>
+					</td>
+					<td style="width: <?=$vat_rate_col_width?>"><?=$item->getVatRate()?>%</td>
+
+					<td style="width: <?=$price_col_width?>">
+						<?php if($has_VAT):
+							echo $price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getPricePerUnitWithVat() );
+						endif; ?>
+					</td>
+					
+					<td style="width: <?=$price_col_width?>"><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getTotalAmountWithoutVat() )?></td>
+
+					<td style="width: <?=$price_col_width?>">
+						<?php if($has_VAT):
+							echo $price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getTotalAmountWithVat() );
+						endif; ?>
+					</td>
+
+				</tr>
+			</table>
+				<?php
+			};
+			?>
+			
+			<?php
+			foreach( $invoice->getItems() as $item ):
+				if(
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_PRODUCT ||
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_VIRTUAL_PRODUCT
+				) {
+					$showItem( $item );
+				}
+			endforeach;
+			
+			foreach( $invoice->getItems() as $item ):
+				if(
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_GIFT ||
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_VIRTUAL_GIFT
+				) {
+					$showItem( $item );
+				}
+			endforeach;
+			
+			foreach( $invoice->getItems() as $item ):
+				if(
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_SERVICE
+				) {
+					$showItem( $item );
+				}
+			endforeach;
+			
+			foreach( $invoice->getItems() as $item ):
+				if(
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_PAYMENT ||
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_DELIVERY
+				) {
+					$showItem( $item );
+				}
+			endforeach;
+			
+			foreach( $invoice->getItems() as $item ):
+				if(
+					$item->getType()==DeliveryNote_Item::ITEM_TYPE_DISCOUNT
+				) {
+					$showItem( $item );
+				}
+			endforeach;
+			
+			
+			?>
+		
+
+		<table cellpadding="6mm" border="0">
+			<tr>
+				<td style="width: 80mm">
+					<?php if($stamp): ?>
+						<img src="<?=$stamp?>">
+					<?php endif; ?>
+				</td>
+				
+				<td>
+					<table align="right" cellpadding="1mm" cellspacing="0mm" border="0" style="font-size: 3mm;">
+						<tr>
+							<td style="width: 60mm"><?=Tr::_('Without VAT:')?></td>
+							<td style="width: 40mm"><?=$price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotalWithoutVat())?></td>
+						</tr>
+						<tr>
+							<td style="width: 60mm"><?=Tr::_('VAT:')?></td>
+							<td style="width: 40mm"><?=$price_formatter->formatWithCurrency_VAT($invoice->getCurrency(), $invoice->getTotalVat())?></td>
+						</tr>
+						<?php if($invoice->getTotalRound()<>0): ?>
+							<tr>
+								<td style="width: 60mm"><?=Tr::_('Round:')?></td>
+								<td style="width: 40mm"><?=$price_formatter->formatWithCurrency_VAT($invoice->getCurrency(), $invoice->getTotalRound())?></td>
+							</tr>
+						<?php endif; ?>
+						
+							<tr>
+								<td style="font-weight: bolder;font-size: 5mm"><?=Tr::_('Total:')?></td>
+								<td style="font-weight: bolder;font-size: 5mm">
+									<?php if($has_VAT):
+										echo $price_formatter->formatWithCurrency($invoice->getCurrency(), $invoice->getTotal());
+									else:
+										echo $price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotal());
+									endif; ?>
+
+								</td>
+							</tr>
+					</table>
+					
+				</td>
+			</tr>
+		</table>
+
+		
+		
+
+	
+<?php if($has_VAT): ?>
+	<b style="font-size: 2mm"><?=Tr::_('VAT overview')?></b>
+	<br>
+	
+		<table style="font-size: 2mm;border-bottom: 0.2mm solid black;" border="0" cellpadding="2mm">
+			<tr>
+				<th style="width: 15mm;font-weight: bolder;"><?=Tr::_('VAT rate')?></th>
+				<th style="width: 31mm;font-weight: bolder;"><?=Tr::_('Tax base')?></th>
+				<th style="width: 31mm;font-weight: bolder;"><?=Tr::_('Tax')?></th>
+			</tr>
+		</table>
+		<?php foreach($invoice->getVATOverview() as $vat_ov_item): ?>
+		<table style="font-size: 2mm;border-bottom: 0.2mm solid #c9c9c9;" border="0" cellpadding="2mm">
+			<tr>
+				<td style="width: 15mm"><?=Locale::float($vat_ov_item->getVatRate())?>%</td>
+				<td style="width: 31mm"><?=$price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $vat_ov_item->getTaxBase())?></td>
+				<td style="width: 31mm"><?=$price_formatter->formatWithCurrency_VAT($invoice->getCurrency(), $vat_ov_item->getTax())?></td>
+			</tr>
+		</table>
+		<?php endforeach; ?>
+
+<?php endif; ?>

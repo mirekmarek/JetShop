@@ -28,30 +28,28 @@ echo $form->start();
 <?=Admin_Managers::UI()->renderEntityToolbar($form)?>
 
 	
-	<div class="row">
-		<div class="col-md-12" id="main-col">
+	<div id="main-col">
 			<?=$this->getRaw('tabs')?>
 			<br>
 			
-			<?=Admin_Managers::UI()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
-			<?=Admin_Managers::UI()->renderEntityFormCommonFields($form)?>
+			<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
+			<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityFormCommonFields($form)?>
 			<?php
 			
-			Admin_Managers::UI()->renderShopDataBlocks(
+			Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 				form: $form,
 				renderer: function( Shops_Shop $shop, string $shop_key ) use ($option, $form) : void {
 					?>
 					<fieldset>
 						<legend class="sub"><?=Tr::_('Main data')?></legend>
 						
-						<?=Admin_Managers::UI()->renderEntityShopDataActivation( $option, $shop, !$form->getIsReadonly() )?>
+						<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityShopDataActivation( $option, $shop, !$form->getIsReadonly() )?>
 						
 						<?=$form->field('/shop_data/'.$shop_key.'/title')?>
 						<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 					</fieldset>
 				<?php }); ?>
 		
-		</div>
 	</div>
 	
 	<?php

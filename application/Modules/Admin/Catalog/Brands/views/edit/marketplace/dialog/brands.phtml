@@ -1,0 +1,21 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
+
+/**
+ * @var MVC_View $this
+ * @var MarketplaceIntegration_Module_Controller_BrandSettings $controller
+ */
+$controller = $this->getController();
+
+$brands = $controller->getMarketplaceBrands();
+?>
+
+<table class="table table-striped">
+	<?php foreach( $brands as $br): ?>
+	<tr>
+		<td nowrap=""><a href="#" onclick="BrandSelect.select('<?=$br->getBrandId()?>','<?=$br->getName()?>');return false"><?=$br->getName()?></a></td>
+		<td nowrap="" style="width: 100%;"><a href="#" onclick="BrandSelect.select('<?=$br->getBrandId()?>','<?=$br->getBrandId()?>');return false"><?=$br->getBrandId()?></a></td>
+	</tr>
+	<?php endforeach; ?>
+</table>

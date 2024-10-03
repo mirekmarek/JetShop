@@ -1,0 +1,9 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Admin_EntityManager_WithShopData_Controller;
+
+abstract class Admin_EntityManager_WithShopData_Controller extends Core_Admin_EntityManager_WithShopData_Controller
+{
+
+}

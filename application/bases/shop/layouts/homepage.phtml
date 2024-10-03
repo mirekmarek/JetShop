@@ -8,52 +8,33 @@ use Jet\MVC;
  * @var MVC_Layout $this
  */
 
-require 'parts/init_libs.php';
+$this->setVar('customer_icon', true);
+$this->setVar('shopping_cart_icon', true);
+$this->setVar('compare_icon', true);
+$this->setVar('wishlist_icon', true);
 ?>
 <!DOCTYPE html>
 <html lang="<?=MVC::getLocale()->getLanguage()?>">
 <head>
-	<title><?=MVC::getBase()->getLocalizedData( MVC::getLocale() )->getTitle()?> : <?=MVC::getPage()->getTitle()?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="content-language" content="<?=MVC::getLocale()->getLanguage()?>" />
-
-	<jet_layout_meta_tags/>
-	<jet_layout_css/>
-	<jet_layout_javascripts/>
-
+	<?php require 'parts/head.phtml'; ?>
 </head>
 <body>
-	<div class="container-fluid">
-		<div class="page-header card text-white bg-dark">
-			<div class="card-body">
-				<h1><a href="<?=MVC::getBase()->getHomepage()->getURL()?>">JetShop!</a></h1>
-				<small>JetShop Example</small>
-
-				<div class="float-right">
-					<div style="display: inline-block;"  id="customer_icon">
-						<jet_module module="Shop.Login" action="customer_icon" is_cacheable="false" />
-					</div>
-					<div style="display: inline-block;" id="shopping_cart_icon">
-						<jet_module module="Shop.ShoppingCart" action="cart_icon" is_cacheable="false" />
-					</div>
-				</div>
-
-			</div>
+	<?=Shop_Managers::Analytics()?->documentStart()?>
+	<div id="main-container">
+		<?php  require 'parts/header.phtml';  ?>
+		<?=Shop_Managers::UI()->renderBreadcrumbNavigation()?>
+		<div id="content">
+			<jet_layout_main_position/>
 		</div>
-
-		<jet_module module="Shop.UI" action="breadcrumbNavigation" view="default" is_cacheable="true" />
-
-		<div class="row">
-			<div class="col-md-1" >
-			</div>
-			<div class="col-md-10" style="padding-top: 10px;padding-bottom: 20px;">
-				<jet_layout_main_position/>
-			</div>
-			<div class="col-md-1" >
-			</div>
-		</div>
+		<?php require 'parts/footer.phtml'; ?>
 	</div>
-
-	<jet_module module="Shop.ShoppingCart" action="cart_popup_dialog" is_cacheable="false" />
+	
+	<?=Shop_Managers::ShoppingCart()->renderIntegration();?>
+	<?=Shop_Managers::CustomerPasswordReset()->renderIntegration();?>
+	<?=Shop_Managers::Compare()?->renderIntegration();?>
+	<?=Shop_Managers::Wishlist()?->renderIntegration();?>
+	<?=Shop_Managers::Shop_CookieSettings()?->renderDialog()?>
+	
+	<?=Shop_Managers::Analytics()?->documentEnd()?>
 </body>
 </html>

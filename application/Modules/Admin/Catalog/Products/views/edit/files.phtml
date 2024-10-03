@@ -1,0 +1,203 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+
+/**
+ * @var MVC_View   $this
+ * @var Product $product
+ */
+
+$product = $this->getRaw('item');
+
+$editable = $this->getBool('editable');
+
+require '_toolbar.phtml';
+?>
+<div id="main-col">
+		
+		<?=$this->getRaw('tabs')?>
+		
+		<?php if($editable):
+			$upload_form = $this->getRaw('upload_form');
+			
+			$file_field = $upload_form->field('file');
+			$file_field->input()->addJsAction('onchange', "ProductFilesHandler.upload()");
+			
+			?>
+			<div class="toolbar" style="display: grid;grid-template-columns: 1fr 1fr;align-items: center">
+				<?=$upload_form->start()?>
+				<div style="display: flex;align-items: center">
+					<div>
+						<div class="btn btn-light btn-upload">
+							<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload files')?></span>
+							<?=$file_field->input()?>
+						</div>
+					</div>
+					<div style="width: 150px">
+						<?=$upload_form->field('kind_of_file')->getLabel()?>
+					</div>
+					<div style="width: 200px">
+						<?=$upload_form->field('kind_of_file')->input()?>
+					</div>
+				</div>
+				<?=$upload_form->end()?>
+				
+				<div style="text-align: right;padding-right: 10px;">
+					<?=UI::button_delete(Tr::_('Delete selected files'))->setOnclick("ProductFilesHandler.deleteFiles();")?>
+				</div>
+			</div>
+		<?php endif; ?>
+		
+		<div style="background-color: #f0f0f0;border-radius: 5px;margin: 10px;padding: 10px;">
+			<div class="files_area" id="files_list" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
+				<?php
+				require 'files/list.phtml';
+				?>
+			</div>
+		</div>
+		
+		
+		
+		<?php if($editable):
+			
+			$delete_dialog = new UI_dialog('delete_file_confirm', Tr::_('Do you really want to delete those files?'), UI_dialog::SIZE_LARGE );
+			
+			echo $delete_dialog->start();
+			?>
+			<div id="file_delete_confirm_area" style="height: 250px;overflow: auto">
+			
+			</div>
+		<?php
+		echo $delete_dialog->footer();
+		echo UI::button_delete()->setOnclick("ProductFilesHandler.deleteConfirm();");
+		echo $delete_dialog->end();
+		
+		?>
+			
+			<script type="text/javascript">
+				let ProductFilesHandler = new function() {
+
+					this.delete_files = null;
+
+					const handler = this;
+
+					this._handleResponse = function( response ) {
+
+						for(let el_id in response['snippets']) {
+							document.getElementById(el_id).innerHTML = response['snippets'][el_id];
+						}
+
+						handler.initSort();
+					};
+
+					this.initSort = function() {
+
+						$('#files_list')['sortable']({
+							revert: true,
+							stop: function() {
+								handler.saveSort();
+							}
+						});
+					};
+
+					this.saveSort = function() {
+						let files = [];
+
+						$('#files_list').find('.file').each(function ( i, file ) {
+							files.push( $(file).data('file') );
+						});
+
+						$.ajax({
+							url: '<?=Http_Request::currentURI(['action'=>'save_sort_files'])?>&files='+files.join(','),
+							dataType: "json",
+							success: function( response ) {
+								handler._handleResponse(response);
+							}
+						});
+					};
+
+					this.deleteFile = function( element ) {
+						handler._delete([{
+							file: element.dataset.file,
+							url: element.dataset.url,
+							name: element.dataset.name,
+							kind: element.dataset.kind
+						}]);
+					};
+
+					this.deleteFiles = function()
+					{
+						let files = [];
+
+						$('#files_list .select_file_checkbox').each( function(i, checkbox) {
+							if(checkbox.checked) {
+								files.push( {
+									file: checkbox.dataset.file,
+									url: checkbox.dataset.url,
+									name: checkbox.dataset.name,
+									kind: checkbox.dataset.kind
+								} );
+							}
+						});
+
+						if(files.length) {
+							handler._delete(files);
+						}
+					};
+
+					this._delete = function( files ) {
+
+						handler.delete_files = files;
+
+						let html = '<div style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns:500px 150px;align-items: center;" >';
+						
+						for(let i=0;i<files.length;i++) {
+							let file = files[i];
+							
+							html += '<div>'+file.name+'</div>';
+							html += '<div>'+file.kind+'</div>';
+						}
+						
+						html += '</div>';
+
+						$('#file_delete_confirm_area').html( html );
+
+						$('#delete_file_confirm').modal('show');
+					};
+
+					this.deleteConfirm = function () {
+						let files = [];
+						for(let i=0; i<handler.delete_files.length;i++) {
+							files.push(encodeURIComponent(handler.delete_files[i].file));
+						}
+
+						$.ajax({
+							url: '<?=Http_Request::currentURI(['action'=>'delete_files'])?>&files='+files.join(','),
+							dataType: "json",
+							success: function( response ) {
+								handler._handleResponse(response);
+							}
+						});
+						$('#delete_file_confirm').modal('hide');
+
+					};
+
+
+					this.upload = function() {
+						JetAjaxForm.submitMultiUpload(
+							'<?=$upload_form->getId()?>',
+							'<?=$file_field->getName()?>',
+						);
+					};
+
+					handler.initSort();
+				};
+			</script>
+		<?php endif; ?>
+</div>

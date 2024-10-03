@@ -1032,18 +1032,7 @@ class Pages_Page extends MVC_Page
 			uasort(
 				$positions[$position],
 				function( Pages_Page_Content $a, Pages_Page_Content $b ) {
-					$a_p = $a->getOutputPositionOrder();
-					$b_p = $b->getOutputPositionOrder();
-
-					if( $a_p == $b_p ) {
-						return 0;
-					}
-
-					if( $a_p > $b_p ) {
-						return 1;
-					}
-
-					return -1;
+					return $a->getOutputPositionOrder()<=>$b->getOutputPositionOrder();
 				}
 			);
 

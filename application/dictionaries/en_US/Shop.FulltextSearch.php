@@ -1,0 +1,23 @@
+<?php
+return [
+	'Search' => '',
+	'In stock' => '',
+	'Has discount' => '',
+	'Price' => '',
+	'Yes' => '',
+	'Brand' => '',
+	'Default' => '',
+	'By name' => '',
+	'Lowest price' => '',
+	'Highest price' => '',
+	'More info' => '',
+	'Add to cart' => '',
+	'Search:' => '',
+	'Cancel filter' => '',
+	'Select variant' => '',
+	'All filters' => '',
+	'Close filter' => '',
+	'Show products (%cnt%)' => '',
+	'Price:' => '',
+	'Buy' => '',
+];

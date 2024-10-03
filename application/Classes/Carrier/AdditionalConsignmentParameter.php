@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Carrier_AdditionalConsignmentParameter;
+
+class Carrier_AdditionalConsignmentParameter extends Core_Carrier_AdditionalConsignmentParameter
+{
+}

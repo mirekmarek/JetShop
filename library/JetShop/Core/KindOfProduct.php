@@ -5,20 +5,28 @@
 
 namespace JetShop;
 
+use Jet\Application_Module;
+use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use Jet\Form_Definition;
+use Jet\Form_Field;
+use JetApplication\Admin_Managers;
+use JetApplication\Category;
 use JetApplication\Entity_WithShopData;
+use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\KindOfProduct_PropertyGroup;
 use JetApplication\KindOfProduct_ShopData;
 use JetApplication\KindOfProduct;
-use JetApplication\Property_ShopData;
-use JetApplication\PropertyGroup_ShopData;
+use JetApplication\Product;
+use JetApplication\Product_VirtualProductHandler;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 use JetApplication\PropertyGroup;
 use JetApplication\Property;
 use JetApplication\KindOfProduct_Property;
+use JetApplication\MeasureUnit;
 
 /**
  *
@@ -27,8 +35,57 @@ use JetApplication\KindOfProduct_Property;
 	name: 'kind_of_product',
 	database_table_name: 'kind_of_product',
 )]
-abstract class Core_KindOfProduct extends Entity_WithShopData
+abstract class Core_KindOfProduct extends Entity_WithShopData implements FulltextSearch_IndexDataProvider
 {
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 64
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Unit of measure:',
+		is_required: false,
+		select_options_creator: [
+			MeasureUnit::class,
+			'getScope'
+		],
+		error_messages: [
+		]
+	)]
+	protected string $measure_unit = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is virtual product',
+		is_required: false,
+		error_messages: [
+		]
+	)]
+	protected bool $is_virtual_product = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 125
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Virtual product handler:',
+		is_required: false,
+		select_options_creator: [
+			Product::class,
+			'getVirtualProductHandlersOptionsScope'
+		],
+		error_messages: [
+		]
+	)]
+	protected string $virtual_product_handler = '';
+	
+	
 	
 	/**
 	 * @var KindOfProduct_PropertyGroup[]
@@ -56,9 +113,6 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 		data_model_class: KindOfProduct_ShopData::class
 	)]
 	protected array $shop_data = [];
-
-	
-
 	
 	/**
 	 * @return KindOfProduct_PropertyGroup[]
@@ -80,7 +134,8 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 	
 	public function getShopData( ?Shops_Shop $shop=null ) : KindOfProduct_ShopData
 	{
-		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->_getShopData( $shop );
 	}
 	
 	
@@ -100,8 +155,6 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 		$group_assoc->setKindOfProductId( $this->id );
 		$group_assoc->setGroupId($group_id);
 		$group_assoc->setPriority( count($this->properties)+1 );
-		
-		//TODO: auto append default group properties
 		
 		$group_assoc->save();
 		
@@ -196,29 +249,6 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 		return true;
 	}
 	
-	public function setUseInFilters( int $property_id, bool $state ) : bool
-	{
-		if(!$this->properties[$property_id]) {
-			return false;
-		}
-		
-		$property = $this->properties[$property_id];
-		
-		$property_definition = Property::load( $property->getPropertyId() );
-		if(
-			!$property_definition ||
-			!$property_definition->canBeFilter()
-		) {
-			return false;
-		}
-		
-		
-		$property->setUseInFilters( $state );
-		$property->save();
-		
-		return true;
-	}
-	
 	public function setShowOnProductDetail( int $property_id, bool $state ) : bool
 	{
 		if(!$this->properties[$property_id]) {
@@ -294,7 +324,6 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 		$property_assoc->setCanBeFilter( $property->canBeFilter() );
 		$property_assoc->setGroupId( $property_group_id );
 		$property_assoc->setPriority( count($this->properties)+1 );
-		$property_assoc->setUseInFilters( $property->canBeFilter() );
 		$property_assoc->setShowOnProductDetail( true );
 		
 		$property_assoc->save();
@@ -419,25 +448,11 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 		}
 		
 		uasort( $this->property_groups, function( KindOfProduct_PropertyGroup $a, KindOfProduct_PropertyGroup $b ) {
-			if($a->getPriority()<$b->getPriority()) {
-				return -1;
-			}
-			if($a->getPriority()>$b->getPriority()) {
-				return 1;
-			}
-			
-			return 0;
+			return $a->getPriority() <=>  $b->getPriority();
 		} );
 		
 		uasort( $this->properties, function( KindOfProduct_Property $a, KindOfProduct_Property $b ) {
-			if($a->getPriority()<$b->getPriority()) {
-				return -1;
-			}
-			if($a->getPriority()>$b->getPriority()) {
-				return 1;
-			}
-			
-			return 0;
+			return $a->getPriority() <=> $b->getPriority();
 		} );
 		
 	}
@@ -483,82 +498,96 @@ abstract class Core_KindOfProduct extends Entity_WithShopData
 		return $layout;
 	}
 	
-	/**
-	 * @param PropertyGroup_ShopData[] &$groups
-	 * @param Property_ShopData[] &$properties
-	 * @param Shops_Shop|null $shop
-	 * @return array
-	 */
-	public function getProductDetailLayout( array &$groups=[], array &$properties=[], ?Shops_Shop $shop=null ) : array
+	
+	public function getFulltextObjectType(): string
 	{
-		
-		$group_ids = [];
-		$property_ids = [];
-
-		foreach($this->properties as $property) {
-			if(!$property->getShowOnProductDetail()) {
-				continue;
-			}
-			
-			$group_id = $property->getGroupId();
-			$property_id = $property->getPropertyId();
-
-			if(
-				$group_id &&
-				!isset($this->property_groups[$group_id])
-			) {
-				$group_id = 0;
-			}
-			
-			if(
-				$group_id &&
-				!in_array($group_id, $group_ids)
-			) {
-				$group_ids[] = $group_id;
-			}
-			$property_ids[] = $property_id;
-		}
-
-		if(!$property_ids) {
-			return [];
-		}
-		
-
-		$properties = Property_ShopData::getActiveList( $property_ids, $shop );
-		$groups = PropertyGroup_ShopData::getActiveList( $group_ids, $shop );
-		
-		
-		$layout = [];
-		$current_group = 0;
-		foreach($this->properties as $property) {
-			$property_id = $property->getPropertyId();
-			if(!isset($properties[$property_id])) {
-				continue;
-			}
-
-			
-			$group_id = $property->getGroupId();
-			
-			if(
-				$group_id &&
-				!isset($groups[$group_id])
-			) {
-				$group_id = 0;
-			}
-			
-			if(!$group_id) {
-				$layout[] = $property_id;
-				continue;
-			}
-			
-			if(!isset($layout[$group_id])) {
-				$layout[$group_id] = [];
-			}
-			
-			$layout[$group_id][] = $property_id;
-		}
-		
-		return $layout;
+		return '';
 	}
+	
+	public function getFulltextObjectIsActive(): bool
+	{
+		return $this->isActive();
+	}
+	
+	public function getInternalFulltextObjectTitle(): string
+	{
+		return $this->getAdminTitle();
+	}
+	
+	public function getInternalFulltextTexts(): array
+	{
+		return [$this->getInternalName(), $this->getInternalCode()];
+	}
+	
+	public function getShopFulltextTexts( Shops_Shop $shop ) : array
+	{
+		return [];
+	}
+	
+	public function updateFulltextSearchIndex() : void
+	{
+		Admin_Managers::FulltextSearch()->updateIndex( $this );
+	}
+	
+	public function removeFulltextSearchIndex() : void
+	{
+		Admin_Managers::FulltextSearch()->deleteIndex( $this );
+	}
+
+	public function getUsageCategoryIds() : array
+	{
+		return Category::dataFetchCol(
+			select: ['id'],
+			where: ['kind_of_product_id'=>$this->id]
+		);
+	}
+	
+	public function setMeasureUnit( string|MeasureUnit $value ) : void
+	{
+		$this->measure_unit = $value;
+		foreach( Shops::getList() as $shop ) {
+			$this->getShopData( $shop )->setMeasureUnit( $value );
+		}
+	}
+	
+	public function getMeasureUnit() : ?MeasureUnit
+	{
+		return MeasureUnit::get( $this->measure_unit );
+	}
+	
+	public function setIsVirtualProduct( bool $value ) : void
+	{
+		$this->is_virtual_product = $value;
+		foreach( Shops::getList() as $shop ) {
+			$this->getShopData( $shop )->setIsVirtualProduct( $value );
+		}
+	}
+	
+	
+	public function getIsVirtualProduct() : bool
+	{
+		return $this->is_virtual_product;
+	}
+	
+	public function getVirtualProductHandler(): null|Product_VirtualProductHandler|Application_Module
+	{
+		if(
+			!$this->virtual_product_handler ||
+			!Application_Modules::moduleIsActivated( $this->virtual_product_handler )
+		) {
+			return null;
+		}
+		
+		return Application_Modules::moduleInstance( $this->virtual_product_handler );
+	}
+	
+	public function setVirtualProductHandler( string $value ): void
+	{
+		$this->virtual_product_handler = $value;
+		foreach( Shops::getList() as $shop ) {
+			$this->getShopData( $shop )->setVirtualProductHandler( $value );
+		}
+	}
+
 	
 }

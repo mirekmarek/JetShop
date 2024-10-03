@@ -10,9 +10,9 @@ use Jet\MVC_View;
 $t = $this->getRaw( 'element' );
 
 if($t->getIsSelected()) {
-	$t->setBaseCssClass('nav-link active');
+	$t->setBaseCssClass('tabs-tab active');
 } else {
-	$t->setBaseCssClass('nav-link');
+	$t->setBaseCssClass('tabs-tab');
 }
 ?>
-<li class="nav-item"><a <?=$t->renderTagAttributes()?>><?= $t->getTitle() ?></a></li>
+<li><a <?=$t->renderTagAttributes()?>><?= $t->getTitle() ?></a></li>

@@ -1,0 +1,47 @@
+<?php
+use Jet\UI;
+use Jet\MVC_View;
+use JetApplication\Entity_WithShopData;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithShopData $item
+ */
+
+$item = $this->getRaw('item');
+
+if(Shops::isMultiShopMode()):
+	?>
+	
+	<div class="dropdown">
+		<button class="btn btn-info dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('eye');?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<?php foreach( Shops::getListSorted() as $shop ):
+				$URL = $item->getShopData($shop)->getURL();
+				if(!$URL) {
+					continue;
+				}
+				?>
+					<a class="dropdown-item" href="<?=$URL?>?cache_prevent_<?=uniqid()?>" target="_blank">
+						<?=UI::icon('arrow-up-right-from-square')->addCustomCssStyle('opacity:0.5');?>
+						<?=$shop->getShopName()?>
+					</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+<?php
+else:
+	foreach( Shops::getListSorted() as $shop ):
+		$URL = $item->getShopData($shop)->getURL();
+		if($URL):
+			?>
+			<a href="<?=$URL?>?cache_prevent_<?=uniqid()?>" target="_blank" class="btn btn-info"><?=UI::icon('eye');?></a>
+			<?php
+			continue;
+		endif;
+	endforeach;
+endif;
+?>

@@ -1,0 +1,13 @@
+<?php
+namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Order $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<a href="<?=$item->getEditURL()?>"><?=$item->getNumber()?></a>

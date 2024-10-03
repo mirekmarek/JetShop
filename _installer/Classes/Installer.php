@@ -17,7 +17,6 @@ use Jet\MVC_View;
 use Jet\SysConf_Jet_Translator;
 use Jet\Session;
 use Jet\Translator;
-use Jet\Tr;
 use Jet\SysConf_Path;
 
 
@@ -228,8 +227,7 @@ class Installer
 			$step_name = array_shift( $steps );
 
 			$step_base_path = static::getBasePath() . 'Step/' . $step_name . '/';
-
-			/** @noinspection PhpIncludeInspection */
+			
 			require_once $step_base_path . 'Controller.php';
 
 			$class_name = __NAMESPACE__ . '\\Installer_Step_' . $step_name . '_Controller';
@@ -357,6 +355,7 @@ class Installer
 	{
 
 		SysConf_Jet_Translator::setAutoAppendUnknownPhrase(true);
+		define('__APP_DICTIONARIES__',SysConf_Path::getDictionaries());
 		SysConf_Path::setDictionaries( static::getBasePath() . 'dictionaries/' );
 
 		Locale::setCurrentLocale( static::getCurrentLocale() );
@@ -459,16 +458,7 @@ class Installer
 	 */
 	public static function buttonBack(): string
 	{
-		$ns = Tr::getCurrentDictionary();
-
-		Tr::setCurrentDictionary( Translator::COMMON_DICTIONARY );
-		$view = static::getView();
-
-		$res = $view->render( 'button/back' );
-
-		Tr::setCurrentDictionary( $ns );
-
-		return $res;
+		return static::getView()->render( 'button/back' );
 	}
 
 	/**
@@ -476,53 +466,18 @@ class Installer
 	 */
 	public static function buttonNext(): string
 	{
-		$ns = Tr::getCurrentDictionary();
-
-		Tr::setCurrentDictionary( Translator::COMMON_DICTIONARY );
-		$view = static::getView();
-
-		$res = $view->render( 'button/next' );
-
-		Tr::setCurrentDictionary( $ns );
-
-		return $res;
+		return static::getView()->render( 'button/next-anchor' );
 	}
-
+	
 	/**
 	 * @return string
 	 */
-	public static function buttonNextSkipIt(): string
+	public static function buttonNextSubmit(): string
 	{
-		$ns = Tr::getCurrentDictionary();
-
-		Tr::setCurrentDictionary( Translator::COMMON_DICTIONARY );
-		$view = static::getView();
-
-		$res = $view->render( 'button/skip' );
-
-		Tr::setCurrentDictionary( $ns );
-
-		return $res;
+		return static::getView()->render( 'button/next-submit-button' );
 	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public static function continueForm(): string
-	{
-		$ns = Tr::getCurrentDictionary();
-
-		Tr::setCurrentDictionary( Translator::COMMON_DICTIONARY );
-		$view = static::getView();
-
-		$res = $view->render( 'continue' );
-
-		Tr::setCurrentDictionary( $ns );
-
-		return $res;
-	}
-
+	
+	
 	/**
 	 * @return string
 	 */

@@ -8,7 +8,6 @@
 namespace JetApplicationModule\Admin\Catalog\SetProductPrices;
 
 use Exception;
-use Jet\Application;
 use Jet\Form;
 use Jet\Form_Field_File;
 use Jet\Form_Field_File_UploadedFile;
@@ -16,18 +15,16 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\IO_Dir;
 use Jet\IO_File;
-use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\Navigation_Breadcrumb;
 use Jet\SysConf_Path;
 use Jet\Tr;
-use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
+use JetApplication\Admin_Managers;
 use JetApplication\Brand;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Pricelists;
+use JetApplication\Pricelists_Pricelist;
 use JetApplicationModule\Admin\Suppliers\Supplier;
 use XLSXReader\XLSXReader;
 
@@ -35,7 +32,7 @@ class Controller_Main extends MVC_Controller_Default
 {
 	protected UI_tabs $tabs;
 	
-	protected ?Shops_Shop $selected_shop = null;
+	protected ?Pricelists_Pricelist $selected_pricelist = null;
 	
 	protected ?string $product_identifier = null;
 	
@@ -51,31 +48,52 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$GET = Http_Request::GET();
 		
-		$this->tabs = new UI_tabs(
-			tabs: [
-				'manually' => Tr::_('Set prices manually'),
-				'export' => Tr::_('Export price list'),
-				'import' => Tr::_('Import price list'),
-			],
-			tab_url_creator: function( string $tab ) : string
-			{
-				return Http_Request::currentURI(set_GET_params: ['p'=>$tab]);
-			},
-			selected_tab_id: $GET->getString('p')
+		$this->tabs = Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module->getModuleManifest()->getName(),
+			action: function() {
+				return new UI_tabs(
+					tabs: [
+						'manually' => Tr::_('Set prices manually'),
+						'export' => Tr::_('Export price list'),
+						'import' => Tr::_('Import price list'),
+					],
+					tab_url_creator: function( string $tab ) : string
+					{
+						return Http_Request::currentURI(set_GET_params: ['p'=>$tab]);
+					},
+					selected_tab_id: Http_Request::GET()->getString('p')
+				);
+				
+			}
 		);
 		
 		$this->view->setVar('tabs', $this->tabs );
 		
-		$shop_key = $GET->getString('shop', valid_values: array_keys(Shops::getList()));
-		if($shop_key) {
-			$this->selected_shop = Shops::get( $shop_key );
-			
-			$this->view->setVar('selected_shop', $this->selected_shop );
-		}
 		
-		$this->product_identifiers = PriceList::getIdentifiers();
-		$this->product_identifier = $GET->getString('product_identifier', '', array_keys($this->product_identifiers));
-		$this->view->setVar( 'product_identifiers', $this->product_identifiers);
+		$pricelists = array_keys( Pricelists::getScope() );
+		
+		$pricelist_code = $GET->getString('pricelist',
+			default_value: $pricelists[0],
+			valid_values: $pricelists
+		);
+		
+		if($pricelist_code) {
+			$this->selected_pricelist = Pricelists::get( $pricelist_code );
+			
+			$this->view->setVar('selected_pricelist', $this->selected_pricelist );
+		}
+			
+		
+		
+		
+		if($this->tabs->getSelectedTabId()=='manually') {
+			$this->product_identifiers = ['id'=>'id'];
+			$this->product_identifier = 'id';
+		} else {
+			$this->product_identifiers = ProductPriceList::getIdentifiers();
+			$this->product_identifier = $GET->getString('product_identifier', '', array_keys($this->product_identifiers));
+			$this->view->setVar( 'product_identifiers', $this->product_identifiers);
+		}
 		$this->view->setVar( 'product_identifier', $this->product_identifier);
 		
 		
@@ -106,7 +124,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		
 		if(
-			$this->selected_shop &&
+			$this->selected_pricelist &&
 			$this->product_identifier &&
 			$this->select_by &&
 			($this->supplier_id || $this->brand_id)
@@ -119,17 +137,7 @@ class Controller_Main extends MVC_Controller_Default
 	
 	protected function setBreadcrumbNavigation( string $current_label = '', string $URL = '' ) : void
 	{
-		$page = MVC::getPage();
-		
-		Navigation_Breadcrumb::reset();
-		
-		Navigation_Breadcrumb::addURL(
-			UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle(),
-			Http_Request::currentURI(unset_GET_params: [
-				'id',
-				'action'
-			])
-		);
+		Admin_Managers::UI()->initBreadcrumb();
 		
 		if($current_label) {
 			Navigation_Breadcrumb::addURL( $current_label, $URL );
@@ -141,14 +149,13 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$this->setBreadcrumbNavigation();
 		
-		$this->output('select');
 	}
 	
-	protected function readPriceList() : PriceList
+	protected function readPriceList() : ProductPriceList
 	{
-		return new PriceList(
+		return new ProductPriceList(
 			$this->product_identifier,
-			$this->selected_shop,
+			$this->selected_pricelist,
 			$this->brand_id,
 			$this->supplier_id
 		);
@@ -162,7 +169,6 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$this->setBreadcrumbNavigation();
 		
-		$this->output('select');
 		$this->output('export');
 		
 	}
@@ -179,7 +185,7 @@ class Controller_Main extends MVC_Controller_Default
 		$price_list->setIsRequired(true);
 		
 		$form = new Form(
-			name:'import',
+			name:'import_form',
 			fields: [$price_list]
 		);
 		$form->setAction( Http_Request::currentURI(unset_GET_params: ['price_list', 'do_it']) );
@@ -232,14 +238,13 @@ class Controller_Main extends MVC_Controller_Default
 			}
 		}
 		
-		$this->output('select');
 		
 		$this->output('import');
 	}
 	
 	public function manually_Action() : void
 	{
-		$this->output('select');
+		$this->setBreadcrumbNavigation();
 		
 		$price_list = $this->readPriceList();
 		$this->view->setVar('price_list', $price_list);

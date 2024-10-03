@@ -52,7 +52,7 @@ if($filter->isMultiShopMode()) {
 
 echo Admin_Managers::EntityListing()->renderListingFilter(
 	filter:      $filter,
-	title:       Tr::_('Is active'),
+	title:       Tr::_('Is active', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName()),
 	form_fields: $fields,
 	is_active:   $is_active,
 	renderer:    function() use ($show_filter, $filter_form, $filter) {

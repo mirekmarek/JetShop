@@ -1,0 +1,82 @@
+<?php
+
+namespace JetApplicationModule\Carrier\DPD;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 10
+]);
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+echo $form->getCommonMessage();
+
+echo $form->start();
+
+echo $form->field('URL_JSON_branches');
+
+?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<br>
+			<h4><?=Tr::_('Packaging parameters - delivery to address');?></h4>
+		</div>
+	</div>
+	<?php
+
+echo $form->field('courier_packaging_has_dimensions');
+echo $form->field('courier_packaging_has_weight');
+
+?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<br>
+			<h4><?=Tr::_('Packaging parameters - delivery point');?></h4>
+		</div>
+	</div>
+	<?php
+
+echo $form->field('delivery_point_packaging_has_dimensions');
+echo $form->field('delivery_point_packaging_has_weight');
+?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<br>
+			<h4><?=Tr::_('Packaging parameters - box');?></h4>
+		</div>
+	</div>
+	<?php
+
+echo $form->field('box_packaging_has_dimensions');
+echo $form->field('box_packaging_has_weight');
+?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<?=UI::button_save()?>
+		</div>
+	</div>
+	<?php
+echo $form->end();

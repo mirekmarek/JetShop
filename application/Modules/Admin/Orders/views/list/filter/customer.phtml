@@ -26,7 +26,7 @@ echo Admin_Managers::EntityListing()->renderListingFilter(
 	is_active:   $filter->getCustomerId()>0,
 	renderer:    function() use ($field) {
 		?>
-		<div><?= $field->input() ?></div>
+		<?= $field->input() ?>
 		<div><?=UI::button(' ')->setType(UI_button::TYPE_SUBMIT)->setIcon('search')?></div>
 		<?php
 	}

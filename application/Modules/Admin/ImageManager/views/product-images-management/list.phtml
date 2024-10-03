@@ -23,7 +23,7 @@ $product = $this->getRaw('product');
 
 
 foreach($product->getImages() as $image):
-	$key = $image->getKey();
+	$id = $image->getId();
 
 	$url = $image_manager->getProductImageURL( $image );
 	$thb_url = $image_manager->getProductImageThumbnailUrl($image, 150,150);
@@ -32,9 +32,9 @@ foreach($product->getImages() as $image):
 	?>
 
 	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
-		<div class="image-thumbnail" data-image="<?=$key?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
+		<div class="image-thumbnail" data-image="<?=$id?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
 			<div style="position: absolute;bottom: 5px;right: 5px;">
-				<input type="checkbox" value="<?=$key?>" data-url="<?=$url?>" class="select_image_checkbox"/>
+				<input type="checkbox" value="<?=$id?>" data-url="<?=$url?>" class="select_image_checkbox"/>
 			</div>
 		</div>
 		<div style="width: 180px;height: 55px;padding: 5px;">
@@ -47,7 +47,7 @@ foreach($product->getImages() as $image):
 						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
 					</td>
 					<td style="padding-right: 5px; text-align: right">
-						<a href="javascript:ProductImagesHandler.deleteImage('<?=$key?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+						<a href="javascript:ProductImagesHandler.deleteImage('<?=$id?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
 					</td>
 				</tr>
 			</table>
@@ -57,7 +57,7 @@ foreach($product->getImages() as $image):
 	else:
     ?>
 	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
-		<div class="image-thumbnail" data-image="<?=$key?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
+		<div class="image-thumbnail" data-image="<?=$id?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
 		</div>
 		<div style="width: 180px;height: 55px;padding: 5px;">
 			<table style="width: 100%">

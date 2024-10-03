@@ -18,14 +18,6 @@ class PropertyGroup extends Application_PropertyGroup implements Admin_Entity_Wi
 
 	use Admin_Entity_WithShopData_Trait;
 	
-	public function isItPossibleToDelete() : bool
-	{
-		//TODO:
-		return true;
-		//$used_in_kinds_of_product = KindOfProduct::getByPropertyGroup( $this );
-		//return count($used_in_kinds_of_product)==0;
-	}
-	
 	
 	public function getEditURL() : string
 	{

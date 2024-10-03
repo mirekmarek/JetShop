@@ -1,7 +1,6 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use JetApplication\Admin_Managers;
 use JetApplication\Shops_Shop;
 
 use Jet\MVC_View;
@@ -24,6 +23,8 @@ $form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
 	
+	<?=$form->field('/shop_data/'.$shop_key.'/allow_to_order_when_sold_out')?>
+	
 	<?=$form->field('/shop_data/'.$shop_key.'/name')?>
 	<?php if($form->fieldExists('/shop_data/'.$shop_key.'/variant_name')): ?>
 	<?=$form->field('/shop_data/'.$shop_key.'/variant_name')?>
@@ -37,32 +38,4 @@ $form->field('/shop_data/'.$shop_key.'/description')->input()->addCustomCssStyle
 	<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
-</fieldset>
-
-<fieldset>
-	<legend class="sub"><?=Tr::_('Price')?></legend>
-	
-	<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/standard_price')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/price')?>
-	
-	<div class="row">
-		<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 20px;margin-top: -3px;"><?=Tr::_('Price:')?></label>
-		<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $item->getShopData($shop)->getPrice() )?></div>
-	</div>
-	
-	<?php if($item->getShopData($shop)->getDiscountPercentage()>0): ?>
-		<div class="row" style="opacity: 0.5">
-			<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 15px;margin-top: -3px;"><?=Tr::_('Discount:')?></label>
-			<div class="col-md-8" style="font-weight: bolder;font-size: 20px;"><?=$item->getShopData($shop)->getDiscountPercentage();?>%</div>
-		</div>
-	<?php endif; ?>
-
-</fieldset>
-<fieldset>
-	<legend class="sub"><?=Tr::_('Availability')?></legend>
-	
-	<?=$form->field('/shop_data/'.$shop_key.'/in_stock_qty')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/length_of_delivery')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/available_from')?>
 </fieldset>

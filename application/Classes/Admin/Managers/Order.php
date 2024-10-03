@@ -1,10 +1,9 @@
 <?php
 namespace JetApplication;
 
-interface Admin_Managers_Order
+use JetShop\Core_Admin_Managers_Order;
+
+interface Admin_Managers_Order extends Core_Admin_Managers_Order
 {
-	
-	public function showOrderStatus( Shops_Shop $shop, int $status_id ) : string;
-	
-	public function showOrdersOfCustomer( Customer $customer ) : string;
+
 }

@@ -130,6 +130,7 @@ class Controller_Main extends MVC_Controller_Default
 			Tr::_( 'Change password', [], Translator::COMMON_DICTIONARY )
 		);
 		
+		
 		if( $form->catchInput() && $form->validate() ) {
 			$data = $form->getValues();
 			/**
@@ -138,7 +139,10 @@ class Controller_Main extends MVC_Controller_Default
 			$user = Auth::getCurrentUser();
 			
 			if( !$user->verifyPassword( $data['current_password'] ) ) {
-				UI_messages::danger( Tr::_( 'Current password do not match' ) );
+				$form->setCommonMessage(
+					UI_messages::createDanger( Tr::_( 'Current password do not match' ) )
+				);
+				
 			} else {
 				
 				$user->setPassword( $data['password'] );
@@ -153,11 +157,13 @@ class Controller_Main extends MVC_Controller_Default
 					context_object_name: $user->getUsername()
 				);
 				
-				UI_messages::success( Tr::_( 'Your password has been changed' ) );
+				$form->setCommonMessage(
+					UI_messages::createSuccess( Tr::_( 'Your password has been changed' ) )
+				);
 			}
 			
 			
-			Http_Headers::reload();
+			//Http_Headers::reload();
 		}
 		
 		$this->view->setVar( 'form', $form );

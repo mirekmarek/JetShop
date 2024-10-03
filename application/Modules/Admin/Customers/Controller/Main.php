@@ -38,9 +38,9 @@ class Controller_Main extends MVC_Controller_Default
 				[
 					'listing'=> Main::ACTION_GET,
 					'view'   => Main::ACTION_GET,
-					'add'    => Main::ACTION_ADD,
+					'add'    => '',
 					'edit'   => Main::ACTION_UPDATE,
-					'delete' => Main::ACTION_DELETE,
+					'delete' => '',
 				]
 			);
 		}

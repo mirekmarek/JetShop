@@ -13,9 +13,11 @@ if( !$r->getBaseCssClasses() ) {
 	$r->setBaseCssClass( 'col-form-label' );
 }
 
+/*
 $r->setWidthCssClassesCreator(function( $size, $width ) {
 	return 'col-' . $size . '-' . $width;
 });
+*/
 
 $r->setCustomTagAttribute( 'for', $r->getField()->getId() );
 
@@ -24,8 +26,8 @@ $r->setCustomTagAttribute( 'for', $r->getField()->getId() );
 	
 	if( $r->getField()->getIsRequired() ):
 		?><em class="form-required">*</em><?php
-    endif;
-    
+	endif;
+
 	echo $r->getField()->getLabel();
 	
 ?></label>

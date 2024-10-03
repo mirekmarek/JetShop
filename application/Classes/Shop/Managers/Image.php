@@ -1,11 +1,9 @@
 <?php
 namespace JetApplication;
 
-interface Shop_Managers_Image
+use JetShop\Core_Shop_Managers_Image;
+
+interface Shop_Managers_Image extends Core_Shop_Managers_Image
 {
-	
-	public function getUrl( string $image ) : string;
-	
-	public function getThumbnailUrl( string $image, int $max_w, int $max_h ) : string;
-	
+
 }

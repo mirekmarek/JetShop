@@ -1,0 +1,28 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\Tr;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+if(!$order->isEditable()) {
+	return;
+}
+
+echo UI::button(Tr::_('Change payment method'))
+	->setClass(UI_button::CLASS_SECONDARY)
+	->setIcon('money-check-alt')
+	->addCustomCssClass('dropdown-item')
+	->setOnClick("$('#change_payment_method_dialog').modal('show');");
+	

@@ -2,11 +2,16 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Customer;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 $customer = Customer::getCurrentCustomer();
 $billing_address_hash = $cash_desk->getBillingAddress()->getHash();
@@ -29,7 +34,7 @@ $billing_address_hash = $cash_desk->getBillingAddress()->getHash();
 			<?=$address->getAddressZip()?> <?=$address->getAddressTown()?>
 
 			<div class="continue-button-area">
-				<?=UI::button(Tr::_('Select this address'))->setOnclick("CashDesk.customer.billingAddress.select({$address->getId()}")->setClass('link')?>
+				<?=UI::button(Tr::_('Select this address'))->setOnclick(" ")->setClass('link')?>
 			</div>
 	</div>
 

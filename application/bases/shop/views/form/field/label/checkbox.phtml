@@ -14,7 +14,8 @@ if( !$r->getBaseCssClasses() ) {
 }
 
 $r->setWidthCssClassesCreator(function( $size, $width ) {
-	return 'col-' . $size . '-' . $width;
+	return '';
+	//return 'col-' . $size . '-' . $width;
 } );
 
 ?>

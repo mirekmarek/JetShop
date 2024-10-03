@@ -23,7 +23,7 @@ abstract class Core_Discounts_Module extends Application_Module
 	abstract public function checkDiscounts( CashDesk $cash_desk ) : void;
 	
 
-	abstract public function Order_saved( Order $order ) : void;
+	abstract public function Order_newOrderCreated( Order $order ) : void;
 
 	abstract public function Order_canceled( Order $order ) : void;
 

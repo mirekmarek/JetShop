@@ -10,5 +10,6 @@ return [
 		'add_delivery_method' => 'Add new delivery_method',
 		'update_delivery_method' => 'Update delivery_method',
 		'delete_delivery_method' => 'Delete delivery_method',
+		'set_price' => 'Set price',
 	],
 ];

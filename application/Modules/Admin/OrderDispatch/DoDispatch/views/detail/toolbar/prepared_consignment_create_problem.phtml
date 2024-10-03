@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\UI_button;
+use JetApplication\OrderDispatch;
+use Jet\UI;
+use Jet\Tr;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+echo UI::button(Tr::_('Try again'))->setUrl( Http_Request::currentURI(['action'=>'try_again']) )->setClass(UI_button::CLASS_SUCCESS);
+
+echo UI::button(Tr::_('Rollback - reopen and edit again'))->setUrl( Http_Request::currentURI(['action'=>'rollback']) );
+echo UI::button(Tr::_('Rollback - reopen and edit again (ignore errors)'))->setUrl( Http_Request::currentURI(['action'=>'rollback','ignore_error'=>true]) );
+
+

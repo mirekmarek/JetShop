@@ -11,13 +11,10 @@ use JetApplication\Admin_Managers;
 
 <?php require 'toolbar.phtml'; ?>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
-		
+<div id="main-col">
 		<?php
 		echo $this->getRaw('tabs');
 		echo Admin_Managers::Image()->renderStandardManagement();
 		?>
-	</div>
 </div>
 

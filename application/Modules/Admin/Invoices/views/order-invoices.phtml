@@ -1,0 +1,71 @@
+<?php
+namespace JetApplicationModule\Admin\Invoices;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Invoice[] $invoices
+ */
+
+$invoices = $this->getRaw('invoices');
+if(!count($invoices)) {
+	return;
+}
+
+$price_formatter = Admin_Managers::PriceFormatter();
+?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th style="width: 200px"></th>
+		<th style="width: 200px"><?=Tr::_('Number')?></th>
+		<th style="width: 200px"><?=Tr::_('Date')?></th>
+		<th style="width: 200px"><?=Tr::_('Total')?></th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach($invoices as $invoice): ?>
+		<tr>
+			<td>
+				<?php if($invoice->getIsCorrectionInvoice()): ?>
+					<span class="text-info"><?=Tr::_('Correction Invoice')?></span>
+				<?php else: ?>
+					<?php if(!$invoice->hasCorrections()): ?>
+						<span class="text-danger"><?=Tr::_('Invoice')?></span>
+					<?php else: ?>
+						<span class="text-success"><?=Tr::_('Invoice')?></span>
+					<?php endif; ?>
+				<?php endif; ?>
+				
+			</td>
+			<td>
+				<?php if($invoice->getIsCorrectionInvoice()): ?>
+					<a href="<?=Main::getEditUrl( $invoice->getId() );?>" class="text-info"><?=$invoice->getNumber();?></a>
+				<?php else: ?>
+					<?php if(!$invoice->hasCorrections()): ?>
+						<a href="<?=Main::getEditUrl( $invoice->getId() );?>"><?=$invoice->getNumber();?></a>
+					<?php else: ?>
+						<a href="<?=Main::getEditUrl( $invoice->getId() );?>" class="text-danger"><?=$invoice->getNumber();?></a>
+					<?php endif; ?>
+				<?php endif; ?>
+			</td>
+			<td>
+				<?=Locale::date(  $invoice->getInvoiceDate() ); ?>
+			</td>
+			<td>
+				<?php if($invoice->hasVAT()):
+					echo $price_formatter->formatWithCurrency($invoice->getCurrency(), $invoice->getTotal());
+				else:
+					echo $price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotal());
+				endif; ?>
+			</td>
+			<td></td>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>

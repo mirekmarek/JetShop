@@ -7,14 +7,14 @@ use JetApplication\ProductFilter_Storage;
 
 abstract class Core_ProductFilter_Filter_Categories extends ProductFilter_Filter
 {
-	protected array $category_ids;
-	protected bool $branch_mode = false;
+	protected array $category_ids = [];
+	protected bool $branch_mode = true;
 	
 	
 	
 	public function setCategoryIds( array $category_ids ) : void
 	{
-		$this->is_active = true;
+		$this->is_active = count($category_ids)>0;
 		$this->category_ids = $category_ids;
 	}
 	
@@ -43,7 +43,9 @@ abstract class Core_ProductFilter_Filter_Categories extends ProductFilter_Filter
 	
 	public function filter(): void
 	{
-		$where = ['category'=>$this->category_ids];
+		if(!$this->category_ids) {
+			return;
+		}
 		
 		
 		$where = $this->product_filter->getShop()->getWhere();
@@ -57,6 +59,7 @@ abstract class Core_ProductFilter_Filter_Categories extends ProductFilter_Filter
 				raw_mode: true
 			);
 		} else {
+
 			$_ids = Category_ShopData::dataFetchCol(
 				select:['product_ids'],
 				where: $where,
@@ -94,7 +97,7 @@ abstract class Core_ProductFilter_Filter_Categories extends ProductFilter_Filter
 		$categories = $storage->getValues( $this, 'categories' );
 		
 		if($categories) {
-			$this->setCategoryIds( array_keys( $categories[0] ) );
+			$this->setCategoryIds( $categories[0] );
 			$this->setBranchMode( (bool)$storage->getValue($this, 'branch_mode') );
 		}
 	}

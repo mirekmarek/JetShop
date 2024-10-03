@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Exports_Module_Controller_KindOfProductSettings;
+
+abstract class Exports_Module_Controller_KindOfProductSettings extends Core_Exports_Module_Controller_KindOfProductSettings
+{
+}

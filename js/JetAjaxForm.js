@@ -13,6 +13,8 @@ let JetAjaxForm = {
 			handlers = {};
 		}
 
+		const focused_element =document.activeElement.tagName;
+
 		if(!handlers.onSuccess) {
 			handlers.onSuccess = JetAjaxForm.defaultHandlers.onSuccess;
 		}
@@ -68,7 +70,7 @@ let JetAjaxForm = {
 
 				if(JetAjaxForm.xhr.status === 200) {
 					let response;
-console.debug( JetAjaxForm.xhr.responseText );
+
 					try {
 						response = JSON.parse(JetAjaxForm.xhr.responseText);
 					} catch (e) {

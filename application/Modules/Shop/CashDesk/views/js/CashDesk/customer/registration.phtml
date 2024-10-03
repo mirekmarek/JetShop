@@ -1,0 +1,72 @@
+<script>
+	CashDesk.customer.registration = {
+		login: function() {
+
+			CashDesk._request.doForm( 'cash_desk_login_form',
+				function(response) {
+					CashDesk.slideUp('cash_desk_customer', function () {
+						CashDesk._request.applySnippets(response);
+
+						CashDesk.slideDown('cash_desk_customer');
+					});
+				},
+				function(response) {
+					CashDesk._request.applySnippets(response);
+				},
+
+				true
+			);
+
+		},
+
+		continueWithoutRegistration: function() {
+			CashDesk.slideUp('cash_desk_customer', function () {
+				CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
+					CashDesk.slideDown('cash_desk_customer');
+				});
+			});
+
+		},
+
+		setPassword: function() {
+			CashDesk._request.doForm('registration_set_password_form',
+				function( response ) {
+					CashDesk.slideUp('cash_desk_confirm', function () {
+						CashDesk.slideUp('cash_desk_customer', function() {
+							CashDesk._request.applySnippets(response);
+							CashDesk.slideDown('cash_desk_customer', function () {
+								if(response['is_ready']) {
+									CashDesk.slideDown('cash_desk_confirm', function () {});
+								}
+							});
+						});
+					});
+				},
+				function( response ) {
+					CashDesk._request.applySnippets(response);
+				},
+				true
+			);
+		},
+
+		doNotRegister: function() {
+			CashDesk.slideUp('cash_desk_customer', function () {
+				CashDesk._request.doGet('?action=customer_registration_do_not_register', function () {
+					CashDesk.slideDown('cash_desk_customer');
+				});
+			});
+
+		},
+
+		back: function() {
+			CashDesk.slideUp('cash_desk_confirm', function () {
+				CashDesk.slideUp('cash_desk_customer', function () {
+					CashDesk._request.doGet('?action=customer_registration_back', function () {
+						CashDesk.slideDown('cash_desk_customer');
+					});
+				});
+			});
+
+		}
+	};
+</script>

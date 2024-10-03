@@ -4,11 +4,15 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
-use JetApplication\Shops;
+use JetApplication\Pricelists;
 
 class Listing_Column_Price extends DataListing_Column
 {
 	public const KEY = 'price';
+	
+	public function __construct()
+	{
+	}
 	
 	public function getKey(): string
 	{
@@ -17,12 +21,12 @@ class Listing_Column_Price extends DataListing_Column
 	
 	public function getOrderByAsc(): array|string
 	{
-		return '+products_shop_data.price';
+		return '+products_price.price';
 	}
 	
 	public function getOrderByDesc(): array|string
 	{
-		return '-products_shop_data.price';
+		return '-products_price.price';
 	}
 
 	public function getTitle(): string
@@ -34,8 +38,8 @@ class Listing_Column_Price extends DataListing_Column
 	{
 		$headers = [];
 		
-		foreach(Shops::getListSorted() as $shop ) {
-			$headers[$shop->getKey()] = 'Price - '.$shop->getShopName();
+		foreach(Pricelists::getList() as $pricelist) {
+			$headers[$pricelist->getCode()] = 'Price - '.$pricelist->getName();
 		}
 		
 		return $headers;
@@ -48,8 +52,8 @@ class Listing_Column_Price extends DataListing_Column
 		 */
 		$data = [];
 		
-		foreach(Shops::getListSorted() as $shop ) {
-			$data[$shop->getKey()] = $item->getShopData($shop)->getPrice();
+		foreach(Pricelists::getList() as $pricelist) {
+			$data[$pricelist->getCode()] = $item->getPrice( $pricelist );
 		}
 		
 		return $data;

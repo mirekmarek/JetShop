@@ -1,0 +1,883 @@
+<?php
+namespace JetShop;
+
+use Jet\Auth;
+use Jet\Data_DateTime;
+use Jet\DataModel;
+use Jet\DataModel_Definition;
+
+use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
+use Jet\Form_Field_FileImage;
+use Jet\Form_Field_Textarea;
+use Jet\Http_Request;
+use JetApplication\Complaint_Event;
+use JetApplication\Complaint_Image;
+use JetApplication\Context_ProvidesContext_Interface;
+use JetApplication\Context_ProvidesContext_Trait;
+use JetApplication\Customer;
+use JetApplication\Customer_Address;
+use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Entity_WithShopRelation;
+use JetApplication\Complaint_ChangeHistory;
+use JetApplication\Complaint;
+use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\Order;
+use JetApplication\Complaint_Trait_Status;
+use JetApplication\Product_ShopData;
+use JetApplication\Shop_Pages;
+use JetApplication\Shops_Shop;
+use JetApplication\Complaint_Trait_Events;
+
+#[DataModel_Definition(
+	name: 'complaint',
+	database_table_name: 'complaints',
+	key: [
+		'name' => 'key',
+		'property_names' => [
+			'key'
+		],
+		'type' => DataModel::KEY_TYPE_UNIQUE
+	]
+)]
+abstract class Core_Complaint extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+{
+	use Context_ProvidesContext_Trait;
+	use NumberSeries_Entity_Trait;
+	
+	use Complaint_Trait_Status;
+	use Complaint_Trait_Events;
+	
+	
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $order_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 50,
+	)]
+	protected string $order_number = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $product_id = 0;
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description of the problem:',
+		error_messages: [
+			Form_Field_Textarea::ERROR_CODE_EMPTY => 'Please enter description of the problem'
+		]
+	)]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 9999999
+	)]
+	protected string $problem_description = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50,
+	)]
+	protected string $key = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+	)]
+	protected string $ip_address = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME
+	)]
+	protected ?Data_DateTime $date_started = null;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $customer_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+		is_key: true
+	)]
+	protected string $email = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+		is_key: true
+	)]
+	protected string $phone = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_company_name = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_first_name = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_surname = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_address_street_no = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_address_town = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_address_zip = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $delivery_address_country = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	protected int $delivery_method_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50,
+		is_key: true
+	)]
+	protected string $delivery_personal_takeover_delivery_point_code = '';
+	
+	protected ?Form $upload_images_form = null;
+	
+	
+	public static function startNew(
+		Order $order,
+		Product_ShopData $product,
+		string $problem_description
+	) : static
+	{
+		$complaint = new static();
+		
+		$complaint->setShop( $order->getShop() );
+		
+		$complaint->setOrderId( $order->getId() );
+		$complaint->setOrderNumber( $order->getNumber() );
+		
+		$complaint->setCustomerId( $order->getCustomerId() );
+		$complaint->setDeliveryAddress( $order->getDeliveryAddress() );
+		$complaint->setEmail( $order->getEmail() );
+		$complaint->setPhone( $order->getPhone() );
+		
+		$complaint->setDateStarted( Data_DateTime::now() );
+		$complaint->setIpAddress( Http_Request::clientIP() );
+		
+		$complaint->setProblemDescription( $problem_description );
+		$complaint->setProductId( $product->getId() );
+		
+		$complaint->save();
+		
+		$complaint->newUnfinishedComplaint();
+		
+		return $complaint;
+	}
+	
+	public function getURL() : string
+	{
+		return Shop_Pages::Complaints( $this->getShop() )->getURL( GET_params: [
+			'c' => $this->getKey(),
+			'k' => $this->getSecondKey()
+		] );
+	}
+	
+	public function getOrderId(): int
+	{
+		return $this->order_id;
+	}
+	
+	public function setOrderId( int $order_id ): void
+	{
+		$this->order_id = $order_id;
+	}
+	
+
+	public function getOrderNumber(): string
+	{
+		return $this->order_number;
+	}
+
+	public function setOrderNumber( string $order_number ): void
+	{
+		$this->order_number = $order_number;
+	}
+	
+
+	public function getProductId(): int
+	{
+		return $this->product_id;
+	}
+
+	public function setProductId( int $product_id ): void
+	{
+		$this->product_id = $product_id;
+	}
+	
+	public function getProduct() : ?Product_ShopData
+	{
+		return Product_ShopData::get( $this->product_id, $this->getShop() );
+	}
+
+	public function getProblemDescription(): string
+	{
+		return $this->problem_description;
+	}
+	
+	public function setProblemDescription( string $problem_description ): void
+	{
+		$this->problem_description = $problem_description;
+	}
+	
+	
+	
+	
+	public function getId() : int
+	{
+		return $this->id;
+	}
+	
+	public function setId( int $id ) : void
+	{
+		$this->id = $id;
+	}
+	
+	
+	public function getNumberSeriesEntityData(): ?Data_DateTime
+	{
+		return $this->getDateStarted();
+	}
+	
+	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	{
+		return $this->getShop();
+	}
+	
+	
+	
+	public function getIpAddress() : string
+	{
+		return $this->ip_address;
+	}
+	
+	public function setIpAddress( string $ip_address ) : void
+	{
+		$this->ip_address = $ip_address;
+	}
+	
+	public function getDateStarted() : Data_DateTime
+	{
+		return $this->date_started;
+	}
+	
+	public function setDateStarted( Data_DateTime $date_started ) : void
+	{
+		$this->date_started = $date_started;
+	}
+	
+	public function getCustomerId() : int
+	{
+		return $this->customer_id;
+	}
+	
+	public function setCustomerId( int $customer_id ) : void
+	{
+		$this->customer_id = $customer_id;
+	}
+	
+	public function getEmail() : string
+	{
+		return $this->email;
+	}
+	
+	public function setEmail( string $email ) : void
+	{
+		$this->email = $email;
+	}
+	
+	public function getPhone() : string
+	{
+		return $this->phone;
+	}
+	
+	public function setPhone( string $phone ) : void
+	{
+		$this->phone = $phone;
+	}
+	
+	
+	public function getDeliveryCompanyName(): string
+	{
+		return $this->delivery_company_name;
+	}
+	
+	public function setDeliveryCompanyName( string $delivery_company_name ): void
+	{
+		$this->delivery_company_name = $delivery_company_name;
+	}
+	
+	
+	
+	public function getDeliveryFirstName() : string
+	{
+		return $this->delivery_first_name;
+	}
+	
+	public function setDeliveryFirstName( string $delivery_first_name ) : void
+	{
+		$this->delivery_first_name = $delivery_first_name;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getDeliverySurname(): string
+	{
+		return $this->delivery_surname;
+	}
+	
+	/**
+	 * @param string $delivery_surname
+	 */
+	public function setDeliverySurname( string $delivery_surname ): void
+	{
+		$this->delivery_surname = $delivery_surname;
+	}
+	
+	public function getDeliveryAddressStreetNo() : string
+	{
+		return $this->delivery_address_street_no;
+	}
+	
+	public function setDeliveryAddressStreetNo( string $delivery_address_street_no ) : void
+	{
+		$this->delivery_address_street_no = $delivery_address_street_no;
+	}
+	
+	public function getDeliveryAddressTown() : string
+	{
+		return $this->delivery_address_town;
+	}
+	
+	public function setDeliveryAddressTown( string $delivery_address_town ) : void
+	{
+		$this->delivery_address_town = $delivery_address_town;
+	}
+	
+	public function getDeliveryAddressZip() : string
+	{
+		return $this->delivery_address_zip;
+	}
+	
+	public function setDeliveryAddressZip( string $delivery_address_zip ) : void
+	{
+		$this->delivery_address_zip = $delivery_address_zip;
+	}
+	
+	public function getDeliveryAddressCountry() : string
+	{
+		return $this->delivery_address_country;
+	}
+	
+	public function setDeliveryAddressCountry( string $delivery_address_country ) : void
+	{
+		$this->delivery_address_country = $delivery_address_country;
+	}
+	
+	public function getDeliveryMethodId() : int
+	{
+		return $this->delivery_method_id;
+	}
+	
+	public function getDeliveryMethod() : Delivery_Method_ShopData
+	{
+		return Delivery_Method_ShopData::get( $this->getDeliveryMethodId(), $this->getShop() );
+	}
+	
+	public function setDeliveryMethodId( int $delivery_method_id ) : void
+	{
+		$this->delivery_method_id = $delivery_method_id;
+	}
+	
+	public function getDeliveryPersonalTakeoverDeliveryPointCode() : string
+	{
+		return $this->delivery_personal_takeover_delivery_point_code;
+	}
+	
+	public function setDeliveryPersonalTakeoverDeliveryPointCode( string $delivery_personal_takeover_delivery_point_code ) : void
+	{
+		$this->delivery_personal_takeover_delivery_point_code = $delivery_personal_takeover_delivery_point_code;
+	}
+	
+	
+	
+	public function changeDeliveryMethod( int $delivery_method_id, string $delivery_personal_takeover_delivery_point_code, float $price ) : Complaint_ChangeHistory
+	{
+		$change = $this->startChange();
+		
+		$new_delivery_method = Delivery_Method_ShopData::get( $delivery_method_id, $this->getShop() );
+		
+		if( $this->delivery_method_id != $delivery_method_id ) {
+			$change->addChange(
+				'delivery_method',
+				$this->delivery_method_id,
+				$delivery_method_id
+			);
+			$this->delivery_method_id = $delivery_method_id;
+		}
+		
+		if($this->delivery_personal_takeover_delivery_point_code!=$delivery_personal_takeover_delivery_point_code) {
+			$change->addChange(
+				'delivery_personal_takeover_delivery_point_code',
+				$this->delivery_personal_takeover_delivery_point_code,
+				$delivery_personal_takeover_delivery_point_code
+			);
+			
+			$this->delivery_personal_takeover_delivery_point_code = $delivery_personal_takeover_delivery_point_code;
+			
+			if( $this->delivery_personal_takeover_delivery_point_code ) {
+				$place = $new_delivery_method->getPersonalTakeoverDeliveryPoint( $delivery_personal_takeover_delivery_point_code );
+				if($place) {
+					
+					$delivery_address = new Customer_Address();
+					$delivery_address->setFirstName( $this->delivery_first_name );
+					$delivery_address->setSurname( $this->delivery_surname );
+					$delivery_address->setCompanyName( $place->getName() );
+					$delivery_address->setAddressStreetNo( $place->getStreet() );
+					$delivery_address->setAddressTown( $place->getTown() );
+					$delivery_address->setAddressZip( $place->getZip() );
+					$delivery_address->setAddressCountry( $place->getCountry() );
+					
+					$address_changes = $this->updateDeliveryAddress( $delivery_address );
+					foreach($address_changes->getChanges() as $address_change) {
+						$change->addChange(
+							$address_change->getProperty(),
+							$address_change->getOldValue(),
+							$address_change->getNewValue()
+						);
+					}
+				}
+			}
+			
+		}
+		
+		
+		
+		return $change;
+	}
+
+	
+	/**
+	 * @return Complaint_Event[]
+	 */
+	public function getHistory() : array
+	{
+		return Complaint_Event::getForComplaint( $this->getId() );
+	}
+
+	
+	
+	protected function generateKey() : void
+	{
+		$this->key = md5( time().uniqid().uniqid() );
+	}
+	
+	public function getKey() : string
+	{
+		return $this->key;
+	}
+	
+	public function getSecondKey() : string
+	{
+		return sha1( $this->email );
+	}
+	
+	public function beforeSave(): void
+	{
+		if($this->getIsNew()) {
+			$this->generateKey();
+		}
+	}
+	
+	public function afterAdd(): void
+	{
+		$this->generateNumber();
+	}
+	
+	
+	public static function get( int $id ) : static|null
+	{
+		return static::load( $id );
+	}
+	
+	public static function getByKey( string $key ) : ?Complaint
+	{
+		$complaints = Complaint::fetch(['complaint' => [
+			'key' => $key
+		]]);
+		
+		if(count($complaints)!=1) {
+			return null;
+		}
+		
+		return $complaints[0];
+	}
+	
+	public static function getByNumber( string $number, Shops_Shop $shop ) : Complaint|null
+	{
+		$where = $shop->getWhere();
+		$where[] = 'AND';
+		$where[] = [
+			'number' => $number
+		];
+		
+		$complaints = Complaint::fetch(['' => $where]);
+		
+		if(count($complaints)!=1) {
+			return null;
+		}
+		
+		return $complaints[0];
+	}
+	
+	
+	public static function getByURL() : ?Complaint
+	{
+		$GET = Http_Request::GET();
+		
+		$complaint_key = $GET->getString('c');
+		$complaint_secondary_key = $GET->getString('k');
+		
+		if(
+			$complaint_key &&
+			$complaint_secondary_key &&
+			($complaint = Complaint::getByKey( $complaint_key )) &&
+			($complaint->getSecondKey()==$complaint_secondary_key)
+		) {
+			return $complaint;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @return Complaint[]
+	 */
+	public static function getList() : iterable
+	{
+		$where = [];
+		
+		return static::fetchInstances( $where );
+	}
+	
+	
+	
+	
+	public function setDeliveryAddress( Customer_Address $address ) : void
+	{
+		$this->setDeliveryCompanyName( $address->getCompanyName() );
+		$this->setDeliveryFirstName( $address->getFirstName() );
+		$this->setDeliverySurname( $address->getSurname() );
+		$this->setDeliveryAddressStreetNo( $address->getAddressStreetNo() );
+		$this->setDeliveryAddressTown( $address->getAddressTown() );
+		$this->setDeliveryAddressZip( $address->getAddressZip() );
+		$this->setDeliveryAddressCountry( $address->getAddressCountry() );
+	}
+	
+	public function updateDeliveryAddress( Customer_Address $address ) : Complaint_ChangeHistory
+	{
+		$map = [
+			'delivery_company_name'      => 'CompanyName',
+			//'delivery_company_id'        => 'CompanyId',
+			//'delivery_company_vat_id'    => 'CompanyVatId',
+			'delivery_first_name'        => 'FirstName',
+			'delivery_surname'           => 'Surname',
+			'delivery_address_street_no' => 'AddressStreetNo',
+			'delivery_address_town'      => 'AddressTown',
+			'delivery_address_zip'       => 'AddressZip',
+			'delivery_address_country'   => 'AddressCountry',
+		];
+		
+		$change = $this->startChange();
+		foreach($map as $property=>$gs) {
+			
+			$address_getter = 'get'.$gs;
+			$complaint_getter = 'getDelivery'.$gs;
+			$complaint_setter = 'setDelivery'.$gs;
+			
+			if($this->{$complaint_getter}() != $address->{$address_getter}()) {
+				$change->addChange(
+					$property,
+					$this->{$complaint_getter}(),
+					$address->{$address_getter}()
+				);
+				$this->{$complaint_setter}( $address->{$address_getter}() );
+			}
+		}
+		
+		return $change;
+	}
+	
+	
+	public function getDeliveryAddress() : Customer_Address
+	{
+		$address = new Customer_Address();
+		
+		$address->setCompanyName( $this->getDeliveryCompanyName( ) );
+		$address->setFirstName( $this->getDeliveryFirstName( ) );
+		$address->setSurname( $this->getDeliverySurname( ) );
+		$address->setAddressStreetNo( $this->getDeliveryAddressStreetNo( ) );
+		$address->setAddressTown( $this->getDeliveryAddressTown( ) );
+		$address->setAddressZip( $this->getDeliveryAddressZip( ) );
+		$address->setAddressCountry( $this->getDeliveryAddressCountry( ) );
+		
+		return $address;
+	}
+	
+	public function getAdminTitle(): string
+	{
+		return $this->getNumber();
+	}
+	
+	
+	public function startChange() : Complaint_ChangeHistory
+	{
+		$change = new Complaint_ChangeHistory();
+		/**
+		 * @var Complaint $this
+		 */
+		$change->setComplaint( $this );
+		$change->setDateAdded( Data_DateTime::now() );
+		
+		$admin = Auth::getCurrentUser();
+		if($admin) {
+			$change->setAdministrator( $admin->getName() );
+			$change->setAdministratorId( $admin->getId() );
+		}
+		
+		return $change;
+	}
+	
+	/**
+	 * @param Order $order
+	 * @param int $product_id
+	 * @return static[]
+	 */
+	public static function getByOrderItem( Order $order, int $product_id ) : array
+	{
+		$where = $order->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['order_id'] = $order->getId();
+		$where[] = 'AND';
+		$where['product_id'] = $product_id;
+		
+		return static::fetch( ['complaint'=>$where] );
+		
+	}
+	
+	
+	/**
+	 * @return static[]
+	 */
+	public static function getByOrder( Order $order ) : array
+	{
+		$where = $order->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['order_id'] = $order->getId();
+		
+		return static::fetch( ['complaint'=>$where] );
+		
+	}
+	
+	/**
+	 * @return static[]
+	 */
+	public static function getByCustomer( Customer $customer ) : array
+	{
+		$where = $customer->getShop()->getWhere();
+		$where[] = 'AND';
+		$where['customer_id'] = $customer->getId();
+		
+		return static::fetch( ['complaint'=>$where] );
+		
+	}
+	
+	protected ?Form $problem_description_edit_form = null;
+	
+	public function getProblemDescriptionEditForm() : Form
+	{
+		if(!$this->problem_description_edit_form) {
+			$this->problem_description_edit_form = $this->createForm('edit_form', [
+				'problem_description'
+			]);
+		}
+		
+		return $this->problem_description_edit_form;
+	}
+	
+	protected ?array $images = null;
+	
+	/**
+	 * @return Complaint_Image[]
+	 */
+	public function getImages() : array
+	{
+		if($this->images===null) {
+			/**
+			 * @var Complaint $this
+			 */
+			$this->images = Complaint_Image::getForComplaint( $this );
+		}
+		
+		return $this->images;
+	}
+	
+	
+	public function getUploadImagesForm() : ?Form
+	{
+		if(!$this->isEditable()) {
+			return null;
+		}
+		
+		if(!$this->upload_images_form) {
+			$image_field = new Form_Field_FileImage('image', '');
+			$image_field->setErrorMessages([
+				Form_Field_FileImage::ERROR_CODE_INVALID_FORMAT => 'Please upload image',
+				Form_Field_FileImage::ERROR_CODE_FILE_IS_TOO_LARGE => 'Sorry, bude the file is too large',
+				Form_Field_FileImage::ERROR_CODE_DISALLOWED_FILE_TYPE => 'Please upload image',
+			]);
+			$image_field->setAllowMultipleUpload( true );
+			
+			$this->upload_images_form = new Form('upload_images_form', [
+				$image_field
+			]);
+		}
+		
+		return $this->upload_images_form;
+	}
+	
+	public function handleImageUpload() : void
+	{
+		$form = $this->getUploadImagesForm();
+		if($form->catch()) {
+			/**
+			 * @var Form_Field_FileImage $image_field
+			 */
+			$image_field = $form->field('image');
+			$images = $image_field->getValidFiles();
+			foreach($images as $img) {
+				/**
+				 * @var Complaint $this
+				 */
+				Complaint_Image::uploadImage( $this, $img );
+				$this->images = null;
+			}
+		}
+	}
+	
+	public function deleteImage( int $image_id ) : void
+	{
+		$images = $this->getImages();
+		if(isset($images[$image_id])) {
+			if(!$images[$image_id]->isLocked()) {
+				$images[$image_id]->delete();
+				$this->images = null;
+			}
+		}
+	}
+
+	public function handleShowImage() : void
+	{
+		if( ($img_id = Http_Request::GET()->getInt('img')) ) {
+			$images = $this->getImages();
+			if(isset($images[$img_id])) {
+				$images[$img_id]->show();
+			}
+		}
+		
+		if( ($img_id = Http_Request::GET()->getInt('thb')) ) {
+			$images = $this->getImages();
+			if(isset($images[$img_id])) {
+				$images[$img_id]->showThb();
+			}
+		}
+		
+		
+	}
+	
+	public function getMinimalImageCount() : int
+	{
+		return 3;
+	}
+	
+	public function getMinimalProblemDescriptionLength() : int
+	{
+		return 150;
+	}
+	
+	public function canBeFinished() : bool
+	{
+		if(strlen($this->problem_description)<$this->getMinimalProblemDescriptionLength()) {
+			return false;
+		}
+		
+		if(count($this->getImages())<$this->getMinimalImageCount()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function finish() : void
+	{
+		foreach($this->getImages() as $img) {
+			$img->setLocked( true );
+			$img->save();
+		}
+		
+		$this->newComplaintFinished();
+	}
+	
+	
+}

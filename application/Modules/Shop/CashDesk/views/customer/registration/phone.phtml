@@ -1,33 +1,41 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 $form = $cash_desk->getPhoneForm();
 
 require 'email_and_phone_has_been_set.phtml';
 
-$form->field('phone')->input()->setCustomRenderer(function() use ($cash_desk) {
+$phone_field = $form->field('phone');
+$phone_field->renderer()->setCustomRenderer(function() use ( $phone_field, $cash_desk ) {
 	?>
-	<div style="display: flex;align-items: center">
-		<div style="padding-right: 10px;"><?=$cash_desk->getShop()->getPhonePrefix()?></div>
-		<div><?=$this->renderByView();?></div>
+	<div style="display: flex;align-items: center;margin-left: 30%;margin-top: 20px; margin-bottom: 20px;">
+		<div style="padding: 5px;"><?=$phone_field->getLabel()?></div>
+		<div style="padding: 5px;"><?=$cash_desk->getConfig()->getPhonePrefix()?></div>
+		<div style="padding: 5px;width: 400px;"><?=$phone_field->input().$phone_field->error()?></div>
 	</div>
 	<?php
+	
 });
 
 ?>
 
 <?=$form->start()?>
 
-	<span class="step-title"><?=Tr::_('Telephone contact')?></span>
-	
-	<div id="field_<?=$form->field('phone')->getId()?>">
-		<?=$form->field('phone')?>
-	</div>
+<span class="step-title"><?=Tr::_('Telephone contact')?></span>
+
+<div id="field_<?=$form->field('phone')->getId()?>">
+	<?=$form->field('phone')?>
+</div>
 
 <div class="continue-button-area">
 	<?=UI::button('Continue')->setClass('primary')->setType('submit')?>

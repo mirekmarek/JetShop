@@ -2,8 +2,11 @@
 namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
 use JetApplication\Product;
 use JetApplication\Product_ShopData;
+use JetApplication\Shop_Managers;
 
 /**
  * @var MVC_View $this
@@ -24,6 +27,12 @@ $product = $this->getRaw('product');
 			if(!$product->isActive()):
 				require 'detail/not-active.phtml';
 			else:
+				require 'detail/stickers.phtml';
+				
+				require 'detail/rank.phtml';
+				
+				require 'detail/similar.phtml';
+			
 				switch($product->getType()) {
 					case  Product::PRODUCT_TYPE_VARIANT_MASTER:
 						require 'detail/select-variant.phtml';
@@ -38,8 +47,76 @@ $product = $this->getRaw('product');
 						
 				}
 			endif;
+			
+			require 'detail/files.phtml';
 			?>
 		</div>
 	</div>
-	
-	<?php require('detail/parameters.phtml'); ?>
+
+<?php
+
+$kind_of_product = $product->getKind();
+$categories = $product->getCategories();
+$reviews_manager = Shop_Managers::ProductReviews();
+$questions_manager = Shop_Managers::ProductQuestions();
+
+
+$_tabs = [
+	'description' => Tr::_('Description'),
+];
+
+if( $kind_of_product ) {
+	$_tabs['parameters'] = Tr::_('Parameters');
+}
+
+if( $categories ) {
+	$_tabs['categories'] = Tr::_('Categories');
+}
+
+if($reviews_manager && $product->getReviewCount()) {
+	$_tabs['reviews'] = Tr::_('Reviews (%cnt%)', ['cnt'=>$product->getReviewCount()]);
+}
+
+if( $questions_manager ) {
+	$_tabs['questions'] = Tr::_('Questions (%cnt%)', ['cnt'=>$product->getQuestionCount()]);
+}
+
+$tabs = UI::tabsJS('product_params', $_tabs);
+
+
+echo $tabs->start();
+
+echo $tabs->getTab('description')->content()->start();
+echo $product->getDescription();
+echo $tabs->getTab('description')->content()->end();
+
+if(isset($_tabs['parameters'])):
+	echo $tabs->getTab('parameters')->content()->start();
+	require 'detail/params.phtml';
+	echo $tabs->getTab('parameters')->content()->end();
+endif;
+
+if( isset($_tabs['categories']) ):
+	echo $tabs->getTab('categories')->content()->start();
+	require 'detail/categories.phtml';
+	echo $tabs->getTab('categories')->content()->end();
+endif;
+
+if( isset($_tabs['reviews']) ):
+	echo $tabs->getTab('reviews')->content()->start();
+	require 'detail/reviews.phtml';
+	echo $tabs->getTab('reviews')->content()->end();
+endif;
+
+if( isset($_tabs['questions']) ):
+	echo $tabs->getTab('questions')->content()->start();
+	require 'detail/questions.phtml';
+	echo $tabs->getTab('questions')->content()->end();
+endif;
+
+
+echo $tabs->end();
+
+echo Shop_Managers::Articles()?->renderProductAdvice( $product );
+
+echo Shop_Managers::Analytics()?->viewProduct( $product );

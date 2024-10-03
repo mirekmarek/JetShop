@@ -9,7 +9,6 @@ namespace JetApplicationModule\Shop\Catalog;
 
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
-use Jet\MVC_Controller_Router;
 use Jet\MVC_Layout;
 
 /**
@@ -20,55 +19,50 @@ class Controller_Main extends MVC_Controller_Default
 
 	use Controller_Main_Category;
 	use Controller_Main_Product;
-
-	protected ?MVC_Controller_Router $router = null;
-
-
-	public function getControllerRouter() : MVC_Controller_Router
+	use Controller_Main_Signpost;
+	
+	
+	public function resolve(): bool|string
 	{
 
-		if( !$this->router ) {
-			$this->router = new MVC_Controller_Router( $this );
+		$main_router = MVC::getRouter();
+		$path = $main_router->getUrlPath();
 
-			$this->router->setDefaultAction('homepage');
-
-			$main_router = MVC::getRouter();
-			$path = $main_router->getUrlPath();
-
-			if($path) {
-				$path = explode('/', $path);
-				$path_base= explode('-', $path[0]);
-
-				if(count($path_base)>1) {
-
-					$i = count($path_base);
-
-					$object_type = $path_base[$i-2];
-					$object_id = (int)$path_base[$i-1];
-
-
-					if($object_id>0) {
-
-						if($object_type=='c') {
-							$this->getControllerRouter_category( $object_id, $path );
-						}
-
-						if($object_type=='p') {
-							$this->getControllerRouter_product( $object_id, $path );
-						}
-					}
+		if(!$path) {
+			return 'homepage';
+		}
+		
+		$path = explode('/', $path);
+		$path_base= explode('-', $path[0]);
+		
+		if(count($path_base)>1) {
+			
+			$i = count($path_base);
+			
+			$object_type = $path_base[$i-2];
+			$object_id = (int)$path_base[$i-1];
+			
+			
+			if($object_id>0) {
+				
+				if($object_type=='c') {
+					return $this->resolve_category( $object_id, $path );
 				}
-
-
+				
+				if($object_type=='p') {
+					return $this->resolve_product( $object_id, $path );
+				}
+				
+				if($object_type=='t') {
+					return $this->resolve_signpost( $object_id, $path );
+				}
 			}
 		}
+		
+		return false;
 
-		return $this->router;
 	}
-
-	/**
-	 *
-	 */
+	
 	public function homepage_Action() : void
 	{
 		MVC_Layout::getCurrentLayout()->setScriptName('homepage');

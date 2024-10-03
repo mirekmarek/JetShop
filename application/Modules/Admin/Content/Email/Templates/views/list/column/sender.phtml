@@ -1,0 +1,31 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Content\Email\Templates;
+
+use Jet\MVC_View;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var EmailTemplateText $item
+ */
+
+$item = $this->getRaw('item');
+
+if(Shops::isMultiShopMode()):
+	foreach(Shops::getList() as $shop):
+		$sd = $item->getShopData( $shop );
+		
+		echo $shop->getShopName().':<br>'.$sd->getSenderName().' &lt;'.$sd->getSenderEmail().'&gt;<br>';
+	endforeach;
+else:
+	$sd = $item->getShopData( Shops::getCurrent() );
+	
+	echo $sd->getSenderName().' &lt;'.$sd->getSenderEmail().'&gt;';
+endif;

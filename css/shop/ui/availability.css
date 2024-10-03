@@ -1,0 +1,30 @@
+.availability {
+	margin: 10px;
+}
+
+.availability_in_stock {
+	font-weight: bolder;
+	color: #12af12;
+}
+
+.availability_good {
+	font-weight: bolder;
+	color: #229a22;
+}
+
+.availability_so_so {
+	font-weight: bolder;
+	color: #33b733;
+}
+
+.availability_bad {
+	font-weight: bolder;
+	color: #e56464;
+}
+
+
+.availability_terrible,
+.availability_not_available {
+	font-weight: bolder;
+	color: #ec4040;
+}

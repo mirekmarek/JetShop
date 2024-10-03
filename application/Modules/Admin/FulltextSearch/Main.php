@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\MVC;
 use Jet\Translator;
-use JetApplication\Admin_FulltextSearch_IndexDataProvider;
+use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\Admin_Managers_FulltextSearch;
 use JetApplication\Application_Admin;
 
@@ -24,24 +24,19 @@ class Main extends Application_Module implements Admin_Managers_FulltextSearch
 	protected static bool $whisperer_main_included = false;
 	
 	
-	public function addIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
-	{
-		Index::addIndex( $object );
-	}
-	
-	public function deleteIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
+	public function deleteIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
 		Index::deleteIndex( $object );
 	}
 	
-	public function updateIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
+	public function updateIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
 		Index::updateIndex( $object );
 	}
 	
 	public function renderWhisperer(
 		string  $name,
-		string  $object_class,
+		string  $entity_type,
 		string  $on_select,
 		string|array|null $object_type_filter=null,
 		?bool $object_is_active_filter=null
@@ -51,14 +46,14 @@ class Main extends Application_Module implements Admin_Managers_FulltextSearch
 		
 		Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
-			function() use (&$res, $object_class, $object_type_filter, $object_is_active_filter, $name, $on_select) {
+			function() use (&$res, $entity_type, $object_type_filter, $object_is_active_filter, $name, $on_select) {
 				$page = MVC::getPage(
 					page_id: static::WHISPERER_PAGE_ID,
 					base_id: Application_Admin::getBaseId()
 				);
 				
 				$GET_params = [
-					'class' => $object_class
+					'class' => $entity_type
 				];
 				
 				if($object_type_filter!==null) {
@@ -92,13 +87,13 @@ class Main extends Application_Module implements Admin_Managers_FulltextSearch
 	}
 	
 	public function  search(
-		string  $object_class,
+		string  $entity_type,
 		string  $search_string,
 		?string $object_type_filter=null,
 		?bool   $object_is_active_filter=null
 	) : array {
 		$result = Index::search(
-			object_class: $object_class,
+			entity_type: $entity_type,
 			search_string: $search_string,
 			object_type_filter:  $object_type_filter,
 			object_is_active_filter: $object_is_active_filter

@@ -1,0 +1,31 @@
+<?php
+
+use Jet\Form;
+use Jet\MVC_View;
+
+use Jet\Tr;
+use Jet\Form_Renderer;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form;
+ */
+$form = $this->getRaw('form');
+
+$form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+$form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+?>
+<?= $form->start() ?>
+<div class="card-body">
+	
+	<?= $form->getCommonMessage() ?>
+	
+	<?= $form->field( 'email' ) ?>
+
+	<div class="buttons">
+		<?= UI::button( Tr::_( 'Send me the reset code' ) )->setType( UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY); ?>
+	</div>
+</div>
+<?= $form->end() ?>

@@ -1,0 +1,115 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+use Jet\UI;
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order     $order
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+
+$order = $this->getRaw( 'order' );
+$listing = $this->getRaw('listing');
+
+$is_editable = $order->isEditable();
+
+$prev_url = $listing->getPrevEditUrl( $order->getId() );
+$next_url = $listing->getNextEditUrl( $order->getId() );
+
+?>
+<div class="toolbar" id="main-toolbar" style="display: grid;grid-template-columns: 1fr;gap:10px;">
+	<div style="display: flex;align-items: center;gap: 10px;">
+		<div>
+			<?=UI::button_goBack()?>
+		</div>
+		
+		<div style="padding-left:20px;width: 80px;text-align: center">
+			<?php if($prev_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+			<?php endif; ?>
+		</div>
+		
+		
+		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+			<b><?=$order->getNumber()?></b>
+		</div>
+		
+		<div style="width: 50px;text-align: center">
+			<?php if($next_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+			<?php endif; ?>
+		</div>
+		
+		<?php if($is_editable): ?>
+			<div class="dropdown">
+				<button class="btn btn-secondary dropdown-toggle" type="button" id="change-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<?=Tr::_('Change')?>
+				</button>
+				<div class="dropdown-menu" aria-labelledby="change-menu">
+					<div style="width:300px;display: grid;grid-template-columns: 1fr;gap: 10px;padding: 10px;">
+						<?=Handler::getHandler(Handler_ChangePaymentMethod_Main::KEY)?->renderButton()?>
+						<?=Handler::getHandler(Handler_ChangeDeliveryMethod_Main::KEY)?->renderButton()?>
+						<?=Handler::getHandler(Handler_AddItem_Main::KEY)->renderButton()?>
+						<?=Handler::getHandler(Handler_UpdateItemQty_Main::KEY)?->renderDeleteButton()?>
+						<?=Handler::getHandler(Handler_Split_Main::KEY)->renderButton()?>
+						<?=Handler::getHandler(Handler_Join_Main::KEY)->renderButton()?>
+					</div>
+				</div>
+			</div>
+			
+			
+			<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
+			
+		
+			<div class="dropdown">
+				<button class="btn btn-secondary dropdown-toggle" type="button" id="change-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<?=Tr::_('Send e-mail')?>
+				</button>
+				<div class="dropdown-menu" aria-labelledby="change-menu">
+					<div style="width:400px;display: grid;grid-template-columns: 1fr;gap: 10px;padding: 10px;">
+						<?=Handler::getHandler(Handler_SendMailConfirmation_Main::KEY)?->renderButton()?>
+					</div>
+				</div>
+			</div>
+			
+			<?=Handler::getHandler(Handler_Invoicing_Main::KEY)->renderButton()?>
+			
+			<?=Handler::getHandler(Handler_Cancel_Main::KEY)?->renderButton()?>
+		<?php endif; ?>
+		
+		&nbsp;&nbsp;&nbsp;
+		<?=Handler::getHandler(Handler_Dispatch_Main::KEY)?->renderButton()?>
+		&nbsp;&nbsp;&nbsp;
+		
+		<a href="<?=Http_Request::currentURI(['print'=>1])?>" target="_blank" class="btn btn-primary"><?=UI::icon('print')?> <?=Tr::_('Print')?></a>
+	</div>
+
+	<div style="display: flex;gap:30px;padding: 5px;">
+		<a class="order-navi" data-tg="o_main" style="cursor: pointer"><?=UI::icon('circle-info')?> <?=Tr::_('Main info')?></a>
+		<a class="order-navi" data-tg="o_items" style="cursor: pointer"><?=UI::icon('list')?> <?=Tr::_('Order items')?></a>
+		<a class="order-navi" data-tg="o_dispatch" style="cursor: pointer"><?=UI::icon('boxes-packing')?> <?=Tr::_('Order dispatch')?></a>
+		<a class="order-navi" data-tg="o_invoices" style="cursor: pointer"><?=UI::icon('file-invoice-dollar')?> <?=Tr::_('Invoices')?></a>
+		<a class="order-navi" data-tg="o_history" style="cursor: pointer"><?=UI::icon('clock-rotate-left')?> <?=Tr::_('Order history')?></a>
+		<a class="order-navi" data-tg="o_sent_emails" style="cursor: pointer"><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></a>
+		
+	</div>
+
+</div>
+
+<script>
+	document.querySelectorAll('.order-navi').forEach( (node) => {
+		node.addEventListener('click', () => {
+			document.getElementById( node.dataset.tg ).scrollIntoView({behavior: 'smooth'});
+			
+			return false;
+		});
+	} );
+</script>
+

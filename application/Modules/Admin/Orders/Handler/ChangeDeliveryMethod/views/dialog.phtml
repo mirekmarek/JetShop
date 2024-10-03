@@ -1,0 +1,48 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+if(!$order->isEditable()) {
+	return;
+}
+
+$form = $this->getRaw('change_delivery_method_form');
+
+$dialog = new UI_dialog( 'change_delivery_method_dialog', Tr::_('Change delivery method'), UI_dialog::SIZE_LARGE );
+
+$form->renderer()->addJsAction('onsubmit', 'changeDeliveryMethod();return false;');
+
+
+echo $dialog->start();
+	echo $form->start();
+		echo '<div id="change-delivery-method-form">';
+			require 'form.phtml';
+		echo '</div>';
+		echo $dialog->footer();
+			echo UI::button_save(Tr::_('Update'));
+	echo $form->end();
+echo $dialog->end();
+?>
+<script>
+	function changeDeliveryMethod() {
+		JetAjaxForm.submit('<?=$form->getId()?>', {
+			onSuccess: function () {
+				location.reload();
+			}
+		})
+	}
+</script>

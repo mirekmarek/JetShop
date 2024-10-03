@@ -1,9 +1,15 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
+use JetApplication\Order_Item;
 use JetApplication\Shop_Managers;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 $order = $cash_desk->getOrder();
 
@@ -17,14 +23,14 @@ $order = $cash_desk->getOrder();
 			</td>
 			<td><?=$item->getTitle()?></td>
 			<td style="width: 120px;">
-				<?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?>
+				<?php if( !($item->getType()==Order_Item::ITEM_TYPE_DISCOUNT && $item->getTotalAmount()==0) ): ?>
+					<?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?>
+				<?php endif; ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
-			<td></td>
-			<td></td>
-			<td style="font-size: 2er;font-weight: bolder"><?=Shop_Managers::PriceFormatter()->formatWithCurrency($order->getTotalAmount())?></td>
+			<td style="font-size: 2em;font-weight: bolder;text-align: right" colspan="3"><?=Shop_Managers::PriceFormatter()->formatWithCurrency($order->getTotalAmount())?></td>
 		</tr>
 	</table>
 </div>

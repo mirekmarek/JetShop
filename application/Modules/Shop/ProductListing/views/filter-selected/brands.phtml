@@ -1,0 +1,35 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Brand_ShopData;
+use JetApplication\ProductListing;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+
+$filter = $listing->getFilter()->getBrandsFilter();
+if(!$filter->getIsActive()) {
+	return;
+}
+
+$brand_ids = $filter->getSelectedBrandIds();
+
+
+$brands = Brand_ShopData::getActiveList( $brand_ids );
+
+foreach($brands as $brand):
+
+	echo UI::button( $brand->getName() )
+		->setClass(UI_button::CLASS_INFO)
+		->setIcon('circle-xmark')
+		->setOnClick("listing.filter.brands.cancel({$brand->getId()})");
+
+endforeach;

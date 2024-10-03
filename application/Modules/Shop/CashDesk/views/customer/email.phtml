@@ -2,32 +2,65 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Form_Renderer;
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Shop_Managers;
 
-$cash_desk = CashDesk::get();
+$oauth = Shop_Managers::OAuth();
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 $form = $cash_desk->getSetEMailForm();
 
 $form->renderer()->addJsAction('onsubmit', 'CashDesk.customer.email.set();return false;');
 
 $form->renderer()->setDefaultLabelWidth([
-		Form_Renderer::LJ_SIZE_MEDIUM => '3'
+		Form_Renderer::LJ_SIZE_MEDIUM => '12'
 ]);
 
 $form->renderer()->setDefaultFieldWidth([
-	Form_Renderer::LJ_SIZE_MEDIUM => '9'
+	Form_Renderer::LJ_SIZE_MEDIUM => '12'
 ]);
 
+$email_field = $form->field('email');
+
+
+$email_field->renderer()->setCustomRenderer(function() use ( $email_field ) {
+	?>
+<div style="display: flex;align-items: center;margin-left: 30%;margin-top: 20px; margin-bottom: 20px;">
+	<div style="padding: 5px;"><?=$email_field->getLabel()?></div>
+	<div style="padding: 5px;width: 400px;"><?=$email_field->input().$email_field->error()?></div>
+</div>
+	<?php
+	
+});
 ?>
 
 
 <span class="step-title"><?=Tr::_("Please tell us your e-mail or log-in using your Google or Facebook account.")?></span>
 <?=$form->start()?>
-<?=$form->field('email')?>
+
+	<?=$form->field('email')?>
 
 <div class="continue-button-area">
 	<?=UI::button('Continue')->setClass('primary')->setType('submit')?>
 </div>
 <?=$form->end()?>
+
+
+<?php if($oauth): ?>
+	<div style="padding: 10px;">
+		<?php foreach($oauth->getOAuthModules() as $oauth_module): ?>
+			<div style="padding: 10px;">
+				<?=$oauth->renderLoginButton( $oauth_module );?>
+			</div>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>
+
 

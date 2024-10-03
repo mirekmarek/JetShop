@@ -15,6 +15,10 @@ use JetApplication\Discounts_Code;
 
 $module = $this->getRaw('module');
 
+if(!$module->isPossibleToAddCode()) {
+	return;
+}
+
 $form = $module->getUseCodeForm();
 
 $form->renderer()->setDefaultLabelWidth([
@@ -31,17 +35,11 @@ $form->renderer()->addJsAction('onsubmit', 'DiscountCode.submit();return false;'
 
 <?=$form->start()?>
 	<?=$form->getCommonMessage()?>
-		<?php
-		echo $code_f->row()->start();
-			echo $code_f->container()->start();
-				echo $code_f->input();
-				echo $code_f->error();
-			echo $code_f->container()->end();
-			?>
-			<div class="col-md-2">
-				<?=UI::button(Tr::_('Use'))->setType('submit')?>
-			</div>
-			<?php
-		echo $code_f->row()->end();
-		?>
+	<div style="display: grid;grid-template-columns: 1fr 50px;margin: 10px;">
+		<div>
+			<?=$code_f->input();?>
+			<?=$code_f->error();?>
+		</div>
+		<div><?=UI::button(Tr::_('Use'))->setType('submit')?></div>
+	</div>
 <?=$form->end()?>

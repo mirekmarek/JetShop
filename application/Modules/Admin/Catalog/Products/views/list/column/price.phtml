@@ -3,7 +3,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops;
+use JetApplication\Pricelists;
 
 /**
  * @var MVC_View $this
@@ -13,6 +13,9 @@ use JetApplication\Shops;
 $item = $this->getRaw('item');
 
 ?>
-<?php foreach(Shops::getListSorted() as $shop): ?>
-<?=$shop->getShopName()?>: <b><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $item->getShopData($shop)->getPrice() )?><br></b>
+<?php foreach(Pricelists::getList() as $pricelist): ?>
+	<?=$pricelist->getName()?>: <b><?=Admin_Managers::PriceFormatter()->formatWithCurrency(
+		$pricelist->getCurrency(),
+		$item->getPrice( $pricelist )
+	)?><br></b>
 <?php endforeach; ?>

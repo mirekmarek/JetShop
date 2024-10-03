@@ -14,9 +14,12 @@ use Jet\Form_Renderer;
  * @var MVC_View $this
  * @var Form     $form
  * @var Entity_WithShopData|Admin_Entity_WithShopData_Interface     $item
+ * @var Main $module
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
+
+$module = $this->getRaw('module');
 
 $common_data_fields_renderer = $this->getRaw('common_data_fields_renderer');
 $shop_data_fields_renderer = $this->getRaw('shop_data_fields_renderer');
@@ -36,44 +39,55 @@ $form->renderer()->setDefaultFieldWidth( [
 ] );
 
 ?>
-<?=$form->start()?>
 
 <?php require 'toolbar.phtml'; ?>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
-		<?=$this->getRaw('tabs')?>
-		<br>
-		
-		<?=Admin_Managers::UI()->renderEntityActivation(
-			entity: $item,
-			editable: !$form->getIsReadonly(),
-		);?>
-		
-		<?=Admin_Managers::UI()->renderEntityFormCommonFields( $form );?>
-		
+
+<div id="main-col">
 		<?php
+		echo $this->getRaw('tabs');
+		if($module->getActivationDisabled()) {
+			echo '<br>';
+		}
+		
+		echo $module->renderEntityActivation(
+					entity: $item,
+					editable: !$form->getIsReadonly(),
+				);
+		
+		echo $form->start();
+		
+		echo $module->renderEntityFormCommonFields( $form );
+		
 		if($common_data_fields_renderer) {
 			$common_data_fields_renderer( $item, $form );
 		}
 		
-		Admin_Managers::UI()->renderShopDataBlocks(
+		$module->renderShopDataBlocks(
 			form: $form,
-			renderer: function( Shops_Shop $shop, string $shop_key ) use ($item, $form, $shop_data_fields_renderer) : void {
+			renderer: function( Shops_Shop $shop, string $shop_key ) use ($item, $form, $shop_data_fields_renderer, $module) : void {
 				$shop_data = $item->getShopData( $shop );
 				
-				echo Admin_Managers::UI()->renderEntityShopDataActivation(
-					entity: $item,
-					shop: $shop,
-					editable: !$form->getIsReadonly(),
-				);
+				?>
+				<div style="display: flex;align-items: center">
+					<div><?=$module->renderEntityShopDataActivation(
+							entity: $item,
+							shop: $shop,
+							editable: !$form->getIsReadonly(),
+						)?></div>
+					<div>
+						<?=$module->getTimerDisabled() || $form->getIsReadonly() ? '' : Admin_Managers::Timer()?->renderIcon( $item, $shop )?>
+					</div>
+				</div>
+				<?php
 				
 				if($shop_data_fields_renderer) {
 					$shop_data_fields_renderer( $shop, $shop_key, $item, $form );
 				}
-			}); ?>
-
-	</div>
+			});
+		
+		echo $form->end();
+		?>
 </div>
 
-<?=$form->end()?>
+<?=Admin_Managers::Timer()?->renderIntegration()?>

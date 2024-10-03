@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\Shop\Customer\Login;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Customer;
+use JetApplication\Shop_Pages;
+
+$customer = Customer::getCurrentCustomer();
+
+$form = Main::getLogoutForm();
+
+$dialog = UI::dialog('customer_detail_dialog', '');
+
+echo UI::button( '' )
+	->setIcon('user')
+	->setClass( UI_button::CLASS_LIGHT )
+	->setOnClick( "dialog.open('customer_detail_dialog')" );
+
+?>
+
+<?=$dialog->start()?>
+
+	<a href="<?=Shop_Pages::CustomerSection()->getURL()?>"><?=$customer->getName()?></a><br>
+	<?=UI::button(Tr::_('Show my account detail'))->setUrl( Shop_Pages::CustomerSection()->getURL() )->setClass(UI_button::CLASS_LINK)?><br>
+	<br>
+	<br>
+	<?=UI::button(Tr::_('Sign out'))->setOnclick('CustomerLogin.logout();')->setClass(UI_button::CLASS_INFO)?>
+	
+<?=$dialog->end()?>
+
+
+<?=$this->render('js')?>
+
+<?=$form->start()?>
+<?=$form->end()?>

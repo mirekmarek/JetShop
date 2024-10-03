@@ -2,7 +2,7 @@
 namespace JetApplicationModule\Admin\Entity\Edit\Common;
 
 use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Entity_Basic;
+use JetApplication\Entity_Common;
 
 use Jet\Http_Request;
 use Jet\UI;
@@ -10,7 +10,7 @@ use Jet\MVC_View;
 
 /**
  * @var MVC_View $this
- * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ * @var Entity_Common|Admin_Entity_Common_Interface     $item
  * @var ?callable $reason_renderer
  */
 $item = $this->getRaw( 'item' );

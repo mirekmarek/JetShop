@@ -11,10 +11,14 @@ use JetApplication\Product_ShopData;
 
 $product = $this->getRaw('product');
 
+$kind = $product->getKind();
+
 $variants = $product->getVariants();
 
 ?>
 <div>
+	<b><?=$kind?->getVariantSelectDescription()?></b><br>
+	
 	<?php foreach($variants as $variant):
 		if($variant->getId()==$product->getId()):
 			?>

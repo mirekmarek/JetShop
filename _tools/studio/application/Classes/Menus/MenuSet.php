@@ -254,16 +254,7 @@ class Menus_MenuSet extends Navigation_MenuSet
 	public function sortMenus(): void
 	{
 		uasort( $this->menus, function( Menus_Menu $a, Menus_Menu $b ) {
-			if( $a->getIndex() == $b->getIndex() ) {
-				return 0;
-			}
-
-			if( $a->getIndex() > $b->getIndex() ) {
-				return 1;
-			}
-
-			return -1;
-
+			return $a->getIndex() <=> $b->getIndex();
 		} );
 
 		$i = 0;

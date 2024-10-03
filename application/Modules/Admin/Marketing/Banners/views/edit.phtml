@@ -1,0 +1,103 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\Banners;
+
+use Jet\Http_Request;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Banner   $item
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+$group = $item->getGroup();
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 2,
+	Form_Renderer::LJ_SIZE_LARGE => 1
+] );
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 8,
+	Form_Renderer::LJ_SIZE_LARGE => 8
+] );
+
+require 'select.phtml';
+?>
+
+
+
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(unset_GET_params: ['id']))?>
+	&nbsp;&nbsp;
+	<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
+</div>
+
+
+<div id="main-col">
+	<?=$form->start()?>
+	
+	<?=Admin_Managers::EntityEdit_Common()->renderEntityFormCommonFields( $form );?>
+	
+	<?=$form->field('is_active')?>
+	<?=$form->field('active_from')?>
+	<?=$form->field('active_till')?>
+	<?php if($group->getHasText()):
+		echo $form->field('text');
+		if($group->getHasColor()):
+			echo $form->field('text_color');
+		endif;
+	endif; ?>
+	<?=$form->field('URL')?>
+	<?=$form->field('nofollow')?>
+	<?=$form->field('open_in_new_window')?>
+	<?=$form->end()?>
+	
+	<?php if($group->getHasMainImage()): ?>
+	<div class="row">
+		<div class="col-form-label col-xs-12 col-sm-12 col-md-2 col-lg-1"></div>
+		<div id="image-main" style="margin: 20px;">
+			<?php require 'edit/image-main.phtml'; ?>
+		</div>
+	</div>
+	<?php endif; ?>
+	<?php if($group->getHasMobileImage()): ?>
+		<div class="row">
+			<div class="col-form-label col-xs-12 col-sm-12 col-md-2 col-lg-1"></div>
+			<div id="image-mobile" style="margin: 20px;">
+				<?php require 'edit/image-mobile.phtml'; ?>
+			</div>
+		</div>
+	<?php endif; ?>
+	
+	<?php if($group->getHasMainVideo()): ?>
+		<div class="row">
+			<div class="col-form-label col-xs-12 col-sm-12 col-md-2 col-lg-1"></div>
+			<div id="video-main" style="margin: 20px;">
+				<?php require 'edit/video-main.phtml'; ?>
+			</div>
+		</div>
+	<?php endif; ?>
+	
+	<?php if($group->getHasMobileVideo()): ?>
+		<div class="row">
+			<div class="col-form-label col-xs-12 col-sm-12 col-md-2 col-lg-1"></div>
+			<div id="video-mobile" style="margin: 20px;">
+				<?php require 'edit/video-mobile.phtml'; ?>
+			</div>
+		</div>
+	<?php endif; ?>
+	
+</div>
+

@@ -4,6 +4,7 @@ namespace JetApplicationModule\Shop\ShoppingCart;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Shop_Pages;
 use JetApplication\Discounts;
 use JetApplication\Shop_Managers;
 
@@ -13,35 +14,78 @@ use JetApplication\Shop_Managers;
 
 $cart = Shop_Managers::ShoppingCart()->getCart();
 
-if($cart->getQuantity()<1):
+if($cart->getNumberOfUnits()<1):
 	echo $this->render('shopping_cart_page/empty');
 	return;
 endif;
 
 
 $dm_code = Discounts::Manager()->getActiveModule('Code');
+
+$dm_free_delivery = Discounts::Manager()->getActiveModule('FreeDelivery');
+
+$available_gifts = $cart->getAvailableCartGifts();
+$selected_gift_ids = $cart->getSelectedCartGiftIds();
+
+$selected_product_gifts = $cart->getSelectedProductGifts();
+
 ?>
 <br><br><br><br>
-	<div>
-		<?=$this->render('shopping_cart_page/items')?>
-	</div>
-	
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-8">
-			
-			</div>
-			<div class="col-md-4 text-right">
-				<?php if($dm_code): ?>
-					<?=$dm_code->ShoppingCart_handle()?>
-				<?php endif; ?>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="col-md-12 text-right">
-				<?=UI::button(Tr::_('Order'))->setUrl( Shop_Managers::CashDesk()->getCashDeskPageURL())->setClass('success')?>
-			</div>
-		</div>
-	</div>
+<div>
+	<?=$this->render('shopping_cart_page/items')?>
+</div>
 
+<?php if($available_gifts || $selected_product_gifts): ?>
+
+<h3><?=Tr::_('Gifts')?></h3>
+<div style="display: grid;grid-template-columns: 20px 60px 1fr;align-items: center;gap: 10px;margin: 20px;">
+<?php foreach($selected_product_gifts as $gift): ?>
+	<div></div>
+	<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+	<div><?=$gift->getGiftProduct()->getName()?></div>
+<?php endforeach; ?>
+
+
+<?php foreach($available_gifts as $gift):
+	$gift_id = $gift->getGiftProductId();
+	?>
+
+	<?php if($gift->getAutoAppend()): ?>
+		<div></div>
+		<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+		<div><?=$gift->getGiftProduct()->getName()?></div>
+	<?php else: ?>
+		<?php if(in_array($gift_id, $selected_gift_ids)): ?>
+			<div><input type="checkbox" checked value="<?=$gift_id?>" onclick="ShoppingCart.Gifts.unselect(<?=$gift_id?>);"></div>
+			<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+			<div><?=$gift->getGiftProduct()->getName()?></div>
+		<?php else: ?>
+			<div><input type="checkbox" value="<?=$gift_id?>" onclick="ShoppingCart.Gifts.select(<?=$gift_id?>);"></div>
+			<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+			<div><?=$gift->getGiftProduct()->getName()?></div>
+		<?php endif; ?>
+	<?php endif; ?>
+	
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+
+<?=Shop_Managers::AutoOffers()?->handleShoppingCart()?>
+
+<div style="display: grid;grid-template-columns: 2fr 1fr;gap: 10px; align-items: center">
+	<div>
+		<?=$dm_free_delivery?->ShoppingCart_handle()?>
+	</div>
+	<div>
+		<?=$dm_code?->ShoppingCart_handle()?>
+	</div>
+</div>
+
+
+<div style="text-align: right;padding: 20px;">
+	<?=UI::button(Tr::_('Order'))->setUrl( Shop_Pages::CashDesk()->getURL() )->setClass('success')?>
+</div>
+
+
+<?=Shop_Managers::Analytics()?->viewCart( $cart )?>

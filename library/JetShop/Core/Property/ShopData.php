@@ -92,6 +92,33 @@ abstract class Core_Property_ShopData extends Entity_WithShopData_ShopData {
 	)]
 	protected string $units = '';
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is filter',
+	)]
+	protected bool $is_filter = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Filter priority',
+	)]
+	protected int $filter_priority = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is default filter',
+	)]
+	protected bool $is_default_filter = false;
+	
 	public function getType(): string
 	{
 		return $this->type;
@@ -228,5 +255,34 @@ abstract class Core_Property_ShopData extends Entity_WithShopData_ShopData {
 		return $this->getTypeInstance()->getProductDetailDisplayValue( $this->getShop() );
 	}
 	
+	public function getIsFilter(): bool
+	{
+		return $this->is_filter;
+	}
+	
+	public function setIsFilter( bool $is_filter ): void
+	{
+		$this->is_filter = $is_filter;
+	}
+	
+	public function getFilterPriority(): int
+	{
+		return $this->filter_priority;
+	}
+	
+	public function setFilterPriority( int $filter_priority ): void
+	{
+		$this->filter_priority = $filter_priority;
+	}
+	
+	public function getIsDefaultFilter(): bool
+	{
+		return $this->is_default_filter;
+	}
+	
+	public function setIsDefaultFilter( bool $is_default_filter ): void
+	{
+		$this->is_default_filter = $is_default_filter;
+	}
 	
 }

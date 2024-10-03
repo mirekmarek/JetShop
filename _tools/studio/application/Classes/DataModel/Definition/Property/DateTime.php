@@ -36,6 +36,7 @@ class DataModel_Definition_Property_DateTime extends Jet_DataModel_Definition_Pr
 
 	/**
 	 * @return mixed
+	 * @noinspection PhpMixedReturnTypeCanBeReducedInspection
 	 */
 	public function getDefaultValue() : mixed
 	{

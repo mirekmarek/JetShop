@@ -7,16 +7,19 @@
  */
 namespace JetApplicationModule\Admin\Payment\Methods;
 
+use Jet\AJAX;
+use Jet\Application_Modules;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use Jet\Logger;
 use Jet\Navigation_Breadcrumb;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Entity_WithShopData_Manager_Controller;
+use JetApplication\Admin_EntityManager_WithShopData_Controller;
 use JetApplication\Application_Admin;
+use JetApplication\Payment_Method;
+use JetApplication\Payment_Method_Module;
 
-class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
+class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 {
 	protected ?PaymentMethod_Option $option = null;
 	
@@ -33,6 +36,19 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		}
 		
 		return $_tabs;
+	}
+	
+	public function setupListing(): void
+	{
+		$this->listing_manager->addColumn( new Listing_Column_FreeLimit() );
+		$this->listing_manager->setDefaultColumnsSchema([
+			'id',
+			'active_state',
+			'internal_name',
+			'internal_code',
+			'internal_notes',
+			'payment_free_limit'
+		]);
 	}
 	
 	protected function currentItemGetter() : void
@@ -55,6 +71,12 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 			$selected_tab!='options'
 		) {
 			parent::setupRouter( $action, $selected_tab );
+
+			$this->router->addAction('get_payment_method_specification', Main::ACTION_GET)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $action=='get_payment_method_specification';
+				});
+			
 			return;
 		}
 		
@@ -102,14 +124,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		if($new_option->catchAddForm()) {
 			$method->addOption( $new_option );
 			
-			Logger::success(
-				event: 'payment_method_updated.option_added',
-				event_message: 'Payment method updated - option added',
-				context_object_id: $method->getId(),
-				context_object_name: $method->getInternalName(),
-				context_object_data: $method
-			);
-			
 			UI_messages::success(
 				Tr::_( 'Option <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $new_option->getInternalName() ] )
 			);
@@ -134,14 +148,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		$sort = explode('|', Http_Request::POST()->getString('sort_order'));
 		$method->sortOptions( $sort );
 		$method->save();
-		
-		Logger::success(
-			event: 'payment_method_updated.options_sorted',
-			event_message: 'Payment method - options sorted',
-			context_object_id: $method->getId(),
-			context_object_name: $method->getInternalName(),
-			context_object_data: $method
-		);
 		
 		Http_Headers::reload(unset_GET_params: ['action']);
 		
@@ -172,14 +178,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		if( $option->catchEditForm() ) {
 			
 			$option->save();
-			
-			Logger::success(
-				event: 'payment_method_updated.option_update',
-				event_message: 'Payment method updated - option updated',
-				context_object_id: $option->getId(),
-				context_object_name: $option->getInternalName(),
-				context_object_data: $option
-			);
 			
 			UI_messages::success(
 				Tr::_( 'Option <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $option->getInternalName() ] )
@@ -221,5 +219,45 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		$this->output( 'edit/option/images' );
 	}
 	
+	public function edit_main_Action(): void
+	{
+		$this->handleSetPrice();
+		
+		parent::edit_main_Action();
+	}
+	
+	
+	public function handleSetPrice() : void
+	{
+		/**
+		 * @var Payment_Method $product
+		 */
+		$method = $this->current_item;
+		
+		if( ($set_price_form = $method->getSetPriceForm()) ) {
+			$this->view->setVar('set_price_form', $set_price_form);
+			if($set_price_form->catch()) {
+				Http_Headers::reload();
+			}
+		}
+		
+	}
+	
+	public function get_payment_method_specification_Action() :  void
+	{
+		$module_name = Http_Request::GET()->getString('module', valid_values: array_keys(Payment_Method::getModulesScope()));
+		
+		$res = [];
+		
+		if($module_name) {
+			/**
+			 * @var Payment_Method_Module $module
+			 */
+			$module = Application_Modules::moduleInstance( $module_name );
+			$res = $module->getPaymentMethodSpecificationList();
+		}
+		
+		AJAX::commonResponse( $res );
+	}
 	
 }

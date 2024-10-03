@@ -1,0 +1,55 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Pages;
+
+
+use Jet\Data_Tree_Node;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI_badge;
+use Jet\UI;
+use Jet\Tr;
+use Jet\MVC;
+
+
+/**
+ * @var MVC_View $this
+ */
+
+$tree = $this->getRaw('tree');
+$selected_base_id = $this->getRaw('selected_base_id');
+$selected_locale = $this->getRaw('selected_locale');
+$selected_page_id = $this->getRaw('selected_page_id');
+
+$UI_tree = UI::tree( $tree );
+$UI_tree->setRootId( MVC::HOMEPAGE_ID );
+$UI_tree->setSelectedId( $selected_page_id );
+
+$renderer = function( Data_Tree_Node $node ) use ($selected_base_id, $selected_locale, $selected_page_id ) {
+	
+	$page = MVC::getPage( page_id: $node->getId(), locale: $selected_locale, base_id: $selected_base_id );
+	
+	$edit_url = Http_Request::currentURI( ['page'=>$node->getId()] );
+	
+	$node_data = $node->getData();
+	
+	if( !$page->getIsActive() ):
+		echo UI::badge(UI_badge::DANGER, UI::icon( 'times' )->setTitle( Tr::_( 'Is not active' ) ));
+	endif;
+	
+	if($page->getId()==$selected_page_id):
+		?>
+		<b><?= $node->getLabel() ?></b>
+		<?php
+	else:
+		?>
+		<a href="<?= $edit_url ?>"><?= $node->getLabel() ?></a>
+		<?php
+	endif;
+};
+
+$UI_tree->setRendererNormal( $renderer );
+$UI_tree->setRendererOpened( $renderer );
+$UI_tree->setRendererSelected( $renderer );
+
+
+echo $UI_tree->render();

@@ -16,7 +16,7 @@ if($result):
 	foreach( $result as $item ):
 		$i++;
 		?><span
-		data-class="<?=$item->getObjectClass()?>"
+		data-class="<?=$item->getEntityType()?>"
 		data-id="<?=$item->getObjectId()?>"
 		data-title="<?=$item->getObjectTitle()?>"
 		data-active="<?=$item->getObjectIsActive()?>"

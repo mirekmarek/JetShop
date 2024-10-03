@@ -1,0 +1,36 @@
+<?php
+namespace JetApplicationModule\Admin\ImageManager;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var CommonImageManager_Image[] $images
+ */
+
+$images = $this->getRaw('images');
+?>
+<table class="table table-striped">
+	<?php foreach($images as $img): ?>
+	<tr>
+		<td style="width: 20px;">
+			<?= UI::button_delete(' ')->setOnClick("CommonImageManager.delete('{$img->getName()}')");?>
+		</td>
+		<td style="width: 110px;">
+			<a href="<?=$img->getURL()?>" target="_blank"><img src="<?=$img->getURL()?>" style="max-width: 100px;height: auto;"></a>
+			
+		</td>
+		<td>
+			<a href="" onclick="CommonImageManager.copyURL('img_<?=$img->getId()?>');return false;"><?=$img->getName()?></a><br>
+			
+			<input type="text" readonly value="<?=$img->getURL()?>" id="img_<?=$img->getId()?>" style="font-size:10px;opacity: 0.5;width: 100%"/><br/>
+			
+			<span style="font-size: 0.8rem"><?=Locale::size($img->getFileSize())?></span><br>
+			<span style="font-size: 0.8rem"><?=$img->getWidth()?>x<?=$img->getHeight()?></span>
+			
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>

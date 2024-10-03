@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+
+use Jet\MVC_View;
+use Jet\Http_Request;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+
+if(
+	$order->isCancelled() ||
+	!main::getCurrentUserCanEdit()
+) {
+	return;
+}
+?>
+<div class="dropdown">
+	<button class="btn btn-success dropdown-toggle" type="button" id="invoicing-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<?=Tr::_('Invoicing')?>
+	</button>
+	<div class="dropdown-menu" aria-labelledby="invoicing-menu" style="text-align: left">
+
+		<?=UI::button( Tr::_('Create a new invoice') )->setIcon('file-invoice-dollar')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_invoice']))?>
+		<?=UI::button( Tr::_('Create a new invoice in advance') )->setIcon('file-invoice')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_invoice_in_advance']))?>
+		<?=UI::button( Tr::_('Create a new delivery note') )->setIcon('file-invoice')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_delivery_note']))?>
+
+	</div>
+</div>
+
+

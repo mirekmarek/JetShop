@@ -18,12 +18,12 @@ $shop_key = $shop->getKey();
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
 	
-	<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/discount_is_not_allowed')?>
+	<?=$form->field('/shop_data/'.$shop_key.'/free_payment_limit')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/title')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/confirmation_email_info_text')?>
 </fieldset>
+

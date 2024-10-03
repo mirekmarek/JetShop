@@ -3,7 +3,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
-use JetApplicationModule\Admin\Catalog\Categories\Category;
+use JetApplication\Category;
 
 /**
  * @var MVC_View   $this
@@ -15,18 +15,24 @@ $product = $this->getRaw('product');
 require '_toolbar.phtml';
 ?>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<?=$this->getRaw('tabs')?>
 
 		<table class="table table-striped">
 			<tbody>
-			<?php foreach( Category::getIdsByProduct($product->getId()) as $category_id): ?>
+			<?php foreach( Category::getIdsByProduct($product->getId()) as $category_id):
+				$category = Category::load($category_id);
+				?>
 				<tr>
-					<td><?=Admin_Managers::Category()->showName( $category_id )?></td>
+					<td>
+						<div style="display: flex;gap: 5px;align-items: center">
+							<div><?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $category )?></div>
+							<div><?=Admin_Managers::Category()->showActiveState( $category_id )?></div>
+							<div><?=Admin_Managers::Category()->showName( $category_id )?></div>
+						</div>
+					</td>
 				</tr>
 			<?php endforeach;  ?>
 			</tbody>
 		</table>
-	</div>
 </div>

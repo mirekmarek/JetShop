@@ -1,11 +1,13 @@
 <?php
 namespace JetShop;
 
-
-use Jet\Application_Modules;
 use Jet\SysConf_Path;
 
+use JetApplication\Exports_Definition;
+use JetApplication\Exports_Manager;
 use JetApplication\Exports_Module;
+use JetApplication\Managers;
+use JetApplication\Managers_General;
 
 abstract class Core_Exports
 {
@@ -13,6 +15,13 @@ abstract class Core_Exports
 	protected static string $module_name_prefix = 'Exports.';
 
 	protected static ?string $root_path = null;
+	
+	
+	public static function getManager() : ?Exports_Manager
+	{
+		return Managers_General::Exports();
+	}
+	
 
 	public static function getModuleNamePrefix(): string
 	{
@@ -49,32 +58,51 @@ abstract class Core_Exports
 	/**
 	 * @return Exports_Module[]
 	 */
-	public static function getActiveModules() : iterable
+	public static function getExportModulesList() : iterable
 	{
 		$modules = [];
 
-		$name_prefix = static::getModuleNamePrefix();
+		foreach( Managers::findManagers(Exports_Module::class, static::getModuleNamePrefix()) as $module) {
+			/**
+			 * @var Exports_Module $module
+			 */
 
-		foreach(Application_Modules::activatedModulesList() as $manifest) {
-			if( str_starts_with( $manifest->getName(), $name_prefix ) ) {
-				/**
-				 * @var Exports_Module $module
-				 */
-				$module = Application_Modules::moduleInstance( $manifest->getName() );
-				$modules[$module->getCode()] = $module;
-			}
+			$modules[$module->getCode()] = $module;
 		}
 
 		return $modules;
 	}
 
-	public static function getActiveModule( string $module ) : ?Exports_Module
+	public static function getExportModule( string $code ) : ?Exports_Module
 	{
-		$modules = static::getActiveModules();
-		if(!isset($modules[$module])) {
+		$modules = static::getExportModulesList();
+		if(!isset( $modules[$code])) {
 			return null;
 		}
 
-		return $modules[$module];
+		return $modules[$code];
+	}
+	
+	/**
+	 * @return Exports_Definition[]
+	 */
+	public static function getExportsList() : array
+	{
+		$list = [];
+		
+		foreach(static::getExportModulesList() as $module) {
+			foreach($module->getExportsDefinitions() as $export) {
+				$list[$export->getCode()] = $export;
+			}
+		}
+
+		return $list;
+	}
+	
+	public static function getExport( string $code ) : ?Exports_Definition
+	{
+		$list = static::getExportsList();
+		
+		return $list[$code]??null;
 	}
 }

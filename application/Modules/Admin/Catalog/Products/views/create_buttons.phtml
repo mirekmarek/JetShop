@@ -6,9 +6,9 @@ use Jet\Tr;
 use Jet\UI;
 
 $types = [
-	Product::PRODUCT_TYPE_REGULAR         => Tr::_('Regular'),
-	Product::PRODUCT_TYPE_VARIANT_MASTER  => Tr::_('With variants'),
-	Product::PRODUCT_TYPE_SET             => Tr::_('Set'),
+	Product::PRODUCT_TYPE_REGULAR         => Product::getProductTypes()[ Product::PRODUCT_TYPE_REGULAR ],
+	Product::PRODUCT_TYPE_VARIANT_MASTER  => Product::getProductTypes()[ Product::PRODUCT_TYPE_VARIANT_MASTER ],
+	Product::PRODUCT_TYPE_SET             => Product::getProductTypes()[ Product::PRODUCT_TYPE_SET ],
 ];
 ?>
 <div class="dropdown">

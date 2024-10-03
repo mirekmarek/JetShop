@@ -1,9 +1,14 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
-$cash_desk = CashDesk::get();
+use Jet\MVC_View;
+use JetApplication\Shop_Managers;
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
 $order = $cash_desk->getOrder();
-?>
 
-
-<?php require 'conversion_codes.phtml'; ?>
+echo Shop_Managers::Analytics()?->purchase( $order );

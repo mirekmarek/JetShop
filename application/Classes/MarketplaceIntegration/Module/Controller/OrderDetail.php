@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_MarketplaceIntegration_Module_Controller_OrderDetail;
+
+abstract class MarketplaceIntegration_Module_Controller_OrderDetail extends Core_MarketplaceIntegration_Module_Controller_OrderDetail
+{
+}

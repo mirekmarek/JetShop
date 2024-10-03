@@ -590,15 +590,15 @@ class Auth_RESTClient_User extends DataModel implements Auth_User_Interface
 		$this->save();
 
 
-		$email_template = new Mailing_Email_Template(
+		$EMail_TemplateText = new Mailing_Email_Template(
 			template_id: 'rest-client/user_password_reset',
 			locale: $this->getLocale()
 		);
 
-		$email_template->setVar( 'user', $this );
-		$email_template->setVar( 'password', $password );
+		$EMail_TemplateText->setVar( 'user', $this );
+		$EMail_TemplateText->setVar( 'password', $password );
 
-		$email = $email_template->getEmail();
+		$email = $EMail_TemplateText->getEmail();
 		$email->setTo( $this->getEmail() );
 		$email->send();
 
@@ -841,9 +841,11 @@ class Auth_RESTClient_User extends DataModel implements Auth_User_Interface
 	{
 		$locales = [];
 
+		/*
 		foreach( Application_REST::getBase()->getLocales() as $locale_str => $locale ) {
 			$locales[$locale_str] = $locale->getName();
 		}
+		*/
 
 		return $locales;
 	}
@@ -854,15 +856,15 @@ class Auth_RESTClient_User extends DataModel implements Auth_User_Interface
 	 */
 	public function sendWelcomeEmail( string $password ): void
 	{
-		$email_template = new Mailing_Email_Template(
+		$EMail_TemplateText = new Mailing_Email_Template(
 			template_id: 'rest-client/user_welcome',
 			locale: $this->getLocale()
 		);
 
-		$email_template->setVar( 'user', $this );
-		$email_template->setVar( 'password', $password );
+		$EMail_TemplateText->setVar( 'user', $this );
+		$EMail_TemplateText->setVar( 'password', $password );
 
-		$email = $email_template->getEmail();
+		$email = $EMail_TemplateText->getEmail();
 		$email->setTo( $this->getEmail() );
 		$email->send();
 

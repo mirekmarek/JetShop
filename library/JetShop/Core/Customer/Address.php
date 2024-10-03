@@ -7,11 +7,9 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Form_Definition;
-use Jet\Form_Field;
 
 use JetApplication\Customer_Address;
+use JetApplication\Entity_Address;
 
 /**
  *
@@ -19,202 +17,21 @@ use JetApplication\Customer_Address;
 #[DataModel_Definition(
 	name: 'customer_address',
 	database_table_name: 'customers_addresses',
-	id_controller_class: DataModel_IDController_AutoIncrement::class,
-	id_controller_options: [
-		'id_property_name' => 'id'
-	]
 )]
-abstract class Core_Customer_Address extends DataModel
+abstract class Core_Customer_Address extends Entity_Address
 {
-
-	/**
-	 * @var int
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID_AUTOINCREMENT,
-		is_id: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_HIDDEN
-	)]
-	protected int $id = 0;
-
-	/**
-	 * @var int
-	 */ 
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
 	)]
 	protected int $customer_id = 0;
 
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Company name:'
-	)]
-	protected string $company_name = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Company id:'
-	)]
-	protected string $company_id = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Company VAT id:'
-	)]
-	protected string $company_vat_id = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'First name:'
-	)]
-	protected string $first_name = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Surname:'
-	)]
-	protected string $surname = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Address - street and number:'
-	)]
-	protected string $address_street_no = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Address - zip:'
-	)]
-	protected string $address_zip = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Address - country:'
-	)]
-	protected string $address_country = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Address - town:'
-	)]
-	protected string $address_town = '';
-
-	/**
-	 * @var string
-	 */ 
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 100,
-	)]
-	protected string $hash = '';
-
-	/**
-	 * @var bool
-	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true,
 	)]
 	protected bool $is_default = false;
-
-
-	public function __clone(): void
-	{
-		$this->setIsNew();
-		$this->id = 0;
-		$this->hash = '';
-
-	}
-
-	public function __wakeup(): void
-	{
-		$this->generateHash();
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getId() : int
-	{
-		return $this->id;
-	}
-
-
-	/**
-	 * @param int|string $id
-	 * @return static|null
-	 */
-	public static function get( int|string $id ) : static|null
-	{
-		return static::load( $id );
-	}
 
 	/**
 	 * @return Customer_Address[]
@@ -229,207 +46,17 @@ abstract class Core_Customer_Address extends DataModel
 		
 		return $list;
 	}
-
-	/**
-	 * @param int $value
-	 */
+	
 	public function setCustomerId( int $value ) : void
 	{
 		$this->customer_id = $value;
 	}
-
-	/**
-	 * @return int
-	 */
+	
 	public function getCustomerId() : int
 	{
 		return $this->customer_id;
 	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setCompanyName( string $value ) : void
-	{
-		$this->company_name = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCompanyName() : string
-	{
-		return $this->company_name;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setCompanyId( string $value ) : void
-	{
-		$this->company_id = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCompanyId() : string
-	{
-		return $this->company_id;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setCompanyVatId( string $value ) : void
-	{
-		$this->company_vat_id = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCompanyVatId() : string
-	{
-		return $this->company_vat_id;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setFirstName( string $value ) : void
-	{
-		$this->first_name = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFirstName() : string
-	{
-		return $this->first_name;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setSurname( string $value ) : void
-	{
-		$this->surname = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSurname() : string
-	{
-		return $this->surname;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setAddressStreetNo( string $value ) : void
-	{
-		$this->address_street_no = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAddressStreetNo() : string
-	{
-		return $this->address_street_no;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setAddressZip( string $value ) : void
-	{
-		$this->address_zip = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAddressZip() : string
-	{
-		return $this->address_zip;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setAddressCountry( string $value ) : void
-	{
-		$this->address_country = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAddressCountry() : string
-	{
-		return $this->address_country;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setAddressTown( string $value ) : void
-	{
-		$this->address_town = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAddressTown() : string
-	{
-		return $this->address_town;
-	}
-
-	public function generateHash() : string
-	{
-		$this->hash = '';
-
-		foreach(get_object_vars($this) as $k=>$v) {
-			if(
-				$k[0]=='_' ||
-				$k=='is_default' ||
-				$k=='hash' ||
-				$k=='id' ||
-				$k=='customer_id'
-			) {
-				continue;
-			}
-
-			$this->hash .= ':'.$v;
-		}
-
-		$this->hash = md5( $this->hash );
-
-		return $this->hash;
-	}
-
-	public function getHash() : string
-	{
-		if(!$this->hash) {
-			$this->generateHash();
-		}
-
-		return $this->hash;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setHash( string $value ) : void
-	{
-		$this->hash = $value;
-	}
-
+	
 	public function setIsDefault() : void
 	{
 		$this->is_default = true;
@@ -456,18 +83,9 @@ abstract class Core_Customer_Address extends DataModel
 		
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isDefault() : bool
 	{
 		return $this->is_default;
 	}
 
-
-	public function beforeSave(): void
-	{
-		$this->generateHash();
-	}
-	
 }

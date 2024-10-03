@@ -3,6 +3,7 @@ namespace JetApplicationModule\Admin\Customers;
 
 use Jet\MVC_View;
 use JetApplication\Customer_Address;
+use JetApplication\DataList;
 use JetApplication\Shops_Shop;
 
 /**
@@ -24,5 +25,5 @@ $address = $this->getRaw('address');
 <?=$address->getFirstName()?> <?=$address->getSurname()?><br>
 <?=$address->getAddressStreetNo()?><br/>
 <?=$address->getAddressZip()?> <?=$address->getAddressTown()?><br>
-<?=$address->getAddressCountry()?>
+<?=DataList::countries()[$address->getAddressCountry()]??''?>
 

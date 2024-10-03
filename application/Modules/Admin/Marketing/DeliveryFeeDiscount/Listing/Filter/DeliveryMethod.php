@@ -1,0 +1,68 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
+
+use Jet\DataListing_Filter;
+use Jet\Form;
+use Jet\Form_Field_Select;
+use Jet\Http_Request;
+use Jet\Tr;
+use JetApplication\Delivery_Method;
+
+/**
+ *
+ */
+class Listing_Filter_DeliveryMethod extends DataListing_Filter {
+	
+	public const KEY = 'delivery_method';
+	
+	protected int $delivery_method = 0;
+	
+	public function getKey(): string
+	{
+		return static::KEY;
+	}
+
+	public function getDeliveryMethod(): int
+	{
+		return $this->delivery_method;
+	}
+	
+	
+	
+	public function catchParams(): void
+	{
+		$this->delivery_method = Http_Request::GET()->getInt( 'delivery_method' );
+		$this->listing->setParam( 'delivery_method', $this->delivery_method );
+	}
+	
+	public function catchForm( Form $form ): void
+	{
+		$this->delivery_method = $form->field( 'delivery_method' )->getValue();
+		$this->listing->setParam( 'delivery_method', $this->delivery_method );
+	}
+	
+	public function generateFormFields( Form $form ): void
+	{
+		$field = new Form_Field_Select( 'delivery_method', 'Delivery method:' );
+		$field->setSelectOptions( [0=>Tr::_('- all -')]+Delivery_Method::getScope() );
+		$field->setDefaultValue( $this->delivery_method );
+		
+		$form->addField( $field );
+	}
+	
+	public function generateWhere(): void
+	{
+		if( $this->delivery_method ) {
+			$this->listing->addFilterWhere( [
+				'delivery_method_id' => $this->delivery_method,
+			] );
+		}
+	}
+	
+}

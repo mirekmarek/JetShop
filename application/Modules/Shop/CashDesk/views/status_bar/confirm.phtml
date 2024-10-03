@@ -1,9 +1,9 @@
 <?php
 use Jet\Tr;
-use JetApplication\Shop_Managers;
+use JetApplication\Shop_Pages;
 
 ?>
-<a class="btn btn-info" href="<?= Shop_Managers::ShoppingCart()->getCartPageURL()?>"><?= Tr::_('Shopping cart'); ?></a>
+<a class="btn btn-info" href="<?= Shop_Pages::ShoppingCart()->getURL()?>"><?= Tr::_('Shopping cart'); ?></a>
 <a class="btn btn-info" onclick="CashDesk.delivery.back();return false;"><?= Tr::_('Delivery'); ?></a>
 <a class="btn btn-info" onclick="CashDesk.payment.back();return false;"><?= Tr::_('Payment'); ?></a>
 <a class="btn btn-info" onclick="CashDesk.customer.registration.back();return false;"><?= Tr::_('Registration'); ?></a>

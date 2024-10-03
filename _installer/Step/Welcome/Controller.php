@@ -8,7 +8,6 @@
 
 namespace JetApplication\Installer;
 
-use Jet\Http_Headers;
 use Jet\Locale;
 use Jet\Http_Request;
 
@@ -18,6 +17,8 @@ use Jet\Http_Request;
 class Installer_Step_Welcome_Controller extends Installer_Step_Controller
 {
 
+	protected string $icon = 'door-open';
+	
 	/**
 	 * @var string
 	 */
@@ -36,6 +37,12 @@ class Installer_Step_Welcome_Controller extends Installer_Step_Controller
 	 */
 	public function main(): void
 	{
+		if(!extension_loaded( 'intl' )) {
+			$this->render( 'error_intl_ext_not_installed' );
+			
+			return;
+		}
+		
 		$this->catchContinue();
 
 		$translations = [];
@@ -55,8 +62,8 @@ class Installer_Step_Welcome_Controller extends Installer_Step_Controller
 
 			Installer::setSelectedLocales( [$locale] );
 			Installer::setCurrentLocale( $locale );
-
-			Http_Headers::reload( [], ['locale'] );
+			
+			Installer::goToNext();
 
 		}
 

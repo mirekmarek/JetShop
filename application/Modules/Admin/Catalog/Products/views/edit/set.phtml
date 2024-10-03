@@ -8,7 +8,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\Pricelists;
 
 /**
  * @var MVC_View   $this
@@ -36,8 +36,7 @@ $product = $this->getRaw('item');
 require '_toolbar.phtml';
 
 ?>
-<div class="row">
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<?=$this->getRaw('tabs')?>
 
 
@@ -47,16 +46,14 @@ require '_toolbar.phtml';
 	<?=$add_form->end()?>
 <?php endif; ?>
 
-<div class="toolbar">
-		<?php if( $editable ): ?>
-			<div style="display: grid;grid-template-columns: 200px 1fr;align-items: center">
-				<div style="text-align: right;font-weight: bolder;"><?=Tr::_('Add product: ')?></div>
-				<div style="width: 400px;"><?=Admin_Managers::Product()->renderSelectWidget(
-					on_select: "$('#set_add_item_form__product_id').val(selected_item.id);$('#set_add_item_form').submit();",
-					only_type_filter: [Product::PRODUCT_TYPE_REGULAR]
-				)?></div>
-			</div>
-		<?php endif; ?>
+<div class="toolbar" style="display: grid;grid-template-columns: 200px 1fr;align-items: center">
+	<?php if( $editable ): ?>
+			<div style="text-align: right;font-weight: bolder;"><?=Tr::_('Add product: ')?></div>
+			<div style="width: 400px;"><?=Admin_Managers::Product()->renderSelectWidget(
+				on_select: "$('#set_add_item_form__product_id').val(selected_item.id);$('#set_add_item_form').submit();",
+				only_type_filter: [Product::PRODUCT_TYPE_REGULAR]
+			)?></div>
+	<?php endif; ?>
 	
 </div>
 
@@ -120,32 +117,34 @@ require '_toolbar.phtml';
 		</table>
 		
 		<h3><?=Tr::_('Price settings')?></h3>
-		<?php Admin_Managers::UI()->renderShopDataBlocks(
-			form: $edit_form, inline_mode: true, renderer: function( Shops_Shop $shop ) use ($edit_form, $editable, $product) {
-				$edit_form->field('/set_price/'.$shop->getKey().'/discount_type')->label()->setWidth([
-					Form_Renderer::LJ_SIZE_MEDIUM => 2
-				]);
-				$edit_form->field('/set_price/'.$shop->getKey().'/discount_value')->label()->setWidth([
-					Form_Renderer::LJ_SIZE_MEDIUM => 2
-				]);
-				$edit_form->field('/set_price/'.$shop->getKey().'/discount_type')->input()->setWidth([
-					Form_Renderer::LJ_SIZE_MEDIUM => 2
-				]);
-				$edit_form->field('/set_price/'.$shop->getKey().'/discount_value')->input()->setWidth([
-					Form_Renderer::LJ_SIZE_MEDIUM => 2
-				]);
-				
+		<?php foreach(Pricelists::getList() as $pricelist):
+					$field_name_prefix = '/set_price/'.$pricelist->getCode().'/';
+					
+					$edit_form->field($field_name_prefix.'discount_type')->label()->setWidth([
+						Form_Renderer::LJ_SIZE_MEDIUM => 2
+					]);
+					$edit_form->field($field_name_prefix.'discount_value')->label()->setWidth([
+						Form_Renderer::LJ_SIZE_MEDIUM => 2
+					]);
+					$edit_form->field($field_name_prefix.'discount_type')->input()->setWidth([
+						Form_Renderer::LJ_SIZE_MEDIUM => 2
+					]);
+					$edit_form->field($field_name_prefix.'discount_value')->input()->setWidth([
+						Form_Renderer::LJ_SIZE_MEDIUM => 2
+					]);
 				?>
+				<fieldset>
+					<legend><?=Tr::_('Price')?> - <?=$pricelist->getName()?></legend>
 				<div class="row" style="padding-bottom: 10px;">
 					<div class="col-md-2" style="font-weight: bolder"><?=Tr::_('Calculated price:')?></div>
 					<div class="col-md-2" style="font-weight: bolder">
-						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $product->getShopData($shop)->getCalculatedSetPrice() )?>
+						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $product->getCalculatedSetPrice( $pricelist ) )?>
 					</div>
 				</div>
 			
-			<?=$edit_form->field('/set_price/'.$shop->getKey().'/discount_type');?>
-				<?=$edit_form->field('/set_price/'.$shop->getKey().'/discount_value');?>
-				<?php if($editable): ?>
+				<?=$edit_form->field($field_name_prefix.'discount_type');?>
+				<?=$edit_form->field($field_name_prefix.'discount_value');?>
+				<?php if(!$edit_form->getIsReadonly()): ?>
 					<div class="row">
 						<div class="col-md-2"></div>
 						<div class="col-md-2">
@@ -156,17 +155,16 @@ require '_toolbar.phtml';
 				<div class="row" style="padding-top: 10px;">
 					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem"><?=Tr::_('Price:')?></div>
 					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem">
-						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $shop, $product->getShopData($shop)->getPrice() )?>
+						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $product->getPrice( $pricelist ) )?>
 					</div>
 				</div>
-				<br><br>
-			<?php
-		} ); ?>
+				</fieldset>
+				<br>
+			<?php endforeach; ?>
 		
 	</div>
 </div>
 
 <?=$edit_form->end()?>
 
-	</div>
 </div>

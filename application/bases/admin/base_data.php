@@ -2,9 +2,6 @@
 return [
 	'id' => 'admin',
 	'name' => 'Administration',
-	'base_path' => NULL,
-	'layouts_path' => NULL,
-	'views_path' => NULL,
 	'is_secret' => true,
 	'is_default' => false,
 	'is_active' => true,
@@ -18,6 +15,20 @@ return [
 				'jet-shop.lc/admin/',
 			],
 			'default_meta_tags' => [
+			],
+			'parameters' => [
+			],
+		],
+		'en_US' => [
+			'is_active' => true,
+			'SSL_required' => false,
+			'title' => '',
+			'URLs' => [
+				'jet-shop.lc/admin/en',
+			],
+			'default_meta_tags' => [
+			],
+			'parameters' => [
 			],
 		],
 	],

@@ -4,14 +4,18 @@ namespace JetShop;
 use Jet\Data_Text;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_Definition_Model_Related_1toN;
 use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 use Jet\Form;
 use Jet\Locale;
+use Jet\Tr;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Shop_Managers;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
+use JetApplication\Timer_Action;
 
 #[DataModel_Definition(
 	database_table_name: '',
@@ -67,6 +71,16 @@ abstract class Core_Entity_WithShopData_ShopData extends DataModel_Related_1toN
 	
 	protected static array $loaded_items = [];
 	
+	public static function getEntityType() : string
+	{
+		
+		$def = static::getDataModelDefinition(static::class);
+		/**
+		 * @var DataModel_Definition_Model_Related_1toN $def
+		 */
+		return $def->getParentModelDefinition()->getModelName();
+	}
+	
 	
 	public static function get( int $id, ?Shops_Shop $shop=null ) : ?static
 	{
@@ -85,6 +99,117 @@ abstract class Core_Entity_WithShopData_ShopData extends DataModel_Related_1toN
 		
 		return static::$loaded_items[ $key ];
 	}
+	
+	public static function getByInternalCode( string $internal_code, ?Shops_Shop $shop=null ) : ?static
+	{
+		$where = $shop->getWhere();
+		$where[] = 'AND';
+		$where['internal_code'] = $internal_code;
+		
+		return static::load( $where );
+	}
+	
+	public static function getActiveByInternalCode( string $internal_code, ?Shops_Shop $shop=null ) : ?static
+	{
+		$where = static::getActiveQueryWhere( $shop );
+		$where[] = 'AND';
+		$where['internal_code'] = $internal_code;
+		
+		return static::load( $where );
+	}
+	
+	
+	/**
+	 * @param array $ids
+	 * @param Shops_Shop|null $shop
+	 * @param array|string|null $order_by
+	 * @return static[]
+	 */
+	public static function getActiveList( array $ids, ?Shops_Shop $shop=null, array|string|null $order_by = null ) : array
+	{
+		if(!$ids) {
+			return [];
+		}
+		
+		$where = static::getActiveQueryWhere( $shop );
+		$where[] = 'AND';
+		$where['entity_id'] = $ids;
+		
+		$_res =  static::fetch(
+			where_per_model: [ ''=>$where],
+			order_by: $order_by,
+			item_key_generator: function( Entity_WithShopData_ShopData $item ) : int {
+				return $item->getEntityId();
+			}
+		);
+		
+		if($order_by) {
+			return $_res;
+		}
+		
+		$res = [];
+		
+		foreach($ids as $id) {
+			if(isset($_res[$id])) {
+				$res[$id] = $_res[$id];
+			}
+		}
+		
+		return $res;
+	}
+	
+	/**
+	 * @param Shops_Shop|null $shop
+	 * @param array|string|null $order_by
+	 * @return static[]
+	 */
+	public static function getAllActive( ?Shops_Shop $shop=null, array|string|null $order_by = null ) : array
+	{
+		$where = static::getActiveQueryWhere( $shop );
+		
+		return static::fetch(
+			where_per_model: [ ''=>$where],
+			order_by: $order_by,
+			item_key_generator: function( Entity_WithShopData_ShopData $item ) : int {
+				return $item->getEntityId();
+			}
+		);
+	}
+	
+	
+	public static function getActiveQueryWhere( ?Shops_Shop $shop=null ) : array
+	{
+		$shop = $shop?:Shops::getCurrent();
+		
+		$where = [];
+		$where[] = $shop->getWhere();
+		$where[] = 'AND';
+		$where[] = [
+			'entity_is_active' => true,
+			'AND',
+			'is_active_for_shop' => true
+		];
+		
+		return $where;
+	}
+	
+	
+	public static function getNonActiveQueryWhere( ?Shops_Shop $shop=null ) : array
+	{
+		$shop = $shop?:Shops::getCurrent();
+		
+		$where = [];
+		$where[] = $shop->getWhere();
+		$where[] = 'AND';
+		$where[] = [
+			'entity_is_active' => false,
+			'OR',
+			'is_active_for_shop' => false
+		];
+		
+		return $where;
+	}
+	
 	
 	
 	public function setShop( Shops_Shop $shop ) : void
@@ -183,7 +308,7 @@ abstract class Core_Entity_WithShopData_ShopData extends DataModel_Related_1toN
 		return $this->is_active_for_shop;
 	}
 	
-	public function activate() : void
+	public function _activate() : void
 	{
 		$this->is_active_for_shop = true;
 		$where = $this->getShop()->getWhere();
@@ -198,7 +323,7 @@ abstract class Core_Entity_WithShopData_ShopData extends DataModel_Related_1toN
 		);
 	}
 	
-	public function deactivate() : void
+	public function _deactivate() : void
 	{
 		$this->is_active_for_shop = false;
 		$where = $this->getShop()->getWhere();
@@ -294,76 +419,6 @@ abstract class Core_Entity_WithShopData_ShopData extends DataModel_Related_1toN
 		
 	}
 	
-	
-	/**
-	 * @param array $ids
-	 * @param Shops_Shop|null $shop
-	 * @param array|string|null $order_by
-	 * @return static[]
-	 */
-	public static function getActiveList( array $ids, ?Shops_Shop $shop=null, array|string|null $order_by = null ) : array
-	{
-		if(!$ids) {
-			return [];
-		}
-		
-		$model_name = static::getDataModelDefinition()->getModelName();
-		
-		$where = static::getActiveQueryWhere( $shop );
-		$where[] = 'AND';
-		$where['entity_id'] = $ids;
-		
-		return static::fetch(
-			where_per_model: [ $model_name=>$where],
-			order_by: $order_by,
-			item_key_generator: function( Entity_WithShopData_ShopData $item ) : int {
-				return $item->getEntityId();
-			}
-		);
-		
-		/*
-		$items = [];
-		foreach($_items as $item) {
-			$items[$item->getEntityId()] = $item;
-		}
-		
-		return $items;
-		*/
-	}
-	
-	public static function getActiveQueryWhere( ?Shops_Shop $shop=null ) : array
-	{
-		$shop = $shop?:Shops::getCurrent();
-		
-		$where = [];
-		$where[] = $shop->getWhere();
-		$where[] = 'AND';
-		$where[] = [
-			'entity_is_active' => true,
-			'AND',
-			'is_active_for_shop' => true
-		];
-		
-		return $where;
-	}
-	
-	
-	public static function getNonActiveQueryWhere( ?Shops_Shop $shop=null ) : array
-	{
-		$shop = $shop?:Shops::getCurrent();
-		
-		$where = [];
-		$where[] = $shop->getWhere();
-		$where[] = 'AND';
-		$where[] = [
-			'entity_is_active' => false,
-			'OR',
-			'is_active_for_shop' => false
-		];
-		
-		return $where;
-	}
-	
 	public function getImage( string $image_class ) : string
 	{
 		return $this->{"image_{$image_class}"};
@@ -390,5 +445,65 @@ abstract class Core_Entity_WithShopData_ShopData extends DataModel_Related_1toN
 		);
 	}
 	
+	
+	/**
+	 * @return Timer_Action[]
+	 */
+	public function getAvailableTimerActions() : array
+	{
+		$shop = $this->getShop();
+		
+		$activate = new class( $shop ) extends Timer_Action {
+			public function __construct( Shops_Shop $shop )
+			{
+				$this->setShop( $shop );
+			}
+			
+			public function getKey(): string
+			{
+				return 'activate';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Activate');
+			}
+			
+			public function perform( Entity_WithShopData $entity, mixed $action_context ): bool
+			{
+				$entity->activateShopData( $this->shop );
+				return true;
+			}
+		};
+		
+		$deactivate = new class($shop) extends Timer_Action {
+			public function __construct( Shops_Shop $shop )
+			{
+				$this->setShop( $shop );
+			}
+			
+			public function getKey(): string
+			{
+				return 'deactivate';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Deactivate');
+			}
+			
+			public function perform( Entity_WithShopData $entity, mixed $action_context ): bool
+			{
+				$entity->deactivateShopData( $this->shop );
+				return true;
+			}
+		};
+		
+		
+		return [
+			$activate->getKey() => $activate,
+			$deactivate->getKey() => $deactivate
+		];
+	}
 	
 }

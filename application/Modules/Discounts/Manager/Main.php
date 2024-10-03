@@ -7,10 +7,10 @@
  */
 namespace JetApplicationModule\Discounts\Manager;
 
-use Jet\Application_Modules;
 use JetApplication\CashDesk;
 use JetApplication\Discounts_Module;
 use JetApplication\Discounts_Manager;
+use JetApplication\Managers;
 
 
 class Main extends Discounts_Manager
@@ -24,29 +24,20 @@ class Main extends Discounts_Manager
 	 */
 	public function getActiveModules() : array
 	{
+		$_modules =  Managers::findManagers( Discounts_Module::class, static::$module_name_prefix );
 		$modules = [];
 		
-		$name_prefix = static::$module_name_prefix;
-		
-		foreach(Application_Modules::activatedModulesList() as $manifest) {
-			if( str_starts_with( $manifest->getName(), $name_prefix ) ) {
-				$module = Application_Modules::moduleInstance( $manifest->getName() );
-				if($module instanceof Discounts_Module) {
-					$module_name = $manifest->getName();
-					$module_name = str_replace($name_prefix, '', $module_name);
-					
-					$modules[$module_name] = $module;
-					
-				}
-			}
+		foreach($_modules as $name => $module) {
+			$name = str_replace( static::$module_name_prefix, '', $name );
+			$modules[$name] = $module;
 		}
-		
 		return $modules;
 	}
 	
 	public function getActiveModule( string $module ) : ?Discounts_Module
 	{
 		$modules = static::getActiveModules();
+
 		if(!isset($modules[$module])) {
 			return null;
 		}

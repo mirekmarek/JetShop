@@ -5,6 +5,8 @@ namespace JetShop;
 use Jet\Locale;
 use Jet\MVC;
 
+use JetApplication\Availabilities;
+use JetApplication\Pricelists;
 use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 
@@ -33,6 +35,9 @@ class Core_Shops {
 	public static function setCurrent( Shops_Shop $shop ) : void
 	{
 		static::$current_shop = $shop;
+		
+		Availabilities::setCurrent( $shop->getDefaultAvailability() );
+		Pricelists::setCurrent( $shop->getDefaultPricelist() );
 	}
 
 	public static function exists( string $key ) : bool

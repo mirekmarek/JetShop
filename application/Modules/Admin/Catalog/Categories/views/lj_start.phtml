@@ -16,11 +16,10 @@ $toolbar = $this->getRaw('toolbar');
 
 ?>
 
-
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-2">
+<div class="toolbar" id="main-toolbar" style="display: grid;grid-template-columns: 1.1fr 5fr;align-items: center;gap: 10px;margin: 0px;padding: 0px;">
+	<div style="display: grid;grid-template-columns: 60% 1fr;padding: 5px;">
 		<?php if(Main::getCurrentUserCanEdit()): ?>
-		<div style="display: grid;grid-template-columns: 60% 1fr;">
+
 			<div>
 				<?php if( $this->getBool('allow_to_sort') ): ?>
 				<?=UI::button('Sort categories')
@@ -36,11 +35,9 @@ $toolbar = $this->getRaw('toolbar');
 				?>
 				<?php endif; ?>
 			</div>
-		</div>
 		<?php endif; ?>
-
 	</div>
-	<div class="col-md-10">
+	<div>
 		<?php if(Main::getCurrentUserCanEdit()):
 			if($toolbar):
 				echo $this->render($toolbar);
@@ -53,20 +50,12 @@ $toolbar = $this->getRaw('toolbar');
 	</div>
 </div>
 
-<script>
-	function searchResult( id ) {
-		let URL = '<?=Http_Request::currentURI(['id'=>'ID'])?>';
-		URL = URL.replace('ID', id);
-		
-		location = URL;
-	}
-</script>
 
-<div class="row h-100" id="main-col" style="margin-top: -10px;">
-	<div class="col-2 tree">
+<div id="main-col" style="display: grid;grid-template-columns: 1.1fr 5fr;gap: 10px;padding: 0px;">
+	<div class="tree">
 		<?php require 'search.phtml'; ?>
 		<?php require 'filter.phtml'; ?>
 		<?php require 'tree.phtml'; ?>
 	</div>
-	<div class="col-10">
+	<div>
 		<?=$this->getRaw('tabs')?>

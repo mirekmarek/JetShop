@@ -11,7 +11,6 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Entity_WithShopData_Trait;
 use JetApplication\Payment_Method_Option;
-use JetApplicationModule\Admin\Catalog\Stickers\Main;
 
 class PaymentMethod_Option extends Payment_Method_Option implements Admin_Entity_WithShopData_Interface
 {
@@ -40,9 +39,4 @@ class PaymentMethod_Option extends Payment_Method_Option implements Admin_Entity
 		
 	}
 	
-	
-	public function isItPossibleToDelete() : bool
-	{
-		return true;
-	}
 }

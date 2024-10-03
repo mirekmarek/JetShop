@@ -1,0 +1,23 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Events\Complaint\NewGoodsDispatched;
+
+
+use Jet\Tr;
+use JetApplication\Complaint_EMailTemplate;
+
+class EMailTemplate extends Complaint_EMailTemplate
+{
+	protected function init(): void
+	{
+		$this->setInternalName(Tr::_('Complaint - new goods dispatched'));
+		$this->setInternalNotes('');
+		
+		$this->initCommonProperties();
+	}
+}

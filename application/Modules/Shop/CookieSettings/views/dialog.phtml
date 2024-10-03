@@ -1,0 +1,196 @@
+<?php
+namespace JetApplicationModule\Shop\CookieSettings;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+$cs = Shop_Managers::Shop_CookieSettings();
+?>
+
+<div id="cookie_settings_main_container">
+	<div id="cookie_settings_sub_container">
+		<h3><?=Tr::_('Cookies - title')?></h3>
+		
+		<p>Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Aliquam ornare wisi eu metus. Nullam dapibus fermentum ipsum. Vestibulum fermentum tortor id mi. Pellentesque pretium lectus id turpis. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+		<div id="cookie-settings-custom" style="display: none">
+			<?php foreach($cs->getGroups() as $group): ?>
+			<div class="cookie_group_container">
+				<div>
+				
+				</div>
+				<div>
+					<label class="cookie_group_title" for="cookie_group_<?=$group->getCode()?>" onclick="Shop_CookieSettings.toggleInfo('<?=$group->getCode()?>')"><?=$group->getTitle()?></label>
+					<div style="display: none" id="cookie_group_info_<?=$group->getCode()?>"><?=$group->getDescription()?></div>
+				</div>
+				<div>
+					<div
+						class="cookie_switcher_container<?=$group->getChecked()?' cookie_switcher_checked':''?>"
+						data-for="cookie_group_<?=$group->getCode()?>"
+						data-checked="<?=$group->getChecked()?1:0?>"
+						onclick="Shop_CookieSettings.switchGroup(this)"
+					>
+						<div class="cookie_switcher_button"> </div>
+					</div>
+					<div style="display: none">
+						<input
+							class="cookie_group_checkbox"
+							type="checkbox"
+							id="cookie_group_<?=$group->getCode()?>"
+							name="cookie_group_<?=$group->getCode()?>"
+							value="<?=$group->getCode()?>"
+							<?=$group->getChecked()?'checked':''?>
+						/>
+					</div>
+				</div>
+				
+			</div>
+			<?php endforeach; ?>
+			<?=UI::button( Tr::_('Save settings') )->setClass(UI_button::CLASS_SUCCESS)->setOnClick("Shop_CookieSettings.saveSettings()")?>
+		</div>
+		
+		<div id="cookie-settings-default">
+			<?=UI::button( Tr::_('Accept all') )->setClass(UI_button::CLASS_SUCCESS)->setOnClick("Shop_CookieSettings.acceptAll();")?>
+			<?=UI::button( Tr::_('Reject all') )->setClass(UI_button::CLASS_INFO)->setOnClick("Shop_CookieSettings.rejectAll();")?>
+			<?=UI::button( Tr::_('Customize') )->setClass(UI_button::CLASS_SECONDARY)->setOnClick("Shop_CookieSettings.customize()")?>
+		</div>
+		
+	</div>
+</div>
+
+<style>
+	#cookie_settings_main_container {
+		position: fixed;
+		bottom: 0px;
+		left: 0px;
+		width: 100%;
+		padding-left: 10%;
+		padding-right: 10%
+	}
+
+	#cookie_settings_sub_container {
+		width: 100%;
+		padding: 10px;
+		background-color: #ffffff;
+		border: 1px solid #c9c9c9;
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	}
+	
+	.cookie_group_title {
+		font-weight: bolder;
+	}
+	
+	.cookie_group_container {
+		display: grid;
+		grid-template-columns: 20px 1fr 80px;
+		align-items: center;
+		border-bottom: 1px solid #dcdcdc;
+		margin: 10px;
+	}
+	
+	.cookie_switcher_container {
+		position: relative;
+		width: 53px;
+		height: 30px;
+		border: 1px solid #dedede;
+		border-radius: 30px;
+		margin: 10px;
+	}
+
+	.cookie_switcher_checked {
+		background-color: #00cf4b;
+	}
+
+	.cookie_switcher_checked .cookie_switcher_button {
+		left: 3px;
+		
+	}
+	
+	.cookie_switcher_button {
+		position: absolute;
+		top: 2px;
+		left: 24px;
+		width: 24px;
+		height: 24px;
+		background-color: #ffffff;
+		border-radius: 50%;
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	}
+</style>
+
+<script>
+	const Shop_CookieSettings = {
+		acceptAll: async () => {
+			await fetch("<?=Http_Request::currentURI(set_GET_params: ['cookie_settings'=>'accept_all'])?>");
+			effects.fadeOut( 'cookie_settings_main_container' );
+		},
+		
+		rejectAll: async () => {
+			await fetch("<?=Http_Request::currentURI(set_GET_params: ['cookie_settings'=>'reject_all'])?>");
+			effects.fadeOut( 'cookie_settings_main_container' );
+		},
+
+		customize: () => {
+			effects.fadeOut( 'cookie-settings-default', 'fast', () => {
+				effects.fadeIn('cookie-settings-custom');
+			} );
+		},
+
+		saveSettings: async () => {
+			let groups = [];
+			
+			Array.from(document.getElementsByClassName('cookie_group_checkbox')).forEach(
+				function(element) {
+					if(element.checked) {
+						groups.push( element.value );
+					}
+				}
+			);
+
+			groups = groups.join(',');
+
+			await fetch("<?=Http_Request::currentURI(set_GET_params: ['cookie_settings'=>'custom'])?>&groups="+groups);
+			effects.fadeOut( 'cookie_settings_main_container' );
+		},
+
+		toggleInfo: ( code ) => {
+			effects.slideToggle('cookie_group_info_'+code);
+		},
+
+		switchGroup: ( node ) => {
+			let checkbox = document.getElementById(node.dataset.for);
+			let button = node.querySelector('.cookie_switcher_button');
+
+			node.style.transitionProperty = 'all';
+			button.style.transitionProperty = 'all';
+			
+			node.style.transitionDuration = '500ms';
+			button.style.transitionDuration = '500ms';
+
+			
+			if(node.dataset.checked=='1') {
+				node.style.backgroundColor = '#ffffff';
+				button.style.left = '24px';
+				
+				node.dataset.checked = '0';
+				checkbox.checked = false;
+				
+			} else {
+				node.style.backgroundColor = '#00cf4b';
+				button.style.left = '3px';
+				
+				node.dataset.checked = '1';
+				checkbox.checked = true;
+			}
+			
+		}
+		
+	};
+</script>

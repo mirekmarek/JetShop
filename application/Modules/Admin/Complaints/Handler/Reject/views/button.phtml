@@ -1,0 +1,27 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+if(!$complaint->isEditable()) {
+	return;
+}
+echo '&nbsp;';
+
+echo UI::button(Tr::_('Reject'))
+	->setClass(UI_button::CLASS_DANGER)
+	->setIcon('xmark')
+	->setOnClick("$('#reject_form_dialog').modal('show');");

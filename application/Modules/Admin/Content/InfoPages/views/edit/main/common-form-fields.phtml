@@ -1,0 +1,16 @@
+<?php
+namespace JetApplicationModule\Admin\Content\InfoPages;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var InfoPage $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+?>
+<?=$form->field( 'page_id' )?>

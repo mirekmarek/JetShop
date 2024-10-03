@@ -1,11 +1,16 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 ?>
 <div class="selected-contact">
 	<div><b><?=Tr::_('Your e-mail:')?></b></div>

@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_messages;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View  $this
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+?>
+
+<div style="margin: 10px;">
+<?php if($complaint->canBeFinished()): ?>
+	<?=UI::button( Tr::_('Finish entering the complaint') )->setUrl( Http_Request::currentURI(['finish'=>1]) )->setClass(UI_button::CLASS_SUCCESS)?>
+	<?php
+else:
+	if(count($complaint->getImages())<$complaint->getMinimalImageCount()):
+		echo '<div style="padding: 10px;">';
+		echo UI_messages::createInfo( Tr::_('Please upload at least %m% pictures.', ['m'=>$complaint->getMinimalImageCount()]) );
+		echo '</div>';
+	endif;
+	
+	if(strlen($complaint->getProblemDescription())<$complaint->getMinimalProblemDescriptionLength()):
+		echo '<div style="padding: 10px;">';
+		echo UI_messages::createInfo( Tr::_('Please provide a sufficiently detailed description of the problem.', ['m'=>$complaint->getMinimalProblemDescriptionLength()]) );
+		echo '</div>';
+	endif;
+endif;
+?>
+</div>

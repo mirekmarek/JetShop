@@ -43,6 +43,23 @@ trait Core_Product_Trait_Variants
 	)]
 	protected int $variant_priority = 0;
 	
+	public static function getProductActiveVariantIds( int $product_id ) : array
+	{
+		$where = [];
+		$where['variant_master_product_id'] = $product_id;
+		$where[] = 'AND';
+		$where['is_active'] = true;
+		
+		
+		$variant_ids = static::dataFetchCol(['id'], $where);
+		return $variant_ids;
+	}
+	
+	public static function getProductVariantMasterProductId( int $product_id ) : int
+	{
+		return (int)static::dataFetchOne(['variant_master_product_id'], ['id'=>$product_id]);
+	}
+	
 
 	public function getInternalNameOfVariant(): string
 	{
@@ -53,9 +70,14 @@ trait Core_Product_Trait_Variants
 	{
 		$this->internal_name_of_variant = $internal_name_of_variant;
 	}
-
 	
-
+	public function getVariantMasterProduct() : ?static
+	{
+		return static::load( $this->variant_master_product_id );
+	}
+	
+	
+	
 	public function getVariantMasterProductId() : int
 	{
 		return $this->variant_master_product_id;
@@ -141,10 +163,6 @@ trait Core_Product_Trait_Variants
 			$this->syncVariant( $v );
 		}
 		
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData($shop)->actualizeVariantMaster();
-		}
-		
 		/** @noinspection PhpParamsInspection */
 		Product_Parameter_Value::syncVariants(
 			$this
@@ -172,18 +190,6 @@ trait Core_Product_Trait_Variants
 
 		$variant->save();
 	}
-
-
-	public function actualizeVariant() : void
-	{
 	
-		if(!$this->isVariant()) {
-			return;
-		}
-		
-		$master = static::load($this->variant_master_product_id);
-		
-		$master?->actualizeVariantMaster();
-
-	}
+	
 }

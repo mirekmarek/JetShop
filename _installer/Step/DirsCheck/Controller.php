@@ -12,6 +12,9 @@ use Jet\IO_Dir;
 use Jet\SysConf_Path;
 
 use JetApplication\Application_Admin;
+use JetApplication\Application_Exports;
+use JetApplication\Application_Services;
+use JetApplication\Application_Shop;
 use JetApplication\Application_Web;
 use JetApplication\Application_REST;
 
@@ -20,6 +23,11 @@ use JetApplication\Application_REST;
  */
 class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 {
+	
+	/**
+	 * @var string
+	 */
+	protected string $icon = 'folder-open';
 
 	/**
 	 * @var string
@@ -75,11 +83,15 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getBases() . Application_Web::getBaseId() . '/'   => [
+			SysConf_Path::getBases() . Application_Exports::getBaseId() . '/'   => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getBases() . Application_REST::getBaseId() . '/'  => [
+			SysConf_Path::getBases() . Application_Services::getBaseId() . '/'  => [
+				'is_required'  => true,
+				'is_writeable' => false,
+			],
+			SysConf_Path::getBases() . Application_Shop::getBaseId() . '/'  => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],

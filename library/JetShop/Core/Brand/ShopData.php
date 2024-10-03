@@ -8,6 +8,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Brand;
 use JetApplication\Entity_WithShopData_ShopData;
+use JetApplication\Shops_Shop;
 
 /**
  *
@@ -109,8 +110,22 @@ abstract class Core_Brand_ShopData extends Entity_WithShopData_ShopData {
 		max_len: 255,
 	)]
 	protected string $image_title = '';
-
-
+	
+	
+	public static function getNameMap( Shops_Shop $shop ) : array
+	{
+		$where = $shop->getWhere();
+		
+		return static::dataFetchPairs(
+			select: [
+				'entity_id',
+				'name'
+			],
+			where: $where,
+			raw_mode: true
+		);
+	}
+	
 	public function getName() : string
 	{
 		return $this->name;

@@ -1,0 +1,54 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+if($dispatch->isEditable()):
+	require __DIR__.'/packets/enabled.phtml';
+else:
+	require __DIR__.'/packets/disabled.phtml';
+endif;
+?>
+
+<br><br>
+<?php  if( $dispatch->getConsignmentId() ): ?>
+	<div class="card">
+		<div class="card-header">
+			<?=Tr::_('Packet tracking')?>
+		</div>
+		<div class="card-body">
+			<div style="display: grid;grid-template-columns: 200px 1fr;gap: 10px;" >
+				<div><?=Tr::_('Consignment ID:')?></div>
+				<div style="font-weight: bolder"><?=$dispatch->getConsignmentId()?></div>
+				
+				<div><?=Tr::_('Tracking number:')?></div>
+				<div style="font-weight: bolder"><?=$dispatch->getTrackingNumber()?></div>
+				
+				<div><?=Tr::_('Tracking URL:')?></div>
+				<div style="font-weight: bolder"><a href="<?=$dispatch->getTrackingURL()?>" target="_blank"><?=$dispatch->getTrackingURL()?></a></div>
+
+				<div><?=Tr::_('History:')?></div>
+				<div>
+					<?php
+					//TODO:
+					?>
+				</div>
+				<div></div>
+				<div>
+					<?=UI::button( Tr::_('Actualize') )->setUrl( Http_Request::currentURI(['action'=>'actualize_tracking']) )?>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<?php endif; ?>

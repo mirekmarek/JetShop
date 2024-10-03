@@ -12,6 +12,7 @@ use JetApplication\Category_ShopData;
 use Jet\ErrorPages;
 use Jet\Http_Headers;
 use Jet\MVC;
+use JetApplication\Shop_Managers;
 
 /**
  *
@@ -21,7 +22,7 @@ trait Controller_Main_Category
 
 	protected static ?Category_ShopData $category = null;
 
-	public function getControllerRouter_category( int $object_id, array $path ) : void
+	public function resolve_category( int $object_id, array $path ) : bool|string
 	{
 
 		$category_URL_path = array_shift( $path );
@@ -32,28 +33,25 @@ trait Controller_Main_Category
 
 
 		if(static::$category) {
-
 			if(static::$category->getURLPathPart()!=$category_URL_path ) {
 				MVC::getRouter()->setIsRedirect( static::$category->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
-				return;
+				return false;
 			}
 
 
 			if(!static::$category->isActive()) {
-				$this->router->setDefaultAction('category_not_active');
+				return 'category_not_active';
 			} else {
 				if(static::$category->getProductsCount()) {
-					$this->router->setDefaultAction('category_listing');
+					return 'category_listing';
 				} else {
-					$this->router->setDefaultAction('category_signpost');
+					return 'category_no_products';
 				}
 			}
 		} else {
-			$this->router->addAction('category_unknown')->setResolver(function() {
-				return true;
-			});
+			return 'category_unknown';
 		}
-
+		
 	}
 
 	public static function getCategory() : Category_ShopData
@@ -78,12 +76,13 @@ trait Controller_Main_Category
 
 		$category = static::$category;
 		
-		/**
-		 * @var Main $moduel
-		 */
-		$module = $this->getModule();
+		$listing = Shop_Managers::ProductListing();
 		
-		$listing = $module->getProductListing( $category->getProductIds(), $category->getId() );
+		$listing->init(
+			$category->getProductIds(),
+			category_id: $category->getId(),
+			category_name: $category->getPathName()
+		);
 		
 		$this->view->setVar('category', static::$category);
 		$this->view->setVar('listing', $listing);
@@ -91,13 +90,13 @@ trait Controller_Main_Category
 		$this->output('category/listing');
 	}
 	
-	public function category_signpost_Action(): void
+	public function category_no_products_Action(): void
 	{
 		Navigation_Breadcrumb::setByCategory( static::$category );
 
 		$this->view->setVar('category', static::$category);
 
-		$this->output('category/signpost');
+		$this->output('category/no-products');
 
 	}
 

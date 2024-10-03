@@ -1,0 +1,267 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\Data_DateTime;
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_button;
+use Jet\UI_dialog;
+use JetApplication\Admin_Managers;
+use JetApplication\WarehouseManagement_StockCard;
+use JetApplication\Product;
+use JetApplication\WarehouseManagement_StockMovement_Type;
+
+/**
+ * @var MVC_View $this
+ * @var WarehouseManagement_StockCard $card
+ * @var Form $change_location_form
+ */
+
+$card = $this->getRaw('card');
+
+$warehouse = $card->getWarehouse();
+
+
+$m_unit = Product::getProductMeasureUnit( $card->getProductId() )?->getName();
+
+$change_location_form = $this->getRaw('change_location_form');
+
+Admin_Managers::EntityEdit_Simple()->init( $card, $this->getRaw('listing') );
+
+echo Admin_Managers::EntityEdit_Simple()->renderToolbar( toolbar_renderer: function() {
+	echo UI::button( Tr::_('Determine inventory status on a specific date') )
+		->setClass(UI_button::CLASS_INFO)
+		->setOnClick("$('#status_on_date_dialog').modal('show');");
+});
+
+$status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine inventory status on a specific date'), UI_dialog::SIZE_EXTRA_LARGE);
+
+?>
+<?=$status_on_date_dialog->start();?>
+
+<div style="display: flex;gap: 10px;align-items: center;">
+	<div><?=Tr::_('Date and time:')?></div>
+	<div><input type="datetime-local" class="form-control" id="status_on_date_input" value="<?=Data_DateTime::now()?>"></div>
+	<div><?=UI::button( Tr::_('Show') )->setOnClick("$('#status_on_date_area').load('".Http_Request::currentURI()."&do=show_status_on_date&date='+document.getElementById('status_on_date_input').value)")->setClass(UI_button::CLASS_PRIMARY)?></div>
+</div>
+
+<div id="status_on_date_area" style="overflow: auto;margin: 10px;height: 500px;">
+
+</div>
+
+<?=$status_on_date_dialog->end();?>
+
+<div class="card card-body" style="padding: 10px;margin: 10px">
+	<div style="display: grid;grid-template-columns: 200px 1fr;align-items: center;gap: 10px;">
+		
+			<div><?=Tr::_('Warehouse:')?></div>
+			<div><?=$warehouse->getInternalName()?></div>
+			
+			<div><?=Tr::_('Product:')?></div>
+			<div><?=Admin_Managers::Product()->showName( $card->getProductId() )?></div>
+
+			<div></div>
+			<div style="gap: 10px;display: flex;align-items: center">
+				<?php
+				if($card->getCancelled()):
+					echo UI::badge( UI_badge::DANGER, Tr::_('Cancelled') )->addCustomCssStyle('padding:10px');
+				
+					if( Main::getCurrentUserCanCancelOrReactivate() ):
+						echo UI::button( Tr::_('Reactivate'))->setClass(UI_button::CLASS_SUCCESS)->setUrl( Http_Request::currentURI(['do'=>'reactivate']) );
+					endif;
+				else:
+					echo UI::badge( UI_badge::SUCCESS, Tr::_('Active') )->addCustomCssStyle('padding:10px');
+				
+					if($card->getInStock()<=0 && Main::getCurrentUserCanCancelOrReactivate()):
+						echo UI::button( Tr::_('Cancel'))->setClass(UI_button::CLASS_DANGER)->setUrl( Http_Request::currentURI(['do'=>'cancel']) );
+					endif;
+				endif;
+				
+				?>
+			</div>
+
+		<?php if($card->getCurrency()): ?>
+		<div><?=Tr::_('Current price per unit:')?></div>
+		<div>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $card->getCurrency(), $card->getPricePerUnit() )?>
+		</div>
+		<?php endif; ?>
+	</div>
+</div>
+
+<div class="card card-body" style="padding: 10px;margin: 10px">
+	<div style="display: grid;grid-template-columns: 200px 1fr;align-items: center;gap: 10px;">
+		<div></div>
+		<div><b><?=Tr::_('Status')?></b></div>
+
+
+		<div><?=Tr::_('In stock:')?></div>
+		<div><?=Locale::float( $card->getInStock() )?> <?=$m_unit?></div>
+		
+		<div><?=Tr::_('Blocked:')?></div>
+		<div><?=Locale::float( $card->getBlocked() )?> <?=$m_unit?></div>
+		
+		<div><?=Tr::_('Available:')?></div>
+		<div><?=Locale::float( $card->getAvailable() )?> <?=$m_unit?></div>
+
+
+		<div><?=Tr::_('Ordered from supplier:')?></div>
+		<div style="display: flex;gap: 15px;">
+			<?php
+			$ordered = $card->getNumberOfOrderedSupplier();
+			?>
+			<div><?=Locale::float( $ordered ).' '.$m_unit?></div>
+			
+			<?php
+			if($ordered):
+				$orders = $card->getRelevantOrdersFromSupplier();
+				
+				foreach( $orders as $o ):
+					?>
+					<?=UI::badge( UI_badge::INFO, Admin_Managers::SupplierGoodsOrders()->showName($o->getId()) )?>
+					<?php
+				endforeach;
+			endif;
+			?>
+		</div>
+		
+		<div><?=Tr::_('On the way from another warehouse:')?></div>
+		<div style="display: flex;gap: 15px;">
+			<?php
+			$ntr = $card->getNumberOnTheWayFromAnotherWarehouse();
+			?>
+			<div><?=Locale::float( $ntr ).' '.$m_unit.'<br>'?></div>
+			
+			<?php
+			if($ntr>0):
+				$transfers = $card->getRelevantTransfersFromAnotherWarehouse();
+				foreach( $transfers as $tr ):
+					?>
+					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->showName( $tr->getId() ))?></div>
+					<?php
+				endforeach;
+			endif;
+			?>
+		</div>
+		
+		<div><?=Tr::_('On the way to another warehouse:')?></div>
+		<div style="display: flex;gap: 15px;">
+			<?php
+			$ntr = $card->getNumberOnTheWayToAnotherWarehouse();
+			?>
+			<div><?=Locale::float( $ntr ).' '.$m_unit?></div>
+			<?php
+
+			if($ntr>0):
+				$transfers = $card->getRelevantTransfersToAnotherWarehouse();
+				foreach( $transfers as $tr ):
+					?>
+					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->showName( $tr->getId() ))?></div>
+				<?php
+				endforeach;
+			endif;
+			?>
+		</div>
+		
+		
+		<div><?=Tr::_('Total in:')?></div>
+		<div><?=Locale::float( $card->getTotalIn() )?> <?=$m_unit?></div>
+
+		<div><?=Tr::_('Total out:')?></div>
+		<div><?=Locale::float( $card->getTotalOut() )?> <?=$m_unit?></div>
+		
+		<div></div>
+		<div>
+			<?php
+			if( Main::getCurrentUserCanRecalculate() ):
+				echo UI::button( Tr::_('Recalculate'))->setClass(UI_button::CLASS_SECONDARY)->setUrl( Http_Request::currentURI(['do'=>'recalculate']) );
+			endif;
+			?>
+		</div>
+	</div>
+</div>
+
+
+<div class="card card-body" style="padding: 10px;margin: 10px">
+	<?=$change_location_form->start()?>
+
+	<div style="display: grid;grid-template-columns: 100px 1fr;align-items: center;gap: 10px;">
+		<div></div>
+		<div><b><?=Tr::_('Location')?></b></div>
+		
+		<div><?=Tr::_('Sector:')?></div>
+		<div><?=$change_location_form->field('sector')->input()?></div>
+		
+		<div><?=Tr::_('Rack:')?></div>
+		<div><?=$change_location_form->field('rack')->input()?></div>
+		
+		<div><?=Tr::_('Position:')?></div>
+		<div><?=$change_location_form->field('position')->input()?></div>
+		
+		<?php if(!$change_location_form->getIsReadonly()): ?>
+		<div></div>
+		<div>
+			<?=UI::button_save()?>
+		</div>
+		<?php endif; ?>
+	</div>
+	
+	<?=$change_location_form->end()?>
+</div>
+
+
+<div class="card card-body" style="padding: 10px;margin: 10px">
+	<h5><?=Tr::_('Active blocations')?></h5>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Date and time')?></th>
+			<th><?=Tr::_('Context')?></th>
+			<th><?=Tr::_('Movement type')?></th>
+			<th><?=Tr::_('Number of units')?></th>
+			<th><?=Tr::_('Price per unit')?></th>
+			<th><?=Tr::_('Total')?></th>
+			<th><?=Tr::_('Currency exchange rate')?></th>
+			<th><?=Tr::_('Position')?></th>
+		</tr>
+		</thead>
+		<?php foreach($card->getMovements() as $mv):
+			if(
+				$mv->getCancelled() ||
+				$mv->getType()->getCode()!=WarehouseManagement_StockMovement_Type::Blocking()->getCode()
+			) {
+				continue;
+			}
+			$this->setVar('movement', $mv);
+			require 'movement/'.$mv->getType().'.phtml';
+		endforeach; ?>
+	</table>
+</div>
+
+
+<div class="card card-body" style="padding: 10px;margin: 10px">
+	<h5><?=Tr::_('Movements')?></h5>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Date and time')?></th>
+			<th><?=Tr::_('Context')?></th>
+			<th><?=Tr::_('Movement type')?></th>
+			<th><?=Tr::_('Number of units')?></th>
+			<th><?=Tr::_('Price per unit')?></th>
+			<th><?=Tr::_('Total')?></th>
+			<th><?=Tr::_('Currency exchange rate')?></th>
+			<th><?=Tr::_('Position')?></th>
+		</tr>
+		</thead>
+		<?php foreach($card->getMovements() as $mv):
+			$this->setVar('movement', $mv);
+			require 'movement/'.$mv->getType().'.phtml';
+		endforeach; ?>
+	</table>
+</div>

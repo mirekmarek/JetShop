@@ -11,12 +11,13 @@ rm -f application/config/mailing.php
 rm -f logs/*
 rm -rf tmp/*
 rm -rf cache/*
+rm -rf images/*
+rm -rf files/*
+rm -rf application/data/*
 
 rm -f sites/admin/site_data.php
 rm -f sites/rest/site_data.php
 rm -f sites/web/site_data.php
 
-rm -rf public/css_packages
-rm -rf public/js_packages
-rm -rf public/test_uploads
-rm -rf public/imagegallery
+rm -rf css/packages
+rm -rf js/packages

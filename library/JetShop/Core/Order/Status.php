@@ -1,156 +1,179 @@
 <?php
-/**
- * 
- */
-
 namespace JetShop;
 
+use Jet\Autoloader;
+use Jet\BaseObject;
+use Jet\IO_Dir;
+use JetApplication\Order;
+use JetApplication\Order_Status;
 
-use Jet\DataModel;
-use Jet\DataModel_Definition;
-
-use Jet\Form_Definition;
-use Jet\Form_Field;
-use Jet\Form_Field_Select;
-
-use JetApplication\Entity_WithShopData;
-use JetApplication\Order_Status_Kind;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
-use JetApplication\Order_Status_ShopData;
-
-/**
- *
- */
-#[DataModel_Definition(
-	name: 'order_status',
-	database_table_name: 'order_statuses',
-)]
-abstract class Core_Order_Status extends Entity_WithShopData
-{
+abstract class Core_Order_Status extends BaseObject {
+	public const CODE = null;
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		is_required: true,
-		label: 'Kind:',
-		select_options_creator: [
-			Order_Status_Kind::class,
-			'getScope'
-		],
-		error_messages: [
-			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select kind',
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select kind'
-		]
-	)]
-	protected string $kind = '';
+	protected string $title;
+	protected int $priority;
 	
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_CHECKBOX,
-		label: 'Is default'
-	)]
-	protected bool $is_default = false;
+	protected static array $flags_map = [
+		'cancelled' => null,
+		'payment_required' => null,
+		'paid' => null,
+		'all_items_available' => null,
+		'ready_for_dispatch' => null,
+		'dispatch_started' => null,
+		'dispatched' => null,
+		'delivered' => null,
+		'returned' => null,
+	];
+	
+	protected static ?array $list = null;
 	
 	
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Order_Status_ShopData::class
-	)]
-	#[Form_Definition(is_sub_forms: true)]
-	protected array $shop_data = [];
-	
-	
-	public function getShopData( ?Shops_Shop $shop=null ) : Order_Status_ShopData
+	public function getCode(): string
 	{
-		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
+		return static::CODE;
 	}
 	
-	
-	public function setKind( string $value ) : void
+	public function getTitle(): string
 	{
-		$this->kind = $value;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setKind( $value );
-		}
+		return $this->title;
 	}
 	
-	
-	public function getKindCode(): string
+	public function getPriority(): int
 	{
-		return $this->kind;
+		return $this->priority;
 	}
 	
-	public function getKind() : ?Order_Status_Kind
-	{
-		return Order_Status_Kind::get( $this->kind );
-	}
-	
-	public function getKindTitle() : string
-	{
-		$kind = $this->getKind();
-		return $kind ? $kind->getTitle() : '';
-	}
 	
 
-	public function isDefault(): bool
+	public static function resolve( Order $order ) : bool
 	{
-		return $this->is_default;
-	}
-	
-	public function setIsDefault( bool $is_default ): void
-	{
-		if( $is_default==$this->is_default ) {
-			return;
-		}
+		$order_flags = $order->getFlags();
 		
-		$this->is_default = $is_default;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setIsDefault( $is_default );
-		}
-		
-		if($is_default) {
-			static::updateData(
-				data:[
-					'is_default' => false
-				],
-				where: [
-					'kind' => $this->kind,
-					'AND',
-					'id !=' => $this->id
-				]
-			);
+		foreach(static::$flags_map as $flag => $value ) {
+			if($value===null) {
+				continue;
+			}
 			
-			Order_Status_ShopData::updateData(
-				data:[
-					'is_default' => false
-				],
-				where: [
-					'kind' => $this->kind,
-					'AND',
-					'entity_id !=' => $this->id
-				]
-			);
+			if(
+				$flag=='paid' &&
+				$value===true &&
+				!$order_flags['payment_required']
+			) {
+				continue;
+			}
+			
+			if($value!=$order_flags[$flag]) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public function setStatus( Order $order ) : void
+	{
+		$flags = [];
+		
+		foreach(static::$flags_map as $flag => $value ) {
+			if($value===null) {
+				continue;
+			}
+			
+			$flags[$flag] = $value;
+		}
+		
+		$order->setFlags( $flags );
+	}
+	
+	public static function getStatusQueryWhere() : array
+	{
+		$where = [];
+		foreach(static::$flags_map as $flag => $value ) {
+			if($value===null) {
+				continue;
+			}
+			
+			if($where) {
+				$where[] = 'AND';
+			}
+			
+			if(
+				$flag=='paid' &&
+				$value===true
+			) {
+				$where[] = [
+					'payment_required' => false,
+					'OR',
+					'paid' => true
+				];
+				
+				continue;
+			}
+			
+			$where[$flag] = $value;
+		}
+		
+		return $where;
+	}
+	
+	
+	/**
+	 * @return Order_Status[]
+	 */
+	public static function getList() : array
+	{
+		if(static::$list===null) {
+			static::$list = [];
+			
+			$path = substr( Autoloader::getScriptPath( Order_Status::class ), 0, -4).'/';
+			
+			$files = IO_Dir::getFilesList( $path, '*.php' );
+			
+			foreach($files as $file) {
+				$class_name = Order_Status::class.'_'.basename( $file, '.php' );
+				
+				static::add( new $class_name() );
+			}
 			
 		}
 		
+		return static::$list;
 	}
 	
-	public static function getDefault( string $kind_code ) : ?static
+	public static function get( string $code ) : ?Order_Status
 	{
-		return static::load([
-			'kind' => $kind_code,
-			'AND',
-			'is_default' => true
-		]);
+		$list = Order_Status::getList();
+		if(!isset($list[$code])) {
+			return null;
+		}
+		
+		return $list[$code];
 	}
+	
+	protected static function add( Order_Status $status ) : void
+	{
+		static::$list[$status->getCode()] = $status;
+		
+		uasort( static::$list, function( Order_Status $a, Order_Status $b ) {
+			return $a->getPriority() <=> $b->getPriority();
+		} );
+	}
+	
+	public static function getScope() : array
+	{
+		$list = Order_Status::getList();
+		
+		
+		$res = [];
+		
+		foreach($list as $item) {
+			$res[$item->getCode()] = $item->getTitle();
+		}
+		
+		return $res;
+	}
+	
 	
 }

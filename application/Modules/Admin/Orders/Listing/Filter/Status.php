@@ -28,32 +28,38 @@ class Listing_Filter_Status extends DataListing_Filter
 	
 	public function catchParams(): void
 	{
-		$this->status = Http_Request::GET()->getString('status', '', array_keys(Order_Status::getScope()));
+		$this->status = Http_Request::GET()->getString('dispatch_state', '', array_keys($this->getScope()));
 		if($this->status) {
-			$this->listing->setParam('status', $this->status);
+			$this->listing->setParam('dispatch_state', $this->status);
 		}
+	}
+	
+	public function getScope() : array
+	{
+		return Order_Status::getScope();
+		
 	}
 	
 	public function generateFormFields( Form $form ): void
 	{
-		$options = [''=>Tr::_(' - all -')] + Order_Status::getScope();
+		$options = [''=>Tr::_(' - all -')] + $this->getScope();
 		
-		$status = new Form_Field_Select('status', 'Status:' );
-		$status->setDefaultValue( $this->status );
-		$status->setSelectOptions( $options );
-		$status->setErrorMessages([
+		$source = new Form_Field_Select('dispatch_state', 'Dispatch state:' );
+		$source->setDefaultValue( $this->status );
+		$source->setSelectOptions( $options );
+		$source->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]);
-		$form->addField($status);
+		$form->addField($source);
 	}
 	
 	public function catchForm( Form $form ): void
 	{
-		$this->status = $form->field('status')->getValue();
+		$this->status = $form->field('dispatch_state')->getValue();
 		if($this->status) {
-			$this->listing->setParam('status', $this->status);
+			$this->listing->setParam('dispatch_state', $this->status);
 		} else {
-			$this->listing->unsetParam('status');
+			$this->listing->unsetParam('dispatch_state');
 		}
 	}
 	
@@ -63,9 +69,8 @@ class Listing_Filter_Status extends DataListing_Filter
 			return;
 		}
 		
-		$this->listing->addFilterWhere([
-			'status_id'   => $this->status,
-		]);
+		
+		$this->listing->addFilterWhere( Order_Status::get( $this->status )::getStatusQueryWhere() );
 	}
 	
 }

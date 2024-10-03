@@ -8,9 +8,9 @@ use JetApplication\Payment_Method_Option_ShopData;
 /**
  * @var MVC_View $this
  * @var Payment_Method_Option_ShopData $payment_method_option
+ * @var CashDesk $cash_desk
  */
-
-$cash_desk = CashDesk::get();
+$cash_desk = $this->getRaw('cash_desk');
 
 $payment_method_option = $this->getRaw('payment_method_option');
 ?>

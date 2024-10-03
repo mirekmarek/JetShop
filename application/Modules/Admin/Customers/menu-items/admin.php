@@ -1,6 +1,6 @@
 <?php
 return [
-	'customers-and-orders' => [
+	'orders-and-customers' => [
 		'customers' => [
 			'index' => 200,
 			'separator_after' => true,

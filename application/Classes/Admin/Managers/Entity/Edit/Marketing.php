@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Admin_Managers_Entity_Edit_Marketing;
+
+interface Admin_Managers_Entity_Edit_Marketing extends Core_Admin_Managers_Entity_Edit_Marketing
+{
+}

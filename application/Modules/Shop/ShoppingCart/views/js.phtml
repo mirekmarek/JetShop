@@ -1,87 +1,97 @@
 <?php
 
-use JetApplication\Shop_Managers;
+use JetApplication\Shop_Pages;
+
 ?>
 <script>
-	const ShoppingCart = {
-		base_URL: '<?=Shop_Managers::ShoppingCart()->getCartPageURL()?>',
+	let ShoppingCart = {
+		base_URL: '<?=Shop_Pages::ShoppingCart()->getURL()?>',
 
 		buy: function( product_id, qty ) {
 
-			$.ajax({
-				type: "GET",
-				url: ShoppingCart.base_URL+'?buy='+product_id+'&gty='+qty,
-				dataType:'json',
-				beforeSend: function(){
-				},
-				success: function( response ) {
-
-					ShoppingCart._handleResponse( response );
-
+			ShoppingCart._request(
+				'?buy='+product_id+'&gty='+qty,
+				(response) => {
 					if(response['ok']) {
-						$('#shopping_cart_popup').modal('show');
+						dialog.open('shopping_cart_popup');
 					}
-				},
-				complete: function(){
 				}
-			});
+			);
 		},
 
+		selectAutoOffer: function( offer_id, qty ) {
+			ShoppingCart._request(
+				'?select_auto_offer='+offer_id+'&qty='+qty
+			);
+		},
+		
 
 		increment: function( product_id ) {
-			let qty = $('#cart_quantity_'+product_id).val();
+			let qty = document.getElementById('cart_quantity_'+product_id).value;
 			qty++;
 
 			ShoppingCart.setQty( product_id, qty );
 		},
 
 		decrement: function( product_id ) {
-			let qty = $('#cart_quantity_'+product_id).val();
+			let qty = document.getElementById('cart_quantity_'+product_id).value;
 			qty--;
 
 			ShoppingCart.setQty( product_id, qty );
 		},
 
 		setQty: function(product_id, qty ) {
-			$.ajax({
-				type: "GET",
-				url: ShoppingCart.base_URL+'?set_qty='+product_id+'&gty='+qty,
-				dataType:'json',
-				beforeSend: function(){
-				},
-				success: function( response ) {
-					ShoppingCart._handleResponse( response );
-				},
-				complete: function(){
-				}
-			});
+			ShoppingCart._request(
+				'?set_qty='+product_id+'&gty='+qty
+			);
 		},
 
 		remove: function( product_id ) {
-			$.ajax({
-				type: "GET",
-				url: ShoppingCart.base_URL+'?remove='+product_id,
-				dataType:'json',
-				beforeSend: function(){
-				},
-				success: function( response ) {
-					ShoppingCart._handleResponse( response );
-				},
-				complete: function(){
-				}
-			});
+			ShoppingCart._request(
+				'?remove='+product_id
+			);
 		},
 
+		_request: async ( rq, onOk ) => {
+
+
+			const r = await fetch(ShoppingCart.base_URL+rq);
+			const response = await r.json();
+
+			ShoppingCart._handleResponse( response );
+
+			if(onOk) {
+				onOk( response );
+			}
+		},
+
+		_handleError: function ( response ) {
+			if( response['error_message'] ) {
+				alert( response['error_message'] );
+			}
+		},
 
 		_handleResponse: function (response) {
 			for( let id in response['snippets'] ) {
-				$('#'+id).html(response['snippets'][id]);
+				document.getElementById(id).innerHTML = response['snippets'][id];
 			}
 
-			if(!response['ok']) {
-				//TODO:
-			}
+			ShoppingCart._handleError( response );
 		}
-
 	};
+
+
+	ShoppingCart.Gifts = {
+		unselect: ( id ) => {
+			ShoppingCart._request(
+				'?unselect_gift='+id
+			);
+		},
+		select: ( id ) => {
+			ShoppingCart._request(
+				'?select_gift='+id
+			);
+		}
+	};
+	
 </script>

@@ -23,12 +23,14 @@ trait CashDesk_Payment {
 
 			$delivery_method = $this->getSelectedDeliveryMethod();
 			
-
-			foreach($delivery_method->getPaymentMethods() as $payment_method ) {
-				if($payment_method->isActive()) {
-					$this->available_payment_methods[$payment_method->getId()] = $payment_method;
+			if($delivery_method) {
+				foreach($delivery_method->getPaymentMethods() as $payment_method ) {
+					if($payment_method->isActive()) {
+						$this->available_payment_methods[$payment_method->getId()] = $payment_method;
+					}
 				}
 			}
+
 
 			foreach($this->available_payment_methods as $code=>$method) {
 				$method->getBackendModule()?->init( $method );
@@ -45,16 +47,7 @@ trait CashDesk_Payment {
 	public function sortPaymentMethods( array &$payment_methods ) : void
 	{
 		uasort( $payment_methods, function( Payment_Method_ShopData $a, Payment_Method_ShopData $b ) {
-			$p_a = $a->getPriority();
-			$p_b = $b->getPriority();
-			
-			if(!$p_a<$p_b) {
-				return -1;
-			}
-			if(!$p_a>$p_b) {
-				return 1;
-			}
-			return 0;
+			return $a->getPriority()<=>$b->getPriority();
 		} );
 		
 	}

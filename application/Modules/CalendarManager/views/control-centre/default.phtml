@@ -1,0 +1,131 @@
+<?php
+
+namespace JetApplicationModule\CalendarManager;
+
+use Jet\Data_DateTime;
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\Locale;use Jet\MVC_View;use Jet\Tr;use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_messages;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Config_PerShop $config
+ */
+
+$form = $this->getRaw('form');
+$config = $this->getRaw('config');
+
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 10
+]);
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+echo $form->getCommonMessage();
+
+echo $form->start();
+
+echo $form->field('is_julian');
+echo $form->field('has_easter');
+echo $form->field('easter_wednesday_is_nonworking_day');
+echo $form->field('easter_thursday_is_nonworking_day');
+echo $form->field('easter_friday_is_nonworking_day');
+echo $form->field('easter_monday_is_nonworking_day');
+
+$form->field('non_working_days_of_week')->input()->addCustomCssStyle("height: 160px");
+echo $form->field('non_working_days_of_week');
+
+?>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-10">
+		<?=UI::button_save()?>
+		<br><br><br><br>
+	</div>
+</div>
+<?=$form->end();?>
+
+
+	<div class="row">
+		<div class="col-md-2"><?=Tr::_('National holidays:')?></div>
+		<div class="col-md-10">
+			<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 250px 250px 100px">
+				<div><?=Tr::_('New national holiday:')?></div>
+				<input type="date" id="new_national_holiday" class="form-control">
+				<div><input type="button" class="btn btn-primary" value="<?=Tr::_('Add')?>" onclick="addNationalHoliday();"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-10" style="padding: 10px;">
+			<table class="table table-striped">
+				<?php foreach($config->getNationalHolidays() as $nh):
+					[$month, $day] = explode('-', $nh);
+					?>
+				<tr>
+					<td style="width: 20px"><?=UI::button_delete(' ')
+							->setUrl( Http_Request::currentURL( set_GET_params: ['action'=>'remove_national_holiday', 'day'=>$nh] ) )
+							->setSize( UI_button::SIZE_EXTRA_SMALL )?></td>
+					<td><?=$day?>. <?=$month?>.</td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="col-md-2"><?=Tr::_('Custom non-working days:')?></div>
+		<div class="col-md-10">
+			<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 250px 250px 100px">
+				<div><?=Tr::_('New custom non-working day:')?></div>
+				<input type="date" id="new_custom_free_day" class="form-control">
+				<div><input type="button" class="btn btn-primary" value="<?=Tr::_('Add')?>" onclick="addCustomFreeDay()"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-10" style="padding: 10px;">
+			<table class="table table-striped">
+				<?php foreach($config->getCustomFreeDays() as $cd): ?>
+					<tr>
+						<td style="width: 20px"><?=UI::button_delete(' ')
+								->setUrl( Http_Request::currentURL( set_GET_params: ['action'=>'remove_custom_free_day', 'day'=>$cd] ) )
+								->setSize( UI_button::SIZE_EXTRA_SMALL )?></td>
+						<td><?=Locale::date( new Data_DateTime($cd ) )?>.</td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+		</div>
+	</div>
+
+
+
+
+<script>
+	
+	function addCustomFreeDay() {
+		const date = document.getElementById('new_custom_free_day').value;
+		location.assign( '<?=Http_Request::currentURL( set_GET_params: ['action'=>'add_custom_free_day'] )?>&day='+date );
+	}
+
+	function addNationalHoliday() {
+		const date = document.getElementById('new_national_holiday').value;
+		location.assign( '<?=Http_Request::currentURL( set_GET_params: ['action'=>'add_national_holiday'] )?>&day='+date );
+	}
+	
+	
+</script>

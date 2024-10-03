@@ -7,66 +7,30 @@
  */
 namespace JetShop;
 
-use Jet\Application_Module;
 use Jet\Auth_User_Interface;
 use Jet\BaseObject;
 use Jet\Auth_Controller_Interface;
 
-use Jet\Factory_MVC;
-use Jet\MVC;
 use Jet\MVC_Page_Interface;
-use Jet\Application_Modules;
 use Jet\Session;
 use Jet\Data_DateTime;
 
 use JetApplication\Customer;
-use JetApplication\Customer_AuthController_Interface;
 use JetApplication\Shop_Managers;
+use JetApplication\Shops;
 
 /**
  *
  */
 abstract class Core_Customer_AuthController extends BaseObject implements Auth_Controller_Interface
 {
-	protected static string $login_module_name = 'Shop.Login';
-
-
 	public const EVENT_LOGIN_FAILED = 'login_failed';
 	public const EVENT_LOGIN_SUCCESS = 'login_success';
 	public const EVENT_LOGOUT = 'logout';
 
-	/**
-	 *
-	 * @var Customer|bool|null
-	 */
+
 	protected Customer|bool|null $current_user = null;
-
-	/**
-	 * @return string
-	 */
-	public static function getLoginModuleName(): string
-	{
-		return self::$login_module_name;
-	}
-
-	/**
-	 * @param string $module_name
-	 */
-	public static function setLoginModuleName( string $module_name ): void
-	{
-		self::$login_module_name = $module_name;
-	}
-
-
-	public static function getLoginModule() : Application_Module|Customer_AuthController_Interface
-	{
-		return Application_Modules::moduleInstance( static::getLoginModuleName() );
-	}
-
-	/**
-	 *
-	 * @return bool
-	 */
+	
 	public function checkCurrentUser() : bool
 	{
 
@@ -102,11 +66,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 
 		return true;
 	}
-
-	/**
-	 *
-	 * @return Customer|null
-	 */
+	
 	public function getCurrentUser() : Customer|bool
 	{
 		if( $this->current_user!==null ) {
@@ -114,161 +74,99 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		}
 
 		$user_id = $this->getSession()->getValue( 'user_id' );
-
-		if( $user_id ) {
-			$this->current_user = Customer::get( $user_id );
+		if(!$user_id) {
+			return false;
 		}
+
+
+		$this->current_user = Customer::get( $user_id );
+
 
 		if(!$this->current_user) {
 			$this->current_user = false;
+		} else {
+			if(
+				$this->current_user->isBlocked() ||
+				$this->current_user->getShop()->getKey()!=Shops::getCurrentKey()
+			) {
+				$this->current_user = false;
+			}
 		}
+		
+		
 
 		return $this->current_user;
 	}
-
-	/**
-	 * @return Session
-	 */
+	
 	protected function getSession() : Session
 	{
 		return new Session( 'auth_shop' );
 
 	}
-
-	/**
-	 *
-	 */
+	
 	public function handleLogin() : void
 	{
-
-		$page = MVC::getPage();
-
-
-		$action = 'login';
-
+		
+		$module = Shop_Managers::CustomerLogin();
+		
 		$user = $this->getCurrentUser();
 
 		if( $user ) {
 			if( !$user->isActivated() ) {
-				$action = 'is_not_activated';
-			} else if( $user->isBlocked() ) {
-				$action = 'is_blocked';
-			} else if( !$user->getPasswordIsValid() ) {
-				$action = 'must_change_password';
+				$module->handleIsNotActivated( $user );
+				return;
+			}
+			
+			if( $user->isBlocked() ) {
+				$module->handleIsBlocked( $user );
+				return;
+			}
+			
+			if( !$user->getPasswordIsValid() ) {
+				$module->handleMustChangePassword( $user );
+				return;
 			}
 		}
-
-		$module = Application_Modules::moduleInstance( static::getLoginModuleName() );
-
-		$page_content = [];
-		$page_content_item = Factory_MVC::getPageContentInstance();
-
-		$page_content_item->setModuleName( $module->getModuleManifest()->getName() );
-		$page_content_item->setControllerAction( $action );
-
-
-		$page_content[] = $page_content_item;
-
-		$page->setContent( $page_content );
-
-		echo $page->render();
+		
+		$module->handleLogin();
 	}
-
-	/**
-	 *
-	 */
+	
 	public function logout() : void
 	{
-		$user = $this->getCurrentUser();
-		/** @noinspection PhpStatementHasEmptyBodyInspection */
-		if( $user ) {
-			/*
-			Logger::info(
-				static::EVENT_LOGOUT, 'User has '.$user->getUsername().' (id:'.$user->getId().') logged off',
-				$user->getId(), $user->getName()
-			);
-			*/
-		}
-
 		$this->getSession()->unsetValue( 'user_id' );
 		$this->current_user = null;
-
-		Shop_Managers::CashDesk()->onCustomerLogout();
-
 	}
-
-	/**
-	 *
-	 * @param string $username
-	 * @param string $password
-	 *
-	 * @return bool
-	 */
+	
 	public function login( string $username, string $password ) : bool
 	{
 
 		$customer = Customer::getByIdentity( $username, $password );
 
 		if( !$customer ) {
-
 			return false;
 		}
 
 
-		$this->loginCustomer( $customer );
-
-		return true;
+		return $this->loginUser( $customer );
 	}
 
-	public function loginCustomer( Customer $customer ) : void
-	{
-		$session = $this->getSession();
-		$session->setValue( 'user_id', $customer->getId() );
-
-		$this->current_user = $customer;
-		
-		Shop_Managers::CashDesk()->onCustomerLogin();
-	}
-
-	/**
-	 *
-	 * @param string $privilege
-	 * @param mixed $value
-	 *
-	 * @return bool
-	 */
+	
 	public function getCurrentUserHasPrivilege( string $privilege, mixed $value=null ): bool
 	{
 		$current_user = $this->getCurrentUser();
 
-		if(
-			!$current_user ||
-			!($current_user instanceof Customer)
-		) {
+		if( !$current_user ) {
 			return false;
 		}
 
 		return $current_user->hasPrivilege($privilege, $value);
 	}
-
-
-	/**
-	 * @param string $module_name
-	 * @param string $action
-	 *
-	 * @return bool
-	 */
+	
 	public function checkModuleActionAccess( string $module_name, string $action ) : bool
 	{
 		return false;
 	}
 
-
-	/**
-	 * @param MVC_Page_Interface $page
-	 *
-	 * @return bool
-	 */
 	public function checkPageAccess( MVC_Page_Interface $page ) : bool
 	{
 		return true;
@@ -276,7 +174,20 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	
 	public function loginUser( Auth_User_Interface $user ): bool
 	{
-		return false;
+		if(
+			!$user instanceof Customer ||
+			$user->getShopKey()!=Shops::getCurrentKey() ||
+			$user->isBlocked()
+		) {
+			return false;
+		}
+		
+		$session = $this->getSession();
+		$session->setValue( 'user_id', $user->getId() );
+		
+		$this->current_user = $user;
+		
+		return true;
 	}
 
 }

@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Signposts;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Signpost $item
+ */
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+?>
+<div style="display: flex;align-items: center">
+	<?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $item );?>
+	<a href="<?=$listing->getEditUrl( $item );?>" style="padding: 10px;"><?=$item->getInternalName()?></a>
+</div>

@@ -7,10 +7,15 @@ use Jet\DataListing;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
 use Jet\MVC_View;
-use JetApplication\Admin_Entity_Common_Manager_Interface;
-use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_EntityManager_Interface;
+use JetApplication\Admin_Entity_Interface;
+use JetApplication\Admin_Managers;
 use JetApplication\Entity_Basic;
+use JetApplication\Entity_Common;
+use JetApplication\Entity_Marketing;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Entity_WithShopRelation;
+use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\Shops;
 
 /**
@@ -19,8 +24,8 @@ use JetApplication\Shops;
 class Listing extends DataListing {
 	
 	
-	protected Entity_Basic|Admin_Entity_Common_Interface $entity;
-	protected Admin_Entity_Common_Manager_Interface $entity_manager;
+	protected Entity_Basic|Admin_Entity_Interface $entity;
+	protected Admin_EntityManager_Interface $entity_manager;
 	protected MVC_View $column_view;
 	protected MVC_View $filter_view;
 	
@@ -39,46 +44,177 @@ class Listing extends DataListing {
 		$this->column_view = $column_view;
 		$this->filter_view = $filter_view;
 		
-		$is_shop_related_entity = ($this->entity instanceof Entity_WithShopRelation);
 		
-		$this->addColumn( new Listing_Column_Edit() );
-		
-		if(!$is_shop_related_entity) {
-			$this->addColumn( new Listing_Column_ID() );
-			$this->addColumn( new Listing_Column_ActiveState() );
-			$this->addColumn( new Listing_Column_InternalName() );
-			$this->addColumn( new Listing_Column_InternalCode() );
-			$this->addColumn( new Listing_Column_InternalNotes() );
-			
-			$this->addFilter( new Listing_Filter_Search() );
-			$this->addFilter( new Listing_Filter_IsActive() );
-			
-			$this->addExport( new Listing_Export_CSV() );
-			$this->addExport( new Listing_Export_XLSX() );
-			
-			
-			$this->setDefaultSort('+internal_name');
-		} else {
-			
-			$this->addColumn( new Listing_Column_ID() );
-			
-			
-			if( Shops::isMultiShopMode() ) {
-				$this->addColumn( new Listing_Column_Shop() );
-				
-				$this->addFilter( new Listing_Filter_Shop() );
-			}
-			
-			$this->addFilter( new Listing_Filter_Search() );
-			
-			
-			$this->setDefaultSort('-id');
+		if( ($this->entity instanceof Entity_Basic) ) {
+			$this->init_Basic();
 		}
 		
-
+		if( ($this->entity instanceof Entity_WithShopRelation) ) {
+			$this->init_WithShopRelation();
+		}
+		
+		if( ($this->entity instanceof Entity_Marketing) ) {
+			$this->init_Marketing();
+		}
+		
+		if( ($this->entity instanceof Entity_Common) ) {
+			$this->init_Common();
+		}
+		
+		if( ($this->entity instanceof Entity_WithShopData) ) {
+			$this->init_WithShopData();
+		}
+		
 	}
 	
-	public function getEntity(): Admin_Entity_Common_Interface|Entity_Basic
+	protected function init_SearchFilter() : Listing_Filter_Search
+	{
+		$search = new Listing_Filter_Search();
+		if($this->entity instanceof FulltextSearch_IndexDataProvider) {
+			
+			$entity = $this->entity;
+			
+			$search->setWhereCreator( function( string $search ) use ($entity) : array {
+				
+				$ids = Admin_Managers::FulltextSearch()->search(
+					$entity::getEntityType(),
+					$search
+				);
+				
+				if(!$ids) {
+					$ids = [0];
+				}
+				
+				return [
+					'id' => $ids,
+				];
+				
+			} );
+			
+		}
+		
+		return $search;
+	}
+	
+	protected function init_Basic() : void
+	{
+		$this->addColumn( new Listing_Column_Edit() );
+		
+		$this->addFilter( $this->init_SearchFilter() );
+		
+		$this->setDefaultColumnsSchema([
+		] );
+		
+		
+		$this->setDefaultSort('-id');
+	}
+	
+	
+	protected function init_WithShopRelation() : void
+	{
+		$this->addColumn( new Listing_Column_Edit() );
+		$this->addColumn( new Listing_Column_ID() );
+		
+		
+		if( Shops::isMultiShopMode() ) {
+			$this->addColumn( new Listing_Column_Shop() );
+			$this->addFilter( new Listing_Filter_Shop() );
+		}
+		
+		$this->addFilter( $this->init_SearchFilter() );
+		
+		$this->setDefaultColumnsSchema([
+			Listing_Column_ID::KEY,
+			Listing_Column_Shop::KEY,
+		] );
+		
+		
+		$this->setDefaultSort('-id');
+	}
+	
+	protected function init_Marketing() : void
+	{
+		$this->addColumn( new Listing_Column_Edit() );
+		$this->addColumn( new Listing_Column_ID() );
+		
+		if( Shops::isMultiShopMode() ) {
+			$this->addColumn( new Listing_Column_Shop() );
+			$this->addFilter( new Listing_Filter_Shop() );
+		}
+		
+		$this->addColumn( new Listing_Column_ActiveState() );
+		
+		$this->addColumn( new Listing_Column_InternalName() );
+		$this->addColumn( new Listing_Column_InternalCode() );
+		
+		$this->addColumn( new Listing_Column_ValidFrom() );
+		$this->addColumn( new Listing_Column_ValidTill() );
+		
+		$this->addColumn( new Listing_Column_InternalNotes() );
+		
+		
+		$this->setDefaultColumnsSchema([
+			Listing_Column_ID::KEY,
+			Listing_Column_Shop::KEY,
+			Listing_Column_ActiveState::KEY,
+			Listing_Column_InternalName::KEY,
+			Listing_Column_InternalCode::KEY,
+			
+			Listing_Column_ValidFrom::KEY,
+			Listing_Column_ValidTill::KEY,
+			
+			Listing_Column_InternalNotes::KEY
+		] );
+		
+		
+		$this->addFilter( $this->init_SearchFilter() );
+		$this->addFilter( new Listing_Filter_IsActive() );
+		
+		$this->addExport( new Listing_Export_CSV() );
+		$this->addExport( new Listing_Export_XLSX() );
+		
+		
+		$this->setDefaultSort('+internal_name');
+	}
+	
+	protected function init_WithShopData() : void
+	{
+		$this->init_Common();
+	}
+	
+	protected function init_Common() : void
+	{
+		$this->addColumn( new Listing_Column_Edit() );
+		$this->addColumn( new Listing_Column_ID() );
+		
+		$this->addColumn( new Listing_Column_ActiveState() );
+		
+		$this->addColumn( new Listing_Column_InternalName() );
+		$this->addColumn( new Listing_Column_InternalCode() );
+		$this->addColumn( new Listing_Column_InternalNotes() );
+		
+		
+		$this->setDefaultColumnsSchema([
+			Listing_Column_ID::KEY,
+			Listing_Column_ActiveState::KEY,
+			Listing_Column_InternalName::KEY,
+			Listing_Column_InternalCode::KEY,
+			Listing_Column_InternalNotes::KEY
+		] );
+		
+		
+		$this->addFilter( $this->init_SearchFilter() );
+		
+		$this->addFilter( new Listing_Filter_IsActive() );
+		$this->addExport( new Listing_Export_CSV() );
+		$this->addExport( new Listing_Export_XLSX() );
+		
+		
+		$this->setDefaultSort('+internal_name');
+	}
+	
+	
+	public function getEntity(): Admin_Entity_Interface|Entity_Basic
 	{
 		return $this->entity;
 	}
@@ -140,7 +276,7 @@ class Listing extends DataListing {
 	}
 	
 	
-	public function getEntityManager(): Admin_Entity_Common_Manager_Interface
+	public function getEntityManager(): Admin_EntityManager_Interface
 	{
 		return $this->entity_manager;
 	}
@@ -159,6 +295,8 @@ class Listing extends DataListing {
 	protected function getIdList(): array
 	{
 		if( $this->all_ids === null ) {
+			$this->handle();
+
 			$this->all_ids = $this->entity::dataFetchCol(select:['id'], where: $this->getFilterWhere(), order_by: $this->getQueryOrderBy() );
 		}
 		
@@ -187,7 +325,7 @@ class Listing extends DataListing {
 	
 	public function getPrevEditUrl( int $current_id ): string
 	{
-		$all_ids = $this->getAllIds();
+		$all_ids = $this->getIdList();
 		
 		$index = array_search( $current_id, $all_ids );
 		
@@ -203,7 +341,7 @@ class Listing extends DataListing {
 	
 	public function getNextEditUrl( int $current_id ): string
 	{
-		$all_ids = $this->getAllIds();
+		$all_ids = $this->getIdList();
 		
 		$index = array_search( $current_id, $all_ids );
 		if( $index !== false ) {

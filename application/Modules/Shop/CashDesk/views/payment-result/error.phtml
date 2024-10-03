@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\Shop\CashDesk;
+
+use Jet\MVC_View;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+
+$order = $this->getRaw('order');
+?>
+
+<h1>Order <?=$order->getNumber()?></h1>
+
+<h2>Payment system error</h2>

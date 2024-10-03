@@ -14,7 +14,7 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Property;
-use JetApplication\Admin_Entity_WithShopData_Manager_Trait;
+use JetApplication\Admin_EntityManager_WithShopData_Trait;
 use JetApplication\Entity_WithShopData;
 
 /**
@@ -22,7 +22,7 @@ use JetApplication\Entity_WithShopData;
  */
 class Main extends Application_Module implements Admin_Managers_Property
 {
-	use Admin_Entity_WithShopData_Manager_Trait;
+	use Admin_EntityManager_WithShopData_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'properties';
 
@@ -44,7 +44,7 @@ class Main extends Application_Module implements Admin_Managers_Property
 			name: $name,
 			caption: Tr::_('... select property ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,
-			object_class: Property::getEntityType(),
+			entity_type: Property::getEntityType(),
 			object_type_filter: $only_type_filter,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getInternalName(),

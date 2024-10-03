@@ -3,8 +3,8 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use Jet\UI;
 use Jet\UI_messages;
+use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Shops;
 
@@ -20,19 +20,38 @@ $listing = $this->getRaw('listing');
 
 $edit_uri = $listing->getEditUrl($item);
 
-$showShopLink = function( Product $item ) {
-	?>
-	<div style="padding: 8px;">
-		<?php foreach(Shops::getListSorted() as $shop): ?>
-			<a href="<?=$item->getShopData($shop)->getURL()?>" target="_blank" style="padding-left: 10px;"><?=UI::icon('eye')?> <?=$shop->getShopName()?></a>
-		<?php endforeach; ?>
-	</div>
-	<?php
-};
+$img = $item->getShopData(Shops::getCurrent())->getImgThumbnailUrl(0, 120, 120);
 ?>
-<a href="<?=$edit_uri;?>"><?=$item->getAdminTitle();?></a>
 
-<?php $showShopLink( $item ); ?>
+<div style="display: flex;align-items: center">
+	<?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $item );?>
+	
+	<div style="padding: 5px;display: grid;grid-template-columns: 140px 1fr">
+		<div style="padding: 5px;">
+			<?php if($img):?>
+			<img src="<?=$img?>">
+			<?php endif; ?>
+		</div>
+		<div>
+			<a href="<?=$edit_uri;?>"><?=$item->getAdminTitle();?></a>
+			<div style="display: grid;grid-template-columns: 100px 1fr;">
+				<?php if($item->getInternalCode()): ?>
+					<div><?=Tr::_('Internal code:')?></div>
+					<div><?=$item->getInternalCode()?></div>
+				<?php endif; ?>
+				
+				<?php if($item->getEan()): ?>
+					<div><?=Tr::_('EAN:')?></div>
+					<div><?=$item->getEan()?></div>
+				<?php endif; ?>
+			</div>
+		</div>
+		
+		
+	</div>
+</div>
+
+
 
 <?php if($item->isVariantMaster()): ?>
 	<br>
@@ -46,8 +65,11 @@ $showShopLink = function( Product $item ) {
 			<tr>
 				<td><?=$variant->renderActiveState() ?></td>
 				<td>
-					<a href="<?=$variant->getEditURL()?>"><?=$variant->getAdminTitle()?></a>
-					<?php $showShopLink( $variant ); ?>
+					<div style="display: flex;align-items: center">
+						<?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $variant );?>
+						&nbsp;&nbsp;
+						<a href="<?=$variant->getEditURL()?>"><?=$variant->getAdminTitle()?></a>
+					</div>
 				</td>
 			</tr>
 		<?php endforeach; ?>
@@ -79,8 +101,9 @@ $showShopLink = function( Product $item ) {
 		<tr>
 			<td><?=$set_item_product->renderActiveState()?></td>
 			<td>
+				<?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $set_item_product );?>
+				&nbsp;&nbsp;
 				<a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a>
-				<?php $showShopLink( $set_item_product ); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

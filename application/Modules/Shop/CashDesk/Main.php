@@ -8,160 +8,81 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Application_Module;
-use Jet\MVC;
-use Jet\MVC_Page_Interface;
+use JetApplication\Admin_ControlCentre;
+use JetApplication\Admin_ControlCentre_Module_Interface;
+use JetApplication\Admin_ControlCentre_Module_Trait;
+use JetApplication\Availabilities;
+use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\Pricelists;
 use JetApplication\Shop_Managers_CashDesk;
-use JetApplication\Shops;
 use JetApplication\CashDesk as Application_CashDesk;
+use JetApplication\Shop_ModuleUsingTemplate_Interface;
+use JetApplication\Shop_ModuleUsingTemplate_Trait;
+use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\Shops;
 
 /**
  *
  */
-class Main extends Application_Module implements Shop_Managers_CashDesk
+class Main extends Application_Module implements
+	Shop_Managers_CashDesk,
+	Shop_ModuleUsingTemplate_Interface,
+	Admin_ControlCentre_Module_Interface,
+	ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface
 {
+	use Shop_ModuleUsingTemplate_Trait;
+	use Admin_ControlCentre_Module_Trait;
+	use ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	
-	protected static string $cash_desk_page_id = 'cash-desk';
 	
-	protected static string $cash_desk_confirmation_page_id = 'cash-desk-confirmation';
+	protected ?CashDesk $cash_desk = null;
 	
-	protected static string $cash_desk_payment_page_id = 'cash-desk-payment';
 	
-	protected static string $cash_desk_payment_problem_page_id = 'cash-desk-payment-problem';
-	
-	protected static string $cash_desk_payment_success_page_id = 'cash-desk-payment-success';
-	
-	protected static string $cash_desk_payment_notification_page_id = 'cash-desk-payment-notification';
-	
-	public function get() : Application_CashDesk
+	public function getCashDesk() : Application_CashDesk
 	{
-		return CashDesk::get();
-	}
-	
-	public function getCashDeskPageId(): string
-	{
-		return static::$cash_desk_page_id;
-	}
-	
-	public function getCashDeskPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
+		if(!$this->cash_desk) {
+			/**
+			 * @var Config_PerShop $config
+			 */
+			$config = $this->getShopConfig( Shops::getCurrent() );
+			$this->cash_desk = new CashDesk(
+				$config,
+				Shops::getCurrent(),
+				Pricelists::getCurrent(),
+				Availabilities::getCurrent()
+			);
+		}
 		
-		return MVC::getPage($this->getCashDeskPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-	
-	public function getCashDeskPageURL(): string
-	{
-		return $this->getCashDeskPage()->getURL();
-	}
-	
-	
-	
-	
-	public function getCashDeskConfirmationPageId(): string
-	{
-		return self::$cash_desk_confirmation_page_id;
-	}
-	
-	public function getCashDeskConfirmationPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
+		$this->cash_desk->checkCurrentCustomer();
+		$this->cash_desk->getDiscounts();
 		
-		return MVC::getPage($this->getCashDeskConfirmationPageId(), $shop->getLocale(), $shop->getBaseId());
+		return $this->cash_desk;
 	}
 	
-	public function getCashDeskConfirmationPageURL(): string
+	public function getControlCentreGroup(): string
 	{
-		return $this->getCashDeskConfirmationPage()->getURL();
-	}
-	
-	
-	
-	
-	
-	public function getCashDeskPaymentPageId(): string
-	{
-		return self::$cash_desk_payment_page_id;
-	}
-	
-	public function getCashDeskPaymentPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-		
-		return MVC::getPage($this->getCashDeskPaymentPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-	
-	public function getCashDeskPaymentPageURL(): string
-	{
-		return $this->getCashDeskPaymentPage()->getURL();
+		return Admin_ControlCentre::GROUP_MAIN;
 	}
 	
 	
-	
-	public function getCashDeskPaymentProblemPageId(): string
+	public function getControlCentreTitle(): string
 	{
-		return self::$cash_desk_payment_problem_page_id;
+		return 'Cash Desk';
 	}
 	
-	public function getCashDeskPaymentProblemPage(): MVC_Page_Interface
+	public function getControlCentreIcon(): string
 	{
-		$shop = Shops::getCurrent();
-		
-		return MVC::getPage($this->getCashDeskPaymentProblemPageId(), $shop->getLocale(), $shop->getBaseId());
+		return 'cash-register';
 	}
 	
-	public function getCashDeskPaymentProblemPageURL(): string
+	public function getControlCentrePerShopMode() : bool
 	{
-		return $this->getCashDeskPaymentProblemPage()->getURL();
+		return true;
 	}
 	
-	
-	
-	
-	public function getCashDeskPaymentSuccessPageId(): string
+	public function getControlCentrePriority(): int
 	{
-		return self::$cash_desk_payment_success_page_id;
-	}
-	
-	public function getCashDeskPaymentSuccessPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-		
-		return MVC::getPage($this->getCashDeskPaymentSuccessPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-	
-	public function getCashDeskPaymentSuccessPageURL(): string
-	{
-		return $this->getCashDeskPaymentSuccessPage()->getURL();
-	}
-	
-	
-	
-	public function getCashDeskPaymentNotificationPageId(): string
-	{
-		return self::$cash_desk_payment_notification_page_id;
-	}
-	
-	
-	public function getCashDeskPaymentNotificationPage(): MVC_Page_Interface
-	{
-		$shop = Shops::getCurrent();
-		
-		return MVC::getPage($this->getCashDeskPaymentNotificationPageId(), $shop->getLocale(), $shop->getBaseId());
-	}
-	
-	public function getCashDeskPaymentNotificationPageURL(): string
-	{
-		return static::getCashDeskPaymentNotificationPage()->getURL();
-	}
-	
-	public function onCustomerLogin(): void
-	{
-		CashDesk::get()->onCustomerLogin();
-	}
-	
-	public function onCustomerLogout(): void
-	{
-		CashDesk::get()->onCustomerLogout();
+		return 10;
 	}
 	
 }

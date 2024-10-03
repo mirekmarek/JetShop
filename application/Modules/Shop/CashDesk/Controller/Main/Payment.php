@@ -41,7 +41,7 @@ trait Controller_Main_Payment {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		if(!$cash_desk->selectPaymentMethod( $GET->getString('method') )) {
@@ -63,7 +63,7 @@ trait Controller_Main_Payment {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		if(!$cash_desk->selectPaymentMethodOption( $GET->getString('option') )) {
@@ -82,7 +82,7 @@ trait Controller_Main_Payment {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setCurrentStep( CashDesk::STEP_CUSTOMER );
 
@@ -99,7 +99,7 @@ trait Controller_Main_Payment {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 
 		$cash_desk->setCurrentStep( CashDesk::STEP_PAYMENT );
 

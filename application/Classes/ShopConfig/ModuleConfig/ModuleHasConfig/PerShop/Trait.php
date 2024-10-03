@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+
+trait ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait {
+	use Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+}

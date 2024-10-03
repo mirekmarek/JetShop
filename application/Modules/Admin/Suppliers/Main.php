@@ -1,8 +1,8 @@
 <?php
 namespace JetApplicationModule\Admin\Suppliers;
 
-use JetApplication\Admin_Entity_Common_Manager_Interface;
-use JetApplication\Admin_Entity_Common_Manager_Trait;
+use JetApplication\Admin_EntityManager_Common_Interface;
+use JetApplication\Admin_EntityManager_Common_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Entity_Common;
@@ -10,9 +10,9 @@ use JetApplication\Entity_Common;
 /**
  *
  */
-class Main extends Application_Module implements Admin_Entity_Common_Manager_Interface
+class Main extends Application_Module implements Admin_EntityManager_Common_Interface
 {
-	use Admin_Entity_Common_Manager_Trait;
+	use Admin_EntityManager_Common_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'suppliers';
 
@@ -29,7 +29,7 @@ class Main extends Application_Module implements Admin_Entity_Common_Manager_Int
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'supplier';
+		return 'Supplier';
 	}
 
 }

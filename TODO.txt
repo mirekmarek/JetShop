@@ -1,0 +1,64 @@
+Procesy a potrebne funkce:
+*************************************
+* Evicende ocekavanych plateb (pohledavek)
+* Evidence prichozich plateb
+* Refundace peněz ( stornované a jiné problematické objednávky )
+
+* Procesně dovyřešit přímé vyzvednutí (dotáhnout ten extra modul dopravy co je k tomu určený)
+
+* Automaticke vystaveni faktur do procesu (po zaplaceni ihned, u dobirky po doruceni)
+
+
+* Doklady v zakaznickem centru
+* Vychozi modul SupplierBackend.Default bude alespon sestavovat PDF a posilat maily
+* VP hadnler: e-books
+* VP hadnler: voucher
+* Pokročilé nástroje pro správu produktů v administraci (wizard)
+* Vrácené balíky
+* Expedice: tracking - otestovat a odladit
+* K objednávkám, vratkám a reklamacím (a vlastně ke všemu) přidělat volitelné nálepky / tagy
+* Skupiny parametrů s defaultními parametry
+* Obj. zbozi: Automaticky doplneni predikce prodeje na zaklade statistik
+* Doskriptovat eventy
+* Napojená na elespoň jedno účetnictví (FlexyBee web)
+* Fakturace - rucni vystaveni faktury
+* Fakturace - rucni vystaveni zalohove faktury
+* Fakturace - rucni vystaveni dodaciho listu
+* Doladeni vratek
+* Doladeni reklamaci
+
+
+Ostatní:
+*************************************
+>>>>>>>>>> Instalátor
+
+>>>>>>>> Alespoň něajaká rozumná základní Šablona vzhledu (bez Bootstrap)
+>> Ukazkove sablony mailu
+
+
+
+Reporty a statistiky:
+*************************************
+* Statistiky objednávek
+* Interni statistiky (počet zobrazení vseho, zaznam session)
+* Statistiky zobrazení
+* Statistiky spolehlivosti
+
+
+
+Dále:
+*************************************
+* Dalsi Backendy k platbam a dopravcum atd
+
+
+Marketplace:
+*************************************
+> Mall
+* Alegro
+* Kaufland
+* Amazon
+* Alza
+
+Možná:
+*************************************
+? Mailing nástroj, nebo integrace na jiné nástroje

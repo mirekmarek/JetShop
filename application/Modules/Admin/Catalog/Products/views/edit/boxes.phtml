@@ -1,0 +1,109 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Product_Box;
+
+
+/**
+ * @var MVC_View   $this
+ * @var Product $product
+ * @var Form $add_form
+ * @var Form $edit_form
+ * @var Product_Box[] $boxes
+ */
+
+$product = $this->getRaw('item');
+
+$editable = $this->getBool('editable');
+
+require '_toolbar.phtml';
+
+$add_form = $this->getRaw('add_form');
+$edit_form = $this->getRaw('edit_form');
+$boxes = $this->getRaw('boxes');
+?>
+<div id="main-col">
+		
+		<?=$this->getRaw('tabs')?>
+		
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th></th>
+				<th><?=Tr::_('EAN')?></th>
+				<th><?=Tr::_('Width')?></th>
+				<th><?=Tr::_('Height')?></th>
+				<th><?=Tr::_('Length')?></th>
+				<th><?=Tr::_('Weight')?></th>
+			</tr>
+			</thead>
+		
+		<?php if($editable): ?>
+		
+			<?php if($edit_form): ?>
+				
+				<?php if($add_form): ?>
+					<?=$add_form->start();?>
+					<tr>
+						<td><b><?=Tr::_('Add box:')?></b></td>
+						
+						<td><?=$add_form->field("EAN")->input()?></td>
+						<td><?=$add_form->field("width")->input()?></td>
+						<td><?=$add_form->field("height")->input()?></td>
+						<td><?=$add_form->field("length")->input()?></td>
+						<td><?=$add_form->field("weight")->input()?></td>
+						<td><?=UI::button_save( Tr::_('Add') )->setType(UI_button::TYPE_SUBMIT)?></td>
+					</tr>
+					<?=$add_form->end();?>
+				
+				
+				<?php endif?>
+				
+				
+				<?=$edit_form->start()?>
+				<?php foreach($boxes as $box):
+					$id = $box->getId();
+					?>
+				<tr>
+					<td><?=UI::button_delete(' ')->setUrl(Http_Request::currentURI(['delete_box'=>$box->getId()]))?></td>
+					<td><?=$edit_form->field("/{$id}/EAN")->input()?></td>
+					<td><?=$edit_form->field("/{$id}/width")->input()?></td>
+					<td><?=$edit_form->field("/{$id}/height")->input()?></td>
+					<td><?=$edit_form->field("/{$id}/length")->input()?></td>
+					<td><?=$edit_form->field("/{$id}/weight")->input()?></td>
+					<td></td>
+				</tr>
+				<?php endforeach; ?>
+				<tr>
+					<td></td>
+					<td colspan="6"><?=UI::button_save()->setType(UI_button::TYPE_SUBMIT)?></td>
+				</tr>
+				<?=$edit_form->end()?>
+			
+			
+			<?php endif; ?>
+		<?php else:
+			foreach($boxes as $box):
+				?>
+				<tr>
+					<td></td>
+					<td><?=$box->getEAN()?></td>
+					<td><?=Locale::float( $box->getWidth() )?></td>
+					<td><?=Locale::float( $box->getHeight() )?></td>
+					<td><?=Locale::float( $box->getLength() )?></td>
+					<td><?=Locale::float( $box->getWeight() )?></td>
+					<td></td>
+				</tr>
+				<?php
+			endforeach;
+		endif; ?>
+		</table>
+	
+</div>

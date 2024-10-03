@@ -1,0 +1,36 @@
+<?php
+
+use Jet\MVC_Page_Interface;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var MVC_Page_Interface $page
+ */
+$page = $this->getRaw('page');
+
+?>
+<script>
+	const Compare = {
+		select: async (id) => {
+			const r = await fetch('<?=$page->getURL(GET_params: ['select'=>''])?>'+id);
+			const response = await r.json();
+
+			for(let el_id in response['snippets']) {
+				document.getElementById(el_id).innerHTML = response['snippets'][el_id];
+			}
+		},
+		unselect: async (id) => {
+			const r = await fetch('<?=$page->getURL(GET_params: ['unselect'=>''])?>'+id);
+			const response = await r.json();
+
+			for(let el_id in response['snippets']) {
+				document.getElementById(el_id).innerHTML = response['snippets'][el_id];
+			}
+		}
+
+	}
+</script>
+<style>
+
+</style>

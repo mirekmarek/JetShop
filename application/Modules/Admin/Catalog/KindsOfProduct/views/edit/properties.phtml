@@ -17,10 +17,7 @@ $form = $kind_of_product->getEditForm();
 
 $editable = !$form->getIsReadonly();
 
-echo Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
-	item: $kind_of_product,
-	listing: $this->getRaw('listing'),
-);
+echo $this->controller->getEditorManager()->renderToolbar();
 ?>
 
 <?php if($editable): ?>
@@ -66,12 +63,6 @@ echo Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
 		function setIsVariantMaster(property_id, state) {
 			$.get('<?=Http_Request::currentURI(
 				set_GET_params:['p_action'=>'set_is_variant_master'],
-				unset_GET_params:['property_id','group_id'])?>&property_id='+property_id+'&state='+(state?1:0));
-		}
-
-		function setUseInFilters(property_id, state) {
-			$.get('<?=Http_Request::currentURI(
-				set_GET_params:['p_action'=>'set_use_in_filters'],
 				unset_GET_params:['property_id','group_id'])?>&property_id='+property_id+'&state='+(state?1:0));
 		}
 
@@ -212,9 +203,7 @@ echo Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
 	}
 </style>
 
-<div class="row">
-	
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<?=$this->getRaw('tabs')?>
 		
 		<div class="toolbar">
@@ -244,5 +233,4 @@ echo Admin_Managers::EntityEdit_WithShopData()->renderToolbar(
 			require 'properties/layout.phtml';
 			?>
 		</div>
-	</div>
 </div>

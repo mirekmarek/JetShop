@@ -5,34 +5,35 @@
 
 namespace JetShop;
 
-use Jet\Application_Module;
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 
-use JetApplication\Delivery_Method_Module;
+use JetApplication\Carrier;
+use JetApplication\Delivery_Method_Price;
+use JetApplication\Entity_HasPrice_Interface;
+use JetApplication\Entity_HasPrice_Trait;
 use JetApplication\Entity_WithShopData;
+use JetApplication\Pricelists_Pricelist;
 use JetApplication\Shops_Shop;
 use JetApplication\Delivery_Kind;
 use JetApplication\Delivery_Class;
 use JetApplication\Delivery_Method_Class;
 use JetApplication\Delivery_Method_PaymentMethods;
-use JetApplication\Delivery_Method_Services;
 use JetApplication\Payment_Method;
 use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Services_Service;
-use JetApplication\Delivery_Method;
 use JetApplication\Shops;
 
 #[DataModel_Definition(
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
 )]
-abstract class Core_Delivery_Method extends Entity_WithShopData
+abstract class Core_Delivery_Method extends Entity_WithShopData implements Entity_HasPrice_Interface
 {
+	use Entity_HasPrice_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
@@ -93,28 +94,6 @@ abstract class Core_Delivery_Method extends Entity_WithShopData
 		select_options_creator: [Payment_Method::class, 'getScope']
 	)]
 	protected array $payment_methods = [];
-
-	
-
-	/**
-	 * @var Delivery_Method_Services[]
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Delivery_Method_Services::class,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_MULTI_SELECT,
-		label: 'Services:',
-		error_messages: [
-			Form_Field::ERROR_CODE_INVALID_VALUE => 'Please select service',
-		],
-		default_value_getter_name: 'getServicesIds',
-		select_options_creator: [Services_Service::class, 'getDeliveryServicesScope']
-	)]
-	protected array $services = [];
-	
-	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -123,15 +102,14 @@ abstract class Core_Delivery_Method extends Entity_WithShopData
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_SELECT,
-		label: 'Backend module:',
-		select_options_creator: [Delivery_Method::class, 'getModulesOptionsScope'],
+		label: 'Carrier:',
+		select_options_creator: [Carrier::class, 'getScope'],
 		error_messages: [
-			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select module',
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select module'
+			Form_Field_Select::ERROR_CODE_EMPTY => 'Please select carrier',
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select carrier'
 		]
 	)]
-	protected string $backend_module_name = '';
-	
+	protected string $carrier_code = '';
 
 	/**
 	 * @var Delivery_Method_ShopData[]
@@ -144,9 +122,12 @@ abstract class Core_Delivery_Method extends Entity_WithShopData
 	protected array $shop_data = [];
 	
 	
-	/**
-	 * @param string $code
-	 */
+	public function getPriceEntity( Pricelists_Pricelist $pricelist ) : Delivery_Method_Price
+	{
+		return Delivery_Method_Price::get( $pricelist, $this->getId() );
+	}
+	
+	
 	public function setKind( string $code ): void
 	{
 		$this->kind = $code;
@@ -155,9 +136,6 @@ abstract class Core_Delivery_Method extends Entity_WithShopData
 		}
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getKindCode(): string
 	{
 		return $this->kind;
@@ -173,33 +151,24 @@ abstract class Core_Delivery_Method extends Entity_WithShopData
 		return $this->getKind()?->getTitle()?:'';
 	}
 	
-	public function getBackendModuleName(): string
+	public function getCarrierCode(): string
 	{
-		return $this->backend_module_name;
+		return $this->carrier_code;
 	}
 	
-	public function setBackendModuleName( string $backend_module_name ): void
+	public function setCarrierCode( string $carrier_code ): void
 	{
-		$this->backend_module_name = $backend_module_name;
+		$this->carrier_code = $carrier_code;
 		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setBackendModuleName( $backend_module_name );
+			$this->getShopData( $shop )->setCarrierCode( $carrier_code );
 		}
 	}
-	
-	public function getBackendModule() : null|Delivery_Method_Module|Application_Module
-	{
-		if(!$this->backend_module_name) {
-			return null;
-		}
-		
-		return Application_Modules::moduleInstance( $this->backend_module_name );
-	}
-	
 	
 
 	public function getShopData( ?Shops_Shop $shop=null ) : Delivery_Method_ShopData
 	{
-		return $this->shop_data[$shop ? $shop->getKey() : Shops::getCurrent()->getKey()];
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->_getShopData( $shop );
 	}
 
 	/**
@@ -285,72 +254,6 @@ abstract class Core_Delivery_Method extends Entity_WithShopData
 	public function getPaymentMethodsIds() : array
 	{
 		return array_keys( $this->payment_methods );
-	}
-
-
-
-
-
-
-
-
-
-	public function setServices( array $ids ) : void
-	{
-		foreach($this->services as $id=>$r) {
-			if(!in_array($id, $ids)) {
-				$r->delete();
-				unset($this->services[$id]);
-			}
-		}
-		
-		foreach( $ids as $id ) {
-			
-			if(!isset($this->services[$id])) {
-				if( !Services_Service::exists( $id ) ) {
-					continue;
-				}
-				
-				$new_item = new Delivery_Method_Services();
-				if($this->id) {
-					$new_item->setDeliveryMethodId( $this->id );
-				}
-				$new_item->setServiceId( $id );
-				
-				$this->services[$id] = $new_item;
-				if($this->id) {
-					$new_item->save();
-				}
-			}
-		}
-	}
-
-	public function getServicesIds() : array
-	{
-		return array_keys($this->services);
-	}
-	
-	
-	public static function getModulesScope() : array
-	{
-		$scope = [''=>''];
-		
-		$modules = Application_Modules::activatedModulesList();
-		
-		foreach($modules as $manifest) {
-			if(!str_starts_with($manifest->getName(), 'Delivery.')) {
-				continue;
-			}
-			
-			$scope[$manifest->getName()] = $manifest->getLabel().' ('.$manifest->getName().')';
-		}
-		
-		return $scope;
-	}
-	
-	public static function getModulesOptionsScope() : array
-	{
-		return [''=>'']+static::getModulesScope();
 	}
 	
 }

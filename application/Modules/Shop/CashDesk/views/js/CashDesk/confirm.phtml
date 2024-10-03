@@ -1,0 +1,27 @@
+<script>
+	CashDesk.confirm = {
+		saveSpecialRequirement: function() {
+			CashDesk._request.doForm('cash_desk_special_requirements_form');
+		},
+
+		toggleAgreeFlag: function( code, checked ) {
+			CashDesk._request.doGet('?action=confirm_toggle_agree_flag&flag='+code+'&state='+(checked?'1':'0') );
+
+		},
+
+		send: function() {
+			effects.fadeOut('cash_desk_order_send_button_area', 'fast', () => {
+				CashDesk._request.doGet(
+					'?action=confirm_send',
+					function( response ) {
+					},
+					function( response ) {
+						CashDesk._request.applySnippets(response);
+					},
+					true
+				);
+				
+			});
+		}
+	};
+</script>

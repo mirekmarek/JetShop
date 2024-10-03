@@ -26,7 +26,7 @@ $orders = $this->getRaw( 'orders' );
 	<?php foreach($orders as $order): ?>
 	<tr>
 		<td><a href="<?=$order->getEditURL()?>"><?=$order->getNumber()?></a></td>
-		<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getShop(), $order->getTotalAmount() )?></td>
+		<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getCurrency(), $order->getTotalAmount() )?></td>
 		<td>
 			<ul>
 				<?php foreach($order->getItems() as $item): ?>
@@ -38,7 +38,7 @@ $orders = $this->getRaw( 'orders' );
 			<?=Locale::dateAndTime( $order->getDatePurchased() );?>
 		</td>
 		<td>
-			<?=Admin_Managers::Order()->showOrderStatus( $order->getShop(), $order->getStatusId() )?>
+			<?=Admin_Managers::Order()->showOrderStatus( $order )?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

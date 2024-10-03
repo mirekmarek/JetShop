@@ -1,0 +1,25 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderDispatch $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+if( $dispatch->isReadyToCreateConsignment() ):
+	echo UI::button_save( Tr::_('Done (alt+s)') )->setUrl( Http_Request::currentURI(['action'=>'set_prepared']) )->setId('save_button');
+endif;
+
+if( $dispatch->getIsCustom() ):
+	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	echo UI::button_delete( Tr::_('Cancel') )->setUrl( Http_Request::currentURI(['action'=>'cancel']) );
+endif;
+

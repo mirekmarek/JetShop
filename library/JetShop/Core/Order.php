@@ -5,15 +5,31 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use JetApplication\Availabilities;
+use JetApplication\Availabilities_Availability;
+use JetApplication\Context_ProvidesContext_Interface;
+use JetApplication\Currencies;
+use JetApplication\Currencies_Currency;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Discounts;
 use JetApplication\Entity_WithShopRelation;
+use JetApplication\Marketing_ConversionSourceDetector_Source;
+use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Order_Item;
-use JetApplication\Order_Status_History;
+use JetApplication\Order_ProductOverviewItem;
+use JetApplication\Order_Trait_Events;
+use JetApplication\Order_Trait_Status;
+use JetApplication\Order_Trait_Changes;
 use JetApplication\Payment_Method_ShopData;
 use JetApplication\Order;
 use JetApplication\Order_Event;
+use JetApplication\Pricelists;
+use JetApplication\Pricelists_Pricelist;
+use JetApplication\Product_ShopData;
+use JetApplication\Shops_Shop;
+use JetApplication\WarehouseManagement_Warehouse;
+use JetApplication\Context_ProvidesContext_Trait;
 
 #[DataModel_Definition(
 	name: 'order',
@@ -26,20 +42,63 @@ use JetApplication\Order_Event;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Order extends Entity_WithShopRelation {
+abstract class Core_Order extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+{
+	
+	
+	use Context_ProvidesContext_Trait;
+	use NumberSeries_Entity_Trait;
+	
+	use Order_Trait_Events;
+	use Order_Trait_Changes;
+	use Order_Trait_Status;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $split_source_order_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $joined_with_order_id = 0;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
 	)]
 	protected string $key = '';
+
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 50,
 	)]
-	protected string $number = '';
+	protected string $currency_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 50,
+	)]
+	protected string $pricelist_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 50,
+	)]
+	protected string $availability_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+	)]
+	protected string $conversion_source = '';
 	
 	
 	#[DataModel_Definition(
@@ -223,7 +282,7 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		max_len: 50,
 		is_key: true
 	)]
-	protected string $delivery_personal_takeover_place_code = '';
+	protected string $delivery_personal_takeover_delivery_point_code = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT
@@ -266,18 +325,32 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		type: DataModel::TYPE_FLOAT
 	)]
 	protected float $total_amount = 0.0;
-
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
-	)]
-	protected int $status_id = 0;
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
 		is_key: true
 	)]
-	protected bool $all_items_available = false;
+	protected int $warehouse_id = 0;
+	
+	protected ?WarehouseManagement_Warehouse $warehouse = null;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	protected float $total_weight_of_products = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	protected float $total_volume_of_products = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE
+	)]
+	protected Data_DateTime|null $promised_delivery_date = null;
+	
 
+	
 	/**
 	 * @var Order_Item[]
 	 */
@@ -286,15 +359,6 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		data_model_class: Order_Item::class
 	)]
 	protected array $items = [];
-	
-	/**
-	 * @var Order_Status_History[]
-	 */
-	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Order_Status_History::class
-	)]
-	protected array $status_history = [];
 
 
 	public function getId() : int
@@ -306,18 +370,108 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	{
 		$this->id = $id;
 	}
-
-	public function getNumber() : string
+	
+	public function getSplitSourceOrderId(): int
 	{
-		return $this->number;
+		return $this->split_source_order_id;
 	}
 	
-	public function generateNumber() : void
+	public function setSplitSourceOrderId( int $split_source_order_id ): void
 	{
-		$this->number = $this->id;
+		$this->split_source_order_id = $split_source_order_id;
+	}
+	
+	public function getJoinedWithOrderId(): int
+	{
+		return $this->joined_with_order_id;
+	}
+	
+	public function setJoinedWithOrderId( int $joined_with_order_id ): void
+	{
+		$this->joined_with_order_id = $joined_with_order_id;
+	}
+	
+	
+	
+	
+	public function getCurrencyCode(): string
+	{
+		return $this->currency_code;
+	}
+	
+	public function getCurrency() : Currencies_Currency
+	{
+		return Currencies::get( $this->currency_code );
+	}
+	
+	public function setCurrencyCode( string $currency_code ): void
+	{
+		$this->currency_code = $currency_code;
+	}
+	
+	public function getPricelistCode(): string
+	{
+		return $this->pricelist_code;
+	}
+	
+	public function getPricelist() : Pricelists_Pricelist
+	{
+		return Pricelists::get( $this->pricelist_code );
 	}
 
+	public function setPricelistCode( string $pricelist_code ): void
+	{
+		$this->pricelist_code = $pricelist_code;
+	}
 
+	public function getAvailabilityCode(): string
+	{
+		return $this->availability_code;
+	}
+	
+	public function getAvailability(): Availabilities_Availability
+	{
+		return Availabilities::get( $this->availability_code );
+	}
+	
+	public function setAvailabilityCode( string $availability_code ): void
+	{
+		$this->availability_code = $availability_code;
+	}
+	
+	
+	public function getNumberSeriesEntityData(): ?Data_DateTime
+	{
+		return $this->getDatePurchased();
+	}
+	
+	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	{
+		return $this->getShop();
+	}
+	
+	public function getConversionSource(): string
+	{
+		return $this->conversion_source;
+	}
+	
+	/**
+	 * @param Marketing_ConversionSourceDetector_Source[] $conversion_sources
+	 * @return void
+	 */
+	public function setConversionSource( array $conversion_sources ): void
+	{
+		$conversion_source = [];
+		foreach($conversion_sources as $source) {
+			$conversion_source[] = $source->getName();
+		}
+		
+		$conversion_source = implode('|', $conversion_source);
+		
+		$this->conversion_source = $conversion_source;
+	}
+	
+	
 	public function getImportSource() : string
 	{
 		return $this->import_source;
@@ -566,7 +720,7 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->special_requirements = $special_requirements;
 	}
 
-	public function isDifferentDeliveryAddress(): bool
+	public function getDifferentDeliveryAddress(): bool
 	{
 		return $this->different_delivery_address;
 	}
@@ -610,6 +764,25 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	{
 		return $this->delivery_method_id;
 	}
+	
+	public function setDeliveryMethod( Delivery_Method_ShopData $delivery_method, string $delivery_point_code ) : void
+	{
+		/**
+		 * @var Order $order
+		 */
+		$order = $this;
+		
+		$delivery_order_item = new Order_Item();
+		$delivery_order_item->setupDeliveryMethod( $order->getPricelist(), $delivery_method );
+		$order->addItem( $delivery_order_item );
+		
+		$order->setDeliveryMethodId( $delivery_method->getId() );
+		if($delivery_method->isPersonalTakeover()) {
+			$order->setDeliveryPersonalTakeoverDeliveryPointCode( $delivery_point_code );
+			$delivery_order_item->setSubCode( $delivery_point_code );
+		}
+		
+	}
 
 	public function getDeliveryMethod() : Delivery_Method_ShopData
 	{
@@ -621,15 +794,46 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->delivery_method_id = $delivery_method_id;
 	}
 
-	public function getDeliveryPersonalTakeoverPlaceCode() : string
+	public function getDeliveryPersonalTakeoverDeliveryPointCode() : string
 	{
-		return $this->delivery_personal_takeover_place_code;
+		return $this->delivery_personal_takeover_delivery_point_code;
 	}
 
-	public function setDeliveryPersonalTakeoverPlaceCode( string $delivery_personal_takeover_place_code ) : void
+	public function setDeliveryPersonalTakeoverDeliveryPointCode( string $delivery_personal_takeover_delivery_point_code ) : void
 	{
-		$this->delivery_personal_takeover_place_code = $delivery_personal_takeover_place_code;
+		$this->delivery_personal_takeover_delivery_point_code = $delivery_personal_takeover_delivery_point_code;
 	}
+	
+	
+	
+	public function setPaymentMethod( Payment_Method_ShopData $payment_method, string $payment_option_id='' ) : void
+	{
+		/**
+		 * @var Order $order
+		 */
+		$order = $this;
+		
+		$payment_order_item = new Order_Item();
+		$payment_order_item->setupPaymentMethod( $order->getPricelist(), $payment_method );
+		$order->addItem( $payment_order_item );
+		
+		$order->setPaymentMethodId( $payment_method->getId() );
+		$order->setPaymentRequired(
+			!$payment_method->getKind()->isCOD()
+		);
+		
+		if($payment_option_id) {
+			$payment_option = $payment_method->getOptions()[$payment_option_id]??null;
+			if($payment_option) {
+				$order->setPaymentMethodSpecification( $payment_option->getId() );
+				$payment_order_item->setSubCode($payment_option->getId());
+				$payment_order_item->setDescription( $payment_option->getTitle() );
+			}
+		}
+		
+		
+	}
+	
 
 	public function getPaymentMethodId() : string
 	{
@@ -700,68 +904,49 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->items[] = $item;
 	}
 
-	public function getStatusId() : string
-	{
-		return $this->status_id;
-	}
-
-	public function setStatus(
-		int $status_id,
-		bool $customer_notified,
-		string $comment,
-		string $administrator,
-		int $administrator_id,
-		bool $comment_is_visible_for_customer,
-		bool $save = false
-	) : Order_Status_History
-	{
-		$this->status_id = $status_id;
-		
-		$history_item = new Order_Status_History();
-		if($this->getId()) {
-			$history_item->setOrderId( $this->getId() );
-		}
-		$history_item->setDateAdded( Data_DateTime::now() );
-		$history_item->setStatusIs( $status_id );
-		$history_item->setCustomerNotified( $customer_notified );
-		$history_item->setComment( $comment );
-		$history_item->setAdministrator( $administrator );
-		$history_item->setAdministratorId( $administrator_id );
-		$history_item->setCommentIsVisibleForCustomer( $comment_is_visible_for_customer );
-		
-		$this->status_history[] = $history_item;
-		
-		if($this->getId() && $save) {
-			static::updateData(['status_id'=>$status_id], ['id'=>$this->id]);
-			$history_item->save();
-		}
-		
-		return $history_item;
-	}
+	
 	
 	/**
-	 * @return Order_Status_History[]
+	 * @return Order_Event[]
 	 */
-	public function getStatusHistory(): array
+	public function getHistory() : array
 	{
-		return $this->status_history;
+		return Order_Event::getForOrder( $this->getId() );
 	}
 	
+	public function getWarehouseId(): int
+	{
+		return $this->warehouse_id;
+	}
 	
-
-	public function getAllItemsAvailable() : bool
+	public function setWarehouseId( int $warehouse_id ): void
 	{
-		return $this->all_items_available;
+		$this->warehouse_id = $warehouse_id;
 	}
-
-	public function setAllItemsAvailable( bool $all_items_available ): void
+	
+	public function getWarehouse() : ?WarehouseManagement_Warehouse
 	{
-		$this->all_items_available = $all_items_available;
+		if(!$this->warehouse) {
+			$this->warehouse = WarehouseManagement_Warehouse::get( $this->warehouse_id );
+		}
+		
+		return $this->warehouse;
 	}
-
-
-
-
+	
+	public function setWarehouse( WarehouseManagement_Warehouse $warehouse ) : void
+	{
+		$this->warehouse = $warehouse;
+		$this->setWarehouseId( $warehouse->getId() );
+		static::updateData(
+			data: [
+				'warehouse_id' => $this->warehouse_id,
+			],
+			where: [
+				'id' => $this->id
+			]
+		);
+	}
+	
 
 	public function recalculate() : void
 	{
@@ -771,20 +956,20 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->service_amount = 0.0;
 		$this->delivery_amount = 0.0;
 		$this->payment_amount = 0.0;
-
-		$this->all_items_available = true;
+		$this->discount_amount = 0.0;
+		
+		$this->total_volume_of_products = 0.0;
+		$this->total_weight_of_products = 0.0;
 
 		foreach( $this->items as $order_item ) {
-			if(
-				(
-					$order_item->getType()==Order_Item::ITEM_TYPE_PRODUCT ||
-					$order_item->getType()==Order_Item::ITEM_TYPE_GIFT
-				)
-				&&
-				!$order_item->isAvailable()
-			) {
-				$this->all_items_available = false;
+			if ( $order_item->isPhysicalProduct() ) {
+				$product = Product_ShopData::get( $order_item->getItemId(), $this->getShop() );
+				
+				$this->total_volume_of_products += ($product->getBoxesVolume()*$order_item->getNumberOfUnits());
+				$this->total_weight_of_products += ($product->getBoxesWeight()*$order_item->getNumberOfUnits());
 			}
+			
+			
 
 			$amount = $order_item->getTotalAmount();
 
@@ -794,6 +979,7 @@ abstract class Core_Order extends Entity_WithShopRelation {
 				case Order_Item::ITEM_TYPE_GIFT:
 				break;
 				case Order_Item::ITEM_TYPE_PRODUCT:
+				case Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT:
 					$this->product_amount += $amount;
 				break;
 				case Order_Item::ITEM_TYPE_SERVICE:
@@ -811,6 +997,8 @@ abstract class Core_Order extends Entity_WithShopRelation {
 
 			}
 		}
+		
+		
 	}
 
 	protected function generateKey() : void
@@ -825,6 +1013,7 @@ abstract class Core_Order extends Entity_WithShopRelation {
 
 	public function beforeSave(): void
 	{
+		parent::beforeSave();
 		if($this->getIsNew()) {
 			$this->generateKey();
 		}
@@ -832,20 +1021,14 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	
 	public function afterAdd(): void
 	{
+		parent::afterAdd();
 		$this->generateNumber();
-		static::updateData(
-			[
-				'number'=>$this->number
-			],
-			[
-				'id'=>$this->id
-			]);
 	}
 	
 	
 	public static function get( int $id ) : static|null
 	{
-		return Order::load( $id );
+		return static::load( $id );
 	}
 
 	public static function getByKey( string $key ) : Order|null
@@ -860,7 +1043,44 @@ abstract class Core_Order extends Entity_WithShopRelation {
 
 		return $orders[0];
 	}
-
+	
+	public static function getByImportSource( string $import_source, string $import_remote_id, Shops_Shop $shop ) : Order|null
+	{
+		$where = $shop->getWhere();
+		$where[] = 'AND';
+		$where[] = [
+			'import_source' => $import_source,
+			'AND',
+			'import_remote_id' => $import_remote_id
+		];
+		
+		$orders = Order::fetch(['' => $where]);
+		
+		if(count($orders)!=1) {
+			return null;
+		}
+		
+		return $orders[0];
+	}
+	
+	
+	public static function getByNumber( string $number, Shops_Shop $shop ) : Order|null
+	{
+		$where = $shop->getWhere();
+		$where[] = 'AND';
+		$where[] = [
+			'number' => $number
+		];
+		
+		$orders = Order::fetch(['' => $where]);
+		
+		if(count($orders)!=1) {
+			return null;
+		}
+		
+		return $orders[0];
+	}
+	
 	/**
 	 * @return Order[]
 	 */
@@ -870,31 +1090,24 @@ abstract class Core_Order extends Entity_WithShopRelation {
 
 		return static::fetchInstances( $where );
 	}
-
-
-	public function onNewOrderSave() : void
+	
+	
+	/**
+	 * @return static[]
+	 */
+	public static function getOrdersWaitingForGoods() : array
 	{
-		/**
-		 * @var Order $this
-		 */
+		$where = [
+			'cancelled' => false,
+			'AND',
+			'dispatched' => false,
+			'AND',
+			'all_items_available' => false
+		];
 		
-		foreach(Discounts::Manager()->getActiveModules() as $dm) {
-			$dm->Order_saved( $this );
-		}
-
-		$this->event( 'NewOrderSave' )->handleImmediately();
-
+		return Order::fetch(['' => $where], order_by: 'id' );
 	}
-
-	public function event( string $event ) : Order_Event
-	{
-		/**
-		 * @var Order $this
-		 */
-		$e = Order_Event::newEvent( $this, $event );
-
-		return $e;
-	}
+	
 	
 	public function setBillingAddress( Customer_Address $address ) : void
 	{
@@ -927,6 +1140,7 @@ abstract class Core_Order extends Entity_WithShopRelation {
 	}
 	
 	
+	
 	public function setDeliveryAddress( Customer_Address $address ) : void
 	{
 		$this->setDeliveryCompanyName( $address->getCompanyName() );
@@ -937,6 +1151,7 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$this->setDeliveryAddressZip( $address->getAddressZip() );
 		$this->setDeliveryAddressCountry( $address->getAddressCountry() );
 	}
+	
 	
 	public function getDeliveryAddress() : Customer_Address
 	{
@@ -951,6 +1166,206 @@ abstract class Core_Order extends Entity_WithShopRelation {
 		$address->setAddressCountry( $this->getDeliveryAddressCountry( ) );
 		
 		return $address;
+	}
+	
+	public function getAdminTitle(): string
+	{
+		return $this->getNumber();
+	}
+	
+	public function getTotalWeightOfProducts(): float
+	{
+		return $this->total_weight_of_products;
+	}
+	
+	public function setTotalWeightOfProducts( float $total_weight_of_products ): void
+	{
+		$this->total_weight_of_products = $total_weight_of_products;
+	}
+	
+	public function getTotalVolumeOfProducts(): float
+	{
+		return $this->total_volume_of_products;
+	}
+	
+	public function setTotalVolumeOfProducts( float $total_volume_of_products ): void
+	{
+		$this->total_volume_of_products = $total_volume_of_products;
+	}
+	
+	
+	/**
+	 * @return Order_ProductOverviewItem[]
+	 */
+	public function getPhysicalProductOverview() : array
+	{
+		/**
+		 * @var Order_ProductOverviewItem[] $result
+		 */
+		$result = [];
+		foreach($this->getItems() as $item) {
+			if(!$item->isPhysicalProduct()) {
+				continue;
+			}
+			
+			if( ($set_items=$item->getSetItems()) ) {
+				foreach( $item->getSetItems() as $set_item ) {
+					$product = Product_ShopData::get( $set_item->getItemId(), $this->getShop() );
+					
+					if(
+						!$product ||
+						!$product->isPhysicalProduct()
+					) {
+						continue;
+					}
+					
+					$number_of_units = $set_item->getNumberOfUnits()*$item->getNumberOfUnits();
+					
+					$id = $product->getId();
+					if(!isset($result[$id])) {
+						$result[$id] = new Order_ProductOverviewItem( $product, $number_of_units );
+					} else {
+						$result[$id]->addNumberOfUnits( $number_of_units );
+					}
+				}
+				
+				continue;
+			}
+			
+			$product = Product_ShopData::get( $item->getItemId(), $this->getShop() );
+			if(
+				!$product ||
+				!$product->isPhysicalProduct()
+			) {
+				continue;
+			}
+			
+			$number_of_units = $item->getNumberOfUnits();
+			
+			$id = $product->getId();
+			
+			if(!isset($result[$id])) {
+				$result[$id] = new Order_ProductOverviewItem( $product, $number_of_units );
+			} else {
+				$result[$id]->addNumberOfUnits( $number_of_units );
+			}
+		}
+		
+		return $result;
+		
+	}
+	
+	public function getHasPhysicalProducts() : bool
+	{
+		return count($this->getPhysicalProductOverview())>0;
+	}
+	
+	
+	/**
+	 * @return Order_ProductOverviewItem[]
+	 */
+	public function getVirtualProductOverview() : array
+	{
+		/**
+		 * @var Order_ProductOverviewItem[] $result
+		 */
+		$result = [];
+		foreach($this->getItems() as $item) {
+			if($item->isPhysicalProduct()) {
+				continue;
+			}
+			
+			if( ($set_items=$item->getSetItems()) ) {
+				foreach( $item->getSetItems() as $set_item ) {
+					$product = Product_ShopData::get( $set_item->getItemId(), $this->getShop() );
+					
+					if(
+						!$product ||
+						!$product->isVirtual()
+					) {
+						continue;
+					}
+					
+					$number_of_units = $set_item->getNumberOfUnits()*$item->getNumberOfUnits();
+					
+					$id = $product->getId();
+					if(!isset($result[$id])) {
+						$result[$id] = new Order_ProductOverviewItem( $product, $number_of_units );
+					} else {
+						$result[$id]->addNumberOfUnits( $number_of_units );
+					}
+				}
+				
+				continue;
+			}
+			
+			$product = Product_ShopData::get( $item->getItemId(), $this->getShop() );
+			if(
+				!$product ||
+				!$product->isVirtual()
+			) {
+				continue;
+			}
+			
+			$number_of_units = $item->getNumberOfUnits();
+			
+			$id = $product->getId();
+			
+			if(!isset($result[$id])) {
+				$result[$id] = new Order_ProductOverviewItem( $product, $number_of_units );
+			} else {
+				$result[$id]->addNumberOfUnits( $number_of_units );
+			}
+		}
+		
+		return $result;
+		
+	}
+	
+	
+	public function getHasVirtualProducts() : bool
+	{
+		return count($this->getVirtualProductOverview())>0;
+	}
+	
+	public function getPromisedDeliveryDate(): ?Data_DateTime
+	{
+		return $this->promised_delivery_date;
+	}
+	
+	public function setPromisedDeliveryDate( Data_DateTime|null|string $date ): void
+	{
+		$this->promised_delivery_date = Data_DateTime::catchDate( $date );
+	}
+	
+	
+	public function basicClone() : Order
+	{
+		$new_order = new Order();
+		
+		$new_order->setDatePurchased( Data_DateTime::now() );
+		$new_order->setIpAddress('clone:'.$this->getNumber());
+		
+		$new_order->setShop( $this->getShop() );
+		$new_order->setCurrencyCode( $this->getCurrencyCode() );
+		$new_order->setAvailabilityCode( $this->getAvailabilityCode() );
+		$new_order->setPricelistCode( $this->getPricelistCode() );
+		
+		$new_order->setCustomerId( $this->getCustomerId() );
+		$new_order->setPhone( $this->getPhone() );
+		$new_order->setEmail( $this->getEmail() );
+		
+		$new_order->setBillingAddress( $this->getBillingAddress());
+		$new_order->setDeliveryAddress( $this->getDeliveryAddress());
+		
+		$new_order->setDifferentDeliveryAddress( $this->getDifferentDeliveryAddress() );
+		$new_order->setSpecialRequirements( $this->getSpecialRequirements() );
+		$new_order->setCompanyOrder( $this->isCompanyOrder() );
+		
+		$new_order->setDeliveryMethod( $this->getDeliveryMethod(), $this->getDeliveryPersonalTakeoverDeliveryPointCode() );
+		$new_order->setPaymentMethod( $this->getPaymentMethod(), $this->getPaymentMethodSpecification() );
+		
+		return $new_order;
 	}
 	
 }

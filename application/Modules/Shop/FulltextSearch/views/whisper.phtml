@@ -1,0 +1,44 @@
+<?php
+namespace JetApplicationModule\Shop\FulltextSearch;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Category_ShopData;
+use JetApplication\Product_ShopData;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Product_ShopData[] $products
+ * @var Category_ShopData[] $categories
+ */
+
+$products = $this->getRaw('products');
+$categories = $this->getRaw('categories');
+
+?>
+
+<div style="display: grid;grid-template-columns: 1fr 4fr;">
+	<div>
+		<?php if( $categories ): ?>
+			<b><?=Tr::_('Categories')?></b><br>
+			<br>
+			<?php foreach($categories as $category): ?>
+				<a href="<?=$category->getURL()?>"><?=$category->getName()?></a><br>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		
+	</div>
+	<div>
+		<?php if($products): ?>
+			<b><?=Tr::_('Products')?></b><br>
+			<br>
+			<div class="product_listing_list_products search_result">
+				<?php foreach($products as $product): ?>
+					<?=Shop_Managers::ProductListing()->renderItem( $product )?>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+	</div>
+</div>
+

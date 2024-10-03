@@ -1,0 +1,36 @@
+<?php
+namespace JetApplicationModule\Shop\Customer\Login;
+use Jet\UI;
+use JetApplication\Shop_Managers;
+use Jet\UI_button;
+
+$oauth = Shop_Managers::OAuth();
+
+$dialog = UI::dialog('customer_login_dialog', '');
+
+echo UI::button( '' )
+	->setIcon('key')
+	->setClass( UI_button::CLASS_LIGHT )
+	->setOnClick( "dialog.open('customer_login_dialog')" );
+?>
+
+<?=$dialog->start()?>
+
+	<div id="customer_login_form_area">
+		<?php require 'login/form.phtml' ?>
+	</div>
+	<br>
+	
+	<?php if($oauth): ?>
+	<div style="padding: 10px;">
+		<?php foreach($oauth->getOAuthModules() as $oauth_module): ?>
+		<div style="padding: 10px;">
+			<?=$oauth->renderLoginButton( $oauth_module );?>
+		</div>
+		<?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+
+<?=$dialog->end()?>
+
+<?=$this->render('js')?>

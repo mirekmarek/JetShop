@@ -5,7 +5,6 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
-use Jet\Logger;
 use Jet\UI_messages;
 use JetApplication\Shops;
 
@@ -34,14 +33,6 @@ trait Controller_Main_Edit_Variants
 		
 		if( $product->catchAddVariantForm( $new_variant ) ) {
 			
-			Logger::success(
-				'product_updated.variant_created',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated - variant created',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-			
 			UI_messages::success(
 				Tr::_( 'New variant has been created' )
 			);
@@ -53,14 +44,7 @@ trait Controller_Main_Edit_Variants
 		
 		$updated = false;
 		if( $product->catchUpdateVariantsForm() ) {
-			Logger::success(
-				'product_updated',
-				'Product '.$product->getAdminTitle().' ('.$product->getId().') updated',
-				$product->getId(),
-				$product->getAdminTitle(),
-				$product
-			);
-			
+
 			UI_messages::success(
 				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
 			);
@@ -75,45 +59,65 @@ trait Controller_Main_Edit_Variants
 		
 		if($GET->exists('activate_variant')) {
 			$variant_id=$GET->getInt('activate_variant');
-			$shop_key = $GET->getString('shop');
 			
-			$variant = $product->getVariants()[$variant_id]??null;
-			$shop = Shops::get( $shop_key );
-			if( $variant && $shop ) {
-				$variant->getShopData($shop)->activate();
+			if( ($variant = $product->getVariants()[$variant_id]??null) ) {
+				$variant->activate();
 				$product->actualizeVariantMaster();
-				
-				Logger::success(
-					event: 'entity_shop_data_activated:'.$variant->getEntityType(),
-					event_message: 'Entity '.$variant->getEntityType().' \''.$this->current_item->getAdminTitle().'\' ('.$variant->getId().') shop data '.$shop->getKey().' activated',
-					context_object_id: $variant->getId().':'.$shop->getKey(),
-					context_object_name: $this->current_item->getInternalName().' ('.$shop->getShopName().')'
-				);
-
 			}
 			
-			Http_Headers::reload(unset_GET_params: ['activate_variant', 'shop']);
+			Http_Headers::reload(unset_GET_params: ['activate_variant']);
+		}
+		
+		if($GET->exists('activate_variant_completely')) {
+			$variant_id=$GET->getInt('activate_variant_completely');
+			
+			if( ($variant = $product->getVariants()[$variant_id]??null) ) {
+				$variant->activateCompletely();
+				$product->actualizeVariantMaster();
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['activate_variant_completely']);
 		}
 		
 		if($GET->exists('deactivate_variant')) {
 			$variant_id=$GET->getInt('deactivate_variant');
+			
+			if( ($variant = $product->getVariants()[$variant_id]??null) ) {
+				$variant->deactivate();
+				$product->actualizeVariantMaster();
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['deactivate_variant']);
+		}
+		
+		
+		
+		if($GET->exists('activate_variant_shop_data')) {
+			$variant_id=$GET->getInt('activate_variant_shop_data');
 			$shop_key = $GET->getString('shop');
 			
 			$variant = $product->getVariants()[$variant_id]??null;
 			$shop = Shops::get( $shop_key );
 			if( $variant && $shop ) {
-				$variant->getShopData($shop)->deactivate();
+				$variant->activateShopData( $shop );
 				$product->actualizeVariantMaster();
-				
-				Logger::success(
-					event: 'entity_shop_data_deactivated:'.$variant->getEntityType(),
-					event_message: 'Entity '.$variant->getEntityType().' \''.$this->current_item->getAdminTitle().'\' ('.$variant->getId().') shop data '.$shop->getKey().' deactivated',
-					context_object_id: $variant->getId().':'.$shop->getKey(),
-					context_object_name: $this->current_item->getInternalName().' ('.$shop->getShopName().')'
-				);
 			}
 			
-			Http_Headers::reload(unset_GET_params: ['deactivate_variant', 'shop']);
+			Http_Headers::reload(unset_GET_params: ['activate_variant_shop_data', 'shop']);
+		}
+		
+		if($GET->exists('deactivate_variant_shop_data')) {
+			$variant_id=$GET->getInt('deactivate_variant_shop_data');
+			$shop_key = $GET->getString('shop');
+			
+			$variant = $product->getVariants()[$variant_id]??null;
+			$shop = Shops::get( $shop_key );
+			if( $variant && $shop ) {
+				$variant->deactivateShopData( $shop );
+				$product->actualizeVariantMaster();
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['deactivate_variant_shop_data', 'shop']);
 		}
 		
 		

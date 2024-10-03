@@ -11,6 +11,7 @@ namespace JetApplicationModule\Admin\Orders;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use Jet\UI_dataGrid_column;
 
 class Listing_Column_Customer extends DataListing_Column
 {
@@ -29,5 +30,10 @@ class Listing_Column_Customer extends DataListing_Column
 	public function getDisallowSort(): bool
 	{
 		return true;
+	}
+	
+	public function initializer( UI_dataGrid_column $column ): void
+	{
+		$column->addCustomCssStyle('width:300px;');
 	}
 }

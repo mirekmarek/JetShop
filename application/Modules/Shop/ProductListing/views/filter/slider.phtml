@@ -1,0 +1,38 @@
+<?php
+use Jet\MVC_View;
+use Jet\Locale;
+
+/**
+ * @var MVC_View $this
+ * @var Locale $locale
+ */
+$from = $this->getInt('from');
+$min = $this->getInt('min');
+
+$to = $this->getInt('to');
+$max = $this->getInt('max');
+
+$onChangeFrom = $this->getRaw('onChangeFrom');
+$onChangeTo = $this->getRaw('onChangeTo');
+
+$locale = $this->getRaw('locale', Locale::getCurrentLocale());
+
+$min_distance_percent = $this->getInt('min_distance_percent', 10);
+
+$units = $this->getString('units');
+?>
+
+	<div class="dual-slider" data-min-distance-percent="<?=$min_distance_percent?>" data-locale="<?=$locale->getLanguage()?>-<?=$locale->getRegion()?>" data-units="<?=$units?>">
+		
+		<div class="dial-slider-container">
+			<input class="dual-slider-range dual-slider-from" type="range" value="<?=$from?>" min="<?=$min?>" max="<?=$max?>" onchange="<?=$onChangeFrom?>"/>
+			<input class="dual-slider-range slider-to" type="range" value="<?=$to?>" min="<?=$min?>" max="<?=$max?>" onchange="<?=$onChangeTo?>"/>
+		</div>
+		<div class="dial-slider-values">
+			<div class="dual-slider-status-from">
+			</div>
+			<div class="dual-slider-status-to">
+			</div>
+		</div>
+	</div>
+

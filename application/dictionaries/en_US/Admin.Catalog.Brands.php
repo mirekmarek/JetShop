@@ -1,0 +1,21 @@
+<?php
+return [
+	'Brands' => '',
+	'... select brand ...' => '',
+	'- all -' => '',
+	'Not active' => '',
+	'Active' => '',
+	'CSV' => '',
+	'XLSX' => '',
+	'ID' => '',
+	'Is active' => '',
+	'Internal name' => '',
+	'Internal code' => '',
+	'Internal notes' => '',
+	'Please enter a value' => '',
+	'Invalid value' => '',
+	'Please select option' => '',
+	'General' => '',
+	'Please enter name' => '',
+	'Name:' => '',
+];

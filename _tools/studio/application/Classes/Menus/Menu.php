@@ -242,16 +242,7 @@ class Menus_Menu extends Navigation_Menu
 	{
 
 		uasort( $this->items, function( Menus_Menu_Item $a, Menus_Menu_Item $b ) {
-			if( $a->getIndex() == $b->getIndex() ) {
-				return 0;
-			}
-
-			if( $a->getIndex() > $b->getIndex() ) {
-				return 1;
-			}
-
-			return -1;
-
+			return $a->getIndex() <=> $b->getIndex();
 		} );
 
 		$i = 0;

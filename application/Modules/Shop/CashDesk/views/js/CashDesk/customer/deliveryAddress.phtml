@@ -1,0 +1,95 @@
+<script>
+	CashDesk.customer.deliveryAddress = {
+		whisperer: null,
+		form: null,
+
+		setTheSame: function() {
+			CashDesk._request.doGet('?action=customer_delivery_address_set_the_same');
+			/*
+			CashDesk.slideUp('cash_desk_delivery_address', function () {
+				CashDesk._request.doGet('?action=customer_delivery_address_set_the_same', function () {
+					CashDesk.slideDown('cash_desk_delivery_address');
+				});
+			});
+			*/
+		},
+
+		setTheSameConfirm: function() {
+			CashDesk.slideUp('cash_desk_delivery_address', function () {
+				CashDesk._request.doGet('?action=customer_delivery_address_set_the_same_confirm', function () {
+					CashDesk.slideDown('cash_desk_delivery_address', function () {
+						CashDesk.slideDown('cash_desk_confirm', () => {
+							CashDesk.scrollTo('cash_desk_confirm');
+						});
+					});
+				});
+			});
+
+		},
+
+		setDifferent: function() {
+			CashDesk._request.doGet('?action=customer_delivery_address_set_different');
+			/*
+			CashDesk.slideUp('cash_desk_delivery_address', function () {
+				CashDesk._request.doGet('?action=customer_delivery_address_set_different', function () {
+					CashDesk.slideDown('cash_desk_delivery_address');
+				});
+			});
+			*/
+		},
+
+		initEdit: function() {
+		},
+
+		disableEdit: function() {
+			CashDesk.customer.deliveryAddress.whisperer = null;
+		},
+
+		select: function( id ) {
+			CashDesk._request.doGet('?action=customer_delivery_address_select&id='+id);
+		},
+
+		sendField: function( field ) {
+			let field_name = field.name;
+			let value = field.value;
+
+			CashDesk._request.doGet(
+				'?action=customer_delivery_address_catch_field&field='+field_name+'&value='+encodeURIComponent(value)
+			);
+		},
+
+
+		confirm: function() {
+			const onResponse = function( response ) {
+				if(response.ok) {
+					CashDesk.slideUp('cash_desk_delivery_address', function () {
+						CashDesk._request.handleResponse(response);
+
+						CashDesk.slideDown('cash_desk_delivery_address', function () {
+							CashDesk.slideDown('cash_desk_confirm', () => {
+								CashDesk.scrollTo('cash_desk_confirm');
+							});
+						});
+					});
+				}
+			};
+
+			CashDesk._request.doForm( 'cash_desk_customer_delivery_address_form', onResponse, null, true);
+		},
+
+		back: function() {
+			CashDesk.slideUp('cash_desk_confirm', function () {
+				CashDesk.slideUp('cash_desk_delivery_address', function () {
+
+					CashDesk._request.doGet('?action=customer_back_to_delivery_address', function () {
+						CashDesk.slideDown('cash_desk_delivery_address', () => {
+							CashDesk.scrollTo('cash_desk_delivery_address');
+						});
+					});
+
+				});
+			});
+		}
+
+	};
+</script>

@@ -23,12 +23,14 @@ $controller = $this->controller;
 	?>
 	<?=$dialog->start()?>
 	<div style="overflow: auto;">
-		<div class="sortable" id="categories-sort">
+		<div id="categories-sort">
 			<?php foreach($controller->getCurrentNode()->getChildren() as $node):
 				?>
-				<div class="sortable-item" data-id="<?=$node->getId()?>">
-					<i class="property-option-move"></i>
-					<?=$node->getLabel()?>
+				<div class="sortable-item card card-body" data-id="<?=$node->getId()?>" style="margin: 10px;padding: 5px;">
+					<div style="display: flex;align-items: center;gap: 20px;">
+						<?=UI::icon('arrows-v')?>
+						<?=$node->getLabel()?>
+					</div>
 				</div>
 			<?php endforeach; ?>
 		</div>
@@ -40,7 +42,8 @@ $controller = $this->controller;
 	</form>
 	<?=$dialog->end()?>
 
-<script type="text/javascript">
+<script>
+	
 	const sortCategories = {
 		openDialog: function () {
 			sortCategories.setSort();
@@ -70,3 +73,12 @@ $controller = $this->controller;
 </script>
 
 <?php endif; ?>
+
+<script>
+	function searchResult( id ) {
+		let URL = '<?=Http_Request::currentURI(['id'=>'ID'])?>';
+		URL = URL.replace('ID', id);
+
+		location = URL;
+	}
+</script>

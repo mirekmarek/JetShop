@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\CustomDispatch;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$items = $this->getRaw('items');
+if(!$items) {
+	return;
+}
+
+$items = json_decode($items, true);
+
+if(!is_array($items)) {
+	return;
+}
+
+?>
+<table class="table table-striped">
+	<?php foreach($items as $id=>$qty):
+		$id = (int)$id;
+		$qty = (int)$qty;
+		?>
+	<tr>
+		<td style="width: 80px">
+			<?=UI::button_delete(' ')->setOnClick("CustomOD.removeItem({$id})")->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+		</td>
+		<td style="width: 80px"><?=$qty?>x</td>
+		<td><?=Admin_Managers::Product()->showName( $id )?></td>
+	</tr>
+	<?php endforeach; ?>
+</table>

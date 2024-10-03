@@ -1,0 +1,22 @@
+<?php
+namespace JetApplicationModule\Shop\Customer\Login;
+?>
+<script>
+	const CustomerLogin = {
+		login: function() {
+			JetAjaxForm.submit('customer_login_form', {
+				onSuccess: function() {
+					location.reload();
+				}
+			});
+		},
+
+		logout: function() {
+			JetAjaxForm.submit('customer_logout_form', {
+				onSuccess: function() {
+					location.reload();
+				}
+			});
+		}
+	};
+</script>

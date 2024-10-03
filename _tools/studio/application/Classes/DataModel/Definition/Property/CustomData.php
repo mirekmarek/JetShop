@@ -36,6 +36,7 @@ class DataModel_Definition_Property_CustomData extends Jet_DataModel_Definition_
 
 	/**
 	 * @return mixed
+	 * @noinspection PhpMixedReturnTypeCanBeReducedInspection
 	 */
 	public function getDefaultValue() : mixed
 	{

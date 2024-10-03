@@ -1,0 +1,69 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use JetApplication\Complaint;
+use JetApplication\Product_ShopData;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $edit_form
+ * @var Product_ShopData $product
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+$edit_form = $this->getRaw('form');
+$product = $complaint->getProduct();
+
+?>
+<div class="card" style="margin: 10px;">
+	<div class="card-body">
+		<h5 class="card-title"><?=Tr::_('Complaint %n%', ['n'=>$complaint->getNumber()])?></h5>
+		
+		<div style="display: grid;grid-template-columns: 60px 1fr;gap: 5px;margin: 10px;align-items: center;margin-bottom: 20px;">
+			<div>
+				<?php if($product->getImg(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+		</div>
+		
+		<?=$this->render('complaint-status')?>
+		
+		
+		<div class="card card-body" style="width: 800px;margin: 10px;">
+			<?=nl2br( $complaint->getProblemDescription() )?>
+		</div>
+		
+		<div id="complaint-images" style="width: 800px;margin: 10px">
+			<div class="card">
+				<div class="card-body">
+					<h5><?=Tr::_('Images')?></h5>
+					
+					<div style="display: grid;grid-template-columns: 100px 300px 200px 1fr;align-items: center;gap: 20px;margin: 20px;">
+						<?php foreach( $complaint->getImages() as $img ):?>
+							
+							<div>
+								<a href="<?=$img->getURL()?>" target="_blank"><img src="<?=$img->getThbURL()?>" style="max-width: 100px; height: auto"></a>
+							</div>
+							<div><?=$img->getName()?></div>
+							<div><?=Locale::size( $img->getSize() )?></div>
+							<div>
+							</div>
+						
+						<?php endforeach; ?>
+					</div>
+				
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+

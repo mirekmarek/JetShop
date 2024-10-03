@@ -7,105 +7,339 @@
  */
 namespace JetApplicationModule\Exports\Heureka;
 
-use JetApplication\Exports_CategoriesCache;
+use Jet\Tr;
+use JetApplication\Admin_ControlCentre;
+use JetApplication\Admin_ControlCentre_Module_Interface;
+use JetApplication\Admin_ControlCentre_Module_Trait;
+use JetApplication\Availabilities_Availability;
+use JetApplication\Brand_ShopData;
+use JetApplication\Exports_Definition;
+use JetApplication\Exports_ExportCategory;
+use JetApplication\Exports_ExportCategory_Parameter;
+use JetApplication\Exports_ExportCategory_Parameter_Value;
+use JetApplication\Exports_Generator_XML;
+use JetApplication\Exports_Join_KindOfProduct;
 use JetApplication\Exports_Module;
+use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\Pricelists_Pricelist;
+use JetApplication\Product_ShopData;
+use JetApplication\Shops;
 use JetApplication\Shops_Shop;
 use SimpleXMLElement;
 
 /**
  *
  */
-class Main extends Exports_Module
+class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
 {
-	protected array $allowed_locales = ['cs_CZ', 'sk_SK'];
-
+	use ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use Admin_ControlCentre_Module_Trait;
+	
+	protected array $allowed_locales = [
+		'cs_CZ',
+		'sk_SK'
+	];
+	
 	protected ?array $export_categories = null;
-
+	
 	public function getTitle(): string
 	{
 		return 'Heureka';
 	}
-
+	
 	public function isAllowedForShop( Shops_Shop $shop ): bool
 	{
 		$locale = $shop->getLocale()->toString();
-
-		return in_array($locale, $this->allowed_locales);
+		
+		return in_array( $locale, $this->allowed_locales );
 	}
-
-	public function joinCategoriesAllowed(): bool
+	
+	
+	public function actualizeCategories( Shops_Shop $shop ): void
 	{
-		return true;
-	}
-
-	public function joinProductsAllowed(): bool
-	{
-		return true;
-	}
-
-	public function __getExportCategories( Shops_Shop $shop ) : array
-	{
-		$context = stream_context_create(['http'=> ['timeout' => 2]]);
-		$xml = @file_get_contents( Config::getCategoriesURL($shop) , false, $context);
-		if(!$xml) {
-			return [];
+		if( !$this->isAllowedForShop( $shop ) ) {
+			return;
 		}
-
-		$xml = new SimpleXMLElement($xml);
-
+		
+		$context = stream_context_create( ['http' => ['timeout' => 2]] );
+		$xml = @file_get_contents( $this->getShopConfig($shop)->getCategoriesURL(), false, $context );
+		if( !$xml ) {
+			return;
+		}
+		
+		$xml = new SimpleXMLElement( $xml );
+		
 		$export_categories = [];
-
+		
 		$addCategory = null;
-
-		$addCategory = function( SimpleXMLElement $xml, $parent_id='', array $path=[] ) use ( &$addCategory, &$export_categories ) {
-			foreach( $xml->CATEGORY as $node ) {
-
-				$category = new HeurekaCategory( $node, $parent_id, $path );
-
-				$export_categories[$category->getId()] = $category;
+		
+		$addCategory = function( SimpleXMLElement $xml, $parent_id = '', array $full_name = [], array $path = [] ) use ( $shop, &$addCategory, &$export_categories ) {
+			foreach( $xml->CATEGORY as $xnl_node ) {
+				
+				$id = trim( (string)$xnl_node->CATEGORY_ID );
 				$next_path = $path;
+				$next_path[] = $id;
+				$name = (string)$xnl_node->CATEGORY_NAME;
+				
+				$_full_name = $full_name;
+				$_full_name[] = $name;
+				
+				
+				$e_c = Exports_ExportCategory::get( $shop, $this->getCode(), $id );
+				
+				if( !$e_c ) {
+					$e_c = new Exports_ExportCategory();
+					$e_c->setShop( $shop );
+					$e_c->setExportCode( $this->getCode() );
+					$e_c->setCategoryId( $id );
+					$e_c->setCategorySecondaryId( $id );
+				}
+				
+				$e_c->setParentCategoryId( $parent_id );
+				$e_c->setName( $name );
+				$e_c->setPath( $path );
+				$e_c->setFullName( $_full_name );
+				
+				$e_c->save();
+				
+				$addCategory( $xnl_node, $id, $_full_name, $next_path );
+			}
+			
+		};
+		
+		$addCategory( $xml );
+	}
+	
+	public function actualizeCategory( Shops_Shop $shop, string $category_id ): void
+	{
+		$csv_url = $this->getShopConfig($shop)->getParametersCsvURL();
+		
+		$data = file_get_contents( $csv_url );
+		
+		$data = explode( "\n", $data );
+		
+		$schema = str_getcsv( $data[0] );
+		unset( $data[0] );
+		
+		$l = 0;
+		foreach( $data as $line ) {
+			$line = trim( $line );
+			$line = str_getcsv( $line );
+			
+			$item = [];
+			foreach( $schema as $i => $name ) {
+				$item[$name] = $line[$i];
+			}
+			
+			if( $item['categoryId'] != $category_id ) {
+				continue;
+			}
+			
+			$param_id = $item['parametrId'];
+			
+			$e_p = Exports_ExportCategory_Parameter::get(
+				$shop,
+				$this->getCode(),
+				$category_id,
+				$param_id
+			);
+			
+			if( !$e_p ) {
+				$e_p = new Exports_ExportCategory_Parameter();
+				$e_p->setShop( $shop );
+				$e_p->setExportCode( $this->getCode() );
+				$e_p->setExportCategoryId( $category_id );
+				$e_p->setExportParameterId( $param_id );
+			}
+			
+			switch( $item['parameterDataType'] ) {
+				case 'string':
+					$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_STRING );
+					break;
+				default:
+					$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_OPTIONS );
+					break;
+			}
+			
+			$e_p->setName( $item['parameterName'] );
+			$e_p->setOptions( explode( ',', $item['parameterValue'] ) );
+			$e_p->setUnits( $item['parameterUnit'] );
+			
+			$e_p->save();
+			
+		}
+	}
+	
+	/** @noinspection SpellCheckingInspection */
+	public function generateExports_products( Shops_Shop $shop, Pricelists_Pricelist $pricelist, Availabilities_Availability $availability ): void
+	{
+		$f = new Exports_Generator_XML( $this->getCode(), $shop );
+		
+		$brand_map = Brand_ShopData::getNameMap( $shop );
+		$export_category_map = Exports_Join_KindOfProduct::getMap( $this->getCode(), $shop );
+		$parameters = [];
+		$export_categories = [];
+		
+		$f->start();
+		
+		$f->tagStart( 'SHOP' );
+		
+		$products = Product_ShopData::getAllActive();
+		
+		foreach($products as $sd) {
+			$f->tagStart( 'SHOPITEM' );
+			
+			$f->tagPair( 'ITEM_ID', $sd->getId() );
 
-				$next_path[] = $category->getId();
-				$addCategory($node, $category->getId(), $next_path);
+			if($sd->isVariant()) {
+				$f->tagPair( 'ITEMGROUP_ID', $sd->getVariantMasterProductId() );
+			}
+			
+			if($sd->isVariantMaster()) {
+				$f->tagPair( 'ITEMGROUP_ID', $sd->getId() );
+			}
+			
+			$f->tagPair( 'PRODUCT', $sd->getName() );
+			$f->tagPair( 'PRODUCTNAME', $sd->getName() );
+			$f->tagPair( 'DESCRIPTION', $sd->getDescription() );
+			$f->tagPair( 'PRODUCTNO', $sd->getInternalCode() );
+			$f->tagPair( 'URL', $sd->getURL() );
+			$f->tagPair( 'PRICE_VAT', $sd->getPriceBeforeDiscount( $pricelist ) );
+			
+			if(isset($brand_map[$sd->getBrandId()])) {
+				$f->tagPair( 'MANUFACTURER', $brand_map[$sd->getBrandId()] );
+			}
+			$f->tagPair( 'IMGURL', $sd->getImgUrl(0) );
+			
+			//$f->tagPair( 'WARRANTY', '' );
+			//$f->tagPair( 'DELIVERY_DATE', '' );
+			
+			if( ($export_category_id = $export_category_map[$sd->getKindId()]??null) ) {
+				
+				if(!array_key_exists($export_category_id, $export_categories)) {
+					$export_categories[$export_category_id] = Exports_ExportCategory::get(
+						$shop,
+						$this->getCode(),
+						$export_category_id
+					);
+				}
+				if( $export_categories[$export_category_id] ) {
+					$export_category = $export_categories[$export_category_id];
+					$f->tagPair( 'CATEGORYTEXT', implode(' | ', $export_category->getFullName()) );
+				}
+
+				if(!isset($parameters[$export_category_id])) {
+					$parameters[$export_category_id] = Exports_ExportCategory_Parameter::getForCategory(
+						$shop,
+						$this->getCode(),
+						$export_category_id
+					);
+				}
+				$params = $parameters[$export_category_id];
+				
+				$values = Exports_ExportCategory_Parameter_Value::getForProduct(
+					$shop,
+					$this->getCode(),
+					$export_category_id,
+					$sd->getId()
+				);
+				
+				foreach($params as $param_id=>$param) {
+					$value = $values[$param_id]??null;
+					if(
+						!$value ||
+						$value->getValue()===''
+					) {
+						continue;
+					}
+					
+					$value = $value->getValue();
+					
+					if($param->getType()==Exports_ExportCategory_Parameter::PARAM_TYPE_OPTIONS) {
+						$_value = explode('|', $value);
+						$value = [];
+						foreach($_value as $val) {
+							$val = $param->getOptions()[$val];
+							
+							if($param->getUnits()) {
+								$val .= ' '.$param->getUnits();
+							}
+							
+							$value[] = $val;
+						}
+						
+						$value = implode(', ', $value);
+					} else {
+						if($param->getUnits()) {
+							$value .= ' '.$param->getUnits();
+						}
+					}
+					
+					
+					$f->tagStart('PARAM');
+						$f->tagPair('PARAM_NAME', $param->getName());
+						$f->tagPair('VAL', $value);
+					$f->tagEnd('PARAM');
+				}
 
 			}
-
-		};
-
-		$addCategory( $xml );
-
-		return $export_categories;
-	}
-
-		/**
-	 * @param Shops_Shop $shop
-	 *
-	 * @return HeurekaCategory[]
-	 */
-	public function getExportCategories( Shops_Shop $shop ) : array
-	{
-
-		if($this->export_categories===null) {
-			$this->export_categories = Exports_CategoriesCache::get( $this->getCode(), $shop, function() use ($shop) {
-				return $this->__getExportCategories( $shop );
-			});
+			
+			$f->tagEnd( 'SHOPITEM' );
 		}
-
-
-		return $this->export_categories;
-
+		
+		
+		$f->tagEnd( 'SHOP' );
+		
+		$f->done();
 	}
-
-	public function actualizeMetadata( Shops_Shop $shop ): void
+	
+	public function getControlCentreGroup(): string
 	{
-		Exports_CategoriesCache::reset( $this->getCode(), $shop );
-		Exports_CategoriesCache::get( $this->getCode(), $shop, function() use ($shop) {
-			return $this->__getExportCategories( $shop );
-		} );
+		return Admin_ControlCentre::GROUP_EXPORTS;
 	}
-
-	public function generateExports( Shops_Shop $shop ): void
+	
+	
+	public function getControlCentreTitle(): string
 	{
-		// TODO: Implement generateExports() method.
+		return 'Heureka export';
+	}
+	
+	public function getControlCentreIcon(): string
+	{
+		return 'file-export';
+	}
+	
+	public function getControlCentrePriority(): int
+	{
+		return 99;
+	}
+	
+	public function getControlCentrePerShopMode(): bool
+	{
+		return true;
+	}
+	
+	public function getExportsDefinitions(): array
+	{
+		$products = new Exports_Definition(
+			module: $this,
+			name: Tr::_('Heureka - Products'),
+			description: '',
+			export_code: 'products',
+			export: function() {
+				$shop = Shops::getCurrent();
+				
+				$this->generateExports_products(
+					$shop,
+					$shop->getDefaultPricelist(),
+					$shop->getDefaultAvailability()
+				);
+			}
+		);
+		
+		return [
+			$products
+		];
 	}
 }

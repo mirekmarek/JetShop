@@ -1,11 +1,16 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Customer;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 if($cash_desk->getBillingAddressHasBeenSet()) {
 	require 'billing_address/has_been_set.phtml';
@@ -34,38 +39,56 @@ if( Customer::getCurrentCustomer() ) {
 }
 
 require 'billing_address/company_person_switch.phtml';
+
+
+$form->field('address_street_no')->input()->setCustomRenderer( function() {
+	echo $this->renderByView();
+	?>
+	<div style="position: relative">
+		<div id="<?=$this->field->getId()?>_ws" class="whisperer-items" style="display: none;"></div>
+	</div>
+	<?php
+} );
+$form->field('address_town')->input()->setCustomRenderer( function() {
+	echo $this->renderByView();
+	?>
+	<div style="position: relative">
+		<div id="<?=$this->field->getId()?>_ws" class="whisperer-items" style="display: none;"></div>
+	</div>
+	<?php
+} );
 ?>
 
 
 <?=$form->start()?>
 
 <?php if ($cash_desk->isCompanyOrder()): ?>
-	<div id="field_<?=$form->field('company_name')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('company_name')->getId()?>">
 		<?=$form->field('company_name')?>
 	</div>
-	<div id="field_<?=$form->field('company_id')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('company_id')->getId()?>">
 		<?=$form->field('company_id')?>
 	</div>
-	<div id="field_<?=$form->field('company_vat_id')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('company_vat_id')->getId()?>">
 		<?=$form->field('company_vat_id')?>
 	</div>
 <?php endif; ?>
 
-	<div id="field_<?=$form->field('first_name')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('first_name')->getId()?>">
 		<?=$form->field('first_name')?>
 	</div>
-	<div id="field_<?=$form->field('surname')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('surname')->getId()?>">
 		<?=$form->field('surname')?>
 	</div>
 
 
-	<div id="field_<?=$form->field('address_street_no')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('address_street_no')->getId()?>">
 		<?=$form->field('address_street_no')?>
 	</div>
-	<div id="field_<?=$form->field('address_town')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('address_town')->getId()?>">
 		<?=$form->field('address_town')?>
 	</div>
-	<div id="field_<?=$form->field('address_zip')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('address_zip')->getId()?>">
 		<?=$form->field('address_zip')?>
 	</div>
 

@@ -15,7 +15,7 @@ trait Controller_Main_Edit_Images
 		$this->setBreadcrumbNavigation( Tr::_('Images') );
 		
 		$this->view->setVar('item', $this->current_item);
-		
+
 		/**
 		 * @var Product $product
 		 */

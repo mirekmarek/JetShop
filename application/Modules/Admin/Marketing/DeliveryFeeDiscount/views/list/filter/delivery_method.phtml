@@ -1,0 +1,30 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_DeliveryMethod $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'delivery_method' );
+
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Delivery method'),
+	form_fields: [$field],
+	is_active:   $filter->getDeliveryMethod()>0,
+	renderer:    function() use ($field) {
+		?>
+		<?= $field->input() ?>
+		<?php
+	}
+);

@@ -22,7 +22,7 @@ class Index_Word extends DataModel {
 		is_key: true,
 		max_len: 50
 	)]
-	protected string $object_class = '';
+	protected string $entity_type = '';
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -49,14 +49,14 @@ class Index_Word extends DataModel {
 		$this->object_id = $object_id;
 	}
 	
-	public function getObjectClass(): string
+	public function getEntitytype(): string
 	{
-		return $this->object_class;
+		return $this->entity_type;
 	}
 	
-	public function setObjectClass( string $object_class ): void
+	public function setEntitytype( string $entity_type ): void
 	{
-		$this->object_class = $object_class;
+		$this->entity_type = $entity_type;
 	}
 
 	public function getWord() : string

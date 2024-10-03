@@ -1,0 +1,13 @@
+<?php
+namespace JetApplicationModule\Shop\Customer\CustomerSection;
+
+use Jet\MVC_View;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+
+echo $this->getRaw('tabs');
+
+echo Shop_Managers::ProductReviews()->renderCustomerSectionReviews();

@@ -9,6 +9,9 @@ use Jet\UI;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
+use JetApplication\CustomerBlacklist;
+use JetApplication\EMailMarketing;
+use JetApplication\EMailMarketing_Subscribe_Log;
 
 /**
  * @var MVC_View $this
@@ -21,20 +24,16 @@ $customer = $this->getRaw( 'customer' );
 
 $shop = $customer->getShop();
 
-$mailing_subscribe_events = $customer->getMailingSubscribeEventLog();
+$mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getShop(), $customer->getEmail() );
 ?>
 
 
 
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()?>
-
-	</div>
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()?>
 </div>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
+<div id="main-col">
 		<legend><?=Tr::_('Main data')?></legend>
 
 		<table class="table">
@@ -59,7 +58,27 @@ $mailing_subscribe_events = $customer->getMailingSubscribeEventLog();
 			</tr>
 			<tr>
 				<td><?=Tr::_('Phone:')?></td>
-				<td><?=$shop->getPhonePrefix()?> <?=$customer->getPhoneNumber()?></td>
+				<td><?=$customer->getPhoneNumber()?></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<?php
+					/**
+					 * @var CustomerBlacklist $bl_detail
+					 */
+					if(CustomerBlacklist::customerIsBlacklisted( $customer->getEmail(), load_details: true, details: $bl_detail )): ?>
+					<div class="alert alert-danger" role="alert" style="font-size: 1.4rem">
+						<?=UI::icon('skull-crossbones')?> <?=Tr::_('Customer is blacklisted')?>
+					</div>
+					
+					
+					<?=Locale::dateAndTime($bl_detail->getCreated())?>
+					<br>
+					<?=nl2br($bl_detail->getDescription())?>
+					<?php endif; ?>
+					
+				</td>
 			</tr>
 		</table>
 
@@ -83,57 +102,8 @@ $mailing_subscribe_events = $customer->getMailingSubscribeEventLog();
 		<fieldset>
 			<?=Admin_Managers::Order()->showOrdersOfCustomer( $customer )?>
 		</fieldset>
-
-
-		<legend>
-			<?=Tr::_('Mailing subscribe')?>
-			<?php if($customer->getMailingSubscribed()): ?>
-				<div class="badge badge-success"><?=Tr::_('Subscribed')?></div>
-			<?php else: ?>
-				<div class="badge badge-danger"><?=Tr::_('Unsubscribed')?></div>
-			<?php endif; ?>
-		</legend>
-
-		<table class="table table-striped">
-			<thead>
-			<tr>
-				<th><?=Tr::_('Date and time')?></th>
-				<th><?=Tr::_('Event')?></th>
-				<th><?=Tr::_('Event source')?></th>
-				<th><?=Tr::_('Comment')?></th>
-			</tr>
-			</thead>
-			<?php foreach($mailing_subscribe_events as $event): ?>
-			<tr>
-				<td style="width: 200px;"><?=Locale::getCurrentLocale()->formatDateAndTime($event->getDateTime())?></td>
-				<td style="width: 500px;">
-					<?=$event->getEventTxt()?><br>
-					<?=$event->getEventData()?>
-				</td>
-				<td style="width: 200px;">
-					<?=$event->getSource()?>
-				</td>
-				<td>
-					<?=nl2br($event->getComment())?>
-				</td>
-			</tr>
-			<?php endforeach; ?>
-		</table>
-
-		<legend><?=Tr::_('Loyalty program')?></legend>
-		<fieldset>
-			<?php
-			//TODO:
-			?>
-		</fieldset>
-
-		<legend><?=Tr::_('Change log')?></legend>
-		<fieldset>
-			<?php
-			//TODO:
-			?>
-		</fieldset>
-
-	</div>
+		
+		<?=EMailMarketing::SubscriptionManager()->showStatus( $customer->getShop(), $customer->getEmail() )?>
+	
 </div>
 

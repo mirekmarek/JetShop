@@ -1,0 +1,111 @@
+<?php
+namespace JetApplicationModule\Shop\CashDesk;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+
+?>
+<script>
+	let CashDesk = {
+		step: '<?=$cash_desk->getCurrentStep()?>',
+		selected_delivery: '<?=$cash_desk->getSelectedDeliveryMethod()->getId()?>',
+		selected_payment: '<?=$cash_desk->getSelectedPaymentMethod()->getId()?>',
+		billing_address_editable: <?=$cash_desk->isBillingAddressEditable() ? 'true' : 'false'?>,
+		delivery_address_editable: <?=$cash_desk->isDeliveryAddressEditable() ? 'true' : 'false' ?>,
+
+
+		_request: {
+			doGet: async function (URL, onOk, onError, do_not_apply_snippets) {
+				const r = await fetch(URL);
+				const response = await r.json();
+
+				CashDesk._request.handleResponse(response, onOk, onError, do_not_apply_snippets);
+			},
+			doForm: async function (form_id, onOk, onError, do_not_apply_snippets) {
+				const form = document.getElementById( form_id );
+
+				const r = await fetch( form.action, {
+					method: 'post',
+					body: new FormData(form)
+				} );
+				const response = await r.json();
+				CashDesk._request.handleResponse(response, onOk, onError, do_not_apply_snippets);
+				
+			},
+			handleError: function () {
+			},
+			handleResponse: function (response, onOk, onError, do_not_apply_snippets) {
+				if (response['redirect']) {
+					location = response['redirect'];
+					return;
+				}
+
+				CashDesk.selected_delivery = response['selected_delivery'];
+				CashDesk.selected_payment = response['selected_payment'];
+
+				if (!do_not_apply_snippets) {
+					CashDesk._request.applySnippets(response);
+				}
+
+				if (response.ok && onOk) {
+					onOk(response);
+				}
+
+				if (!response.ok && onError) {
+					onError(response);
+				}
+			},
+
+			applySnippets: function (response) {
+				if (response['snippets']) {
+					for (let id in response['snippets']) {
+						let element = document.getElementById(id);
+						if (element) {
+							element.innerHTML = response['snippets'][id];
+						}
+					}
+				}
+
+				CashDesk.delivery.personalTakeover.initialized = false;
+
+				if (CashDesk.billing_address_editable != response.billing_address_editable) {
+					CashDesk.billing_address_editable = response.billing_address_editable;
+					if (CashDesk.billing_address_editable) {
+						CashDesk.customer.billingAddress.initEdit();
+					} else {
+						CashDesk.customer.billingAddress.disableEdit();
+					}
+				}
+
+				if (CashDesk.delivery_address_editable != response.delivery_address_editable) {
+					CashDesk.delivery_address_editable = response.delivery_address_editable;
+					if (CashDesk.delivery_address_editable) {
+						CashDesk.customer.deliveryAddress.initEdit();
+					} else {
+						CashDesk.customer.deliveryAddress.disableEdit();
+					}
+				}
+			}
+		},
+
+		slideUp: function (element_id, after) {
+			effects.slideUp(element_id, 'fast', after);
+		},
+
+		slideDown: function (element_id, after) {
+			effects.slideDown(element_id, 'fast', after);
+		},
+		
+		scrollTo: function(element_id) {
+			effects.scrollTo( element_id );
+		},
+		
+		customer: {}
+	};
+</script>

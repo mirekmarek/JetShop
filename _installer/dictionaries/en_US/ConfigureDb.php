@@ -27,4 +27,8 @@ return [
 	'UNIX socket:' => '',
 	'Charset:' => '',
 	'Path:' => '',
+	'Error connecting to database:' => '',
+	'Please enter a value' => '',
+	'Invalid value' => '',
+	'Out of range' => '',
 ];

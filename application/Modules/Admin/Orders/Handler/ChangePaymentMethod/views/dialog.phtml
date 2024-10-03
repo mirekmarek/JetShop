@@ -1,0 +1,28 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+if(!$order->isEditable()) {
+	return;
+}
+
+$dialog = new UI_dialog( 'change_payment_method_dialog', Tr::_('Change payment method'), UI_dialog::SIZE_DEFAULT );
+
+echo $dialog->start();
+echo '<div id="change-payment-method-form">';
+require 'form.phtml';
+echo '</div>';
+echo $dialog->end();

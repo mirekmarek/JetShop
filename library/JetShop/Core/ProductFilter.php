@@ -1,6 +1,8 @@
 <?php
 namespace JetShop;
 
+use JetApplication\Availabilities_Availability;
+use JetApplication\Pricelists_Pricelist;
 use JetApplication\ProductFilter_Filter_Basic;
 use JetApplication\ProductFilter_Filter_Brands;
 use JetApplication\ProductFilter_Filter_Categories;
@@ -16,6 +18,8 @@ use JetApplication\ProductFilter_Filter;
 abstract class Core_ProductFilter {
 	
 	protected Shops_Shop $shop;
+	protected Pricelists_Pricelist $pricelist;
+	protected Availabilities_Availability $availability;
 	
 	protected string $context_entity;
 	protected int $context_entity_id;
@@ -37,11 +41,43 @@ abstract class Core_ProductFilter {
 	protected array $filters = [];
 	
 
-	public function __construct( Shops_Shop $shop )
+	public function __construct(
+		Shops_Shop $shop,
+		?Pricelists_Pricelist $pricelist =null,
+		?Availabilities_Availability $availability=null
+	)
 	{
 		$this->shop = $shop;
+		
+		if( !$pricelist ) {
+			$pricelist = $this->shop->getDefaultPricelist();
+		}
+		if( !$availability ) {
+			$availability = $this->shop->getDefaultAvailability();
+		}
+		
+		$this->pricelist = $pricelist;
+		$this->availability = $availability;
+		
+		
 		$this->initFilters();
 	}
+	
+	public function getShop(): Shops_Shop
+	{
+		return $this->shop;
+	}
+	
+	public function getPricelist(): Pricelists_Pricelist
+	{
+		return $this->pricelist;
+	}
+	
+	public function getAvailability(): Availabilities_Availability
+	{
+		return $this->availability;
+	}
+	
 	
 	public function initFilters() : void
 	{
@@ -76,14 +112,6 @@ abstract class Core_ProductFilter {
 	{
 		$this->initial_product_ids = $initial_product_ids;
 	}
-	
-	
-	
-	public function getShop(): Shops_Shop
-	{
-		return $this->shop;
-	}
-	
 	
 	
 	public function addFilter( ProductFilter_Filter $filter ) : void
@@ -129,8 +157,8 @@ abstract class Core_ProductFilter {
 			if(!$filter->getIsActive()) {
 				continue;
 			}
-			
-			if($result) {
+
+			if( $result===null || $result ) {
 				$filter->filter();
 				$result = $filter->getFilterResult();
 			}

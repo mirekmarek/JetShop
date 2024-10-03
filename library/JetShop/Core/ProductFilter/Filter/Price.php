@@ -1,7 +1,7 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Product_ShopData;
+use JetApplication\Product_Price;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Storage;
 
@@ -9,7 +9,6 @@ abstract class Core_ProductFilter_Filter_Price extends ProductFilter_Filter
 {
 	protected null|int|float $min_price = null;
 	protected null|int|float $max_price = null;
-
 	
 	
 	public function getKey(): string
@@ -39,36 +38,20 @@ abstract class Core_ProductFilter_Filter_Price extends ProductFilter_Filter
 	{
 		return $this->max_price;
 	}
-	
+
 	
 	public function filter(): void
 	{
-		$where = $this->product_filter->getShop()->getWhere();
-		
-		if($this->previous_filter_result!==null) {
-			$where[] = 'AND';
-			$where['entity_id'] = $this->previous_filter_result;
-		}
-		
-		if($this->min_price!==null) {
-			$where[] = 'AND';
-			$where[] = ['price >='=>$this->min_price];
-		}
-		if($this->max_price!==null) {
-			$where[] = 'AND';
-			$where[] = ['price <='=>$this->max_price];
-		}
-		
-		$this->filter_result = [];
-		$data = Product_ShopData::dataFetchAll(
-			select: ['entity_id'],
-			where: $where,
-			raw_mode: true
+		$product_prices = Product_Price::filterMinMax(
+			$this->getPricelist(),
+			$this->min_price,
+			$this->max_price,
+			$this->previous_filter_result
 		);
 		
-		foreach($data as $d) {
-			$product_id = (int)$d['entity_id'];
-			
+		$this->filter_result = [];
+		
+		foreach($product_prices as $product_id) {
 			if(
 				$this->previous_filter_result &&
 				!in_array($product_id, $this->previous_filter_result)

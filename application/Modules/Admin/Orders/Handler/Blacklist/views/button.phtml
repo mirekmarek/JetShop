@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+use JetApplication\CustomerBlacklist;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('add_bl_form');
+$order = $this->getRaw('order');
+if(!$form) {
+	return;
+}
+
+
+/**
+ * @var CustomerBlacklist $bl_detail
+ */
+if(CustomerBlacklist::customerIsBlacklisted( $order->getEmail(), load_details: true, details: $bl_detail )): ?>
+
+	<div class="alert alert-danger" role="alert" style="font-size: 1.4rem">
+		<?= UI::icon( 'skull-crossbones' ) ?> <?= Tr::_( 'Customer is blacklisted' ) ?>
+	</div>
+	
+	
+	<?= Locale::dateAndTime( $bl_detail->getCreated() ) ?>
+	<br>
+	<?= nl2br( $bl_detail->getDescription() ) ?>
+
+<?php else: ?>
+<div style="text-align: center;padding: 10px;">
+	<?=UI::button(Tr::_('Add customer to blacklist'))->setIcon('book-skull')
+	->setClass(UI_button::CLASS_DANGER)
+	->setOnClick("$('#bl_dialog').modal('show');")?>
+</div>
+<?php endif;
+

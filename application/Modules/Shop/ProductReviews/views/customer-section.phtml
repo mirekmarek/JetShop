@@ -1,0 +1,76 @@
+<?php
+namespace JetApplicationModule\Shop\ProductReviews;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;use JetApplication\Product_ShopData;
+
+
+/**
+ * @var MVC_View   $this
+ * @var CustomerReviewManager $manager
+ */
+
+$manager = $this->getRaw('manager');
+
+$pwp = $manager->getPossibleProducts();
+$reviews = $manager->getCustomersReviews();
+?>
+
+<?php if($pwp): ?>
+<div class="card card-body" style="margin: 20px;">
+	<h4 class="card-title"><?=Tr::_('Write review')?></h4>
+	
+	<div style="display: grid;grid-template-columns: 200px 1fr;gap: 30px;align-items: center;margin: 20px;">
+	<?php foreach($manager->getPossibleProducts() as $p): ?>
+		
+		<div>
+			<?php if($p->getImg(0)): ?>
+				<a href="<?=$p->getURL()?>"><img src="<?=$p->getImgThumbnailUrl(0, 200, 200)?>"></a>
+			<?php endif; ?>
+		</div>
+		<div>
+			<a href="<?=$p->getURL()?>"><b><?=$p->getName()?></b></a>
+			<br>
+			<?=UI::button( Tr::_('Write review') )
+				->setUrl(Http_Request::currentURI(set_GET_params: ['write_review'=>$p->getId()]))
+				->setClass(UI_button::CLASS_SUCCESS)
+			?>
+		</div>
+	
+	<?php endforeach; ?>
+	</div>
+</div>
+<?php endif; ?>
+
+<?php if(count($reviews)): ?>
+<div class="card card-body" style="margin: 20px;">
+	<h4 class="card-title"><?=Tr::_('Reviews')?></h4>
+	
+	<div style="display: grid;grid-template-columns: 100px 1fr;gap: 30px;margin: 20px;">
+	<?php foreach($reviews as $review):
+	
+		$p = Product_ShopData::get( $review->getProductId() );
+		if(!$p) {
+			continue;
+		}
+		
+		$this->setVar('review', $review);
+		?>
+		<div>
+			<?php if($p->getImg(0)): ?>
+				<a href="<?=$p->getURL()?>"><img src="<?=$p->getImgThumbnailUrl(0, 100, 100)?>"></a>
+			<?php endif; ?>
+		</div>
+		<div>
+			<a href="<?=$p->getURL()?>"><b><?=$p->getName()?></b></a>
+			<br>
+			<?=$this->render('product-reviews/item');?>
+		</div>
+		
+	<?php endforeach; ?>
+	</div>
+</div>
+<?php endif; ?>

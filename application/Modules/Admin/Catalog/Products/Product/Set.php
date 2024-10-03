@@ -8,6 +8,7 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Int;
 use Jet\Form_Field_Select;
 use Jet\Tr;
+use JetApplication\Pricelists;
 use JetApplication\Shops;
 
 
@@ -26,11 +27,6 @@ trait Product_Set  {
 		
 		foreach( Shops::getList() as $shop ) {
 			$form->removeField( '/shop_data/'.$shop->getKey().'/variant_name' );
-			$form->field('/shop_data/'.$shop->getKey().'/standard_price')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/price')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/in_stock_qty')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/length_of_delivery')->setIsReadonly( true );
-			$form->field('/shop_data/'.$shop->getKey().'/available_from')->setIsReadonly( true );
 		}
 	}
 	
@@ -58,12 +54,12 @@ trait Product_Set  {
 				
 			}
 			
-			foreach( Shops::getList() as $shop ) {
+			foreach(Pricelists::getList() as $pricelist) {
 				$discount_type = new Form_Field_Select(
-					name: '/set_price/'.$shop->getKey().'/discount_type',
+					name: '/set_price/'.$pricelist->getCode().'/discount_type',
 					label: 'Discount type:'
 				);
-				$discount_type->setDefaultValue( $this->getShopData($shop)->getSetDiscountType() );
+				$discount_type->setDefaultValue( $this->getSetDiscountType($pricelist) );
 				$discount_type->setSelectOptions([
 					Product::SET_DISCOUNT_NONE => Tr::_('None'),
 					Product::SET_DISCOUNT_PERCENT => Tr::_('Percent'),
@@ -72,8 +68,8 @@ trait Product_Set  {
 				$discount_type->setErrorMessages([
 					Form_Field_Input::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 				]);
-				$discount_type->setFieldValueCatcher( function() use ($shop, $discount_type) {
-					$this->getShopData($shop)->setSetDiscountType( $discount_type->getValue() );
+				$discount_type->setFieldValueCatcher( function() use ($discount_type, $pricelist) {
+					$this->setSetDiscountType( $pricelist, $discount_type->getValue() );
 				} );
 				$this->_set_setup_form->addField( $discount_type );
 				
@@ -81,20 +77,24 @@ trait Product_Set  {
 				
 				
 				$discount_value = new Form_Field_Float(
-					name: '/set_price/'.$shop->getKey().'/discount_value',
+					name: '/set_price/'.$pricelist->getCode().'/discount_value',
 					label: 'Discount value:'
 				);
-				$discount_value->setDefaultValue(  $this->getShopData($shop)->getSetDiscountValue()  );
-				$discount_value->setFieldValueCatcher( function() use ($shop, $discount_value) {
-					$this->getShopData($shop)->setSetDiscountValue( $discount_value->getValue() );
+				$discount_value->setDefaultValue(  $this->getSetDiscountValue($pricelist)  );
+				$discount_value->setFieldValueCatcher( function() use ( $discount_value, $pricelist) {
+					$this->setSetDiscountValue( $pricelist, $discount_value->getValue() );
 				} );
 				$this->_set_setup_form->addField( $discount_value );
 				
 			}
+				
 			
 			
 			
-			if(!$this->isEditable()) {
+			if(
+				!$this->isEditable() ||
+				!Main::getCurrentUserCanSetPrice()
+			) {
 				$this->_set_setup_form->setIsReadonly();
 			}
 			
@@ -115,6 +115,7 @@ trait Product_Set  {
 			return false;
 		}
 		
+		$this->save();
 		$this->actualizeSet();
 		
 		return true;

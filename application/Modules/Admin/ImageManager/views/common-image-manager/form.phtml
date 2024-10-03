@@ -1,0 +1,21 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+$image_field = $form->getField('image');
+$image_field->input()->addJsAction('onchange', "CommonImageManager.upload()");
+?>
+<?=$form->start()?>
+<div class="btn btn-light btn-upload">
+	<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images')?></span>
+	<?=$image_field->input()?>
+</div>
+<?=$form->end()?>

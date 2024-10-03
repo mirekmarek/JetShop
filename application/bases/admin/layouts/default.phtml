@@ -22,16 +22,11 @@ require_once 'parts/init_libs.php';
 <jet_module module="Admin.UI" action="main_menu"/>
 <jet_module module="Admin.UI" action="breadcrumb_navigation"/>
 
-<div class="container-fluid h-100">
-	<div class="row">
-		<div class="col-md-12" id="system-messages-area">
-			<jet_module module="Admin.UI" action="messages"/>
-		</div>
-	</div>
-
-	<jet_layout_main_position/>
+<div id="system-messages-area">
+	<jet_module module="Admin.UI" action="messages"/>
 </div>
 
+<jet_layout_main_position/>
 
 
 <div id="__progress__">

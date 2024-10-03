@@ -1,0 +1,22 @@
+<?php
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Entity_WithShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithShopData $entity
+ */
+
+$entity = $this->getRaw('entity');
+?>
+<div style="padding: 10px;">
+<?php if($entity->isActive()): ?>
+	<span class="btn btn-success"><?= UI::icon('check');?> <?=Tr::_('Active')?></span>
+	<a href="<?= $this->getRaw('deactivate_url') ?>" class="btn btn-danger"><?=Tr::_('Deactivate')?></a>
+<?php else: ?>
+	<span class="btn btn-danger"><?= UI::icon('circle-xmark');?> <?=Tr::_('Not active')?></span>
+	<a href="<?=  $this->getRaw('activate_url') ?>" class="btn btn-success"><?=Tr::_('Activate')?></a>
+<?php endif; ?>
+</div>

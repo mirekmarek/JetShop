@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+
+interface ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface extends Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface
+{
+}

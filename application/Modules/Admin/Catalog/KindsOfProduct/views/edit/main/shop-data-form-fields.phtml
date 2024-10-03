@@ -17,6 +17,8 @@ $shop_key = $shop->getKey();
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
 	
-	<?=$form->field('/shop_data/'.$shop_key.'/label');?>
+	<?=$form->field('/shop_data/'.$shop_key.'/name');?>
+	<?=$form->field('/shop_data/'.$shop_key.'/variant_select_description');?>
+	<?=$form->field('/shop_data/'.$shop_key.'/similar_product_select_description');?>
 	<?=$form->field('/shop_data/'.$shop_key.'/description');?>
 </fieldset>

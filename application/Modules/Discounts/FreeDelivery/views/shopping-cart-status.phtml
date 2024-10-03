@@ -1,0 +1,26 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Shop_Managers;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ */
+
+$remains = $this->getRaw('remains');
+if($remains===false) {
+	return;
+}
+
+$formatter = Shop_Managers::PriceFormatter();
+if($remains>0):
+	?>
+
+	<?=Tr::_('Buy any item for <b>%remains%</b> and you will get <b>free shipping</b>.', ['remains'=>$formatter->formatWithCurrency( $remains )])?>
+
+	<?php
+else:
+	?>
+	<?=Tr::_('Congratulations, you got free shipping.');?>
+	<?php
+endif;

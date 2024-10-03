@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Catalog\ProductReviews;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var ProductReview $item
+ */
+
+$item = $this->getRaw('item');
+
+echo $item->getRank().'%';

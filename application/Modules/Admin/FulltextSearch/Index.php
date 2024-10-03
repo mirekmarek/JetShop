@@ -4,7 +4,8 @@ namespace JetApplicationModule\Admin\FulltextSearch;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use JetApplication\Admin_FulltextSearch_IndexDataProvider;
+use JetApplication\FulltextSearch_Dictionary;
+use JetApplication\FulltextSearch_IndexDataProvider;
 
 
 #[DataModel_Definition(
@@ -19,7 +20,7 @@ class Index extends DataModel {
 		max_len: 50,
 		is_id: true
 	)]
-	protected string $object_class = '';
+	protected string $entity_type = '';
 
 	
 	#[DataModel_Definition(
@@ -58,9 +59,8 @@ class Index extends DataModel {
 
 	protected static int $search_ids_count_limit = 200;
 	
-	public function __construct( string $object_class='' )
+	public function __construct()
 	{
-		$this->object_class = $object_class;
 	}
 	
 	
@@ -74,20 +74,14 @@ class Index extends DataModel {
 		$this->object_id = $object_id;
 	}
 	
-	/**
-	 * @return string
-	 */
-	public function getObjectClass(): string
+	public function getEntityType(): string
 	{
-		return $this->object_class;
+		return $this->entity_type;
 	}
 	
-	/**
-	 * @param string $object_class
-	 */
-	public function setObjectClass( string $object_class ): void
+	public function setEntityType( string $entity_type ): void
 	{
-		$this->object_class = $object_class;
+		$this->entity_type = $entity_type;
 	}
 	
 	/**
@@ -136,16 +130,16 @@ class Index extends DataModel {
 	}
 	
 	
-	public static function deleteRecord( string $object_class, string $object_id ) : void
+	public static function deleteRecord( string $entity_type, string $object_id ) : void
 	{
 		static::dataDelete([
-			'object_class'=>$object_class,
+			'entity_type'=>$entity_type,
 			'AND',
 			'object_id'=>$object_id
 		]);
 		
 		Index_Word::dataDelete([
-			'object_class'=>$object_class,
+			'entity_type'=>$entity_type,
 			'AND',
 			'object_id'=>$object_id
 		]);
@@ -153,7 +147,7 @@ class Index extends DataModel {
 	
 	
 	/**
-	 * @param string $object_class
+	 * @param string $entity_type
 	 * @param string $search_string
 	 *
 	 * @param array|null $object_type_filter
@@ -162,13 +156,13 @@ class Index extends DataModel {
 	 * @return static[]
 	 */
 	public static function search(
-		string $object_class,
+		string $entity_type,
 		string $search_string,
 		?array $object_type_filter=null,
 		?bool $object_is_active_filter=null
 	) : iterable {
 
-		$search_string = Dictionary::prepareText( $search_string );
+		$search_string = FulltextSearch_Dictionary::prepareText( $search_string );
 		$query = explode(' ',  $search_string );
 
 
@@ -181,7 +175,7 @@ class Index extends DataModel {
 		$matches = [];
 		
 		$base_where = [
-			'object_class' => $object_class,
+			'entity_type' => $entity_type,
 		];
 		
 		foreach( $query as $q_string ) {
@@ -222,8 +216,9 @@ class Index extends DataModel {
 			return [];
 		}
 		
+		
 		$where = [
-			'object_class' => $object_class,
+			'entity_type' => $entity_type,
 			'AND',
 			'object_id' => $ids
 		];
@@ -238,44 +233,61 @@ class Index extends DataModel {
 			$where['object_type'] = $object_type_filter;
 		}
 		
-		$res = static::fetchInstances($where);
 		
-		$res->getQuery()->setOrderBy('+object_title');
-		$res->getQuery()->setLimit(0, static::$search_ids_count_limit);
+		$data = static::dataFetchAll(
+			select: [
+				'entity_type',
+				'object_id',
+				'object_type',
+				'object_is_active',
+				'object_title',
+			],
+			where: $where,
+			limit: static::$search_ids_count_limit,
+			raw_mode: true
+		);
+		
+		$res = [];
+		foreach($data as $d) {
+			$i = new static();
+			$i->entity_type = $d['entity_type'];
+			$i->object_id = $d['object_id'];
+			$i->object_type = $d['object_type'];
+			$i->object_is_active = $d['object_is_active'];
+			$i->object_title = $d['object_title'];
+			
+			$res[] = $i;
+		}
 		
 		return $res;
 	}
 	
-	public static function addIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
-	{
-		static::updateIndex($object);
-	}
-	
-	public static function deleteIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
+	public static function deleteIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
 		static::deleteRecord(
-			object_class: $object->getAdminFulltextObjectClass(),
-			object_id: $object->getAdminFulltextObjectId()
+			entity_type: $object::getEntityType(),
+			object_id: $object->getId()
 		);
 	}
 	
-	public static function updateIndex( Admin_FulltextSearch_IndexDataProvider $object ) : void
+	public static function updateIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
 		
 		$index = static::load([
-			'object_class' => $object->getAdminFulltextObjectClass(),
+			'entity_type' => $object::getEntityType(),
 			'AND',
-			'object_id' => $object->getAdminFulltextObjectId()
+			'object_id' => $object->getId()
 		]);
 		
 		if(!$index) {
-			$index = new static( $object->getAdminFulltextObjectClass() );
-			$index->setObjectId( $object->getAdminFulltextObjectId() );
-			$index->setObjectType( $object->getAdminFulltextObjectType() );
-			$index->setObjectTitle( $object->getAdminFulltextObjectTitle() );
-			$index->setObjectIsActive( $object->getAdminFulltextObjectIsActive() );
+			$index = new static();
+			$index->setEntityType( $object::getEntityType() );
+			$index->setObjectId( $object->getId() );
+			$index->setObjectType( $object->getFulltextObjectType() );
+			$index->setObjectTitle( $object->getInternalFulltextObjectTitle() );
+			$index->setObjectIsActive( $object->getFulltextObjectIsActive() );
 			
-			$words = Dictionary::collectWords( $object->getAdminFulltextTexts() );
+			$words = FulltextSearch_Dictionary::collectWords( $object->getInternalFulltextTexts() );
 			
 			$index->setWords( $words );
 			
@@ -284,7 +296,7 @@ class Index extends DataModel {
 			foreach( $words as $word ) {
 				$w = new Index_Word();
 				$w->setObjectId( $index->object_id );
-				$w->setObjectClass( $index->object_class );
+				$w->setEntitytype( $index->entity_type );
 				$w->setWord( $word );
 				
 				$w->save();
@@ -296,21 +308,21 @@ class Index extends DataModel {
 		$update = false;
 		$update_words = false;
 		
-		if($index->getObjectType()!=$object->getAdminFulltextObjectType()) {
-			$index->setObjectType( $object->getAdminFulltextObjectType() );
+		if($index->getObjectType()!=$object->getFulltextObjectType()) {
+			$index->setObjectType( $object->getFulltextObjectType() );
 			$update = true;
 		}
-		if($index->getObjectTitle()!=$object->getAdminFulltextObjectTitle()) {
-			$index->setObjectTitle( $object->getAdminFulltextObjectTitle() );
+		if($index->getObjectTitle()!=$object->getInternalFulltextObjectTitle()) {
+			$index->setObjectTitle( $object->getInternalFulltextObjectTitle() );
 			$update = true;
 		}
-		if($index->getObjectIsActive()!=$object->getAdminFulltextObjectIsActive()) {
-			$index->setObjectIsActive( $object->getAdminFulltextObjectIsActive() );
+		if($index->getObjectIsActive()!=$object->getFulltextObjectIsActive()) {
+			$index->setObjectIsActive( $object->getFulltextObjectIsActive() );
 			$update = true;
 		}
 		
 		$old_words = $index->getWords();
-		$words = Dictionary::collectWords( $object->getAdminFulltextTexts() );
+		$words = FulltextSearch_Dictionary::collectWords( $object->getInternalFulltextTexts() );
 		$index->setWords( $words );
 		if($old_words!=$index->getWords()) {
 			$update = true;
@@ -323,7 +335,7 @@ class Index extends DataModel {
 		
 		if($update_words) {
 			Index_Word::dataDelete([
-				'object_class'=>$index->getObjectClass(),
+				'entity_type'=>$index->getEntityType(),
 				'AND',
 				'object_id'=>$index->getObjectId()
 			]);
@@ -331,7 +343,7 @@ class Index extends DataModel {
 			foreach( $words as $word ) {
 				$w = new Index_Word();
 				$w->setObjectId( $index->object_id );
-				$w->setObjectClass( $index->object_class );
+				$w->setEntitytype( $index->entity_type );
 				$w->setWord( $word );
 				
 				$w->save();

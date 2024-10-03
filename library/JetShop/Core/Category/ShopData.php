@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Data_Tree;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
@@ -164,15 +163,15 @@ abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 	
 	
 	
-	public function activate(): void
+	public function _activate(): void
 	{
-		parent::activate();
+		parent::_activate();
 		Category::actualizeBranchProductAssoc( $this->root_id );
 	}
 	
-	public function deactivate(): void
+	public function _deactivate(): void
 	{
-		parent::deactivate();
+		parent::_deactivate();
 		Category::actualizeBranchProductAssoc( $this->root_id );
 	}
 	
@@ -186,7 +185,7 @@ abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 	{
 		$this->priority = $priority;
 		if($save) {
-			$where = Shops::get($this->shop_code)->getWhere();
+			$where = $this->getShop()->getWhere();
 			$where[] = 'AND';
 			$where['entity_id'] = $this->entity_id;
 			
@@ -292,7 +291,7 @@ abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 		return $this->URL_path_part;
 	}
 
-	public function setURLPathPart( string $URL_path_part, bool $save=false ) : void
+	public function setURLPathPart( string $URL_path_part, bool $save=true ) : void
 	{
 		$this->URL_path_part = $URL_path_part;
 		if($save) {
@@ -338,7 +337,17 @@ abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 	{
 		return $this->image_main;
 	}
-
+	
+	public function getImageMainThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl('main', $max_w, $max_h);
+	}
+	
+	public function getMainImageUrl(): string
+	{
+		return $this->getImageUrl('main');
+	}
+	
 
 	public function setImagePictogram( string $image_pictogram ) : void
 	{
@@ -349,7 +358,17 @@ abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 	{
 		return $this->image_pictogram;
 	}
-
+	
+	
+	public function getImagePictogramThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl('pictogram', $max_w, $max_h);
+	}
+	
+	public function getPictogramImageUrl(): string
+	{
+		return $this->getImageUrl('pictogram');
+	}
 
 
 	public function getProductIds() : array
@@ -476,54 +495,47 @@ abstract class Core_Category_ShopData extends Entity_WithShopData_ShopData {
 		return $list;
 	}
 	
-	/**
-	 * @var Data_Tree[]
-	 */
-	protected static array $trees = [];
+	protected static array $names = [];
 	
-	public static function getTree( Shops_Shop $shop ) : Data_Tree
+	public static function getNames( Shops_Shop $shop ) : array
 	{
 		$key = $shop->getKey();
 		
-		if(!isset(static::$trees[$key])) {
+		if(!isset(static::$names[$key])) {
 			
 			$where = static::getActiveQueryWhere();
 			
-			
 			$data = static::dataFetchAll(
 				select:[
-					'id' => 'entity_id',
-					'parent_id' => 'parent_id',
-					'name' => 'name',
+					'entity_id',
+					'name',
 				],
 				where: $where,
-				order_by: ['priority', 'name']
+				raw_mode: true
 			);
 			
-			
-			$tree = new Data_Tree();
-			$tree->getRootNode()->setLabel('');
-			$tree->setIgnoreOrphans(true);
-			
-			$tree->setData( $data );
-			
-			static::$trees[$key] = $tree;
+			foreach( $data as $d ) {
+				static::$names[$key][(int)$d['entity_id']] = $d['name'];
+			}
+
 		}
 		
 		
-		return static::$trees[$key];
+		return static::$names[$key];
 	}
 	
 	public function getPathName( bool $as_array=false, string $path_str_glue=' / ' ) : array|string
 	{
 		$result = [];
 		
-		$tree = static::getTree( $this->getShop() );
+		$names = static::getNames( $this->getShop() );
 		
 		foreach( $this->getPath() as $id ) {
-			$name = $tree->getNode($id)?->getLabel();
+			$name = $names[$id]??'';
 			
-			$result[$id] = $name?:'';
+			if($name) {
+				$result[$id] = $name;
+			}
 		}
 		
 		if($as_array) {

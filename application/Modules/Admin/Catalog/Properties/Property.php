@@ -49,20 +49,14 @@ class Property extends Application_Property implements Admin_Entity_WithShopData
 	
 	protected function setupEditForm( Form $form ) : void
 	{
+		if(!$this->getTypeInstance()->canBeFilter()) {
+			$form->field('is_filter')->setIsReadonly(true);
+			$form->field('is_default_filter')->setIsReadonly(true);
+			$form->field('filter_priority')->setIsReadonly(true);
+		}
+		
 		$this->getTypeInstance()->setupForm( $form );
 	}
-	
-	
-	
-	public function isItPossibleToDelete() : bool
-	{
-		//TODO:
-		return true;
-		//$used_in_kinds_of_product = KindOfProduct::getByProperty( $this );
-		
-		//return count($used_in_kinds_of_product)==0;
-	}
-	
 	
 	public function getEditURL() : string
 	{
@@ -79,11 +73,6 @@ class Property extends Application_Property implements Admin_Entity_WithShopData
 			image_class:  'pictogram',
 			image_title:  Tr::_('Pictogram image')
 		);
-	}
-	
-	public function getAdminFulltextObjectType(): string
-	{
-		return $this->type;
 	}
 	
 	/**

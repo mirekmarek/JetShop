@@ -33,13 +33,7 @@ class Listing_Schema extends DataModel
 	protected static Listing $listing;
 	protected static string $entity_type;
 	
-	protected static array $default_col_schema = [
-		Listing_Column_ID::KEY,
-		Listing_Column_ActiveState::KEY,
-		Listing_Column_InternalName::KEY,
-		Listing_Column_InternalCode::KEY,
-		Listing_Column_InternalNotes::KEY
-	];
+	protected static array $default_col_schema = [];
 	
 	public const  COLS_SEPARATOR = '|';
 	
@@ -366,6 +360,14 @@ class Listing_Schema extends DataModel
 		
 		if(static::getSelectedSchemaDefinition()->catchUpdateSchemaForm()) {
 			Http_Headers::reload();
+		}
+		
+		$GET = Http_Request::GET();
+		if($GET->exists(static::SCHEMA_GET_PARAM)) {
+			static::$listing->setParam(static::SCHEMA_GET_PARAM, $GET->getString(static::SCHEMA_GET_PARAM) );
+		}
+		if($GET->exists(static::SCHEMA_ID_GET_PARAM)) {
+			static::$listing->setParam(static::SCHEMA_ID_GET_PARAM, $GET->getInt(static::SCHEMA_ID_GET_PARAM) );
 		}
 		
 	}

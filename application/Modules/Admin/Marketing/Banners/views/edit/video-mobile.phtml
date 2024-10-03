@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\Banners;
+
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Banner   $item
+ */
+$item = $this->getRaw( 'item' );
+
+$group = $item->getGroup();
+$upload_form = $item->getUploadForm_MobileVideo();
+
+$video_field = $upload_form->field('video');
+
+$video_field->input()
+	->addJsAction('onchange', "JetAjaxForm.submit(this.form.id)");
+
+
+?>
+<div class="card card-body">
+	<h5><?=Tr::_('Mobile video')?></h5>
+	
+	<?php if($item->isEditable()): ?>
+		<?=$upload_form->start()?>
+		<div class="btn btn-light btn-upload">
+			<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload video')?></span>
+			<?=$video_field->input()?>
+		</div>
+		<?=$upload_form->end()?>
+	<?php endif; ?>
+	
+	<?php if($item->getVideoMobile()): ?>
+		<video style="width: <?=$group->getMobileVideoW()?>px;height: <?=$group->getMobileVideoH()?>px;" controls>
+			<source src="<?=$item->getVideoMobileURI()?>">
+		</video>
+		<?php if($item->isEditable()):
+			$delete_url = Http_Request::currentURI(['delete_media'=>'video_mobile']);
+			?>
+			<div style="margin:10px;">
+				<?=UI::button_delete(' ')->setOnClick("$('#video-mobile').load('{$delete_url}');")?>
+			</div>
+		<?php endif; ?>
+	
+	<?php endif; ?>
+</div>

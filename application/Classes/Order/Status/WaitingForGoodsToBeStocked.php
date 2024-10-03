@@ -1,0 +1,7 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Order_Status_WaitingForGoodsToBeStocked;
+
+class Order_Status_WaitingForGoodsToBeStocked extends Core_Order_Status_WaitingForGoodsToBeStocked {
+}

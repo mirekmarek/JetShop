@@ -40,18 +40,15 @@ $form->renderer()->setDefaultFieldWidth( [
 
 <?=$form->start()?>
 
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
-		<?=UI::button_goBack()?>
-		
-		<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
-	</div>
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()?>
+	
+	<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
 </div>
 
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
-		<?=Admin_Managers::UI()->renderEntityFormCommonFields( $form );?>
+<div id="main-col">
+		<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityFormCommonFields( $form );?>
 		
 		<?php
 		if($common_data_fields_renderer) {
@@ -59,7 +56,7 @@ $form->renderer()->setDefaultFieldWidth( [
 		}
 		
 		
-		Admin_Managers::UI()->renderShopDataBlocks(
+		Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( Shops_Shop $shop, string $shop_key ) use ($form, $item, $shop_data_fields_renderer) : void {
 				if($shop_data_fields_renderer) {
@@ -67,7 +64,7 @@ $form->renderer()->setDefaultFieldWidth( [
 				}
 				
 			}); ?>
-	</div>
+
 </div>
 
 <?=$form->end()?>

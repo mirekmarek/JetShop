@@ -16,7 +16,7 @@ return [
 	],
 	'contents' => [
 		[
-			'module_name' => 'Shop.Login',
+			'module_name' => 'Shop.Customer.Login',
 			'controller_name' => 'Main',
 			'controller_action' => 'default',
 			'parameters' => [

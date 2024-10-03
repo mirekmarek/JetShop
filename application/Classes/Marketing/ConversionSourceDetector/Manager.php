@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Marketing_ConversionSourceDetector_Manager;
+
+interface Marketing_ConversionSourceDetector_Manager extends Core_Marketing_ConversionSourceDetector_Manager
+{
+}

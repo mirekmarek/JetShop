@@ -3,7 +3,7 @@ namespace JetApplicationModule\Admin\Entity\Edit\Common;
 
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Entity_Basic;
+use JetApplication\Entity_Common;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -12,7 +12,7 @@ use Jet\UI;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ * @var Entity_Common|Admin_Entity_Common_Interface     $item
  * @var Admin_Managers_Entity_Listing $listing
  */
 $form = $this->getRaw( 'form' );
@@ -25,8 +25,7 @@ $prev_url = $listing?->getPrevEditUrl( $item->getId() );
 $next_url = $listing?->getNextEditUrl( $item->getId() );
 
 ?>
-<div class="row toolbar" id="main-toolbar">
-	<div class="col-md-12">
+<div class="toolbar" id="main-toolbar">
 		<?=UI::button_goBack()?>
 		
 		<div style="display: inline-block;padding-left: 10px;padding-right: 10px;">
@@ -53,5 +52,4 @@ $next_url = $listing?->getNextEditUrl( $item->getId() );
 			$toolbar_renderer( $item, $form );
 		endif;
 		?>
-	</div>
 </div>

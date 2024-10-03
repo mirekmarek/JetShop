@@ -52,6 +52,20 @@ abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation
 	)]
 	protected string $export_category_id = '';
 
+	public static function getMap( string $export_code, Shops_Shop $shop ) : array
+	{
+		$where = $shop->getWhere();
+		$where[] = 'AND';
+		$where['export_code'] = $export_code;
+		
+		return static::dataFetchPairs(
+			select: [
+				'kind_of_product_id',
+				'export_category_id'
+			],
+			where: $where
+		);
+	}
 
 	public static function get( string $export_code, Shops_Shop $shop, int $kind_of_product_id  ) : static|null
 	{

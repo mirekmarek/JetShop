@@ -29,12 +29,12 @@ trait Core_Product_Trait_Images
 		return $this->images[$index]??null;
 	}
 	
-	public function getImageByKey( string $key ) : ?Product_Image
+	public function getImageById( int $id ) : ?Product_Image
 	{
 		$this->getImages();
 		
 		foreach($this->images as $image) {
-			if($image->getKey()==$key) {
+			if($image->getId()==$id) {
 				return $image;
 			}
 		}
@@ -42,27 +42,25 @@ trait Core_Product_Trait_Images
 		return null;
 	}
 	
-	public function deleteImage( string $key ) : ?Product_Image
+	public function deleteImage( int $id ) : ?Product_Image
 	{
 		$this->getImages();
 		
-		$deleted_image = $this->getImageByKey( $key );
+		$deleted_image = $this->getImageById( $id );
 		if(!$deleted_image) {
 			return null;
 		}
 		
-		$index = $deleted_image->getImageIndex();
-		
 		$deleted_image->delete();
 		
-		unset( $this->images[$index] );
+		$this->images = null;
+		$this->getImages();
 		
-		$i = 0;
+		$index = 0;
 		foreach($this->images as $img) {
-			$img->setImageIndex( $i );
+			$img->setImageIndex( $index );
 			$img->save();
-			
-			$i++;
+			$index++;
 		}
 		
 		return $deleted_image;
@@ -81,35 +79,24 @@ trait Core_Product_Trait_Images
 		$this->images[] = $new_image;
 	}
 	
-	public function sortImages( array $image_keys ) : void
+	public function sortImages( array $image_ids ) : void
 	{
-		$image_keys = array_unique($image_keys);
-		
+		$image_ids = array_unique($image_ids);
 		$this->getImages();
 		
-		$sorted_images = [];
-		
-		foreach($image_keys as $image_key) {
-			$image = $this->getImageByKey( $image_key );
+		$i = 0;
+		foreach($image_ids as $id) {
+			$image = $this->getImageById( $id );
 			if(!$image) {
-				return;
+				continue;
 			}
-			$sorted_images [] = $image;
-		}
-		
-		if(count($sorted_images)!=count($this->images)) {
-			return;
-		}
-		
-		
-		/**
-		 * @var Product_Image[] $sorted_images
-		 */
-		foreach($sorted_images as $i=>$image) {
+			
 			$image->setImageIndex( $i );
 			$image->save();
+			
+			$i++;
 		}
 		
-		$this->images = $sorted_images;
+		$this->images = null;
 	}
 }

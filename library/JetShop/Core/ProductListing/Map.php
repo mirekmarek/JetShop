@@ -7,7 +7,8 @@
  */
 namespace JetShop;
 
-use JetApplication\KindOfProduct_ShopData;
+use JetApplication\Pricelists_Pricelist;
+use JetApplication\Product_Price;
 use JetApplication\ProductListing;
 use JetApplication\Property;
 use JetApplication\Shops_Shop;
@@ -17,6 +18,7 @@ use JetApplication\Product_Parameter_Value;
 abstract class Core_ProductListing_Map
 {
 	protected Shops_Shop $shop;
+	protected Pricelists_Pricelist $pricelist;
 	protected array $product_ids;
 	
 	protected array $brand_ids = [];
@@ -37,6 +39,8 @@ abstract class Core_ProductListing_Map
 	public function __construct( ProductListing $listing, array $product_ids )
 	{
 		$this->shop = $listing->getShop();
+		$this->pricelist = $listing->getPricelist();
+		
 		$this->product_ids = [];
 		if(!$product_ids) {
 			return;
@@ -47,11 +51,15 @@ abstract class Core_ProductListing_Map
 		$where[] = 'AND';
 		$where['entity_id'] = $product_ids;
 		
+		$prices = Product_Price::getPriceMap( $this->pricelist, $product_ids );
+		
+		$this->min_price = min($prices);
+		$this->max_price = max($prices);
+		
 		
 		$data = Product_ShopData::dataFetchAll(
 			select: [
-				'entity_id',
-				'price',
+				'id' => 'entity_id',
 				'brand_id',
 				'kind_id'
 			],
@@ -59,12 +67,10 @@ abstract class Core_ProductListing_Map
 			raw_mode: true
 		);
 		
-		$prices = [];
 		
 		foreach($data as $d) {
-			$id = (int)$d['entity_id'];
+			$id = (int)$d['id'];
 			$brand_id = (int)$d['brand_id'];
-			$price = (float)$d['price'];
 			$kind_of_product_id = (int)$d['kind_id'];
 			
 			if(!in_array($brand_id, $this->brand_ids)) {
@@ -79,16 +85,9 @@ abstract class Core_ProductListing_Map
 			}
 			
 			$this->product_ids[] = $id;
-			$prices[] = $price;
 		}
-		$this->min_price = min($prices);
-		$this->max_price = max($prices);
 		
-		if($this->kind_of_product_ids) {
-			$filterable_property_ids = KindOfProduct_ShopData::getFilterablePropertyIds( $this->kind_of_product_ids );
-		} else {
-			$filterable_property_ids = [];
-		}
+		$filterable_property_ids = Property::getFilterablePropertyIds();
 		
 		
 		if($filterable_property_ids) {

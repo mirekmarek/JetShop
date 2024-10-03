@@ -3,7 +3,7 @@ namespace JetApplicationModule\Admin\Entity\Edit\Common;
 
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_Basic;
+use JetApplication\Entity_Common;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -12,7 +12,7 @@ use Jet\Form_Renderer;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ * @var Entity_Common|Admin_Entity_Common_Interface     $item
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
@@ -35,28 +35,26 @@ $form->renderer()->setDefaultFieldWidth( [
 ] );
 
 ?>
-<?=$form->start()?>
-
 <?php require 'toolbar.phtml'; ?>
 
-<div class="row">
-	<div class="col-md-12" id="main-col">
-		<?=$this->getRaw('tabs')?>
-		<br>
-		
-		<?=Admin_Managers::UI()->renderEntityActivation(
-			entity: $item,
-			editable: !$form->getIsReadonly(),
-		);?>
-		
-		<?=Admin_Managers::UI()->renderEntityFormCommonFields( $form );?>
-		
-		<?php
-		if($common_data_fields_renderer) {
-			$common_data_fields_renderer( $item, $form );
-		}
-		?>
-	</div>
+<div id="main-col">
+	<?php
+	echo $this->getRaw('tabs');
+	echo '<br>';
+	
+	echo Admin_Managers::EntityEdit_Common()->renderEntityActivation(
+		entity: $item,
+		editable: !$form->getIsReadonly(),
+	);
+	
+	echo $form->start();
+	
+	echo Admin_Managers::EntityEdit_Common()->renderEntityFormCommonFields( $form );
+	
+	if($common_data_fields_renderer) {
+		$common_data_fields_renderer( $item, $form );
+	}
+	
+	$form->end();
+	?>
 </div>
-
-<?=$form->end()?>

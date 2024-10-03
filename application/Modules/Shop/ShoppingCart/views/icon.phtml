@@ -2,44 +2,51 @@
 namespace JetApplicationModule\Shop\ShoppingCart;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Pricelists;
 use JetApplication\Shop_Managers;
+use JetApplication\Shop_Pages;
 
 $cart = Shop_Managers::ShoppingCart()->getCart();
-?>
-<div class="dropdown" style="display: inline-block">
-	<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		<?=UI::icon('shopping-cart')?> <?=$cart->getQuantity()?>
-	</button>
-	<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-		<div class="dropdown-item" style="padding-bottom: 10px;">
-			<?php if($cart->getQuantity()>0): ?>
-				<table class="table table-striped">
-					<?php foreach($cart->getItems() as $item):
-						$product = $item->getProduct();
-						?>
-					<tr>
-						<td>
-							<img src="<?=$product->getImgThumbnailUrl( 0, 50, 50)?>"/>
-						</td>
-						<td>
-							<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a>
-						</td>
-						<td>
-							<span class="small"><?=$item->getQuantity()?>x <?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice())?></span><br/>
-							<b><?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
-						</td>
-					</tr>
-					<?php endforeach; ?>
-				</table>
 
-				<?=UI::button()->setClass('success')->setUrl(
-						Shop_Managers::ShoppingCart()->getCartPageURL()
-					)->setLabel(Tr::_('Proceed to checkout')
-				)?>
-			<?php else: ?>
-				<b><?=Tr::_('Shopping cart is empty');?></b>
-			<?php endif; ?>
+$cart_status_dialog = UI::dialog('cart_status_dialog', UI::icon('shopping-cart').' '.Tr::_('Shopping cart'));
+
+
+echo UI::button( '&nbsp;'.$cart->getNumberOfUnits() )->setIcon('shopping-cart')->setClass(UI_button::CLASS_LIGHT)->setOnClick("dialog.open('cart_status_dialog');");
+?>
+
+<?=$cart_status_dialog->start()?>
+
+	<?php if($cart->getNumberOfUnits()>0): ?>
+			<?php foreach($cart->getItems() as $item):
+				$product = $item->getProduct();
+				?>
+			<div style="display: grid;gap: 10px;align-items: center;grid-template-columns: 50px 300px 200px;margin: 10px;border-bottom: 1px dashed #c9c9c9;padding: 10px;">
+			
+				<div>
+					<img src="<?=$product->getImgThumbnailUrl( 0, 50, 50)?>"/>
+				</div>
+				<div>
+					<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a>
+				</div>
+				<div>
+					<span class="small"><?=$item->getNumberOfUnits()?> <?=$product->getMeasureUnit()?->getName()?> x <?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?></span><br/>
+					<b><?=Shop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
+				</div>
+			</div>
+			
+			<?php endforeach; ?>
+
+		<div class="buttons">
+			<?=UI::button()->setClass('success')->setUrl(
+				Shop_Pages::ShoppingCart()->getURL()
+			)->setLabel(Tr::_('Proceed to checkout')
+			)?>
+			
 		</div>
-	</div>
-</div>
+	<?php else: ?>
+		<b><?=Tr::_('Shopping cart is empty');?></b>
+	<?php endif; ?>
+
+<?=$cart_status_dialog->end()?>
 

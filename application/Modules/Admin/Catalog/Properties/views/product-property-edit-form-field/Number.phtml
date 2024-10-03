@@ -22,7 +22,7 @@ if(!$form->fieldExists($prefix.'value')) {
 $value = $form->field($prefix.'value');
 
 $value->setLabel(
-	'<a href="'.$property->getEditURL().'">'.$property->getInternalName().'</a><br>'
+	'<a href="'.$property->getEditURL().'" tabindex="99999">'.$property->getInternalName().'</a><br>'
 	.Admin_Managers::Property()->renderActiveState( $property )
 );
 

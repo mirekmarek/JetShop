@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Category_ShopData;
+
+/**
+ * @var MVC_View   $this
+ * @var Category_ShopData $category
+ */
+
+$category = $this->getRaw('category');
+
+$subcategories = $category->getChildren();
+?>
+	<h1><?=$category->getName()?></h1>
+	<div style="display: grid;grid-template-columns: 200px 1fr;">
+		<div style="padding: 20px;">
+			<?php if($category->getImageMain()): ?>
+				<img src="<?=$category->getImageMainThumbnailUrl(150, 150)?>" style="max-width: 150px;height: auto">
+			<?php endif; ?>
+		</div>
+		<div>
+			<?=$category->getDescription()?>
+		</div>
+	</div>
+	
+	<?php if($subcategories): ?>
+	<div class="categories">
+		<?php foreach( $subcategories as $item):
+			if(!$item->getBranchProductsCount()) {
+				continue;
+			}
+			?>
+			<div class="category">
+				<div class="category-image">
+				<?php if($item->getImageMain()): ?>
+					<a href="<?=$item->getUrl()?>" ><img src="<?=$item->getImageMainThumbnailUrl(150, 150)?>"></a>
+				<?php endif; ?>
+				</div>
+				<div class="category-name">
+				<a href="<?=$item->getUrl()?>"><?=$item->getName()?></a>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>

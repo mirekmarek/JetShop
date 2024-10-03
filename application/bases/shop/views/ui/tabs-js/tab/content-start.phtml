@@ -10,12 +10,12 @@ use Jet\MVC_View;
 $t = $this->getRaw( 'element' );
 
 if($t->getIsSelected()) {
-	$t->setBaseCssClass('tab-pane fade show active');
+	$t->setBaseCssClass('tab-pane active');
 } else {
-	$t->setBaseCssClass('tab-pane fade');
+	$t->setBaseCssClass('tab-pane');
 }
 
-$t->addCustomCssStyle('padding-top: 10px;');
+$t->setId($GLOBALS['__current_js_tabs'].'_'.$t->getId());
 ?>
 <div <?=$t->renderTagAttributes()?>>
 

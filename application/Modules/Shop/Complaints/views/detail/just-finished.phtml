@@ -1,0 +1,19 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\MVC_View;
+use Jet\Tr;use JetApplication\Complaint;
+
+/**
+ * @var MVC_View  $this
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+
+?>
+<h1><?=Tr::_('Complaint entry completed')?></h1>
+
+<p><?=Tr::_('Your complaint has the number <b>%no%</b>', ['no'=>$complaint->getNumber()])?></p>
+
+<p><?=Tr::_('Our team will deal with your claim as soon as possible.')?></p>

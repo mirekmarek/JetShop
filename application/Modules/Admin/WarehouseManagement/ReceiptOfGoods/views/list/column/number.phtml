@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+/**
+ * @var MVC_View $this
+ * @var ReceiptOfGoods $item
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+
+$item = $this->getRaw('item');
+$listing = $this->getRaw('listing');
+
+$edit_uri = $listing->getEditUrl($item);
+?>
+<a href="<?=$edit_uri?>"><?=$item->getNumber()?></a>
+
+

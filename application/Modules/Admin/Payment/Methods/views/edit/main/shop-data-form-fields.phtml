@@ -1,16 +1,21 @@
 <?php
+
+use JetApplication\Payment_Method;
 use JetApplication\Shops_Shop;
 
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View $this
  * @var Form     $form
  * @var Shops_Shop $shop
+ * @var Payment_Method $item
  */
 
+$item = $this->getRaw('item');
 $shop = $this->getRaw('shop');
 $form = $this->getRaw('form');
 $shop_key = $shop->getKey();
@@ -18,12 +23,31 @@ $shop_key = $shop->getKey();
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
 	
-	<?=$form->field('/shop_data/'.$shop_key.'/vat_rate')?>
-	<?=$form->field('/shop_data/'.$shop_key.'/default_price')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/discount_is_not_allowed')?>
+	<?=$form->field('/shop_data/'.$shop_key.'/free_payment_limit')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/priority')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/title')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/description')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/description_short')?>
 	<?=$form->field('/shop_data/'.$shop_key.'/confirmation_email_info_text')?>
 </fieldset>
+
+<?php foreach($shop->getPricelists() as $pricelist): ?>
+	<fieldset>
+		<legend class="sub"><?=Tr::_('Price')?> - <?=$pricelist->getName()?></legend>
+		<div class="row">
+			<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 18px;margin-top: -3px;"><?=Tr::_('VAT rate:')?></label>
+			<div class="col-md-8" style="font-weight: bolder;font-size: 20px;">
+				<?=$item->getVatRate( $pricelist )?>%
+			</div>
+		</div>
+		
+		<div class="row">
+			<label class="col-md-2 col-form-label" style="font-weight: bolder;font-size: 20px;margin-top: -3px;"><?=Tr::_('Price:')?></label>
+			<div class="col-md-8" style="font-weight: bolder;font-size: 25px;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $item->getShopData($shop)->getPrice( $pricelist ) )?></div>
+		</div>
+	
+	
+	</fieldset>
+<?php endforeach; ?>
+

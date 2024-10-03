@@ -1,4 +1,6 @@
 <?php
+
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Form;
 
@@ -10,11 +12,29 @@ use Jet\Form;
 $form = $this->getRaw('form');
 
 $form->field( 'delivery_methods' )->input()->addCustomCssStyle('height: 300px');
-$form->field( 'services' )->input()->addCustomCssStyle('height: 200px');
+
+$form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadPaymentMethodSpecification(this.options[this.selectedIndex].value);');
 ?>
+<script>
+	async function reloadPaymentMethodSpecification( module_name ) {
+		const response = await fetch('<?=Http_Request::currentURI(['action' =>'get_payment_method_specification'])?>&module='+encodeURIComponent(module_name));
+		const options = await response.json();
+		
+		const select = document.getElementById('<?=$form->field( 'backend_module_payment_method_specification' )->getId()?>');
+
+		while (select.options.length > 0) {
+			select.remove(0);
+		}
+		
+		for( let opt in options ) {
+			const option = new Option(options[opt], opt);
+			select.add( option );
+		}
+	}
+</script>
 
 <?=$form->field( 'kind' )?>
 <?=$form->field( 'backend_module_name' )?>
+<?=$form->field( 'backend_module_payment_method_specification' )?>
 <?=$form->field( 'delivery_methods' )?>
-<?=$form->field( 'services' )?>
 

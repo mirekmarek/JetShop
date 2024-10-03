@@ -1,0 +1,44 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('add_bl_form');
+
+if(!$form) {
+	return;
+}
+
+
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+
+$bl_dialog = new UI_dialog( 'bl_dialog', Tr::_('Add customer to blacklist') );
+$form->field('description')->input()->addCustomCssStyle("height: 300px;");
+
+echo $bl_dialog->start();
+	echo $form->start();
+		echo $form->field('email');
+		echo $form->field('name');
+		echo $form->field('description');
+	echo $bl_dialog->footer();
+		echo UI::button_save(Tr::_('Add'));
+	echo $form->end();
+echo $bl_dialog->end();

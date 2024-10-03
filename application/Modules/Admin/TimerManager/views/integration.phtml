@@ -1,0 +1,34 @@
+<?php
+namespace JetApplicationModule\Admin\TimerManager;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$dialog = UI::dialog('timer_dialog', Tr::_('Timer'), UI_dialog::SIZE_LARGE);
+
+echo $dialog->start();
+?>
+<iframe src="about:blank" style="width: 100%;height: 700px;border: 0px;" id="timer_editing"></iframe>
+<?php
+echo $dialog->end();
+?>
+<script>
+	const TimerManager = {
+		open: ( entity_type, entity_class, entity_id, shop_key ) => {
+			document.getElementById('timer_editing').src =
+				'<?=$this->getRaw('page_url')?>'
+				+'?entity_type='+encodeURIComponent(entity_type)
+				+'&entity_class='+encodeURIComponent(entity_class)
+				+'&entity_id='+entity_id
+				+'&shop_key='+encodeURIComponent(shop_key);
+				
+			$('#timer_dialog').modal('show');
+		}
+	};
+</script>

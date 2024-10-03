@@ -1,0 +1,215 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Locale;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+use Jet\UI;
+use Jet\MVC_View;
+use JetApplication\Order_Item;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order     $order
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+
+$order = $this->getRaw( 'order' );
+$listing = $this->getRaw('listing');
+
+
+$price_formatter = Admin_Managers::PriceFormatter();
+$product_manager = Admin_Managers::Product();
+$icons = Order_Item::getItemIcons();
+
+?>
+
+	
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th style="width: 20px;"></th>
+			<th style="width: 60px;"></th>
+			<th><?=Tr::_('Item')?></th>
+			
+			<th><?=Tr::_('Available')?></th>
+			<th><?=Tr::_('Not available')?></th>
+			
+			<th style="width: 100px;"><?=Tr::_('VAT')?></th>
+			<th style="width: 200px;"><?=Tr::_('Price per item')?></th>
+			<th style="width: 200px;"><?=Tr::_('Total amount')?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php
+		$showItem = function( Order_Item $item ) use ($product_manager, $icons, $price_formatter, $order) {
+			?>
+			<tr id="item_<?=$item->getId()?>">
+				<td style="text-align: center"><?=$icons[$item->getType()]?></td>
+				<td style="text-align: right"><b><?=Locale::float($item->getNumberOfUnits()) ?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></b></td>
+				<td>
+					<?php if( $item->isPhysicalProduct() || $item->isVirtualProduct() ): ?>
+						<a href="<?=$product_manager->getEditURL( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
+					<?php else: ?>
+						<?=$item->getTitle() ?>
+					<?php endif; ?>
+				</td>
+				<td>
+					<?php if( $item->isPhysicalProduct() ): ?>
+						<?=$item->getNumberOfUnitsAvailable()?>&nbsp;<?=$item->getMeasureUnit()?->getName()?>
+					<?php endif; ?>
+				</td>
+				<td>
+					<?php if($item->isPhysicalProduct() && $item->getNumberOfUnitsNotAvailable()>0):?>
+
+					<b style="color: red"><?=$item->getNumberOfUnitsNotAvailable()?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></b><br>
+					
+							<?php
+							echo $item->getNotAvailableUnitsDeliveryTemInfo()?->getDeliveryInfoText();
+							echo '<br>';
+							echo Locale::date( $item->getNotAvailableUnitsPromisedDeliveryDate() );
+							?>
+					
+					<?php endif; ?>
+				</td>
+				
+				<td><?=$item->getVatRate()?>%</td>
+				<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $item->getPricePerUnit() )?></td>
+				<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $item->getTotalAmount() )?></td>
+			</tr>
+			<?php
+			
+			if($item->getSetItems()):
+				foreach($item->getSetItems() as $set_item):
+					?>
+					<tr style="opacity: 0.3">
+						<td style="text-align: center">
+						</td>
+						<td style="text-align: right"><b><?=Locale::float($set_item->getNumberOfUnits()) ?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b></td>
+						<td>
+							<a href="<?=$product_manager->getEditURL( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
+						</td>
+						<td>
+							<?=$set_item->getNumberOfUnitsAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?>
+						</td>
+						<td>
+							<?php if($set_item->getNumberOfUnitsNotAvailable()>0):?>
+								<b style="color: red"><?=$set_item->getNumberOfUnitsNotAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b><br>
+								<?php
+								echo $set_item->getNotAvailableUnitsDeliveryTemInfo()?->getDeliveryInfoText();
+								echo '<br>';
+								echo Locale::date( $set_item->getNotAvailableUnitsPromisedDeliveryDate() );
+								?>
+							<?php endif; ?>
+						</td>
+
+						<td><?=$set_item->getVatRate()?>%</td>
+						<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $set_item->getPricePerUnit() )?></td>
+						<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $set_item->getTotalAmount()*$item->getNumberOfUnits() )?></td>
+					</tr>
+				<?php
+				endforeach; ?>
+				<tr style="opacity: 0.5">
+					<td></td>
+					<td></td>
+					<td colspan="4"><i><?=Tr::_('Set discount:')?></i></td>
+					<td><i><?=$price_formatter->formatWithCurrency($order->getCurrency(), $item->getSetDiscountPerUnit())?></i></td>
+					<td><i><?=$price_formatter->formatWithCurrency($order->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i></td>
+				</tr>
+				<?php
+			endif;
+		};
+		?>
+		
+		<?php
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_PRODUCT ||
+				$item->getType()==Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_GIFT ||
+				$item->getType()==Order_Item::ITEM_TYPE_VIRTUAL_GIFT
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_SERVICE
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_PAYMENT ||
+				$item->getType()==Order_Item::ITEM_TYPE_DELIVERY
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		foreach( $order->getItems() as $item ):
+			if(
+				$item->getType()==Order_Item::ITEM_TYPE_DISCOUNT
+			) {
+				$showItem( $item );
+			}
+		endforeach;
+		
+		
+		?>
+		</tbody>
+	</table>
+	
+	<div style="display: grid;grid-template-columns: 1fr 400px;">
+		<div>
+		
+		</div>
+		<div>
+			<table class="table table">
+				<tr>
+					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_PRODUCT]?></td>
+					<td><?=Tr::_('Products:')?></td>
+					<td style="width: 200px;"><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getProductAmount())?></td>
+				</tr>
+				<tr>
+					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_SERVICE]?></td>
+					<td><?=Tr::_('Services:')?></td>
+					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getServiceAmount())?></td>
+				</tr>
+				<tr>
+					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_DELIVERY]?></td>
+					<td><?=Tr::_('Delivery:')?></td>
+					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getDeliveryAmount())?></td>
+				</tr>
+				<tr>
+					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_PAYMENT]?></td>
+					<td><?=Tr::_('Payment:')?></td>
+					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getPaymentAmount())?></td>
+				</tr>
+				<tr>
+					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_DISCOUNT]?></td>
+					<td><?=Tr::_('Discounts:')?></td>
+					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getDiscountAmount())?></td>
+				</tr>
+				<tr>
+					<td><?=UI::icon('calculator')?></td>
+					<td style="font-weight: bolder;font-size: 1.8"><?=Tr::_('Total amount:')?></td>
+					<td style="font-weight: bolder;font-size: 1.8"><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getTotalAmount())?></td>
+				</tr>
+			</table>
+		</div>
+	
+	</div>

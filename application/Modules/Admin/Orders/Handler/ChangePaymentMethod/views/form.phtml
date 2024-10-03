@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var Mvc_View $this
+ * @var Order $order
+ * @var Form $form
+ */
+$order = $this->getRaw( 'order' );
+
+$form = $this->getRaw('change_payment_method_form');
+if(!$form) {
+	return;
+}
+
+
+echo $form->start();
+
+foreach($form->getFields() as $field) {
+	echo $field;
+}
+
+?>
+</div>
+<div class="modal-footer">
+<?php
+echo UI::button_save(Tr::_('Update'));
+
+
+echo $form->end();
+
+

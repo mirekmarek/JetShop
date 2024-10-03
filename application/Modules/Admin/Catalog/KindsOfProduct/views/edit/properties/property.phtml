@@ -20,7 +20,7 @@ $p = $this->getRaw('property');
 	<div
 		class="list-group-item sortable-item property<?=$this->getBool('property_in_group')?' property-in-group':''?>"
 		data-id="<?=$p->getPropertyId()?>"
-		style="display: grid;grid-template-columns: 20px 200px 200px 170px 170px 170px 200px 1fr;align-items: center">
+		style="display: grid;grid-template-columns: 20px 200px 200px 170px 170px 200px 1fr;align-items: center">
 		<div>
 			<?php if($editable): ?>
 				<?=UI::icon('up-down')?>
@@ -42,15 +42,6 @@ $p = $this->getRaw('property');
 					<label><input type="checkbox" <?=$p->getIsVariantSelector()?' checked':''?> onchange="setIsVariantMaster(<?=$p->getPropertyId()?> ,this.checked)"> <?=Tr::_('Is variant selector')?></label>
 				<?php else: ?>
 					<label><input type="checkbox" disabled <?=$p->getIsVariantSelector()?' checked':''?>> <?=Tr::_('Is variant selector')?></label>
-				<?php endif; ?>
-			<?php endif; ?>
-		</div>
-		<div>
-			<?php if($p->canBeFilter()): ?>
-				<?php if( $editable ): ?>
-					<label><input type="checkbox" <?=$p->getUseInFilters()?' checked':''?> onchange="setUseInFilters(<?=$p->getPropertyId()?> ,this.checked)"> <?=Tr::_('Use in filters')?></label>
-				<?php else: ?>
-					<label><input type="checkbox" disabled <?=$p->getUseInFilters()?' checked':''?>> <?=Tr::_('Use in filters')?></label>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>

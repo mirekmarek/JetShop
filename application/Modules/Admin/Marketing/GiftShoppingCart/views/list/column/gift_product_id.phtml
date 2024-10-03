@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Gift $item
+ */
+
+$item = $this->getRaw('item');
+echo Admin_Managers::Product()->showName( $item->getGiftProductId() );

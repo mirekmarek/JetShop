@@ -1,0 +1,178 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+use Jet\MVC_View;
+use JetApplication\MarketplaceIntegration;
+use JetApplication\Shops;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order     $order
+ * @var Admin_Managers_Entity_Listing $listing
+ * @var Form $add_bl_form
+ */
+
+$order = $this->getRaw( 'order' );
+?>
+
+	<div style="padding: 10px;display: flex">
+		<?php if($order->getImportSource()):
+			$mp = MarketplaceIntegration::getOrderHandler( $order );
+			?>
+		<div style="margin: 10px" class="card">
+
+			<div class="card-header"><b><?=Tr::_('Order import source')?></b></div>
+			<div class="card-body">
+				<div>
+				<?=$order->getImportSource()?><br>
+				<i><?=$order->getImportRemoteId()?></i>
+				</div>
+				
+				<?php $mp?->handleOrderDetail( $order ) ?>
+				
+			</div>
+		</div>
+		<?php endif; ?>
+		
+		<div style="margin: 10px" class="card">
+			
+			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
+			<div class="card-body">
+				
+				<?=Admin_Managers::Order()->showOrderStatus( $order )?>
+				
+				<table style="margin: 10px">
+					<?php if($order->getSplitSourceOrderId()): ?>
+					<tr>
+						<td style="font-weight: bolder;font-size: 1.2rew"><?=Tr::_('Comes from a split order:')?></td>
+						<td style="font-weight: bolder;font-size: 1.2rew"><?=Admin_Managers::Order()->showName($order->getSplitSourceOrderId())?></td>
+					</tr>
+					<?php endif; ?>
+					
+					<?php if($order->getJoinedWithOrderId()): ?>
+						<tr>
+							<td style="font-weight: bolder;font-size: 1.2rew"><?=Tr::_('Joined with order:')?></td>
+							<td style="font-weight: bolder;font-size: 1.2rew"><?=Admin_Managers::Order()->showName($order->getJoinedWithOrderId())?></td>
+						</tr>
+					<?php endif; ?>
+					
+					
+					<?php if(Shops::isMultiShopMode()): ?>
+						<tr>
+							<td><b><?=Tr::_('Shop')?></b></td>
+							<td><?=$order->getShop()->getShopName()?></td>
+						</tr>
+					<?php endif; ?>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Purchase date and time:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($order->getDatePurchased()) ?></td>
+					</tr>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?= $order->getIpAddress() ?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Delivery method:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=$order->getDeliveryMethod()->getTitle()?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Payment method:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=$order->getPaymentMethod()->getTitle()?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Indicative total weight:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Locale::float($order->getTotalWeightOfProducts())?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Indicative total volume:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Locale::float($order->getTotalVolumeOfProducts())?></td>
+					</tr>
+					
+					<tr>
+						<td><b><?=Tr::_('Payment required:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Tr::_($order->getPaymentRequired() ? 'yes' : 'no')?></td>
+					</tr>
+					
+					<?php if($order->getPaymentRequired()): ?>
+					<tr>
+						<td><b><?=Tr::_('Paid:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Tr::_($order->getPaid() ? 'yes' : 'no')?></td>
+					</tr>
+					<?php endif; ?>
+					
+					<tr>
+						<td><b><?=Tr::_('All items available:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Tr::_($order->getAllItemsAvailable() ? 'yes' : 'no')?></td>
+					</tr>
+
+					<tr>
+						<td><b><?=Tr::_('Designated warehouse:')?></b></td>
+						<td nowrap="" style="padding: 3px">
+							<?=$order->getWarehouse()?->getInternalName()?>
+						</td>
+					</tr>
+					
+				</table>
+
+				<?php Admin_Managers::Complaint()->showOrderComplaints( $order ); ?>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;margin-left: 80px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Customer')?></b></div>
+			<div class="card-body">
+				
+				<table>
+					<tr>
+						<td></td>
+						<td>
+							<?=Admin_Managers::Customer()->showName( $order->getCustomerId() )?>
+							<br>
+						</td>
+					</tr>
+					<tr>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Phone:')?></td>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=$order->getPhone()?></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('e-mail:')?></td>
+						<td><a href="mailto:<?=$order->getEmail()?>"><u><?=$order->getEmail()?></u></a></td>
+					</tr>
+				</table>
+				
+				
+				<?=Handler::getHandler( Handler_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>
+				<?=Handler::getHandler( Handler_Blacklist_Main::KEY )?->renderButton()?>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Billing address')?></b></div>
+			<div class="card-body">
+				<?=Admin_Managers::Customer()->formatAddress( $order->getShop(), $order->getBillingAddress() )?>
+				
+				<?=Handler::getHandler( Handler_ChangeBillingAddress_Main::KEY )?->renderButton()?>
+			</div>
+		</div>
+		
+		
+		<div style="margin: 10px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
+			<div class="card-body">
+				<?=Admin_Managers::Customer()->formatAddress( $order->getShop(), $order->getDeliveryAddress() )?>
+				
+				<?=Handler::getHandler( Handler_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;">
+		</div>
+	</div>
+

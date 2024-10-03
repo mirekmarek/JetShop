@@ -8,11 +8,11 @@ use JetApplication\Delivery_Method_ShopData;
 /**
  * @var MVC_View $this
  * @var Delivery_Method_ShopData $method
+ * @var CashDesk $cash_desk
  */
+$cash_desk = $this->getRaw('cash_desk');
 
-$cash_desk = CashDesk::get();
-
-$place = $cash_desk->getSelectedPersonalTakeoverPlace();
+$place = $cash_desk->getSelectedPersonalTakeoverDeliveryPoint();
 $method = $cash_desk->getSelectedDeliveryMethod();
 
 $this->setVar('delivery_method', $method);

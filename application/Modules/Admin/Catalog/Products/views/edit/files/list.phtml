@@ -1,0 +1,64 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Files;
+use JetApplication\Product_KindOfFile;
+
+/**
+ * @var MVC_View $this
+ * @var Product $product
+ */
+
+$editable = $this->getBool('editable');
+$product = $this->getRaw('product');
+
+$kind_of_files = Product_KindOfFile::getScope();
+
+foreach( $product->getFiles() as $file ):
+	$key = $file->getId();
+
+	$url = Files::Manager()->getFileURL( $product, $file->getFile() );
+	$kind = $kind_of_files[$file->getKindOfFileId()]??'';
+	
+	if($editable):
+		?>
+		
+		<div
+			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: 30px 30px 30px 500px 150px 40px;align-items: center;"
+		>
+			<div class="file" data-file="<?=$key?>">
+				<input type="checkbox" value="<?=$key?>"
+				data-file="<?=$key?>"
+				data-url="<?=$url?>"
+				data-name="<?=$file->getFile()?>"
+				data-kind="<?=$kind?>"
+				class="select_file_checkbox"/></div>
+			<div><?=UI::icon('up-down')?></div>
+			<div style="width: 30px;"><a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download file'))?></a></div>
+			<div><?=$file->getFile()?></div>
+			<div><?=$kind?></div>
+			<div><a
+					data-file="<?=$key?>"
+					data-url="<?=$url?>"
+					data-name="<?=$file->getFile()?>"
+					data-kind="<?=$kind?>"
+					onclick="ProductFilesHandler.deleteFile(this);return false;"
+				><?=UI::icon('trash')->setTitle(Tr::_('Delete file'))?></a></div>
+		</div>
+	<?php
+	else:
+		?>
+		<div
+			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns:500px 150px;align-items: center;"
+		>
+			<div><?=$file->getFile()?></div>
+			<div><?=$kind?></div>
+		</div>
+	
+	<?php
+	endif;
+endforeach; ?>
+

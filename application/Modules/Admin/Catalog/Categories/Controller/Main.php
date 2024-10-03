@@ -1,13 +1,13 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
+use Jet\Application;
 use Jet\Data_Tree;
-use Jet\Logger;
 use Jet\MVC_Controller_Router;
 use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
 
-use JetApplication\Admin_Entity_WithShopData_Manager_Controller;
+use JetApplication\Admin_EntityManager_WithShopData_Controller;
 
 use Jet\UI_messages;
 
@@ -21,7 +21,7 @@ use Jet\Data_Tree_Node;
 /**
  *
  */
-class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
+class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 {
 	
 	protected ?MVC_Controller_Router $router = null;
@@ -75,7 +75,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 	
 	public function getCurrentItem() : Category|null
 	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $this->current_item;
 	}
 
@@ -109,12 +108,15 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 			$sort = $GET->getString('sort', Category::SORT_PRIORITY, array_keys($sort_scope));
 			$active_filter = $GET->getString('active', '', array_keys($active_filter_scope));
 			
+			/*
 			$_active_filter = match( $active_filter ) {
 				'' => null,
 				'active' => true,
 				'non_active' => false
 			};
+			*/
 			
+			$_active_filter = null;
 			
 			$this->view->setVar('allow_to_sort', $sort==Category::SORT_PRIORITY);
 			
@@ -148,6 +150,7 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		
 		$current_node = $tree->getNode( $this->getCurrentCategoryId() );
 
+		
 		foreach( $current_node->getPath() as $node ) {
 
 			if(!$node->getId()) {
@@ -187,16 +190,18 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		if($category->isEditable()) {
 			$this->edit_main_handleActivation();
 			
+			if(Http_Request::GET()->getString('action')=='change_kind_of_product') {
+				$category->setKindOfProductId( Http_Request::POST()->getInt('kind_of_product_id') );
+				
+				UI_messages::success(
+					Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
+				);
+				
+				Http_Headers::reload( unset_GET_params: ['action'] );
+			}
+			
 			if( $category->catchEditForm() ) {
 				$category->save();
-				
-				Logger::success(
-					event: 'category_updated',
-					event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated',
-					context_object_id: $category->getId(),
-					context_object_name: $category->getPathName(),
-					context_object_data: $category
-				);
 				
 				UI_messages::success(
 					Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
@@ -221,13 +226,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		
 		
 		$_updated = function() use ($category) {
-			Logger::success(
-				event: 'category_updated',
-				event_message:  'Category '.$category->getPathName().' ('.$category->getId().') updated',
-				context_object_id: $category->getId(),
-				context_object_name: $category->getPathName(),
-				context_object_data: $category
-			);
 			
 			UI_messages::success(
 				Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
@@ -236,15 +234,13 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		};
 		
 		if($category->isEditable()) {
+			Admin_Managers::ProductFilter()->init( $category->getAutoAppendProductsFilter() );
+			
 			
 			$GET = Http_Request::GET();
 			if(($action = $GET->getString('action'))) {
 				
 				switch($action) {
-					case 'change_kind_of_product':
-						$category->setKindOfProductId( Http_Request::POST()->getInt('kind_of_product_id') );
-						$_updated();
-						break;
 					case 'enable_auto_append_mode':
 						$category->setAutoAppendProducts( true );
 						$category->save();
@@ -260,6 +256,13 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 							$category->actualizeCategoryBranchProductAssoc();
 							$_updated();
 						}
+						break;
+					case 'sort_products':
+						$products = explode(',',$GET->getString('products'));
+						$category->sortProducts( $products );
+						$category->save();
+						Application::end();
+						
 						break;
 				}
 				
@@ -283,7 +286,7 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 			}
 			
 			if($category->getAutoAppendProducts()) {
-				if( Admin_Managers::ProductFilter()->handleCategoryAutoAppendFilterForm( $category ) ) {
+				if( Admin_Managers::ProductFilter()->handleFilterForm() ) {
 					if($category->actualizeAutoAppend()) {
 						$category->actualizeCategoryBranchProductAssoc();
 						
@@ -292,7 +295,13 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 					Http_Headers::reload();
 				}
 			} else {
-				if( Admin_Managers::ProductFilter()->handleCategoryManualAppendFilterForm( $category ) ) {
+				if( Admin_Managers::ProductFilter()->handleFilterForm() ) {
+					
+					$products = Admin_Managers::ProductFilter()->getFilter()->filter();
+					foreach($products as $product_id) {
+						$category->addProduct( $product_id );
+					}
+					
 					$category->actualizeCategoryBranchProductAssoc();
 					$_updated();
 					Http_Headers::reload();
@@ -335,14 +344,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 		if($new_category->catchAddForm()) {
 			$new_category->save();
 			
-			Logger::success(
-				event: 'category_created',
-				event_message: 'Category '.$new_category->getPathName().' ('.$new_category->getId().') created',
-				context_object_id: $new_category->getId(),
-				context_object_name: $new_category->getPathName(),
-				context_object_data: $new_category
-			);
-			
 			UI_messages::success(
 				Tr::_( 'Category <b>%NAME%</b> has been created', [ 'NAME' => $new_category->getPathName() ] )
 			);
@@ -374,13 +375,6 @@ class Controller_Main extends Admin_Entity_WithShopData_Manager_Controller
 			$priority++;
 			
 			$category->setPriority( $priority );
-			Logger::success(
-				event: 'category_priority_updated',
-				event_message: 'Category '.$category->getPathName().' ('.$category->getId().') priority updated',
-				context_object_id: $category->getId(),
-				context_object_name: $category->getPathName(),
-				context_object_data: $priority
-			);
 		}
 		
 		Http_Headers::reload([], ['action']);

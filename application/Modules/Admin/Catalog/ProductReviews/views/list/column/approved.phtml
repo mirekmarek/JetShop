@@ -1,0 +1,34 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Catalog\ProductReviews;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var ProductReview $item
+ */
+
+$item = $this->getRaw('item');
+
+if(!$item->isAssessed()) {
+	return;
+}
+
+if($item->isApproved()):
+	echo UI::badge(UI_badge::SUCCESS, Tr::_('yes'));
+	echo '<br>';
+	echo Locale::dateAndTime( $item->getApprovedDateTime() );
+else:
+	echo UI::badge(UI_badge::DANGER, Tr::_('no'));
+endif;

@@ -20,4 +20,7 @@ $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 ?>
 	<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getNumber();?></a>
-<?php
+<?php if($item->getImportSource()): ?>
+<br><br>
+<?=$item->getImportSource()?><br><i><?=$item->getImportRemoteId()?></i>
+<?php endif; ?>

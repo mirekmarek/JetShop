@@ -1,0 +1,142 @@
+<?php
+namespace JetApplicationModule\Carrier\Zasilkovna;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var MVC_View $this
+ * @var OrderDispatch[] $dispatches
+ */
+$dispatches = $this->getRaw('dispatches');
+$barcode = $this->getRaw('barcode');
+
+$warehouse = null;
+foreach($dispatches as $dispatch) {
+	$warehouse = $dispatch->getWarehouse();
+	break;
+}
+
+$barcode_image = BarcodeGenerator::generate( $barcode );
+
+ob_start();
+imagepng( $barcode_image );
+$barcode_image_data = ob_get_contents();
+ob_end_clean();
+
+?>
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<style type="text/css">
+		body, table {
+			background: #fff;
+			color: #000;
+		}
+
+		table {
+			border-collapse: collapse;
+		}
+
+		th {
+			background: #aaa;
+			padding: 4px;
+			font-size: 9pt;
+			border: 1px solid black;
+		}
+
+		thead {
+			display: table-header-group;
+		}
+
+		tbody td {
+			padding: 1px 4px;
+			font-size: 9pt;
+			border: 1px solid black;
+		}
+
+		thead td {
+			border: 0 none;
+			font-size: 9pt;
+			font-weight: normal;
+		}
+
+		tr.even td {
+			background: #ddd;
+		}
+	</style>
+</head>
+<body onload="window.print();">
+<table style="width:100%;">
+	<thead>
+	<tr>
+		<td colspan="8">
+			<table width="100%">
+				<tr>
+					<td>
+						<strong>Předání zásilek</strong><br>
+						<?=$barcode?><br>
+						Zásilek: <?=count( $dispatches )?><br>
+						Tisk: <?=date('d. n. Y')?><br>
+					</td>
+					<td align="center">
+						<img src="data:image/png;base64,<?=base64_encode($barcode_image_data)?>" style="width: 8cm; height: 1.5cm; ">
+					</td>
+					<td>
+						<strong>Odesílatel</strong><br>
+						<?=$warehouse->getAddressName()?><br>
+						<?=$warehouse->getAddressStreetNo()?><br>
+						<?=$warehouse->getAddressZip()?> <?=$warehouse->getAddressTown()?>
+					</td>
+					<td>
+						<strong>Příjemce</strong><br>
+						Zásilkovna s.r.o.<br>Českomoravská 2408/1a<br>19000 Praha
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<th>Balík č.</th>
+		<th>Čárový kód</th>
+		<th>Vytvořeno</th>
+		<th>Jméno a příjmení</th>
+		<th>Dobírka</th>
+		<th align="center">Výdejní místo/Služba</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody id="naj">
+	<tr
+	<?php
+	$i = 0;
+	foreach($dispatches as $dispatch):
+		$i++;
+		?>
+	<tr class="<?=($i%2)?'even':'odd'?>" style="text-decoration: none">
+		<td>0111</td>
+		<td align="center" style='white-space: nowrap'><?=$dispatch->getConsignmentId()?></td>
+		<td align="center" style='white-space: nowrap'><?=$dispatch->getDispatchDate()->format('d. m.')?></td>
+		<td align="center" style='white-space: nowrap'><?=$dispatch->getRecipientFirstName()?> <?=$dispatch->getRecipientSurname()?> <?=$dispatch->getRecipientCompany()?></td>
+		<td align="right" style='white-space: nowrap'>
+			<strong><?=$dispatch->getCod() ?  Admin_Managers::PriceFormatter()->formatWithCurrency( $dispatch->getCodCurrency(), $dispatch->getCod() ) : '----'?></strong>
+		</td>
+		<td align="center">
+			<?php if(($point=$dispatch->getDeliveryPoint())): ?>
+				<?=$point->getId()?>, <?=$point->getName()?>
+			<?php else: ?>
+				<?=$dispatch->getCarrierService()->getName()?>
+			<?php endif?>
+		</td>
+		<td></td>
+	</tr>
+	<?php endforeach; ?>
+	<tr>
+		<td>
+			<div style="margin: 3px 0; height: 20px; border: 2px solid black; text-align: center; overflow: hidden; ">KONEC</div>
+		</td>
+	</tr>
+	</tbody>
+</table>

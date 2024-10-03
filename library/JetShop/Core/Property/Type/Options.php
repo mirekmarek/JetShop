@@ -68,6 +68,7 @@ abstract class Core_Property_Type_Options extends Property_Type
 		
 		foreach($this->getOptionsScope() as  $option_id=>$option_label) {
 			$option = new Form_Field_Checkbox('/property/'.$property_id.'/option_'.$option_id, $option_label );
+			$option->setDoNotTranslateLabel( true );
 			
 			$option->setDefaultValue( $filter->getOptionIsSelected( $property_id, $option_id ) );
 			

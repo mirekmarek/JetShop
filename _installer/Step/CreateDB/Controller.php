@@ -11,30 +11,12 @@ namespace JetApplication\Installer;
 use Exception;
 use Jet\DataModel_Helper;
 
-use JetApplication\Auth_Administrator_Role;
-use JetApplication\Auth_Administrator_Role_Privilege;
-use JetApplication\Auth_Administrator_User;
-use JetApplication\Auth_Administrator_User_Roles;
-
-use JetApplication\Auth_Visitor_Role;
-use JetApplication\Auth_Visitor_Role_Privilege;
-use JetApplication\Auth_Visitor_User;
-use JetApplication\Auth_Visitor_User_Roles;
-
-use JetApplication\Auth_RESTClient_Role;
-use JetApplication\Auth_RESTClient_Role_Privilege;
-use JetApplication\Auth_RESTClient_User;
-use JetApplication\Auth_RESTClient_User_Roles;
-
-use JetApplication\Logger_Admin_Event;
-use JetApplication\Logger_Web_Event;
-use JetApplication\Logger_REST_Event;
-
 /**
  *
  */
 class Installer_Step_CreateDB_Controller extends Installer_Step_Controller
 {
+	protected string $icon = 'square-plus';
 
 	/**
 	 * @var string
@@ -58,26 +40,7 @@ class Installer_Step_CreateDB_Controller extends Installer_Step_Controller
 		$this->catchContinue();
 
 
-		$classes = [
-			Auth_Administrator_Role::class,
-			Auth_Administrator_Role_Privilege::class,
-			Auth_Administrator_User::class,
-			Auth_Administrator_User_Roles::class,
-
-			Auth_Visitor_Role::class,
-			Auth_Visitor_Role_Privilege::class,
-			Auth_Visitor_User::class,
-			Auth_Visitor_User_Roles::class,
-
-			Auth_RESTClient_Role::class,
-			Auth_RESTClient_Role_Privilege::class,
-			Auth_RESTClient_User::class,
-			Auth_RESTClient_User_Roles::class,
-
-			Logger_Admin_Event::class,
-			Logger_Web_Event::class,
-			Logger_REST_Event::class,
-		];
+		$classes = [];
 
 		$result = [];
 		$OK = true;

@@ -232,7 +232,7 @@ abstract class Core_Product_Parameter {
 		$product_id = $this->product_id;
 		
 		if(!array_key_exists($product_id, static::$text_value_maps)) {
-			static::$text_value_maps[$product_id] = Product_Parameter_TextValue::get( $product_id );
+			static::$text_value_maps[$product_id] = Product_Parameter_TextValue::getForProduct( $product_id );
 		}
 		
 		return static::$text_value_maps[$product_id];

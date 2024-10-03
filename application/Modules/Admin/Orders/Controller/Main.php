@@ -7,15 +7,17 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
+use Jet\Http_Headers;
+use Jet\Http_Request;
+use Jet\MVC_Layout;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Order as Order;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
-
+use JetApplication\EMail_Sent;
 
 
 class Controller_Main extends MVC_Controller_Default
@@ -76,41 +78,87 @@ class Controller_Main extends MVC_Controller_Default
 		$this->listing_manager->addColumn( new Listing_Column_TotalAmount() );
 		$this->listing_manager->addColumn( new Listing_Column_Items() );
 		$this->listing_manager->addColumn( new Listing_Column_DatePurchased() );
-		$this->listing_manager->addColumn( new Listing_Column_StatusId() );
+		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Status() );
+		$this->listing_manager->addFilter( new Listing_Filter_Source() );
+		$this->listing_manager->addFilter( new Listing_Filter_Cancelled() );
+		$this->listing_manager->addFilter( new Listing_Filter_PaymentRequired() );
+		$this->listing_manager->addFilter( new Listing_Filter_Paid() );
+		$this->listing_manager->addFilter( new Listing_Filter_AllItemsAvailable() );
 		$this->listing_manager->addFilter( new Listing_Filter_Delivery() );
 		$this->listing_manager->addFilter( new Listing_Filter_Payment() );
 		$this->listing_manager->addFilter( new Listing_Filter_DatePurchased() );
 		$this->listing_manager->addFilter( new Listing_Filter_Customer() );
-
-		//TODO: filter product
-		//TODO: filter source
+		$this->listing_manager->addFilter( new Listing_Filter_Product() );
 		
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
-			$search = '%'.$search.'%';
-		
-			//TODO: better search
-			return [
-				'id *'            => $search,
-				'OR',
-				'number *'            => $search,
-				'OR',
-				'email *' => $search,
-			];
 			
+			$search_separated = explode( ' ', $search );
+			
+			$q = [];
+			
+			if(count( $search_separated )==2) {
+				$search_query_alt = addslashes($search_separated[1].' '.$search_separated[0]);
+				$q[] = [
+					'billing_first_name *' => '%'.$search_separated[0].'%',
+					'AND',
+					'billing_surname *' => '%'.$search_separated[1].'%'
+				];
+				$q[] = 'OR';
+				$q[] = [
+					'billing_first_name *' => '%'.$search_separated[1].'%',
+					'AND',
+					'billing_surname *' => '%'.$search_separated[0].'%'
+				];
+				$q[] = 'OR';
+				
+				$q[] = [
+					'delivery_first_name *' => '%'.$search_separated[0].'%',
+					'AND',
+					'delivery_surname *' => '%'.$search_separated[1].'%'
+				];
+				$q[] = 'OR';
+				$q[] = [
+					'delivery_first_name *' => '%'.$search_separated[1].'%',
+					'AND',
+					'delivery_surname *' => '%'.$search_separated[0].'%'
+				];
+				
+			}
+			
+			$q[] = 'OR';
+			$q['phone *'] = '%'.$search.'%';
+			$q[] = 'OR';
+			$q['email *'] = '%'.$search.'%';
+			$q[] = 'OR';
+			$q['billing_company_name *'] = '%'.$search.'%';
+			$q[] = 'OR';
+			$q['delivery_company_name *'] = '%'.$search.'%';
+			$q[] = 'OR';
+			$q['billing_company_id *'] = '%'.$search.'%';
+			$q[] = 'OR';
+			$q['import_remote_id'] = $search;
+			$q[] = 'OR';
+			$q['number'] = $search;
+
+			return $q;
 		} );
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'shop',
-			'number',
-			'customer',
-			'total_amount',
-			'items',
-			'date_purchased',
-			'status_id'
+			Listing_Column_Number::KEY,
+			Listing_Column_Customer::KEY,
+			Listing_Column_TotalAmount::KEY,
+			Listing_Column_Items::KEY,
+			Listing_Column_DatePurchased::KEY,
+			Listing_Column_Status::KEY
 		]);
+		
+		$this->listing_manager->setCustomBtnRenderer( function() : string {
+			return $this->view->render('list/toolbar');
+		} );
 		
 	}
 	
@@ -118,7 +166,18 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$this->setBreadcrumbNavigation();
 		
-		$this->content->output( $this->getListing()->renderListing() );
+		
+		ListingHandler::initHandlers( $this->view, $this->getListing() );
+		
+		ListingHandler::handleHandlers();
+		
+		$output = $this->getListing()->renderListing();
+		
+		foreach(ListingHandler::getHandlers() as $handler) {
+			$output .= $handler->renderDialog();
+		}
+		
+		$this->content->output( $output );
 	}
 
 
@@ -128,7 +187,23 @@ class Controller_Main extends MVC_Controller_Default
 	
 	public function edit_Action() : void
 	{
+		/**
+		 * @var Order $order
+		 */
 		$order = $this->order;
+		
+		if(($sent_email_id=Http_Request::GET()->getInt('show_sent_email'))) {
+			$sent_email = EMail_Sent::load( $sent_email_id );
+			if(!$sent_email) {
+				Http_Headers::reload(unset_GET_params: ['show_sent_email']);
+			}
+			$this->view->setVar('sent_email', $sent_email);
+			
+			MVC_Layout::getCurrentLayout()->setScriptName('dialog');
+			
+			$this->output( 'sent_email' );
+			return;
+		}
 		
 		$this->setBreadcrumbNavigation(
 			Tr::_( 'Order <b>%NUMBER%</b>', [ 'NUMBER' => $order->getNumber() ] )
@@ -136,13 +211,18 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$this->view->setVar( 'order', $order );
 		$this->view->setVar('listing', $this->getListing());
-		$this->output( 'edit' );
+		
+		Handler::initHandlers( $this->view, $this->order );
 
+		Handler::handleHandlers();
+		
+		if(Http_Request::GET()->exists('print')) {
+			MVC_Layout::getCurrentLayout()->setScriptName('plain');
+			$this->output( 'print' );
+		} else {
+			$this->output( 'edit' );
+		}
 	}
 	
-	public function view_Action() : void
-	{
-		$this->edit_Action();
-	}
-
+	
 }

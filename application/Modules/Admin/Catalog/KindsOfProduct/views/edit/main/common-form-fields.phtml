@@ -1,10 +1,47 @@
 <?php
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Tr;
+use JetApplication\KindOfProduct;
+use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View $this
  * @var Form $form
+ * @var KindOfProduct $item
  */
 $form = $this->getRaw('form');
+
+$item  =$this->getRaw('item');
+
+echo $form->field('measure_unit');
+echo $form->field('is_virtual_product');
+echo $form->field('virtual_product_handler');
+
+
+
+$category_ids = $item->getUsageCategoryIds();
+?>
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">
+	
+	</div>
+	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+		<div class="card">
+			<div class="card-header"><?= Tr::_('Usage')?></div>
+			<div class="card-body">
+				<table class="table table-striped">
+					<?php foreach($category_ids as $id): ?>
+						<tr>
+							<td><?= Admin_Managers::Category()->showName( $id )?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+		</div>
+		<br>
+	</div>
+</div>
+
+
 

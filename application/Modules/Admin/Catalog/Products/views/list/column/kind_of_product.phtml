@@ -1,0 +1,15 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product $item
+ */
+
+$item = $this->getRaw('item');
+
+echo Admin_Managers::KindOfProduct()->showName( $item->getKindId() );
+

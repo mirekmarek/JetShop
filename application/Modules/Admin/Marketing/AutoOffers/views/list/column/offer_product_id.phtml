@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Marketing\AutoOffers;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var AutoOffer $item
+ */
+
+$item = $this->getRaw('item');
+echo Admin_Managers::Product()->showName( $item->getOfferProductId() );

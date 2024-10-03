@@ -1,6 +1,7 @@
 <?php
 return [
 	'name' => 'Receipt Of Goods',
+	'icon' => 'truck-loading',
 	'is_active' => true,
 	'title' => 'Receipt Of Goods',
 	'menu_title' => 'Receipt Of Goods',

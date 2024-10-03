@@ -1,11 +1,9 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
-use JetApplication\Delivery_Class;
 use JetApplication\Delivery_Method_ShopData;
 use JetApplication\Shop_Managers;
-use JetApplication\Delivery_Kind;
-use JetApplication\Delivery_PersonalTakeover_Place;
+use JetApplication\Carrier_DeliveryPoint;
 
 trait CashDesk_Delivery {
 	
@@ -22,99 +20,13 @@ trait CashDesk_Delivery {
 	{
 
 		if($this->available_delivery_methods===null) {
-			$this->available_delivery_methods = [];
-
-			$default_delivery_class = Delivery_Class::getDefault();
 			$cart = Shop_Managers::ShoppingCart()->getCart();
-
-			$delivery_classes = [];
-			$delivery_kinds = [];
-
-			foreach($cart->getItems() as $item) {
-				$product = $item->getProduct();
-
-				$delivery_class_id = $product->getDeliveryClassId();
-				if(!$delivery_class_id) {
-					if(!$default_delivery_class) {
-						continue;
-					}
-					
-					$delivery_class_id = $default_delivery_class->getId();
-				}
-
-				if(!isset($delivery_classes[$delivery_class_id])) {
-					$delivery_class = Delivery_Class::load( $delivery_class_id );
-					
-					$delivery_classes[$delivery_class_id] = $delivery_class;
-
-					foreach($delivery_class->getKinds() as $kind ) {
-						$kind = $kind->getCode();
-
-						if(!in_array($kind, $delivery_kinds)) {
-							$delivery_kinds[] = $kind;
-						}
-
-					}
-				}
-			}
-
-			$has_only_personal_takeover = false;
-			$has_only_e_delivery = null;
-
-
-			foreach( $delivery_classes as $delivery_class ) {
-				if($delivery_class->isPersonalTakeOverOnly()) {
-					$has_only_personal_takeover = true;
-				}
-
-				if($delivery_class->isEDelivery()) {
-					if($has_only_e_delivery===null) {
-						$has_only_e_delivery = true;
-					}
-				} else {
-					$has_only_e_delivery = false;
-				}
-			}
-
-			foreach($delivery_classes as $class ) {
-				$methods = Delivery_Method_ShopData::getActiveList( $class->getDeliveryMethodIds() );
-				
-				foreach( $methods as $method ) {
-					if(
-						$has_only_personal_takeover &&
-						$method->getKindCode()!=Delivery_Kind::KIND_PERSONAL_TAKEOVER
-					) {
-						//There is something what is available only as "personal take over item" in the order. So only personal takeover methods are allowed
-						continue;
-					}
-
-					if(
-						$has_only_e_delivery &&
-						$method->getKindCode()!=Delivery_Kind::KIND_E_DELIVERY
-					) {
-						//There is something virtual and nothing else. So only e-delivery is allowed
-						continue;
-					}
-
-					if(
-						!$has_only_e_delivery &&
-						$method->getKindCode()==Delivery_Kind::KIND_E_DELIVERY
-					) {
-						//There is something physical. So e-delivery is not allowed
-						continue;
-					}
-
-					$this->available_delivery_methods[$method->getId()] = $method;
-
-				}
-			}
-
-			foreach($this->available_delivery_methods as $code=>$method) {
-				$method->getBackendModule()?->init( $method );
-			}
+			
+			$this->available_delivery_methods = Delivery_Method_ShopData::getAvailableByProducts(
+				$cart->getProducts()
+			);
 
 			$this->sortDeliveryMethods( $this->available_delivery_methods );
-
 		}
 
 		return $this->available_delivery_methods;
@@ -134,16 +46,7 @@ trait CashDesk_Delivery {
 	{
 		
 		uasort( $delivery_methods, function( Delivery_Method_ShopData $a, Delivery_Method_ShopData $b ) {
-			$p_a = $a->getPriority();
-			$p_b = $b->getPriority();
-			
-			if(!$p_a<$p_b) {
-				return -1;
-			}
-			if(!$p_a>$p_b) {
-				return 1;
-			}
-			return 0;
+			return $a->getPriority()<=>$b->getPriority();
 		} );
 		
 	}
@@ -155,6 +58,7 @@ trait CashDesk_Delivery {
 		
 		$methods = [];
 		$cheapest = null;
+		$pricelist = $this->getPricelist();
 		
 		foreach($delivery_methods as $delivery_method) {
 			if($delivery_method->isPersonalTakeover()) {
@@ -166,7 +70,7 @@ trait CashDesk_Delivery {
 				continue;
 			}
 			
-			if($delivery_method->getPrice()<$cheapest->getPrice()) {
+			if($delivery_method->getPrice($pricelist)<$cheapest->getPrice($pricelist)) {
 				$cheapest = $delivery_method;
 			}
 		}
@@ -189,7 +93,7 @@ trait CashDesk_Delivery {
 
 		if(!isset($methods[$id])) {
 			$session->setValue('selected_delivery_method', $default_method->getId());
-			$session->setValue('selected_delivery_method_place_code', '');
+			$session->setValue('selected_delivery_method_point_code', '');
 
 			return $default_method;
 		}
@@ -198,12 +102,12 @@ trait CashDesk_Delivery {
 
 		if(
 			$method->isPersonalTakeover() &&
-			!$method->getPersonalTakeoverPlace(
-				$session->getValue('selected_personal_takeover_place_code', '')
+			!$method->getPersonalTakeoverDeliveryPoint(
+				$session->getValue('selected_personal_takeover_point_code', '')
 			)
 		) {
 			$session->setValue('selected_delivery_method', $default_method->getId());
-			$session->setValue('selected_delivery_method_place_code', '');
+			$session->setValue('selected_delivery_method_point_code', '');
 
 			return $default_method;
 		}
@@ -222,42 +126,66 @@ trait CashDesk_Delivery {
 		}
 		if($session->getValue('selected_delivery_method')!=$id) {
 			$session->setValue('selected_delivery_method', $id);
-			$session->setValue('selected_personal_takeover_place_code', '');
+			$session->setValue('selected_personal_takeover_point_code', '');
 		}
 
 		return true;
 	}
 
-	public function selectPersonalTakeoverPlace( int $method_id, string $place_code ) : bool
+	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method_ShopData $method, Carrier_DeliveryPoint $point ) : bool
 	{
-		if( !($method = CashDesk::get()->getDeliveryMethod( $method_id )) ) {
-			return false;
-		}
-		
-		$place = $method->getPersonalTakeoverPlace( $place_code, only_active: true );
+		$point = $method->getPersonalTakeoverDeliveryPoint( $point->getPointCode() );
 
-		if( !$place ) {
+		if( !$point ) {
 			return false;
 		}
 
 		$session = $this->getSession();
 		$session->setValue('selected_delivery_method', $method->getId() );
-		$session->setValue('selected_personal_takeover_place_code', $place->getPlaceCode() );
+		$session->setValue('selected_personal_takeover_point_code', $point->getPointCode() );
 
 		return true;
 	}
 
-	public function getSelectedPersonalTakeoverPlace() : ?Delivery_PersonalTakeover_Place
+	public function getSelectedPersonalTakeoverDeliveryPoint() : ?Carrier_DeliveryPoint
 	{
 		$session = $this->getSession();
 		$method = $this->getSelectedDeliveryMethod();
 
-		$place_code = $session->getValue('selected_personal_takeover_place_code');
+		$place_code = $session->getValue('selected_personal_takeover_point_code');
 
 		if(!$place_code) {
 			return null;
 		}
 
-		return $method->getPersonalTakeoverPlace( $place_code );
+		return $method->getPersonalTakeoverDeliveryPoint( $place_code );
+	}
+	
+	public function getDeliveryPointByCode( string $code, ?Delivery_Method_ShopData &$method=null ) : ?Carrier_DeliveryPoint
+	{
+		if(
+			!$code ||
+			!str_contains($code, ':')
+		) {
+			return null;
+		}
+		
+		[$method_id, $point_code] = explode(':', $code);
+		
+		$method = Delivery_Method_ShopData::get( (int)$method_id );
+		if(!$method || !$method->isActive()) {
+			return null;
+		}
+		
+		$point = Carrier_DeliveryPoint::getPoint(
+			$method->getCarrier(),
+			$point_code
+		);
+		
+		if(!$point) {
+			return null;
+		}
+		
+		return $point;
 	}
 }

@@ -9,15 +9,27 @@ use Jet\Application_Module;
 use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Form_Field_Select;
+use Jet\Form_Field_Float;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Entity_HasPrice_Interface;
+use JetApplication\Entity_HasPrice_Trait;
+use JetApplication\Entity_WithShopData;
 use JetApplication\Entity_WithShopData_ShopData;
 use JetApplication\Order;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Module;
 use JetApplication\Payment_Method_Option_ShopData;
+use JetApplication\Payment_Method_ShopData;
+use JetApplication\Pricelists_Pricelist;
+use JetApplication\Payment_Method_Price;
+use JetApplication\Shops_Shop;
+use JetApplication\Timer_Action;
+use JetApplication\Timer_Action_SetPrice;
 
 /**
  *
@@ -27,8 +39,9 @@ use JetApplication\Payment_Method_Option_ShopData;
 	database_table_name: 'payment_methods_shop_data',
 	parent_model_class: Payment_Method::class
 )]
-abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
+abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData implements Entity_HasPrice_Interface
 {
+	use Entity_HasPrice_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -105,25 +118,6 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 	protected int $priority = 0;
 	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_FLOAT,
-		label: 'Default price:'
-	)]
-	protected float $default_price = 0.0;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_FLOAT,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_FLOAT,
-		label: 'VAT rate:',
-		creator: ['this', 'createVatRateInputField']
-	)]
-	protected float $vat_rate = 0.0;
-	
-	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 	)]
 	#[Form_Definition(
@@ -139,15 +133,42 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 	)]
 	protected string $backend_module_name = '';
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		is_key: true,
+		max_len: 255,
+	)]
+	protected string $backend_module_payment_method_specification = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Free payment limit:'
+	)]
+	protected float $free_payment_limit = 0.0;
+	
 	/**
 	 * @var Payment_Method_Option_ShopData[]
 	 */
 	protected ?array $options = null;
 	
 	
-	protected ?float $price = null;
+	/**
+	 * @var Payment_Method_Price[]
+	 */
+	protected array $default_price = [];
 	
 	protected bool $enabled = true;
+	
+	
+	public function getPriceEntity( Pricelists_Pricelist $pricelist ) : Payment_Method_Price
+	{
+		return Payment_Method_Price::get( $pricelist, $this->getId() );
+	}
+	
 	
 	public function getEnabled(): bool
 	{
@@ -220,63 +241,27 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 	{
 		return $this->priority;
 	}
-
-	public function setDefaultPrice( float $value ) : void
-	{
-		$this->default_price = $value;
-	}
 	
-	public function getDefaultPrice() : float
-	{
-		return $this->default_price;
-	}
 	
-
-	public function getPrice(): ?float
+	public function getDefaultPrice( Pricelists_Pricelist $pricelist ) : float
 	{
-		if($this->price===null) {
-			$this->price = $this->getDefaultPrice();
+		$code = $pricelist->getCode();
+		
+		if(!isset($this->default_price[$code])) {
+			$this->default_price[$code] = clone $this->getPriceEntity( $pricelist );
 		}
-		return $this->price;
+		return $this->default_price[$code]->getPrice();
 	}
 	
-	public function setPrice( float $price ): void
+	public function setPrice( Pricelists_Pricelist $pricelist, float $price ): void
 	{
-		$this->price = $price;
+		$this->getDefaultPrice( $pricelist );
+		
+		$this->getPriceEntity( $pricelist )->setPrice( $price );
 	}
+
 	
-	
 
-	public function setVatRate( float $value ) : void
-	{
-		$this->vat_rate = $value;
-	}
-
-	public function getVatRate() : float
-	{
-		return $this->vat_rate;
-	}
-
-	public function createVatRateInputField() : Form_Field_Select
-	{
-		$shop = $this->getShop();
-
-		$input = new Form_Field_Select('vat_rate', 'VAT rate:' );
-		$input->setDefaultValue( !$this->getIsSaved() ? $shop->getDefaultVatRate()  : $this->vat_rate );
-
-		$input->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select VAT rate',
-		]);
-
-		$vat_rates = $shop->getVatRates();
-
-		$vat_rates = array_combine($vat_rates, $vat_rates);
-
-		$input->setSelectOptions($vat_rates);
-
-		return $input;
-	}
-	
 	public function setDiscountIsNotAllowed( bool $value ) : void
 	{
 		$this->discount_is_not_allowed = $value;
@@ -285,6 +270,16 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 	public function getDiscountIsNotAllowed() : bool
 	{
 		return $this->discount_is_not_allowed;
+	}
+
+	public function getFreePaymentLimit(): float
+	{
+		return $this->free_payment_limit;
+	}
+	
+	public function setFreePaymentLimit( float $free_payment_limit ): void
+	{
+		$this->free_payment_limit = $free_payment_limit;
 	}
 
 	public function setConfirmationEmailInfoText( string $value ) : void
@@ -315,6 +310,18 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 		
 		return Application_Modules::moduleInstance( $this->backend_module_name );
 	}
+	
+	public function getBackendModulePaymentMethodSpecification(): string
+	{
+		return $this->backend_module_payment_method_specification;
+	}
+	
+	public function setBackendModulePaymentMethodSpecification( string $backend_module_payment_method_specification ): void
+	{
+		$this->backend_module_payment_method_specification = $backend_module_payment_method_specification;
+	}
+	
+	
 	
 	public function setIcon1( string $image ) : void
 	{
@@ -386,6 +393,88 @@ abstract class Core_Payment_Method_ShopData extends Entity_WithShopData_ShopData
 		} else {
 			return $this->getConfirmationEmailInfoText();
 		}
+	}
+	
+	
+	/**
+	 * @return Timer_Action[]
+	 */
+	public function getAvailableTimerActions() : array
+	{
+		$actions = parent::getAvailableTimerActions();
+		
+		$shop = $this->getShop();
+		
+		foreach($shop->getPricelists() as $pricelist) {
+			$set_price = new class( $shop, $pricelist, $this->getDefaultPrice($pricelist) ) extends Timer_Action_SetPrice {
+				public function perform( Entity_WithShopData $entity, mixed $action_context ): bool
+				{
+					$entity->getPriceEntity( $this->pricelist )->setPrice( (float)$action_context );
+					
+					return true;
+				}
+			};
+			
+			$actions[$set_price->getKey()] = $set_price;
+		}
+		
+		
+		$set_free_limit = new class( $shop, $this->free_payment_limit ) extends Timer_Action {
+			protected Shops_Shop $shop;
+			protected float $free_payment_limit;
+			
+			public function __construct( Shops_Shop $shop, float $free_delivery_limit ) {
+				$this->shop = $shop;
+				$this->free_payment_limit = $free_delivery_limit;
+			}
+			
+			public function perform( Entity_WithShopData $entity, mixed $action_context ): bool
+			{
+				/**
+				 * @var Payment_Method_ShopData $entity
+				 */
+				$entity->setFreePaymentLimit( (float)$action_context );
+				$entity->save();
+				
+				return true;
+			}
+			
+			public function getKey(): string
+			{
+				return 'set_free_limit:'.$this->shop->getKey();
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Set free limit');
+			}
+			
+			public function updateForm( Form $form ): void
+			{
+				$price = new Form_Field_Float('free_limit', 'Free limit:');
+				$price->setDefaultValue( $this->free_payment_limit );
+				
+				$form->addField( $price );
+			}
+			
+			public function catchActionContextValue( Form $form ) : mixed
+			{
+				return $form->field('free_limit')->getValue();
+			}
+			
+			public function formatActionContextValue( mixed $action_context ) : string
+			{
+				return Admin_Managers::PriceFormatter()->formatWithCurrency(
+					$this->shop->getDefaultPricelist()->getCurrency(), (float)$action_context
+				);
+			}
+			
+		};
+		
+		$actions[$set_free_limit->getKey()] = $set_free_limit;
+		
+		
+		return $actions;
 	}
 	
 }

@@ -1,11 +1,16 @@
 <?php
 namespace JetApplicationModule\Shop\CashDesk;
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Customer;
 
-$cash_desk = CashDesk::get();
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
 
 if(
 	$cash_desk->isDeliveryAddressDisabled() ||
@@ -55,38 +60,57 @@ else:
 	?>
 	
 	<?php if ($cash_desk->isCompanyOrder()): ?>
-		<div id="field_<?=$form->field('company_name')->getId()?>">
+		<div class="address-field" id="field_<?=$form->field('company_name')->getId()?>">
 			<?=$form->field('company_name')?>
 		</div>
 	<?php endif; ?>
 	
-	<div id="field_<?=$form->field('first_name')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('first_name')->getId()?>">
 		<?=$form->field('first_name')?>
 	</div>
-	<div id="field_<?=$form->field('surname')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('surname')->getId()?>">
 		<?=$form->field('surname')?>
 	</div>
 	
 	<?php if ($cash_desk->isDeliveryAddressDisabled()): ?>
 	<div style="opacity: 0.5">
-		<div id="field_<?=$form->field('address_street_no')->getId()?>">
+		<div class="address-field" id="field_<?=$form->field('address_street_no')->getId()?>">
 			<?=$form->field('address_street_no')?>
 		</div>
-		<div id="field_<?=$form->field('address_town')->getId()?>">
+		<div class="address-field" id="field_<?=$form->field('address_town')->getId()?>">
 			<?=$form->field('address_town')?>
 		</div>
-		<div id="field_<?=$form->field('address_zip')->getId()?>">
+		<div class="address-field" id="field_<?=$form->field('address_zip')->getId()?>">
 			<?=$form->field('address_zip')?>
 		</div>
 	</div>
-<?php else: ?>
-	<div id="field_<?=$form->field('address_street_no')->getId()?>">
+<?php else:
+	
+	$form->field('address_street_no')->input()->setCustomRenderer( function() {
+		echo $this->renderByView();
+		?>
+		<div style="position: relative">
+			<div id="<?=$this->field->getId()?>_ws" class="whisperer-items" style="display: none;"></div>
+		</div>
+		<?php
+	} );
+	$form->field('address_town')->input()->setCustomRenderer( function() {
+		echo $this->renderByView();
+		?>
+		<div style="position: relative">
+			<div id="<?=$this->field->getId()?>_ws" class="whisperer-items" style="display: none;"></div>
+		</div>
+		<?php
+	} );
+	
+	?>
+	<div class="address-field" id="field_<?=$form->field('address_street_no')->getId()?>">
 		<?=$form->field('address_street_no')?>
 	</div>
-	<div id="field_<?=$form->field('address_town')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('address_town')->getId()?>">
 		<?=$form->field('address_town')?>
 	</div>
-	<div id="field_<?=$form->field('address_zip')->getId()?>">
+	<div class="address-field" id="field_<?=$form->field('address_zip')->getId()?>">
 		<?=$form->field('address_zip')?>
 	</div>
 <?php endif; ?>

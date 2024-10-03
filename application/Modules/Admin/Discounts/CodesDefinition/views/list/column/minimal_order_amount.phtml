@@ -17,4 +17,4 @@ use JetApplication\Admin_Managers;
 
 $item = $this->getRaw('item');
 
-echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getShop(), $item->getMinimalOrderAmount() );
+echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getShop()->getDefaultPricelist()->getCurrency(), $item->getMinimalOrderAmount() );

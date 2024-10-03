@@ -8,9 +8,9 @@ use JetApplication\Delivery_Method_ShopData;
 /**
  * @var MVC_View $this
  * @var Delivery_Method_ShopData $method
+ * @var CashDesk $cash_desk
  */
-
-$cash_desk = CashDesk::get();
+$cash_desk = $this->getRaw('cash_desk');
 $method = $this->getRaw('delivery_method');
 
 

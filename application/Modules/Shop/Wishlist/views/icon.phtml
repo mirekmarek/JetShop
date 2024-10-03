@@ -1,0 +1,16 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Shop_Pages;
+
+/**
+ * @var MVC_View $this
+ */
+
+
+echo UI::button( '&nbsp;'.count($this->getRaw('product_ids')) )
+	->setIcon('heart')
+	->setClass( UI_button::CLASS_LIGHT )
+	->setUrl( Shop_Pages::Wishlist()->getURL() );
+

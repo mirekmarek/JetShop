@@ -8,7 +8,7 @@
 namespace JetApplicationModule\Shop\CashDesk;
 
 use Jet\Http_Request;
-use JetApplication\Shop_Managers;
+use JetApplication\Shop_Pages;
 
 trait Controller_Main_Confirm {
 
@@ -41,7 +41,7 @@ trait Controller_Main_Confirm {
 	public function confirm_toggle_agree_flag_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
+		$cash_desk = $this->cash_desk;
 		$GET = Http_Request::GET();
 
 		$code = $GET->getString('flag');
@@ -63,9 +63,8 @@ trait Controller_Main_Confirm {
 	public function confirm_save_special_requirements_Action() : void
 	{
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
 
-		$form = $cash_desk->getSpecialRequirementsForm();
+		$form = $this->cash_desk->getSpecialRequirementsForm();
 		$form->catch();
 		
 		$response->response();
@@ -76,16 +75,13 @@ trait Controller_Main_Confirm {
 	{
 
 		$response = new Controller_Main_Response( $this );
-		$cash_desk = CashDesk::get();
 
-		if(!($order=$cash_desk->saveOrder())) {
+		if(!($order=$this->cash_desk->saveOrder())) {
 			$response->error();
 		} else {
-			
-			$response->setData('URL', Shop_Managers::CashDesk()->getCashDeskPaymentPage()->getURL([$order->getKey()]));
+			$response->redirect( Shop_Pages::CashDeskPayment()->getURL([$order->getKey()]) );
 		}
-
-
+		
 		$response->response();
 
 	}

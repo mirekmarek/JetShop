@@ -14,19 +14,17 @@ use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
-use Jet\Translator;
 use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Entity_Basic;
-use JetApplication\Admin_Entity_Common_Manager_Interface;
-use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_Entity_Interface;
+use JetApplication\Admin_EntityManager_Interface;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_Entity_Listing
 {
-	protected Admin_Entity_Common_Interface|Entity_Basic $entity;
-	protected Admin_Entity_Common_Manager_Interface $entity_manager;
+	protected Admin_Entity_Interface $entity;
+	protected Admin_EntityManager_Interface $entity_manager;
 	
 	protected Listing $listing;
 	
@@ -45,28 +43,28 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 	 */
 	protected $create_btn_renderer = null;
 	
+	/**
+	 * @var callable|null
+	 */
+	protected $custom_btn_renderer = null;
+	
 	public function setUp(
-		Admin_Entity_Common_Manager_Interface|Application_Module $entity_manager
+		Admin_EntityManager_Interface|Application_Module $entity_manager
 	): void
 	{
 		$this->entity_manager = $entity_manager;
 		$this->entity = $entity_manager::getEntityInstance();
 		
-		Translator::setCurrentDictionaryTemporary(
-			dictionary: $this->getModuleManifest()->getName(),
-			action: function() {
-				$this->listing = new Listing( $this );
-			}
-		);
+		$this->listing = new Listing( $this );
 		
 	}
 	
-	public function getEntity(): Admin_Entity_Common_Interface|Entity_Basic
+	public function getEntity(): Admin_Entity_Interface
 	{
 		return $this->entity;
 	}
 
-	public function getEntityManager(): Admin_Entity_Common_Manager_Interface
+	public function getEntityManager(): Admin_EntityManager_Interface
 	{
 		return $this->entity_manager;
 	}
@@ -79,14 +77,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		$view->setVar( 'listing', $listing );
 		
-		Translator::setCurrentDictionaryTemporary(
-			dictionary: $this->getModuleManifest()->getName(),
-			action: function() use (&$res, $view) {
-				$res = $view->render( 'list' );
-			}
-		);
-		
-		return $res;
+		return $view->render( 'list' );
 	}
 	
 
@@ -123,6 +114,10 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 		return $this->create_uri_creator;
 	}
 	
+	public function setDefaultSort( string $default_sort ): void
+	{
+		$this->listing->setDefaultSort( $default_sort );
+	}
 
 	public function setCreateUriCreator( callable $create_uri_creator ): void
 	{
@@ -190,9 +185,20 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 		$view->setVar('title', $title);
 		$view->setVar('form_fields', $form_fields);
 		$view->setVar('is_active', $is_active);
-		$view->setVar('$renderer', $renderer);
+		$view->setVar('renderer', $renderer);
 		$view->setVar('reset_value', $reset_value);
 		
 		return $view->render('filter');
 	}
+	
+	public function getCustomBtnRenderer(): ?callable
+	{
+		return $this->custom_btn_renderer;
+	}
+	
+	public function setCustomBtnRenderer( callable $renderer ): void
+	{
+		$this->custom_btn_renderer = $renderer;
+	}
+	
 }

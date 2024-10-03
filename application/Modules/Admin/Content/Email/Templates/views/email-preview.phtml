@@ -1,0 +1,55 @@
+<?php
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\EMail;
+
+/**
+ * @var MVC_View $this
+ * @var EMail $email
+ */
+$email = $this->getRaw('test_email');
+
+?>
+<style>
+	.container {
+		display: grid;
+		grid-template-columns: 200px 800px;
+		gap: 10px;
+	}
+	
+	.title {
+		padding: 11px;
+	}
+	
+	.value {
+		border: 1px dotted #a4a4a4;
+		padding: 10px;
+	}
+</style>
+<br><br>
+<div class="container">
+		<div class="title"><?= Tr::_('Sender - name:')?></div>
+		<div class="value"><?=$email->getSenderName()?></div>
+	
+		<div class="title"><?= Tr::_('Sender - e-mail:')?></div>
+		<div class="value"><?=$email->getSenderEmail()?></div>
+	
+		<div class="title"><?= Tr::_('Subject:')?></div>
+		<div class="value"><?=$email->getSubject()?></div>
+	
+		<div class="title"><?= Tr::_('HTML:')?></div>
+		<div class="value"><?=$email->getBodyHtml()?></div>
+	
+		<div class="title"><?= Tr::_('TXT:')?></div>
+		<div class="value"><pre><?=$email->getBodyTxt()?></pre></div>
+
+		<div class="title"><?= Tr::_('Attachments:')?></div>
+		<div>
+			<ul>
+			<?php foreach($email->getAttachments() as $attachment): ?>
+				<li><?=$attachment?></li>
+			<?php endforeach; ?>
+			</ul>
+		</div>
+</div>
+<br><br><br><br>

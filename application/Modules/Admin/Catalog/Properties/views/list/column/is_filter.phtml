@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+
+/**
+ * @var MVC_View $this
+ * @var Property $item
+ */
+
+$item = $this->getRaw('item');
+
+if($item->getIsFilter()):
+	echo UI::badge( UI_badge::SUCCESS, Tr::_('yes') );
+else:
+	echo UI::badge( UI_badge::DANGER, Tr::_('no') );
+endif;

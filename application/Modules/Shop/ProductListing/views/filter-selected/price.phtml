@@ -1,0 +1,33 @@
+<?php
+namespace JetApplicationModule\Shop\Catalog;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\ProductListing;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$filter = $listing->getFilter()->getPriceFilter();
+if(!$filter->getIsActive()) {
+	return;
+}
+
+$min = $filter->getMinPrice();
+$max = $filter->getMaxPrice();
+
+$min = $min?:$listing->getInitialMap()->getMinPrice();
+$max = $max?:$listing->getInitialMap()->getMaxPrice();
+
+
+echo UI::button( Shop_Managers::PriceFormatter()->formatWithCurrency($min).' - '.Shop_Managers::PriceFormatter()->formatWithCurrency($max) )
+	->setClass(UI_button::CLASS_INFO)
+	->setIcon('circle-xmark')
+	->setOnClick("listing.filter.price.cancel();");
+
