@@ -1,0 +1,26 @@
+<?php
+namespace JetShop;
+
+use Jet\Form;
+
+interface Core_Admin_Managers_UI
+{
+	public function handleCurrentPreferredShop();
+	
+	public function initBreadcrumb() : void;
+	
+	public function renderSelectEntityWidget(
+		string $name,
+		string $caption,
+		string $on_select,
+		string $entity_type,
+		string|array|null $object_type_filter,
+		?bool $object_is_active_filter,
+		?string $selected_entity_title,
+		?string $selected_entity_edit_URL
+	) : string;
+	
+	
+	public function renderEntityToolbar( Form $form, ?callable $buttons_renderer=null ) : string;
+	
+}
