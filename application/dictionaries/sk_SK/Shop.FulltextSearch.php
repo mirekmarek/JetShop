@@ -1,0 +1,23 @@
+<?php
+return [
+	'Search' => 'Vyhľadávanie',
+	'In stock' => 'Na sklade',
+	'Has discount' => 'Má zľavu',
+	'Price' => 'cena',
+	'Yes' => 'Áno',
+	'Brand' => 'Značka',
+	'Default' => 'Predvolené',
+	'By name' => 'Podľa názvu',
+	'Lowest price' => 'Najnižšia cena',
+	'Highest price' => 'Najvyššia cena',
+	'More info' => 'Viac informácií',
+	'Add to cart' => 'Pridať do košíka',
+	'Search:' => 'Vyhľadávanie:',
+	'Cancel filter' => 'Zrušiť filter',
+	'Select variant' => 'Vyberte variant',
+	'All filters' => 'Všetky filtre',
+	'Close filter' => 'Zavřít filter',
+	'Show products (%cnt%)' => 'Zobraziť produkty (%cnt%)',
+	'Price:' => 'Cena:',
+	'Buy' => 'Kúpiť',
+];

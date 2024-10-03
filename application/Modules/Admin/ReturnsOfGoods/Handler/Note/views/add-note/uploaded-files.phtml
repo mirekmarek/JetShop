@@ -1,0 +1,67 @@
+<?php
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\Http_Request;
+use Jet\IO_File;
+use Jet\Locale;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\ReturnOfGoods_Note;
+
+/**
+ * @var Mvc_View $this
+ * @var ReturnOfGoods_Note $new_note
+ * @var Handler_Note_Main $handler
+ */
+
+$new_note = $this->getRaw('new_note');
+$handler = $this->getRaw('handler');
+?>
+<div class="card">
+	<div class="card-body">
+		<h5 class="card-title"><?=Tr::_('Attach files')?></h5>
+		<form action="<?=Http_Request::currentURI(['note-action'=>'upload_note_files'])?>" method="post" enctype="multipart/form-data" id="upload_note_files_form">
+			<input type="file" name="files[]" multiple value="<?=Tr::_('Select and upload files')?>" onchange="ReturnOfGoodsNoteHandler.upload()">
+		</form>
+		<br>
+		<?php if(($files=$handler->getUploadedFiles())): ?>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th style="width: 20px;"></th>
+					<th style="width: 120px;"></th>
+					<th><?=Tr::_('Name')?></th>
+					<th style="width: 120px;"><?=Tr::_('Type')?></th>
+					<th style="width: 120px;"><?=Tr::_('Size')?></th>
+				</tr>
+				</thead>
+				<?php foreach($files as $path=>$name):
+					$mime = IO_File::getMimeType( $path );
+					$size = IO_File::getSize( $path );
+					$download_URL = Http_Request::currentURI(['note-action'=>'show_note_tmp_file', 'file'=>$name]);
+					$delete_URL = Http_Request::currentURI(['note-action'=>'delete_note_uploaded_file', 'file'=>$name]);
+					$is_image = str_contains( $mime, 'image' );
+					?>
+					<tr>
+						<td>
+							<a href="<?=$delete_URL?>" class="btn btn-danger" onclick="ReturnOfGoodsNoteHandler.deleteImage(this);return false;"><?=UI::icon('trash')?></a>
+						</td>
+						<td>
+							<?php if( $is_image ): ?>
+								<img src="<?=$download_URL?>" style="max-width: 100px;height: auto">
+							<?php endif; ?>
+						</td>
+						<td><a href="<?=$download_URL?>" target="_blank"><?=$name?></a></td>
+						<td><?=$mime?></td>
+						<td><?=Locale::size( $size )?></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+		<?php endif; ?>
+		
+	</div>
+	
+
+</div>
+

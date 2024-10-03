@@ -1,0 +1,22 @@
+<?php
+return [
+	'Kind of articles' => '',
+	'- all -' => '',
+	'Not active' => '',
+	'Active' => '',
+	'CSV' => '',
+	'XLSX' => '',
+	'Please enter a value' => '',
+	'Invalid value' => '',
+	'This code is already used' => '',
+	'Supplier <b>%ITEM_NAME%</b> has been updated' => '',
+	'ID' => '',
+	'Is active' => '',
+	'Internal name' => '',
+	'Internal code' => '',
+	'Internal notes' => '',
+	'Please select option' => '',
+	'General' => '',
+	'Please enter name' => '',
+	'Name:' => '',
+];

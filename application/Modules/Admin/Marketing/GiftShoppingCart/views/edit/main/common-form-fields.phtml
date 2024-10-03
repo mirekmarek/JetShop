@@ -1,0 +1,43 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Gift $item
+ */
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+echo $form->field( 'shop' );
+echo $form->field( 'internal_name' );
+echo $form->field( 'internal_code' );
+echo $form->field( 'internal_notes' );
+
+?>
+	<div class="row form-group">
+		<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?= Tr::_('Gift:')?></label>
+		<div class="col-md-8" style="padding-bottom: 10px">
+			<?=Admin_Managers::Product()->renderSelectWidget(
+				"$('#{$form->field('gift_product_id')->getId()}').val(selected_item.id)",
+				selected_product_id: $item->getGiftProductId()
+			);?>
+		</div>
+	</div>
+	<?php
+echo $form->field( 'gift_product_id' );
+
+
+echo $form->field( 'is_active' );
+echo $form->field( 'active_from' );
+echo $form->field( 'active_till' );
+echo $form->field( 'priority' );
+echo $form->field( 'order_amount_limit_min' );
+echo $form->field( 'order_amount_limit_max' );
+echo $form->field( 'in_stock_limit' );
+echo $form->field( 'auto_append' );

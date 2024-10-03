@@ -1,0 +1,22 @@
+<?php
+return [
+	'Managers - Administration' => 'Manažery - Administrace',
+	'Modules' => 'Moduly',
+	'Mandatory' => 'Povinné',
+	'Not mandatory' => 'Nepovinné',
+	'Is mandatory' => 'Je povinná',
+	'Installed' => 'Instalováno',
+	'Not installed' => 'Není instalován',
+	'Activated' => 'Aktivováno',
+	'Not activated' => 'Neaktivováno',
+	'Install' => 'Nainstalujte',
+	'Install and activate' => 'Nainstalujte a aktivujte',
+	'Deactivate' => 'Deaktivovat',
+	'Module %module% has been deactivated' => 'Modul %module% byl deaktivován',
+	'Activate' => 'Aktivovat',
+	'Module %module% has been activated' => 'Modul %module% byl aktivován',
+	'Uninstall' => 'Odinstalovat',
+	'Module %module% has been uninstalled' => 'Modul %module% byl odinstalován',
+	'Module %module% has been installed and activated' => 'Modul %module% byl nainstalován a aktivován',
+	'Module %module% has been installed' => 'Modul %module% byl nainstalován',
+];

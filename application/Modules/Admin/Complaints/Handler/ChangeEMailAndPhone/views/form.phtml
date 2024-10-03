@@ -1,0 +1,41 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('phone_and_email_form');
+
+if(!$form) {
+	return;
+}
+
+$form->renderer()->setDefaultLabelWidth([	Form_Renderer::LJ_SIZE_MEDIUM => 3
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 9
+]);
+
+$form->renderer()->addJsAction('onsubmit', 'sendUpdateEMailAndPhone();return false;');
+
+echo $form->start();
+
+foreach($form->getFields() as $field) {
+	echo $field;
+}
+?>
+	</div>
+	<div class="modal-footer">
+	<?php
+echo UI::button_save(Tr::_('Update'));
+echo $form->end();

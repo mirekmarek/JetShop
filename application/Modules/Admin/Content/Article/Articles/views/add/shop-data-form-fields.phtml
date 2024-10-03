@@ -1,0 +1,20 @@
+<?php
+use JetApplication\Shops_Shop;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Shops_Shop $shop
+ */
+
+$shop = $this->getRaw('shop');
+$form = $this->getRaw('form');
+$shop_key = $shop->getKey();
+?>
+<?=$form->field('/shop_data/'.$shop_key.'/title');?>
+<?=$form->field('/shop_data/'.$shop_key.'/seo_title');?>
+<?=$form->field('/shop_data/'.$shop_key.'/perex');?>
+<?=$form->field('/shop_data/'.$shop_key.'/text');?>

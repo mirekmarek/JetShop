@@ -1,0 +1,35 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\InvoicesInAdvance;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplication\CustomerBlacklist;
+
+/**
+ * @var MVC_View $this
+ * @var Invoice $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?php if($item->getCustomerCompanyName()): ?>
+<?=$item->getCustomerCompanyName()?><br>
+<?php endif; ?>
+<?=$item->getCustomerFirstName()?> <?=$item->getCustomerSurname()?> (<?=Admin_Managers::Customer()->showName( $item->getCustomerId() )?>)<br>
+<a href="mailto:<?=$item->getCustomerEmail()?>"><?=$item->getCustomerEmail()?></a><br>
+<?=$item->getCustomerPhone()?><br>
+
+
+<?php if( CustomerBlacklist::customerIsBlacklisted( $item->getCustomerEmail() ) ): ?>
+	<div class="alert alert-danger" role="alert">
+		<?=UI::icon('skull-crossbones')?> <?=Tr::_('Customer is blacklisted')?>
+	</div>
+<?php endif; ?>

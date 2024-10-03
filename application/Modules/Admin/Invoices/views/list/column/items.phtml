@@ -1,0 +1,23 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Invoices;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Invoice $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<ul>
+<?php foreach($item->getItems() as $item): ?>
+	<li><?=$item->getTitle();?></li>
+<?php endforeach;  ?>
+</ul>

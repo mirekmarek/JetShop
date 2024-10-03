@@ -1,0 +1,74 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Complaint     $complaint
+ */
+
+$complaint = $this->getRaw( 'complaint' );
+
+?>
+<?php require 'edit/toolbar.phtml';?>
+<?php require 'edit/main.phtml';?>
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('Product')?></h5>
+	
+	<p><?=Admin_Managers::Product()->showName( $complaint->getProductId() )?></p>
+</div>
+
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('Description of the problem')?></h5>
+	
+	<p><?=nl2br($complaint->getProblemDescription())?></p>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('Images')?></h5>
+	
+	<div style="display: grid;grid-template-columns: 100px 300px 200px 1fr;align-items: center;gap: 20px;margin: 20px;">
+		<?php foreach( $complaint->getImages() as $img ):?>
+			
+			<div>
+				<a href="<?=$img->getURL()?>" target="_blank"><img src="<?=$img->getThbURL()?>" style="max-width: 100px; height: auto"></a>
+			</div>
+			<div><?=$img->getName()?></div>
+			<div><?=Locale::size( $img->getSize() )?></div>
+			<div></div>
+		
+		<?php endforeach; ?>
+	</div>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('URL')?></h5>
+	<p><a href="<?=$complaint->getURL()?>" target="_blank"><?=$complaint->getURL()?></a></p>
+</div>
+
+<?=Admin_Managers::OrderDispatch()->showDispatches( $complaint->getProvidesContext() )?>
+<br><br>
+<div id="complaint-history">
+	<?php require 'edit/history.phtml';?>
+</div>
+
+<?php
+foreach(Handler::getHandlers() as $handler):
+	echo $handler->renderDialog();
+endforeach;
+?>
+
+
+<div id="sent-emails">
+	<?php require 'edit/sent-emails.phtml';?>
+</div>
+
+
+<br><br><br><br>

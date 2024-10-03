@@ -1,0 +1,27 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Locale;
+use Jet\Mvc_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var Mvc_View $this
+ * @var Complaint $complaint
+ */
+$complaint = $this->getRaw( 'complaint' );
+$item = $this->getRaw('history_item')
+?>
+<tr>
+	<td>
+		<?=Locale::dateAndTime( $item->getDateAdded() )?>
+	</td>
+	<td>
+		<?=Admin_Managers::Complaint()->showComplaintStatus( $item )?>
+	</td>
+	<td><?=nl2br($item->getComment())?></td>
+	<td>
+	</td>
+	<td><?=$item->getAdministrator()?></td>
+</tr>
+

@@ -1,0 +1,22 @@
+<?php
+return [
+	'Pricelists' => '',
+	'Please enter a value' => '',
+	'Invalid value' => '',
+	'Out of range' => '',
+	'Internal code: ' => '',
+	'Currency code (ISO 4217): ' => '',
+	'Internal name: ' => '',
+	'Default round method: ' => '',
+	'VAT rates: ' => '',
+	'Default VAT rate: ' => '',
+	'Configuration has been saved' => '',
+	'Please neter code' => '',
+	'This code is already used' => '',
+	'Name' => '',
+	'Internal code' => '',
+	'Currency code (ISO)' => '',
+	'Delete pricelist' => '',
+	'Currency: ' => '',
+	'Currency code' => '',
+];

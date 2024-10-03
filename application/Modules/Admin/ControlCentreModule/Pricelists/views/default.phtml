@@ -1,0 +1,94 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Pricelists;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Pricelists;
+use JetApplication\Pricelists_Pricelist;
+
+/**
+ * @var MVC_View   $this
+ * @var Pricelists_Pricelist|null $selected_pl
+ * @var Pricelists_Pricelist|null $new_pl
+ */
+
+$selected_pl = $this->getRaw('selected_pl');
+$new_pl = $this->getRaw('new_pl');
+
+?>
+<div style="display: grid;grid-template-columns: 2fr 3fr;gap: 10px">
+	<div>
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Name')?></th>
+			<th><?=Tr::_('Internal code')?></th>
+			<th><?=Tr::_('Currency code')?></th>
+		</tr>
+		</thead>
+		<?php foreach(Pricelists::getList() as $pricelist):
+			$edit_URL = Http_Request::currentURI(set_GET_params: ['pricelist'=>$pricelist->getCode()], unset_GET_params: ['add']);
+		
+			if( $selected_pl?->getCode()==$pricelist->getCode() ):
+				?>
+				<tr>
+					<td><b><?=$pricelist->getName()?></b></td>
+					<td><b><?=$pricelist->getCode()?></b></td>
+					<td><b><?=$pricelist->getCurrencyCode()?></b></td>
+				</tr>
+			<?php else: ?>
+				<tr>
+					<td><a href="<?=$edit_URL?>"><?=$pricelist->getName()?></a></td>
+					<td><a href="<?=$edit_URL?>"><?=$pricelist->getCode()?></a></td>
+					<td><a href="<?=$edit_URL?>"><?=$pricelist->getCurrencyCode()?></a></td>
+				</tr>
+			<?php
+			endif;
+		endforeach; ?>
+		</table>
+		
+		<?=UI::button_create('Create a new pricelist')->setUrl( Http_Request::currentURI(set_GET_params: ['add'=>'add'], unset_GET_params: ['pricelist']) )?>
+	</div>
+	<div>
+		<?php if($selected_pl || $new_pl):
+			foreach( UI_messages::get(context: 'CC') as $message ):
+				echo $message;
+			endforeach;
+			
+			
+			$form = $selected_pl?->getEditForm();
+			if(!$form) {
+				$form = $new_pl->getAddForm();
+			}
+			?>
+			<?=$form->start()?>
+				<?=$form->field('code')?>
+				<?=$form->field('currency_code')?>
+				<?=$form->field('name')?>
+				<?=$form->field('prices_are_without_vat')?>
+			<?php
+			//TODO: VAT rates nějak lepe UI
+			?>
+				<?=$form->field('vat_rates')?>
+				<?=$form->field('default_vat_rate')?>
+		
+				<div style="display: grid;grid-template-columns: 1fr 1fr;">
+					<div>
+						<?=UI::button_save()?>
+					</div>
+					<div style="text-align: right">
+						<?php if($selected_pl): ?>
+							<?=UI::button_delete( Tr::_('Delete pricelist'))->setUrl( Http_Request::currentURI(['delete'=>'delete']) )?>
+						<?php endif ?>
+					</div>
+				</div>
+				
+			<?=$form->end()?>
+		<?php endif; ?>
+		
+	</div>
+	
+</div>

@@ -1,0 +1,33 @@
+<?php
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\Locale;
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var Mvc_View $this
+ * @var ReturnOfGoods $return
+ */
+$return = $this->getRaw( 'return' );
+$item = $this->getRaw('history_item')
+?>
+<tr>
+	<td>
+		<?=Locale::dateAndTime( $item->getDateAdded() )?>
+	</td>
+	<td>
+		<?=Admin_Managers::ReturnOfGoods()->showReturnOfGoodsStatus( $item )?>
+	</td>
+	<td><?=nl2br($item->getComment())?></td>
+	<td>
+		<?php if($item->getCustomerNotified()): ?>
+			<div style="padding: 10px;background-color: #99d099"><?=Tr::_('Yes')?></div>
+		<?php else: ?>
+			<div style="padding: 10px;background-color: #b67f7f"><?=Tr::_('No')?></div>
+		<?php endif; ?>
+	</td>
+	<td><?=$item->getAdministrator()?></td>
+</tr>
+

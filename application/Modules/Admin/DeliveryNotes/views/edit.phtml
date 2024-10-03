@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\DeliveryNotes;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var DeliveryNote     $invoice
+ */
+
+$invoice = $this->getRaw( 'invoice' );
+
+require 'edit/js.phtml';
+require 'edit/toolbar.phtml';
+?>
+<div id="main-col">
+	<?php
+	require 'edit/main.phtml';
+	require 'edit/items.phtml';?>
+</div>

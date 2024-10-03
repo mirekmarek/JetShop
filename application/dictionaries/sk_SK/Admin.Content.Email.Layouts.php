@@ -1,0 +1,20 @@
+<?php
+return [
+	'E-mail layouts administration' => 'Správa rozložení e-mailov',
+	'- all -' => '- všetko -',
+	'Not active' => 'Neaktívny',
+	'Active' => 'Aktívne',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'Create new' => 'Vytvor nový',
+	'This code is already used' => 'Tento kód sa už používa',
+	'Images' => 'snímky',
+	'File is too large' => 'Súbor je príliš veľký',
+	'Please upload image' => 'Nahrajte obrázok',
+	'Select and upload images' => 'Vyberte a odovzdajte obrázky',
+	'Get email layout data' => 'Získajte údaje o rozložení e-mailov',
+	'Add new email layout' => 'Pridať nové rozloženie e-mailu',
+	'Update email layout' => 'Aktualizujte rozloženie e-mailu',
+	'Delete email layout' => 'Odstrániť rozloženie e-mailu',
+	'Admin.Content.Email.Layouts' => 'Admin.Content.Email.Layouts',
+];

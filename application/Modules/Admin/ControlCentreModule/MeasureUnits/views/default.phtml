@@ -1,0 +1,121 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\MeasureUnits;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\MeasureUnit;
+
+/**
+ * @var MVC_View   $this
+ * @var MeasureUnit|null $selected_measure_unit
+ * @var MeasureUnit|null $new_measure_unit
+ */
+
+$selected_measure_unit = $this->getRaw('selected_measure_unit');
+$new_measure_unit = $this->getRaw('new_measure_unit');
+
+?>
+<div style="display: grid;grid-template-columns: 2fr 3fr;gap: 10px">
+	<div>
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Code')?></th>
+			<th><?=Tr::_('Name')?></th>
+		</tr>
+		</thead>
+		<?php foreach( MeasureUnit::getList() as $munit):
+			$edit_URL = Http_Request::currentURI(set_GET_params: ['measure_unit'=>$munit->getCode()], unset_GET_params: ['add']);
+		
+			if( $selected_measure_unit?->getCode()==$munit->getCode() ):
+				?>
+				<tr>
+					<td><b><?=$munit->getCode()?></b></td>
+					<td>
+						<div style="display: grid;grid-template-columns: 20px 1fr;gap: 10px; align-items: center">
+							<?php foreach( $munit->getNames() as $locale=> $name): ?>
+								<div><b><?=UI::flag( new Locale($locale) )?></b></div>
+								<div><b><?=$munit->getName()?></b></div>
+							<?php endforeach; ?>
+						</div>
+					</td>
+				</tr>
+			<?php else: ?>
+				<tr>
+					<td><a href="<?=$edit_URL?>"><?=$munit->getCode()?></a></td>
+					<td>
+						<div style="display: grid;grid-template-columns: 20px 1fr;gap: 10px; align-items: center">
+							<?php foreach( $munit->getNames() as $locale=> $name): ?>
+							<div><a href="<?=$edit_URL?>"><?=UI::flag( new Locale($locale) )?></a></div>
+							<div><a href="<?=$edit_URL?>"><?=$munit->getName()?></a></div>
+							<?php endforeach; ?>
+						</div>
+						
+					</td>
+				</tr>
+			<?php
+			endif;
+		endforeach; ?>
+		</table>
+		
+		<?=UI::button_create('Create a new measure unit')->setUrl( Http_Request::currentURI(set_GET_params: ['add'=>'add'], unset_GET_params: ['measure_unit']) )?>
+	</div>
+	<div>
+		<?php if($selected_measure_unit || $new_measure_unit):
+			foreach( UI_messages::get(context: 'CC') as $message ):
+				echo $message;
+			endforeach;
+			
+			
+			$form = $selected_measure_unit?->getEditForm();
+			if(!$form) {
+				$form = $new_measure_unit->getAddForm();
+				$names = $new_measure_unit->getNames();
+			} else {
+				$names = $selected_measure_unit->getNames();
+			}
+			?>
+			<?=$form->start()?>
+				<?=$form->field('code')?>
+				<div class="row">
+					<label class="col-md-4"><?=Tr::_('Name:')?></label>
+					<div class="col-md-8">
+						<?php foreach($names as $locale=>$name): ?>
+							<div style="display: grid;grid-template-columns: 20px 1fr;gap: 10px; align-items: center;margin: 5px;">
+								<div><?=UI::flag( new Locale($locale) )?></div>
+								<div>
+									<?=$form->field('/name/'.$locale)->input()?>
+								</div>
+							</div>
+							
+						<?php endforeach; ?>
+						<br>
+					</div>
+				</div>
+
+				<?=$form->field('is_decimal_number')?>
+				<?=$form->field('number_step')?>
+				<?=$form->field('decimal_places')?>
+		
+		
+				<div style="display: grid;grid-template-columns: 1fr 1fr;">
+					<div>
+						<?=UI::button_save()?>
+					</div>
+					<div style="text-align: right">
+						<?php if($selected_measure_unit): ?>
+							<?=UI::button_delete( Tr::_('Delete measure unit'))->setUrl( Http_Request::currentURI(['delete'=>'delete']) )?>
+						<?php endif ?>
+					</div>
+				</div>
+				
+			<?=$form->end()?>
+		<?php endif; ?>
+		
+	</div>
+	
+</div>

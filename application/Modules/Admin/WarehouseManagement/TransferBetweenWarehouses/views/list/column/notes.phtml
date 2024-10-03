@@ -1,0 +1,15 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+/**
+ * @var MVC_View $this
+ * @var Transfer $item
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+
+$item = $this->getRaw('item');
+
+echo nl2br( $item->getNotes() );

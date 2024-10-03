@@ -1,0 +1,104 @@
+<?php
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+use Jet\MVC_View;
+use JetApplication\ReturnOfGoods_Note;
+
+
+/**
+ * @var MVC_View $this
+ * @var Admin_Managers_Entity_Listing $listing
+ * @var ReturnOfGoods_Note $new_note
+ * @var Handler_Note_Main $handler
+ */
+
+$handler = $this->getRaw('handler');
+if(!$handler) {
+	return;
+}
+$new_note = $this->getRaw('new_note');
+
+$tabs = UI::tabsJS('note_mode', [
+	'internal' => Tr::_('Internal note'),
+	'for_customer' => Tr::_('Message for the customer')
+]);
+
+$internal_note_form = $handler->getInternalNoteForm();
+$internal_note_form->renderer()->addJsAction('onsubmit', 'ReturnOfGoodsNoteHandler.addInternalNote();return false;');
+$internal_note_form->field('new_note_text')->input()->addCustomCssStyle('width: 800px;height: 300px');
+$internal_note_form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$internal_note_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+$customer_message_form = $handler->getCustomerMessageForm();
+$customer_message_form->renderer()->addJsAction('onsubmit', 'ReturnOfGoodsNoteHandler.addCustomerMessage();return false;');
+$customer_message_form->field('new_note_text')->input()->addCustomCssStyle('width: 800px;height: 300px');
+$customer_message_form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$customer_message_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+?>
+<div class="card" style="margin: 20px">
+	<div class="card-header"><?=Tr::_('Return of goods note')?></div>
+	
+	<div class="card-body" style="display: grid;grid-template-columns: 820px 900px;gap: 10px;">
+		
+
+		<div>
+			<?=$tabs->start()?>
+			<?=$tabs->tab('internal')->content()->start()?>
+				<?=$internal_note_form->start()?>
+					<div>
+						<?=$internal_note_form->field('new_note_text')->input()?>
+					</div>
+					<br>
+					<?=UI::button_save(Tr::_('Save'))?>
+				<?=$internal_note_form->end()?>
+			<?=$tabs->tab('internal')->content()->end()?>
+			
+			<?=$tabs->tab('for_customer')->content()->start()?>
+				<div style="display: flex;gap: 10px;margin: 10px;align-items: center">
+					<div>
+						<b><?=Tr::_('Generate message:')?></b>
+					</div>
+					<div>
+						<?php foreach( Handler_Note_MessageGenerator::getGenerators() as $message_generator): ?>
+							<?=UI::button($message_generator->getTitle())->setOnClick("ReturnOfGoodsNoteHandler.generateMessage('{$message_generator->getKey()}');")?>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<?=$customer_message_form->start()?>
+			
+					<div>
+						<?=$customer_message_form->field('new_note_text')->input()?>
+					</div>
+					<div style="padding-top: 5px;">
+						<?=$customer_message_form->field('email_subject')->label()?>
+						<br>
+						<?=$customer_message_form->field('email_subject')->input()?>
+					</div>
+					<br>
+					<?=UI::button_save(Tr::_('Send'))->setIcon('paper-plane')?>
+				<?=$customer_message_form->end()?>
+			
+			<?=$tabs->tab('for_customer')->content()->end()?>
+			<?=$tabs->end()?>
+			
+		</div>
+		<div id="note-uploaded-files">
+			<?php require 'uploaded-files.phtml'; ?>
+		</div>
+
+	</div>
+</div>
+

@@ -1,0 +1,379 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Carrier;
+use JetApplication\OrderDispatch;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View   $this
+ * @var WarehouseManagement_Warehouse $warehouse
+ */
+
+$warehouse = $this->getRaw('warehouse');
+
+$pending = OrderDispatch::getListOfPending( $warehouse );
+$to_be_canceled = OrderDispatch::getListOfToBeCanceled( $warehouse );
+$prepared = OrderDispatch::getListOfPrepared( $warehouse );
+$sent = OrderDispatch::getListOfSent( $warehouse );
+
+$prepared_not_created = [];
+$prepared_problematic = [];
+$prepared_ready = [];
+
+foreach( $prepared as $dispatch) {
+	if($dispatch->getStatus()==OrderDispatch::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED) {
+		$prepared_not_created[] = $dispatch;
+	}
+}
+
+foreach( $prepared as $dispatch) {
+	if($dispatch->getStatus()==OrderDispatch::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM) {
+		$prepared_problematic[] = $dispatch;
+	}
+}
+
+$carriers = Carrier::getScope();
+
+foreach( $prepared as $dispatch) {
+	if($dispatch->getStatus()==OrderDispatch::STATUS_PREPARED_CONSIGNMENT_CREATED) {
+		if(!isset($prepared_ready[$dispatch->getCarrierCode()])) {
+			$prepared_ready[$dispatch->getCarrierCode()] = [];
+		}
+		
+		$prepared_ready[$dispatch->getCarrierCode()][] = $dispatch;
+	}
+}
+
+
+require 'list/js.phtml';
+?>
+<div style="display: flex;gap: 20px;align-items: center;margin: 20px;">
+	<div><b><?=Tr::_('Warehouse:')?></b></div>
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $wh):
+		if(
+				$wh->getIsVirtual() ||
+				!$wh->isActive()
+		) {
+			continue;
+		}
+		
+		if($wh->getId()==$warehouse->getId()): ?>
+			<div><b class="btn btn-success"><?=$wh->getInternalName()?></b></div>
+		<?php else:  ?>
+			<div><a href="<?=Http_Request::currentURI(set_GET_params: ['warehouse'=>$wh->getId()])?>" class="btn btn-light"><?=$wh->getInternalName()?></a></div>
+		<?php endif;
+		
+	endforeach; ?>
+</div>
+
+<div style="display: grid;grid-template-columns: 1fr 1.5fr 1fr;gap: 10px;padding: 10px;">
+	
+	<div>
+		<?php if(count($pending)): ?>
+		<div class="card">
+			<div class="card-header bg-info text-white">
+				<?=Tr::_('Pending (%cnt%)', ['cnt'=>count($pending)])?>
+			</div>
+			<div class="card-body">
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<th><?=Tr::_('Dispatch number')?></th>
+						<th><?=Tr::_('Order number')?></th>
+						<th><?=Tr::_('Context')?></th>
+					</tr>
+					</thead>
+					<?php foreach( $pending as $dispatch):
+						$this->setVar('dispatch', $dispatch)
+						?>
+						<tr>
+							<td><?php require 'link.phtml';  ?></td>
+							<td><?php require 'order.phtml'; ?></td>
+							<td><?php require 'context.phtml'; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+		</div>
+		<br><br>
+		<?php endif; ?>
+		
+		<?php if(count($to_be_canceled)): ?>
+			<div class="card">
+				<div class="card-header bg-dark text-white">
+					<?=Tr::_('To be canceled (%cnt%)', ['cnt'=>count($to_be_canceled)])?>
+				</div>
+				<div class="card-body">
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<th><?=Tr::_('Dispatch number')?></th>
+							<th><?=Tr::_('Order number')?></th>
+							<th><?=Tr::_('Context')?></th>
+						</tr>
+						</thead>
+						<?php foreach( $to_be_canceled as $dispatch):
+							$this->setVar('dispatch', $dispatch)
+							?>
+							<tr>
+								<td><?php require 'link.phtml';  ?></td>
+								<td><?php require 'order.phtml'; ?></td>
+								<td><?php require 'context.phtml'; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</table>
+				</div>
+			</div>
+			<br><br>
+		<?php endif; ?>
+		
+	</div>
+
+	<div>
+		<?php if($prepared_not_created): ?>
+			<div class="card">
+				<div class="card-header bg-info text-white">
+					<?=Tr::_('Waiting for consignment creation (%cnt%)', ['cnt'=>count($prepared_not_created)])?>
+				</div>
+				<div class="card-body">
+					<form method="post" action="<?=Http_Request::currentURI()?>" id="waiting_for_creation_form">
+						<input type="hidden" name="list_action" value="">
+						
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<th></th>
+							<th><?=Tr::_('Dispatch number')?></th>
+							<th><?=Tr::_('Order number')?></th>
+							<th><?=Tr::_('Context')?></th>
+							<th></th>
+						</tr>
+						</thead>
+						<?php  foreach( $prepared_not_created as $dispatch):
+							$this->setVar('dispatch', $dispatch);
+							?>
+							<tr>
+								<td><input type="checkbox" class="checkbox" value="<?=$dispatch->getId()?>" name="id[]" checked></td>
+								<td><?php  require 'link.phtml';  ?></td>
+								<td><?php require 'order.phtml'; ?></td>
+								<td><?php  require 'context.phtml';  ?></td>
+								<td>
+									<?=UI::button(Tr::_('Create consignment'))
+										->setOnClick("WaitingForCreation.create({$dispatch->getId()})")
+										->setClass(UI_button::CLASS_SUCCESS)->setIcon('wand-magic-sparkles')->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+
+						<tfoot>
+						<tr>
+							<td colspan="5">
+								<?=UI::button( Tr::_('Unselect all') )->setClass(UI_button::CLASS_LIGHT)
+									->setOnClick("WaitingForCreation.unselectAll()")?>
+								<?=UI::button( Tr::_('Select all') )->setClass(UI_button::CLASS_LIGHT)
+									->setOnClick("WaitingForCreation.selectAll()")?>
+								
+								&nbsp;&nbsp;&nbsp;
+								<?=UI::button( Tr::_('Create consignments') )
+									->setClass(UI_button::CLASS_SUCCESS)
+									->setIcon('wand-magic-sparkles')
+									->setOnClick("WaitingForCreation.createSelected();")
+								?>
+							</td>
+						</tr>
+						</tfoot>
+						
+					</table>
+					</form>
+
+				</div>
+			</div>
+			<br><br>
+		<?php endif; ?>
+		
+		<?php if($prepared_problematic): ?>
+			<div class="card">
+				<div class="card-header bg-danger text-white">
+						<?=Tr::_('Problematic (%cnt%)', ['cnt'=>count($prepared_problematic)])?>
+				</div>
+				<div class="card-body">
+					<form method="post" action="<?=Http_Request::currentURI()?>" id="problematic_form">
+						<input type="hidden" name="list_action" value="">
+					
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<th></th>
+							<th><?=Tr::_('Dispatch number')?></th>
+							<th><?=Tr::_('Order number')?></th>
+							<th><?=Tr::_('Context')?></th>
+							<th></th>
+						</tr>
+						</thead>
+						<?php foreach( $prepared_problematic as $dispatch ):
+							$this->setVar('dispatch', $dispatch);
+							?>
+							<tr>
+								<td><input type="checkbox" class="checkbox" value="<?=$dispatch->getId()?>" name="id[]" checked></td>
+								<td><?php  require 'link.phtml';  ?></td>
+								<td><?php require 'order.phtml'; ?></td>
+								<td><?php require 'context.phtml'; ?></td>
+								<td>
+									<?php require 'status.phtml';  ?>
+									<br>
+									<?=$dispatch->getConsignmentCreateErrorMessage()?>
+									<br>
+									<?=UI::button( Tr::_('Try again') )
+											->setClass(UI_button::CLASS_SUCCESS)
+											->setIcon('rotate-right')
+											->setSize(UI_button::SIZE_EXTRA_SMALL)
+											->setOnClick("Problematic.tryAgain({$dispatch->getId()})")
+									?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+
+						<tfoot>
+						<tr>
+							<td colspan="5">
+								<?=UI::button( Tr::_('Unselect all') )->setClass(UI_button::CLASS_LIGHT)
+									->setOnClick("Problematic.unselectAll()")?>
+								<?=UI::button( Tr::_('Select all') )->setClass(UI_button::CLASS_LIGHT)
+									->setOnClick("Problematic.selectAll()")?>
+
+								&nbsp;&nbsp;&nbsp;
+								<?=UI::button( Tr::_('Try again') )
+									->setClass(UI_button::CLASS_SUCCESS)
+									->setIcon('rotate-right')
+									->setOnClick("Problematic.tryAgainSelected()")
+								?>
+							</td>
+						</tr>
+						</tfoot>
+						
+					</table>
+					</form>
+				</div>
+			</div>
+
+			<br><br>
+		<?php endif; ?>
+		
+		<?php
+		foreach($prepared_ready as $carrier_code=>$prepared_ready_list): ?>
+			<div class="card">
+				<div class="card-header bg-success text-white">
+					<?=Tr::_('Prepared - waiting to be send - %carrier% (%cnt%)', ['carrier'=>$carriers[$carrier_code], 'cnt'=>count($prepared_ready_list)])?>
+				</div>
+				<div class="card-body">
+					<form method="post" action="<?=Http_Request::currentURI()?>" id="ready_<?=md5($carrier_code)?>_form">
+						<input type="hidden" name="list_action" value="">
+						<input type="hidden" name="carrier" value="<?=$carrier_code?>">
+					
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<th></th>
+							<th><?=Tr::_('Dispatch number')?></th>
+							<th><?=Tr::_('Order number')?></th>
+							<th><?=Tr::_('Context')?></th>
+							<th></th>
+						</tr>
+						</thead>
+			
+					<?php foreach( $prepared_ready_list as $dispatch):
+						$this->setVar('dispatch', $dispatch);
+						?>
+						<tr>
+							<td><input type="checkbox" class="checkbox" value="<?=$dispatch->getId()?>" name="id[]" checked></td>
+							<td><?php  require 'link.phtml';  ?></td>
+							<td><?php  require 'order.phtml';  ?></td>
+							<td><?php  require 'context.phtml';  ?></td>
+							<td style="text-align: center;">
+								<div style="padding: 5px">
+									<?=UI::button(Tr::_('Show label'))
+										->setOnClick("Ready.showLabel('".md5($carrier_code)."', {$dispatch->getId()})")
+										->setClass(UI_button::CLASS_SUCCESS)
+										->setIcon('tag')
+										->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+									
+									<?=UI::button(Tr::_('Mark as sent'))
+										->setOnClick("Ready.sent('".md5($carrier_code)."', {$dispatch->getId()})")
+										->setClass(UI_button::CLASS_INFO)
+										->setIcon('truck-fast')
+										->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+								</div>
+								
+							</td>
+						</tr>
+					<?php endforeach; ?>
+						<tfoot>
+						<tr>
+							<td colspan="5">
+								<?=UI::button( Tr::_('Unselect all') )->setClass(UI_button::CLASS_LIGHT)
+									->setOnClick("Ready.unselectAll('".md5($carrier_code)."')")?>
+								<?=UI::button( Tr::_('Select all') )->setClass(UI_button::CLASS_LIGHT)
+									->setOnClick("Ready.selectAll('".md5($carrier_code)."')")?>
+
+								&nbsp;&nbsp;&nbsp;
+								<?=UI::button( Tr::_('Show labels') )
+									->setOnClick("Ready.showLabelsSelected('".md5($carrier_code)."')")
+									->setClass(UI_button::CLASS_SUCCESS)
+									->setIcon('tags')?>
+								&nbsp;&nbsp;&nbsp;
+								<?=UI::button( Tr::_('Show delivery note') )
+									->setOnClick("Ready.showDeliveryNoteSelected('".md5($carrier_code)."')")
+									->setClass(UI_button::CLASS_SUCCESS)
+									->setIcon('file')?>
+								&nbsp;&nbsp;&nbsp;
+								<?=UI::button( Tr::_('Mark as sent') )
+									->setOnClick("Ready.sentSelected('".md5($carrier_code)."')")
+									->setClass(UI_button::CLASS_INFO)
+									->setIcon('truck-fast')?>
+							</td>
+						</tr>
+						</tfoot>
+					</table>
+					</form>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	</div>
+
+
+	<div class="card">
+		<?php if(count($sent)): ?>
+			<div class="card-header bg-secondary text-white">
+				<?=Tr::_('Sent today (%cnt%)', ['cnt'=>count($sent)])?>
+			</div>
+			<div class="card-body">
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<th><?=Tr::_('Dispatch number')?></th>
+						<th><?=Tr::_('Order number')?></th>
+						<th><?=Tr::_('Context')?></th>
+					</tr>
+					</thead>
+					<?php foreach( $sent as $dispatch):
+						$this->setVar('dispatch', $dispatch)
+						?>
+						<tr>
+							<td><?php require 'link.phtml';  ?></td>
+							<td><?php require 'order.phtml'; ?></td>
+							<td><?php require 'context.phtml'; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+		<?php endif; ?>
+	</div>
+	
+</div>
+

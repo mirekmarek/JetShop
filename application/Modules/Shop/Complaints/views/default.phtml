@@ -1,0 +1,74 @@
+<?php
+namespace JetApplicationModule\Shop\Complaints;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Complaint;
+use JetApplication\Customer;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $order_number_form
+ */
+
+$order_number_form = $this->getRaw('order_number_form');
+
+$complaints = [];
+if( ($customer=Customer::getCurrentCustomer()) ) {
+	$complaints = Complaint::getByCustomer( $customer );
+}
+?>
+<?=$order_number_form->start()?>
+	<div class="card" style="margin: 10px;">
+		<div class="card-body">
+			<h5 class="card-title"><?=Tr::_('New complaint')?></h5>
+			<div style="display: grid;align-items: center;gap:10px;grid-template-columns: 250px 400px;">
+				<?=$order_number_form->field('order_number')?>
+				<?=$order_number_form->fieldExists('email') ? $order_number_form->field('email') : ''?>
+
+
+				<div></div>
+				<div>
+					<?=UI::button( Tr::_('Find order') )->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY)?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?=$order_number_form->end()?>
+
+<?php if($complaints): ?>
+<h2><?=Tr::_('Complaints')?></h2>
+
+<table class="table table-striped">
+	<?php foreach($complaints as $complaint):
+		$this->setVar('complaint', $complaint);
+		$product = $complaint->getProduct();
+		?>
+	<tr>
+		<td><a href="<?=$complaint->getURL()?>"><?=$complaint->getNumber()?></a></td>
+		<td><?=$complaint->getOrderNumber()?></td>
+		<td>
+			<?=$this->render('complaint-status');?>
+		</td>
+		<td>
+			<?php if($product): ?>
+				<div style="display: grid;grid-template-columns: 60px 1fr;gap: 5px;margin: 10px;align-items: center">
+					<div>
+						<?php if($product->getImg(0)): ?>
+							<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+						<?php endif; ?>
+					</div>
+					<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+				</div>
+			<?php endif; ?>
+		</td>
+		<td><?=Locale::dateAndTime( $complaint->getDateStarted() )?></td>
+	</tr>
+	<?php endforeach; ?>
+</table>
+
+<?php endif; ?>

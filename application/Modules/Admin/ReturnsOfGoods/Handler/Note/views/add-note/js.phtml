@@ -1,0 +1,40 @@
+<?php
+
+use Jet\Http_Request;
+
+?>
+<script>
+	let ReturnOfGoodsNoteHandler = {
+		upload: function() {
+			JetAjaxForm.submit('upload_note_files_form');
+		},
+
+		deleteImage: function( node )
+		{
+			$('#note-uploaded-files').load( node.href );
+		},
+
+		addInternalNote: function()
+		{
+			JetAjaxForm.submit('internal_note_form');
+		},
+
+		addCustomerMessage: function()
+		{
+			JetAjaxForm.submit('customer_message_form');
+		},
+
+		generateMessage: function( generator_key )
+		{
+			$.get(
+				'<?=Http_Request::currentURI()?>&generate_message='+generator_key,
+				function( data, status ) {
+					$('#customer_message_form__email_subject').val( data['subject'] );
+					$('#customer_message_form__new_note_text').val( data['text'] );
+				},
+				'json'
+			);
+			
+		}
+	}
+</script>

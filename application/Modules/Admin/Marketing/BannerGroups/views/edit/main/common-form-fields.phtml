@@ -1,0 +1,25 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw('form');
+
+echo $form->field('has_main_image');
+echo $form->field('main_image_w');
+echo $form->field('main_image_h');
+echo $form->field('has_mobile_image');
+echo $form->field('mobile_image_w');
+echo $form->field('mobile_image_h');
+echo $form->field('has_main_video');
+echo $form->field('main_video_w');
+echo $form->field('main_video_h');
+echo $form->field('has_mobile_video');
+echo $form->field('mobile_video_w');
+echo $form->field('mobile_video_h');
+echo $form->field('has_text');
+echo $form->field('has_color');

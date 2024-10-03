@@ -1,0 +1,26 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\WarehouseManagement_StockVerification;
+
+/**
+ * @var MVC_View $this
+ * @var WarehouseManagement_StockVerification $item
+ */
+
+$item = $this->getRaw('item');
+
+echo match ($item->getStatus()) {
+	WarehouseManagement_StockVerification::STATUS_PENDING
+		=> UI::badge( UI_badge::INFO, Tr::_( 'Pending' ) )->addCustomCssStyle( 'padding:10px' ),
+	WarehouseManagement_StockVerification::STATUS_DONE
+		=> UI::badge( UI_badge::PRIMARY, Tr::_( 'Done' ) )->addCustomCssStyle( 'padding:10px' ),
+	WarehouseManagement_StockVerification::STATUS_CANCELLED
+		=> UI::badge( UI_badge::DANGER, Tr::_( 'Cancelled' ) )->addCustomCssStyle( 'padding:10px' ),
+	default
+	=> $item->getStatus(),
+};

@@ -1,0 +1,20 @@
+<?php
+return [
+	'Number Series' => '',
+	'Orders' => '',
+	'Complaints' => '',
+	'Return of goods' => '',
+	'Warehouse Management - Receipt of goods' => '',
+	'Please enter a value' => '',
+	'Out of range' => '',
+	'Invalid value' => '',
+	'Counter: ' => '',
+	'Total' => '',
+	'Year' => '',
+	'Month' => '',
+	'Day' => '',
+	'Prefix: ' => '',
+	'Number pad length: ' => '',
+	'Configuration has been saved' => '',
+	'Orders of goods from suppliers' => '',
+];

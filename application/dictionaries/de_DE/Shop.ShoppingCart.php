@@ -1,0 +1,22 @@
+<?php
+return [
+	'Proceed to checkout' => '',
+	'Marketing' => '',
+	'Mesurement' => '',
+	'Stats' => '',
+	'e-Delivery' => '',
+	'Personal takeover' => '',
+	'Delivery' => '',
+	'Discount code' => '',
+	'Please enter your discount code' => '',
+	'Invalid value' => '',
+	'Unknown discount code' => '',
+	'The discount code will not be active until the future' => '',
+	'The discount code is no longer valid' => '',
+	'The discount code has been already used' => '',
+	'The minimum order value must be at least %MIN%' => '',
+	'The discount code is only for certain products. Unfortunately you do not have such products in your cart.' => '',
+	'Discount code cannot be combined with other codes.' => '',
+	'Use' => '',
+	'Order' => '',
+];

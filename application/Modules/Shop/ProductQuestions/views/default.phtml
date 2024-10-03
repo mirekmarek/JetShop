@@ -1,0 +1,52 @@
+<?php
+namespace JetApplicationModule\Shop\ProductQuestions;
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\ProductQuestion;
+
+/**
+ * @var MVC_View   $this
+ * @var ProductQuestion[] $questions
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+$questions = $this->getRaw('questions');
+
+
+?>
+<script>
+	const NewQuestion = {
+		send: ()=> {
+			JetAjaxForm.submit('<?=$form->getId()?>');
+		}
+	};
+</script>
+<div id="new_question_form">
+<?php require 'new_question_form.phtml'; ?>
+</div>
+<?php
+
+foreach($questions as $q):
+	?>
+	<div style="padding: 10px;border: 1px solid #c9c9c9;margin: 10px;border-radius: 5px;">
+		<div style="text-align: right"><?=Locale::date($q->getCreated())?></div>
+		
+		<div style="padding: 10px;">
+			<?=nl2br( $q->getQuestion() )?>
+		</div>
+		
+		<div style="padding: 20px;">
+			<b><?=Tr::_('Answer:')?></b><br>
+			<?=nl2br( $q->getAnswer() )?>
+		</div>
+	
+	</div>
+
+	<?php
+endforeach;
+

@@ -1,0 +1,54 @@
+<?php
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods     $return
+ */
+
+$return = $this->getRaw( 'return' );
+
+?>
+<?php require 'edit/toolbar.phtml';?>
+<?php require 'edit/main.phtml';?>
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('Product')?></h5>
+	
+	<p><?=Admin_Managers::Product()->showName( $return->getProductId() )?></p>
+</div>
+
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('Description of the problem')?></h5>
+	
+	<p><?=nl2br($return->getProblemDescription())?></p>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<h5><?=Tr::_('URL')?></h5>
+	<p><a href="<?=$return->getURL()?>" target="_blank"><?=$return->getURL()?></a></p>
+</div>
+
+<br><br>
+<div id="return-of-goods-history">
+	<?php require 'edit/history.phtml';?>
+</div>
+
+<?php
+foreach(Handler::getHandlers() as $handler):
+	echo $handler->renderDialog();
+endforeach;
+?>
+
+<div id="sent-emails">
+	<?php require 'edit/sent-emails.phtml';?>
+</div>
+
+
+<br><br><br><br>

@@ -1,0 +1,22 @@
+<?php
+return [
+	'Managers - Administration' => '',
+	'Modules' => '',
+	'Mandatory' => '',
+	'Not mandatory' => '',
+	'Is mandatory' => '',
+	'Installed' => '',
+	'Not installed' => '',
+	'Activated' => '',
+	'Not activated' => '',
+	'Install' => '',
+	'Install and activate' => '',
+	'Deactivate' => '',
+	'Module %module% has been deactivated' => '',
+	'Activate' => '',
+	'Module %module% has been activated' => '',
+	'Uninstall' => '',
+	'Module %module% has been uninstalled' => '',
+	'Module %module% has been installed and activated' => '',
+	'Module %module% has been installed' => '',
+];

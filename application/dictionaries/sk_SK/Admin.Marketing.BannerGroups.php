@@ -1,0 +1,21 @@
+<?php
+return [
+	'Banner groups' => 'Bannerové skupiny',
+	'- all -' => '- všetko -',
+	'Not active' => 'Neaktívny',
+	'Active' => 'Aktívne',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'Create new' => 'Vytvor nový',
+	'This code is already used' => 'Tento kód sa už používa',
+	'Supplier <b>%ITEM_NAME%</b> has been created' => 'Dodávateľ <b>%ITEM_NAME%</b> bol vytvorený',
+	'Supplier <b>%ITEM_NAME%</b> has been updated' => 'Dodávateľ <b>%ITEM_NAME%</b> bol aktualizovaný',
+	'Delete' => 'Odstrániť',
+	'Do you really want to delete this Banner group?' => 'Naozaj chcete odstrániť túto skupinu bannerov?',
+	'Banner group <b>%ITEM_NAME%</b> has been updated' => 'Skupina bannerov <b>%ITEM_NAME%</b> bola aktualizovaná',
+	'View banner groups' => 'Zobraziť skupiny bannerov',
+	'Add new banner group' => 'Pridať novú skupinu bannerov',
+	'Update banner group' => 'Aktualizovať skupinu bannerov',
+	'Delete banner group' => 'Odstrániť skupinu bannerov',
+	'Admin.Content.BannerGroups' => 'Admin.Content.BannerGroups',
+];

@@ -1,0 +1,28 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
+
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var ProductQuestion $item
+ */
+
+$item = $this->getRaw('item');
+
+if(!$item->getSource()) {
+	echo Tr::_('e-shop');
+	return;
+}
+
+echo $item->getSource();
+echo '<br>';
+echo $item->getSourceId();

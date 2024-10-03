@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\InvoicesInAdvance;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Invoice     $invoice
+ */
+
+$invoice = $this->getRaw( 'invoice' );
+
+require 'edit/js.phtml';
+require 'edit/toolbar.phtml';
+?>
+<div id="main-col">
+	<?php
+	require 'edit/main.phtml';
+	require 'edit/items.phtml';?>
+</div>

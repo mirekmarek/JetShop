@@ -1,0 +1,60 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\ShopCreator;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_messages;
+use JetApplication\Shops_Shop;
+
+/**
+ * @var MVC_View   $this
+ * @var Shops_Shop|null $new_shop
+ * @var Form $form
+ */
+
+$new_shop = $this->getRaw('new_shop');
+$form = $this->getRaw('form');
+
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 4
+]);
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+?>
+<?=$form->start()?>
+
+<?=$form->field('base')?>
+<?=$form->field('locale')?>
+<?=$form->field('shop_code')?>
+<?=$form->field('shop_name')?>
+<?=$form->field('URLs')?>
+<?=$form->field('pricelist_codes')?>
+<?=$form->field('default_pricelist_code')?>
+<?=$form->field('availability_codes')?>
+<?=$form->field('default_availability_code')?>
+<?=$form->field('default_warehouse_id')?>
+<?=$form->field('use_template')?>
+<?=$form->field('template_relative_dir')?>
+<?=$form->field('pages_source_shop')?>
+
+
+<div class="row">
+	<div class="col-md-2">
+	</div>
+	<div class="col-md-4">
+		<?=UI::button_create( Tr::_('Create e new e-shop') )->setClass(UI_button::CLASS_PRIMARY)->setType(UI_button::TYPE_SUBMIT)?>
+	</div>
+</div>
+
+<?=$form->end()?>
+

@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods[] $returns
+ */
+$returns = $this->getRaw('returns');
+?>
+
+<h5><?=Tr::_('Return of goods')?></h5>
+<table>
+	<?php foreach( $returns as $return ): ?>
+		<tr>
+			<td><?=Admin_Managers::ReturnOfGoods()->showName( $return->getId() )?></td>
+			<td><?=Admin_Managers::ReturnOfGoods()->showReturnOfGoodsStatus( $return )?></td>
+		</tr>
+	<?php endforeach; ?>
+</table>

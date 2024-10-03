@@ -1,0 +1,31 @@
+<?php
+use JetApplication\Entity_Basic;
+use JetApplication\Admin_Entity_Common_Interface;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Entity_Basic|Admin_Entity_Common_Interface     $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+
+echo $form->field('has_main_image');
+echo $form->field('main_image_w');
+echo $form->field('main_image_h');
+echo $form->field('has_mobile_image');
+echo $form->field('mobile_image_w');
+echo $form->field('mobile_image_h');
+echo $form->field('has_main_video');
+echo $form->field('main_video_w');
+echo $form->field('main_video_h');
+echo $form->field('has_mobile_video');
+echo $form->field('mobile_video_w');
+echo $form->field('mobile_video_h');
+echo $form->field('has_text');
+echo $form->field('has_color');

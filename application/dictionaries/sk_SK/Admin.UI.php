@@ -1,0 +1,23 @@
+<?php
+return [
+	'Content' => 'Obsah',
+	'System' => 'Systém',
+	'Change password' => 'Zmeniť heslo',
+	'Logout' => 'Odhlásiť sa',
+	'Catalog' => 'Katalóg',
+	'Customers and orders' => 'Zákazníci a objednávky',
+	'Statistics and reports' => 'Štatistiky a prehľady',
+	'Expedition' => 'Expedícia',
+	'Content and marketing' => 'Obsah a marketing',
+	'Warehouse management' => 'Skladový manažment',
+	'Not active' => 'Neaktívny',
+	'Activate' => 'Aktivovať',
+	'Completely activate' => 'Úplne aktivujte',
+	'Active' => 'Aktívne',
+	'Deactivate' => 'Deaktivovať',
+	'Internal name:' => 'Interný názov:',
+	'Internal code:' => 'Interný kód:',
+	'Internal notes:' => 'Interné poznámky:',
+	'Code:' => 'kód:',
+	'Logs and statistics' => 'Protokoly a štatistiky',
+];

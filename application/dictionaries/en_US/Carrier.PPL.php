@@ -1,0 +1,23 @@
+<?php
+return [
+	'InTime' => '',
+	'PPL' => '',
+	'Please enter a value' => '',
+	'Invalid value' => '',
+	'URL - JSON - pobočky: ' => '',
+	'Out of range' => '',
+	'Packaging parameters - delivery to address' => '',
+	'Has dimensions' => '',
+	'Has weight' => '',
+	'Max. height:' => '',
+	'Max. length:' => '',
+	'Max. width:' => '',
+	'Max. weight:' => '',
+	'Default height:' => '',
+	'Default length:' => '',
+	'Default width:' => '',
+	'Packaging parameters - delivery point' => '',
+	'Packaging parameters - box' => '',
+	'Branch' => '',
+	'Box' => '',
+];

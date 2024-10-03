@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
+
+use Jet\Locale;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Transfer $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<div style="display: grid;grid-template-columns: 40px 1fr;gap: 10px; align-items: center;font-size: 0.7rem">
+	<?php foreach($item->getItems() as $item):
+		if(!$item->getNumberOfUnits()) {
+			continue;
+		}
+		?>
+		<div><?=Locale::float( $item->getNumberOfUnits() )?> <?=$item->getMeasureUnit()?->getName()?></div>
+		<div><?=$item->getProductName()?></div>
+	<?php endforeach; ?>
+</div>

@@ -1,0 +1,23 @@
+<?php
+return [
+	'Carrier Packaging definition' => 'Definice přepravního obalu',
+	'Carrier Services definition' => 'Definice přepravních služeb',
+	'Carrier' => 'Dopravce',
+	'Service' => 'Servis',
+	'Packaging' => 'Obal',
+	'Please enter code' => 'Zadejte kód',
+	'Invalid value' => 'neplatná hodnota',
+	'This code is already used' => 'Tento kód se již používá',
+	'Please enter a value' => 'Zadejte hodnotu',
+	'Internal code: ' => 'Interní kód: ',
+	'Name: ' => 'Název: ',
+	'Kind of delivery: ' => 'druh doručení: ',
+	'Carrier service identification code: ' => 'Identifikační kód služby operátora: ',
+	'Packaging has dimensions' => 'Balení má rozměry',
+	'Packaging has weight' => 'Balení má váhu',
+	'e-Delivery' => 'e-Doručování',
+	'Personal takeover' => 'Osobní převzetí',
+	'Delivery' => 'Dodání',
+	'Configuration has been saved' => 'Konfigurace byla uložena',
+	'Delete service' => 'Smazat službu',
+];

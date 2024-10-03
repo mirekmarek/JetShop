@@ -1,0 +1,85 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Availabilities;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Availabilities;
+use JetApplication\Availabilities_Availability;
+
+/**
+ * @var MVC_View   $this
+ * @var Availabilities_Availability|null $selected_avl
+ * @var Availabilities_Availability|null $new_avl
+ */
+
+$selected_avl = $this->getRaw('selected_avl');
+$new_avl = $this->getRaw('new_avl');
+
+?>
+<div style="display: grid;grid-template-columns: 2fr 3fr;gap: 10px">
+	<div>
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Name')?></th>
+			<th><?=Tr::_('Internal code')?></th>
+		</tr>
+		</thead>
+		<?php foreach(Availabilities::getList() as $avl):
+			$edit_URL = Http_Request::currentURI(set_GET_params: ['availability'=>$avl->getCode()], unset_GET_params: ['add']);
+		
+			if( $selected_avl?->getCode()==$avl->getCode() ):
+				?>
+				<tr>
+					<td><b><?=$avl->getName()?></b></td>
+					<td><b><?=$avl->getCode()?></b></td>
+				</tr>
+			<?php else: ?>
+				<tr>
+					<td><a href="<?=$edit_URL?>"><?=$avl->getName()?></a></td>
+					<td><a href="<?=$edit_URL?>"><?=$avl->getCode()?></a></td>
+				</tr>
+			<?php
+			endif;
+		endforeach; ?>
+		</table>
+		
+		<?=UI::button_create('Create a new availability')->setUrl( Http_Request::currentURI(set_GET_params: ['add'=>'add'], unset_GET_params: ['availability']) )?>
+	</div>
+	<div>
+		<?php if($selected_avl || $new_avl):
+			foreach( UI_messages::get(context: 'CC') as $message ):
+				echo $message;
+			endforeach;
+			
+			
+			$form = $selected_avl?->getEditForm();
+			if(!$form) {
+				$form = $new_avl->getAddForm();
+			}
+			?>
+			<?=$form->start()?>
+				<?=$form->field('code')?>
+				<?=$form->field('name')?>
+				<?=$form->field('warehouse_ids')?>
+		
+				<div style="display: grid;grid-template-columns: 1fr 1fr;">
+					<div>
+						<?=UI::button_save()?>
+					</div>
+					<div style="text-align: right">
+						<?php if($selected_avl): ?>
+							<?=UI::button_delete( Tr::_('Delete availability'))->setUrl( Http_Request::currentURI(['delete'=>'delete']) )?>
+						<?php endif ?>
+					</div>
+				</div>
+				
+			<?=$form->end()?>
+		<?php endif; ?>
+		
+	</div>
+	
+</div>

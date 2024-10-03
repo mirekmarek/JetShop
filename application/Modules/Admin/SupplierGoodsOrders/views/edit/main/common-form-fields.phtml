@@ -1,0 +1,156 @@
+<?php
+namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+
+use Jet\Locale;
+use Jet\Tr;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_messages;
+use JetApplication\Admin_Managers;
+use JetApplication\Supplier_GoodsOrder;
+use JetApplication\Supplier_GoodsOrder_Item;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Order     $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+?>
+
+<div class="card card-body" style="margin: 10px;">
+	
+	<div style="display: grid;grid-template-columns: 100px 1fr;gap: 10px;margin: 10px">
+		<div></div>
+		<div><b><?=$item->getNumber()?></b></div>
+		
+		<div><?=Tr::_('Supplier:')?></div>
+		<div><b><?=$item->getSupplierCompanyName()?></b></div>
+		
+		<div><?=Tr::_('Address:')?></div>
+		<div>
+			<?=$item->getSupplierAddressStreetAndNo()?><br>
+			<?=$item->getSupplierAddressZip()?> <?=$item->getSupplierAddressTown()?><br>
+			<?=$item->getSupplierAddressCountry()?>
+		</div>
+		
+		<div><?=Tr::_('Phone:')?></div>
+		<div>
+			<?=$item->getSupplierPhone1()?><br>
+			<?=$item->getSupplierPhone2()?>
+		</div>
+		
+		<div><?=Tr::_('e-mail:')?></div>
+		<div>
+			<a href="mailto:<?=$item->getSupplierEmail1()?>"><?=$item->getSupplierEmail1()?></a><br>
+			<a href="mailto:<?=$item->getSupplierEmail2()?>"><?=$item->getSupplierEmail2()?></a>
+		</div>
+	</div>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	
+	
+	<div style="display: grid;grid-template-columns: 250px 1fr;margin: 10px;gap: 10px;align-items: center">
+		<div></div>
+		<div>
+			<?=$this->render('status')?>
+			<?php if($item->getProblemDuringSendingError()):
+				echo '<br><br>';
+				echo UI_messages::createDanger( $item->getProblemDuringSendingError() );
+			endif; ?>
+		</div>
+		
+		<div><?=Tr::_('Supplier\'s order number:')?></div>
+		<div>
+			<b><?=$item->getNumberBySupplier()?></b>
+			<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER):
+				echo UI::button(Tr::_('Set'))->setOnClick("$('#set_number_by_supplier_dialog').modal('show');")->setClass(UI_button::CLASS_SECONDARY);
+			endif; ?>
+		</div>
+	</div>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<?=$form->getCommonMessage()?>
+	
+	<h4><?=Tr::_('Items')?></h4>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th nowrap=""><?=Tr::_('Product')?></th>
+			<th nowrap=""><?=Tr::_('EAN')?></th>
+			<th nowrap=""><?=Tr::_('Internal code')?></th>
+			<th nowrap=""><?=Tr::_('Supplier code')?></th>
+			<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_GOODS_RECEIVED): ?>
+				<th nowrap=""><?=Tr::_('Units ordered')?></th>
+				<th nowrap=""><?=Tr::_('Units received')?></th>
+			<?php else: ?>
+				<th nowrap=""><?=Tr::_('Units to order')?></th>
+				<th nowrap=""></th>
+			<?php endif; ?>
+			<th style="width: 100%"></th>
+		</tr>
+		</thead>
+		<?php
+		$showItem = function( Supplier_GoodsOrder_Item $i ) use ($form, $item) {
+			?>
+			<tr style="<?php if(!$i->getUnitsOrdered()):?>opacity: 0.5<?php endif; ?>">
+				<td nowrap=""><?=Admin_Managers::Product()->showName($i->getProductId())?></td>
+				<td nowrap=""><?=$i->getProductEan()?></td>
+				<td nowrap=""><?=$i->getProductInternalCode()?></td>
+				<td nowrap=""><?=$i->getProductSupplierCode()?></td>
+				
+				<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_GOODS_RECEIVED): ?>
+					<td><?=Locale::float($i->getUnitsOrdered())?> <?=$i->getMeasureUnit()?->getName()?></td>
+					<td><?=Locale::float($i->getUnitsReceived())?> <?=$i->getMeasureUnit()?->getName()?></td>
+				<?php else: ?>
+					<td><?=$form->field('/order/'.$i->getProductId())->input()?></td>
+					<td><?=$i->getMeasureUnit()?->getName()?></td>
+				<?php endif; ?>
+
+				<td></td>
+			</tr>
+			<?php
+		};
+		?>
+		
+		<?php
+		foreach($item->getItems() as $i):
+			if($i->getUnitsOrdered()) {
+				$showItem( $i );
+			}
+		endforeach;
+		foreach($item->getItems() as $i):
+			if(!$i->getUnitsOrdered()) {
+				$showItem( $i );
+			}
+		endforeach;
+		?>
+	</table>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<?=$form->field('destination_warehouse_id')?>
+	<?=$form->field('notes')?>
+	<?=$form->field('expected_delivery_date')?>
+</div>
+
+<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER):
+	$dialog = UI::dialog('set_number_by_supplier_dialog', Tr::_('Set supplier\'s order number'));
+	$form = $item->getSetSupplierOrderNumberForm();
+	
+	echo $dialog->start();
+		echo $form->start();
+		echo $form->field('number');
+	echo $dialog->footer();
+		echo UI::button_save();
+	echo $form->end();
+	echo $dialog->end();
+endif;
+?>

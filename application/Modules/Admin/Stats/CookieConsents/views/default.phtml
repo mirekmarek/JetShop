@@ -1,0 +1,104 @@
+<?php
+namespace JetApplicationModule\Admin\Stats\CookieConsents;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_tabs;
+use JetApplication\Shops;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$disagree_count = $this->getInt('disagree_count');
+
+$agree_count = $this->getInt('agree_count');
+
+$non_complete_agree_count = $this->getInt('non_complete_agree_count');
+$complete_agree_count = $this->getInt('complete_agree_count');
+
+$agree_by_groups = $this->getRaw('agree_by_groups');
+
+$total = $disagree_count+$agree_count;
+
+
+$shops = [];
+foreach(Shops::getList() as $shop) {
+	$shops[$shop->getKey()] = UI::flag( $shop->getLocale() ).' '.$shop->getShopName();
+}
+
+//require 'filter.phtml';
+$tabs = new UI_tabs(['' => Tr::_('All')]+$shops, function( $tab ) {
+	return Http_Request::currentURI(['shop'=>$tab]);
+}, $this->getString('shop_key'));
+
+echo $tabs;
+?>
+
+<div class="toolbar">
+	<form method="get">
+		<input type="hidden" name="shop" value="<?=$this->getString('shop_key')?>">
+		<div style="display: flex;gap: 10px;align-items: center;padding-left: 20px;">
+			<div><?=Tr::_('From:')?></div>
+			<div><input type="date" name="date_from" value="<?=$this->getString('date_from')?>" class="form-control"></div>
+			<div></div>
+			<div><?=Tr::_('Till:')?></div>
+			<div><input type="date" name="date_till" value="<?=$this->getString('date_till')?>" class="form-control"></div>
+			<div>
+				<?=UI::button(Tr::_('Filter'))->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY)?>
+			</div>
+			<div>
+				<?=UI::button(Tr::_('Export'))->setClass(UI_button::CLASS_INFO)->setUrl(Http_Request::currentURI(['export'=>1]))?>
+			</div>
+		</div>
+	</form>
+</div>
+
+<?php if($total): ?>
+
+<table class="table">
+	<tbody>
+	<tr>
+		<td nowrap=""><?=Tr::_('Number of reactions:')?>:</td>
+		<td style="width: 100%">
+			<b><?=$total?></b>
+		</td>
+	</tr>
+	<tr>
+		<td nowrap=""><?=Tr::_('Full approvals:')?></td>
+		<td style="width: 100%">
+			<?=$complete_agree_count?>
+			/
+			<b><?=Locale::float($complete_agree_count/$total*100)?>%</b>
+		</td>
+	</tr>
+	<tr>
+		<td nowrap=""><?=Tr::_('Partial approvals:')?></td>
+		<td style="width: 100%">
+			<?=$non_complete_agree_count?>
+			/
+			<b><?=Locale::float($non_complete_agree_count/$total*100)?>%</b>
+		</td>
+	</tr>
+	<?php foreach($agree_by_groups as $group=>$cnt): ?>
+		<tr>
+			<td nowrap=""><?=Tr::_('Group approval:')?> '<?=$group?>':</td>
+			<td><?=$cnt?></td>
+		</tr>
+	<?php endforeach; ?>
+	<tr>
+		<td nowrap=""><?=Tr::_('Number of disagreements:')?></td>
+		<td style="width: 100%">
+			<?=$disagree_count?>
+			/
+			<b><?=Locale::float($disagree_count/$total*100)?>%</b>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<?php endif; ?>

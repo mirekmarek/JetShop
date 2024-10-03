@@ -1,0 +1,4 @@
+<?php
+return [
+	'Product stickers' => '',
+];

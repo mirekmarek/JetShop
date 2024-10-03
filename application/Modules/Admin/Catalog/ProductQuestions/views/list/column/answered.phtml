@@ -1,0 +1,31 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var ProductQuestion $item
+ */
+
+$item = $this->getRaw('item');
+
+if( $item->isAnswered() ):
+	if( $item->isDisplay() ):
+		echo UI::badge( UI_badge::SUCCESS, Tr::_( 'Answered - visible' ) );
+	else:
+		echo UI::badge( UI_badge::INFO, Tr::_( 'Answered - not visible' ) );
+	endif;
+else:
+	echo UI::badge( UI_badge::DANGER, Tr::_( 'Not answered' ) );
+endif;

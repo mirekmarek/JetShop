@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Date $filter
+ */
+
+$filter = $this->getRaw('filter');
+$listing = $filter->getListing();
+$filter_form = $listing->getFilterForm();
+
+$date_from = $filter_form->field( 'date_from' );
+$date_till = $filter_form->field( 'date_till' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Date'),
+	form_fields: [$date_from, $date_till],
+	is_active:   $filter->getFrom() || $filter->getTill(),
+	renderer:    function() use ($date_from, $date_till) {
+		?>
+		<div><?=Tr::_('From:')?></div>
+		<div><?= $date_from->input() ?></div>
+		<div><?=Tr::_('Till:')?></div>
+		<div><?= $date_till->input() ?></div>
+		
+		<div><?=UI::button(Tr::_('Set'))->setType(UI_button::TYPE_SUBMIT)?></div>
+		<?php
+	}
+);

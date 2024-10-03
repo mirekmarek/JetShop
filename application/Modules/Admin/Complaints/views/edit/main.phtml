@@ -1,0 +1,94 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Listing;
+
+use Jet\MVC_View;
+use JetApplication\Shops;
+
+
+/**
+ * @var MVC_View $this
+ * @var Complaint     $complaint
+ * @var Admin_Managers_Entity_Listing $listing
+ * @var Form $add_bl_form
+ */
+
+$complaint = $this->getRaw( 'complaint' );
+?>
+
+<div id="main-col">
+	<div style="padding: 10px;display: flex">
+		<div style="margin: 10px" class="card">
+			
+			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
+			<div class="card-body">
+				
+				<?=Admin_Managers::Complaint()->showComplaintStatus( $complaint )?>
+				
+				<table style="margin: 10px">
+					<?php if(Shops::isMultiShopMode()): ?>
+						<tr>
+							<td><b><?=Tr::_('Shop')?></b></td>
+							<td><?=$complaint->getShop()->getShopName()?></td>
+						</tr>
+					<?php endif; ?>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Purchase date and time:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($complaint->getDateStarted()) ?></td>
+					</tr>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?= $complaint->getIpAddress() ?></td>
+					</tr>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->showName($complaint->getOrderId())?></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;margin-left: 80px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Customer')?></b></div>
+			<div class="card-body">
+				
+				<table>
+					<tr>
+						<td></td>
+						<td>
+							<?=Admin_Managers::Customer()->showName( $complaint->getCustomerId() )?>
+							<br>
+						</td>
+					</tr>
+					<tr>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Phone:')?></td>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=$complaint->getPhone()?></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('e-mail:')?></td>
+						<td><a href="mailto:<?=$complaint->getEmail()?>"><u><?=$complaint->getEmail()?></u></a></td>
+					</tr>
+				</table>
+				
+				<?=Handler::getHandler( Handler_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>
+			</div>
+		</div>
+
+		<div style="margin: 10px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
+			<div class="card-body">
+				<?=Admin_Managers::Customer()->formatAddress( $complaint->getShop(), $complaint->getDeliveryAddress() )?>
+				<?=Handler::getHandler( Handler_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;">
+		</div>
+	</div>
+
+</div>

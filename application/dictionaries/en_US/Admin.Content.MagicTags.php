@@ -1,0 +1,22 @@
+<?php
+return [
+	'Magic Tags generator' => '',
+	'Page URL' => '',
+	'Product URL' => '',
+	'Product:' => '',
+	'Category:' => '',
+	'Invalid value' => '',
+	'Please enter a value' => '',
+	'Page:' => '',
+	'Generate' => '',
+	'Out of range' => '',
+	'Str:' => '',
+	'Int:' => '',
+	'Flt:' => '',
+	'Bool:' => '',
+	'Page link' => '',
+	'Product link' => '',
+	'Product avatar' => '',
+	'Category URL' => '',
+	'Category link' => '',
+];

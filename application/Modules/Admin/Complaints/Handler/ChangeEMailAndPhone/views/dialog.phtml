@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('phone_and_email_form');
+
+if(!$form) {
+	return;
+}
+
+$phone_end_email_dialog = new UI_dialog( 'phone_end_email_dialog', Tr::_('Update phone and e-mail'), UI_dialog::SIZE_DEFAULT );
+?>
+<?=$phone_end_email_dialog->start()?>
+
+<div id="phone-and-email-update-area">
+	<?php require 'form.phtml'; ?>
+</div>
+
+<?=$phone_end_email_dialog->end()?>
+
+<script>
+	function sendUpdateEMailAndPhone() {
+		JetAjaxForm.submit('<?=$form->getId()?>', {
+			onSuccess: function () {
+				location.reload();
+			}
+		});
+	}
+</script>

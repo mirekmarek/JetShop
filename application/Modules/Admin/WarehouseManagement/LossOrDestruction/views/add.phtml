@@ -1,0 +1,84 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Supplier_GoodsOrder;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $add_form
+ * @var LossOrDestruction $rcp
+ * @var Controller_Main $controller
+ * @var Supplier_GoodsOrder $order
+ */
+
+$selected_warehouse_id = $this->getInt('warehouse_id');
+$selected_supplier_id = $this->getInt('supplier_id');
+$controller = $this->getController();
+
+$selected_warehouse = WarehouseManagement_Warehouse::get( $selected_warehouse_id );
+
+$order_number = $this->getString('order_number');
+$order = $this->getRaw('order');
+
+$rcp = $this->getRaw('rcp');
+
+echo $controller->getEditorManager()->renderToolbar( $rcp?$rcp->getAddForm():null );
+?>
+<div id="main-col">
+
+
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Warehouse:')?></b></div>
+	
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+		if($warehouse->getId()==$selected_warehouse_id): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$warehouse->getAdminTitle()?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['warehouse'=>$warehouse->getId()], unset_GET_params: [])?>" class="btn btn-light"><?=$warehouse->getAdminTitle()?></a></div>
+		<?php endif;
+	endforeach; ?>
+</div>
+
+<?php if($rcp):
+	$form = $rcp->getAddForm();
+	$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 1
+	]);
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 8
+	]);
+
+$form->field('notes')->input()->addCustomCssStyle("height: 500px");
+	?>
+
+<?=$form->start()?>
+	<?=$form->field('product_id')?>
+	
+	<div class="card card-body" style="margin: 10px;">
+		<?=$form->field('date')?>
+		<div class="form-group row">
+			<label class="col-form-label col-md-1"><?=Tr::_('Product:')?></label>
+			<div class="col-md-8">
+				<?=Admin_Managers::Product()->renderSelectWidget(
+					on_select: "document.getElementById('{$form->field('product_id')->getId()}').value=selected_item.id;",
+					selected_product_id: $rcp->getProductId()
+				);?>
+			</div>
+		</div>
+		<?=$form->field('number_of_units')?>
+		<?=$form->field('notes')?>
+	</div>
+
+	
+<br><br><br>
+<?=$form->end()?>
+</div>
+
+<?php endif; ?>

@@ -1,0 +1,60 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\ProductReviews;
+
+use Jet\Locale;use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var ProductReview $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+$form->field('positive_characteristics')->input()->addCustomCssStyle('height:200px');
+$form->field('negative_characteristics')->input()->addCustomCssStyle('height:200px');
+$form->field('summary')->input()->addCustomCssStyle('height:400px');
+$form->field('our_comments')->input()->addCustomCssStyle('height:400px');
+
+
+
+?>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		
+		<div class="card card-body">
+			<?=$item->getShop()->getShopName()?> / <?=Locale::dateAndTime($item->getCreated())?>
+			<div style="padding: 10px;">
+				<?=Admin_Managers::Product()->showName( $item->getProductId() ) ?>
+			</div>
+			
+			
+			<?php if($item->isAssessed()):
+				if($item->isApproved()):
+					echo UI::badge( UI_badge::SUCCESS, Tr::_('Approved') );
+				else:
+					echo UI::badge( UI_badge::DANGER, Tr::_('Rejected') );
+				endif;
+			endif; ?>
+		</div>
+		<br>
+	</div>
+</div>
+
+<?=$form->field('author_name')?>
+<?=$form->field('author_email')?>
+
+<?=$form->field('positive_characteristics')?>
+<?=$form->field('negative_characteristics')?>
+<?=$form->field('summary')?>
+
+<?=$form->field('our_comments')?>
+
+

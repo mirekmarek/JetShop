@@ -1,0 +1,68 @@
+<?php
+namespace JetApplicationModule\Admin\Content\Article\Articles;
+
+use Jet\Http_Headers;
+use Jet\Http_Request;
+use Jet\Tr;
+use JetApplication\Admin_EntityManager_WithShopData_Controller;
+
+class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+{
+	public function getTabs(): array
+	{
+		return [
+			'main'   => Tr::_( 'Main data' ),
+			'categories' => Tr::_('Categories'),
+			'images' => Tr::_( 'Images' ),
+		];
+	}
+	
+	public function setupRouter( string $action, string $selected_tab ): void
+	{
+		parent::setupRouter( $action, $selected_tab );
+		
+		$this->router->addAction('edit_categories', $this->module::ACTION_UPDATE)
+			->setResolver(function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='categories' && $action=='';
+			})
+			->setURICreator(function( int $id ) {
+				return Http_Request::currentURI( ['id'=>$id, 'page'=>'categories'], ['action'] );
+			});
+		
+	}
+	
+	public function edit_categories_Action() : void
+	{
+		$this->setBreadcrumbNavigation( Tr::_( 'Categories' ) );
+		
+		$this->view->setVar( 'item', $this->current_item);
+		$this->view->setVar( 'editable', $this->current_item->isEditable() );
+		
+		if( $this->current_item->isEditable() ) {
+			/**
+			 * @var Article $article
+			 */
+			$article = $this->current_item;
+			$GET = Http_Request::GET();
+			if(($add=$GET->getInt('add_category'))) {
+				$article->addCategory( $add );
+				Http_Headers::reload(unset_GET_params: ['add_category']);
+			}
+			
+			if(($remove=$GET->getInt('remove_category'))) {
+				$article->removeCategory( $remove );
+				Http_Headers::reload(unset_GET_params: ['remove_category']);
+			}
+			
+			if(($sort_categories=$GET->getString('sort_categories'))) {
+				$article->sortCategories( explode(',', $sort_categories) );
+				Http_Headers::reload(unset_GET_params: ['sort_categories']);
+			}
+			
+			
+			
+		}
+		
+		$this->output('edit/categories');
+	}
+}

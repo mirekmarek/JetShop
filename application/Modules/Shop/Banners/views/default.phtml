@@ -1,0 +1,21 @@
+<?php
+namespace JetApplicationModule\Shop\Banners;
+
+use JetApplication\Marketing_BannerGroup;
+use Jet\MVC_View;
+use JetApplication\Marketing_Banner;
+
+/**
+ * @var MVC_View   $this
+ * @var Marketing_BannerGroup $group
+ * @var Marketing_Banner[] $banners
+ */
+
+$group = $this->getRaw('group');
+$banners = $this->getRaw('banners');
+
+foreach($banners as $banner):
+	?>
+	<a href="<?=$banner->getURL()?>"><img src="<?=$banner->getImageMainURI()?>" style="width: 100%;height: auto;"></a>
+<?php
+endforeach;

@@ -1,0 +1,23 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\MVC_View;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods $return_of_goods
+ */
+$return_of_goods = $this->getRaw('return_of_goods');
+
+$status = $return_of_goods->getStatus();
+?>
+<div class="return-of-goods-status return-of-goods-status-<?=$status?->getCode()?>">
+	<?=$status?->getTitle()?>
+</div>

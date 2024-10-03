@@ -1,0 +1,66 @@
+<?php
+/**
+ *
+ * @copyright 
+ * @license  
+ * @author  
+ */
+namespace JetApplicationModule\Shop\MagicTags;
+
+use Jet\Application_Module;
+use Jet\IO_Dir;
+use Jet\MVC_Layout;
+use Jet\Translator;
+use JetApplication\Content_MagicTag;
+use JetApplication\Shop_Managers_MagicTags;
+use JetApplication\Shop_ModuleUsingTemplate_Interface;
+use JetApplication\Shop_ModuleUsingTemplate_Trait;
+
+class Main extends Application_Module implements Shop_Managers_MagicTags, Shop_ModuleUsingTemplate_Interface
+{
+	use Shop_ModuleUsingTemplate_Trait;
+	
+	/**
+	 * @return Content_MagicTag[]
+	 */
+	public function getList() : array
+	{
+		return Translator::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() : array {
+				$list = IO_Dir::getFilesList( __DIR__.'/MagicTag/', '*.php' );
+				
+				$result = [];
+				foreach($list as $file) {
+					$class_name = MagicTag::class.'_'.substr( $file, 0, -4 );
+					
+					/**
+					 * @var Content_MagicTag $mg
+					 */
+					$mg = new $class_name();
+					$result[$mg->getId()] = $mg;
+				}
+				
+				uasort( $result, function( MagicTag $a, MagicTag $b ) {
+					return strcmp( $a->getTitle(), $b->getTitle() );
+				} );
+				
+				return $result;
+			}
+		);
+	}
+	
+	public function init(): void
+	{
+		$layout = MVC_Layout::getCurrentLayout();
+		$view = $this->getView();
+		
+		$list = IO_Dir::getFilesList( __DIR__.'/MagicTag/', '*.php' );
+		
+		foreach($list as $file) {
+			$class_name = MagicTag::class.'_'.substr( $file, 0, -4 );
+			
+			$layout->addOutputPostprocessor( new $class_name( $layout, $view ) );
+		}
+	}
+}

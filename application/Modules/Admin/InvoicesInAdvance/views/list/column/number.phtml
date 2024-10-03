@@ -1,0 +1,27 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\InvoicesInAdvance;
+
+use Jet\MVC_View;
+use JetApplicationModule\Admin\Entity\Listing\Listing;
+
+/**
+ * @var MVC_View $this
+ * @var Listing $listing
+ * @var Invoice $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+
+if(!$item->isCancelled()):
+?>
+	<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getNumber();?></a>
+<?php else: ?>
+	<a href="<?=$listing->getEditUrl( $item );?>" style="text-decoration: line-through;color: red;"><?=$item->getNumber();?></a>
+<?php endif;

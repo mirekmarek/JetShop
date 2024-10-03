@@ -1,0 +1,33 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\LandingPages;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var LandingPage $item
+ */
+
+$item = $this->getRaw('item');
+
+?>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="<?=$item->getPreviewURL()?>" target="_blank" class="btn btn-info"><?=UI::icon('eye')?> <?=Tr::_('Preview')?></a>
+<a href="<?=$item->getURL()?>" target="_blank" class="btn btn-info"><?=UI::icon('eye')?> <?=Tr::_('Show')?></a>
+
+&nbsp;&nbsp;&nbsp;
+	<b><?=Tr::_('URL:')?></b>
+
+	<input id="URL" value="<?=$item->getURL()?>" onclick="copyURL()" style="width: 600px;border: none;background-color: transparent;">
+
+
+<script>
+	function copyURL() {
+		const copyText = document.getElementById("URL");
+		copyText.select();
+		copyText.setSelectionRange(0, 99999);
+		document.execCommand("copy");
+	}
+</script>

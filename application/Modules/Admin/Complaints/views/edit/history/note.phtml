@@ -1,0 +1,68 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Locale;
+use Jet\Mvc_View;
+use Jet\Tr;
+use JetApplication\Complaint_Note;
+
+/**
+ * @var Mvc_View $this
+ * @var Complaint $complaint
+ * @var Complaint_Note $item
+ * @var Handler_Note_Main $note_handler
+ */
+$complaint = $this->getRaw( 'complaint' );
+$note_handler = Handler::getHandler(Handler_Note_Main::KEY);
+$item = $this->getRaw('history_item');
+?>
+<tr>
+	<td>
+		<?=Locale::dateAndTime( $item->getDateAdded() )?>
+	</td>
+	<td>
+		<?php if($item->getSentToCustomer()): ?>
+			<div style="padding: 10px;font-weight: bolder;background: #c29595"><?=Tr::_('Message for customer')?></div>
+		<?php else: ?>
+			<div style="padding: 10px;font-weight: bolder;background: #b9b9b9"><?=Tr::_('Internal note')?></div>
+		<?php endif?>
+	</td>
+	<td>
+		<?=nl2br($item->getNote())?>
+		<?php if(($files=$item->getFiles())): ?>
+			<hr>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th style="width: 70px;!important;"></th>
+					<th><?=Tr::_('File name')?></th>
+					<th style="width: 180px;"><?=Tr::_('Type')?></th>
+					<th style="width: 180px;"><?=Tr::_('Size')?></th>
+				</tr>
+				</thead>
+				<?php foreach( $note_handler->getNoteFiles( $item ) as $file): ?>
+					<tr>
+						<td style="width: 70px;">
+							<?php if($file->isImage()):?>
+								<img src="<?=$file->getDownloadURL()?>" style="max-width: 80px;height: auto">
+							<?php endif; ?>
+						</td>
+						<td><a href="<?=$file->getDownloadURL()?>" target="_blank"><?=$file->getName()?></a></td>
+						<td><?=$file->getMime()?></td>
+						<td><?=Locale::size( $file->getSize() )?></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+		
+		<?php endif; ?>
+	</td>
+	<td>
+		<?php if($item->getSentToCustomer()): ?>
+			<div style="padding: 10px;background-color: #99d099"><?=Tr::_('Yes')?></div>
+		<?php else: ?>
+			<div style="padding: 10px;background-color: #b67f7f"><?=Tr::_('No')?></div>
+		<?php endif; ?>
+	</td>
+	<td><?=$item->getAdministrator()?></td>
+</tr>
+

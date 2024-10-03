@@ -1,0 +1,20 @@
+<?php
+return [
+	'Currencies' => 'Měny',
+	'Measure units' => 'Měřné jednotky',
+	'Code' => 'Kód',
+	'Please enter a value' => 'Zadejte hodnotu',
+	'Invalid value' => 'neplatná hodnota',
+	'Code: ' => 'Kód: ',
+	'Name: ' => 'Název: ',
+	'Delete measure unit' => 'Smazat měrnou jednotku',
+	'Name' => 'název',
+	'Please enter code' => 'Zadejte kód',
+	'This code is already used' => 'Tento kód se již používá',
+	'Configuration has been saved' => 'Konfigurace byla uložena',
+	'Out of range' => 'Mimo dosah',
+	'Is decimal number' => 'Je desetinné číslo',
+	'Number step:' => 'Krok číslo:',
+	'Decimal places:' => 'desetinná místa:',
+	'Name:' => 'Název:',
+];

@@ -1,0 +1,42 @@
+<?php
+namespace JetApplicationModule\Admin\Invoices;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Product $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'product_id' );
+
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Product'),
+	form_fields: [$field],
+	is_active:   $field->getValue(),
+	renderer:    function() use ($field) {
+		?>
+		<script>
+			function filterProduct( id ) {
+				const input = document.getElementById('<?=$field->getId()?>');
+				input.value = id;
+				input.form.submit();
+			}
+		</script>
+		<div style="width: 400px;">
+			<?=Admin_Managers::Product()->renderSelectWidget(
+				"filterProduct(selected_item.id)",
+				$field->getValue()
+			)?>
+			<?= $field->input() ?>
+		</div>
+		<?php
+	}
+);

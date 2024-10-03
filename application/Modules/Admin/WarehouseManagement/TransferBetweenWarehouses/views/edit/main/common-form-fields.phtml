@@ -1,0 +1,171 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
+
+use Jet\Form_Renderer;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Item;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View   $this
+ * @var Transfer $transfer
+ * @var Controller_Main $controller
+ */
+
+$controller = $this->getController();
+
+
+$transfer = $this->getRaw('item');
+
+
+
+$form = $transfer->getEditForm();
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+
+?>
+<div id="main-col">
+	
+	
+	<div class="card card-body" style="display: grid;align-items: center;margin: 10px;grid-template-columns: 250px 1fr;gap: 10px">
+		
+		<div><?=Tr::_('Source warehouse:')?></div>
+
+		<div style="display: flex;gap: 10px;">
+			<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+				if($warehouse->getId()==$transfer->getSourceWarehouseId()): ?>
+					<b><?=$warehouse->getAdminTitle()?></b>
+				<?php endif;
+			endforeach; ?>
+		</div>
+
+		<div><?=Tr::_('Target warehouse:')?></div>
+		<div style="display: flex;gap: 10px;">
+			<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+				if($warehouse->getId()==$transfer->getTargetWarehouseId()): ?>
+					<b><?=$warehouse->getAdminTitle()?></b>
+				<?php endif;
+			endforeach; ?>
+		</div>
+
+		<div></div>
+		<div>
+			<?=$this->render('status');?>
+		</div>
+		
+		<div><?=Tr::_('Sent date:')?></div>
+		<div><?=Locale::dateAndTime($transfer->getSentDateTime())?></div>
+
+		<div><?=Tr::_('Receipt date:')?></div>
+		<div><?=Locale::dateAndTime($transfer->getReceiptDateTime())?></div>
+		
+	</div>
+
+
+	<?=$form->start()?>
+	
+	<div class="card card-body" style="margin: 10px;">
+		<?=$form->getCommonMessage()?>
+
+		<h4><?=Tr::_('Items')?></h4>
+
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Product name')?></th>
+				<th><?=Tr::_('EAN')?></th>
+				<th><?=Tr::_('Internal code')?></th>
+				<th><?=Tr::_('Supplier code')?></th>
+
+				<th><?=Tr::_('Source sector')?></th>
+				<th><?=Tr::_('Source rack')?></th>
+				<th><?=Tr::_('Source position')?></th>
+
+				<th><?=Tr::_('Target sector')?></th>
+				<th><?=Tr::_('Target rack')?></th>
+				<th><?=Tr::_('Target position')?></th>
+				
+
+				<th><?=Tr::_('Number of units')?></th>
+				<th></th>
+			</tr>
+			</thead>
+			<?php
+			$showItem = function( WarehouseManagement_TransferBetweenWarehouses_Item $item ) use ($form) {
+				$p_id = $item->getProductId();
+				?>
+				<tr style="<?php if(!$item->getNumberOfUnits()):?>opacity: 0.5<?php endif;?>">
+					<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
+
+					<td><?=$item->getProductEan()?></td>
+					<td><?=$item->getProductInternalCode()?></td>
+					<td><?=$item->getProductSupplierCode()?></td>
+
+					<td><?=$item->getSourceSector()?></td>
+					<td><?=$item->getSourceRack()?></td>
+					<td><?=$item->getSourcePosition()?></td>
+
+					<td>
+						<?=$form->field('/item_'.$p_id.'/sector')->input();?>
+						<?=$form->field('/item_'.$p_id.'/sector')->error();?>
+					</td>
+					<td>
+						<?=$form->field('/item_'.$p_id.'/rack')->input();?>
+						<?=$form->field('/item_'.$p_id.'/rack')->error();?>
+					</td>
+					<td>
+						<?=$form->field('/item_'.$p_id.'/position')->input();?>
+						<?=$form->field('/item_'.$p_id.'/position')->error();?>
+					</td>
+
+					<td>
+						<?php
+						$input = $form->field('/item_'.$p_id.'/qty')->input();
+						$input->addCustomCssStyle("width: 150px;");
+						$input->addCustomCssClass('qty');
+						
+						echo $input;
+						?>
+					</td>
+					<td><?=$item->getMeasureUnit()?->getName()?></td>
+				</tr>
+				<?php
+			};
+			
+			foreach( $transfer->getItems() as $item):
+				if($item->getNumberOfUnits()) {
+					$showItem( $item );
+				}
+			endforeach;
+			
+			foreach( $transfer->getItems() as $item):
+				if(!$item->getNumberOfUnits()) {
+					$showItem( $item );
+				}
+			endforeach;
+			?>
+		</table>
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?php
+		$form->field('notes')->label()->setWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 1
+		]);
+		$form->field('notes')->input()->setWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 10
+		]);
+		?>
+		<?=$form->field('notes')?>
+	</div>
+	
+	<br><br><br>
+	<?=$form->start()?>
+</div>

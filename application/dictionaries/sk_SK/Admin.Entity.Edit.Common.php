@@ -1,0 +1,23 @@
+<?php
+return [
+	'This code is already used' => 'Tento kód sa už používa',
+	'Internal name:' => 'Interný názov:',
+	'Internal code:' => 'Interný kód:',
+	'Internal notes:' => 'Interné poznámky:',
+	'Has main image' => 'Má hlavný obrázok',
+	'Main image width:' => 'Šírka hlavného obrázka:',
+	'Main image height:' => 'Výška hlavného obrazu:',
+	'Has mobile image' => 'Má mobilný obrázok',
+	'Mobile image width:' => 'Šírka mobilného obrázka:',
+	'Mobile image height:' => 'Výška mobilného obrázka:',
+	'Has main video' => 'Má hlavné video',
+	'Main video width:' => 'Hlavná šírka videa:',
+	'Main video height:' => 'Hlavná výška videa:',
+	'Has mobile video' => 'Má mobilné video',
+	'Mobile video width:' => 'Šírka mobilného videa:',
+	'Mobile video height:' => 'Výška mobilného videa:',
+	'Has text' => 'Obsahuje text',
+	'Has text color' => 'Má farbu textu',
+	'Not active' => 'Neaktívny',
+	'Activate' => 'Aktivovať',
+];

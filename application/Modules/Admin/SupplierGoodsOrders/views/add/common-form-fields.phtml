@@ -1,0 +1,100 @@
+<?php
+namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+
+use Jet\Http_Request;
+use Jet\Tr;
+
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Admin_Managers;
+use JetApplication\Supplier;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Order     $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+?>
+<div class="card card-body" style="margin: 10px;">
+	<div style="display: flex;align-items: center;gap: 10px">
+		<div style="font-weight: bolder;"><?= Tr::_('Supplier:')?></div>
+		<div>
+			<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
+				<?php foreach(Supplier::getScope() as $id=>$name):
+					if( $item->getSupplierId()==$id ):
+						?><option value="<?=$id?>" selected><?=$name?></option><?php
+					else:
+						?><option value="<?=$id?>"><?=$name?></option><?php
+					endif;
+				endforeach; ?>
+			</select>
+		</div>
+	</div>
+	
+	<div style="display: grid;grid-template-columns: 100px 1fr;gap: 10px;margin: 10px">
+		<div><?=Tr::_('Supplier:')?></div>
+		<div><b><?=$item->getSupplierCompanyName()?></b></div>
+		
+		<div><?=Tr::_('Address:')?></div>
+		<div>
+			<?=$item->getSupplierAddressStreetAndNo()?><br>
+			<?=$item->getSupplierAddressZip()?> <?=$item->getSupplierAddressTown()?><br>
+			<?=$item->getSupplierAddressCountry()?>
+		</div>
+		
+		<div><?=Tr::_('Phone:')?></div>
+		<div>
+			<?=$item->getSupplierPhone1()?><br>
+			<?=$item->getSupplierPhone2()?>
+		</div>
+		
+		<div><?=Tr::_('e-mail:')?></div>
+		<div>
+			<a href="mailto:<?=$item->getSupplierEmail1()?>"><?=$item->getSupplierEmail1()?></a><br>
+			<a href="mailto:<?=$item->getSupplierEmail2()?>"><?=$item->getSupplierEmail2()?></a>
+		</div>
+	</div>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<?=$form->getCommonMessage()?>
+	
+	<h4><?=Tr::_('Items')?></h4>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th nowrap=""><?=Tr::_('Product')?></th>
+			<th nowrap=""><?=Tr::_('EAN')?></th>
+			<th nowrap=""><?=Tr::_('Internal code')?></th>
+			<th nowrap=""><?=Tr::_('Supplier code')?></th>
+			<th nowrap=""><?=Tr::_('Units to order')?></th>
+			<th nowrap=""></th>
+			<th style="width: 100%"></th>
+		</tr>
+		</thead>
+	<?php foreach($item->getItems() as $i): ?>
+	<tr>
+		<td nowrap=""><?=Admin_Managers::Product()->showName($i->getProductId())?></td>
+		<td nowrap=""><?=$i->getProductEan()?></td>
+		<td nowrap=""><?=$i->getProductInternalCode()?></td>
+		<td nowrap=""><?=$i->getProductSupplierCode()?></td>
+		<td><?=$form->field('/order/'.$i->getProductId())->input()?></td>
+		<td><?=$i->getMeasureUnit()?->getName()?></td>
+		<td></td>
+	</tr>
+	<?php endforeach; ?>
+	</table>
+</div>
+
+<div class="card card-body" style="margin: 10px;">
+	<?=$form->field('destination_warehouse_id')?>
+	<?=$form->field('notes')?>
+	<?=$form->field('expected_delivery_date')?>
+</div>
+
+
+

@@ -1,0 +1,141 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
+
+use Jet\Form_Renderer;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Supplier;
+use JetApplicationModule\Admin\Catalog\KindsOfProduct\KindOfProduct;
+
+/**
+ * @var MVC_View   $this
+ * @var Verification $verification
+ * @var Controller_Main $controller
+ */
+
+$controller = $this->getController();
+
+$verification = $this->getRaw('item');
+
+
+
+$form = $verification->getEditForm();
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+
+?>
+<div id="main-col">
+	<?=$form->start()?>
+
+	<div class="card card-body" style="margin: 10px;">
+		
+		<div style="display: grid;grid-template-columns: 200px 1fr; gap: 10px; align-items: center">
+			<?php if($verification->getCriteriaSupplierId()): ?>
+			<div><?=Tr::_('Supplier:')?></div>
+			<div style="font-weight: bolder;"><?= Supplier::getScope()[$verification->getCriteriaSupplierId()]?></div>
+			<?php endif; ?>
+			
+			<?php if($verification->getCriteriaKindOfProductId()): ?>
+				<div><?=Tr::_('Kind of product:')?></div>
+				<div style="font-weight: bolder;"><?= KindOfProduct::getScope()[$verification->getCriteriaKindOfProductId()]?></div>
+			<?php endif; ?>
+			
+			<?php if($verification->getCriteriaSector()): ?>
+				<div><?=Tr::_('Sector:')?></div>
+				<div style="font-weight: bolder;"><?=$verification->getCriteriaSector()?></div>
+			<?php endif; ?>
+			
+			<?php if($verification->getCriteriaRack()): ?>
+				<div><?=Tr::_('Rack:')?></div>
+				<div style="font-weight: bolder;"><?=$verification->getCriteriaRack()?></div>
+			<?php endif; ?>
+			
+			<?php if($verification->getCriteriaPosition()): ?>
+				<div><?=Tr::_('Position:')?></div>
+				<div style="font-weight: bolder;"><?=$verification->getCriteriaPosition()?></div>
+			<?php endif; ?>
+
+			<div></div>
+			<div>
+				<?=$this->render('status');?>
+			</div>
+
+			<div><?=Tr::_('Date:')?></div>
+			<div><?=Locale::dateAndTime($verification->getDate())?></div>
+			
+		</div>
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?=$form->getCommonMessage()?>
+
+		<h4><?=Tr::_('Items')?></h4>
+
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Product name')?></th>
+				<th><?=Tr::_('EAN')?></th>
+				<th><?=Tr::_('Internal code')?></th>
+				<th><?=Tr::_('Supplier code')?></th>
+
+				<th><?=Tr::_('Sector')?></th>
+				<th><?=Tr::_('Rack')?></th>
+				<th><?=Tr::_('Position')?></th>
+
+				<th><?=Tr::_('Number of units - expected')?></th>
+				<th><?=Tr::_('Number of units - reality')?></th>
+				<th></th>
+			</tr>
+			</thead>
+			<?php foreach( $verification->getItems() as $item):
+				$p_id = $item->getProductId();
+				?>
+				<tr>
+					<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
+					<td><?=$item->getProductEan()?></td>
+					<td><?=$item->getProductInternalCode()?></td>
+					<td><?=$item->getProductSupplierCode()?></td>
+
+					<td><?=$form->field('/item_'.$p_id.'/sector')->input()?></td>
+					<td><?=$form->field('/item_'.$p_id.'/rack')->input()?></td>
+					<td><?=$form->field('/item_'.$p_id.'/position')->input()?></td>
+
+					<td><?=Locale::float( $item->getNumberOfUnitsExpected() )?></td>
+					<td>
+						<?php
+						$input = $form->field('/item_'.$p_id.'/qty_reality')->input();
+						$input->addCustomCssStyle("width: 150px;");
+						
+						echo $input;
+						?>
+					</td>
+					<td><?=$item->getMeasureUnit()?->getName()?></td>
+				</tr>
+			<?php endforeach; ?>
+		</table>
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?php
+		$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 1
+		]);
+		$form->renderer()->setDefaultFieldWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 10
+		]);
+		?>
+		<?=$form->field('date')?>
+		<?=$form->field('notes')?>
+	</div>
+	
+	<br><br><br>
+	<?=$form->start()?>
+</div>
+	

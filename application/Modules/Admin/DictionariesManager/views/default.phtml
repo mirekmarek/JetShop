@@ -1,0 +1,134 @@
+<?php
+namespace JetApplicationModule\Admin\DictionariesManager;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\Translator_Dictionary;
+use Jet\UI;
+
+/**
+ * @var MVC_View   $this
+ * @var Locale[] $locales
+ * @var ?Locale $locale
+ * @var array $dictionaries
+ * @var ?Translator_Dictionary $dictionary
+ */
+
+
+$locales      = $this->getRaw('locales');
+$locale       = $this->getRaw('locale');
+$dictionaries = $this->getRaw('dictionaries');
+$dictionary   = $this->getRaw('dictionary');
+$dictionary   = $this->getRaw('dictionary');
+$prev_dictionary = $this->getRaw('prev_dictionary');
+$next_dictionary = $this->getRaw('next_dictionary');
+
+$locale_key = $locale?$locale->toString():'';
+?>
+
+<div class="toolbar" id="main-toolbar">
+	<div style="display: flex;align-items: center;gap: 5px;">
+		<div><?=Tr::_('Locale:')?></div>
+		<?php foreach($locales as $_locale): ?>
+			<div>
+				<?php if($_locale->toString()==$locale): ?>
+					<b class="btn btn-success" style="width: 100%; text-align: left"><?=$_locale->getName()?></b>
+				<?php else:  ?>
+					<a href="<?=Http_Request::currentURI(set_GET_params: ['locale'=>$_locale->toString()])?>" class="btn btn-light" style="width: 100%; text-align: left"><?=$_locale->getName()?></a>
+				<?php endif; ?>
+			</div>
+		<?php endforeach; ?>
+		
+		<?php if($dictionary): ?>
+			<div style="padding-left: 30px;"></div>
+			<div>
+				<?php if($prev_dictionary):
+					echo UI::button(' ')
+						->setUrl( Http_Request::currentURI(set_GET_params: ['dictionary'=>$prev_dictionary]) )
+						->setIcon('chevron-left');
+				endif ?>
+			</div>
+			<div style="padding: 10px;"><b><?=$dictionary->getName()?></b></div>
+			<div>
+				<?php if($next_dictionary):
+					echo UI::button(' ')
+						->setUrl( Http_Request::currentURI(set_GET_params: ['dictionary'=>$next_dictionary]) )
+						->setIcon('chevron-right');
+				endif ?>
+			</div>
+		<?php endif; ?>
+	</div>
+
+</div>
+<div id="main-col">
+	<div style="display: grid;grid-template-columns: 2fr 8fr;gap: 10px;">
+		<div>
+			<?php if($locale): ?>
+				<div><b><?=Tr::_('Dictionary:')?></b></div>
+				
+				<?php foreach($dictionaries as $_dictionary): ?>
+					<div style="margin: 5px;">
+						<?php if($dictionary && $dictionary->getName()==$_dictionary): ?>
+							<b class="btn btn-success" style="width: 100%; text-align: left"><?=$_dictionary?></b>
+						<?php else:  ?>
+							<a href="<?=Http_Request::currentURI(set_GET_params: ['dictionary'=>$_dictionary])?>" class="btn btn-light" style="width: 100%;text-align: left"><?=$_dictionary?></a>
+						<?php endif; ?>
+					</div>
+				<?php endforeach; ?>
+			<?php endif; ?>
+			
+		</div>
+		<div>
+			<?php if($dictionary): ?>
+				<br>
+				<table class="table table-striped">
+					<?php foreach($dictionary->getPhrases() as $phrase):
+						$hash = base64_encode($phrase->getHash());
+						?>
+						<tr>
+							<td style="width: 20px;"><?=UI::button_delete(' ')->setOnClick("remove('{$hash}', this);")?></td>
+							<td><textarea style="width: 100%" readonly><?=$phrase->getPhrase()?></textarea></td>
+							<td><textarea style="width: 100%" onchange="save('<?=$hash?>', this.value)"><?=$phrase->getTranslationRaw()?></textarea></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>
+
+<script>
+	function save( hash, translation ) {
+		$.ajax({
+			type: 'POST',
+			url: '<?=Http_Request::currentURI(set_GET_params: ['action'=>'save_translation'])?>',
+			data: {
+				hash: hash,
+				translation: translation
+			},
+			dataType: 'json',
+			success: function (response) {
+			}
+		});
+		
+	}
+	function remove( hash, button ) {
+		if(!confirm(<?=json_encode(Tr::_('Do you really want to remove phrase?'))?>)) {
+			return;
+		}
+		$.ajax({
+			type: 'POST',
+			url: '<?=Http_Request::currentURI(set_GET_params: ['action'=>'remove_phrase'])?>',
+			data: {
+				hash: hash
+			},
+			dataType: 'json',
+			success: function (response) {
+				$(button).parent().parent().remove();
+			}
+		});
+
+	}
+</script>

@@ -1,0 +1,170 @@
+<?php
+
+namespace JetApplicationModule\MarketplaceIntegration\Heureka;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\MVC_View;use Jet\Tr;use Jet\UI;
+use Jet\UI_messages;
+
+/**
+ * @var MVC_View $this
+ * @var Form $main_form
+ * @var Form $add_delivery_method_form
+ * @var Form $add_payment_method_form
+ * @var Config_PerShop $config
+ */
+
+$config = $this->getRaw('config');
+$main_form = $this->getRaw('form');
+$add_delivery_method_form = $this->getRaw('add_delivery_method_form');
+$add_payment_method_form = $this->getRaw('add_payment_method_form');
+$server_API_URLs = $this->getRaw('server_API_URLs');
+
+
+$setupForm = function( Form $form ) {
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 10
+	]);
+	$form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	
+};
+
+$setupForm( $main_form );
+$setupForm( $add_delivery_method_form );
+$setupForm( $add_payment_method_form );
+
+$saveBtn = function() {
+	?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<?=UI::button_save()?>
+		</div>
+	</div>
+	<?php
+};
+?>
+
+<div class="card card-body">
+<h3><?=Tr::_('Heureka API')?></h3>
+<?php
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+
+echo $main_form->getCommonMessage();
+echo $main_form->start();
+echo $main_form->field('API_URL');
+$saveBtn();
+echo $main_form->end();
+?>
+</div>
+
+<br><br>
+
+<div class="card card-body">
+	<h4><?=Tr::_('E-shop REST server API URLs')?></h4>
+	
+	<?php if(!$server_API_URLs): ?>
+		<?=UI_messages::createWarning(Tr::_('Please setup Heureka API first'))?>
+	<?php else: ?>
+		<table class="table table-striped">
+		<?php foreach($server_API_URLs as $URL=>$desc): ?>
+		<tr>
+			<td><b><?=$desc?></b></td>
+			<td><?=$URL?></td>
+		</tr>
+		<?php endforeach; ?>
+		</table>
+	<?php endif; ?>
+</div>
+<br><br>
+
+
+<h3><?=Tr::_('Delivery methods')?></h3>
+
+<div class="card card-body">
+	<h4><?=Tr::_('Add delivery method')?></h4>
+<?php
+echo $add_delivery_method_form->getCommonMessage();
+echo $add_delivery_method_form->start();
+echo $add_delivery_method_form->field('delivery_method_id');
+echo $add_delivery_method_form->field('type');
+echo $add_delivery_method_form->field('store_type');
+echo $add_delivery_method_form->field('store_id');
+$saveBtn();
+echo $add_delivery_method_form->end();
+?>
+</div>
+<br><br>
+
+<?php foreach($config->getDeliveryMap() as $mi):
+	$form = $mi->getEditForm();
+	
+	$setupForm( $form );
+	?>
+	
+<div class="card card-body">
+	<div >
+		<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['unset_delivery_method'=>$mi->getDeliveryMethodId()]) )?>
+	</div>
+	
+	<?php
+	echo $form->getCommonMessage();
+	echo $form->start();
+	echo $form->field('delivery_method_id');
+	echo $form->field('type');
+	echo $form->field('store_type');
+	echo $form->field('store_id');
+	$saveBtn();
+	echo $form->end();?>
+</div>
+<br>
+
+<?php endforeach; ?>
+
+<br><br>
+
+<h3><?=Tr::_('Payment methods')?></h3>
+
+<div class="card card-body">
+	<h4><?=Tr::_('Add payment method')?></h4>
+	<?php
+	echo $add_payment_method_form->getCommonMessage();
+	echo $add_payment_method_form->start();
+	echo $add_payment_method_form->field('payment_method_id');
+	echo $add_payment_method_form->field('type');
+	$saveBtn();
+	echo $add_payment_method_form->end();
+	?>
+</div>
+<br><br>
+
+<?php foreach($config->getPaymentMap() as $mi):
+	$form = $mi->getEditForm();
+	
+	$setupForm( $form );
+	?>
+
+	<div class="card card-body">
+		<div >
+			<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['unset_payment_method'=>$mi->getPaymentMethodId()]) )?>
+		</div>
+		
+		<?php
+		echo $form->getCommonMessage();
+		echo $form->start();
+		echo $form->field('payment_method_id');
+		echo $form->field('type');
+		$saveBtn();
+		echo $form->end();?>
+	</div>
+	<br>
+
+<?php endforeach; ?>

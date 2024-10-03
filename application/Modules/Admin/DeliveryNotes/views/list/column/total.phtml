@@ -1,0 +1,20 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\DeliveryNotes;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var DeliveryNote $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getCurrency(), $item->getTotal() )?>

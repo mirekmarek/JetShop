@@ -1,0 +1,105 @@
+<?php
+
+use Jet\Tr;
+use JetApplication\EMail_Template;
+use JetApplication\EMail_TemplateText;
+use JetApplication\Shops_Shop;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Shops_Shop $shop
+ * @var EMail_Template[] $templates
+ * @var EMail_TemplateText $item
+ */
+
+$shop = $this->getRaw('shop');
+$form = $this->getRaw('form');
+$shop_key = $shop->getKey();
+$item = $this->getRaw('item');
+
+$templates = $this->getRaw('templates');
+
+$template = $templates[$item->getInternalCode()]??null;
+?>
+
+<div style="display: grid;grid-template-columns: 2fr 1fr;gap: 10px;margin: 10px;">
+	<div>
+		<div><?= Tr::_('Layout:');?></div>
+		<?=$form->field('/shop_data/'.$shop_key.'/layout_id')->input()?>
+		<br>
+		<div><?= Tr::_('Sender - e-mail:');?></div>
+		<?=$form->field('/shop_data/'.$shop_key.'/sender_email')->input()?>
+		<br>
+		<div><?= Tr::_('Sender - name:');?></div>
+		<?=$form->field('/shop_data/'.$shop_key.'/sender_name')->input()?>
+		<br>
+		<div><?= Tr::_('Subject:');?></div>
+		<?=$form->field('/shop_data/'.$shop_key.'/subject')->input()?>
+		<br>
+		<div><?= Tr::_('HTML');?></div>
+		<?=$form->field('/shop_data/'.$shop_key.'/body_html')->input()?>
+		<br>
+		<div><?= Tr::_('TXT');?></div>
+		<?=$form->field('/shop_data/'.$shop_key.'/body_txt')->input()->addCustomCssStyle('height: 400px;')?>
+	</div>
+	<div>
+		<?php if($template): ?>
+			<div class="card">
+				<div class="card-header"><?=Tr::_('Properties')?></div>
+				<div class="card-body">
+					<?php foreach($template->getProperties() as $p): ?>
+					<div>
+						<b><?=$p->getInstructionTemplate()?></b>
+					</div>
+					<div>
+						<?=$p->getDescription()?>
+					</div>
+					<hr>
+					<?php endforeach; ?>
+					
+				</div>
+			</div>
+			<br>
+		
+			<?php if($template->getBlocks()): ?>
+			<div class="card">
+				<div class="card-header"><?=Tr::_('Blocks')?></div>
+				<div class="card-body">
+					<?php foreach($template->getBlocks() as $b): ?>
+						<div>
+							<b><?=$b->getInstructionTemplate()?></b>
+						</div>
+						<div>
+							<?=$b->getDescription()?>
+						</div>
+						<div style="padding: 20px;padding-left: 30px;padding-right: 30px;">
+							<i><?=Tr::_('Block properties:')?></i><br><br>
+							
+							<?php foreach($b->getProperties() as $p): ?>
+								<div>
+									<b><?=$p->getInstructionTemplate()?></b>
+								</div>
+								<div>
+									<?=$p->getDescription()?>
+								</div>
+							<?php endforeach; ?>
+							
+						</div>
+
+						<hr>
+					<?php endforeach; ?>
+
+				</div>
+			</div>
+			<?php endif; ?>
+		
+		<?php endif; ?>
+	</div>
+</div>
+<br><br><br><br>
+

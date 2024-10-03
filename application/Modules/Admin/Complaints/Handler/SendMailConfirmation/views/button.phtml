@@ -1,0 +1,12 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI_button;
+use Jet\UI;
+?>
+
+<?=UI::button(Tr::_('Resend complaint confirmation e-mail'))->setClass(UI_button::CLASS_INFO)
+	->setUrl(Http_Request::currentURI(['send_email'=>'confirm']))
+	->setIcon('envelope-circle-check')?>

@@ -1,0 +1,21 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\DeliveryNotes;
+
+use Jet\Locale;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var DeliveryNote $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=Locale::dateAndTime( $item->getInvoiceDate() );?>
+

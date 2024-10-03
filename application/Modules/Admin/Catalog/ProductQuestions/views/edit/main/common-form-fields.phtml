@@ -1,0 +1,55 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
+
+use Jet\Locale;use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var ProductQuestion $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+$form->field('question')->input()->addCustomCssStyle('height:400px');
+$form->field('answer')->input()->addCustomCssStyle('height:400px');
+
+
+
+?>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		
+		<div class="card card-body">
+			<?=$item->getShop()->getShopName()?> / <?=Locale::dateAndTime($item->getCreated())?>
+			<div style="padding: 10px;">
+				<?=Admin_Managers::Product()->showName( $item->getProductId() ) ?>
+			</div>
+			
+			
+			<?php if($item->isAnswered()):
+				if($item->isDisplay()):
+					echo UI::badge( UI_badge::SUCCESS, Tr::_('Answered - visible') );
+				else:
+					echo UI::badge( UI_badge::INFO, Tr::_('Answered - not visible') );
+				endif;
+			else:
+				echo UI::badge( UI_badge::DANGER, Tr::_('Not answered') );
+			endif; ?>
+		</div>
+		<br>
+	</div>
+</div>
+
+<?=$form->field('author_name')?>
+<?=$form->field('author_email')?>
+
+<?=$form->field('question')?>
+<?=$form->field('answer')?>

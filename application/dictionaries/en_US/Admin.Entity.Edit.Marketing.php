@@ -1,0 +1,23 @@
+<?php
+return [
+	'Products' => '',
+	'Add product:' => '',
+	'Remove all products' => '',
+	'Filter - exclude products' => '',
+	'Filter' => '',
+	'Please enter a value' => '',
+	'Save filter settings' => '',
+	'Basic' => '',
+	'Kind of product:' => '',
+	'Is in stock:' => '',
+	'Has discount:' => '',
+	'Brands' => '',
+	'Add brand:' => '',
+	'Categories' => '',
+	'Include subcategories' => '',
+	'Add category:' => '',
+	'Out of range' => '',
+	'Min:' => '',
+	'Max:' => '',
+	'Exclude products' => '',
+];

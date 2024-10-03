@@ -1,0 +1,101 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Modules;
+
+use Jet\Application_Module_Manifest;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_button;
+use Jet\UI_messages;
+
+/**
+ * @var MVC_View   $this
+ * @var Application_Module_Manifest[] $modules
+ */
+
+$modules = $this->getRaw('modules');
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th></th>
+		<th><?=Tr::_('Installed')?></th>
+		<th><?=Tr::_('Activated')?></th>
+		<th></th>
+	</tr>
+	</thead>
+	<?php foreach($modules as $module):?>
+	<tr>
+		<td>
+			<b><?=$module->getName()?></b>
+			<div style="font-size: 0.8rem"><?=$module->getDescription()?></div>
+		</td>
+
+		<?php /*
+		<td>
+			<?php if($module->isMandatory()):
+				echo UI::badge(UI_badge::DANGER, Tr::_('Mandatory'))->addCustomCssStyle('padding: 5px');
+			else:
+				echo UI::badge(UI_badge::INFO, Tr::_('Not mandatory'))->addCustomCssStyle('padding: 5px');
+			endif; ?>
+		</td>
+        */ ?>
+
+		<td>
+			<?php if($module->isInstalled()):
+				echo UI::badge(UI_badge::SUCCESS, Tr::_('Installed'))->addCustomCssStyle('padding: 5px');
+			else:
+				echo UI::badge(UI_badge::DANGER, Tr::_('Not installed'))->addCustomCssStyle('padding: 5px');
+			endif; ?>
+		</td>
+
+		<td>
+			<?php if($module->isActivated()):
+				echo UI::badge(UI_badge::SUCCESS, Tr::_('Activated'))->addCustomCssStyle('padding: 5px');
+			else:
+				echo UI::badge(UI_badge::DANGER, Tr::_('Not activated'))->addCustomCssStyle('padding: 5px');
+			endif; ?>
+		</td>
+		
+		<td>
+			<?php if(!$module->isInstalled()):
+				echo UI::button(Tr::_('Install'))
+					->setUrl( Http_Request::currentURI(['install'=>$module->getName()]) )
+					->setClass(UI_button::CLASS_SUCCESS);
+				echo '&nbsp;';
+				
+				echo UI::button(Tr::_('Install and activate'))
+					->setUrl( Http_Request::currentURI(['install_activate'=>$module->getName()]) )
+					->setClass(UI_button::CLASS_SUCCESS);
+			
+			else:
+				if($module->isActivated()):
+					echo UI::button(Tr::_('Deactivate'))
+						->setUrl( Http_Request::currentURI(['deactivate'=>$module->getName()]) )
+						->setClass(UI_button::CLASS_DANGER);
+				else:
+					echo UI::button(Tr::_('Activate'))
+						->setUrl( Http_Request::currentURI(['activate'=>$module->getName()]) )
+						->setClass(UI_button::CLASS_SUCCESS);
+					
+					echo '&nbsp;';
+				
+					echo UI::button(Tr::_('Uninstall'))
+						->setUrl( Http_Request::currentURI(['uninstall'=>$module->getName()]) )
+						->setClass(UI_button::CLASS_DANGER);
+				
+				endif;
+			endif; ?>
+			
+		</td>
+
+	</tr>
+	<?php endforeach; ?>
+</table>

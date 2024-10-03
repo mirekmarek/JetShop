@@ -1,0 +1,78 @@
+<?php
+namespace JetApplicationModule\Admin\Context;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Context;
+use JetApplication\Order;
+use JetApplication\WarehouseManagement_LossOrDestruction;
+use JetApplication\WarehouseManagement_ReceiptOfGoods;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
+use JetApplicationModule\Admin\Complaints\Complaint;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var MVC_View   $this
+ * @var Context $context
+ */
+$context = $this->getRaw('context');
+
+switch( $context->getContextType() ) {
+	case Order::getProvidesContextType():
+		
+		echo Tr::_('Order');
+		echo '&nbsp;';
+		echo Admin_Managers::Order()->showName( $context->getContextId() );
+		
+		break;
+	case Complaint::getProvidesContextType():
+		
+		echo Tr::_('Complaint');
+		echo '&nbsp;';
+		echo Admin_Managers::Complaint()->showName( $context->getContextId() );
+		echo '<br>';
+		echo Tr::_('Order');
+		echo '&nbsp;';
+		echo Admin_Managers::Order()->showName( Complaint::get($context->getContextId())->getOrderId() );
+		
+		
+		break;
+	case OrderDispatch::getProvidesContextType():
+		
+		echo Tr::_('Order dispatch');
+		echo '&nbsp;';
+		echo Admin_Managers::OrderDispatch()->showName( $context->getContextId() );
+		echo '<br>';
+		
+		$order_dispatch = OrderDispatch::get( $context->getContextId() );
+		$dispatch_context = $order_dispatch?->getContext();
+		if($dispatch_context) {
+			echo Admin_Managers::Context()->showContext( $dispatch_context );
+		}
+		
+		break;
+		
+	case WarehouseManagement_ReceiptOfGoods::getProvidesContextType():
+		echo Tr::_('Receipt of Goods');
+		echo '&nbsp;';
+		echo Admin_Managers::ReceiptOfGoods()->showName( $context->getContextId() );
+		
+		break;
+	case WarehouseManagement_TransferBetweenWarehouses::getProvidesContextType():
+		echo Tr::_('Transfer between warehouses');
+		echo '&nbsp;';
+		echo Admin_Managers::TransferBetweenWarehouses()->showName( $context->getContextId() );
+		break;
+	case WarehouseManagement_LossOrDestruction::getProvidesContextType():
+		echo Tr::_('Loss or destruction');
+		echo '&nbsp;';
+		
+		echo Admin_Managers::LossOrDestruction()->showName( $context->getContextId() );
+		
+		break;
+	default:
+		var_dump($context);
+		break;
+
+}

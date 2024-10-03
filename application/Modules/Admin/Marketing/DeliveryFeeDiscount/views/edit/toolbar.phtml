@@ -1,0 +1,16 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var DeliveryFeeDiscount $item
+ */
+
+$item = $this->getRaw('item');
+
+if($item->isEditable()) {
+	echo Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
+}

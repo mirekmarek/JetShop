@@ -1,0 +1,22 @@
+<?php
+return [
+	'Exports' => 'Exporty',
+	'Please enter a value' => 'Zadejte hodnotu',
+	'Invalid value' => 'Neplatná hodnota',
+	'Key: ' => 'Klíč: ',
+	'MVC Base ID: ' => 'ID základny MVC: ',
+	'Generate a new key' => 'Vygenerujte nový klíč',
+	'Heureka - Products' => 'Heureka - Produkty',
+	'Google shopping - Products' => 'Nákupy Google – Produkty',
+	'Schedule export outage' => 'Naplánujte výpadek exportu',
+	'From date and time:' => 'Od data a času:',
+	'Till date and time:' => 'Do data a času:',
+	'Schedule' => 'Plán',
+	'Active' => 'Aktivní',
+	'Schedule outage' => 'Naplánujte výpadek',
+	'Shutdown now' => 'Nyní vypněte',
+	'link' => 'odkaz',
+	'Deactivated' => 'Deaktivováno',
+	'Start now' => 'Začněte hned',
+	'Configuration has been saved' => 'Konfigurace byla uložena',
+];

@@ -1,0 +1,21 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+
+ * @var ProductQuestion $item
+ */
+
+$item = $this->getRaw('item');
+
+echo Admin_Managers::Product()->showName( $item->getProductId() );

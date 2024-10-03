@@ -1,0 +1,23 @@
+<?php
+return [
+	'Carrier Packaging definition' => '',
+	'Carrier Services definition' => '',
+	'Carrier' => '',
+	'Service' => '',
+	'Packaging' => '',
+	'Please enter code' => '',
+	'Invalid value' => '',
+	'This code is already used' => '',
+	'Please enter a value' => '',
+	'Internal code: ' => '',
+	'Name: ' => '',
+	'Kind of delivery: ' => '',
+	'Carrier service identification code: ' => '',
+	'Packaging has dimensions' => '',
+	'Packaging has weight' => '',
+	'e-Delivery' => '',
+	'Personal takeover' => '',
+	'Delivery' => '',
+	'Configuration has been saved' => '',
+	'Delete service' => '',
+];

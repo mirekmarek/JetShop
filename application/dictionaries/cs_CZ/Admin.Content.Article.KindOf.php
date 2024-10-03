@@ -1,0 +1,22 @@
+<?php
+return [
+	'Kind of articles' => 'Druhy článků',
+	'- all -' => '- Všechno -',
+	'Not active' => 'Neaktivní',
+	'Active' => 'Aktivní',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'Please enter a value' => 'Zadejte hodnotu',
+	'Invalid value' => 'neplatná hodnota',
+	'This code is already used' => 'Tento kód se již používá',
+	'Supplier <b>%ITEM_NAME%</b> has been updated' => 'Dodavatel <b>%ITEM_NAME%</b> byl aktualizován',
+	'ID' => 'ID',
+	'Is active' => 'Je aktivní',
+	'Internal name' => 'Interní název',
+	'Internal code' => 'Interní kód',
+	'Internal notes' => 'Interní poznámky',
+	'Please select option' => 'Vyberte prosím možnost',
+	'General' => 'Všeobecné',
+	'Please enter name' => 'Zadejte jméno',
+	'Name:' => 'Název:',
+];

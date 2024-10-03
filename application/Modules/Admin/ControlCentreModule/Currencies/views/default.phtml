@@ -1,0 +1,136 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Currencies;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Currencies;
+use JetApplication\Currencies_Currency;
+
+/**
+ * @var MVC_View   $this
+ * @var Currencies_Currency|null $selected_currency
+ * @var Currencies_Currency|null $new_currency
+ */
+
+$selected_currency = $this->getRaw('selected_currency');
+$new_currency = $this->getRaw('new_currency');
+?>
+<div style="display: grid;grid-template-columns: 2fr 3fr;gap: 10px">
+	<div>
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Code')?></th>
+			<th></th>
+		</tr>
+		</thead>
+		<?php foreach( Currencies::getList() as $currency):
+			$edit_URL = Http_Request::currentURI(set_GET_params: ['currency'=>$currency->getCode()], unset_GET_params: ['add']);
+			?>
+			<tr>
+				<td>
+			<?php if( $selected_currency?->getCode()==$currency->getCode() ): ?>
+					<b><?=$currency->getCode()?></b>
+			<?php else: ?>
+					<a href="<?=$edit_URL?>"><?=$currency->getCode()?></a>
+			<?php endif; ?>
+				</td>
+				<td>
+					<table>
+					<?php
+					foreach(Currencies::getList() as $tg_currency):
+						if($tg_currency->getCode()==$currency->getCode()) {
+							continue;
+						}
+						?>
+						<tr>
+							<td>1 <?=$currency->getCode()?></td>
+							<td> = </td>
+							<td><?=$currency->getExchangeRate( $tg_currency )?> <?=$tg_currency->getCode()?></td>
+						</tr>
+						<?php
+					endforeach;
+					?>
+					</table>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+		</table>
+		
+		<?=UI::button_create('Create a new currency')->setUrl( Http_Request::currentURI(set_GET_params: ['add'=>'add'], unset_GET_params: ['currency']) )?>
+	</div>
+	<div>
+		<?php if($selected_currency || $new_currency):
+			foreach( UI_messages::get(context: 'CC') as $message ):
+				echo $message;
+			endforeach;
+			
+			
+			$form = $selected_currency?->getEditForm();
+			if(!$form) {
+				$form = $new_currency->getAddForm();
+			}
+			$form->renderer()->setCustomTagAttribute('novalidate', 'novalidate');
+			?>
+			<?=$form->start()?>
+				<?=$form->field('code')?>
+				<?=$form->field('symbol_left')?>
+				<?=$form->field('symbol_right')?>
+				<?=$form->field('decimal_separator')?>
+				<?=$form->field('thousands_separator')?>
+				<?=$form->field('decimal_places')?>
+				<?=$form->field('round_precision_with_VAT')?>
+				<?=$form->field('round_precision_without_VAT')?>
+				<?=$form->field('round_precision_VAT')?>
+		
+				<?php
+				if($selected_currency):
+					foreach(Currencies::getList() as $currency):
+						if($currency->getCode()==$selected_currency->getCode()) {
+							continue;
+						}
+						$field = $form->field('/exchange_rate/'.$currency->getCode());
+						
+						$field->input()->setCustomRenderer( function() use ($field, $form, $currency, $selected_currency ) {
+							?>
+							<div style="display: flex;align-items: center;gap: 10px;">
+								<div>1 <?=$selected_currency?->getCode()?> = <span></span></div>
+								<div><?=$field->input()->renderByView()?></div>
+								<div><?=$currency->getCode()?></div>
+							</div>
+							<?php
+						} );
+						
+						echo $field;
+					endforeach;
+				endif;
+				?>
+
+				<div class="row">
+					<div class="col-md-4">
+					</div>
+					<div class="col-md-8">
+					</div>
+				</div>
+		
+		
+				<div style="display: grid;grid-template-columns: 1fr 1fr;">
+					<div>
+						<?=UI::button_save()?>
+					</div>
+					<div style="text-align: right">
+						<?php if($selected_currency): ?>
+							<?=UI::button_delete( Tr::_('Delete currency'))->setUrl( Http_Request::currentURI(['delete'=>'delete']) )?>
+						<?php endif ?>
+					</div>
+				</div>
+				
+			<?=$form->end()?>
+		<?php endif; ?>
+		
+	</div>
+	
+</div>

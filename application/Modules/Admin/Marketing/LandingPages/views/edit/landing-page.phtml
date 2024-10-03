@@ -1,0 +1,43 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\LandingPages;
+
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var LandingPage $item
+ * @var Form $form
+ */
+
+$item = $this->getRaw('item');
+$editable = $item->isEditable();
+
+$form = $this->getRaw('form');
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] );
+
+echo $this->controller->getEditorManager()->renderToolbar(
+	$this->getRaw('form'),
+	function() use ($item) {
+		require 'toolbar.phtml';
+		
+		if($item->isEditable()) {
+			echo Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
+		}
+	}
+);
+?>
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+	<br>
+	<?=$form->start()?>
+	<?=$form->field('landing_page_title')?>
+	<?=$form->field('landing_page_description')?>
+	<?=$form->field('landing_page_url')?>
+	<?=$form->field('landing_page_html')?>
+	
+	<?=$form->end()?>
+</div>

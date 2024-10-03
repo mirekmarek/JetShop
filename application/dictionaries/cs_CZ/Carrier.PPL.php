@@ -1,0 +1,23 @@
+<?php
+return [
+	'InTime' => 'Včas',
+	'PPL' => 'PPL',
+	'Please enter a value' => 'Zadejte hodnotu',
+	'Invalid value' => 'neplatná hodnota',
+	'URL - JSON - pobočky: ' => 'URL - JSON - pobočky: ',
+	'Out of range' => 'Mimo dosah',
+	'Packaging parameters - delivery to address' => 'Parametry balení - doručení na adresu',
+	'Has dimensions' => 'Má rozměry',
+	'Has weight' => 'Má váhu',
+	'Max. height:' => 'Max. výška:',
+	'Max. length:' => 'Max. délka:',
+	'Max. width:' => 'Max. šířka:',
+	'Max. weight:' => 'Max. hmotnost:',
+	'Default height:' => 'Výchozí výška:',
+	'Default length:' => 'Výchozí délka:',
+	'Default width:' => 'Výchozí šířka:',
+	'Packaging parameters - delivery point' => 'Parametry balení - výdejní místo',
+	'Packaging parameters - box' => 'Parametry balení - krabice',
+	'Branch' => 'Větev',
+	'Box' => 'Box',
+];

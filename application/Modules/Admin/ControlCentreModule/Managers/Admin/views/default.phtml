@@ -1,0 +1,70 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Managers\Admin;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_messages;
+use JetApplication\Manager_MetaInfo;
+
+/**
+ * @var MVC_View   $this
+ * @var Manager_MetaInfo[] $managers
+ * @var array $config
+ */
+
+$managers = $this->getRaw('managers');
+$config = $this->getRaw('config');
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+?>
+<table class="table table-striped">
+
+	<?php foreach($managers as $manager): ?>
+	<tr>
+		<td>
+			<b><?=$manager->getName()?></b>
+			<div style="font-size: 0.8rem"><?=$manager->getInterfaceClassName()?></div>
+			
+		</td>
+		<td><?=$manager->getDescription()?></td>
+		<td>
+			<?php if($manager->isMandatory()):
+				echo UI::badge(UI_badge::DANGER, Tr::_('Mandatory'))->addCustomCssStyle('padding: 5px');
+			else:
+				echo UI::badge(UI_badge::INFO, Tr::_('Not mandatory'))->addCustomCssStyle('padding: 5px');
+			endif; ?>
+		</td>
+		<td>
+			<form method="post" action="<?=Http_Request::currentURI()?>">
+				<input type="hidden" name="action" value="save"/>
+				<input type="hidden" name="interface_class_name" value="<?=$manager->getInterfaceClassName()?>"/>
+				
+				<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 1fr 100px;">
+					<select name="manager" class="form-control">
+						
+						<?php foreach($manager->getPossibleModulesScope() as $module_name => $module):
+							$selected = $config[$manager->getInterfaceClassName()]??'';
+							?>
+						<option value="<?=$module_name?>" <?=$module_name==$selected?'selected="selected"':''?>>
+							
+							<?php if(is_string($module)): ?>
+							<?php else: ?>
+								<?=$module->getModuleManifest()->getName()?> (<?=$module_name?>)
+							<?php endif; ?>
+						</option>
+						<?php endforeach; ?>
+					</select>
+					
+					<?=UI::button_save()?>
+				</div>
+			</form>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>

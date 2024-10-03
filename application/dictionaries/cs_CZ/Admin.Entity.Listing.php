@@ -1,0 +1,19 @@
+<?php
+return [
+	'Export' => 'Export',
+	'Filter' => 'Filtr',
+	'Search' => 'Vyhledávání',
+	'Is active' => 'Je aktivní',
+	'Displayed columns setting' => 'Nastavení zobrazených sloupců',
+	'Predefined schemas' => 'Předdefinovaná schémata',
+	'Current schema <b>%SCHEMA%</b>' => 'Aktuální schéma <b>%SCHEMA%</b>',
+	'Available columns' => 'Dostupné sloupce',
+	'Selected columns' => 'Vybrané sloupce',
+	'Set' => 'Nastavit',
+	'Update current schema' => 'Aktualizujte aktuální schéma',
+	'Save as new schema' => 'Uložit jako nové schéma',
+	'Inactive' => 'Neaktivní',
+	'Active' => 'Aktivní',
+	'Shop' => 'Prodejna',
+	'Unlimited' => 'Neomezený',
+];

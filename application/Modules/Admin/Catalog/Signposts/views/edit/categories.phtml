@@ -1,0 +1,111 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Signposts;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use Jet\Form;
+
+/**
+ * @var MVC_View   $this
+ * @var Signpost $signpost
+ * @var Form $form
+ */
+
+$signpost = $this->getRaw('signpost');
+$editable = $this->getBool('editable');
+
+$c_manager = Admin_Managers::Category();
+
+echo $this->controller->getEditorManager()->renderToolbar();
+
+
+?>
+<div id="main-col">
+		<?=$this->getRaw('tabs')?>
+		<fieldset>
+			<legend><?=Tr::_('Categories')?></legend>
+			
+			<?php if($editable): ?>
+				
+				<div class="toolbar" style="display: grid;grid-template-columns: 150px 300px 1fr;align-items: center">
+					<div style="padding-left: 20px;">
+						<?=UI::icon('plus')?>
+						<?=Tr::_('Add category:')?>
+					</div>
+					<div>
+						<?=Admin_Managers::Category()->renderSelectWidget(
+							on_select: "location='".Http_Request::currentURI()."&add_category='+selected_item.id"
+						)?>
+					</div>
+					<div style="padding-left: 40px;">
+					</div>
+				</div>
+			
+			<?php endif; ?>
+			
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th style="width: 30px;"></th>
+					<th style="width: 100px;"></th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody id="category-list">
+				<?php foreach( $signpost->getCategoryIds() as $c_id): ?>
+					<tr class="category" data-id="<?=$c_id?>">
+						<td style="width: 20px;">
+							<?php if($editable): ?>
+							<?=UI::icon('up-down')?>
+							<?php endif; ?>
+						</td>
+						<td><?=$c_manager->showActiveState($c_id)?></td>
+						<td><?=$c_manager->showName($c_id)?></td>
+						<td style="width: 20px;">
+							<?php if($editable): ?>
+								<?=UI::button_delete(' ')->setUrl(Http_Request::currentURI(set_GET_params: ['remove_category'=>$c_id]))?>
+							<?php endif; ?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		
+		</fieldset>
+	
+</div>
+
+<?php if( $editable ): ?>
+<script>
+	const SortCategories = {
+		initSort: function() {
+
+			$('#category-list')['sortable']({
+				//revert: true,
+				stop: function() {
+					SortCategories.saveSort();
+				}
+			});
+		},
+
+		saveSort: function() {
+			let categories = [];
+
+			$('#category-list').find('.category').each(function ( i, category ) {
+				categories.push( category.dataset.id );
+			});
+			
+			console.debug( '<?=Http_Request::currentURI(['action'=>'sort_categories'])?>&categories='+categories.join(',') );
+
+			$.ajax({
+				url: '<?=Http_Request::currentURI()?>&sort_categories='+categories.join(',')
+			});
+		}
+	};
+	
+	SortCategories.initSort();
+</script>
+<?php endif;

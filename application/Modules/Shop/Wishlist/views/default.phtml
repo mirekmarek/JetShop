@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\Shop\Wishlist;
+
+use Jet\MVC_View;
+use JetApplication\Product_ShopData;
+use JetApplication\Shop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Product_ShopData[] $products
+ */
+
+$products = $this->getRaw('products');
+
+?>
+
+<?php if($products): ?>
+	<div class="product_listing_list_products">
+		<?php foreach($products as $product): ?>
+			<?=Shop_Managers::ProductListing()->renderItem( $product )?>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>

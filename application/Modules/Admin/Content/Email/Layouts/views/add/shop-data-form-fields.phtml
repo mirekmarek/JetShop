@@ -1,0 +1,23 @@
+<?php
+
+use JetApplication\Shops_Shop;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Shops_Shop $shop
+ */
+
+$shop = $this->getRaw('shop');
+$form = $this->getRaw('form');
+$shop_key = $shop->getKey();
+
+$form->field('/shop_data/'.$shop_key.'/layout_txt')->input()->addCustomCssStyle('height:400px');
+?>
+<?=$form->field('/shop_data/'.$shop_key.'/layout_html')?>
+<?=$form->field('/shop_data/'.$shop_key.'/layout_txt')?>
+<br><br><br>

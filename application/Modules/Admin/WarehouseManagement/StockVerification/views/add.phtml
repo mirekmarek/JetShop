@@ -1,0 +1,232 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\KindOfProduct;
+use JetApplication\Supplier;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $add_form
+ * @var Verification $verification
+ * @var Controller_Main $controller
+ */
+
+$selected_warehouse_id = $this->getInt('warehouse_id');
+$supplier_id = $this->getInt('supplier_id');
+$kind_of_product_id = $this->getInt('kind_of_product_id');
+
+$sectors = $this->getRaw('sectors');
+$sector = $this->getString('sector');
+
+$racks = $this->getRaw('racks');
+$rack = $this->getString('rack');
+
+$positions = $this->getRaw('positions');
+$position = $this->getString('position');
+
+$controller = $this->getController();
+
+$verification = $this->getRaw('verification');
+
+
+echo $controller->getEditorManager()->renderToolbar( $verification?$verification->getAddForm():null );
+?>
+<div id="main-col">
+
+
+<div style="display: flex;align-items: center;margin: 10px;">
+	<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Warehouse:')?></b></div>
+	
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+		if($warehouse->getId()==$selected_warehouse_id): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$warehouse->getAdminTitle()?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['warehouse'=>$warehouse->getId()], unset_GET_params: [])?>" class="btn btn-light"><?=$warehouse->getAdminTitle()?></a></div>
+		<?php endif;
+	endforeach; ?>
+</div>
+
+	<div class="card card-body" style="margin: 10px;">
+
+		<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 0.4fr 1fr 3fr">
+
+
+			
+			<div style="font-weight: bolder;"><?= Tr::_('Supplier:')?></div>
+			<div>
+				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
+					<option value=""><?=Tr::_('- all -')?></option>
+					<?php foreach(Supplier::getScope() as $id=>$name):
+						if( $supplier_id==$id ):
+							?><option value="<?=$id?>" selected><?=$name?></option><?php
+						else:
+							?><option value="<?=$id?>"><?=$name?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</div>
+			<div></div>
+
+			<div style="font-weight: bolder;"><?= Tr::_('Kind of product:')?></div>
+			<div>
+				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['kind'])?>&kind='+this.value">
+					<option value=""><?=Tr::_('- all -')?></option>
+					<?php foreach(KindOfProduct::getScope() as $id=>$name):
+						if( $kind_of_product_id==$id ):
+							?><option value="<?=$id?>" selected><?=$name?></option><?php
+						else:
+							?><option value="<?=$id?>"><?=$name?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</div>
+			<div></div>
+
+
+
+			<div style="font-weight: bolder;"><?= Tr::_('Sector:')?></div>
+			<div>
+				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['sector'])?>&sector='+this.value">
+					<option value=""><?=Tr::_('- all -')?></option>
+					<?php foreach($sectors as $s):
+						if( $sector==$s ):
+							?><option value="<?=$s?>" selected><?=$s?></option><?php
+						else:
+							?><option value="<?=$s?>"><?=$s?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</div>
+			<div></div>
+
+
+			<div style="font-weight: bolder;"><?= Tr::_('Rack:')?></div>
+			<div>
+				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['rack'])?>&rack='+this.value">
+					<option value=""><?=Tr::_('- all -')?></option>
+					<?php foreach($racks as $s):
+						if( $rack==$s ):
+							?><option value="<?=$s?>" selected><?=$s?></option><?php
+						else:
+							?><option value="<?=$s?>"><?=$s?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</div>
+			<div></div>
+
+
+			<div style="font-weight: bolder;"><?= Tr::_('Position:')?></div>
+			<div>
+				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['position'])?>&position='+this.value">
+					<option value=""><?=Tr::_('- all -')?></option>
+					<?php foreach($positions as $s):
+						if( $position==$s ):
+							?><option value="<?=$s?>" selected><?=$s?></option><?php
+						else:
+							?><option value="<?=$s?>"><?=$s?></option><?php
+						endif;
+					endforeach; ?>
+				</select>
+			</div>
+			<div></div>
+			
+			
+			
+		</div>
+	</div>
+	
+
+<?php if($verification):
+	$form = $verification->getAddForm();
+	$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	?>
+
+<?=$form->start()?>
+	
+
+	<div class="card card-body" style="margin: 10px;">
+		<?=$form->getCommonMessage()?>
+
+		<h4><?=Tr::_('Items')?></h4>
+	
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Product name')?></th>
+				<th><?=Tr::_('EAN')?></th>
+				<th><?=Tr::_('Internal code')?></th>
+				<th><?=Tr::_('Supplier code')?></th>
+				
+				<th><?=Tr::_('Sector')?></th>
+				<th><?=Tr::_('Rack')?></th>
+				<th><?=Tr::_('Position')?></th>
+				
+				<th><?=Tr::_('Number of units - expected')?></th>
+				<th><?=Tr::_('Number of units - reality')?></th>
+				<th></th>
+			</tr>
+			</thead>
+		<?php foreach( $verification->getItems() as $item):
+			$p_id = $item->getProductId();
+			$form->field('/item_'.$p_id.'/sector')->setIsReadonly(true);
+			$form->field('/item_'.$p_id.'/rack')->setIsReadonly(true);
+			$form->field('/item_'.$p_id.'/position')->setIsReadonly(true);
+			$form->field('/item_'.$p_id.'/qty_reality')->setIsReadonly(true);
+			?>
+		<tr>
+			<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
+			<td><?=$item->getProductEan()?></td>
+			<td><?=$item->getProductInternalCode()?></td>
+			<td><?=$item->getProductSupplierCode()?></td>
+			
+			<td><?=$form->field('/item_'.$p_id.'/sector')->input()?></td>
+			<td><?=$form->field('/item_'.$p_id.'/rack')->input()?></td>
+			<td><?=$form->field('/item_'.$p_id.'/position')->input()?></td>
+			
+			<td><?=Locale::float( $item->getNumberOfUnitsExpected() )?></td>
+			<td>
+				<?php
+				$input = $form->field('/item_'.$p_id.'/qty_reality')->input();
+				$input->addCustomCssStyle("width: 150px;");
+				
+				echo $input;
+				?>
+			</td>
+			<td><?=$item->getMeasureUnit()?->getName()?></td>
+		</tr>
+		<?php endforeach; ?>
+		</table>
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?php
+		$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 1
+		]);
+		$form->renderer()->setDefaultFieldWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 10
+		]);
+		?>
+		<?=$form->field('date')?>
+		<?=$form->field('notes')?>
+	</div>
+	
+<br><br><br>
+<?=$form->end()?>
+</div>
+
+<?php endif; ?>

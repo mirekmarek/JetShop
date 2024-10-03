@@ -1,0 +1,28 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Status $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'warehouse' );
+
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Warehouse'),
+	form_fields: [$field],
+	is_active:   $field->getValue(),
+	renderer:    function() use ($field) {
+		echo $field->input();
+	}
+);

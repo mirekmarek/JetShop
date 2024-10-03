@@ -1,0 +1,142 @@
+<?php
+namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
+
+use Jet\Form;
+use Jet\Form_Field_Float;
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\WarehouseManagement_Warehouse;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $add_form
+ * @var Transfer $transfer
+ * @var Controller_Main $controller
+ */
+
+$source_warehouse_id = $this->getInt('source_warehouse_id');
+$target_warehouse_id = $this->getInt('target_warehouse_id');
+
+$controller = $this->getController();
+
+
+$transfer = $this->getRaw('transfer');
+
+echo $controller->getEditorManager()->renderToolbar( $transfer?$transfer->getAddForm():null );
+?>
+<div id="main-col">
+
+
+<div style="display: grid;align-items: center;margin: 10px;grid-template-columns: 250px 1fr;">
+	<div><b><?=Tr::_('Source warehouse:')?></b></div>
+	
+	<div style="display: flex;gap: 10px;">
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+		if($warehouse->getId()==$source_warehouse_id): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$warehouse->getAdminTitle()?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['source_warehouse'=>$warehouse->getId()])?>" class="btn btn-light"><?=$warehouse->getAdminTitle()?></a></div>
+		<?php endif;
+	endforeach; ?>
+	</div>
+
+	<div><b><?=Tr::_('Target warehouse:')?></b></div>
+	<div style="display: flex;gap: 10px;">
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $warehouse):
+		if($warehouse->getId()==$target_warehouse_id): ?>
+			<div style="padding: 5px"><b class="btn btn-success"><?=$warehouse->getAdminTitle()?></b></div>
+		<?php else:  ?>
+			<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['target_warehouse'=>$warehouse->getId()])?>" class="btn btn-light"><?=$warehouse->getAdminTitle()?></a></div>
+		<?php endif;
+	endforeach; ?>
+	</div>
+</div>
+
+
+<?php if($transfer):
+	$form = $transfer->getAddForm();
+	$form->renderer()->setDefaultLabelWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	?>
+
+<?=$form->start()?>
+	
+
+	<div class="card card-body" style="margin: 10px;">
+		<?=$form->getCommonMessage()?>
+
+		<h4><?=Tr::_('Items')?></h4>
+
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Product name')?></th>
+				<th><?=Tr::_('EAN')?></th>
+				<th><?=Tr::_('Internal code')?></th>
+				<th><?=Tr::_('Supplier code')?></th>
+				
+				<th><?=Tr::_('Sector')?></th>
+				<th><?=Tr::_('Rack')?></th>
+				<th><?=Tr::_('Position')?></th>
+				
+				<th><?=Tr::_('Number of units')?></th>
+				<th><?=Tr::_('Max')?></th>
+				<th></th>
+			</tr>
+			</thead>
+		<?php foreach($transfer->getItems() as $item):
+			$p_id = $item->getProductId();
+			/**
+			 * @var Form_Field_Float $qty
+			 */
+			$qty = $form->field('/item_'.$p_id.'/qty');
+			?>
+		<tr>
+			<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
+			<td><?=$item->getProductEan()?></td>
+			<td><?=$item->getProductInternalCode()?></td>
+			<td><?=$item->getProductSupplierCode()?></td>
+
+			<td><?=$item->getSourceSector()?></td>
+			<td><?=$item->getSourceRack()?></td>
+			<td><?=$item->getSourcePosition()?></td>
+			
+			<td>
+				<?=$qty->input();?>
+				<?=$qty->error();?>
+			</td>
+			<td>
+				<?=Locale::float( $qty->getMaxValue() )?>
+			</td>
+			<td><?=$item->getMeasureUnit()?->getName()?></td>
+		</tr>
+		<?php endforeach; ?>
+		</table>
+
+	</div>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?php
+		$form->field('notes')->label()->setWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 1
+		]);
+		$form->field('notes')->input()->setWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 10
+		]);
+		?>
+		<?=$form->field('notes')?>
+	</div>
+	
+<br><br><br>
+<?=$form->end()?>
+</div>
+
+<?php endif; ?>

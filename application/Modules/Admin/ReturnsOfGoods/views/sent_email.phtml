@@ -1,0 +1,46 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\EMail_Sent;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var EMail_Sent $sent_email
+ */
+
+$email = $this->getRaw('sent_email');
+?>
+<style>
+	.container {
+		display: grid;
+		grid-template-columns: 150px 800px;
+		gap: 10px;
+	}
+
+	.title {
+		padding: 11px;
+	}
+
+	.value {
+		border: 1px dotted #a4a4a4;
+		padding: 10px;
+	}
+</style>
+<br><br>
+<div class="container">
+	<div class="title"><?= Tr::_('Sender - name:')?></div>
+	<div class="value"><?=$email->getSenderName()?></div>
+	
+	<div class="title"><?= Tr::_('Sender - e-mail:')?></div>
+	<div class="value"><?=$email->getSenderEmail()?></div>
+	
+	<div class="title"><?= Tr::_('Subject:')?></div>
+	<div class="value"><?=$email->getSubject()?></div>
+	
+	<div class="title"><?= Tr::_('HTML:')?></div>
+	<div class="value"><?=$email->getBodyHtml()?></div>
+	
+	<div class="title"><?= Tr::_('TXT:')?></div>
+	<div class="value"><pre><?=$email->getBodyTxt()?></pre></div>
+</div>
+<br><br><br><br>

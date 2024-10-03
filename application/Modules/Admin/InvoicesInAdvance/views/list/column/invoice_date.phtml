@@ -1,0 +1,21 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\InvoicesInAdvance;
+
+use Jet\Locale;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Invoice $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=Locale::dateAndTime( $item->getInvoiceDate() );?>
+

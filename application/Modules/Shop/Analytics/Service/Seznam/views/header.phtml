@@ -1,0 +1,17 @@
+<?php
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$id = $this->getRaw('id');
+
+?>
+
+<script type="text/javascript">
+	/* <![CDATA[ */
+	var seznam_retargetingId = '<?=$id?>';
+	/* ]]> */
+</script>
+<script type="text/javascript" src="//c.imedia.cz/js/retargeting.js"></script>

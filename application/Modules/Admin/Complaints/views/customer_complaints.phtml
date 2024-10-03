@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint[]     $complaints
+ */
+
+$complaints = $this->getRaw( 'complaints' );
+?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th><?=Tr::_('Number')?></th>
+		<th><?=Tr::_('Product')?></th>
+		<th><?=Tr::_('Date started')?></th>
+		<th><?=Tr::_('Status')?></th>
+	</tr>
+	</thead>
+	<?php foreach( $complaints as $complaint): ?>
+	<tr>
+		<td><a href="<?=$complaint->getEditURL()?>"><?=$complaint->getNumber()?></a></td>
+		<td>
+			<?=Admin_Managers::Product()->showName( $complaint->getProductId() )?>
+		</td>
+		<td>
+			<?=Locale::dateAndTime( $complaint->getDateStarted() );?>
+		</td>
+		<td>
+			<?=Admin_Managers::Complaint()->showComplaintStatus( $complaint )?>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>
+

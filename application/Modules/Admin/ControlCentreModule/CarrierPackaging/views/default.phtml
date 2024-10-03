@@ -1,0 +1,193 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\CarrierPackaging;
+
+use Jet\Form_Field;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Carrier;
+use JetApplication\Carrier_Packaging;
+use JetApplication\Carrier_Service;
+use JetApplication\OrderDispatch;
+
+/**
+ * @var MVC_View   $this
+ * @var Carrier_Packaging|null $selected_packaging
+ * @var Carrier_Packaging|null $new_packaging
+ * @var Carrier|null $selected_carrier
+ * @var Carrier_Service|null $selected_carrier_service
+ */
+
+$selected_carrier = $this->getRaw('carrier');
+$selected_carrier_service = $this->getRaw('carrier_service');
+
+$selected_packaging = $this->getRaw('selected_packaging');
+$new_packaging = $this->getRaw('new_packaging');
+
+?>
+<div style="display: grid;grid-template-columns: 1fr 1fr;gap: 10px">
+	<div>
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th><?=Tr::_('Carrier')?></th>
+				<th><?=Tr::_('Service')?></th>
+				<th><?=Tr::_('Packaging')?></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach( Carrier::getList() as $carrier ): ?>
+			<tr>
+				<td>
+					<?php if( $selected_carrier?->getCode()==$carrier->getCode() ): ?>
+					<b><?=$carrier->getName()?></b>
+					<?php else: ?>
+					<?=$carrier->getName()?>
+					<?php endif; ?>
+				</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<?php foreach($carrier->getServices() as $service): ?>
+					<?php if(
+						$selected_carrier?->getCode()==$carrier->getCode() &&
+						$selected_carrier_service?->getCode()==$service->getCode()
+					): ?>
+					<tr>
+						<td></td>
+						<td><b><?=$service->getName()?></b></td>
+						<td></td>
+					</tr>
+						
+						<?php foreach($selected_carrier_service->getAvailablePackaging() as $packaging ):
+							$edit_URL = Http_Request::currentURI(set_GET_params: ['packaging'=>$packaging->getCode()], unset_GET_params: ['add']);
+							
+							if( $selected_packaging?->getCode()==$packaging->getCode() ):
+								?>
+								<tr>
+									<td></td>
+									<td></td>
+									<td><b><?=$packaging->getName()?> (<?=$packaging->getCode()?>)</b></td>
+								</tr>
+							<?php else: ?>
+								<tr>
+									<td></td>
+									<td></td>
+									<td><a href="<?=$edit_URL?>"><?=$packaging->getName()?> (<?=$packaging->getCode()?>)</a></td>
+								</tr>
+							<?php
+							endif;
+						endforeach; ?>
+					
+						<tr>
+							<td colspan="2"></td>
+							<td colspan="1"><?=UI::button_create('Create a new packaging')->setUrl( Http_Request::currentURI(set_GET_params: ['add'=>'add'], unset_GET_params: ['packaging']) )?></td>
+						</tr>
+					
+						
+					<?php else: ?>
+					<tr>
+						<td></td>
+						<td><a href="<?=Http_Request::currentURI(['carrier'=>$carrier->getCode(), 'service'=>$service->getCode()], unset_GET_params: ['packaging'])?>"><?=$service->getName()?></a></td>
+						<td></td>
+					</tr>
+					
+					<?php endif; ?>
+			<?php endforeach; ?>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+		
+	</div>
+	<div>
+		<?php if($selected_packaging || $new_packaging):
+			foreach( UI_messages::get(context: 'CC') as $message ):
+				echo $message;
+			endforeach;
+			
+			
+			$form = $selected_packaging?->getEditForm();
+			if(!$form) {
+				$form = $new_packaging->getAddForm();
+			}
+			
+			$renderDimensions = function( Form_Field $field ) : string {
+				$field->input()->setCustomRenderer( function() use ($field) {
+					?>
+					<div style="display: grid;grid-template-columns: 1fr 30px;align-items: center;gap: 5px;">
+						<div><?=$this->renderByView()?></div>
+						<div><?=OrderDispatch::getDimensionsUnits()?></div>
+					</div>
+					<?php
+				} );
+				return $field->render();
+			};
+			$renderWeight = function( Form_Field $field ) : string {
+				$field->input()->setCustomRenderer( function() use ($field) {
+					?>
+					<div style="display: grid;grid-template-columns: 1fr 30px;align-items: center;gap: 5px;">
+						<div><?=$this->renderByView()?></div>
+						<div><?=OrderDispatch::getWeightUnits()?></div>
+					</div>
+					<?php
+				} );
+				return $field->render();
+			};
+			
+			?>
+			<?=$form->start()?>
+				<?=$form->field('code')?>
+				<?=$form->field('name')?>
+				<br><br>
+				<?=$form->field('internal_classification')?>
+				<?=$form->field('carrier_packing_identification_code')?>
+		
+				<?php if($selected_carrier_service->getsPackagingHasDimensions()):?>
+				<br><br>
+				<?=$renderDimensions($form->field('default_w'));?>
+				<?=$renderDimensions($form->field('min_w'))?>
+				<?=$renderDimensions($form->field('max_w'))?>
+		
+				<?=$form->field('w_editable')?>
+				<br><br>
+				<?=$renderDimensions($form->field('default_l'));?>
+				<?=$renderDimensions($form->field('min_l'))?>
+				<?=$renderDimensions($form->field('max_l'))?>
+		
+				<?=$form->field('l_editable')?>
+				<br><br>
+				<?=$renderDimensions($form->field('default_h'));?>
+				<?=$renderDimensions($form->field('min_h'))?>
+				<?=$renderDimensions($form->field('max_h'))?>
+		
+				<?=$form->field('h_editable')?>
+				<?php endif; ?>
+		
+				<?php if($selected_carrier_service->getsPackagingHasWeight()): ?>
+				<br><br>
+				<?=$renderWeight($form->field('default_weight'))?>
+				<?=$renderWeight($form->field('min_weight'))?>
+				<?=$renderWeight($form->field('max_weight'))?>
+		
+				<?=$form->field('weight_editable')?>
+				<?php endif; ?>
+		
+				<div style="display: grid;grid-template-columns: 1fr 1fr;">
+					<div>
+						<?=UI::button_save()?>
+					</div>
+					<div style="text-align: right">
+						<?php if($selected_packaging): ?>
+							<?=UI::button_delete( Tr::_('Delete packaging'))->setUrl( Http_Request::currentURI(['delete'=>'delete']) )?>
+						<?php endif ?>
+					</div>
+				</div>
+				
+			<?=$form->end()?>
+		<?php endif; ?>
+		
+	</div>
+	
+</div>

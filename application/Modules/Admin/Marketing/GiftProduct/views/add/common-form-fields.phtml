@@ -1,0 +1,42 @@
+<?php
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Admin_Managers;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ */
+
+$form = $this->getRaw('form');
+
+echo $form->field( 'shop' );
+echo $form->field( 'internal_name' );
+echo $form->field( 'internal_code' );
+echo $form->field( 'internal_notes' );
+
+?>
+	<div class="row form-group">
+		<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?= Tr::_('Gift:')?></label>
+		<div class="col-md-8" style="padding-bottom: 10px">
+			<?=Admin_Managers::Product()->renderSelectWidget(
+				"$('#{$form->field('gift_product_id')->getId()}').val(selected_item.id)",
+				selected_product_id: 0
+			);?>
+		</div>
+	</div>
+<?php
+echo $form->field( 'gift_product_id' );
+
+
+echo $form->field( 'is_active' );
+echo $form->field( 'active_from' );
+echo $form->field( 'active_till' );
+echo $form->field( 'priority' );
+echo $form->field( 'relevance_mode' );
+echo $form->field( 'product_price_limit_min' );
+echo $form->field( 'product_price_limit_max' );
+echo $form->field( 'in_stock_limit' );
+echo $form->field( 'only_one' );
+

@@ -1,0 +1,90 @@
+<?php
+namespace JetApplicationModule\Admin\ControlCentreModule\Shops;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\Shops;
+use JetApplication\Shops_Shop;
+
+/**
+ * @var MVC_View   $this
+ * @var Shops_Shop|null $selected_shop
+ * @var Shops_Shop|null $new_shop
+ */
+
+$selected_shop = $this->getRaw('selected_shop');
+$new_shop = $this->getRaw('new_shop');
+
+?>
+<div style="display: grid;grid-template-columns: 2fr 3fr;gap: 10px">
+	<div>
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th><?=Tr::_('Name')?></th>
+			<th><?=Tr::_('Internal code')?></th>
+			<th><?=Tr::_('Locale')?></th>
+		</tr>
+		</thead>
+		<?php foreach(Shops::getList() as $shop):
+			$edit_URL = Http_Request::currentURI(set_GET_params: ['shop'=>$shop->getKey()], unset_GET_params: ['add']);
+		
+			if( $selected_shop?->getKey()==$shop->getKey() ):
+				?>
+				<tr>
+					<td><b><?=$shop->getShopName()?></b></td>
+					<td><b><?=$shop->getShopCode()?></b></td>
+					<td><?=UI::flag($shop->getLocale())?></td>
+				</tr>
+			<?php else: ?>
+				<tr>
+					<td><a href="<?=$edit_URL?>"><?=$shop->getShopName()?></a></td>
+					<td><a href="<?=$edit_URL?>"><?=$shop->getShopCode()?></a></td>
+					<td><a href="<?=$edit_URL?>"><?=UI::flag($shop->getLocale())?></a></td>
+				</tr>
+			<?php
+			endif;
+		endforeach; ?>
+		</table>
+	</div>
+	<div>
+		<?php if($selected_shop || $new_shop):
+			foreach( UI_messages::get(context: 'CC') as $message ):
+				echo $message;
+			endforeach;
+			
+			
+			$form = $selected_shop->getEditForm();
+			$form->field('URLs')->input()->addCustomCssStyle("height: 300px");
+			?>
+			<?=$form->start()?>
+				<?=$form->field('shop_code')?>
+				<?=$form->field('shop_name')?>
+				<?=$form->field('_is_active')?>
+				<?=$form->field('is_default_shop')?>
+				<?=$form->field('URLs')?>
+				<?=$form->field('pricelist_codes')?>
+				<?=$form->field('default_pricelist_code')?>
+				<?=$form->field('availability_codes')?>
+				<?=$form->field('default_availability_code')?>
+				<?=$form->field('default_warehouse_id')?>
+				<?=$form->field('use_template')?>
+				<?=$form->field('template_relative_dir')?>
+		
+				<div style="display: grid;grid-template-columns: 1fr 1fr;">
+					<div>
+						<?=UI::button_save()?>
+					</div>
+					<div style="text-align: right">
+					</div>
+				</div>
+				
+			<?=$form->end()?>
+		<?php endif; ?>
+		
+	</div>
+	
+</div>

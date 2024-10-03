@@ -1,0 +1,23 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplicationModule\Admin\Entity\Listing\Listing;
+
+/**
+ * @var MVC_View $this
+ * @var Listing $listing
+ * @var ReturnOfGoods $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+
+echo Admin_Managers::Product()->showName( $item->getProductId() );

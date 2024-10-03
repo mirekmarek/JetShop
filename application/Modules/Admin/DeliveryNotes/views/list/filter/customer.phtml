@@ -1,0 +1,33 @@
+<?php
+namespace JetApplicationModule\Admin\DeliveryNotes;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_Customer $filter
+ */
+
+$filter = $this->getRaw('filter');
+
+$field = $filter->getListing()->getFilterForm()->field( 'customer' );
+
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Customer'),
+	form_fields: [$field],
+	is_active:   $filter->getCustomerId()>0,
+	renderer:    function() use ($field) {
+		?>
+		<?= $field->input() ?>
+		<div><?=UI::button(' ')->setType(UI_button::TYPE_SUBMIT)->setIcon('search')?></div>
+		<?php
+	}
+);

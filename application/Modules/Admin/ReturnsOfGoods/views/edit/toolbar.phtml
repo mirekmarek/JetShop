@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+use JetApplication\Admin_Managers_Entity_Listing;
+
+use Jet\UI;
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods     $return
+ * @var Admin_Managers_Entity_Listing $listing
+ */
+
+$return = $this->getRaw( 'return' );
+$listing = $this->getRaw('listing');
+
+$is_editable = $return->isEditable();
+
+$prev_url = $listing->getPrevEditUrl( $return->getId() );
+$next_url = $listing->getNextEditUrl( $return->getId() );
+
+?>
+<div class="toolbar" id="main-toolbar">
+	<div>
+		<?=UI::button_goBack()?>
+	</div>
+	
+	<div style="padding-left:20px;width: 80px;text-align: center">
+		<?php if($prev_url): ?>
+			<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+		<?php endif; ?>
+	</div>
+	
+	
+	<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+		<b><?=$return->getNumber()?></b>
+	</div>
+	
+	<div style="width: 50px;text-align: center">
+		<?php if($next_url): ?>
+			<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+		<?php endif; ?>
+	</div>
+	
+	<?=Handler::getHandler( Handler_SendMailConfirmation_Main::KEY )->renderButton()?>
+	<?=Handler::getHandler( Handler_DoneAccepted_Main::KEY )->renderButton()?>
+	<?=Handler::getHandler( Handler_DoneRejected_Main::KEY )->renderButton()?>
+
+</div>

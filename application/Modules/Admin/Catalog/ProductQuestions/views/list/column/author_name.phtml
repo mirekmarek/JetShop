@@ -1,0 +1,25 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var ProductQuestion $item
+ */
+
+$item = $this->getRaw('item');
+
+$item = $this->getRaw('item');
+$listing = $this->getRaw('listing');
+
+?>
+<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getAuthorName();?></a>
+<?php

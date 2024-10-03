@@ -1,0 +1,16 @@
+<?php
+namespace JetApplicationModule\Admin\Content\Email\Layouts;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var EmailLayout $item
+ */
+
+$item = $this->getRaw('item');
+
+if($item->isEditable()) {
+	echo Admin_Managers::Image()->commonImageManager( 'email_layout', $item->getId() );
+}

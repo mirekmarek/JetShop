@@ -1,0 +1,235 @@
+<?php
+namespace JetApplicationModule\Admin\OrderDispatch\CustomDispatch;
+
+use Jet\Form_Renderer_Field_Label;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+use JetApplication\OrderDispatch;
+use Jet\Form;
+use Jet\Http_Request;
+
+/**
+ * @var MVC_View   $this
+ * @var OrderDispatch $dispatch
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+$dispatch = $this->getRaw('dispatch');
+
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer_Field_Label::LJ_SIZE_MEDIUM => 2
+]);
+
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer_Field_Label::LJ_SIZE_MEDIUM => 8
+]);
+
+$form->field('warehouse')->input()->addJsAction('onchange', "CustomOD.warehouseSelected(this.options[this.selectedIndex].value);");
+$form->field('context_number')->input()->addJsAction('onchange', "CustomOD.contextNumberEntered();");
+
+?>
+<?=$form->start()?>
+<?=$form->field('items')?>
+
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_save()?>
+</div>
+<div id="main-col">
+	
+	<?=$form->getCommonMessage()?>
+	
+	<?=$form->field('shop')?>
+	
+	<?=$form->field('context_type')?>
+	<?=$form->field('context_number')?>
+	
+	<?=$form->field('order')?>
+	
+	<?=$form->field('warehouse')?>
+	
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8"><h4><?=Tr::_('Sender')?></h4></div>
+	</div>
+	
+	<?=$form->field('sender_name')?>
+	<?=$form->field('sender_street')?>
+	<?=$form->field('sender_town')?>
+	<?=$form->field('sender_zip')?>
+	<?=$form->field('sender_country')?>
+	<?=$form->field('sender_phone')?>
+	<?=$form->field('sender_email')?>
+
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8"><h4><?=Tr::_('Recipient')?></h4></div>
+	</div>
+	
+	<?=$form->field('recipient_company')?>
+	<?=$form->field('recipient_first_name')?>
+	<?=$form->field('recipient_surname')?>
+	<?=$form->field('recipient_street')?>
+	<?=$form->field('recipient_town')?>
+	<?=$form->field('recipient_zip')?>
+	<?=$form->field('recipient_country')?>
+	<?=$form->field('recipient_phone')?>
+	<?=$form->field('recipient_email')?>
+
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8"><hr></div>
+	</div>
+	
+	<?=$form->field('carrier_service')?>
+	<?=$form->field('delivery_point_code')?>
+	
+	
+	<?=$form->field('currency')?>
+	<?=$form->field('financial_value')?>
+	<?=$form->field('cod')?>
+	
+	<?=$form->field('our_note')?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8"><hr></div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-2"><?=Tr::_('Items:')?></div>
+		<div class="col-md-8">
+			<div style="display: grid;align-items: center;gap: 10px;padding: 10px;grid-template-columns: 100px 1fr 100px 100px 100px">
+				<div style="text-align: right"><?=Tr::_('Product:')?></div>
+				<div><?=Admin_Managers::Product()->renderSelectWidget("CustomOD.add_item_product_id=selected_item.id;")?></div>
+				<div style="text-align: right"><?=Tr::_('Number of units:')?></div>
+				<div><input type="number" step="1" value="1" class="form-control" id="add_item_qty"></div>
+				<div><?=UI::button_create(' ')->setOnClick("CustomOD.addItem()")->setClass(UI_button::CLASS_PRIMARY)?></div>
+			</div>
+			
+			<div style="height: 300px;overflow: auto;margin: 10px;padding: 10px;" class="card card-body" id="items">
+				<?php
+				$this->setVar('items', $form->field('items')->getValueRaw());
+				require 'items.phtml';
+				?>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<?=$form->end()?>
+
+<script>
+	const CustomOD = {
+		add_item_product_id: 0,
+		
+		getCurrentItems: () => {
+			let items = document.getElementById('<?=$form->field('items')->getId()?>').value;
+			
+			if(!items) {
+				items = {};
+			} else {
+				items = JSON.parse(items);
+				if(!items) {
+					items = {};
+				}
+			}
+			
+			return items;
+		},
+		
+		setCurrentItems: async ( items ) => {
+			items = JSON.stringify(items);
+
+			document.getElementById('<?=$form->field('items')->getId()?>').value = items;
+
+			const _snippet = await fetch('<?=Http_Request::currentURI(['action' =>'render_items'])?>&items='+encodeURIComponent(items));
+			const snippet = await _snippet.text();
+
+			document.getElementById('items').innerHTML = snippet;
+		},
+		
+		addItem: () => {
+			const id = CustomOD.add_item_product_id;
+			const qty = document.getElementById('add_item_qty').value*1;
+			
+			if(qty<1 || !id) {
+				return;
+			}
+			
+			let items = CustomOD.getCurrentItems();
+			if(items[id]) {
+				items[id] = items[id]+qty;
+			} else {
+				items[id] = qty;
+			}
+
+			CustomOD.setCurrentItems( items );
+		},
+
+		removeItem: ( id ) => {
+			let items = CustomOD.getCurrentItems();
+			if(items[id]) {
+				delete items[id];
+			}
+
+			CustomOD.setCurrentItems( items );
+		},
+		
+		warehouseSelected: async (id)=> {
+
+			const _address = await fetch('<?=Http_Request::currentURI(['action' =>'get_warehouse_address'])?>&warehouse='+encodeURIComponent(id));
+			const address = await _address.json();
+			
+			document.getElementById('<?=$form->field('sender_name')->getId()?>').value = address['address_name'];
+			document.getElementById('<?=$form->field('sender_street')->getId()?>').value = address['address_street_no'];
+			document.getElementById('<?=$form->field('sender_town')->getId()?>').value = address['address_town'];
+			document.getElementById('<?=$form->field('sender_zip')->getId()?>').value = address['address_zip'];
+			document.getElementById('<?=$form->field('sender_country')->getId()?>').value = address['address_country'];
+			document.getElementById('<?=$form->field('sender_phone')->getId()?>').value = address['phone'];
+			document.getElementById('<?=$form->field('sender_email')->getId()?>').value = address['email'];
+
+		},
+		
+		contextNumberEntered: async () => {
+			const shop_field = document.getElementById('<?=$form->field('shop')->getId()?>');
+			const context_type_field = document.getElementById('<?=$form->field('context_type')->getId()?>');
+			const context_number_field = document.getElementById('<?=$form->field('context_number')->getId()?>');
+
+			const shop_code = shop_field.options[shop_field.selectedIndex].value;
+			const context_type = context_type_field.options[context_type_field.selectedIndex].value;
+			const context_number = context_number_field.value;
+
+			const _context = await fetch('<?=Http_Request::currentURI(['action' =>'get_context_info'])?>&context_type='+encodeURIComponent(context_type)+'&context_number='+encodeURIComponent(context_number)+'&shop='+shop_code);
+			const context = await _context.json();
+
+			if(!context['id']) {
+				document.getElementById('<?=$form->field('order')->getId()?>').value = '';
+				
+				return;
+			}
+
+
+			CustomOD.setContext( context );
+		},
+		
+		setContext: (context) => {
+
+			document.getElementById('<?=$form->field('context_number')->getId()?>').value = context['number'];
+
+			document.getElementById('<?=$form->field('order')->getId()?>').value = context['order_number'];
+			
+			document.getElementById('<?=$form->field('recipient_company')->getId()?>').value = context['address_company'];
+			document.getElementById('<?=$form->field('recipient_first_name')->getId()?>').value = context['address_first_name'];
+			document.getElementById('<?=$form->field('recipient_surname')->getId()?>').value = context['address_surname'];
+			document.getElementById('<?=$form->field('recipient_street')->getId()?>').value = context['address_street_no'];
+			document.getElementById('<?=$form->field('recipient_town')->getId()?>').value = context['address_town'];
+			document.getElementById('<?=$form->field('recipient_zip')->getId()?>').value = context['address_zip'];
+			document.getElementById('<?=$form->field('recipient_country')->getId()?>').value = context['address_country'];
+			document.getElementById('<?=$form->field('recipient_phone')->getId()?>').value = context['phone'];
+			document.getElementById('<?=$form->field('recipient_email')->getId()?>').value = context['email'];
+		}
+	};
+</script>
