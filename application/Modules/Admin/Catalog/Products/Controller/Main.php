@@ -36,6 +36,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 	use Controller_Main_Edit_Boxes;
 	use Controller_Main_Edit_Marketplace;
 	use Controller_Main_Edit_Export;
+	use Controller_Main_Edit_Accessories;
 	
 	
 	
@@ -113,6 +114,12 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 				return $this->current_item && $selected_tab=='boxes';
 			} );
 		
+		$this->router->addAction('edit_accessories', Main::ACTION_UPDATE)
+			->setResolver( function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='accessories';
+			} );
+		
+		
 		$this->router->addAction('marketplace', Main::ACTION_UPDATE)
 			->setResolver( function() use ($action, $selected_tab) {
 				return $this->current_item && $selected_tab=='marketplace';
@@ -136,6 +143,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 			'files'            => Tr::_('Files'),
 			'parameters'       => Tr::_('Parameters'),
 			'categories'       => Tr::_('Categories'),
+			'accessories'      => Tr::_('Accessories'),
 		];
 		
 		
@@ -221,7 +229,6 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 			];
 			
 		} );
-		
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Categories() );
 		$this->listing_manager->addFilter( new Listing_Filter_ProductKind() );

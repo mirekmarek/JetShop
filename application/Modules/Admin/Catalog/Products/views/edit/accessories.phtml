@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Product_Box;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View   $this
+ * @var Product $product
+ * @var Form $form
+ * @var Product_Box[] $boxes
+ */
+
+$product = $this->getRaw('item');
+
+$editable = $this->getBool('editable');
+
+require '_toolbar.phtml';
+
+$form = $this->getRaw('form');
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 1
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 10
+]);
+
+$form->field('groups')->input()->addCustomCssStyle("height: calc(100vh - 250px)");
+?>
+<div id="main-col">
+	<?=$form->start()?>
+	<?=$form->field('groups')?>
+	<?=$form->end()?>
+</div>
