@@ -31,6 +31,7 @@ use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_Price;
 use JetApplication\Product_EShopData;
+use JetApplication\Product_Trait_Accessories;
 use JetApplication\Product_Trait_Availability;
 use JetApplication\Product_Trait_Images;
 use JetApplication\Product_Trait_Files;
@@ -81,6 +82,7 @@ abstract class Core_Product extends Entity_WithEShopData implements
 	use Product_Trait_Stickers;
 	use Product_Trait_Similar;
 	use Product_Trait_Boxes;
+	use Product_Trait_Accessories;
 	
 	use Admin_Entity_WithEShopData_Trait;
 	

@@ -23,6 +23,7 @@ use JetApplication\Product_EShopData_Trait_Files;
 use JetApplication\Product_EShopData_Trait_Categories;
 use JetApplication\Product_EShopData_Trait_Boxes;
 use JetApplication\Product_EShopData_Trait_SimilarProducts;
+use JetApplication\Product_EShopData_Trait_Accessories;
 
 
 #[DataModel_Definition(
@@ -40,6 +41,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 	use Product_EShopData_Trait_Categories;
 	use Product_EShopData_Trait_Boxes;
 	use Product_EShopData_Trait_SimilarProducts;
+	use Product_EShopData_Trait_Accessories;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
