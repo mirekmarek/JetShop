@@ -2,7 +2,7 @@
 return [
 	'vendor' => '',
 	'version' => '',
-	'label' => 'Shop.Analytics.Service.Seznam',
+	'label' => 'Admin.Entity.Edit.WithEShopData',
 	'description' => '',
 	'is_mandatory' => false,
 ];
