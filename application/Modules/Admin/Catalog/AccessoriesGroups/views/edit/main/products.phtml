@@ -1,0 +1,28 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+use JetApplication\Accessories_Group;
+
+/**
+ * @var MVC_View $this
+ * @var Accessories_Group $group
+ */
+$group = $this->getRaw('item');
+
+$p_manager = Admin_Managers::Product();
+
+
+foreach($group->getProducts() as $p): ?>
+	<div
+		class="product"
+		style="border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: 20px 1fr 30px;gap: 20px;align-items: center;margin: 10px;padding: 10px;"
+		data-id="<?=$p->getProductId()?>"
+	>
+		<div><?=UI::icon('up-down')?></div>
+		<div><?=$p_manager->showName( $p->getProductId() )?></div>
+		<div><?= UI::button_delete(' ')->setOnClick("Products.remove({$p->getProductId()})")->setSize( UI_button::SIZE_EXTRA_SMALL)?></div>
+	</div>
+<?php endforeach;
+

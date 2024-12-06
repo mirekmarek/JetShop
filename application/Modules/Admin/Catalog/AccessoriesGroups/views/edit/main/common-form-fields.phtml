@@ -1,0 +1,54 @@
+<?php
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw('form');
+?>
+<script>
+	const Products = {
+		initSort: () => {
+			$('#product')['sortable']({
+				revert: true,
+				stop: function() {
+					Products.saveSort();
+				}
+			});
+		},
+		add: ( id ) => {
+			$('#product').load('<?=Http_Request::currentURI()?>&add_product='+id);
+		},
+		
+		remove: ( id ) => {
+			$('#product').load('<?=Http_Request::currentURI()?>&remove_product='+id);
+		},
+
+		saveSort: () => {
+			let products = [];
+			
+			$('#product').find('.product').each(function ( i, item ) {
+				products.push( item.dataset['id'] );
+			});
+
+			fetch('<?=Http_Request::currentURI()?>&sort='+products.join(','));
+		}
+	};
+</script>
+<div class="toolbar" style="display: grid;grid-template-columns: auto 1fr; gap: 5px;padding: 10px;">
+	<div><b><?= Tr::_('Add product:')?></b></div>
+	<?= Admin_Managers::Product()->renderSelectWidget("Products.add(selected_item.id)")?>
+</div>
+
+<div id="product">
+	<?php require 'products.phtml'; ?>
+</div>
+
+<script>
+	Products.initSort();
+</script>
