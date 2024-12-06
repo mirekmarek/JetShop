@@ -8,4 +8,12 @@ return [
 	'Delivered' => 'Doručeno',
 	'Returned' => 'Vráceno',
 	'Cancelled' => 'Zrušeno',
+	'Čekání na platbu' => 'Čekání na platbu',
+	'Čeká na naskladnění zboží' => 'Čeká na naskladnění zboží',
+	'Připraveno k odeslání' => 'Připraveno k odeslání',
+	'Odeslání zahájeno' => 'Odeslání zahájeno',
+	'Odesláno' => 'Odesláno',
+	'Doručeno' => 'Doručeno',
+	'Vráceno' => 'Vráceno',
+	'Zrušeno' => 'Zrušeno',
 ];

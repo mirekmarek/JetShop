@@ -32,4 +32,5 @@ return [
 	'About author:' => 'O autorovi:',
 	'Activate' => 'Aktivovat',
 	'Article author <b>%ITEM_NAME%</b> has been updated' => 'Autor článku <b>%ITEM_NAME%</b> byl aktualizován',
+	'Article author <b>%ITEM_NAME%</b> has been created' => 'Autor článku <b>%ITEM_NAME%</b> byl vytvořen',
 ];

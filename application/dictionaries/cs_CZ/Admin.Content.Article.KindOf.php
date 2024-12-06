@@ -19,4 +19,11 @@ return [
 	'General' => 'Všeobecné',
 	'Please enter name' => 'Zadejte jméno',
 	'Name:' => 'Název:',
+	'Create new' => 'Vytvořit nový',
+	'Internal name:' => 'Interní název:',
+	'Internal code:' => 'Interní kód:',
+	'Internal notes:' => 'Interní poznámky:',
+	'Kind of article <b>%ITEM_NAME%</b> has been created' => 'Byl vytvořen druh článku <b>%ITEM_NAME%.</b>',
+	'Activate' => 'Aktivovat',
+	'Deactivate' => 'Deaktivovat',
 ];

@@ -9,4 +9,5 @@ return [
 	'Subscribe' => 'Přihlásit se k odběru',
 	'Unsubscribe' => 'Odhlásit odběr',
 	'Mail change' => 'Změna pošty',
+	'Unsubscribed' => 'Neodebíraný',
 ];

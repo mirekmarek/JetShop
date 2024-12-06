@@ -69,5 +69,5 @@ return [
 	'Internal name:' => 'Interní název:',
 	'Internal code:' => 'Interní kód:',
 	'Activate' => 'Aktivovat',
-	'Is active - %what%' => '',
+	'Is active - %what%' => 'Je aktivní – %what%',
 ];

@@ -53,4 +53,5 @@ return [
 	'Complaint entry completed' => 'Zadání stížnosti dokončeno',
 	'Your complaint has the number <b>%no%</b>' => 'Vaše stížnost má číslo <b>%no%</b>',
 	'Our team will deal with your claim as soon as possible.' => 'Náš tým se bude Vaší reklamací zabývat co nejdříve.',
+	'Exports' => 'Exporty',
 ];

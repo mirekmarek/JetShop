@@ -168,4 +168,5 @@ return [
 	'Active' => 'Aktivní',
 	'Deactivate' => 'Deaktivovat',
 	'Description' => 'Popis',
+	'Accessories' => 'Příslušenství',
 ];

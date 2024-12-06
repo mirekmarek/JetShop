@@ -22,4 +22,6 @@ return [
 	'Produkt:' => 'Produkt:',
 	'Strana:' => 'strana:',
 	'Kategorie:' => 'Kategorie:',
+	'Date and time' => 'Datum a čas',
+	'What to display:' => 'Co zobrazit:',
 ];

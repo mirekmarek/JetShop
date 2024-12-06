@@ -89,5 +89,5 @@ return [
 	'General' => 'Všeobecné',
 	'Out of range' => 'Mimo dosah',
 	'Usage' => 'Používání',
-	'Is active - %what%' => '',
+	'Is active - %what%' => 'Je aktivní – %what%',
 ];

@@ -27,4 +27,6 @@ return [
 	'Products' => 'Produkty',
 	'Sort:' => 'Seřadit:',
 	'Show more products' => 'Zobrazit více produktů',
+	'Detail' => 'Detail',
+	'Availability:' => 'Dostupnost:',
 ];

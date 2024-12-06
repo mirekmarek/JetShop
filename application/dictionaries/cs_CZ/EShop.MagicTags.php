@@ -10,4 +10,10 @@ return [
 	'Product URL' => 'URL produktu',
 	'Category URL' => 'Adresa URL kategorie',
 	'Category link' => 'Odkaz na kategorii',
+	'Date and time' => 'Datum a čas',
+	'What to display:' => 'Co zobrazit:',
+	'This year' => 'Letos',
+	'Next year' => 'Příští rok',
+	'Today - date' => 'Dnes - datum',
+	'Tomorrow - date' => 'Zítra - datum',
 ];

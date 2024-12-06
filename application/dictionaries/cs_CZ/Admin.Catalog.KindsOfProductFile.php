@@ -38,4 +38,5 @@ return [
 	'Internal notes:' => 'Interní poznámky:',
 	'Activate' => 'Aktivovat',
 	'Activate completely' => 'Aktivovat kompletně',
+	'Kind of product file <b>%ITEM_NAME%</b> has been updated' => 'Soubor typu <b>%ITEM_NAME%</b> produktu byl aktualizován',
 ];

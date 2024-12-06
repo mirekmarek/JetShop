@@ -54,6 +54,6 @@ return [
 	'Updates the status of delivered consignments.<br><b>It is necessary to run this service periodically.</b>' => 'Aktualizuje stav doručených zásilek.<br> <b>Tuto službu je nutné spouštět pravidelně.</b>',
 	'Updates the list of points where the consignment can be delivered / where the customer can pick up the consignment.' => 'Aktualizuje seznam míst, kde lze zásilku doručit / kde si zákazník může zásilku vyzvednout.',
 	'Updates the status of delivered consignments.' => 'Aktualizuje stav doručených zásilek.',
-	'API password: ' => '',
-	'e-shop ID: ' => '',
+	'API password: ' => 'Heslo API: ',
+	'e-shop ID: ' => 'ID e-shopu: ',
 ];

@@ -46,4 +46,8 @@ return [
 	'Article <b>%ITEM_NAME%</b> has been updated' => 'Článek <b>%ITEM_NAME%</b> byl aktualizován',
 	'Article <b>%ITEM_NAME%</b> has been created' => 'Článek <b>%ITEM_NAME%</b> byl vytvořen',
 	'Activate completely' => 'Aktivovat kompletně',
+	'Author' => 'Autor',
+	'Kind of Article' => 'Druh článku',
+	' - all -' => ' - Všechno -',
+	'Kind of article' => 'Druh článku',
 ];
