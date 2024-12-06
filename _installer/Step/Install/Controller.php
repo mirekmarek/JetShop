@@ -268,6 +268,9 @@ class Installer_Step_Install_Controller extends Installer_Step_Controller
 			\JetApplication\Statistics_Product_OrderLog::class,
 			\JetApplication\Statistics_Category_ViewLog::class,
 			\JetApplication\Statistics_Order_SourceLog::class,
+			\JetApplication\Accessories_Group::class,
+			\JetApplication\Accessories_Group_Product::class,
+			\JetApplication\Product_Accessories_Group::class,
 		];
 		
 		$result = [];
