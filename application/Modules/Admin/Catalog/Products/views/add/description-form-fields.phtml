@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\Locale;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Locale $locale
+ * @var Product $item
+ */
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+$locale = $this->getRaw('locale');
+$locale_str = $locale->toString();
+
+$form->field('/description/'.$locale_str.'/description')->input()->addCustomCssStyle('height:600px');
+?>
+<fieldset>
+	<legend class="sub"><?=Tr::_('Main data')?></legend>
+	
+	<?=$form->field('/description/'.$locale_str.'/name')?>
+	<?php if($form->fieldExists('/description/'.$locale_str.'/variant_name')): ?>
+		<?=$form->field('/description/'.$locale_str.'/variant_name')?>
+	<?php endif; ?>
+	<?=$form->field('/description/'.$locale_str.'/description')?>
+	<?=$form->field('/description/'.$locale_str.'/short_description')?>
+</fieldset>
+
+<fieldset>
+	<legend class="sub"><?=Tr::_('SEO')?></legend>
+	<?=$form->field('/description/'.$locale_str.'/seo_title')?>
+	<?=$form->field('/description/'.$locale_str.'/seo_description')?>
+	<?=$form->field('/description/'.$locale_str.'/seo_keywords')?>
+</fieldset>

@@ -1,18 +1,18 @@
 <?php
 namespace JetApplicationModule\Admin\Content\Article\Authors;
 
-use JetApplication\Admin_EntityManager_WithShopData_Interface;
-use JetApplication\Admin_EntityManager_WithShopData_Trait;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Trait;
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Entity_WithEShopData;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithShopData_Interface
+class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface
 {
-	use Admin_EntityManager_WithShopData_Trait;
+	use Admin_EntityManager_WithEShopData_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'article-authors';
 
@@ -26,7 +26,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopDat
 		return 'article author';
 	}
 	
-	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
+	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
 		return new Author();
 	}

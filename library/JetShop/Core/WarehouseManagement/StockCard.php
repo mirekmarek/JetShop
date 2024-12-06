@@ -11,7 +11,7 @@ use Jet\DataModel_Definition;
 
 use Jet\Logger;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\Entity_Basic;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_StockCard;
@@ -211,7 +211,7 @@ class Core_WarehouseManagement_StockCard extends Entity_Basic
 		return $this->price_per_unit;
 	}
 	
-	public function setPricePerUnit( float $price_per_unit, ?Currencies_Currency $currency=null ): void
+	public function setPricePerUnit( float $price_per_unit, ?Currency $currency=null ): void
 	{
 		$wh_currency = $this->getWarehouse()->getCurrency();
 		if(!$currency) {
@@ -228,7 +228,7 @@ class Core_WarehouseManagement_StockCard extends Entity_Basic
 		
 	}
 	
-	public function getCurrency(): ?Currencies_Currency
+	public function getCurrency(): ?Currency
 	{
 		if(!$this->currency_code) {
 			return null;

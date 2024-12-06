@@ -73,6 +73,16 @@ abstract class Core_Entity_Common extends Entity_Basic
 		return static::$loaded_items[ $key ];
 	}
 	
+	public static function getByInternalCode( string $internal_code ) : ?static
+	{
+		$id = static::dataFetchOne(select: ['id'], where: ['internal_code'=>$internal_code]);
+		if(!$id) {
+			return null;
+		}
+		
+		return static::get( $id );
+	}
+	
 	
 	public function isActive() : bool
 	{

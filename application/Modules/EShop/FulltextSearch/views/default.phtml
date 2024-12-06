@@ -1,0 +1,69 @@
+<?php
+namespace JetApplicationModule\EShop\FulltextSearch;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Category_EShopData;
+use JetApplication\EShop_Managers_ProductListing;
+
+/**
+ * @var MVC_View   $this
+ * @var EShop_Managers_ProductListing $products
+ * @var Category_EShopData[] $categories
+ */
+
+$products = $this->getRaw('products');
+$categories = $this->getRaw('categories');
+
+?>
+
+<br>
+<div class="card">
+	<form method="get">
+	<div class="card-body">
+
+		<div id="search-dialog">
+			<div></div>
+				<div class="dialog">
+				<div>
+					<b><?=Tr::_('Search:')?></b>
+				</div>
+				<input type="search" name="q" class="form-control"
+				       value="<?=$this->getString('q')?>"
+				>
+				<button type="submit">
+					<?=UI::icon('search')?>
+				</button>
+			</div>
+			<div></div>
+		</div>
+	</div>
+	</form>
+</div>
+
+<br><br>
+
+<?php if( $categories ): ?>
+	<h2><?=Tr::_('Categories')?></h2>
+	<div class="categories">
+	<?php foreach($categories as $item): ?>
+		<div class="category">
+			<div class="category-image">
+				<?php if($item->getImageMain()): ?>
+					<a href="<?=$item->getUrl()?>" ><img src="<?=$item->getImageMainThumbnailUrl(150, 150)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div class="category-name">
+				<a href="<?=$item->getUrl()?>"><?=$item->getName()?></a>
+			</div>
+		</div>
+	<?php endforeach; ?>
+	</div>
+<?php endif; ?>
+
+<?php if($products): ?>
+	<h2><?=Tr::_('Products')?></h2>
+
+	<?=$products->render()?>
+<?php endif; ?>

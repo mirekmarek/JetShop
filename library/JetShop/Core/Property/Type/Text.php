@@ -5,8 +5,8 @@ use Jet\Form;
 use Jet\Form_Field_Input;
 use JetApplication\ProductFilter;
 use JetApplication\Property_Type;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 
 abstract class Core_Property_Type_Text extends Property_Type
@@ -29,21 +29,21 @@ abstract class Core_Property_Type_Text extends Property_Type
 		return null;
 	}
 	
-	public function getProductParameterTextValue( Shops_Shop $shop ) : string
+	public function getProductParameterTextValue( EShop $eshop ) : string
 	{
-		return $this->product_parameter->getPropertyTextValue( $shop );
+		return $this->product_parameter->getPropertyTextValue( $eshop );
 	}
 	
 	
 	public function getValueEditForm() : Form
 	{
 		$fields = [];
-		foreach(Shops::getList() as $shop) {
-			$field = new Form_Field_Input( $shop->getKey(), '' );
+		foreach( EShops::getList() as $eshop) {
+			$field = new Form_Field_Input( $eshop->getKey(), '' );
 			
-			$field->setDefaultValue( $this->getProductParameterTextValue( $shop ) );
-			$field->setFieldValueCatcher( function( $v ) use ($shop) {
-				$this->product_parameter->setPropertyTextValue( $shop, $v );
+			$field->setDefaultValue( $this->getProductParameterTextValue( $eshop ) );
+			$field->setFieldValueCatcher( function( $v ) use ($eshop) {
+				$this->product_parameter->setPropertyTextValue( $eshop, $v );
 			} );
 			
 			
@@ -61,19 +61,25 @@ abstract class Core_Property_Type_Text extends Property_Type
 	public function setupForm( Form $form ) : void
 	{
 		$form->removeField('decimal_places');
-		foreach( Shops::getList() as $shop ) {
-			$form->removeField('/shop_data/'.$shop->getKey().'/bool_yes_description');
-			$form->removeField('/shop_data/'.$shop->getKey().'/units');
-			$form->removeField('/shop_data/'.$shop->getKey().'/url_param');
+		
+		foreach($form->getFields() as $f) {
+			if(
+				str_ends_with($f->getName(),'/bool_yes_description') ||
+				str_ends_with($f->getName(),'/units') ||
+				str_ends_with($f->getName(),'/url_param')
+			) {
+				$form->removeField( $f->getName() );
+			}
 		}
+		
 	}
 	
 	
-	public function getProductDetailDisplayValue( ?Shops_Shop $shop=null ): string
+	public function getProductDetailDisplayValue( ?EShop $eshop=null ): string
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$eshop = $eshop?:EShops::getCurrent();
 		
-		return $this->getProductParameterTextValue( $shop );
+		return $this->getProductParameterTextValue( $eshop );
 	}
 	
 }

@@ -4,14 +4,14 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EMail;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 
 #[DataModel_Definition(
 	name: 'sent_emails',
 	database_table_name: 'sent_emails',
 	
 )]
-abstract class Core_EMail_Sent extends Entity_WithShopRelation {
+abstract class Core_EMail_Sent extends Entity_WithEShopRelation {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -100,7 +100,7 @@ abstract class Core_EMail_Sent extends Entity_WithShopRelation {
 	public static function emailSent( EMail $email ) : void
 	{
 		$item = new static();
-		$item->setShop( $email->getShop() );
+		$item->setEshop( $email->getEshop() );
 		$item->template_code = $email->getTemplateCode();
 		$item->context_customer_id = $email->getContextCustomerId();
 		$item->context = $email->getContext();

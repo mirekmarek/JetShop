@@ -5,7 +5,7 @@ use Jet\Form;
 use Jet\Form_Field_Checkbox;
 use JetApplication\ProductFilter;
 use JetApplication\Property_Type;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_Property_Type_Bool extends Property_Type
 {
@@ -63,7 +63,7 @@ abstract class Core_Property_Type_Bool extends Property_Type
 		] );
 	}
 	
-	public function getProductDetailDisplayValue( ?Shops_Shop $shop=null ): bool
+	public function getProductDetailDisplayValue( ?EShop $eshop=null ): bool
 	{
 		return (bool)$this->getProductParameterValue();
 	}

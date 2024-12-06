@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\Events\ReturnOfGoods\NewUnfinishedReturnOfGoods;
+
+use Jet\MVC_View;
+use JetApplication\ReturnOfGoods_Event;
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods_Event $event
+ * @var Main $handler
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');

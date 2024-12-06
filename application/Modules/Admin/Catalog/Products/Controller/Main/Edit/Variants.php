@@ -6,7 +6,8 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\Product;
 
 
 trait Controller_Main_Edit_Variants
@@ -92,32 +93,32 @@ trait Controller_Main_Edit_Variants
 		
 		
 		
-		if($GET->exists('activate_variant_shop_data')) {
-			$variant_id=$GET->getInt('activate_variant_shop_data');
-			$shop_key = $GET->getString('shop');
+		if($GET->exists('activate_variant_eshop_data')) {
+			$variant_id=$GET->getInt('activate_variant_eshop_data');
+			$eshop_key = $GET->getString('eshop');
 			
 			$variant = $product->getVariants()[$variant_id]??null;
-			$shop = Shops::get( $shop_key );
-			if( $variant && $shop ) {
-				$variant->activateShopData( $shop );
+			$eshop = EShops::get( $eshop_key );
+			if( $variant && $eshop ) {
+				$variant->activateEShopData( $eshop );
 				$product->actualizeVariantMaster();
 			}
 			
-			Http_Headers::reload(unset_GET_params: ['activate_variant_shop_data', 'shop']);
+			Http_Headers::reload(unset_GET_params: ['activate_variant_eshop_data', 'eshop']);
 		}
 		
-		if($GET->exists('deactivate_variant_shop_data')) {
-			$variant_id=$GET->getInt('deactivate_variant_shop_data');
-			$shop_key = $GET->getString('shop');
+		if($GET->exists('deactivate_variant_eshop_data')) {
+			$variant_id=$GET->getInt('deactivate_variant_eshop_data');
+			$eshop_key = $GET->getString('eshop');
 			
 			$variant = $product->getVariants()[$variant_id]??null;
-			$shop = Shops::get( $shop_key );
-			if( $variant && $shop ) {
-				$variant->deactivateShopData( $shop );
+			$eshop = EShops::get( $eshop_key );
+			if( $variant && $eshop ) {
+				$variant->deactivateEShopData( $eshop );
 				$product->actualizeVariantMaster();
 			}
 			
-			Http_Headers::reload(unset_GET_params: ['deactivate_variant_shop_data', 'shop']);
+			Http_Headers::reload(unset_GET_params: ['deactivate_variant_eshop_data', 'eshop']);
 		}
 		
 		

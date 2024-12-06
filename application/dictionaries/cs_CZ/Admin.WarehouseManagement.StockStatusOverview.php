@@ -10,7 +10,7 @@ return [
 	'On the way' => 'Na cestě',
 	'Delivered' => 'Doručeno',
 	'Returning' => 'Vracející se',
-	'Returned' => 'Vrátil',
+	'Returned' => 'Vráceno',
 	'Lost' => 'Ztracený',
 	'Cancellation in progress' => 'Probíhá zrušení',
 	'Canceled' => 'Zrušeno',
@@ -91,5 +91,5 @@ return [
 	'Determine inventory status on a specific date' => 'Určete stav zásob k určitému datu',
 	'Date and time:' => 'Datum a čas:',
 	'Show' => 'Ukázat',
-	'Active blocations' => '',
+	'Active blocations' => 'Aktivní blokády',
 ];

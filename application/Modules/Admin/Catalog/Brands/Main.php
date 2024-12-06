@@ -3,21 +3,22 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithShopData_Interface;
-use JetApplication\Admin_EntityManager_WithShopData_Trait;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Trait;
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\Admin_Managers_Brand;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
+use JetApplication\Brand;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithShopData_Interface, Admin_Managers_Brand
+class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface, Admin_Managers_Brand
 {
-	use Admin_EntityManager_WithShopData_Trait;
+	use Admin_EntityManager_WithEShopData_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'brands';
 
@@ -31,7 +32,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopDat
 		return 'brand';
 	}
 	
-	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
+	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
 		return new Brand();
 	}

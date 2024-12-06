@@ -54,4 +54,5 @@ return [
 	'Please enter name' => 'Zadejte jméno',
 	'Name:' => 'Název:',
 	'Activate' => 'Aktivovat',
+	'Deactivate' => '',
 ];

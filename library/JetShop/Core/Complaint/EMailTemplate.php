@@ -3,13 +3,15 @@ namespace JetShop;
 
 use Jet\Tr;
 use JetApplication\Complaint;
+use JetApplication\Complaint_Event;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 	
 	protected Complaint $complaint;
+	protected Complaint_Event $event;
 	
 	public function getComplaint(): Complaint
 	{
@@ -21,11 +23,24 @@ abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 		$this->complaint = $complaint;
 	}
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function getEvent(): Complaint_Event
+	{
+		return $this->event;
+	}
+	
+	public function setEvent( Complaint_Event $event ): void
+	{
+		$this->event = $event;
+		$this->complaint = $event->getComplaint();
+	}
+	
+	
+	
+	public function initTest( EShop $eshop ): void
 	{
 		$ids = Complaint::dataFetchCol(
 			select: ['id'],
-			where: $shop->getWhere(),
+			where: $eshop->getWhere(),
 			order_by: '-id',
 			limit: 1000
 		);
@@ -35,7 +50,7 @@ abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 		$this->complaint = Complaint::get($id);
 	}
 	
-	public function setupEMail( Shops_Shop $shop, EMail $email ): void
+	public function setupEMail( EShop $eshop, EMail $email ): void
 	{
 		$email->setContext('complaint');
 		$email->setContextId( $this->complaint->getId() );

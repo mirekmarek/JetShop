@@ -1,0 +1,50 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Category_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Category_EShopData $category
+ */
+
+$category = $this->getRaw('category');
+
+$subcategories = $category->getChildren();
+?>
+	<h1 class="category-title"><?=$category->getName()?></h1>
+	<div class="category-description">
+		<div class="image">
+			<?php if($category->getImageMain()): ?>
+				<img src="<?=$category->getImageMainThumbnailUrl(150, 150)?>">
+			<?php endif; ?>
+		</div>
+		<div class="text">
+			<?=$category->getDescription()?>
+		</div>
+	</div>
+	
+	<?php if($subcategories): ?>
+	<div class="categories">
+		<?php foreach( $subcategories as $item):
+			if(!$item->getBranchProductsCount()) {
+				continue;
+			}
+			?>
+			<div class="category">
+				<div class="category-image">
+				<?php if($item->getImageMain()): ?>
+					<a href="<?=$item->getUrl()?>" ><img src="<?=$item->getImageMainThumbnailUrl(150, 150)?>"></a>
+				<?php endif; ?>
+				</div>
+				<div class="category-name">
+				<a href="<?=$item->getUrl()?>"><?=$item->getName()?></a>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>
+
+<?=EShop_Managers::Analytics()?->viewCategory( $category );?>

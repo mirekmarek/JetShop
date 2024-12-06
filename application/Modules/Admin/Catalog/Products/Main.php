@@ -5,19 +5,20 @@ use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Product;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Product;
-use JetApplication\Admin_EntityManager_WithShopData_Trait;
+use JetApplication\Admin_EntityManager_WithEShopData_Trait;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\Exports_Module_Controller_ProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 
 
 class Main extends Application_Module implements Admin_Managers_Product
 {
-	use Admin_EntityManager_WithShopData_Trait;
+	use Admin_EntityManager_WithEShopData_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'products';
 
@@ -52,7 +53,7 @@ class Main extends Application_Module implements Admin_Managers_Product
 	}
 	
 	
-	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
+	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
 		return new Product();
 	}

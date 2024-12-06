@@ -66,7 +66,7 @@ class Handler_Blacklist_Main extends Handler {
 	{
 		if($this->form->catch()) {
 			CustomerBlacklist::add(
-				shop: $this->order->getShop(),
+				eshop: $this->order->getEshop(),
 				email: $this->form->field('email')->getValue(),
 				name: $this->form->field('name')->getValue(),
 				description: $this->form->field('description')->getValue()

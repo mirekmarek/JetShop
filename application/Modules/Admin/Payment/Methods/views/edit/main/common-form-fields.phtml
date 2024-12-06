@@ -3,18 +3,27 @@
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Tr;
+use JetApplication\Payment_Method_Price;
+use JetApplication\Pricelists;
+use JetApplication\Admin_Managers;
+use JetApplication\Payment_Method;
 
 /**
  * @var MVC_View $this
  * @var Form     $form
+ * @var Payment_Method $item
+ * @var Form $set_price_form
  */
 
+$item = $this->getRaw( 'item' );
 $form = $this->getRaw('form');
 
 $form->field( 'delivery_methods' )->input()->addCustomCssStyle('height: 300px');
 
 $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadPaymentMethodSpecification(this.options[this.selectedIndex].value);');
 ?>
+<!--suppress JSCheckFunctionSignatures -->
 <script>
 	async function reloadPaymentMethodSpecification( module_name ) {
 		const response = await fetch('<?=Http_Request::currentURI(['action' =>'get_payment_method_specification'])?>&module='+encodeURIComponent(module_name));
@@ -38,3 +47,17 @@ $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadP
 <?=$form->field( 'backend_module_payment_method_specification' )?>
 <?=$form->field( 'delivery_methods' )?>
 
+<div class="form-group row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Price:')?></label>
+	<div class="col-md-8">
+		<div style="display: grid; grid-template-columns: repeat(auto-fit, 300px); gap: 20px;">
+			<?php foreach( Pricelists::getList() as $pricelist):
+				$price = Payment_Method_Price::get( $pricelist, $item->getId() );
+				
+				echo Admin_Managers::PriceFormatter()->showPriceInfo( $price );
+			endforeach; ?>
+			
+		</div>
+	</div>
+</div>
+<br><br>

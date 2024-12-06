@@ -1,1 +1,52 @@
+<?php
+use Jet\MVC_View;
+use Jet\Form_Renderer_Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form_Renderer_Form $r
+ */
+$r = $this->getRaw( 'renderer' );
+$form = $r->getForm();
+
+?>
 </form>
+
+<?php if($form->getValidationErrors()):
+	foreach($form->getValidationErrors() as $error):
+		?>
+		<script>
+			setTimeout(() => {
+				const input_element = document.getElementById('<?=$error->getField()->getId()?>');
+				
+				if( !input_element.checkVisibility() ) {
+					function findParent(el, css_class) {
+						while(
+							(el = el.parentNode) &&
+							el.className.indexOf(css_class) < 0
+						);
+						return el;
+					}
+					
+					const pane = findParent(input_element, 'tab-pane');
+					
+					if(pane) {
+						const tab = document.getElementById(pane.id+'_tab');
+						if(tab) {
+							tab.click();
+						}
+					}
+				}
+				
+				setTimeout(() => {
+					input_element.focus();
+				}, 200)
+				
+				
+			}, 100);
+			
+		</script>
+		<?php
+		break;
+	endforeach;
+endif; ?>

@@ -1,0 +1,77 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Currencies;
+use JetApplication\Pricelists;
+use JetApplication\ProductListing;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$eshop = EShops::getCurrent();
+$listing = $this->getRaw('listing');
+
+$map = $listing->getInitialMap();
+
+$min_price = $map->getMinPrice();
+$max_price = $map->getMaxPrice();
+
+
+if($min_price==$max_price) {
+	return;
+}
+
+$filter_min_price = $min_price;
+$filter_max_price = $max_price;
+
+$price_filter = $listing->getFilter()->getPriceFilter();
+if($price_filter->getIsActive()) {
+	if($price_filter->getMinPrice()!==null) {
+		$filter_min_price = $price_filter->getMinPrice();
+	}
+	if($price_filter->getMaxPrice()!==null) {
+		$filter_max_price = $price_filter->getMaxPrice();
+	}
+	
+}
+
+$this->setVar('min', $min_price );
+$this->setVar('max', $max_price );
+$this->setVar('from', $filter_min_price );
+$this->setVar('to', $filter_max_price );
+$this->setVar('onChangeFrom', "document.getElementById('lf-price-min').value=this.value;listing.submitFilter();");
+$this->setVar('onChangeTo', "document.getElementById('lf-price-max').value=this.value;listing.submitFilter();");
+if(Pricelists::getCurrent()->getPricesAreWithoutVat()) {
+	$this->setVar('units', Currencies::getCurrent()->getSymbolRight_WithoutVAT().Currencies::getCurrent()->getSymbolLeft_WithoutVAT() );
+} else {
+	$this->setVar('units', Currencies::getCurrent()->getSymbolRight_WithVAT().Currencies::getCurrent()->getSymbolLeft_WithVAT() );
+}
+
+?>
+<div class="product_listing_filter">
+	<div
+		id="f_price_title"
+		class="product_listing_filter_title"
+		data-target="f_price"
+		onclick="listing.UI.toggleFilterItem(this)"
+	><?=Tr::_('Price');?></div>
+	
+	<div
+		class="product_listing_filter_filter"
+		id="f_price"
+		style="display: none;"
+		onscroll="listing.UI.filterContainerScroll( this )"
+	>
+		<?=$this->render('filter/slider')?>
+		
+		<div style="display: none">
+			<input id="lf-price-min" type="number" value="<?=$filter_min_price?>" data-min="<?=$min_price?>">
+			<input id="lf-price-max" type="number" value="<?=$filter_max_price?>" data-max="<?=$max_price?>">
+		</div>
+	</div>
+</div>

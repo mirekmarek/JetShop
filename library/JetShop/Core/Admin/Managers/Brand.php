@@ -1,10 +1,10 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Admin_EntityManager_WithShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 
-interface Core_Admin_Managers_Brand extends Admin_EntityManager_WithShopData_Interface
+interface Core_Admin_Managers_Brand extends Admin_EntityManager_WithEShopData_Interface
 {
 	public function renderSelectWidget( string $on_select,
 	                                    int $selected_brand_id=0,

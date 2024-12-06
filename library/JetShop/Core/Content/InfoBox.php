@@ -8,9 +8,9 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Content_InfoBox_ShopData;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Content_InfoBox_EShopData;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShop;
 
 
 
@@ -18,23 +18,23 @@ use JetApplication\Shops_Shop;
 	name: 'content_info_box',
 	database_table_name: 'content_info_box',
 )]
-abstract class Core_Content_InfoBox extends Entity_WithShopData
+abstract class Core_Content_InfoBox extends Entity_WithEShopData
 {
 	/**
-	 * @var Content_InfoBox_ShopData[]
+	 * @var Content_InfoBox_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Content_InfoBox_ShopData::class
+		data_model_class: Content_InfoBox_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	
 	
-	public function getShopData( ?Shops_Shop $shop = null ): Content_InfoBox_ShopData
+	public function getEshopData( ?EShop $eshop = null ): Content_InfoBox_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 }

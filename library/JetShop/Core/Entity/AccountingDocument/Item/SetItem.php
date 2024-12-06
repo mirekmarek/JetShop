@@ -10,9 +10,10 @@ use JetApplication\Entity_AccountingDocument_Item_SetItem;
 use JetApplication\Entity_Price;
 use JetApplication\MeasureUnit;
 use JetApplication\Entity_AccountingDocument_Item;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\MeasureUnits;
+use JetApplication\Pricelist;
 use JetApplication\Product_SetItem;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
@@ -234,7 +235,7 @@ abstract class Core_Entity_AccountingDocument_Item_SetItem extends DataModel_Rel
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	protected function recalculate() : void
@@ -306,9 +307,9 @@ abstract class Core_Entity_AccountingDocument_Item_SetItem extends DataModel_Rel
 	
 	
 	
-	public function setupBySetItem( Pricelists_Pricelist $pricelist, Product_ShopData $set, Product_SetItem $set_item, float $number_of_units ) : void
+	public function setupBySetItem( Pricelist $pricelist, Product_EShopData $set, Product_SetItem $set_item, float $number_of_units ) : void
 	{
-		$product = Product_ShopData::get( $set_item->getItemProductId(), $set->getShop() );
+		$product = Product_EShopData::get( $set_item->getItemProductId(), $set->getEshop() );
 		$kind = $product->getKind();
 		
 		if($product->isVirtual()) {

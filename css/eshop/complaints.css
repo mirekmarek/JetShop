@@ -1,0 +1,138 @@
+.complaints-search-order-form {
+	display: grid;
+	align-items: center;
+	gap:10px;
+	grid-template-columns: 250px 400px;
+}
+
+.complaints-product {
+	display: grid;
+	grid-template-columns: 60px 1fr;
+	gap: 5px;
+	margin: 10px;
+	align-items: center;
+}
+
+.complaints-product img {
+	max-width: 100%;
+	height: auto;
+}
+
+@media screen and (width<=1000px) {
+	.complaints-search-order-form {
+		grid-template-columns: 1fr;
+	}
+}
+
+.complaints-list-item>.rog-number {
+	grid-area: rog-number;
+}
+.complaints-list-item>.order-number {
+	grid-area: order-number;
+}
+.complaints-list-item>.status {
+	grid-area: status;
+}
+.complaints-list-item>.product {
+	grid-area: product;
+}
+.complaints-list-item>.date {
+	grid-area: date;
+}
+
+
+.complaints-list-item {
+	margin-bottom: 20px;
+	display: grid;
+	gap: 10px;
+	grid-template:
+			"rog-number date"
+			"status order-number"
+			"product product";
+}
+
+
+@media screen and (width<=1000px) {
+	.complaints-list-item {
+		margin-bottom: 20px;
+		display: grid;
+		gap: 10px;
+		grid-template:
+			"rog-number"
+			"date"
+			"status"
+			"order-number"
+			"product";
+	}
+}
+
+.complaints-description {
+	padding: 10px;
+}
+
+.complaints-select-product-item {
+	display: grid;
+	grid-template-columns: 1fr;
+	gat: 20px;
+	margin-bottom: 20px;
+}
+
+.complaints-select-product-item>.buttons>.exists-request {
+	padding: 20px;
+	font-weight: bolder;
+}
+
+#complaint-images {
+	margin-top: 20px;
+}
+
+.complaint-image>.image {
+	grid-area: image;
+}
+
+.complaint-image>.image img {
+	max-width: 100%;
+	height: auto;
+}
+
+
+.complaint-image>.name {
+	grid-area: name;
+}
+.complaint-image>.size {
+	grid-area: size;
+}
+.complaint-image>.delete {
+	grid-area: delete;
+	text-align: right;
+}
+
+.complaint-image {
+	display: grid;
+	align-items: center;
+	gap: 20px;
+	margin: 20px;
+	padding-bottom: 20px;
+	grid-template:
+			"image name delete"
+			"image size delete"
+		;
+	grid-template-columns: 100px 1fr 100px;
+	border-bottom: 1px dotted #c9c9c9;
+}
+
+
+@media screen and (width<=1000px) {
+	.complaint-image {
+		display: grid;
+		align-items: center;
+		gap: 20px;
+		margin: 20px;
+		grid-template:
+			"image name"
+			"image size"
+			"image delete"
+		;
+		grid-template-columns: 60px 1fr;
+	}
+}

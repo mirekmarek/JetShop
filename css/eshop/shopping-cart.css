@@ -1,0 +1,239 @@
+#shopping_cart_page #shopping-cart {
+	padding-left: 10%;
+	padding-right: 10%;
+}
+
+
+@media screen and (width <= 1600px) {
+	#shopping_cart_page #shopping-cart {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
+#shopping-cart .item .item-image {
+	grid-area: image;
+}
+#shopping-cart .item .item-name {
+	grid-area: name;
+}
+#shopping-cart .item .item-availability {
+	grid-area: availability;
+	font-size: 0.7rem;
+}
+#shopping-cart .item .delete-btn {
+	grid-area: delete-btn;
+}
+
+#shopping-cart .item .delete-btn button {
+	background-color: #c99595;
+	border: none;
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+	padding: 5px;
+	color: #ffffff;
+	font-weight: bolder;
+}
+
+#shopping-cart .item .delete-btn button:after {
+	content: '✕';
+}
+
+
+#shopping-cart .item .number-of-units {
+	grid-area: number-of-units;
+	text-align: right;
+	align-items: center;
+	display: flex;
+	gap: 5px;
+	justify-content: right;
+	padding-right: 2%;
+}
+
+#shopping-cart .item .number-of-units button {
+	background-color: #c9c9c9;
+	border: none;
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+	padding: 5px;
+	color: #000000;
+	font-weight: bolder;
+}
+
+#shopping-cart .item .number-of-units input {
+	background-color: transparent;
+	border: none;
+	text-align: right;
+	width: 60px;
+}
+
+#shopping-cart .item .number-of-units button.minus::after {
+	content: '-';
+}
+
+
+#shopping-cart .item .number-of-units button.plus::after {
+	content: '+';
+}
+
+
+
+#shopping-cart .item .price-per-unit {
+	grid-area: price-per-unit;
+}
+#shopping-cart .item .item-amount {
+	grid-area: item-amount;
+}
+
+
+#shopping-cart .item {
+	background-color: #fff;
+	background-clip: border-box;
+	border: 1px solid rgba(0, 0, 0, .125);
+	border-radius: .25rem;
+	box-shadow: 0px 0px 10px #aaaaaa;
+
+	margin-top: 1%;
+	margin-bottom: 2%;
+	padding: 1%;
+
+	display: grid;
+	align-items: center;
+
+	grid-template-areas:
+						"delete-btn number-of-units number-of-units price-per-unit"
+						"image image name name"
+						"image image availability item-amount";
+	grid-template-columns: 20px 60px 1fr 150px;
+	grid-template-rows: 50px 50px 50px;
+	gap: 10px;
+}
+
+#shopping-cart .total {
+	font-weight: bolder;
+	text-align: right;
+	font-size: 1.6rem;
+	padding-right: 5%;
+}
+
+#shopping-cart-status-dialog {
+	width: 95%;
+	max-width: 1000px;
+}
+
+
+#shopping-cart-status-dialog .item .image {
+	grid-area: image;
+}
+
+#shopping-cart-status-dialog .item .name {
+	grid-area: name;
+}
+
+#shopping-cart-status-dialog .item .price-per-unit {
+	grid-area: price-per-unit;
+}
+
+#shopping-cart-status-dialog .item .total {
+	grid-area: total;
+	font-weight: bolder;
+}
+
+#shopping-cart-status-dialog .item {
+	margin: 10px;
+	padding: 10px;
+	min-width: 400px;
+	max-width: 100%;
+	border-bottom: 1px dashed #c9c9c9;
+
+	display: grid;
+	align-items: center;
+	gap: 10px;
+
+
+	grid-template-areas:
+						"image name name name"
+						"price-per-unit price-per-unit total total";
+	grid-template-columns: 60px 1fr 80px 80px;
+	grid-template-rows: 50px 50px;
+
+}
+
+.shopping-cart-discount-modules {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+	align-items: center;
+}
+
+.shopping-cart-buy-button {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	margin: 10px;
+}
+
+.shopping-cart-buy-button input {
+	width: 60px;
+	padding: 10px;
+	border: 1px solid #c9c9c9;
+}
+
+.shopping-cart-buy-button button {
+	margin-left: 10px;
+	padding: 10px;
+	font-weight: bolder;
+}
+
+.shopping-cart-product-gifts {
+	padding: 10px;
+}
+
+#shopping-cart-gifts {
+	display: grid;
+	grid-template-columns: 20px 60px 1fr;
+	align-items: center;
+	gap: 10px;
+	margin: 20px;
+}
+
+.shopping-cart-buy-button-area {
+	text-align: right;
+	padding: 20px;
+}
+
+.shopping-cart-popup-contetn .image {
+	grid-area: image;
+}
+
+.shopping-cart-popup-contetn .name {
+	grid-area: name;
+}
+
+.shopping-cart-popup-contetn .price-per-unit {
+	grid-area: price-per-unit;
+}
+
+.shopping-cart-popup-contetn .total {
+	grid-area: total;
+	font-weight: bolder;
+}
+
+.shopping-cart-popup-contetn {
+	display: grid;
+	grid-template-columns: 100px 1fr;
+	grid-template-rows: 50px 50x 50px;
+	grid-template-areas:
+					"image name"
+					"image price-per-unit"
+					". total";
+	gap: 10px;
+	margin: 20px;
+	align-items: center;
+}
+
+.shopping-cart-popup-buttons {
+	text-align: right;
+}

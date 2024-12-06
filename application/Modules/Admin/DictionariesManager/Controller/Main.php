@@ -11,7 +11,6 @@ use Jet\AJAX;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Translator;
-use JetApplication\Admin_Managers;
 
 /**
  *
@@ -24,8 +23,6 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function default_Action() : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
 		$GET = Http_Request::GET();
 		$POST = Http_Request::POST();
 		

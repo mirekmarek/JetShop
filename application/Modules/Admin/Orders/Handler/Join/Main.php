@@ -34,7 +34,7 @@ class Handler_Join_Main extends Handler
 		
 		if(($search_order=$GET->getString('join_order_search'))) {
 			
-			$join_order = Order::getByNumber( $search_order, $this->order->getShop() );
+			$join_order = Order::getByNumber( $search_order, $this->order->getEshop() );
 			if(!$join_order) {
 				echo UI_messages::createDanger( Tr::_('Unknown order') )->setCloseable( false );
 				Application::end();

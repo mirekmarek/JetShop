@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+?>
+<div class="buy-btn">
+	<?=EShop_Managers::ShoppingCart()->renderBuyButton_detail( $product );?>
+</div>
+

@@ -1,9 +1,8 @@
 <?php
 namespace JetApplicationModule\Events\Order\InternalNote;
 
-use Jet\Locale;
 use Jet\MVC_View;
-use Jet\Tr;
+use JetApplication\Admin_Managers;
 use JetApplication\Order_Event;
 use JetApplication\Order_Note;
 
@@ -21,32 +20,5 @@ $note = $event->getContext();
 if(!$note) {
 	return;
 }
-?>
-<?=nl2br($note->getNote())?>
-<?php if(($files=$note->getFiles())): ?>
-	<hr>
-	<table class="table table-striped">
-		<thead>
-		<tr>
-			<th style="width: 70px;!important;"></th>
-			<th><?=Tr::_('File name')?></th>
-			<th style="width: 180px;"><?=Tr::_('Type')?></th>
-			<th style="width: 180px;"><?=Tr::_('Size')?></th>
-		</tr>
-		</thead>
-		<?php foreach( $files as $file): ?>
-			<tr>
-				<td style="width: 70px;">
-					<?php if($file->isImage()):?>
-						<img src="<?=$file->getDownloadURL()?>" style="max-width: 80px;height: auto">
-					<?php endif; ?>
-				</td>
-				<td><a href="<?=$file->getDownloadURL()?>" target="_blank"><?=$file->getName()?></a></td>
-				<td><?=$file->getMime()?></td>
-				<td><?=Locale::size( $file->getSize() )?></td>
-			</tr>
-		<?php endforeach; ?>
-	</table>
 
-<?php endif; ?>
-
+echo Admin_Managers::Note()?->showNote( $note );

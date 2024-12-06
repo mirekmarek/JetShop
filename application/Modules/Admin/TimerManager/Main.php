@@ -16,9 +16,8 @@ use Jet\Translator;
 use JetApplication\Admin_Managers_Timer;
 use JetApplication\Application_Admin;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops_Shop;
-use JetApplication\Timer;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
 
 /**
  *
@@ -53,27 +52,43 @@ class Main extends Application_Module implements Admin_Managers_Timer
 		);
 	}
 	
-	public function renderIcon( Entity_WithShopData $entity, Shops_Shop $shop ) : string
+	public function renderEntityEdit( Entity_WithEShopData $entity, bool $editable ) : string
 	{
-		if(!$this->getCurrentUserCanView()) {
-			return '';
-		}
-		
+		return '<div id="timmer_settings">'.$this->_renderEntityEdit($entity, $editable).'</div>';
+	}
+	
+	public function _renderEntityEdit( Entity_WithEShopData $entity, bool $editable ) : string
+	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
-			function() use ($entity, $shop ) {
+			function() use ( $entity, $editable ) {
 				$view = $this->getView();
-				$class = addslashes(get_parent_class( $entity ));
+				$class = addslashes( get_class( $entity ) );
+				if(str_starts_with($class, 'JetApplicationModule')) {
+					$class = addslashes( get_parent_class( $entity ) );
+				}
 				
 				$view->setVar('entity', $entity);
-				$view->setVar('shop', $shop);
 				$view->setVar('class', $class);
-				$view->setVar('has_not_processed', Timer::hasNotProcessed( $entity, $shop ));
+				$view->setVar('editable', $editable);
 				
-				return $view->render('button');
+				$res = '';
+				
+				$res .= $view->render('entity-edit/header');
+				
+				foreach(EShops::getListSorted() as $eshop) {
+					$view->setVar('eshop', $eshop);
+					
+					$res .= $view->render('entity-edit/item');
+				}
+				
+				$res .= $view->render('entity-edit/footer');
+				
+				return $res;
 			}
 		);
 	}
+	
 	
 	public static function getCurrentUserCanView() : bool
 	{

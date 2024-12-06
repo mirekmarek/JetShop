@@ -18,7 +18,7 @@ use TCPDF;
  * @var TCPDF $tcpdf
  */
 $invoice = $this->getRaw('invoice');
-$company = CompanyInfo::get( $invoice->getShop() );
+$company = CompanyInfo::get( $invoice->getEshop() );
 $tcpdf = $this->getRaw('tcpdf');
 
 $tcpdf->setFont( 'dejavusans' );
@@ -259,27 +259,25 @@ $vat_rate_col_width = '10mm';
 				<tr style="border-bottom: 2px solid red">
 					<td style="width: <?=$item_col_width?>;"><?=$item->getTitle() ?></td>
 					<td style="width: <?=$units_col_width?>;"><?=Locale::float($item->getNumberOfUnits()) ?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></td>
-					<td style="width: <?=$price_col_width?>;"><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getPricePerUnitWithoutVat() )?></td>
+					<td style="width: <?=$price_col_width?>;"><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getPricePerUnit_WithoutVat() )?></td>
 
 					<td style="width: <?=$price_col_width?>">
 						<?php if($has_VAT):
-							echo $price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $item->getPricePerUnitVat() );
+							echo $price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $item->getPricePerUnit_Vat() );
 						endif; ?>
 					</td>
 					<td style="width: <?=$vat_rate_col_width?>"><?=$item->getVatRate()?>%</td>
 
 					<td style="width: <?=$price_col_width?>">
 						<?php if($has_VAT):
-							echo $price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getPricePerUnitWithVat() );
+							echo $price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getPricePerUnit_WithVat() );
 						endif; ?>
 					</td>
 					
-					<td style="width: <?=$price_col_width?>"><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getTotalAmountWithoutVat() )?></td>
+					<td style="width: <?=$price_col_width?>"><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getTotalAmount_WithoutVat() )?></td>
 
 					<td style="width: <?=$price_col_width?>">
-						<?php if($has_VAT):
-							echo $price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getTotalAmountWithVat() );
-						endif; ?>
+						<?=$price_formatter->formatWithCurrencyByHasVAT($has_VAT, $invoice->getCurrency(), $item->getTotalAmount_WithVat() )?>
 					</td>
 
 				</tr>
@@ -364,12 +362,7 @@ $vat_rate_col_width = '10mm';
 							<tr>
 								<td style="font-weight: bolder;font-size: 5mm"><?=Tr::_('Total:')?></td>
 								<td style="font-weight: bolder;font-size: 5mm">
-									<?php if($has_VAT):
-										echo $price_formatter->formatWithCurrency($invoice->getCurrency(), $invoice->getTotal());
-									else:
-										echo $price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotal());
-									endif; ?>
-
+									<?=$price_formatter->formatWithCurrencyByHasVAT($has_VAT, $invoice->getCurrency(), $invoice->getTotal())?>
 								</td>
 							</tr>
 					</table>

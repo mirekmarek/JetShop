@@ -20,15 +20,19 @@ echo $dialog->end();
 ?>
 <script>
 	const TimerManager = {
-		open: ( entity_type, entity_class, entity_id, shop_key ) => {
+		open: ( entity_type, entity_class, entity_id, eshop_key ) => {
 			document.getElementById('timer_editing').src =
 				'<?=$this->getRaw('page_url')?>'
 				+'?entity_type='+encodeURIComponent(entity_type)
 				+'&entity_class='+encodeURIComponent(entity_class)
 				+'&entity_id='+entity_id
-				+'&shop_key='+encodeURIComponent(shop_key);
+				+'&eshop_key='+encodeURIComponent(eshop_key);
 				
 			$('#timer_dialog').modal('show');
 		}
 	};
+
+	window.addEventListener('message', function(event) {
+		$('#timmer_settings').load( event.data );
+	});
 </script>

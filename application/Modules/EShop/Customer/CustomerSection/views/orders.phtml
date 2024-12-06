@@ -1,0 +1,57 @@
+<?php
+namespace JetApplicationModule\EShop\Customer\CustomerSection;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Order;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Order[] $orders
+ */
+
+$orders = $this->getRaw('orders');
+
+?>
+
+<?=$this->getRaw('tabs')?>
+
+<div class="customer-section-container">
+
+<?php foreach($orders as $order): ?>
+<div class="card order-list-item">
+	
+	
+	<div class="main-info">
+			<div><b><?=Tr::_('Number')?></b></div>
+			<div><a href="<?=Http_Request::currentURL(set_GET_params: ['order'=>$order->getNumber()])?>"><?=$order->getNumber()?></a></div>
+
+			<div><b><?=Tr::_('Purchased')?></b></div>
+			<div><?=Locale::dateAndTime( $order->getDatePurchased() )?></div>
+
+			<div><b><?=Tr::_('Status')?></b></div>
+			<div><?=$order->getStatus()?->getTitle()?></div>
+	</div>
+
+	<div class="items">
+		<b><?=Tr::_('Items')?></b>
+
+		<?php foreach($order->getItems() as $item): ?>
+		<div class="item">
+				<div class="number-of-units"><?=$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName();?></div>
+				<div class="title"><?=$item->getTitle()?></div>
+				<div class="total"><?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?></div>
+		</div>
+		<?php endforeach; ?>
+	</div>
+	
+	
+	<div class="total">
+		<?=EShop_Managers::PriceFormatter()->formatWithCurrency( $order->getTotalAmount_WithVAT() )?>
+	</div>
+</div>
+<?php endforeach; ?>
+</div>

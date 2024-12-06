@@ -1,0 +1,24 @@
+<?php
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Entity_WithEShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithEShopData $entity
+ */
+
+$entity = $this->getRaw('entity');
+?>
+
+<div>
+	<?php if($entity->isActive()):
+		echo $this->render('entity-activation/active');
+	else:
+		echo $this->render('entity-activation/not-active');
+	endif; ?>
+</div>
+<div><b><?=Tr::_('Master switch', dictionary: Tr::COMMON_DICTIONARY)?></b></div>
+<div></div>
+<div></div>
+

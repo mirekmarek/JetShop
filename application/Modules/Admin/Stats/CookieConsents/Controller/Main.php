@@ -13,10 +13,9 @@ use Jet\Http_Request;
 use Jet\Locale;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Shop_CookieSettings_Evidence_Agree;
-use JetApplication\Shop_CookieSettings_Evidence_Disagree;
-use JetApplication\Shops;
+use JetApplication\EShop_CookieSettings_Evidence_Agree;
+use JetApplication\EShop_CookieSettings_Evidence_Disagree;
+use JetApplication\EShops;
 use XLSXWriter\XLSXWriter;
 
 /**
@@ -30,16 +29,13 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function default_Action() : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
-		
 		$GET = Http_Request::GET();
 		
 		
-		$shop_key = $GET->getString('shop', '', array_keys(Shops::getScope()));
-		$shop = null;
-		if($shop_key) {
-			$shop = Shops::get( $shop_key );
+		$eshop_key = $GET->getString('eshop', '', array_keys(EShops::getScope()));
+		$eshop = null;
+		if($eshop_key) {
+			$eshop = EShops::get( $eshop_key );
 		}
 		
 		$date_from = new Data_DateTime( $GET->getString('date_from', date('Y-m-01',strtotime('last month'))) );
@@ -51,14 +47,14 @@ class Controller_Main extends MVC_Controller_Default
 			'AND',
 			'date_time <=' => $date_till
 		];
-		if($shop) {
+		if($eshop) {
 			$where[] = 'AND';
-			$where[] = $shop->getWhere();
+			$where[] = $eshop->getWhere();
 		}
 
 		
 		
-		$q = Shop_CookieSettings_Evidence_Agree::createQuery();
+		$q = EShop_CookieSettings_Evidence_Agree::createQuery();
 		$q->setSelect([
 			'IP',
 			'date_time',
@@ -68,7 +64,7 @@ class Controller_Main extends MVC_Controller_Default
 		$q->setWhere($where);
 		
 		
-		$agree_data = Shop_CookieSettings_Evidence_Agree::dataFetchAll(
+		$agree_data = EShop_CookieSettings_Evidence_Agree::dataFetchAll(
 			select: [
 				'IP',
 				'date_time',
@@ -79,7 +75,7 @@ class Controller_Main extends MVC_Controller_Default
 		);
 
 		
-		$disagree_data = Shop_CookieSettings_Evidence_Disagree::dataFetchAll(
+		$disagree_data = EShop_CookieSettings_Evidence_Disagree::dataFetchAll(
 			select: [
 				'IP',
 				'date_time'
@@ -139,8 +135,8 @@ class Controller_Main extends MVC_Controller_Default
 			
 			$writer->writeSheet( $sheet_data );
 			
-			if($shop) {
-				$file_name = 'cookies_agree_'.$shop->getKey().'_'.$date_from.'_'.$date_till.'_'.date('Ymd');
+			if($eshop) {
+				$file_name = 'cookies_agree_'.$eshop->getKey().'_'.$date_from.'_'.$date_till.'_'.date('Ymd');
 			} else {
 				$file_name = 'cookies_agree_'.$date_from.'_'.$date_till.'_'.date('Ymd');
 			}
@@ -155,8 +151,8 @@ class Controller_Main extends MVC_Controller_Default
 			Application::end();
 		}
 		
-		$this->view->setVar('shop_key', $shop_key);
-		$this->view->setVar('shop', $shop );
+		$this->view->setVar('eshop_key', $eshop_key);
+		$this->view->setVar('eshop', $eshop );
 		$this->view->setVar('date_from', $date_from->format('Y-m-d'));
 		$this->view->setVar('date_till', $date_till->format('Y-m-d'));
 		

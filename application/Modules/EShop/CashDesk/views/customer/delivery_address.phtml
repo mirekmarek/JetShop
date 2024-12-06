@@ -1,0 +1,125 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Customer;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+if(
+	$cash_desk->isDeliveryAddressDisabled() ||
+	!$cash_desk->getBillingAddressHasBeenSet()
+) {
+	return;
+}
+
+if($cash_desk->getDeliveryAddressHasBeenSet()) {
+	require 'delivery_address/has_been_set.phtml';
+
+	return;
+}
+
+
+require 'delivery_address/different_or_same.phtml';
+
+if(!$cash_desk->hasDifferentDeliveryAddress()):
+?>
+	<div class="continue-button-area">
+		<?=UI::button(Tr::_('Continue'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSameConfirm();')->setClass('primary')?>
+	</div>
+<?php
+
+else:
+
+	$form = $cash_desk->getDeliveryAddressForm();
+	
+	
+	$cash_desk->setDeliveryAddressEditable( true );
+	
+	foreach($form->getFields() as $field) {
+		if($field->getValue() && !$field->getLastErrorCode()) {
+			$field->input()->addCustomCssClass('is-valid');
+		}
+	}
+	?>
+	<?=$form->start()?>
+	
+	<span class="step-title"><?=Tr::_('Delivery address')?></span>
+	
+	
+	<?php
+	if( Customer::getCurrentCustomer() ) {
+		require 'delivery_address/select_address.phtml';
+	}
+	?>
+	
+	<?php if ($cash_desk->isCompanyOrder()): ?>
+		<div class="address-field" id="field_<?=$form->field('company_name')->getId()?>">
+			<?=$form->field('company_name')?>
+		</div>
+	<?php endif; ?>
+	
+	<div class="address-field" id="field_<?=$form->field('first_name')->getId()?>">
+		<?=$form->field('first_name')?>
+	</div>
+	<div class="address-field" id="field_<?=$form->field('surname')->getId()?>">
+		<?=$form->field('surname')?>
+	</div>
+	
+	<?php if ($cash_desk->isDeliveryAddressDisabled()): ?>
+	<div class="disabled-delivery-address">
+		<div class="address-field" id="field_<?=$form->field('address_street_no')->getId()?>">
+			<?=$form->field('address_street_no')?>
+		</div>
+		<div class="address-field" id="field_<?=$form->field('address_town')->getId()?>">
+			<?=$form->field('address_town')?>
+		</div>
+		<div class="address-field" id="field_<?=$form->field('address_zip')->getId()?>">
+			<?=$form->field('address_zip')?>
+		</div>
+	</div>
+<?php else:
+	
+	$form->field('address_street_no')->input()->setCustomRenderer( function() {
+		echo $this->renderByView();
+		?>
+		<div style="position: relative">
+			<div id="<?=$this->field->getId()?>_ws" class="whisperer-items" style="display: none;"></div>
+		</div>
+		<?php
+	} );
+	$form->field('address_town')->input()->setCustomRenderer( function() {
+		echo $this->renderByView();
+		?>
+		<div style="position: relative">
+			<div id="<?=$this->field->getId()?>_ws" class="whisperer-items" style="display: none;"></div>
+		</div>
+		<?php
+	} );
+	
+	?>
+	<div class="address-field" id="field_<?=$form->field('address_street_no')->getId()?>">
+		<?=$form->field('address_street_no')?>
+	</div>
+	<div class="address-field" id="field_<?=$form->field('address_town')->getId()?>">
+		<?=$form->field('address_town')?>
+	</div>
+	<div class="address-field" id="field_<?=$form->field('address_zip')->getId()?>">
+		<?=$form->field('address_zip')?>
+	</div>
+<?php endif; ?>
+	
+	<div class="continue-button-area">
+		<?=UI::button(Tr::_('Continue'))->setType('submit')->setClass('primary')?>
+	</div>
+	
+	<?=$form->end()?>
+	
+	<?php
+endif;

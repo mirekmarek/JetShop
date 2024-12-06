@@ -4,14 +4,14 @@ namespace JetApplicationModule\Admin\Content\Article\Articles;
 use Jet\DataModel_Definition;
 use Jet\Tr;
 use JetApplication\Content_Article;
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Trait;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 
 #[DataModel_Definition]
-class Article extends Content_Article implements Admin_Entity_WithShopData_Interface
+class Article extends Content_Article implements Admin_Entity_WithEShopData_Interface
 {
 	
-	use Admin_Entity_WithShopData_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	public function getEditURL() : string
 	{

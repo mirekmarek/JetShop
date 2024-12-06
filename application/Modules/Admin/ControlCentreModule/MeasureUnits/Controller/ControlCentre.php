@@ -14,6 +14,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 
 
 /**
@@ -27,7 +28,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		$save = function() {
 			$ok = true;
 			try {
-				MeasureUnit::saveCfg();
+				MeasureUnits::saveCfg();
 			} catch( Exception $e ) {
 				$ok = false;
 				UI_messages::danger( Tr::_('Error during configuration saving: ').$e->getMessage(), context: 'CC' );
@@ -43,7 +44,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 			$new_measure_unit = new MeasureUnit();
 			
 			if( $new_measure_unit->getAddForm()->catch() ) {
-				MeasureUnit::add( $new_measure_unit );
+				MeasureUnits::add( $new_measure_unit );
 				$save();
 				Http_Headers::reload();
 			}
@@ -53,13 +54,13 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		}
 		
 		
-		$selected_measure_unit_code = $GET->getString('measure_unit', default_value: '', valid_values: array_keys(MeasureUnit::getList()));
+		$selected_measure_unit_code = $GET->getString('measure_unit', default_value: '', valid_values: array_keys(MeasureUnits::getScope()));
 		
 		if($selected_measure_unit_code) {
-			$selected_measure_unit = MeasureUnit::get($selected_measure_unit_code);
+			$selected_measure_unit = MeasureUnits::get($selected_measure_unit_code);
 			
 			if($GET->exists('delete')) {
-				MeasureUnit::remove( $selected_measure_unit );
+				MeasureUnits::remove( $selected_measure_unit );
 				$save();
 				Http_Headers::reload(unset_GET_params: ['measure_unit', 'delete']);
 			}

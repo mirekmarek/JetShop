@@ -9,5 +9,5 @@ return [
 	'Delivery' => 'Dodání',
 	'Market place integration' => 'Integrace tržišť',
 	'System services' => 'Systémové služby',
-	'System' => '',
+	'System' => 'Systém',
 ];

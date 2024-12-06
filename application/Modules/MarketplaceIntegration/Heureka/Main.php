@@ -15,23 +15,23 @@ use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\Order_Event;
 use JetApplication\OrderDispatch;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
-use JetApplication\ShopConfig_ModuleConfig_PerShop;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_PerShop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
 use JetApplicationModule\Admin\Orders\Order;
-use JetShop\Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetShop\Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 
 
 class Main extends MarketplaceIntegration_Module implements
 	Admin_ControlCentre_Module_Interface,
-	ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
+	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
 	SysServices_Provider_Interface
 {
 	use Admin_ControlCentre_Module_Trait;
-	use Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	
 	public const IMPORT_SOURCE = 'Heureka';
 	
@@ -56,14 +56,14 @@ class Main extends MarketplaceIntegration_Module implements
 	}
 	
 	
-	public function isAllowedForShop( Shops_Shop $shop ): bool
+	public function isAllowedForShop( EShop $eshop ): bool
 	{
-		return $this->getConfig( $shop )->getApiUrl();
+		return $this->getConfig( $eshop )->getApiUrl();
 	}
 	
-	public function getConfig( Shops_Shop $shop ) : Config_PerShop|ShopConfig_ModuleConfig_PerShop
+	public function getConfig( EShop $eshop ) : Config_PerShop|EShopConfig_ModuleConfig_PerShop
 	{
-		return $this->getShopConfig( $shop );
+		return $this->getEshopConfig( $eshop );
 	}
 	
 	
@@ -92,15 +92,15 @@ class Main extends MarketplaceIntegration_Module implements
 		return true;
 	}
 	
-	public function actualizeBrands( Shops_Shop $shop ): void
+	public function actualizeBrands( EShop $eshop ): void
 	{
 	}
 	
-	public function actualizeCategories( Shops_Shop $shop ): void
+	public function actualizeCategories( EShop $eshop ): void
 	{
 	}
 	
-	public function actualizeCategory( Shops_Shop $shop, string $category_id ): void
+	public function actualizeCategory( EShop $eshop, string $category_id ): void
 	{
 	}
 	
@@ -108,18 +108,18 @@ class Main extends MarketplaceIntegration_Module implements
 	{
 		$servers = [];
 		
-		foreach(Shops::getList() as $shop) {
-			if(!$this->getConfig($shop)->getApiUrl()) {
+		foreach( EShops::getList() as $eshop) {
+			if(!$this->getConfig($eshop)->getApiUrl()) {
 				continue;
 			}
 			
-			$servers[$shop->getKey()] = new SysServices_Definition(
+			$servers[$eshop->getKey()] = new SysServices_Definition(
 				module: $this,
-				name: Tr::_('Heureka Marketplace Server - '.$shop->getShopName()),
+				name: Tr::_('Heureka Marketplace Server - '.$eshop->getName()),
 				description: Tr::_('Heureka Marketplace Server'),
-				service_code: 'mp_server_'.$shop->getKey(),
-				service: function() use ($shop)  {
-					$this->getServer( $shop )->handle();
+				service_code: 'mp_server_'.$eshop->getKey(),
+				service: function() use ($eshop)  {
+					$this->getServer( $eshop )->handle();
 				}
 			);
 		}
@@ -128,14 +128,14 @@ class Main extends MarketplaceIntegration_Module implements
 		return $servers;
 	}
 	
-	public function getServer( Shops_Shop $shop ) : Server
+	public function getServer( EShop $eshop ) : Server
 	{
-		return new Server( $this->getConfig( $shop ) );
+		return new Server( $this->getConfig( $eshop ) );
 	}
 	
-	public function getClient( Shops_Shop $shop ) : Client
+	public function getClient( EShop $eshop ) : Client
 	{
-		return new Client( $this->getConfig( $shop ) );
+		return new Client( $this->getConfig( $eshop ) );
 	}
 	
 	public function handleOrderEvent( Order_Event $order_event ): bool
@@ -175,7 +175,7 @@ class Main extends MarketplaceIntegration_Module implements
 	
 	protected function handleEvent_dispatched( Order_Event $order_event ) : bool
 	{
-		$client = $this->getClient( $order_event->getShop() );
+		$client = $this->getClient( $order_event->getEshop() );
 		
 		$tracking_url = '';
 		$dispatch = $order_event->getContext();
@@ -208,7 +208,7 @@ class Main extends MarketplaceIntegration_Module implements
 	
 	protected function setStatus( Order_Event $order_event, int $heureka_status_id) : bool
 	{
-		$client = $this->getClient( $order_event->getShop() );
+		$client = $this->getClient( $order_event->getEshop() );
 		if(!$client->putHeurekaOrderStatus(
 			$order_event->getOrderId(),
 			$heureka_status_id

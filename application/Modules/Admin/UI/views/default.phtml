@@ -8,7 +8,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_icon;
 use Jet\MVC_View;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
@@ -94,11 +94,11 @@ foreach($_menus as $menu) {
 			<div>
 				<?=$signatures_form->start()?>
 				
-				<?php foreach( Shops::getList() as $shop):
-					$signatures_form->field('/signature/'.$shop->getKey())->input()->addCustomCssStyle('height: 250px;')
+				<?php foreach( EShops::getList() as $eshop):
+					$signatures_form->field('/signature/'.$eshop->getKey())->input()->addCustomCssStyle('height: 250px;')
 					?>
-					<?=$shop->getShopName()?>:
-					<?=$signatures_form->field('/signature/'.$shop->getKey())->input()?>
+					<?=$eshop->getName()?>:
+					<?=$signatures_form->field('/signature/'.$eshop->getKey())->input()?>
 					<br>
 				<?php endforeach; ?>
 				

@@ -1,0 +1,24 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$selected_method = $cash_desk->getSelectedDeliveryMethod();
+
+if(!$selected_method->isPersonalTakeover()) {
+	$selected_method = null;
+}
+
+if($selected_method) {
+	require 'personal_takeover/selected.phtml';
+} else {
+	require 'personal_takeover/not-selected.phtml';
+}
+
+

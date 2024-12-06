@@ -12,19 +12,12 @@ use Jet\MVC_View;
 /**
  * @var MVC_View $this
  * @var Form $form
- * @var Order $order
  */
-
-$order = $this->getRaw('order');
-
-if( !$order->isEditable()) {
-	return;
-}
 
 echo UI::button(Tr::_('Note'))
 	->setClass(UI_button::CLASS_INFO)
 	->setIcon('pen-to-square')
-	->setOnClick("OrderNoteHandler.showDialog();");
+	->setOnClick("NoteHandler.showDialog();");
 
 
 

@@ -55,8 +55,6 @@ class Controller_Main extends MVC_Controller_Default
 	
 	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
@@ -142,7 +140,6 @@ class Controller_Main extends MVC_Controller_Default
 	
 	public function edit_Action() : void
 	{
-		Admin_Managers::UI()->initBreadcrumb(  );
 		Navigation_Breadcrumb::addURL( $this->stock_card->getAdminTitle() );
 		
 		$this->view->setVar('card', $this->stock_card);

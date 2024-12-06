@@ -29,5 +29,5 @@ return [
 	'Such a e-shop already exists (%shop%)' => 'Takový e-shop již existuje (%shop%)',
 	'Create e new e-shop' => 'Vytvořte si nový e-shop',
 	'New e-shop has been created' => 'Byl vytvořen nový e-shop',
-	'Default warehouse: ' => '',
+	'Default warehouse: ' => 'Výchozí sklad: ',
 ];

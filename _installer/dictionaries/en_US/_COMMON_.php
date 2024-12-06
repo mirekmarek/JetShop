@@ -4,4 +4,5 @@ return [
 	'Example Project Installer' => '',
 	'Go Back' => '',
 	'PHP Jet - Example Project Installer' => '',
+	'Jet Shop Installer' => '',
 ];

@@ -5,7 +5,7 @@ use Jet\Tr;
 use JetApplication\DeliveryNote;
 use JetApplication\EMail;
 use JetApplication\Invoices;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 class EMailTemplate_DeliveryNote extends EMailTemplate
 {
@@ -18,11 +18,11 @@ class EMailTemplate_DeliveryNote extends EMailTemplate
 	}
 	
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function initTest( EShop $eshop ): void
 	{
 		$ids = DeliveryNote::dataFetchCol(
 			select: ['id'],
-			where: $shop->getWhere(),
+			where: $eshop->getWhere(),
 			order_by: '-id',
 			limit: 1000
 		);
@@ -33,7 +33,7 @@ class EMailTemplate_DeliveryNote extends EMailTemplate
 		$this->invoice = DeliveryNote::get($id);
 	}
 	
-	public function generateAttachment( Shops_Shop $shop, EMail $email ): void
+	public function generateAttachment( EShop $eshop, EMail $email ): void
 	{
 		/**
 		 * @var DeliveryNote $invoice

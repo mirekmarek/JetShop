@@ -76,7 +76,10 @@ abstract class Core_OrderDispatch_TrackingHistory extends DataModel
 	)]
 	protected string $our_status = '';
 	
-	public function __construct(
+	public function __construct() {
+	}
+	
+	public function setup(
 		int $dispatch_id,
 		string $carrier_status_id,
 		string $carrier_status_description,
@@ -84,7 +87,8 @@ abstract class Core_OrderDispatch_TrackingHistory extends DataModel
 		string $carrier_notes,
 		string $delivered_person,
 		string $our_status
-	) {
+	) : void
+	{
 		$this->dispatch_id = $dispatch_id;
 		$this->carrier_status_id = $carrier_status_id;
 		$this->carrier_status_description = $carrier_status_description;

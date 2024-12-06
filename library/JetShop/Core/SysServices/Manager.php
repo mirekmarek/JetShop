@@ -3,14 +3,14 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Data_DateTime;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\SysServices_Definition;
 
 abstract class Core_SysServices_Manager extends Application_Module {
 
 	abstract public function handleSysServices() : void;
 	
-	abstract public function getSysServiceURL( SysServices_Definition $service, ?Shops_Shop $shop=null ) : string;
+	abstract public function getSysServiceURL( SysServices_Definition $service, ?EShop $eshop=null ) : string;
 	
 	public function shutdownService( SysServices_Definition $service ) : void
 	{

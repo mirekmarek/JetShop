@@ -5,7 +5,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Property;
 use JetApplication\Product;
 
@@ -13,7 +13,7 @@ use JetApplication\Product;
 	name: 'products_text_parameters',
 	database_table_name: 'products_text_parameters',
 )]
-abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
+abstract class Core_Product_Parameter_TextValue extends Entity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(
@@ -92,7 +92,7 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 				$map[$property_id] = [];
 			}
 			
-			$map[$property_id][$item->getShopKey()] = $item;
+			$map[$property_id][$item->getEshopKey()] = $item;
 		}
 		
 		return $map;
@@ -114,7 +114,7 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 			
 			$map = [];
 			foreach( $_map as $d ) {
-				$key = $d->getProductId() . ':' . $d->getShopKey().':'.$d->getText();
+				$key = $d->getProductId() . ':' . $d->getEshopKey().':'.$d->getText();
 				$map[$key] = $d;
 			}
 			
@@ -151,7 +151,7 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 			 * @var static $param
 			 */
 			$param_item = new static();
-			$param_item->setShop( $param->getShop() );
+			$param_item->setEshop( $param->getEshop() );
 			$param_item->setProductId( $set_product_id );
 			$param_item->setPropertyId( $param->getPropertyId() );
 			$param_item->setText( $param->getText() );
@@ -177,13 +177,13 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 			$map = [];
 			foreach( $_map as $d ) {
 				$property_id = $d->getPropertyId();
-				$shop_key = $d->getShopKey();
+				$eshop_key = $d->getEshopKey();
 				
 				if(!isset($map[$property_id])) {
 					$map[$property_id] = [];
 				}
 				
-				$map[$property_id][$shop_key] = $d;
+				$map[$property_id][$eshop_key] = $d;
 			}
 			
 			return $map;
@@ -200,14 +200,14 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 		}
 		
 		foreach($master_map as $property_id=>$values) {
-			foreach( $values as $shop_key=>$master_value ) {
+			foreach( $values as $eshop_key=>$master_value ) {
 				/**
 				 * @var static $master_value
 				 */
 				foreach($variant_maps as $variant_id=>$variant_values) {
-					if(!isset($variant_maps[$variant_id][$property_id][$shop_key])) {
+					if(!isset($variant_maps[$variant_id][$property_id][$eshop_key])) {
 						$variant_value = new static();
-						$variant_value->setShop( $master_value->getShop() );
+						$variant_value->setEshop( $master_value->getEshop() );
 						$variant_value->setPropertyId( $property_id );
 						$variant_value->setProductId( $variant_id );
 						$variant_value->setText( $master_value->getText() );
@@ -219,7 +219,7 @@ abstract class Core_Product_Parameter_TextValue extends Entity_WithShopRelation
 					/**
 					 * @var static $variant_value
 					 */
-					$variant_value = $variant_maps[$variant_id][$property_id][$shop_key];
+					$variant_value = $variant_maps[$variant_id][$property_id][$eshop_key];
 					if($variant_value->getText()!=$master_value->getText()) {
 						$variant_value->setText( $master_value->getText() );
 						$variant_value->save();

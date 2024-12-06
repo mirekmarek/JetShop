@@ -22,4 +22,6 @@ return [
 	'Is default internal currency' => '',
 	'Exchange rate: ' => '',
 	'Is default' => '',
+	'Show exchange rates' => '',
+	'Exchagne rates' => '',
 ];

@@ -22,30 +22,34 @@ $prev_url = $listing->getPrevEditUrl( $complaint->getId() );
 $next_url = $listing->getNextEditUrl( $complaint->getId() );
 
 ?>
-<div class="toolbar" id="main-toolbar">
-	<div>
-		<?=UI::button_goBack()?>
+<div class="toolbar" id="main-toolbar" style="display: grid;grid-template-columns: 1fr;gap:10px;">
+	<div style="display: flex;align-items: center;gap: 10px;">
+		<div>
+			<?=UI::button_goBack()?>
+		</div>
+		
+		<div style="padding-left:20px;width: 80px;text-align: center">
+			<?php if($prev_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+			<?php endif; ?>
+		</div>
+		
+		
+		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+			<b><?=$complaint->getNumber()?></b>
+		</div>
+		
+		<div style="width: 50px;text-align: center">
+			<?php if($next_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+			<?php endif; ?>
+		</div>
+		
+		<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
+		
+		<?=Handler::getHandler( Handler_SendMailConfirmation_Main::KEY )->renderButton()?>
+		<?=Handler::getHandler( Handler_DispatchNewGoods_Main::KEY )->renderButton()?>
+		<?=Handler::getHandler( Handler_Reject_Main::KEY )->renderButton()?>
+	
 	</div>
-	
-	<div style="padding-left:20px;width: 80px;text-align: center">
-		<?php if($prev_url): ?>
-			<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
-		<?php endif; ?>
-	</div>
-	
-	
-	<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
-		<b><?=$complaint->getNumber()?></b>
-	</div>
-	
-	<div style="width: 50px;text-align: center">
-		<?php if($next_url): ?>
-			<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
-		<?php endif; ?>
-	</div>
-	
-	<?=Handler::getHandler( Handler_SendMailConfirmation_Main::KEY )->renderButton()?>
-	<?=Handler::getHandler( Handler_DispatchNewGoods_Main::KEY )->renderButton()?>
-	<?=Handler::getHandler( Handler_Reject_Main::KEY )->renderButton()?>
-	
 </div>

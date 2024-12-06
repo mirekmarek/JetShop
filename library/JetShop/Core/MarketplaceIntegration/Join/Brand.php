@@ -4,15 +4,15 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 
 #[DataModel_Definition(
 	name: 'marketplace_join_brand',
 	database_table_name: 'marketplace_join_brand',
 )]
-abstract class Core_MarketplaceIntegration_Join_Brand extends Entity_WithShopRelation
+abstract class Core_MarketplaceIntegration_Join_Brand extends Entity_WithEShopRelation
 {
 	
 	/**
@@ -47,19 +47,19 @@ abstract class Core_MarketplaceIntegration_Join_Brand extends Entity_WithShopRel
 	protected string $marketplace_brand_id = '';
 	
 	
-	public static function get( string $marketplace_code, Shops_Shop $shop, int $brand_id  ) : static|null
+	public static function get( string $marketplace_code, EShop $eshop, int $brand_id  ) : static|null
 	{
 		$i = static::load( [
 			'marketplace_code' => $marketplace_code,
 			'AND',
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'brand_id' => $brand_id
 		] );
 		
 		if(!$i) {
 			$i = new static();
-			$i->setShop( $shop );
+			$i->setEshop( $eshop );
 			$i->setMarketplaceCode( $marketplace_code );
 			$i->setBrandId( $brand_id );
 		}

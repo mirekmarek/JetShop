@@ -1,0 +1,59 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$form = $cash_desk->getLoginForm();
+$form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+]);
+$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 10
+]);
+
+$form->renderer()->addJsAction('onsubmit', 'CashDesk.customer.registration.login();return false;');
+
+$password_field = $form->field('password');
+
+$password_field->renderer()->setCustomRenderer(function() use ( $password_field ) {
+	?>
+	<div class="form-field">
+		<label><?=$password_field->getLabel()?></label>
+		<div><?=$password_field->input().$password_field->error()?></div>
+	</div>
+	<?php
+	
+});
+?>
+
+<div class="step-title"><?=Tr::_('Welcome back!')?></div>
+
+<?=Tr::_('Please log in. Maybe we have a loyalty discount for you :-)')?><br />
+<br />
+<?=Tr::_('Please enter a valid password for your <strong>%EMAIL% </strong> user account', ['EMAIL'=>$cash_desk->getEmailAddress()])?>
+(<a href="#" onclick="CashDesk.customer.email.back();return false;"><?=Tr::_('change e-mail')?></a>)<br />
+<br />
+<br />
+
+
+<?=$form->start()?>
+<?=$form->message()?>
+<?=$form->field('password')?>
+
+<div class="continue-button-area">
+	<?=UI::button(Tr::_('Today I prefer to continue without logging in'))->setClass('link')->setOnclick('CashDesk.customer.registration.continueWithoutRegistration();')?>
+	<?=UI::button(Tr::_('I forget password ...'))->setClass('info')->setOnclick("PasswordReset.start('".$cash_desk->getEmailAddress()."');")?>
+	<?=UI::button(Tr::_('Continue'))->setClass('primary')->setOnclick('CashDesk.customer.registration.login();')?>
+</div>
+<?=$form->end()?>
+
+

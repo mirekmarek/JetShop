@@ -272,7 +272,6 @@ class Index extends DataModel {
 	
 	public static function updateIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
-		
 		$index = static::load([
 			'entity_type' => $object::getEntityType(),
 			'AND',

@@ -49,7 +49,7 @@ class Handler_ChangeEMailAndPhone_Main extends Handler {
 					return true;
 				}
 				
-				$exists = Customer::getByEmail( $new_email_address, $this->complaint->getShop() );
+				$exists = Customer::getByEmail( $new_email_address, $this->complaint->getEshop() );
 				if(!$exists) {
 					return true;
 				}
@@ -105,52 +105,26 @@ class Handler_ChangeEMailAndPhone_Main extends Handler {
 			
 			if($this->form->validate()) {
 				$new_email = $this->form->field('email')->getValue();
-				$new_pone = $this->form->field('phone')->getValue();
+				$new_phone = $this->form->field('phone')->getValue();
 				if($this->form->fieldExists('update_customer_account')) {
 					$update_customer_account = $this->form->field('update_customer_account')->getValue();
 				} else {
 					$update_customer_account = false;
 				}
 				
-				$change = $this->complaint->startChange();
-				$email_updated = false;
+				$change = $this->complaint->updateEmailAndPhone(
+					new_email: $new_email,
+					new_phone: $new_phone,
+					update_customer_account: $update_customer_account
+				);
 				
-				if($new_email!=$this->complaint->getEmail()) {
-					
-					$change->addChange('email', $this->complaint->getEmail(), $new_email);
-					$this->complaint->setEmail( $new_email );
-					$email_updated = true;
-					
+				if($change->hasChange('email')) {
 					UI_messages::success(Tr::_('E-mail has been changed'));
 				}
-				
-				if($new_pone!=$this->complaint->getPhone()) {
-					
-					$change->addChange('phone', $this->complaint->getPhone(), $new_pone);
-					$this->complaint->setPhone( $new_pone );
-					
-					UI_messages::success(Tr::_('Phone has been changed'));
+				if($change->hasChange('phone')) {
+					UI_messages::success( Tr::_( 'Phone has been changed' ) );
 				}
 				
-				if($change->hasChange()) {
-					$this->complaint->save();
-					$change->save();
-				}
-				
-				if($update_customer_account) {
-					$customer = Customer::get( $this->complaint->getCustomerId() );
-					
-					if($customer->getEmail()!=$new_email) {
-						
-						$customer->changeEmail( $new_email, 'complaint:'.$this->complaint->getNumber() );
-					}
-					
-					if($customer->getPhoneNumber()!=$new_pone) {
-						
-						$customer->setPhoneNumber( $new_pone );
-						$customer->save();
-					}
-				}
 				
 				
 				AJAX::operationResponse(true);

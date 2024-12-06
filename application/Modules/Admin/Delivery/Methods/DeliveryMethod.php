@@ -12,18 +12,18 @@ use Jet\Form;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Trait;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Carrier;
 use JetApplication\Delivery_Method;
 use JetApplication\Pricelists;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 #[DataModel_Definition]
-class DeliveryMethod extends Delivery_Method implements Admin_Entity_WithShopData_Interface
+class DeliveryMethod extends Delivery_Method implements Admin_Entity_WithEShopData_Interface
 {
-	use Admin_Entity_WithShopData_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	protected ?Form $set_price_form = null;
 	
@@ -69,16 +69,17 @@ class DeliveryMethod extends Delivery_Method implements Admin_Entity_WithShopDat
 			}
 		}
 		
+		
 		/**
 		 * @var Form_Field_Select $services_field
 		 * @var Form_Field_Select $dp_type_field
 		 */
-		foreach(Shops::getList() as $shop) {
-			$services_field = $form->getField('/shop_data/'.$shop->getKey().'/carrier_service_code');
+		foreach( EShops::getList() as $eshop) {
+			$services_field = $form->getField('/eshop_data/'.$eshop->getKey().'/carrier_service_code');
 			$services_field->setIsRequired( false );
 			$services_field->setSelectOptions( $services );
 			
-			$dp_type_field = $form->getField('/shop_data/'.$shop->getKey().'/allowed_delivery_point_types');
+			$dp_type_field = $form->getField('/eshop_data/'.$eshop->getKey().'/allowed_delivery_point_types');
 			$dp_type_field->setIsRequired( false );
 			$dp_type_field->setSelectOptions( $delivery_point_types );
 			

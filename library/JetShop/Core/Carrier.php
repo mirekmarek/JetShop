@@ -9,7 +9,7 @@ use Jet\Application_Module;
 
 use JetApplication\Carrier;
 use JetApplication\Carrier_Document;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Service;
 use JetApplication\Managers;
@@ -64,10 +64,10 @@ abstract class Core_Carrier extends Application_Module
 	
 	
 	/**
-	 * @param Delivery_Method_ShopData $delivery_method
+	 * @param Delivery_Method_EShopData $delivery_method
 	 * @return Carrier_Service[]
 	 */
-	public function getPossibleServices( Delivery_Method_ShopData $delivery_method ) : array
+	public function getPossibleServices( Delivery_Method_EShopData $delivery_method ) : array
 	{
 		$all_services = $this->getServices();
 		$possible_services = [];
@@ -87,7 +87,7 @@ abstract class Core_Carrier extends Application_Module
 	}
 	
 	
-	public function getPossibleServicesScope( Delivery_Method_ShopData $delivery_method ) : array
+	public function getPossibleServicesScope( Delivery_Method_EShopData $delivery_method ) : array
 	{
 		$scope = [''=>''];
 		foreach($this->getPossibleServices( $delivery_method ) as $service) {

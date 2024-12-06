@@ -2,56 +2,56 @@
 namespace JetShop;
 
 
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order;
-use JetApplication\Payment_Method_Option_ShopData;
-use JetApplication\Payment_Method_ShopData;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Shops_Shop;
+use JetApplication\Payment_Method_Option_EShopData;
+use JetApplication\Payment_Method_EShopData;
+use JetApplication\Pricelist;
+use JetApplication\EShop;
 use JetApplication\CashDesk_Confirm_AgreeFlag;
 
 interface Core_CashDesk {
 	
-	public function getShop() : Shops_Shop;
+	public function getEshop() : EShop;
 	
-	public function getPricelist() : Pricelists_Pricelist;
+	public function getPricelist() : Pricelist;
 	
-	public function getAvailability() : Availabilities_Availability;
+	public function getAvailability() : Availability;
 	
 	/**
-	 * @return Delivery_Method_ShopData[]
+	 * @return Delivery_Method_EShopData[]
 	 */
 	public function getAvailableDeliveryMethods() : array;
 	
-	public function getDeliveryMethod( int $id ) : ?Delivery_Method_ShopData;
+	public function getDeliveryMethod( int $id ) : ?Delivery_Method_EShopData;
 	
-	public function getDefaultDeliveryMethod() : ?Delivery_Method_ShopData;
+	public function getDefaultDeliveryMethod() : ?Delivery_Method_EShopData;
 	
-	public function getSelectedDeliveryMethod() : ?Delivery_Method_ShopData;
+	public function getSelectedDeliveryMethod() : ?Delivery_Method_EShopData;
 	
 	public function selectDeliveryMethod( int $id ) : bool;
 	
-	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method_ShopData $method, Carrier_DeliveryPoint $point ) : bool;
+	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method_EShopData $method, Carrier_DeliveryPoint $point ) : bool;
 	
 	public function getSelectedPersonalTakeoverDeliveryPoint() : ?Carrier_DeliveryPoint;
 	
 	
 	/**
-	 * @return Payment_Method_ShopData[]
+	 * @return Payment_Method_EShopData[]
 	 */
 	public function getAvailablePaymentMethods() : iterable;
 	
-	public function getDefaultPaymentMethod() : ?Payment_Method_ShopData;
+	public function getDefaultPaymentMethod() : ?Payment_Method_EShopData;
 	
-	public function getSelectedPaymentMethod() : Payment_Method_ShopData;
+	public function getSelectedPaymentMethod() : Payment_Method_EShopData;
 	
 	public function selectPaymentMethod( int $id ) : bool;
 	
-	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option_ShopData;
+	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option_EShopData;
 	
 	public function selectPaymentMethodOption( string $option_code ) : bool;
 	
@@ -172,7 +172,7 @@ interface Core_CashDesk {
 	/**
 	 * @return Discounts_Discount[]
 	 */
-	public function getDiscounts() : array;
+	public function getDiscounts( bool $reset=false ) : array;
 	
 	public function addDiscount( Discounts_Discount $discount ) : void;
 	

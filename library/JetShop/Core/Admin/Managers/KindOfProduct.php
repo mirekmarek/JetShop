@@ -1,11 +1,11 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Admin_EntityManager_WithShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
 
-interface Core_Admin_Managers_KindOfProduct extends Admin_EntityManager_WithShopData_Interface
+interface Core_Admin_Managers_KindOfProduct extends Admin_EntityManager_WithEShopData_Interface
 {
 	
 	public function renderSelectWidget( string $on_select,

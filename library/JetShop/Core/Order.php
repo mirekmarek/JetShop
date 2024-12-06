@@ -6,13 +6,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\Availabilities;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
@@ -21,13 +21,13 @@ use JetApplication\Order_ProductOverviewItem;
 use JetApplication\Order_Trait_Events;
 use JetApplication\Order_Trait_Status;
 use JetApplication\Order_Trait_Changes;
-use JetApplication\Payment_Method_ShopData;
+use JetApplication\Payment_Method_EShopData;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Context_ProvidesContext_Trait;
 
@@ -42,7 +42,7 @@ use JetApplication\Context_ProvidesContext_Trait;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Order extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
 {
 	
 	
@@ -299,32 +299,62 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $product_amount = 0.0;
+	protected float $product_amount_with_VAT = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $product_amount_without_VAT = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $delivery_amount = 0.0;
+	protected float $delivery_amount_with_VAT = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $delivery_amount_without_VAT = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $payment_amount = 0.0;
+	protected float $payment_amount_with_VAT = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $payment_amount_without_VAT = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $service_amount = 0.0;
+	protected float $service_amount_with_VAT = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $service_amount_without_VAT = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $discount_amount = 0.0;
+	protected float $discount_amount_with_VAT = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $discount_amount_without_VAT = 0.0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_FLOAT
 	)]
-	protected float $total_amount = 0.0;
+	protected float $total_amount_with_VAT = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT
+	)]
+	protected float $total_amount_without_VAT = 0.0;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -399,7 +429,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		return $this->currency_code;
 	}
 	
-	public function getCurrency() : Currencies_Currency
+	public function getCurrency() : Currency
 	{
 		return Currencies::get( $this->currency_code );
 	}
@@ -414,7 +444,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		return $this->pricelist_code;
 	}
 	
-	public function getPricelist() : Pricelists_Pricelist
+	public function getPricelist() : Pricelist
 	{
 		return Pricelists::get( $this->pricelist_code );
 	}
@@ -429,7 +459,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		return $this->availability_code;
 	}
 	
-	public function getAvailability(): Availabilities_Availability
+	public function getAvailability(): Availability
 	{
 		return Availabilities::get( $this->availability_code );
 	}
@@ -445,9 +475,9 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		return $this->getDatePurchased();
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
-		return $this->getShop();
+		return $this->getEshop();
 	}
 	
 	public function getConversionSource(): string
@@ -765,7 +795,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		return $this->delivery_method_id;
 	}
 	
-	public function setDeliveryMethod( Delivery_Method_ShopData $delivery_method, string $delivery_point_code ) : void
+	public function setDeliveryMethod( Delivery_Method_EShopData $delivery_method, string $delivery_point_code ) : void
 	{
 		/**
 		 * @var Order $order
@@ -784,9 +814,9 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		
 	}
 
-	public function getDeliveryMethod() : Delivery_Method_ShopData
+	public function getDeliveryMethod() : Delivery_Method_EShopData
 	{
-		return Delivery_Method_ShopData::get( $this->getDeliveryMethodId(), $this->getShop() );
+		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
 	}
 
 	public function setDeliveryMethodId( int $delivery_method_id ) : void
@@ -806,7 +836,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 	
 	
 	
-	public function setPaymentMethod( Payment_Method_ShopData $payment_method, string $payment_option_id='' ) : void
+	public function setPaymentMethod( Payment_Method_EShopData $payment_method, string $payment_option_id='' ) : void
 	{
 		/**
 		 * @var Order $order
@@ -845,9 +875,9 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		$this->payment_method_id = $payment_method_id;
 	}
 
-	public function getPaymentMethod() : Payment_Method_ShopData
+	public function getPaymentMethod() : Payment_Method_EShopData
 	{
-		return Payment_Method_ShopData::get( $this->getPaymentMethodId(), $this->getShop() );
+		return Payment_Method_EShopData::get( $this->getPaymentMethodId(), $this->getEshop() );
 	}
 
 	public function getPaymentMethodSpecification() : string
@@ -860,35 +890,65 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		$this->payment_method_specification = $payment_method_specification;
 	}
 	
-	public function getDiscountAmount() : float
+	public function getDiscountAmount_WithVAT() : float
 	{
-		return $this->discount_amount;
+		return $this->discount_amount_with_VAT;
+	}
+	
+	public function getDiscountAmount_WithoutVAT() : float
+	{
+		return $this->discount_amount_without_VAT;
 	}
 
-	public function getTotalAmount() : float
+	public function getTotalAmount_WithVAT() : float
 	{
-		return $this->total_amount;
+		return $this->total_amount_with_VAT;
+	}
+	
+	public function getTotalAmount_WithoutVAT() : float
+	{
+		return $this->total_amount_without_VAT;
 	}
 
-	public function getProductAmount() : float
+	public function getProductAmount_WithVAT() : float
 	{
-		return $this->product_amount;
+		return $this->product_amount_with_VAT;
+	}
+	
+	public function getProductAmount_WithoutVAT() : float
+	{
+		return $this->product_amount_without_VAT;
 	}
 
-	public function getDeliveryAmount() : float
+	public function getDeliveryAmount_WithVAT() : float
 	{
-		return $this->delivery_amount;
+		return $this->delivery_amount_with_VAT;
+	}
+	
+	public function getDeliveryAmount_WithoutVAT() : float
+	{
+		return $this->delivery_amount_without_VAT;
 	}
 
 
-	public function getPaymentAmount() : float
+	public function getPaymentAmount_WithVAT() : float
 	{
-		return $this->payment_amount;
+		return $this->payment_amount_with_VAT;
+	}
+	
+	public function getPaymentAmount_WithoutVAT() : float
+	{
+		return $this->payment_amount_without_VAT;
 	}
 
-	public function getServiceAmount() : float
+	public function getServiceAmount_WithVAT() : float
 	{
-		return $this->service_amount;
+		return $this->service_amount_with_VAT;
+	}
+	
+	public function getServiceAmount_WithoutVAT() : float
+	{
+		return $this->service_amount_without_VAT;
 	}
 
 	/**
@@ -951,19 +1011,25 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 	public function recalculate() : void
 	{
 
-		$this->total_amount = 0.0;
-		$this->product_amount = 0.0;
-		$this->service_amount = 0.0;
-		$this->delivery_amount = 0.0;
-		$this->payment_amount = 0.0;
-		$this->discount_amount = 0.0;
+		$this->total_amount_with_VAT = 0.0;
+		$this->total_amount_without_VAT = 0.0;
+		$this->product_amount_with_VAT = 0.0;
+		$this->product_amount_without_VAT = 0.0;
+		$this->service_amount_with_VAT = 0.0;
+		$this->service_amount_without_VAT = 0.0;
+		$this->delivery_amount_with_VAT = 0.0;
+		$this->delivery_amount_without_VAT = 0.0;
+		$this->payment_amount_with_VAT = 0.0;
+		$this->payment_amount_without_VAT = 0.0;
+		$this->discount_amount_with_VAT = 0.0;
+		$this->discount_amount_without_VAT = 0.0;
 		
 		$this->total_volume_of_products = 0.0;
 		$this->total_weight_of_products = 0.0;
 
 		foreach( $this->items as $order_item ) {
 			if ( $order_item->isPhysicalProduct() ) {
-				$product = Product_ShopData::get( $order_item->getItemId(), $this->getShop() );
+				$product = Product_EShopData::get( $order_item->getItemId(), $this->getEshop() );
 				
 				$this->total_volume_of_products += ($product->getBoxesVolume()*$order_item->getNumberOfUnits());
 				$this->total_weight_of_products += ($product->getBoxesWeight()*$order_item->getNumberOfUnits());
@@ -971,28 +1037,35 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 			
 			
 
-			$amount = $order_item->getTotalAmount();
+			$amount_with_VAT = $order_item->getTotalAmount_WithVat();
+			$amount_without_VAT = $order_item->getTotalAmount_WithoutVat();
 
-			$this->total_amount += $amount;
+			$this->total_amount_with_VAT += $amount_with_VAT;
+			$this->total_amount_without_VAT += $amount_without_VAT;
 
 			switch($order_item->getType()) {
 				case Order_Item::ITEM_TYPE_GIFT:
 				break;
 				case Order_Item::ITEM_TYPE_PRODUCT:
 				case Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT:
-					$this->product_amount += $amount;
+					$this->product_amount_with_VAT += $amount_with_VAT;
+					$this->product_amount_without_VAT += $amount_without_VAT;
 				break;
 				case Order_Item::ITEM_TYPE_SERVICE:
-					$this->service_amount += $amount;
+					$this->service_amount_with_VAT += $amount_with_VAT;
+					$this->service_amount_without_VAT += $amount_without_VAT;
 				break;
 				case Order_Item::ITEM_TYPE_PAYMENT:
-					$this->payment_amount += $amount;
+					$this->payment_amount_with_VAT += $amount_with_VAT;
+					$this->payment_amount_without_VAT += $amount_without_VAT;
 				break;
 				case Order_Item::ITEM_TYPE_DELIVERY:
-					$this->delivery_amount += $amount;
+					$this->delivery_amount_with_VAT += $amount_with_VAT;
+					$this->delivery_amount_without_VAT += $amount_without_VAT;
 				break;
 				case Order_Item::ITEM_TYPE_DISCOUNT:
-					$this->discount_amount += $amount;
+					$this->discount_amount_with_VAT += $amount_with_VAT;
+					$this->discount_amount_without_VAT += $amount_without_VAT;
 					break;
 
 			}
@@ -1044,9 +1117,9 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		return $orders[0];
 	}
 	
-	public static function getByImportSource( string $import_source, string $import_remote_id, Shops_Shop $shop ) : Order|null
+	public static function getByImportSource( string $import_source, string $import_remote_id, EShop $eshop ) : Order|null
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where[] = [
 			'import_source' => $import_source,
@@ -1064,9 +1137,9 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 	}
 	
 	
-	public static function getByNumber( string $number, Shops_Shop $shop ) : Order|null
+	public static function getByNumber( string $number, EShop $eshop ) : Order|null
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where[] = [
 			'number' => $number
@@ -1210,7 +1283,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 			
 			if( ($set_items=$item->getSetItems()) ) {
 				foreach( $item->getSetItems() as $set_item ) {
-					$product = Product_ShopData::get( $set_item->getItemId(), $this->getShop() );
+					$product = Product_EShopData::get( $set_item->getItemId(), $this->getEshop() );
 					
 					if(
 						!$product ||
@@ -1232,7 +1305,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 				continue;
 			}
 			
-			$product = Product_ShopData::get( $item->getItemId(), $this->getShop() );
+			$product = Product_EShopData::get( $item->getItemId(), $this->getEshop() );
 			if(
 				!$product ||
 				!$product->isPhysicalProduct()
@@ -1277,7 +1350,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 			
 			if( ($set_items=$item->getSetItems()) ) {
 				foreach( $item->getSetItems() as $set_item ) {
-					$product = Product_ShopData::get( $set_item->getItemId(), $this->getShop() );
+					$product = Product_EShopData::get( $set_item->getItemId(), $this->getEshop() );
 					
 					if(
 						!$product ||
@@ -1299,7 +1372,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 				continue;
 			}
 			
-			$product = Product_ShopData::get( $item->getItemId(), $this->getShop() );
+			$product = Product_EShopData::get( $item->getItemId(), $this->getEshop() );
 			if(
 				!$product ||
 				!$product->isVirtual()
@@ -1346,7 +1419,7 @@ abstract class Core_Order extends Entity_WithShopRelation implements NumberSerie
 		$new_order->setDatePurchased( Data_DateTime::now() );
 		$new_order->setIpAddress('clone:'.$this->getNumber());
 		
-		$new_order->setShop( $this->getShop() );
+		$new_order->setEshop( $this->getEshop() );
 		$new_order->setCurrencyCode( $this->getCurrencyCode() );
 		$new_order->setAvailabilityCode( $this->getAvailabilityCode() );
 		$new_order->setPricelistCode( $this->getPricelistCode() );

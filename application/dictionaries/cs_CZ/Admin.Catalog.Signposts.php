@@ -35,7 +35,9 @@ return [
 	'Add category:' => 'Přidat kategorii:',
 	'Inactive' => 'Neaktivní',
 	'Unknown item %ID%' => 'Neznámá položka %ID%',
-	'Images' => '',
-	'Main image' => '',
-	'Pictogram - Product detail' => '',
+	'Images' => 'snímky',
+	'Main image' => 'Hlavní obrázek',
+	'Pictogram - Product detail' => 'Piktogram - Detail produktu',
+	'Delete' => 'Vymazat',
+	'Do you really want to delete this Signpost?' => 'Opravdu chcete smazat tento rozcestník?',
 ];

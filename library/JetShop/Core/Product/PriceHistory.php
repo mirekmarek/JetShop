@@ -6,7 +6,7 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\Entity_Basic;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplication\Product_Price;
 
 #[DataModel_Definition(
@@ -89,7 +89,7 @@ abstract class Core_Product_PriceHistory extends Entity_Basic
 	/**
 	 * @return static[]
 	 */
-	public static function get( Pricelists_Pricelist $pricelist, int $product_id ) : array
+	public static function get( Pricelist $pricelist, int $product_id ) : array
 	{
 		$where = [];
 		$where['product_id'] = $product_id;

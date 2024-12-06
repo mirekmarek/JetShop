@@ -13,7 +13,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -27,15 +27,15 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		$GET = Http_Request::GET();
 		
-		$selected_shop_code = $GET->getString('shop', default_value: '', valid_values: array_keys(Shops::getList()));
+		$selected_eshop_code = $GET->getString('eshop', default_value: '', valid_values: array_keys(EShops::getList()));
 		
-		if($selected_shop_code) {
-			$selected_shop = Shops::get($selected_shop_code);
+		if($selected_eshop_code) {
+			$selected_eshop = EShops::get($selected_eshop_code);
 			
-			if( $selected_shop->getEditForm()->catch() ) {
+			if( $selected_eshop->getEditForm()->catch() ) {
 				$ok = true;
 				try {
-					$selected_shop->save();
+					$selected_eshop->save();
 				} catch( Exception $e ) {
 					$ok = false;
 					UI_messages::danger( Tr::_('Error during configuration saving: ').$e->getMessage(), context: 'CC' );
@@ -48,7 +48,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 				Http_Headers::reload();
 			}
 			
-			$this->view->setVar('selected_shop', $selected_shop);
+			$this->view->setVar('selected_eshop', $selected_eshop);
 		}
 		
 		

@@ -53,7 +53,7 @@ echo $controller->getEditorManager()->renderToolbar( $rcp?$rcp->getAddForm():nul
 		<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 0.5fr 1fr 3fr">
 			<div style="font-weight: bolder;"><?= Tr::_('Order number:')?></div>
 			<div>
-				<input type="search" class="form-control" value="<?=$order_number?>" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['order'])?>&order='+encodeURIComponent(this.value)">
+				<input type="search" class="form-control" value="<?=$order_number?>" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['order'])?>&order='+encodeURIComponent(this.value)">
 			</div>
 			<div></div>
 			<?php if($order_number && !$rcp): ?>
@@ -68,7 +68,7 @@ echo $controller->getEditorManager()->renderToolbar( $rcp?$rcp->getAddForm():nul
 			<?php if(!$order_number): ?>
 			<div style="font-weight: bolder;"><?= Tr::_('Supplier:')?></div>
 			<div>
-				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
+				<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
 					<?php foreach(Supplier::getScope() as $id=>$name):
 						if( $rcp?->getSupplierId()==$id ):
 							?><option value="<?=$id?>" selected><?=$name?></option><?php

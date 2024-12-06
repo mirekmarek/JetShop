@@ -9,11 +9,11 @@ namespace JetApplicationModule\Admin\Orders;
 
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Order as Application_Order;
 
 
-class Order extends Application_Order implements Admin_Entity_WithShopRelation_Interface
+class Order extends Application_Order implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

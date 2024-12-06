@@ -17,7 +17,7 @@ use JetApplication\Invoice;
 use JetApplication\InvoiceInAdvance;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
-use JetApplication\Shops;
+use JetApplication\EShops;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\WarehouseManagement_StockVerification;
@@ -39,68 +39,68 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		$entities[] = [
 			'entity' => Order::getEntityType(),
-			'per_shop' => true,
+			'per_eshop' => true,
 			'title' => Tr::_('Orders')
 		];
 		
 		$entities[] = [
 			'entity' => Invoice::getEntityType(),
-			'per_shop' => true,
+			'per_eshop' => true,
 			'title' => Tr::_('Invoices')
 		];
 		
 		$entities[] = [
 			'entity' => InvoiceInAdvance::getEntityType(),
-			'per_shop' => true,
+			'per_eshop' => true,
 			'title' => Tr::_('Invoices in advance')
 		];
 		
 		$entities[] = [
 			'entity' => DeliveryNote::getEntityType(),
-			'per_shop' => true,
+			'per_eshop' => true,
 			'title' => Tr::_('Delivery note')
 		];
 		
 		$entities[] = [
 			'entity' => Complaint::getEntityType(),
-			'per_shop' => true,
+			'per_eshop' => true,
 			'title' => Tr::_('Complaints')
 		];
 		
 		$entities[] = [
 			'entity' => ReturnOfGoods::getEntityType(),
-			'per_shop' => true,
+			'per_eshop' => true,
 			'title' => Tr::_('Return of goods')
 		];
 		
 		$entities[] = [
 			'entity' => Supplier_GoodsOrder::getEntityType(),
-			'per_shop' => false,
+			'per_eshop' => false,
 			'title' => Tr::_('Orders of goods from suppliers')
 		];
 		
 		$entities[] = [
 			'entity' => OrderDispatch::getEntityType(),
-			'per_shop' => false,
+			'per_eshop' => false,
 			'title' => Tr::_('Order dispatch')
 		];
 		
 		
 		$entities[] = [
 			'entity' => WarehouseManagement_ReceiptOfGoods::getEntityType(),
-			'per_shop' => false,
+			'per_eshop' => false,
 			'title' => Tr::_('Warehouse Management - Receipt of goods')
 		];
 		
 		$entities[] = [
 			'entity' => WarehouseManagement_TransferBetweenWarehouses::getEntityType(),
-			'per_shop' => false,
+			'per_eshop' => false,
 			'title' => Tr::_('Warehouse Management - Transfer Between Warehouses')
 		];
 		
 		$entities[] = [
 			'entity' => WarehouseManagement_StockVerification::getEntityType(),
-			'per_shop' => false,
+			'per_eshop' => false,
 			'title' => Tr::_('Warehouse Management - Stock Verification')
 		];
 		
@@ -134,14 +134,14 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		foreach( $entities as $entity ) {
 			$e = $entity['entity'];
 			
-			if($entity['per_shop']) {
-				foreach( Shops::getList() as $shop ) {
-					$config = new EntityConfig( $e, $shop );
+			if($entity['per_eshop']) {
+				foreach( EShops::getList() as $eshop ) {
+					$config = new EntityConfig( $e, $eshop );
 					
-					$forms[$e.'_'.$shop->getKey()] = $config->createForm( $e.'_'.$shop->getKey() );
+					$forms[$e.'_'.$eshop->getKey()] = $config->createForm( $e.'_'.$eshop->getKey() );
 					
-					if($forms[$e.'_'.$shop->getKey()]->catch()) {
-						$save( $config, $e.'_'.$shop->getKey() );
+					if($forms[$e.'_'.$eshop->getKey()]->catch()) {
+						$save( $config, $e.'_'.$eshop->getKey() );
 					}
 				}
 				

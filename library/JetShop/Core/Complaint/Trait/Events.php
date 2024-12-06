@@ -2,12 +2,15 @@
 namespace JetShop;
 
 use JetApplication\Complaint;
+use JetApplication\Complaint_ChangeHistory;
 use JetApplication\Complaint_Event;
+use JetApplication\Complaint_Note;
 
 trait Core_Complaint_Trait_Events {
 	
 	public const EVENT_NEW_UNFINISHED_COMPLAINT = 'NewUnfinishedComplaint';
 	public const EVENT_NEW_COMPLAINT_FINISHED = 'NewComplaintFinished';
+	public const EVENT_UPDATED = 'Updated';
 	
 	public const EVENT_PROCESSING_STARTED = 'ProcessingStarted';
 	public const EVENT_CLARIFICATION_REQUIRED = 'ClarificationRequired';
@@ -26,7 +29,10 @@ trait Core_Complaint_Trait_Events {
 
 	public const EVENT_DELIVERED = 'Delivered';
 	public const EVENT_RETURNED = 'Returned';
-
+	
+	public const EVENT_MESSAGE_FOR_CUSTOMER = 'MessageForCustomer';
+	public const EVENT_INTERNAL_NOTE = 'InternalNote';
+	
 	
 	public function createEvent( string $event ) : Complaint_Event
 	{
@@ -75,6 +81,38 @@ trait Core_Complaint_Trait_Events {
 		$event->setNoteForCustomer( $note_for_customer );
 		$event->handleImmediately();
 		
+	}
+	
+	public function newNote( Complaint_Note $note ) : void
+	{
+		if( $note->getSentToCustomer() ) {
+			$this->messageForCustomer( $note );
+		} else {
+			$this->internalNote( $note );
+		}
+	}
+	
+	public function messageForCustomer( Complaint_Note $note ) : void
+	{
+		$event = $this->createEvent( Complaint::EVENT_MESSAGE_FOR_CUSTOMER );
+		$event->setContext( $note );
+		$event->handleImmediately();
+	}
+	
+	public function internalNote( Complaint_Note $note ) : void
+	{
+		$event = $this->createEvent( Complaint::EVENT_INTERNAL_NOTE );
+		$event->setContext( $note );
+		$event->handleImmediately();
+	}
+	
+	
+	public function updated( Complaint_ChangeHistory $change ) : void
+	{
+		$event = $this->createEvent( Complaint::EVENT_UPDATED );
+		$event->setContext( $change );
+		
+		$event->handleImmediately();
 	}
 	
 }

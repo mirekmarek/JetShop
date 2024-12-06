@@ -69,12 +69,16 @@ class Core_ReturnOfGoods_Event extends Entity_Event
 		return $this->_return_of_goods;
 	}
 	
-	public function getHandlerModule() : ReturnOfGoods_Event_HandlerModule
+	public function getHandlerModule() : ?ReturnOfGoods_Event_HandlerModule
 	{
 		/**
 		 * @var ReturnOfGoods_event $this
 		 * @var ReturnOfGoods_Event_HandlerModule $module
 		 */
+		if(!Application_Modules::moduleIsActivated( $this->getHandlerModuleName() )) {
+			return null;
+		}
+		
 		$module = Application_Modules::moduleInstance( $this->getHandlerModuleName() );
 		$module->init( $this );
 
@@ -90,7 +94,7 @@ class Core_ReturnOfGoods_Event extends Entity_Event
 	{
 		$e = new ReturnOfGoods_Event();
 		$e->setEvent( $event );
-		$e->setShop( $return->getShop() );
+		$e->setEshop( $return->getEshop() );
 		$e->setReturnOfGoodsId( $return->getId() );
 		$e->created_date_time = Data_DateTime::now();
 

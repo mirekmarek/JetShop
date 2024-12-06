@@ -18,7 +18,7 @@ return [
 	'Default width:' => 'Výchozí šířka:',
 	'Packaging parameters - delivery point' => 'Parametry balení - výdejní místo',
 	'Packaging parameters - box' => 'Parametry balení - krabice',
-	'Branch' => 'Větev',
+	'Branch' => 'Pobočka',
 	'Box' => 'Box',
 	'DPD - Actualize delivery points' => 'DPD - Aktualizace dodacích míst',
 	'Updates the list of points where the consignment can be delivered / where the customer can pick up the consignment.<br><b>It is necessary to run periodically.</b>' => 'Aktualizuje seznam míst, kde lze zásilku doručit / kde si zákazník může zásilku vyzvednout.<br> <b>Je nutné pravidelně spouštět.</b>',

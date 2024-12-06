@@ -17,4 +17,6 @@ return [
 	'Create bases' => '',
 	'Base has been created' => '',
 	'Invalid value' => '',
+	'Services' => '',
+	'Exports' => '',
 ];

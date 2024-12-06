@@ -1,0 +1,20 @@
+<?php
+
+use Jet\UI;
+use Jet\UI_tabs_tab;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var UI_tabs_tab $t
+ */
+$t = $this->getRaw( 'element' );
+
+if($t->getIsSelected()) {
+	$t->setBaseCssClass('tabs-tab active');
+	$t->addJsAction("onclick", "tabs.showMobileMenu(this);return false;");
+} else {
+	$t->setBaseCssClass('tabs-tab');
+}
+?>
+<li><a <?=$t->renderTagAttributes()?>><?php if($t->getIsSelected()): ?><div class="tabs-mobile-menu-icon"><?= UI::icon('burger-menu')?></div><?php endif; ?><?= $t->getTitle() ?></a></li>

@@ -20,14 +20,12 @@ require 'edit/toolbar.phtml';
 ?>
 <div id="main-col">
 	<div id="o_main" class="o_anchor"></div>
-	
 	<div class="o_section">
 		<?php require 'edit/main.phtml'; ?>
 	</div>
 
 	
 	<div style="position: relative;"><div id="o_items" class="o_anchor"></div></div>
-	
 	<fieldset class="o_section">
 		<legend><?=UI::icon('list')?> <?=Tr::_('Order items')?></legend>
 		<?php require 'edit/items.phtml';?>

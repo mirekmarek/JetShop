@@ -8,13 +8,14 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Logger;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\Entity_Simple;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\WarehouseManagement;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
@@ -212,7 +213,7 @@ class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implement
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	public function setMeasureUnit( ?MeasureUnit $measure_unit ): void
@@ -230,7 +231,7 @@ class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implement
 		return $this->currency_code;
 	}
 	
-	public function getCurrency() : Currencies_Currency
+	public function getCurrency() : Currency
 	{
 		return Currencies::get( $this->currency_code );
 	}
@@ -292,7 +293,7 @@ class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implement
 		return $this->created;
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
 		return null;
 	}

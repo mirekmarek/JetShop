@@ -8,10 +8,10 @@
 namespace JetApplicationModule\Admin\Customers;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Customer as Application_Customer;
 
-class Customer extends Application_Customer implements Admin_Entity_WithShopRelation_Interface
+class Customer extends Application_Customer implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

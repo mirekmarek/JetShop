@@ -1,0 +1,33 @@
+<?php
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Entity_Price;
+use JetApplication\Admin_Managers;
+use JetApplication\Product_Price;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_Price $price
+ */
+$price = $this->getRaw('price');
+$pricelist = $price->getPricelist();
+?>
+<fieldset>
+	<legend class="sub"><?=$pricelist->getName()?></legend>
+	
+	<div style="display: grid;grid-template-columns: 180px 200px;gap: 5px;align-items: center">
+		<div><?=Tr::_('VAT rate:')?></div>
+		<div style="font-weight: bolder;"><?=$price->getVatRate()?>%</div>
+
+		<div>
+			<?=Tr::_( $pricelist->getPricesAreWithoutVat() ? 'Price (without VAT):' : 'Price (with VAT):'  )?>
+		</div>
+		<div style="font-weight: bolder;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPrice() )?></div>
+		
+		<?php if( $price instanceof Product_Price && $price->getDiscountPercentage()>0): ?>
+		<div><?=Tr::_('Discount:')?></div>
+		<div style="font-weight: bolder;"><?=$price->getDiscountPercentage();?>%</div>
+		<?php endif; ?>
+	</div>
+
+</fieldset>

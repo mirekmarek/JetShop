@@ -1,0 +1,27 @@
+<?php
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_icon;
+
+?>
+
+
+<div class="card login-dialog">
+	<h5 class="card-header">
+		<?= Tr::_( 'Account is blocked' ) ?>
+	</h5>
+	<div class="card-body">
+
+		<div class="login-warning">
+			<div>
+				<?= UI::icon( 'circle-xmark' )->setSize( UI_icon::SIZE_EXTRA_LARGE ) ?>
+			</div>
+			<div>
+				<?= Tr::_( '<b>Your account is blocked!</b>' ); ?>
+			</div>
+		</div>
+		
+		<a href="?logout" class="btn btn-light"><?= Tr::_( 'Logout' ); ?></a>
+	</div>
+</div>

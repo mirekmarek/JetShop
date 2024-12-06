@@ -1,0 +1,54 @@
+.article {
+
+}
+
+.article .author {
+	display: grid;
+	grid-template-columns: 110px 1fr;
+	gap: 10px;
+	margin: 10px;
+}
+
+.article .author .info .name {
+	font-weight: bolder;
+}
+
+.product-advices {
+	border-top: 1px solid #c9c9c9;
+	padding-top: 10px;
+	margin-top: 30px;
+}
+
+.product-advices .articles {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+	gap: 15px;
+}
+
+.product-advices .articles .article .image {
+	grid-area: image;
+}
+
+.product-advices .articles .article .image>img {
+	width: 100%;
+	height: auto;
+}
+
+.product-advices .articles .article .title {
+	grid-area: title;
+}
+
+.product-advices .articles .article .perex {
+	grid-area: perex;
+}
+
+.product-advices .articles .article {
+	display: grid;
+	grid-template:  "image title"
+					"image perex";
+	gap: 10px;
+	grid-template-columns: 100px 1fr;
+	border: 1px solid #c9c9c9;
+	padding: 10px;
+	border-radius: 5px;
+}

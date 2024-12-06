@@ -15,16 +15,16 @@ use JetApplication\Carrier;
 use JetApplication\Carrier_AdditionalConsignmentParameter;
 use JetApplication\Carrier_Document;
 use JetApplication\OrderDispatch;
-use JetApplication\ShopConfig_ModuleConfig_General;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+use JetApplication\EShopConfig_ModuleConfig_General;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 
 /**
  *
  */
-class Main extends Carrier implements ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface, Admin_ControlCentre_Module_Interface
+class Main extends Carrier implements EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface, Admin_ControlCentre_Module_Interface
 {
-	use ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
 	public const CODE = 'CeskaPosta';
@@ -55,7 +55,7 @@ class Main extends Carrier implements ShopConfig_ModuleConfig_ModuleHasConfig_Ge
 		return false;
 	}
 	
-	public function getConfig() : Config_General|ShopConfig_ModuleConfig_General
+	public function getConfig() : Config_General|EShopConfig_ModuleConfig_General
 	{
 		return $this->getGeneralConfig();
 	}

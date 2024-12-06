@@ -9,4 +9,5 @@ return [
 	'Invalid username or password!' => '',
 	'Please enter username and password' => '',
 	'Invalid value' => '',
+	'The access configuration file does not exist' => '',
 ];

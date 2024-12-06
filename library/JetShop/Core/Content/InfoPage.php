@@ -10,10 +10,10 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
-use JetApplication\Content_InfoPage_ShopData;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Content_InfoPage_EShopData;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 
 
@@ -21,7 +21,7 @@ use JetApplication\Shops_Shop;
 	name: 'content_info_page',
 	database_table_name: 'content_info_page',
 )]
-abstract class Core_Content_InfoPage extends Entity_WithShopData
+abstract class Core_Content_InfoPage extends Entity_WithEShopData
 {
 	
 	#[DataModel_Definition(
@@ -42,20 +42,20 @@ abstract class Core_Content_InfoPage extends Entity_WithShopData
 	protected string $page_id = '';
 	
 	/**
-	 * @var Content_InfoPage_ShopData[]
+	 * @var Content_InfoPage_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Content_InfoPage_ShopData::class
+		data_model_class: Content_InfoPage_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	
 	
 	public function afterAdd(): void
 	{
-		foreach(Shops::getList() as $shop ) {
-			$this->getShopData( $shop )->publish();
+		foreach( EShops::getList() as $eshop ) {
+			$this->getEshopData( $eshop )->publish();
 		}
 		
 		parent::afterAdd();
@@ -63,8 +63,8 @@ abstract class Core_Content_InfoPage extends Entity_WithShopData
 	
 	public function afterUpdate(): void
 	{
-		foreach(Shops::getList() as $shop ) {
-			$this->getShopData( $shop )->publish();
+		foreach( EShops::getList() as $eshop ) {
+			$this->getEshopData( $eshop )->publish();
 		}
 		
 		parent::afterUpdate();
@@ -76,8 +76,8 @@ abstract class Core_Content_InfoPage extends Entity_WithShopData
 	public function setPageId( string $value ): void
 	{
 		$this->page_id = $value;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setPageId( $value );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setPageId( $value );
 		}
 	}
 	
@@ -86,16 +86,16 @@ abstract class Core_Content_InfoPage extends Entity_WithShopData
 		return $this->page_id;
 	}
 	
-	public function getShopData( ?Shops_Shop $shop = null ): Content_InfoPage_ShopData
+	public function getEshopData( ?EShop $eshop = null ): Content_InfoPage_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	public function publish() : void
 	{
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->publish();
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->publish();
 		}
 	}
 	
@@ -117,15 +117,15 @@ abstract class Core_Content_InfoPage extends Entity_WithShopData
 		$this->publish();
 	}
 	
-	public function activateShopData( Shops_Shop $shop ): void
+	public function activateEShopData( EShop $eshop ): void
 	{
-		parent::activateShopData( $shop );
+		parent::activateEShopData( $eshop );
 		$this->publish();
 	}
 	
-	public function deactivateShopData( Shops_Shop $shop ): void
+	public function deactivateEShopData( EShop $eshop ): void
 	{
-		parent::deactivateShopData( $shop );
+		parent::deactivateEShopData( $eshop );
 		$this->publish();
 	}
 	

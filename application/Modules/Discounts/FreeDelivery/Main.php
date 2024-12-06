@@ -15,7 +15,7 @@ use JetApplication\Marketing_DeliveryFeeDiscount;
 use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\Pricelists;
-use JetApplication\Shop_Managers;
+use JetApplication\EShop_Managers;
 
 
 class Main extends Discounts_Module
@@ -42,7 +42,7 @@ class Main extends Discounts_Module
 	
 	protected function getOrderAmount() : float
 	{
-		return Shop_Managers::ShoppingCart()->getCart()->getAmount();
+		return EShop_Managers::ShoppingCart()->getCart()->getAmount();
 	}
 	
 	public function generateDiscounts( CashDesk $cash_desk ): void
@@ -56,7 +56,7 @@ class Main extends Discounts_Module
 			if(
 				$discount->isActive() &&
 				$discount->getDiscountPercentage()>0 &&
-				$discount->isRelevant( Shop_Managers::ShoppingCart()->getCart()->getProductIds() )
+				$discount->isRelevant( EShop_Managers::ShoppingCart()->getCart()->getProductIds() )
 			) {
 				$marketing_discounts[$discount->getDeliveryMethodId()] = $discount;
 			}
@@ -99,7 +99,7 @@ class Main extends Discounts_Module
 	
 	public function remains() : float|bool
 	{
-		$cash_desk = Shop_Managers::CashDesk()->getCashDesk();
+		$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
 		
 		$limit = false;
 		foreach($cash_desk->getAvailableDeliveryMethods() as $method) {

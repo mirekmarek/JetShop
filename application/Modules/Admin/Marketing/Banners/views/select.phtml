@@ -5,30 +5,30 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_tabs;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 /**
  * @var MVC_View   $this
  * @var UI_tabs $tabs
- * @var ?Shops_Shop $selected_shop
+ * @var ?EShop $selected_eshop
  */
 $tabs = $this->getRaw('tabs');
 
-$selected_shop = $this->getRaw('selected_shop')?:null;
-$selected_shop_key = $selected_shop?->getKey();
+$selected_eshop = $this->getRaw('selected_eshop')?:null;
+$selected_eshop_key = $selected_eshop?->getKey();
 
 ?>
 
-<?php if( Shops::isMultiShopMode() ): ?>
+<?php if( EShops::isMultiEShopMode() ): ?>
 	<div style="display: flex;align-items: center;margin: 10px;">
 		<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Shop:')?></b></div>
 		
-		<?php foreach(Shops::getListSorted() as $shop):
-			if($shop->getKey()==$selected_shop_key): ?>
-				<div style="padding: 5px"><b class="btn btn-success"><?=$shop->getShopName()?></b></div>
+		<?php foreach( EShops::getListSorted() as $eshop):
+			if($eshop->getKey()==$selected_eshop_key): ?>
+				<div style="padding: 5px"><b class="btn btn-success"><?=$eshop->getName()?></b></div>
 			<?php else:  ?>
-				<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['shop'=>$shop->getKey()], unset_GET_params: ['do_it', 'price_list'])?>" class="btn btn-light"><?=$shop->getShopName()?></a></div>
+				<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['eshop'=>$eshop->getKey()], unset_GET_params: ['do_it', 'price_list'])?>" class="btn btn-light"><?=$eshop->getName()?></a></div>
 			<?php endif;
 		endforeach; ?>
 	</div>

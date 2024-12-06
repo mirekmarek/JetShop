@@ -4,7 +4,7 @@ return [
 	'Activate' => 'Aktivovať',
 	'Invalid value' => 'Nesprávna hodnota',
 	'Deactivate' => 'Deaktivovať',
-	'Date time:' => 'Dátum Čas:',
+	'Date and time:' => 'Dátum Čas:',
 	'Set price' => 'Stanovte cenu',
 	'Price:' => 'Cena:',
 	'Set' => 'Set',

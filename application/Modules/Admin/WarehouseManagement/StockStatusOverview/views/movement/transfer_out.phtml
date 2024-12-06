@@ -42,19 +42,19 @@ $mv = $this->getRaw('movement');
 	</td>
 	<td>
 		<?php if($mv->getCurrency()): ?>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $mv->getCurrency(), $mv->getPricePerUnit() )?>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getCurrency(), $mv->getPricePerUnit() )?>
 			<?php if($mv->getEntryCurrencyIsDifferent()): ?>
 			<br>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit() )?>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit() )?>
 			<?php endif; ?>
 		<?php endif; ?>
 	</td>
 	<td>
 		<?php if($mv->getCurrency()): ?>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $mv->getCurrency(), $mv->getPricePerUnit()*$mv->getNumberOfUnits() )?>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getCurrency(), $mv->getPricePerUnit()*$mv->getNumberOfUnits() )?>
 			<?php if($mv->getEntryCurrencyIsDifferent()): ?>
 			<br>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit()*$mv->getNumberOfUnits() )?>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit()*$mv->getNumberOfUnits() )?>
 			<?php endif; ?>
 		<?php endif; ?>
 	</td>

@@ -8,6 +8,7 @@
 namespace JetApplicationModule\Admin\ImageManager;
 
 use Jet\Data_Image;
+use Jet\Data_Text;
 use Jet\Exception;
 use Jet\Form;
 use Jet\Form_Field_FileImage;
@@ -17,7 +18,7 @@ use Jet\Logger;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 class Image {
 	
@@ -49,7 +50,7 @@ class Image {
 	 */
 	protected $image_property_setter;
 	
-	protected ?Shops_Shop $shop;
+	protected ?EShop $eshop;
 	
 	public static function getRootPath(): string
 	{
@@ -93,13 +94,13 @@ class Image {
 	
 	
 	public function __construct(
-		string $entity,
+		string     $entity,
 		string|int $object_id,
-		string $image_class='',
-		string $image_title='',
-		?callable $image_property_getter=null,
-		?callable $image_property_setter=null,
-		?Shops_Shop $shop=null,
+		string     $image_class='',
+		string     $image_title='',
+		?callable  $image_property_getter=null,
+		?callable  $image_property_setter=null,
+		?EShop     $eshop=null,
 	) {
 		$this->entity = $entity;
 		$this->object_id = $object_id;
@@ -108,23 +109,29 @@ class Image {
 		$this->image_property_getter = $image_property_getter;
 		$this->image_property_setter = $image_property_setter;
 		
-		$this->shop = $shop;
+		$this->eshop = $eshop;
+	}
+	
+	public static function generateKey( string $entity, string|int $object_id, string $image_class, ?EShop $eshop=null ) : string
+	{
+		$key = $entity.'_'.$object_id;
+		
+		
+		if($image_class) {
+			$key .= '_'.$image_class;
+		}
+		
+		if($eshop) {
+			$key .= '_'.$eshop->getKey();
+		}
+		
+		return $key;
+		
 	}
 	
 	public function getKey() : string
 	{
-		$key = $this->entity.'_'.$this->object_id;
-		
-		
-		if($this->image_class) {
-			$key .= '_'.$this->image_class;
-		}
-		
-		if($this->shop) {
-			$key .= '_'.$this->shop->getKey();
-		}
-
-		return $key;
+		return static::generateKey( $this->entity, $this->object_id, $this->image_class, $this->eshop );
 	}
 	
 	public function getImagePropertyGetter(): ?callable
@@ -179,8 +186,8 @@ class Image {
 	{
 		$dir = '';
 		
-		if($this->shop) {
-			$dir .= $this->shop->getKey().'/';
+		if($this->eshop) {
+			$dir .= $this->eshop->getKey().'/';
 		}
 		
 		$dir .= $this->entity.'/';
@@ -221,7 +228,7 @@ class Image {
 		return $dir;
 	}
 	
-	public function upload( string $tmp_path ) : string
+	public function upload( string $tmp_path, string $name ) : string
 	{
 		try {
 			$image = new Data_Image( $tmp_path );
@@ -229,10 +236,13 @@ class Image {
 			return '';
 		}
 		
+		$file_name = pathinfo($name)['filename'];
+		$file_name = Data_Text::removeAccents($file_name);
+		$file_name = str_replace(' ', '_', $file_name);
 
-		$target_path = $this->getDirPath().uniqid().uniqid().image_type_to_extension( $image->getImgType() );
+		$target_path = $this->getDirPath().$file_name.image_type_to_extension( $image->getImgType() );
 		
-		IO_File::moveUploadedFile( $tmp_path, static::getRootPath().$target_path );
+		IO_File::copy( $tmp_path, static::getRootPath().$target_path );
 		
 		if( ($current_image = $this->getImage()) ) {
 			$this->delete();
@@ -252,7 +262,7 @@ class Image {
 		$thb_dir = static::getRootPath().$this->getThbRootDir();
 
 		
-		$shop = $this->shop;
+		$eshop = $this->eshop;
 		$entity = $this->entity;
 		$image_class = $this->image_class;
 		
@@ -377,19 +387,19 @@ class Image {
 		$images = $image_field->getValidFiles();
 		
 		foreach($images as $image) {
-			$image = $this->upload( $image->getTmpFilePath() );
+			$image = $this->upload( $image->getTmpFilePath(), $image->getFileName() );
 			
 			if($image) {
-				if($this->shop) {
+				if($this->eshop) {
 					Logger::success(
 						event: 'image_uploaded:'.$this->entity.':'.$this->image_class,
-						event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' uploaded ('.$this->shop->getKey().')',
+						event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' uploaded ('.$this->eshop->getKey().')',
 						context_object_id: $this->object_id,
 						context_object_data: [
 							'entity'      => $this->entity,
 							'object_id'   => $this->object_id,
 							'image_class' => $this->image_class,
-							'shop'        => $this->shop->getKey(),
+							'eshop'       => $this->eshop->getKey(),
 							'image'       => $image
 						]
 					);
@@ -442,16 +452,16 @@ class Image {
 		if($image) {
 			$this->delete();
 			
-			if($this->shop) {
+			if($this->eshop) {
 				Logger::success(
 					event: 'image_deleted:'.$this->entity.':'.$this->image_class,
-					event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' deleted ('.$this->shop->getKey().')',
+					event_message: $this->entity.' '.$this->object_id.' image '.$this->image_class.' deleted ('.$this->eshop->getKey().')',
 					context_object_id: $this->object_id,
 					context_object_data: [
 						'entity'      => $this->entity,
 						'object_id'   => $this->object_id,
 						'image_class' => $this->image_class,
-						'shop'        => $this->shop->getKey(),
+						'eshop'       => $this->eshop->getKey(),
 						'image'       => $image
 					]
 				);
@@ -493,9 +503,9 @@ class Image {
 		return $this->image_title;
 	}
 	
-	public function getShop(): ?Shops_Shop
+	public function getEshop(): ?EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
 

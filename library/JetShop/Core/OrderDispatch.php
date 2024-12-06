@@ -18,8 +18,8 @@ use JetApplication\Context_HasContext_Trait;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Currency;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\OrderDispatch;
@@ -27,7 +27,7 @@ use JetApplication\OrderDispatch_Item;
 use JetApplication\OrderDispatch_Packet;
 use JetApplication\Order;
 use JetApplication\OrderDispatch_TrackingHistory;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\OrderDispatch_Trait_Forms;
 use JetApplication\OrderDispatch_Trait_Workflow;
@@ -37,7 +37,7 @@ use JetApplication\OrderDispatch_Trait_Workflow;
 	name: 'order_dispatch',
 	database_table_name: 'order_dispatches',
 )]
-abstract class Core_OrderDispatch extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_HasContext_Interface, Context_ProvidesContext_Interface
+abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_HasContext_Interface, Context_ProvidesContext_Interface
 {
 	use OrderDispatch_Trait_Forms;
 	use OrderDispatch_Trait_Workflow;
@@ -493,9 +493,9 @@ abstract class Core_OrderDispatch extends Entity_WithShopRelation implements Num
 		return $this->getDispatchDate();
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
-		return $this->getShop();
+		return $this->getEshop();
 	}
 	
 	
@@ -571,12 +571,12 @@ abstract class Core_OrderDispatch extends Entity_WithShopRelation implements Num
 	}
 	
 
-	public function getCodCurrency(): Currencies_Currency
+	public function getCodCurrency(): Currency
 	{
 		return Currencies::get( $this->cod_currency_code );
 	}
 	
-	public function setCodCurrency( Currencies_Currency $cod_currency ): void
+	public function setCodCurrency( Currency $cod_currency ): void
 	{
 		$this->cod_currency_code = $cod_currency->getCode();
 	}

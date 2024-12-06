@@ -4,6 +4,7 @@ namespace JetApplicationModule\Admin\Catalog\Signposts;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Signpost;
 
 class Listing_Column_InternalName extends DataListing_Column
 {
@@ -27,7 +28,7 @@ class Listing_Column_InternalName extends DataListing_Column
 	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
 		/**
-		 * @var \JetApplication\Signpost $item
+		 * @var Signpost $item
 		 */
 		return $item->getInternalName();
 	}

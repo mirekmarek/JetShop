@@ -1,0 +1,35 @@
+<?php
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\Locale;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Locale $locale
+ */
+$form = $this->getRaw('form');
+$locale = $this->getRaw('locale');
+$locale = $locale->toString();
+
+
+?>
+<fieldset>
+	<legend class="sub"><?=Tr::_('Main data')?></legend>
+	<?php
+	echo $form->field('/description/'.$locale.'/label');
+	echo $form->field('/description/'.$locale.'/description');
+	
+	if($form->fieldExists('/description/'.$locale.'/bool_yes_description')) {
+		echo $form->field('/description/'.$locale.'/bool_yes_description');
+	}
+	
+	if($form->fieldExists('/description/'.$locale.'/units')) {
+		echo $form->field( '/description/' . $locale . '/units' );
+	}
+	if($form->fieldExists('/description/'.$locale.'/url_param')) {
+		echo $form->field( '/description/' . $locale . '/url_param' );
+	}
+	?>
+</fieldset>

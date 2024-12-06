@@ -1,0 +1,89 @@
+<?php
+namespace JetApplicationModule\EShop\ShoppingCart;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\EShop_Pages;
+use JetApplication\Discounts;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ */
+
+$cart = EShop_Managers::ShoppingCart()->getCart();
+
+if($cart->getNumberOfUnits()<1):
+	echo $this->render('shopping_cart_page/empty');
+	return;
+endif;
+
+
+$dm_code = Discounts::Manager()->getActiveModule('Code');
+
+$dm_free_delivery = Discounts::Manager()->getActiveModule('FreeDelivery');
+
+$available_gifts = $cart->getAvailableCartGifts();
+$selected_gift_ids = $cart->getSelectedCartGiftIds();
+
+$selected_product_gifts = $cart->getSelectedProductGifts();
+
+?>
+<?=$this->render('shopping_cart_page/items')?>
+
+<?php if($available_gifts || $selected_product_gifts): ?>
+
+<h3><?=Tr::_('Gifts')?></h3>
+<div id="shopping-cart-gifts">
+<?php foreach($selected_product_gifts as $gift): ?>
+	<div></div>
+	<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+	<div><?=$gift->getGiftProduct()->getName()?></div>
+<?php endforeach; ?>
+
+
+<?php foreach($available_gifts as $gift):
+	$gift_id = $gift->getGiftProductId();
+	?>
+
+	<?php if($gift->getAutoAppend()): ?>
+		<div></div>
+		<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+		<div><?=$gift->getGiftProduct()->getName()?></div>
+	<?php else: ?>
+		<?php if(in_array($gift_id, $selected_gift_ids)): ?>
+			<div><input type="checkbox" checked value="<?=$gift_id?>" onclick="ShoppingCart.Gifts.unselect(<?=$gift_id?>);"></div>
+			<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+			<div><?=$gift->getGiftProduct()->getName()?></div>
+		<?php else: ?>
+			<div><input type="checkbox" value="<?=$gift_id?>" onclick="ShoppingCart.Gifts.select(<?=$gift_id?>);"></div>
+			<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+			<div><?=$gift->getGiftProduct()->getName()?></div>
+		<?php endif; ?>
+	<?php endif; ?>
+	
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+
+<?=EShop_Managers::AutoOffers()?->handleShoppingCart()?>
+
+
+<div class="shopping-cart-discount-modules">
+	<div>
+		<?=$dm_free_delivery?->ShoppingCart_handle()?>
+	</div>
+	<div>
+		<?=$dm_code?->ShoppingCart_handle()?>
+	</div>
+</div>
+
+
+<div class="shopping-cart-buy-button-area">
+	<?=UI::button(Tr::_('Order'))->setUrl( EShop_Pages::CashDesk()->getURL() )->setClass('success')?>
+</div>
+
+
+<?=EShop_Managers::Analytics()?->viewCart( $cart )?>

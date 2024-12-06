@@ -7,10 +7,10 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\DataList;
 use JetApplication\Entity_Address;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Invoices;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop_Managers;
+use JetApplication\EShop;
 
 use Jet\Form;
 
@@ -18,7 +18,7 @@ use Jet\Form;
 	name: 'company_info',
 	database_table_name: 'company_info',
 )]
-abstract class Core_CompanyInfo extends Entity_WithShopRelation {
+abstract class Core_CompanyInfo extends Entity_WithEShopRelation {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -238,12 +238,12 @@ abstract class Core_CompanyInfo extends Entity_WithShopRelation {
 	
 	protected ?Form $edit_form = null;
 	
-	public static function get( Shops_Shop $shop ) : static
+	public static function get( EShop $eshop ) : static
 	{
-		$info = static::load( $shop->getWhere() );
+		$info = static::load( $eshop->getWhere() );
 		if(!$info) {
 			$info = new static();
-			$info->setShop( $shop );
+			$info->setEshop( $eshop );
 			$info->save();
 		}
 		
@@ -417,7 +417,7 @@ abstract class Core_CompanyInfo extends Entity_WithShopRelation {
 		if(!$this->logo) {
 			return '';
 		}
-		return Shop_Managers::Image()->getThumbnailUrl( $this->logo, $max_w, $max_h );
+		return EShop_Managers::Image()->getThumbnailUrl( $this->logo, $max_w, $max_h );
 	}
 	
 	public function getLogoUrl() : string
@@ -425,7 +425,7 @@ abstract class Core_CompanyInfo extends Entity_WithShopRelation {
 		if(!$this->logo) {
 			return '';
 		}
-		return Shop_Managers::Image()->getUrl( $this->logo );
+		return EShop_Managers::Image()->getUrl( $this->logo );
 	}
 	
 	public function getStampAndSignature(): string
@@ -443,7 +443,7 @@ abstract class Core_CompanyInfo extends Entity_WithShopRelation {
 		if(!$this->stamp_and_signature) {
 			return '';
 		}
-		return Shop_Managers::Image()->getThumbnailUrl( $this->stamp_and_signature, $max_w, $max_h );
+		return EShop_Managers::Image()->getThumbnailUrl( $this->stamp_and_signature, $max_w, $max_h );
 	}
 	
 	public function getStampAndSignatureUrl() : string
@@ -451,7 +451,7 @@ abstract class Core_CompanyInfo extends Entity_WithShopRelation {
 		if(!$this->stamp_and_signature) {
 			return '';
 		}
-		return Shop_Managers::Image()->getUrl( $this->stamp_and_signature );
+		return EShop_Managers::Image()->getUrl( $this->stamp_and_signature );
 	}
 	
 	public function getBankName(): string

@@ -14,7 +14,7 @@ use Jet\UI_messages;
 use JetApplication\Supplier;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Simple_Controller;
-use JetApplicationModule\Admin\Catalog\KindsOfProduct\KindOfProduct;
+use JetApplication\KindOfProduct;
 
 /**
  *

@@ -318,8 +318,6 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function setBreadcrumbNavigation( string $current_label = '', string $URL = '' ) : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
 		$title = '';
 		
 		if(

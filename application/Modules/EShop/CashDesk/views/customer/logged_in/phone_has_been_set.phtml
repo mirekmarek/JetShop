@@ -1,0 +1,25 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+?>
+	<?php if($cash_desk->getPhoneHasBeenSet()): ?>
+	<div class="selected-contact">
+		<div class="title"><?=Tr::_('Phone:')?></div>
+		<div class="info">
+			<?=$cash_desk->getPhoneWithPrefix()?>
+		</div>
+		<div class="change-btn">
+			<?=UI::button(Tr::_('Change phone'))->setOnclick("CashDesk.customer.phone.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+		</div>
+	</div>
+<?php endif; ?>

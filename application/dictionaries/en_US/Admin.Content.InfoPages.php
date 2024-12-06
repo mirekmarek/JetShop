@@ -64,4 +64,6 @@ return [
 	'Content - Info Page <b>%ITEM_NAME%</b> has been deleted' => '',
 	'Content - Info Page <b>%ITEM_NAME%</b> has been created' => '',
 	'Content - Info Page <b>%ITEM_NAME%</b> has been updated' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
 ];

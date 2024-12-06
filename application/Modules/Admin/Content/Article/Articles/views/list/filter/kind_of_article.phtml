@@ -1,0 +1,30 @@
+<?php
+namespace JetApplicationModule\Admin\Content\Article\Articles;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Filter_KindOfArticle $filter
+ */
+
+$listing = $this->getRaw( 'listing' );
+$filter = $this->getRaw('filter');
+$filter_form = $listing->getFilterForm();
+$field = $filter_form->field( 'kind_of_article' );
+$field->input()->addJsAction( 'onchange', 'this.form.submit()' );
+
+echo Admin_Managers::EntityListing()->renderListingFilter(
+	filter:      $filter,
+	title:       Tr::_('Kind of article'),
+	form_fields: [$field],
+	is_active:   $field->getValue(),
+	renderer:    function() use ($field) {
+		?>
+		<?= $field->input() ?>
+		<?php
+	}
+);

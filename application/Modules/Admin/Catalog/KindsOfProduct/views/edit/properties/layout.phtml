@@ -2,10 +2,10 @@
 namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 use Jet\MVC_View;
-use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Admin_Managers;
+use JetApplication\KindOfProduct;
 
 /**
  * @var MVC_View   $this
@@ -31,13 +31,13 @@ foreach($layout  as $k=>$v):
 		$group_name = Admin_Managers::PropertyGroup()->showName( $group_id );
 		
 		?>
-		<div class="card sortable-item group-start" style="margin-top: 20px;" data-id="<?=$group_id?>">
+		<div class="card sortable-item group-start" style="margin-top: 30px;" data-id="<?=$group_id?>">
 			<div class="card-header">
 				<?php if($editable): ?>
 					<?=UI::icon('up-down')?>
 				<?php endif ?>
 				
-				<b><?=Tr::_('Group start');?></b> <?= $group_name?>
+				<?=UI::icon('chevron-down')->addCustomCssStyle('opacity:0.5')?> <?= $group_name?>
 				
 				<?php if($editable): ?>
 					<div class="float-right">
@@ -59,26 +59,26 @@ foreach($layout  as $k=>$v):
 		endforeach;
 		
 		?>
-		
-		<div class="card sortable-item group-end" style="margin-bottom: 20px;" data-id="<?=$group_id?>">
+
+		<div class="card sortable-item group-end" style="margin-bottom: 50px;" data-id="<?=$group_id?>">
 			<div class="card-header">
 				<?php if($editable): ?>
 					<?=UI::icon('up-down')?>
 				<?php endif ?>
 				
-				<b><?=Tr::_('Group end');?></b> <?= $group_name?>
+				<?=UI::icon('chevron-up')->addCustomCssStyle('opacity:0.5')?> <?= $group_name?>
 			</div>
 		</div>
 	<?php
 	else:
 		$property = $kind_of_product->getProperty( $v );
-	
+		
 		$this->setVar('property_in_group', false);
 		$this->setVar('property', $property);
 		
 		require 'property.phtml';
 	endif;
- endforeach;
+endforeach;
 ?>
 
 

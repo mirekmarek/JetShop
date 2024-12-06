@@ -21,10 +21,9 @@ use Jet\SysConf_Path;
 use Jet\Tr;
 use Jet\UI_messages;
 use Jet\UI_tabs;
-use JetApplication\Admin_Managers;
 use JetApplication\Brand;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplicationModule\Admin\Suppliers\Supplier;
 use XLSXReader\XLSXReader;
 
@@ -32,7 +31,7 @@ class Controller_Main extends MVC_Controller_Default
 {
 	protected UI_tabs $tabs;
 	
-	protected ?Pricelists_Pricelist $selected_pricelist = null;
+	protected ?Pricelist $selected_pricelist = null;
 	
 	protected ?string $product_identifier = null;
 	
@@ -137,8 +136,6 @@ class Controller_Main extends MVC_Controller_Default
 	
 	protected function setBreadcrumbNavigation( string $current_label = '', string $URL = '' ) : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
 		if($current_label) {
 			Navigation_Breadcrumb::addURL( $current_label, $URL );
 		}

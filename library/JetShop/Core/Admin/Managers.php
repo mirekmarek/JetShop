@@ -2,7 +2,8 @@
 namespace JetShop;
 
 use Jet\Application_Module;
-use Jet\SysConf_Path;
+use JetApplication\Admin_Managers_Note;
+use JetApplication\EShopConfig;
 use JetApplication\Managers;
 use JetApplication\Manager_MetaInfo;
 use JetApplication\Admin_Managers_Context;
@@ -21,10 +22,10 @@ use JetApplication\Admin_Managers_Image;
 use JetApplication\Admin_Managers_UI;
 use JetApplication\Admin_Managers_FulltextSearch;
 use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Admin_Managers_Entity_Edit_WithShopData;
+use JetApplication\Admin_Managers_Entity_Edit_WithEShopData;
 use JetApplication\Admin_Managers_Entity_Edit_Simple;
 use JetApplication\Admin_Managers_Entity_Edit_Common;
-use JetApplication\Admin_Managers_Entity_Edit_WithShopRelation;
+use JetApplication\Admin_Managers_Entity_Edit_WithEShopRelation;
 use JetApplication\Admin_Managers_Entity_Edit_Marketing;
 use JetApplication\Admin_Managers_ProductFilter;
 use JetApplication\Admin_Managers_PriceFormatter;
@@ -52,7 +53,7 @@ class Core_Admin_Managers extends Managers {
 	
 	public static function getCfgFilePath() : string
 	{
-		return SysConf_Path::getConfig().'shop/managers/admin.php';
+		return EShopConfig::getRootDir().'managers/admin.php';
 	}
 	
 	
@@ -148,9 +149,9 @@ class Core_Admin_Managers extends Managers {
 		);
 		
 		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_WithShopData::class,
+			interface_class_name: Admin_Managers_Entity_Edit_WithEShopData::class,
 			is_mandatory: true,
-			name: 'Entity Edit With Shop Data',
+			name: 'Entity Edit With e-shop data',
 			description: '',
 			module_name_prefix: 'Admin.'
 		);
@@ -172,9 +173,9 @@ class Core_Admin_Managers extends Managers {
 		);
 		
 		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_WithShopRelation::class,
+			interface_class_name: Admin_Managers_Entity_Edit_WithEShopRelation::class,
 			is_mandatory: true,
-			name: 'Entity Edit With Shop Relation',
+			name: 'Entity Edit With e-shop Relation',
 			description: '',
 			module_name_prefix: 'Admin.'
 		);
@@ -320,6 +321,14 @@ class Core_Admin_Managers extends Managers {
 		);
 		
 		
+		static::registerManager(
+			interface_class_name: Admin_Managers_Note::class,
+			is_mandatory: false,
+			name: 'Internal notes and messages for customer',
+			description: '',
+			module_name_prefix: 'Admin.'
+		);
+		
 	}
 	
 	
@@ -376,9 +385,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Entity_Listing::class );
 	}
 	
-	public static function EntityEdit_WithShopData() : Admin_Managers_Entity_Edit_WithShopData|Application_Module
+	public static function EntityEdit_WithEShopData() : Admin_Managers_Entity_Edit_WithEShopData|Application_Module
 	{
-		return static::get( Admin_Managers_Entity_Edit_WithShopData::class );
+		return static::get( Admin_Managers_Entity_Edit_WithEShopData::class );
 	}
 	
 	public static function EntityEdit_Simple() : Admin_Managers_Entity_Edit_Simple|Application_Module
@@ -392,9 +401,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Entity_Edit_Common::class );
 	}
 	
-	public static function EntityEdit_WithShopRelation() : Admin_Managers_Entity_Edit_WithShopRelation|Application_Module
+	public static function EntityEdit_WithEShopRelation() : Admin_Managers_Entity_Edit_WithEShopRelation|Application_Module
 	{
-		return static::get( Admin_Managers_Entity_Edit_WithShopRelation::class );
+		return static::get( Admin_Managers_Entity_Edit_WithEShopRelation::class );
 	}
 	
 	public static function EntityEdit_Marketing() : Admin_Managers_Entity_Edit_Marketing|Application_Module
@@ -472,7 +481,7 @@ class Core_Admin_Managers extends Managers {
 	
 	public static function WarehouseManagementOverview() : Admin_Managers_WarehouseManagementOverview|Application_Module|null
 	{
-		return static::get( Core_Admin_Managers_WarehouseManagementOverview::class );
+		return static::get( Admin_Managers_WarehouseManagementOverview::class );
 	}
 	
 	public static function Context() : Admin_Managers_Context|Application_Module
@@ -488,6 +497,11 @@ class Core_Admin_Managers extends Managers {
 	public static function LossOrDestruction() : Admin_Managers_LossOrDestruction|Application_Module|null
 	{
 		return static::get( Admin_Managers_LossOrDestruction::class );
+	}
+	
+	public static function Note() : Admin_Managers_Note|Application_Module|null
+	{
+		return static::get( Admin_Managers_Note::class );
 	}
 	
 }

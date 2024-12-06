@@ -18,12 +18,12 @@ namespace JetApplicationModule\Admin\Complaints;
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockCard;
 
-class StockCard extends WarehouseManagement_StockCard implements Admin_Entity_WithShopRelation_Interface
+class StockCard extends WarehouseManagement_StockCard implements Admin_Entity_WithEShopRelation_Interface
 {
 	public function getAdminTitle() : string
 	{

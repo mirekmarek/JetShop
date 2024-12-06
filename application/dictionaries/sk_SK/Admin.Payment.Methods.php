@@ -28,7 +28,7 @@ return [
 	'Cash' => 'Hotovosť',
 	'Loan' => 'Pôžička',
 	'Loan - online' => 'Pôžička - online',
-	'Bank transfer' => 'bankový prevod',
+	'Bank transfer' => 'Bankový prevod',
 	'Kind' => 'Milý',
 	'Internal name' => 'Interný názov',
 	'Please select delivery method' => 'Vyberte spôsob doručenia',

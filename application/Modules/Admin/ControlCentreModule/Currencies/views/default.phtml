@@ -2,24 +2,29 @@
 namespace JetApplicationModule\Admin\ControlCentreModule\Currencies;
 
 use Jet\Http_Request;
+use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 
 /**
  * @var MVC_View   $this
- * @var Currencies_Currency|null $selected_currency
- * @var Currencies_Currency|null $new_currency
+ * @var Currency|null $selected_currency
+ * @var Currency|null $new_currency
  */
 
 $selected_currency = $this->getRaw('selected_currency');
 $new_currency = $this->getRaw('new_currency');
+
 ?>
-<div style="display: grid;grid-template-columns: 2fr 3fr;gap: 10px">
+<div style="display: grid;grid-template-columns: 1fr 3fr;gap: 10px">
 	<div>
+		<?=UI::button( Tr::_('Show exchange rates') )->setOnClick("document.getElementById('exchange_rates').showModal();") ?>
+		<br><br>
+		
 		<table class="table table-striped">
 		<thead>
 		<tr>
@@ -39,6 +44,7 @@ $new_currency = $this->getRaw('new_currency');
 			<?php endif; ?>
 				</td>
 				<td>
+					<?php /*
 					<table>
 					<?php
 					foreach(Currencies::getList() as $tg_currency):
@@ -55,6 +61,7 @@ $new_currency = $this->getRaw('new_currency');
 					endforeach;
 					?>
 					</table>
+					*/ ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
@@ -77,14 +84,32 @@ $new_currency = $this->getRaw('new_currency');
 			?>
 			<?=$form->start()?>
 				<?=$form->field('code')?>
-				<?=$form->field('symbol_left')?>
-				<?=$form->field('symbol_right')?>
 				<?=$form->field('decimal_separator')?>
 				<?=$form->field('thousands_separator')?>
-				<?=$form->field('decimal_places')?>
+		
+				<fieldset><legend><?=Tr::_('With VAT')?></legend>
+				<?=$form->field('symbol_left_with_VAT')?>
+				<?=$form->field('symbol_right_with_VAT')?>
 				<?=$form->field('round_precision_with_VAT')?>
+				<?=$form->field('decimal_places_with_VAT')?>
+				</fieldset>
+
+				<fieldset><legend><?=Tr::_('Without VAT')?></legend>
+				<?=$form->field('symbol_left_without_VAT')?>
+				<?=$form->field('symbol_right_without_VAT')?>
 				<?=$form->field('round_precision_without_VAT')?>
+				<?=$form->field('decimal_places_without_VAT')?>
+				</fieldset>
+
+				<fieldset><legend><?=Tr::_('VAT')?></legend>
+				<?=$form->field('symbol_left_VAT')?>
+				<?=$form->field('symbol_right_VAT')?>
 				<?=$form->field('round_precision_VAT')?>
+				<?=$form->field('decimal_places_VAT')?>
+				</fieldset>
+		
+		
+		
 		
 				<?php
 				if($selected_currency):
@@ -134,3 +159,41 @@ $new_currency = $this->getRaw('new_currency');
 	</div>
 	
 </div>
+
+<dialog id="exchange_rates" style="border: 1px solid black;border-radius: 5px;">
+	<div style="display: grid;grid-template-columns: 1fr 20px;">
+		<div><h3><?=Tr::_('Exchagne rates')?></h3></div>
+		<div onclick="document.getElementById('exchange_rates').close();" style="cursor: pointer;font-size: 20px;font-weight: bolder;">&times;</div>
+	</div>
+	
+	<div style="overflow: auto;">
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th></th>
+				<?php foreach(Currencies::getList() as $currency): ?>
+					<th><?=$currency->getCode()?></th>
+				<?php endforeach; ?>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach(Currencies::getList() as $currency_y): ?>
+				<tr>
+					<td><b><?=$currency_y->getCode()?></b></td>
+					<?php foreach(Currencies::getList() as $currency_x): ?>
+						<td>
+							<?php
+							if($currency_y->getCode()!=$currency_x->getCode()):
+								$er = $currency_y->getExchangeRate( $currency_x );
+								echo !$er ? '<span style="color: #c9c9c9;">X</span>' : Locale::float( $er, max_fraction_digits: 6 );
+							endif;
+							?>
+						</td>
+					<?php endforeach;?>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+		
+	</div>
+</dialog>

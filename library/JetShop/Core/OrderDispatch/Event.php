@@ -68,12 +68,16 @@ class Core_OrderDispatch_Event extends Entity_Event
 		return $this->_order_dispatch;
 	}
 	
-	public function getHandlerModule() : OrderDispatch_Event_HandlerModule
+	public function getHandlerModule() : ?OrderDispatch_Event_HandlerModule
 	{
 		/**
 		 * @var OrderDispatch_Event $this
 		 * @var OrderDispatch_Event_HandlerModule $module
 		 */
+		if(!Application_Modules::moduleIsActivated( $this->getHandlerModuleName() )) {
+			return null;
+		}
+		
 		$module = Application_Modules::moduleInstance( $this->getHandlerModuleName() );
 		$module->init( $this );
 		
@@ -89,7 +93,7 @@ class Core_OrderDispatch_Event extends Entity_Event
 	{
 		$e = new OrderDispatch_Event();
 		$e->setEvent( $event );
-		$e->setShop( $order_dispatch->getShop() );
+		$e->setEshop( $order_dispatch->getEshop() );
 		$e->setOrderDispatchId( $order_dispatch->getId() );
 		$e->created_date_time = Data_DateTime::now();
 		

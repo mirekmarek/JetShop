@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use JetApplication\MeasureUnit;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ShoppingCart;
 
 class Core_Marketing_Gift {
@@ -19,7 +19,7 @@ class Core_Marketing_Gift {
 	
 	protected bool $only_one = false;
 	
-	protected ?Product_ShopData $product = null;
+	protected ?Product_EShopData $product = null;
 	
 	public function __construct( ShoppingCart $cart, int $product_id, float $number_of_units )
 	{
@@ -68,10 +68,10 @@ class Core_Marketing_Gift {
 		return $this->product_id;
 	}
 	
-	public function getProduct() : Product_ShopData
+	public function getProduct() : Product_EShopData
 	{
 		if($this->product===null) {
-			$this->product = Product_ShopData::get( $this->product_id, $this->cart->getShop() );
+			$this->product = Product_EShopData::get( $this->product_id, $this->cart->getEshop() );
 		}
 		return $this->product;
 	}

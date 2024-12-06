@@ -63,11 +63,12 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 					</div>
 				</div>
 			</div>
-			
+		<?php endif; ?>
 			
 			<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
-			
 		
+		
+		<?php if($is_editable): ?>
 			<div class="dropdown">
 				<button class="btn btn-secondary dropdown-toggle" type="button" id="change-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<?=Tr::_('Send e-mail')?>

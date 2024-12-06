@@ -19,13 +19,11 @@ require __DIR__.'/Init/Cache.php';
 require __DIR__.'/Init/Autoloader.php';
 require __DIR__.'/Init/HTTPRequest.php';
 
-require __DIR__.'/config/JetShop.php';
-
 
 if(isset($argv) && is_array($argv)) {
-	Shops::determineByCliArg( $argv );
+	EShops::determineByCliArg( $argv );
 } else {
-	$shop = Shops::getDefault();
+	$eshop = EShops::getDefault();
 	
-	Shops::setCurrent( $shop );
+	EShops::setCurrent( $eshop );
 }

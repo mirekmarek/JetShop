@@ -9,7 +9,7 @@ use JetApplication\Admin_Managers_Entity_Listing;
 
 use Jet\MVC_View;
 use JetApplication\MarketplaceIntegration;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -51,23 +51,23 @@ $order = $this->getRaw( 'order' );
 				<table style="margin: 10px">
 					<?php if($order->getSplitSourceOrderId()): ?>
 					<tr>
-						<td style="font-weight: bolder;font-size: 1.2rew"><?=Tr::_('Comes from a split order:')?></td>
-						<td style="font-weight: bolder;font-size: 1.2rew"><?=Admin_Managers::Order()->showName($order->getSplitSourceOrderId())?></td>
+						<td style="font-weight: bolder;font-size: 1.1rem"><?=Tr::_('Comes from a split order:')?></td>
+						<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->showName($order->getSplitSourceOrderId())?></td>
 					</tr>
 					<?php endif; ?>
 					
 					<?php if($order->getJoinedWithOrderId()): ?>
 						<tr>
-							<td style="font-weight: bolder;font-size: 1.2rew"><?=Tr::_('Joined with order:')?></td>
-							<td style="font-weight: bolder;font-size: 1.2rew"><?=Admin_Managers::Order()->showName($order->getJoinedWithOrderId())?></td>
+							<td style="font-weight: bolder;font-size: 1.1rem"><?=Tr::_('Joined with order:')?></td>
+							<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->showName($order->getJoinedWithOrderId())?></td>
 						</tr>
 					<?php endif; ?>
 					
 					
-					<?php if(Shops::isMultiShopMode()): ?>
+					<?php if(EShops::isMultiEShopMode()): ?>
 						<tr>
-							<td><b><?=Tr::_('Shop')?></b></td>
-							<td><?=$order->getShop()->getShopName()?></td>
+							<td><b><?=Tr::_('e-shop')?></b></td>
+							<td><?=$order->getEshop()->getName()?></td>
 						</tr>
 					<?php endif; ?>
 					<tr>
@@ -156,7 +156,7 @@ $order = $this->getRaw( 'order' );
 		<div style="margin: 10px;" class="card">
 			<div class="card-header"><b><?=Tr::_('Billing address')?></b></div>
 			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $order->getShop(), $order->getBillingAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getBillingAddress() )?>
 				
 				<?=Handler::getHandler( Handler_ChangeBillingAddress_Main::KEY )?->renderButton()?>
 			</div>
@@ -166,7 +166,7 @@ $order = $this->getRaw( 'order' );
 		<div style="margin: 10px;" class="card">
 			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
 			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $order->getShop(), $order->getDeliveryAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getDeliveryAddress() )?>
 				
 				<?=Handler::getHandler( Handler_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
 			</div>

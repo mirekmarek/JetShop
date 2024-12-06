@@ -3,14 +3,14 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Data_DateTime;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Exports_Definition;
 
 abstract class Core_Exports_Manager extends Application_Module {
 	
 	abstract public function handleExports() : void;
 	
-	abstract public function getExportURL( Exports_Definition $export, ?Shops_Shop $shop=null ) : string;
+	abstract public function getExportURL( Exports_Definition $export, ?EShop $eshop=null ) : string;
 	
 	public function shutdownExport( Exports_Definition $export ) : void
 	{

@@ -14,14 +14,11 @@ use Jet\Form;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC_View;
-use Jet\Navigation_Breadcrumb;
-use Jet\MVC;
 use Jet\Session;
 use Jet\Translator;
-use Jet\UI;
 
 use JetApplication\Admin_Managers_UI;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -31,19 +28,6 @@ class Main extends Application_Module implements Admin_Managers_UI
 {
 
 	protected MVC_View $view;
-	
-	public function initBreadcrumb() : void
-	{
-		$page = MVC::getPage();
-
-		Navigation_Breadcrumb::reset();
-
-		Navigation_Breadcrumb::addURL(
-			UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle(),
-			Http_Request::currentURI(unset_GET_params: ['id', 'action', 'page'])
-		);
-
-	}
 	
 	public function __construct( Application_Module_Manifest $manifest )
 	{
@@ -102,38 +86,38 @@ class Main extends Application_Module implements Admin_Managers_UI
 	}
 	
 	
-	public const CURR_SHOP_SESSION = 'current_shop';
-	public const CURR_SHOP_SESSION_KEY = 'key';
-	public const CURR_SHOP_GET_PARAM = 'select_shop';
+	public const CURR_ESHOP_SESSION = 'current_eshop';
+	public const CURR_ESHOP_SESSION_KEY = 'key';
+	public const CURR_ESHOP_GET_PARAM = 'select_eshop';
 	
 
 	public function handleCurrentPreferredShop() : void
 	{
-		$all_shops = array_keys(Shops::getList());
-		$default_shop = Shops::getDefault();
+		$all_eshops = array_keys(EShops::getList());
+		$default_eshop = EShops::getDefault();
 		
-		$session = new Session( static::CURR_SHOP_SESSION );
-		$current_shop_key = $session->getValue(static::CURR_SHOP_SESSION_KEY, '');
-		if(!in_array($current_shop_key, $all_shops)) {
-			$current_shop_key = $default_shop->getKey();
-			$session->setValue(static::CURR_SHOP_SESSION_KEY, $current_shop_key);
+		$session = new Session( static::CURR_ESHOP_SESSION );
+		$current_eshop_key = $session->getValue(static::CURR_ESHOP_SESSION_KEY, '');
+		if(!in_array($current_eshop_key, $all_eshops)) {
+			$current_eshop_key = $default_eshop->getKey();
+			$session->setValue(static::CURR_ESHOP_SESSION_KEY, $current_eshop_key);
 		}
 		
 		
 		$GET = Http_Request::GET();
-		if($GET->exists(static::CURR_SHOP_GET_PARAM)) {
-			$current_shop_key = $GET->getString(
-				key:static::CURR_SHOP_GET_PARAM,
-				default_value: $default_shop->getKey(),
-				valid_values: $all_shops
+		if($GET->exists(static::CURR_ESHOP_GET_PARAM)) {
+			$current_eshop_key = $GET->getString(
+				key:static::CURR_ESHOP_GET_PARAM,
+				default_value: $default_eshop->getKey(),
+				valid_values: $all_eshops
 			);
 			
-			$session->setValue(static::CURR_SHOP_SESSION_KEY, $current_shop_key);
+			$session->setValue(static::CURR_ESHOP_SESSION_KEY, $current_eshop_key);
 			
-			Http_Headers::reload(unset_GET_params: [static::CURR_SHOP_GET_PARAM]);
+			Http_Headers::reload(unset_GET_params: [static::CURR_ESHOP_GET_PARAM]);
 		}
 		
-		Shops::setCurrent( Shops::get($current_shop_key) );
+		EShops::setCurrent( EShops::get($current_eshop_key) );
 	}
 	
 	public function renderMainMenu() : string

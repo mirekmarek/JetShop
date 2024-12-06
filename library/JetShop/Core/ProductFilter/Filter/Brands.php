@@ -1,7 +1,7 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Filter_Brands_Brand;
 use JetApplication\ProductFilter_Storage;
@@ -94,7 +94,7 @@ abstract class Core_ProductFilter_Filter_Brands extends ProductFilter_Filter
 	public function filter(): void
 	{
 
-		$where = $this->product_filter->getShop()->getWhere();
+		$where = $this->product_filter->getEshop()->getWhere();
 		
 		if( $this->previous_filter_result !== null ) {
 			$where[] = 'AND';
@@ -104,7 +104,7 @@ abstract class Core_ProductFilter_Filter_Brands extends ProductFilter_Filter
 		$where[] = 'AND';
 		$where[] = ['brand_id' => array_keys( $this->brands )];
 		
-		$_map = Product_ShopData::dataFetchAll(
+		$_map = Product_EShopData::dataFetchAll(
 			select: [
 				'entity_id',
 				'brand_id'

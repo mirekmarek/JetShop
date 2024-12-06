@@ -9,14 +9,14 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
 
 class Listing_Column_ActiveState extends Listing_Column_Abstract
 {
 	public const KEY = 'active_state';
 	
-	protected ?bool $multi_shop_mode = null;
+	protected ?bool $multi_eshop_mode = null;
 	
 	
 	public function getKey(): string
@@ -24,9 +24,9 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 		return static::KEY;
 	}
 	
-	public function isMultiShopMode(): bool
+	public function isMultiEShopMode(): bool
 	{
-		if($this->multi_shop_mode===null) {
+		if($this->multi_eshop_mode===null) {
 			/**
 			 * @var Listing $listing
 			 */
@@ -34,17 +34,17 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 			
 			$entity = $listing->getEntity();
 			
-			$this->multi_shop_mode = ($entity instanceof Entity_WithShopData);
+			$this->multi_eshop_mode = ($entity instanceof Entity_WithEShopData);
 			
 			if(
-				$this->multi_shop_mode &&
-				!Shops::isMultiShopMode()
+				$this->multi_eshop_mode &&
+				!EShops::isMultiEShopMode()
 			)  {
-				$this->multi_shop_mode = false;
+				$this->multi_eshop_mode = false;
 			}
 		}
 		
-		return $this->multi_shop_mode;
+		return $this->multi_eshop_mode;
 	}
 	
 	
@@ -68,10 +68,10 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 	{
 		$titles = ['general'=> Tr::_('Is active')];
 		
-		if($this->isMultiShopMode()) {
-			$shops = Shops::getListSorted();
-			foreach($shops as $shop) {
-				$titles[$shop->getKey()] = Tr::_('Is active - %what%', ['what'=>$shop->getShopName()]);
+		if($this->isMultiEShopMode()) {
+			$eshops = EShops::getListSorted();
+			foreach($eshops as $eshop) {
+				$titles[$eshop->getKey()] = Tr::_('Is active - %what%', ['what'=>$eshop->getName()]);
 			}
 		}
 		
@@ -81,7 +81,7 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 	public function getExportData( mixed $item ): array
 	{
 		/**
-		 * @var Entity_WithShopData $item
+		 * @var Entity_WithEShopData $item
 		 */
 		
 		$data = [
@@ -89,10 +89,10 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 		];
 		
 		
-		if($this->isMultiShopMode()) {
-			$shops = Shops::getListSorted();
-			foreach($shops as $shop) {
-				$data[$shop->getKey()] = $item->getShopData($shop)->isActiveForShop() ? 1 : 0;
+		if($this->isMultiEShopMode()) {
+			$eshops = EShops::getListSorted();
+			foreach($eshops as $eshop) {
+				$data[$eshop->getKey()] = $item->getEshopData($eshop)->isActiveForShop() ? 1 : 0;
 			}
 		}
 		

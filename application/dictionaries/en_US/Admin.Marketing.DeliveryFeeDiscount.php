@@ -57,4 +57,5 @@ return [
 	'Internal notes' => '',
 	'General' => '',
 	'Name:' => '',
+	'e-shop' => '',
 ];

@@ -1,0 +1,58 @@
+<?php
+namespace JetApplicationModule\EShop\ProductQuestions;
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+use JetApplication\ProductQuestion;
+
+/**
+ * @var MVC_View   $this
+ * @var ProductQuestion[] $questions
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+$questions = $this->getRaw('questions');
+
+$dialog = UI::dialog('new_product_question_dialog', Tr::_('Ask a question'), UI_dialog::SIZE_EXTRA_LARGE );
+
+?>
+<script>
+	const NewQuestion = {
+		send: ()=> {
+			JetAjaxForm.submit('<?=$form->getId()?>');
+		}
+	};
+</script>
+
+<?=$dialog->start()?>
+<div id="new_question_form">
+<?php require 'new_question_form.phtml'; ?>
+</div>
+<?=$dialog->end()?>
+
+
+<?=UI::button(Tr::_('Ask a question'))->setClass(UI_button::CLASS_INFO)->setOnClick("dialog.open('new_product_question_dialog');")?>
+<?php
+
+foreach($questions as $q):
+	?>
+	<div class="product-question">
+		<div class="date-time"><?=Locale::date($q->getCreated())?></div>
+		<div class="question">
+			<?=nl2br( $q->getQuestion() )?>
+		</div>
+		<div class="answer">
+			<b><?=Tr::_('Answer:')?></b><br>
+			<?=nl2br( $q->getAnswer() )?>
+		</div>
+	</div>
+	<?php
+endforeach;
+

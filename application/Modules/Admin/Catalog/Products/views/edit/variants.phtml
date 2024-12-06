@@ -13,8 +13,9 @@ use Jet\UI_dialog;
 use JetApplication\Admin_Managers;
 use JetApplication\Availabilities;
 use JetApplication\Pricelists;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
@@ -55,7 +56,7 @@ $kind = $product->getKindOfProduct();
 echo $this->controller->getEditorManager()->renderToolbar(
 	form:  $variants_update_form,
 	toolbar_renderer: function() use ($add_form, $product) {
-		echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $product );
+		echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $product );
 		
 		if($add_form) {
 			echo '&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -97,13 +98,13 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 					<div style="padding-right: 20px;">
 						<div style="display: flex;align-items: center;gap: 5px;">
 							<div>
-								<?php echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $variant ); ?>
+								<?php echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $variant ); ?>
 							</div>
 							<div>
 								<?=Tr::_('ID:')?><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getId()?></a>
 							</div>
 							<div style="padding-left: 50px;">
-								<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityActivation(
+								<?=Admin_Managers::EntityEdit_WithEShopData()->renderEntityActivation(
 									entity: $variant,
 									editable: !$variants_update_form->getIsReadonly(),
 									deactivate_url_creator: function() use ($variant) : string {
@@ -120,6 +121,12 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 										return Http_Request::currentURI([
 											'activate_variant_completely'=>$variant->getId()
 										]);
+									},
+									deactivate_per_eshop_url_creator: function( EShop $eshop ) : string {
+										return '';
+									},
+									activate_per_eshop_url_creator: function( EShop $eshop ) : string {
+										return '';
 									}
 								
 								);?>
@@ -137,44 +144,14 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 						</div>
 					</div>
 					<div>
-						
-						<?php /*Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
-							form: $variants_update_form,
-							inline_mode: true,
-							renderer: function( Shops_Shop $shop, string $shop_key ) use ($variants_update_form, $variant) {
-								?>
-								<div style="padding: 5px;">
-									
-									<?=Admin_Managers::EntityEdit_WithShopData()->renderEntityShopDataActivation(
-										entity: $variant,
-										shop: $shop,
-										editable: !$variants_update_form->getIsReadonly(),
-										deactivate_url_creator: function() use ($variant, $shop) : string {
-											return Http_Request::currentURI([
-												'deactivate_variant_shop_data'=>$variant->getId(),
-												'shop'=>$shop->getKey()
-											]);
-										},
-										activate_url_creator: function() use ($variant, $shop) : string {
-											return Http_Request::currentURI([
-												'activate_variant_shop_data'=>$variant->getId(),
-												'shop'=>$shop->getKey()
-											]);
-										},
-										
-									);?>
-								</div>
-								<?php
-							}
-						);*/ ?>
 					</div>
 				
 				<div style="display: grid;grid-template-columns: 200px 1fr;gap: 10px;margin: 10px;">
-					<?php foreach(Shops::getListSorted() as $shop): ?>
-						<div><?=UI::flag($shop->getLocale())?> <?=$shop->getShopName()?></div>
+					<?php foreach( EShops::getListSorted() as $eshop): ?>
+						<div><?=UI::flag($eshop->getLocale())?> <?=$eshop->getName()?></div>
 						<div style="display: flex;align-items: center;gap: 10px;">
-							<label><?=$variants_update_form->field('/'.$variant->getId().'/'.$shop->getKey().'/variant_name')->getLabel()?></label>
-							<?=$variants_update_form->field('/'.$variant->getId().'/'.$shop->getKey().'/variant_name')->input()?>
+							<label><?=$variants_update_form->field('/'.$variant->getId().'/'.$eshop->getKey().'/variant_name')->getLabel()?></label>
+							<?=$variants_update_form->field('/'.$variant->getId().'/'.$eshop->getKey().'/variant_name')->input()?>
 						</div>
 					<?php endforeach; ?>
 				</div>
@@ -204,32 +181,19 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 					<?php endforeach; ?>
 				</div>
 
-				<div style="display: flex;gap: 10px;">
-					<?php foreach(Pricelists::getList() as $pricelist): ?>
-						<fieldset>
-							<legend class="sub"><?=Tr::_('Price')?> - <?=$pricelist->getName()?></legend>
-							
-							<div style="display: grid;grid-template-columns: 180px 180px;align-items: center">
-								<div style="font-weight: bolder;font-size: 20px;"><?=Tr::_('Price:')?></div>
-								<div style="font-weight: bolder;font-size: 25px;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $variant->getPrice( $pricelist ) )?></div>
-							
-							<?php if($variant->getDiscountPercentage( $pricelist )>0): ?>
-								<div style="opacity: 0.5;font-weight: bolder;font-size: 15px;"><?=Tr::_('Discount:')?></div>
-								<div style="opacity: 0.5;font-weight: bolder;font-size: 20px;"><?=$variant->getDiscountPercentage( $pricelist );?>%</div>
-							<?php endif; ?>
-							</div>
-						</fieldset>
-					<?php endforeach; ?>
-				
-				
+				<div style="display: grid; grid-template-columns: repeat(auto-fit, 300px); gap: 20px;">
+					<?php foreach(Pricelists::getList() as $pricelist):
+						$price = $variant->getPriceEntity( $pricelist );
+						echo Admin_Managers::PriceFormatter()->showPriceInfo( $price );
+					endforeach; ?>
 				</div>
 				
 				
-					<div style="padding: 10px;padding-left: 30px;">
-						<?php
-						$showPropertyEditForm( $product, '/'.$variant->getId(), $variants_update_form );
-						?>
-					</div>
+				<div style="padding: 10px;padding-left: 30px;">
+					<?php
+					$showPropertyEditForm( $product, '/'.$variant->getId(), $variants_update_form );
+					?>
+				</div>
 
 			</div>
 		</div>
@@ -249,12 +213,11 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 	<?=$add_form->field('internal_name_of_variant')?>
 	<?=$add_form->field('internal_code')?>
 	
-	<?php
-	Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
+	<?=Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
 		form: $add_form,
-		renderer: function( Shops_Shop $shop, string $shop_key ) use ($add_form) : void {
+		renderer: function( EShop $eshop, string $eshop_key ) use ($add_form) : void {
 			?>
-			<?=$add_form->field('/shop_data/'.$shop_key.'/variant_name')?>
+			<?=$add_form->field('/eshop_data/'.$eshop_key.'/variant_name')?>
 		<?php }); ?>
 	
 	

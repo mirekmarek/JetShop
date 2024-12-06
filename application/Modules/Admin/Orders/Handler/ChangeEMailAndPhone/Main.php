@@ -49,7 +49,7 @@ class Handler_ChangeEMailAndPhone_Main extends Handler {
 					return true;
 				}
 				
-				$exists = Customer::getByEmail( $new_email_address, $this->order->getShop() );
+				$exists = Customer::getByEmail( $new_email_address, $this->order->getEshop() );
 				if(!$exists) {
 					return true;
 				}

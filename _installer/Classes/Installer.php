@@ -11,13 +11,20 @@ namespace JetApplication\Installer;
 use Jet\Http_Request;
 use Jet\Http_Headers;
 use Jet\Factory_MVC;
+use Jet\MVC_Base;
 use Jet\MVC_Layout;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\SysConf_Jet_Translator;
 use Jet\Session;
+use Jet\SysConf_URI;
+use Jet\Tr;
 use Jet\Translator;
 use Jet\SysConf_Path;
+use JetApplication\Application_Admin;
+use JetApplication\Application_EShop;
+use JetApplication\Application_Exports;
+use JetApplication\Application_Services;
 
 
 require 'Step/Controller.php';
@@ -41,18 +48,36 @@ class Installer
 	/**
 	 * @var Locale[]
 	 */
-	protected static array $available_locales = [];
+	protected static array $available_installer_locales = [];
+	
+	/**
+	 * @var Locale[]
+	 */
+	protected static array $available_admin_locales = [];
 
 	/**
 	 * @var array
 	 */
-	protected static array $selected_locales = [];
-
+	protected static array $selected_eshop_locales = [];
+	
 	/**
 	 * @var ?Locale
 	 */
 	protected static ?Locale $current_locale = null;
+	
 
+	/**
+	 * @var ?Locale
+	 */
+	protected static ?Locale $services_locale = null;
+	
+	
+	protected static string $default_currency_code = '';
+	
+	protected static array $default_currency_codes = [];
+	
+	protected static array $default_vat_rates = [];
+	
 	/**
 	 * @var string
 	 */
@@ -67,6 +92,8 @@ class Installer
 	 * @var ?MVC_Layout
 	 */
 	protected static ?MVC_Layout $layout = null;
+	
+	protected static ?Session $session = null;
 
 	/**
 	 * @param array $steps
@@ -80,53 +107,86 @@ class Installer
 	/**
 	 * @return Locale[]
 	 */
-	public static function getAvailableLocales(): array
+	public static function getAvailableInstallerLocales(): array
 	{
-		return self::$available_locales;
+		return self::$available_installer_locales;
 	}
 
 	/**
-	 * @param array $available_locales
+	 * @param array $locales
 	 */
-	public static function setAvailableLocales( array $available_locales ): void
+	public static function setAvailableInstallerLocales( array $locales ): void
 	{
 		$ls = [];
 
-		foreach( $available_locales as $locale ) {
+		foreach( $locales as $locale ) {
 			$locale = new Locale( $locale );
 			$ls[(string)$locale] = $locale;
 		}
 
-
-		self::$available_locales = $ls;
+		self::$available_installer_locales = $ls;
 	}
-
+	
 	/**
 	 * @return Locale[]
 	 */
-	public static function getSelectedLocales(): array
+	public static function getAvailableAdminLocales(): array
 	{
-		if( !self::$selected_locales ) {
-			self::$selected_locales = static::getSession()->getValue( 'selected_locales', [static::getCurrentLocale()->toString()] );
+		return self::$available_admin_locales;
+	}
+	
+	public static function setAvailableAdminLocales( array $locales ): void
+	{
+		$ls = [];
+		
+		foreach( $locales as $locale ) {
+			$locale = new Locale( $locale );
+			$ls[(string)$locale] = $locale;
+		}
+		
+		self::$available_admin_locales = $ls;
+	}
+	
+	public static function getServicesLocale():?Locale
+	{
+		return self::$services_locale;
+	}
+	
+	public static function setServicesLocale( Locale $services_locale ): void
+	{
+		self::$services_locale = $services_locale;
+	}
+	
+	
+
+	
+	
+	/**
+	 * @return Locale[]
+	 */
+	public static function getSelectedEshopLocales(): array
+	{
+		if( !self::$selected_eshop_locales ) {
+			self::$selected_eshop_locales = static::getSession()->getValue( 'selected_locales', [static::getCurrentLocale()->toString()] );
 		}
 
-		return self::$selected_locales;
+		return self::$selected_eshop_locales;
 	}
 
 	/**
-	 * @param Locale[] $selected_locales
+	 * @param Locale[] $selected_eshop_locales
 	 */
-	public static function setSelectedLocales( array $selected_locales ): void
+	public static function setSelectedEshopLocales( array $selected_eshop_locales ): void
 	{
-		self::$selected_locales = [];
+		self::$selected_eshop_locales = [];
 
-		foreach( $selected_locales as $locale ) {
+		foreach( $selected_eshop_locales as $locale ) {
 			$locale = new Locale( $locale );
-
-			self::$selected_locales[$locale->toString()] = $locale;
+			
+			self::$selected_eshop_locales[$locale->toString()] = $locale;
 		}
 
-		static::getSession()->setValue( 'selected_locales', self::$selected_locales );
+		static::getSession()->setValue( 'selected_locales', self::$selected_eshop_locales );
 	}
 
 	/**
@@ -134,7 +194,11 @@ class Installer
 	 */
 	public static function getSession(): Session
 	{
-		return new Session( '_installer_' );
+		if(!static::$session) {
+			static::$session = new Session( '_installer_' );
+		}
+		
+		return static::$session;
 	}
 
 	/**
@@ -148,7 +212,7 @@ class Installer
 			if( $session->getValueExists( 'current_locale' ) ) {
 				static::$current_locale = $session->getValue( 'current_locale' );
 			} else {
-				foreach( static::$available_locales as $locale ) {
+				foreach( static::$available_installer_locales as $locale ) {
 					static::setCurrentLocale( $locale );
 					break;
 				}
@@ -494,4 +558,266 @@ class Installer
 		static::$base_path = $base_path;
 	}
 
+	
+	public static function initBases() : void
+	{
+		
+		$URL = $_SERVER['HTTP_HOST'] . SysConf_URI::getBase();
+		
+		
+		$eshop = Factory_MVC::getBaseInstance();
+		$eshop->setName( 'e-shop' );
+		$eshop->setId( Application_EShop::getBaseId() );
+		
+		$default_added = false;
+		foreach( Installer::getSelectedEshopLocales() as $locale ) {
+			if(!$default_added) {
+				$eshop_ld = $eshop->addLocale( $locale );
+				$eshop_ld->setTitle( 'E-Shop' );
+				$eshop_ld->setURLs( [$URL] );
+				
+				
+				$default_added = true;
+				
+				continue;
+			}
+			
+			$eshop_ld = $eshop->addLocale( $locale );
+			$eshop_ld->setTitle( 'e-shop' );
+			$eshop_ld->setURLs( [$URL . $locale->getLanguage().'-'.strtolower($locale->getRegion())] );
+		}
+		$eshop->setIsDefault( true );
+		$eshop->setIsActive( true );
+		$eshop->setInitializer( [
+			Application_EShop::class,
+			'init'
+		] );
+		
+		
+		
+		
+		
+		$admin = Factory_MVC::getBaseInstance();
+		$admin->setIsSecret( true );
+		$admin->setName( 'Administration' );
+		$admin->setId( Application_Admin::getBaseId() );
+		
+		
+		$default_added = false;
+		foreach( Installer::getAvailableAdminLocales() as $locale ) {
+			if( !$default_added ) {
+				$admin_ld = $admin->addLocale( $locale );
+				$admin_ld->setTitle( Tr::_( 'Administration', [], null, $locale ) );
+				$admin_ld->setURLs( [$URL . 'admin/'] );
+				
+				$default_added = true;
+				continue;
+			}
+			
+			$admin_ld = $admin->addLocale( $locale );
+			$admin_ld->setTitle( Tr::_( 'Administration', [], null, $locale ) );
+			$admin_ld->setURLs( [$URL . 'admin/' . $locale->getLanguage() . '/'] );
+		}
+		$admin->setIsActive( true );
+		$admin->setInitializer( [
+			Application_Admin::class,
+			'init'
+		] );
+		
+		
+		$services = Factory_MVC::getBaseInstance();
+		$services->setIsSecret( true );
+		$services->setName( 'Services' );
+		$services->setId( Application_Services::getBaseId() );
+		$services_ld = $services->addLocale( Installer::getServicesLocale() );
+		$services_ld->setTitle( Tr::_( 'Services') );
+		$services_ld->setURLs( [$URL . 'services/'] );
+		$services->setIsActive( true );
+		$services->setInitializer( [
+			Application_Services::class,
+			'init'
+		] );
+		
+		
+		
+		
+		$exports = Factory_MVC::getBaseInstance();
+		$exports->setIsSecret( true );
+		$exports->setName( 'Exports' );
+		$exports->setId( Application_Exports::getBaseId() );
+		$exports_ld = $exports->addLocale( Installer::getServicesLocale() );
+		$exports_ld->setTitle( Tr::_( 'Exports' ) );
+		$exports_ld->setURLs( [$URL . 'exports/'] );
+		$exports->setIsActive( true );
+		$exports->setInitializer( [
+			Application_Exports::class,
+			'init'
+		] );
+		
+		
+		
+		$services->setInitializer( [ Application_Services::class, 'init' ] );
+		
+		$exports->setInitializer( [ Application_Exports::class, 'init' ] );
+		
+		$admin->setInitializer( [ Application_Admin::class, 'init'] );
+		$admin->setIsSecret( true );
+		
+		$eshop->setInitializer( [ Application_EShop::class, 'init' ] );
+		
+		
+		$bases = [
+			$eshop->getId() => $eshop,
+			$admin->getId() => $admin,
+			$services->getId() => $services,
+			$exports->getId() => $exports,
+		];
+		
+		
+		Installer::getSession()->setValue( 'bases', $bases );
+		
+	}
+	
+	/**
+	 * @return MVC_Base[]
+	 */
+	public static function getBases() : array
+	{
+		$session = static::getSession();
+		
+		if( !$session->getValueExists( 'bases' ) ) {
+			static::initBases();
+		}
+		$bases = $session->getValue( 'bases' );
+		
+		return $bases;
+		
+	}
+	
+	public static function getDefaultCurrencyCode(): string
+	{
+		return self::$default_currency_code;
+	}
+	
+	public static function setDefaultCurrencyCode( string $default_currency_code ): void
+	{
+		self::$default_currency_code = $default_currency_code;
+	}
+	
+	public static function getDefaultCurrencyCodes(): array
+	{
+		return self::$default_currency_codes;
+	}
+	
+	public static function setDefaultCurrencyCodes( array $default_currency_codes ): void
+	{
+		self::$default_currency_codes = $default_currency_codes;
+	}
+	
+	public static function getDefaultVatRates(): array
+	{
+		return self::$default_vat_rates;
+	}
+	
+	public static function setDefaultVatRates( array $default_vat_rates ): void
+	{
+		self::$default_vat_rates = $default_vat_rates;
+	}
+	
+	
+	
+	
+	public static function initCurrencies() : void
+	{
+		$curencies = [];
+		$default_currency_code = static::getDefaultCurrencyCode();
+		$default_currency_codes = static::getDefaultCurrencyCodes();
+		
+		foreach( Installer::getSelectedEshopLocales() as $locale ) {
+			$locale = $locale->toString();
+			
+			$currency = $default_currency_codes[$locale] ?? $default_currency_code;
+			
+			$curencies[ $locale ] = $currency;
+		}
+		
+		Installer::getSession()->setValue( 'currencies', $curencies );
+	}
+	
+	public static function getCurrencies() : array
+	{
+		$session = static::getSession();
+		
+		$currencies = $session->getValue( 'currencies' );
+		
+		if( !is_array($currencies) ) {
+			static::initCurrencies();
+		}
+		
+		$currencies = $session->getValue( 'currencies' );
+		
+		return $currencies;
+	}
+	
+	public static function setCurrency( Locale $locale, string $currency_code ) : void
+	{
+		$currencies = static::getCurrencies();
+		$currencies[$locale->toString()] = $currency_code;
+		
+		Installer::getSession()->setValue( 'currencies', $currency_code );
+	}
+	
+	public static function getVATRates( Locale $locale ) : array
+	{
+		
+		$vat_rates = static::getSession()->getValue( 'vat_rates', [] );
+		
+		if( !is_array($vat_rates) ) {
+			$vat_rates = [];
+		}
+		
+		if(
+			!isset($vat_rates[$locale->toString()]) ||
+			!is_array($vat_rates[$locale->toString()])
+		) {
+			$default = Installer::getDefaultVatRates()[$locale->toString()]??[];
+			
+			$vat_rates[$locale->toString()] = $default;
+		}
+		
+		return $vat_rates[$locale->toString()];
+	}
+	
+	public static function setVATRates( Locale $locale, array $vat_rates ): void
+	{
+		$session = static::getSession();
+		
+		$c_vat_rates = $session->getValue( 'vat_rates', [] );
+		
+		if( !is_array($c_vat_rates) ) {
+			$c_vat_rates = [];
+		}
+		
+		$c_vat_rates[ $locale->toString() ] = [];
+		foreach($vat_rates as $rate) {
+			if($rate===null || $rate==='') {
+				continue;
+			}
+			$c_vat_rates[ $locale->toString() ][] = (float)$rate;
+		}
+		
+		static::getSession()->setValue( 'vat_rates', $c_vat_rates );
+	}
+	
+	
+	public static function getAvailabilityStrategy() : string
+	{
+		return Installer::getSession()->getValue( 'availability_strategy', 'global' );
+	}
+	
+	public static function setAvailabilityStrategy( string $strategy ) : void
+	{
+		Installer::getSession()->setValue( 'availability_strategy', $strategy );
+	}
+	
 }

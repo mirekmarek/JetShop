@@ -103,5 +103,5 @@ return [
 	'Activate completely' => 'Aktivovat kompletně',
 	'Price' => 'Cena',
 	'Deactivate' => 'Deaktivovat',
-	'Length of delivery in working days:' => '',
+	'Length of delivery in working days:' => 'Délka dodání v pracovní dny:',
 ];

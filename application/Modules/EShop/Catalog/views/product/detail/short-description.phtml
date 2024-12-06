@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+?>
+<div class="short-description"><?=$product->getShortDescription()?></div>
+
+<a href="#product_description" class="description-anch" onclick="effects.scrollTo('product_description'); return false;"><?=Tr::_('Show full description')?></a>

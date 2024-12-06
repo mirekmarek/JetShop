@@ -27,6 +27,9 @@ $history = $order->getHistory();
 		<tbody>
 		<?php foreach($history as $event):
 			$handler = $event->getHandlerModule();
+			if(!$handler) {
+				continue;
+			}
 			?>
 			<tr>
 				<td>

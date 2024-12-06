@@ -8,7 +8,7 @@ use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Entity_Listing;
 
 use Jet\MVC_View;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -32,10 +32,10 @@ $invoice = $this->getRaw( 'invoice' );
 				
 				<table style="margin: 10px">
 					
-					<?php if(Shops::isMultiShopMode()): ?>
+					<?php if(EShops::isMultiEShopMode()): ?>
 						<tr>
-							<td><b><?=Tr::_('Shop')?></b></td>
-							<td style="padding: 3px"><?=$invoice->getShop()->getShopName()?></td>
+							<td><b><?=Tr::_('e-shop')?></b></td>
+							<td style="padding: 3px"><?=$invoice->getEshop()->getName()?></td>
 						</tr>
 					<?php endif; ?>
 					<?php if($invoice->getOrderId()): ?>
@@ -71,7 +71,7 @@ $invoice = $this->getRaw( 'invoice' );
 				<?=Admin_Managers::Customer()->showName( $invoice->getCustomerId() )?>
 				<br>
 				
-				<?=Admin_Managers::Customer()->formatAddress( $invoice->getShop(), $invoice->getCustomerAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $invoice->getEshop(), $invoice->getCustomerAddress() )?>
 				
 				<table>
 					<tr>
@@ -92,7 +92,7 @@ $invoice = $this->getRaw( 'invoice' );
 			<div class="card-header"><b><?=Tr::_('Issuer')?></b></div>
 			<div class="card-body">
 				
-				<?=Admin_Managers::Customer()->formatAddress( $invoice->getShop(), $invoice->getIssuerAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $invoice->getEshop(), $invoice->getIssuerAddress() )?>
 				<div style="font-size: 0.8rem">
 					<?=$invoice->getIssuerInfo()?>
 				</div>

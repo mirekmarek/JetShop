@@ -1,0 +1,22 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\Content\Article\Articles;
+
+use Jet\MVC_View;
+use JetApplication\Content_Article_Author;
+
+/**
+ * @var MVC_View $this
+ 
+ * @var Article $item
+ */
+
+$item = $this->getRaw('item');
+
+echo Content_Article_Author::getScope()[$item->getAuthorId()]??'';
+

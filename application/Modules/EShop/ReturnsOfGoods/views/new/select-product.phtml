@@ -1,0 +1,57 @@
+<?php
+namespace JetApplicationModule\EShop\ReturnsOfGoods;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\EShop_Managers;
+use JetApplication\Order;
+use JetApplication\Product_EShopData;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View   $this
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+
+$showProduct = function( Product_EShopData $product ) use ($order) {
+	
+	$returns_of_goods = ReturnOfGoods::getByOrderItem( $order, $product->getId() );
+	?>
+	<div class="card card-body return-of-goods-select-product-item">
+		<div class="return-of-goods-product">
+			<div>
+				<?php if($product->getImg(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 150, 150)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+		</div>
+		<div class="buttons">
+			<?php if(count($returns_of_goods)): ?>
+				<?php foreach($returns_of_goods as $return): ?>
+				<div class="exists-request">
+					<?=Tr::_('Request already exists: ')?><a href="<?=$return->getURL()?>"><?=$return->getNumber()?></a>
+				</div>
+				<?php endforeach; ?>
+			
+				<?=UI::button( Tr::_('Create next return of goods request') )->setUrl(Http_Request::currentURL(['product_id'=>$product->getId()]))->setClass(UI_button::CLASS_LIGHT)?>
+			<?php else: ?>
+				<?=UI::button( Tr::_('Create return of goods request') )->setUrl(Http_Request::currentURL(['product_id'=>$product->getId()]))->setClass(UI_button::CLASS_INFO)?>
+			<?php endif; ?>
+		</div>
+	</div>
+	<?php
+};
+
+echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+?>
+<div class="customer-section-container">
+	<?php foreach($order->getPhysicalProductOverview() as $item):
+		$showProduct( $item->getProduct() );
+	endforeach; ?>
+</div>

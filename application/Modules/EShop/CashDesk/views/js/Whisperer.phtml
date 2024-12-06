@@ -1,0 +1,254 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+?>
+<script>
+	let Whisperer = function(
+		input_id,
+		whisperer_items_area_id,
+		data_request_url
+	) {
+		this.input_id = input_id;
+		this.input_field = document.getElementById( input_id );
+		this.whisperer_items_area = document.getElementById(whisperer_items_area_id);
+		
+		this.data_request_url = data_request_url;
+		
+		this.item_class = 'whisperer-item';
+		this.selected_item_class = 'whisperer-item-selected';
+		this.message_class = 'whisperer-message';
+		this.container_height_multiple = 5;
+		this.selected_row_positioning = 2;
+		this.min_str_len = 2;
+
+		this.enabled = true;
+
+		this.urlGenerator = null;
+
+		this._xhr = null;
+		this._cancel_timeout_handler = null;
+		this._whisperer_timeout_handler = null;
+		this._original_blur_handlers = null;
+
+
+		this.onItemFocus = ( item_node, whisperer ) => {
+		};
+
+		this.onItemSelect = ( item_node, whisperer ) => {
+		};
+
+		this.onCancel = ( whisperer ) => {
+		};
+		this.onLoad = ( items, whisperer ) => {
+		};
+
+		this.onHide = (whisperer ) => {
+		};
+		this.onShow = (whisperer ) => {
+		};
+
+
+		let whisperer = this;
+
+		this.init = () => {
+			whisperer.input_field.setAttribute('autocomplete' ,'off' );
+
+
+			whisperer.input_field.addEventListener('keyup', (event) => {
+				if(!whisperer.enabled) {
+					return true;
+				}
+
+				if(
+					event.code === 'ArrowDown' ||
+					event.code === 'ArrowUp' ||
+					event.code === 'Enter' ||
+					event.code === 'Escape'
+				) {
+					const selected_row = whisperer.whisperer_items_area.querySelector('.'+whisperer.selected_item_class);
+
+					switch( event.code ) {
+						case 'Enter':
+							if(selected_row) {
+								whisperer._handleItemSelect( selected_row );
+							}
+							return false;
+						case 'ArrowDown':
+							if(selected_row) {
+								const next_row = selected_row.nextElementSibling;
+
+								if( next_row ) {
+									whisperer._handleItemFetch( next_row );
+								}
+							}
+							return false;
+						case 'ArrowUp':
+							if(selected_row) {
+								const prev_row = selected_row.previousElementSibling;
+								if( prev_row ) {
+									whisperer._handleItemFetch( prev_row );
+								}
+							}
+							return false;
+						case 'Escape':
+							whisperer._handleCancel();
+							return false;
+					}
+					
+					return false;
+				}
+
+				whisperer.whisper();
+
+			});
+
+			whisperer.input_field.addEventListener('blur', ( e ) => {
+				if(whisperer._whisperer_timeout_handler) {
+					clearTimeout(whisperer._whisperer_timeout_handler);
+					whisperer._whisperer_timeout_handler = null;
+				}
+
+				if(whisperer._cancel_timeout_handler) {
+					clearTimeout(whisperer._cancel_timeout_handler);
+				}
+
+				whisperer._cancel_timeout_handler = setTimeout( () => {
+					whisperer._handleCancel( e );
+					whisperer._cancel_timeout_handler = null;
+				}, 200);
+			});
+
+			whisperer.input_field.addEventListener( 'focus', () => {
+				if(whisperer._cancel_timeout_handler) {
+					clearTimeout(whisperer._cancel_timeout_handler);
+				}
+			});
+
+
+			
+		};
+
+		this.whisper = () => {
+			if( whisperer.input_field.readOnly ) {
+				return;
+			}
+
+			if(whisperer._whisperer_timeout_handler) {
+				clearTimeout(whisperer._whisperer_timeout_handler);
+				whisperer._whisperer_timeout_handler = null;
+			}
+
+			whisperer._whisperer_timeout_handler = setTimeout( () => {
+				whisperer._whisperer_timeout_handler = null;
+
+				if(whisperer._xhr) {
+					whisperer._xhr.abort();
+				}
+
+				let value = whisperer.input_field.value;
+
+				if( value.length >= whisperer.min_str_len ) {
+					let url = whisperer.data_request_url + encodeURIComponent(value);
+
+					if(whisperer.urlGenerator) {
+						url = whisperer.urlGenerator( value );
+					}
+
+					whisperer._xhr = new XMLHttpRequest();
+
+					whisperer._xhr.onreadystatechange = () => {
+
+						if( whisperer._xhr.readyState === XMLHttpRequest.DONE ) {
+							whisperer._onLoad( whisperer._xhr.responseText );
+						}
+					};
+					
+
+					whisperer._xhr.open("GET", url, true);
+					whisperer._xhr.send();
+					
+					whisperer._show();
+				}
+				else {
+					whisperer.hide();
+				}
+			}, 200 );
+
+		};
+
+		this.hide = () => {
+			whisperer.whisperer_items_area.style.display = 'none';
+			whisperer.onHide( whisperer );
+		};
+
+		this._show = () => {
+			if (window.getComputedStyle(whisperer.whisperer_items_area).display === 'none') {
+				whisperer.whisperer_items_area.display = '';
+				whisperer.onShow( whisperer );
+			}
+		};
+
+		this._onLoad = ( snippet ) => {
+			visibility.show( whisperer.whisperer_items_area.id );
+			whisperer.whisperer_items_area.innerHTML = snippet;
+			whisperer.whisperer_items_area.scrollTop = 0;
+
+			let items = [];
+
+			let selected_row = whisperer.whisperer_items_area.querySelector('.' + whisperer.selected_item_class);
+
+			if (selected_row ) {
+				const row_height = selected_row.clientHeight;
+				
+				whisperer.whisperer_items_area.style.height = (row_height * whisperer.container_height_multiple)+'px';
+
+				whisperer.whisperer_items_area.querySelectorAll('.' + whisperer.item_class).forEach( (row) => {
+					items.push(row);
+					row.addEventListener('click', () => {
+						whisperer._handleItemSelect( row );
+					})
+				});
+			} else {
+				let message = whisperer.whisperer_items_area.querySelector('.' + whisperer.message_class);
+				if ( message ) {
+					whisperer.whisperer_items_area.style.height = (message.innerHeight + 2)+'px';
+				}
+			}
+
+			whisperer.onLoad( items, whisperer );
+		};
+
+		this._handleItemSelect = ( selected_row ) => {
+			setTimeout( () => {
+				whisperer.onItemSelect( selected_row, whisperer );
+			}, 10);
+		};
+
+		this._handleCancel = () => {
+			whisperer.hide();
+			whisperer.onCancel( whisperer );
+
+		};
+		
+		this._handleItemFetch = ( row ) => {
+
+			let selected_row = whisperer.whisperer_items_area.querySelector('.'+whisperer.selected_item_class);
+			
+			selected_row.classList.remove( whisperer.selected_item_class );
+			row.classList.add( whisperer.selected_item_class );
+
+			row.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+			
+			whisperer.onItemFocus( row, whisperer );
+
+		};
+
+	};
+</script>

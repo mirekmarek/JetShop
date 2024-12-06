@@ -1,0 +1,64 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Category_EShopData;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ */
+
+$sp = $this->getRaw('signpost');
+
+$category_IDs = $sp->getCategoryIds();
+
+if(!$category_IDs) {
+	return;
+}
+
+
+$categories = Category_EShopData::getActiveList(
+	ids: $category_IDs,
+	eshop:  EShops::getCurrent()
+);
+
+if(!$categories) {
+	return;
+}
+?>
+<h1 class="category-title"><?=$sp->getName()?></h1>
+<div class="category-description">
+	<div class="image">
+		<?php if($sp->getImageMain()): ?>
+			<img src="<?=$sp->getImageMainThumbnailUrl(150, 150)?>">
+		<?php endif; ?>
+	</div>
+	<div class="text">
+		<?=$sp->getDescription(); ?>
+	</div>
+</div>
+
+
+<br>
+<div class="categories">
+	<?php foreach($sp->getCategoryIds() as $c_id):
+		$category = $categories[$c_id]??null;
+		if(!$category) {
+			continue;
+		}
+		?>
+		<div class="category">
+			<div class="category-image">
+				<?php if($category->getImageMain()): ?>
+					<a href="<?=$category->getUrl()?>" ><img src="<?=$category->getImageMainThumbnailUrl(150, 150)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div class="category-name">
+				<a href="<?=$category->getURL()?>"><?=$category->getName();?></a>
+			</div>
+		</div>
+	<?php endforeach; ?>
+</div>
+
+

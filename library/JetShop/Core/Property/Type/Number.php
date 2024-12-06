@@ -6,8 +6,7 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Int;
 use JetApplication\ProductFilter;
 use JetApplication\Property_Type;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 
 abstract class Core_Property_Type_Number extends Property_Type
@@ -98,12 +97,14 @@ abstract class Core_Property_Type_Number extends Property_Type
 	
 	public function setupForm( Form $form ) : void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$form->removeField('/shop_data/'.$shop->getKey().'/bool_yes_description');
+		foreach($form->getFields() as $f) {
+			if(str_ends_with($f->getName(),'/bool_yes_description')) {
+				$form->removeField( $f->getName() );
+			}
 		}
 	}
 	
-	public function getProductDetailDisplayValue( ?Shops_Shop $shop=null ): int|float
+	public function getProductDetailDisplayValue( ?EShop $eshop=null ): int|float
 	{
 		if(($dp=$this->property_model->getDecimalPlaces())) {
 			return (float)$this->getProductParameterValue();

@@ -8,14 +8,15 @@ namespace JetShop;
 use JetApplication\Complaint_Event;
 use JetApplication\Entity_Event;
 use JetApplication\Event_HandlerModule;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Complaint;
+use JetApplication\Complaint_EMailTemplate;
 
 
 abstract class Core_Complaint_Event_HandlerModule extends Event_HandlerModule
 {
 	protected Complaint_Event $event;
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	protected Complaint $complaint;
 
 
@@ -24,7 +25,7 @@ abstract class Core_Complaint_Event_HandlerModule extends Event_HandlerModule
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;
 		$complaint = $event->getComplaint();
-		$this->shop = $complaint->getShop();
+		$this->eshop = $complaint->getEshop();
 		$this->complaint = $complaint;
 	}
 
@@ -36,5 +37,13 @@ abstract class Core_Complaint_Event_HandlerModule extends Event_HandlerModule
 	public function getComplaint(): Complaint
 	{
 		return $this->complaint;
+	}
+	
+	public function sendEMail( Complaint_EMailTemplate $template ) : bool
+	{
+		$template->setEvent($this->event);
+		$email = $template->createEmail( $this->getEvent()->getEshop() );
+		
+		return $email->send();
 	}
 }

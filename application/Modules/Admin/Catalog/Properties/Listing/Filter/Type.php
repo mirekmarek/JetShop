@@ -12,6 +12,7 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Property;
 
 
 class Listing_Filter_Type extends DataListing_Filter
@@ -28,7 +29,7 @@ class Listing_Filter_Type extends DataListing_Filter
 	
 	public function catchParams(): void
 	{
-		$this->type = Http_Request::GET()->getString('type', '', array_keys(Property::getTypesScope()));
+		$this->type = Http_Request::GET()->getString('type', '', array_keys( Property::getTypesScope()));
 		if($this->type) {
 			$this->listing->setParam('type', $this->type);
 		}

@@ -1,11 +1,10 @@
 <?php
 namespace JetApplicationModule\Admin\Complaints;
 
+use Jet\Locale;
 use Jet\Tr;
 use Jet\MVC_View;
-use JetApplication\Complaint_ChangeHistory;
-use JetApplication\Complaint_Event;
-use JetApplication\Complaint_Note;
+use Jet\UI_messages;
 
 /**
  * @var MVC_View $this
@@ -16,39 +15,39 @@ $complaint = $this->getRaw( 'complaint' );
 
 $history = $complaint->getHistory();
 ?>
-<fieldset style="padding: 10px;">
-	<legend><?=Tr::_('Complaint history')?></legend>
-	
-	<table class="table table-striped">
-		<thead>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th style="width: 150px;"><?=Tr::_('Date and time')?></th>
+		<th style="width: 250px;"></th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach($history as $event):
+		$handler = $event->getHandlerModule();
+		if(!$handler) {
+			continue;
+		}
+		?>
 		<tr>
-			<th style="width: 150px;"><?=Tr::_('Date and time')?></th>
-			<th style="width: 250px;"><?=Tr::_('Status')?></th>
-			<th><?=Tr::_('Notes')?></th>
-			<th style="width: 50px;"><?=Tr::_('Sent to customer')?></th>
-			<th style="width: 150px;"><?=Tr::_('Author')?></th>
+			<td>
+				<?=Locale::dateAndTime( $event->getDateAdded() )?>
+				<br>
+				<?=$event->getAdministrator() ?>
+			</td>
+			<td><div style="padding: 10px;font-weight: bolder;<?=$handler->getEventStyle()?>"><?=$handler->showEventName()?></div></td>
+			<td>
+				<?php if(!$event->getHandled()):
+					//TODO:
+					?>
+					<?=UI_messages::createDanger( $event->getErrorMessage() ) ?>
+				<?php endif; ?>
+				
+				<?=$handler->showEventDetails(); ?>
+			</td>
 		</tr>
-		</thead>
-		<tbody>
-		<?php foreach($history as $item):
-			$this->setVar('history_item', $item);
-			?>
-			<tr>
-				<?php
-				if($item instanceof Complaint_Event) {
-					require 'history/event.phtml';
-				}
-				
-				if($item instanceof Complaint_Note) {
-					require 'history/note.phtml';
-				}
-				
-				if($item instanceof Complaint_ChangeHistory) {
-					require 'history/change.phtml';
-				}
-				?>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-</fieldset>
+	<?php endforeach; ?>
+	</tbody>
+</table>

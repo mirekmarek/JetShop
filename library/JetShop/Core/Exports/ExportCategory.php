@@ -3,16 +3,16 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Exports_ExportCategory_Parameter;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Exports_ExportCategory;
 
 #[DataModel_Definition(
 	name: 'exports_category',
 	database_table_name: 'exports_categories',
 )]
-class Core_Exports_ExportCategory extends Entity_WithShopRelation
+class Core_Exports_ExportCategory extends Entity_WithEShopRelation
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -60,9 +60,9 @@ class Core_Exports_ExportCategory extends Entity_WithShopRelation
 	)]
 	protected string $full_name = '';
 	
-	public static function get( Shops_Shop $shop, string $export_code, string $category_id ) : ?static
+	public static function get( EShop $eshop, string $export_code, string $category_id ) : ?static
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['export_code'] = $export_code;
 		$where[] = 'AND';
@@ -72,13 +72,13 @@ class Core_Exports_ExportCategory extends Entity_WithShopRelation
 	}
 	
 	/**
-	 * @param Shops_Shop $shop
+	 * @param EShop $eshop
 	 * @param string $export_code
 	 * @return static[]
 	 */
-	public static function getCategories( Shops_Shop $shop, string $export_code ) : array
+	public static function getCategories( EShop $eshop, string $export_code ) : array
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['export_code'] = $export_code;
 		
@@ -174,7 +174,7 @@ class Core_Exports_ExportCategory extends Entity_WithShopRelation
 	public function getParameters() : array
 	{
 		return Exports_ExportCategory_Parameter::getForCategory(
-			$this->getShop(),
+			$this->getEshop(),
 			$this->export_code,
 			$this->category_id
 		);

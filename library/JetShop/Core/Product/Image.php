@@ -96,4 +96,17 @@ abstract class Core_Product_Image extends Entity_Basic
 	{
 		return $this->image_file;
 	}
+	
+	public function afterUpdate(): void
+	{
+	}
+	
+	public function afterDelete(): void
+	{
+	}
+	
+	public function afterAdd(): void
+	{
+	}
+	
 }

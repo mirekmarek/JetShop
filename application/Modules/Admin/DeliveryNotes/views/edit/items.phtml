@@ -75,18 +75,18 @@ $has_VAT = $invoice->hasVAT();
 					<?php endif; ?>
 				</td>
 				
-				<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getPricePerUnitWithoutVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getPricePerUnit_WithoutVat() )?></td>
 			<?php if($has_VAT): ?>
-				<td><?=$price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $item->getPricePerUnitVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $item->getPricePerUnit_Vat() )?></td>
 			<?php endif; ?>
 				<td><?=$item->getVatRate()?>%</td>
 			
 			<?php if($has_VAT): ?>
-				<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getPricePerUnitWithVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getPricePerUnit_WithVat() )?></td>
 			<?php endif; ?>
-				<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getTotalAmountWithoutVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $item->getTotalAmount_WithoutVat() )?></td>
 			<?php if($has_VAT): ?>
-				<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getTotalAmountWithVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $item->getTotalAmount_WithVat() )?></td>
 			<?php endif; ?>
 			
 			</tr>
@@ -130,10 +130,12 @@ $has_VAT = $invoice->hasVAT();
 					<td></td>
 					<td colspan="99">
 						<i><?=Tr::_('Set discount:')?></i>
-						<i><?=$price_formatter->formatWithCurrency($invoice->getCurrency(), $item->getSetDiscountPerUnit())?></i>
-						<?php if($item->getNumberOfUnits()>1): ?>
-						/
-						<i><?=$price_formatter->formatWithCurrency($invoice->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i>
+						<?php if($has_VAT): ?>
+							<i><?=$price_formatter->formatWithCurrency_WithVAT($invoice->getCurrency(), $item->getSetDiscountPerUnit())?></i>
+							<?php if($item->getNumberOfUnits()>1): ?> / <i><?=$price_formatter->formatWithCurrency_WithVAT($invoice->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i><?php endif; ?>
+						<?php else: ?>
+							<i><?=$price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $item->getSetDiscountPerUnit())?></i>
+							<?php if($item->getNumberOfUnits()>1): ?> / <i><?=$price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i><?php endif; ?>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -217,12 +219,7 @@ $has_VAT = $invoice->hasVAT();
 						<td><?=UI::icon('calculator')?></td>
 						<td style="font-weight: bolder;font-size: 1.4rem"><?=Tr::_('Total:')?></td>
 						<td style="font-weight: bolder;font-size: 1.4rem">
-							<?php if($has_VAT):
-								echo $price_formatter->formatWithCurrency($invoice->getCurrency(), $invoice->getTotal());
-							else:
-								echo $price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotal());
-							endif; ?>
-
+							<?=$price_formatter->formatWithCurrencyByHasVAT( $has_VAT, $invoice->getCurrency(), $invoice->getTotal());?>
 						</td>
 					</tr>
 			</table>

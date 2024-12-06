@@ -20,6 +20,6 @@ class Controller_OrderDetail extends MarketplaceIntegration_Module_Controller_Or
 		 */
 		$mp = $this->marketplace;
 		
-		$mp->getClient( $this->order->getShop() )->getHeurekaOrderStatus( $this->order->getId() );
+		$mp->getClient( $this->order->getEshop() )->getHeurekaOrderStatus( $this->order->getId() );
 	}
 }

@@ -57,5 +57,6 @@ return [
 	'Internal notes' => 'Interní poznámky',
 	'General' => 'Všeobecné',
 	'Name:' => 'Název:',
-	'Discount code definition <b>%ITEM_NAME%</b> has been deleted' => '',
+	'Discount code definition <b>%ITEM_NAME%</b> has been deleted' => 'Definice slevového kódu <b>%ITEM_NAME%</b> byla smazána',
+	'e-shop' => 'internetový obchod',
 ];

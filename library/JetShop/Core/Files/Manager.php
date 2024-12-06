@@ -1,18 +1,17 @@
 <?php
 namespace JetShop;
 
-use Jet\Form_Field_File_UploadedFile;
 use JetApplication\Entity_Common;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Entity_WithShopData_ShopData;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopData_EShopData;
 
 interface Core_Files_Manager
 {
-	public function uploadFile( Entity_Common|Entity_WithShopData|Entity_WithShopData_ShopData $entity, Form_Field_File_UploadedFile $file ) : string;
+	public function uploadFile( Entity_WithEShopData_EShopData|Entity_Common|Entity_WithEShopData $entity, string $file_name, string $srouce_file_paths ): string;
 	
-	public function getFilePath( Entity_Common|Entity_WithShopData|Entity_WithShopData_ShopData $entity, string $file ) : string;
+	public function getFilePath( Entity_Common|Entity_WithEShopData|Entity_WithEShopData_EShopData $entity, string $file ) : string;
 	
-	public function getFileURL( Entity_Common|Entity_WithShopData|Entity_WithShopData_ShopData $entity, string $file ) : string;
+	public function getFileURL( Entity_Common|Entity_WithEShopData|Entity_WithEShopData_EShopData $entity, string $file ) : string;
 	
-	public function deleteFile( Entity_WithShopData_ShopData|Entity_Common|Entity_WithShopData $entity, string $file ): void;
+	public function deleteFile( Entity_WithEShopData_EShopData|Entity_Common|Entity_WithEShopData $entity, string $file ): void;
 }

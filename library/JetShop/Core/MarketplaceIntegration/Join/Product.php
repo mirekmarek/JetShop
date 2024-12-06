@@ -4,15 +4,15 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 
 #[DataModel_Definition(
 	name: 'marketplace_join_product',
 	database_table_name: 'marketplace_join_product',
 )]
-abstract class Core_MarketplaceIntegration_Join_Product extends Entity_WithShopRelation
+abstract class Core_MarketplaceIntegration_Join_Product extends Entity_WithEShopRelation
 {
 	
 
@@ -32,24 +32,24 @@ abstract class Core_MarketplaceIntegration_Join_Product extends Entity_WithShopR
 	protected int $product_id = 0;
 	
 	
-	public static function get( string $marketplace_code, Shops_Shop $shop, int $product_id  ) : static|null
+	public static function get( string $marketplace_code, EShop $eshop, int $product_id  ) : static|null
 	{
 		return static::load( [
 			'marketplace_code' => $marketplace_code,
 			'AND',
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'product_id' => $product_id
 		] );
 
 	}
 	
-	public static function getProductIds( string $marketplace_code, Shops_Shop $shop) : array
+	public static function getProductIds( string $marketplace_code, EShop $eshop) : array
 	{
 		return static::dataFetchCol(
 			select: ['product_id'],
 			where: [
-				$shop->getWhere(),
+				$eshop->getWhere(),
 				'AND',
 				'marketplace_code' => $marketplace_code,
 			],

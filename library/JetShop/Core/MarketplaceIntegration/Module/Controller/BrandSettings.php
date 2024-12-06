@@ -20,7 +20,7 @@ use JetApplication\MarketplaceIntegration_Join_Brand;
 use JetApplication\MarketplaceIntegration_MarketplaceBrand;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  *
@@ -34,7 +34,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 	
 	protected Brand $brand;
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	protected MarketplaceIntegration_Module $marketplace;
 	
@@ -45,20 +45,20 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 	protected Form $brand_form;
 	
 	public function init(
-		Brand $brand,
-		Shops_Shop $shop,
+		Brand                         $brand,
+		EShop                         $eshop,
 		MarketplaceIntegration_Module $marketplace
 	): void
 	{
 		$this->brand = $brand;
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		$this->marketplace = $marketplace;
-		$this->marketplace_brands = $this->marketplace->getBrands( $this->shop );
+		$this->marketplace_brands = $this->marketplace->getBrands( $this->eshop );
 		$this->selected_marketplace_brand = null;
 		
 		$this->brand_id_join = MarketplaceIntegration_Join_Brand::get(
 			$this->marketplace->getCode(),
-			$this->shop,
+			$this->eshop,
 			$this->brand->getId()
 		);
 		
@@ -78,9 +78,9 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 		return $this->brand;
 	}
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
 	public function getMarketplace(): MarketplaceIntegration_Module
@@ -111,14 +111,14 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 		$GET = Http_Request::GET();
 		
 		if($GET->exists('brand')) {
-			return 'dialog_shop_brand';
+			return 'dialog_eshop_brand';
 		}
 		
 		
 		return 'default';
 	}
 	
-	public function dialog_shop_brand_Action() : void
+	public function dialog_eshop_brand_Action() : void
 	{
 		/**
 		 * @var MarketplaceIntegration_Module_Controller_BrandSettings $this

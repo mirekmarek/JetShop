@@ -8,14 +8,14 @@
 namespace JetApplicationModule\CalendarManager;
 
 use Jet\Data_DateTime;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use DateInterval;
 
 class Calendar {
 	
 	protected static array $calendars = [];
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	protected Config_PerShop $config;
 	
 	
@@ -27,7 +27,7 @@ class Calendar {
 	
 	protected function __construct(  Config_PerShop $config )
 	{
-		$this->shop = $config->getShop();
+		$this->eshop = $config->getEshop();
 		$this->config = $config;
 		
 		$this->non_working_days_of_week = $config->getNonWorkingDaysOfWeek();
@@ -94,9 +94,9 @@ class Calendar {
 	
 	public static function get( Config_PerShop $config ) : static
 	{
-		$shop = $config->getShop();
+		$eshop = $config->getEshop();
 		
-		$key = $shop->getKey();
+		$key = $eshop->getKey();
 		
 		if(!isset(static::$calendars[$key])) {
 			static::$calendars[$key] = new static( $config );

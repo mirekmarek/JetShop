@@ -68,12 +68,16 @@ class Core_Complaint_Event extends Entity_Event
 		return $this->_complaint;
 	}
 	
-	public function getHandlerModule() : Complaint_Event_HandlerModule
+	public function getHandlerModule() : ?Complaint_Event_HandlerModule
 	{
 		/**
 		 * @var Complaint_event $this
 		 * @var Complaint_Event_HandlerModule $module
 		 */
+		if(!Application_Modules::moduleIsActivated( $this->getHandlerModuleName() )) {
+			return null;
+		}
+		
 		$module = Application_Modules::moduleInstance( $this->getHandlerModuleName() );
 		$module->init( $this );
 
@@ -96,7 +100,7 @@ class Core_Complaint_Event extends Entity_Event
 	{
 		$e = new Complaint_Event();
 		$e->setEvent( $event );
-		$e->setShop( $complaint->getShop() );
+		$e->setEshop( $complaint->getEshop() );
 		$e->setComplaintId( $complaint->getId() );
 		$e->created_date_time = Data_DateTime::now();
 

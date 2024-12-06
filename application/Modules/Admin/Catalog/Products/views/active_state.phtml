@@ -3,7 +3,8 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Tr;
 use Jet\MVC_View;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
@@ -19,10 +20,10 @@ else:
 	?><span class="badge badge-danger"><?=Tr::_('Inactive')?></span> <?php
 endif;
 
-foreach(Shops::getListSorted() as $shop):
-	if($product->getShopData($shop)->isActive()):
-		?><span class="badge badge-success"><?=$shop->getShopName()?></span> <?php
+foreach( EShops::getListSorted() as $eshop):
+	if($product->getEshopData($eshop)->isActive()):
+		?><span class="badge badge-success"><?=$eshop->getName()?></span> <?php
 	else:
-		?><span class="badge badge-danger"><?=$shop->getShopName()?></span> <?php
+		?><span class="badge badge-danger"><?=$eshop->getName()?></span> <?php
 	endif;
 endforeach;

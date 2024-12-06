@@ -6,6 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement;
@@ -125,7 +126,7 @@ abstract class Core_Supplier_GoodsOrder_Item extends DataModel_Related_1toN
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	public function setMeasureUnit( ?MeasureUnit $measure_unit ): void

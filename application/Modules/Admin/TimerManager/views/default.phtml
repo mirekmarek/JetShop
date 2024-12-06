@@ -99,3 +99,7 @@ if(Main::getCurrentUserCanSet()):
 </div>
 
 <?php endif; ?>
+
+<script>
+	window.parent.postMessage('<?=$this->getRaw('reload_URL')?>', '*');
+</script>

@@ -1,0 +1,9 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+?>
+	<?=UI_messages::createInfo(Tr::_('Place order as an unregistered client. Unfortunately, this <strong> loses your loyalty discount </strong>'))?>
+	<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.registration.back();")->setClass('link')?>

@@ -17,9 +17,9 @@ abstract class Core_NumberSeries_Counter_Total extends NumberSeries_Counter
 		$where = [
 			'entity' => $entity->getNumberSeriesEntityType()
 		];
-		if( ($shop=$entity->getNumberSeriesEntityShop()) ) {
+		if( ($eshop=$entity->getNumberSeriesEntityShop()) ) {
 			$where[] = 'AND';
-			$where['shop_key'] = $shop->getKey();
+			$where['eshop_key'] = $eshop->getKey();
 		}
 		
 		
@@ -44,8 +44,8 @@ abstract class Core_NumberSeries_Counter_Total extends NumberSeries_Counter
 		
 		$item = new static();
 		$item->entity = $entity->getNumberSeriesEntityType();
-		if($shop) {
-			$item->shop_key = $shop->getKey();
+		if($eshop) {
+			$item->eshop_key = $eshop->getKey();
 		}
 		$item->count = $count;
 		$item->save();

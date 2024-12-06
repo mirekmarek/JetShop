@@ -26,11 +26,11 @@ use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\Exports;
 use JetApplication\Exports_Definition;
 use JetApplication\Exports_Manager;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
-use JetApplication\ShopConfig_ModuleConfig_General;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+use JetApplication\EShops;
+use JetApplication\EShop;
+use JetApplication\EShopConfig_ModuleConfig_General;
 use JetApplication\Logger_Exports;
 
 /**
@@ -38,10 +38,10 @@ use JetApplication\Logger_Exports;
  */
 class Main extends Exports_Manager implements
 	Admin_ControlCentre_Module_Interface,
-	ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface
+	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface
 {
 	use Admin_ControlCentre_Module_Trait;
-	use ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 	
 	
 	public function getControlCentreGroup(): string
@@ -69,7 +69,7 @@ class Main extends Exports_Manager implements
 		return false;
 	}
 	
-	protected function getConfig() : ShopConfig_ModuleConfig_General|Config_General
+	protected function getConfig() : EShopConfig_ModuleConfig_General|Config_General
 	{
 		return $this->getGeneralConfig();
 	}
@@ -124,12 +124,12 @@ class Main extends Exports_Manager implements
 		
 		
 		
-		if( $shop_key = Http_Request::GET()->getString('shop', valid_values: array_keys(Shops::getScope())) ) {
-			Shops::setCurrent( Shops::get( $shop_key ) );
+		if( $eshop_key = Http_Request::GET()->getString('eshop', valid_values: array_keys(EShops::getScope())) ) {
+			EShops::setCurrent( EShops::get( $eshop_key ) );
 		} else {
-			Shops::setCurrent( Shops::getDefault() );
+			EShops::setCurrent( EShops::getDefault() );
 		}
-		Locale::setCurrentLocale( Shops::getCurrent()->getLocale() );
+		Locale::setCurrentLocale( EShops::getCurrent()->getLocale() );
 		
 		$URL_path = explode('/', MVC::getRouter()->getUrlPath());
 		
@@ -181,12 +181,12 @@ class Main extends Exports_Manager implements
 		Application::end();
 	}
 	
-	public function getExportURL( Exports_Definition $export, ?Shops_Shop $shop=null ) : string
+	public function getExportURL( Exports_Definition $export, ?EShop $eshop=null ) : string
 	{
 		$key = $this->getConfig()->getKey();
 		$GET_params = [];
-		if($shop) {
-			$GET_params['shop'] = $shop->getKey();
+		if($eshop) {
+			$GET_params['eshop'] = $eshop->getKey();
 		}
 		
 		$base =  MVC::getBase( $this->getConfig()->getBaseId() );

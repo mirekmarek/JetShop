@@ -10,7 +10,7 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Entity_Simple;
 use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Item;
@@ -149,7 +149,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Simple i
 	
 	
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
 		return null;
 	}

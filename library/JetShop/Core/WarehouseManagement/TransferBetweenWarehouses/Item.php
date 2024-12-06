@@ -7,8 +7,9 @@ use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
 
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
@@ -183,7 +184,7 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Item extends D
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	public function setMeasureUnit( ?MeasureUnit $measure_unit ): void
@@ -292,12 +293,12 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Item extends D
 		$this->target_position = $target_position;
 	}
 	
-	public function getCurrency(): ?Currencies_Currency
+	public function getCurrency(): ?Currency
 	{
 		return Currencies::get( $this->currency_code );
 	}
 	
-	public function setCurrency( Currencies_Currency $currency ): void
+	public function setCurrency( Currency $currency ): void
 	{
 		$this->currency_code = $currency->getCode();
 	}

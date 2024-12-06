@@ -14,12 +14,12 @@ use Jet\Http_Request;
 use Jet\Navigation_Breadcrumb;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\Application_Admin;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Module;
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	protected ?PaymentMethod_Option $option = null;
 	
@@ -224,6 +224,11 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		$this->handleSetPrice();
 		
 		parent::edit_main_Action();
+		
+		$this->content->output(
+			$this->view->render('edit/main/set-price')
+		);
+		
 	}
 	
 	

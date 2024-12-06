@@ -17,9 +17,9 @@ use JetApplication\Discounts_Code;
 use JetApplication\Entity_Marketing;
 use JetApplication\Order;
 use JetApplication\Pricelists;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop_Managers;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplication\Discounts_Code_Usage;
 
 use JetApplication\Discounts_Discount;
@@ -125,10 +125,10 @@ class Core_Discounts_Code extends Entity_Marketing
 		return static::load( $id );
 	}
 
-	public static function getByCode( string $discount_code, ?Shops_Shop $shop=null ): ?static
+	public static function getByCode( string $discount_code, ?EShop $eshop=null ): ?static
 	{
-		if(!$shop) {
-			$shop = Shops::getCurrent();
+		if(!$eshop) {
+			$eshop = EShops::getCurrent();
 		}
 		
 		$discount_code = strtolower($discount_code);
@@ -138,7 +138,7 @@ class Core_Discounts_Code extends Entity_Marketing
 			'discounts_code' => [
 				'code' => $discount_code,
 				'AND',
-				$shop->getWhere()
+				$eshop->getWhere()
 			]
 		]);
 
@@ -245,7 +245,7 @@ class Core_Discounts_Code extends Entity_Marketing
 	public function getRelevantProductAmount() : float
 	{
 		
-		$cart = Shop_Managers::ShoppingCart()->getCart();
+		$cart = EShop_Managers::ShoppingCart()->getCart();
 		$amount = 0;
 		
 		foreach($cart->getItems() as $item) {
@@ -312,7 +312,7 @@ class Core_Discounts_Code extends Entity_Marketing
 		
 		$has_some_relevant_product = false;
 		
-		foreach( Shop_Managers::ShoppingCart()->getCart()->getItems() as $item ) {
+		foreach( EShop_Managers::ShoppingCart()->getCart()->getItems() as $item ) {
 			if( $this->isRelevant( [$item->getProductId() ] ) ) {
 				$has_some_relevant_product = true;
 				break;
@@ -334,7 +334,7 @@ class Core_Discounts_Code extends Entity_Marketing
 			if($amount<$this->getMinimalOrderAmount()) {
 				$error_code = 'under_min_value';
 				$error_data = [
-					'MIN' => Shop_Managers::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
+					'MIN' => EShop_Managers::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
 				];
 				
 				return false;

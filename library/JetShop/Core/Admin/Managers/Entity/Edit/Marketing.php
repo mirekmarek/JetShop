@@ -25,7 +25,7 @@ interface Core_Admin_Managers_Entity_Edit_Marketing extends Admin_Managers_Entit
 	
 	public function renderAdd(
 		?callable $common_data_fields_renderer = null,
-		?callable $shop_data_fields_renderer = null
+		?callable $eshop_data_fields_renderer = null
 	): string;
 	
 	public function renderDeleteConfirm(

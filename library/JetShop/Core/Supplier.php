@@ -14,7 +14,7 @@ use JetApplication\DataList;
 use JetApplication\Entity_Common;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_Backend_Module;
 
@@ -412,7 +412,7 @@ abstract class Core_Supplier extends Entity_Common implements FulltextSearch_Ind
 		return [$this->getInternalName(), $this->getInternalCode()];
 	}
 	
-	public function getShopFulltextTexts( Shops_Shop $shop ) : array
+	public function getShopFulltextTexts( EShop $eshop ) : array
 	{
 		return [];
 	}

@@ -23,4 +23,5 @@ return [
 	'URL %URL% is not valid' => '',
 	'URL %URL% is not unique. It is already used by e-shop %SHOP%' => '',
 	'Is default e-shop' => '',
+	'Default warehouse: ' => '',
 ];

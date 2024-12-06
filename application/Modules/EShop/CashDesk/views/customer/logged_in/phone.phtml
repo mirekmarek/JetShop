@@ -1,0 +1,44 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$form = $cash_desk->getPhoneForm();
+
+
+$phone_field = $form->field('phone');
+$phone_field->renderer()->setCustomRenderer(function() use ( $phone_field, $cash_desk ) {
+	?>
+	<div class="form-field">
+		<label><?=$phone_field->getLabel()?></label>
+		<div class="phone-field">
+			<div class="prefix"><?=$cash_desk->getConfig()->getPhonePrefix()?></div>
+			<div class="input"><?=$phone_field->input().$phone_field->error()?></div>
+		</div>
+	</div>
+	<?php
+});
+
+?>
+
+<?=$form->start()?>
+
+<span class="step-title"><?=Tr::_('Telephone contact')?></span>
+
+<div id="field_<?=$form->field('phone')->getId()?>">
+	<?=$form->field('phone')?>
+</div>
+
+<div class="continue-button-area">
+	<?=UI::button('Continue')->setClass('primary')->setType('submit')?>
+</div>
+
+<?=$form->end()?>

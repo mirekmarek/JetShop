@@ -8,7 +8,7 @@ use Jet\Logger;
 use JetApplication\Exports;
 use JetApplication\Exports_Definition;
 use JetApplication\Exports_Module;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Exports_PlannedOutage;
 
 abstract class Core_Exports_Definition {
@@ -76,12 +76,12 @@ abstract class Core_Exports_Definition {
 	
 	
 	
-	public function getURL( ?Shops_Shop $shop = null ) : string
+	public function getURL( ?EShop $eshop = null ) : string
 	{
 		/**
 		 * @var Exports_Definition $this
 		 */
-		return Exports::getManager()->getExportURL( $this, $shop );
+		return Exports::getManager()->getExportURL( $this, $eshop );
 	}
 	
 	

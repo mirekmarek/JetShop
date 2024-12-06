@@ -1,0 +1,108 @@
+<?php
+
+use JetApplication\EShop_Pages;
+
+?>
+<script>
+	let ShoppingCart = {
+		base_URL: '<?=EShop_Pages::ShoppingCart()->getURL()?>',
+
+		buy: function( product_id, qty ) {
+
+			ShoppingCart._request(
+				'?buy='+product_id+'&gty='+qty,
+				(response) => {
+					if(response['ok']) {
+						dialog.open('shopping_cart_popup');
+					}
+				}
+			);
+		},
+
+		selectAutoOffer: function( offer_id, qty ) {
+			ShoppingCart._request(
+				'?select_auto_offer='+offer_id+'&qty='+qty
+			);
+		},
+		
+
+		increment: function( product_id ) {
+			const input = document.getElementById('qty_'+product_id);
+			let qty = input.value;
+			qty++;
+			input.value = qty;
+			
+			ShoppingCart.setQty( product_id );
+		},
+
+		decrement: function( product_id ) {
+			const input = document.getElementById('qty_'+product_id);
+			let qty = input.value;
+			qty--;
+			input.value = qty;
+			
+			ShoppingCart.setQty( product_id );
+		},
+		
+		_getQty: function( product_id ) {
+			const input = document.getElementById('qty_'+product_id);
+			return input.value;
+		},
+		
+		setQty: function( product_id  ) {
+			let qty = ShoppingCart._getQty( product_id );
+			
+			ShoppingCart._request(
+				'?set_qty='+product_id+'&gty='+qty
+			);
+		},
+
+		remove: function( product_id ) {
+			ShoppingCart._request(
+				'?remove='+product_id
+			);
+		},
+
+		_request: async ( rq, onOk ) => {
+
+
+			const r = await fetch(ShoppingCart.base_URL+rq);
+			const response = await r.json();
+
+			ShoppingCart._handleResponse( response );
+
+			if(onOk) {
+				onOk( response );
+			}
+		},
+
+		_handleError: function ( response ) {
+			if( response['error_message'] ) {
+				alert( response['error_message'] );
+			}
+		},
+
+		_handleResponse: function (response) {
+			for( let id in response['snippets'] ) {
+				document.getElementById(id).innerHTML = response['snippets'][id];
+			}
+
+			ShoppingCart._handleError( response );
+		}
+	};
+
+
+	ShoppingCart.Gifts = {
+		unselect: ( id ) => {
+			ShoppingCart._request(
+				'?unselect_gift='+id
+			);
+		},
+		select: ( id ) => {
+			ShoppingCart._request(
+				'?select_gift='+id
+			);
+		}
+	};
+	
+</script>

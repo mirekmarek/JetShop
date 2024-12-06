@@ -21,5 +21,5 @@ return [
 	'Min:' => 'min:',
 	'Max:' => 'Max:',
 	'Inactive' => 'Neaktivní',
-	'Properties' => '',
+	'Properties' => 'Vlastnosti',
 ];

@@ -27,7 +27,7 @@ class Controller_Main extends Admin_EntityManager_Marketing_Controller
 		$this->listing_manager->addColumn( new Listing_Column_DeliveryMethod() );
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
-			'shop',
+			'eshop',
 			'active_state',
 			'delivery_method',
 			'internal_name',

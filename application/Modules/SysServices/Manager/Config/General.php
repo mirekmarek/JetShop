@@ -12,14 +12,14 @@ use Jet\Form_Definition;
 use Jet\Form_Definition_Interface;
 use Jet\Form_Definition_Trait;
 use Jet\Form_Field;
-use JetApplication\ShopConfig_ModuleConfig_General;
+use JetApplication\EShopConfig_ModuleConfig_General;
 use Jet\Config;
 use Jet\Application_Module_Manifest;
 
 #[Config_Definition(
 	name: 'SysServices'
 )]
-class Config_General extends ShopConfig_ModuleConfig_General implements Form_Definition_Interface {
+class Config_General extends EShopConfig_ModuleConfig_General implements Form_Definition_Interface {
 	use Form_Definition_Trait;
 	
 	#[Config_Definition(

@@ -35,12 +35,12 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 	
 	public function default_Action() : void
 	{
-		$shop = $this->getShop();
+		$eshop = $this->getEshop();
 		
-		$selected_base_id = $shop->getBaseId();
+		$selected_base_id = $eshop->getBaseId();
 		$selected_base = MVC::getBase( $selected_base_id );
 		
-		$selected_locale = $shop->getLocale();
+		$selected_locale = $eshop->getLocale();
 		
 		$tree_data = [];
 		

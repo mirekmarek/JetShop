@@ -5,9 +5,9 @@ use Error;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 use JetApplication\Timer;
 
 
@@ -15,13 +15,13 @@ use JetApplication\Timer;
 	name: 'timers',
 	database_table_name: 'timers'
 )]
-abstract class Core_Timer extends Entity_WithShopRelation {
+abstract class Core_Timer extends Entity_WithEShopRelation {
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
 		is_key: true
 	)]
-	protected ?Data_DateTime $date_time;
+	protected ?Data_DateTime $date_time = null;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -134,18 +134,18 @@ abstract class Core_Timer extends Entity_WithShopRelation {
 	}
 	
 	public static function newTimer(
-		Entity_WithShopData $entity,
-		Shops_Shop $shop,
-		Data_DateTime $date_time,
-		string $action,
-		mixed $action_context
+		Entity_WithEShopData $entity,
+		EShop                $eshop,
+		Data_DateTime        $date_time,
+		string               $action,
+		mixed                $action_context
 	) : static
 	{
 		$timer = new static();
 		$timer->action_entity_type = $entity::getEntityType();
 		$timer->action_entity_id = $entity->getId();
 		$timer->action_entity_class = get_class($entity);
-		$timer->setShop( $shop );
+		$timer->setEshop( $eshop );
 		
 		$timer->date_time = $date_time;
 		$timer->action = $action;
@@ -156,14 +156,14 @@ abstract class Core_Timer extends Entity_WithShopRelation {
 		return $timer;
 	}
 	
-	protected static function getWhere( Entity_WithShopData $entity, Shops_Shop $shop ) : array
+	protected static function getWhere( Entity_WithEShopData $entity, EShop $eshop ) : array
 	{
 		$where = [
 			'action_entity_type' => $entity::getEntityType(),
 			'AND',
 			'action_entity_id' => $entity->getId(),
 			'AND',
-			$shop->getWhere()
+			$eshop->getWhere()
 		];
 
 		return $where;
@@ -172,9 +172,9 @@ abstract class Core_Timer extends Entity_WithShopRelation {
 	/**
 	 * @return static[]
 	 */
-	public static function getScheduled( Entity_WithShopData $entity, Shops_Shop $shop ) : array
+	public static function getScheduled( Entity_WithEShopData $entity, EShop $eshop ) : array
 	{
-		$where = static::getWhere( $entity, $shop );
+		$where = static::getWhere( $entity, $eshop );
 		$where[] = 'AND';
 		$where['processed'] = false;
 		
@@ -214,9 +214,9 @@ abstract class Core_Timer extends Entity_WithShopRelation {
 		return $to_perform;
 	}
 	
-	public static function hasNotProcessed( Entity_WithShopData $entity, Shops_Shop $shop ) : bool
+	public static function hasNotProcessed( Entity_WithEShopData $entity, EShop $eshop ) : bool
 	{
-		$where = static::getWhere($entity, $shop);
+		$where = static::getWhere($entity, $eshop);
 		$where[] = 'AND';
 		$where['processed'] = false;
 		
@@ -229,7 +229,7 @@ abstract class Core_Timer extends Entity_WithShopRelation {
 	public function perform() : bool
 	{
 		/**
-		 * @var Entity_WithShopData $class
+		 * @var Entity_WithEShopData $class
 		 */
 		$class = $this->action_entity_class;
 		
@@ -240,7 +240,7 @@ abstract class Core_Timer extends Entity_WithShopRelation {
 			return false;
 		}
 		
-		$actions = $entity->getShopData($this->getShop())->getAvailableTimerActions();
+		$actions = $entity->getEshopData($this->getEshop())->getAvailableTimerActions();
 		
 		if(!isset($actions[$this->action])) {
 			$this->errorDuringProcess('The item action no longer exists');

@@ -1,0 +1,79 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Product;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$kind_of_product = $product->getKind();
+$categories = $product->getCategories();
+$reviews_manager = EShop_Managers::ProductReviews();
+$questions_manager = EShop_Managers::ProductQuestions();
+
+?>
+<div class="product-detail">
+	<div class="images">
+		<?php require('detail/images.phtml'); ?>
+	</div>
+	
+	<div class="infos">
+		<h1><?=$product->getFullName()?></h1>
+		
+		<?php
+		if(!$product->isActive()):
+			require 'detail/not-active.phtml';
+		else:
+			require 'detail/stickers.phtml';
+			require 'detail/rank.phtml';
+			require 'detail/short-description.phtml';
+			require 'detail/similar.phtml';
+		
+			switch($product->getType()) {
+				case  Product::PRODUCT_TYPE_VARIANT_MASTER:
+					require 'detail/variants.phtml';
+					require 'detail/price.phtml';
+					require 'detail/availability.phtml';
+					
+					break;
+				case  Product::PRODUCT_TYPE_VARIANT:
+					require 'detail/variants.phtml';
+					require 'detail/price.phtml';
+					require 'detail/availability.phtml';
+					require 'detail/buy-btn.phtml';
+					break;
+				default:
+					require 'detail/price.phtml';
+					require 'detail/availability.phtml';
+					require 'detail/buy-btn.phtml';
+					break;
+					
+			}
+		endif;
+		
+		require 'detail/files.phtml';
+		?>
+	</div>
+
+	<div class="details">
+	<?php
+	require 'detail/description.phtml';
+	require 'detail/params.phtml';
+	require 'detail/categories.phtml';
+	require 'detail/reviews.phtml';
+	require 'detail/questions.phtml';
+	?>
+	</div>
+	
+</div>
+
+<?php
+echo EShop_Managers::Articles()?->renderProductAdvice( $product );
+echo EShop_Managers::Analytics()?->viewProductDetail( $product );

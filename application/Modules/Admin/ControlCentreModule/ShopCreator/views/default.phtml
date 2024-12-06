@@ -8,15 +8,15 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_messages;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  * @var MVC_View   $this
- * @var Shops_Shop|null $new_shop
+ * @var EShop|null $new_eshop
  * @var Form $form
  */
 
-$new_shop = $this->getRaw('new_shop');
+$new_eshop = $this->getRaw('new_eshop');
 $form = $this->getRaw('form');
 
 $form->renderer()->setDefaultLabelWidth([
@@ -35,8 +35,8 @@ endforeach;
 
 <?=$form->field('base')?>
 <?=$form->field('locale')?>
-<?=$form->field('shop_code')?>
-<?=$form->field('shop_name')?>
+<?=$form->field('code')?>
+<?=$form->field('name')?>
 <?=$form->field('URLs')?>
 <?=$form->field('pricelist_codes')?>
 <?=$form->field('default_pricelist_code')?>
@@ -45,7 +45,6 @@ endforeach;
 <?=$form->field('default_warehouse_id')?>
 <?=$form->field('use_template')?>
 <?=$form->field('template_relative_dir')?>
-<?=$form->field('pages_source_shop')?>
 
 
 <div class="row">

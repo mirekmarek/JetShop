@@ -1,0 +1,83 @@
+.return-of-goods-search-order-form {
+	display: grid;
+	align-items: center;
+	gap:10px;
+	grid-template-columns: 250px 400px;
+}
+
+.return-of-goods-product {
+	display: grid;
+	grid-template-columns: 60px 1fr;
+	gap: 5px;
+	margin: 10px;
+	align-items: center;
+}
+
+.return-of-goods-product img {
+	max-width: 100%;
+	height: auto;
+}
+
+@media screen and (width<=1000px) {
+	.return-of-goods-search-order-form {
+		grid-template-columns: 1fr;
+	}
+}
+
+.return-of-goods-list-item>.rog-number {
+	grid-area: rog-number;
+}
+.return-of-goods-list-item>.order-number {
+	grid-area: order-number;
+}
+.return-of-goods-list-item>.status {
+	grid-area: status;
+}
+.return-of-goods-list-item>.product {
+	grid-area: product;
+}
+.return-of-goods-list-item>.date {
+	grid-area: date;
+}
+
+
+.return-of-goods-list-item {
+	margin-bottom: 20px;
+	display: grid;
+	gap: 10px;
+	grid-template:
+			"rog-number date"
+			"status order-number"
+			"product product";
+}
+
+
+@media screen and (width<=1000px) {
+	.return-of-goods-list-item {
+		margin-bottom: 20px;
+		display: grid;
+		gap: 10px;
+		grid-template:
+			"rog-number"
+			"date"
+			"status"
+			"order-number"
+			"product";
+	}
+}
+
+.return-of-goods-description {
+	padding: 10px;
+}
+
+.return-of-goods-select-product-item {
+	display: grid;
+	grid-template-columns: 1fr;
+	gat: 20px;
+	margin-bottom: 20px;
+}
+
+.return-of-goods-select-product-item>.buttons>.exists-request {
+	padding: 20px;
+	font-weight: bolder;
+}

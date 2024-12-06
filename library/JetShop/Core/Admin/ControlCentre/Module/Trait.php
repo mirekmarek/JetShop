@@ -7,7 +7,7 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use Jet\Translator;
 use JetApplication\Admin_ControlCentre_Module_Interface;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 trait Core_Admin_ControlCentre_Module_Trait {
 	
@@ -22,18 +22,18 @@ trait Core_Admin_ControlCentre_Module_Trait {
 		} );
 	}
 	
-	public function handleControlCentre( ?Shops_Shop $shop=null ) : string
+	public function handleControlCentre( ?EShop $eshop=null ) : string
 	{
 		/**
 		 * @var Application_Module|Admin_ControlCentre_Module_Interface $this
 		 */
 		
-		return Translator::setCurrentDictionaryTemporary( $this->getModuleManifest()->getName(), function() use ($shop) : string {
+		return Translator::setCurrentDictionaryTemporary( $this->getModuleManifest()->getName(), function() use ($eshop) : string {
 			$page_content = Factory_MVC::getPageContentInstance();
 			
 			$page_content->setModuleName( $this->getModuleManifest()->getName() );
 			$page_content->setControllerName( 'ControlCentre' );
-			$page_content->setParameter( 'shop', $shop );
+			$page_content->setParameter( 'eshop', $eshop );
 			
 			$page_content->dispatch();
 			

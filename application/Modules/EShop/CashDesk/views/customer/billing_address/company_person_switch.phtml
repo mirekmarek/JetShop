@@ -1,0 +1,27 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+?>
+
+
+<div class="company-or-person-switch">
+		<?=Tr::_('I an shopping as a')?>
+
+		<?php if ($cash_desk->isCompanyOrder()): ?>
+			<?=UI::button(Tr::_('Private person'))->setOnclick('CashDesk.customer.billingAddress.setIsPerson();')->setClass('link')?>
+			<?=UI::button(Tr::_('Company'))->setOnclick(' ')->setClass('primary')?>
+		<?php else: ?>
+			<?=UI::button(Tr::_('Private person'))->setOnclick(' ')->setClass('primary')?>
+			<?=UI::button(Tr::_('Company'))->setOnclick('CashDesk.customer.billingAddress.setIsCompany();')->setClass('link')?>
+		<?php endif; ?>
+</div>

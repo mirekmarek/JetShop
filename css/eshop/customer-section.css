@@ -1,0 +1,286 @@
+.customer-section-container {
+	padding: 20px;
+}
+
+.customer-section-container h2 {
+	margin-top: 30px;
+}
+
+.login-dialog {
+	width: 600px;
+	max-width: 100%;
+	margin-left: calc( 50% - 300px );
+}
+
+.login-dialog-input {
+	margin-bottom: 25px;
+	display: flex;
+	gap: 5px;
+	align-items: center
+}
+
+.login-dialog-buttons {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 10px;
+	justify-content: right;
+}
+
+
+@media screen and ( width <= 800px ) {
+	.login-dialog {
+		margin-left: 0;
+		width: 100%;
+	}
+}
+
+.login-warning {
+	display: grid;
+	grid-template-columns: 70px 1fr;
+	gap: 10px;
+	margin: 10px;
+	align-items: center;
+}
+
+#customer_detail_dialog .user-name {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin: 20px;
+}
+
+#customer_detail_dialog .buttons {
+	display:flex;
+	gap: 10px;
+	margin: 10px;
+}
+
+.customer_section_addresses {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 20px;
+}
+
+.customer_section_addresses_address {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.selected-address {
+	background-color: #dcdcdc;
+}
+
+.customer_section_addresses_address_buttons {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: 1fr;
+	border-left: 1px solid #c9c9c9;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+
+@media screen and (width <= 1000px ) {
+	.customer_section_addresses_address {
+		grid-template-columns: 1fr;
+	}
+
+	.customer_section_addresses_address_buttons {
+		display: flex;
+		gap: 10px;
+		border-top: 1px solid #c9c9c9;
+		margin-top: 10px;
+		padding-top: 10px;
+		border-left: none;
+		margin-left: 0px;
+		padding-left: 0px;
+	}
+
+}
+
+.customer_section_addresses_edit_form_dialog {
+	margin-left: 20%;
+	margin-right: 20%;
+	margin-bottom: 100px;
+
+}
+
+.customer_section_addresses_edit_form {
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+	gap: 10px;
+	align-items: center;
+	margin: 10px;
+}
+
+@media screen and (width <= 1000px ) {
+	.customer_section_addresses_edit_form_dialog {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.customer_section_addresses_edit_form {
+		grid-template-columns: 1fr;
+	}
+}
+
+.customer_section_basic_info {
+	display: grid;
+	grid-template-columns: 100px 1fr;
+	gap: 20px;
+}
+
+@media screen and (width <= 1000px ) {
+	.customer_section_basic_info {
+		grid-template-columns: 1fr;
+	}
+}
+
+.order-detail>.main-info,
+.order-list-item>.main-info
+{
+	display: grid;
+	grid-template-columns: 0.8fr 2fr;
+	gap: 10px;
+	align-items: center
+}
+
+.order-list-item>.items {
+
+}
+
+.order-list-item>.items>.item>.number-of-units,
+.order-detail>.items>.item>.number-of-units
+{
+	grid-area: number-of-units;
+}
+
+.order-list-item>.items>.item>.title,
+.order-detail>.items>.item>.title
+{
+	grid-area: title;
+}
+
+.order-list-item>.items>.item>.total,
+.order-detail>.items>.item>.total
+{
+	grid-area: total;
+	text-align: right;
+}
+
+
+.order-list-item>.items>.item,
+.order-detail>.items>.item
+{
+	display: grid;
+	grid-template: "number-of-units title total";
+	grid-template-columns: 0.2fr 1fr 0.3fr;
+	gap: 10px;
+	margin: 10px;
+}
+
+@media screen and (width <= 1000px ) {
+	.order-list-item>.items>.item,
+	.order-detail>.items>.item
+	{
+		display: grid;
+		grid-template: "number-of-units title"
+						". total";
+		grid-template-columns: 0.2fr 1fr;
+		gap: 10px;
+		margin: 10px;
+	}
+
+	.order-list-item>.items>.item>.total,
+	.order-detail>.items>.item>.total
+	{
+		text-align: right;
+	}
+}
+
+
+.order-list-item>.total {
+	font-weight: bolder;
+	font-size: 1.5rem;
+	text-align: right;
+}
+
+.order-list-item {
+	display: grid;
+	grid-template-columns: 0.7fr 1fr 200px;
+	margin: 20px;
+	border-radius: 5px;
+	padding: 20px;
+	gap: 10px;
+}
+
+@media screen and (width <= 1000px ) {
+	.order-list-item {
+		grid-template-columns: 1fr;
+	}
+}
+
+
+.order-detail-header {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	margin: 20px;
+}
+
+@media screen and (width <= 1000px ) {
+	.order-detail-header {
+		grid-template-columns: 1fr;
+	}
+}
+
+
+.order-detail .billing-address {
+	grid-area: billing-address;
+}
+
+
+.order-detail .delivery-address {
+	grid-area: delivery-address;
+}
+
+.order-detail .main-info {
+	grid-area: main-info;
+}
+
+.order-detail .items {
+	grid-area: items;
+}
+
+
+.order-detail>.total {
+	grid-area: total;
+	text-align: right;
+	font-weight: bolder;
+	font-size: 1.5rem;
+}
+
+.order-detail {
+	display: grid;
+	grid-template:
+			"main-info main-info"
+			"billing-address delivery-address"
+			"items items"
+			"total total";
+	gap: 20px;
+	margin-top: 10px;
+}
+
+@media screen and (width <= 1000px ) {
+	.order-detail {
+		display: grid;
+		grid-template:
+			"main-info"
+			"billing-address"
+			"delivery-address"
+			"items"
+			"total";
+		gap: 20px;
+		margin-top: 10px;
+	}
+}

@@ -11,26 +11,26 @@ use Jet\Http_Headers;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\Order;
 use JetApplication\Payment_Method_Module;
-use JetApplication\Payment_Method_ShopData;
-use JetApplication\Shop_Pages;
+use JetApplication\Payment_Method_EShopData;
+use JetApplication\EShop_Pages;
 
 class Main extends Payment_Method_Module implements
-	ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
+	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
 	Admin_ControlCentre_Module_Interface
 {
-	use ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	public function handlePayment( Order $order, Payment_Method_ShopData $payment_method ): bool
+	public function handlePayment( Order $order, Payment_Method_EShopData $payment_method ): bool
 	{
 		/**
 		 * @var Config_PerShop $config
 		 */
-		$config = $this->getShopConfig( $order->getShop() );
+		$config = $this->getEshopConfig( $order->getEshop() );
 
 		
 		$gopay = new GoPay( $config->getGoPayConfig() );
@@ -48,7 +48,7 @@ class Main extends Payment_Method_Module implements
 		
 		$o = new GoPay_Order();
 		$o->setOderNumber( $order->getNumber() );
-		$o->setAmount( $order->getTotalAmount() );
+		$o->setAmount( $order->getTotalAmount_WithVAT() );
 		$o->setDescription( '' );
 		$o->setFirstName( $order->getBillingFirstName() );
 		$o->setLastName( $order->getBillingSurname() );
@@ -66,7 +66,7 @@ class Main extends Payment_Method_Module implements
 			$o_item->setAmount( $item->getTotalAmount() );
 		}
 		
-		$return_url = Shop_Pages::CashDeskPayment()->getURL([$order->getKey()]);
+		$return_url = EShop_Pages::CashDeskPayment()->getURL([$order->getKey()]);
 		$notification_url = '';
 		
 		$selected_bank = GoPay_Bank::get( $order->getPaymentMethodSpecification() );

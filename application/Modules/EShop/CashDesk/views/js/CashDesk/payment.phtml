@@ -1,0 +1,68 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+?>
+
+<script>
+	CashDesk.payment = {
+		select: function( method ) {
+			if(CashDesk.selected_payment==method) {
+				return;
+			}
+			CashDesk.selected_payment=method;
+			CashDesk._request.doGet('?action=select_payment&method=' + method);
+		},
+
+		selectOption: function( option ) {
+			CashDesk._request.doGet('?action=select_payment_option&option=' + option);
+		},
+
+
+		back: function() {
+			CashDesk.slideUp('cash_desk_confirm', () => {
+				CashDesk.slideUp('cash_desk_customer', () => {
+					CashDesk.slideUp('cash_desk_payment', () => {
+						CashDesk._request.doGet('?action=back_to_payment', () => {
+							CashDesk.slideDown('cash_desk_payment', () => {
+								CashDesk.scrollTo('cash_desk_payment');
+							});
+						});
+					});
+				});
+			});
+
+		},
+
+		continue: function() {
+			CashDesk.slideUp('cash_desk_customer', () => {
+				CashDesk.slideUp('cash_desk_payment', () => {
+					CashDesk._request.doGet('?action=continue_to_customer', (response) => {
+						CashDesk.slideDown('cash_desk_payment', () => {
+							CashDesk.slideDown('cash_desk_customer', () => {
+								if(response['is_ready']) {
+									CashDesk.slideDown('cash_desk_confirm', () => {
+										CashDesk.scrollTo('cash_desk_confirm');
+									});
+								} else {
+									CashDesk.scrollTo('cash_desk_customer');
+								}
+							});
+						});
+					});
+				});
+			});
+
+		},
+
+		setPaymentOptions: function( method, callback ) {
+			CashDesk._request.doForm('payment_method_options_form_'+method, callback);
+		}
+	};
+</script>

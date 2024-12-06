@@ -92,7 +92,7 @@ return [
 	'Cash' => 'Hotovosť',
 	'Loan' => 'Pôžička',
 	'Loan - online' => 'Pôžička - online',
-	'Bank transfer' => 'bankový prevod',
+	'Bank transfer' => 'Bankový prevod',
 	'Place order as an unregistered client. Unfortunately, this <strong> loses your loyalty discount </strong>' => 'Objednávajte ako neregistrovaný klient. Bohužiaľ tým <strong>prídete o vernostnú zľavu</strong>',
 	'I agree with <a href="%link%">terms and conditions</a>' => 'Súhlasím s <a href="%link%">obchodnými podmienkami</a>',
 	'To complete the order, it is necessary to agree to the terms and conditions' => 'Pre dokončenie objednávky je potrebné súhlasiť s obchodnými podmienkami',
@@ -123,5 +123,5 @@ return [
 	'Order item description' => 'Popis položky objednávky',
 	'Order item unit price' => 'Jednotková cena položky objednávky',
 	'Order item price' => 'Cena položky objednávky',
-	'Receipt Of Goods' => '',
+	'Receipt Of Goods' => 'Príjem Tovaru',
 ];

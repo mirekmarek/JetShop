@@ -6,7 +6,7 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\Availabilities;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\Entity_Basic;
 use JetApplication\Product;
 use JetApplication\Product_Availability;
@@ -53,7 +53,7 @@ abstract class Core_Product_Availability extends Entity_Basic
 	
 	protected static array $loaded = [];
 	
-	public static function getInStockQtyMap( Availabilities_Availability $availability ) : array
+	public static function getInStockQtyMap( Availability $availability ) : array
 	{
 		$where = [
 			'availability_code' => $availability->getCode()
@@ -69,7 +69,7 @@ abstract class Core_Product_Availability extends Entity_Basic
 		);
 	}
 	
-	public static function get( Availabilities_Availability $availability, int $product_id ) : static
+	public static function get( Availability $availability, int $product_id ) : static
 	{
 		$key = $availability->getCode().':'.$product_id;
 		if(!isset(static::$loaded[$key])) {
@@ -92,9 +92,9 @@ abstract class Core_Product_Availability extends Entity_Basic
 	}
 	
 	public static function filterIsInStock(
-		Availabilities_Availability $availability,
-		bool $is_in_stock,
-		?array $product_ids = null
+		Availability $availability,
+		bool         $is_in_stock,
+		?array       $product_ids = null
 	) : array
 	{
 		
@@ -130,7 +130,7 @@ abstract class Core_Product_Availability extends Entity_Basic
 	}
 	
 	
-	public function getAvailability() : Availabilities_Availability
+	public function getAvailability() : Availability
 	{
 		return Availabilities::get( $this->availability_code );
 	}

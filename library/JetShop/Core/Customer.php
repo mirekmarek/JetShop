@@ -15,10 +15,10 @@ use Jet\DataModel_Query;
 use JetApplication\Customer_Address;
 use JetApplication\Customer;
 use JetApplication\EMailMarketing;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShops;
 use JetApplication\EMailMarketing_Subscribe;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 
 #[DataModel_Definition(
@@ -32,7 +32,7 @@ use JetApplication\Shops_Shop;
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 )]
-abstract class Core_Customer extends Entity_WithShopRelation implements Auth_User_Interface
+abstract class Core_Customer extends Entity_WithEShopRelation implements Auth_User_Interface
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -339,7 +339,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		$this->save();
 
 		EMailMarketing::SubscriptionManager()->changeMail(
-			$this->getShop(), $old_email, $new_email, $source, $comment
+			$this->getEshop(), $old_email, $new_email, $source, $comment
 		);
 	}
 
@@ -604,7 +604,7 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 	 */
 	public function getMailingSubscribed() : bool
 	{
-		return (bool)EMailMarketing_Subscribe::get( $this->getShop(), $this->email );
+		return (bool)EMailMarketing_Subscribe::get( $this->getEshop(), $this->email );
 	}
 
 	/**
@@ -668,17 +668,17 @@ abstract class Core_Customer extends Entity_WithShopRelation implements Auth_Use
 		return $user;
 	}
 
-	public static function getByEmail( string $email_address, ?Shops_Shop $shop=null ) : ?static
+	public static function getByEmail( string $email_address, ?EShop $eshop=null ) : ?static
 	{
-		if(!$shop) {
-			$shop = Shops::getCurrent();
+		if(!$eshop) {
+			$eshop = EShops::getCurrent();
 		}
 
 		$customers = static::fetch([
 			'customer' => [
 				'email' => $email_address,
 				'AND',
-				$shop->getWhere()
+				$eshop->getWhere()
 			]
 		]);
 

@@ -1,0 +1,40 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI_tabsJS;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var UI_tabsJS $tabs
+ */
+
+$tabs = $this->getRaw('tabs');
+
+if(EShops::isMultiEShopMode()):
+	foreach( EShops::getAvailableLocales() as $locale) {
+		$tabs->tab( $locale->toString() )->addJsAction('onclick', "UI_DescriptionBlock.onSelect('".$locale->toString()."');");
+	}
+	
+	?>
+	<script>
+		
+		const UI_DescriptionBlock = {
+			onSelect: ( locale ) => {
+				Cookies.set('selected_description_locale', locale, undefined, '/');
+			},
+			
+			init: () => {
+				let tab = Cookies.get('selected_description_locale');
+
+				if(tab) {
+					$('.nav-tabs a[href="#' + tab + '"]').tab('show');
+				}
+			}
+		};
+		
+	</script>
+<?php
+endif;
+
+
+echo $tabs->start();

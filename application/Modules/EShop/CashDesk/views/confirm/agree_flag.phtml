@@ -1,0 +1,27 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\UI_messages;
+use JetApplication\CashDesk_Confirm_AgreeFlag;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk_Confirm_AgreeFlag $flag
+ */
+
+$flag = $this->getRaw('flag');
+$code = $flag->getCode();
+?>
+<div id="agree_flag_area_<?=$code?>">
+<?php if($flag->isChecked()): ?>
+	<label><input type="checkbox" id="agree_flag_<?=$code?>" onchange="CashDesk.confirm.toggleAgreeFlag('<?=$code?>', this.checked );" checked>  <?=$flag->getTitle()?></label>
+<?php else: ?>
+	<label><input type="checkbox" id="agree_flag_<?=$code?>" onchange="CashDesk.confirm.toggleAgreeFlag('<?=$code?>', this.checked );">  <?=$flag->getTitle()?></label>
+<?php endif; ?>
+
+<?php if($flag->showError()): ?>
+	<?=UI_messages::createDanger($flag->getErrorMessage())?>
+<?php endif ?>
+</div>
+

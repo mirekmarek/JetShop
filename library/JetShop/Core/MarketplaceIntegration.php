@@ -6,7 +6,7 @@ use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\Managers;
 use JetApplication\Order;
 use JetApplication\Order_Event;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 abstract class Core_MarketplaceIntegration
 {
@@ -60,12 +60,12 @@ abstract class Core_MarketplaceIntegration
 		$res = [];
 		
 		foreach( static::getActiveModules() as $mp ) {
-			foreach(Shops::getList() as $shop ) {
-				if( $mp->isAllowedForShop( $shop ) ) {
-					if(Shops::isMultiShopMode()) {
-						$res[$mp->getCode().':'.$shop->getKey()] = $mp->getTitle().' - '.$shop->getShopName();
+			foreach( EShops::getList() as $eshop ) {
+				if( $mp->isAllowedForShop( $eshop ) ) {
+					if(EShops::isMultiEShopMode()) {
+						$res[$mp->getCode().':'.$eshop->getKey()] = $mp->getTitle().' - '.$eshop->getName();
 					} else {
-						$res[$mp->getCode().':'.$shop->getKey()] = $mp->getTitle();
+						$res[$mp->getCode().':'.$eshop->getKey()] = $mp->getTitle();
 					}
 				}
 			}

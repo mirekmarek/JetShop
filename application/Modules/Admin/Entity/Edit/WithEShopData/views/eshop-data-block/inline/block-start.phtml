@@ -1,0 +1,15 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\EShop;
+
+/**
+ * @var MVC_View $this
+ * @var EShop $eshop
+ */
+
+$eshop = $this->getRaw('eshop');
+?>
+<div>
+<fieldset>
+	<legend><?=UI::flag( $eshop->getLocale() )?> <?=$eshop->getName()?></legend>

@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use Jet\Locale;
-use Jet\SysConf_Path;
+use JetApplication\EShopConfig;
 
 abstract class Core_DataList {
 	
@@ -11,7 +11,7 @@ abstract class Core_DataList {
 		/**
 		 * @var array $default_countries
 		 */
-		$default_countries = require SysConf_Path::getConfig() . 'shop/default_countries.php';
+		$default_countries = require EShopConfig::getRootDir() . 'default_countries.php';
 		
 		$all_locales = Locale::getAllLocalesList();
 		$res = [];
@@ -44,7 +44,7 @@ abstract class Core_DataList {
 		/**
 		 * @var array $default_locales
 		 */
-		$default_locales = require SysConf_Path::getConfig() . 'shop/default_locales.php';
+		$default_locales = require EShopConfig::getRootDir() . 'default_locales.php';
 		
 		
 		$all_locales = Locale::getAllLocalesList();

@@ -14,7 +14,7 @@ use JetApplication\Discounts_Discount;
 
 class Handler_Note_MessageGenerator_Apology extends Handler_Note_MessageGenerator
 {
-	
+	public const KEY = 'apology';
 	
 	public function getTitle(): string
 	{
@@ -23,14 +23,11 @@ class Handler_Note_MessageGenerator_Apology extends Handler_Note_MessageGenerato
 	
 	public function generateSubject(): string
 	{
-		$this->view->setVar('number', $this->return_of_goods->getNumber() );
-		
 		return $this->renderSubject();
 	}
 	
 	public function generateText(): string
 	{
-		
 		
 		do {
 			$d_code = 'SR-';
@@ -45,23 +42,18 @@ class Handler_Note_MessageGenerator_Apology extends Handler_Note_MessageGenerato
 			}
 			
 			
-		} while( Discounts_Code::getByCode( $d_code, $this->return_of_goods->getShop() ) );
+		} while( Discounts_Code::getByCode( $d_code, $this->return_of_goods->getEshop() ) );
 		
 		$discounts_code = new Discounts_Code();
-		$discounts_code->setShop( $this->return_of_goods->getShop() );
-		$discounts_code->setNumberOfCodesAvailable( 1 );
+		$discounts_code->setEshop( $this->return_of_goods->getEshop() );
 		$discounts_code->setMinimalOrderAmount(0);
+		$discounts_code->setNumberOfCodesAvailable( 1 );
 		$discounts_code->setDiscountType( Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT );
-		//TODO:
-		$discounts_code->setDiscount( 100 );
 		$discounts_code->setCode( $d_code );
 		$discounts_code->setActiveTill( new Data_DateTime( date('Y-m-d 23:59:59', strtotime('+6 months')) ) );
-		$discounts_code->setInternalNotes( 'Apology about the return of goods '.$this->return_of_goods->getNumber());
-		$discounts_code->save();
+		$discounts_code->setInternalNotes( 'Apology about the order '.$this->return_of_goods->getNumber());
 		
 		
-		
-		$this->view->setVar('number', $this->return_of_goods->getNumber());
 		$this->view->setVar('discounts_code', $discounts_code );
 		
 		return $this->renderText( true );

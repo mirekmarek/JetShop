@@ -2,31 +2,33 @@
 namespace JetShop;
 
 use Jet\IO_File;
-use Jet\SysConf_Path;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
+use JetApplication\EShopConfig;
 
 
 abstract class Core_Availabilities {
 	
 	/**
-	 * @var Availabilities_Availability[]|null
+	 * @var Availability[]|null
 	 */
 	protected static ?array $_list = null;
-	protected static ?Availabilities_Availability $current = null;
+	protected static ?Availability $current = null;
 	
 	public static function getCfgFilePath() : string
 	{
-		return SysConf_Path::getConfig().'shop/availabilities.php';
+		return EShopConfig::getRootDir().'availabilities.php';
 	}
 	
 	public static function loadCfg() : void
 	{
 		static::$_list = [];
 		
-		$cfg = require static::getCfgFilePath();
-		
-		foreach($cfg as $item) {
-			static::addAvailability( (new Availabilities_Availability( $item )) );
+		if(IO_File::exists(static::getCfgFilePath())) {
+			$cfg = require static::getCfgFilePath();
+			
+			foreach($cfg as $item) {
+				static::addAvailability( (new Availability( $item )) );
+			}
 		}
 	}
 	
@@ -45,14 +47,14 @@ abstract class Core_Availabilities {
 	}
 	
 	
-	public static function getCurrent() : Availabilities_Availability
+	public static function getCurrent() : Availability
 	{
 		return static::$current;
 	}
 	
-	public static function setCurrent( Availabilities_Availability $shop ) : void
+	public static function setCurrent( Availability $eshop ) : void
 	{
-		static::$current = $shop;
+		static::$current = $eshop;
 	}
 	
 	public static function exists( string $key ) : bool
@@ -60,23 +62,23 @@ abstract class Core_Availabilities {
 		return isset(static::getList()[$key]);
 	}
 	
-	public static function get( string $code ) : Availabilities_Availability|null
+	public static function get( string $code ) : Availability|null
 	{
 		return static::getList()[$code]??null;
 	}
 	
-	public static function addAvailability( Availabilities_Availability $availability ) : void
+	public static function addAvailability( Availability $availability ) : void
 	{
 		static::$_list[$availability->getCode()] = $availability;
 	}
 	
-	public static function removeAvailability( Availabilities_Availability $availability ) : void
+	public static function removeAvailability( Availability $availability ) : void
 	{
 		unset(static::$_list[$availability->getCode()]);
 	}
 	
 	/**
-	 * @return Availabilities_Availability[]
+	 * @return Availability[]
 	 */
 	public static function getList() : array
 	{

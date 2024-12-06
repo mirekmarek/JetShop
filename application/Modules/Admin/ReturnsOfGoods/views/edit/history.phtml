@@ -1,10 +1,10 @@
 <?php
 namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
+use Jet\Locale;
 use Jet\Tr;
 use Jet\MVC_View;
-use JetApplication\ReturnOfGoods_ChangeHistory;
-use JetApplication\ReturnOfGoods_Note;
+use Jet\UI_messages;
 
 /**
  * @var MVC_View $this
@@ -15,35 +15,39 @@ $return = $this->getRaw( 'return' );
 
 $history = $return->getHistory();
 ?>
-<fieldset style="padding: 10px;">
-	<legend><?=Tr::_('Return of goods history')?></legend>
-	
-	<table class="table table-striped">
-		<thead>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th style="width: 150px;"><?=Tr::_('Date and time')?></th>
+		<th style="width: 250px;"></th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach($history as $event):
+		$handler = $event->getHandlerModule();
+		if(!$handler) {
+			continue;
+		}
+		?>
 		<tr>
-			<th style="width: 150px;"><?=Tr::_('Date and time')?></th>
-			<th style="width: 250px;"><?=Tr::_('Status')?></th>
-			<th><?=Tr::_('Notes')?></th>
-			<th style="width: 50px;"><?=Tr::_('Sent to customer')?></th>
-			<th style="width: 150px;"><?=Tr::_('Author')?></th>
-		</tr>
-		</thead>
-		<tbody>
-		<?php foreach($history as $item):
-			$this->setVar('history_item', $item);
-			?>
-			<tr>
-				<?php
-				if($item instanceof ReturnOfGoods_Note) {
-					require 'history/note.phtml';
-				}
+			<td>
+				<?=Locale::dateAndTime( $event->getDateAdded() )?>
+				<br>
+				<?=$event->getAdministrator() ?>
+			</td>
+			<td><div style="padding: 10px;font-weight: bolder;<?=$handler->getEventStyle()?>"><?=$handler->showEventName()?></div></td>
+			<td>
+				<?php if(!$event->getHandled()):
+					//TODO:
+					?>
+					<?=UI_messages::createDanger( $event->getErrorMessage() ) ?>
+				<?php endif; ?>
 				
-				if($item instanceof ReturnOfGoods_ChangeHistory) {
-					require 'history/change.phtml';
-				}
-				?>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-</fieldset>
+				<?=$handler->showEventDetails(); ?>
+			</td>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>

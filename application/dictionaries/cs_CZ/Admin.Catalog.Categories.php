@@ -180,7 +180,8 @@ return [
 	'Nastavitelná výška řídítek' => 'Nastavitelná výška řídítek',
 	'Stojan' => 'Stojan',
 	'Elektrický pohon' => 'Elektrický pohon',
-	'Include subcategories' => '',
-	'Add category:' => '',
-	'Properties' => '',
+	'Include subcategories' => 'Zahrnout podkategorie',
+	'Add category:' => 'Přidat kategorii:',
+	'Properties' => 'Vlastnosti',
+	'Unknown item %ID%' => 'Neznámá položka %ID%',
 ];

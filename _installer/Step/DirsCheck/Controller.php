@@ -14,9 +14,9 @@ use Jet\SysConf_Path;
 use JetApplication\Application_Admin;
 use JetApplication\Application_Exports;
 use JetApplication\Application_Services;
-use JetApplication\Application_Shop;
-use JetApplication\Application_Web;
-use JetApplication\Application_REST;
+use JetApplication\Application_EShop;
+use JetApplication\EShop_Template;
+use JetApplication\EShopConfig;
 
 /**
  *
@@ -39,7 +39,7 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 	 */
 	public function getIsAvailable(): bool
 	{
-		return !Installer_Step_CreateBases_Controller::basesCreated();
+		return true;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getBases() . Application_Shop::getBaseId() . '/'  => [
+			SysConf_Path::getBases() . Application_EShop::getBaseId() . '/'  => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
@@ -99,6 +99,15 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
+			EShopConfig::getRootDir()                                       => [
+				'is_required'  => true,
+				'is_writeable' => false,
+			],
+			
+			EShop_Template::getRootDir() => [
+				'is_required'  => true,
+				'is_writeable' => false,
+			]
 		];
 
 

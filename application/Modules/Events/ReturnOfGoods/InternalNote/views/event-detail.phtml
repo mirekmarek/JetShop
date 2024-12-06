@@ -1,0 +1,24 @@
+<?php
+namespace JetApplicationModule\Events\ReturnOfGoods\InternalNote;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\ReturnOfGoods_Event;
+use JetApplication\ReturnOfGoods_Note;
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods_Event $event
+ * @var Main $handler
+ * @var ReturnOfGoods_Note $note
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');
+
+$note = $event->getContext();
+if(!$note) {
+	return;
+}
+
+echo Admin_Managers::Note()?->showNote( $note );

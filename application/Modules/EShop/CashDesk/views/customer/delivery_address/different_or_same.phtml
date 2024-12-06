@@ -1,0 +1,25 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+?>
+<br>
+<span class="step-title"><?=Tr::_('Where should we send the goods?')?></span>
+
+<div class="different-address-switch">
+	<?php if($cash_desk->hasDifferentDeliveryAddress()): ?>
+		<?=UI::button(Tr::_('To the same address'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSame();')->setClass('light')?>
+		<?=UI::button(Tr::_('To another address'))->setOnclick('CashDesk.customer.deliveryAddress.setDifferent();')->setClass('info')?>
+	<?php else: ?>
+		<?=UI::button(Tr::_('To the same address'))->setOnclick('CashDesk.customer.deliveryAddress.setTheSame();')->setClass('info')?>
+		<?=UI::button(Tr::_('To another address'))->setOnclick('CashDesk.customer.deliveryAddress.setDifferent();')->setClass('light')?>
+	<?php endif; ?>
+</div>

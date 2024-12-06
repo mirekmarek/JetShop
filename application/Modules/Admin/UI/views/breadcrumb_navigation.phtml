@@ -1,28 +1,37 @@
 <?php
+
+use Jet\MVC;
 use Jet\Navigation_Breadcrumb;
+use Jet\UI;
+use Jet\Http_Request;
 
 $items = Navigation_Breadcrumb::getItems();
 ?>
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb" style="margin-bottom: 0;">
-		<?php foreach( $items as $item ): ?>
-			<?php if( $item->getIsActive() ): ?>
-				<li class="breadcrumb-item active">
-					<?php if( !$item->getIsLast() ): ?>
-						<a href="<?=$item->getURL();?>"><?=$item->getTitle();?></a>
-					<?php else: ?>
-						<?=$item->getTitle();?>
-					<?php endif; ?>
-				</li>
-			<?php else: ?>
-				<li class="breadcrumb-item">
-					<?php if( !$item->getIsLast() ): ?>
-						<a href="<?=$item->getURL();?>"><?=$item->getTitle();?></a>
-					<?php else: ?>
-						<?=$item->getTitle();?>
-					<?php endif; ?>
-				</li>
-			<?php endif; ?>
+		<?php foreach( $items as $item ):
+			if($item->getPage()?->getId()== MVC::HOMEPAGE_ID) {
+				continue;
+			}
+			
+			$title = $item->getTitle();
+			$URL = $item->getURL();
+			
+			if( ($page = $item->getPage()) ) {
+				$title = UI::icon( $page->getIcon() ).'&nbsp;&nbsp;'.$page->getBreadcrumbTitle();
+				$URL = Http_Request::currentURI(unset_GET_params: ['id', 'action', 'page']);
+			}
+			
+			$class = $item->getIsActive() ? 'breadcrumb-item active' : 'breadcrumb-item';
+			
+			?>
+			<li class="<?=$class?>">
+				<?php if( !$item->getIsLast() ): ?>
+					<a href="<?=$URL;?>"><?=$title;?></a>
+				<?php else: ?>
+					<?=$title;?>
+				<?php endif; ?>
+			</li>
 		<?php endforeach; ?>
 	</ol>
 </nav>

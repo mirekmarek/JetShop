@@ -13,10 +13,10 @@ use Jet\Form_Field;
 use JetApplication\Content_Article_Author;
 use JetApplication\Content_Article_Category;
 use JetApplication\Content_Article_KindOfArticle;
-use JetApplication\Content_Article_ShopData;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Content_Article_EShopData;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 
 
@@ -24,7 +24,7 @@ use JetApplication\Shops_Shop;
 	name: 'content_article',
 	database_table_name: 'content_articles',
 )]
-abstract class Core_Content_Article extends Entity_WithShopData
+abstract class Core_Content_Article extends Entity_WithEShopData
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -81,11 +81,11 @@ abstract class Core_Content_Article extends Entity_WithShopData
 	
 	public function afterAdd(): void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_key = $shop->getKey();
+		foreach( EShops::getList() as $eshop ) {
+			$eshop_key = $eshop->getKey();
 			
-			$this->shop_data[$shop_key]->generateURLPathPart();
-			$this->shop_data[$shop_key]->save();
+			$this->eshop_data[$eshop_key]->generateURLPathPart();
+			$this->eshop_data[$eshop_key]->save();
 		}
 		
 		parent::afterAdd();
@@ -99,8 +99,8 @@ abstract class Core_Content_Article extends Entity_WithShopData
 
 	public function setPriority( int $priority ): void
 	{
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setPriority( $priority );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setPriority( $priority );
 		}
 		$this->priority = $priority;
 	}
@@ -112,8 +112,8 @@ abstract class Core_Content_Article extends Entity_WithShopData
 	
 	public function setKindId( int $kind_id ): void
 	{
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setKindId( $kind_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setKindId( $kind_id );
 		}
 		$this->kind_id = $kind_id;
 	}
@@ -125,8 +125,8 @@ abstract class Core_Content_Article extends Entity_WithShopData
 	
 	public function setAuthorId( int $author_id ): void
 	{
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setAuthorId( $author_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setAuthorId( $author_id );
 		}
 		$this->author_id = $author_id;
 	}
@@ -237,20 +237,20 @@ abstract class Core_Content_Article extends Entity_WithShopData
 	
 	
 	/**
-	 * @var Content_Article_ShopData[]
+	 * @var Content_Article_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Content_Article_ShopData::class
+		data_model_class: Content_Article_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	
 	
-	public function getShopData( ?Shops_Shop $shop = null ): Content_Article_ShopData
+	public function getEshopData( ?EShop $eshop = null ): Content_Article_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 }

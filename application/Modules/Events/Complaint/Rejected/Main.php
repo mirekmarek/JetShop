@@ -23,7 +23,7 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 
 		$email_template->setComplaint( $this->complaint );
 		
-		$email = $email_template->createEmail( $this->complaint->getShop() );
+		$email = $email_template->createEmail( $this->complaint->getEshop() );
 		
 		return $email->send();
 	}

@@ -1,0 +1,39 @@
+.icon {
+	background-repeat: no-repeat;
+	background-position: center center;
+	display: inline-block;
+	background-color: #000000;
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+
+.icon-xs {
+	width: 16px;
+	height: 16px;
+}
+
+.icon-sm {
+	width: 20px;
+	height: 20px;
+}
+
+.icon-normal {
+	width: 24px;
+	height: 24px;
+}
+
+.icon-lg {
+	width: 32px;
+	height: 32px;
+}
+
+.icon-xl {
+	width: 64px;
+	height: 64px;
+}
+
+
+.icon-ul {
+	width: 128px;
+	height: 128px;
+}

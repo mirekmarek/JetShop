@@ -107,7 +107,7 @@ return [
 	'Delivery address - Address - zip' => 'Dodací adresa - Adresa - PSČ',
 	'Delivery address - Address - country' => 'Dodací adresa - Adresa - země',
 	'Phone' => 'Telefon',
-	'e-mail' => 'e-mailem',
+	'e-mail' => 'e-mail',
 	'Payment amount' => 'Částka k úhradě',
 	'Payment method' => 'Způsob platby',
 	'Payment method specification' => 'Specifikace způsobu platby',
@@ -125,4 +125,8 @@ return [
 	'Subject:' => 'Předmět:',
 	'HTML:' => 'HTML:',
 	'TXT:' => 'TXT:',
+	'e-shop' => 'internetový obchod',
+	'Note' => 'Poznámka',
+	'Return of goods - changed' => 'Vrácení zboží - změněno',
+	'Delivery address has been changed' => 'Doručovací adresa byla změněna',
 ];

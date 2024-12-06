@@ -14,11 +14,11 @@ use Jet\Mailing;
 use Jet\MVC_Layout;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\EMail_Template;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	/**
 	 * @var EMail_Template[]
@@ -74,17 +74,17 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 	
 	public function email_preview_Action() : void
 	{
-		$shop_key = Http_Request::GET()->getString('shop');
-		if(!Shops::exists($shop_key)) {
+		$eshop_key = Http_Request::GET()->getString('eshop');
+		if(!EShops::exists($eshop_key)) {
 			return;
 		}
 		
-		$shop = Shops::get( $shop_key );
+		$eshop = EShops::get( $eshop_key );
 		
 		$this->templates = EmailTemplateText::actualizeList();
 		
 		$template = $this->templates[$this->current_item->getInternalCode()];
-		$test_email = $template->createTestEmail( $shop );
+		$test_email = $template->createTestEmail( $eshop );
 		
 		MVC_Layout::getCurrentLayout()->setScriptName('dialog');
 		$this->view->setVar('test_email', $test_email);
@@ -94,19 +94,19 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 	
 	public function send_test_email_Action() : void
 	{
-		$shop_key = Http_Request::GET()->getString('shop');
-		if(!Shops::exists($shop_key)) {
+		$eshop_key = Http_Request::GET()->getString('eshop');
+		if(!EShops::exists($eshop_key)) {
 			return;
 		}
 		
 		$email = Http_Request::GET()->getString('email');
 		
-		$shop = Shops::get( $shop_key );
+		$eshop = EShops::get( $eshop_key );
 		
 		$this->templates = EmailTemplateText::actualizeList();
 		
 		$template = $this->templates[$this->current_item->getInternalCode()];
-		$test_email = $template->createTestEmail( $shop );
+		$test_email = $template->createTestEmail( $eshop );
 		$test_email->setTo($email);
 		$test_email->send();
 		
@@ -115,26 +115,26 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		);
 		
 		Http_Headers::reload(unset_GET_params: [
-			'action', 'shop', 'email'
+			'action', 'eshop', 'email'
 		]);
 	}
 	
 	public function download_message_file_Action() : void
 	{
 		
-		$shop_key = Http_Request::GET()->getString('shop');
-		if(!Shops::exists($shop_key)) {
+		$eshop_key = Http_Request::GET()->getString('eshop');
+		if(!EShops::exists($eshop_key)) {
 			return;
 		}
 		
 		$email = 'test@test.tld';
 		
-		$shop = Shops::get( $shop_key );
+		$eshop = EShops::get( $eshop_key );
 		
 		$this->templates = EmailTemplateText::actualizeList();
 		
 		$template = $this->templates[$this->current_item->getInternalCode()];
-		$test_email = $template->createTestEmail( $shop );
+		$test_email = $template->createTestEmail( $eshop );
 		
 		$message = '';
 		$header = '';

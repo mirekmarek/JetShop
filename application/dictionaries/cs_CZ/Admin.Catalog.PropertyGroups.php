@@ -50,5 +50,6 @@ return [
 	'Please select option' => 'Vyberte prosím možnost',
 	'General' => 'Všeobecné',
 	'Please enter name' => 'Zadejte jméno',
-	'Usage' => '',
+	'Usage' => 'Používání',
+	'Create new' => 'Vytvořit nový',
 ];

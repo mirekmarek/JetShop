@@ -4,15 +4,15 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 
 #[DataModel_Definition(
 	name: 'marketplace_join_product_common_data',
 	database_table_name: 'marketplace_join_product_common_data',
 )]
-abstract class Core_MarketplaceIntegration_Join_ProductCommonData extends Entity_WithShopRelation
+abstract class Core_MarketplaceIntegration_Join_ProductCommonData extends Entity_WithEShopRelation
 {
 	
 	
@@ -45,12 +45,12 @@ abstract class Core_MarketplaceIntegration_Join_ProductCommonData extends Entity
 	protected mixed $common_data = null;
 	
 	
-	public static function get( string $marketplace_code, Shops_Shop $shop, int $product_id, string $common_data_key  ) : static|null
+	public static function get( string $marketplace_code, EShop $eshop, int $product_id, string $common_data_key  ) : static|null
 	{
 		return static::load( [
 			'marketplace_code' => $marketplace_code,
 			'AND',
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'product_id' => $product_id,
 			'AND',

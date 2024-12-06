@@ -7,23 +7,23 @@ use Jet\Form_Field_Checkbox;
 use JetApplication\Product_Parameter;
 use JetApplication\ProductFilter;
 use JetApplication\Property;
-use JetApplication\Property_ShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Property_EShopData;
+use JetApplication\EShop;
 
 
 abstract class Core_Property_Type
 {
 
-	protected Property|Property_ShopData $property_model;
+	protected Property|Property_EShopData $property_model;
 	protected int $property_id;
 	
 	protected ?Product_Parameter $product_parameter = null;
 	
 	
-	public function __construct( Property|Property_ShopData $property_model )
+	public function __construct( Property|Property_EShopData $property_model )
 	{
 		$this->property_model = $property_model;
-		if($property_model instanceof Property_ShopData) {
+		if($property_model instanceof Property_EShopData) {
 			$this->property_id = $property_model->getEntityId();
 		} else {
 			$this->property_id = $property_model->getId();
@@ -75,5 +75,5 @@ abstract class Core_Property_Type
 	
 	abstract public function getProductFilterEditForm( ProductFilter $filter ) : ? Form;
 	
-	abstract public function getProductDetailDisplayValue( ?Shops_Shop $shop=null ) : mixed;
+	abstract public function getProductDetailDisplayValue( ?EShop $eshop=null ) : mixed;
 }

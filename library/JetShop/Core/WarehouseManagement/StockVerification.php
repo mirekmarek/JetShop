@@ -11,7 +11,7 @@ use JetApplication\Entity_Simple;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\WarehouseManagement;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_StockVerification_Item;
@@ -162,7 +162,7 @@ class Core_WarehouseManagement_StockVerification extends Entity_Simple implement
 		return $this->created;
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
 		return null;
 	}

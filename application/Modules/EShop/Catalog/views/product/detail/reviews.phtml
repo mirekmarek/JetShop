@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$reviews_manager = EShop_Managers::ProductReviews();
+
+if(!$reviews_manager || !$product->getReviewCount()) {
+	return;
+}
+?>
+<h3><?=Tr::_('Reviews (%cnt%)', ['cnt'=>$product->getReviewCount()])?></h3>
+<?=$reviews_manager->renderReviews( $product );?>

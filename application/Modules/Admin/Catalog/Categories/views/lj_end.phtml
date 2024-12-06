@@ -79,6 +79,6 @@ $controller = $this->controller;
 		let URL = '<?=Http_Request::currentURI(['id'=>'ID'])?>';
 		URL = URL.replace('ID', id);
 
-		location = URL;
+		location.href = URL;
 	}
 </script>

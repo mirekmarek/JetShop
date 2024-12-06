@@ -7,7 +7,7 @@ use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\MarketplaceIntegration;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 class Listing_Filter_Marketplace extends DataListing_Filter
@@ -60,12 +60,12 @@ class Listing_Filter_Marketplace extends DataListing_Filter
 			return;
 		}
 		
-		[$mp_code, $shop_key] = explode(':', $this->marketplace);
+		[$mp_code, $eshop_key] = explode(':', $this->marketplace);
 		
 		$mp = MarketplaceIntegration::getActiveModule( $mp_code );
-		$shop = Shops::get( $shop_key );
+		$eshop = EShops::get( $eshop_key );
 		
-		$ids = $mp->getSellingProductIds( $shop );
+		$ids = $mp->getSellingProductIds( $eshop );
 		if(!$ids) {
 			$ids = [0];
 		}

@@ -7,7 +7,7 @@ use Jet\Form_Definition;
 
 use Jet\Form_Field;
 use JetApplication\Entity_Marketing;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 #[DataModel_Definition(
 	name: 'product_stickers',
@@ -153,7 +153,7 @@ abstract class Core_Marketing_ProductSticker extends Entity_Marketing
 	public static function getProductStickers( int $product_id ) : array
 	{
 		if(static::$active_stickers===null) {
-			static::$active_stickers = static::getAllActive( Shops::getCurrent(), ['priority'] );
+			static::$active_stickers = static::getAllActive( EShops::getCurrent(), ['priority'] );
 		}
 		
 		$stickers = [];

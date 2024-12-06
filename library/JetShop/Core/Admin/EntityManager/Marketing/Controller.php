@@ -17,7 +17,7 @@ use JetApplication\Admin_EntityManager_Marketing_Interface;
 use JetApplication\Admin_Managers_Entity_Edit_Marketing;
 use JetApplication\Entity_Marketing;
 use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Shops;
+use JetApplication\EShops;
 use JetApplication\Admin_Managers_Entity_Edit;
 use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
@@ -42,7 +42,7 @@ abstract class Core_Admin_EntityManager_Marketing_Controller extends Admin_Entit
 	public function newItemFactory(): mixed
 	{
 		$new_item =  parent::newItemFactory();
-		$new_item->setShop( Shops::getCurrent() );
+		$new_item->setEShop( EShops::getCurrent() );
 		
 		return $new_item;
 	}

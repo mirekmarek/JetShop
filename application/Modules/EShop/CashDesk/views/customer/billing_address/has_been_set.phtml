@@ -1,0 +1,34 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$ba = $cash_desk->getBillingAddress();
+?>
+
+<div class="selected-contact">
+	<div class="title"><?= Tr::_('Billing address') ?></div>
+	<div class="info">
+		<?php if($cash_desk->isCompanyOrder()): ?>
+			<?=$ba->getCompanyName()?><br>
+			<?=$ba->getCompanyId()?><br>
+			<?=$ba->getCompanyVatId()?><br>
+		<?php endif?>
+		
+		<?=$ba->getFirstName()?> <?=$ba->getSurname()?><br>
+		<?=$ba->getAddressStreetNo()?><br/>
+		<?=$ba->getAddressZip()?> <?=$ba->getAddressTown()?>
+	</div>
+	
+	<div class="change-btn"><?=UI::button(Tr::_('Change billing address'))->setOnclick("CashDesk.customer.billingAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?></div>
+</div>
+

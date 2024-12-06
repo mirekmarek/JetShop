@@ -1,25 +1,30 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Closure;
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\Locale;
 use Jet\Tr;
 
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use Jet\UI_messages;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_Managers;
 use JetApplication\Availabilities;
 use JetApplication\Delivery_Class;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\Exports;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Pricelists;
+use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_Price;
 
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	use Controller_Main_Edit_Images;
 	use Controller_Main_Edit_Files;
@@ -34,7 +39,7 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 	
 	
 	
-	protected function newItemFactory(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
+	protected function newItemFactory(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
 		/**
 		 * @var Product $new_item
@@ -61,6 +66,12 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
 		parent::setupRouter( $action, $selected_tab );
+		
+		$this->router->addAction('edit_description', Main::ACTION_UPDATE)
+			->setResolver( function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='description';
+			} );
+		
 		
 		$this->router->addAction('edit_parameters', Main::ACTION_UPDATE)
 			->setResolver( function() use ($action, $selected_tab) {
@@ -120,6 +131,7 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		
 		$_tabs = [
 			'main'             => Tr::_('Main data'),
+			'description'      => Tr::_('Description'),
 			'images'           => Tr::_('Images'),
 			'files'            => Tr::_('Files'),
 			'parameters'       => Tr::_('Parameters'),
@@ -176,6 +188,41 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 			'price',
 		]);
 		
+		$this->listing_manager->setSearchWhereCreator(  function( string $search ) : array {
+			
+			$ft_ids = Admin_Managers::FulltextSearch()->search(
+				Product::getEntityType(),
+				$search
+			);
+			
+			$code_ids = Product::dataFetchCol(
+				select: ['id'],
+				where: [
+					'internal_code' => $search,
+					'OR',
+					'ean' => $search
+				] );
+			
+			
+			$ids = [];
+			if($ft_ids) {
+				$ids += array_merge($ids, $ft_ids);
+			}
+			if($code_ids) {
+				$ids = array_merge($ids, $code_ids);
+			}
+			
+			if(!$ids) {
+				$ids = [0];
+			}
+			
+			return [
+				'id' => $ids,
+			];
+			
+		} );
+		
+		
 		$this->listing_manager->addFilter( new Listing_Filter_Categories() );
 		$this->listing_manager->addFilter( new Listing_Filter_ProductKind() );
 		$this->listing_manager->addFilter( new Listing_Filter_ProductType() );
@@ -193,12 +240,66 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		
 	}
 	
+	protected function getEditEshopDataFieldsRenderer() : ?Closure
+	{
+		return null;
+	}
+	
+	protected function getAddEshopDataFieldsRenderer() : ?Closure
+	{
+		return null;
+	}
+	
+	protected function getEditDescriptionFieldsRenderer() : ?Closure
+	{
+		return null;
+	}
+	
+	protected function getAddDescriptionFieldsRenderer() : ?Closure
+	{
+		return function( Locale $locale, string $locale_str ) {
+			$this->view->setVar('locale', $locale);
+			echo $this->view->render('add/description-form-fields');
+		};
+	}
+	
+	
 	public function edit_main_Action(): void
 	{
 		$this->handleSetAvailability();
 		$this->handleSetPrice();
 		
 		parent::edit_main_Action();
+		
+		$this->content->output(
+			$this->view->render('edit/main/set-price')
+		);
+		
+	}
+	
+	public function edit_description_Action() : void
+	{
+		$this->setBreadcrumbNavigation( Tr::_('Description') );
+		
+		/**
+		 * @var Product $product
+		 */
+		$product = $this->current_item;
+		
+		$this->view->setVar('item', $product);
+		
+
+		if( $product->catchDescriptionEditForm() ) {
+			
+			UI_messages::success(
+				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
+			);
+			
+			Http_Headers::reload();
+		}
+		
+		$this->output( 'edit/description' );
+	
 	}
 	
 	public function handleSetAvailability() : void

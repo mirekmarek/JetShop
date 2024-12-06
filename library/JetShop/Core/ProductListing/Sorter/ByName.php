@@ -9,7 +9,7 @@ namespace JetShop;
 
 
 use Jet\Tr;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ProductListing_Sorter;
 
 abstract class Core_ProductListing_Sorter_ByName extends ProductListing_Sorter
@@ -28,9 +28,9 @@ abstract class Core_ProductListing_Sorter_ByName extends ProductListing_Sorter
 	
 	public function sort( array $product_ids ): array
 	{
-		$where = $this->listing->getShop()->getWhere();
+		$where = $this->listing->getEshop()->getWhere();
 		
-		return Product_ShopData::dataFetchCol(
+		return Product_EShopData::dataFetchCol(
 			select: ['entity_id'],
 			where: [
 				$where,

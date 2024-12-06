@@ -1,0 +1,66 @@
+<?php
+namespace JetApplicationModule\EShop\Complaints;
+
+use Jet\Form_Field_FileImage;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_messages;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View  $this
+ * @var Complaint $complaint
+ * @var Form_Field_FileImage $img_field
+ */
+
+$complaint = $this->getRaw('complaint');
+
+$form = $complaint->getUploadImagesForm();
+$img_field = $form->getField('image');
+
+$form->field('image')->input()->addJsAction('onchange', 'JetAjaxForm.submit(this.form.id)');
+?>
+<div class="card">
+	<div class="card-body">
+		<h5><?=Tr::_('Images')?></h5>
+		<?=$form->start()?>
+		
+		<div class="btn btn-light btn-upload">
+			<div>
+				<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload images')?></span>
+				<?=$img_field->input()?>
+			</div>
+		</div>
+		
+		<?php foreach($img_field->getProblematicFiles() as $problematic_file ):
+			foreach($problematic_file->getErrors() as $err_code=>$err_msg):
+				echo UI_messages::createDanger( $problematic_file->getFileName().':' . $err_msg );
+			endforeach;
+		endforeach; ?>
+		
+		
+		<?=$form->end();?>
+		
+		
+		<?php foreach( $complaint->getImages() as $img ):?>
+			<div class="complaint-image">
+				
+				<div class="image">
+					<a href="<?=$img->getURL()?>" target="_blank"><img src="<?=$img->getThbURL()?>"></a>
+				</div>
+				<div class="name"><?=$img->getName()?></div>
+				<div class="size"><?=Locale::size( $img->getSize() )?></div>
+				<div class="delete">
+					<?php if(!$img->isLocked()):
+						echo UI::button_delete(' ')->setOnClick(  "deleteImage({$img->getId()})"  )->setSize(UI_button::SIZE_EXTRA_SMALL);
+					endif; ?>
+				</div>
+
+			</div>
+		<?php endforeach; ?>
+		
+	</div>
+</div>

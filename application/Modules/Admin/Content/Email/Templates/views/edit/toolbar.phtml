@@ -7,7 +7,7 @@ use Jet\UI;
 use Jet\Tr;
 
 use JetApplication\Admin_Managers;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
@@ -23,28 +23,28 @@ if(!$item->isEditable()) {
 &nbsp;&nbsp;&nbsp;&nbsp;
 
 <script>
-	function sendTestEmail( shop_key ) {
+	function sendTestEmail( eshop_key ) {
 		let email = document.getElementById('test-email-address').value;
 		if(!email) {
 			return;
 		}
 		
-		location = '<?=Http_Request::currentURI(['action'=>'send_test_email'])?>&shop='+shop_key+'&email='+encodeURIComponent( email );
+		location.href = '<?=Http_Request::currentURI(['action'=>'send_test_email'])?>&eshop='+eshop_key+'&email='+encodeURIComponent( email );
 	}
 </script>
 
-<?php if(Shops::isMultiShopMode()): ?>
+<?php if(EShops::isMultiEShopMode()): ?>
 	<div class="dropdown">
 		<button class="btn btn-info dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<?=UI::icon('eye');?> <?=Tr::_('Preview e-mail')?>
 		</button>
 		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-			<?php foreach( Shops::getListSorted() as $shop ):
-				$URL = Http_Request::currentURI(['action'=>'email_preview','shop'=>$shop->getKey()]);
+			<?php foreach( EShops::getListSorted() as $eshop ):
+				$URL = Http_Request::currentURI(['action'=>'email_preview','eshop'=>$eshop->getKey()]);
 				?>
 				<a class="dropdown-item" href="<?=$URL?>" target="_blank">
 					<?=UI::icon('arrow-up-right-from-square')->addCustomCssStyle('opacity:0.5');?>
-					<?=$shop->getShopName()?>
+					<?=$eshop->getName()?>
 				</a>
 			<?php endforeach; ?>
 		</div>
@@ -65,9 +65,9 @@ if(!$item->isEditable()) {
 			<?=UI::icon('at');?> <?=Tr::_('Send test e-mail')?>
 		</button>
 		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-			<?php foreach( Shops::getListSorted() as $shop ): ?>
-				<a class="dropdown-item" href="#" onclick="sendTestEmail('<?=$shop->getKey()?>');">
-					<?=$shop->getShopName()?>
+			<?php foreach( EShops::getListSorted() as $eshop ): ?>
+				<a class="dropdown-item" href="#" onclick="sendTestEmail('<?=$eshop->getKey()?>');">
+					<?=$eshop->getName()?>
 				</a>
 			<?php endforeach; ?>
 		</div>
@@ -78,12 +78,12 @@ if(!$item->isEditable()) {
 			<?=UI::icon('at');?> <?=Tr::_('Download e-mail message file')?>
 		</button>
 		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-			<?php foreach( Shops::getListSorted() as $shop ):
-				$URL = Http_Request::currentURI(['action'=>'download_message_file','shop'=>$shop->getKey()]);
+			<?php foreach( EShops::getListSorted() as $eshop ):
+				$URL = Http_Request::currentURI(['action'=>'download_message_file','eshop'=>$eshop->getKey()]);
 				?>
 				<a class="dropdown-item" href="<?=$URL?>" target="_blank">
 					<?=UI::icon('arrow-up-right-from-square')->addCustomCssStyle('opacity:0.5');?>
-					<?=$shop->getShopName()?>
+					<?=$eshop->getName()?>
 				</a>
 			<?php endforeach; ?>
 		</div>
@@ -93,8 +93,8 @@ if(!$item->isEditable()) {
 
 <?php
 else:
-	$shop = Shops::getDefault();
-	$URL = Http_Request::currentURI(['action'=>'email-preview','shop'=>$shop->getKey()]);
+	$eshop = EShops::getDefault();
+	$URL = Http_Request::currentURI(['action'=>'email-preview','eshop'=>$eshop->getKey()]);
 	?>
 	<a href="<?=$URL?>" target="_blank" class="btn btn-info"><?=UI::icon('eye');?> <?=Tr::_('Preview e-mail')?></a>
 
@@ -108,9 +108,9 @@ else:
 		>
 	</div>
 
-	<a href="#" class="btn btn-info" onclick="sendTestEmail('<?=$shop->getKey()?>');"><?=UI::icon('at');?> <?=Tr::_('Send test e-mail')?></a>
+	<a href="#" class="btn btn-info" onclick="sendTestEmail('<?=$eshop->getKey()?>');"><?=UI::icon('at');?> <?=Tr::_('Send test e-mail')?></a>
 	<?php
-	$URL = Http_Request::currentURI(['action'=>'download_message_file','shop'=>$shop->getKey()]);
+	$URL = Http_Request::currentURI(['action'=>'download_message_file','eshop'=>$eshop->getKey()]);
 	?>
 	<a href="<?=$URL?>" target="_blank" class="btn btn-info"><?=UI::icon('at');?> <?=Tr::_('Download e-mail message file')?></a>
 	<?php

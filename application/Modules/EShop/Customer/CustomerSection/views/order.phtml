@@ -1,0 +1,86 @@
+<?php
+namespace JetApplicationModule\EShop\Customer\CustomerSection;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Order;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+
+$billing_address = $order->getBillingAddress();
+$delivery_address = $order->getBillingAddress();
+?>
+
+<?=$this->getRaw('tabs')?>
+
+<div class="customer-section-container">
+	<?=UI::button( Tr::_('Orders'))->setUrl( Http_Request::currentURL(unset_GET_params: ['order']) )->setIcon('chevron-left');?>
+	
+	<div class="order-detail">
+		<div class="card card-body billing-address">
+			<h5 class="card-title"><?=Tr::_('Billing address')?></h5>
+			
+			<?php if( $billing_address->getCompanyName() ): ?>
+				<?=$billing_address->getCompanyName()?><br>
+				<?=$billing_address->getCompanyId()?><br>
+				<?=$billing_address->getCompanyVatId()?><br>
+			<?php endif?>
+			
+			<?=$billing_address->getFirstName()?> <?=$billing_address->getSurname()?><br>
+			<?=$billing_address->getAddressStreetNo()?><br/>
+			<?=$billing_address->getAddressZip()?> <?=$billing_address->getAddressTown()?>
+		</div>
+
+		<div class="card card-body delivery-address">
+			<h5 class="card-title"><?=Tr::_('Delivery address')?></h5>
+			
+			<?php if( $delivery_address->getCompanyName() ): ?>
+				<?=$delivery_address->getCompanyName()?><br>
+				<?=$delivery_address->getCompanyId()?><br>
+				<?=$delivery_address->getCompanyVatId()?><br>
+			<?php endif?>
+			
+			<?=$delivery_address->getFirstName()?> <?=$delivery_address->getSurname()?><br>
+			<?=$delivery_address->getAddressStreetNo()?><br/>
+			<?=$delivery_address->getAddressZip()?> <?=$delivery_address->getAddressTown()?>
+		</div>
+
+		<div class="card card-body main-info">
+			<div><b><?=Tr::_('Number')?></b></div>
+			<div><a href="<?=Http_Request::currentURL(set_GET_params: ['order'=>$order->getNumber()])?>"><?=$order->getNumber()?></a></div>
+
+			<div><b><?=Tr::_('Purchased')?></b></div>
+			<div><?=Locale::dateAndTime( $order->getDatePurchased() )?></div>
+
+			<div><b><?=Tr::_('Status')?></b></div>
+			<div><?=$order->getStatus()?->getTitle()?></div>
+		</div>
+
+		<div class="card card-body items">
+			<b><?=Tr::_('Items')?></b>
+			
+			<?php foreach($order->getItems() as $item): ?>
+				<div class="item">
+					<div class="number-of-units"><?=$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName();?></div>
+					<div class="title"><?=$item->getTitle()?></div>
+					<div class="total"><?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?></div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+
+
+		<div class="total">
+			<?=EShop_Managers::PriceFormatter()->formatWithCurrency( $order->getTotalAmount_WithVAT() )?>
+		</div>
+		
+	</div>
+</div>

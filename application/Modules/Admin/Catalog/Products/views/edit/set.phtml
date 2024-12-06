@@ -9,6 +9,7 @@ use Jet\UI;
 use Jet\UI_messages;
 use JetApplication\Admin_Managers;
 use JetApplication\Pricelists;
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
@@ -134,11 +135,11 @@ require '_toolbar.phtml';
 					]);
 				?>
 				<fieldset>
-					<legend><?=Tr::_('Price')?> - <?=$pricelist->getName()?></legend>
+					<legend><?=$pricelist->getName()?></legend>
 				<div class="row" style="padding-bottom: 10px;">
 					<div class="col-md-2" style="font-weight: bolder"><?=Tr::_('Calculated price:')?></div>
 					<div class="col-md-2" style="font-weight: bolder">
-						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $product->getCalculatedSetPrice( $pricelist ) )?>
+						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $product->getCalculatedSetPrice( $pricelist ) )?>
 					</div>
 				</div>
 			
@@ -155,7 +156,7 @@ require '_toolbar.phtml';
 				<div class="row" style="padding-top: 10px;">
 					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem"><?=Tr::_('Price:')?></div>
 					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem">
-						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist->getCurrency(), $product->getPrice( $pricelist ) )?>
+						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $product->getPrice( $pricelist ) )?>
 					</div>
 				</div>
 				</fieldset>

@@ -2,7 +2,7 @@
 namespace JetShop;
 
 
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 interface Core_Admin_ControlCentre_Module_Interface {
 	
@@ -18,6 +18,6 @@ interface Core_Admin_ControlCentre_Module_Interface {
 	
 	public function getControlCentrePerShopMode() : bool;
 	
-	public function handleControlCentre( ?Shops_Shop $shop=null ) : string;
+	public function handleControlCentre( ?EShop $eshop=null ) : string;
 
 }

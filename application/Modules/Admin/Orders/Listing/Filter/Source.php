@@ -37,7 +37,7 @@ class Listing_Filter_Source extends DataListing_Filter
 	public function getScope() : array
 	{
 		return [
-			'shop' => 'e-shop'
+			'eshop' => 'e-shop'
 		] + MarketplaceIntegration::getSourcesScope();
 	}
 	
@@ -71,7 +71,7 @@ class Listing_Filter_Source extends DataListing_Filter
 		}
 		
 		$this->listing->addFilterWhere([
-			'import_source'   => $this->source!='shop'? $this->source : '',
+			'import_source'   => $this->source!='eshop'? $this->source : '',
 		]);
 	}
 	

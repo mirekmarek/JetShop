@@ -13,14 +13,14 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
 
 class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 	
 	public function default_Action() : void
 	{
 		/**
-		 * @var ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface $module
+		 * @var EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface $module
 		 */
 		$module = $this->getModule();
 		

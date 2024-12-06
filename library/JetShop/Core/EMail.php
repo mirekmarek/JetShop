@@ -3,11 +3,11 @@ namespace JetShop;
 
 use Jet\Mailing_Email;
 use JetApplication\EMail_Sent;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_EMail extends Mailing_Email {
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	protected string $template_code = '';
 	
@@ -21,14 +21,14 @@ abstract class Core_EMail extends Mailing_Email {
 	
 	protected string $body_html_raw = '';
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
-	public function setShop( Shops_Shop $shop ): void
+	public function setEshop( EShop $eshop ): void
 	{
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 	}
 	
 	public function getTemplateCode(): string

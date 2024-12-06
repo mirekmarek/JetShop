@@ -19,7 +19,7 @@ var_dump( $filter->filter(), $filter->getDuration() );
 die();
 
 
-$shop = Shops::getDefault();
+$eshop = EShops::getDefault();
 
 /*
 $kind = KindOfProduct::load(22);
@@ -37,7 +37,7 @@ $filter->getPropertyOptionsFilter()->initOptions( array_keys( $properties_by_typ
 $filter->getBrandsFilter()->initBrands( Brand::dataFetchCol(select:['id']) );
 */
 
-$filter = new ProductFilter( $shop );
+$filter = new ProductFilter( $eshop );
 
 $filter->getBasicFilter()->setKindOfProductId( 22 );
 $filter->getBasicFilter()->setHasDiscount( true );

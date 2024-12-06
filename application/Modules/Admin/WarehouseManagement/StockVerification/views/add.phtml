@@ -62,7 +62,7 @@ echo $controller->getEditorManager()->renderToolbar( $verification?$verification
 			
 			<div style="font-weight: bolder;"><?= Tr::_('Supplier:')?></div>
 			<div>
-				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
+				<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
 					<option value=""><?=Tr::_('- all -')?></option>
 					<?php foreach(Supplier::getScope() as $id=>$name):
 						if( $supplier_id==$id ):
@@ -77,7 +77,7 @@ echo $controller->getEditorManager()->renderToolbar( $verification?$verification
 
 			<div style="font-weight: bolder;"><?= Tr::_('Kind of product:')?></div>
 			<div>
-				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['kind'])?>&kind='+this.value">
+				<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['kind'])?>&kind='+this.value">
 					<option value=""><?=Tr::_('- all -')?></option>
 					<?php foreach(KindOfProduct::getScope() as $id=>$name):
 						if( $kind_of_product_id==$id ):
@@ -94,7 +94,7 @@ echo $controller->getEditorManager()->renderToolbar( $verification?$verification
 
 			<div style="font-weight: bolder;"><?= Tr::_('Sector:')?></div>
 			<div>
-				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['sector'])?>&sector='+this.value">
+				<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['sector'])?>&sector='+this.value">
 					<option value=""><?=Tr::_('- all -')?></option>
 					<?php foreach($sectors as $s):
 						if( $sector==$s ):
@@ -110,7 +110,7 @@ echo $controller->getEditorManager()->renderToolbar( $verification?$verification
 
 			<div style="font-weight: bolder;"><?= Tr::_('Rack:')?></div>
 			<div>
-				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['rack'])?>&rack='+this.value">
+				<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['rack'])?>&rack='+this.value">
 					<option value=""><?=Tr::_('- all -')?></option>
 					<?php foreach($racks as $s):
 						if( $rack==$s ):
@@ -126,7 +126,7 @@ echo $controller->getEditorManager()->renderToolbar( $verification?$verification
 
 			<div style="font-weight: bolder;"><?= Tr::_('Position:')?></div>
 			<div>
-				<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['position'])?>&position='+this.value">
+				<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['position'])?>&position='+this.value">
 					<option value=""><?=Tr::_('- all -')?></option>
 					<?php foreach($positions as $s):
 						if( $position==$s ):

@@ -4,16 +4,16 @@ namespace JetApplicationModule\Admin\Customers;
 use Jet\MVC_View;
 use JetApplication\Customer_Address;
 use JetApplication\DataList;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  * @var MVC_View $this
  * @var string $code
  * @var Customer_Address $address
- * @var Shops_Shop $shop
+ * @var EShop $eshop
  */
 
-$shop = $this->getRaw('shop');
+$eshop = $this->getRaw('eshop');
 $address = $this->getRaw('address');
 ?>
 <?php if($address->getCompanyName()): ?>

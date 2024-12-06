@@ -11,7 +11,7 @@ use JetApplication\CashDesk;
 use JetApplication\Discounts_Module;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\Shop_Managers;
+use JetApplication\EShop_Managers;
 
 
 class Main extends Discounts_Module
@@ -29,7 +29,7 @@ class Main extends Discounts_Module
 	
 	protected function getOrderAmount() : float
 	{
-		return Shop_Managers::ShoppingCart()->getCart()->getAmount();
+		return EShop_Managers::ShoppingCart()->getCart()->getAmount();
 	}
 	
 	public function generateDiscounts( CashDesk $cash_desk ): void
@@ -51,7 +51,7 @@ class Main extends Discounts_Module
 	
 	public function remains() : float|bool
 	{
-		$cash_desk = Shop_Managers::CashDesk()->getCashDesk();
+		$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
 		
 		$limit = false;
 		foreach($cash_desk->getAvailablePaymentMethods() as $method) {

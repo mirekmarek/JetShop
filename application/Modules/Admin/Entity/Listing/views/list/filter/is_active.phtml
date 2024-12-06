@@ -5,7 +5,7 @@ use Jet\Form_Field;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -40,8 +40,8 @@ if($filter_form->field('is_active_general')->getValue()) {
 	$is_active = true;
 }
 
-if($filter->isMultiShopMode()) {
-	foreach(Shops::getListSorted() as $code=>$shop) {
+if($filter->isMultiEShopMode()) {
+	foreach( EShops::getListSorted() as $code=> $eshop) {
 		$fields[] = $filter_form->field('is_active_'.$code);
 		if($filter_form->field('is_active_'.$code)->getValue()) {
 			$is_active = true;
@@ -61,11 +61,11 @@ echo Admin_Managers::EntityListing()->renderListingFilter(
 			Tr::_('General')
 		);
 		
-		if( $filter->isMultiShopMode() ):
-			foreach(Shops::getListSorted() as $code=>$shop):
+		if( $filter->isMultiEShopMode() ):
+			foreach( EShops::getListSorted() as $key=> $eshop):
 				$show_filter(
-					$filter_form->field('is_active_'.$code),
-					$shop->getShopName()
+					$filter_form->field('is_active_'.$key),
+					$eshop->getName()
 				);
 			
 			endforeach;

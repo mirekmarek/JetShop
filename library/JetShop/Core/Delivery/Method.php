@@ -15,22 +15,22 @@ use JetApplication\Carrier;
 use JetApplication\Delivery_Method_Price;
 use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Entity_HasPrice_Trait;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\Pricelist;
+use JetApplication\EShop;
 use JetApplication\Delivery_Kind;
 use JetApplication\Delivery_Class;
 use JetApplication\Delivery_Method_Class;
 use JetApplication\Delivery_Method_PaymentMethods;
 use JetApplication\Payment_Method;
-use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Shops;
+use JetApplication\Delivery_Method_EShopData;
+use JetApplication\EShops;
 
 #[DataModel_Definition(
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
 )]
-abstract class Core_Delivery_Method extends Entity_WithShopData implements Entity_HasPrice_Interface
+abstract class Core_Delivery_Method extends Entity_WithEShopData implements Entity_HasPrice_Interface
 {
 	use Entity_HasPrice_Trait;
 	
@@ -112,17 +112,17 @@ abstract class Core_Delivery_Method extends Entity_WithShopData implements Entit
 	protected string $carrier_code = '';
 
 	/**
-	 * @var Delivery_Method_ShopData[]
+	 * @var Delivery_Method_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Delivery_Method_ShopData::class
+		data_model_class: Delivery_Method_EShopData::class
 	)]
 	#[Form_Definition(is_sub_forms: true)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	
-	public function getPriceEntity( Pricelists_Pricelist $pricelist ) : Delivery_Method_Price
+	public function getPriceEntity( Pricelist $pricelist ) : Delivery_Method_Price
 	{
 		return Delivery_Method_Price::get( $pricelist, $this->getId() );
 	}
@@ -131,8 +131,8 @@ abstract class Core_Delivery_Method extends Entity_WithShopData implements Entit
 	public function setKind( string $code ): void
 	{
 		$this->kind = $code;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData($shop)->setKind($code);
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData($eshop)->setKind($code);
 		}
 	}
 
@@ -159,16 +159,16 @@ abstract class Core_Delivery_Method extends Entity_WithShopData implements Entit
 	public function setCarrierCode( string $carrier_code ): void
 	{
 		$this->carrier_code = $carrier_code;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setCarrierCode( $carrier_code );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setCarrierCode( $carrier_code );
 		}
 	}
 	
 
-	public function getShopData( ?Shops_Shop $shop=null ) : Delivery_Method_ShopData
+	public function getEshopData( ?EShop $eshop=null ) : Delivery_Method_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 
 	/**

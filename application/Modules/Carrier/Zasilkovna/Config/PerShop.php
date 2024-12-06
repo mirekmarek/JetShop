@@ -14,14 +14,14 @@ use Jet\Form_Definition;
 use Jet\Form_Definition_Interface;
 use Jet\Form_Definition_Trait;
 use Jet\Form_Field;
-use JetApplication\ShopConfig_ModuleConfig_PerShop;
+use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use Jet\Config;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 #[Config_Definition(
 	name: 'Zasilkovna'
 )]
-class Config_PerShop extends ShopConfig_ModuleConfig_PerShop implements Form_Definition_Interface {
+class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_Definition_Interface {
 	use Form_Definition_Trait;
 	
 	#[Config_Definition(
@@ -38,7 +38,7 @@ class Config_PerShop extends ShopConfig_ModuleConfig_PerShop implements Form_Def
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
-		label: 'API key: ',
+		label: 'API password: ',
 	)]
 	protected string $API_password = '';
 	
@@ -56,7 +56,7 @@ class Config_PerShop extends ShopConfig_ModuleConfig_PerShop implements Form_Def
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
-		label: 'Sender ID: ',
+		label: 'e-shop ID: ',
 	)]
 	protected string $eshop_id = '';
 	
@@ -109,7 +109,7 @@ class Config_PerShop extends ShopConfig_ModuleConfig_PerShop implements Form_Def
 		$this->API_key = $API_key;
 	}
 	
-	public function getForm( Main $carrier, Shops_Shop $shop ) : Form
+	public function getForm( Main $carrier, EShop $eshop ) : Form
 	{
 		$form = $this->createForm('cfg_form');
 		

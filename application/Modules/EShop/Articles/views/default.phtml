@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\EShop\Articles;
+
+use Jet\MVC_View;
+use JetApplication\Content_Article_EShopData;
+
+/**
+ * @var MVC_View   $this
+ * @var Content_Article_EShopData $article
+ */
+$article = $this->getRaw('article');
+
+$author = $article->getAuthor();
+?>
+<div class="article">
+	<h1><?=$article->getTitle()?></h1>
+
+	<p class="perex"><?=$article->getPerex()?></p>
+	
+	<p class="text"><?=$article->getText()?></p>
+	
+	
+	<?php if($author): ?>
+		<div class="author">
+			<div class="avatar">
+				<?php if($author->getImageAvatar1()): ?>
+					<img src="<?=$author->getImageAvatar1ThumbnailUrl(100,100)?>">
+				<?php endif; ?>
+			</div>
+			<div class="info">
+				<div class="name"><?=$author->getName()?></div>
+				<div class="about"><?=$author->getAboutAuthor()?></div>
+			</div>
+		</div>
+	<?php endif; ?>
+	
+</div>

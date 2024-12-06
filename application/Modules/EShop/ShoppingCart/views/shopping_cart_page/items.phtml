@@ -1,0 +1,69 @@
+<?php
+namespace JetApplicationModule\EShop\ShoppingCart;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Pricelists;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ */
+
+$cart = EShop_Managers::ShoppingCart()->getCart();
+
+?>
+<?php foreach($cart->getItems() as $item):
+	$product = $item->getProduct();
+	$mu = $product->getMeasureUnit();
+	$delivery_info = $product->getDeliveryInfo( $cart->getAvailability() );
+	?>
+<div class="item">
+
+	<div class="item-image">
+		<img src="<?=$product->getImgThumbnailUrl(0, 90, 90)?>"/>
+	</div>
+	<div class="item-name">
+		<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a>
+	</div>
+	<div class="item-availability">
+		<?php if($item->getNumberOfUnits()<=$delivery_info->getNumberOfUnitsAvailable()): ?>
+			<span class="availability_in_stock"><?=Tr::_('In stock')?></span>
+		<?php else:
+			$avl = $delivery_info->getNumberOfUnitsAvailable();
+			if($avl<=0) {
+				$avl = 0;
+			}
+			
+			if($avl>0): ?>
+				<?=$avl.' '.$mu?->getName()?> <span class="availability_in_stock"><?=Tr::_('In stock')?></span><br>
+			<?php endif; ?>
+			
+			<?=($item->getNumberOfUnits()-$avl).' '.$mu?->getName()?> <span class="availability_<?=$delivery_info->getSituation()?>"><?=$delivery_info->getDeliveryInfoTextTranslated()?></span><br>
+		<?php endif ?>
+	</div>
+	<div class="delete-btn">
+		<button onclick="ShoppingCart.remove('<?=$product->getId()?>');"></button>
+	</div>
+	<div class="number-of-units">
+		<input type="number" id="qty_<?=$product->getId()?>" step="<?=$mu?->getNumberStep()??1?>" <?php if(!$mu?->isIsDecimalNumber()):?> oninput="this.value=(parseInt(this.value)||0)"<?php endif; ?> value="<?=$item->getNumberOfUnits()?>" onchange="ShoppingCart.setQty(<?=$product->getId()?>, this.value)">
+		<?=$mu?->getName()?>
+		<button class="minus" onclick="ShoppingCart.decrement(<?=$product->getId()?>)"></button>
+		<button class="plus" onclick="ShoppingCart.increment(<?=$product->getId()?>)"></button>
+		
+	</div>
+	<div class="price-per-unit">
+		<?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?> <?=$mu?->getName()?' / '.$mu->getName():''?>
+	</div>
+	<div class="item-amount">
+		<b><?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
+	</div>
+</div>
+<?php endforeach; ?>
+
+<div class="total">
+	<?=EShop_Managers::PriceFormatter()->formatWithCurrency($cart->getAmount())?>
+</div>
+	
+
+

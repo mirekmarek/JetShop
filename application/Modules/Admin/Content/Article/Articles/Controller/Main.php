@@ -4,9 +4,9 @@ namespace JetApplicationModule\Admin\Content\Article\Articles;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	public function getTabs(): array
 	{
@@ -16,6 +16,26 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 			'images' => Tr::_( 'Images' ),
 		];
 	}
+	
+	public function setupListing(): void
+	{
+		$this->listing_manager->addColumn( new Listing_Column_Author() );
+		$this->listing_manager->addColumn( new Listing_Column_KindOfArticle() );
+		
+		$this->listing_manager->addFilter( new Listing_Filter_KindOfArticle() );
+		$this->listing_manager->addFilter( new Listing_Filter_Author() );
+		
+		$this->listing_manager->setDefaultColumnsSchema([
+			'id',
+			'internal_name',
+			'internal_code',
+			'internal_notes',
+			Listing_Column_Author::KEY,
+			Listing_Column_KindOfArticle::KEY
+		]);
+		
+	}
+	
 	
 	public function setupRouter( string $action, string $selected_tab ): void
 	{

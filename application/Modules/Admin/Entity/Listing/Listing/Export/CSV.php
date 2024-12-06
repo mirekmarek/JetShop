@@ -18,6 +18,6 @@ class Listing_Export_CSV extends DataListing_Export_CSV
 	
 	protected function generateFileName(): string
 	{
-		return 'products_' . date( 'YmdHis' ) . '.csv';
+		return 'export_' . date( 'YmdHis' ) . '.csv';
 	}
 }

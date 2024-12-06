@@ -1,11 +1,19 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
+use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 
+use Jet\UI;
 use JetApplication\Admin_Managers;
+use JetApplication\Availabilities;
+use JetApplication\EShops;
+use JetApplication\Pricelists;
+use JetApplication\Product_Availability;
+use JetApplication\Product_PriceHistory;
+use JetApplication\Product;
 
 /**
  * @var MVC_View $this
@@ -16,20 +24,31 @@ use JetApplication\Admin_Managers;
 $item = $this->getRaw('item');
 $form = $this->getRaw('form');
 $editable = !$form->getIsReadonly();
+
+if($form->fieldExists('kind_of_product_id')) {
+	$kind_id_field = $form->field('kind_of_product_id');
+	
+	$kind_id_field->input()->setCustomRenderer(function() use ($kind_id_field) {
+		?>
+		<div style="display:none;">
+			<?=$this->renderByView()?>
+		</div>
+		<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
+			on_select: "document.getElementById('{$kind_id_field->getId()}').value=selected_item.id",
+			selected_kind_of_product_id: $kind_id_field->getValue()?:0
+		);?>
+		<?php
+	});
+} else {
+	$kind_id_field = '';
+}
+
 ?>
-<div class="form-group row">
-	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Kind of product:')?></label>
-	<div class="col-md-8">
-		<?php if(($kind_id=$item->getKindId())):
-			?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
-		else:
-			?><b><?=Tr::_('- kind of product is not set -')?></b><?php
-		endif; ?>
-	</div>
-</div>
 <?php if( $form->fieldExists('internal_name_of_variant') ): ?>
 	<?=$form->field('internal_name_of_variant')?>
 <?php endif; ?>
+
+<?=$kind_id_field?>
 
 <?=$form->field('ean')?>
 <?=$form->field('brand_id')?>
@@ -37,6 +56,75 @@ $editable = !$form->getIsReadonly();
 <?=$form->field('supplier_code')?>
 <?=$form->field('delivery_class_id')?>
 
+<div class="form-group row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Allow to order when sold out')?></label>
+	<div class="col-md-8">
+		<?php foreach(EShops::getListSorted() as $eshop):
+			$field = $form->field('/eshop_data/'.$eshop->getKey().'/allow_to_order_when_sold_out');
+			$field->setLabel( UI::flag($eshop->getLocale()).' '.$eshop->getName() );
+			$field->setDoNotTranslateLabel( true );
+		
+			echo $field->input();
+		endforeach; ?>
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Price:')?></label>
+	<div class="col-md-8">
+		<?php foreach( Pricelists::getList() as $pricelist):
+			$price = $item->getPriceEntity($pricelist);
+			?>
+		
+			<div>
+				<?=Admin_Managers::PriceFormatter()->showPriceInfo( $price )?>
+				
+				<b><?=Tr::_('Price history:')?></b><br>
+
+				<table class="table table-striped">
+					<?php foreach( Product_PriceHistory::get( $pricelist, $item->getId() ) as $hi): ?>
+						<tr>
+							<td style="width: 150px;"><?=Locale::dateAndTime( $hi->getDateTime() )?></td>
+							<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $hi->getPrice() )?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<br>
+			</div>
+		<?php endforeach; ?>
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Availability:')?></label>
+	<div class="col-md-8">
+		<?php foreach( Availabilities::getList() as $availability):
+			$product_availability = Product_Availability::get( $availability, $item->getId() );
+			?>
+			<fieldset>
+				<legend class="sub"><?=$availability->getName()?></legend>
+				
+				<table class="table table-striped">
+					<tr>
+						<td style="width: 200px;"><?=Tr::_('Available units:');?></td>
+						<td><b><?=Locale::float( $product_availability->getNumberOfAvailable() )?> <?=$item->getKindOfProduct()?->getMeasureUnit()?->getName()?></b></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('Length of delivery:');?></td>
+						<td><b><?=Locale::int( $product_availability->getLengthOfDelivery() )?></b></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('Available from:');?></td>
+						<td><?=Locale::date( $product_availability->getAvailableFrom() )?></td>
+					</tr>
+				</table>
+
+			</fieldset>
+			<br><br>
+		<?php endforeach; ?>
+
+	</div>
+</div>
 
 <?php if(
 	$item->isPhysicalProduct() &&
@@ -48,4 +136,5 @@ $editable = !$form->getIsReadonly();
 		<?=Admin_Managers::WarehouseManagementOverview()?->renderProductStockStatusInfo( $item )?>
 	</div>
 </div>
-<?php endif; ?>
+<?php endif;
+

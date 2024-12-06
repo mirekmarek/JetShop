@@ -1,5 +1,5 @@
 <?php
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -8,16 +8,16 @@ use Jet\Tr;
 /**
  * @var MVC_View $this
  * @var Form $form
- * @var Shops_Shop $shop
+ * @var EShop $eshop
  */
 $form = $this->getRaw('form');
-$shop = $this->getRaw('shop');
-$shop_key = $shop->getKey();
+$eshop = $this->getRaw('eshop');
+$eshop_key = $eshop->getKey();
 ?>
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
 	
-	<?=$form->field('/shop_data/'.$shop_key.'/label');?>
-	<?=$form->field('/shop_data/'.$shop_key.'/description');?>
+	<?=$form->field('/eshop_data/'.$eshop_key.'/label');?>
+	<?=$form->field('/eshop_data/'.$eshop_key.'/description');?>
 
 </fieldset>

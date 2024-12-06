@@ -8,10 +8,10 @@
 namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
 use Jet\Http_Headers;
-use JetApplication\Admin_EntityManager_WithShopRelation_Controller;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Controller;
 
 
-class Controller_Main extends Admin_EntityManager_WithShopRelation_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopRelation_Controller
 {
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
@@ -43,7 +43,7 @@ class Controller_Main extends Admin_EntityManager_WithShopRelation_Controller
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
-			'shop',
+			'eshop',
 			'product_id',
 			'created',
 			'author_name',

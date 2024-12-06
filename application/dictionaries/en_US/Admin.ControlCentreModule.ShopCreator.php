@@ -29,4 +29,6 @@ return [
 	'Such a e-shop already exists (%shop%)' => '',
 	'Create e new e-shop' => '',
 	'New e-shop has been created' => '',
+	'Default warehouse: ' => '',
+	'Copy pages from e-shop:' => '',
 ];

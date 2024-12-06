@@ -8,13 +8,13 @@ use JetApplication\Entity_Event;
 use JetApplication\Event_HandlerModule;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 
 abstract class Core_OrderDispatch_Event_HandlerModule extends Event_HandlerModule
 {
 	protected OrderDispatch_Event $event;
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	protected OrderDispatch $order_dispatch;
 
 
@@ -23,7 +23,7 @@ abstract class Core_OrderDispatch_Event_HandlerModule extends Event_HandlerModul
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;
 		$order_dispatch = $event->getOrderDispatch();
-		$this->shop = $order_dispatch->getShop();
+		$this->eshop = $order_dispatch->getEshop();
 		$this->order_dispatch = $order_dispatch;
 	}
 

@@ -7,8 +7,6 @@ interface Core_Admin_Managers_UI
 {
 	public function handleCurrentPreferredShop();
 	
-	public function initBreadcrumb() : void;
-	
 	public function renderSelectEntityWidget(
 		string $name,
 		string $caption,

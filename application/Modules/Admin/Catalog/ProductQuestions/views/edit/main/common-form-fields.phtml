@@ -28,7 +28,7 @@ $form->field('answer')->input()->addCustomCssStyle('height:400px');
 	<div class="col-md-8">
 		
 		<div class="card card-body">
-			<?=$item->getShop()->getShopName()?> / <?=Locale::dateAndTime($item->getCreated())?>
+			<?=$item->getEshop()->getName()?> / <?=Locale::dateAndTime($item->getCreated())?>
 			<div style="padding: 10px;">
 				<?=Admin_Managers::Product()->showName( $item->getProductId() ) ?>
 			</div>

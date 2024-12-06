@@ -3,6 +3,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Tr;
 use JetApplication\Admin_Managers;
+use JetApplication\Product;
 
 /**
  *

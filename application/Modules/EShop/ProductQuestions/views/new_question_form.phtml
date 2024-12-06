@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\EShop\ProductQuestions;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+$form->renderer()->addJsAction('onsubmit', "return false;");
+
+$form->field( 'question' )->input()->addCustomCssStyle('height:300px');
+
+
+echo $form->start();
+?>
+<div class="new-product-question-form">
+<?php
+if($form->fieldExists('author_name')) {
+	echo $form->field('author_name');
+}
+if($form->fieldExists('author_email')) {
+	echo $form->field( 'author_email' );
+}
+
+echo $form->field('question');
+?>
+	<div></div>
+	<div><?=UI::button_save( Tr::_('Send question') )->setOnClick("NewQuestion.send();")?></div>
+</div>
+<?php
+echo $form->end();

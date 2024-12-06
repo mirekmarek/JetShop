@@ -1,0 +1,50 @@
+<?php
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+use JetApplication\Pricelists;
+use JetApplication\Payment_Method;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Payment_Method $item
+ * @var Form $set_price_form
+ */
+
+$set_price_form = $this->getRaw('set_price_form');
+
+if($set_price_form):
+	
+	$set_price_dialog = UI::dialog('set_price_dialog', Tr::_('Set price'), UI_dialog::SIZE_DEFAULT );
+	
+	echo $set_price_dialog->start();
+	echo $set_price_form->start();
+	
+	foreach(Pricelists::getList() as $pricelist):
+		?>
+		<fieldset>
+			<?php if(count(Pricelists::getList())>1): ?>
+				<legend><?=$pricelist->getName()?> - <?=$pricelist->getCurrency()->getCode()?></legend>
+			<?php endif; ?>
+			<?php
+			$field_name_prefix = '/'.$pricelist->getCode().'/';
+			
+			echo $set_price_form->field( $field_name_prefix.'vat_rate' );
+			echo $set_price_form->field( $field_name_prefix.'default_price' );
+			?>
+		</fieldset>
+	<?php endforeach;
+	
+	
+	echo $set_price_dialog->footer();
+	echo UI::button_save( Tr::_('Set') );
+	echo $set_price_form->end();
+	echo $set_price_dialog->end();
+endif;
+
+
+

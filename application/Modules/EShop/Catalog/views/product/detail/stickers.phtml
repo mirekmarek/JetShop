@@ -1,0 +1,32 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Marketing_ProductSticker;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$stickers = Marketing_ProductSticker::getProductStickers( $product->getId() );
+
+if(!$stickers) {
+	return;
+}
+?>
+<div class="stickers">
+<?php foreach($stickers as $sticker): ?>
+	<div class="product_detail_sticker" style="background-color: <?=$sticker->getColorBackground();?>;color: <?=$sticker->getColorText()?>">
+		<?php if($sticker->getImageProductDetail()): ?>
+		<div class="product_detail_sticker_image">
+			<img src="<?=$sticker->getImageProductDetailThumbnailUrl(30, 30)?>">
+		</div>
+		<?php endif; ?>
+		<div class="product_detail_sticker_text"><?=$sticker->getText()?></div>
+	</div>
+<?php endforeach; ?>
+</div>

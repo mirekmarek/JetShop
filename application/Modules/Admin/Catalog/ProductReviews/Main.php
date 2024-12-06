@@ -8,17 +8,17 @@
 namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Trait;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Entity_WithEShopRelation;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithShopRelation_Interface
+class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface
 {
-	use Admin_EntityManager_WithShopRelation_Trait;
+	use Admin_EntityManager_WithEShopRelation_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'product-reviews';
 
@@ -33,7 +33,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopRel
 		return 'Product review';
 	}
 	
-	public static function getEntityInstance(): Entity_WithShopRelation|Admin_Entity_WithShopRelation_Interface
+	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
 		return new ProductReview();
 	}

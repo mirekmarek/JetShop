@@ -2,7 +2,10 @@
 namespace JetApplication\Installer;
 
 use Jet\Form;
+use Jet\Locale;
 use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\DataList;
 
 /**
  * @var MVC_View $this
@@ -12,9 +15,20 @@ $form = $this->getRaw( 'form' );
 ?>
 
 <?= $form->start() ?>
-<?php foreach( $form->getFields() as $field ): ?>
-	<?= $field ?>
+
+
+<?php foreach( DataList::locales() as $locale_code=>$locale_name ):
+	$field = $form->getField( 'locale_'.$locale_code );
+	$locale = new Locale( $locale_code );
+	?>
+<div style="display: grid;grid-template-columns: 20px 40px 80px 1fr;align-items: center;padding: 10px;border-bottom: 1px dotted #c9c9c9;">
+	<div><input <?=$field->input()->renderTagAttributes() ?>></div>
+	<div><?=UI::flag( $locale )?></div>
+	<div><?=$locale_code?></div>
+	<label for="<?=$field->getId()?>"><?=$locale_name?></label>
+</div>
 <?php endforeach; ?>
+
 
 <div style="padding: 10px 10px 10px 15px;">
 	<?= Installer::buttonNextSubmit(); ?>

@@ -7,18 +7,18 @@
  */
 namespace JetShop;
 
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplication\Product_Price;
 use JetApplication\ProductListing;
 use JetApplication\Property;
-use JetApplication\Shops_Shop;
-use JetApplication\Product_ShopData;
+use JetApplication\EShop;
+use JetApplication\Product_EShopData;
 use JetApplication\Product_Parameter_Value;
 
 abstract class Core_ProductListing_Map
 {
-	protected Shops_Shop $shop;
-	protected Pricelists_Pricelist $pricelist;
+	protected EShop $eshop;
+	protected Pricelist $pricelist;
 	protected array $product_ids;
 	
 	protected array $brand_ids = [];
@@ -38,7 +38,7 @@ abstract class Core_ProductListing_Map
 	
 	public function __construct( ProductListing $listing, array $product_ids )
 	{
-		$this->shop = $listing->getShop();
+		$this->eshop = $listing->getEshop();
 		$this->pricelist = $listing->getPricelist();
 		
 		$this->product_ids = [];
@@ -47,17 +47,22 @@ abstract class Core_ProductListing_Map
 		}
 		
 		
-		$where = Product_ShopData::getActiveQueryWhere( $this->shop );
+		$where = Product_EShopData::getActiveQueryWhere( $this->eshop );
 		$where[] = 'AND';
 		$where['entity_id'] = $product_ids;
 		
 		$prices = Product_Price::getPriceMap( $this->pricelist, $product_ids );
 		
-		$this->min_price = min($prices);
-		$this->max_price = max($prices);
+		if(!$prices) {
+			$this->min_price = 0.0;
+			$this->max_price = 0.0;
+		} else {
+			$this->min_price = min($prices);
+			$this->max_price = max($prices);
+		}
 		
 		
-		$data = Product_ShopData::dataFetchAll(
+		$data = Product_EShopData::dataFetchAll(
 			select: [
 				'id' => 'entity_id',
 				'brand_id',
@@ -90,7 +95,10 @@ abstract class Core_ProductListing_Map
 		$filterable_property_ids = Property::getFilterablePropertyIds();
 		
 		
-		if($filterable_property_ids) {
+		if(
+			$this->product_ids &&
+			$filterable_property_ids
+		) {
 			$property_map= Product_Parameter_Value::dataFetchAll(
 				select: [
 					'property_id',

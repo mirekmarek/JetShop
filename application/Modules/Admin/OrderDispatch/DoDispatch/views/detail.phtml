@@ -99,7 +99,7 @@ require 'detail/js.phtml';
 		<?php if($dispatch->getCod()):?>
 		<div><?=Tr::_('COD:')?></div>
 		<div>
-			<b><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $dispatch->getCodCurrency(), $dispatch->getCod() )?></b>
+			<b><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCodCurrency(), $dispatch->getCod() )?></b>
 		</div>
 		<?php endif; ?>
 		

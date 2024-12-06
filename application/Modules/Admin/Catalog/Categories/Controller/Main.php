@@ -6,8 +6,8 @@ use Jet\Data_Tree;
 use Jet\MVC_Controller_Router;
 use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
-
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Category;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 
 use Jet\UI_messages;
 
@@ -21,7 +21,7 @@ use Jet\Data_Tree_Node;
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	
 	protected ?MVC_Controller_Router $router = null;
@@ -93,7 +93,7 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		if(!$this->tree) {
 			$sort_scope = [
 				Category::SORT_PRIORITY => Tr::_('priority'),
-				Category::SORT_NAME => Tr::_('name'),
+				Category::SORT_NAME     => Tr::_('name'),
 			];
 			
 			$active_filter_scope = [
@@ -141,8 +141,6 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 	protected function _setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
 		$tree = $this->initTree();
-		
-		Admin_Managers::UI()->initBreadcrumb();
 		
 		if(!$this->getCurrentCategoryId()) {
 			return;

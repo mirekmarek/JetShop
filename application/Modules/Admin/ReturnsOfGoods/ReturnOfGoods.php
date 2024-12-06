@@ -18,10 +18,10 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\ReturnOfGoods as Application_ReturnOfGoods;
 
-class ReturnOfGoods extends Application_ReturnOfGoods implements Admin_Entity_WithShopRelation_Interface
+class ReturnOfGoods extends Application_ReturnOfGoods implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

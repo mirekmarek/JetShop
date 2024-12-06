@@ -17,7 +17,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC_Page_Content_Interface;
 use JetApplication\AdministratorSignatures;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -50,11 +50,11 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$signatures_form = new Form('admin_signatures_form', []);
 		
-		foreach(Shops::getList() as $shop) {
-			$signature = new Form_Field_Textarea('/signature/'.$shop->getKey(), '');
-			$signature->setDefaultValue( AdministratorSignatures::getSignature( $shop ) );
-			$signature->setFieldValueCatcher( function() use ($signature, $shop) {
-				AdministratorSignatures::setSignature( $shop, Auth::getCurrentUser()->getId(), $signature->getValue() );
+		foreach( EShops::getList() as $eshop) {
+			$signature = new Form_Field_Textarea('/signature/'.$eshop->getKey(), '');
+			$signature->setDefaultValue( AdministratorSignatures::getSignature( $eshop ) );
+			$signature->setFieldValueCatcher( function() use ($signature, $eshop) {
+				AdministratorSignatures::setSignature( $eshop, Auth::getCurrentUser()->getId(), $signature->getValue() );
 			} );
 			$signatures_form->addField( $signature );
 		}

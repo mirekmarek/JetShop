@@ -1,0 +1,50 @@
+<?php
+namespace JetApplication;
+
+use Jet\MVC_Layout;
+use Jet\MVC;
+
+/**
+ * @var MVC_Layout $this
+ */
+
+?>
+<div id="header">
+		<div id="header-logo-area">
+			<a href="<?=MVC::getBase()->getHomepage()->getURL()?>">JetShop!</a>
+			<br>
+			<small>JetShop Example</small>
+		</div>
+		
+		<div id="header-search-area">
+			<?=EShop_Managers::FulltextSearch()->renderTopSearch()?>
+		</div>
+		
+		<div  id="header-icons-area">
+			<?php if($this->getBool('customer_icon', true)): ?>
+			<div id="customer_icon">
+				<?=EShop_Managers::CustomerLogin()->renderCustomerIcon()?>
+			</div>
+			<?php endif; ?>
+			
+			<?php if($this->getBool('shopping_cart_icon', true)): ?>
+			<div id="shopping_cart_icon">
+				<?=EShop_Managers::ShoppingCart()->renderIcon();?>
+			</div>
+			<?php endif; ?>
+			
+			<?php if($this->getBool('compare_icon', true)): ?>
+			<div id="compare_icon">
+				<?=EShop_Managers::Compare()?->renderIcon();?>
+			</div>
+			<?php endif; ?>
+			
+			<?php if($this->getBool('wishlist_icon', true)): ?>
+			<div id="wishlist_icon">
+				<?=EShop_Managers::Wishlist()?->renderIcon();?>
+			</div>
+			<?php endif; ?>
+			
+		</div>
+	
+</div>

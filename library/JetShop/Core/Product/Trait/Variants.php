@@ -5,11 +5,14 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\DataModel_Fetch_Instances;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Input;
+use Jet\Form_Field_Int;
 use JetApplication\Product;
 use JetApplication\Product_Parameter_Value;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 trait Core_Product_Trait_Variants
@@ -43,6 +46,13 @@ trait Core_Product_Trait_Variants
 	)]
 	protected int $variant_priority = 0;
 	
+	protected ?Form $_variant_setup_form = null;
+	
+	protected ?Form $_variant_add_form = null;
+	
+	protected ?Form $_update_variants_form = null;
+	
+	
 	public static function getProductActiveVariantIds( int $product_id ) : array
 	{
 		$where = [];
@@ -51,8 +61,7 @@ trait Core_Product_Trait_Variants
 		$where['is_active'] = true;
 		
 		
-		$variant_ids = static::dataFetchCol(['id'], $where);
-		return $variant_ids;
+		return static::dataFetchCol(['id'], $where);
 	}
 	
 	public static function getProductVariantMasterProductId( int $product_id ) : int
@@ -88,8 +97,8 @@ trait Core_Product_Trait_Variants
 		if($this->isVariant()) {
 			$this->variant_master_product_id = $variant_master_product_id;
 			
-			foreach(Shops::getList() as $shop) {
-				$this->getShopData( $shop )->setVariantMasterProductId( $variant_master_product_id );
+			foreach( EShops::getList() as $eshop) {
+				$this->getEshopData( $eshop )->setVariantMasterProductId( $variant_master_product_id );
 			}
 		}
 	}
@@ -103,8 +112,8 @@ trait Core_Product_Trait_Variants
 	{
 		if($this->isVariant()) {
 			$this->variant_priority = $variant_priority;
-			foreach(Shops::getList() as $shop) {
-				$this->getShopData( $shop )->setVariantPriority( $variant_priority );
+			foreach( EShops::getList() as $eshop) {
+				$this->getEshopData( $eshop )->setVariantPriority( $variant_priority );
 			}
 		}
 	}
@@ -180,16 +189,175 @@ trait Core_Product_Trait_Variants
 		$variant->internal_name = $this->internal_name;
 		$variant->delivery_class_id = $this->delivery_class_id;
 		
-		foreach( Shops::getList() as $shop ) {
-			$variant->getShopData( $shop )->setVariantMasterProductId( $this->id );
+		foreach( EShops::getList() as $eshop ) {
+			$variant->getEshopData( $eshop )->setVariantMasterProductId( $this->id );
 			
-			$this->getShopData( $shop )->syncVariant(
-				$variant->getShopData( $shop )
+			$this->getEshopData( $eshop )->syncVariant(
+				$variant->getEshopData( $eshop )
 			);
 		}
 
 		$variant->save();
 	}
 	
+	
+	public function createNewVariantInstance() : static
+	{
+		$variant = new static();
+		
+		$variant->setType( Product::PRODUCT_TYPE_VARIANT );
+		$variant->is_active = true;
+		$variant->setKindId( $this->getKindId() );
+		$variant->setVariantMasterProductId( $this->getId() );
+		$variant->setInternalName( $this->getInternalName() );
+		$variant->setInternalCode( $this->getInternalCode() );
+		
+		return $variant;
+	}
+	
+	protected function _setupForm_variantMaster( Form $form ) : void
+	{
+		if(!$this->isVariantMaster()) {
+			return;
+		}
+		$form->removeField('internal_name_of_variant');
+		$form->addField( $this->generateKindOfProductField() );
+		
+		foreach( EShops::getList() as $eshop ) {
+			$form->removeField('/eshop_data/'.$eshop->getKey().'/variant_name');
+		}
+	}
+	
+	
+	protected function _setupForm_variant( Form $form ) : void
+	{
+		if($this->type!=static::PRODUCT_TYPE_VARIANT) {
+			return;
+		}
+		
+		$form->setIsReadonly();
+	}
+	
+	
+	public function getAddVariantForm() : Form
+	{
+		
+		if(!$this->_variant_add_form) {
+			$this->_variant_add_form = $this->createForm('variant_add_form', [
+				'ean',
+				'internal_code',
+				'internal_name_of_variant',
+				'/eshop_data/*/variant_name',
+			]);
+			
+			
+		}
+		
+		return $this->_variant_add_form;
+	}
+	
+	public function catchAddVariantForm( Product $new_variant ) : bool
+	{
+		$edit_form = $new_variant->getAddVariantForm();
+		if( $edit_form->catch() ) {
+			$this->addVariant( $new_variant );
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function getUpdateVariantsForm() : Form
+	{
+		if(!$this->_update_variants_form) {
+			$fields = [];
+			
+			foreach($this->getVariants() as $variant) {
+				/**
+				 * @var Product $variant
+				 */
+				$_form = $variant->createForm('', [
+					'ean',
+					'internal_code',
+					'internal_name_of_variant',
+					'supplier_code',
+					'/eshop_data/*/variant_name',
+				]);
+				
+				
+				
+				foreach($_form->getFields() as $field) {
+					$field_name = $field->getName();
+					if($field_name[0]=='/') {
+						$field_name = substr($field_name, 1);
+					}
+					
+					$field_name = '/'.$variant->getId().'/'.$field_name;
+					
+					$field->setName( $field_name );
+					
+					$fields[] = $field;
+				}
+				
+				$priority_field = new Form_Field_Int('/'.$variant->getId().'/variant_priority', 'Priority:');
+				$priority_field->setDefaultValue( $variant->getVariantPriority() );
+				$priority_field->setFieldValueCatcher( function( $value ) use ($variant) {
+					$variant->setVariantPriority( (int)$value );
+				} );
+				$fields[] = $priority_field;
+				
+				
+				$variant_control_properties = $this->getKindOfProduct()?->getVariantSelectorProperties() ? : [];
+				
+				foreach($variant_control_properties as $property) {
+					
+					$property->assocToProduct( $variant->getId() );
+					
+					foreach( $property->getValueEditForm()->getFields() as $field ) {
+						$field->setName('/'.$variant->getId().'/'.$property->getId().'/'.$field->getName());
+						$fields[] = $field;
+					}
+				}
+				
+				foreach( EShops::getListSorted() as $eshop ) {
+					
+					$name_field = new Form_Field_Input('/'.$variant->getId().'/'.$eshop->getKey().'/variant_name', 'Name:');
+					$name_field->setDefaultValue( $variant->getEshopData( $eshop )->getVariantName() );
+					$name_field->setFieldValueCatcher( function( $value ) use ($variant, $eshop) {
+						$variant->getEshopData( $eshop )->setVariantName( $value );
+					} );
+					
+					$fields[] = $name_field;
+					
+				}
+				
+			}
+			
+			$this->_update_variants_form = new Form('update_variants_form', $fields);
+			if(!$this->isEditable()) {
+				$this->_update_variants_form->setIsReadonly();
+			}
+		}
+		
+		return $this->_update_variants_form;
+	}
+	
+	
+	public function catchUpdateVariantsForm(): bool
+	{
+		$edit_form = $this->getUpdateVariantsForm();
+		if( $edit_form->catch() ) {
+			foreach($this->getVariants() as $variant) {
+				$variant->save();
+			}
+			
+			$this->actualizeVariantMaster();
+			
+			return true;
+		}
+		
+		return false;
+	}
 	
 }

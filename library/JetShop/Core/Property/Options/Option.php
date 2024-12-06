@@ -4,11 +4,14 @@ use Jet\DataModel_Definition;
 use Jet\DataModel;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use JetApplication\Entity_WithShopData;
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\Property;
-use JetApplication\Property_Options_Option_ShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Property_Options_Option_EShopData;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'properties_options',
@@ -18,8 +21,10 @@ use JetApplication\Shops_Shop;
 	default_order_by: ['priority'],
 	parent_model_class: Property::class
 )]
-abstract class Core_Property_Options_Option extends Entity_WithShopData
+abstract class Core_Property_Options_Option extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
 {
+	use Admin_Entity_WithEShopData_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -34,13 +39,13 @@ abstract class Core_Property_Options_Option extends Entity_WithShopData
 	
 	
 	/**
-	 * @var Property_Options_Option_ShopData[]
+	 * @var Property_Options_Option_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Property_Options_Option_ShopData::class
+		data_model_class: Property_Options_Option_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	protected bool $is_first = false;
 	
@@ -66,8 +71,8 @@ abstract class Core_Property_Options_Option extends Entity_WithShopData
 	public function setPriority( int $priority ): void
 	{
 		$this->priority = $priority;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData($shop)->setPriority( $priority );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData($eshop)->setPriority( $priority );
 		}
 	}
 	
@@ -77,10 +82,10 @@ abstract class Core_Property_Options_Option extends Entity_WithShopData
 	}
 	
 	
-	public function getShopData( ?Shops_Shop $shop = null ): Property_Options_Option_ShopData
+	public function getEshopData( ?EShop $eshop = null ): Property_Options_Option_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	
@@ -117,5 +122,27 @@ abstract class Core_Property_Options_Option extends Entity_WithShopData
 		}
 		
 		return $res;
+	}
+	
+	public function defineImages() : void
+	{
+		$this->defineImage(
+			image_class:  'main',
+			image_title:  Tr::_('Main image')
+		);
+		$this->defineImage(
+			image_class:  'pictogram',
+			image_title:  Tr::_('Pictogram image')
+		);
+	}
+	
+	public function getEditURL(): string
+	{
+		return '';
+	}
+	
+	public function getDescriptionMode() : bool
+	{
+		return true;
 	}
 }

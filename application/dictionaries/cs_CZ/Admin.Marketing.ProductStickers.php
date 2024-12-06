@@ -54,4 +54,5 @@ return [
 	'Products' => 'produkty',
 	'Pictogram - Product detail' => 'Piktogram - Detail produktu',
 	'Pictogram - Product listing' => 'Piktogram - výpis produktu',
+	'e-shop' => 'internetový obchod',
 ];

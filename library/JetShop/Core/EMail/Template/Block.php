@@ -74,7 +74,7 @@ abstract class Core_EMail_Template_Block {
 	
 	public function processText( string &$text  ) : void
 	{
-		$items = $this->getItemListCreator()();
+		$items = $this->getItemListCreator();
 		
 		$reg_exp = '/\[%'.$this->name.'\]([^[]*)\['.$this->name.'%]/';
 		

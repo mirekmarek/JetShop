@@ -4,15 +4,15 @@ namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 use Jet\DataModel_Definition;
 use Jet\Form;
 
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
-use JetApplication\Admin_Entity_WithShopRelation_Trait;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
 use JetApplication\ProductQuestion as Application_ProductQuestion;
 
 #[DataModel_Definition]
-class ProductQuestion extends Application_ProductQuestion implements Admin_Entity_WithShopRelation_Interface
+class ProductQuestion extends Application_ProductQuestion implements Admin_Entity_WithEShopRelation_Interface
 {
 	
-	use Admin_Entity_WithShopRelation_Trait;
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	public function getEditURL() : string
 	{

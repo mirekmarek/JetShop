@@ -10,13 +10,13 @@ use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
 use JetApplication\Entity_Basic;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 
 /**
  *
  */
 #[DataModel_Definition]
-abstract class Core_Entity_Event extends Entity_WithShopRelation
+abstract class Core_Entity_Event extends Entity_WithEShopRelation
 {
 	protected static string $handler_module_name_prefix = '';
 	

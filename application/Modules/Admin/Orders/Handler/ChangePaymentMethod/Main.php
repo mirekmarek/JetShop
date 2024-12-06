@@ -14,7 +14,7 @@ use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_ShopData;
+use JetApplication\Payment_Method_EShopData;
 
 class Handler_ChangePaymentMethod_Main extends Handler
 {
@@ -53,7 +53,7 @@ class Handler_ChangePaymentMethod_Main extends Handler
 		
 		
 		$fee = new Form_Field_Float('fee', 'Fee:');
-		$fee->setDefaultValue( $this->order->getPaymentAmount() );
+		$fee->setDefaultValue( $this->order->getPaymentAmount_WithVAT() );
 		
 		
 		$this->form = new Form('change_payment_method_form', [
@@ -77,7 +77,7 @@ class Handler_ChangePaymentMethod_Main extends Handler
 				[$selected_pm,$specification] = explode(':', $selected_pm);
 			}
 			
-			$payment_method = Payment_Method_ShopData::get( (int)$selected_pm, $this->order->getShop() );
+			$payment_method = Payment_Method_EShopData::get( (int)$selected_pm, $this->order->getEshop() );
 			
 			if($payment_method) {
 				$change = $this->order->changePaymentMethod(

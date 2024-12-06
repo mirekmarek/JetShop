@@ -1,0 +1,64 @@
+<?php
+namespace JetApplicationModule\EShop\MagicTags;
+
+use Jet\MVC_View;
+use JetApplication\Marketing_ProductSticker;
+use JetApplication\Pricelists;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Product_EShopData $product
+ */
+$product = $this->getRaw('product');
+
+$stickers = Marketing_ProductSticker::getProductStickers( $product->getId() );
+$pricelist = Pricelists::getCurrent();
+$URL = $product->getURL();
+
+?>
+
+<div class="product_listing_item">
+	<div class="product_listing_item_stickers">
+		<?php foreach($stickers as $sticker): ?>
+			
+			<div class="product_listing_item_sticker" style="background-color: <?=$sticker->getColorBackground();?>;color: <?=$sticker->getColorText()?>;">
+				<?php if($sticker->getImageProductListing()): ?>
+					<div class="product_listing_item_sticker_image"><img src="<?=$sticker->getImageProductListingThumbnailUrl(20, 20)?>"></div>
+				<?php endif; ?>
+				<div class="product_listing_item_sticker_text"><?=$sticker->getText()?></div>
+			</div>
+		
+		<?php endforeach; ?>
+	</div>
+	
+	
+	<div class="product_listing_item_images">
+		<a href="<?=$URL?>" class="product_listing_item_main_image">
+			<?php if($product->getImgUrl(0)): ?>
+				<img src="<?=$product->getImgThumbnailUrl( 0, 220, 220 )?>"/>
+			<?php endif; ?>
+		</a>
+	</div>
+	
+	<div class="product_listing_item_title"><a href="<?= $URL ?>"><?= $product->getFullName() ?></a></div>
+	
+	
+	<div class="product_listing_item_price">
+		<div class="product_listing_item_price_standard">
+			<?php if ($product->getPriceBeforeDiscount( $pricelist )): ?>
+				<?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?>
+			<?php endif; ?>
+		</div>
+		<div class="product_listing_item_price_final"><?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?></div>
+	</div>
+	
+	<div class="product_listing_item_reviews">
+		<?php
+		echo EShop_Managers::ProductReviews()?->renderRank( $product );
+		?>
+	</div>
+
+</div>
+

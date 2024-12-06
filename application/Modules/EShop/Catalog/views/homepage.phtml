@@ -1,0 +1,75 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use JetApplication\Category_EShopData;
+use JetApplication\Content_InfoBox_EShopData;
+use JetApplication\EShop_Managers;
+use JetApplication\EShops;
+use JetApplication\Signpost_EShopData;
+
+/**
+ * @var MVC_View   $this
+ */
+
+
+$signposts = Signpost_EShopData::getAllActive(
+	eshop: EShops::getCurrent(),
+	order_by: ['priority']
+);
+
+$all_category_IDs = [];
+
+foreach( $signposts as $item) {
+	$ids = $item->getCategoryIds();
+	$all_category_IDs = array_merge( $all_category_IDs, $ids );
+}
+
+$all_category_IDs = array_unique($all_category_IDs);
+if(!$all_category_IDs) {
+	return;
+}
+
+
+$categories = Category_EShopData::getActiveList(
+	ids: $all_category_IDs,
+	eshop:  EShops::getCurrent()
+);
+
+if(!$categories) {
+	return;
+}
+
+echo EShop_Managers::Banners()?->renderPosition('hp');
+?>
+<?=Content_InfoBox_EShopData::getActiveByInternalCode('homepage')?->getText()?>
+
+<div id="hp-signpost" class="categories">
+
+<?php foreach( $signposts as $item): ?>
+	<div class="category">
+		<div class="category-image">
+			<?php if($item->getImageMain()): ?>
+				<a href="<?=$item->getUrl()?>" ><img src="<?=$item->getImageMainThumbnailUrl(150, 150)?>"></a>
+			<?php endif; ?>
+		</div>
+
+		<div class="category-name">
+			<a href="<?=$item->getUrl()?>"><?=$item->getName()?></a>
+		</div>
+
+
+		<div class="category-subcategories">
+			<?php foreach( $item->getCategoryIds() as $c_id):
+				$category = $categories[$c_id]??null;
+				if(!$category) {
+					continue;
+				}
+				?>
+				<span class="category-subcategory"><a href="<?=$category->getURL()?>"><?=$category->getName();?></a></span>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+<?php endforeach; ?>
+</div>

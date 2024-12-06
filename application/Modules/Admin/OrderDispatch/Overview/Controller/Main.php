@@ -47,8 +47,6 @@ class Controller_Main extends MVC_Controller_Default
 	
 	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-
 		if( $current_label ) {
 			Navigation_Breadcrumb::addURL( $current_label );
 		}
@@ -130,7 +128,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		
 		$this->listing_manager->setDefaultColumnsSchema([
-			'shop',
+			'eshop',
 			'created',
 			'dispatch_date',
 			'number',

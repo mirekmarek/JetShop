@@ -28,7 +28,7 @@ return [
 	'On the way' => 'Na cestě',
 	'Delivered' => 'Doručeno',
 	'Returning' => 'Vracející se',
-	'Returned' => 'Vrátil',
+	'Returned' => 'Vráceno',
 	'Lost' => 'Ztracený',
 	'Cancellation in progress' => 'Probíhá zrušení',
 	'Canceled' => 'Zrušeno',
@@ -42,4 +42,5 @@ return [
 	'Tracking number' => 'Sledovací číslo',
 	'Complaint' => 'Stížnost',
 	'Warehouse' => 'Sklad',
+	'e-shop' => 'internetový obchod',
 ];

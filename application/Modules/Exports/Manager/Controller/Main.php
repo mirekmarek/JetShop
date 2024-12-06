@@ -13,7 +13,6 @@ use Jet\Form_Field_DateTime;
 use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
-use JetApplication\Admin_Managers;
 use JetApplication\Exports;
 
 /**
@@ -27,8 +26,6 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function default_Action() : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
 		$POST = Http_Request::POST();
 		
 		$export_action = new Form_Field_Hidden('export_action');

@@ -1,0 +1,29 @@
+<?php
+namespace JetApplicationModule\EShop\ShoppingCart;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+if($product->isVirtual()) {
+	return;
+}
+
+$delivery_info = $product->getDeliveryInfo();
+?>
+<div class="availability">
+	<?php if( $delivery_info->getNumberOfUnitsAvailable()>0 ): ?>
+		<?=Tr::_('Availability:')?>
+		<span class="availability_in_stock"><?=Tr::_('In stock')?></span>
+	<?php else : ?>
+		<?=Tr::_('Availability:')?>
+		<span class="availability_<?=$delivery_info->getSituation()?>"><?=$delivery_info->getDeliveryInfoTextTranslated()?></span>
+	<?php endif; ?>
+</div>

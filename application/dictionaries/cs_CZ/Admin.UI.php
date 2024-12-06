@@ -26,6 +26,6 @@ return [
 	'Warehouse and expedition' => 'Sklad a expedice',
 	'Warehouse and order dispatch' => 'Sklad a expedice objednávek',
 	'Orders and Customers' => 'Objednávky a zákazníci',
-	'Your signature' => 'Tvůj podpis',
+	'Your signature' => 'Váš podpis',
 	'Goods operations' => 'Operace se zbožím',
 ];

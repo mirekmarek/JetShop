@@ -3,7 +3,7 @@ namespace JetShop;
 
 use JetApplication\Product_Availability;
 use JetApplication\Product_Price;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Storage;
 
@@ -83,7 +83,7 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 	
 	public function prepareWhere(): array
 	{
-		$where = $this->product_filter->getShop()->getWhere();
+		$where = $this->product_filter->getEshop()->getWhere();
 		
 		if($this->previous_filter_result!==null) {
 			$where[] = 'AND';
@@ -101,13 +101,13 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 				$where[] = [
 					'entity_is_active' => true,
 					'AND',
-					'is_active_for_shop' => true
+					'is_active_for_eshop' => true
 				];
 			} else {
 				$where[] = [
 					'entity_is_active' => false,
 					'OR',
-					'is_active_for_shop' => false
+					'is_active_for_eshop' => false
 				];
 			}
 		}
@@ -119,7 +119,7 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 	public function filter(): void
 	{
 		$where = $this->prepareWhere();
-		$basic_filter_result = Product_ShopData::dataFetchCol(
+		$basic_filter_result = Product_EShopData::dataFetchCol(
 			select: ['entity_id'],
 			where: $where,
 			raw_mode: true

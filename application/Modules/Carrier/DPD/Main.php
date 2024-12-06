@@ -16,25 +16,25 @@ use JetApplication\Carrier_AdditionalConsignmentParameter;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Document;
 use JetApplication\OrderDispatch;
-use JetApplication\ShopConfig_ModuleConfig_General;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
-use JetApplication\Shops_Shop;
-use JetApplication\ShopConfig_ModuleConfig_PerShop;
+use JetApplication\EShopConfig_ModuleConfig_General;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\EShop;
+use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
 
 class Main extends Carrier implements
-	ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
-	ShopConfig_ModuleConfig_ModuleHasConfig_General_Interface,
+	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
+	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface,
 	Admin_ControlCentre_Module_Interface,
 	SysServices_Provider_Interface
 
 {
-	use ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
-	use ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
 	public const CODE = 'DPD';
@@ -64,15 +64,15 @@ class Main extends Carrier implements
 		return true;
 	}
 	
-	public function getMainConfig(): Config_General|ShopConfig_ModuleConfig_General
+	public function getMainConfig(): Config_General|EShopConfig_ModuleConfig_General
 	{
 		return $this->getGeneralConfig();
 	}
 	
 	
-	public function getConfig( Shops_Shop $shop ) : Config_PerShop|ShopConfig_ModuleConfig_PerShop
+	public function getConfig( EShop $eshop ) : Config_PerShop|EShopConfig_ModuleConfig_PerShop
 	{
-		return $this->getShopConfig( $shop );
+		return $this->getEshopConfig( $eshop );
 	}
 	
 	public function getClient() : Client

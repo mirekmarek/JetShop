@@ -2,32 +2,34 @@
 namespace JetShop;
 
 use Jet\IO_File;
-use Jet\SysConf_Path;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
+use JetApplication\EShopConfig;
 
 
 abstract class Core_Currencies {
 	
 	/**
-	 * @var Currencies_Currency[]|null
+	 * @var Currency[]|null
 	 */
 	protected static ?array $_list = null;
-	protected static ?Currencies_Currency $current = null;
+	protected static ?Currency $current = null;
 	
 	
 	public static function getCfgFilePath() : string
 	{
-		return SysConf_Path::getConfig().'shop/currencies.php';
+		return EShopConfig::getRootDir().'currencies.php';
 	}
 	
 	public static function loadCfg() : void
 	{
 		static::$_list = [];
 		
-		$cfg = require static::getCfgFilePath();
-		
-		foreach($cfg as $item) {
-			static::addCurrency( (new Currencies_Currency( $item )) );
+		if(IO_File::exists(static::getCfgFilePath())) {
+			$cfg = require static::getCfgFilePath();
+			
+			foreach($cfg as $item) {
+				static::addCurrency( (new Currency( $item )) );
+			}
 		}
 	}
 	
@@ -46,12 +48,12 @@ abstract class Core_Currencies {
 	}
 
 	
-	public static function getCurrent() : Currencies_Currency
+	public static function getCurrent() : Currency
 	{
 		return static::$current;
 	}
 	
-	public static function setCurrent( Currencies_Currency $currency ) : void
+	public static function setCurrent( Currency $currency ) : void
 	{
 		static::$current = $currency;
 	}
@@ -61,12 +63,12 @@ abstract class Core_Currencies {
 		return isset(static::getList()[$key]);
 	}
 	
-	public static function get( string $code ) : Currencies_Currency|null
+	public static function get( string $code ) : Currency|null
 	{
 		return static::getList()[$code]??null;
 	}
 	
-	public static function calcExchange( Currencies_Currency $from_currency, Currencies_Currency $to_currency, float $price ) : float
+	public static function calcExchange( Currency $from_currency, Currency $to_currency, float $price ) : float
 	{
 		if($from_currency->getCode()==$to_currency->getCode()) {
 			return $price;
@@ -75,7 +77,7 @@ abstract class Core_Currencies {
 		return $price * $from_currency->getExchangeRate( $to_currency );
 	}
 	
-	public static function getExchangeRate( Currencies_Currency $from_currency, Currencies_Currency $to_currency ) : float
+	public static function getExchangeRate( Currency $from_currency, Currency $to_currency ) : float
 	{
 		if($from_currency->getCode()==$to_currency->getCode()) {
 			return 1.0;
@@ -86,7 +88,7 @@ abstract class Core_Currencies {
 	
 	
 	/**
-	 * @return Currencies_Currency[]
+	 * @return Currency[]
 	 */
 	public static function getList() : array
 	{
@@ -97,15 +99,15 @@ abstract class Core_Currencies {
 		return static::$_list;
 	}
 	
-	public static function addCurrency( Currencies_Currency $pricelist ) : void
+	public static function addCurrency( Currency $currency ) : void
 	{
-		static::$_list[$pricelist->getCode()] = $pricelist;
+		static::$_list[$currency->getCode()] = $currency;
 	}
 	
 	
-	public static function removeCurrency( Currencies_Currency $pricelist ) : void
+	public static function removeCurrency( Currency $currency ) : void
 	{
-		unset( static::$_list[$pricelist->getCode()] );
+		unset( static::$_list[$currency->getCode()] );
 	}
 	
 	public static function getScope() : array

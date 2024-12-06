@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
@@ -18,14 +18,14 @@ use JetApplication\Shops;
 
 $item = $this->getRaw('item');
 
-foreach(Shops::getList() as $shop):
-	if($item->getShopData( $shop )->getFreePaymentLimit()==0) {
+foreach( EShops::getList() as $eshop):
+	if($item->getEshopData( $eshop )->getFreePaymentLimit()==0) {
 		continue;
 	}
 	
-	echo $shop->getShopName().': '.Admin_Managers::PriceFormatter()->formatWithCurrency(
-		$shop->getDefaultPricelist()->getCurrency(),
-		$item->getShopData( $shop )->getFreePaymentLimit()
+	echo $eshop->getName().': '.Admin_Managers::PriceFormatter()->formatWithCurrency(
+		$eshop->getDefaultPricelist(),
+		$item->getEshopData( $eshop )->getFreePaymentLimit()
 	);
 	echo '<br>';
 endforeach;

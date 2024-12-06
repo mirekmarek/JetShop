@@ -5,34 +5,34 @@ namespace JetShop;
 use Jet\Application_Module;
 use JetApplication\EMailMarketing_Subscribe;
 use JetApplication\EMailMarketing_Subscribe_Log;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 {
-	public function subscribe( Shops_Shop $shop, string $email_address, string $source, string $comment='' ) : void
+	public function subscribe( EShop $eshop, string $email_address, string $source, string $comment='' ) : void
 	{
-		$exists_reg = EMailMarketing_Subscribe::get( $shop, $email_address );
+		$exists_reg = EMailMarketing_Subscribe::get( $eshop, $email_address );
 		if($exists_reg) {
 			return;
 		}
 		
 		$reg = new EMailMarketing_Subscribe();
-		$reg->setShop( $shop );
+		$reg->setEshop( $eshop );
 		$reg->setEmailAddress( $email_address );
 		
 		$reg->save();
 		
 		EMailMarketing_Subscribe_Log::subscribe(
-			$shop,
+			$eshop,
 			$email_address,
 			$source,
 			$comment
 		);
 	}
 	
-	public function unsubscribe( Shops_Shop $shop, string $email_address, string $source, string $comment='' ) : void
+	public function unsubscribe( EShop $eshop, string $email_address, string $source, string $comment='' ) : void
 	{
-		$exists_reg = EMailMarketing_Subscribe::get( $shop, $email_address );
+		$exists_reg = EMailMarketing_Subscribe::get( $eshop, $email_address );
 		if(!$exists_reg) {
 			return;
 		}
@@ -40,7 +40,7 @@ abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 		$exists_reg->delete();
 		
 		EMailMarketing_Subscribe_Log::unsubscribe(
-			$shop,
+			$eshop,
 			$email_address,
 			$source,
 			$comment
@@ -48,10 +48,10 @@ abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 	}
 	
 	
-	public function changeMail( Shops_Shop $shop,string $old_email_address, string $new_mail_address, string $source, string $comment='' ) : void
+	public function changeMail( EShop $eshop, string $old_email_address, string $new_mail_address, string $source, string $comment='' ) : void
 	{
 		
-		$exists_reg = EMailMarketing_Subscribe::get( $shop, $old_email_address );
+		$exists_reg = EMailMarketing_Subscribe::get( $eshop, $old_email_address );
 		
 		if($exists_reg) {
 			EMailMarketing_Subscribe::updateData(
@@ -61,13 +61,13 @@ abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 				[
 					'email_address' => $old_email_address,
 					'AND',
-					$shop->getWhere()
+					$eshop->getWhere()
 				]
 			);
 		}
 		
 		EMailMarketing_Subscribe_Log::changeMail(
-			$shop,
+			$eshop,
 			$old_email_address,
 			$new_mail_address,
 			$source,
@@ -76,6 +76,6 @@ abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 		
 	}
 	
-	abstract public function showStatus( Shops_Shop $shop, string $email ) : string;
+	abstract public function showStatus( EShop $eshop, string $email ) : string;
 
 }

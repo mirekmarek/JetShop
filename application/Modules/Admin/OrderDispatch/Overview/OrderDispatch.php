@@ -18,11 +18,11 @@ namespace JetApplicationModule\Admin\Complaints;
 namespace JetApplicationModule\Admin\OrderDispatch\Overview;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\OrderDispatch as Application_OrderDispatch;
 
-class OrderDispatch extends Application_OrderDispatch implements Admin_Entity_WithShopRelation_Interface
+class OrderDispatch extends Application_OrderDispatch implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

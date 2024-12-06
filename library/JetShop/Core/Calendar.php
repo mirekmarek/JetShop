@@ -5,7 +5,7 @@ use Jet\Application_Module;
 use Jet\Data_DateTime;
 use JetApplication\Calendar_Manager;
 use JetApplication\Managers_General;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_Calendar {
 	
@@ -15,29 +15,29 @@ abstract class Core_Calendar {
 	}
 	
 	
-	public static function getNextBusinessDate( ?Shops_Shop $shop=null, int $number_of_working_days=1, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : Data_DateTime
+	public static function getNextBusinessDate( ?EShop $eshop=null, int $number_of_working_days=1, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : Data_DateTime
 	{
-		return static::getManager()->getNextBusinessDate( $shop, $number_of_working_days, $start_date, $use_holydays );
+		return static::getManager()->getNextBusinessDate( $eshop, $number_of_working_days, $start_date, $use_holydays );
 	}
 	
-	public static function getPrevBusinessDate( ?Shops_Shop $shop=null, int $number_of_working_days=1, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : Data_DateTime
+	public static function getPrevBusinessDate( ?EShop $eshop=null, int $number_of_working_days=1, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : Data_DateTime
 	{
-		return static::getManager()->getPrevBusinessDate( $shop, $number_of_working_days, $start_date, $use_holydays );
+		return static::getManager()->getPrevBusinessDate( $eshop, $number_of_working_days, $start_date, $use_holydays );
 	}
 	
-	public static function calcBusinessDaysOffset( Shops_Shop $shop, int $number_of_working_days, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : int
+	public static function calcBusinessDaysOffset( EShop $eshop, int $number_of_working_days, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : int
 	{
-		return static::getManager()->calcBusinessDaysOffset( $shop, $number_of_working_days, $start_date, $use_holydays );
+		return static::getManager()->calcBusinessDaysOffset( $eshop, $number_of_working_days, $start_date, $use_holydays );
 	}
 	
-	public static function calcBusinessDaysSubset( Shops_Shop $shop, int $number_of_working_days, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : int
+	public static function calcBusinessDaysSubset( EShop $eshop, int $number_of_working_days, string|Data_DateTime $start_date='now', bool $use_holydays=true ) : int
 	{
-		return static::getManager()->calcBusinessDaysSubset( $shop, $number_of_working_days, $start_date, $use_holydays );
+		return static::getManager()->calcBusinessDaysSubset( $eshop, $number_of_working_days, $start_date, $use_holydays );
 	}
 	
-	public static function howManyWorkingDays( Shops_Shop $shop, Data_DateTime|string $from, Data_DateTime|string $till, bool$use_holydays=true ) : int
+	public static function howManyWorkingDays( EShop $eshop, Data_DateTime|string $from, Data_DateTime|string $till, bool $use_holydays=true ) : int
 	{
-		return static::getManager()->howManyWorkingDays( $shop, $from, $till, $use_holydays );
+		return static::getManager()->howManyWorkingDays( $eshop, $from, $till, $use_holydays );
 	}
 	
 }

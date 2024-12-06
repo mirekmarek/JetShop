@@ -16,4 +16,5 @@ return [
 	'Active' => '',
 	'Shop' => '',
 	'Unlimited' => '',
+	'e-shop' => '',
 ];

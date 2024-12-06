@@ -8,7 +8,6 @@
 namespace JetApplicationModule\Discounts\Code;
 
 use Jet\AJAX;
-use Jet\Application;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
@@ -70,7 +69,9 @@ class Controller_ShoppingCart extends MVC_Controller_Default
 
 
 		AJAX::operationResponse($ok, [
-			'discount_code_area' => $this->view->render('shopping_cart/state')
+			'discount_code_area' =>
+				$this->view->render('shopping_cart/used-codes')
+				.$this->view->render('shopping_cart/form')
 		]);
 
 	}
@@ -84,16 +85,17 @@ class Controller_ShoppingCart extends MVC_Controller_Default
 		$this->view->setVar('module', $this->getModule());
 		
 		$code = Discounts_Code::getByCode(
-			Http_Request::POST()->getString('code')
+			Http_Request::GET()->getString('code')
 		);
-
+		
 		if( $code ) {
 			$module->cancelUse( $code );
 		}
 
 
-		ob_end_clean();
-		echo $this->view->render('shopping_cart/state');
-		Application::end();
+		AJAX::snippetResponse(
+			$this->view->render('shopping_cart/used-codes')
+			.$this->view->render('shopping_cart/form')
+		);
 	}
 }

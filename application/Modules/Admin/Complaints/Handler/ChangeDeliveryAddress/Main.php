@@ -49,8 +49,6 @@ class Handler_ChangeDeliveryAddress_Main extends Handler
 			
 			if($change->hasChange()) {
 				UI_messages::success(Tr::_('Delivery address has been changed'));
-				$change->save();
-				$this->complaint->save();
 			}
 			
 			Http_Headers::reload();

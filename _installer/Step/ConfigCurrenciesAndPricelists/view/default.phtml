@@ -1,0 +1,59 @@
+<?php
+
+namespace JetApplication\Installer;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+
+?>
+
+<?=$form->start()?>
+
+<h2><?=Tr::_('Currencies')?></h2>
+<hr>
+
+<?php foreach($form->getFields() as $field):
+	if(!str_starts_with($field->getName(), 'currency_')) {
+		continue;
+	}
+	?>
+	<div style="display: grid;grid-template-columns: 200px 100px;align-items: center;gap: 10px;margin: 10px;">
+		<?=$field->label()?>
+		<?=$field->input()?>
+	</div>
+<?php endforeach; ?>
+
+<br><br>
+
+<h2><?=Tr::_('VAT rates')?></h2>
+<hr>
+
+<?php foreach(Installer::getSelectedEshopLocales() as $locale): ?>
+<div style="display: grid;grid-template-columns: 200px 1fr;border-bottom: 1px solid #c9c9c9;margin-bottom: 20px">
+	<div><?=UI::flag($locale)?> <?=$locale->getName()?></div>
+	<div>
+		<?php foreach($form->getFields() as $field):
+			if(str_starts_with($field->getName(), '/vat_rate/'.$locale.'/')):
+				?>
+				<div style="padding: 10px;width: 100px"><?=$field->input()?></div>
+				<?php
+			endif;
+		endforeach; ?>
+	</div>
+</div>
+<?php endforeach; ?>
+
+<br><br>
+<?= Installer::buttonNextSubmit(); ?>
+
+<?=$form->end()?>

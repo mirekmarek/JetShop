@@ -91,7 +91,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit_Mark
 	
 	public function renderAdd(
 		?callable $common_data_fields_renderer=null,
-		?callable $shop_data_fields_renderer=null
+		?callable $eshop_data_fields_renderer=null
 	) : string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
@@ -100,7 +100,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit_Mark
 		$view->setVar('tabs', $this->tabs);
 		$view->setVar('form', $this->item->getAddForm());
 		$view->setVar('common_data_fields_renderer', $common_data_fields_renderer);
-		$view->setVar('shop_data_fields_renderer', $shop_data_fields_renderer);
+		$view->setVar('eshop_data_fields_renderer', $eshop_data_fields_renderer);
 		
 		return $view->render( 'add' );
 		

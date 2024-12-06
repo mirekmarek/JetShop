@@ -1,0 +1,10 @@
+<?php
+use Jet\Tr;
+use JetApplication\EShop_Pages;
+
+?>
+<a class="step-prev" href="<?= EShop_Pages::ShoppingCart()->getURL() ?>"><?= Tr::_('Shopping cart'); ?></a>
+<a class="step-prev" onclick="CashDesk.delivery.back();return false;"><?= Tr::_('Delivery'); ?></a>
+<div class="step-current"><?= Tr::_('Payment'); ?></div>
+<div class="step-next"><?= Tr::_('Registration'); ?></div>
+<div class="step-next"><?= Tr::_('Confirmation'); ?></div>

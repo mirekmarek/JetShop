@@ -6,10 +6,10 @@ use Jet\Form_Field;
 use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_MultiSelect;
 use JetApplication\ProductFilter;
-use JetApplication\Property_Options_Option_ShopData;
+use JetApplication\Property_Options_Option_EShopData;
 use JetApplication\Property_Type;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 abstract class Core_Property_Type_Options extends Property_Type
 {
@@ -90,28 +90,27 @@ abstract class Core_Property_Type_Options extends Property_Type
 	{
 		$form->removeField('decimal_places');
 		
-		foreach( Shops::getList() as $shop ) {
-			$shop_key = $shop->getKey();
-			
-			$form->removeField('/shop_data/'.$shop_key.'/bool_yes_description');
+		foreach($form->getFields() as $f) {
+			if(str_ends_with($f->getName(),'/bool_yes_description')) {
+				$form->removeField( $f->getName() );
+			}
 		}
-		
 	}
 	
 	/**
-	 * @param Shops_Shop|null $shop
-	 * @return Property_Options_Option_ShopData[]
+	 * @param EShop|null $eshop
+	 * @return Property_Options_Option_EShopData[]
 	 */
-	public function getProductDetailDisplayValue( ?Shops_Shop $shop=null ): array
+	public function getProductDetailDisplayValue( ?EShop $eshop=null ): array
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$eshop = $eshop?:EShops::getCurrent();
 		
 		$values = $this->getProductParameterValue();
 		if(!$values) {
 			return [];
 		}
 		
-		return Property_Options_Option_ShopData::getActiveList( $values, $shop, ['priority'] );
+		return Property_Options_Option_EShopData::getActiveList( $values, $eshop, ['priority'] );
 	}
 	
 	

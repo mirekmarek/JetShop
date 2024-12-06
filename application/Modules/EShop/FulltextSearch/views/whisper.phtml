@@ -1,0 +1,65 @@
+<?php
+namespace JetApplicationModule\EShop\FulltextSearch;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Category_EShopData;
+use JetApplication\EShop_Pages;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Product_EShopData[] $products
+ * @var Category_EShopData[] $categories
+ */
+
+$products = $this->getRaw('products');
+$categories = $this->getRaw('categories');
+
+$products_limit = 6;
+?>
+
+<div id="search_whisperer_content">
+	<div class="result-categories">
+		<?php if( $categories ): ?>
+			<h5><?=Tr::_('Categories')?></h5>
+		
+			<div>
+			<?php foreach($categories as $category): ?>
+				<a href="<?=$category->getURL()?>"><?=$category->getName()?></a><br>
+			<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+		
+	</div>
+	<div class="result-products">
+		<?php if($products): ?>
+			<h5><?=Tr::_('Products')?></h5>
+			<div class="product_listing_list_products search_result">
+				<?php
+				$c = 0;
+				foreach($products as $product):
+					$c++;
+					if($c>$products_limit) {
+						break;
+					}
+					echo EShop_Managers::ProductListing()->renderItem( $product );
+					
+				endforeach; ?>
+			</div>
+			<?php if(count($products)>$products_limit): ?>
+			<div class="more_products">
+				<?=UI::button(Tr::_('Show more products'))
+					->setUrl( EShop_Pages::Search()->getURL(GET_params: ['q'=>Http_Request::GET()->getRaw('q')]) )
+					->setClass(UI_button::CLASS_PRIMARY) ?>
+			</div>
+			<?php endif; ?>
+		
+		<?php endif; ?>
+	</div>
+</div>
+

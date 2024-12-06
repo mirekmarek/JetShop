@@ -4,6 +4,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
 use JetApplication\Category;
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
@@ -26,7 +27,7 @@ require '_toolbar.phtml';
 				<tr>
 					<td>
 						<div style="display: flex;gap: 5px;align-items: center">
-							<div><?=Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $category )?></div>
+							<div><?=Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $category )?></div>
 							<div><?=Admin_Managers::Category()->showActiveState( $category_id )?></div>
 							<div><?=Admin_Managers::Category()->showName( $category_id )?></div>
 						</div>

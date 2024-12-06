@@ -1,0 +1,77 @@
+<?php
+namespace JetApplicationModule\EShop\ReturnsOfGoods;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Customer;
+use JetApplication\EShop_Managers;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $order_number_form
+ */
+
+$order_number_form = $this->getRaw('order_number_form');
+
+$returns_of_goods = [];
+if( ($customer=Customer::getCurrentCustomer()) ) {
+	$returns_of_goods = ReturnOfGoods::getByCustomer( $customer );
+}
+
+echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+?>
+<div class="customer-section-container">
+<?=$order_number_form->start()?>
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title"><?=Tr::_('New return of goods request')?></h5>
+			<div class="return-of-goods-search-order-form">
+				<?=$order_number_form->field('order_number')?>
+				<?=$order_number_form->fieldExists('email') ? $order_number_form->field('email') : ''?>
+
+
+				<div></div>
+				<div>
+					<?=UI::button( Tr::_('Find order') )->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY)?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?=$order_number_form->end()?>
+
+<?php if($returns_of_goods): ?>
+<h2><?=Tr::_('Return of goods requests')?></h2>
+
+
+	<?php foreach( $returns_of_goods as $return_of_goods):
+		$this->setVar('return', $return_of_goods);
+		$product = $return_of_goods->getProduct();
+		?>
+	<div class="card card-body return-of-goods-list-item">
+		<div class="rog-number"><?=Tr::_('Request number:')?> <a href="<?=$return_of_goods->getURL()?>"><?=$return_of_goods->getNumber()?></a></div>
+		<div class="order-number"><?=Tr::_('Order number:')?> <?=$return_of_goods->getOrderNumber()?></div>
+		<div class="status"><?=$this->render('return-of-goods-status');?></div>
+		<div class="product">
+			<?php if($product): ?>
+				<div class="return-of-goods-product">
+					<div>
+						<?php if($product->getImg(0)): ?>
+							<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+						<?php endif; ?>
+					</div>
+					<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+				</div>
+			<?php endif; ?>
+		</div>
+		<div class="date"><?=Locale::dateAndTime( $return_of_goods->getDateStarted() )?></div>
+	</div>
+	<?php endforeach; ?>
+
+
+<?php endif; ?>
+</div>

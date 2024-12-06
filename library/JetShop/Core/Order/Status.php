@@ -4,6 +4,7 @@ namespace JetShop;
 use Jet\Autoloader;
 use Jet\BaseObject;
 use Jet\IO_Dir;
+use Jet\Tr;
 use JetApplication\Order;
 use JetApplication\Order_Status;
 
@@ -35,8 +36,12 @@ abstract class Core_Order_Status extends BaseObject {
 		return static::CODE;
 	}
 	
-	public function getTitle(): string
+	public function getTitle( bool $translate=true ): string
 	{
+		if( $translate ) {
+			return Tr::_( $this->title, dictionary: 'Order.Status' );
+		}
+		
 		return $this->title;
 	}
 	

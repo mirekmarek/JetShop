@@ -6,28 +6,31 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 
 use Jet\Form_Field;
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\Shops;
+use JetApplication\EShops;
 use JetApplication\Signpost_Category;
-use JetApplication\Signpost_ShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Signpost_EShopData;
+use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'signposts',
 	database_table_name: 'signposts',
 )]
-abstract class Core_Signpost extends Entity_WithShopData implements FulltextSearch_IndexDataProvider
+abstract class Core_Signpost extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
-	
+	use Admin_Entity_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Signpost_ShopData::class
+		data_model_class: Signpost_EShopData::class
 	)]
 	#[Form_Definition(is_sub_forms: true)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT
@@ -41,10 +44,10 @@ abstract class Core_Signpost extends Entity_WithShopData implements FulltextSear
 	protected ?array $category_ids = null;
 	
 	
-	public function getShopData( ?Shops_Shop $shop = null ): Signpost_ShopData
+	public function getEshopData( ?EShop $eshop = null ): Signpost_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	public function getFulltextObjectType(): string
@@ -70,7 +73,7 @@ abstract class Core_Signpost extends Entity_WithShopData implements FulltextSear
 		];
 	}
 	
-	public function getShopFulltextTexts( Shops_Shop $shop ): array
+	public function getShopFulltextTexts( EShop $eshop ): array
 	{
 		return [];
 	}
@@ -94,8 +97,8 @@ abstract class Core_Signpost extends Entity_WithShopData implements FulltextSear
 	public function setPriority( int $priority ): void
 	{
 		$this->priority = $priority;
-		foreach( Shops::getList() as $shop ) {
-			$this->getShopData( $shop )->setPriority( $priority );
+		foreach( EShops::getList() as $eshop ) {
+			$this->getEshopData( $eshop )->setPriority( $priority );
 		}
 	}
 	
@@ -183,6 +186,28 @@ abstract class Core_Signpost extends Entity_WithShopData implements FulltextSear
 		return true;
 	}
 	
+	public function getEditURL() : string
+	{
+		return '';
+		//TODO: return Admin_Managers::Signpost()->getEditURL( $this->id );
+	}
 	
+	public function defineImages() : void
+	{
+		$this->defineImage(
+			image_class:  'main',
+			image_title:  Tr::_('Main image'),
+		);
+		
+		$this->defineImage(
+			image_class:  'pictogram',
+			image_title:  Tr::_('Pictogram - Product detail'),
+		);
+		
+	}
 	
+	public function getDescriptionMode() : bool
+	{
+		return true;
+	}
 }

@@ -58,7 +58,7 @@ return [
 	'Properties' => 'Vlastnosti',
 	'Blocks' => 'Bloky',
 	'Block properties:' => 'Vlastnosti bloku:',
-	'Attachments:' => '',
-	'Download e-mail message file' => '',
-	'Activate completely' => '',
+	'Attachments:' => 'Přílohy:',
+	'Download e-mail message file' => 'Stáhnout soubor e-mailové zprávy',
+	'Activate completely' => 'Aktivovat kompletně',
 ];

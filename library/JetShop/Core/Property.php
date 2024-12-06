@@ -6,30 +6,42 @@ use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\Product_Parameter;
 use JetApplication\ProductFilter;
 use JetApplication\Property;
 use JetApplication\Property_Options_Option;
-use JetApplication\Property_ShopData;
+use JetApplication\Property_EShopData;
 use JetApplication\Property_Type;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplication\KindOfProduct_Property;
 
 #[DataModel_Definition(
 	name: 'property',
 	database_table_name: 'properties',
 )]
-abstract class Core_Property extends Entity_WithShopData implements FulltextSearch_IndexDataProvider
+abstract class Core_Property extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
+	use Admin_Entity_WithEShopData_Trait;
 	
 	public const PROPERTY_TYPE_NUMBER  = 'Number';
 	public const PROPERTY_TYPE_BOOL    = 'Bool';
 	public const PROPERTY_TYPE_OPTIONS = 'Options';
 	public const PROPERTY_TYPE_TEXT    = 'Text';
+	
+	protected static array $types = [
+		self::PROPERTY_TYPE_NUMBER => 'Number',
+		self::PROPERTY_TYPE_BOOL => 'Yes / No',
+		self::PROPERTY_TYPE_OPTIONS => 'Options',
+		self::PROPERTY_TYPE_TEXT => 'Text',
+	];
+	
 
 	protected ?Property_Type $_type_instance = null;
 
@@ -79,18 +91,35 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 	
 	
 	/**
-	 * @var Property_ShopData[]
+	 * @var Property_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Property_ShopData::class
+		data_model_class: Property_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	/**
 	 * @var Property_Options_Option[]
 	 */
 	protected ?array $options = null;
+	
+	
+	public static function getTypesScope() : array
+	{
+		$list = [];
+		
+		foreach( self::$types as $type=>$label ) {
+			$list[$type] = Tr::_($label);
+		}
+		
+		return $list;
+	}
+	
+	public function getTypeTitle() : string
+	{
+		return static::getTypesScope()[$this->getType()];
+	}
 	
 	
 	public function getType() : string
@@ -101,8 +130,8 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 	public function setType( string $type ) : void
 	{
 		$this->type = $type;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setType( $type );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setType( $type );
 		}
 	}
 	
@@ -127,16 +156,16 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 	public function setDecimalPlaces( int $decimal_places ) : void
 	{
 		$this->decimal_places = $decimal_places;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setDecimalPlaces( $decimal_places );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setDecimalPlaces( $decimal_places );
 		}
 	}
 	
 
-	public function getShopData( ?Shops_Shop $shop=null ) : Property_ShopData
+	public function getEshopData( ?EShop $eshop=null ) : Property_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	
@@ -213,8 +242,8 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 		}
 		
 		$this->is_filter = $is_filter;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setIsFilter( $is_filter );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setIsFilter( $is_filter );
 		}
 	}
 	
@@ -226,8 +255,8 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 	public function setFilterPriority( int $filter_priority ): void
 	{
 		$this->filter_priority = $filter_priority;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setFilterPriority( $filter_priority );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setFilterPriority( $filter_priority );
 		}
 	}
 	
@@ -247,8 +276,8 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 		}
 		
 		$this->is_default_filter = $is_default_filter;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setIsDefaultFilter( $is_default_filter );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setIsDefaultFilter( $is_default_filter );
 		}
 	}
 	
@@ -289,9 +318,9 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 		$this->options[$option->getId()] = $option;
 		
 		$option->activate();
-		foreach(Shops::getList() as $shop) {
-			if(!$option->getShopData($shop)->isActiveForShop()) {
-				$option->getShopData($shop)->_activate();
+		foreach( EShops::getList() as $eshop) {
+			if(!$option->getEshopData($eshop)->isActiveForShop()) {
+				$option->getEshopData($eshop)->_activate();
 			}
 		}
 	}
@@ -342,7 +371,7 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 		return [$this->getInternalName(), $this->getInternalCode()];
 	}
 	
-	public function getShopFulltextTexts( Shops_Shop $shop ) : array
+	public function getShopFulltextTexts( EShop $eshop ) : array
 	{
 		return [];
 	}
@@ -382,6 +411,44 @@ abstract class Core_Property extends Entity_WithShopData implements FulltextSear
 			]
 		);
 		
+	}
+	
+	protected function setupAddForm( Form $form ) : void
+	{
+		$this->getTypeInstance()->setupForm( $form );
+	}
+	
+	protected function setupEditForm( Form $form ) : void
+	{
+		if(!$this->getTypeInstance()->canBeFilter()) {
+			$form->field('is_filter')->setIsReadonly(true);
+			$form->field('is_default_filter')->setIsReadonly(true);
+			$form->field('filter_priority')->setIsReadonly(true);
+		}
+		
+		$this->getTypeInstance()->setupForm( $form );
+	}
+	
+	public function getEditURL() : string
+	{
+		return Admin_Managers::Property()->getEditUrl( $this->id );
+	}
+	
+	public function defineImages() : void
+	{
+		$this->defineImage(
+			image_class:  'main',
+			image_title:  Tr::_('Main image')
+		);
+		$this->defineImage(
+			image_class:  'pictogram',
+			image_title:  Tr::_('Pictogram image')
+		);
+	}
+	
+	public function getDescriptionMode() : bool
+	{
+		return true;
 	}
 	
 }

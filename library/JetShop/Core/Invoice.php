@@ -298,7 +298,7 @@ abstract class Core_Invoice extends Entity_AccountingDocument implements NumberS
 		 */
 		$c_invoice->setIsCorrectionOfInvoice( $this );
 		
-		$c_invoice->setShop( $this->getShop() );
+		$c_invoice->setEshop( $this->getEshop() );
 		
 		$c_invoice->setOrderId( $this->getOrderId() );
 		

@@ -14,7 +14,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 
 
 /**
@@ -41,7 +41,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		$GET = Http_Request::GET();
 		if( $GET->exists('add') ) {
-			$new_currency = new Currencies_Currency();
+			$new_currency = new Currency();
 			
 			if( $new_currency->getAddForm()->catch() ) {
 				Currencies::addCurrency( $new_currency );

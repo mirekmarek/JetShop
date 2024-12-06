@@ -1,8 +1,8 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Availabilities_Availability;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Availability;
+use JetApplication\Pricelist;
 use JetApplication\ProductFilter;
 use JetApplication\ProductFilter_Storage;
 
@@ -28,13 +28,13 @@ abstract class Core_ProductFilter_Filter
 		$this->product_filter = $product_filter;
 	}
 	
-	public function getPricelist(): Pricelists_Pricelist
+	public function getPricelist(): Pricelist
 	{
 		return $this->product_filter->getPricelist();
 	}
 	
 	
-	public function getAvailability(): Availabilities_Availability
+	public function getAvailability(): Availability
 	{
 		return $this->product_filter->getAvailability();
 	}

@@ -1,7 +1,7 @@
 <?php
 
 use Jet\MVC;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -10,23 +10,23 @@ use Jet\Form;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Shops_Shop $shop
+ * @var EShop $eshop
  */
 
-$shop = $this->getRaw('shop');
+$eshop = $this->getRaw('eshop');
 $form = $this->getRaw('form');
-$shop_key = $shop->getKey();
+$eshop_key = $eshop->getKey();
 
-$base_URL = MVC::getBase($shop->getBaseId())->getHomepage($shop->getLocale())->getURL();
+$base_URL = MVC::getBase($eshop->getBaseId())->getHomepage($eshop->getLocale())->getURL();
 ?>
-<?=$form->field('/shop_data/'.$shop_key.'/title')?>
-<?=$form->field('/shop_data/'.$shop_key.'/menu_title')?>
-<?=$form->field('/shop_data/'.$shop_key.'/breadcrumb_title')?>
-<?=$form->field('/shop_data/'.$shop_key.'/meta_keywords')?>
-<?=$form->field('/shop_data/'.$shop_key.'/meta_description')?>
-<?=$form->field( '/shop_data/'.$shop_key.'/custom_layout_script' )?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/title')?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/menu_title')?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/breadcrumb_title')?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/meta_keywords')?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/meta_description')?>
+<?=$form->field( '/eshop_data/'.$eshop_key.'/custom_layout_script' )?>
 <?php
-$relative_path_fragment = $form->field('/shop_data/'.$shop_key.'/relative_path_fragment');
+$relative_path_fragment = $form->field('/eshop_data/'.$eshop_key.'/relative_path_fragment');
 ?>
 <?=$relative_path_fragment->row()->start()?>
 <?=$relative_path_fragment->label()?>
@@ -43,4 +43,4 @@ $relative_path_fragment = $form->field('/shop_data/'.$shop_key.'/relative_path_f
 
 <?=$relative_path_fragment->row()->end()?>
 
-<?=$form->field('/shop_data/'.$shop_key.'/text')?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/text')?>

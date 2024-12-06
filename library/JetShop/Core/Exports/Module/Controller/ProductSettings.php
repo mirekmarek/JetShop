@@ -15,21 +15,21 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
-use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_Module;
 use JetApplication\Product;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  *
  */
 abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Controller_Default
 {
-	protected Product|Admin_Entity_WithShopData_Interface $product;
+	protected Product|Admin_Entity_WithEShopData_Interface $product;
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	protected Exports_Module $export;
 	
@@ -43,14 +43,14 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	protected ?Form $parameters_form;
 	
-	public function getProduct(): Admin_Entity_WithShopData_Interface|Product
+	public function getProduct(): Admin_Entity_WithEShopData_Interface|Product
 	{
 		return $this->product;
 	}
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
 	public function getExport(): Exports_Module
@@ -91,17 +91,17 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	
 	public function init(
-		Product|Admin_Entity_WithShopData_Interface $product,
-		Shops_Shop                    $shop,
-		Exports_Module $export
+		Product|Admin_Entity_WithEShopData_Interface $product,
+		EShop                                        $eshop,
+		Exports_Module                               $export
 	): void
 	{
 		$this->product = $product;
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		$this->export = $export;
 		$this->editable = $product->isEditable();
-		$this->category = $this->export->getCategory( $shop, $product );
-		$this->selling = $this->export->getProductIsSelling( $this->shop, $this->product->getId() );
+		$this->category = $this->export->getCategory( $eshop, $product );
+		$this->selling = $this->export->getProductIsSelling( $this->eshop, $this->product->getId() );
 		
 		$tabs = $this->initTabs();
 		
@@ -125,12 +125,12 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	public function parameters_Action() : void
 	{
-		$this->parameters_form = $this->export->getParamsEditForm( $this->shop, $this->product );
+		$this->parameters_form = $this->export->getParamsEditForm( $this->eshop, $this->product );
 		
 		
 		if($this->editable) {
 			if( $this->parameters_form ) {
-				if($this->export->catchParamsEditForm( $this->shop, $this->product )) {
+				if($this->export->catchParamsEditForm( $this->eshop, $this->product )) {
 					UI_messages::success(
 						Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $this->product->getAdminTitle() ] )
 					);
@@ -141,7 +141,7 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 			
 			if( $this->category ) {
 				if(Http_Request::GET()->exists('actualize_list_of_parameters')) {
-					$this->export->actualizeCategory( $this->shop, $this->category->getCategoryId() );
+					$this->export->actualizeCategory( $this->eshop, $this->category->getCategoryId() );
 					Http_Headers::reload(unset_GET_params: ['actualize_list_of_parameters']);
 				}
 				

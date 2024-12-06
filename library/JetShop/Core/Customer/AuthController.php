@@ -16,8 +16,8 @@ use Jet\Session;
 use Jet\Data_DateTime;
 
 use JetApplication\Customer;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops;
+use JetApplication\EShop_Managers;
+use JetApplication\EShops;
 
 /**
  *
@@ -87,7 +87,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		} else {
 			if(
 				$this->current_user->isBlocked() ||
-				$this->current_user->getShop()->getKey()!=Shops::getCurrentKey()
+				$this->current_user->getEshop()->getKey()!=EShops::getCurrentKey()
 			) {
 				$this->current_user = false;
 			}
@@ -100,14 +100,14 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	
 	protected function getSession() : Session
 	{
-		return new Session( 'auth_shop' );
+		return new Session( 'auth_eshop' );
 
 	}
 	
 	public function handleLogin() : void
 	{
 		
-		$module = Shop_Managers::CustomerLogin();
+		$module = EShop_Managers::CustomerLogin();
 		
 		$user = $this->getCurrentUser();
 
@@ -176,7 +176,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	{
 		if(
 			!$user instanceof Customer ||
-			$user->getShopKey()!=Shops::getCurrentKey() ||
+			$user->getEshopKey()!=EShops::getCurrentKey() ||
 			$user->isBlocked()
 		) {
 			return false;

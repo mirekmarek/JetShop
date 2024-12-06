@@ -1,0 +1,79 @@
+<?php
+use Jet\MVC;
+use Jet\UI;
+use JetApplication\EShop_Pages;
+
+$page = EShop_Pages::Search();
+
+if(MVC::getPage()->getId()==$page->getId()) {
+	return;
+}
+
+?>
+<script>
+	const search = {
+		timer: null,
+		
+		whisper: async ( value )=> {
+
+			if(value.length<=3) {
+				visibility.hide( 'search_whisperer' );
+
+				return;
+			}
+			
+			if(search.timer) {
+				clearTimeout(search.timer);
+				search.timer = null;
+			}
+			
+			visibility.show( 'search_whisperer' );
+
+			const r = await fetch('<?=EShop_Pages::SearchWhisperer()->getURL()?>?q='+encodeURIComponent( value ));
+			const response = await r.text();
+			
+			document.getElementById('search_whisperer').innerHTML = response;
+		},
+		hide: ()=> {
+			search.timer = setTimeout(function () {
+				visibility.hide( 'search_whisperer' );
+				document.getElementById('search_whisperer').innerHTML = '';
+			}, 1500);
+		},
+
+		resultFocus: ()=>{
+			if(search.timer) {
+				clearTimeout(search.timer);
+				search.timer = null;
+			}
+		}
+		
+		
+	};
+</script>
+
+<div id="header-search-dialog">
+	<div></div>
+	<form method="get" action="<?= $page->getURL()?>">
+		<div class="dialog">
+			<input type="search" name="q" value=""
+			       onkeyup="search.whisper( this.value );"
+			       onblur="search.hide()"
+			       autocomplete="off"
+			>
+			<button type="submit">
+				<?=UI::icon('search')?>
+			</button>
+		</div>
+
+		<div
+			id="search_whisperer"
+			onmouseover="search.resultFocus()"
+			onclick="search.resultFocus()"
+			onmouseout="search.hide()"
+			style="display: none;"
+		></div>
+	
+	</form>
+	<div></div>
+</div>

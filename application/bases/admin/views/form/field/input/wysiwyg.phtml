@@ -79,12 +79,22 @@ if( !$r->getEditorConfig() ) {
 
 $height = '600px';
 
+if( !$r->getBaseCssClasses() ) {
+	$r->setBaseCssClass( 'form-control' );
+}
+
+$field = $r->getField();
+if( $field->getLastErrorCode() ) {
+	$r->addCustomCssClass( 'is-invalid' );
+}
+
+
 $r->addCustomCssStyle('width:100%');
 $r->addCustomCssStyle('height:'.$height.';');
 $r->addJsAction('onkeyup', "document.getElementById('{$field->getId()}_preview').innerHTML=this.value");
 ?>
-	<textarea <?=$r->renderTagAttributes()?>><?= $field->getValueRaw() ?></textarea>
-	<div style="width: 100%;height: <?=$height?>;overflow: auto;border: 1px inset #c9c9c9;padding: 5px;" id="<?=$field->getId()?>_preview"></div>
+<textarea <?=$r->renderTagAttributes()?>><?= $field->getValueRaw() ?></textarea>
+<div style="width: 100%;height: <?=$height?>;overflow: auto;border: 1px inset #c9c9c9;padding: 5px;" id="<?=$field->getId()?>_preview"></div>
 
 <script>
 	document.getElementById('<?=$field->getId()?>_preview').innerHTML=document.getElementById('<?=$field->getId()?>').value;

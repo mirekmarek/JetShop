@@ -11,7 +11,7 @@ use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 
 /**
@@ -23,12 +23,12 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 	public function default_Action() : void
 	{
 		
-		$new_shop = new Shops_Shop();
+		$new_eshop = new EShop();
 		
-		$form = $new_shop->getCreateForm();
+		$form = $new_eshop->getCreateForm();
 		
 		$error_message = '';
-		if($new_shop->catchCreateForm( $error_message )) {
+		if($new_eshop->catchCreateForm( $error_message )) {
 			UI_messages::success( Tr::_('New e-shop has been created'), 'CC' );
 			Http_Headers::reload();
 		}
@@ -38,7 +38,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		}
 		
 		
-		$this->view->setVar('new_shop', $new_shop);
+		$this->view->setVar('new_eshop', $new_eshop);
 		$this->view->setVar('form', $form);
 		
 		

@@ -10,7 +10,7 @@ namespace JetApplicationModule\SysServices\Prices\DeterminePriceBeforeFirstDisco
 use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplication\Product_Price;
 use JetApplication\Product_PriceHistory;
 use JetApplication\SysServices_Definition;
@@ -44,14 +44,14 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 		];
 	}
 	
-	public function determine( Pricelists_Pricelist $pricelist ) : void
+	public function determine( Pricelist $pricelist ) : void
 	{
 		echo "Pricelist: {$pricelist->getName()}\n";
 		
 		$prices = Product_Price::dataFetchAll(
 			select: [
 				'id',
-				'product_id',
+				'entity_id',
 				'price_before_discount',
 				'price',
 				'discount_percentage'
@@ -71,7 +71,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 					'date_time'
 				],
 				where: [
-					'product_id' => $price['product_id'],
+					'product_id' => $price['entity_id'],
 					'AND',
 					'pricelist_code' => $pricelist->getCode(),
 				],

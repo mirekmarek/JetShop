@@ -16,7 +16,7 @@ use Jet\MVC_Page_Content;
 use JetApplication\Exports_Definition;
 use JetApplication\Product;
 use JetApplication\Exports;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\KindOfProduct;
 use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
@@ -46,9 +46,9 @@ abstract class Core_Exports_Module extends Application_Module
 	
 	abstract public function getTitle() : string;
 	
-	abstract public function isAllowedForShop( Shops_Shop $shop ) : bool;
+	abstract public function isAllowedForShop( EShop $eshop ) : bool;
 	
-	public function handleKindOfProductSettings( KindOfProduct $kind_of_product, Shops_Shop $shop ): void
+	public function handleKindOfProductSettings( KindOfProduct $kind_of_product, EShop $eshop ): void
 	{
 		$content = new MVC_Page_Content();
 		
@@ -64,14 +64,14 @@ abstract class Core_Exports_Module extends Application_Module
 		/** @noinspection PhpParamsInspection */
 		$controller->init(
 			$kind_of_product,
-			$shop,
+			$eshop,
 			$this
 		);
 		$content->setControllerAction( $controller->resolve() );
 		$controller->dispatch();
 	}
 	
-	public function handleProductSettings( Product $product, Shops_Shop $shop ): void
+	public function handleProductSettings( Product $product, EShop $eshop ): void
 	{
 		$content = new class extends MVC_Page_Content {
 			public function output( string $output ): void
@@ -92,7 +92,7 @@ abstract class Core_Exports_Module extends Application_Module
 		/** @noinspection PhpParamsInspection */
 		$controller->init(
 			$product,
-			$shop,
+			$eshop,
 			$this
 		);
 		$content->setControllerAction( $controller->resolve() );
@@ -100,23 +100,23 @@ abstract class Core_Exports_Module extends Application_Module
 	}
 	
 	
-	abstract public function actualizeCategories( Shops_Shop $shop ) : void;
+	abstract public function actualizeCategories( EShop $eshop ) : void;
 	
-	abstract public function actualizeCategory( Shops_Shop $shop, string $category_id ) : void;
+	abstract public function actualizeCategory( EShop $eshop, string $category_id ) : void;
 	
 	
-	public function getCache( Shops_Shop $shop, string $cache_key ) : mixed
+	public function getCache( EShop $eshop, string $cache_key ) : mixed
 	{
-		$cd = Exports_Join_Cache::get( $this->getCode(), $shop, $cache_key );
+		$cd = Exports_Join_Cache::get( $this->getCode(), $eshop, $cache_key );
 		return $cd?->getCacheData();
 	}
 	
-	public function setCache( Shops_Shop $shop, string $cache_key, mixed $cache_data ) : void
+	public function setCache( EShop $eshop, string $cache_key, mixed $cache_data ) : void
 	{
-		$cd = Exports_Join_Cache::get( $this->getCode(), $shop, $cache_key );
+		$cd = Exports_Join_Cache::get( $this->getCode(), $eshop, $cache_key );
 		if(!$cd) {
 			$cd = new Exports_Join_Cache();
-			$cd->setShop( $shop );
+			$cd->setEshop( $eshop );
 			$cd->setExportCode( $this->getCode() );
 			$cd->setCacheKey( $cache_key );
 		}
@@ -128,21 +128,21 @@ abstract class Core_Exports_Module extends Application_Module
 	
 	
 	
-	public function getProductIsSelling( Shops_Shop $shop, int $product_id ) : bool
+	public function getProductIsSelling( EShop $eshop, int $product_id ) : bool
 	{
-		return (bool)Exports_Join_Product::get( $this->getCode(), $shop, $product_id );
+		return (bool)Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
 	}
 	
-	public function getProductCommonData( Shops_Shop $shop, int $product_id, string $common_data_key ) : mixed
+	public function getProductCommonData( EShop $eshop, int $product_id, string $common_data_key ) : mixed
 	{
-		$cd = Exports_Join_ProductCommonData::get( $this->getCode(), $shop, $product_id, $common_data_key );
+		$cd = Exports_Join_ProductCommonData::get( $this->getCode(), $eshop, $product_id, $common_data_key );
 		
 		return $cd?->getCommonData();
 	}
 	
-	public function getProductCommonData_int( Shops_Shop $shop, int $product_id, string $common_data_key ) : ?int
+	public function getProductCommonData_int( EShop $eshop, int $product_id, string $common_data_key ) : ?int
 	{
-		$co = $this->getProductCommonData( $shop, $product_id, $common_data_key );
+		$co = $this->getProductCommonData( $eshop, $product_id, $common_data_key );
 		
 		if(is_array($co)) {
 			return (int)$co[0];
@@ -151,9 +151,9 @@ abstract class Core_Exports_Module extends Application_Module
 		return null;
 	}
 	
-	public function getProductCommonData_float( Shops_Shop $shop, int $product_id, string $common_data_key ) : ?float
+	public function getProductCommonData_float( EShop $eshop, int $product_id, string $common_data_key ) : ?float
 	{
-		$co = $this->getProductCommonData( $shop, $product_id, $common_data_key );
+		$co = $this->getProductCommonData( $eshop, $product_id, $common_data_key );
 		
 		if(is_array($co)) {
 			return (float)$co[0];
@@ -162,9 +162,9 @@ abstract class Core_Exports_Module extends Application_Module
 		return null;
 	}
 	
-	public function getProductCommonData_string( Shops_Shop $shop, int $product_id, string $common_data_key ) : ?string
+	public function getProductCommonData_string( EShop $eshop, int $product_id, string $common_data_key ) : ?string
 	{
-		$co = $this->getProductCommonData( $shop, $product_id, $common_data_key );
+		$co = $this->getProductCommonData( $eshop, $product_id, $common_data_key );
 		
 		if(is_array($co)) {
 			return (string)$co[0];
@@ -174,12 +174,12 @@ abstract class Core_Exports_Module extends Application_Module
 	}
 	
 	
-	public function setProductCommonData( Shops_Shop $shop, int $product_id, string $common_data_key, mixed $common_data ) : void
+	public function setProductCommonData( EShop $eshop, int $product_id, string $common_data_key, mixed $common_data ) : void
 	{
-		$cd = Exports_Join_ProductCommonData::get( $this->getCode(), $shop, $product_id, $common_data_key );
+		$cd = Exports_Join_ProductCommonData::get( $this->getCode(), $eshop, $product_id, $common_data_key );
 		if(!$cd) {
 			$cd = new Exports_Join_ProductCommonData();
-			$cd->setShop( $shop );
+			$cd->setEshop( $eshop );
 			$cd->setExportCode( $this->getCode() );
 			$cd->setProductId( $product_id );
 			$cd->setCommonDataKey( $common_data_key );
@@ -189,45 +189,45 @@ abstract class Core_Exports_Module extends Application_Module
 		$cd->save();
 	}
 	
-	public function stopSelling( Shops_Shop $shop, int $product_id ) : void
+	public function stopSelling( EShop $eshop, int $product_id ) : void
 	{
-		$join = Exports_Join_Product::get( $this->getCode(), $shop, $product_id );
+		$join = Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
 		$join?->delete();
 	}
 	
-	public function startSelling( Shops_Shop $shop, int $product_id ) : void
+	public function startSelling( EShop $eshop, int $product_id ) : void
 	{
-		$join = Exports_Join_Product::get( $this->getCode(), $shop, $product_id );
+		$join = Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
 		if($join) {
 			return;
 		}
 		
 		$join = new Exports_Join_Product();
-		$join->setShop( $shop );
+		$join->setEshop( $eshop );
 		$join->setExportCode( $this->getCode() );
 		$join->setProductId( $product_id );
 		$join->save();
 	}
 	
-	public function getSellingProductIds( Shops_Shop $shop ) : array
+	public function getSellingProductIds( EShop $eshop ) : array
 	{
 		return Exports_Join_Product::getProductIds(
 			$this->getCode(),
-			$shop
+			$eshop
 		);
 	}
 	
 	
-	public function getCategories( Shops_Shop $shop ) : array
+	public function getCategories( EShop $eshop ) : array
 	{
-		return Exports_ExportCategory::getCategories( $shop, $this->getCode() );
+		return Exports_ExportCategory::getCategories( $eshop, $this->getCode() );
 	}
 	
-	public function getCategory( Shops_Shop $shop, Product $product ) : ?Exports_ExportCategory
+	public function getCategory( EShop $eshop, Product $product ) : ?Exports_ExportCategory
 	{
 		$category_id = Exports_Join_KindOfProduct::get(
 			$this->getCode(),
-			$shop,
+			$eshop,
 			$product->getKindId()
 		);
 		
@@ -236,20 +236,20 @@ abstract class Core_Exports_Module extends Application_Module
 		}
 		
 		return Exports_ExportCategory::get(
-			$shop,
+			$eshop,
 			$this->getCode(),
 			$category_id
 		);
 	}
 	
-	public function getParamsEditForm( Shops_Shop $shop, Product $product ) : ?Form
+	public function getParamsEditForm( EShop $eshop, Product $product ) : ?Form
 	{
-		$key = $shop->getKey().':'.$product->getId();
+		$key = $eshop->getKey().':'.$product->getId();
 		
 		if(!isset($this->param_edit_form[$key])) {
 			$category_id = Exports_Join_KindOfProduct::get(
 				$this->getCode(),
-				$shop,
+				$eshop,
 				$product->getKindId()
 			);
 			
@@ -258,7 +258,7 @@ abstract class Core_Exports_Module extends Application_Module
 			}
 			
 			$parameters = Exports_ExportCategory_Parameter::getForCategory(
-				$shop,
+				$eshop,
 				$this->getCode(),
 				$category_id
 			);
@@ -268,7 +268,7 @@ abstract class Core_Exports_Module extends Application_Module
 			}
 			
 			$values = Exports_ExportCategory_Parameter_Value::getForProduct(
-				$shop,
+				$eshop,
 				$this->getCode(),
 				$category_id,
 				$product->getId()
@@ -281,7 +281,7 @@ abstract class Core_Exports_Module extends Application_Module
 				$value = $values[$param_id]??null;
 				if(!$value) {
 					$value = new Exports_ExportCategory_Parameter_Value();
-					$value->setShop( $shop );
+					$value->setEshop( $eshop );
 					$value->setExportCode( $this->getCode() );
 					$value->setExportCategoryId( $category_id );
 					$value->setExportParameterId( $param_id );
@@ -346,9 +346,9 @@ abstract class Core_Exports_Module extends Application_Module
 		return $this->param_edit_form[$key];
 	}
 	
-	public function catchParamsEditForm( Shops_Shop $shop, Product $product ) : bool
+	public function catchParamsEditForm( EShop $eshop, Product $product ) : bool
 	{
-		return $this->getParamsEditForm( $shop, $product )->catch();
+		return $this->getParamsEditForm( $eshop, $product )->catch();
 	}
 	
 	/**

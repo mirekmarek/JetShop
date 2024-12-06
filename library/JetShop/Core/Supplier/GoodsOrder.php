@@ -14,7 +14,7 @@ use JetApplication\Entity_Basic;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Supplier_GoodsOrder_Item;
@@ -265,7 +265,7 @@ abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSe
 		return $this->getOrderCreatedDate();
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
 		return null;
 	}

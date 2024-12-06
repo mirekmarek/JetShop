@@ -88,7 +88,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 		<?php if($card->getCurrency()): ?>
 		<div><?=Tr::_('Current price per unit:')?></div>
 		<div>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $card->getCurrency(), $card->getPricePerUnit() )?>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $card->getCurrency(), $card->getPricePerUnit() )?>
 		</div>
 		<?php endif; ?>
 	</div>

@@ -15,14 +15,14 @@ use JetApplication\EMailMarketing_Subscribe_Log;
 
 
 $email = $this->getRaw('email');
-$shop = $this->getRaw('shop');
+$eshop = $this->getRaw('eshop');
 
 $mailing_subscribe_events = EMailMarketing_Subscribe_Log::get(
-	$shop,
+	$eshop,
 	$email
 );
 
-$subscribed = (bool)EMailMarketing_Subscribe::get( $shop, $email );
+$subscribed = (bool)EMailMarketing_Subscribe::get( $eshop, $email );
 ?>
 		
 <legend>

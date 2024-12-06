@@ -1,9 +1,11 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Signposts;
 
-use Jet\Http_Request;use Jet\Tr;
+use Jet\Http_Request;
+use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
+use JetApplication\Signpost;
 
 echo '&nbsp;';
 echo UI::button('Sort signposts')
@@ -56,7 +58,7 @@ echo $dialog->start();
 				values.push($(item).data('id'));
 			});
 			
-			location = '<?=Http_Request::currentURI(['sort_signposts'=>''])?>'+values.join(',');
+			location.href = '<?=Http_Request::currentURI(['sort_signposts'=>''])?>'+values.join(',');
 
 		}
 	};

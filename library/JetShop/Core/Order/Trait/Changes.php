@@ -7,13 +7,13 @@ use Jet\Logger;
 use JetApplication\Admin_Managers;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order;
 use JetApplication\Order_ChangeHistory;
 use JetApplication\Order_Item;
-use JetApplication\Payment_Method_ShopData;
-use JetApplication\Product_ShopData;
+use JetApplication\Payment_Method_EShopData;
+use JetApplication\Product_EShopData;
 
 trait Core_Order_Trait_Changes {
 	
@@ -40,7 +40,7 @@ trait Core_Order_Trait_Changes {
 		$change->addChange(
 			property: 'idem_deleted',
 			old_value:
-			$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getCurrency(), $item->getPricePerUnit()).')',
+			$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
 			new_value: ''
 		);
 		$change->save();
@@ -121,7 +121,7 @@ trait Core_Order_Trait_Changes {
 				$change->addChange(
 					property: 'idem_deleted',
 					old_value:
-					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getCurrency(), $item->getPricePerUnit()).')',
+					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
 					new_value: ''
 				);
 				
@@ -161,7 +161,7 @@ trait Core_Order_Trait_Changes {
 	}
 	
 	
-	public function addProduct( Product_ShopData $product, float $number_of_units ) : Order_ChangeHistory
+	public function addProduct( Product_EShopData $product, float $number_of_units ) : Order_ChangeHistory
 	{
 		/**
 		 * @var Order $this
@@ -197,7 +197,7 @@ trait Core_Order_Trait_Changes {
 	}
 	
 	
-	public function addGift( Product_ShopData $product, float $number_of_units ) : ?Order_ChangeHistory
+	public function addGift( Product_EShopData $product, float $number_of_units ) : ?Order_ChangeHistory
 	{
 		/**
 		 * @var Order $this
@@ -232,7 +232,7 @@ trait Core_Order_Trait_Changes {
 		return $change;
 	}
 	
-	public function addDeliveryFee( Delivery_Method_ShopData $method, float $fee ) : Order_ChangeHistory
+	public function addDeliveryFee( Delivery_Method_EShopData $method, float $fee ) : Order_ChangeHistory
 	{
 		/**
 		 * @var Order $this
@@ -268,7 +268,7 @@ trait Core_Order_Trait_Changes {
 	}
 	
 	
-	public function addPaymentFee( Payment_Method_ShopData $method, float $fee ) : Order_ChangeHistory
+	public function addPaymentFee( Payment_Method_EShopData $method, float $fee ) : Order_ChangeHistory
 	{
 		/**
 		 * @var Order $this
@@ -388,7 +388,7 @@ trait Core_Order_Trait_Changes {
 	}
 	
 	
-	public function changeDeliveryMethod( Delivery_Method_ShopData $new_delivery_method, string $personal_takeover_delivery_point_code, float $price ) : Order_ChangeHistory
+	public function changeDeliveryMethod( Delivery_Method_EShopData $new_delivery_method, string $personal_takeover_delivery_point_code, float $price ) : Order_ChangeHistory
 	{
 		$change = $this->startChange();
 		
@@ -433,13 +433,13 @@ trait Core_Order_Trait_Changes {
 			
 		}
 		
-		if( $this->delivery_amount!=$price ) {
+		if( $this->delivery_amount_with_VAT!=$price ) {
 			$change->addChange(
 				'delivery_amount',
-				$this->delivery_amount,
+				$this->delivery_amount_with_VAT,
 				$price
 			);
-			$this->delivery_amount = $price;
+			$this->delivery_amount_with_VAT = $price;
 		}
 		
 		
@@ -466,7 +466,7 @@ trait Core_Order_Trait_Changes {
 		return $change;
 	}
 	
-	public function changePaymentMethod( Payment_Method_ShopData $new_payment_method, string $payment_method_specification, float $price ) : Order_ChangeHistory
+	public function changePaymentMethod( Payment_Method_EShopData $new_payment_method, string $payment_method_specification, float $price ) : Order_ChangeHistory
 	{
 		$change = $this->startChange();
 		
@@ -492,13 +492,13 @@ trait Core_Order_Trait_Changes {
 			
 		}
 		
-		if( $this->payment_amount!=$price ) {
+		if( $this->payment_amount_with_VAT!=$price ) {
 			$change->addChange(
 				'payment_amount',
-				$this->payment_amount,
+				$this->payment_amount_with_VAT,
 				$price
 			);
-			$this->payment_amount = $price;
+			$this->payment_amount_with_VAT = $price;
 		}
 		
 		
@@ -658,7 +658,7 @@ trait Core_Order_Trait_Changes {
 				$change->addChange(
 					property: 'idem_deleted',
 					old_value:
-					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getCurrency(), $item->getPricePerUnit()).')',
+					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
 					new_value: ''
 				);
 				

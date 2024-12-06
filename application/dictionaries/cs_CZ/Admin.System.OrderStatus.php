@@ -12,7 +12,7 @@ return [
 	'Order is being processed' => 'Objednávka se zpracovává',
 	'Order is dispatched' => 'Objednávka je odeslána',
 	'Cancelled' => 'Zrušeno',
-	'Returned' => 'Vrátil',
+	'Returned' => 'Vráceno',
 	'Code:' => 'Kód:',
 	'Kind:' => 'Druh:',
 	'Order Status <b>%ITEM_NAME%</b> has been created' => 'Stav objednávky <b>%ITEM_NAME%</b> bylo vytvořeno',

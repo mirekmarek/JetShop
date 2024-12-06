@@ -1,0 +1,22 @@
+<?php
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+echo UI::button(Tr::_('Note'))
+	->setClass(UI_button::CLASS_INFO)
+	->setIcon('pen-to-square')
+	->setOnClick("NoteHandler.showDialog();");
+
+
+

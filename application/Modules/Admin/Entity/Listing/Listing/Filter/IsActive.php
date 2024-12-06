@@ -12,8 +12,8 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
 
 
 class Listing_Filter_IsActive extends Listing_Filter_Abstract
@@ -22,9 +22,9 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 	
 	protected string $is_active_general = '';
 	
-	protected array $is_active_per_shop = [];
+	protected array $is_active_per_eshop = [];
 	
-	protected ?bool $multi_shop_mode = null;
+	protected ?bool $multi_eshop_mode = null;
 	
 	public function __construct()
 	{
@@ -36,9 +36,9 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 	}
 	
 
-	public function isMultiShopMode(): bool
+	public function isMultiEShopMode(): bool
 	{
-		if($this->multi_shop_mode===null) {
+		if($this->multi_eshop_mode===null) {
 			/**
 			 * @var Listing $listing
 			 */
@@ -46,26 +46,26 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 			
 			$entity = $listing->getEntity();
 			
-			$this->multi_shop_mode = ($entity instanceof Entity_WithShopData);
+			$this->multi_eshop_mode = ($entity instanceof Entity_WithEShopData);
 			
 			if(
-				$this->multi_shop_mode &&
-				!Shops::isMultiShopMode()
+				$this->multi_eshop_mode &&
+				!EShops::isMultiEShopMode()
 			)  {
-				$this->multi_shop_mode = false;
+				$this->multi_eshop_mode = false;
 			}
 			
-			if($this->multi_shop_mode) {
-				foreach(Shops::getListSorted() as $code => $shop) {
-					if(!array_key_exists($code, $this->is_active_per_shop)) {
-						$this->is_active_per_shop[$code] = '';
+			if($this->multi_eshop_mode) {
+				foreach( EShops::getListSorted() as $code => $eshop) {
+					if(!array_key_exists($code, $this->is_active_per_eshop)) {
+						$this->is_active_per_eshop[$code] = '';
 					}
 				}
 			}
 			
 		}
 		
-		return $this->multi_shop_mode;
+		return $this->multi_eshop_mode;
 	}
 	
 	
@@ -78,12 +78,12 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 			$this->listing->setParam('is_active_general', $this->is_active_general);
 		}
 		
-		if($this->isMultiShopMode()) {
-			foreach(Shops::getListSorted() as $code => $shop) {
-				$this->is_active_per_shop[$code] = Http_Request::GET()->getString('is_active_'.$code, '', ['', '1', '-1']);
+		if($this->isMultiEShopMode()) {
+			foreach( EShops::getListSorted() as $code => $eshop) {
+				$this->is_active_per_eshop[$code] = Http_Request::GET()->getString('is_active_'.$code, '', ['', '1', '-1']);
 				
-				if($this->is_active_per_shop[$code]!='') {
-					$this->listing->setParam('is_active_'.$code, $this->is_active_per_shop[$code]);
+				if( $this->is_active_per_eshop[$code]!='') {
+					$this->listing->setParam('is_active_'.$code, $this->is_active_per_eshop[$code]);
 				}
 			}
 		}
@@ -108,11 +108,11 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 		$is_active_general->setErrorMessages($error_messages);
 		$form->addField($is_active_general);
 		
-		if($this->isMultiShopMode()) {
-			foreach( Shops::getListSorted() as $code => $shop ) {
+		if($this->isMultiEShopMode()) {
+			foreach( EShops::getListSorted() as $code => $eshop ) {
 				
-				$is_active = new Form_Field_Select( 'is_active_' . $code, 'Is active - ' . $shop->getShopName() . ':' );
-				$is_active->setDefaultValue( $this->is_active_per_shop[$code] );
+				$is_active = new Form_Field_Select( 'is_active_' . $code, 'Is active - ' . $eshop->getName() . ':' );
+				$is_active->setDefaultValue( $this->is_active_per_eshop[$code] );
 				$is_active->setSelectOptions( $options );
 				$is_active->setErrorMessages( $error_messages );
 				$form->addField( $is_active );
@@ -129,11 +129,11 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 			$this->listing->setParam('is_active_general', '');
 		}
 		
-		if($this->isMultiShopMode()) {
-			foreach(Shops::getListSorted() as $code => $shop) {
-				$this->is_active_per_shop[$code] = $form->field('is_active_'.$code)->getValue();
-				if($this->is_active_per_shop[$code]!='') {
-					$this->listing->setParam('is_active_'.$code, $this->is_active_per_shop[$code]);
+		if($this->isMultiEShopMode()) {
+			foreach( EShops::getListSorted() as $code => $eshop) {
+				$this->is_active_per_eshop[$code] = $form->field('is_active_'.$code)->getValue();
+				if( $this->is_active_per_eshop[$code]!='') {
+					$this->listing->setParam('is_active_'.$code, $this->is_active_per_eshop[$code]);
 				} else {
 					$this->listing->unsetParam('is_active_'.$code);
 				}
@@ -153,21 +153,21 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 			$where['is_active'] = ($this->is_active_general=='1');
 		}
 		
-		if($this->isMultiShopMode()) {
+		if($this->isMultiEShopMode()) {
 			
-			$shop_data = $listing->getEntity()::getEntityShopDataInstance();
-			foreach(Shops::getList() as $code=>$shop) {
-				if($this->is_active_per_shop[$code]=='') {
+			$eshop_data = $listing->getEntity()::getEntityShopDataInstance();
+			foreach( EShops::getList() as $code=>$eshop) {
+				if( $this->is_active_per_eshop[$code]=='') {
 					continue;
 				}
 				
 				
-				$ids = $shop_data::dataFetchCol(
+				$ids = $eshop_data::dataFetchCol(
 					select:['entity_id'],
 					where: [
-						$shop->getWhere(),
+						$eshop->getWhere(),
 						'AND',
-						'is_active_for_shop' => ($this->is_active_per_shop[$code]=='1')
+						'is_active_for_eshop' => ($this->is_active_per_eshop[$code]=='1')
 					]);
 
 				if(!$ids) {

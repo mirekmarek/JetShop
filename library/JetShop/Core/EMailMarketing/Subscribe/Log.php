@@ -12,8 +12,8 @@ use Jet\Http_Request;
 use Jet\Tr;
 
 use JetApplication\EMailMarketing_Subscribe_Log;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 /**
  *
@@ -22,7 +22,7 @@ use JetApplication\Shops_Shop;
 	name: 'mailing_subscribe_log',
 	database_table_name: 'mailing_subscribe_log',
 )]
-abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
+abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithEShopRelation
 {
 	public const EVENT_SUBSCRIBE = 'subscribe';
 	public const EVENT_UNSUBSCRIBE = 'unsubscribe';
@@ -107,15 +107,15 @@ abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
 	
 
 	/**
-	 * @param Shops_Shop $shop
+	 * @param EShop $eshop
 	 * @param string $email_address
 	 *
 	 * @return EMailMarketing_Subscribe_Log[]
 	 */
-	public static function get( Shops_Shop $shop, string $email_address ) : iterable
+	public static function get( EShop $eshop, string $email_address ) : iterable
 	{
 		$where = [
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'email_address' => $email_address
 		];
@@ -269,13 +269,13 @@ abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
 	}
 
 	public static function subscribe(
-		Shops_Shop $shop,
+		EShop  $eshop,
 		string $email_address,
 		string $source,
 		string $comment
 	) : EMailMarketing_Subscribe_Log {
 		return EMailMarketing_Subscribe_Log::_event(
-			$shop,
+			$eshop,
 			$email_address,
 			$source,
 			$comment,
@@ -284,14 +284,14 @@ abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
 	}
 
 	public static function unsubscribe(
-		Shops_Shop $shop,
+		EShop  $eshop,
 		string $email_address,
 		string $source,
 		string $comment
 	) : EMailMarketing_Subscribe_Log {
 
 		return EMailMarketing_Subscribe_Log::_event(
-			$shop,
+			$eshop,
 			$email_address,
 			$source,
 			$comment,
@@ -301,7 +301,7 @@ abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
 
 	
 	public static function _event(
-		Shops_Shop $shop,
+		EShop  $eshop,
 		string $email_address,
 		string $source,
 		string $comment,
@@ -313,7 +313,7 @@ abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
 		$e->date_time = Data_DateTime::now();
 		$e->ip_address = Http_Request::clientIP();
 		$e->event = $event;
-		$e->setShop($shop);
+		$e->setEshop($eshop);
 		$e->email_address = $email_address;
 		$e->source = $source;
 		$e->comment = $comment;
@@ -325,21 +325,21 @@ abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithShopRelation
 	}
 
 
-	public static function changeMail( Shops_Shop $shop,string $old_email_address, string $new_mail_address, string $source, string $comment='' ) : void
+	public static function changeMail( EShop $eshop, string $old_email_address, string $new_mail_address, string $source, string $comment='' ) : void
 	{
 		EMailMarketing_Subscribe_Log::updateData(
 			[
 				'email_address' => $new_mail_address
 			],
 			[
-				$shop->getWhere(),
+				$eshop->getWhere(),
 				'AND',
 				'email_address' => $old_email_address
 			]
 		);
 
 		EMailMarketing_Subscribe_Log::_event(
-			$shop,
+			$eshop,
 			$new_mail_address,
 			$source,
 			$comment,

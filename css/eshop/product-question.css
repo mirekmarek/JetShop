@@ -1,0 +1,38 @@
+.new-product-question-form {
+	display: grid;
+	grid-template-columns: 200px 500px;
+	gap: 10px;
+}
+
+
+@media screen and ( width <= 1000px ) {
+	.new-product-question-form {
+		width: 100%;
+		grid-template-columns: 1fr;
+	}
+
+	#new_product_question_dialog {
+		width: 100vw;
+	}
+}
+
+
+.product-question {
+	padding: 10px;
+	border: 1px solid #c9c9c9;
+	margin: 10px;
+	border-radius: 5px;
+}
+
+.product-question>.date-time {
+	text-align: right;
+}
+
+.product-question>.question {
+	padding: 10px;
+}
+
+
+.product-question>.answer {
+	padding: 20px;
+}

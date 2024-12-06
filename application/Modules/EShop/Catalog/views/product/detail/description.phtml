@@ -1,0 +1,18 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+?>
+<h3><?=Tr::_('Description')?></h3>
+<div id="product_description">
+	<?=$product->getDescription();?>
+</div>

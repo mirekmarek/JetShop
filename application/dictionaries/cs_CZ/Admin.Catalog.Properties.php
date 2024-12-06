@@ -87,4 +87,7 @@ return [
 	'Create' => 'Vytvořit',
 	'Please enter a value' => 'Zadejte hodnotu',
 	'General' => 'Všeobecné',
+	'Out of range' => 'Mimo dosah',
+	'Usage' => 'Používání',
+	'Is active - %what%' => '',
 ];

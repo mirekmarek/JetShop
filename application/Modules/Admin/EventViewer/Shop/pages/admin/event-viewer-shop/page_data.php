@@ -1,13 +1,13 @@
 <?php
 return [
 	'id' => 'event-viewer-shop',
-	'name' => 'Event viewer - Shop',
+	'name' => 'Event viewer - e-shop',
 	'is_active' => true,
 	'SSL_required' => false,
-	'title' => 'Event viewer - Shop',
+	'title' => 'Event viewer - e-shop',
 	'icon' => 'eye',
-	'menu_title' => 'Event viewer - Shop',
-	'breadcrumb_title' => 'Event viewer - Shop',
+	'menu_title' => 'Event viewer - e-shop',
+	'breadcrumb_title' => 'Event viewer - e-shop',
 	'order' => 0,
 	'is_secret' => false,
 	'layout_script_name' => '',

@@ -1,0 +1,138 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_icon;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+
+$count = 0;
+$previews = array();
+
+for ($i = 0; $i <= 9; $i++) {
+	if ($img = $product->getImg($i)) {
+		$previews[] = array(
+			'url' => $product->getImgUrl( $i ),
+			'image' => $product->getImgThumbnailUrl($i, 110, 110 )
+		);
+	}
+}
+?>
+	<?php if( $product->getImg( 0 ) ): ?>
+		<a href="<?= $product->getImgUrl( 0 ) ?>"
+		   title="<?= $product->getFullName() ?>"
+		   class="product-image"
+		   onclick="return false;"
+		>
+			<img src="<?= $product->getImgThumbnailUrl( 0, 650, 650 ) ?>" class="main-image"/>
+		</a>
+	<?php endif; ?>
+	
+	<div class="other-images">
+		<?php foreach ($previews as $i=>$preview):
+			if($i==0) {
+				continue;
+			}
+			?>
+			
+				<a href="<?= $preview['url'] ?>" class="product-image" onclick="return false;">
+					<img src="<?= $preview['image'] ?>"/>
+				</a>
+		<?php endforeach; ?>
+	
+	</div>
+<?php
+$dialog = UI::dialog('show_image_dialog', '');
+
+echo $dialog->start();
+?>
+	<div  id="image_area">
+		<div onclick="productImages.prevImage();" id="prev_image_btn"><?=UI::icon('prev-page')->setSize(UI_icon::SIZE_EXTRA_LARGE)?></div>
+		<div onclick="productImages.nextImage();" id="next_image_btn"><?=UI::icon('next-page')->setSize(UI_icon::SIZE_EXTRA_LARGE)?></div>
+	</div>
+<?php
+echo $dialog->end();
+?>
+
+<script>
+	const productImages = {
+		list: [],
+		current: null,
+		last: 0,
+
+		init: () => {
+			document.querySelectorAll('.product-image').forEach( ( node, i ) => {
+				productImages.list.push( node );
+
+				node.addEventListener('click', () => {
+					dialog.open('show_image_dialog');
+					productImages.open( i, node.href );
+					return false;
+				});
+			} );
+
+			productImages.last = productImages.list.length - 1;
+
+			document.addEventListener('keyup', ( e ) => {
+				if(e.code=='ArrowLeft') {
+					productImages.prevImage();
+				}
+				if(e.code=='ArrowRight') {
+					productImages.nextImage();
+				}
+			})
+		},
+
+		open: ( i, url ) => {
+			productImages.current = i;
+			document.getElementById('image_area').style.backgroundImage = 'url('+url+')';
+
+			if(productImages.current<1) {
+				document.getElementById('prev_image_btn').style.opacity = '0';
+			} else {
+				document.getElementById('prev_image_btn').style.opacity = '';
+			}
+
+			if(productImages.current>=productImages.last) {
+				document.getElementById('next_image_btn').style.opacity = '0';
+			} else {
+				document.getElementById('next_image_btn').style.opacity = '';
+			}
+
+
+		},
+
+		prevImage: () => {
+			if(productImages.current<1) {
+				return;
+			}
+
+			let prev = productImages.current;
+			prev--;
+			productImages.open(prev, productImages.list[prev]);
+		},
+
+		nextImage: () => {
+
+			if( productImages.current>=productImages.last ) {
+				return;
+			}
+
+			let next = productImages.current;
+			next++;
+			productImages.open(next, productImages.list[next]);
+
+		}
+	};
+
+	productImages.init();
+
+</script>

@@ -16,7 +16,7 @@ use JetApplication\OrderDispatch;
 use JetApplication\Order;
 use JetApplication\Product;
 use JetApplication\Product_Availability;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 use JetApplication\WarehouseManagement_Manager;
@@ -105,7 +105,7 @@ class Main extends Application_Module implements WarehouseManagement_Manager
 			if( ($set_items=$item->getSetItems()) ) {
 
 				foreach( $set_items as $set_item ) {
-					$product = Product_ShopData::get( $set_item->getItemId(), $order->getShop() );
+					$product = Product_EShopData::get( $set_item->getItemId(), $order->getEshop() );
 					
 					if(
 						!$product ||
@@ -163,7 +163,7 @@ class Main extends Application_Module implements WarehouseManagement_Manager
 
 			
 			} else {
-				$product = Product_ShopData::get( $item->getItemId(), $order->getShop() );
+				$product = Product_EShopData::get( $item->getItemId(), $order->getEshop() );
 				if(!$product) {
 					continue;
 				}
@@ -219,7 +219,7 @@ class Main extends Application_Module implements WarehouseManagement_Manager
 	
 	public function manageNewOrder( Order $order ) : void {
 		
-		$warehouse = WarehouseManagement_Warehouse::get( $order->getShop()->getDefaultWarehouseId() );
+		$warehouse = WarehouseManagement_Warehouse::get( $order->getEshop()->getDefaultWarehouseId() );
 		
 		$order->setWarehouse( $warehouse );
 		

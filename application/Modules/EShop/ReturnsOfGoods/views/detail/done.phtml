@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\EShop\ReturnsOfGoods;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use JetApplication\EShop_Managers;
+use JetApplication\Product_EShopData;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $edit_form
+ * @var Product_EShopData $product
+ * @var ReturnOfGoods $return
+ */
+
+$return = $this->getRaw('return');
+$edit_form = $this->getRaw('form');
+$product = $return->getProduct();
+
+echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+?>
+<div class="customer-section-container">
+<div class="card">
+	<div class="card-body">
+		<h5 class="card-title"><?=Tr::_('Return of goods %n%', ['n'=>$return->getNumber()])?></h5>
+
+		<div class="return-of-goods-product">
+			<div>
+				<?php if($product->getImg(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+		</div>
+		
+		<?=$this->render('return-of-goods-status')?>
+		<br>
+		
+		<div class="card card-body return-of-goods-description">
+			<?=nl2br( $return->getProblemDescription() )?>
+		</div>
+		
+	</div>
+</div>
+</div>

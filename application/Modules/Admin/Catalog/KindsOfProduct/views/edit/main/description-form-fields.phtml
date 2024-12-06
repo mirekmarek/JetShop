@@ -1,0 +1,24 @@
+<?php
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\Locale;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Locale $locale
+ */
+$form = $this->getRaw('form');
+$locale = $this->getRaw('locale');
+$locale = $locale->toString();
+?>
+<fieldset>
+	<legend class="sub"><?=Tr::_('Main data')?></legend>
+	
+	<?=$form->field('/description/'.$locale.'/name');?>
+	<?=$form->field('/description/'.$locale.'/variant_select_description');?>
+	<?=$form->field('/description/'.$locale.'/similar_product_select_description');?>
+	<?=$form->field('/description/'.$locale.'/description');?>
+</fieldset>

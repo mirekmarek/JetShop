@@ -7,6 +7,7 @@ use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
 
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\Product;
 use JetApplication\Supplier_GoodsOrder_Item;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
@@ -189,7 +190,7 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods_Item extends DataModel_Re
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	public function setMeasureUnit( ?MeasureUnit $measure_unit ): void

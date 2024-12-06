@@ -4,8 +4,8 @@ namespace JetApplicationModule\Admin\ImageManager;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Image;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 /**
  * @var MVC_View   $this
@@ -14,17 +14,17 @@ use JetApplication\Shops_Shop;
 $image_manager = $this->getRaw('manager');
 $UI_manager = Admin_Managers::UI();
 
-if($image_manager->getShopSyncMode()):
-	foreach(Shops::getList() as $shop):
-		echo $image_manager->renderImageWidgets( $shop );
+if($image_manager->getEshopSyncMode()):
+	foreach( EShops::getList() as $eshop):
+		echo $image_manager->renderImageWidgets( $eshop );
 		break;
 	endforeach;
 else:
 	echo '<br>';
-	Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
+	echo Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
 		inline_mode: true,
-		renderer: function( Shops_Shop $shop, string $shop_key ) use ($image_manager) : void {
-			echo $image_manager->renderImageWidgets( $shop );
+		renderer: function( EShop $eshop, string $eshop_key ) use ($image_manager) : void {
+			echo $image_manager->renderImageWidgets( $eshop );
 		});
 	
 endif;

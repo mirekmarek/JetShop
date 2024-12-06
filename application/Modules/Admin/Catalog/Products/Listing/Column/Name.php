@@ -4,7 +4,8 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\Product;
 
 class Listing_Column_Name extends DataListing_Column
 {
@@ -17,12 +18,12 @@ class Listing_Column_Name extends DataListing_Column
 	
 	public function getOrderByAsc(): array|string
 	{
-		return '+products_shop_data.name';
+		return '+products_eshop_data.name';
 	}
 	
 	public function getOrderByDesc(): array|string
 	{
-		return '-products_shop_data.name';
+		return '-products_eshop_data.name';
 	}
 
 	public function getTitle(): string
@@ -34,8 +35,8 @@ class Listing_Column_Name extends DataListing_Column
 	{
 		$headers = [];
 		
-		foreach(Shops::getListSorted() as $shop ) {
-			$headers[] = 'Name - '.$shop->getShopName();
+		foreach( EShops::getListSorted() as $eshop ) {
+			$headers[] = 'Name - '.$eshop->getName();
 		}
 		
 		return $headers;
@@ -48,8 +49,8 @@ class Listing_Column_Name extends DataListing_Column
 		 */
 		$data = [];
 		
-		foreach(Shops::getListSorted() as $shop ) {
-			$data[] = $item->getShopData($shop)->getFullName();
+		foreach( EShops::getListSorted() as $eshop ) {
+			$data[] = $item->getEshopData($eshop)->getFullName();
 		}
 		
 		return $data;

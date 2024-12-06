@@ -9,16 +9,16 @@ use Jet\MVC;
 use Jet\Form_Field_Input;
 
 use JetApplication\Content_InfoPage;
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Trait;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 #[DataModel_Definition]
-class InfoPage extends Content_InfoPage implements Admin_Entity_WithShopData_Interface
+class InfoPage extends Content_InfoPage implements Admin_Entity_WithEShopData_Interface
 {
 	
-	use Admin_Entity_WithShopData_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	public function getEditURL() : string
 	{
@@ -29,11 +29,11 @@ class InfoPage extends Content_InfoPage implements Admin_Entity_WithShopData_Int
 	{
 		$form->field('page_id')->setIsReadonly( true );
 		
-		foreach(Shops::getList() as $shop) {
+		foreach( EShops::getList() as $eshop) {
 			
-			$form->field('/shop_data/'.$shop->getKey().'/relative_path_fragment')
-				->setValidator( function( Form_Field_Input $field ) use ($shop) {
-					return $this->_pathFragmentValidator( $field, $shop );
+			$form->field('/eshop_data/'.$eshop->getKey().'/relative_path_fragment')
+				->setValidator( function( Form_Field_Input $field ) use ($eshop) {
+					return $this->_pathFragmentValidator( $field, $eshop );
 				} );
 			
 		}
@@ -46,8 +46,8 @@ class InfoPage extends Content_InfoPage implements Admin_Entity_WithShopData_Int
 		$form->field('page_id')->setValidator(function( $page_id_field ) {
 			$page_id = $page_id_field->getValue();
 			
-			foreach(Shops::getList() as $shop) {
-				if( MVC::getPage( $page_id, $shop->getLocale(), $shop->getBaseId() ) ) {
+			foreach( EShops::getList() as $eshop) {
+				if( MVC::getPage( $page_id, $eshop->getLocale(), $eshop->getBaseId() ) ) {
 					$page_id_field->setError( 'page_id_is_not_unique' );
 					
 					return false;
@@ -58,17 +58,17 @@ class InfoPage extends Content_InfoPage implements Admin_Entity_WithShopData_Int
 		});
 		
 		
-		foreach(Shops::getList() as $shop) {
+		foreach( EShops::getList() as $eshop) {
 			
-			$form->field('/shop_data/'.$shop->getKey().'/relative_path_fragment')
-				->setValidator( function( Form_Field_Input $field ) use ($shop) {
-					return $this->_pathFragmentValidator( $field, $shop );
+			$form->field('/eshop_data/'.$eshop->getKey().'/relative_path_fragment')
+				->setValidator( function( Form_Field_Input $field ) use ($eshop) {
+					return $this->_pathFragmentValidator( $field, $eshop );
 				} );
 			
 		}
 	}
 	
-	public function _pathFragmentValidator( Form_Field_Input $field, Shops_Shop $shop  ) : bool
+	public function _pathFragmentValidator( Form_Field_Input $field, EShop $eshop  ) : bool
 	{
 		$value = $field->getValue();
 		
@@ -87,7 +87,7 @@ class InfoPage extends Content_InfoPage implements Admin_Entity_WithShopData_Int
 			return false;
 		}
 		
-		$parent = MVC::getBase($shop->getBaseId())->getHomepage($shop->getLocale());
+		$parent = MVC::getBase($eshop->getBaseId())->getHomepage($eshop->getLocale());
 		
 		
 		foreach( $parent->getChildren() as $ch ) {

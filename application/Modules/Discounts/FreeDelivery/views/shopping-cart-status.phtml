@@ -1,6 +1,6 @@
 <?php
 use Jet\MVC_View;
-use JetApplication\Shop_Managers;
+use JetApplication\EShop_Managers;
 use Jet\Tr;
 
 /**
@@ -12,7 +12,7 @@ if($remains===false) {
 	return;
 }
 
-$formatter = Shop_Managers::PriceFormatter();
+$formatter = EShop_Managers::PriceFormatter();
 if($remains>0):
 	?>
 

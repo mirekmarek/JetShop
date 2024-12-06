@@ -8,6 +8,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 
 /**
  * @var MVC_View   $this
@@ -28,7 +29,7 @@ $new_measure_unit = $this->getRaw('new_measure_unit');
 			<th><?=Tr::_('Name')?></th>
 		</tr>
 		</thead>
-		<?php foreach( MeasureUnit::getList() as $munit):
+		<?php foreach( MeasureUnits::getList() as $munit):
 			$edit_URL = Http_Request::currentURI(set_GET_params: ['measure_unit'=>$munit->getCode()], unset_GET_params: ['add']);
 		
 			if( $selected_measure_unit?->getCode()==$munit->getCode() ):

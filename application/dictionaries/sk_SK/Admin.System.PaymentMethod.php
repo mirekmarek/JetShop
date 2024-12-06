@@ -30,5 +30,5 @@ return [
 	'Cash' => 'Hotovosť',
 	'Loan' => 'Pôžička',
 	'Loan - online' => 'Pôžička - online',
-	'Bank transfer' => 'bankový prevod',
+	'Bank transfer' => 'Bankový prevod',
 ];

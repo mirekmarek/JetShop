@@ -4,15 +4,15 @@ namespace JetApplicationModule\Admin\Content\Email\Templates;
 use Jet\DataModel_Definition;
 use Jet\Form;
 
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Trait;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\EMail_TemplateText;
 
 #[DataModel_Definition]
-class EmailTemplateText extends EMail_TemplateText implements Admin_Entity_WithShopData_Interface
+class EmailTemplateText extends EMail_TemplateText implements Admin_Entity_WithEShopData_Interface
 {
 	
-	use Admin_Entity_WithShopData_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	public function getEditURL() : string
 	{

@@ -1,0 +1,20 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\WithEShopData;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+?>
+
+<?php require 'toolbar.phtml'; ?>
+
+<div id="main-col">
+	<?php
+	echo $this->getRaw('tabs');
+	echo Admin_Managers::Image()->renderStandardManagement();
+	?>
+</div>
+

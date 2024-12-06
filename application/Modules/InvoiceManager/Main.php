@@ -61,7 +61,7 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 	public function generateInvoicePDF( Invoice $invoice, string $force_template=''  ) : string
 	{
 		if(!$force_template) {
-			$force_template = CompanyInfo::get( $invoice->getShop() )->getInvoicePdfTemplate();
+			$force_template = CompanyInfo::get( $invoice->getEshop() )->getInvoicePdfTemplate();
 			if(!$force_template) {
 				$force_template = 'default';
 			}
@@ -78,7 +78,7 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 	public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice, string $force_template=''  ) : string
 	{
 		if(!$force_template) {
-			$force_template = CompanyInfo::get( $invoice->getShop() )->getInvoiceInAdvancePdfTemplate();
+			$force_template = CompanyInfo::get( $invoice->getEshop() )->getInvoiceInAdvancePdfTemplate();
 			if(!$force_template) {
 				$force_template = 'default';
 			}
@@ -96,7 +96,7 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 	public function generateDeliveryNotePDF( DeliveryNote $invoice, string $force_template=''  ) : string
 	{
 		if(!$force_template) {
-			$force_template = CompanyInfo::get( $invoice->getShop() )->getInvoiceInAdvancePdfTemplate();
+			$force_template = CompanyInfo::get( $invoice->getEshop() )->getInvoiceInAdvancePdfTemplate();
 			if(!$force_template) {
 				$force_template = 'default';
 			}
@@ -133,7 +133,7 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 		$email_template = new EMailTemplate_Invoice();
 		$email_template->setInvoice( $invoice );
 		
-		$email_template->createEmail( $invoice->getShop() )->send();
+		$email_template->createEmail( $invoice->getEshop() )->send();
 	}
 	
 	public function sendInvoiceInAdvance( InvoiceInAdvance $invoice ) : void
@@ -141,7 +141,7 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 		$email_template = new EMailTemplate_InvoiceInAdvance();
 		$email_template->setInvoice( $invoice );
 		
-		$email_template->createEmail( $invoice->getShop() )->send();
+		$email_template->createEmail( $invoice->getEshop() )->send();
 	}
 	
 	public function sendDeliveryNote( DeliveryNote $invoice ) : void
@@ -149,7 +149,7 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 		$email_template = new EMailTemplate_DeliveryNote();
 		$email_template->setInvoice( $invoice );
 		
-		$email_template->createEmail( $invoice->getShop() )->send();
+		$email_template->createEmail( $invoice->getEshop() )->send();
 	}
 	
 	
@@ -179,8 +179,8 @@ class Main extends Application_Module implements Invoice_Manager, EMail_Template
 			dictionary: $this->module_manifest->getName(),
 			action: function() use ($invoice, $force_template, $template_dir) {
 				$current_locale = Locale::getCurrentLocale();
-				Locale::setCurrentLocale( $invoice->getShop()->getLocale() );
-				Tr::setCurrentLocale( $invoice->getShop()->getLocale() );
+				Locale::setCurrentLocale( $invoice->getEshop()->getLocale() );
+				Tr::setCurrentLocale( $invoice->getEshop()->getLocale() );
 				
 				$tcpdf = new class(
 					'P',

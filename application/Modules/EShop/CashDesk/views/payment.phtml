@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+if($cash_desk->getCurrentStep()==CashDesk::STEP_DELIVERY) {
+	return;
+}
+if($cash_desk->getCurrentStep()!=CashDesk::STEP_PAYMENT):
+	require 'payment/has_been_selected.phtml';
+	return;
+endif;
+$payment_methods = $cash_desk->getAvailablePaymentMethods();
+$selected_payment_method = $cash_desk->getSelectedPaymentMethod();
+?>
+<span class="step-title"><?= Tr::_('Please select your preferred payment method') ?></span>
+
+<div class="methods">
+<?php foreach ($payment_methods as $payment_method):
+	$this->setVar( 'payment_method', $payment_method );
+	
+	if( $payment_method->getId()==$selected_payment_method->getId() ) {
+		require 'payment/method/selected.phtml';
+	} else {
+		require 'payment/method/not-selected.phtml';
+	}
+endforeach ?>
+</div>
+
+<div class="continue-button-area">
+	<?=UI::button(Tr::_('Continue'))->setOnclick('CashDesk.payment.continue()')->setClass('primary')?>
+</div>

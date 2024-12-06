@@ -4,7 +4,7 @@ namespace JetShop;
 use JetApplication\Product_Parameter_InfoNotAvl;
 use JetApplication\Product_Parameter_Value;
 use JetApplication\Product_Parameter_TextValue;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_Product_Parameter {
 	
@@ -58,7 +58,7 @@ abstract class Core_Product_Parameter {
 	}
 	
 	
-	public function getPropertyTextValue( Shops_Shop $shop ) : string
+	public function getPropertyTextValue( EShop $eshop ) : string
 	{
 		$_values =  $this->getParameterTextValuesMap()[$this->property_id]??null;
 		
@@ -66,11 +66,11 @@ abstract class Core_Product_Parameter {
 			return '';
 		}
 		
-		if(!isset($_values[$shop->getKey()])) {
+		if(!isset( $_values[$eshop->getKey()])) {
 			return '';
 		}
 		
-		return $_values[$shop->getKey()]->getText();
+		return $_values[$eshop->getKey()]->getText();
 	}
 	
 	
@@ -178,20 +178,20 @@ abstract class Core_Product_Parameter {
 		return $updated;
 	}
 	
-	public function setPropertyTextValue( Shops_Shop $shop, string $text ) : bool
+	public function setPropertyTextValue( EShop $eshop, string $text ) : bool
 	{
-		$current_value = $this->getParameterTextValuesMap()[$shop->getKey()]??null;
+		$current_value = $this->getParameterTextValuesMap()[$eshop->getKey()]??null;
 
 		
 		if(!$current_value) {
 			$v = new Product_Parameter_TextValue();
 			$v->setProductId( $this->product_id );
 			$v->setPropertyId( $this->property_id );
-			$v->setShop( $shop );
+			$v->setEshop( $eshop );
 			$v->setText( $text );
 			$v->save();
 			
-			static::$text_value_maps[$this->product_id][$this->property_id][$shop->getKey()] = $v;
+			static::$text_value_maps[$this->product_id][$this->property_id][$eshop->getKey()] = $v;
 			
 			return true;
 		}

@@ -1,0 +1,58 @@
+<?php
+namespace JetApplicationModule\EShop\Complaints;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\EShop_Managers;
+use JetApplication\Order;
+use JetApplication\Product_EShopData;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View   $this
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+
+$showProduct = function( Product_EShopData $product ) use ($order) {
+	
+	$complaints = Complaint::getByOrderItem( $order, $product->getId() );
+	?>
+	<div class="card card-body complaints-select-product-item">
+		<div class="complaints-product">
+			<div>
+				<?php if($product->getImg(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 150, 150)?>"></a>
+				<?php endif; ?>
+			</div>
+			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+		</div>
+		<div class="buttons">
+			<?php if(count($complaints)): ?>
+				<?php foreach($complaints as $complaint): ?>
+				<div class="exists-request">
+					<a href="<?=$complaint->getURL()?>"><?=$complaint->getNumber()?></a><br>
+				</div>
+				<?php endforeach; ?>
+
+				<?=UI::button( Tr::_('Initiate next complaint') )->setUrl(Http_Request::currentURL(['product_id'=>$product->getId()]))->setClass(UI_button::CLASS_LIGHT)?>
+			<?php else: ?>
+				<?=UI::button( Tr::_('Initiate a complaint') )->setUrl(Http_Request::currentURL(['product_id'=>$product->getId()]))->setClass(UI_button::CLASS_INFO)?>
+			<?php endif; ?>
+		</div>
+
+	</div>
+	<?php
+};
+
+echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+?>
+<div class="customer-section-container">
+	<?php foreach($order->getPhysicalProductOverview() as $item):
+		$showProduct( $item->getProduct() );
+	endforeach; ?>
+</div>

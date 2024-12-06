@@ -1,5 +1,5 @@
 <?php
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -7,12 +7,12 @@ use Jet\Form;
 /**
  * @var MVC_View $this
  * @var Form $form
- * @var Shops_Shop $shop
+ * @var EShop $eshop
  */
 $form = $this->getRaw('form');
-$shop = $this->getRaw('shop');
-$shop_key = $shop->getKey();
+$eshop = $this->getRaw('eshop');
+$eshop_key = $eshop->getKey();
 
 ?>
-<?=$form->field('/shop_data/'.$shop_key.'/name');?>
-<?=$form->field('/shop_data/'.$shop_key.'/about_author');?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/name');?>
+<?=$form->field('/eshop_data/'.$eshop_key.'/about_author');?>

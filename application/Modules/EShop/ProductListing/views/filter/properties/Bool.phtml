@@ -1,0 +1,77 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\ProductListing;
+use JetApplication\Property_Options_Option_EShopData;
+use JetApplication\Property_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ * @var Property_EShopData $property
+ * @var Property_Options_Option_EShopData[] $options
+ */
+
+$listing = $this->getRaw('listing');
+
+$property = $this->getRaw('property');
+
+$property_id = $property->getId();
+
+if(!$listing->getFilteredPropertyBoolCount( $property_id, true )) {
+	return;
+}
+
+
+
+$bool_filter = $listing->getFilter()->getPropertyBoolFilter();
+
+$selected = $bool_filter->getPropertyRule( $property_id )===true;
+
+if(!$selected) {
+	$count = $listing->getFilteredPropertyBoolCount( $property_id, true );
+	$disabled = $count==0;
+}
+
+$label = $property->getBoolYesDescription() ? : Tr::_('Yes');
+
+if($selected):
+	?>
+	<div>
+		<label><input
+				type="checkbox"
+				class="lf-bool"
+				value="<?=$property_id?>"
+				checked
+				onchange="listing.submitFilter()"
+			> <?=$label?></label>
+	</div>
+<?php
+else:
+	if($disabled):
+		?>
+		<div>
+			<label><input
+					type="checkbox"
+					class="lf-bool"
+					value="<?=$property_id?>"
+					disabled
+					onchange="listing.submitFilter()"
+				> <?=$label?></label>
+		</div>
+	<?php
+	else:
+		?>
+		<div>
+			<label><input
+					type="checkbox"
+					class="lf-bool"
+					value="<?=$property_id?>"
+					onchange="listing.submitFilter()"
+				> <?=$label?> (<?=$count?>)</label>
+		</div>
+	<?php
+	endif;
+endif;

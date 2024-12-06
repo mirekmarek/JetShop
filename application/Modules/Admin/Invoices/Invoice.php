@@ -13,13 +13,13 @@ use Jet\Form_Field_Date;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Invoice as Application_Invoice;
 use JetApplication\Entity_Price;
 use JetApplication\Payment_Kind;
 
 
-class Invoice extends Application_Invoice implements Admin_Entity_WithShopRelation_Interface
+class Invoice extends Application_Invoice implements Admin_Entity_WithEShopRelation_Interface
 {
 	protected ?Form $correction_invoice_form = null;
 	protected ?Invoice $new_correction_invoice = null;

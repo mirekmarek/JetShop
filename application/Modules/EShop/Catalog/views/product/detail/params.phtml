@@ -1,0 +1,135 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+use JetApplication\Property_EShopData;
+use JetApplication\PropertyGroup_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$kind_of_product = $product->getKind();
+
+/**
+ * @var MVC_View $this
+ * @var Property_EShopData[] $properties
+ * @var PropertyGroup_EShopData[] $groups
+ */
+
+$showProperty = null;
+$layout = null;
+if(!$kind_of_product) {
+	return;
+}
+
+$groups = [];
+$properties = [];
+
+$_layout = $kind_of_product->getProductDetailLayout( $groups, $properties );
+
+
+if(!$_layout) {
+	return;
+}
+
+$renderProperty = function( $property_id ) use ($properties, $product) {
+	$property = $properties[$property_id];
+	$property->assocToProduct( $product->getEntityId() );
+	
+	$this->setVar('property', $property);
+	$v = $this->render('product/detail/parameters/'.$property->getType());
+	if(!$v) {
+		return '';
+	}
+	
+	return $v;
+};
+
+$layout = [];
+
+foreach($_layout as $k=>$v ) {
+	if(is_array($v)) {
+		$group_id = $k;
+		$property_ids = $v;
+		
+		$group = [];
+		foreach( $property_ids as $property_id ):
+			$property_value = $renderProperty( $property_id );
+			if( $property_value ) {
+				$group[$property_id] = $property_value;
+			}
+		endforeach;
+		
+		/*
+		if( count( $group ) == 1 ) {
+			foreach( $group as $property_id => $property_value ) {
+				$layout[$property_id] = $property_value;
+			}
+		}
+		*/
+		
+		if( count( $group ) > 0 ) {
+			$layout[$group_id] = $group;
+		}
+	} else {
+		$property_id = $v;
+		
+		$value = $renderProperty( $property_id );
+		if( $value ) {
+			$layout[$property_id] = $value;
+		}
+	}
+	
+}
+
+if(!$layout) {
+	return;
+}
+
+?>
+<h3><?=Tr::_('Parameters')?></h3>
+
+<table class="table table-striped">
+	<?php foreach($layout as $k=>$v):
+		if(is_array($v)):
+			$group_id = $k;
+			$group = $groups[$group_id];
+			
+			
+			$group_properties = $v;
+			?>
+			<tr>
+				<td colspan="2"><b><?=$group->getLabel()?></b></td>
+			</tr>
+			<?php
+			foreach($group_properties as $property_id=>$property_value):
+				$property = $properties[$property_id];
+				
+				?>
+				<tr>
+					<td nowrap=""><?=$property->getLabel()?>:</td>
+					<td style="width: 100%"><?=$property_value?></td>
+				</tr>
+				<?php
+			endforeach;
+		else:
+			$property_id = $k;
+			$property_value = $v;
+			$property = $properties[$property_id];
+			
+			?>
+			<tr>
+				<td nowrap=""><?=$property->getLabel()?>:</td>
+				<td style="width: 100%"><?=$property_value?></td>
+			</tr>
+		<?php
+		
+		endif;
+	endforeach; ?>
+</table>

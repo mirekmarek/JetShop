@@ -9,7 +9,7 @@ use Jet\UI;
 use Jet\UI_badge;
 use Jet\UI_button;
 use Jet\UI_dialog;
-use JetApplication\Shops;
+use JetApplication\EShops;
 use JetApplication\SysServices;
 use JetApplication\SysServices_Definition;
 use Jet\Form;
@@ -106,17 +106,17 @@ $schedule_dialog = UI::dialog('schedule_dialog', Tr::_('Schedule service outage'
 				<?=$service->getDescription()?>
 			</td>
 			<td>
-				<?php if( $service->getServiceRequiresShopDesignation() ): ?>
+				<?php if( $service->getServiceRequiresEshopDesignation() ): ?>
 				<div style="display: grid;grid-template-columns: 100px 1fr;gap: 10px;align-items: center">
-					<?php foreach( Shops::getList() as $shop ): ?>
+					<?php foreach( EShops::getList() as $eshop ): ?>
 						<div>
-							<?=UI::flag( $shop->getLocale() )?>
-							<?=$shop->getShopName()?>:
+							<?=UI::flag( $eshop->getLocale() )?>
+							<?=$eshop->getName()?>:
 						</div>
 						<div>
 							
 							<?php
-							echo UI::button( Tr::_('link'))->setUrl($service->getURL($shop))->setIcon('link')->setCustomTagAttribute('target', '_blank')->setClass(UI_button::CLASS_PRIMARY);
+							echo UI::button( Tr::_('link'))->setUrl($service->getURL($eshop))->setIcon('link')->setCustomTagAttribute('target', '_blank')->setClass(UI_button::CLASS_PRIMARY);
 							?>
 						</div>
 					<?php endforeach; ?>

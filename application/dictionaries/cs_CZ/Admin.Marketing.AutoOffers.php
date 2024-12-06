@@ -229,4 +229,5 @@ return [
 	'Valid till' => 'Platný do',
 	'General' => 'Všeobecné',
 	'Gift' => 'Dar',
+	'e-shop' => 'internetový obchod',
 ];

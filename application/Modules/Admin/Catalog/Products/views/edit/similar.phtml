@@ -6,7 +6,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Admin_Managers;
-
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
@@ -70,14 +70,14 @@ require '_toolbar.phtml';
 
 					items = items.join(',');
 
-					location = '<?=Http_Request::currentURI()?>&sort='+items;
+					location.href = '<?=Http_Request::currentURI()?>&sort='+items;
 				}
 			});
 			
 		},
 		
 		add: ( id ) => {
-			location = '<?=Http_Request::currentURI()?>&add='+id;
+			location.href = '<?=Http_Request::currentURI()?>&add='+id;
 		}
 	};
 

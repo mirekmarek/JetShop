@@ -8,13 +8,13 @@
 namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Trait;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Payment_Method_Option;
 
-class PaymentMethod_Option extends Payment_Method_Option implements Admin_Entity_WithShopData_Interface
+class PaymentMethod_Option extends Payment_Method_Option implements Admin_Entity_WithEShopData_Interface
 {
-	use Admin_Entity_WithShopData_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	
 	public function getEditURL() : string

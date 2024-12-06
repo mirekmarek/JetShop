@@ -4,7 +4,8 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\MarketplaceIntegration;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\Product;
 
 
 trait Controller_Main_Edit_Marketplace
@@ -22,7 +23,7 @@ trait Controller_Main_Edit_Marketplace
 		
 		
 		$selected_mp = null;
-		$selected_mp_shop = null;
+		$selected_mp_eshop = null;
 		
 		$GET = Http_Request::GET();
 		
@@ -31,13 +32,13 @@ trait Controller_Main_Edit_Marketplace
 			$selected_mp = MarketplaceIntegration::getActiveModule($mp);
 			
 			if($selected_mp) {
-				$mp_shop = $GET->getString('mp_shop');
-				if($mp_shop) {
-					$selected_mp_shop = Shops::get($mp_shop);
-					if($selected_mp_shop) {
-						if(!$selected_mp->isAllowedForShop($selected_mp_shop)) {
+				$mp_eshop = $GET->getString('mp_eshop');
+				if($mp_eshop) {
+					$selected_mp_eshop = EShops::get($mp_eshop);
+					if($selected_mp_eshop) {
+						if(!$selected_mp->isAllowedForShop($selected_mp_eshop)) {
 							$selected_mp = null;
-							$selected_mp_shop = null;
+							$selected_mp_eshop = null;
 						}
 					} else {
 						$selected_mp = null;
@@ -47,10 +48,10 @@ trait Controller_Main_Edit_Marketplace
 		}
 		
 		$this->view->setVar('selected_mp', $selected_mp );
-		$this->view->setVar('selected_mp_shop', $selected_mp_shop );
+		$this->view->setVar('selected_mp_eshop', $selected_mp_eshop );
 		
 		$this->view->setVar('selected_mp_code', $selected_mp?->getCode());
-		$this->view->setVar('selected_mp_shop_key', $selected_mp_shop?->getKey() );
+		$this->view->setVar('selected_mp_eshop_key', $selected_mp_eshop?->getKey() );
 		
 		$this->view->setVar('item', $product);
 		$this->output( 'edit/marketplace' );

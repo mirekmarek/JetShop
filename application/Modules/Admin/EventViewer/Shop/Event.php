@@ -20,7 +20,7 @@ use Jet\UI;
 use Jet\UI_badge;
 
 #[DataModel_Definition(
-	database_table_name: 'events_shop',
+	database_table_name: 'events_eshop',
 	name: 'logger_event',
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
 	id_controller_options: ['id_property_name' => 'id']

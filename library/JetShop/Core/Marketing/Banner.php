@@ -15,8 +15,8 @@ use Jet\SysConf_URI;
 use JetApplication\Entity_Marketing;
 use JetApplication\Marketing_Banner;
 use JetApplication\Marketing_BannerGroup;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplicationModule\Admin\Marketing\BannerGroups\BannerGroup;
 
 
@@ -345,13 +345,13 @@ abstract class Core_Marketing_Banner extends Entity_Marketing
 	
 	
 	/**
-	 * @param Shops_Shop $shop
+	 * @param EShop $eshop
 	 * @param Marketing_BannerGroup $group
 	 * @return static[]
 	 */
-	public static function getByGroup( Shops_Shop $shop, Marketing_BannerGroup $group ): array
+	public static function getByGroup( EShop $eshop, Marketing_BannerGroup $group ): array
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['group_id'] = $group->getId();
 		
@@ -362,15 +362,15 @@ abstract class Core_Marketing_Banner extends Entity_Marketing
 	
 	/**
 	 * @param BannerGroup $group
-	 * @param Shops_Shop|null $shop
+	 * @param EShop|null $eshop
 	 *
 	 * @return static[]
 	 */
-	public static function getActiveByGroup( BannerGroup $group, ?Shops_Shop $shop=null ): array
+	public static function getActiveByGroup( BannerGroup $group, ?EShop $eshop=null ): array
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$eshop = $eshop?:EShops::getCurrent();
 		
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['group_id'] = $group->getId();
 		$where[] = 'AND';
@@ -393,11 +393,11 @@ abstract class Core_Marketing_Banner extends Entity_Marketing
 		return $result;
 	}
 	
-	public static function getActive( string $internal_code, ?Shops_Shop $shop=null ): ?static
+	public static function getActive( string $internal_code, ?EShop $eshop=null ): ?static
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$eshop = $eshop?:EShops::getCurrent();
 		
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['internal_code'] = $internal_code;
 		$where[] = 'AND';

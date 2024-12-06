@@ -3,28 +3,34 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\DataModel_Query;
 
+use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Availabilities;
 use JetApplication\Category;
 use JetApplication\Delivery_Class;
 use JetApplication\Entity_HasPrice_Interface;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\KindOfProduct;
 
 use JetApplication\Managers;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\Pricelists;
 use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_Price;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\Product_Trait_Availability;
 use JetApplication\Product_Trait_Images;
 use JetApplication\Product_Trait_Files;
@@ -37,9 +43,9 @@ use JetApplication\Product_Trait_Stickers;
 use JetApplication\Product_Trait_Similar;
 use JetApplication\Product_Trait_Boxes;
 use JetApplication\Product_VirtualProductHandler;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop_Managers;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplication\Brand;
 use JetApplication\Supplier;
 
@@ -52,13 +58,17 @@ use JetApplication\Supplier;
 	relation: [
 		'related_to_class_name' => Product_Price::class,
 		'join_by_properties' => [
-			'id' => 'product_id'
+			'id' => 'entity_id'
 		],
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 
 )]
-abstract class Core_Product extends Entity_WithShopData implements FulltextSearch_IndexDataProvider, Entity_HasPrice_Interface {
+abstract class Core_Product extends Entity_WithEShopData implements
+	FulltextSearch_IndexDataProvider,
+	Entity_HasPrice_Interface,
+	Admin_Entity_WithEShopData_Interface
+{
 	
 	use Product_Trait_Availability;
 	use Product_Trait_Price;
@@ -71,6 +81,9 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	use Product_Trait_Stickers;
 	use Product_Trait_Similar;
 	use Product_Trait_Boxes;
+	
+	use Admin_Entity_WithEShopData_Trait;
+	
 
 	public const PRODUCT_TYPE_REGULAR        = 'regular';
 	public const PRODUCT_TYPE_VARIANT_MASTER = 'variant_master';
@@ -168,14 +181,28 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	
 	
 	/**
-	 * @var Product_ShopData[]
+	 * @var Product_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Product_ShopData::class
+		data_model_class: Product_EShopData::class
 	)]
 	#[Form_Definition(is_sub_forms: true)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
+	
+	
+	
+	public static function getProductTypes() : array
+	{
+		return [
+			static::PRODUCT_TYPE_REGULAR        => Tr::_('Regular'),
+			static::PRODUCT_TYPE_VARIANT_MASTER => Tr::_('Variant master'),
+			static::PRODUCT_TYPE_VARIANT        => Tr::_('Variant'),
+			static::PRODUCT_TYPE_SET            => Tr::_('Set of products'),
+		];
+		
+	}
+	
 	
 	public function activate(): void
 	{
@@ -251,8 +278,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	{
 		$this->type = $type;
 		
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setType( $this->type );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setType( $this->type );
 		}
 	}
 	
@@ -263,15 +290,21 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	
 	public function getKind() : ?KindOfProduct
 	{
-		return KindOfProduct::get( $this->kind_id );
+		return $this->getKindOfProduct();
 	}
+	
+	public function getKindOfProduct() : ?KindOfProduct
+	{
+		return KindOfProduct::load($this->getKindId());
+	}
+	
 	
 	public function setKindId( int $kind_id ): void
 	{
 		$this->kind_id = $kind_id;
 		
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setKindId( $this->kind_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setKindId( $this->kind_id );
 		}
 		
 	}
@@ -285,8 +318,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	{
 		$this->delivery_class_id = $delivery_class_id;
 		
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setDeliveryClassId( $this->delivery_class_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setDeliveryClassId( $this->delivery_class_id );
 		}
 	}
 	
@@ -301,8 +334,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	{
 		$this->ean = $ean;
 		
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setEan( $this->ean );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setEan( $this->ean );
 		}
 		
 	}
@@ -316,8 +349,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	{
 		$this->erp_id = $erp_id;
 		
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setErpId( $this->erp_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setErpId( $this->erp_id );
 		}
 	}
 
@@ -329,8 +362,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	public function setBrandId( int $brand_id ) : void
 	{
 		$this->brand_id = $brand_id;
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setBrandId( $this->brand_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setBrandId( $this->brand_id );
 		}
 	}
 
@@ -342,8 +375,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	public function setSupplierId( int $supplier_id ) : void
 	{
 		$this->supplier_id = $supplier_id;
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setSupplierId( $this->supplier_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setSupplierId( $this->supplier_id );
 		}
 	}
 	
@@ -355,8 +388,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	public function setSupplierCode( string $supplier_code ): void
 	{
 		$this->supplier_code = $supplier_code;
-		foreach(Shops::getList() as $shop) {
-			$this->shop_data[$shop->getKey()]->setSupplierCode( $this->supplier_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setSupplierCode( $this->supplier_id );
 		}
 	}
 	
@@ -374,10 +407,10 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	}
 	
 	
-	public function getShopData( ?Shops_Shop $shop=null ) : Product_ShopData
+	public function getEshopData( ?EShop $eshop=null ) : Product_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	
@@ -411,12 +444,8 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 		
 		$internal_name = $this->internal_name;
 		
-		if($this->type==static::PRODUCT_TYPE_VARIANT) {
-			$internal_name.= ' / '.$this->getInternalNameOfVariant();
-		}
-		
 		if($this->internal_name_of_variant) {
-			$internal_name .= ' - '.$this->internal_name_of_variant;
+			$internal_name .= ' / '.$this->internal_name_of_variant;
 		}
 		
 		return $internal_name.$codes;
@@ -424,11 +453,11 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	
 	public function afterAdd(): void
 	{
-		foreach( Shops::getList() as $shop ) {
-			$shop_key = $shop->getKey();
+		foreach( EShops::getList() as $eshop ) {
+			$eshop_key = $eshop->getKey();
 			
-			$this->shop_data[$shop_key]->generateURLPathPart();
-			$this->shop_data[$shop_key]->save();
+			$this->eshop_data[$eshop_key]->generateURLPathPart();
+			$this->eshop_data[$eshop_key]->save();
 		}
 		
 		parent::afterAdd();
@@ -467,20 +496,20 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 		return [$this->internal_name, $this->internal_code, $this->ean, $this->internal_name_of_variant];
 	}
 	
-	public function getShopFulltextTexts( Shops_Shop $shop ) : array
+	public function getShopFulltextTexts( EShop $eshop ) : array
 	{
-		$shop_data = $this->getShopData( $shop );
+		$eshop_data = $this->getEshopData( $eshop );
 		if(
-			!$shop_data->isActiveForShop() ||
-			$shop_data->isVariant()
+			!$eshop_data->isActiveForShop() ||
+			$eshop_data->isVariant()
 		) {
 			return [];
 		}
 		
 		$texts = [];
-		$texts[] = $shop_data->getName();
-		$texts[] = $shop_data->getInternalCode();
-		$texts[] = $shop_data->getEan();
+		$texts[] = $eshop_data->getName();
+		$texts[] = $eshop_data->getInternalCode();
+		$texts[] = $eshop_data->getEan();
 		
 		return $texts;
 	}
@@ -488,18 +517,18 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	public function updateFulltextSearchIndex() : void
 	{
 		Admin_Managers::FulltextSearch()->updateIndex( $this );
-		Shop_Managers::FulltextSearch()->updateIndex( $this );
+		EShop_Managers::FulltextSearch()->updateIndex( $this );
 	}
 	
 	public function removeFulltextSearchIndex() : void
 	{
 		Admin_Managers::FulltextSearch()->deleteIndex( $this );
-		Shop_Managers::FulltextSearch()->deleteIndex( $this );
+		EShop_Managers::FulltextSearch()->deleteIndex( $this );
 	}
 	
 	public static function updateReviews( int $product_id, int $count, int $rank ) : void
 	{
-		Product_ShopData::updateData(
+		Product_EShopData::updateData(
 			data: [
 				'review_count' => $count,
 				'review_rank' => $rank
@@ -512,7 +541,7 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 	
 	public static function updateQuestions( int $product_id, int $count ) : void
 	{
-		Product_ShopData::updateData(
+		Product_EShopData::updateData(
 			data: [
 				'question_count' => $count,
 			],
@@ -547,7 +576,7 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 			return null;
 		}
 		
-		return MeasureUnit::get( $measure_unit );
+		return MeasureUnits::get( $measure_unit );
 	}
 	
 	
@@ -577,4 +606,179 @@ abstract class Core_Product extends Entity_WithShopData implements FulltextSearc
 		return [''=>'']+static::getVirtualProductHandlersScope();
 	}
 	
+	
+	public function defineImages(): void
+	{
+	}
+	
+	
+	protected function _setupForm( Form $form ) : void
+	{
+		
+		$this->_setupForm_regular( $form );
+		$this->_setupForm_set( $form );
+		$this->_setupForm_variant( $form );
+		$this->_setupForm_variantMaster( $form );
+		
+	}
+	
+	protected function _setupForm_regular( Form $form ) : void
+	{
+		if(!$this->isRegular()) {
+			return;
+		}
+		$form->removeField('internal_name_of_variant');
+		$form->addField( $this->generateKindOfProductField() );
+		
+		foreach( EShops::getList() as $eshop ) {
+			$form->removeField( '/eshop_data/'.$eshop->getKey().'/variant_name' );
+		}
+	}
+	
+	
+	protected function generateKindOfProductField() : Form_Field
+	{
+		$kind_id_field = new Form_Field_Input( 'kind_of_product_id', 'Kind of product:' );
+		$kind_id_field->setDefaultValue( $this->kind_id );
+		$kind_id_field->setErrorMessages([
+			Form_Field::ERROR_CODE_EMPTY => 'Please select kind of product',
+		]);
+		$kind_id_field->setFieldValueCatcher( function( $value ) {
+			$this->setKindId( $value );
+		} );
+		$kind_id_field->setValidator( function() use ($kind_id_field) {
+			$kind_id = $kind_id_field->getValue();
+			if(
+				!$kind_id ||
+				!KindOfProduct::exists( $kind_id )
+			) {
+				$kind_id_field->setError(Form_Field::ERROR_CODE_EMPTY);
+				return false;
+			}
+			
+			
+			return true;
+		} );
+		
+		return $kind_id_field;
+	}
+	
+	
+	
+	public function getAddForm() : Form
+	{
+		if(!$this->_add_form) {
+			$this->_add_form = $this->createForm('add_form');
+			
+			
+			
+			$this->_add_form->addField( $this->generateKindOfProductField() );
+			
+			$description_edit_form = $this->getDescriptionEditForm();
+			foreach($description_edit_form->getFields() as $f) {
+				$this->_add_form->addField( $f );
+			}
+			
+			$this->_setupForm( $this->_add_form );
+		}
+		
+		return $this->_add_form;
+	}
+	
+	public function catchAddForm() : bool
+	{
+		$add_form = $this->getAddForm();
+		if( !$add_form->catch() ) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	public function getEditForm() : Form
+	{
+		if(!$this->_edit_form) {
+			$this->_edit_form = $this->createForm('edit_form');
+			
+			$this->_setupForm( $this->_edit_form );
+		}
+		
+		return $this->_edit_form;
+	}
+	
+	public function catchEditForm() : bool
+	{
+		$edit_form = $this->getEditForm();
+		if( !$edit_form->catch() ) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	public function renderActiveState() : string
+	{
+		return Admin_Managers::Product()->renderActiveState( $this );
+	}
+	
+	public function getEditURL() : string
+	{
+		return Admin_Managers::Product()->getEditURL( $this->id );
+	}
+	
+	protected ?Form $_description_edit_form = null;
+	
+	public function getProductDescriptionEditForm() : Form
+	{
+		if( !$this->_description_edit_form ) {
+			if($this->getDescriptionMode()) {
+				$this->_description_edit_form = $this->getDescriptionEditForm();
+				
+				if($this->isVariant()) {
+					foreach( $this->_description_edit_form->getFields() as $f ) {
+						if( !str_ends_with($f->getName(), '/variant_name') ) {
+							$f->setIsReadonly( true );
+						}
+					}
+				} else {
+					foreach( $this->_description_edit_form->getFields() as $f ) {
+						if( str_ends_with($f->getName(), '/variant_name') ) {
+							$this->_description_edit_form->removeField( $f->getName() );
+						}
+					}
+				}
+				
+			} else {
+				$this->_description_edit_form = $this->getEditForm();
+				
+				foreach( $this->_description_edit_form->getFields() as $f ) {
+					if( !str_starts_with($f->getName(), '/eshop_data/') ) {
+						$this->_description_edit_form->removeField( $f->getName() );
+					}
+				}
+			}
+			
+		}
+		
+		return $this->_description_edit_form;
+	}
+	
+	public function catchDescriptionEditForm() : bool
+	{
+		if(!$this->getProductDescriptionEditForm()->catch()) {
+			return false;
+		}
+		
+		$this->save();
+		return true;
+	}
+	
+	public function getDescriptionMode() : bool
+	{
+		return true;
+	}
+	
+
 }

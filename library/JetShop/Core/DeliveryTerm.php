@@ -2,12 +2,12 @@
 namespace JetShop;
 
 use Jet\Application_Module;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\DeliveryTerm_Info;
 use JetApplication\DeliveryTerm_Manager;
 use JetApplication\Managers_General;
 use JetApplication\Order;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 
 abstract class Core_DeliveryTerm {
 	public const SITUATION_IN_STOCK = 'in_stock';
@@ -24,7 +24,7 @@ abstract class Core_DeliveryTerm {
 		return Managers_General::DeliveryTerm();
 	}
 	
-	public static function getInfo( Product_ShopData $product, ?Availabilities_Availability $availability=null ) : DeliveryTerm_Info
+	public static function getInfo( Product_EShopData $product, ?Availability $availability=null ) : DeliveryTerm_Info
 	{
 		return static::getManager()->getInfo( $product, $availability );
 	}

@@ -7,6 +7,7 @@ use Jet\DataModel_Related_1toN;
 use Jet\DataModel_IDController_AutoIncrement;
 
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockVerification;
 
@@ -183,7 +184,7 @@ abstract class Core_WarehouseManagement_StockVerification_Item extends DataModel
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	public function setMeasureUnit( ?MeasureUnit $measure_unit ): void

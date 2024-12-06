@@ -14,6 +14,7 @@ class Core_Content_MagicTag_Context {
 	protected string $name = '';
 	protected string $type = '';
 	protected string $description = '';
+	protected array $options = [];
 	
 	public function __construct( string $name, string $type, string $description )
 	{
@@ -52,6 +53,17 @@ class Core_Content_MagicTag_Context {
 	{
 		$this->description = $description;
 	}
+	
+	public function getOptions(): array
+	{
+		return $this->options;
+	}
+	
+	public function setOptions( array $options ): void
+	{
+		$this->options = $options;
+	}
+	
 	
 	
 }

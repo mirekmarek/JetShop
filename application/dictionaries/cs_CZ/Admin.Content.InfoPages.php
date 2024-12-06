@@ -68,4 +68,6 @@ return [
 	'Deactivate' => 'Deaktivovat',
 	'Internal name:' => 'Interní název:',
 	'Internal code:' => 'Interní kód:',
+	'Activate' => 'Aktivovat',
+	'Is active - %what%' => '',
 ];

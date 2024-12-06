@@ -1,0 +1,41 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$payment_method = $cash_desk->getSelectedPaymentMethod();
+
+/**
+ * @var MVC_View $this
+ */
+$this->setVar('payment_method', $payment_method);
+
+$option = $cash_desk->getSelectedPaymentMethodOption();
+?>
+<div class="method-has-been-selected">
+	<div class="title"><?= Tr::_('Payment method') ?></div>
+	<div class="change-btn">
+		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.payment.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+	
+	<div class="method-title">
+		<?= $payment_method->getTitle() ?>
+		<?php if($option): ?>
+			- <?=$option->getTitle()?>
+		<?php endif; ?>
+	</div>
+
+	<div class="method-detail">
+	</div>
+	<?=$this->render('payment/price')?>
+	
+</div>

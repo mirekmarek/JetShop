@@ -4,7 +4,11 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\MVC_View;
 use Jet\Form;
 
+use Jet\Tr;
+use Jet\UI;
 use JetApplication\Admin_Managers;
+use JetApplication\EShops;
+use JetApplication\Product;
 
 /**
  * @var MVC_View $this
@@ -37,6 +41,20 @@ $kind_id_field->input()->setCustomRenderer(function() use ($kind_id_field) {
 <?=$form->field('supplier_id')?>
 <?=$form->field('supplier_code')?>
 <?=$form->field('delivery_class_id')?>
+
+<div class="form-group row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Allow to order when sold out')?></label>
+	<div class="col-md-8">
+		<?php foreach(EShops::getListSorted() as $eshop):
+			$field = $form->field('/eshop_data/'.$eshop->getKey().'/allow_to_order_when_sold_out');
+			$field->setLabel( UI::flag($eshop->getLocale()).' '.$eshop->getName() );
+			$field->setDoNotTranslateLabel( true );
+			
+			echo $field->input();
+		endforeach; ?>
+	</div>
+</div>
+
 
 
 

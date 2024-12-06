@@ -10,8 +10,8 @@ namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 use Jet\Tr;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop;
 use JetApplication\Product;
 
 class EmailTemplate_Answer extends EMail_Template
@@ -19,13 +19,13 @@ class EmailTemplate_Answer extends EMail_Template
 	
 	protected ProductQuestion $question;
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function initTest( EShop $eshop ): void
 	{
 		$products = Product::dataFetchCol(['id'], limit: 1000, raw_mode: true);
 		$id_key = array_rand( $products, 1 );
 		
 		$this->question = new ProductQuestion();
-		$this->question->setShop( $shop );
+		$this->question->setEshop( $eshop );
 		$this->question->setProductId( $products[$id_key] );
 		$this->question->setQuestion('Test question');
 		$this->question->setAnswer('Test answer');
@@ -41,7 +41,7 @@ class EmailTemplate_Answer extends EMail_Template
 			Tr::_('URL of product')
 		);
 		$product_URL_property->setPropertyValueCreator(function() : string {
-			$product = Product_ShopData::get( $this->question->getProductId(), $this->getQuestion()->getShop() );
+			$product = Product_EShopData::get( $this->question->getProductId(), $this->getQuestion()->getEshop() );
 			return $product?->getURL()??'';
 		});
 		
@@ -50,7 +50,7 @@ class EmailTemplate_Answer extends EMail_Template
 			Tr::_('Name of product')
 		);
 		$product_name_property->setPropertyValueCreator( function() : string {
-			$product = Product_ShopData::get( $this->question->getProductId(), $this->getQuestion()->getShop() );
+			$product = Product_EShopData::get( $this->question->getProductId(), $this->getQuestion()->getEshop() );
 			return $product?->getName()??'';
 		} );
 		
@@ -82,7 +82,7 @@ class EmailTemplate_Answer extends EMail_Template
 		$this->question = $question;
 	}
 	
-	public function setupEMail( Shops_Shop $shop, EMail $email ) : void
+	public function setupEMail( EShop $eshop, EMail $email ) : void
 	{
 		$email->setContext('product_question');
 		$email->setContextId( $this->question->getId() );

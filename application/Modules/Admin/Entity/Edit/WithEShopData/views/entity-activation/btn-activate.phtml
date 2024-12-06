@@ -1,0 +1,18 @@
+<?php
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ */
+
+if(!$this->getRaw('activate_url')) {
+	return;
+}
+
+echo UI::button(Tr::_('Activate', dictionary: Tr::COMMON_DICTIONARY))
+	->setUrl( $this->getRaw('activate_url') )
+	->setClass( UI_button::CLASS_SUCCESS )
+	->setSize( UI_button::SIZE_EXTRA_SMALL );

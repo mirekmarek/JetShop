@@ -16,5 +16,5 @@ use JetApplication\Admin_Managers;
  */
 
 $item = $this->getRaw('item');
-?>
-<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getCurrency(), $item->getTotal() )?>
+
+echo Admin_Managers::PriceFormatter()->formatWithCurrencyByHasVAT($item->hasVAT(), $item->getCurrency(), $item->getTotal() );

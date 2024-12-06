@@ -10,17 +10,17 @@ namespace JetApplicationModule\Admin\Customers;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Trait;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Admin_Managers_Customer;
 use JetApplication\Entity_Address;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
-class Main extends Application_Module implements Admin_EntityManager_WithShopRelation_Interface, Admin_Managers_Customer
+class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_Customer
 {
-	use Admin_EntityManager_WithShopRelation_Trait;
+	use Admin_EntityManager_WithEShopRelation_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'customers';
 
@@ -53,7 +53,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopRel
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithShopRelation|Admin_Entity_WithShopRelation_Interface
+	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
 		return new Customer();
 	}
@@ -77,15 +77,15 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopRel
 		);
 	}
 	
-	public function formatAddress( Shops_Shop $shop, Entity_Address $address ) : string
+	public function formatAddress( EShop $eshop, Entity_Address $address ) : string
 	{
 		return Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),
-			action: function() use ($shop, $address) {
+			action: function() use ($eshop, $address) {
 				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 				
 				$view->setVar('address', $address);
-				$view->setVar('shop', $shop);
+				$view->setVar('eshop', $eshop);
 				
 				return $view->render('address/default');
 			}

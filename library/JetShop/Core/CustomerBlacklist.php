@@ -6,15 +6,15 @@ use Jet\DataModel_Definition;
 use Jet\Form_Field;
 use Jet\Form_Definition;
 use JetApplication\CustomerBlacklist;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 
 #[DataModel_Definition(
 	name: 'customer_blacklist',
 	database_table_name: 'customers_blacklist',
 )]
-abstract class Core_CustomerBlacklist extends Entity_WithShopRelation
+abstract class Core_CustomerBlacklist extends Entity_WithEShopRelation
 {
 
 	#[DataModel_Definition(
@@ -95,14 +95,14 @@ abstract class Core_CustomerBlacklist extends Entity_WithShopRelation
 	}
 	
 	public static function add(
-		Shops_Shop $shop,
+		EShop  $eshop,
 		string $email,
 		string $name,
 		string $description
 	) : static
 	{
 		$item = new static();
-		$item->setShop( $shop );
+		$item->setEshop( $eshop );
 		$item->setEmail( $email );
 		$item->setName( $name );
 		$item->setDescription( $description );
@@ -112,16 +112,16 @@ abstract class Core_CustomerBlacklist extends Entity_WithShopRelation
 	}
 	
 	public static function customerIsBlacklisted(
-		string $email,
-		?Shops_Shop $shop=null,
-		bool $load_details = false,
+		string             $email,
+		?EShop             $eshop=null,
+		bool               $load_details = false,
 		?CustomerBlacklist &$details = null
 	) : bool
 	{
 		$email = strtolower($email);
 		
-		if($shop) {
-			$where = $shop->getWhere();
+		if($eshop) {
+			$where = $eshop->getWhere();
 			$where[] = 'AND';
 			$where['email'] = $email;
 		} else {

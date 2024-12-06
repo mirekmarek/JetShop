@@ -113,7 +113,7 @@ return [
 	'Out of range' => '',
 	'Google Maps API key: ' => '',
 	'Map center - lat: ' => '',
-	'Map center - lot: ' => '',
+	'Map center - lon: ' => '',
 	'Map default zoom: ' => '',
 	'Phone number prefix: ' => '',
 	'Phone number validation regular expression: ' => '',

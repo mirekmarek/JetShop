@@ -1,0 +1,27 @@
+<?php
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Entity_WithEShopData_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithEShopData_EShopData $eshop_data
+ */
+
+$eshop_data = $this->getRaw('eshop_data');
+
+if($eshop_data->isActiveForShop()): ?>
+	<div><?=$this->render('entity-activation/active')?></div>
+	<div><?=UI::flag($eshop_data->getEshop()->getLocale())?> <?=$eshop_data->getEshop()->getName()?></div>
+	<div><?=$this->render('entity-activation/btn-deactivate')?></div>
+	<div></div>
+<?php else: ?>
+	<div><?=$this->render('entity-activation/not-active')?></div>
+	<div><?=UI::flag($eshop_data->getEshop()->getLocale())?> <?=$eshop_data->getEshop()->getName()?></div>
+	<div><?=$this->render('entity-activation/btn-activate')?></div>
+	<div></div>
+<?php endif;
+
+
+
+

@@ -47,5 +47,5 @@ return [
 	'e-mail 2:' => 'e-mail 2:',
 	'Currency:' => 'Měna:',
 	'Activate' => 'Aktivovat',
-	'Deactivate' => '',
+	'Deactivate' => 'Deaktivovat',
 ];

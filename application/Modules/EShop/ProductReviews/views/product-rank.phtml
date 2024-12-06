@@ -1,0 +1,57 @@
+<?php
+namespace JetApplicationModule\EShop\ProductReviews;
+
+use Jet\MVC_View;
+use Jet\Tr;use Jet\UI;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View   $this
+ * @var Product_EShopData $product
+ */
+$product = $this->getRaw('product');
+
+if(!$product->getReviewCount()) {
+	return;
+}
+
+$rank = $product->getReviewRank();
+
+$stars = $rank / 20;
+
+$b_stars = 0;
+$w_stars = 5;
+$half_star = false;
+
+while($stars>=1) {
+	$b_stars++;
+	$w_stars--;
+	$stars--;
+}
+
+if($stars>0.7) {
+	$b_stars++;
+	$w_stars--;
+}
+
+if($stars>0.3 && $stars<0.7) {
+	$w_stars--;
+	$half_star = true;
+}
+
+
+
+for($c=1;$c<=$b_stars;$c++):
+	echo UI::icon('star-filled');
+endfor;
+
+if($half_star):
+	echo UI::icon('star-half');
+endif;
+
+for($c=1;$c<=$w_stars;$c++):
+	echo UI::icon('star-empty');
+endfor;
+
+?>
+ (<?=$product->getReviewCount()?>x) <a href="#product_reviews" onclick="effects.scrollTo('product_reviews');return false;"><?=Tr::_('Show reviews')?></a>

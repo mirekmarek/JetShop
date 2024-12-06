@@ -1,0 +1,61 @@
+<?php
+namespace JetApplicationModule\EShop\ProductReviews;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+
+/**
+ * @var MVC_View   $this
+ * @var CustomerReviewManager $manager
+ */
+
+$manager = $this->getRaw('manager');
+
+$p =  $manager->getWriteReviewProduct();
+if(!$p) {
+	return;
+}
+
+$form = $manager->getWriteReviewForm();
+
+$form->field('summary')->input()->addCustomCssStyle('height:400px');
+$form->field('positive')->input()->addCustomCssStyle('height:200px');
+$form->field('negative')->input()->addCustomCssStyle('height:200px');
+?>
+
+<div id="product-write-review-page">
+	
+	<div class="product-write-review">
+		<div>
+			<?php if($p->getImg(0)): ?>
+				<a href="<?=$p->getURL()?>"><img src="<?=$p->getImgThumbnailUrl(0, 80, 80)?>"></a>
+			<?php endif; ?>
+		</div>
+		<div>
+			<a href="<?=$p->getURL()?>"><b><?=$p->getName()?></b></a>
+		</div>
+	</div>
+	
+	<div class="card card-body">
+		<h2 class="card-title"><?=Tr::_('Write review')?></h2>
+		
+	<?=$form->start()?>
+	
+	<div id="product-write-review-form">
+		<?=$form->field('rank')?>
+		<?=$form->field('summary')?>
+		<?=$form->field('positive')?>
+		<?=$form->field('negative')?>
+		
+		<div></div>
+		<div>
+			<?=UI::button_save()?>
+		</div>
+	</div>
+	
+	<?=$form->end()?>
+	</div>
+	
+</div>

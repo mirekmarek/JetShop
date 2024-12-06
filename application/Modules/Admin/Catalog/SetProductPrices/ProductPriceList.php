@@ -12,18 +12,18 @@ use Jet\Logger;
 use Jet\Tr;
 use JetApplication\Brand;
 use JetApplication\DataExport_XLSX;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplication\Product;
 use JetApplication\Product_Price;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops;
+use JetApplication\Product_EShopData;
+use JetApplication\EShops;
 use JetApplicationModule\Admin\Suppliers\Supplier;
 use XLSXReader\XLSXReader;
 
 class ProductPriceList {
 	
 	protected string $product_identifier;
-	protected Pricelists_Pricelist $pricelist;
+	protected Pricelist $pricelist;
 	protected ?int $brand_id = null;
 	protected ?int $supplier_id = null;
 	
@@ -34,10 +34,10 @@ class ProductPriceList {
 	
 	
 	public function __construct(
-		string $product_identifier,
-		Pricelists_Pricelist $pricelist,
-		?int $brand_id=null,
-		?int $supplier_id=null
+		string    $product_identifier,
+		Pricelist $pricelist,
+		?int      $brand_id=null,
+		?int      $supplier_id=null
 	)
 	{
 		$this->product_identifier = $product_identifier;
@@ -59,7 +59,7 @@ class ProductPriceList {
 	
 	public function read() : void
 	{
-		$where = Shops::getCurrent()->getWhere();
+		$where = EShops::getCurrent()->getWhere();
 		$where[] = 'AND';
 		if($this->brand_id) {
 			$where['brand_id'] = $this->brand_id;
@@ -74,7 +74,7 @@ class ProductPriceList {
 		];
 		
 		
-		$data = Product_ShopData::dataFetchAll(
+		$data = Product_EShopData::dataFetchAll(
 			select: [
 				'id' => 'entity_id',
 				'ean',
@@ -107,7 +107,7 @@ class ProductPriceList {
 		
 	}
 
-	public function getPricelist() : Pricelists_Pricelist
+	public function getPricelist() : Pricelist
 	{
 		return $this->pricelist;
 	}

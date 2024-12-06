@@ -1,0 +1,97 @@
+<?php
+namespace JetApplicationModule\Events\ReturnOfGoods\Updated;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Delivery_Method;
+use JetApplication\ReturnOfGoods_Event;
+use JetApplication\Payment_Method;
+
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods_Event $event
+ * @var Main $handler
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');
+$return_of_goods = $event->getReturnOfGoods();
+
+$history = $event->getContext();
+if(!$history) {
+	return;
+}
+
+$properties = [
+	'billing_company_name'      => Tr::_('Billing address - Company name'),
+	'billing_company_id'        => Tr::_('Billing address - Company ID'),
+	'billing_company_vat_id'    => Tr::_('Billing address - Company VAT ID'),
+	'billing_first_name'        => Tr::_('Billing address - First name'),
+	'billing_surname'           => Tr::_('Billing address - Surname'),
+	'billing_address_street_no' => Tr::_('Billing address - Address - street and number'),
+	'billing_address_town'      => Tr::_('Billing address - Address - town'),
+	'billing_address_zip'       => Tr::_('Billing address - Address - zip'),
+	'billing_address_country'   => Tr::_('Billing address - Address - country'),
+	
+	'delivery_company_name'      => Tr::_('Delivery address - Company name'),
+	'delivery_company_id'        => Tr::_('Delivery address - Company ID'),
+	'delivery_company_vat_id'    => Tr::_('Delivery address - Company VAT ID'),
+	'delivery_first_name'        => Tr::_('Delivery address - First name'),
+	'delivery_surname'           => Tr::_('Delivery address - Surname'),
+	'delivery_address_street_no' => Tr::_('Delivery address - Address - street and number'),
+	'delivery_address_town'      => Tr::_('Delivery address - Address - town'),
+	'delivery_address_zip'       => Tr::_('Delivery address - Address - zip'),
+	'delivery_address_country'   => Tr::_('Delivery address - Address - country'),
+	
+	'phone' => Tr::_('Phone'),
+	'email' => Tr::_('e-mail'),
+	
+	'payment_amount'               => Tr::_('Payment amount'),
+	'payment_method'               => Tr::_('Payment method'),
+	'payment_method_specification' => Tr::_('Payment method specification'),
+	
+	'delivery_amount'               => Tr::_('Delivery amount'),
+	'delivery_method'               => Tr::_('Delivery method'),
+	'delivery_personal_takeover_delivery_point_code' => Tr::_('Personal takeover delivery point'),
+	
+];
+
+
+
+$formatters = [
+	'payment_method' => function( $value ) {
+		return Payment_Method::getScope()[$value]??$value;
+	},
+	'delivery_method' => function( $value ) {
+		return Delivery_Method::getScope()[$value]??$value;
+	},
+	
+
+];
+
+$format = function( string $property, string $value ) use ($formatters) {
+	if(!isset($formatters[$property])) {
+		return $value;
+	}
+	
+	$formatter = $formatters[$property];
+	return $formatter( $value );
+};
+
+?>
+<div style="display: grid;grid-template-columns: 0.6fr 1fr 1fr;align-items: center;padding: 10px;margin: 10px;gap: 10px;" class="card">
+	<div>&nbsp;</div>
+	<div><b><?=Tr::_('Old value')?></b></div>
+	<div><b><?=Tr::_('New value')?></b></div>
+	
+	<div style="grid-column: span 3"><hr></div>
+	
+	<?php foreach($history->getChanges() as $change): ?>
+		<div><?=$properties[$change->getProperty()]??$change->getProperty() ?>:</div>
+		<div><?=$format($change->getProperty(), $change->getOldValue())?:'&nbsp;'?></div>
+		<div><?=$format($change->getProperty(), $change->getNewValue())?:'&nbsp;'?></div>
+		
+		<div style="grid-column: span 3"><hr></div>
+	<?php endforeach; ?>
+</div>

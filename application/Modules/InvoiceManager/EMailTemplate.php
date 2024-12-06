@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUndefinedClassInspection */
+<?php
 
 /**
  *
@@ -13,8 +13,8 @@ use JetApplication\EMail;
 use JetApplication\EMail_Template;
 use JetApplication\Entity_AccountingDocument;
 use JetApplication\Order;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop_Managers;
+use JetApplication\EShop;
 
 abstract class EMailTemplate extends EMail_Template {
 	
@@ -55,18 +55,22 @@ abstract class EMailTemplate extends EMail_Template {
 		
 		$purchased_date_time_property = $this->addProperty( 'date_of_issue', Tr::_( 'Date of issue:' ) );
 		$purchased_date_time_property->setPropertyValueCreator( function() : string {
-			return $this->invoice->getShop()->getLocale()->formatDateAndTime( $this->invoice->getInvoiceDate() );
+			return $this->invoice->getEshop()->getLocale()->formatDateAndTime( $this->invoice->getInvoiceDate() );
 		} );
 		
 		$total_property = $this->addProperty( 'total', Tr::_( 'Total:' ) );
 		$total_property->setPropertyValueCreator( function() : string {
-			return Shop_Managers::PriceFormatter()->formatWithCurrency($this->invoice->getTotal(), $this->invoice->getCurrency());
+			if($this->invoice->hasVAT()) {
+				return EShop_Managers::PriceFormatter()->formatWithCurrency_WithVAT($this->invoice->getTotal(), $this->invoice->getCurrency());
+			} else {
+				return EShop_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT($this->invoice->getTotal(), $this->invoice->getCurrency());
+			}
 		} );
 		
 	}
 	
 	
-	public function setupEMail( Shops_Shop $shop, EMail $email ) : void
+	public function setupEMail( EShop $eshop, EMail $email ) : void
 	{
 		$email->setContext('order');
 		$email->setContextId( $this->invoice->getOrderId() );
@@ -74,9 +78,9 @@ abstract class EMailTemplate extends EMail_Template {
 		$email->setSaveHistoryAfterSend( true );
 		$email->setTo( $this->invoice->getCustomerEmail() );
 		
-		$this->generateAttachment( $shop, $email );
+		$this->generateAttachment( $eshop, $email );
 	}
 	
-	abstract public function generateAttachment( Shops_Shop $shop, EMail $email ) : void;
+	abstract public function generateAttachment( EShop $eshop, EMail $email ) : void;
 	
 }

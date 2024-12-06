@@ -5,7 +5,7 @@ use Jet\Tr;
 use JetApplication\Marketing_Gift_Product;
 use JetApplication\MeasureUnit;
 use JetApplication\Pricelists;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ShoppingCart;
 
 abstract class Core_ShoppingCart_Item
@@ -25,7 +25,7 @@ abstract class Core_ShoppingCart_Item
 
 	protected string $check_error_message = '';
 	
-	protected ?Product_ShopData $product=null;
+	protected ?Product_EShopData $product=null;
 
 	public function __construct( int $product_id, float $number_of_units, ?MeasureUnit $measure_unit=null, int $selected_gift_id=0 )
 	{
@@ -69,10 +69,10 @@ abstract class Core_ShoppingCart_Item
 		return $this->product_id;
 	}
 
-	public function getProduct() : ?Product_ShopData
+	public function getProduct() : ?Product_EShopData
 	{
 		if($this->product===null) {
-			$this->product = Product_ShopData::get( $this->product_id, $this->getCart()->getShop() );
+			$this->product = Product_EShopData::get( $this->product_id, $this->getCart()->getEshop() );
 		}
 		
 		return $this->product;
@@ -185,9 +185,9 @@ abstract class Core_ShoppingCart_Item
 			text: 'Sorry, but the maximum quantity is %units% %mu%',
 			data: [
 				'units' => $number_of_units,
-				'mu' => $p->getKind()->getMeasureUnit()->getName( $this->getCart()->getShop()->getLocale() )
+				'mu' => $p->getKind()->getMeasureUnit()->getName( $this->getCart()->getEshop()->getLocale() )
 			],
-			locale: $this->getCart()->getShop()->getLocale()
+			locale: $this->getCart()->getEshop()->getLocale()
 		);
 		
 		return true;

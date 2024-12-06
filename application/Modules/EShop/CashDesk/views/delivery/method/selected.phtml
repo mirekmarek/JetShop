@@ -1,0 +1,42 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+
+use Jet\MVC_View;
+use JetApplication\Delivery_Method_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Delivery_Method_EShopData $method
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+$method = $this->getRaw('delivery_method');
+
+
+$this->setVar('delivery_method', $method);
+?>
+
+<div class="method-selected">
+	<div class="method-radio-btn">
+		<input type="radio" name="delivery_method" checked onclick="setTimeout(function(){CashDesk.delivery.select('<?= $method->getId() ?>')}, 10);return false;" />
+	</div>
+	
+	<div class="method-icon">
+		<?php if(($img=$method->getIcon1ThumbnailUrl(50, 50))): ?>
+		<img src="<?=$img?>">
+		<?php endif; ?>
+	</div>
+	
+	
+	<div class="method-title">
+		<b><?= $method->getTitle() ?></b>
+		<?php if($method->getDescription()): ?>
+			<div>
+				<?= $method->getDescription() ?>
+			</div>
+		<?php endif; ?>
+	</div>
+	
+	<?=$this->render('delivery/price')?>
+</div>

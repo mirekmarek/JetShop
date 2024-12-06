@@ -13,20 +13,20 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 
 class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 	
 	public function default_Action() : void
 	{
-		$shop = $this->getShop();
+		$eshop = $this->getEshop();
 		
 		/**
-		 * @var ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface $module
+		 * @var EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface $module
 		 */
 		$module = $this->getModule();
 		
-		$config = $module->getShopConfig( $shop );
+		$config = $module->getEshopConfig( $eshop );
 		
 		$save = function() use ($config) {
 			$ok = true;

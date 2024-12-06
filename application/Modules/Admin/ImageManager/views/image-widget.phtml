@@ -15,7 +15,7 @@ $image = $this->getRaw('image');
 
 $entity = $image->getEntity();
 $image_class = $image->getImageClass();
-$shop_key = $image->getShop()?->getKey();
+$eshop_key = $image->getEshop()?->getKey();
 $editable = $this->getBool('editable');
 
 if($editable) {

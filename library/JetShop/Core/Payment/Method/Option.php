@@ -3,16 +3,16 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\DataModel;
 
-use JetApplication\Entity_WithShopData;
-use JetApplication\Payment_Method_Option_ShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\Payment_Method_Option_EShopData;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'payment_methods_options',
 	database_table_name: 'payment_methods_options',
 )]
-abstract class Core_Payment_Method_Option extends Entity_WithShopData {
+abstract class Core_Payment_Method_Option extends Entity_WithEShopData {
 	
 	
 	#[DataModel_Definition(
@@ -28,13 +28,13 @@ abstract class Core_Payment_Method_Option extends Entity_WithShopData {
 	protected int $priority = 0;
 	
 	/**
-	 * @var Payment_Method_Option_ShopData[]
+	 * @var Payment_Method_Option_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Payment_Method_Option_ShopData::class
+		data_model_class: Payment_Method_Option_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	public function getMethodId(): int
 	{
@@ -44,15 +44,15 @@ abstract class Core_Payment_Method_Option extends Entity_WithShopData {
 	public function setMethodId( int $method_id ): void
 	{
 		$this->method_id = $method_id;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData($shop)->setMethodId( $method_id );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData($eshop)->setMethodId( $method_id );
 		}
 	}
 	
-	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_Option_ShopData
+	public function getEshopData( ?EShop $eshop=null ) : Payment_Method_Option_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	public function getPriority(): int
@@ -63,8 +63,8 @@ abstract class Core_Payment_Method_Option extends Entity_WithShopData {
 	public function setPriority( int $priority ): void
 	{
 		$this->priority = $priority;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData($shop)->setPriority( $priority );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData($eshop)->setPriority( $priority );
 		}
 		
 	}

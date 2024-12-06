@@ -8,8 +8,8 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 /**
  *
@@ -18,7 +18,7 @@ use JetApplication\Shops_Shop;
 	name: 'mailing_subscribe',
 	database_table_name: 'mailing_subscribe',
 )]
-abstract class Core_EMailMarketing_Subscribe extends Entity_WithShopRelation
+abstract class Core_EMailMarketing_Subscribe extends Entity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(
@@ -30,10 +30,10 @@ abstract class Core_EMailMarketing_Subscribe extends Entity_WithShopRelation
 	protected string $email_address = '';
 	
 
-	public static function get( Shops_Shop $shop, string $email_address ) : static|null
+	public static function get( EShop $eshop, string $email_address ) : static|null
 	{
 		return static::load( [
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'email_address' => $email_address
 		] );

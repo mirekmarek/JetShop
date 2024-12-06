@@ -5,7 +5,7 @@ use Jet\Tr;
 use JetApplication\EMail;
 use JetApplication\Invoice;
 use JetApplication\Invoices;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 class EMailTemplate_Invoice extends EMailTemplate {
 	
@@ -19,11 +19,11 @@ class EMailTemplate_Invoice extends EMailTemplate {
 	}
 	
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function initTest( EShop $eshop ): void
 	{
 		$ids = Invoice::dataFetchCol(
 			select: ['id'],
-			where: [$shop->getWhere(), 'AND', ['correction_invoice'=>false]],
+			where: [$eshop->getWhere(), 'AND', ['correction_invoice' =>false]],
 			order_by: '-id',
 			limit: 1000
 		);
@@ -33,7 +33,7 @@ class EMailTemplate_Invoice extends EMailTemplate {
 		$this->invoice = Invoice::get($id);
 	}
 	
-	public function generateAttachment( Shops_Shop $shop, EMail $email ) : void
+	public function generateAttachment( EShop $eshop, EMail $email ) : void
 	{
 		/**
 		 * @var Invoice $invoice

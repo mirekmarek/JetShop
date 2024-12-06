@@ -5,12 +5,12 @@ use Jet\Data_DateTime;
 use Jet\Logger;
 use Jet\UI_messages;
 use JetApplication\Complaint;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
 use JetApplication\OrderDispatch_Item;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 
 
 
@@ -19,16 +19,16 @@ trait Core_OrderDispatch_Trait_Workflow
 	public static function newByComplaint( Complaint $complaint, int $product_id, int $delivery_method, string $delivery_point_code ) : static
 	{
 		$_order = Order::get($complaint->getOrderId());
-		$product = Product_ShopData::get( $product_id, $complaint->getShop() );
+		$product = Product_EShopData::get( $product_id, $complaint->getEshop() );
 		
-		$delivery_method = Delivery_Method_ShopData::get( $delivery_method, $complaint->getShop() );
+		$delivery_method = Delivery_Method_EShopData::get( $delivery_method, $complaint->getEshop() );
 		
 		
 		$dispatch = new static();
 		
 		$dispatch->setDispatchDate( Data_DateTime::now() );
 		
-		$dispatch->setShop( $complaint->getShop() );
+		$dispatch->setEshop( $complaint->getEshop() );
 		$dispatch->setContext( $complaint->getProvidesContext() );
 		$dispatch->setOrderId( $complaint->getOrderId() );
 		
@@ -95,7 +95,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		
 		$dispatch->setDispatchDate( Data_DateTime::now() );
 		
-		$dispatch->setShop( $order->getShop() );
+		$dispatch->setEshop( $order->getEshop() );
 		
 		$dispatch->setContext( $order->getProvidesContext() );
 		
@@ -117,11 +117,11 @@ trait Core_OrderDispatch_Trait_Workflow
 		$dispatch->setRecipientCountry( $order->getDeliveryAddressCountry() );
 		
 		if($order->getPaymentMethod()->getKind()->isCOD()) {
-			$dispatch->setCod( $order->getTotalAmount() );
+			$dispatch->setCod( $order->getTotalAmount_WithVAT() );
 		}
 		$dispatch->setCodCurrency( $order->getCurrency() );
 		
-		$dispatch->setFinancialValue( $order->getProductAmount() );
+		$dispatch->setFinancialValue( $order->getProductAmount_WithVAT() );
 		
 		$delivery_method = $order->getDeliveryMethod();
 		
@@ -131,7 +131,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		
 		foreach($order->getItems() as $order_item) {
 			if( $order_item->isPhysicalProduct() ) {
-				$product = Product_ShopData::get( $order_item->getItemId(), $order->getShop() );
+				$product = Product_EShopData::get( $order_item->getItemId(), $order->getEshop() );
 				
 				$dispatch_item = new OrderDispatch_Item();
 				$dispatch_item->setProductId( $order_item->getItemId() );

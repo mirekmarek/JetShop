@@ -14,7 +14,7 @@ use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\Shop_Managers;
+use JetApplication\EShop_Managers;
 
 /**
  *
@@ -27,9 +27,9 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 	 */
 	public function default_Action() : void
 	{
-		Shop_Managers::setShop( $this->getShop() );
-		$managers = Shop_Managers::getRegisteredManagers();
-		$config = Shop_Managers::getConfig();
+		EShop_Managers::setEshop( $this->getEshop() );
+		$managers = EShop_Managers::getRegisteredManagers();
+		$config = EShop_Managers::getConfig();
 		
 		$this->view->setVar('managers', $managers);
 		$this->view->setVar('config', $config);
@@ -42,8 +42,8 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 			
 			$ok = true;
 			try {
-				Shop_Managers::setManagerConfig( $interface_class_name, $manager );
-				Shop_Managers::saveCfg();
+				EShop_Managers::setManagerConfig( $interface_class_name, $manager );
+				EShop_Managers::saveCfg();
 				
 				Logger::info(
 					event: 'manager_set',

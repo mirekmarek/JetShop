@@ -45,4 +45,5 @@ return [
 	'Status' => 'Stav',
 	'Source' => 'Zdroj',
 	'Name:' => 'Název:',
+	'e-shop' => 'internetový obchod',
 ];

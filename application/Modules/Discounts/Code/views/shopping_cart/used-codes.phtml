@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Discounts\Code;
+
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Discounts_Code;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Discounts_Code|null $used_code
+ * @var Main $module
+ */
+
+$module = $this->getRaw('module');
+
+$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
+
+
+foreach($cash_desk->getDiscounts() as $discount):
+	if($discount->getDiscountModule()!=Main::DISCOUNT_MODULE) {
+		continue;
+	}
+	?>
+<div id="discount_code_used_codes">
+	<?php if( $discount->getAmount() ):
+		?>
+		<?=$discount->getDescription()?>:
+
+		<strong><?=EShop_Managers::PriceFormatter()->formatWithCurrency($discount->getAmount())?></strong>
+	<?php else: ?>
+		<?=$discount->getDescription()?>
+	<?php endif; ?>
+
+	<?=UI::button(' ')->setIcon('trash')->setOnclick("DiscountCode.cancel('{$discount->getDiscountContext()}')")?>
+</div>
+<?php endforeach;
+

@@ -5,7 +5,8 @@ use Jet\Form;
 use Jet\MVC_View;
 use Jet\UI;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\Property;
 
 /**
  * @var MVC_View $this
@@ -18,28 +19,28 @@ $form = $this->getRaw('form');
 $prefix = $this->getString('prefix');
 
 
-if(!$form->fieldExists($prefix.Shops::getDefault()->getKey())) {
+if(!$form->fieldExists($prefix.EShops::getDefault()->getKey())) {
 	return;
 }
 
-$default = $form->field($prefix.Shops::getDefault()->getKey());
+$default = $form->field($prefix.EShops::getDefault()->getKey());
 
 $default->setLabel(
 	'<a href="'.$property->getEditURL().'" tabindex="99999">'.$property->getInternalName().'</a><br>'
 	.Admin_Managers::Property()->renderActiveState( $property )
 );
 
-if( Shops::isMultiShopMode() ) {
+if( EShops::isMultiEShopMode() ) {
 	$default->input()->setCustomRenderer( function() use ($form, $prefix) {
-		foreach(Shops::getListSorted() as $shop) {
-			if(!$form->fieldExists($prefix.$shop->getKey())) {
+		foreach( EShops::getListSorted() as $eshop) {
+			if(!$form->fieldExists($prefix.$eshop->getKey())) {
 				continue;
 			}
 			
-			$field = $form->field($prefix.$shop->getKey());
+			$field = $form->field($prefix.$eshop->getKey());
 			?>
 			<div style="padding-bottom: 5px;">
-				<div><?=UI::flag($shop->getLocale())?> <?=$shop->getShopName();?></div>
+				<div><?=UI::flag($eshop->getLocale())?> <?=$eshop->getName();?></div>
 				<div><?=$field->input()->renderByView();?></div>
 			</div>
 			<?php

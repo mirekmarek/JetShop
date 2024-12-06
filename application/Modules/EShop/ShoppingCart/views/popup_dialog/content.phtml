@@ -1,0 +1,45 @@
+<?php
+namespace JetApplicationModule\EShop\ShoppingCart;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Pricelists;
+use JetApplication\EShop_Managers;
+use JetApplication\EShop_Pages;
+use JetApplication\ShoppingCart_Item;
+
+/**
+ * @var MVC_View $this
+ * @var ShoppingCart_Item $item
+ */
+
+$item = $this->getRaw('new_item');
+
+$product = $item->getProduct();
+?>
+
+<div class="shopping-cart-popup-contetn">
+	<div class="image">
+		<?php if(($img=$product->getImgThumbnailUrl( 0, 100, 100))): ?>
+			<img src="<?=$img?>"/>
+		<?php endif; ?>
+	</div>
+	<div class="name">
+		<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a><br>
+	</div>
+	<div class="price-per-unit">
+		<?=$item->getNumberOfUnits()?> <?=$product->getMeasureUnit()?->getName()?> x <?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?>
+	</div>
+	<div class="total">
+		<?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?>
+	</div>
+</div>
+
+
+<div class="shopping-cart-popup-buttons">
+	<?=UI::button(Tr::_('Proceed to checkout'))->setUrl( EShop_Pages::ShoppingCart()->getURL() )->setClass( UI_button::CLASS_SUCCESS )?>
+</div>
+
+<?=EShop_Managers::Analytics()?->addToCart( $item )?>

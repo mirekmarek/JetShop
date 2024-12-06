@@ -13,8 +13,8 @@ use Jet\Locale;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Document;
 use JetApplication\OrderDispatch;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use SoapClient;
 use SoapFault;
 
@@ -27,11 +27,11 @@ class Client
 		$this->carrier = $carrier;
 	}
 	
-	public function getCarriers( ?Shops_Shop $shop = null ): array
+	public function getCarriers( ?EShop $eshop = null ): array
 	{
-		$shop = $shop ? : Shops::getDefault();
+		$eshop = $eshop ? : EShops::getDefault();
 		
-		$API_key = $this->carrier->getConfig( $shop )->getAPIKey();
+		$API_key = $this->carrier->getConfig( $eshop )->getAPIKey();
 		if( !$API_key ) {
 			return [];
 		}
@@ -63,11 +63,11 @@ class Client
 	{
 		$res = [];
 		
-		foreach( Shops::getList() as $shop ) {
-			foreach( $this->_downloadUpToDateDeliveryPointsList_branches( $shop ) as $item ) {
+		foreach( EShops::getList() as $eshop ) {
+			foreach( $this->_downloadUpToDateDeliveryPointsList_branches( $eshop ) as $item ) {
 				$res[$item->getKey()] = $item;
 			}
-			foreach( $this->_downloadUpToDateDeliveryPointsList_boxes( $shop ) as $item ) {
+			foreach( $this->_downloadUpToDateDeliveryPointsList_boxes( $eshop ) as $item ) {
 				$res[$item->getKey()] = $item;
 			}
 		}
@@ -79,33 +79,33 @@ class Client
 	 * @return Carrier_DeliveryPoint[]
 	 * @throws Exception
 	 */
-	public function _downloadUpToDateDeliveryPointsList_branches( Shops_Shop $shop ): array
+	public function _downloadUpToDateDeliveryPointsList_branches( EShop $eshop ): array
 	{
 		
-		$API_key = $this->carrier->getConfig( $shop )->getAPIKey();
+		$API_key = $this->carrier->getConfig( $eshop )->getAPIKey();
 		if( !$API_key ) {
 			return [];
 		}
 		
-		$JSON_URL = 'https://pickup-point.api.packeta.com/v5/' . $API_key . '/branch/json?language=' . $shop->getLocale()->getLanguage();
+		$JSON_URL = 'https://pickup-point.api.packeta.com/v5/' . $API_key . '/branch/json?language=' . $eshop->getLocale()->getLanguage();
 		
-		return $this->download( $shop->getLocale(), Main::DP_TYPE_BRANCH, $JSON_URL );
+		return $this->download( $eshop->getLocale(), Main::DP_TYPE_BRANCH, $JSON_URL );
 	}
 	
 	/**
 	 * @return Carrier_DeliveryPoint[]
 	 * @throws Exception
 	 */
-	public function _downloadUpToDateDeliveryPointsList_boxes( Shops_Shop $shop ): array
+	public function _downloadUpToDateDeliveryPointsList_boxes( EShop $eshop ): array
 	{
-		$API_key = $this->carrier->getConfig( $shop )->getAPIKey();
+		$API_key = $this->carrier->getConfig( $eshop )->getAPIKey();
 		if( !$API_key ) {
 			return [];
 		}
 		
-		$JSON_URL = 'https://pickup-point.api.packeta.com/v5/' . $API_key . '/box/json?language=' . $shop->getLocale()->getLanguage();
+		$JSON_URL = 'https://pickup-point.api.packeta.com/v5/' . $API_key . '/box/json?language=' . $eshop->getLocale()->getLanguage();
 		
-		return $this->download( $shop->getLocale(), Main::DP_TYPE_BOX, $JSON_URL );
+		return $this->download( $eshop->getLocale(), Main::DP_TYPE_BOX, $JSON_URL );
 	}
 	
 	protected function download( Locale $locale, string $type, string $JSON_URL ): array
@@ -218,7 +218,7 @@ class Client
 	public function createConsignment( OrderDispatch $dispatch ): bool
 	{
 		
-		$cfg = $this->carrier->getConfig( $dispatch->getShop() );
+		$cfg = $this->carrier->getConfig( $dispatch->getEshop() );
 		
 		$gw = new SoapClient( $cfg->getSoapApiURL() );
 		$api_password = $cfg->getAPIPassword();
@@ -314,7 +314,7 @@ class Client
 	
 	public function cancelConsignment( OrderDispatch $dispatch, string &$error_message = '' ): bool
 	{
-		$cfg = $this->carrier->getConfig( $dispatch->getShop() );
+		$cfg = $this->carrier->getConfig( $dispatch->getEshop() );
 		
 		$gw = new SoapClient( $cfg->getSoapApiURL() );
 		$api_password = $cfg->getAPIPassword();
@@ -335,7 +335,7 @@ class Client
 	public function getPacketLabel( OrderDispatch $dispatch, string &$error_message = '' ): ?Carrier_Document
 	{
 		
-		$cfg = $this->carrier->getConfig( $dispatch->getShop() );
+		$cfg = $this->carrier->getConfig( $dispatch->getEshop() );
 		
 		$gw = new SoapClient( $cfg->getSoapApiURL() );
 		$api_password = $cfg->getAPIPassword();
@@ -371,7 +371,7 @@ class Client
 		
 		foreach( $dispatches as $dispatch ) {
 			if( !$gw ) {
-				$cfg = $this->carrier->getConfig( $dispatch->getShop() );
+				$cfg = $this->carrier->getConfig( $dispatch->getEshop() );
 				
 				$gw = new SoapClient( $cfg->getSoapApiURL() );
 				$api_password = $cfg->getAPIPassword();
@@ -417,7 +417,7 @@ class Client
 		
 		foreach( $dispatches as $dispatch ) {
 			if( !$gw ) {
-				$cfg = $this->carrier->getConfig( $dispatch->getShop() );
+				$cfg = $this->carrier->getConfig( $dispatch->getEshop() );
 				
 				$gw = new SoapClient( $cfg->getSoapApiURL() );
 				$api_password = $cfg->getAPIPassword();
@@ -458,7 +458,7 @@ class Client
 	
 	public function actualizeTracking( OrderDispatch $dispatch, string &$error_message = '' ): bool
 	{
-		$cfg = $this->carrier->getConfig( $dispatch->getShop() );
+		$cfg = $this->carrier->getConfig( $dispatch->getEshop() );
 		
 		$gw = new SoapClient( $cfg->getSoapApiURL() );
 		$api_password = $cfg->getAPIPassword();

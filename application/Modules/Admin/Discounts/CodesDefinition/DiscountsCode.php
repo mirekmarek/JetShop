@@ -15,7 +15,7 @@ use Jet\Form_Field_Select;
 use JetApplication\Admin_Entity_Marketing_Interface;
 use JetApplication\Admin_Entity_Marketing_Trait;
 use JetApplication\Discounts_Code;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 class DiscountsCode extends Discounts_Code implements Admin_Entity_Marketing_Interface
 {
@@ -45,18 +45,18 @@ class DiscountsCode extends Discounts_Code implements Admin_Entity_Marketing_Int
 	
 	protected function setupForm( Form $form ) : void
 	{
-		$shop = new Form_Field_Select('shop', 'Shop');
-		$shop->setSelectOptions( Shops::getScope() );
-		$shop->setDefaultValue( $this->getShop()->getKey() );
-		$shop->setErrorMessages([
+		$eshop = new Form_Field_Select('eshop', 'e-shop');
+		$eshop->setSelectOptions( EShops::getScope() );
+		$eshop->setDefaultValue( $this->getEshop()->getKey() );
+		$eshop->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]);
-		$shop->setFieldValueCatcher( function( string $shop_key ) {
-			$shop = Shops::get( $shop_key );
-			$this->setShop( $shop );
+		$eshop->setFieldValueCatcher( function( string $eshop_key ) {
+			$eshop = EShops::get( $eshop_key );
+			$this->setEshop( $eshop );
 		} );
 		
-		$form->addField( $shop );
+		$form->addField( $eshop );
 		
 		$code = $form->getField('code');
 		

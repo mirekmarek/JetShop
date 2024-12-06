@@ -2,32 +2,34 @@
 namespace JetShop;
 
 use Jet\IO_File;
-use Jet\SysConf_Path;
 use JetApplication\Currencies;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\EShopConfig;
+use JetApplication\Pricelist;
 
 
 abstract class Core_Pricelists {
 	
 	/**
-	 * @var Pricelists_Pricelist[]|null
+	 * @var Pricelist[]|null
 	 */
 	protected static ?array $_list = null;
-	protected static ?Pricelists_Pricelist $current = null;
+	protected static ?Pricelist $current = null;
 	
 	public static function getCfgFilePath() : string
 	{
-		return SysConf_Path::getConfig().'shop/pricelists.php';
+		return EShopConfig::getRootDir().'pricelists.php';
 	}
 	
 	public static function loadCfg() : void
 	{
 		static::$_list = [];
 		
-		$cfg = require static::getCfgFilePath();
-		
-		foreach($cfg as $item) {
-			static::addPricelist( (new Pricelists_Pricelist( $item )) );
+		if(IO_File::exists(static::getCfgFilePath())) {
+			$cfg = require static::getCfgFilePath();
+			
+			foreach($cfg as $item) {
+				static::addPricelist( (new Pricelist( $item )) );
+			}
 		}
 	}
 	
@@ -46,14 +48,14 @@ abstract class Core_Pricelists {
 	}
 	
 	/**
-	 * @return Pricelists_Pricelist
+	 * @return Pricelist
 	 */
-	public static function getCurrent() : Pricelists_Pricelist
+	public static function getCurrent() : Pricelist
 	{
 		return static::$current;
 	}
 
-	public static function setCurrent( Pricelists_Pricelist $pricelist ) : void
+	public static function setCurrent( Pricelist $pricelist ) : void
 	{
 		static::$current = $pricelist;
 		
@@ -66,14 +68,14 @@ abstract class Core_Pricelists {
 		return isset(static::getList()[$code]);
 	}
 
-	public static function get( string $code ) : Pricelists_Pricelist|null
+	public static function get( string $code ) : Pricelist|null
 	{
 		return static::getList()[$code]??null;
 	}
 
 
 	/**
-	 * @return Pricelists_Pricelist[]
+	 * @return Pricelist[]
 	 */
 	public static function getList() : array
 	{
@@ -95,12 +97,12 @@ abstract class Core_Pricelists {
 		return $scope;
 	}
 	
-	public static function addPricelist( Pricelists_Pricelist $pricelist ) : void
+	public static function addPricelist( Pricelist $pricelist ) : void
 	{
 		static::$_list[$pricelist->getCode()] = $pricelist;
 	}
 	
-	public static function removePricelist( Pricelists_Pricelist $pricelist ) : void
+	public static function removePricelist( Pricelist $pricelist ) : void
 	{
 		unset(static::$_list[$pricelist->getCode()]);
 	}

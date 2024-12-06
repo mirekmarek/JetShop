@@ -5,11 +5,13 @@ use Jet\Tr;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
 use JetApplication\ReturnOfGoods;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
+use JetApplication\ReturnOfGoods_Event;
 
 abstract class Core_ReturnOfGoods_EMailTemplate extends EMail_Template {
 	
 	protected ReturnOfGoods $return_of_goods;
+	protected ReturnOfGoods_Event $event;
 	
 	public function getReturnOfGoods(): ReturnOfGoods
 	{
@@ -21,11 +23,17 @@ abstract class Core_ReturnOfGoods_EMailTemplate extends EMail_Template {
 		$this->return_of_goods = $return_of_goods;
 	}
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function setEvent( ReturnOfGoods_Event $event ): void
+	{
+		$this->event = $event;
+		$this->return_of_goods = $event->getReturnOfGoods();
+	}
+	
+	public function initTest( EShop $eshop ): void
 	{
 		$ids = ReturnOfGoods::dataFetchCol(
 			select: ['id'],
-			where: $shop->getWhere(),
+			where: $eshop->getWhere(),
 			order_by: '-id',
 			limit: 1000
 		);
@@ -36,7 +44,7 @@ abstract class Core_ReturnOfGoods_EMailTemplate extends EMail_Template {
 		$this->return_of_goods = ReturnOfGoods::get( $id );
 	}
 	
-	public function setupEMail( Shops_Shop $shop, EMail $email ): void
+	public function setupEMail( EShop $eshop, EMail $email ): void
 	{
 		$email->setContext('return_of_goods');
 		$email->setContextId( $this->return_of_goods->getId() );

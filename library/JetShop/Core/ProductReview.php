@@ -7,15 +7,15 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Product;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
 	name: 'product_reviews',
 	database_table_name: 'product_reviews',
 )]
-abstract class Core_ProductReview extends Entity_WithShopRelation
+abstract class Core_ProductReview extends Entity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(
@@ -371,11 +371,11 @@ abstract class Core_ProductReview extends Entity_WithShopRelation
 	}
 	
 	/**
-	 * @param Product_ShopData $product
+	 * @param Product_EShopData $product
 	 *
 	 * @return static[]
 	 */
-	public static function getReviews( Product_ShopData $product ): array
+	public static function getReviews( Product_EShopData $product ): array
 	{
 		$p_id = $product->getId();
 		if($product->isVariant()) {

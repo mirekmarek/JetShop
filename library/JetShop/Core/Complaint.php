@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Auth;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -18,18 +17,18 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Complaint_ChangeHistory;
+use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Complaint;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Order;
-use JetApplication\Complaint_Trait_Status;
-use JetApplication\Product_ShopData;
-use JetApplication\Shop_Pages;
-use JetApplication\Shops_Shop;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Pages;
+use JetApplication\EShop;
 use JetApplication\Complaint_Trait_Events;
+use JetApplication\Complaint_Trait_Status;
+use JetApplication\Complaint_Trait_Changes;
 
 #[DataModel_Definition(
 	name: 'complaint',
@@ -42,13 +41,14 @@ use JetApplication\Complaint_Trait_Events;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Complaint extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+abstract class Core_Complaint extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
 	
 	use Complaint_Trait_Status;
 	use Complaint_Trait_Events;
+	use Complaint_Trait_Changes;
 	
 	
 	
@@ -186,13 +186,13 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	
 	public static function startNew(
 		Order $order,
-		Product_ShopData $product,
+		Product_EShopData $product,
 		string $problem_description
 	) : static
 	{
 		$complaint = new static();
 		
-		$complaint->setShop( $order->getShop() );
+		$complaint->setEshop( $order->getEshop() );
 		
 		$complaint->setOrderId( $order->getId() );
 		$complaint->setOrderNumber( $order->getNumber() );
@@ -217,7 +217,7 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	
 	public function getURL() : string
 	{
-		return Shop_Pages::Complaints( $this->getShop() )->getURL( GET_params: [
+		return EShop_Pages::Complaints( $this->getEshop() )->getURL( GET_params: [
 			'c' => $this->getKey(),
 			'k' => $this->getSecondKey()
 		] );
@@ -255,9 +255,9 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 		$this->product_id = $product_id;
 	}
 	
-	public function getProduct() : ?Product_ShopData
+	public function getProduct() : ?Product_EShopData
 	{
-		return Product_ShopData::get( $this->product_id, $this->getShop() );
+		return Product_EShopData::get( $this->product_id, $this->getEshop() );
 	}
 
 	public function getProblemDescription(): string
@@ -289,9 +289,9 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 		return $this->getDateStarted();
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
-		return $this->getShop();
+		return $this->getEshop();
 	}
 	
 	
@@ -430,9 +430,9 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 		return $this->delivery_method_id;
 	}
 	
-	public function getDeliveryMethod() : Delivery_Method_ShopData
+	public function getDeliveryMethod() : Delivery_Method_EShopData
 	{
-		return Delivery_Method_ShopData::get( $this->getDeliveryMethodId(), $this->getShop() );
+		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
 	}
 	
 	public function setDeliveryMethodId( int $delivery_method_id ) : void
@@ -452,60 +452,6 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	
 	
 	
-	public function changeDeliveryMethod( int $delivery_method_id, string $delivery_personal_takeover_delivery_point_code, float $price ) : Complaint_ChangeHistory
-	{
-		$change = $this->startChange();
-		
-		$new_delivery_method = Delivery_Method_ShopData::get( $delivery_method_id, $this->getShop() );
-		
-		if( $this->delivery_method_id != $delivery_method_id ) {
-			$change->addChange(
-				'delivery_method',
-				$this->delivery_method_id,
-				$delivery_method_id
-			);
-			$this->delivery_method_id = $delivery_method_id;
-		}
-		
-		if($this->delivery_personal_takeover_delivery_point_code!=$delivery_personal_takeover_delivery_point_code) {
-			$change->addChange(
-				'delivery_personal_takeover_delivery_point_code',
-				$this->delivery_personal_takeover_delivery_point_code,
-				$delivery_personal_takeover_delivery_point_code
-			);
-			
-			$this->delivery_personal_takeover_delivery_point_code = $delivery_personal_takeover_delivery_point_code;
-			
-			if( $this->delivery_personal_takeover_delivery_point_code ) {
-				$place = $new_delivery_method->getPersonalTakeoverDeliveryPoint( $delivery_personal_takeover_delivery_point_code );
-				if($place) {
-					
-					$delivery_address = new Customer_Address();
-					$delivery_address->setFirstName( $this->delivery_first_name );
-					$delivery_address->setSurname( $this->delivery_surname );
-					$delivery_address->setCompanyName( $place->getName() );
-					$delivery_address->setAddressStreetNo( $place->getStreet() );
-					$delivery_address->setAddressTown( $place->getTown() );
-					$delivery_address->setAddressZip( $place->getZip() );
-					$delivery_address->setAddressCountry( $place->getCountry() );
-					
-					$address_changes = $this->updateDeliveryAddress( $delivery_address );
-					foreach($address_changes->getChanges() as $address_change) {
-						$change->addChange(
-							$address_change->getProperty(),
-							$address_change->getOldValue(),
-							$address_change->getNewValue()
-						);
-					}
-				}
-			}
-			
-		}
-		
-		
-		
-		return $change;
-	}
 
 	
 	/**
@@ -564,9 +510,9 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 		return $complaints[0];
 	}
 	
-	public static function getByNumber( string $number, Shops_Shop $shop ) : Complaint|null
+	public static function getByNumber( string $number, EShop $eshop ) : Complaint|null
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where[] = [
 			'number' => $number
@@ -625,39 +571,6 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 		$this->setDeliveryAddressCountry( $address->getAddressCountry() );
 	}
 	
-	public function updateDeliveryAddress( Customer_Address $address ) : Complaint_ChangeHistory
-	{
-		$map = [
-			'delivery_company_name'      => 'CompanyName',
-			//'delivery_company_id'        => 'CompanyId',
-			//'delivery_company_vat_id'    => 'CompanyVatId',
-			'delivery_first_name'        => 'FirstName',
-			'delivery_surname'           => 'Surname',
-			'delivery_address_street_no' => 'AddressStreetNo',
-			'delivery_address_town'      => 'AddressTown',
-			'delivery_address_zip'       => 'AddressZip',
-			'delivery_address_country'   => 'AddressCountry',
-		];
-		
-		$change = $this->startChange();
-		foreach($map as $property=>$gs) {
-			
-			$address_getter = 'get'.$gs;
-			$complaint_getter = 'getDelivery'.$gs;
-			$complaint_setter = 'setDelivery'.$gs;
-			
-			if($this->{$complaint_getter}() != $address->{$address_getter}()) {
-				$change->addChange(
-					$property,
-					$this->{$complaint_getter}(),
-					$address->{$address_getter}()
-				);
-				$this->{$complaint_setter}( $address->{$address_getter}() );
-			}
-		}
-		
-		return $change;
-	}
 	
 	
 	public function getDeliveryAddress() : Customer_Address
@@ -681,23 +594,6 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	}
 	
 	
-	public function startChange() : Complaint_ChangeHistory
-	{
-		$change = new Complaint_ChangeHistory();
-		/**
-		 * @var Complaint $this
-		 */
-		$change->setComplaint( $this );
-		$change->setDateAdded( Data_DateTime::now() );
-		
-		$admin = Auth::getCurrentUser();
-		if($admin) {
-			$change->setAdministrator( $admin->getName() );
-			$change->setAdministratorId( $admin->getId() );
-		}
-		
-		return $change;
-	}
 	
 	/**
 	 * @param Order $order
@@ -706,13 +602,13 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	 */
 	public static function getByOrderItem( Order $order, int $product_id ) : array
 	{
-		$where = $order->getShop()->getWhere();
+		$where = $order->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['order_id'] = $order->getId();
 		$where[] = 'AND';
 		$where['product_id'] = $product_id;
 		
-		return static::fetch( ['complaint'=>$where] );
+		return static::fetch( ['complaint'=>$where], order_by: ['-id']  );
 		
 	}
 	
@@ -722,11 +618,11 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	 */
 	public static function getByOrder( Order $order ) : array
 	{
-		$where = $order->getShop()->getWhere();
+		$where = $order->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['order_id'] = $order->getId();
 		
-		return static::fetch( ['complaint'=>$where] );
+		return static::fetch( ['complaint'=>$where], order_by: ['-id'] );
 		
 	}
 	
@@ -735,11 +631,11 @@ abstract class Core_Complaint extends Entity_WithShopRelation implements NumberS
 	 */
 	public static function getByCustomer( Customer $customer ) : array
 	{
-		$where = $customer->getShop()->getWhere();
+		$where = $customer->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['customer_id'] = $customer->getId();
 		
-		return static::fetch( ['complaint'=>$where] );
+		return static::fetch( ['complaint'=>$where], order_by: ['-id']  );
 		
 	}
 	

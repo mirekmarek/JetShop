@@ -1,25 +1,31 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
+use JetApplication\Entity_Price;
+use JetApplication\Pricelist;
 
 interface Core_Admin_Managers_PriceFormatter {
 	
-	public function format( Currencies_Currency $currency, float $price ) : string;
+	public function format( Pricelist $pricelist, float $price ) : string;
 	
-	public function formatWithCurrency( Currencies_Currency $currency, float $price ) : string;
+	public function formatWithCurrency( Pricelist $pricelist, float $price ) : string;
 	
-	public function format_WithoutVAT( Currencies_Currency $currency, float $price ): string;
+	public function formatWithCurrencyByHasVAT( bool $has_VAT, Currency $currency, float $price ): string;
 	
-	public function formatWithCurrency_WithoutVAT( Currencies_Currency $currency, float $price ): string;
+	public function format_WithoutVAT( Currency $currency, float $price ): string;
 	
-	public function format_VAT( Currencies_Currency $currency, float $price ): string;
+	public function formatWithCurrency_WithoutVAT( Currency $currency, float $price ): string;
 	
-	public function formatWithCurrency_VAT( Currencies_Currency $currency, float $price ): string;
+	public function format_VAT( Currency $currency, float $price ): string;
 	
-	public function format_WithVAT( Currencies_Currency $currency, float $price ): string;
+	public function formatWithCurrency_VAT( Currency $currency, float $price ): string;
 	
-	public function formatWithCurrency_WithVAT( Currencies_Currency $currency, float $price ): string;
+	public function format_WithVAT( Currency $currency, float $price ): string;
+	
+	public function formatWithCurrency_WithVAT( Currency $currency, float $price ): string;
+	
+	public function showPriceInfo( Entity_Price $price ) : string;
 	
 	
 }

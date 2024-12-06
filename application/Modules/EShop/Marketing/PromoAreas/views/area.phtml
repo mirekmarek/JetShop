@@ -1,0 +1,15 @@
+<?php
+namespace JetApplicationModule\EShop\Marketing\PromoAreas;
+
+use Jet\MVC_View;
+use JetApplication\Marketing_PromoArea;
+
+/**
+ * @var MVC_View   $this
+ * @var Marketing_PromoArea $area
+ */
+
+$area_code = $this->getString('area_code');
+$area = $this->getRaw('area');
+
+echo $area->getHtml();

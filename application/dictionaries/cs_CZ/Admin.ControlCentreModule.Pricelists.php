@@ -19,6 +19,6 @@ return [
 	'Delete pricelist' => 'Smazat ceník',
 	'Currency: ' => 'Měna: ',
 	'Currency code' => 'Kód měny',
-	'Please enter code' => '',
-	'Prices are without VAT' => '',
+	'Please enter code' => 'Zadejte kód',
+	'Prices are without VAT' => 'Ceny jsou uvedeny bez DPH',
 ];

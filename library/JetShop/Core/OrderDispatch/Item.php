@@ -6,6 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\DataModel_Related_1toN;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\OrderDispatch;
 
 #[DataModel_Definition(
@@ -134,7 +135,7 @@ abstract class Core_OrderDispatch_Item extends DataModel_Related_1toN
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 
 	

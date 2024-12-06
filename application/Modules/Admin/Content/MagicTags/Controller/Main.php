@@ -18,10 +18,9 @@ use Jet\Http_Request;
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
 use JetApplication\Content_MagicTag_Context;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops;
+use JetApplication\EShop_Managers;
+use JetApplication\EShops;
 
 /**
  *
@@ -34,9 +33,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function default_Action() : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
-		$manager = Shop_Managers::MagicTags();
+		$manager = EShop_Managers::MagicTags();
 		if(!$manager) {
 			return;
 		}
@@ -65,8 +62,8 @@ class Controller_Main extends MVC_Controller_Default
 
 				switch($c->getType()) {
 					case Content_MagicTag_Context::TYPE_PAGE:
-						$shop = Shops::getCurrent();
-						$_pages = MVC::getPages(base_id: $shop->getBaseId(), locale: $shop->getLocale());
+						$eshop = EShops::getCurrent();
+						$_pages = MVC::getPages(base_id: $eshop->getBaseId(), locale: $eshop->getLocale());
 						$pages = [];
 						foreach($_pages as $p) {
 							$pages[$p->getId()] = $p->getName();
@@ -95,11 +92,24 @@ class Controller_Main extends MVC_Controller_Default
 						$form->addField($category_id);
 						break;
 					case Content_MagicTag_Context::TYPE_STRING:
-						$input = new Form_Field_Input($c->getName(), $c->getDescription() );
-						$input->setFieldValueCatcher( function( ?string $v ) use (&$context_data, $c) {
-							$context_data[$c->getName()] = $v;
-						} );
-						$form->addField($input);
+						$options = $c->getOptions();
+						
+						if($options) {
+							$select = new Form_Field_Select($c->getName(), $c->getDescription() );
+							$select->setFieldValueCatcher( function( ?string $v ) use (&$context_data, $c) {
+								$context_data[$c->getName()] = $v;
+							} );
+							$select->setSelectOptions( $options );
+							
+							$form->addField($select);
+						} else {
+							$input = new Form_Field_Input($c->getName(), $c->getDescription() );
+							$input->setFieldValueCatcher( function( ?string $v ) use (&$context_data, $c) {
+								$context_data[$c->getName()] = $v;
+							} );
+							$form->addField($input);
+						}
+						
 						break;
 					case Content_MagicTag_Context::TYPE_INT:
 						$input = new Form_Field_Int($c->getName(), $c->getDescription() );

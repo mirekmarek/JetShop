@@ -16,7 +16,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 
 	public function default_Action() : void
 	{
-		$shop = $this->getShop();
+		$eshop = $this->getEshop();
 		
 		/**
 		 * @var Main $module
@@ -33,7 +33,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 				'AND',
 				'carrier_code' => $module->getCode(),
 				'AND',
-				'point_locale' => $shop->getLocale()
+				'point_locale' => $eshop->getLocale()
 			])
 		) {
 			if( $selected_point->getEditForm()->catch() ) {
@@ -45,7 +45,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 		} else {
 			if(Http_Request::GET()->exists('new_point')) {
 				$new_point = new Carrier_DeliveryPoint();
-				$new_point->setPointLocale( $shop->getLocale() );
+				$new_point->setPointLocale( $eshop->getLocale() );
 				$new_point->setCarrier( $module );
 				
 				$new_point->addOpeningHours( 'monday', '', '' );
@@ -63,7 +63,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 			}
 		}
 		
-		$points = Carrier_DeliveryPoint::getPointList( $module, only_locale: $shop->getLocale() );
+		$points = Carrier_DeliveryPoint::getPointList( $module, only_locale: $eshop->getLocale() );
 		
 		
 		$this->view->setVar('points', $points);

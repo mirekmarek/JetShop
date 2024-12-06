@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+
+require 'status_bar/'.$cash_desk->getCurrentStep().'.phtml';
+

@@ -9,15 +9,16 @@ namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 
 use Jet\Application;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\MarketplaceIntegration;
-use JetApplication\Shops;
+use JetApplication\EShops;
 use JetApplication\Exports;
+use JetApplication\KindOfProduct;
 
 use Jet\Http_Request;
 use Jet\Tr;
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	
 	
@@ -164,20 +165,20 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		$GET = Http_Request::GET();
 		
 		$selected_exp = null;
-		$selected_exp_shop = null;
+		$selected_exp_eshop = null;
 		
 		$exp = $GET->getString('exp');
 		if($exp) {
 			$selected_exp = Exports::getExportModule($exp);
 			
 			if($selected_exp) {
-				$exp_shop = $GET->getString('exp_shop');
-				if($exp_shop) {
-					$selected_exp_shop = Shops::get($exp_shop);
-					if($selected_exp_shop) {
-						if(!$selected_exp->isAllowedForShop($selected_exp_shop)) {
+				$exp_eshop = $GET->getString('exp_eshop');
+				if($exp_eshop) {
+					$selected_exp_eshop = EShops::get($exp_eshop);
+					if($selected_exp_eshop) {
+						if(!$selected_exp->isAllowedForShop($selected_exp_eshop)) {
 							$selected_exp = null;
-							$selected_exp_shop = null;
+							$selected_exp_eshop = null;
 						}
 					} else {
 						$selected_exp = null;
@@ -186,12 +187,12 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 			}
 		}
 		
-		if($selected_exp_shop) {
+		if($selected_exp_eshop) {
 			$this->view->setVar('selected_exp', $selected_exp );
-			$this->view->setVar('selected_exp_shop', $selected_exp_shop );
+			$this->view->setVar('selected_exp_eshop', $selected_exp_eshop );
 			
 			$this->view->setVar('selected_exp_code', $selected_exp->getCode());
-			$this->view->setVar('selected_exp_shop_key', $selected_exp_shop->getKey() );
+			$this->view->setVar('selected_exp_eshop_key', $selected_exp_eshop->getKey() );
 			
 			$this->view->setVar( 'kind_of_product', $kind_of_product );
 		}
@@ -211,20 +212,20 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		
 
 		$selected_mp = null;
-		$selected_mp_shop = null;
+		$selected_mp_eshop = null;
 		
 		$mp = $GET->getString('mp');
 		if($mp) {
 			$selected_mp = MarketplaceIntegration::getActiveModule($mp);
 			
 			if($selected_mp) {
-				$mp_shop = $GET->getString('mp_shop');
-				if($mp_shop) {
-					$selected_mp_shop = Shops::get($mp_shop);
-					if($selected_mp_shop) {
-						if(!$selected_mp->isAllowedForShop($selected_mp_shop)) {
+				$mp_eshop = $GET->getString('mp_eshop');
+				if($mp_eshop) {
+					$selected_mp_eshop = EShops::get($mp_eshop);
+					if($selected_mp_eshop) {
+						if(!$selected_mp->isAllowedForShop($selected_mp_eshop)) {
 							$selected_mp = null;
-							$selected_mp_shop = null;
+							$selected_mp_eshop = null;
 						}
 					} else {
 						$selected_mp = null;
@@ -233,12 +234,12 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 			}
 		}
 		
-		if($selected_mp_shop) {
+		if($selected_mp_eshop) {
 			$this->view->setVar('selected_mp', $selected_mp );
-			$this->view->setVar('selected_mp_shop', $selected_mp_shop );
+			$this->view->setVar('selected_mp_eshop', $selected_mp_eshop );
 			
 			$this->view->setVar('selected_mp_code', $selected_mp->getCode());
-			$this->view->setVar('selected_mp_shop_key', $selected_mp_shop->getKey() );
+			$this->view->setVar('selected_mp_eshop_key', $selected_mp_eshop->getKey() );
 			
 			$this->view->setVar( 'kind_of_product', $kind_of_product );
 		}

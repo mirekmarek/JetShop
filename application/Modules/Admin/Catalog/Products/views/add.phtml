@@ -8,7 +8,8 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\Http_Request;
 use JetApplication\Admin_Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
@@ -43,24 +44,23 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] 
 		<?=$form->field('brand_id')?>
 		<?=$form->field('supplier_id')?>
 		
-		<?php
-		Admin_Managers::EntityEdit_WithShopData()->renderShopDataBlocks(
+		<?=Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
 			form: $form,
-			renderer: function( Shops_Shop $shop, string $shop_key ) use ($product, $form) : void {
+			renderer: function( EShop $eshop, string $eshop_key ) use ($product, $form) : void {
 				?>
 				<fieldset>
 					<legend class="sub"><?=Tr::_('Main data')?></legend>
 					
-					<?=$form->field('/shop_data/'.$shop_key.'/name')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/description')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/short_description')?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/name')?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/description')?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/short_description')?>
 				</fieldset>
 				
 				<fieldset>
 					<legend class="sub"><?=Tr::_('SEO')?></legend>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_title')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_description')?>
-					<?=$form->field('/shop_data/'.$shop_key.'/seo_keywords')?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/seo_title')?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/seo_description')?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/seo_keywords')?>
 				</fieldset>
 				
 			<?php }); ?>

@@ -10,7 +10,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\ProductFilter;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Storage_Value;
@@ -26,7 +26,7 @@ use JetApplication\ProductFilter_Storage_Value;
 		'id_property_name' => 'id'
 	]
 )]
-abstract class Core_ProductFilter_Storage extends Entity_WithShopRelation
+abstract class Core_ProductFilter_Storage extends Entity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(
@@ -102,8 +102,8 @@ abstract class Core_ProductFilter_Storage extends Entity_WithShopRelation
 		$context_entity = $filter->getContextEntity();
 		$context_entity_id = $filter->getContextEntityId();
 		
-		$shop = $filter->getShop();
-		$where = $shop->getWhere();
+		$eshop = $filter->getEshop();
+		$where = $eshop->getWhere();
 		
 		$where[] = 'AND';
 		$where[] = [
@@ -117,7 +117,7 @@ abstract class Core_ProductFilter_Storage extends Entity_WithShopRelation
 			$storage = new static();
 			$storage->setContextEntity( $context_entity );
 			$storage->setContextEntityId( $context_entity_id );
-			$storage->setShop( $filter->getShop() );
+			$storage->setEshop( $filter->getEshop() );
 		}
 
 		return $storage;

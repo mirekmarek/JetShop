@@ -8,7 +8,7 @@ use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Entity_Listing;
 
 use Jet\MVC_View;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -21,8 +21,8 @@ use JetApplication\Shops;
 $return = $this->getRaw( 'return' );
 ?>
 
-<div id="main-col">
-	<div style="padding: 10px;display: flex">
+
+	<div style="display: flex">
 		<div style="margin: 10px" class="card">
 			
 			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
@@ -31,10 +31,10 @@ $return = $this->getRaw( 'return' );
 				<?=Admin_Managers::ReturnOfGoods()->showReturnOfGoodsStatus( $return )?>
 				
 				<table style="margin: 10px">
-					<?php if(Shops::isMultiShopMode()): ?>
+					<?php if(EShops::isMultiEShopMode()): ?>
 						<tr>
-							<td><b><?=Tr::_('Shop')?></b></td>
-							<td><?=$return->getShop()->getShopName()?></td>
+							<td><b><?=Tr::_('e-shop')?></b></td>
+							<td><?=$return->getEshop()->getName()?></td>
 						</tr>
 					<?php endif; ?>
 					<tr>
@@ -82,7 +82,7 @@ $return = $this->getRaw( 'return' );
 		<div style="margin: 10px;" class="card">
 			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
 			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $return->getShop(), $return->getDeliveryAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $return->getEshop(), $return->getDeliveryAddress() )?>
 				<?=Handler::getHandler( Handler_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
@@ -91,4 +91,3 @@ $return = $this->getRaw( 'return' );
 		</div>
 	</div>
 
-</div>

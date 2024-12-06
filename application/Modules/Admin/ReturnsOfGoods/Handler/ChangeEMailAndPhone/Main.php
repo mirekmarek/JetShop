@@ -49,7 +49,7 @@ class Handler_ChangeEMailAndPhone_Main extends Handler {
 					return true;
 				}
 				
-				$exists = Customer::getByEmail( $new_email_address, $this->return_of_goods->getShop() );
+				$exists = Customer::getByEmail( $new_email_address, $this->return_of_goods->getEshop() );
 				if(!$exists) {
 					return true;
 				}
@@ -105,52 +105,26 @@ class Handler_ChangeEMailAndPhone_Main extends Handler {
 			
 			if($this->form->validate()) {
 				$new_email = $this->form->field('email')->getValue();
-				$new_pone = $this->form->field('phone')->getValue();
+				$new_phone = $this->form->field('phone')->getValue();
 				if($this->form->fieldExists('update_customer_account')) {
 					$update_customer_account = $this->form->field('update_customer_account')->getValue();
 				} else {
 					$update_customer_account = false;
 				}
 				
-				$change = $this->return_of_goods->startChange();
-				$email_updated = false;
+				$change = $this->return_of_goods->updateEmailAndPhone(
+					new_email: $new_email,
+					new_phone: $new_phone,
+					update_customer_account: $update_customer_account
+				);
 				
-				if($new_email!=$this->return_of_goods->getEmail()) {
-					
-					$change->addChange('email', $this->return_of_goods->getEmail(), $new_email);
-					$this->return_of_goods->setEmail( $new_email );
-					$email_updated = true;
-					
+				if($change->hasChange('email')) {
 					UI_messages::success(Tr::_('E-mail has been changed'));
 				}
-				
-				if($new_pone!=$this->return_of_goods->getPhone()) {
-					
-					$change->addChange('phone', $this->return_of_goods->getPhone(), $new_pone);
-					$this->return_of_goods->setPhone( $new_pone );
-					
-					UI_messages::success(Tr::_('Phone has been changed'));
+				if($change->hasChange('phone')) {
+					UI_messages::success( Tr::_( 'Phone has been changed' ) );
 				}
 				
-				if($change->hasChange()) {
-					$this->return_of_goods->save();
-					$change->save();
-				}
-				
-				if($update_customer_account) {
-					$customer = Customer::get( $this->return_of_goods->getCustomerId() );
-					
-					if($customer->getEmail()!=$new_email) {
-						
-						$customer->changeEmail( $new_email, 'return_of_goods:'.$this->return_of_goods->getNumber() );
-					}
-					
-					if($customer->getPhoneNumber()!=$new_pone) {
-						
-						$customer->setPhoneNumber( $new_pone );
-						$customer->save();
-					}
-				}
 				
 				
 				AJAX::operationResponse(true);

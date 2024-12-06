@@ -1,7 +1,7 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 interface Core_FulltextSearch_IndexDataProvider {
 	
@@ -14,7 +14,7 @@ interface Core_FulltextSearch_IndexDataProvider {
 	public function getInternalFulltextObjectTitle() : string;
 	public function getInternalFulltextTexts() : array;
 	
-	public function getShopFulltextTexts( Shops_Shop $shop ) : array;
+	public function getShopFulltextTexts( EShop $eshop ) : array;
 	
 	public function updateFulltextSearchIndex() : void;
 	public function removeFulltextSearchIndex() : void;

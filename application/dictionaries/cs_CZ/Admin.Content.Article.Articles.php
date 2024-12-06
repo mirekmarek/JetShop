@@ -44,4 +44,6 @@ return [
 	'Text:' => 'Text:',
 	'Activate' => 'Aktivovat',
 	'Article <b>%ITEM_NAME%</b> has been updated' => 'Článek <b>%ITEM_NAME%</b> byl aktualizován',
+	'Article <b>%ITEM_NAME%</b> has been created' => 'Článek <b>%ITEM_NAME%</b> byl vytvořen',
+	'Activate completely' => 'Aktivovat kompletně',
 ];

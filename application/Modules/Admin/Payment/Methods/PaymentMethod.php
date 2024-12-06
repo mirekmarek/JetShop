@@ -12,15 +12,15 @@ use Jet\Form;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithShopData_Interface;
-use JetApplication\Admin_Entity_WithShopData_Trait;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Module;
 use JetApplication\Pricelists;
 
-class PaymentMethod extends Payment_Method implements Admin_Entity_WithShopData_Interface
+class PaymentMethod extends Payment_Method implements Admin_Entity_WithEShopData_Interface
 {
-	use Admin_Entity_WithShopData_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	protected ?Form $set_price_form = null;
 	

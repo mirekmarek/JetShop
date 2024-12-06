@@ -1,0 +1,7 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Admin_Entity_WithEShopData_Interface;
+
+interface Admin_Entity_WithEShopData_Interface extends Core_Admin_Entity_WithEShopData_Interface {
+}

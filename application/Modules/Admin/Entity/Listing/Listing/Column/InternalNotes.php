@@ -8,7 +8,7 @@
 namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 
 class Listing_Column_InternalNotes extends Listing_Column_Abstract
 {
@@ -38,7 +38,7 @@ class Listing_Column_InternalNotes extends Listing_Column_Abstract
 	public function getExportData( mixed $item ): string
 	{
 		/**
-		 * @var Entity_WithShopData $item
+		 * @var Entity_WithEShopData $item
 		 */
 		return $item->getInternalNotes();
 	}

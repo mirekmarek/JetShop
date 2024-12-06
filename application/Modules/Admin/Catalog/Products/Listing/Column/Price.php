@@ -1,7 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-
+use JetApplication\Product;
 use Jet\DataListing_Column;
 use Jet\Tr;
 use JetApplication\Pricelists;

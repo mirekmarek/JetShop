@@ -92,4 +92,12 @@ return [
 	'Na poštu' => '',
 	'Balíkovna' => '',
 	'Do ruky' => '',
+	'Set price' => '',
+	'Carrier:' => '',
+	'Price:' => '',
+	'Length of delivery in working days:' => '',
+	'Carrier service:' => '',
+	'Allowed delivery point types:' => '',
+	'Free delivery limit:' => '',
+	'Set' => '',
 ];

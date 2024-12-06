@@ -1,0 +1,40 @@
+<?php
+namespace JetApplication;
+
+use Jet\MVC_Layout;
+use Jet\MVC;
+
+/**
+ * @var MVC_Layout $this
+ */
+
+$this->setVar('customer_icon', true);
+$this->setVar('shopping_cart_icon', true);
+$this->setVar('compare_icon', true);
+$this->setVar('wishlist_icon', true);
+?>
+<!DOCTYPE html>
+<html lang="<?=MVC::getLocale()->getLanguage()?>">
+<head>
+	<?php require 'parts/head.phtml'; ?>
+</head>
+<body>
+	<?=EShop_Managers::Analytics()?->documentStart()?>
+	<div id="main-container">
+		<?php  require 'parts/header.phtml';  ?>
+		<?=EShop_Managers::UI()->renderBreadcrumbNavigation()?>
+		<div id="content">
+			<jet_layout_main_position/>
+		</div>
+		<?php require 'parts/footer.phtml'; ?>
+	</div>
+	
+	<?=EShop_Managers::ShoppingCart()->renderIntegration();?>
+	<?=EShop_Managers::CustomerPasswordReset()->renderIntegration();?>
+	<?=EShop_Managers::Compare()?->renderIntegration();?>
+	<?=EShop_Managers::Wishlist()?->renderIntegration();?>
+	<?=EShop_Managers::CookieSettings()?->renderDialog()?>
+	
+	<?=EShop_Managers::Analytics()?->documentEnd()?>
+</body>
+</html>

@@ -4,14 +4,14 @@ namespace JetShop;
 use Jet\Auth;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'administrator_signature',
 	database_table_name: 'administrators_signatures',
 )]
-class Core_AdministratorSignatures extends Entity_WithShopRelation
+class Core_AdministratorSignatures extends Entity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(
@@ -26,13 +26,13 @@ class Core_AdministratorSignatures extends Entity_WithShopRelation
 	)]
 	protected string $signature = '';
 	
-	public static function getSignature( Shops_Shop $shop, ?int $user_id=null ) : string
+	public static function getSignature( EShop $eshop, ?int $user_id=null ) : string
 	{
 		if(!$user_id) {
 			$user_id = Auth::getCurrentUser()->getId();
 		}
 		
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['user_id'] = $user_id;
 		
@@ -44,16 +44,16 @@ class Core_AdministratorSignatures extends Entity_WithShopRelation
 		return $signature;
 	}
 	
-	public static function setSignature( Shops_Shop $shop, int $user_id, string $signature ) : void
+	public static function setSignature( EShop $eshop, int $user_id, string $signature ) : void
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['user_id'] = $user_id;
 		
 		$i = static::load($where);
 		if(!$i) {
 			$i = new static();
-			$i->setShop( $shop );
+			$i->setEshop( $eshop );
 			$i->user_id = $user_id;
 		}
 		$i->signature = $signature;

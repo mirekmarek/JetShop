@@ -5,7 +5,7 @@ use Jet\Tr;
 use JetApplication\EMail;
 use JetApplication\InvoiceInAdvance;
 use JetApplication\Invoices;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 class EMailTemplate_InvoiceInAdvance extends EMailTemplate
 {
@@ -17,11 +17,11 @@ class EMailTemplate_InvoiceInAdvance extends EMailTemplate
 		$this->initCommonFields();
 	}
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function initTest( EShop $eshop ): void
 	{
 		$ids = InvoiceInAdvance::dataFetchCol(
 			select: ['id'],
-			where: $shop->getWhere(),
+			where: $eshop->getWhere(),
 			order_by: '-id',
 			limit: 1000
 		);
@@ -31,7 +31,7 @@ class EMailTemplate_InvoiceInAdvance extends EMailTemplate
 		$this->invoice = InvoiceInAdvance::get($id);
 	}
 	
-	public function generateAttachment( Shops_Shop $shop, EMail $email ): void
+	public function generateAttachment( EShop $eshop, EMail $email ): void
 	{
 		/**
 		 * @var InvoiceInAdvance $invoice

@@ -42,7 +42,7 @@ $form->field('context_number')->input()->addJsAction('onchange', "CustomOD.conte
 	
 	<?=$form->getCommonMessage()?>
 	
-	<?=$form->field('shop')?>
+	<?=$form->field('eshop')?>
 	
 	<?=$form->field('context_type')?>
 	<?=$form->field('context_number')?>
@@ -194,15 +194,15 @@ $form->field('context_number')->input()->addJsAction('onchange', "CustomOD.conte
 		},
 		
 		contextNumberEntered: async () => {
-			const shop_field = document.getElementById('<?=$form->field('shop')->getId()?>');
+			const eshop_field = document.getElementById('<?=$form->field('eshop')->getId()?>');
 			const context_type_field = document.getElementById('<?=$form->field('context_type')->getId()?>');
 			const context_number_field = document.getElementById('<?=$form->field('context_number')->getId()?>');
 
-			const shop_code = shop_field.options[shop_field.selectedIndex].value;
+			const eshop_code = eshop_field.options[eshop_field.selectedIndex].value;
 			const context_type = context_type_field.options[context_type_field.selectedIndex].value;
 			const context_number = context_number_field.value;
 
-			const _context = await fetch('<?=Http_Request::currentURI(['action' =>'get_context_info'])?>&context_type='+encodeURIComponent(context_type)+'&context_number='+encodeURIComponent(context_number)+'&shop='+shop_code);
+			const _context = await fetch('<?=Http_Request::currentURI(['action' =>'get_context_info'])?>&context_type='+encodeURIComponent(context_type)+'&context_number='+encodeURIComponent(context_number)+'&eshop='+eshop_code);
 			const context = await _context.json();
 
 			if(!context['id']) {

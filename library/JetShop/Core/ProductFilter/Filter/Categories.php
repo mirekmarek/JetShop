@@ -1,7 +1,7 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Category_ShopData;
+use JetApplication\Category_EShopData;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Storage;
 
@@ -48,19 +48,19 @@ abstract class Core_ProductFilter_Filter_Categories extends ProductFilter_Filter
 		}
 		
 		
-		$where = $this->product_filter->getShop()->getWhere();
+		$where = $this->product_filter->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['entity_id'] = $this->category_ids;
 		
 		if($this->branch_mode) {
-			$_ids = Category_ShopData::dataFetchCol(
+			$_ids = Category_EShopData::dataFetchCol(
 				select:['branch_product_ids'],
 				where: $where,
 				raw_mode: true
 			);
 		} else {
 
-			$_ids = Category_ShopData::dataFetchCol(
+			$_ids = Category_EShopData::dataFetchCol(
 				select:['product_ids'],
 				where: $where,
 				raw_mode: true

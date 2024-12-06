@@ -7,17 +7,13 @@ use Jet\Form_Definition_Interface;
 use Jet\Form_Definition_Trait;
 use Jet\Form_Field;
 use Jet\Form_Field_Input;
-use Jet\IO_File;
 use Jet\Locale;
-use Jet\SysConf_Path;
-use JetApplication\MeasureUnit;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\MeasureUnits;
 
 abstract class Core_MeasureUnit implements Form_Definition_Interface
 {
 	use Form_Definition_Trait;
-	
-	protected static ?array $list = null;
 	
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
@@ -52,42 +48,11 @@ abstract class Core_MeasureUnit implements Form_Definition_Interface
 	protected ?Form $add_form = null;
 	
 	
-	public static function getCfgFilePath() : string
-	{
-		return SysConf_Path::getConfig().'shop/measure_units.php';
-	}
-	
-	public static function loadCfg() : void
-	{
-		static::$list = [];
-		
-		$cfg = require static::getCfgFilePath();
-		
-		foreach($cfg as $item) {
-			static::add( (new static( $item )) );
-		}
-	}
-	
-	public static function saveCfg() : void
-	{
-		$cfg = [];
-		
-		foreach( static::getList() as $item ) {
-			$cfg[] = $item->toArray();
-		}
-		
-		IO_File::writeDataAsPhp(
-			static::getCfgFilePath(),
-			$cfg
-		);
-	}
-	
-	
 	public function __construct( ?array $data=null )
 	{
 		$this->name = [];
-		foreach(Shops::getList() as $shop) {
-			$locale = $shop->getLocale()->toString();
+		foreach( EShops::getList() as $eshop) {
+			$locale = $eshop->getLocale()->toString();
 			if(!isset($this->name[$locale])) {
 				$this->name[$locale] = '';
 			}
@@ -113,50 +78,6 @@ abstract class Core_MeasureUnit implements Form_Definition_Interface
 			
 		}
 	}
-	
-	public static function add( Core_MeasureUnit $unit ) : void
-	{
-		static::$list[$unit->code] = $unit;
-	}
-	
-	public static function remove( string $code ) : void
-	{
-		if(isset(static::$list[$code])) {
-			unset( static::$list[$code] );
-		}
-	}
-	
-	
-	public static function get( string $code ) : ?static
-	{
-		static::getList();
-		
-		return static::$list[$code]??null;
-	}
-	
-	public static function getScope() : array
-	{
-		static::getList();
-		$res = [];
-		foreach(static::$list as $unit) {
-			$res[$unit->getCode()] = $unit->getName();
-		}
-		
-		return $res;
-	}
-	
-	/**
-	 * @return static[]
-	 */
-	public static function getList() : array
-	{
-		if(static::$list===null) {
-			static::loadCfg();
-		}
-		
-		return static::$list;
-	}
-	
 	
 	public function getCode(): string
 	{
@@ -262,7 +183,7 @@ abstract class Core_MeasureUnit implements Form_Definition_Interface
 				'not_unique' => 'This code is already used'
 			]);
 			$code->setValidator( function() use ($code) : bool {
-				if(MeasureUnit::get( $code->getValue() )) {
+				if(MeasureUnits::get( $code->getValue() )) {
 					$code->setError('not_unique');
 					return false;
 				}

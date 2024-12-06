@@ -8,13 +8,14 @@ use Jet\DataModel_IDController_AutoIncrement;
 
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Discounts_Discount;
 use JetApplication\Entity_Price;
 use JetApplication\MeasureUnit;
-use JetApplication\Payment_Method_ShopData;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Product_ShopData;
+use JetApplication\MeasureUnits;
+use JetApplication\Payment_Method_EShopData;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
 use JetApplication\Entity_AccountingDocument_Item_SetItem;
 use JetApplication\Entity_AccountingDocument_Item;
 
@@ -311,7 +312,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	public function setMeasureUnit( ?MeasureUnit $measure_unit ): void
@@ -330,17 +331,17 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 		return $this->price_per_unit;
 	}
 	
-	public function getPricePerUnitWithVat(): float
+	public function getPricePerUnit_WithVat(): float
 	{
 		return $this->price_per_unit_with_vat;
 	}
 	
-	public function getPricePerUnitWithoutVat(): float
+	public function getPricePerUnit_WithoutVat(): float
 	{
 		return $this->price_per_unit_without_vat;
 	}
 	
-	public function getPricePerUnitVat(): float
+	public function getPricePerUnit_Vat(): float
 	{
 		return $this->price_per_unit_vat;
 	}
@@ -352,17 +353,17 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 		return $this->total_amount;
 	}
 	
-	public function getTotalAmountWithVat(): float
+	public function getTotalAmount_WithVat(): float
 	{
 		return $this->total_amount_with_vat;
 	}
 	
-	public function getTotalAmountWithoutVat(): float
+	public function getTotalAmount_WithoutVat(): float
 	{
 		return $this->total_amount_without_vat;
 	}
 	
-	public function getTotalAmountVat(): float
+	public function getTotalAmount_Vat(): float
 	{
 		return $this->total_amount_vat;
 	}
@@ -386,7 +387,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 	}
 	
 	
-	public function setupProduct( Pricelists_Pricelist $pricelist, Product_ShopData $product, float $number_of_units ) : void
+	public function setupProduct( Pricelist $pricelist, Product_EShopData $product, float $number_of_units ) : void
 	{
 		$kind = $product->getKind();
 		
@@ -422,7 +423,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 		}
 	}
 	
-	public function setupGift( Pricelists_Pricelist $pricelist, Product_ShopData $product, float $number_of_units ) : void
+	public function setupGift( Pricelist $pricelist, Product_EShopData $product, float $number_of_units ) : void
 	{
 		$kind = $product->getKind();
 		
@@ -457,7 +458,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 		}
 	}
 	
-	public function setupDeliveryMethod( Pricelists_Pricelist $pricelist, Delivery_Method_ShopData $delivery_method ) : void
+	public function setupDeliveryMethod( Pricelist $pricelist, Delivery_Method_EShopData $delivery_method ) : void
 	{
 		$this->setType( Entity_AccountingDocument_Item::ITEM_TYPE_DELIVERY );
 		$this->setItemId( $delivery_method->getId() );
@@ -471,7 +472,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 		
 	}
 	
-	public function setupPaymentMethod( Pricelists_Pricelist $pricelist, Payment_Method_ShopData $payment_method ) : void
+	public function setupPaymentMethod( Pricelist $pricelist, Payment_Method_EShopData $payment_method ) : void
 	{
 		$this->setType( Entity_AccountingDocument_Item::ITEM_TYPE_PAYMENT );
 		$this->setItemId( $payment_method->getId() );
@@ -486,7 +487,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 	}
 	
 	
-	public function setupDiscount( Pricelists_Pricelist $pricelist, Discounts_Discount $discount ) : void
+	public function setupDiscount( Pricelist $pricelist, Discounts_Discount $discount ) : void
 	{
 		$this->setType( Entity_AccountingDocument_Item::ITEM_TYPE_DISCOUNT );
 		$this->setSubType( $discount->getDiscountType() );
@@ -499,6 +500,7 @@ abstract class Core_Entity_AccountingDocument_Item extends DataModel_Related_1to
 		
 		$discount_price = new class extends Entity_Price {};
 		
+		$discount_price->setPricelistCode( $pricelist->getCode() );
 		$discount_price->setVatRate( $discount->getVatRate() );
 		$discount_price->setPrice( $discount->getAmount() );
 		

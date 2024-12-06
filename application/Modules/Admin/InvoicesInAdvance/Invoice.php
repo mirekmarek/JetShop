@@ -8,11 +8,11 @@
 namespace JetApplicationModule\Admin\InvoicesInAdvance;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\InvoiceInAdvance as Application_Invoice;
 
 
-class Invoice extends Application_Invoice implements Admin_Entity_WithShopRelation_Interface
+class Invoice extends Application_Invoice implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

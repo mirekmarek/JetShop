@@ -2,9 +2,9 @@
 namespace JetShop;
 
 use Jet\Form;
-use JetApplication\Admin_EntityManager_WithShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
 
-interface Core_Admin_Managers_Property extends Admin_EntityManager_WithShopData_Interface
+interface Core_Admin_Managers_Property extends Admin_EntityManager_WithEShopData_Interface
 {
 	
 	public function showType( string $type ) : string;

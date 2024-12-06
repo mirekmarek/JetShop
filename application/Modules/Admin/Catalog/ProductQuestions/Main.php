@@ -8,18 +8,18 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Trait;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\EMail_TemplateProvider;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithShopRelation_Interface, EMail_TemplateProvider
+class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, EMail_TemplateProvider
 {
-	use Admin_EntityManager_WithShopRelation_Trait;
+	use Admin_EntityManager_WithEShopRelation_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'product-questions';
 
@@ -34,7 +34,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopRel
 		return 'Product question';
 	}
 	
-	public static function getEntityInstance(): Entity_WithShopRelation|Admin_Entity_WithShopRelation_Interface
+	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
 		return new ProductQuestion();
 	}

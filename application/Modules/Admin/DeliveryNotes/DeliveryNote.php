@@ -8,11 +8,11 @@
 namespace JetApplicationModule\Admin\DeliveryNotes;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\DeliveryNote as Application_DeliveryNote;
 
 
-class DeliveryNote extends Application_DeliveryNote implements Admin_Entity_WithShopRelation_Interface
+class DeliveryNote extends Application_DeliveryNote implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

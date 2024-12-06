@@ -6,6 +6,7 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Product;
 
 
 class Listing_Filter_ProductType extends DataListing_Filter
@@ -22,7 +23,7 @@ class Listing_Filter_ProductType extends DataListing_Filter
 	
 	public function catchParams(): void
 	{
-		$this->product_type = Http_Request::GET()->getString('product_type', '', array_keys(Product::getProductTypes()));
+		$this->product_type = Http_Request::GET()->getString('product_type', '', array_keys( Product::getProductTypes()));
 		if($this->product_type) {
 			$this->listing->setParam('product_type', $this->product_type);
 		}

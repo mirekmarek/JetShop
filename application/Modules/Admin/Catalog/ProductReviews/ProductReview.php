@@ -4,15 +4,15 @@ namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 use Jet\DataModel_Definition;
 use Jet\Form;
 
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
-use JetApplication\Admin_Entity_WithShopRelation_Trait;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
 use JetApplication\ProductReview as Application_ProductReview;
 
 #[DataModel_Definition]
-class ProductReview extends Application_ProductReview implements Admin_Entity_WithShopRelation_Interface
+class ProductReview extends Application_ProductReview implements Admin_Entity_WithEShopRelation_Interface
 {
 	
-	use Admin_Entity_WithShopRelation_Trait;
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	public function getEditURL() : string
 	{

@@ -13,25 +13,25 @@ use Jet\Form_Field_Select;
 
 use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Entity_HasPrice_Trait;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 use JetApplication\Managers;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method_Module;
-use JetApplication\Payment_Method_ShopData;
+use JetApplication\Payment_Method_EShopData;
 use JetApplication\Payment_Method_Option;
 use JetApplication\Delivery_Method;
 use JetApplication\Payment_Method_DeliveryMethods;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplication\Payment_Method;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplication\Payment_Method_Price;
 
 #[DataModel_Definition(
 	name: 'payment_method',
 	database_table_name: 'payment_methods'
 )]
-abstract class Core_Payment_Method extends Entity_WithShopData implements Entity_HasPrice_Interface
+abstract class Core_Payment_Method extends Entity_WithEShopData implements Entity_HasPrice_Interface
 {
 	use Entity_HasPrice_Trait;
 	
@@ -84,13 +84,13 @@ abstract class Core_Payment_Method extends Entity_WithShopData implements Entity
 	
 	
 	/**
-	 * @var Payment_Method_ShopData[]
+	 * @var Payment_Method_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Payment_Method_ShopData::class
+		data_model_class: Payment_Method_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 
 
 	/**
@@ -118,7 +118,7 @@ abstract class Core_Payment_Method extends Entity_WithShopData implements Entity
 	 */
 	protected ?array $options = null;
 	
-	public function getPriceEntity( Pricelists_Pricelist $pricelist ) : Payment_Method_Price
+	public function getPriceEntity( Pricelist $pricelist ) : Payment_Method_Price
 	{
 		return Payment_Method_Price::get( $pricelist, $this->getId() );
 	}
@@ -127,8 +127,8 @@ abstract class Core_Payment_Method extends Entity_WithShopData implements Entity
 	public function setKind( string $kind ): void
 	{
 		$this->kind = $kind;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData($shop)->setKind($kind);
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData($eshop)->setKind($kind);
 		}
 		
 	}
@@ -157,8 +157,8 @@ abstract class Core_Payment_Method extends Entity_WithShopData implements Entity
 	public function setBackendModuleName( string $backend_module_name ): void
 	{
 		$this->backend_module_name = $backend_module_name;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setBackendModuleName( $backend_module_name );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setBackendModuleName( $backend_module_name );
 		}
 	}
 	
@@ -170,18 +170,18 @@ abstract class Core_Payment_Method extends Entity_WithShopData implements Entity
 	public function setBackendModulePaymentMethodSpecification( string $backend_module_payment_method_specification ): void
 	{
 		$this->backend_module_payment_method_specification = $backend_module_payment_method_specification;
-		foreach(Shops::getList() as $shop) {
-			$this->getShopData( $shop )->setBackendModulePaymentMethodSpecification( $backend_module_payment_method_specification );
+		foreach( EShops::getList() as $eshop) {
+			$this->getEshopData( $eshop )->setBackendModulePaymentMethodSpecification( $backend_module_payment_method_specification );
 		}
 	}
 
 
 	
 
-	public function getShopData( ?Shops_Shop $shop=null ) : Payment_Method_ShopData
+	public function getEshopData( ?EShop $eshop=null ) : Payment_Method_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	
@@ -243,9 +243,9 @@ abstract class Core_Payment_Method extends Entity_WithShopData implements Entity
 		$this->options[$option->getId()] = $option;
 		
 		$option->activate();
-		foreach(Shops::getList() as $shop) {
-			if(!$option->getShopData($shop)->isActiveForShop()) {
-				$option->getShopData($shop)->_activate();
+		foreach( EShops::getList() as $eshop) {
+			if(!$option->getEshopData($eshop)->isActiveForShop()) {
+				$option->getEshopData($eshop)->_activate();
 			}
 		}
 	}

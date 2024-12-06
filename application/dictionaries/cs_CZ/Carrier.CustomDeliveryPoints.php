@@ -1,4 +1,21 @@
 <?php
 return [
 	'Custom Delivery Points' => 'Vlastní dodací místa',
+	'New delivery point' => '',
+	'Please enter code' => '',
+	'Invalid value' => '',
+	'This code is already used' => '',
+	'Please enter a value' => '',
+	'Out of range' => '',
+	'Code:' => '',
+	'Type:' => '',
+	'Is active' => '',
+	'Name:' => '',
+	'Address:' => '',
+	'Town:' => '',
+	'ZIP:' => '',
+	'Country:' => '',
+	'Latitude:' => '',
+	'Longitude:' => '',
+	'Opening hours' => '',
 ];

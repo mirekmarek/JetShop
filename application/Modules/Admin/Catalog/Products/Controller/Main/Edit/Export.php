@@ -4,7 +4,8 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Exports;
-use JetApplication\Shops;
+use JetApplication\EShops;
+use JetApplication\Product;
 
 
 trait Controller_Main_Edit_Export
@@ -22,7 +23,7 @@ trait Controller_Main_Edit_Export
 		
 		
 		$selected_export = null;
-		$selected_export_shop = null;
+		$selected_export_eshop = null;
 		
 		$GET = Http_Request::GET();
 		
@@ -31,13 +32,13 @@ trait Controller_Main_Edit_Export
 			$selected_export = Exports::getExportModule($export);
 			
 			if($selected_export) {
-				$export_shop = $GET->getString('export_shop');
-				if($export_shop) {
-					$selected_export_shop = Shops::get($export_shop);
-					if($selected_export_shop) {
-						if(!$selected_export->isAllowedForShop($selected_export_shop)) {
+				$export_eshop = $GET->getString('export_eshop');
+				if($export_eshop) {
+					$selected_export_eshop = EShops::get($export_eshop);
+					if($selected_export_eshop) {
+						if(!$selected_export->isAllowedForShop($selected_export_eshop)) {
 							$selected_export = null;
-							$selected_export_shop = null;
+							$selected_export_eshop = null;
 						}
 					} else {
 						$selected_export = null;
@@ -47,10 +48,10 @@ trait Controller_Main_Edit_Export
 		}
 		
 		$this->view->setVar('selected_export', $selected_export );
-		$this->view->setVar('selected_export_shop', $selected_export_shop );
+		$this->view->setVar('selected_export_eshop', $selected_export_eshop );
 		
 		$this->view->setVar('selected_export_code', $selected_export?->getCode());
-		$this->view->setVar('selected_export_shop_key', $selected_export_shop?->getKey() );
+		$this->view->setVar('selected_export_eshop_key', $selected_export_eshop?->getKey() );
 		
 		$this->view->setVar('item', $product);
 		$this->output( 'edit/export' );

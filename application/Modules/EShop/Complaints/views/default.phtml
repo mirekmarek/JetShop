@@ -1,0 +1,78 @@
+<?php
+namespace JetApplicationModule\EShop\Complaints;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Complaint;
+use JetApplication\Customer;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ * @var Form $order_number_form
+ */
+
+$order_number_form = $this->getRaw('order_number_form');
+
+$complaints = [];
+if( ($customer=Customer::getCurrentCustomer()) ) {
+	$complaints = Complaint::getByCustomer( $customer );
+}
+
+echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+?>
+<div class="customer-section-container">
+<?=$order_number_form->start()?>
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title"><?=Tr::_('New complaint')?></h5>
+			<div class="complaints-search-order-form">
+				<?=$order_number_form->field('order_number')?>
+				<?=$order_number_form->fieldExists('email') ? $order_number_form->field('email') : ''?>
+
+
+				<div></div>
+				<div>
+					<?=UI::button( Tr::_('Find order') )->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY)?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?=$order_number_form->end()?>
+
+<?php if($complaints): ?>
+<h2><?=Tr::_('Complaints')?></h2>
+
+
+	<?php foreach($complaints as $complaint):
+		$this->setVar('complaint', $complaint);
+		$product = $complaint->getProduct();
+		?>
+	<div class="card card-body complaints-list-item">
+
+		<div class="rog-number"><?=Tr::_('Complaint number:')?> <a href="<?=$complaint->getURL()?>"><?=$complaint->getNumber()?></a></div>
+		<div class="order-number"><?=Tr::_('Order number:')?> <?=$complaint->getOrderNumber()?></div>
+		<div class="status"><?=$this->render('complaint-status');?></div>
+		<div class="product">
+			<?php if($product): ?>
+				<div class="complaints-product">
+					<div>
+						<?php if($product->getImg(0)): ?>
+							<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+						<?php endif; ?>
+					</div>
+					<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
+				</div>
+			<?php endif; ?>
+		</div>
+		<div class="date"><?=Locale::dateAndTime( $complaint->getDateStarted() )?></div>
+	</div>
+	<?php endforeach; ?>
+
+
+<?php endif; ?>
+</div>

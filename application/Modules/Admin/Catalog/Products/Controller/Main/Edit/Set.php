@@ -7,6 +7,7 @@ use Jet\UI_messages;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Product;
 
 
 /**

@@ -1,0 +1,21 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Property_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Property_EShopData $property
+ */
+
+$property = $this->getRaw('property');
+
+$value = $property->getProductDetailDisplayValue();
+
+if($value):
+	echo $property->getBoolYesDescription() ? : Tr::_('yes');
+else:
+	echo Tr::_('no');
+endif;

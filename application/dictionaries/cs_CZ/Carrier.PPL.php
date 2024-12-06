@@ -18,6 +18,6 @@ return [
 	'Default width:' => 'Výchozí šířka:',
 	'Packaging parameters - delivery point' => 'Parametry balení - výdejní místo',
 	'Packaging parameters - box' => 'Parametry balení - krabice',
-	'Branch' => 'Větev',
+	'Branch' => 'Pobočka',
 	'Box' => 'Box',
 ];

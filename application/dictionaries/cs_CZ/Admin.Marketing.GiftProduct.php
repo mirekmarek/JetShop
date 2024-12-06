@@ -51,8 +51,9 @@ return [
 	'Please enter name' => 'Zadejte jméno',
 	'Name:' => 'Název:',
 	'Gift - product <b>%ITEM_NAME%</b> has been updated' => 'Dárek – produkt <b>%ITEM_NAME%</b> byl aktualizován',
-	'Síťka je součástí' => '',
-	'Obal/kryt' => '',
-	'Sada' => '',
-	'Gift - product <b>%ITEM_NAME%</b> has been created' => '',
+	'Síťka je součástí' => 'Síťka je součástí',
+	'Obal/kryt' => 'Obal/kryt',
+	'Sada' => 'Sada',
+	'Gift - product <b>%ITEM_NAME%</b> has been created' => 'Dárek – produkt <b>%ITEM_NAME%</b> byl vytvořen',
+	'e-shop' => 'internetový obchod',
 ];

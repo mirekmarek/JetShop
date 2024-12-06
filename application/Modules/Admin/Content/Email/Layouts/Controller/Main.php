@@ -8,10 +8,10 @@
 namespace JetApplicationModule\Admin\Content\Email\Layouts;
 
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	protected function getTabs() : array
 	{

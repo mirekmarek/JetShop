@@ -121,7 +121,7 @@ ob_end_clean();
 		<td align="center" style='white-space: nowrap'><?=$dispatch->getDispatchDate()->format('d. m.')?></td>
 		<td align="center" style='white-space: nowrap'><?=$dispatch->getRecipientFirstName()?> <?=$dispatch->getRecipientSurname()?> <?=$dispatch->getRecipientCompany()?></td>
 		<td align="right" style='white-space: nowrap'>
-			<strong><?=$dispatch->getCod() ?  Admin_Managers::PriceFormatter()->formatWithCurrency( $dispatch->getCodCurrency(), $dispatch->getCod() ) : '----'?></strong>
+			<strong><?=$dispatch->getCod() ?  Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCodCurrency(), $dispatch->getCod() ) : '----'?></strong>
 		</td>
 		<td align="center">
 			<?php if(($point=$dispatch->getDeliveryPoint())): ?>

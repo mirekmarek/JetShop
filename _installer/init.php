@@ -8,6 +8,7 @@
 namespace JetApplication\Installer;
 
 use Jet\Config;
+use Jet\Locale;
 use Jet\SysConf_Jet_Form;
 use Jet\SysConf_Jet_UI;
 use Jet\SysConf_Path;
@@ -35,22 +36,73 @@ Installer::setSteps(
 		'SystemCheck',
 		'DirsCheck',
 		'SelectDbType',
-		'CreateDB',
 		'SelectLocales',
-		'CreateBases',
-		'Mailing',
-		'InstallModules',
+		'ConfigURLs',
+		'ConfigCurrenciesAndPricelists',
+		'ConfigureAvailabilities',
+		
+		'Install',
+		
+		//TODO: configure mandatory e-shop modules
+		
 		'CreateAdministrator',
-		'CreateVisitor',
-		'CreateRESTClient',
-		'ConfigureStudio',
 		'Final',
 	]
 );
 
 
-Installer::setAvailableLocales(
+Installer::setAvailableInstallerLocales(
 	[
 		'en_US', 'cs_CZ',
 	]
 );
+
+Installer::setAvailableAdminLocales(
+	[
+		'en_US', 'cs_CZ',
+	]
+);
+
+Installer::setServicesLocale( new Locale( 'en_US' ) );
+
+Installer::setDefaultCurrencyCode( 'EUR' );
+Installer::setDefaultCurrencyCodes([
+	'cs_CZ' => 'CZK',
+	'pl_PL' => 'PLN',
+	'hu_HU' => 'HUF',
+	'en_GB' => 'GBP',
+	
+	'bg_BG' => 'BGN',
+	
+	'fr_CH' => 'CHF',
+	'it_CH' => 'CHF',
+	'rm_CH' => 'CHF',
+	'de_CH' => 'CHF',
+	'de_LI' => 'CHF',
+	
+	'da_DK' => 'DKK',
+	
+	'ro_RO' => 'RON',
+	
+	'sv_SE' => 'SEK',
+	
+	'nb_NO' => 'NOK',
+	'nn_NO' => 'NOK',
+	
+	'uk_UA' => 'UAH',
+	
+	'tr_TR' => 'TRY',
+	 
+	 'is_IS' => 'ISK',
+	
+]);
+
+Installer::setDefaultVATRates([
+	'cs_CZ' => [21, 12, 0],
+	'sk_SK' => [20, 10, 5],
+	'pl_PL' => [23, 8, 5],
+	'de_DE' => [19, 9],
+	'de_AT' => [20, 13, 10],
+	'hu_HU' => [27, 18, 5],
+] );
+

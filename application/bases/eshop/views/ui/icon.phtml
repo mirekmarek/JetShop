@@ -1,0 +1,31 @@
+<?php
+
+use Jet\IO_File;
+use Jet\UI_icon;
+use Jet\MVC_View;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var UI_icon $i
+ */
+$i = $this->getRaw( 'element' );
+
+$res = '';
+
+$style = '';
+
+
+$i->setBaseCssClass('icon icon-'. $i->getSize() );
+$i->setCustomTagAttribute('title', $i->getTitle());
+
+$icon = $i->getIcon();
+if( str_contains( $icon, '.' ) ){
+	return;
+}
+
+
+$i->addCustomCssStyle( "mask-image: url('". EShops::getCurrent()->getImagesURI()."icons/$icon.svg');" );
+
+?>
+<div <?=$i->renderTagAttributes()?>>&nbsp;</div>

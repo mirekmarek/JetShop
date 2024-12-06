@@ -9,6 +9,7 @@
 namespace JetApplication;
 
 //Debug_Profiler::blockStart('INIT - ClassNames');
+use Jet\Factory_MVC;
 
 /**
  * Example:
@@ -17,5 +18,8 @@ namespace JetApplication;
  *
  * Factory_Application::setModuleManifestClassName( Application_Module_Manifest::class );
  */
+
+Factory_MVC::setPageContentClassName( MVC_Page_Content::class );
+Factory_MVC::setPageClassName( MVC_Page::class );
 
 //Debug_Profiler::blockEnd('INIT - ClassNames');

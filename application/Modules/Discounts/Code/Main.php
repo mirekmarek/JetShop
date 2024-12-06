@@ -20,7 +20,7 @@ use JetApplication\Discounts_Discount;
 use JetApplication\Discounts_Module;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\Shop_Managers;
+use JetApplication\EShop_Managers;
 
 /**
  *
@@ -68,7 +68,7 @@ class Main extends Discounts_Module
 			$codes[$code->getId()] = $code;
 		}
 		
-		$this->getSession()->setValue('code_ids', $valid_code_ids);
+		$this->setUsedCodesRaw( $valid_code_ids );
 		
 		return $codes;
 	}
@@ -85,6 +85,12 @@ class Main extends Discounts_Module
 		return $code_ids;
 	}
 	
+	protected function setUsedCodesRaw( array $code_ids ): void
+	{
+		$session = $this->getSession();
+		$this->getSession()->setValue('code_ids', $code_ids);
+	}
+	
 
 	public function useCode( Discounts_Code $code ) : void
 	{
@@ -96,12 +102,17 @@ class Main extends Discounts_Module
 		$ids = array_keys($used_codes);
 		$ids[] = $code->getId();
 		
-		$this->getSession()->setValue('code_ids', $ids);
+		$this->setUsedCodesRaw( $ids );
+		
+		$this->used_form = null;
+		EShop_Managers::CashDesk()->getCashDesk()->getDiscounts(true);
+		
 	}
 
 	public function cancelUse( Discounts_Code $code ) : void
 	{
 		$used_codes = $this->getUsedCodes();
+		
 		if(!isset($used_codes[$code->getId()])) {
 			return;
 		}
@@ -109,7 +120,9 @@ class Main extends Discounts_Module
 		
 		
 		$ids = array_keys($used_codes);
-		$this->getSession()->setValue('code_ids', $ids);
+		$this->setUsedCodesRaw( $ids );
+		EShop_Managers::CashDesk()->getCashDesk()->getDiscounts(true);
+		
 	}
 
 
@@ -203,11 +216,11 @@ class Main extends Discounts_Module
 					
 					if($used_code->getRelevanceMode()!=Discounts_Code::RELEVANCE_MODE_ALL) {
 						$discount->setDescription( Tr::_('Discount %D%% for some of products price', [
-							'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
+							'D'=>$cash_desk->getEshop()->getLocale()->formatFloat($used_code->getDiscount())
 						]) );
 					} else {
 						$discount->setDescription( Tr::_('Discount %D%% for products price', [
-							'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
+							'D'=>$cash_desk->getEshop()->getLocale()->formatFloat($used_code->getDiscount())
 						]) );
 					}
 					
@@ -229,9 +242,9 @@ class Main extends Discounts_Module
 				case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
 					
 					$discount->setDescription( Tr::_('Discount %D% for products price', [
-						'D'=>Shop_Managers::PriceFormatter()->formatWithCurrency(
+						'D'=>EShop_Managers::PriceFormatter()->formatWithCurrency(
 							$used_code->getDiscount(),
-							$cash_desk->getPricelist()->getCurrency()
+							$cash_desk->getPricelist()
 						)
 					]) );
 					
@@ -250,7 +263,7 @@ class Main extends Discounts_Module
 					
 					
 					$discount->setDescription( Tr::_('Discount %D%% for delivery price', [
-						'D'=>$cash_desk->getShop()->getLocale()->formatFloat($used_code->getDiscount())
+						'D'=>$cash_desk->getEshop()->getLocale()->formatFloat($used_code->getDiscount())
 					]) );
 					
 					foreach($cash_desk->getAvailableDeliveryMethods() as $method) {
@@ -276,9 +289,9 @@ class Main extends Discounts_Module
 					$discount->setAmount( 0 );
 					
 					$discount->setDescription( Tr::_('Discount %D% for delivery price', [
-						'D'=>Shop_Managers::PriceFormatter()->formatWithCurrency(
+						'D'=>EShop_Managers::PriceFormatter()->formatWithCurrency(
 							$used_code->getDiscount(),
-							$cash_desk->getPricelist()->getCurrency()
+							$cash_desk->getPricelist()
 						)
 					]) );
 					
@@ -323,7 +336,7 @@ class Main extends Discounts_Module
 			$code->used( $order );
 		}
 		
-		$this->getSession()->setValue('code_ids', []);
+		$this->setUsedCodesRaw([]);
 	}
 
 	public function Order_canceled( Order $order ) : void

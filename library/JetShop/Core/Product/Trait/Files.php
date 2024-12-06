@@ -77,11 +77,11 @@ trait Core_Product_Trait_Files
 		return $deleted_file;
 	}
 	
-	public function addFile( string $file, int $kind_of_product_id ) : Product_File
+	public function addFile( string $file, int $kind_of_file_id ) : Product_File
 	{
 		foreach( $this->getFiles() as $e_file ) {
 			if($e_file->getFile()==$file) {
-				$e_file->setKindOfFileId( $kind_of_product_id );
+				$e_file->setKindOfFileId( $kind_of_file_id );
 				$e_file->save();
 				
 				return $e_file;
@@ -90,7 +90,7 @@ trait Core_Product_Trait_Files
 		
 		$new_image = new Product_File();
 		$new_image->setProductId( $this->getId() );
-		$new_image->setKindOfFileId( $kind_of_product_id );
+		$new_image->setKindOfFileId( $kind_of_file_id );
 		$new_image->setFile( $file );
 		$new_image->setFileIndex( count($this->files) );
 		$new_image->save();

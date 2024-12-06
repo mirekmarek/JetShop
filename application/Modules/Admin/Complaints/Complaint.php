@@ -18,10 +18,10 @@ namespace JetApplicationModule\Admin\Complaints;
 namespace JetApplicationModule\Admin\Complaints;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Complaint as Application_Complaint;
 
-class Complaint extends Application_Complaint implements Admin_Entity_WithShopRelation_Interface
+class Complaint extends Application_Complaint implements Admin_Entity_WithEShopRelation_Interface
 {
 	
 	public function isEditable(): bool

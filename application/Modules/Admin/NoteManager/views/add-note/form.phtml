@@ -1,0 +1,104 @@
+<?php
+namespace JetApplicationModule\Admin\NoteManager;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+
+use Jet\MVC_View;
+use JetApplication\Entity_Note;
+use JetApplication\Entity_Note_MessageGenerator;
+
+
+/**
+ * @var MVC_View $this
+ * @var Entity_Note $new_note
+ * @var Main $handler
+ * @var Form $internal_note_form
+ * @var Form $customer_message_form
+ * @var Entity_Note_MessageGenerator[] $generators
+ */
+
+$new_note = $this->getRaw('new_note');
+
+$tabs = UI::tabsJS('note_mode', [
+	'internal' => Tr::_('Internal note'),
+	'for_customer' => Tr::_('Message for the customer')
+]);
+
+$internal_note_form = $this->getRaw('internal_note_form');
+$internal_note_form->renderer()->addJsAction('onsubmit', 'NoteHandler.addInternalNote();return false;');
+$internal_note_form->field('new_note_text')->input()->addCustomCssStyle('width: 100%;height: 300px');
+$internal_note_form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$internal_note_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+$customer_message_form = $this->getRaw('customer_message_form');
+$customer_message_form->renderer()->addJsAction('onsubmit', 'NoteHandler.addCustomerMessage();return false;');
+$customer_message_form->field('new_note_text')->input()->addCustomCssStyle('width: 100%;height: 300px');
+$customer_message_form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$customer_message_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+$generators = $this->getRaw('message_generators');
+?>
+<div style="display: grid;grid-template-columns: 1.4fr 1fr;gap: 10px;">
+	
+	<div>
+		<?=$tabs->start()?>
+		<?=$tabs->tab('internal')->content()->start()?>
+			<?=$internal_note_form->start()?>
+				<div>
+					<?=$internal_note_form->field('new_note_text')->input()?>
+				</div>
+				<br>
+				<?=UI::button_save(Tr::_('Save'))?>
+			<?=$internal_note_form->end()?>
+		<?=$tabs->tab('internal')->content()->end()?>
+		
+		<?=$tabs->tab('for_customer')->content()->start()?>
+		
+				<?php if($generators): ?>
+				<div style="display: flex;gap: 10px;margin: 10px;align-items: center">
+					<div>
+						<b><?=Tr::_('Generate message:')?></b>
+					</div>
+					<div>
+						<?php foreach( $generators as $message_generator): ?>
+							<?=UI::button($message_generator->getTitle())->setOnClick("NoteHandler.generateMessage('{$message_generator->getKey()}');")?>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<?php endif; ?>
+
+			<?=$customer_message_form->start()?>
+				<div>
+					<?=$customer_message_form->field('new_note_text')->input()?>
+				</div>
+				<div style="padding-top: 5px;">
+					<?=$customer_message_form->field('email_subject')->label()?>
+					<br>
+					<?=$customer_message_form->field('email_subject')->input()?>
+				</div>
+				<br>
+				<?=UI::button_save(Tr::_('Send'))->setIcon('paper-plane')?>
+			<?=$customer_message_form->end()?>
+		
+		<?=$tabs->tab('for_customer')->content()->end()?>
+		<?=$tabs->end()?>
+		
+	</div>
+	<div id="note-uploaded-files">
+		<?php require 'uploaded-files.phtml'; ?>
+	</div>
+
+</div>
+
+

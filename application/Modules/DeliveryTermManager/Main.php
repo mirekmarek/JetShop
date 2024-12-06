@@ -15,15 +15,15 @@ use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;
 use JetApplication\DeliveryTerm_Manager;
 use JetApplication\Order;
-use JetApplication\Product_ShopData;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Product_EShopData;
+use JetApplication\Availability;
 
 /**
  *
  */
 class Main extends Application_Module implements DeliveryTerm_Manager
 {
-	public function getInfo( Product_ShopData $product, ?Availabilities_Availability $availability=null ) : DeliveryTerm_Info
+	public function getInfo( Product_EShopData $product, ?Availability $availability=null ) : DeliveryTerm_Info
 	{
 		if(!$availability) {
 			$availability = Availabilities::getCurrent();
@@ -31,7 +31,7 @@ class Main extends Application_Module implements DeliveryTerm_Manager
 		
 		$info = new DeliveryTerm_Info();
 		$info->setAvailability( $availability );
-		$info->setShop( $product->getShop() );
+		$info->setEshop( $product->getEshop() );
 		
 		if($product->isVirtual()) {
 			$info->setIsVirtualProduct( true );
@@ -73,7 +73,7 @@ class Main extends Application_Module implements DeliveryTerm_Manager
 					2 => 'Two working days',
 					3 => 'Three working days',
 					4 => 'For working days',
-					'default' => 'One weak'
+					'default' => 'One week'
 				];
 				
 				$weeks_map = [
@@ -135,14 +135,14 @@ class Main extends Application_Module implements DeliveryTerm_Manager
 			
 			if($item->getSetItems()) {
 				foreach($item->getSetItems() as $set_item) {
-					$product = Product_ShopData::get( $set_item->getItemId(), $order->getShop() );
+					$product = Product_EShopData::get( $set_item->getItemId(), $order->getEshop() );
 					if(!$product) {
 						continue;
 					}
 					
 					if($set_item->getNumberOfUnitsAvailable()>0) {
 						$set_item->setAvailableUnitsPromisedDeliveryDate( Calendar::getNextBusinessDate(
-							shop: $order->getShop(),
+							eshop: $order->getEshop(),
 							number_of_working_days: $lod
 						) );
 					}
@@ -157,14 +157,14 @@ class Main extends Application_Module implements DeliveryTerm_Manager
 			}
 
 			
-			$product = Product_ShopData::get( $item->getItemId(), $order->getShop() );
+			$product = Product_EShopData::get( $item->getItemId(), $order->getEshop() );
 			if(!$product) {
 				continue;
 			}
 			
 			if($item->getNumberOfUnitsAvailable()>0) {
 				$item->setAvailableUnitsPromisedDeliveryDate( Calendar::getNextBusinessDate(
-					shop: $order->getShop(),
+					eshop: $order->getEshop(),
 					number_of_working_days: $lod
 				) );
 			}

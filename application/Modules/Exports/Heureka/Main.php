@@ -11,8 +11,8 @@ use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
-use JetApplication\Availabilities_Availability;
-use JetApplication\Brand_ShopData;
+use JetApplication\Availability;
+use JetApplication\Brand_EShopData;
 use JetApplication\Exports_Definition;
 use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_ExportCategory_Parameter;
@@ -20,20 +20,20 @@ use JetApplication\Exports_ExportCategory_Parameter_Value;
 use JetApplication\Exports_Generator_XML;
 use JetApplication\Exports_Join_KindOfProduct;
 use JetApplication\Exports_Module;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use SimpleXMLElement;
 
 /**
  *
  */
-class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
+class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
 {
-	use ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
 	protected array $allowed_locales = [
@@ -48,22 +48,22 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 		return 'Heureka';
 	}
 	
-	public function isAllowedForShop( Shops_Shop $shop ): bool
+	public function isAllowedForShop( EShop $eshop ): bool
 	{
-		$locale = $shop->getLocale()->toString();
+		$locale = $eshop->getLocale()->toString();
 		
 		return in_array( $locale, $this->allowed_locales );
 	}
 	
 	
-	public function actualizeCategories( Shops_Shop $shop ): void
+	public function actualizeCategories( EShop $eshop ): void
 	{
-		if( !$this->isAllowedForShop( $shop ) ) {
+		if( !$this->isAllowedForShop( $eshop ) ) {
 			return;
 		}
 		
 		$context = stream_context_create( ['http' => ['timeout' => 2]] );
-		$xml = @file_get_contents( $this->getShopConfig($shop)->getCategoriesURL(), false, $context );
+		$xml = @file_get_contents( $this->getEshopConfig($eshop)->getCategoriesURL(), false, $context );
 		if( !$xml ) {
 			return;
 		}
@@ -74,7 +74,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 		
 		$addCategory = null;
 		
-		$addCategory = function( SimpleXMLElement $xml, $parent_id = '', array $full_name = [], array $path = [] ) use ( $shop, &$addCategory, &$export_categories ) {
+		$addCategory = function( SimpleXMLElement $xml, $parent_id = '', array $full_name = [], array $path = [] ) use ( $eshop, &$addCategory, &$export_categories ) {
 			foreach( $xml->CATEGORY as $xnl_node ) {
 				
 				$id = trim( (string)$xnl_node->CATEGORY_ID );
@@ -86,11 +86,11 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 				$_full_name[] = $name;
 				
 				
-				$e_c = Exports_ExportCategory::get( $shop, $this->getCode(), $id );
+				$e_c = Exports_ExportCategory::get( $eshop, $this->getCode(), $id );
 				
 				if( !$e_c ) {
 					$e_c = new Exports_ExportCategory();
-					$e_c->setShop( $shop );
+					$e_c->setEshop( $eshop );
 					$e_c->setExportCode( $this->getCode() );
 					$e_c->setCategoryId( $id );
 					$e_c->setCategorySecondaryId( $id );
@@ -111,9 +111,9 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 		$addCategory( $xml );
 	}
 	
-	public function actualizeCategory( Shops_Shop $shop, string $category_id ): void
+	public function actualizeCategory( EShop $eshop, string $category_id ): void
 	{
-		$csv_url = $this->getShopConfig($shop)->getParametersCsvURL();
+		$csv_url = $this->getEshopConfig($eshop)->getParametersCsvURL();
 		
 		$data = file_get_contents( $csv_url );
 		
@@ -139,7 +139,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 			$param_id = $item['parametrId'];
 			
 			$e_p = Exports_ExportCategory_Parameter::get(
-				$shop,
+				$eshop,
 				$this->getCode(),
 				$category_id,
 				$param_id
@@ -147,7 +147,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 			
 			if( !$e_p ) {
 				$e_p = new Exports_ExportCategory_Parameter();
-				$e_p->setShop( $shop );
+				$e_p->setEshop( $eshop );
 				$e_p->setExportCode( $this->getCode() );
 				$e_p->setExportCategoryId( $category_id );
 				$e_p->setExportParameterId( $param_id );
@@ -172,12 +172,12 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 	}
 	
 	/** @noinspection SpellCheckingInspection */
-	public function generateExports_products( Shops_Shop $shop, Pricelists_Pricelist $pricelist, Availabilities_Availability $availability ): void
+	public function generateExports_products( EShop $eshop, Pricelist $pricelist, Availability $availability ): void
 	{
-		$f = new Exports_Generator_XML( $this->getCode(), $shop );
+		$f = new Exports_Generator_XML( $this->getCode(), $eshop );
 		
-		$brand_map = Brand_ShopData::getNameMap( $shop );
-		$export_category_map = Exports_Join_KindOfProduct::getMap( $this->getCode(), $shop );
+		$brand_map = Brand_EShopData::getNameMap( $eshop );
+		$export_category_map = Exports_Join_KindOfProduct::getMap( $this->getCode(), $eshop );
 		$parameters = [];
 		$export_categories = [];
 		
@@ -185,7 +185,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 		
 		$f->tagStart( 'SHOP' );
 		
-		$products = Product_ShopData::getAllActive();
+		$products = Product_EShopData::getAllActive();
 		
 		foreach($products as $sd) {
 			$f->tagStart( 'SHOPITEM' );
@@ -219,7 +219,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 				
 				if(!array_key_exists($export_category_id, $export_categories)) {
 					$export_categories[$export_category_id] = Exports_ExportCategory::get(
-						$shop,
+						$eshop,
 						$this->getCode(),
 						$export_category_id
 					);
@@ -231,7 +231,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 
 				if(!isset($parameters[$export_category_id])) {
 					$parameters[$export_category_id] = Exports_ExportCategory_Parameter::getForCategory(
-						$shop,
+						$eshop,
 						$this->getCode(),
 						$export_category_id
 					);
@@ -239,7 +239,7 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 				$params = $parameters[$export_category_id];
 				
 				$values = Exports_ExportCategory_Parameter_Value::getForProduct(
-					$shop,
+					$eshop,
 					$this->getCode(),
 					$export_category_id,
 					$sd->getId()
@@ -328,12 +328,12 @@ class Main extends Exports_Module implements ShopConfig_ModuleConfig_ModuleHasCo
 			description: '',
 			export_code: 'products',
 			export: function() {
-				$shop = Shops::getCurrent();
+				$eshop = EShops::getCurrent();
 				
 				$this->generateExports_products(
-					$shop,
-					$shop->getDefaultPricelist(),
-					$shop->getDefaultAvailability()
+					$eshop,
+					$eshop->getDefaultPricelist(),
+					$eshop->getDefaultAvailability()
 				);
 			}
 		);

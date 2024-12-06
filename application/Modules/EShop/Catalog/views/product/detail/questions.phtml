@@ -1,0 +1,22 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$questions_manager = EShop_Managers::ProductQuestions();
+if(!$questions_manager) {
+	return;
+}
+?>
+<h3><?=Tr::_('Questions (%cnt%)', ['cnt'=>$product->getQuestionCount()]);?></h3>
+<?=$questions_manager->renderQuestions( $product )?>

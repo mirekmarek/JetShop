@@ -9,9 +9,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\EMail_Template;
-use JetApplication\EMail_TemplateText_ShopData;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\EMail_TemplateText_EShopData;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShop;
 
 
 
@@ -19,25 +19,25 @@ use JetApplication\Shops_Shop;
 	name: 'email_templates',
 	database_table_name: 'email_templates',
 )]
-abstract class Core_EMail_TemplateText extends Entity_WithShopData
+abstract class Core_EMail_TemplateText extends Entity_WithEShopData
 {
 	
 	
 	/**
-	 * @var EMail_TemplateText_ShopData[]
+	 * @var EMail_TemplateText_EShopData[]
 	 */
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: EMail_TemplateText_ShopData::class
+		data_model_class: EMail_TemplateText_EShopData::class
 	)]
-	protected array $shop_data = [];
+	protected array $eshop_data = [];
 	
 	
 	
-	public function getShopData( ?Shops_Shop $shop = null ): EMail_TemplateText_ShopData
+	public function getEshopData( ?EShop $eshop = null ): EMail_TemplateText_EShopData
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getShopData( $shop );
+		return $this->_getEshopData( $eshop );
 	}
 	
 	/**

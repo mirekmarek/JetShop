@@ -16,4 +16,5 @@ return [
 	'Active' => 'Aktivní',
 	'Shop' => 'Prodejna',
 	'Unlimited' => 'Neomezený',
+	'e-shop' => 'internetový obchod',
 ];

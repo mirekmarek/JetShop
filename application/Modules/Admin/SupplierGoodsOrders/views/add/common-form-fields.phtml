@@ -23,7 +23,7 @@ $item = $this->getRaw('item');
 	<div style="display: flex;align-items: center;gap: 10px">
 		<div style="font-weight: bolder;"><?= Tr::_('Supplier:')?></div>
 		<div>
-			<select class="form-control" onchange="location='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
+			<select class="form-control" onchange="location.href='<?=Http_Request::currentURI(unset_GET_params: ['supplier'])?>&supplier='+this.value">
 				<?php foreach(Supplier::getScope() as $id=>$name):
 					if( $item->getSupplierId()==$id ):
 						?><option value="<?=$id?>" selected><?=$name?></option><?php

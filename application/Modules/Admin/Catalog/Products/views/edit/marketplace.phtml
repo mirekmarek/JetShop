@@ -5,15 +5,15 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\MarketplaceIntegration_Module;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
-
+use JetApplication\EShops;
+use JetApplication\EShop;
+use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
  * @var Product $product
  * @var MarketplaceIntegration_Module $selected_mp
- * @var Shops_Shop $selected_mp_shop
+ * @var EShop $selected_mp_eshop
  */
 
 $product = $this->getRaw('item');
@@ -21,9 +21,9 @@ $product = $this->getRaw('item');
 $modules = MarketplaceIntegration::getActiveModules();
 
 $selected_mp = $this->getRaw('selected_mp');
-$selected_mp_shop = $this->getRaw('selected_mp_shop');
+$selected_mp_eshop = $this->getRaw('selected_mp_eshop');
 $selected_mp_code = $this->getString('selected_mp_code');
-$selected_mp_shop_key = $this->getString('selected_mp_shop_key');
+$selected_mp_eshop_key = $this->getString('selected_mp_eshop_key');
 
 require '_toolbar.phtml';
 ?>
@@ -36,18 +36,18 @@ require '_toolbar.phtml';
 		<div>
 			<ul class="list-group">
 				<?php foreach($modules as $module):
-					foreach(Shops::getListSorted() as $shop):
+					foreach( EShops::getListSorted() as $eshop):
 						if(
-							!$module->isAllowedForShop($shop) ||
+							!$module->isAllowedForShop($eshop) ||
 							!$module->hasProductSettings()
 						):
 							continue;
 						endif;
 						
-						$title = $module->getTitle().' - '.$shop->getShopName();
-						$link = Http_Request::currentURI(['mp'=>$module->getCode(),'mp_shop'=>$shop->getKey()]);
+						$title = $module->getTitle().' - '.$eshop->getName();
+						$link = Http_Request::currentURI(['mp'=>$module->getCode(),'mp_eshop'=>$eshop->getKey()]);
 						
-						if($module->getCode()==$selected_mp_code && $shop->getKey()==$selected_mp_shop_key):
+						if($module->getCode()==$selected_mp_code && $eshop->getKey()==$selected_mp_eshop_key):
 							?><li class="list-group-item active"><?=$title?></li><?php
 						else:
 							?><li class="list-group-item"><a href="<?=$link?>"><?=$title?></a></li><?php
@@ -58,8 +58,8 @@ require '_toolbar.phtml';
 		</div>
 		<div>
 			<?php if($selected_mp): ?>
-				<legend><?=$selected_mp->getTitle()?> - <?=$selected_mp_shop->getShopName()?></legend>
-				<?php $selected_mp->handleProductSettings( $product, $selected_mp_shop )?>
+				<legend><?=$selected_mp->getTitle()?> - <?=$selected_mp_eshop->getName()?></legend>
+				<?php $selected_mp->handleProductSettings( $product, $selected_mp_eshop )?>
 			<?php endif; ?>
 			
 		</div>

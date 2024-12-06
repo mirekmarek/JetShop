@@ -1,31 +1,31 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 
 trait Core_Entity_HasPrice_Trait {
 	
-	public function getVatRate( Pricelists_Pricelist $pricelist ) : float
+	public function getVatRate( Pricelist $pricelist ) : float
 	{
 		return $this->getPriceEntity( $pricelist )->getVatRate();
 	}
 	
-	public function getPrice( Pricelists_Pricelist $pricelist ): float
+	public function getPrice( Pricelist $pricelist ): float
 	{
 		return $this->getPriceEntity( $pricelist )->getPrice();
 	}
 	
-	public function getPrice_WithoutVAT( Pricelists_Pricelist $pricelist ) : float
+	public function getPrice_WithoutVAT( Pricelist $pricelist ) : float
 	{
 		return $this->getPriceEntity( $pricelist )->getPrice_WithoutVAT();
 	}
 	
-	public function getPrice_WithVAT( Pricelists_Pricelist $pricelist ) : float
+	public function getPrice_WithVAT( Pricelist $pricelist ) : float
 	{
 		return $this->getPriceEntity( $pricelist )->getPrice_WithVAT();
 	}
 	
-	public function getPrice_VAT( Pricelists_Pricelist $pricelist ) : float
+	public function getPrice_VAT( Pricelist $pricelist ) : float
 	{
 		return $this->getPriceEntity( $pricelist )->getPrice_VAT();
 	}

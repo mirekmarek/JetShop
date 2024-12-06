@@ -13,12 +13,11 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
 use JetApplication\Carrier;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplicationModule\Shop\Catalog\Navigation_Breadcrumb;
+use Jet\Navigation_Breadcrumb;
 
 /**
  *
@@ -57,8 +56,6 @@ class Controller_Main extends MVC_Controller_Default
 	
 	public function list_Action() : void
 	{
-		Admin_Managers::UI()->initBreadcrumb();
-		
 		$this->view->setVar('warehouse', $this->warehouse);
 		
 		$POST = Http_Request::POST();
@@ -284,8 +281,6 @@ class Controller_Main extends MVC_Controller_Default
 		) {
 			AJAX::operationResponse(true);
 		}
-		
-		Admin_Managers::UI()->initBreadcrumb();
 		
 		Navigation_Breadcrumb::addURL(
 			title: $this->dispatch->getWarehouse()->getInternalName(),

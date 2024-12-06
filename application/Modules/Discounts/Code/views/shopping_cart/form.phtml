@@ -35,11 +35,13 @@ $form->renderer()->addJsAction('onsubmit', 'DiscountCode.submit();return false;'
 
 <?=$form->start()?>
 	<?=$form->getCommonMessage()?>
-	<div style="display: grid;grid-template-columns: 1fr 50px;margin: 10px;">
+	<div id="discount_code_enter_form">
+		<div></div>
 		<div>
 			<?=$code_f->input();?>
-			<?=$code_f->error();?>
 		</div>
-		<div><?=UI::button(Tr::_('Use'))->setType('submit')?></div>
+		<?=UI::button(Tr::_('Use'))->setType('submit')?>
+		<div><?=$code_f->error();?></div>
+		<div></div>
 	</div>
 <?=$form->end()?>

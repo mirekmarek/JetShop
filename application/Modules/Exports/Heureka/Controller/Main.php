@@ -10,7 +10,7 @@ namespace JetApplicationModule\Exports\Heureka;
 use Jet\MVC_Controller_Default;
 use JetApplication\Availabilities;
 use JetApplication\Pricelists;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  *
@@ -24,7 +24,7 @@ class Controller_Main extends MVC_Controller_Default
 		 */
 		$modula = $this->module;
 		$modula->generateExports_products(
-			Shops::getCurrent(),
+			EShops::getCurrent(),
 			Pricelists::getCurrent(),
 			Availabilities::getCurrent()
 		);

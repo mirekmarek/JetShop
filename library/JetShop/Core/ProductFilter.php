@@ -1,8 +1,8 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Availabilities_Availability;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Availability;
+use JetApplication\Pricelist;
 use JetApplication\ProductFilter_Filter_Basic;
 use JetApplication\ProductFilter_Filter_Brands;
 use JetApplication\ProductFilter_Filter_Categories;
@@ -11,15 +11,15 @@ use JetApplication\ProductFilter_Filter_PropertyBool;
 use JetApplication\ProductFilter_Filter_PropertyNumber;
 use JetApplication\ProductFilter_Filter_PropertyOptions;
 use JetApplication\ProductFilter_Storage;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\ProductFilter_Filter;
 
 
 abstract class Core_ProductFilter {
 	
-	protected Shops_Shop $shop;
-	protected Pricelists_Pricelist $pricelist;
-	protected Availabilities_Availability $availability;
+	protected EShop $eshop;
+	protected Pricelist $pricelist;
+	protected Availability $availability;
 	
 	protected string $context_entity;
 	protected int $context_entity_id;
@@ -42,18 +42,18 @@ abstract class Core_ProductFilter {
 	
 
 	public function __construct(
-		Shops_Shop $shop,
-		?Pricelists_Pricelist $pricelist =null,
-		?Availabilities_Availability $availability=null
+		EShop                        $eshop,
+		?Pricelist                   $pricelist =null,
+		?Availability $availability=null
 	)
 	{
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		
 		if( !$pricelist ) {
-			$pricelist = $this->shop->getDefaultPricelist();
+			$pricelist = $this->eshop->getDefaultPricelist();
 		}
 		if( !$availability ) {
-			$availability = $this->shop->getDefaultAvailability();
+			$availability = $this->eshop->getDefaultAvailability();
 		}
 		
 		$this->pricelist = $pricelist;
@@ -63,17 +63,17 @@ abstract class Core_ProductFilter {
 		$this->initFilters();
 	}
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
-	public function getPricelist(): Pricelists_Pricelist
+	public function getPricelist(): Pricelist
 	{
 		return $this->pricelist;
 	}
 	
-	public function getAvailability(): Availabilities_Availability
+	public function getAvailability(): Availability
 	{
 		return $this->availability;
 	}

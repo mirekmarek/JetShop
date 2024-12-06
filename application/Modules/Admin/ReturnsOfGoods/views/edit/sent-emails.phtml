@@ -16,8 +16,6 @@ use JetApplication\EMail_Sent;
 $return = $this->getRaw( 'return' );
 ?>
 
-<fieldset>
-	<legend><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></legend>
 	
 	<table class="table table-striped">
 		<thead>
@@ -41,4 +39,3 @@ $return = $this->getRaw( 'return' );
 			</tr>
 		<?php endforeach; ?>
 	</table>
-</fieldset>

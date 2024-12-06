@@ -9,17 +9,17 @@ use Jet\Form_Field;
 use JetApplication\CompanyInfo;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\Entity_AccountingDocument_Item;
 use JetApplication\Entity_Address;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Invoice_VATOverviewItem;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Payment_Kind;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Shops_Shop;
+use JetApplication\Pricelist;
+use JetApplication\EShop;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Order;
 
@@ -32,7 +32,7 @@ use JetApplication\Order;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+abstract class Core_Entity_AccountingDocument extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
 {
 	
 	
@@ -317,7 +317,7 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 		return $this->currency_code;
 	}
 	
-	public function getCurrency() : Currencies_Currency
+	public function getCurrency() : Currency
 	{
 		return Currencies::get( $this->currency_code );
 	}
@@ -332,7 +332,7 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 		return $this->pricelist_code;
 	}
 	
-	public function getPricelist() : Pricelists_Pricelist
+	public function getPricelist() : Pricelist
 	{
 		return Pricelists::get( $this->pricelist_code );
 	}
@@ -343,9 +343,9 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 	}
 	
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
-		return $this->getShop();
+		return $this->getEshop();
 	}
 	
 	
@@ -716,8 +716,8 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 				$overview[$vat_rate_key] = new Invoice_VATOverviewItem( $item->getVatRate() );
 			}
 			
-			$overview[$vat_rate_key]->addTaxBase( $pricelist->round_WithoutVAT( $item->getNumberOfUnits() * $item->getPricePerUnitWithoutVat() ) );
-			$overview[$vat_rate_key]->addTax( $pricelist->round_VAT( $item->getNumberOfUnits() * $item->getPricePerUnitVat() ) );
+			$overview[$vat_rate_key]->addTaxBase( $pricelist->round_WithoutVAT( $item->getNumberOfUnits() * $item->getPricePerUnit_WithoutVat() ) );
+			$overview[$vat_rate_key]->addTax( $pricelist->round_VAT( $item->getNumberOfUnits() * $item->getPricePerUnit_Vat() ) );
 		}
 		
 		return $overview;
@@ -738,8 +738,8 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 		$pricelist = $this->getPricelist();
 		
 		foreach( $this->items as $item ) {
-			$this->total_without_vat += $pricelist->round_WithoutVAT( $item->getNumberOfUnits() * $item->getPricePerUnitWithoutVat() );
-			$this->total_vat         += $pricelist->round_VAT( $item->getNumberOfUnits() * $item->getPricePerUnitVat() );
+			$this->total_without_vat += $pricelist->round_WithoutVAT( $item->getNumberOfUnits() * $item->getPricePerUnit_WithoutVat() );
+			$this->total_vat         += $pricelist->round_VAT( $item->getNumberOfUnits() * $item->getPricePerUnit_Vat() );
 		}
 		
 		
@@ -798,9 +798,9 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 	}
 	
 	
-	public static function getByNumber( string $number, Shops_Shop $shop ) : static|null
+	public static function getByNumber( string $number, EShop $eshop ) : static|null
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where[] = [
 			'number' => $number
@@ -831,7 +831,7 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 	public static function getListByOrder( Order $order ) : iterable
 	{
 		$where = [
-			$order->getShop()->getWhere(),
+			$order->getEshop()->getWhere(),
 			'AND',
 			'order_id' => $order->getId()
 		];
@@ -929,7 +929,7 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 	{
 		$invoice = new static();
 		
-		$invoice->setShop( $order->getShop() );
+		$invoice->setEshop( $order->getEshop() );
 		
 		$invoice->setOrderId( $order->getId() );
 		
@@ -941,7 +941,7 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithShopRelation im
 		$invoice->setCustomerEmail( $order->getEmail() );
 		$invoice->setCustomerPhone( $order->getPhone() );
 		
-		$company_info = CompanyInfo::get( $order->getShop() );
+		$company_info = CompanyInfo::get( $order->getEshop() );
 		
 		$invoice->setIssuerEmail( $company_info->getEmail() );
 		$invoice->setIssuerPhone( $company_info->getPhone() );

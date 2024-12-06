@@ -3,11 +3,11 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\MarketplaceIntegration;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	public function getTabs(): array
 	{
@@ -43,20 +43,20 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 		
 		
 		$selected_mp = null;
-		$selected_mp_shop = null;
+		$selected_mp_eshop = null;
 		
 		$mp = $GET->getString('mp');
 		if($mp) {
 			$selected_mp = MarketplaceIntegration::getActiveModule($mp);
 			
 			if($selected_mp) {
-				$mp_shop = $GET->getString('mp_shop');
-				if($mp_shop) {
-					$selected_mp_shop = Shops::get($mp_shop);
-					if($selected_mp_shop) {
-						if(!$selected_mp->isAllowedForShop($selected_mp_shop)) {
+				$mp_eshop = $GET->getString('mp_eshop');
+				if($mp_eshop) {
+					$selected_mp_eshop = EShops::get($mp_eshop);
+					if($selected_mp_eshop) {
+						if(!$selected_mp->isAllowedForShop($selected_mp_eshop)) {
 							$selected_mp = null;
-							$selected_mp_shop = null;
+							$selected_mp_eshop = null;
 						}
 					} else {
 						$selected_mp = null;
@@ -65,12 +65,12 @@ class Controller_Main extends Admin_EntityManager_WithShopData_Controller
 			}
 		}
 		
-		if($selected_mp_shop) {
+		if($selected_mp_eshop) {
 			$this->view->setVar('selected_mp', $selected_mp );
-			$this->view->setVar('selected_mp_shop', $selected_mp_shop );
+			$this->view->setVar('selected_mp_eshop', $selected_mp_eshop );
 			
 			$this->view->setVar('selected_mp_code', $selected_mp->getCode());
-			$this->view->setVar('selected_mp_shop_key', $selected_mp_shop->getKey() );
+			$this->view->setVar('selected_mp_eshop_key', $selected_mp_eshop->getKey() );
 			
 			$this->view->setVar( 'brand', $brand );
 		}

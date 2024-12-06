@@ -1,0 +1,34 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$categories = $product->getCategories();
+
+if(!$categories) {
+	return;
+}
+
+?>
+<h3><?=Tr::_('Categories')?></h3>
+
+<table class="table table-striped">
+	<?php foreach($categories as $category): ?>
+		<tr>
+			<td>
+				<a href="<?=$category->getURL()?>">
+					<?=$category->getPathName()?>
+				</a>
+			</td>
+		</tr>
+	<?php endforeach; ?>
+</table>

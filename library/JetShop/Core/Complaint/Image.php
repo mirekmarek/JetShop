@@ -64,7 +64,7 @@ abstract class Core_Complaint_Image extends Entity_Basic
 	
 	protected function getImagesDirPath() : string
 	{
-		$dir = SysConf_Path::getData().'complaint_images/'.$this->complaint->getShop()->getKey().'/'.$this->complaint->getId().'/';
+		$dir = SysConf_Path::getData().'complaint_images/'.$this->complaint->getEshop()->getKey().'/'.$this->complaint->getId().'/';
 		
 		if(!IO_Dir::exists($dir)) {
 			IO_Dir::create( $dir );

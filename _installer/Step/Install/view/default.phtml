@@ -1,0 +1,66 @@
+<?php
+
+namespace JetApplication\Installer;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ */
+
+$steps = $this->getRaw('steps');
+?>
+
+<div id="install_result">
+	<h1><?=Tr::_('Installing ...')?></h1>
+</div>
+
+<br><br>
+<div id="continue-btn" style="display: none;">
+	<?= Installer::buttonNext() ?>
+</div>
+
+
+<script>
+	const Install = {
+		steps: <?=json_encode( $steps ) ?>,
+		
+		do: async () => {
+			let ok = true;
+			const res = document.getElementById('install_result');
+			
+			for( let step_code in Install.steps ) {
+				res.innerHTML += '<h2>'+Install.steps[step_code]+'</h2>';
+
+				let response = await fetch( '<?=Http_Request::currentURI([''=>''])?>&is='+step_code );
+				
+				response = await response.json();
+				
+				console.debug( response );
+				
+				if(response['ok']) {
+					res.innerHTML += '<div><?=Tr::_('OK')?></div><br>';
+
+					await new Promise(r => setTimeout(r, 500));
+				} else {
+					res.innerHTML += response['error'];
+					ok = false;
+					
+					break;
+				}
+			}
+			
+			
+			if(ok) {
+				document.getElementById('continue-btn').style.removeProperty('display');
+			}
+			
+		}
+	};
+	
+	setTimeout(()=> {
+		Install.do()
+	}, 1000);
+</script>

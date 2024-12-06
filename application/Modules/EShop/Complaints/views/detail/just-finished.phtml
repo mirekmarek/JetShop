@@ -1,0 +1,23 @@
+<?php
+namespace JetApplicationModule\EShop\Complaints;
+
+use Jet\MVC_View;
+use Jet\Tr;use JetApplication\Complaint;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View  $this
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('complaint');
+
+echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+?>
+<div class="customer-section-container">
+<h1><?=Tr::_('Complaint entry completed')?></h1>
+
+<p><?=Tr::_('Your complaint has the number <b>%no%</b>', ['no'=>$complaint->getNumber()])?></p>
+
+<p><?=Tr::_('Our team will deal with your claim as soon as possible.')?></p>
+</div>

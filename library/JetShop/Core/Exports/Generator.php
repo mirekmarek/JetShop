@@ -6,7 +6,7 @@ use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Exports;
 
 
@@ -22,12 +22,12 @@ abstract class Core_Exports_Generator
 	
 	protected string $export_code;
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 
-	public function __construct( string $export_code, Shops_Shop $shop )
+	public function __construct( string $export_code, EShop $eshop )
 	{
 		$this->export_code = $export_code;
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		
 	}
 	
@@ -35,7 +35,7 @@ abstract class Core_Exports_Generator
 	{
 		$this->target_path = Exports::getRootPath().$target_file_name;
 		
-		$this->tmp_file_path = SysConf_Path::getTmp().'export_'.$this->export_code.'_'.$this->shop->getKey().'_'.date('YmdHis');
+		$this->tmp_file_path = SysConf_Path::getTmp().'export_'.$this->export_code.'_'.$this->eshop->getKey().'_'.date('YmdHis');
 	}
 
 	public function getInputCharset(): string

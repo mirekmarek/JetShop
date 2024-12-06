@@ -248,4 +248,5 @@ abstract class Core_Product_Price extends Entity_Price
 		return (bool)$updated;
 	}
 	
+	
 }

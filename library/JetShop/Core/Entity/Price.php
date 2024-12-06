@@ -6,7 +6,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\Entity_Basic;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 
 #[DataModel_Definition]
 abstract class Core_Entity_Price extends Entity_Basic
@@ -42,7 +42,7 @@ abstract class Core_Entity_Price extends Entity_Basic
 	
 	protected static array $loaded = [];
 	
-	public static function get( Pricelists_Pricelist $pricelist, int $entity_id ) : static
+	public static function get( Pricelist $pricelist, int $entity_id ) : static
 	{
 		
 		if(!isset(static::$loaded[static::class][$pricelist->getCode()][$entity_id])) {
@@ -60,32 +60,49 @@ abstract class Core_Entity_Price extends Entity_Basic
 				$price->setVatRate( $pricelist->getDefaultVatRate() );
 			}
 			
+			
+			$custoun_discount_mtp = $pricelist->getCustomDiscountMtp( static::class );
+			if($custoun_discount_mtp) {
+				$price->setPrice( $price->getPrice()*$custoun_discount_mtp );
+			}
+			
 			static::$loaded[static::class][$pricelist->getCode()][$entity_id] = $price;
 		}
 		
 		return static::$loaded[static::class][$pricelist->getCode()][$entity_id];
 	}
 	
-	public static function prefetch( Pricelists_Pricelist $pricelist, array $entity_ids ) : array
+	public static function prefetch( Pricelist $pricelist, array $entity_ids ) : array
 	{
 		if(!$entity_ids) {
 			return [];
 		}
 		
-		$prices = static::fetch(['products_price'=>[
+		$prices = static::fetch([''=>[
 			'pricelist_code' => $pricelist->getCode(),
 			'AND',
 			'entity_id' => $entity_ids
 		]]);
 		
-		foreach( $prices as $price ) {
-			static::$loaded[ static::class ][$pricelist->getCode()][$price->getEntityId()] = $price;
+		$custoun_discount_mtp = $pricelist->getCustomDiscountMtp( static::class );
+		
+		if($custoun_discount_mtp) {
+			foreach( $prices as $price ) {
+				$price->setPrice( $price->getPrice()*$custoun_discount_mtp );
+				
+				static::$loaded[ static::class ][$pricelist->getCode()][$price->getEntityId()] = $price;
+			}
+		} else {
+			foreach( $prices as $price ) {
+				static::$loaded[ static::class ][$pricelist->getCode()][$price->getEntityId()] = $price;
+			}
+			
 		}
 		
 		return $prices;
 	}
 	
-	public static function getPriceMap( Pricelists_Pricelist $pricelist, array $entity_ids ) : array
+	public static function getPriceMap( Pricelist $pricelist, array $entity_ids ) : array
 	{
 		$data = static::dataFetchAll(
 			select:['entity_id', 'price'],
@@ -99,14 +116,22 @@ abstract class Core_Entity_Price extends Entity_Basic
 		
 		$prices = [];
 		
+		$custoun_discount_mtp = $pricelist->getCustomDiscountMtp( static::class );
+		
 		foreach($data as $p) {
-			$prices[] = (float)$p['price'];
+			$price = (float)$p['price'];
+			
+			if($custoun_discount_mtp) {
+				$price = $price*$custoun_discount_mtp;
+			}
+			
+			$prices[] = $price;
 		}
 		
 		return $prices;
 	}
 	
-	public static function orderAsc( Pricelists_Pricelist $pricelist, array $entity_ids ) : array
+	public static function orderAsc( Pricelist $pricelist, array $entity_ids ) : array
 	{
 		return static::dataFetchCol(
 			select: ['entity_id'],
@@ -120,7 +145,7 @@ abstract class Core_Entity_Price extends Entity_Basic
 		
 	}
 	
-	public static function orderDesc( Pricelists_Pricelist $pricelist, array $entity_ids ) : array
+	public static function orderDesc( Pricelist $pricelist, array $entity_ids ) : array
 	{
 		return static::dataFetchCol(
 			select: ['entity_id'],
@@ -135,12 +160,23 @@ abstract class Core_Entity_Price extends Entity_Basic
 	}
 	
 	public static function filterMinMax(
-		Pricelists_Pricelist $pricelist,
+		Pricelist      $pricelist,
 		null|int|float $min_price = null,
 		null|int|float $max_price = null,
-		?array $entity_ids = null
+		?array         $entity_ids = null
 	) : array
 	{
+		
+		if($pricelist->getCustomDiscountPrc( static::class )) {
+			$mtp = 100 - $pricelist->getCustomDiscountPrc( static::class );
+			
+			if($min_price!==null) {
+				$min_price = ($min_price / $mtp)*100;
+			}
+			if($max_price!==null) {
+				$max_price = ($max_price / $mtp)*100;
+			}
+		}
 		
 		$where = [
 			'pricelist_code' => $pricelist->getCode()
@@ -176,9 +212,9 @@ abstract class Core_Entity_Price extends Entity_Basic
 	}
 	
 	public static function filterHasDiscount(
-		Pricelists_Pricelist $pricelist,
-		bool $has_discount,
-		?array $entity_ids = null
+		Pricelist $pricelist,
+		bool      $has_discount,
+		?array    $entity_ids = null
 	) : array
 	{
 		
@@ -236,7 +272,7 @@ abstract class Core_Entity_Price extends Entity_Basic
 		$this->pricelist_code = $pricelist_code;
 	}
 	
-	public function getPricelist() : Pricelists_Pricelist
+	public function getPricelist() : Pricelist
 	{
 		return Pricelists::get( $this->pricelist_code );
 	}
@@ -320,7 +356,7 @@ abstract class Core_Entity_Price extends Entity_Basic
 	{
 		$pricelist = $this->getPricelist();
 		if( $this->vat_rate==0 ) {
-			return $this->price;
+			return 0;
 		}
 		
 		

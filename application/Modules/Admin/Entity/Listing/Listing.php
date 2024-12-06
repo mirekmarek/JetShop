@@ -13,10 +13,10 @@ use JetApplication\Admin_Managers;
 use JetApplication\Entity_Basic;
 use JetApplication\Entity_Common;
 use JetApplication\Entity_Marketing;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  *
@@ -49,8 +49,8 @@ class Listing extends DataListing {
 			$this->init_Basic();
 		}
 		
-		if( ($this->entity instanceof Entity_WithShopRelation) ) {
-			$this->init_WithShopRelation();
+		if( ($this->entity instanceof Entity_WithEShopRelation) ) {
+			$this->init_WithEShopRelation();
 		}
 		
 		if( ($this->entity instanceof Entity_Marketing) ) {
@@ -61,8 +61,8 @@ class Listing extends DataListing {
 			$this->init_Common();
 		}
 		
-		if( ($this->entity instanceof Entity_WithShopData) ) {
-			$this->init_WithShopData();
+		if( ($this->entity instanceof Entity_WithEShopData) ) {
+			$this->init_WithEShopData();
 		}
 		
 	}
@@ -110,22 +110,22 @@ class Listing extends DataListing {
 	}
 	
 	
-	protected function init_WithShopRelation() : void
+	protected function init_WithEShopRelation() : void
 	{
 		$this->addColumn( new Listing_Column_Edit() );
 		$this->addColumn( new Listing_Column_ID() );
 		
 		
-		if( Shops::isMultiShopMode() ) {
-			$this->addColumn( new Listing_Column_Shop() );
-			$this->addFilter( new Listing_Filter_Shop() );
+		if( EShops::isMultiEShopMode() ) {
+			$this->addColumn( new Listing_Column_EShop() );
+			$this->addFilter( new Listing_Filter_EShop() );
 		}
 		
 		$this->addFilter( $this->init_SearchFilter() );
 		
 		$this->setDefaultColumnsSchema([
 			Listing_Column_ID::KEY,
-			Listing_Column_Shop::KEY,
+			Listing_Column_EShop::KEY,
 		] );
 		
 		
@@ -137,9 +137,9 @@ class Listing extends DataListing {
 		$this->addColumn( new Listing_Column_Edit() );
 		$this->addColumn( new Listing_Column_ID() );
 		
-		if( Shops::isMultiShopMode() ) {
-			$this->addColumn( new Listing_Column_Shop() );
-			$this->addFilter( new Listing_Filter_Shop() );
+		if( EShops::isMultiEShopMode() ) {
+			$this->addColumn( new Listing_Column_EShop() );
+			$this->addFilter( new Listing_Filter_EShop() );
 		}
 		
 		$this->addColumn( new Listing_Column_ActiveState() );
@@ -155,7 +155,7 @@ class Listing extends DataListing {
 		
 		$this->setDefaultColumnsSchema([
 			Listing_Column_ID::KEY,
-			Listing_Column_Shop::KEY,
+			Listing_Column_EShop::KEY,
 			Listing_Column_ActiveState::KEY,
 			Listing_Column_InternalName::KEY,
 			Listing_Column_InternalCode::KEY,
@@ -177,7 +177,7 @@ class Listing extends DataListing {
 		$this->setDefaultSort('+internal_name');
 	}
 	
-	protected function init_WithShopData() : void
+	protected function init_WithEShopData() : void
 	{
 		$this->init_Common();
 	}
@@ -240,11 +240,17 @@ class Listing extends DataListing {
 		}
 	}
 	
+	protected bool $handled = false;
+	
 	public function handle(): void
 	{
-		$this->handleSchemaManagement();
-		parent::handle();
-		$this->handeExports();
+		if(!$this->handled) {
+			$this->handleSchemaManagement();
+			parent::handle();
+			$this->handeExports();
+
+			$this->handled = true;
+		}
 	}
 	
 	/**
@@ -295,9 +301,11 @@ class Listing extends DataListing {
 	protected function getIdList(): array
 	{
 		if( $this->all_ids === null ) {
-			$this->handle();
-
-			$this->all_ids = $this->entity::dataFetchCol(select:['id'], where: $this->getFilterWhere(), order_by: $this->getQueryOrderBy() );
+			$this->all_ids = $this->entity::dataFetchCol(
+				select:['id'],
+				where: $this->getFilterWhere(),
+				order_by: $this->getQueryOrderBy()
+			);
 		}
 		
 		return $this->all_ids;
@@ -325,6 +333,7 @@ class Listing extends DataListing {
 	
 	public function getPrevEditUrl( int $current_id ): string
 	{
+		$this->handle();
 		$all_ids = $this->getIdList();
 		
 		$index = array_search( $current_id, $all_ids );
@@ -341,6 +350,7 @@ class Listing extends DataListing {
 	
 	public function getNextEditUrl( int $current_id ): string
 	{
+		$this->handle();
 		$all_ids = $this->getIdList();
 		
 		$index = array_search( $current_id, $all_ids );

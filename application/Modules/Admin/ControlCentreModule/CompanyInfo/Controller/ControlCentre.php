@@ -23,7 +23,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 
 	public function default_Action() : void
 	{
-		$info = CompanyInfo::get( $this->getShop() );
+		$info = CompanyInfo::get( $this->getEshop() );
 		
 		if($info->getEditForm()->catch()) {
 			UI_messages::success( Tr::_('Company info has been saved') );
@@ -48,7 +48,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 				$info->setLogo( $val );
 				$info->save();
 			},
-			shop: null
+			eshop: null
 		);
 		$image_manager->defineImage(
 			entity: $info::getEntityType(),
@@ -62,7 +62,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 				$info->setStampAndSignature( $val );
 				$info->save();
 			},
-			shop: null
+			eshop: null
 		);
 		
 		$image_manager->handleSelectImageWidgets();

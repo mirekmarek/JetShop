@@ -18,10 +18,10 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\Locale;
 use JetApplication\Carrier;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Entity_Basic;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 use JetApplication\Carrier_DeliveryPoint_OpeningHours;
 use JetApplication\Carrier_DeliveryPoint;
 
@@ -400,10 +400,10 @@ class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition
 	}
 	
 
-	public static function getMapData( ?Shops_Shop $shop=null, array $only_method_ids = [] ) : array
+	public static function getMapData( ?EShop $eshop=null, array $only_method_ids = [] ) : array
 	{
-		if(!$shop) {
-			$shop = Shops::getCurrent();
+		if(!$eshop) {
+			$eshop = EShops::getCurrent();
 		}
 
 		$point_select = [
@@ -416,7 +416,7 @@ class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition
 		
 		$map_data = [];
 		
-		$all_methods = Delivery_Method_ShopData::fetchInstances( $shop->getWhere() );
+		$all_methods = Delivery_Method_EShopData::fetchInstances( $eshop->getWhere() );
 		
 		foreach( $all_methods as $method ) {
 			if(
@@ -607,7 +607,7 @@ class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition
 	
 	/**
 	 * @param string $q
-	 * @param Delivery_Method_ShopData[] $only_methods
+	 * @param Delivery_Method_EShopData[] $only_methods
 	 * @return static[]
 	 */
 	public static function search( string $q, array $only_methods ) : array

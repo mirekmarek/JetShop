@@ -14,7 +14,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 
 /**
  *
@@ -43,7 +43,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		$GET = Http_Request::GET();
 		if( $GET->exists('add') ) {
-			$new_pl = new Pricelists_Pricelist();
+			$new_pl = new Pricelist();
 			
 			if( $new_pl->getAddForm()->catch() ) {
 				Pricelists::addPricelist( $new_pl );

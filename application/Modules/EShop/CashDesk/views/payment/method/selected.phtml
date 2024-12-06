@@ -1,0 +1,58 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+
+use Jet\MVC_View;
+use JetApplication\Payment_Method_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Payment_Method_EShopData $method
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+$method = $this->getRaw('payment_method');
+
+$this->setVar('payment_method', $method);
+
+$options = $method->getOptions();
+?>
+
+<div class="method-selected">
+
+	<div class="method-radio-btn">
+		<input type="radio" name="payment_method" checked />
+	</div>
+	<div class="method-icon">
+		<?php if(($img=$method->getIcon1ThumbnailUrl(50, 50))): ?>
+			<img src="<?=$img?>">
+		<?php endif; ?>
+	</div>
+	<div class="method-title">
+		<b><?= $method->getTitle() ?></b>
+
+		<div>
+			<?= $method->getDescription() ?>
+			
+			
+			<?php if($options):
+				$selected_option_id = $cash_desk->getSelectedPaymentMethodOption()->getId();
+				?>
+				<div>
+					<?php foreach($options as $option):
+						$this->setVar( 'payment_method_option', $option );
+							if($option->getId()==$selected_option_id):
+								require 'option/selected.phtml';
+							else:
+								require 'option/not-selected.phtml';
+							endif;
+					endforeach; ?>
+				</div>
+			<?php endif; ?>
+			
+		</div>
+	</div>
+	
+	<?=$this->render('payment/price')?>
+
+</div>

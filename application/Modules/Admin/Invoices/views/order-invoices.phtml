@@ -58,11 +58,7 @@ $price_formatter = Admin_Managers::PriceFormatter();
 				<?=Locale::date(  $invoice->getInvoiceDate() ); ?>
 			</td>
 			<td>
-				<?php if($invoice->hasVAT()):
-					echo $price_formatter->formatWithCurrency($invoice->getCurrency(), $invoice->getTotal());
-				else:
-					echo $price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotal());
-				endif; ?>
+				<?=$price_formatter->formatWithCurrencyByHasVAT($invoice->hasVAT(), $invoice->getCurrency(), $invoice->getTotal())?>
 			</td>
 			<td></td>
 		</tr>

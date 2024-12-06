@@ -5,7 +5,7 @@ use Jet\Application_Module;
 use Closure;
 use Jet\Data_DateTime;
 use Jet\Logger;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\SysServices;
 use JetApplication\SysServices_PlannedOutage;
 
@@ -20,7 +20,7 @@ abstract class Core_SysServices_Definition {
 	protected string $service_code = '';
 	protected ?Closure $service = null;
 
-	protected bool $service_requires_shop_designation = false;
+	protected bool $service_requires_eshop_designation = false;
 
 	protected bool $is_periodically_triggered_service = true;
 	
@@ -77,14 +77,14 @@ abstract class Core_SysServices_Definition {
 	
 	
 
-	public function getServiceRequiresShopDesignation(): bool
+	public function getServiceRequiresEshopDesignation(): bool
 	{
-		return $this->service_requires_shop_designation;
+		return $this->service_requires_eshop_designation;
 	}
 	
-	public function setServiceRequiresShopDesignation( bool $service_requires_shop_designation ): void
+	public function setServiceRequiresEshopDesignation( bool $service_requires_eshop_designation ): void
 	{
-		$this->service_requires_shop_designation = $service_requires_shop_designation;
+		$this->service_requires_eshop_designation = $service_requires_eshop_designation;
 	}
 	
 
@@ -100,9 +100,9 @@ abstract class Core_SysServices_Definition {
 	
 	
 	
-	public function getURL( ?Shops_Shop $shop = null ) : string
+	public function getURL( ?EShop $eshop = null ) : string
 	{
-		return SysServices::getManager()->getSysServiceURL( $this, $shop );
+		return SysServices::getManager()->getSysServiceURL( $this, $eshop );
 	}
 	
 	

@@ -9,14 +9,15 @@ namespace JetShop;
 use JetApplication\Entity_Event;
 use JetApplication\Event_HandlerModule;
 use JetApplication\Order_Event;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Order;
+use JetApplication\Order_EMailTemplate;
 
 
 abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 {
 	protected Order_Event $event;
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	protected Order $order;
 
 
@@ -25,7 +26,7 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;
 		$order = $event->getOrder();
-		$this->shop = $order->getShop();
+		$this->eshop = $order->getEshop();
 		$this->order = $order;
 	}
 
@@ -40,10 +41,10 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 	}
 
 	
-	public function sendEMail( Core_Order_EMailTemplate $template ) : bool
+	public function sendEMail( Order_EMailTemplate $template ) : bool
 	{
 		$template->setEvent($this->event);
-		$email = $template->createEmail( $this->getEvent()->getShop() );
+		$email = $template->createEmail( $this->getEvent()->getEshop() );
 		
 		return $email->send();
 	}

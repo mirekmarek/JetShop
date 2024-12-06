@@ -1,7 +1,7 @@
 <?php
 namespace JetApplicationModule\Admin\UI;
 
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 use Jet\Http_Request;
 use Jet\UI;
@@ -15,8 +15,8 @@ use Jet\Locale;
 use Jet\MVC;
 
 
-$shops = Shops::getListSorted();
-$current_shop = Shops::getCurrent();
+$eshops = EShops::getListSorted();
+$current_eshop = EShops::getCurrent();
 
 $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, callable $item_renderer ) {
 	$separator_allowed = false;
@@ -61,11 +61,11 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 		<ul class="nav navbar-nav">
 			<li class="nav-item dropdown bg-secondary">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<?=$current_shop->getShopName()?> <span class="caret"></span>
+					<?=$current_eshop->getName()?> <span class="caret"></span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<?php foreach( $shops as $shop ): ?>
-						<a class="dropdown-item" href="<?=Http_Request::currentURI([Main::CURR_SHOP_GET_PARAM =>$shop->getKey()])?>"><?=$shop->getShopName()?></a>
+					<?php foreach( $eshops as $eshop ): ?>
+						<a class="dropdown-item" href="<?=Http_Request::currentURI([Main::CURR_ESHOP_GET_PARAM =>$eshop->getKey()])?>"><?=$eshop->getName()?></a>
 					<?php endforeach; ?>
 				</div>
 			</li>

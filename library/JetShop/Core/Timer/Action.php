@@ -3,23 +3,23 @@
 namespace JetShop;
 
 use Jet\Form;
-use JetApplication\Entity_WithShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShop;
 
 abstract class Core_Timer_Action {
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	abstract public function getKey() : string;
 	abstract public function getTitle() : string;
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
-	public function setShop( Shops_Shop $shop ): void
+	public function setEshop( EShop $eshop ): void
 	{
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 	}
 	
 	public function updateForm( Form $form ) : void
@@ -36,5 +36,5 @@ abstract class Core_Timer_Action {
 		return '';
 	}
 	
-	abstract public function perform( Entity_WithShopData $entity, mixed $action_context ) : bool;
+	abstract public function perform( Entity_WithEShopData $entity, mixed $action_context ) : bool;
 }

@@ -10,20 +10,20 @@ namespace JetApplicationModule\Admin\InvoicesInAdvance;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithShopRelation_Trait;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Admin_Managers_InvoiceInAdvance;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\InvoiceInAdvance;
 use JetApplication\Order;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithShopRelation_Interface, Admin_Managers_InvoiceInAdvance
+class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_InvoiceInAdvance
 {
-	use Admin_EntityManager_WithShopRelation_Trait;
+	use Admin_EntityManager_WithEShopRelation_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'invoices-in-advance';
 	
@@ -45,7 +45,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopRel
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithShopRelation|Admin_Entity_WithShopRelation_Interface
+	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
 		return new Invoice();
 	}

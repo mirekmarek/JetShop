@@ -1,0 +1,85 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Brand_EShopData;
+use JetApplication\ProductListing;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$initial_map = $listing->getInitialMap();
+$brand_ids = $initial_map->getBrandIds();
+if(!$brand_ids) {
+	return;
+}
+
+$filtered_map = $listing->getFilteredMap();
+
+$brands = Brand_EShopData::getActiveList( $brand_ids );
+
+
+?>
+<div class="product_listing_filter">
+	<div
+		id="f_brands_title"
+		class="product_listing_filter_title"
+		data-target="f_brands"
+		onclick="listing.UI.toggleFilterItem(this)"
+	><?=Tr::_('Brand')?></div>
+	
+	<div
+		class="product_listing_filter_filter"
+		id="f_brands"
+		onscroll="listing.UI.filterContainerScroll( this )"
+		style="display: none;"
+	>
+<?php
+foreach( $brands as $brand_id=>$brand ):
+	
+	
+	$selected = $listing->getFilter()->getBrandsFilter()->getBrandSelected( $brand_id );
+	
+	
+	if(!$selected) {
+		$count = $listing->getBrandCount( $brand_id );
+		$disabled = $count==0;
+		
+		if($disabled) {
+			$label = $brand->getName();
+			$css_class = 'product_listing_filter_option_disabled';
+			$param  = 'disabled';
+		} else {
+			$css_class = 'product_listing_filter_option';
+			$label = $brand->getName().' ('.$count.')';
+			$param  = '';
+		}
+	} else {
+		$label = $brand->getName();
+		$css_class = 'product_listing_filter_option_selected';
+		$param  = 'checked';
+	}
+	
+	$id = 'filter_brand_'.$brand_id;
+	
+	?>
+	<div class="<?=$css_class?>">
+		<input
+			type="checkbox"
+			class="lf-brand"
+			value="<?=$brand_id?>"
+			<?=$param?>
+			onchange="listing.submitFilter()"
+			id="<?=$id?>">
+		<label for="<?=$id?>"><?=$label?></label>
+	
+	</div>
+	<?php
+endforeach; ?>
+	</div>
+</div>

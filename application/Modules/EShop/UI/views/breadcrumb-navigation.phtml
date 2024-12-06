@@ -1,0 +1,35 @@
+<?php
+
+use Jet\MVC_View;
+use Jet\Navigation_Breadcrumb;
+
+/**
+ * @var MVC_View $this
+ */
+$items = Navigation_Breadcrumb::getItems();
+?>
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb">
+		<?php foreach( $items as $item ):
+			/*
+			$icon = $item->getPage()?->getIcon();
+			if($icon) {
+				$icon = UI::icon($icon).'&nbsp;&nbsp;&nbsp;';
+			}
+			*/
+			$icon = '';
+			?>
+			<li class="breadcrumb-item <?=$item->getIsActive()?' active':''?>">
+				
+				<?php if( !$item->getIsLast() ): ?>
+					<div><a href="<?= $item->getURL(); ?>"><?=$icon?></a></div>
+					<div><a href="<?= $item->getURL(); ?>"><?= $item->getTitle(); ?></a></div>
+				<?php else: ?>
+					<div><?=$icon?></div>
+					<div><b><?= $item->getTitle(); ?></b></div>
+					
+				<?php endif; ?>
+			</li>
+		<?php endforeach; ?>
+	</ol>
+</nav>

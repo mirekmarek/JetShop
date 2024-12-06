@@ -19,12 +19,12 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_tabsJS;
 use JetApplication\Delivery_Method;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order_Item;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_ShopData;
-use JetApplication\Product_ShopData;
+use JetApplication\Payment_Method_EShopData;
+use JetApplication\Product_EShopData;
 
 
 class Handler_AddItem_Main extends Handler {
@@ -80,7 +80,7 @@ class Handler_AddItem_Main extends Handler {
 		$product_id = (int)$form->field('product_id')->getValue();
 		$qty = $form->field('qty')->getValue();
 		
-		$product = Product_ShopData::get( $product_id, $this->order->getShop() );
+		$product = Product_EShopData::get( $product_id, $this->order->getEshop() );
 		if(!$product) {
 			return false;
 		}
@@ -109,7 +109,7 @@ class Handler_AddItem_Main extends Handler {
 		$product_id = (int)$form->field('product_id')->getValue();
 		$qty = $form->field('qty')->getValue();
 		
-		$product = Product_ShopData::get( $product_id, $this->order->getShop() );
+		$product = Product_EShopData::get( $product_id, $this->order->getEshop() );
 		if(!$product) {
 			return false;
 		}
@@ -193,7 +193,7 @@ class Handler_AddItem_Main extends Handler {
 		$method_id = (int)$form->field('payment_method')->getValue();
 		$fee = $form->field('fee')->getValue();
 		
-		$method = Payment_Method_ShopData::get( $method_id, $this->order->getShop() );
+		$method = Payment_Method_EShopData::get( $method_id, $this->order->getEshop() );
 		if(!$method) {
 			return false;
 		}
@@ -226,7 +226,7 @@ class Handler_AddItem_Main extends Handler {
 		$delivery_method_id = (int)$form->field('delivery_method')->getValue();
 		$fee = $form->field('fee')->getValue();
 		
-		$method = Delivery_Method_ShopData::get( $delivery_method_id, $this->order->getShop() );
+		$method = Delivery_Method_EShopData::get( $delivery_method_id, $this->order->getEshop() );
 		
 		return $this->order->addDeliveryFee( $method, $fee )->hasChange();
 	}

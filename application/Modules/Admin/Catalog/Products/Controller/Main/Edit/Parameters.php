@@ -6,6 +6,7 @@ use Jet\UI_messages;
 
 use Jet\Http_Headers;
 use Jet\Tr;
+use JetApplication\Product;
 
 /**
  *

@@ -1,0 +1,20 @@
+<?php
+return [
+	'Homepage' => '',
+	'Cash Desk' => '',
+	'Cash Desk - confirmation' => '',
+	'Cash Desk - payment' => '',
+	'Reset password' => '',
+	'Login' => '',
+	'Customer section' => '',
+	'Shopping cart' => '',
+	'Search' => '',
+	'Search - whisper' => '',
+	'Compare' => '',
+	'Wishlist' => '',
+	'o-auth service' => '',
+	'Complaints' => '',
+	'Return of goods' => '',
+	'Change password' => '',
+	'Sign Up' => '',
+];

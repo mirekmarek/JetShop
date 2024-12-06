@@ -4,7 +4,7 @@ return [
 	'Activate' => '',
 	'Invalid value' => '',
 	'Deactivate' => '',
-	'Date time:' => '',
+	'Date and time:' => '',
 	'Set price' => '',
 	'Price:' => '',
 	'Set' => '',
@@ -23,4 +23,6 @@ return [
 	'Out of range' => '',
 	'Set free limit' => '',
 	'Free limit:' => '',
+	'Setup timer' => '',
+	'No timer is scheduled' => '',
 ];

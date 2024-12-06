@@ -11,7 +11,7 @@ use Exception;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\MarketplaceIntegration_Join_Brand;
 use JetApplication\MarketplaceIntegration_Join_KindOfProduct;
 use JetApplication\MarketplaceIntegration_MarketplaceBrand;
@@ -20,49 +20,48 @@ use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter_Value;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\Order_Event;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Product_ShopData;
-use JetApplication\ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
-use JetApplication\ShopConfig_ModuleConfig_PerShop;
-use JetApplication\Shops_Shop;
-use JetShop\Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_PerShop;
+use JetApplication\EShop;
+use JetShop\Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 
-//TODO: table of changes
 
-class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_Module_Interface, ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface
+class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_Module_Interface, EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface
 {
 	public const IMPORT_SOURCE = 'Mall';
 	
 	use Admin_ControlCentre_Module_Trait;
-	use Core_ShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	
 	public function getTitle(): string
 	{
 		return 'Mall';
 	}
 	
-	public function isAllowedForShop( Shops_Shop $shop ): bool
+	public function isAllowedForShop( EShop $eshop ): bool
 	{
-		return $this->getConfig( $shop )->getClientId();
+		return $this->getConfig( $eshop )->getClientId();
 	}
 	
-	public function actualizeBrands( Shops_Shop $shop ): void
+	public function actualizeBrands( EShop $eshop ): void
 	{
-		if(!$this->isAllowedForShop($shop)) {
+		if(!$this->isAllowedForShop($eshop)) {
 			return;
 		}
 		
-		$config = $this->getShopConfig( $shop );
-		$client = $this->getClient( $shop );
+		$config = $this->getEshopConfig( $eshop );
+		$client = $this->getClient( $eshop );
 		
 		$_brands = $client->getObject('brands', '');
 		if(!$_brands) {
-			throw new Exception('Unable to get categories! [1]');
+			throw new Exception('Unable to get brands! [1]');
 		}
 		
 		
 		foreach($_brands as $brand) {
-			$m_b = MarketplaceIntegration_MarketplaceBrand::get( $shop, $this->getCode(), $brand['brand_id'] );
+			$m_b = MarketplaceIntegration_MarketplaceBrand::get( $eshop, $this->getCode(), $brand['brand_id'] );
 			
 			if($m_b) {
 				if( $brand['title']!=$m_b->getName() ) {
@@ -72,7 +71,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 				
 			} else {
 				$m_b = new MarketplaceIntegration_MarketplaceBrand();
-				$m_b->setShop( $shop );
+				$m_b->setEshop( $eshop );
 				$m_b->setMarketplaceCode( $this->getCode() );
 				$m_b->setBrandId( $brand['brand_id'] );
 				$m_b->setName( $brand['title'] );
@@ -83,14 +82,14 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		}
 	}
 	
-	public function actualizeCategories( Shops_Shop $shop ): void
+	public function actualizeCategories( EShop $eshop ): void
 	{
-		if(!$this->isAllowedForShop($shop)) {
+		if(!$this->isAllowedForShop($eshop)) {
 			return;
 		}
 		
-		$config = $this->getConfig( $shop );
-		$client = $this->getClient( $shop );
+		$config = $this->getConfig( $eshop );
+		$client = $this->getClient( $eshop );
 		
 		$_categories = $client->getObject('categories/tree/'.$config->getCountryCode(), '');
 		if(!$_categories) {
@@ -137,7 +136,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		
 		foreach($categories as $cat) {
 			
-			$m_c = MarketplaceIntegration_MarketplaceCategory::get( $shop, $this->getCode(), $cat['id'] );
+			$m_c = MarketplaceIntegration_MarketplaceCategory::get( $eshop, $this->getCode(), $cat['id'] );
 			if($m_c) {
 				$updated = false;
 				
@@ -162,7 +161,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 				
 			} else {
 				$m_c = new MarketplaceIntegration_MarketplaceCategory();
-				$m_c->setShop( $shop );
+				$m_c->setEshop( $eshop );
 				$m_c->setMarketplaceCode( $this->getCode() );
 				$m_c->setCategoryId( $cat['id'] );
 				
@@ -176,14 +175,14 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		
 	}
 	
-	public function actualizeCategory( Shops_Shop $shop, string $category_id ) : void
+	public function actualizeCategory( EShop $eshop, string $category_id ) : void
 	{
-		$m_c = MarketplaceIntegration_MarketplaceCategory::get( $shop, $this->getCode(), $category_id );
+		$m_c = MarketplaceIntegration_MarketplaceCategory::get( $eshop, $this->getCode(), $category_id );
 		if(!$m_c) {
 			return;
 		}
 		
-		$client = $this->getClient( $shop );
+		$client = $this->getClient( $eshop );
 		
 		$collectParams = function( array $params ) {
 			$res = [];
@@ -221,7 +220,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 
 		foreach($params as $param_id=>$param) {
 			$e_p = MarketplaceIntegration_MarketplaceCategory_Parameter::get(
-				$shop,
+				$eshop,
 				$this->getCode(),
 				$m_c->getCategoryId(),
 				$param_id
@@ -229,7 +228,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 			
 			if( !$e_p ) {
 				$e_p = new MarketplaceIntegration_MarketplaceCategory_Parameter();
-				$e_p->setShop( $shop );
+				$e_p->setEshop( $eshop );
 				$e_p->setMarketplaceCode( $this->getCode() );
 				$e_p->setMarketplaceCategoryId( $m_c->getCategoryId() );
 				$e_p->setMarketplaceParameterId( $param_id );
@@ -249,27 +248,27 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		}
 	}
 	
-	public function getConfig( Shops_Shop $shop ) : Config_PerShop|ShopConfig_ModuleConfig_PerShop
+	public function getConfig( EShop $eshop ) : Config_PerShop|EShopConfig_ModuleConfig_PerShop
 	{
-		return $this->getShopConfig( $shop );
+		return $this->getEshopConfig( $eshop );
 	}
 	
-	public function getClient( Shops_Shop $shop ) : Client
+	public function getClient( EShop $eshop ) : Client
 	{
-		$client = new Client( $this->getConfig( $shop ) );
+		$client = new Client( $this->getConfig( $eshop ) );
 		
 		return $client;
 	}
 	
-	public function getLabels( Shops_Shop $shop, bool $reload = false ) : array
+	public function getLabels( EShop $eshop, bool $reload = false ) : array
 	{
 
-		$_labels = $this->getCache($shop, 'labels');
+		$_labels = $this->getCache($eshop, 'labels');
 		if(!$_labels || $reload) {
-			$client = $this->getClient( $shop );
+			$client = $this->getClient( $eshop );
 			
 			$_labels = $client->getObject('labels', '');
-			$this->setCache($shop, 'labels', $_labels);
+			$this->setCache($eshop, 'labels', $_labels);
 		}
 		
 		
@@ -287,13 +286,13 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 	}
 	
 	/** @noinspection SpellCheckingInspection */
-	public function productToData( Shops_Shop $shop, int $product_id, Pricelists_Pricelist $pricelist, Availabilities_Availability $availability ) : array
+	public function productToData( EShop $eshop, int $product_id, Pricelist $pricelist, Availability $availability ) : array
 	{
-		$product = Product_ShopData::get( $product_id, $shop );
+		$product = Product_EShopData::get( $product_id, $eshop );
 		
 		$category_id = MarketplaceIntegration_Join_KindOfProduct::get(
 			$this->getCode(),
-			$shop,
+			$eshop,
 			$product->getKindId()
 		);
 		
@@ -302,12 +301,12 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		
 		if($category_id) {
 			$parameters = MarketplaceIntegration_MarketplaceCategory_Parameter::getForCategory(
-				$shop,
+				$eshop,
 				$this->getCode(),
 				$category_id
 			);
 			$values = MarketplaceIntegration_MarketplaceCategory_Parameter_Value::getForProduct(
-				$shop,
+				$eshop,
 				$this->getCode(),
 				$category_id,
 				$product->getId()
@@ -322,8 +321,8 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 			'title' => $product->getName(),
 			'shortdesc' => strip_tags( $product->getDescription() ),
 			'longdesc' => $product->getDescription(),
-			'priority' => $this->getProductCommonData_int($shop, $product_id, 'priority'),
-			'package_size' =>  $this->getProductCommonData_string($shop, $product_id, 'package_size'),
+			'priority' => $this->getProductCommonData_int($eshop, $product_id, 'priority'),
+			'package_size' =>  $this->getProductCommonData_string($eshop, $product_id, 'package_size'),
 			'free_delivery' => false,
 			'vat' => $product->getVatRate( $pricelist ),
 			'price' => $product->getPrice( $pricelist ),
@@ -339,7 +338,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		
 		$brand = MarketplaceIntegration_Join_Brand::get(
 			$this->getCode(),
-			$shop,
+			$eshop,
 			$product->getBrandId()
 		);
 		
@@ -376,7 +375,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 			}
 			
 			$product_data['media'][] = [
-				'url' => rtrim($shop->getHomepage()->getURL(), '/').$img,
+				'url' => rtrim($eshop->getHomepage()->getURL(), '/').$img,
 				'main' => $i==0
 			];
 		}
@@ -397,7 +396,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 			};
 		}
 		
-		$active_labels = $this->getProductCommonData( $shop, $product_id, 'active_labels' );
+		$active_labels = $this->getProductCommonData( $eshop, $product_id, 'active_labels' );
 		if($active_labels) {
 			foreach($active_labels as $label) {
 				/**
@@ -431,10 +430,10 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 			foreach( $product->getVariants() as $variant ) {
 				if(
 					$variant->isActive() &&
-					$this->getProductIsSelling( $shop, $variant->getId() )
+					$this->getProductIsSelling( $eshop, $variant->getId() )
 				) {
 					$product_data['variants'][] = $this->productToData(
-						$shop,
+						$eshop,
 						$variant->getId(),
 						$pricelist,
 						$availability

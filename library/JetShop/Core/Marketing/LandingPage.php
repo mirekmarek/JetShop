@@ -125,12 +125,12 @@ abstract class Core_Marketing_LandingPage extends Entity_Marketing
 	
 	public function getURL() : string
 	{
-		return $this->getShop()->getURL( [$this->getURLPathPart()] );
+		return $this->getEshop()->getURL( [$this->getURLPathPart()] );
 	}
 	
 	public function getPreviewURL() : string
 	{
-		return $this->getShop()->getURL( [$this->getURLPathPart()], GET_params: ['pvk'=>$this->generatePreviewKey()] );
+		return $this->getEshop()->getURL( [$this->getURLPathPart()], GET_params: ['pvk' =>$this->generatePreviewKey()] );
 	}
 	
 	public function generatePreviewKey() : string

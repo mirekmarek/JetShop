@@ -26,16 +26,11 @@
 
 		addEventListener("scroll", (event) => {
 			let container_rect = container.getBoundingClientRect();
-			let new_pinned;
-			
-			if(
-				container_rect.y>30 ||
-				(container_rect.y+container_rect.height)<30
-			) {
-				new_pinned = false;
-			} else {
-				new_pinned = true;
-			}
+			let new_pinned =
+				!(
+					container_rect.y > 30 ||
+					(container_rect.y + container_rect.height) < 30
+				);
 			
 			if(new_pinned!=pinned) {
 				pinned = new_pinned;

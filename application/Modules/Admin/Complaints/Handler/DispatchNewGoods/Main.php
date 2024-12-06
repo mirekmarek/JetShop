@@ -14,7 +14,7 @@ use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Order;
 
 class Handler_DispatchNewGoods_Main extends Handler {
@@ -35,7 +35,7 @@ class Handler_DispatchNewGoods_Main extends Handler {
 		$delivery_method = new Form_Field_Select('delivery_method', 'Delivery method:');
 		$delivery_method->setDefaultValue( $order->getDeliveryMethodId() );
 		$options = [];
-		foreach( Delivery_Method_ShopData::getAllActive( $order->getShop() ) as $dm ) {
+		foreach( Delivery_Method_EShopData::getAllActive( $order->getEshop() ) as $dm ) {
 			$options[$dm->getId()] = $dm->getTitle();
 		}
 		$delivery_method->setSelectOptions( $options );
@@ -48,7 +48,7 @@ class Handler_DispatchNewGoods_Main extends Handler {
 		]);
 		$delivery_point_code->setValidator( function() use ($delivery_point_code, $delivery_method, $order) {
 			$_delivery_point_code = $delivery_point_code->getValue();
-			$_delivery_method = Delivery_Method_ShopData::get( $delivery_method->getValue(), $order->getShop() );
+			$_delivery_method = Delivery_Method_EShopData::get( $delivery_method->getValue(), $order->getEshop() );
 			if(!$_delivery_method->isPersonalTakeover()) {
 				return true;
 			}

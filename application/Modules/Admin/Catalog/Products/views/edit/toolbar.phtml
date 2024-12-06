@@ -5,13 +5,11 @@ use Jet\Tr;
 use Jet\MVC_View;
 use Jet\UI;
 use Jet\UI_button;
-use Jet\UI_dialog;
 use Jet\UI_messages;
 use Jet\UI_tabs;
 use Jet\Form;
 use JetApplication\Admin_Managers;
-use JetApplication\Availabilities;
-use JetApplication\Pricelists;
+use JetApplication\Product;
 
 /**
  * @var MVC_View $this
@@ -28,7 +26,7 @@ $set_price_form = $this->getRaw('set_price_form');
 $set_availability_form = $this->getRaw('set_availability_form');
 
 
-echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $item );
+echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $item );
 ?>
 
 <div style="display: inline-block">
@@ -45,70 +43,15 @@ echo Admin_Managers::EntityEdit_WithShopData()->renderPreviewButton( $item );
 
 <?php
 if($set_price_form):
-	
 	echo UI::button( Tr::_('Set price'))
 				->setClass(UI_button::CLASS_DANGER)
 				->setOnClick("$('#set_price_dialog').modal('show')");
-
-
-	$set_price_dialog = UI::dialog('set_price_dialog', Tr::_('Set price'), UI_dialog::SIZE_DEFAULT );
-	
-	echo $set_price_dialog->start();
-	echo $set_price_form->start();
-	
-	foreach(Pricelists::getList() as $pricelist):
-		?>
-		<fieldset>
-			<?php if(count(Pricelists::getList())>1): ?>
-			<legend><?=$pricelist->getName()?></legend>
-			<?php endif; ?>
-			<?php
-			$field_name_prefix = '/'.$pricelist->getCode().'/';
-			
-			echo $set_price_form->field( $field_name_prefix.'vat_rate' );
-			echo $set_price_form->field( $field_name_prefix.'price' );
-			?>
-		</fieldset>
-	<?php endforeach;
-
-	
-	echo $set_price_dialog->footer();
-		echo UI::button_save( Tr::_('Set') );
-	echo $set_price_form->end();
-	echo $set_price_dialog->end();
 endif;
 
 
 
 if($set_availability_form):
-	
-		echo UI::button( Tr::_('Set availability'))
+	echo UI::button( Tr::_('Set availability'))
 			->setClass(UI_button::CLASS_DANGER)
 			->setOnClick("$('#set_availability_dialog').modal('show')");
-	
-	$set_availability_dialog = UI::dialog('set_availability_dialog', Tr::_('Set price'), UI_dialog::SIZE_DEFAULT );
-	
-	echo $set_availability_dialog->start();
-	echo $set_availability_form->start();
-	
-	foreach(Availabilities::getList() as $availability):
-		?>
-		<fieldset>
-				<?php if(count(Availabilities::getList())>1): ?>
-			<legend><?=$availability->getName()?></legend>
-			<?php endif; ?>
-			<?php
-			$field_name_prefix = '/'.$availability->getCode().'/';
-			
-			echo $set_availability_form->field( $field_name_prefix.'available_from' );
-			echo $set_availability_form->field( $field_name_prefix.'length_of_delivery' );
-			?>
-		</fieldset>
-	<?php endforeach;
-	
-	echo $set_availability_dialog->footer();
-	echo UI::button_save( Tr::_('Set') );
-	echo $set_availability_form->end();
-	echo $set_availability_dialog->end();
-
 endif;

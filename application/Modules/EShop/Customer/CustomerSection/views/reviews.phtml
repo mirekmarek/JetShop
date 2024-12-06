@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\EShop\Customer\CustomerSection;
+
+use Jet\MVC_View;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View   $this
+ */
+?>
+<?=$this->getRaw('tabs');?>
+<div class="customer-section-container">
+<?=EShop_Managers::ProductReviews()->renderCustomerSectionReviews()?>
+</div>

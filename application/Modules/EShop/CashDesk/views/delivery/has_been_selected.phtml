@@ -1,0 +1,40 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$delivery_method = $cash_desk->getSelectedDeliveryMethod();
+
+$this->setVar('delivery_method', $delivery_method);
+?>
+<div class="method-has-been-selected">
+	<div class="title"><?= Tr::_('Delivery method') ?></div>
+	<div class="change-btn">
+		<?=UI::button(Tr::_('Change selection'))->setOnclick("CashDesk.delivery.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+	
+	<div class="method-title">
+		<?= $delivery_method->getTitle() ?>
+	</div>
+
+	<div class="method-detail">
+		<?php if($delivery_method->isPersonalTakeover()):
+			$place = $cash_desk->getSelectedPersonalTakeoverDeliveryPoint();
+			?>
+				<?=$place->getName()?><br>
+				<?=$place->getStreet()?><br>
+				<?=$place->getZip()?>  <?=$place->getTown()?>
+		<?php endif; ?>
+	</div>
+
+	<?=$this->render('delivery/price')?>
+</div>

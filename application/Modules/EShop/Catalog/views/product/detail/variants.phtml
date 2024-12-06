@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$kind = $product->getKind();
+
+$variants = $product->getVariants();
+
+$title = $kind?->getVariantSelectDescription()??'';
+
+if(!$title) {
+	$title = Tr::_('Select variant');
+}
+?>
+<h3 class="variants-title"><?=$title?></h3>
+
+<div class="variants">
+	<?php foreach($variants as $variant):
+		if($variant->getId()==$product->getId()):
+			?>
+		<div class="variant-selected">
+			<img src="<?= $variant->getImgThumbnailUrl( 0, 150, 150 ) ?>"/>
+			<b><?=$variant->getVariantName()?></b>
+		</div>
+		<?php
+		else:
+		?>
+		<div class="variant">
+			<a href="<?=$variant->getURL()?>" title="<?= $variant->getVariantName() ?>">
+				<img src="<?= $variant->getImgThumbnailUrl( 0, 150, 150 ) ?>"/>
+			</a>
+			<a href="<?=$variant->getURL()?>"><?=$variant->getVariantName()?></a>
+		</div>
+		<?php
+	    endif;
+	endforeach; ?>
+</div>

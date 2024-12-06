@@ -9,7 +9,7 @@ use Jet\Form_Field;
 use JetApplication\Entity_Marketing;
 use JetApplication\Marketing_Gift;
 use JetApplication\Marketing_Gift_Product;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ShoppingCart;
 
 #[DataModel_Definition(
@@ -27,7 +27,7 @@ abstract class Core_Marketing_Gift_Product extends Entity_Marketing
 	)]
 	protected int $gift_product_id = 0;
 	
-	protected Product_ShopData|null|bool $gift_product = null;
+	protected Product_EShopData|null|bool $gift_product = null;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -86,10 +86,10 @@ abstract class Core_Marketing_Gift_Product extends Entity_Marketing
 		$this->gift_product_id = $gift_product_id;
 	}
 	
-	public function getGiftProduct(): ?Product_ShopData
+	public function getGiftProduct(): ?Product_EShopData
 	{
 		if($this->gift_product===null) {
-			$this->gift_product = Product_ShopData::get( $this->gift_product_id, $this->getShop() );
+			$this->gift_product = Product_EShopData::get( $this->gift_product_id, $this->getEshop() );
 			if(!$this->gift_product) {
 				$this->gift_product = false;
 			}
@@ -166,7 +166,7 @@ abstract class Core_Marketing_Gift_Product extends Entity_Marketing
 		return true;
 	}
 	
-	public function productIsRelevant( ShoppingCart $cart, Product_ShopData $product ) : bool
+	public function productIsRelevant( ShoppingCart $cart, Product_EShopData $product ) : bool
 	{
 		if(!$this->isRelevant([$product->getId()])) {
 			return false;
@@ -207,12 +207,12 @@ abstract class Core_Marketing_Gift_Product extends Entity_Marketing
 	 */
 	public static function getAvailable( ShoppingCart $cart ) : array
 	{
-		$shop = $cart->getShop();
+		$eshop = $cart->getEshop();
 		
-		$key = $shop->getKey().':'.$cart->getAvailability()->getCode().':'.$cart->getPricelist()->getCode();
+		$key = $eshop->getKey().':'.$cart->getAvailability()->getCode().':'.$cart->getPricelist()->getCode();
 		
 		if(!isset( static::$available[$key])) {
-			$where = static::getActiveQueryWhere( $shop );
+			$where = static::getActiveQueryWhere( $eshop );
 			
 			$list = static::fetch(
 				where_per_model: [ 'this'=>$where],

@@ -9,7 +9,8 @@ use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Application_Admin;
 use JetApplication\Files;
-use JetApplicationModule\Admin\Catalog\KindsOfProductFile\KindOfProductFile;
+use JetApplication\Product_KindOfFile;
+use JetApplication\Product;
 
 /**
  *
@@ -58,7 +59,7 @@ trait Controller_Main_Edit_Files
 			$kind_of_file->setErrorMessages([
 				Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 			]);
-			$kind_of_file->setSelectOptions( KindOfProductFile::getScope() );
+			$kind_of_file->setSelectOptions( Product_KindOfFile::getScope() );
 			
 			
 			$form = new Form('file_upload_form', [
@@ -82,7 +83,11 @@ trait Controller_Main_Edit_Files
 						
 						if($form->catch()) {
 							foreach($file_field->getValidFiles() as $file) {
-								$file = Files::Manager()->uploadFile( $product, $file );
+								$file = Files::Manager()->uploadFile(
+									$product,
+									$file->getFileName(),
+									$file->getTmpFilePath()
+								);
 								$product->addFile(
 									$file,
 									$kind_of_file->getValue()

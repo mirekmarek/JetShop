@@ -9,17 +9,17 @@ use Jet\UI;
 use Jet\UI_icon;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 /**
  * @var MVC_View   $this
  * @var Admin_ControlCentre_Module_Interface|Application_Module|null $selected_module
- * @var Shops_Shop $selected_shop
+ * @var EShop $selected_eshop
  */
 
 $selected_module = $this->getRaw( 'selected_module' );
-$selected_shop = $this->getRaw( 'selected_shop' );
+$selected_eshop = $this->getRaw( 'selected_eshop' );
 
 $selected_module_name = $selected_module?->getModuleManifest()->getName();
 
@@ -136,18 +136,18 @@ endforeach;
 	<div class="search"></div>
 
 	<div class="shop-select">
-		<?php if($selected_module->getControlCentrePerShopMode() && Shops::isMultiShopMode() ):
-			foreach(Shops::getList() as $shop):
-				if($shop->getKey()==$selected_shop->getKey()): ?>
+		<?php if($selected_module->getControlCentrePerShopMode() && EShops::isMultiEShopMode() ):
+			foreach( EShops::getList() as $eshop):
+				if($eshop->getKey()==$selected_eshop->getKey()): ?>
 					<div class="shop-select-item-selected">
-						<?=UI::flag( $shop->getLocale() )?>
-						<?=$shop->getShopName()?>
+						<?=UI::flag( $eshop->getLocale() )?>
+						<?=$eshop->getName()?>
 					</div>
 				<?php else: ?>
 					<div class="shop-select-item">
-						<a href="<?=Http_Request::currentURI(['shop'=>$shop->getKey()])?>">
-							<?=UI::flag( $shop->getLocale() )?>
-							<?=$shop->getShopName()?>
+						<a href="<?=Http_Request::currentURI(['eshop'=>$eshop->getKey()])?>">
+							<?=UI::flag( $eshop->getLocale() )?>
+							<?=$eshop->getName()?>
 						</a>
 					</div>
 				<?php endif;
@@ -180,7 +180,7 @@ endforeach;
 	<div style="padding: 20px;border: 1px solid #999999">
 		<h2><?=UI::icon( $selected_module->getControlCentreIcon())->setSize(UI_icon::SIZE_EXTRA_LARGE) ?> <?=$selected_module->getControlCentreTitleTranslated()?></h2>
 		<hr>
-		<?=$selected_module->handleControlCentre( $selected_shop )?>
+		<?=$selected_module->handleControlCentre( $selected_eshop )?>
 	</div>
 </div>
 <?php else: ?>

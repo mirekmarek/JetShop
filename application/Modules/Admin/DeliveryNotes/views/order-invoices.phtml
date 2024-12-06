@@ -44,7 +44,7 @@ $price_formatter = Admin_Managers::PriceFormatter();
 			</td>
 			<td>
 				<?php if($invoice->hasVAT()):
-					echo $price_formatter->formatWithCurrency($invoice->getCurrency(), $invoice->getTotal());
+					echo $price_formatter->formatWithCurrency_WithVAT($invoice->getCurrency(), $invoice->getTotal());
 				else:
 					echo $price_formatter->formatWithCurrency_WithoutVAT($invoice->getCurrency(), $invoice->getTotal());
 				endif; ?>

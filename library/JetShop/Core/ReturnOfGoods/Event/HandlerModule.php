@@ -7,15 +7,16 @@ namespace JetShop;
 
 use JetApplication\Entity_Event;
 use JetApplication\Event_HandlerModule;
+use JetApplication\ReturnOfGoods_EMailTemplate;
 use JetApplication\ReturnOfGoods_Event;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\ReturnOfGoods;
 
 
 abstract class Core_ReturnOfGoods_Event_HandlerModule extends Event_HandlerModule
 {
 	protected ReturnOfGoods_Event $event;
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	protected ReturnOfGoods $return_of_goods;
 
 
@@ -24,7 +25,7 @@ abstract class Core_ReturnOfGoods_Event_HandlerModule extends Event_HandlerModul
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;
 		$return = $event->getReturnOfGoods();
-		$this->shop = $return->getShop();
+		$this->eshop = $return->getEshop();
 		$this->return_of_goods = $return;
 	}
 
@@ -36,6 +37,14 @@ abstract class Core_ReturnOfGoods_Event_HandlerModule extends Event_HandlerModul
 	public function getReturnOfGoods(): ReturnOfGoods
 	{
 		return $this->return_of_goods;
+	}
+	
+	public function sendEMail( ReturnOfGoods_EMailTemplate $template ) : bool
+	{
+		$template->setEvent($this->event);
+		$email = $template->createEmail( $this->getEvent()->getEshop() );
+		
+		return $email->send();
 	}
 
 }

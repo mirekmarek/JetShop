@@ -1,0 +1,24 @@
+<?php
+namespace JetApplicationModule\EShop\ReturnsOfGoods;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\EShop_Managers;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View  $this
+ * @var ReturnOfGoods $return
+ */
+
+$return = $this->getRaw('return');
+
+echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+?>
+<div class="customer-section-container">
+<h1><?=Tr::_('Return of goods request entry completed')?></h1>
+
+<p><?=Tr::_('Your return of goods request has the number <b>%no%</b>', ['no'=>$return->getNumber()])?></p>
+
+<p><?=Tr::_('Our team will deal with your return of goods request as soon as possible.')?></p>
+</div>

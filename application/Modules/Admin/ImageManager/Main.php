@@ -16,7 +16,7 @@ use JetApplication\Admin_Managers_Image;
 
 use JetApplication\Product;
 use JetApplication\Product_Image;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  *
@@ -33,19 +33,24 @@ class Main extends Application_Module implements Admin_Managers_Image
 	
 	protected bool $editable = false;
 	
-	protected bool $shop_sync_mode = true;
+	protected bool $eshop_sync_mode = true;
 	
 	
-	public function getShopSyncMode(): bool
+	public function getEshopSyncMode(): bool
 	{
-		return $this->shop_sync_mode;
+		return $this->eshop_sync_mode;
 	}
 	
-	public function setShopSyncMode( bool $shop_sync_mode ): void
+	public function setEshopSyncMode( bool $eshop_sync_mode ): void
 	{
-		$this->shop_sync_mode = $shop_sync_mode;
+		$this->eshop_sync_mode = $eshop_sync_mode;
 	}
 	
+	
+	public function resetDefinedImages() : void
+	{
+		$this->defined_images = [];
+	}
 	
 	public function defineImage(
 		string      $entity,
@@ -54,7 +59,7 @@ class Main extends Application_Module implements Admin_Managers_Image
 		?string     $image_title = '',
 		?callable   $image_property_getter = null,
 		?callable   $image_property_setter = null,
-		?Shops_Shop $shop = null
+		?EShop $eshop = null
 	): void
 	{
 		$image = new Image(
@@ -64,10 +69,24 @@ class Main extends Application_Module implements Admin_Managers_Image
 			$image_title,
 			$image_property_getter,
 			$image_property_setter,
-			$shop
+			$eshop
 		);
 		
 		$this->defined_images[$image->getKey()] = $image;
+	}
+	
+	public function uploadImage(
+		string $tmp_file_path,
+		string $file_name,
+		string $entity,
+		string|int $object_id,
+		string $image_class,
+		?EShop $eshop = null
+	) : void
+	{
+		$this->defined_images[
+			Image::generateKey($entity, $object_id, $image_class, $eshop)
+		]->upload( $tmp_file_path, $file_name );
 	}
 	
 	
@@ -118,7 +137,7 @@ class Main extends Application_Module implements Admin_Managers_Image
 	
 	public function cloneImageToOtherShops( Image $source_image ): void
 	{
-		if( !$source_image->getShop() ) {
+		if( !$source_image->getEshop() ) {
 			return;
 		}
 		
@@ -130,7 +149,7 @@ class Main extends Application_Module implements Admin_Managers_Image
 				continue;
 			}
 			
-			if( $source_image->getShop()->getKey() != $image->getShop()->getKey() ) {
+			if( $source_image->getEshop()->getKey() != $image->getEshop()->getKey() ) {
 				$image->setImage( $source_image->getImage() );
 			}
 			
@@ -166,15 +185,15 @@ class Main extends Application_Module implements Admin_Managers_Image
 	}
 	
 	
-	public function renderImageWidgets( ?Shops_Shop $shop = null ): string
+	public function renderImageWidgets( ?EShop $eshop = null ): string
 	{
 		
 		$res = '';
-		Translator::setCurrentDictionaryTemporary( $this->module_manifest->getName(), function() use ( $shop, &$res ) {
+		Translator::setCurrentDictionaryTemporary( $this->module_manifest->getName(), function() use ( $eshop, &$res ) {
 			
-			if( $shop ) {
+			if( $eshop ) {
 				foreach( $this->defined_images as $image ):
-					if( $image->getShop()->getKey() == $shop->getKey() ) {
+					if( $image->getEshop()->getKey() == $eshop->getKey() ) {
 						$res .= $this->renderImageWidget( $image );
 					}
 				endforeach;
@@ -223,6 +242,22 @@ class Main extends Application_Module implements Admin_Managers_Image
 		
 	}
 	
+	public function uploadProductImages( Product $product, array $images ) : void
+	{
+		$def = new Image(
+			entity: $product->getEntityType(),
+			object_id: $product->getId(),
+			image_property_setter: function( $value ) use ($product) {
+				$product->addImage( $value );
+				$product->save();
+			}
+		);
+		
+		foreach($images as $image=>$name) {
+			$def->upload( $image, $name );
+		}
+	}
+	
 	public function renderProductImageManagement(): string
 	{
 		return Translator::setCurrentDictionaryTemporary( $this->module_manifest->getName(), function() {
@@ -251,9 +286,6 @@ class Main extends Application_Module implements Admin_Managers_Image
 		
 		return $this->product_image_manager->getProductDefinedImage()->getThumbnailUrl( $max_w, $max_h );
 	}
-	
-	
-	
 	
 	
 	public function commonImageManager( string $entity, int $entity_id ): string

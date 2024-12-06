@@ -8,8 +8,8 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 /**
  *
@@ -18,7 +18,7 @@ use JetApplication\Shops_Shop;
 	name: 'exports_join_kind_of_product',
 	database_table_name: 'exports_join_kind_of_product',
 )]
-abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation
+abstract class Core_Exports_Join_KindOfProduct extends Entity_WithEShopRelation
 {
 
 	/**
@@ -52,9 +52,9 @@ abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation
 	)]
 	protected string $export_category_id = '';
 
-	public static function getMap( string $export_code, Shops_Shop $shop ) : array
+	public static function getMap( string $export_code, EShop $eshop ) : array
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['export_code'] = $export_code;
 		
@@ -67,19 +67,19 @@ abstract class Core_Exports_Join_KindOfProduct extends Entity_WithShopRelation
 		);
 	}
 
-	public static function get( string $export_code, Shops_Shop $shop, int $kind_of_product_id  ) : static|null
+	public static function get( string $export_code, EShop $eshop, int $kind_of_product_id  ) : static|null
 	{
 		$i = static::load( [
 			'export_code' => $export_code,
 			'AND',
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'kind_of_product_id' => $kind_of_product_id
 		] );
 
 		if(!$i) {
 			$i = new static();
-			$i->setShop( $shop );
+			$i->setEshop( $eshop );
 			$i->setExportCode( $export_code );
 			$i->setKindOfProductId( $kind_of_product_id );
 		}

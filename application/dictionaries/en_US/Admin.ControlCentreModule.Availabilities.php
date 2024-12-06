@@ -20,4 +20,5 @@ return [
 	'Please enter code' => '',
 	'This code is already used' => '',
 	'Warehouses: ' => '',
+	'Product availabilities' => '',
 ];

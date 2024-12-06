@@ -1,0 +1,42 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$da = $cash_desk->getDeliveryAddress();
+?>
+
+<div class="selected-contact">
+
+	<div class="title"><?= Tr::_('Delivery address') ?></div>
+
+	<div class="info">
+	<?php if($cash_desk->hasDifferentDeliveryAddress()): ?>
+			<?php if($cash_desk->isCompanyOrder()): ?>
+				<?=$da->getCompanyName()?><br>
+				<?=$da->getCompanyId()?><br>
+				<?=$da->getCompanyVatId()?><br>
+			<?php endif?>
+
+			<?=$da->getFirstName()?> <?=$da->getSurname()?><br>
+			<?=$da->getAddressStreetNo()?><br/>
+			<?=$da->getAddressZip()?> <?=$da->getAddressTown()?>
+	<?php else: ?>
+		<?=Tr::_('Same address as the billing address')?>
+	<?php endif; ?>
+	</div>
+	
+	<div class="change-btn">
+		<?=UI::button(Tr::_('Change'))->setOnclick("CashDesk.customer.deliveryAddress.back();")->setClass('link')->setSize(UI_button::SIZE_SMALL)?>
+	</div>
+</div>
+

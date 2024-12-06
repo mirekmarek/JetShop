@@ -9,18 +9,18 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Application_Module;
 use Jet\Auth;
-use JetApplication\Admin_EntityManager_WithShopData_Interface;
-use JetApplication\Admin_EntityManager_WithShopData_Trait;
-use JetApplication\Admin_Entity_WithShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_WithShopData;
+use JetApplication\Entity_WithEShopData;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithShopData_Interface
+class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface
 {
-	use Admin_EntityManager_WithShopData_Trait;
+	use Admin_EntityManager_WithEShopData_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'payment-method';
 
@@ -30,7 +30,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithShopDat
 	public const ACTION_DELETE = 'delete_payment_method';
 	public const ACTION_SET_PRICE = 'set_price';
 	
-	public static function getEntityInstance(): Entity_WithShopData|Admin_Entity_WithShopData_Interface
+	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
 		return new PaymentMethod();
 	}

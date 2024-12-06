@@ -36,7 +36,9 @@ class Pages_Page extends MVC_Page
 	public const MAX_HTTP_HEADERS_COUNT = 100;
 	
 	public const PARAMS_COUNT = 5;
-
+	
+	protected string $definition_key = '';
+	
 	/**
 	 * @var bool
 	 */

@@ -33,6 +33,11 @@ class Pages_Page_Content extends MVC_Page_Content
 	 * @var ?Form
 	 */
 	protected ?Form $__edit_form = null;
+	
+	protected string $manager_group = '';
+	
+	protected string $manager_interface = '';
+	
 
 	/**
 	 * @return string

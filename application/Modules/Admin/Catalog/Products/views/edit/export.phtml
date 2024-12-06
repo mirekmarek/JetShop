@@ -5,15 +5,16 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use JetApplication\Exports;
 use JetApplication\Exports_Module;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
+use JetApplication\Product;
 
 
 /**
  * @var MVC_View   $this
  * @var Product $product
  * @var Exports_Module $selected_export
- * @var Shops_Shop $selected_export_shop
+ * @var EShop $selected_export_eshop
  */
 
 $product = $this->getRaw('item');
@@ -21,9 +22,9 @@ $product = $this->getRaw('item');
 $modules = Exports::getExportModulesList();
 
 $selected_export = $this->getRaw('selected_export');
-$selected_export_shop = $this->getRaw('selected_export_shop');
+$selected_export_eshop = $this->getRaw('selected_export_eshop');
 $selected_export_code = $this->getString('selected_export_code');
-$selected_export_shop_key = $this->getString('selected_export_shop_key');
+$selected_export_eshop_key = $this->getString('selected_export_eshop_key');
 
 require '_toolbar.phtml';
 ?>
@@ -36,15 +37,15 @@ require '_toolbar.phtml';
 		<div>
 			<ul class="list-group">
 				<?php foreach($modules as $module):
-					foreach(Shops::getListSorted() as $shop):
-						if(!$module->isAllowedForShop($shop)):
+					foreach( EShops::getListSorted() as $eshop):
+						if(!$module->isAllowedForShop($eshop)):
 							continue;
 						endif;
 						
-						$title = $module->getTitle().' - '.$shop->getShopName();
-						$link = Http_Request::currentURI(['export'=>$module->getCode(),'export_shop'=>$shop->getKey()]);
+						$title = $module->getTitle().' - '.$eshop->getName();
+						$link = Http_Request::currentURI(['export'=>$module->getCode(),'export_eshop'=>$eshop->getKey()]);
 						
-						if($module->getCode()==$selected_export_code && $shop->getKey()==$selected_export_shop_key):
+						if($module->getCode()==$selected_export_code && $eshop->getKey()==$selected_export_eshop_key):
 							?><li class="list-group-item active"><?=$title?></li><?php
 						else:
 							?><li class="list-group-item"><a href="<?=$link?>"><?=$title?></a></li><?php
@@ -55,8 +56,8 @@ require '_toolbar.phtml';
 		</div>
 		<div>
 			<?php if($selected_export): ?>
-				<legend><?=$selected_export->getTitle()?> - <?=$selected_export_shop->getShopName()?></legend>
-				<?php $selected_export->handleProductSettings( $product, $selected_export_shop )?>
+				<legend><?=$selected_export->getTitle()?> - <?=$selected_export_eshop->getName()?></legend>
+				<?php $selected_export->handleProductSettings( $product, $selected_export_eshop )?>
 			<?php endif; ?>
 		
 		</div>

@@ -1,0 +1,50 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\SysConf_URI;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+
+?>
+<script type="text/javascript" src="//maps.google.com/maps/api/js?key=<?=$cash_desk->getConfig()->getMapAPIKey()?>"></script>
+<script type="text/javascript" src="<?=SysConf_URI::getJs()?>GMmarkerclusterer.js"></script>
+
+<?php
+require 'js/Whisperer.phtml';
+require 'js/AddressWhisperer.phtml';
+require 'js/CashDesk.phtml';
+require 'js/CashDesk/delivery.phtml';
+require 'js/CashDesk/delivery/personalTakeover.phtml';
+require 'js/CashDesk/payment.phtml';
+require 'js/CashDesk/customer/email.phtml';
+require 'js/CashDesk/customer/phone.phtml';
+require 'js/CashDesk/customer/registration.phtml';
+require 'js/CashDesk/customer/billingAddress.phtml';
+require 'js/CashDesk/customer/deliveryAddress.phtml';
+require 'js/CashDesk/confirm.phtml';
+?>
+
+<script>
+CashDesk.delivery.personalTakeover.map = {
+	center: {
+		lat: <?=$cash_desk->getConfig()->getMapCenterLat()?>,
+		lon: <?=$cash_desk->getConfig()->getMapCenterLon()?>,
+	},
+	default_zoom: <?=$cash_desk->getConfig()->getMapDefaultZoom()?>
+};
+
+
+<?php if($cash_desk->isBillingAddressEditable()): ?>
+CashDesk.customer.billingAddress.initEdit();
+<?php endif; ?>
+<?php if($cash_desk->isDeliveryAddressEditable()): ?>
+CashDesk.customer.deliveryAddress.initEdit();
+<?php endif; ?>
+
+</script>

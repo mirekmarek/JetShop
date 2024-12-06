@@ -3,15 +3,15 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithShopRelation;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter_Value;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'marketplace_category_param_value',
 	database_table_name: 'marketplace_categories_params_values',
 )]
-class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends Entity_WithShopRelation
+class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends Entity_WithEShopRelation
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -47,9 +47,9 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends En
 	protected string $value = '';
 	
 	
-	public static function get( Shops_Shop $shop, string $marketplace_code, string $category_id, string $parameter_code, int $product_id ) : ?static
+	public static function get( EShop $eshop, string $marketplace_code, string $category_id, string $parameter_code, int $product_id ) : ?static
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['marketplace_code'] = $marketplace_code;
 		$where[] = 'AND';
@@ -63,16 +63,16 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends En
 	}
 	
 	/**
-	 * @param Shops_Shop $shop
+	 * @param EShop $eshop
 	 * @param string $marketplace_code
 	 * @param string $category_id
 	 * @param int $product_id
 	 *
 	 * @return static[]
 	 */
-	public static function getForProduct( Shops_Shop $shop, string $marketplace_code, string $category_id, int $product_id ) : array
+	public static function getForProduct( EShop $eshop, string $marketplace_code, string $category_id, int $product_id ) : array
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['marketplace_code'] = $marketplace_code;
 		$where[] = 'AND';

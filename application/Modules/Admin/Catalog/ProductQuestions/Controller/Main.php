@@ -8,10 +8,10 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use Jet\Http_Headers;
-use JetApplication\Admin_EntityManager_WithShopRelation_Controller;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Controller;
 
 
-class Controller_Main extends Admin_EntityManager_WithShopRelation_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopRelation_Controller
 {
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
@@ -47,7 +47,7 @@ class Controller_Main extends Admin_EntityManager_WithShopRelation_Controller
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
-			'shop',
+			'eshop',
 			'product_id',
 			'created',
 			'author_name',
@@ -99,7 +99,7 @@ class Controller_Main extends Admin_EntityManager_WithShopRelation_Controller
 		$email_template = new EmailTemplate_Answer();
 		
 		$email_template->setQuestion( $this->current_item );
-		$email = $email_template->createEmail( $this->current_item->getShop() );
+		$email = $email_template->createEmail( $this->current_item->getEshop() );
 		$email->send();
 	}
 	

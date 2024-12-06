@@ -1,6 +1,8 @@
 <?php
 namespace JetShop;
 
+use JetApplication\Admin_Managers;
+use JetApplication\Product;
 use JetApplication\Product_Image;
 
 trait Core_Product_Trait_Images
@@ -98,5 +100,13 @@ trait Core_Product_Trait_Images
 		}
 		
 		$this->images = null;
+	}
+	
+	public function uploadImages( array $images ) : void
+	{
+		/**
+		 * @var Product $this
+		 */
+		Admin_Managers::Image()->uploadProductImages( $this, $images );
 	}
 }

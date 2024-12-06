@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\ProductListing;
+
+/**
+ * @var MVC_View $this
+ * @var ProductListing $listing
+ */
+
+$listing = $this->getRaw('listing');
+
+$filter = $listing->getFilter()->getBasicFilter();
+if(!$filter->getIsActive()) {
+	return;
+}
+
+if($filter->getInStock()):
+	echo UI::button( Tr::_('In stock') )
+			->setClass(UI_button::CLASS_INFO)
+			->setIcon('circle-xmark')
+			->setOnClick("listing.filter.basic.cancel('in_stock')");
+
+endif;
+
+if($filter->getHasDiscount()):
+	
+	echo UI::button( Tr::_('Has discount') )
+		->setClass(UI_button::CLASS_INFO)
+		->setIcon('circle-xmark')
+		->setOnClick("listing.filter.basic.cancel('has_discount')");
+
+endif;

@@ -1,0 +1,35 @@
+<?php
+namespace JetApplicationModule\Discounts\Code;
+?>
+<style>
+	#discount_code_area {
+		text-align: right;
+	}
+	#discount_code_enter_form {
+		display: grid;
+		grid-template-columns: 1fr 200px 100px;
+	}
+	
+	#discount_code_used_codes {
+		padding: 20px;
+		text-align: right;
+	}
+
+	#discount_code_used_codes strong {
+		font-size: 1.2rem;
+	}
+</style>
+<script>
+	const DiscountCode = {
+		submit: function() {
+			JetAjaxForm.submit('discount_code_use_form');
+		},
+
+		cancel: async function( code ) {
+
+			const r = await fetch('?action=cancel_use_code&code='+encodeURIComponent(code));
+			const response = await r.text()
+			document.getElementById('discount_code_area').innerHTML = response;
+		}
+	};
+</script>

@@ -13,9 +13,10 @@ use JetApplication\Context;
 use JetApplication\Context_HasContext_Interface;
 use JetApplication\Context_HasContext_Trait;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\Entity_Basic;
 use JetApplication\MeasureUnit;
+use JetApplication\MeasureUnits;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_StockMovement;
 use JetApplication\WarehouseManagement_StockMovement_Type;
@@ -368,7 +369,7 @@ class Core_WarehouseManagement_StockMovement extends Entity_Basic implements Con
 	
 	public function getMeasureUnit(): ?MeasureUnit
 	{
-		return MeasureUnit::get( $this->measure_unit );
+		return MeasureUnits::get( $this->measure_unit );
 	}
 	
 	
@@ -397,7 +398,7 @@ class Core_WarehouseManagement_StockMovement extends Entity_Basic implements Con
 		$this->currency_code = $currency_code;
 	}
 	
-	public function getCurrency(): ?Currencies_Currency
+	public function getCurrency(): ?Currency
 	{
 		if(!$this->currency_code) {
 			return null;
@@ -417,7 +418,7 @@ class Core_WarehouseManagement_StockMovement extends Entity_Basic implements Con
 	}
 	
 	
-	public function getEntryCurrency() : ?Currencies_Currency
+	public function getEntryCurrency() : ?Currency
 	{
 		if(!$this->entry_currency_code) {
 			return null;
@@ -454,7 +455,7 @@ class Core_WarehouseManagement_StockMovement extends Entity_Basic implements Con
 		return $this->entry_currency_exchange_rate;
 	}
 	
-	public function setPricePerUnit( Currencies_Currency $entry_currency, float $entry_price_per_unit ): void
+	public function setPricePerUnit( Currency $entry_currency, float $entry_price_per_unit ): void
 	{
 		$wh_currency = $this->getWarehouse()->getCurrency();
 		

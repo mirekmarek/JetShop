@@ -10,9 +10,9 @@ use JetApplication\EMail_Template_Property_Param;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Item;
-use JetApplication\Product_ShopData;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Managers;
+use JetApplication\EShop;
 
 abstract class Core_Order_EMailTemplate extends EMail_Template {
 	
@@ -40,11 +40,11 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		$this->setOrder( $event->getOrder() );
 	}
 	
-	public function initTest( Shops_Shop $shop ): void
+	public function initTest( EShop $eshop ): void
 	{
 		$ids = Order::dataFetchCol(
 			select: ['id'],
-			where: $shop->getWhere(),
+			where: $eshop->getWhere(),
 			order_by: '-id',
 			limit: 1000
 		);
@@ -54,7 +54,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		$this->order = Order::get($id);
 	}
 	
-	public function setupEMail( Shops_Shop $shop, EMail $email ): void
+	public function setupEMail( EShop $eshop, EMail $email ): void
 	{
 		$email->setContext('order');
 		$email->setContextId( $this->order->getId() );
@@ -73,12 +73,12 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		
 		$purchased_date_time_property = $this->addProperty( 'purchase_date_time', Tr::_( 'Date and time of purchase' ) );
 		$purchased_date_time_property->setPropertyValueCreator( function() : string {
-			return $this->order->getShop()->getLocale()->formatDateAndTime( $this->order->getDatePurchased() );
+			return $this->order->getEshop()->getLocale()->formatDateAndTime( $this->order->getDatePurchased() );
 		} );
 		
 		$total_property = $this->addProperty( 'total', Tr::_( 'Order total' ) );
 		$total_property->setPropertyValueCreator( function() : string {
-			return Shop_Managers::PriceFormatter()->formatWithCurrency($this->order->getTotalAmount(), $this->order->getCurrency());
+			return EShop_Managers::PriceFormatter()->formatWithCurrency($this->order->getTotalAmount_WithVAT(), $this->order->getPricelist());
 		} );
 		
 		
@@ -130,7 +130,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		$price_property = $items_block->addProperty('unit_price', Tr::_('Order item unit price'));
 		$price_property->setPropertyValueCreator( function( Order_Item $item ) : string {
 			return Admin_Managers::PriceFormatter()->formatWithCurrency(
-				$this->order->getPricelist()->getCurrency(),
+				$this->order->getPricelist(),
 				$item->getPricePerUnit()
 			);
 		} );
@@ -138,7 +138,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		$price_property = $items_block->addProperty('price', Tr::_('Order item price'));
 		$price_property->setPropertyValueCreator( function( Order_Item $item ) : string {
 			return Admin_Managers::PriceFormatter()->formatWithCurrency(
-				$this->order->getPricelist()->getCurrency(),
+				$this->order->getPricelist(),
 				$item->getPricePerUnit()*$item->getNumberOfUnits()
 			);
 		} );
@@ -149,12 +149,12 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 	protected array $products = [];
 	
 	
-	public function getProduct( Order_Item $item ) : ?Product_ShopData
+	public function getProduct( Order_Item $item ) : ?Product_EShopData
 	{
 		if(!array_key_exists($item->getItemId(), $this->products)) {
 			
 			if( $item->isPhysicalProduct() ) {
-				$product = $product=Product_ShopData::get( $item->getItemId(), $this->order->getShop() );
+				$product = $product=Product_EShopData::get( $item->getItemId(), $this->order->getEshop() );
 				if($product) {
 					$this->products[$item->getItemId()] = $product;
 				}

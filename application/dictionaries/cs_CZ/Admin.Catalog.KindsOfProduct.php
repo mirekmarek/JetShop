@@ -76,7 +76,7 @@ return [
 	'Options' => 'Možnosti',
 	'Text' => 'Text',
 	'Add property group: ' => 'Přidat skupinu vlastností: ',
-	'Group start' => 'Skupinový start',
+	'Group start' => 'Start skupiny',
 	'Group end' => 'Konec skupiny',
 	'Kind of Products' => 'Druh produktů',
 	'Kind of Product' => 'Druh produktu',
@@ -104,5 +104,6 @@ return [
 	'Is virtual product' => 'Je virtuální produkt',
 	'Usage' => 'Používání',
 	'Activate completely' => 'Aktivovat kompletně',
-	'Virtual product handler:' => '',
+	'Virtual product handler:' => 'Virtuální obslužný program produktu:',
+	'Inactive' => 'Neaktivní',
 ];

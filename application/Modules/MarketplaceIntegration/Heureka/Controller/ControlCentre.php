@@ -19,19 +19,19 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 	
 	public function default_Action() : void
 	{
-		$shop = $this->getShop();
+		$eshop = $this->getEshop();
 		/**
 		 * @var Main $module
 		 * @var Config_PerShop $config
 		 */
 		$module = $this->getModule();
 		
-		$config = $module->getShopConfig( $shop );
+		$config = $module->getEshopConfig( $eshop );
 		$this->config = $config;
 		
 		$this->view->setVar('config', $config);
 		
-		$server_service = $module->getSysServicesDefinitions()[$shop->getKey()]??null;
+		$server_service = $module->getSysServicesDefinitions()[$eshop->getKey()]??null;
 		
 		if($server_service) {
 			$server_base_URL = $server_service->getURL();

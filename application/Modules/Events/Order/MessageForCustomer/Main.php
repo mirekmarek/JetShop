@@ -44,7 +44,7 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 			$template->setOrder( $this->order );
 			$template->setMessage( $note->getNote() );
 			
-			$email = $template->createEmail( $this->order->getShop() );
+			$email = $template->createEmail( $this->order->getEshop() );
 			
 			$email->setSubject( $note->getSubject() );
 			

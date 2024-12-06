@@ -41,11 +41,11 @@ class Controller_ProductSettings extends MarketplaceIntegration_Module_Controlle
 		 */
 		$mp = $this->marketplace;
 
-		$labels = $mp->getLabels( $this->shop );
+		$labels = $mp->getLabels( $this->eshop );
 		
 		$form = new Form('labels_form', []);
 		
-		$active_labels = $mp->getProductCommonData( $this->shop, $this->product->getId(), 'active_labels' );
+		$active_labels = $mp->getProductCommonData( $this->eshop, $this->product->getId(), 'active_labels' );
 
 		if(!$active_labels) {
 			$active_labels = [];
@@ -76,7 +76,7 @@ class Controller_ProductSettings extends MarketplaceIntegration_Module_Controlle
 		
 		if($this->editable) {
 			if(Http_Request::GET()->exists('actualize_list_of_labels')) {
-				$mp->getLabels( $this->shop, true );
+				$mp->getLabels( $this->eshop, true );
 				
 				Http_Headers::reload(unset_GET_params: ['actualize_list_of_labels']);
 			}
@@ -100,7 +100,7 @@ class Controller_ProductSettings extends MarketplaceIntegration_Module_Controlle
 					$active_labels[$id] = $active_label;
 				}
 				
-				$this->marketplace->setProductCommonData( $this->shop, $this->product->getId(), 'active_labels', $active_labels );
+				$this->marketplace->setProductCommonData( $this->eshop, $this->product->getId(), 'active_labels', $active_labels );
 				
 				Http_Headers::reload();
 			}
@@ -121,7 +121,7 @@ class Controller_ProductSettings extends MarketplaceIntegration_Module_Controlle
 		$form = new Form('labels_form', []);
 		
 		$priority = new Form_Field_Int('priority', 'Priority:');
-		$priority->setDefaultValue( $this->marketplace->getProductCommonData_int($this->shop, $this->product->getId(), 'priority') );
+		$priority->setDefaultValue( $this->marketplace->getProductCommonData_int($this->eshop, $this->product->getId(), 'priority') );
 		$form->addField( $priority );
 		
 		$package_size = new Form_Field_Select('package_size', 'Box size:');
@@ -130,14 +130,14 @@ class Controller_ProductSettings extends MarketplaceIntegration_Module_Controlle
 			'smallbox' => 'smallbox',
 			'bigbox' => 'bigbox',
 		]);
-		$package_size->setDefaultValue( $this->marketplace->getProductCommonData_string($this->shop, $this->product->getId(), 'package_size') );
+		$package_size->setDefaultValue( $this->marketplace->getProductCommonData_string($this->eshop, $this->product->getId(), 'package_size') );
 		$form->addField( $package_size );
 		
 		
 		if($this->editable) {
 			if($form->catch()) {
-				$this->marketplace->setProductCommonData( $this->shop, $this->product->getId(), 'priority', $priority->getValue() );
-				$this->marketplace->setProductCommonData( $this->shop, $this->product->getId(), 'package_size', $package_size->getValue() );
+				$this->marketplace->setProductCommonData( $this->eshop, $this->product->getId(), 'priority', $priority->getValue() );
+				$this->marketplace->setProductCommonData( $this->eshop, $this->product->getId(), 'package_size', $package_size->getValue() );
 				
 				Http_Headers::reload();
 			}

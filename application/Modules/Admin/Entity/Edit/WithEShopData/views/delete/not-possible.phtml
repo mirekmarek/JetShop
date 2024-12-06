@@ -1,0 +1,38 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\WithEShopData;
+
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Entity_WithEShopData;
+
+use Jet\Http_Request;
+use Jet\UI;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithEShopData|Admin_Entity_WithEShopData_Interface     $item
+ * @var ?callable $reason_renderer
+ */
+$item = $this->getRaw( 'item' );
+$reason_renderer = $this->getRaw('reason_renderer');
+?>
+<div class="col d-flex justify-content-center">
+	
+	<div class="card" style="margin-top:50px;">
+		<div class="card-body">
+			<div>
+				<?=$this->getRaw('message')?>
+				<br/>
+				<a href="<?=$item->getEditURL();?>" style="font-weight: bolder;font-size: 20px;"><?=$item->getInternalName();?> (<?=$item->getId();?>)</a>
+			</div>
+			
+			<div>
+				<?php if($reason_renderer) $reason_renderer(); ?>
+			</div>
+			
+			<div style="display: inline-block;width: 50%">
+				<?= UI::button_goBack()->setUrl(Http_Request::currentURI(unset_GET_params: ['id', 'action'])) ?>
+			</div>
+		</div>
+	</div>
+</div>

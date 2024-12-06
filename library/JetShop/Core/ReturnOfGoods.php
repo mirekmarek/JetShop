@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Auth;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -19,14 +18,14 @@ use JetApplication\ReturnOfGoods_Event;
 use JetApplication\ReturnOfGoods_Status;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_ShopData;
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\ReturnOfGoods_ChangeHistory;
+use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\ReturnOfGoods;
 use JetApplication\Order;
-use JetApplication\Product_ShopData;
-use JetApplication\Shop_Pages;
-use JetApplication\Shops_Shop;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop_Pages;
+use JetApplication\EShop;
+use JetApplication\ReturnOfGoods_Trait_Changes;
 use JetApplication\ReturnOfGoods_Trait_Status;
 use JetApplication\ReturnOfGoods_Trait_Events;
 
@@ -41,13 +40,14 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
 	
 	use ReturnOfGoods_Trait_Status;
 	use ReturnOfGoods_Trait_Events;
+	use ReturnOfGoods_Trait_Changes;
 	
 	
 	#[DataModel_Definition(
@@ -183,13 +183,13 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	
 	public static function startNew(
 		Order $order,
-		Product_ShopData $product,
+		Product_EShopData $product,
 		string $problem_description
 	) : static
 	{
 		$return = new static();
 		
-		$return->setShop( $order->getShop() );
+		$return->setEshop( $order->getEshop() );
 		
 		$return->setOrderId( $order->getId() );
 		$return->setOrderNumber( $order->getNumber() );
@@ -214,7 +214,7 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	
 	public function getURL() : string
 	{
-		return Shop_Pages::ReturnOfGoods( $this->getShop() )->getURL( GET_params: [
+		return EShop_Pages::ReturnOfGoods( $this->getEshop() )->getURL( GET_params: [
 			'c' => $this->getKey(),
 			'k' => $this->getSecondKey()
 		] );
@@ -252,9 +252,9 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 		$this->product_id = $product_id;
 	}
 	
-	public function getProduct() : ?Product_ShopData
+	public function getProduct() : ?Product_EShopData
 	{
-		return Product_ShopData::get( $this->product_id, $this->getShop() );
+		return Product_EShopData::get( $this->product_id, $this->getEshop() );
 	}
 	
 	public function getProblemDescription(): string
@@ -288,9 +288,9 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 		return $this->getDateStarted();
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
-		return $this->getShop();
+		return $this->getEshop();
 	}
 	
 	
@@ -429,9 +429,9 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 		return $this->delivery_method_id;
 	}
 	
-	public function getDeliveryMethod() : Delivery_Method_ShopData
+	public function getDeliveryMethod() : Delivery_Method_EShopData
 	{
-		return Delivery_Method_ShopData::get( $this->getDeliveryMethodId(), $this->getShop() );
+		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
 	}
 	
 	public function setDeliveryMethodId( int $delivery_method_id ) : void
@@ -451,61 +451,6 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	
 	
 	
-	public function changeDeliveryMethod( int $delivery_method_id, string $personal_takeover_delivery_point_code, float $price ) : ReturnOfGoods_ChangeHistory
-	{
-		$change = $this->startChange();
-		
-		$new_delivery_method = Delivery_Method_ShopData::get( $delivery_method_id, $this->getShop() );
-		
-		if( $this->delivery_method_id != $delivery_method_id ) {
-			$change->addChange(
-				'delivery_method',
-				$this->delivery_method_id,
-				$delivery_method_id
-			);
-			$this->delivery_method_id = $delivery_method_id;
-		}
-		
-		if($this->delivery_personal_takeover_delivery_point_code!=$personal_takeover_delivery_point_code) {
-			$change->addChange(
-				'delivery_personal_takeover_delivery_point_code',
-				$this->delivery_personal_takeover_delivery_point_code,
-				$personal_takeover_delivery_point_code
-			);
-			
-			$this->delivery_personal_takeover_delivery_point_code = $personal_takeover_delivery_point_code;
-			
-			if( $this->delivery_personal_takeover_delivery_point_code ) {
-				$place = $new_delivery_method->getPersonalTakeoverDeliveryPoint( $personal_takeover_delivery_point_code );
-				if($place) {
-					
-					$delivery_address = new Customer_Address();
-					$delivery_address->setFirstName( $this->delivery_first_name );
-					$delivery_address->setSurname( $this->delivery_surname );
-					$delivery_address->setCompanyName( $place->getName() );
-					$delivery_address->setAddressStreetNo( $place->getStreet() );
-					$delivery_address->setAddressTown( $place->getTown() );
-					$delivery_address->setAddressZip( $place->getZip() );
-					$delivery_address->setAddressCountry( $place->getCountry() );
-					
-					$address_changes = $this->updateDeliveryAddress( $delivery_address );
-					foreach($address_changes->getChanges() as $address_change) {
-						$change->addChange(
-							$address_change->getProperty(),
-							$address_change->getOldValue(),
-							$address_change->getNewValue()
-						);
-					}
-				}
-			}
-			
-		}
-		
-		
-		
-		return $change;
-	}
-	
 	
 	
 	public function getStatus() : ?ReturnOfGoods_Status
@@ -523,7 +468,6 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	}
 	
 
-	
 	
 	/**
 	 * @return ReturnOfGoods_Event[]
@@ -624,40 +568,6 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 		$this->setDeliveryAddressCountry( $address->getAddressCountry() );
 	}
 	
-	public function updateDeliveryAddress( Customer_Address $address ) : ReturnOfGoods_ChangeHistory
-	{
-		$map = [
-			'delivery_company_name'      => 'CompanyName',
-			//'delivery_company_id'        => 'CompanyId',
-			//'delivery_company_vat_id'    => 'CompanyVatId',
-			'delivery_first_name'        => 'FirstName',
-			'delivery_surname'           => 'Surname',
-			'delivery_address_street_no' => 'AddressStreetNo',
-			'delivery_address_town'      => 'AddressTown',
-			'delivery_address_zip'       => 'AddressZip',
-			'delivery_address_country'   => 'AddressCountry',
-		];
-		
-		$change = $this->startChange();
-		foreach($map as $property=>$gs) {
-			
-			$address_getter = 'get'.$gs;
-			$_getter = 'getDelivery'.$gs;
-			$_setter = 'setDelivery'.$gs;
-			
-			if($this->{$_getter}() != $address->{$address_getter}()) {
-				$change->addChange(
-					$property,
-					$this->{$_getter}(),
-					$address->{$address_getter}()
-				);
-				$this->{$_setter}( $address->{$address_getter}() );
-			}
-		}
-		
-		return $change;
-	}
-	
 	
 	public function getDeliveryAddress() : Customer_Address
 	{
@@ -680,24 +590,6 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	}
 	
 	
-	public function startChange() : ReturnOfGoods_ChangeHistory
-	{
-		$change = new ReturnOfGoods_ChangeHistory();
-		/**
-		 * @var ReturnOfGoods $this
-		 */
-		$change->setReturnOfGoods( $this );
-		$change->setDateAdded( Data_DateTime::now() );
-		
-		$admin = Auth::getCurrentUser();
-		if($admin) {
-			$change->setAdministrator( $admin->getName() );
-			$change->setAdministratorId( $admin->getId() );
-		}
-		
-		return $change;
-	}
-	
 	/**
 	 * @param Order $order
 	 * @param int $product_id
@@ -705,13 +597,13 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	 */
 	public static function getByOrderItem( Order $order, int $product_id ) : array
 	{
-		$where = $order->getShop()->getWhere();
+		$where = $order->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['order_id'] = $order->getId();
 		$where[] = 'AND';
 		$where['product_id'] = $product_id;
 		
-		return static::fetch( ['return_of_goods'=>$where] );
+		return static::fetch( ['return_of_goods'=>$where], order_by: ['-id']  );
 		
 	}
 	
@@ -721,11 +613,11 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	 */
 	public static function getByOrder( Order $order ) : array
 	{
-		$where = $order->getShop()->getWhere();
+		$where = $order->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['order_id'] = $order->getId();
 		
-		return static::fetch( ['return_of_goods'=>$where] );
+		return static::fetch( ['return_of_goods'=>$where], order_by: ['-id']  );
 		
 	}
 	
@@ -734,11 +626,11 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	 */
 	public static function getByCustomer( Customer $customer ) : array
 	{
-		$where = $customer->getShop()->getWhere();
+		$where = $customer->getEshop()->getWhere();
 		$where[] = 'AND';
 		$where['customer_id'] = $customer->getId();
 		
-		return static::fetch( ['return_of_goods'=>$where] );
+		return static::fetch( ['return_of_goods'=>$where], order_by: '-id' );
 		
 	}
 	
@@ -760,7 +652,7 @@ abstract class Core_ReturnOfGoods extends Entity_WithShopRelation implements Num
 	
 	public function getMinimalProblemDescriptionLength() : int
 	{
-		return 100;
+		return 10;
 	}
 	
 	public function canBeFinished() : bool

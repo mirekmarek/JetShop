@@ -22,9 +22,9 @@ use JetApplication\EMailMarketing_Subscribe_Log;
 
 $customer = $this->getRaw( 'customer' );
 
-$shop = $customer->getShop();
+$eshop = $customer->getEshop();
 
-$mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getShop(), $customer->getEmail() );
+$mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getEshop(), $customer->getEmail() );
 ?>
 
 
@@ -39,7 +39,7 @@ $mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getSho
 		<table class="table">
 			<tr>
 				<td style="width: 150px"><?=Tr::_('Shop:')?></td>
-				<td><?=$shop->getShopName()?></td>
+				<td><?=$eshop->getName()?></td>
 			</tr>
 			<tr>
 				<td><?=Tr::_('Registration:');?></td>
@@ -89,7 +89,7 @@ $mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getSho
 			<div class="card" style="width: 400px;height: 190px;float: left;margin: 10px;">
 				<div class="card-body">
 					<p class="card-text">
-						<?=Admin_Managers::Customer()->formatAddress( $customer->getShop(), $address )?>
+						<?=Admin_Managers::Customer()->formatAddress( $customer->getEshop(), $address )?>
 					</p>
 				</div>
 			</div>
@@ -103,7 +103,7 @@ $mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getSho
 			<?=Admin_Managers::Order()->showOrdersOfCustomer( $customer )?>
 		</fieldset>
 		
-		<?=EMailMarketing::SubscriptionManager()->showStatus( $customer->getShop(), $customer->getEmail() )?>
+		<?=EMailMarketing::SubscriptionManager()->showStatus( $customer->getEshop(), $customer->getEmail() )?>
 	
 </div>
 

@@ -1,0 +1,46 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+
+use Jet\MVC_View;
+use JetApplication\Delivery_Method_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Delivery_Method_EShopData $method
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$place = $cash_desk->getSelectedPersonalTakeoverDeliveryPoint();
+$method = $cash_desk->getSelectedDeliveryMethod();
+
+$this->setVar('delivery_method', $method);
+?>
+
+<div class="method" onclick="CashDesk.delivery.personalTakeover.startSelection()">
+
+	<div>
+		<input type="radio" name="delivery_method" checked onclick="setTimeout(function(){CashDesk.delivery.personalTakeover.startSelection()}, 10);return false;" />
+	</div>
+	
+	<div class="method-icon">
+		<?php if(($img=$method->getIcon1ThumbnailUrl(50, 50))): ?>
+			<img src="<?=$img?>">
+		<?php endif; ?>
+	</div>
+	
+	<div class="method-title">
+		<b><?=$method->getTitle()?></b>
+		
+		<div>
+			<b><?=$place->getName()?></b><br>
+			<?=$place->getStreet()?><br>
+			<?=$place->getZip()?>  <?=$place->getTown()?>
+
+		</div>
+	</div>
+	
+	<?=$this->render('delivery/price')?>
+
+</div>

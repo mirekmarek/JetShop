@@ -23,6 +23,4 @@ require __DIR__.'/Init/HTTPRequest.php';
 require __DIR__.'/Init/Installation.php';
 //</REMOVE AFTER INSTALLATION> !!!
 
-require __DIR__.'/config/JetShop.php';
-
 Application::runMVC();

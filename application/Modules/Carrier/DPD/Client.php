@@ -9,8 +9,8 @@ namespace JetApplicationModule\Carrier\DPD;
 
 use Jet\Exception;
 use JetApplication\Carrier_DeliveryPoint;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 class Client {
 	protected Main $carrier;
@@ -28,8 +28,8 @@ class Client {
 	{
 		$res = [];
 		
-		foreach(Shops::getList() as $shop) {
-			foreach( $this->_downloadUpToDateDeliveryPointsList( $shop ) as $item ) {
+		foreach( EShops::getList() as $eshop) {
+			foreach( $this->_downloadUpToDateDeliveryPointsList( $eshop ) as $item ) {
 				$res[$item->getKey()] = $item;
 			}
 		}
@@ -40,11 +40,11 @@ class Client {
 	/**
 	 * @return Carrier_DeliveryPoint[]
 	 */
-	public function _downloadUpToDateDeliveryPointsList( Shops_Shop $shop ): array
+	public function _downloadUpToDateDeliveryPointsList( EShop $eshop ): array
 	{
 		$list = [];
 		
-		$JSON_URL = $this->carrier->getConfig( $shop )->getURLJSONBranches();
+		$JSON_URL = $this->carrier->getConfig( $eshop )->getURLJSONBranches();
 		if(!$JSON_URL) {
 			return [];
 		}
@@ -66,7 +66,7 @@ class Client {
 			
 			$point->setCarrier( $this->carrier );
 			$point->setPointType( Main::DP_TYPE_BRANCH );
-			$point->setPointLocale( $shop->getLocale() );
+			$point->setPointLocale( $eshop->getLocale() );
 			$point->setPointType( '' );
 			
 			

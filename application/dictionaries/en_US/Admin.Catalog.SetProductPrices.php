@@ -32,4 +32,7 @@ return [
 	'Increase' => '',
 	'Pricelist:' => '',
 	'Unsupported file type' => '',
+	'Set prices manually' => '',
+	'Export price list' => '',
+	'Import price list' => '',
 ];

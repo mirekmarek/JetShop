@@ -1,0 +1,60 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\WithEShopRelation;
+
+use Jet\UI_tabs;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Entity_WithEShopRelation;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface     $item
+ * @var UI_tabs $tabs
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+$common_data_fields_renderer = $this->getRaw('common_data_fields_renderer');
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 3,
+	Form_Renderer::LJ_SIZE_LARGE => 2
+] );
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 8,
+	Form_Renderer::LJ_SIZE_LARGE => 8
+] );
+
+?>
+
+<?php require 'toolbar.phtml'; ?>
+
+<?php
+$tabs = $this->getRaw('tabs');
+if(
+	$tabs && count($tabs->getTabs())>1
+	
+) {
+	echo $tabs;
+}
+?>
+
+<div id="main-col">
+	<br>
+	<?php
+	echo $form->start();
+	if($common_data_fields_renderer) {
+		$common_data_fields_renderer( $item, $form );
+	}
+	echo $form->end();
+	?>
+</div>

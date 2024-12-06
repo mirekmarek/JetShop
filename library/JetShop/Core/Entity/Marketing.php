@@ -14,9 +14,9 @@ use JetApplication\Entity_Basic;
 use JetApplication\Entity_Marketing;
 use JetApplication\Product_Relation;
 use JetApplication\ProductFilter;
-use JetApplication\Shop_Managers;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop_Managers;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 #[DataModel_Definition]
 abstract class Core_Entity_Marketing extends Entity_Basic
@@ -29,20 +29,20 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	
 	#[Form_Definition(
 		type: Form_Field::TYPE_SELECT,
-		label: 'Shop',
+		label: 'e-shop',
 		is_required: true,
 		error_messages: [
 			Form_Field::ERROR_CODE_INVALID_VALUE => 'Invalid value',
 			Form_Field::ERROR_CODE_EMPTY         => 'Invalid value'
 		],
 		select_options_creator: [
-			Shops::class,
+			EShops::class,
 			'getScope'
 		],
 		default_value_getter_name: 'getShopKey',
-		creator: ['this', 'shopFieldCreator']
+		creator: ['this', 'eshopFieldCreator']
 	)]
-	protected ?Shops_Shop $shop = null;
+	protected ?EShop $eshop = null;
 	
 	
 	
@@ -51,7 +51,7 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 		max_len: 100,
 		is_key: true,
 	)]
-	protected string $shop_code = '';
+	protected string $eshop_code = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_LOCALE,
@@ -59,26 +59,26 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	)]
 	protected ?Locale $locale = null;
 	
-	public function shopFieldCreator( Form_Field $field ) : Form_Field
+	public function eshopFieldCreator( Form_Field $field ) : Form_Field
 	{
-		$field->setFieldValueCatcher( function( string $shop_key ) {
-			$shop = Shops::get( $shop_key );
-			$this->setShop( $shop );
+		$field->setFieldValueCatcher( function( string $eshop_key ) {
+			$eshop = EShops::get( $eshop_key );
+			$this->setEshop( $eshop );
 		} );
 		
 		return $field;
 	}
 	
-	public function setShop( Shops_Shop $shop ) : void
+	public function setEshop( EShop $eshop ) : void
 	{
-		$this->shop_code = $shop->getShopCode();
-		$this->locale = $shop->getLocale();
-		$this->shop = $shop;
+		$this->eshop_code = $eshop->getCode();
+		$this->locale = $eshop->getLocale();
+		$this->eshop = $eshop;
 	}
 	
-	public function getShopCode() : string
+	public function getEshopCode() : string
 	{
-		return $this->shop_code;
+		return $this->eshop_code;
 	}
 	
 	
@@ -87,18 +87,18 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 		return $this->locale;
 	}
 	
-	public function getShop() : Shops_Shop
+	public function getEshop() : EShop
 	{
-		if(!$this->shop) {
-			$this->shop = Shops::get( $this->getShopKey() );
+		if(!$this->eshop) {
+			$this->eshop = EShops::get( $this->getShopKey() );
 		}
 		
-		return $this->shop;
+		return $this->eshop;
 	}
 	
 	public function getShopKey() : string
 	{
-		return $this->shop_code.'_'.$this->locale;
+		return $this->eshop_code.'_'.$this->locale;
 	}
 	
 	
@@ -425,7 +425,7 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	public function getProductsFilter() : ProductFilter
 	{
 		if($this->product_filter===null) {
-			$this->product_filter = new ProductFilter( $this->getShop() );
+			$this->product_filter = new ProductFilter( $this->getEshop() );
 			$this->product_filter->setContextEntity( static::getEntityType() );
 			$this->product_filter->setContextEntityId( $this->id );
 			$this->product_filter->load();
@@ -521,7 +521,7 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	
 	public function getImageThumbnailUrl( string $image_class, int $max_w, int $max_h ): string
 	{
-		return Shop_Managers::Image()->getThumbnailUrl(
+		return EShop_Managers::Image()->getThumbnailUrl(
 			$this->getImage( $image_class ),
 			$max_w,
 			$max_h
@@ -530,7 +530,7 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	
 	public function getImageUrl( string $image_class ): string
 	{
-		return Shop_Managers::Image()->getUrl(
+		return EShop_Managers::Image()->getUrl(
 			$this->getImage( $image_class )
 		);
 	}
@@ -539,18 +539,18 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	
 	
 	
-	public static function getByInternalCode( string $internal_code, ?Shops_Shop $shop=null ) : ?static
+	public static function getByInternalCode( string $internal_code, ?EShop $eshop=null ) : ?static
 	{
-		$where = $shop->getWhere();
+		$where = $eshop->getWhere();
 		$where[] = 'AND';
 		$where['internal_code'] = $internal_code;
 		
 		return static::load( $where );
 	}
 	
-	public static function getActiveByInternalCode( string $internal_code, ?Shops_Shop $shop=null ) : ?static
+	public static function getActiveByInternalCode( string $internal_code, ?EShop $eshop=null ) : ?static
 	{
-		$where = static::getActiveQueryWhere( $shop );
+		$where = static::getActiveQueryWhere( $eshop );
 		$where[] = 'AND';
 		$where['internal_code'] = $internal_code;
 		
@@ -560,17 +560,17 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	
 	/**
 	 * @param array $ids
-	 * @param Shops_Shop|null $shop
+	 * @param EShop|null $eshop
 	 * @param array|string|null $order_by
 	 * @return static[]
 	 */
-	public static function getActiveList( array $ids, ?Shops_Shop $shop=null, array|string|null $order_by = null ) : array
+	public static function getActiveList( array $ids, ?EShop $eshop=null, array|string|null $order_by = null ) : array
 	{
 		if(!$ids) {
 			return [];
 		}
 		
-		$where = static::getActiveQueryWhere( $shop );
+		$where = static::getActiveQueryWhere( $eshop );
 		$where[] = 'AND';
 		$where['entity_id'] = $ids;
 		
@@ -598,13 +598,13 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	}
 	
 	/**
-	 * @param Shops_Shop|null $shop
+	 * @param EShop|null $eshop
 	 * @param array|string|null $order_by
 	 * @return static[]
 	 */
-	public static function getAllActive( ?Shops_Shop $shop=null, array|string|null $order_by = null ) : array
+	public static function getAllActive( ?EShop $eshop=null, array|string|null $order_by = null ) : array
 	{
-		$where = static::getActiveQueryWhere( $shop );
+		$where = static::getActiveQueryWhere( $eshop );
 		
 		return static::fetch(
 			where_per_model: [ ''=>$where],
@@ -616,12 +616,12 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	}
 	
 	
-	public static function getActiveQueryWhere( ?Shops_Shop $shop=null ) : array
+	public static function getActiveQueryWhere( ?EShop $eshop=null ) : array
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$eshop = $eshop?:EShops::getCurrent();
 		
 		$where = [];
-		$where[] = $shop->getWhere();
+		$where[] = $eshop->getWhere();
 		$where[] = 'AND';
 		$where[] = [
 			'is_active' => true
@@ -631,12 +631,12 @@ abstract class Core_Entity_Marketing extends Entity_Basic
 	}
 	
 	
-	public static function getNonActiveQueryWhere( ?Shops_Shop $shop=null ) : array
+	public static function getNonActiveQueryWhere( ?EShop $eshop=null ) : array
 	{
-		$shop = $shop?:Shops::getCurrent();
+		$eshop = $eshop?:EShops::getCurrent();
 		
 		$where = [];
-		$where[] = $shop->getWhere();
+		$where[] = $eshop->getWhere();
 		$where[] = 'AND';
 		$where[] = [
 			'is_active' => false

@@ -14,8 +14,8 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Locale;
 use Jet\Logger;
-use JetApplication\Availabilities_Availability;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Availability;
+use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\Order_Status_Cancelled;
@@ -24,19 +24,19 @@ use JetApplication\Order_Status_Dispatched;
 use JetApplication\Order_Status_DispatchStarted;
 use JetApplication\Order_Status_ReadyForDispatch;
 use JetApplication\Order_Status_Returned;
-use JetApplication\Payment_Method_ShopData;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\Payment_Method_EShopData;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 class Server
 {
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	protected Config_PerShop $config;
 	
-	protected Availabilities_Availability $availability;
-	protected Pricelists_Pricelist $pricelist;
+	protected Availability $availability;
+	protected Pricelist $pricelist;
 	
 	protected array $request_data = [];
 	protected string $raw_request_data = '';
@@ -47,17 +47,17 @@ class Server
 	{
 		$this->config = $config;
 		
-		$shop = $config->getShop();
+		$eshop = $config->getEshop();
 		
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		
-		$this->availability = $shop->getDefaultAvailability();
-		$this->pricelist = $shop->getDefaultPricelist();
+		$this->availability = $eshop->getDefaultAvailability();
+		$this->pricelist = $eshop->getDefaultPricelist();
 		
-		Shops::setCurrent( $shop );
-		Locale::setCurrentLocale( $shop->getLocale() );
+		EShops::setCurrent( $eshop );
+		Locale::setCurrentLocale( $eshop->getLocale() );
 		
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 	}
 	
 	public function handle() : void
@@ -163,7 +163,7 @@ class Server
 				$this->responseUnknownRequest(['info'=>'product count is missing']);
 			}
 			
-			$product = Product_ShopData::get( $p_d['id'], $this->shop );
+			$product = Product_EShopData::get( $p_d['id'], $this->eshop );
 			
 			if(!$product) {
 				$this->responseUnknownItem(['info'=>'unknown product '.$p_d['id']]);
@@ -186,7 +186,7 @@ class Server
 		
 		foreach($this->getProducts() as $item) {
 			/**
-			 * @var Product_ShopData $product
+			 * @var Product_EShopData $product
 			 */
 			$product = $item['product'];
 			$count = $item['count'];
@@ -207,7 +207,7 @@ class Server
 		]);
 	}
 	
-	protected function handle_productsAvailability_generateResponseItem( Product_ShopData $product, $requested_count ) : array
+	protected function handle_productsAvailability_generateResponseItem( Product_EShopData $product, $requested_count ) : array
 	{
 		$avl_count = $requested_count;
 		$available = true;
@@ -252,7 +252,7 @@ class Server
 		$products = [];
 		foreach($this->getProducts() as $item) {
 			/**
-			 * @var Product_ShopData $product
+			 * @var Product_EShopData $product
 			 */
 			$product = $item['product'];
 			$count = $item['count'];
@@ -269,7 +269,7 @@ class Server
 		$allowed_payment_methods_ids = null;
 		$allowed_payment_methods = [];
 		
-		$delivery_methods = Delivery_Method_ShopData::getAvailableByProducts( $products );
+		$delivery_methods = Delivery_Method_EShopData::getAvailableByProducts( $products );
 		
 		foreach( $delivery_methods as $delivery_method ) {
 			
@@ -310,7 +310,7 @@ class Server
 		}
 		
 		
-		foreach(Payment_Method_ShopData::getAllActive($this->shop) as $payment_method ) {
+		foreach( Payment_Method_EShopData::getAllActive($this->eshop) as $payment_method ) {
 			if(
 				!in_array($payment_method->getId(), $allowed_payment_methods_ids??[]) ||
 				!($map_item = $this->config->getPaymentMapItem($payment_method->getId()))
@@ -364,7 +364,7 @@ class Server
 		
 		$import_source = Main::IMPORT_SOURCE;
 		
-		$exists = Order::getByImportSource( $import_source, $heureka_id, $this->shop );
+		$exists = Order::getByImportSource( $import_source, $heureka_id, $this->eshop );
 		
 		if($exists) {
 			$this->response([
@@ -386,7 +386,7 @@ class Server
 		
 		$order->setDatePurchased( Data_DateTime::now() );
 		
-		$order->setShop( $this->shop );
+		$order->setEshop( $this->eshop );
 		$order->setCurrencyCode( $this->pricelist->getCurrency()->getCode() );
 		$order->setAvailabilityCode( $this->availability->getCode() );
 		$order->setPricelistCode( $this->pricelist->getCode() );
@@ -422,7 +422,7 @@ class Server
 		
 		foreach($this->getProducts() as $item) {
 			/**
-			 * @var Product_ShopData $product
+			 * @var Product_EShopData $product
 			 */
 			$product = $item['product'];
 			$count = $item['count'];
@@ -440,10 +440,10 @@ class Server
 		
 		
 		
-		$delivery_method = Delivery_Method_ShopData::get( $data['deliveryId'] );
+		$delivery_method = Delivery_Method_EShopData::get( $data['deliveryId'] );
 		$order->setDeliveryMethod( $delivery_method, $data['originalId'] );
 		
-		$payment_method = Payment_Method_ShopData::get( $data['paymentId'] );
+		$payment_method = Payment_Method_EShopData::get( $data['paymentId'] );
 		$order->setPaymentMethod( $payment_method );
 		
 		
@@ -463,7 +463,7 @@ class Server
 	public function handle_orderCancel() : void
 	{
 		
-		$order = Order::getByNumber( $this->request_data['order_id']??'', $this->shop );
+		$order = Order::getByNumber( $this->request_data['order_id']??'', $this->eshop );
 		if(!$order) {
 			$this->responseUnknownItem();
 		}
@@ -478,7 +478,7 @@ class Server
 	/** @noinspection SpellCheckingInspection */
 	protected function handle_orderStatus() : void
 	{
-		$order = Order::getByNumber( $this->request_data['order_id']??'', $this->shop );
+		$order = Order::getByNumber( $this->request_data['order_id']??'', $this->eshop );
 		if(!$order) {
 			$this->responseUnknownItem();
 		}
@@ -509,7 +509,7 @@ class Server
 	
 	protected function handle_paymentStatus() : void
 	{
-		$order = Order::getByNumber( $this->request_data['order_id']??'', $this->shop );
+		$order = Order::getByNumber( $this->request_data['order_id']??'', $this->eshop );
 		if(!$order) {
 			$this->responseUnknownItem();
 		}

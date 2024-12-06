@@ -9,28 +9,28 @@ namespace JetShop;
 
 use Jet\Data_Paginator;
 use JetApplication\Availabilities;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\Pricelists;
-use JetApplication\Pricelists_Pricelist;
+use JetApplication\Pricelist;
 use JetApplication\Product_Price;
-use JetApplication\Product_ShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\ProductListing_Sorter;
 use JetApplication\ProductListing_Sorter_ByName;
 use JetApplication\ProductListing_Sorter_Default;
 use JetApplication\ProductListing_Sorter_HighestPrice;
 use JetApplication\ProductListing_Sorter_LowestPrice;
-use JetApplication\Property_Options_Option_ShopData;
-use JetApplication\Property_ShopData;
-use JetApplication\Shops;
+use JetApplication\Property_Options_Option_EShopData;
+use JetApplication\Property_EShopData;
+use JetApplication\EShops;
 use JetApplication\ProductFilter;
 use JetApplication\ProductListing_Map;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_ProductListing
 {
-	protected Shops_Shop $shop;
-	protected Pricelists_Pricelist $pricelist;
-	protected Availabilities_Availability $availability;
+	protected EShop $eshop;
+	protected Pricelist $pricelist;
+	protected Availability $availability;
 	
 	protected ProductFilter $filter;
 	protected ProductListing_Map $initial_map;
@@ -44,12 +44,12 @@ abstract class Core_ProductListing
 	protected ?int $category_id = null;
 	
 	/**
-	 * @var Property_ShopData[]
+	 * @var Property_EShopData[]
 	 */
 	protected array $properties = [];
 	
 	/**
-	 * @var Property_Options_Option_ShopData[]
+	 * @var Property_Options_Option_EShopData[]
 	 */
 	protected array $property_options = [];
 	
@@ -60,14 +60,14 @@ abstract class Core_ProductListing
 	protected array $sorters = [];
 	
 	public function __construct(
-		array $product_ids,
-		?Shops_Shop $shop=null,
-		?Pricelists_Pricelist $pricelist =null,
-		?Availabilities_Availability $availability=null
+		array                        $product_ids,
+		?EShop                       $eshop=null,
+		?Pricelist                   $pricelist =null,
+		?Availability $availability=null
 	)
 	{
-		if(!$shop) {
-			$shop = Shops::getCurrent();
+		if(!$eshop) {
+			$eshop = EShops::getCurrent();
 		}
 		if( !$pricelist ) {
 			$pricelist = Pricelists::getCurrent();
@@ -77,14 +77,14 @@ abstract class Core_ProductListing
 		}
 		
 		
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		
 		$this->pricelist = $pricelist;
 		$this->availability = $availability;
 		
 		$this->initial_map = new ProductListing_Map($this , $product_ids );
 		
-		$this->filter = new ProductFilter( Shops::getCurrent() );
+		$this->filter = new ProductFilter( EShops::getCurrent() );
 		$this->filter->setInitialProductIds( $this->initial_map->getProductIds() );
 		
 		$this->initSorters();
@@ -140,17 +140,17 @@ abstract class Core_ProductListing
 	
 	
 
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
-	public function getPricelist(): Pricelists_Pricelist
+	public function getPricelist(): Pricelist
 	{
 		return $this->pricelist;
 	}
 	
-	public function getAvailability(): Availabilities_Availability
+	public function getAvailability(): Availability
 	{
 		return $this->availability;
 	}
@@ -366,8 +366,8 @@ abstract class Core_ProductListing
 		$property_ids = $initial_map->getPropertyIds();
 		$option_ids = $initial_map->getPropertyOptionIds();
 		if($property_ids) {
-			$this->properties = Property_ShopData::getActiveList( $property_ids, order_by: ['-is_default_filter','filter_priority','label'] );
-			$this->property_options = Property_Options_Option_ShopData::getActiveList( $option_ids, order_by: ['priority','filter_label'] );
+			$this->properties = Property_EShopData::getActiveList( $property_ids, order_by: ['-is_default_filter', 'filter_priority', 'label'] );
+			$this->property_options = Property_Options_Option_EShopData::getActiveList( $option_ids, order_by: ['priority', 'filter_label'] );
 		}
 		
 	}
@@ -396,11 +396,11 @@ abstract class Core_ProductListing
 	}
 	
 	/**
-	 * @return Product_ShopData[]
+	 * @return Product_EShopData[]
 	 */
 	public function getVisibleProducts() : array
 	{
-		return Product_ShopData::getActiveList( $this->getVisibleProductIDs(), $this->shop );
+		return Product_EShopData::getActiveList( $this->getVisibleProductIDs(), $this->eshop );
 	}
 	
 	public function getBrandCount( int $brand_id ) : int
@@ -513,7 +513,7 @@ abstract class Core_ProductListing
 	}
 	
 	/**
-	 * @return Property_ShopData[]
+	 * @return Property_EShopData[]
 	 */
 	public function getProperties(): array
 	{
@@ -521,7 +521,7 @@ abstract class Core_ProductListing
 	}
 	
 	/**
-	 * @return Property_Options_Option_ShopData[]
+	 * @return Property_Options_Option_EShopData[]
 	 */
 	public function getPropertyOptions(): array
 	{

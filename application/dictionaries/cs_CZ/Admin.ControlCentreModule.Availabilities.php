@@ -20,5 +20,5 @@ return [
 	'Please enter code' => 'Zadejte kód',
 	'This code is already used' => 'Tento kód se již používá',
 	'Warehouses: ' => 'sklady: ',
-	'Product availabilities' => '',
+	'Product availabilities' => 'Dostupnost produktů',
 ];

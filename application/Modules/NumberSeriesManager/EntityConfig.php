@@ -14,14 +14,14 @@ use Jet\Form_Definition_Interface;
 use Jet\Form_Definition_Trait;
 use Jet\Form_Field;
 use Jet\IO_File;
-use Jet\SysConf_Path;
 use Jet\Config;
 use Jet\Tr;
+use JetApplication\EShopConfig;
 use JetApplication\NumberSeries_Counter_Month;
 use JetApplication\NumberSeries_Counter_Total;
 use JetApplication\NumberSeries_Counter_Year;
 use JetApplication\NumberSeries_Counter_Day;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 #[Config_Definition(
 	name: 'NumberSeries'
@@ -76,12 +76,12 @@ class EntityConfig extends Config implements Form_Definition_Interface {
 	}
 	
 	
-	public function __construct( string $entity_type, ?Shops_Shop $shop=null, ?array $data = null )
+	public function __construct( string $entity_type, ?EShop $eshop=null, ?array $data = null )
 	{
-		$this->_config_file_path = SysConf_Path::getConfig() . 'shop/number_series/'.$entity_type.'/';
+		$this->_config_file_path = EShopConfig::getRootDir() . 'number_series/'.$entity_type.'/';
 		
-		if($shop) {
-			$this->_config_file_path .= $shop->getKey().'.php';
+		if($eshop) {
+			$this->_config_file_path .= $eshop->getKey().'.php';
 		} else {
 			$this->_config_file_path .= 'general.php';
 		}

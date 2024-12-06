@@ -28,6 +28,7 @@ abstract class Core_Managers {
 	{
 		if(static::$config===null) {
 			$path = static::getCfgFilePath();
+			
 			if(!IO_File::exists($path)) {
 				static::$config = [];
 				static::saveCfg();
@@ -183,7 +184,7 @@ abstract class Core_Managers {
 	}
 	
 	
-	protected static function get( string $manager_interface ) : ?Application_Module
+	public static function get( string $manager_interface ) : ?Application_Module
 	{
 		if(isset(static::$managers[$manager_interface])) {
 			return static::$managers[$manager_interface];

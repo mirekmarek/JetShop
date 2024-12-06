@@ -1,14 +1,14 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\Marketing_AutoOffer;
 use JetApplication\Marketing_Gift;
 use JetApplication\Marketing_Gift_Product;
 use JetApplication\Marketing_Gift_ShoppingCart;
-use JetApplication\Pricelists_Pricelist;
-use JetApplication\Product_ShopData;
-use JetApplication\Shops_Shop;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+use JetApplication\EShop;
 use JetApplication\ShoppingCart_Item;
 
 
@@ -16,9 +16,9 @@ abstract class Core_ShoppingCart
 {
 	protected string $id = '';
 
-	protected ?Shops_Shop $shop = null;
-	protected ?Availabilities_Availability $availability = null;
-	protected ?Pricelists_Pricelist $pricelist = null;
+	protected ?EShop $eshop = null;
+	protected ?Availability $availability = null;
+	protected ?Pricelist $pricelist = null;
 
 	/**
 	 * @var ShoppingCart_Item[]
@@ -29,26 +29,26 @@ abstract class Core_ShoppingCart
 	
 	
 
-	public function __construct( Shops_Shop $shop, Availabilities_Availability $availability, Pricelists_Pricelist $pricelist )
+	public function __construct( EShop $eshop, Availability $availability, Pricelist $pricelist )
 	{
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		$this->availability = $availability;
 		$this->pricelist = $pricelist;
 	}
 
 	
-	public function getShop() : Shops_Shop
+	public function getEshop() : EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 
-	public function getAvailability(): ?Availabilities_Availability
+	public function getAvailability(): ?Availability
 	{
 		return $this->availability;
 	}
 	
 	
-	public function getPricelist(): ?Pricelists_Pricelist
+	public function getPricelist(): ?Pricelist
 	{
 		return $this->pricelist;
 	}
@@ -131,7 +131,7 @@ abstract class Core_ShoppingCart
 
 
 	/**
-	 * @return Product_ShopData[]
+	 * @return Product_EShopData[]
 	 */
 	public function getProducts() : array
 	{
@@ -201,7 +201,7 @@ abstract class Core_ShoppingCart
 	{
 		$product_id = $auto_offer->getOfferProductId();
 		
-		$product = Product_ShopData::get( $product_id, $this->shop );
+		$product = Product_EShopData::get( $product_id, $this->eshop );
 		
 		$item = new ShoppingCart_Item(
 			product_id: $product_id,
@@ -245,7 +245,7 @@ abstract class Core_ShoppingCart
 	}
 	
 
-	public function addItem( Product_ShopData $product, float $number_of_units, ?int $selected_gift_id=null, string &$error_message='' ) : bool|shoppingCart_item
+	public function addItem( Product_EShopData $product, float $number_of_units, ?int $selected_gift_id=null, string &$error_message='' ) : bool|shoppingCart_item
 	{
 		$selected_gift_id = 0;
 		$gifts = $this->getAvailableProductGifts( $product );
@@ -353,7 +353,7 @@ abstract class Core_ShoppingCart
 	/**
 	 * @return Marketing_Gift_Product[]
 	 */
-	public function getAvailableProductGifts( Product_ShopData $product ) : array
+	public function getAvailableProductGifts( Product_EShopData $product ) : array
 	{
 		$gifts = [];
 		

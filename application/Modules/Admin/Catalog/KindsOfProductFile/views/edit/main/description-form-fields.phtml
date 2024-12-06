@@ -1,0 +1,19 @@
+<?php
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Locale $locale
+ */
+$form = $this->getRaw('form');
+$locale = $this->getRaw('locale');
+$locale = $locale->toString();
+?>
+
+<?=$form->field('/description/'.$locale.'/name');?>
+<?=$form->field('/description/'.$locale.'/description');?>
+<?=$form->field('/description/'.$locale.'/short_description');?>

@@ -32,6 +32,4 @@ return [
 	'Context object:' => '',
 	'Export to CSV file' => '',
 	'Event viewer - Exports' => '',
-	'Please enter a value' => '',
-	'Invalid value' => '',
 ];

@@ -20,7 +20,7 @@ use JetApplication\KindOfProduct;
 use JetApplication\Exports_Join_KindOfProduct;
 use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_Module;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  *
@@ -34,7 +34,7 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 	
 	protected KindOfProduct $kind_of_product;
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	protected Exports_Module $export;
 	
@@ -45,20 +45,20 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 	protected Form $category_form;
 	
 	public function init(
-		KindOfProduct $kind_of_product,
-		Shops_Shop $shop,
+		KindOfProduct  $kind_of_product,
+		EShop          $eshop,
 		Exports_Module $marketplace
 	): void
 	{
 		$this->kind_of_product = $kind_of_product;
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		$this->export = $marketplace;
-		$this->export_categories = $this->export->getCategories( $this->shop );
+		$this->export_categories = $this->export->getCategories( $this->eshop );
 		$this->selected_export_category = null;
 		
 		$this->category_id_join = Exports_Join_KindOfProduct::get(
 			$this->export->getCode(),
-			$this->shop,
+			$this->eshop,
 			$this->kind_of_product->getId()
 		);
 		
@@ -78,9 +78,9 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 		return $this->kind_of_product;
 	}
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
 	public function getExport(): Exports_Module
@@ -111,7 +111,7 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 		$GET = Http_Request::GET();
 		
 		if($GET->exists('category')) {
-			return 'dialog_shop_category';
+			return 'dialog_eshop_category';
 		}
 		
 		if($GET->exists('actualize_list_of_categories')) {
@@ -126,7 +126,7 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 		return 'default';
 	}
 	
-	public function dialog_shop_category_Action() : void
+	public function dialog_eshop_category_Action() : void
 	{
 		/** @noinspection PhpParamsInspection */
 		AJAX::snippetResponse(
@@ -140,13 +140,13 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 	
 	public function actualize_list_of_categories_Action() : void
 	{
-		$this->export->actualizeCategories( $this->shop );
+		$this->export->actualizeCategories( $this->eshop );
 		Http_Headers::reload(unset_GET_params: ['actualize_list_of_categories']);
 	}
 	
 	public function actualize_list_of_parameters_Action() : void
 	{
-		$this->export->actualizeCategory( $this->shop, $this->category_id_join );
+		$this->export->actualizeCategory( $this->eshop, $this->category_id_join );
 		Http_Headers::reload(unset_GET_params: ['actualize_list_of_parameters']);
 	}
 	

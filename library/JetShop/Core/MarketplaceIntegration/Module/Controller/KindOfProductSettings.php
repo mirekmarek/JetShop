@@ -21,7 +21,7 @@ use JetApplication\MarketplaceIntegration_Join_KindOfProduct;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 /**
  *
@@ -35,7 +35,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 	
 	protected KindOfProduct $kind_of_product;
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	protected MarketplaceIntegration_Module $marketplace;
 	
@@ -46,20 +46,20 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 	protected Form $category_form;
 	
 	public function init(
-		KindOfProduct $kind_of_product,
-		Shops_Shop $shop,
+		KindOfProduct                 $kind_of_product,
+		EShop                         $eshop,
 		MarketplaceIntegration_Module $marketplace
 	): void
 	{
 		$this->kind_of_product = $kind_of_product;
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 		$this->marketplace = $marketplace;
-		$this->marketplace_categories = $this->marketplace->getCategories( $this->shop );
+		$this->marketplace_categories = $this->marketplace->getCategories( $this->eshop );
 		$this->selected_marketplace_category = null;
 		
 		$this->category_id_join = MarketplaceIntegration_Join_KindOfProduct::get(
 			$this->marketplace->getCode(),
-			$this->shop,
+			$this->eshop,
 			$this->kind_of_product->getId()
 		);
 		
@@ -79,9 +79,9 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 		return $this->kind_of_product;
 	}
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
 	public function getMarketplace(): MarketplaceIntegration_Module
@@ -112,13 +112,22 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 		$GET = Http_Request::GET();
 		
 		if($GET->exists('category')) {
-			return 'dialog_shop_category';
+			return 'dialog_eshop_category';
 		}
+		
+		if($GET->exists('actualize_list_of_categories')) {
+			return 'actualize_list_of_categories';
+		}
+		
+		if($GET->exists('actualize_list_of_parameters')) {
+			return 'actualize_list_of_parameters';
+		}
+		
 		
 		return 'default';
 	}
 	
-	public function dialog_shop_category_Action() : void
+	public function dialog_eshop_category_Action() : void
 	{
 		/**
 		 * @var MarketplaceIntegration_Module_Controller_KindOfProductSettings $this
@@ -129,8 +138,20 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 				Http_Request::GET()->getString('category')
 			)
 		);
-		
 	}
+	
+	public function actualize_list_of_categories_Action() : void
+	{
+		$this->marketplace->actualizeCategories( $this->eshop );
+		Http_Headers::reload(unset_GET_params: ['actualize_list_of_categories']);
+	}
+	
+	public function actualize_list_of_parameters_Action() : void
+	{
+		$this->marketplace->actualizeCategory( $this->eshop, $this->category_id_join );
+		Http_Headers::reload(unset_GET_params: ['actualize_list_of_parameters']);
+	}
+	
 	
 	public function default_Action() : void
 	{

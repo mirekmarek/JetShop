@@ -1,0 +1,81 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Carrier_DeliveryPoint;
+
+/**
+ * @var MVC_View $this
+ * @var Carrier_DeliveryPoint $point
+ * @var Delivery_Method_EShopData $method
+ */
+
+$point = $this->getRaw('point');
+$method = $this->getRaw('delivery_method');
+?>
+
+<div class="pto-header">
+	<div class="image">
+		<?php if($method->getIcon1()): ?>
+			<img src="<?=$method->getIcon1ThumbnailUrl(80, 80);?>">
+		<?php endif; ?>
+	</div>
+
+	<div class="info">
+		<h5><?=$method->getTitle()?></h5>
+		<b><?=$point->getName()?></b>
+		<br>
+		<div>
+			<?=$point->getStreet()?><br/>
+			<?=$point->getZip()?> <?=$point->getTown()?><br/>
+		</div>
+	</div>
+</div>
+
+<?php if(count($point->getImages())): ?>
+
+	<div class="pto-images">
+		<?php foreach( $point->getImages() as $image): ?>
+			<div>
+				<a href="<?=$image?>" target="_blank">
+					<img src="<?=$image?>"/>
+				</a>
+			</div>
+		<?php endforeach; ?>
+	</div>
+
+<?php endif; ?>
+
+
+
+<?php if($point->getOpeningHours()): ?>
+<br/>
+<div>
+	<b><?=Tr::_('Opening hours:')?></b>
+	<br/>
+	<table class="table">
+		<?php foreach( $point->getOpeningHours() as $oh): ?>
+		<tr>
+			<td nowrap=""><?=$oh->getDay()?></td>
+			<td nowrap=""><?=$oh->getOpen1()?></td>
+			<td nowrap=""><?=$oh->getClose1()?></td>
+			<td nowrap=""><?=$oh->getOpen2()?></td>
+			<td nowrap=""><?=$oh->getClose2()?></td>
+			<td nowrap=""><?=$oh->getOpen3()?></td>
+			<td nowrap=""><?=$oh->getClose3()?></td>
+		</tr>
+		<?php endforeach; ?>
+	</table>
+</div>
+<?php endif; ?>
+
+
+
+<div class="continue-button-area">
+	<div class="price"><?=$this->render('delivery/price')?></div>
+	<br>
+	<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPont('{$method->getId()}:{$point->getPointCode()}')")?>
+</div>

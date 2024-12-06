@@ -1,0 +1,56 @@
+<?php
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\Form;
+use Jet\MVC_View;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw( 'login_form' );
+
+$form->field( 'email' )->setPlaceholder( 'email' );
+$form->field( 'password' )->setPlaceholder( 'password' );
+
+$oauth = EShop_Managers::OAuth();
+?>
+<div class="card login-dialog">
+	<h5 class="card-header">
+		<?= Tr::_( 'Sign In' ) ?>
+	</h5>
+
+	<div class="card-body">
+		<?= $form->start() ?>
+		<?= $form->getCommonMessage() ?>
+
+		<div class="login-dialog-input">
+			<?= UI::icon( 'user' ) ?>
+			<?= $form->field( 'email' )->input() ?>
+		</div>
+
+		<div class="login-dialog-input">
+			<?= UI::icon( 'lock' ) ?>
+			<?= $form->field( 'password' )->input() ?>
+		</div>
+		
+		<div class="login-dialog-buttons">
+			<div>
+				<?=UI::button(Tr::_('I forget my password'))->setClass('link')->setOnclick('PasswordReset.start();')?>
+			</div>
+			<div>
+				<input type="submit" class="btn btn-primary" value="<?= Tr::_( 'Sign In' ) ?>"/>
+			</div>
+		</div>
+	<?= $form->end() ?>
+	
+	<?php if($oauth):
+		foreach($oauth->getOAuthModules() as $oauth_module):
+			echo $oauth->renderLoginButton( $oauth_module );
+		endforeach;
+	endif; ?>
+	
+	</div>
+</div>

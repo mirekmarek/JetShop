@@ -29,7 +29,7 @@ switch($item->getDiscountType()) {
 		break;
 	case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
 	case Discounts_Discount::DISCOUNT_TYPE_DELIVERY_AMOUNT:
-		echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getShop()->getDefaultPricelist()->getCurrency(), $item->getDiscount() );
+		echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getEshop()->getDefaultPricelist(), $item->getDiscount() );
 		break;
 }
 ?></b>

@@ -1,8 +1,0 @@
-<?php
-namespace JetApplication;
-
-use JetShop\Core_ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
-
-trait ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait {
-	use Core_ShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
-}

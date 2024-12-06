@@ -25,6 +25,7 @@ $price_formatter = Admin_Managers::PriceFormatter();
 $product_manager = Admin_Managers::Product();
 $icons = Order_Item::getItemIcons();
 
+
 ?>
 
 	
@@ -39,8 +40,10 @@ $icons = Order_Item::getItemIcons();
 			<th><?=Tr::_('Not available')?></th>
 			
 			<th style="width: 100px;"><?=Tr::_('VAT')?></th>
-			<th style="width: 200px;"><?=Tr::_('Price per item')?></th>
-			<th style="width: 200px;"><?=Tr::_('Total amount')?></th>
+			<th style="width: 200px;"><?=Tr::_('Price per item<br><span style="font-weight: normal">without VAT</span>')?></th>
+			<th style="width: 200px;"><?=Tr::_('Price per item<br><span style="font-weight: normal">with VAT</span>')?></th>
+			<th style="width: 200px;"><?=Tr::_('Total amount<br><span style="font-weight: normal">without VAT</span>')?></th>
+			<th style="width: 200px;"><?=Tr::_('Total amount<br><span style="font-weight: normal">with VAT</span>')?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -77,8 +80,10 @@ $icons = Order_Item::getItemIcons();
 				</td>
 				
 				<td><?=$item->getVatRate()?>%</td>
-				<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $item->getPricePerUnit() )?></td>
-				<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $item->getTotalAmount() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $order->getPricelist()->getCurrency(), $item->getPricePerUnit_WithoutVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithVAT( $order->getPricelist()->getCurrency(), $item->getPricePerUnit_WithVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $order->getPricelist()->getCurrency(), $item->getTotalAmount_WithoutVat() )?></td>
+				<td><?=$price_formatter->formatWithCurrency_WithVAT( $order->getPricelist()->getCurrency(), $item->getTotalAmount_WithVat() )?></td>
 			</tr>
 			<?php
 			
@@ -107,8 +112,8 @@ $icons = Order_Item::getItemIcons();
 						</td>
 
 						<td><?=$set_item->getVatRate()?>%</td>
-						<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $set_item->getPricePerUnit() )?></td>
-						<td><?=$price_formatter->formatWithCurrency( $order->getCurrency(), $set_item->getTotalAmount()*$item->getNumberOfUnits() )?></td>
+						<td><?=$price_formatter->formatWithCurrency( $order->getPricelist(), $set_item->getPricePerUnit() )?></td>
+						<td><?=$price_formatter->formatWithCurrency( $order->getPricelist(), $set_item->getTotalAmount()*$item->getNumberOfUnits() )?></td>
 					</tr>
 				<?php
 				endforeach; ?>
@@ -116,8 +121,8 @@ $icons = Order_Item::getItemIcons();
 					<td></td>
 					<td></td>
 					<td colspan="4"><i><?=Tr::_('Set discount:')?></i></td>
-					<td><i><?=$price_formatter->formatWithCurrency($order->getCurrency(), $item->getSetDiscountPerUnit())?></i></td>
-					<td><i><?=$price_formatter->formatWithCurrency($order->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i></td>
+					<td><i><?=$price_formatter->formatWithCurrency($order->getPricelist(), $item->getSetDiscountPerUnit())?></i></td>
+					<td><i><?=$price_formatter->formatWithCurrency($order->getPricelist(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i></td>
 				</tr>
 				<?php
 			endif;
@@ -172,8 +177,18 @@ $icons = Order_Item::getItemIcons();
 		?>
 		</tbody>
 	</table>
+
+
+<?php
+$showSummary = function( $wo_VAT, $w_VAT ) use ($order, $price_formatter) {
+	?>
+	<div style="opacity: 0.5"><?=$price_formatter->formatWithCurrency_WithoutVAT($order->getPricelist()->getCurrency(), $wo_VAT)?> <?=Tr::_('without VAT')?></div>
+	<div><?=$price_formatter->formatWithCurrency_WithVAT($order->getPricelist()->getCurrency(), $w_VAT)?> <?=Tr::_('with VAT')?></div>
+	<?php
+};
+?>
 	
-	<div style="display: grid;grid-template-columns: 1fr 400px;">
+	<div style="display: grid;grid-template-columns: 1fr 500px;">
 		<div>
 		
 		</div>
@@ -182,32 +197,44 @@ $icons = Order_Item::getItemIcons();
 				<tr>
 					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_PRODUCT]?></td>
 					<td><?=Tr::_('Products:')?></td>
-					<td style="width: 200px;"><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getProductAmount())?></td>
+					<td style="width: 200px;">
+						<?php $showSummary( $order->getProductAmount_WithoutVAT(), $order->getProductAmount_WithVAT() ); ?>
+					</td>
 				</tr>
 				<tr>
 					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_SERVICE]?></td>
 					<td><?=Tr::_('Services:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getServiceAmount())?></td>
+					<td>
+						<?php $showSummary( $order->getServiceAmount_WithoutVAT(), $order->getServiceAmount_WithVAT() ); ?>
+					</td>
 				</tr>
 				<tr>
 					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_DELIVERY]?></td>
 					<td><?=Tr::_('Delivery:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getDeliveryAmount())?></td>
+					<td>
+						<?php $showSummary( $order->getDeliveryAmount_WithoutVAT(), $order->getDeliveryAmount_WithVAT() ); ?>
+					</td>
 				</tr>
 				<tr>
 					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_PAYMENT]?></td>
 					<td><?=Tr::_('Payment:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getPaymentAmount())?></td>
+					<td>
+						<?php $showSummary( $order->getPaymentAmount_WithoutVAT(), $order->getPaymentAmount_WithVAT() ); ?>
+					</td>
 				</tr>
 				<tr>
 					<td style="width: 20px"><?=$icons[Order_Item::ITEM_TYPE_DISCOUNT]?></td>
 					<td><?=Tr::_('Discounts:')?></td>
-					<td><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getDiscountAmount())?></td>
+					<td>
+						<?php $showSummary( $order->getDiscountAmount_WithoutVAT(), $order->getDiscountAmount_WithVAT() ); ?>
+					</td>
 				</tr>
 				<tr>
 					<td><?=UI::icon('calculator')?></td>
-					<td style="font-weight: bolder;font-size: 1.8"><?=Tr::_('Total amount:')?></td>
-					<td style="font-weight: bolder;font-size: 1.8"><?=$price_formatter->formatWithCurrency($order->getCurrency(), $order->getTotalAmount())?></td>
+					<td style="font-weight: bolder;font-size: 1.2rem" nowrap=""><?=Tr::_('Total amount:')?></td>
+					<td style="font-weight: bolder;font-size: 1.2rem" nowrap="">
+						<?php $showSummary( $order->getTotalAmount_WithoutVAT(), $order->getTotalAmount_WithVAT() ); ?>
+					</td>
 				</tr>
 			</table>
 		</div>

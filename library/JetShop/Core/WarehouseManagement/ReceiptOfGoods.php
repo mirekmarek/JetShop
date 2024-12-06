@@ -8,12 +8,12 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Logger;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\Entity_Simple;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement;
@@ -209,13 +209,13 @@ class Core_WarehouseManagement_ReceiptOfGoods extends Entity_Simple implements N
 		return $this->created;
 	}
 	
-	public function getNumberSeriesEntityShop(): ?Shops_Shop
+	public function getNumberSeriesEntityShop(): ?EShop
 	{
 		return null;
 	}
 	
 	
-	public function getCurrency() : Currencies_Currency
+	public function getCurrency() : Currency
 	{
 		return Currencies::get( $this->currency_code );
 	}

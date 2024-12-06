@@ -5,6 +5,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Product;
 
 
 /**

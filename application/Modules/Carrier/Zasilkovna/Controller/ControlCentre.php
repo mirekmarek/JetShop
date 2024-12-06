@@ -17,21 +17,21 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 
 	public function default_Action() : void
 	{
-		$shop = $this->getShop();
+		$eshop = $this->getEshop();
 		/**
 		 * @var Main $module
 		 */
 		$module = $this->getModule();
 		
-		$shop_config = $module->getShopConfig( $shop );
+		$eshop_config = $module->getEshopConfig( $eshop );
 		
-		$form = $shop_config->getForm( $module, $shop );
+		$form = $eshop_config->getForm( $module, $eshop );
 		
 		if( $form->catch() ) {
 
 			$ok = true;
 			try {
-				$shop_config->saveConfigFile();
+				$eshop_config->saveConfigFile();
 			} catch( Exception $e ) {
 				$ok = false;
 				UI_messages::danger( Tr::_('Error during configuration saving: ').$e->getMessage(), context: 'CC' );
@@ -44,7 +44,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller {
 			Http_Headers::reload();
 		}
 		
-		$this->view->setVar('config', $shop_config);
+		$this->view->setVar('config', $eshop_config);
 		$this->view->setVar('form', $form);
 		
 		$this->output('control-centre/default');

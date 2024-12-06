@@ -1,0 +1,88 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\EShop;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View   $this
+ * @var Product $product
+ */
+
+$product = $this->getRaw('item');
+
+$d_mode = $product->getDescriptionMode();
+
+$form = $product->getProductDescriptionEditForm();
+
+
+$this->setVar('form', $form);
+
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 1 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 7 ] );
+
+
+require '_toolbar.phtml';
+
+?>
+
+<?=$form->start()?>
+
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+	<br>
+	<?php
+	
+	if( $d_mode ) {
+		echo Admin_Managers::EntityEdit_WithEShopData()->renderDescriptionBlocks(form: $form, renderer: function( Locale $locale, string $locale_str ) use ($form) {
+		?>
+		<fieldset>
+			<?=$form->field('/description/'.$locale_str.'/name')?>
+			<?php if($form->fieldExists('/description/'.$locale_str.'/variant_name')): ?>
+				<?=$form->field('/description/'.$locale_str.'/variant_name')?>
+			<?php endif; ?>
+			<?=$form->field('/description/'.$locale_str.'/description')?>
+			<?=$form->field('/description/'.$locale_str.'/short_description')?>
+		</fieldset>
+
+		<fieldset>
+			<legend class="sub"><?=Tr::_('SEO')?></legend>
+			<?=$form->field('/description/'.$locale_str.'/seo_title')?>
+			<?=$form->field('/description/'.$locale_str.'/seo_description')?>
+			<?=$form->field('/description/'.$locale_str.'/seo_keywords')?>
+		</fieldset>
+		<?php
+		});
+	} else {
+		echo Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(form: $form, renderer: function( EShop $eshop ) use ($form) {
+			$eshop_key = $eshop->getKey();
+			?>
+			<fieldset>
+				<?=$form->field('/eshop_data/'.$eshop_key.'/name')?>
+				<?php if($form->fieldExists('/eshop_data/'.$eshop_key.'/variant_name')): ?>
+					<?=$form->field('/eshop_data/'.$eshop_key.'/variant_name')?>
+				<?php endif; ?>
+				<?=$form->field('/eshop_data/'.$eshop_key.'/description')?>
+				<?=$form->field('/eshop_data/'.$eshop_key.'/short_description')?>
+			</fieldset>
+
+			<fieldset>
+				<legend class="sub"><?=Tr::_('SEO')?></legend>
+				<?=$form->field('/eshop_data/'.$eshop_key.'/seo_title')?>
+				<?=$form->field('/eshop_data/'.$eshop_key.'/seo_description')?>
+				<?=$form->field('/eshop_data/'.$eshop_key.'/seo_keywords')?>
+			</fieldset>
+			<?php
+		});
+		
+	}?>
+	
+</div>
+
+<?=$form->end()?>

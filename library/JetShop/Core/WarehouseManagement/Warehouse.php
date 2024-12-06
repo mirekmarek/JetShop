@@ -13,7 +13,7 @@ use Jet\Form_Field;
 
 use JetApplication\Context;
 use JetApplication\Currencies;
-use JetApplication\Currencies_Currency;
+use JetApplication\Currency;
 use JetApplication\DataList;
 use JetApplication\Entity_Common;
 use JetApplication\Product;
@@ -184,7 +184,7 @@ class Core_WarehouseManagement_Warehouse extends Entity_Common
 		$this->currency_code = $currency_code;
 	}
 	
-	public function getCurrency() : Currencies_Currency
+	public function getCurrency() : Currency
 	{
 		return Currencies::get( $this->currency_code );
 	}
@@ -396,7 +396,7 @@ class Core_WarehouseManagement_Warehouse extends Entity_Common
 		int                                    $product_id,
 		float                                  $number_of_units,
 		Context                                $context,
-		?Currencies_Currency                   $currency = null,
+		?Currency                              $currency = null,
 		?float                                 $price_per_unit = null,
 		string                                 $sector = '',
 		string                                 $rack = '',
@@ -588,14 +588,14 @@ class Core_WarehouseManagement_Warehouse extends Entity_Common
 	
 	
 	public function in(
-		int $product_id,
-		float $number_of_units,
-		Context $context,
-		Currencies_Currency $currency,
-		float $price_per_unit,
-		string $sector,
-		string $rack,
-		string $position
+		int      $product_id,
+		float    $number_of_units,
+		Context  $context,
+		Currency $currency,
+		float    $price_per_unit,
+		string   $sector,
+		string   $rack,
+		string   $position
 	) : WarehouseManagement_StockMovement
 	{
 		return $this->movement(
@@ -612,14 +612,14 @@ class Core_WarehouseManagement_Warehouse extends Entity_Common
 	}
 	
 	public function transferIn(
-		int $product_id,
-		float $number_of_units,
-		Context $context,
-		Currencies_Currency $currency,
-		float $price_per_unit,
-		string $sector,
-		string $rack,
-		string $position
+		int      $product_id,
+		float    $number_of_units,
+		Context  $context,
+		Currency $currency,
+		float    $price_per_unit,
+		string   $sector,
+		string   $rack,
+		string   $position
 	) : WarehouseManagement_StockMovement
 	{
 		

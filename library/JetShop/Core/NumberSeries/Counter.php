@@ -25,7 +25,7 @@ abstract class Core_NumberSeries_Counter extends DataModel
 		max_len: 50,
 		is_id: true,
 	)]
-	protected string $shop_key = '';
+	protected string $eshop_key = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT

@@ -3,6 +3,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use Jet\MVC_View;
 use Jet\Tr;
+use Jet\UI;
 use JetApplication\Admin_Managers;
 
 
@@ -15,30 +16,75 @@ $return = $this->getRaw( 'return' );
 
 ?>
 <?php require 'edit/toolbar.phtml';?>
-<?php require 'edit/main.phtml';?>
 
-<div class="card card-body" style="margin: 10px;">
-	<h5><?=Tr::_('Product')?></h5>
-	
-	<p><?=Admin_Managers::Product()->showName( $return->getProductId() )?></p>
+<div id="main-col">
+	<div id="o_main" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<?php require 'edit/main.phtml'; ?>
+	</fieldset>
+
+	<div id="o_product" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<div class="card card-body" style="margin: 10px;">
+			<h5><?=Tr::_('Product')?></h5>
+
+			<p><?=Admin_Managers::Product()->showName( $return->getProductId() )?></p>
+		</div>
+	</fieldset>
+
+	<div id="o_description" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<div class="card card-body" style="margin: 10px;">
+			<h5><?=Tr::_('Description of the problem')?></h5>
+
+			<p><?=nl2br($return->getProblemDescription())?></p>
+		</div>
+	</fieldset>
+
+
+
+	<div id="o_url" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<div class="card card-body" style="margin: 10px;">
+			<h5><?=Tr::_('URL')?></h5>
+			<p><a href="<?=$return->getURL()?>" target="_blank"><?=$return->getURL()?></a></p>
+		</div>
+	</fieldset>
+
+
+	<div id="o_history" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('Return of goods history')?></legend>
+		<div id="return-of-goods-history">
+			<?php require 'edit/history.phtml';?>
+		</div>
+	</fieldset>
+
+
+	<div id="o_sent_emails" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></legend>
+
+		<div id="sent-emails">
+			<?php require 'edit/sent-emails.phtml'; ?>
+		</div>
+	</fieldset>
+
+	<br><br><br><br>
 </div>
 
 
-<div class="card card-body" style="margin: 10px;">
-	<h5><?=Tr::_('Description of the problem')?></h5>
-	
-	<p><?=nl2br($return->getProblemDescription())?></p>
-</div>
+<style>
+	.o_section {
+		padding: 10px;
+		margin-bottom: 50px;
+	}
 
-<div class="card card-body" style="margin: 10px;">
-	<h5><?=Tr::_('URL')?></h5>
-	<p><a href="<?=$return->getURL()?>" target="_blank"><?=$return->getURL()?></a></p>
-</div>
-
-<br><br>
-<div id="return-of-goods-history">
-	<?php require 'edit/history.phtml';?>
-</div>
+	.o_anchor {
+		position: relative;
+		top: -80px;
+	}
+</style>
 
 <?php
 foreach(Handler::getHandlers() as $handler):
@@ -46,9 +92,3 @@ foreach(Handler::getHandlers() as $handler):
 endforeach;
 ?>
 
-<div id="sent-emails">
-	<?php require 'edit/sent-emails.phtml';?>
-</div>
-
-
-<br><br><br><br>

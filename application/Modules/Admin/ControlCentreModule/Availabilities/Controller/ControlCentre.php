@@ -14,7 +14,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
 use JetApplication\Availabilities;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 
 
 /**
@@ -41,7 +41,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		$GET = Http_Request::GET();
 		if( $GET->exists('add') ) {
-			$new_pl = new Availabilities_Availability();
+			$new_pl = new Availability();
 			
 			if( $new_pl->getAddForm()->catch() ) {
 				Availabilities::addAvailability( $new_pl );

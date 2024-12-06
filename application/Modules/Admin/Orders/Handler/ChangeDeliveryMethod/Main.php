@@ -17,7 +17,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Delivery_Method;
-use JetApplication\Delivery_Method_ShopData;
+use JetApplication\Delivery_Method_EShopData;
 
 class Handler_ChangeDeliveryMethod_Main extends Handler
 {
@@ -48,7 +48,7 @@ class Handler_ChangeDeliveryMethod_Main extends Handler
 		$pto_point->setDefaultValue( $this->order->getDeliveryPersonalTakeoverDeliveryPointCode() );
 		$pto_point->setValidator( function() use ($pto_point, $delivery_method) {
 			$delivery_method_id = $delivery_method->getValue();
-			$dm = Delivery_Method_ShopData::get( $delivery_method_id, $this->order->getShop() );
+			$dm = Delivery_Method_EShopData::get( $delivery_method_id, $this->order->getEshop() );
 			$place_code = $pto_point->getValue();
 			
 			if($dm->isPersonalTakeover()) {
@@ -73,7 +73,7 @@ class Handler_ChangeDeliveryMethod_Main extends Handler
 		
 		
 		$fee = new Form_Field_Float('fee', 'Fee:');
-		$fee->setDefaultValue( $this->order->getDeliveryAmount() );
+		$fee->setDefaultValue( $this->order->getDeliveryAmount_WithVAT() );
 		
 		
 		$this->form = new Form('change_delivery_method_form', [
@@ -92,9 +92,9 @@ class Handler_ChangeDeliveryMethod_Main extends Handler
 		if( $this->form->catchInput() ) {
 			
 			if($this->form->validate()) {
-				$delivery_method = Delivery_Method_ShopData::get(
+				$delivery_method = Delivery_Method_EShopData::get(
 					$this->form->field('delivery_method')->getValue(),
-					$this->order->getShop()
+					$this->order->getEshop()
 				);
 				
 				if($delivery_method) {

@@ -4,15 +4,15 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithShopRelation;
-use JetApplication\Shops_Shop;
+use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShop;
 
 
 #[DataModel_Definition(
 	name: 'marketplace_join_cache',
 	database_table_name: 'marketplace_join_cache',
 )]
-abstract class Core_MarketplaceIntegration_Join_Cache extends Entity_WithShopRelation
+abstract class Core_MarketplaceIntegration_Join_Cache extends Entity_WithEShopRelation
 {
 	
 	
@@ -37,12 +37,12 @@ abstract class Core_MarketplaceIntegration_Join_Cache extends Entity_WithShopRel
 	protected mixed $cache_data = null;
 	
 	
-	public static function get( string $marketplace_code, Shops_Shop $shop, string $cache_key  ) : static|null
+	public static function get( string $marketplace_code, EShop $eshop, string $cache_key  ) : static|null
 	{
 		return static::load( [
 			'marketplace_code' => $marketplace_code,
 			'AND',
-			$shop->getWhere(),
+			$eshop->getWhere(),
 			'AND',
 			'cache_key' => $cache_key
 		] );

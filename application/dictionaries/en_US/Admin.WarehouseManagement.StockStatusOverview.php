@@ -64,4 +64,7 @@ return [
 	'Receipt Of Goods' => '',
 	'Cancel' => '',
 	'Order dispatch' => '',
+	'Ordered from supplier:' => '',
+	'On the way from another warehouse:' => '',
+	'On the way to another warehouse:' => '',
 ];

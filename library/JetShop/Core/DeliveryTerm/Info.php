@@ -1,21 +1,22 @@
 <?php
 namespace JetShop;
 
+use Exception;
 use Jet\BaseObject_Interface_Serializable_JSON;
 use Jet\Data_DateTime;
 use Jet\Tr;
 use JetApplication\Availabilities;
-use JetApplication\Availabilities_Availability;
+use JetApplication\Availability;
 use JetApplication\Calendar;
 use JetApplication\DeliveryTerm;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializable_JSON {
 	
-	protected Availabilities_Availability $availability;
+	protected Availability $availability;
 	
-	protected Shops_Shop $shop;
+	protected EShop $eshop;
 	
 	protected bool $is_virtual_product = false;
 	
@@ -35,24 +36,24 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	public function __construct() {
 	}
 	
-	public function getAvailability(): Availabilities_Availability
+	public function getAvailability(): Availability
 	{
 		return $this->availability;
 	}
 	
-	public function setAvailability( Availabilities_Availability $availability ): void
+	public function setAvailability( Availability $availability ): void
 	{
 		$this->availability = $availability;
 	}
 	
-	public function getShop(): Shops_Shop
+	public function getEshop(): EShop
 	{
-		return $this->shop;
+		return $this->eshop;
 	}
 	
-	public function setShop( Shops_Shop $shop ): void
+	public function setEshop( EShop $eshop ): void
 	{
-		$this->shop = $shop;
+		$this->eshop = $eshop;
 	}
 	
 	
@@ -113,7 +114,7 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	public function getDeliveryInfoTextTranslated(): string
 	{
 		$text =  $this->delivery_info_text;
-		$locale = $this->shop->getLocale();
+		$locale = $this->eshop->getLocale();
 		
 		return Tr::_(
 			text: $text,
@@ -161,7 +162,7 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 		}
 		
 		return Calendar::getNextBusinessDate(
-			shop: $this->shop,
+			eshop: $this->eshop,
 			number_of_working_days: $length_of_delivery,
 			start_date: $available_from
 		);
@@ -181,16 +182,20 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 		$data = json_decode( $json, true );
 		
 		$item = new static();
+
+		try {
+			$item->is_virtual_product = $data['is_virtual_product'];
+			$item->number_of_units_available = $data['number_of_units_available'];
+			$item->length_of_delivery = $data['length_of_delivery'];
+			$item->allow_to_order_more = $data['allow_to_order_more'];
+			$item->situation = $data['situation'];
+			$item->delivery_info_text = $data['delivery_info_text'];
+			$item->available_from_date = Data_DateTime::catchDate( $data['available_from_date'] );
+			$item->availability = Availabilities::get( $data['availability'] );
+			$item->eshop = EShops::get( $data['eshop']??EShops::getDefault()->getKey() );
+		} catch( Exception $e ) {
 		
-		$item->availability = Availabilities::get( $data['availability'] );
-		$item->shop = Shops::get( $data['shop'] );
-		$item->is_virtual_product = $data['is_virtual_product'];
-		$item->number_of_units_available = $data['number_of_units_available'];
-		$item->length_of_delivery = $data['length_of_delivery'];
-		$item->allow_to_order_more = $data['allow_to_order_more'];
-		$item->situation = $data['situation'];
-		$item->delivery_info_text = $data['delivery_info_text'];
-		$item->available_from_date = Data_DateTime::catchDate( $data['available_from_date'] );
+		}
 		
 		return $item;
 	}
@@ -204,7 +209,7 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	{
 		$data = get_object_vars( $this );
 		
-		$data['shop'] = $this->shop->getKey();
+		$data['eshop'] = $this->eshop->getKey();
 		$data['availability'] = $this->availability->getCode();
 		
 		return $data;

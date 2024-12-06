@@ -57,7 +57,7 @@ trait Core_Admin_Entity_Marketing_Trait {
 				$this->setImage( $image_class, $val );
 				$this->save();
 			},
-			shop: $this->getShop()
+			eshop: $this->getEshop()
 		);
 	}
 	

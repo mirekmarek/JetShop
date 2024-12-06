@@ -1,0 +1,54 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+
+use Jet\MVC_View;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$step = $cash_desk->getCurrentStep();
+?>
+
+<?=EShop_Managers::Analytics()?->beginCheckout( $cash_desk )?>
+
+
+<div id="cash_desk_main_layout">
+	<div>
+		<div id="cash_desk_status_bar">
+			<?php require 'status_bar.phtml'; ?>
+		</div>
+		
+		<div id="cash_desk_delivery" class="step-block">
+			<?php require 'delivery.phtml';?>
+		</div>
+
+		<div id="cash_desk_payment" class="step-block" <?php if($step==CashDesk::STEP_DELIVERY):?>style="display: none"<?php endif;?>>
+			<?php require 'payment.phtml';?>
+		</div>
+
+		<div id="cash_desk_customer" class="step-block" <?php if($step==CashDesk::STEP_DELIVERY || $step==CashDesk::STEP_PAYMENT ):?>style="display: none"<?php endif;?>>
+			<?php require 'customer.phtml';?>
+		</div>
+
+		<div id="cash_desk_confirm" class="step-block" <?php if($step==CashDesk::STEP_DELIVERY || $step==CashDesk::STEP_PAYMENT || $step==CashDesk::STEP_CUSTOMER ):?>style="display: none"<?php endif;?>>
+			<?php require 'confirm.phtml';?>
+		</div>
+
+		<br/><br/><br/><br/><br/>
+	</div>
+
+	<div id="cash_desk_overview">
+		<?php require 'overview.phtml';?>
+	</div>
+
+</div>
+
+<?php
+require 'delivery/select_personal_takeover_point_dialog.phtml';
+require 'js.phtml';
+

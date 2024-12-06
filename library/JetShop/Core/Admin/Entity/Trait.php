@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use Jet\Form;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 trait Core_Admin_Entity_Trait {
 	
@@ -51,7 +51,7 @@ trait Core_Admin_Entity_Trait {
 	public function getAddForm() : Form
 	{
 		if(!$this->_add_form) {
-			$this->setShop( Shops::getCurrent() );
+			$this->setEshop( EShops::getCurrent() );
 			
 			$this->_add_form = $this->createForm('add_form');
 			

@@ -240,4 +240,10 @@ return [
 	'Supplier' => '',
 	'Internal name' => '',
 	'Internal code' => '',
+	'Set of products' => '',
+	'Unknown item %ID%' => '',
+	'Activate completely' => '',
+	'Supplier code:' => '',
+	'Allow to order when sold out' => '',
+	'Available units:' => '',
 ];

@@ -7,13 +7,14 @@ namespace JetShop;
 
 use Jet\Translator;
 use JetApplication\EMail;
-use JetApplication\EMail_Layout_ShopData;
+use JetApplication\EMail_Layout_EShopData;
 use JetApplication\EMail_Template_Block;
 use JetApplication\EMail_Template_Property;
 use JetApplication\EMail_TemplateProvider;
-use JetApplication\EMail_TemplateText_ShopData;
+use JetApplication\EMail_TemplateText;
+use JetApplication\EMail_TemplateText_EShopData;
 use JetApplication\Managers;
-use JetApplication\Shops_Shop;
+use JetApplication\EShop;
 
 abstract class Core_EMail_Template {
 	
@@ -53,7 +54,7 @@ abstract class Core_EMail_Template {
 		
 	}
 	
-	public function initTest( Shops_Shop $shop ) : void
+	public function initTest( EShop $eshop ) : void
 	{
 	
 	}
@@ -134,7 +135,7 @@ abstract class Core_EMail_Template {
 
 	
 	
-	protected function applyProperties( Shops_Shop $shop, EMail $email ) : void
+	protected function applyProperties( EShop $eshop, EMail $email ) : void
 	{
 		$data = [];
 		
@@ -160,16 +161,28 @@ abstract class Core_EMail_Template {
 	}
 	
 
-	public function createEmail( Shops_Shop $shop ) : EMail
+	public function createEmail( EShop $eshop ) : EMail
 	{
 		
 		/**
-		 * @var EMail_TemplateText_ShopData $template
+		 * @var EMail_TemplateText_EShopData $template
 		 */
-		$template = EMail_TemplateText_ShopData::getByInternalCode(
+		$template = EMail_TemplateText_EShopData::getByInternalCode(
 			$this->getInternalCode(),
-			$shop
+			$eshop
 		);
+		
+		if(!$template) {
+			$template = new EMail_TemplateText();
+			$template->checkShopData();
+			$template->setInternalCode( $this->getInternalCode() );
+			$template->setInternalName( $this->getInternalName() );
+			$template->setInternalNotes( $this->getInternalNotes() );
+			
+			$template->save();
+			
+			$template->activateCompletely();
+		}
 		
 		$placeholder = '%body%';
 		
@@ -179,7 +192,7 @@ abstract class Core_EMail_Template {
 		$body_txt = $template->getBodyTxt();
 		
 		if($template->getLayoutId()) {
-			$layout = EMail_Layout_ShopData::get( $template->getLayoutId(), $shop );
+			$layout = EMail_Layout_EShopData::get( $template->getLayoutId(), $eshop );
 			if($layout) {
 				
 				if(str_contains($layout->getLayoutHTML(), $placeholder)) {
@@ -195,7 +208,7 @@ abstract class Core_EMail_Template {
 		
 		
 		$email = new EMail();
-		$email->setShop( $shop );
+		$email->setEshop( $eshop );
 		$email->setTemplateCode( $template->getInternalCode() );
 		$email->setSenderEmail( $template->getSenderEmail() );
 		$email->setSenderName( $template->getSenderName() );
@@ -203,20 +216,20 @@ abstract class Core_EMail_Template {
 		$email->setBodyTxt( $body_txt );
 		$email->setBodyHtml( $body_html );
 		
-		$this->setupEMail( $shop, $email );
+		$this->setupEMail( $eshop, $email );
 		
-		$this->applyProperties( $shop, $email );
+		$this->applyProperties( $eshop, $email );
 		
 		return $email;
 	}
 	
-	abstract public function setupEMail( Shops_Shop $shop, EMail $email ) : void;
+	abstract public function setupEMail( EShop $eshop, EMail $email ) : void;
 	
 	
-	public function createTestEmail( Shops_Shop $shop ) : EMail
+	public function createTestEmail( EShop $eshop ) : EMail
 	{
-		$this->initTest( $shop );
-		$email = $this->createEmail( $shop );
+		$this->initTest( $eshop );
+		$email = $this->createEmail( $eshop );
 		$email->setSaveHistoryAfterSend( false );
 		
 		return $email;

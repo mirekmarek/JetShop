@@ -8,8 +8,8 @@
 namespace JetApplicationModule\Carrier\PPL;
 
 use JetApplication\Carrier_DeliveryPoint;
-use JetApplication\Shops;
-use JetApplication\Shops_Shop;
+use JetApplication\EShops;
+use JetApplication\EShop;
 
 class Client {
 	protected Main $carrier;
@@ -26,8 +26,8 @@ class Client {
 	{
 		$res = [];
 		
-		foreach(Shops::getList() as $shop) {
-			foreach( $this->_downloadUpToDateDeliveryPointsList( $shop ) as $item ) {
+		foreach( EShops::getList() as $eshop) {
+			foreach( $this->_downloadUpToDateDeliveryPointsList( $eshop ) as $item ) {
 				$res[$item->getKey()] = $item;
 			}
 		}
@@ -38,7 +38,7 @@ class Client {
 	/**
 	 * @return Carrier_DeliveryPoint[]
 	 */
-	public function _downloadUpToDateDeliveryPointsList( Shops_Shop $shop ): array
+	public function _downloadUpToDateDeliveryPointsList( EShop $eshop ): array
 	{
 		//TODO:
 		return [];

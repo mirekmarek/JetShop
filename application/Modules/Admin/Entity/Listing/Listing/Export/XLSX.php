@@ -27,7 +27,7 @@ class Listing_Export_XLSX extends DataListing_Export
 		);
 		$xlsx->setSheetName('Sheet1');
 		
-		$file_name = 'products_' . date( 'YmdHis' ) . '.xlsx';
+		$file_name = 'export_' . date( 'YmdHis' ) . '.xlsx';
 		
 		$xlsx->sentToBeDownloaded( $file_name );
 	}

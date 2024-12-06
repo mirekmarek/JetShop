@@ -1,0 +1,24 @@
+<?php
+namespace JetApplicationModule\Events\Complaint\MessageForCustomer;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Complaint_Event;
+use JetApplication\Complaint_Note;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint_Event $event
+ * @var Main $handler
+ * @var Complaint_Note $note
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');
+
+$note = $event->getContext();
+if(!$note) {
+	return;
+}
+
+echo Admin_Managers::Note()?->showNote( $note );

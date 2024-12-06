@@ -1,0 +1,37 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_icon;
+use JetApplication\Delivery_Method_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Delivery_Method_EShopData $delivery_method
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+
+?>
+
+<div class="method" onclick="CashDesk.delivery.personalTakeover.startSelection()">
+
+	<div>
+		<input type="radio" name="delivery_method" onclick="setTimeout(function(){CashDesk.delivery.personalTakeover.startSelection()}, 10);return false;" />
+	</div>
+	
+	
+	<div class="method-icon">
+		<?=UI::icon('personal-takeover')->setSize(UI_icon::SIZE_LARGE)?>
+	</div>
+	
+	<div class="method-title">
+		<b><?=Tr::_('Personal takeover')?></b>
+	</div>
+	
+	<div></div>
+</div>

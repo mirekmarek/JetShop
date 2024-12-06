@@ -8,7 +8,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_tabs;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  * @var MVC_View   $this
@@ -26,22 +26,22 @@ $agree_by_groups = $this->getRaw('agree_by_groups');
 $total = $disagree_count+$agree_count;
 
 
-$shops = [];
-foreach(Shops::getList() as $shop) {
-	$shops[$shop->getKey()] = UI::flag( $shop->getLocale() ).' '.$shop->getShopName();
+$eshops = [];
+foreach( EShops::getList() as $eshop) {
+	$eshops[$eshop->getKey()] = UI::flag( $eshop->getLocale() ).' '.$eshop->getName();
 }
 
 //require 'filter.phtml';
-$tabs = new UI_tabs(['' => Tr::_('All')]+$shops, function( $tab ) {
-	return Http_Request::currentURI(['shop'=>$tab]);
-}, $this->getString('shop_key'));
+$tabs = new UI_tabs(['' => Tr::_('All')]+$eshops, function( $tab ) {
+	return Http_Request::currentURI(['eshop'=>$tab]);
+}, $this->getString('eshop_key'));
 
 echo $tabs;
 ?>
 
 <div class="toolbar">
 	<form method="get">
-		<input type="hidden" name="shop" value="<?=$this->getString('shop_key')?>">
+		<input type="hidden" name="shop" value="<?=$this->getString('eshop_key')?>">
 		<div style="display: flex;gap: 10px;align-items: center;padding-left: 20px;">
 			<div><?=Tr::_('From:')?></div>
 			<div><input type="date" name="date_from" value="<?=$this->getString('date_from')?>" class="form-control"></div>

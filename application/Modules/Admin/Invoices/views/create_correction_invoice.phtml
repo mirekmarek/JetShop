@@ -10,7 +10,7 @@ use JetApplication\Admin_Managers_Entity_Listing;
 
 use Jet\MVC_View;
 use JetApplication\Invoice_Item;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 
 /**
@@ -57,10 +57,10 @@ $correction_form->renderer()->setDefaultFieldWidth([
 
 				<table style="margin: 10px">
 					
-					<?php if(Shops::isMultiShopMode()): ?>
+					<?php if(EShops::isMultiEShopMode()): ?>
 						<tr>
-							<td><b><?=Tr::_('Shop')?></b></td>
-							<td style="padding: 3px"><?=$invoice->getShop()->getShopName()?></td>
+							<td><b><?=Tr::_('e-shop')?></b></td>
+							<td style="padding: 3px"><?=$invoice->getEshop()->getName()?></td>
 						</tr>
 					<?php endif; ?>
 					<?php if($invoice->getOrderId()): ?>
@@ -91,7 +91,7 @@ $correction_form->renderer()->setDefaultFieldWidth([
 				<?=Admin_Managers::Customer()->showName( $invoice->getCustomerId() )?>
 				<br>
 				
-				<?=Admin_Managers::Customer()->formatAddress( $invoice->getShop(), $invoice->getCustomerAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $invoice->getEshop(), $invoice->getCustomerAddress() )?>
 
 				<table>
 					<tr>
@@ -112,7 +112,7 @@ $correction_form->renderer()->setDefaultFieldWidth([
 			<div class="card-header"><b><?=Tr::_('Issuer')?></b></div>
 			<div class="card-body">
 				
-				<?=Admin_Managers::Customer()->formatAddress( $invoice->getShop(), $invoice->getIssuerAddress() )?>
+				<?=Admin_Managers::Customer()->formatAddress( $invoice->getEshop(), $invoice->getIssuerAddress() )?>
 				<div style="font-size: 0.8rem">
 					<?=$invoice->getIssuerInfo()?>
 				</div>
@@ -168,9 +168,9 @@ $correction_form->renderer()->setDefaultFieldWidth([
 				<?php if($has_VAT): ?>
 				<td>
 					<div style="display: flex;align-items: center;gap: 5px;">
-					<?=$invoice->getCurrency()->getSymbolLeft()?>
+					<?=$invoice->getCurrency()->getSymbolLeft_WithVAT()?>
 					<?=$correction_form->field('/price_per_unit_with_vat/'.$i)->input()?>
-					<?=$invoice->getCurrency()->getSymbolRight()?>
+					<?=$invoice->getCurrency()->getSymbolRight_WithVAT()?>
 					</div>
 				</td>
 				<?php endif; ?>
@@ -178,9 +178,9 @@ $correction_form->renderer()->setDefaultFieldWidth([
 
 				<td>
 					<div style="display: flex;align-items: center;gap: 5px;">
-					<?=$invoice->getCurrency()->getSymbolLeft()?>
+					<?=$invoice->getCurrency()->getSymbolLeft_WithoutVAT()?>
 					<?=$correction_form->field('/price_per_unit_without_vat/'.$i)->input()?>
-					<?=$invoice->getCurrency()->getSymbolRight()?>
+					<?=$invoice->getCurrency()->getSymbolRight_WithoutVAT()?>
 					</div>
 				</td>
 				
@@ -193,17 +193,17 @@ $correction_form->renderer()->setDefaultFieldWidth([
 
 				<td>
 					<div style="display: flex;align-items: center;gap: 5px;">
-						<?=$invoice->getCurrency()->getSymbolLeft()?>
+						<?=$invoice->getCurrency()->getSymbolLeft_WithoutVAT()?>
 						<?=$correction_form->field('/total_amount_without_vat/'.$i)->input()?>
-						<?=$invoice->getCurrency()->getSymbolRight()?>
+						<?=$invoice->getCurrency()->getSymbolRight_WithoutVAT()?>
 					</div>
 				</td>
 				<?php if($has_VAT): ?>
 					<td>
 						<div style="display: flex;align-items: center;gap: 5px;">
-							<?=$invoice->getCurrency()->getSymbolLeft()?>
+							<?=$invoice->getCurrency()->getSymbolLeft_WithVAT()?>
 							<?=$correction_form->field('/total_amount_with_vat/'.$i)->input()?>
-							<?=$invoice->getCurrency()->getSymbolRight()?>
+							<?=$invoice->getCurrency()->getSymbolRight_WithVAT()?>
 						</div>
 					</td>
 				<?php endif; ?>
@@ -243,11 +243,8 @@ $correction_form->renderer()->setDefaultFieldWidth([
 					<td></td>
 					<td colspan="99">
 						<i><?=Tr::_('Set discount:')?></i>
-						<i><?=$price_formatter->formatWithCurrency($invoice->getCurrency(), $item->getSetDiscountPerUnit())?></i>
-						<?php if($item->getNumberOfUnits()>1): ?>
-							/
-							<i><?=$price_formatter->formatWithCurrency($invoice->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i>
-						<?php endif; ?>
+						<i><?=$price_formatter->formatWithCurrencyByHasVAT($has_VAT, $invoice->getCurrency(), $item->getSetDiscountPerUnit())?></i>
+						<?php if($item->getNumberOfUnits()>1): ?> / <i><?=$price_formatter->formatWithCurrencyByHasVAT($has_VAT, $invoice->getCurrency(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i><?php endif; ?>
 					</td>
 				</tr>
 			<?php

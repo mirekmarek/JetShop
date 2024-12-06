@@ -1,0 +1,29 @@
+<?php
+namespace JetApplicationModule\EShop\CashDesk;
+
+use Jet\MVC_View;
+use JetApplication\Order_Item;
+use JetApplication\EShop_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var CashDesk $cash_desk
+ */
+$cash_desk = $this->getRaw('cash_desk');
+
+$order = $cash_desk->getOrder();
+
+?>
+<?php foreach($order->getItems() as $item): ?>
+<div class="item">
+	<div class="title"><?=$item->getTitle()?></div>
+	<div class="price">
+		<?php if( !($item->getType()==Order_Item::ITEM_TYPE_DISCOUNT && $item->getTotalAmount()==0) ): ?>
+			<?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?>
+		<?php endif; ?>
+	</div>
+</div>
+<?php endforeach; ?>
+
+<div class="total"><?=EShop_Managers::PriceFormatter()->formatWithCurrency($order->getTotalAmount_WithVAT())?></div>
+

@@ -76,14 +76,14 @@ $properties = [
 
 $formatters = [
 	'payment_amount' => function( $value ) use ($order) {
-		return Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getCurrency(), $value );
+		return Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $value );
 	},
 	'payment_method' => function( $value ) {
 		return Payment_Method::getScope()[$value]??$value;
 	},
 	
 	'delivery_amount' => function( $value ) use ($order) {
-		return Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getCurrency(), $value );
+		return Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $value );
 	},
 	'delivery_method' => function( $value ) {
 		return Delivery_Method::getScope()[$value]??$value;

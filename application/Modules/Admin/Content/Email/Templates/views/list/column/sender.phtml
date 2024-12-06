@@ -8,7 +8,7 @@
 namespace JetApplicationModule\Admin\Content\Email\Templates;
 
 use Jet\MVC_View;
-use JetApplication\Shops;
+use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
@@ -18,14 +18,14 @@ use JetApplication\Shops;
 
 $item = $this->getRaw('item');
 
-if(Shops::isMultiShopMode()):
-	foreach(Shops::getList() as $shop):
-		$sd = $item->getShopData( $shop );
+if(EShops::isMultiEShopMode()):
+	foreach( EShops::getList() as $eshop):
+		$sd = $item->getEshopData( $eshop );
 		
-		echo $shop->getShopName().':<br>'.$sd->getSenderName().' &lt;'.$sd->getSenderEmail().'&gt;<br>';
+		echo $eshop->getName().':<br>'.$sd->getSenderName().' &lt;'.$sd->getSenderEmail().'&gt;<br>';
 	endforeach;
 else:
-	$sd = $item->getShopData( Shops::getCurrent() );
+	$sd = $item->getEshopData( EShops::getCurrent() );
 	
 	echo $sd->getSenderName().' &lt;'.$sd->getSenderEmail().'&gt;';
 endif;

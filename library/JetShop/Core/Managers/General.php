@@ -2,10 +2,10 @@
 namespace JetShop;
 
 use Jet\Application_Module;
-use Jet\SysConf_Path;
 use JetApplication\Calendar_Manager;
 use JetApplication\DeliveryTerm_Manager;
 use JetApplication\Discounts_Manager;
+use JetApplication\EShopConfig;
 use JetApplication\Invoice_Manager;
 use JetApplication\Manager_MetaInfo;
 use JetApplication\Managers;
@@ -30,7 +30,7 @@ class Core_Managers_General extends Managers {
 	
 	public static function getCfgFilePath() : string
 	{
-		return SysConf_Path::getConfig().'shop/managers/general.php';
+		return EShopConfig::getRootDir().'managers/general.php';
 	}
 	
 	protected static function registerManagers() : void

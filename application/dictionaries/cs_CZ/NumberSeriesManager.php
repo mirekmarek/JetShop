@@ -21,6 +21,6 @@ return [
 	'Order dispatch' => 'Odeslání objednávky',
 	'Warehouse Management - Stock Verification' => 'Skladové hospodářství - Ověřování skladu',
 	'Invoices' => 'Faktury',
-	'Invoices in advance' => '',
-	'Delivery note' => '',
+	'Invoices in advance' => 'Proforma faktury',
+	'Delivery note' => 'Dodací list',
 ];

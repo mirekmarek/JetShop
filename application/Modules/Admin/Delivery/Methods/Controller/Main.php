@@ -10,17 +10,21 @@ namespace JetApplicationModule\Admin\Delivery\Methods;
 use Jet\AJAX;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use JetApplication\Admin_EntityManager_WithShopData_Controller;
+use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\Carrier;
 use JetApplication\Delivery_Method;
 
-class Controller_Main extends Admin_EntityManager_WithShopData_Controller
+class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
 	public function edit_main_Action(): void
 	{
 		$this->handleSetPrice();
 		
 		parent::edit_main_Action();
+		
+		$this->content->output(
+			$this->view->render('edit/main/set-price')
+		);
 	}
 	
 	protected function setupRouter( string $action, string $selected_tab ): void

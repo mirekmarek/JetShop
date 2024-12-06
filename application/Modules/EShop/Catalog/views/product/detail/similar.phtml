@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\EShop\Catalog;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$similar = $product->getSimilarProducts();
+
+if(!$similar) {
+	return;
+}
+
+$kind = $product->getKind();
+
+
+$title = $kind?->getSimilarProductSelectDescription();
+if(!$title) {
+	$title = Tr::_('Similar products');
+}
+?>
+<h3 class="variants-title"><?=$title?></h3>
+
+<div class="variants">
+	<?php foreach($similar as $s):
+		if($s->getId()==$product->getId()):
+			?>
+			<div class="variant-selected">
+				<img src="<?= $s->getImgThumbnailUrl( 0, 150, 150 ) ?>"/>
+				<b><?=$s->getFullName()?></b>
+			</div>
+		<?php
+		else:
+			?>
+			<div class="variant">
+				<a href="<?=$s->getURL()?>" title="<?= $s->getVariantName() ?>">
+					<img src="<?= $s->getImgThumbnailUrl( 0, 150, 150 ) ?>"/>
+				</a>
+				<a href="<?=$s->getURL()?>"><?=$s->getFullName()?></a>
+			</div>
+		<?php
+		endif;
+	endforeach; ?>
+</div>
