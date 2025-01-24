@@ -20,7 +20,7 @@ trait Core_Order_Trait_Changes {
 	public function startChange() : Order_ChangeHistory
 	{
 		$change = new Order_ChangeHistory();
-		/** @noinspection PhpParamsInspection */
+
 		$change->setOrder( $this );
 		$change->setDateAdded( Data_DateTime::now() );
 		

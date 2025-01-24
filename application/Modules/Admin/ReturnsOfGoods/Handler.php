@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 use Jet\Factory_MVC;
 use Jet\IO_Dir;
 use Jet\MVC_View;
+use JetApplication\ReturnOfGoods;
 
 
 abstract class Handler {

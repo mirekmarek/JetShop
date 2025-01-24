@@ -10,6 +10,7 @@ use JetApplication\Admin_Managers_Entity_Listing;
 use Jet\MVC_View;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\EShops;
+use JetApplication\Order;
 
 
 /**
@@ -80,11 +81,11 @@ $order = $this->getRaw( 'order' );
 					</tr>
 					<tr>
 						<td><b><?=Tr::_('Delivery method:')?></b></td>
-						<td nowrap="" style="padding: 3px"><?=$order->getDeliveryMethod()->getTitle()?></td>
+						<td nowrap="" style="padding: 3px"><?=$order->getDeliveryMethod()?->getTitle()?></td>
 					</tr>
 					<tr>
 						<td><b><?=Tr::_('Payment method:')?></b></td>
-						<td nowrap="" style="padding: 3px"><?=$order->getPaymentMethod()->getTitle()?></td>
+						<td nowrap="" style="padding: 3px"><?=$order->getPaymentMethod()?->getTitle()?></td>
 					</tr>
 					<tr>
 						<td><b><?=Tr::_('Indicative total weight:')?></b></td>

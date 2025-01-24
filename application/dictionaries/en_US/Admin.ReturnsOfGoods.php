@@ -125,4 +125,6 @@ return [
 	'Subject:' => '',
 	'HTML:' => '',
 	'TXT:' => '',
+	'e-shop' => '',
+	'Note' => '',
 ];

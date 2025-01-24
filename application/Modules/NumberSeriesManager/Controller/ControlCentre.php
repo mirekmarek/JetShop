@@ -8,23 +8,16 @@
 namespace JetApplicationModule\NumberSeriesManager;
 
 use Jet\Http_Headers;
+use Jet\IO_Dir;
 use Jet\Logger;
+use Jet\SysConf_Path;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\DeliveryNote;
-use JetApplication\Invoice;
-use JetApplication\InvoiceInAdvance;
-use JetApplication\Order;
-use JetApplication\OrderDispatch;
 use JetApplication\EShops;
-use JetApplication\Supplier_GoodsOrder;
-use JetApplication\WarehouseManagement_ReceiptOfGoods;
-use JetApplication\WarehouseManagement_StockVerification;
-use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
-use JetApplicationModule\Admin\Complaints\Complaint;
-use JetApplicationModule\Admin\ReturnsOfGoods\ReturnOfGoods;
 use Error;
+use JetApplication\NumberSeries_Entity_Interface;
+use ReflectionClass;
 
 /**
  *
@@ -35,74 +28,83 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 	public function default_Action() : void
 	{
 		
+		$finder = new class {
+			/**
+			 * @var ReflectionClass[]
+			 */
+			protected array $classes = [];
+			protected string $dir = '';
+			
+			public function __construct()
+			{
+				$this->dir = SysConf_Path::getApplication() . 'Classes/';
+				$this->find();
+			}
+			
+			
+			public function find(): void
+			{
+				$this->readDir( $this->dir );
+				
+				ksort( $this->classes );
+			}
+			
+			protected function readDir( string $dir ): void
+			{
+				$dirs = IO_Dir::getList( $dir, '*', true, false );
+				$files = IO_Dir::getList( $dir, '*.php', false, true );
+				
+				foreach( $files as $path => $name ) {
+					$class = str_replace($this->dir, '', $path);
+					$class = str_replace('.php', '', $class);
+					
+					$class = str_replace('/', '_', $class);
+					$class = str_replace('\\', '_', $class);
+					
+					$class = '\\JetApplication\\'.$class;
+					
+					$reflection = new ReflectionClass( $class );
+					
+					if(
+						!$reflection->isAbstract() &&
+						$reflection->implementsInterface( NumberSeries_Entity_Interface::class )
+					) {
+						$this->classes[$class] = $reflection;
+					}
+				}
+				
+				foreach( $dirs as $path => $name ) {
+					$this->readDir( $path );
+				}
+			}
+			
+			/**
+			 * @return ReflectionClass[]
+			 */
+			public function getClasses(): array
+			{
+				return $this->classes;
+			}
+		};
+		
+		
 		$entities = [];
 		
-		$entities[] = [
-			'entity' => Order::getEntityType(),
-			'per_eshop' => true,
-			'title' => Tr::_('Orders')
-		];
+		foreach( $finder->getClasses() as $class_name=>$reflection ) {
+			/**
+			 * @var NumberSeries_Entity_Interface $class_name
+			 */
+			
+			$entities[] = [
+				'entity'     => $class_name::getNumberSeriesEntityType(),
+				'per_eshop'  => $class_name::getNumberSeriesEntityIsPerShop(),
+				'title'      => Tr::_( $class_name::getNumberSeriesEntityTitle() )
+			];
+		}
 		
-		$entities[] = [
-			'entity' => Invoice::getEntityType(),
-			'per_eshop' => true,
-			'title' => Tr::_('Invoices')
-		];
-		
-		$entities[] = [
-			'entity' => InvoiceInAdvance::getEntityType(),
-			'per_eshop' => true,
-			'title' => Tr::_('Invoices in advance')
-		];
-		
-		$entities[] = [
-			'entity' => DeliveryNote::getEntityType(),
-			'per_eshop' => true,
-			'title' => Tr::_('Delivery note')
-		];
-		
-		$entities[] = [
-			'entity' => Complaint::getEntityType(),
-			'per_eshop' => true,
-			'title' => Tr::_('Complaints')
-		];
-		
-		$entities[] = [
-			'entity' => ReturnOfGoods::getEntityType(),
-			'per_eshop' => true,
-			'title' => Tr::_('Return of goods')
-		];
-		
-		$entities[] = [
-			'entity' => Supplier_GoodsOrder::getEntityType(),
-			'per_eshop' => false,
-			'title' => Tr::_('Orders of goods from suppliers')
-		];
-		
-		$entities[] = [
-			'entity' => OrderDispatch::getEntityType(),
-			'per_eshop' => false,
-			'title' => Tr::_('Order dispatch')
-		];
-		
-		
-		$entities[] = [
-			'entity' => WarehouseManagement_ReceiptOfGoods::getEntityType(),
-			'per_eshop' => false,
-			'title' => Tr::_('Warehouse Management - Receipt of goods')
-		];
-		
-		$entities[] = [
-			'entity' => WarehouseManagement_TransferBetweenWarehouses::getEntityType(),
-			'per_eshop' => false,
-			'title' => Tr::_('Warehouse Management - Transfer Between Warehouses')
-		];
-		
-		$entities[] = [
-			'entity' => WarehouseManagement_StockVerification::getEntityType(),
-			'per_eshop' => false,
-			'title' => Tr::_('Warehouse Management - Stock Verification')
-		];
+		uasort( $entities, function( array $a, array $b ) {
+			return strcasecmp( $a['title'], $b['title'] );
+		} );
 		
 		
 		

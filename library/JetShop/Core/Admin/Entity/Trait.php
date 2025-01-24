@@ -1,8 +1,11 @@
 <?php
 namespace JetShop;
 
+use Jet\Attributes;
 use Jet\Form;
 use JetApplication\EShops;
+use JetApplication\JetShopEntity_Definition;
+use ReflectionClass;
 
 trait Core_Admin_Entity_Trait {
 	
@@ -18,11 +21,13 @@ trait Core_Admin_Entity_Trait {
 	 */
 	protected static array $loaded_items = [];
 	
-	public static function get( int $id ) : static|null
+	public static function get( int|string $id ) : static|null
 	{
 		if(!$id) {
 			return null;
 		}
+		
+		$id = (int)$id;
 		
 		if(isset( static::$loaded_items[static::class][$id])) {
 			return static::$loaded_items[static::class][$id];
@@ -44,6 +49,10 @@ trait Core_Admin_Entity_Trait {
 		$this->editable = $editable;
 	}
 	
+	public function getEditURL( array $get_params=[] ) : string
+	{
+		return $this->getAdminManager()->getEditURL( $this, $get_params );
+	}
 	
 	
 	
@@ -96,5 +105,13 @@ trait Core_Admin_Entity_Trait {
 	{
 		return $this->getEditForm()->catch();
 	}
+	
+	public function getAdminManagerInterface() : ?string
+	{
+		$attributes = Attributes::getClassDefinition( new ReflectionClass($this), JetShopEntity_Definition::class );
+		
+		return $attributes['admin_manager_interface']??null;
+	}
+	
 	
 }

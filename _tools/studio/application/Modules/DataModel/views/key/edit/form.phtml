@@ -1,0 +1,26 @@
+<?php
+
+namespace JetStudioModule\DataModel;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this ;
+ */
+
+$key = DataModels::getCurrentKey();
+
+$form = $key->getEditForm();
+
+echo $form->start();
+?>
+<div class="form-fields">
+<?php
+echo $form->field( 'name' );
+echo $form->field( 'type' );
+echo $form->field( 'properties' );
+?>
+</div>
+<?php
+echo $form->end();
+

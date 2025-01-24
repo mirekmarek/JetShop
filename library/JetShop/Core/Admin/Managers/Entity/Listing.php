@@ -8,6 +8,7 @@ use Jet\DataListing_Column;
 use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
 use JetApplication\Admin_EntityManager_Common_Interface;
+use JetApplication\Entity_Basic;
 
 interface Core_Admin_Managers_Entity_Listing
 {
@@ -47,6 +48,8 @@ interface Core_Admin_Managers_Entity_Listing
 	public function getPrevEditUrl( int $current_id ): string;
 	
 	public function getNextEditUrl( int $current_id ): string;
+	
+	public function getEditUrl( Entity_Basic $item ): string;
 
 	public function setSearchWhereCreator( Closure $creator ) : void;
 	

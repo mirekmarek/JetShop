@@ -11,7 +11,6 @@ use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Admin_Managers_InvoiceInAdvance;
 use JetApplication\Entity_WithEShopRelation;
@@ -21,7 +20,7 @@ use JetApplication\Order;
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_InvoiceInAdvance
+class Main extends Application_Module implements Admin_Managers_InvoiceInAdvance
 {
 	use Admin_EntityManager_WithEShopRelation_Trait;
 	
@@ -29,11 +28,6 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 	
 	public const ACTION_GET = 'get_invoice';
 	public const ACTION_UPDATE = 'update_invoice';
-	
-	public static function showActiveState( int $id ): string
-	{
-		return '';
-	}
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
@@ -47,12 +41,12 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 	
 	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
-		return new Invoice();
+		return new InvoiceInAdvance();
 	}
 	
 	public static function getEntityNameReadable(): string
 	{
-		return 'Invoice';
+		return 'Invoice In Advance';
 	}
 	
 	public function showOrderInvoices( Order $order ) : string

@@ -271,6 +271,9 @@ class Installer_Step_Install_Controller extends Installer_Step_Controller
 			\JetApplication\Accessories_Group::class,
 			\JetApplication\Accessories_Group_Product::class,
 			\JetApplication\Product_Accessories_Group::class,
+			\JetApplication\OrderPersonalReceipt::class,
+			\JetApplication\OrderPersonalReceipt_Item::class,
+			\JetApplication\OrderPersonalReceipt_Event::class,
 		];
 		
 		$result = [];

@@ -1,0 +1,51 @@
+<?php
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
+use Jet\Locale;
+use JetApplication\OrderPersonalReceipt;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+
+/**
+ * @var MVC_View   $this
+ * @var OrderPersonalReceipt $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+echo match ($dispatch->getStatus()) {
+	OrderPersonalReceipt::STATUS_PENDING => UI::badge(
+		UI_badge::PRIMARY,
+		Tr::_( 'Awaiting processing' )
+	)->addCustomCssStyle("padding: 10px"),
+	
+	OrderPersonalReceipt::STATUS_IN_PROGRESS => UI::badge(
+		UI_badge::INFO,
+		Tr::_( 'In progress' )
+	)->addCustomCssStyle("padding: 10px"),
+	
+	OrderPersonalReceipt::STATUS_PREPARED => UI::badge(
+		UI_badge::SUCCESS,
+		Tr::_( 'Ready to be handed over' )
+	)->addCustomCssStyle("padding: 10px"),
+	
+	OrderPersonalReceipt::STATUS_HANDED_OVER => UI::badge(
+		UI_badge::SUCCESS,
+		Tr::_( 'Handed over - %DATE_TIME%', ['DATE_TIME'=>Locale::dateAndTime($dispatch->getHeadedOverDateTime())] )
+	)->addCustomCssStyle("padding: 10px"),
+	
+	OrderPersonalReceipt::STATUS_CANCEL => UI::badge(
+		UI_badge::WARNING,
+		Tr::_( 'Cancellation in progress' )
+	)->addCustomCssStyle("padding: 10px"),
+	
+	OrderPersonalReceipt::STATUS_CANCELED => UI::badge(
+		UI_badge::DANGER,
+		Tr::_( 'Cancelled' )
+	)->addCustomCssStyle("padding: 10px"),
+	
+	default => $dispatch->getStatus(),
+};
+

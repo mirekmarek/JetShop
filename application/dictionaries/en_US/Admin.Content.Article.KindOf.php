@@ -19,4 +19,8 @@ return [
 	'General' => '',
 	'Please enter name' => '',
 	'Name:' => '',
+	'Deactivate' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
 ];

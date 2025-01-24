@@ -5,15 +5,24 @@
 
 namespace JetShop;
 
+use Jet\Application_Module;
+use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Admin_Managers_PaymentMethods;
 use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Entity_HasPrice_Trait;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Managers;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method_Module;
@@ -26,14 +35,21 @@ use JetApplication\Payment_Method;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Payment_Method_Price;
+use JetApplication\Pricelists;
 
 #[DataModel_Definition(
 	name: 'payment_method',
 	database_table_name: 'payment_methods'
 )]
-abstract class Core_Payment_Method extends Entity_WithEShopData implements Entity_HasPrice_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_PaymentMethods::class
+)]
+abstract class Core_Payment_Method extends Entity_WithEShopData implements
+	Entity_HasPrice_Interface,
+	Admin_Entity_WithEShopData_Interface
 {
 	use Entity_HasPrice_Trait;
+	use Admin_Entity_WithEShopData_Trait;
 	
 	protected static array $loaded = [];
 
@@ -154,12 +170,23 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 		return $this->backend_module_name;
 	}
 	
+	public function getBackendModule() : null|Payment_Method_Module|Application_Module
+	{
+		if(!$this->backend_module_name) {
+			return null;
+		}
+		
+		return Application_Modules::moduleInstance( $this->backend_module_name );
+	}
+	
+	
 	public function setBackendModuleName( string $backend_module_name ): void
 	{
 		$this->backend_module_name = $backend_module_name;
 		foreach( EShops::getList() as $eshop) {
 			$this->getEshopData( $eshop )->setBackendModuleName( $backend_module_name );
 		}
+		$this->actualizeOptions();
 	}
 	
 	public function getBackendModulePaymentMethodSpecification(): string
@@ -173,6 +200,7 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 		foreach( EShops::getList() as $eshop) {
 			$this->getEshopData( $eshop )->setBackendModulePaymentMethodSpecification( $backend_module_payment_method_specification );
 		}
+		$this->actualizeOptions();
 	}
 
 
@@ -219,6 +247,50 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 		return array_keys($this->delivery_methods);
 	}
 	
+	public function actualizeOptions() : void
+	{
+		$backend = $this->getBackendModule();
+		if(!$backend) {
+			return;
+		}
+		
+		/**
+		 * @var Payment_Method $this
+		 */
+		
+		$module_options = $backend->getPaymentMethodOptionsList( $this );
+		
+		$current_options = $this->getOptions();
+		
+		foreach( $current_options as $c_option ) {
+			$code = $c_option->getInternalCode();
+			if(!isset($module_options[$code])) {
+				$c_option->delete();
+				unset( $current_options[$code] );
+				unset( $this->options[$code] );
+			}
+		}
+		
+		foreach($module_options as $code=>$title) {
+			if( isset($this->options[$code]) ) {
+				continue;
+			}
+			
+			$option = new Payment_Method_Option();
+			$option->setInternalCode( $code );
+			$option->setInternalName( $title );
+			$option->checkShopData();
+			
+			foreach( EShops::getList() as $eshop ) {
+				$sd = $option->getEshopData( $eshop );
+				$sd->setTitle( $title );
+			}
+			
+			$this->addOption( $option );
+		}
+
+	}
+	
 	
 	/**
 	 * @return Payment_Method_Option[]
@@ -240,7 +312,7 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 		$option->setPriority( count($this->options)+1 );
 		$option->setMethodId( $this->id );
 		$option->save();
-		$this->options[$option->getId()] = $option;
+		$this->options[$option->getInternalCode()] = $option;
 		
 		$option->activate();
 		foreach( EShops::getList() as $eshop) {
@@ -251,15 +323,15 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 	}
 	
 	
-	public function getOption( int $id ) : Payment_Method_Option|null
+	public function getOption( string $code ) : Payment_Method_Option|null
 	{
 		$this->getOptions();
 		
-		if(!isset($this->options[$id])) {
+		if(!isset($this->options[$code])) {
 			return null;
 		}
 		
-		return $this->options[$id];
+		return $this->options[$code];
 	}
 	
 	
@@ -267,11 +339,11 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 	{
 		$this->getOptions();
 		$i = 0;
-		foreach($sort as $id) {
-			if(isset($this->options[$id])) {
+		foreach($sort as $code) {
+			if(isset($this->options[$code])) {
 				$i++;
-				$this->options[$id]->setPriority($i);
-				$this->options[$id]->save();
+				$this->options[$code]->setPriority($i);
+				$this->options[$code]->save();
 			}
 		}
 	}
@@ -301,4 +373,150 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements Entit
 	{
 		return [''=>'']+static::getModulesScope();
 	}
+	
+	
+	
+	
+	protected ?Form $set_price_form = null;
+	
+	public function defineImages() : void
+	{
+		$this->defineImage(
+			image_class:  'icon1',
+			image_title:  Tr::_('Icon 1'),
+		);
+		$this->defineImage(
+			image_class:  'icon2',
+			image_title:  Tr::_('Icon 3'),
+		);
+		$this->defineImage(
+			image_class:  'icon3',
+			image_title:  Tr::_('Icon 3'),
+		);
+		
+	}
+	
+	public function getAddForm(): Form
+	{
+		if(!$this->_add_form) {
+			$this->_add_form = $this->createForm('add_form');
+			
+		}
+		
+		return $this->_add_form;
+	}
+	
+	
+	public function setupEditForm( Form $form ): void
+	{
+		$module_name = $form->field('backend_module_name')->getValueRaw();
+		
+		if($module_name) {
+			/**
+			 * @var Payment_Method_Module $module
+			 */
+			if(Application_Modules::moduleExists($module_name)) {
+				$module = Application_Modules::moduleInstance( $module_name );
+				$specification = $module->getPaymentMethodSpecificationList();
+				
+				/**
+				 * @var Form_Field_Select $options
+				 */
+				$options = $form->getField('backend_module_payment_method_specification');
+				$options->setSelectOptions( $specification );
+			}
+		} else {
+			/**
+			 * @var Form_Field_Select $spec
+			 */
+			$spec = $form->getField('backend_module_payment_method_specification');
+			$spec->setIsRequired(false);
+			$spec->setSelectOptions([''=>'']);
+		}
+		
+	}
+	
+	public function catchAddForm(): bool
+	{
+		$form = $this->getAddForm();
+		if(!$form->catchInput()) {
+			return false;
+		}
+		
+		$this->setupEditForm( $form );
+		
+		if(!$form->validate()) {
+			return false;
+		}
+		
+		$form->catch();
+		
+		return true;
+	}
+	
+	public function catchEditForm(): bool
+	{
+		$form = $this->getEditForm();
+		if(!$form->catchInput()) {
+			return false;
+		}
+		
+		$this->setupEditForm( $form );
+		
+		if(!$form->validate()) {
+			return false;
+		}
+		
+		$form->catch();
+		
+		return true;
+	}
+	
+	public function getSetPriceForm() : ?Form
+	{
+		if( !static::getAdminManager()::getCurrentUserCanSetPrice() ) {
+			return null;
+		}
+		
+		if(!$this->set_price_form) {
+			$this->set_price_form = new Form('set_price_form', []);
+			
+			
+			foreach(Pricelists::getList() as $pricelist) {
+				
+				$field_name_prefix = '/'.$pricelist->getCode().'/';
+				
+				$vat_rate = new Form_Field_Select( $field_name_prefix.'vat_rate', 'VAT rate:' );
+				$vat_rate->setDefaultValue( $this->getVatRate( $pricelist ) );
+				
+				$vat_rate->setErrorMessages([
+					Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+				]);
+				$vat_rate->setFieldValueCatcher(function( $value ) use ($pricelist) {
+					$p = $this->getPriceEntity($pricelist);
+					$p->setVatRate($value);
+					$p->save();
+				});
+				$vat_rate->setSelectOptions( $pricelist->getVatRatesScope() );
+				$this->set_price_form->addField( $vat_rate );
+				
+				
+				$price = new Form_Field_Float($field_name_prefix.'default_price', 'Price:');
+				$price->setDefaultValue( $this->getPrice( $pricelist ) );
+				$price->setFieldValueCatcher(function( $value ) use ($pricelist) {
+					$p = $this->getPriceEntity($pricelist);
+					$p->setPrice($value);
+					$p->save();
+				});
+				
+				$this->set_price_form->addField( $price );
+				
+				
+			}
+			
+		}
+		
+		return $this->set_price_form;
+	}
+	
 }

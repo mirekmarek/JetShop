@@ -7,9 +7,11 @@
  */
 namespace JetApplicationModule\Events\Order\DispatchStarted;
 
+use JetApplication\Delivery_Kind;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\OrderDispatch;
 use JetApplication\Order_Event_HandlerModule;
+use JetApplication\OrderPersonalReceipt;
 
 /**
  *
@@ -38,9 +40,21 @@ class Main extends Order_Event_HandlerModule
 		$virtual_products = $this->order->getHasVirtualProducts();
 		
 		if( $physical_products ) {
-			$dispatch = OrderDispatch::newByOrder( $this->order );
-			$this->event->setContext( $dispatch );
-			$this->event->save();
+			$delivert_method = $this->order->getDeliveryMethod();
+			
+			if( $delivert_method->getKindCode()==Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL ) {
+				
+				$dispatch = OrderPersonalReceipt::newByOrder( $this->order );
+				$this->event->setContext( $dispatch );
+				$this->event->save();
+
+			} else {
+				
+				$dispatch = OrderDispatch::newByOrder( $this->order );
+				$this->event->setContext( $dispatch );
+				$this->event->save();
+				
+			}
 		}
 		
 		if( $virtual_products ) {

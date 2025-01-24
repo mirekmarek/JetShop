@@ -12,6 +12,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Complaint_Event;
+use JetApplication\Complaint;
 
 class Handler_SendMailConfirmation_Main extends Handler
 {

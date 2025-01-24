@@ -7,6 +7,7 @@
  */
 namespace JetApplicationModule\Payment\GoPay;
 
+use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
@@ -33,27 +34,64 @@ class PaymentPair extends DataModel {
 	)]
 	protected string $payment_id = '';
 	
-	public static function getPaymentId( int $order_id ) : ?string
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true
+	)]
+	protected string $payment_status = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME
+	)]
+	protected ?Data_DateTime $date_time = null;
+	
+	/**
+	 * @param int $order_id
+	 * @return static[]
+	 */
+	public static function getPayments( int $order_id ) : array
 	{
-		$payment_id = static::dataFetchOne(select: ['payment_id'], where: ['order_id'=>$order_id]);
-		return $payment_id?:null;
+		return static::fetch([''=>['order_id'=>$order_id]], item_key_generator: function( PaymentPair $payment_pair ) : string {
+			return $payment_pair->getPaymentId();
+		});
 	}
 	
 	public static function setPaymentId( int $order_id, string $payment_id ) : void
 	{
-		$exists = static::getPaymentId($order_id);
-		if($exists) {
-			static::updateData(
-				data:['payment_id'=>$payment_id],
-				where:['order_id'=>$order_id]
-			);
-			return;
-		}
-		
 		$rec = new static();
 		$rec->order_id = $order_id;
 		$rec->payment_id = $payment_id;
+		$rec->date_time = Data_DateTime::now();
+		$rec->payment_status = '';
 		$rec->save();
-		
 	}
+	
+	public function getOrderId(): int
+	{
+		return $this->order_id;
+	}
+	
+	public function getPaymentId(): string
+	{
+		return $this->payment_id;
+	}
+	
+	public function getPaymentStatus(): string
+	{
+		return $this->payment_status;
+	}
+	
+	public function getDateTime(): ?Data_DateTime
+	{
+		return $this->date_time;
+	}
+	
+	public function setPaymentStatus( string $payment_status ) : void
+	{
+		$this->payment_status = $payment_status;
+		$this->save();
+	}
+	
+	
 }

@@ -1,16 +1,17 @@
 <?php
 namespace JetApplicationModule\Admin\Suppliers;
 
-use JetApplication\Admin_EntityManager_Common_Interface;
+use JetApplication\Admin_Managers_Supplier;
 use JetApplication\Admin_EntityManager_Common_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Entity_Common;
+use JetApplication\Supplier;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Common_Interface
+class Main extends Application_Module implements Admin_Managers_Supplier
 {
 	use Admin_EntityManager_Common_Trait;
 

@@ -21,7 +21,6 @@ use JetApplication\Product_Parameter_Value;
 use JetApplication\Product_Price;
 use JetApplication\Product_SetItem;
 use JetApplication\Product;
-use JetApplicationModule\Admin\Catalog\Products\Main;
 
 trait Core_Product_Trait_Set {
 	
@@ -232,8 +231,7 @@ trait Core_Product_Trait_Set {
 			
 			
 			if(
-				!$this->isEditable() ||
-				!Main::getCurrentUserCanSetPrice()
+				!$this->isEditable()
 			) {
 				$this->_set_setup_form->setIsReadonly();
 			}

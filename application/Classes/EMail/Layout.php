@@ -11,6 +11,7 @@ use JetShop\Core_EMail_Layout;
  *
  */
 #[DataModel_Definition]
+#[JetShopEntity_Definition]
 class EMail_Layout extends Core_EMail_Layout
 {
 }

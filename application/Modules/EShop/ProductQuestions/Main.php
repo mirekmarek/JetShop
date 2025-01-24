@@ -20,7 +20,7 @@ use JetApplication\EShop_Managers_ProductQuestions;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShops;
-use JetApplicationModule\Admin\Customers\Customer;
+use JetApplication\Customer;
 
 /**
  *

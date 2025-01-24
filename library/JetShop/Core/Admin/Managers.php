@@ -3,6 +3,8 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Managers_Note;
+use JetApplication\Admin_Managers_OrderPersonalReceipt;
+use JetApplication\Admin_Managers_Signpost;
 use JetApplication\EShopConfig;
 use JetApplication\Managers;
 use JetApplication\Manager_MetaInfo;
@@ -36,8 +38,8 @@ use JetApplication\Admin_Managers_Customer;
 use JetApplication\Admin_Managers_Timer;
 use JetApplication\Admin_Managers_WarehouseManagementOverview;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
-use JetApplication\Admin_Managers_TransferBetweenWarehouses;
-use JetApplication\Admin_Managers_LossOrDestruction;
+use JetApplication\Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses;
+use JetApplication\Admin_Managers_WarehouseManagementLossOrDestruction;
 
 
 class Core_Admin_Managers extends Managers {
@@ -56,281 +58,10 @@ class Core_Admin_Managers extends Managers {
 		return EShopConfig::getRootDir().'managers/admin.php';
 	}
 	
-	
 	protected static function registerManagers() : void
 	{
-		static::registerManager(
-			interface_class_name: Admin_Managers_Category::class,
-			is_mandatory: true,
-			name: 'Catalog - Categories',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Brand::class,
-			is_mandatory: true,
-			name: 'Catalog - Brands',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_OrderDispatch::class,
-			is_mandatory: true,
-			name: 'Order dispatch',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Product::class,
-			is_mandatory: true,
-			name: 'Catalog - products',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Property::class,
-			is_mandatory: true,
-			name: 'Catalog - properties',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_PropertyGroup::class,
-			is_mandatory: true,
-			name: 'Catalog - property groups',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_KindOfProduct::class,
-			is_mandatory: true,
-			name: 'Catalog - Kind of products',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Image::class,
-			is_mandatory: true,
-			name: 'Images',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_UI::class,
-			is_mandatory: true,
-			name: 'UI',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_FulltextSearch::class,
-			is_mandatory: true,
-			name: 'Fulltext Search',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Listing::class,
-			is_mandatory: true,
-			name: 'Entity Listing',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_WithEShopData::class,
-			is_mandatory: true,
-			name: 'Entity Edit With e-shop data',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_Simple::class,
-			is_mandatory: true,
-			name: 'Entity Edit Simple',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_Common::class,
-			is_mandatory: true,
-			name: 'Entity Edit Common',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_WithEShopRelation::class,
-			is_mandatory: true,
-			name: 'Entity Edit With e-shop Relation',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Entity_Edit_Marketing::class,
-			is_mandatory: true,
-			name: 'Entity Edit Marketing',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_ProductFilter::class,
-			is_mandatory: true,
-			name: 'Product Filter',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_PriceFormatter::class,
-			is_mandatory: true,
-			name: 'Price Formatter',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Order::class,
-			is_mandatory: true,
-			name: 'Orders',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Invoice::class,
-			is_mandatory: true,
-			name: 'Invoices',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_InvoiceInAdvance::class,
-			is_mandatory: true,
-			name: 'Invoices in advance',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_DeliveryNote::class,
-			is_mandatory: true,
-			name: 'Delivery note',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Complaint::class,
-			is_mandatory: true,
-			name: 'Complaints',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_ReturnOfGoods::class,
-			is_mandatory: true,
-			name: 'Return of goods',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Customer::class,
-			is_mandatory: true,
-			name: 'Customers',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Timer::class,
-			is_mandatory: false,
-			name: 'Timer',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_WarehouseManagementOverview::class,
-			is_mandatory: false,
-			name: 'Warehouse Management Overview',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Context::class,
-			is_mandatory: true,
-			name: 'Context',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_ReceiptOfGoods::class,
-			is_mandatory: true,
-			name: 'Receipt of goods',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_TransferBetweenWarehouses::class,
-			is_mandatory: true,
-			name: 'Transfer between warehouses',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_SupplierGoodsOrders::class,
-			is_mandatory: false,
-			name: 'Supplier - Goods Orders',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_LossOrDestruction::class,
-			is_mandatory: false,
-			name: 'Warehouse - Loss or destruction',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
-		
-		static::registerManager(
-			interface_class_name: Admin_Managers_Note::class,
-			is_mandatory: false,
-			name: 'Internal notes and messages for customer',
-			description: '',
-			module_name_prefix: 'Admin.'
-		);
-		
+		static::_registerManagers( Manager_MetaInfo::GROUP_ADMIN );
 	}
-	
 	
 	public static function Category() : Admin_Managers_Category|Application_Module
 	{
@@ -342,12 +73,10 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Brand::class );
 	}
 	
-	
 	public static function Product() : Admin_Managers_Product|Application_Module
 	{
 		return static::get( Admin_Managers_Product::class );
 	}
-	
 	
 	public static function Property() : Admin_Managers_Property|Application_Module
 	{
@@ -363,7 +92,6 @@ class Core_Admin_Managers extends Managers {
 	{
 		return static::get( Admin_Managers_KindOfProduct::class );
 	}
-	
 	
 	public static function Image() : Admin_Managers_Image|Application_Module
 	{
@@ -395,7 +123,6 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Entity_Edit_Simple::class );
 	}
 	
-	
 	public static function EntityEdit_Common() : Admin_Managers_Entity_Edit_Common|Application_Module
 	{
 		return static::get( Admin_Managers_Entity_Edit_Common::class );
@@ -420,7 +147,6 @@ class Core_Admin_Managers extends Managers {
 	{
 		return static::get( Admin_Managers_PriceFormatter::class );
 	}
-	
 	
 	public static function Order() : Admin_Managers_Order|Application_Module
 	{
@@ -447,16 +173,20 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_OrderDispatch::class );
 	}
 	
+	public static function OrderPersonalReceipt() : Admin_Managers_OrderPersonalReceipt|Application_Module
+	{
+		return static::get( Admin_Managers_OrderPersonalReceipt::class );
+	}
+	
 	public static function ReceiptOfGoods() : Admin_Managers_ReceiptOfGoods|Application_Module
 	{
 		return static::get( Admin_Managers_ReceiptOfGoods::class );
 	}
 	
-	public static function TransferBetweenWarehouses() : Admin_Managers_TransferBetweenWarehouses|Application_Module
+	public static function TransferBetweenWarehouses() : Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses|Application_Module
 	{
-		return static::get( Admin_Managers_TransferBetweenWarehouses::class );
+		return static::get( Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses::class );
 	}
-	
 	
 	public static function Complaint() : Admin_Managers_Complaint|Application_Module
 	{
@@ -467,7 +197,6 @@ class Core_Admin_Managers extends Managers {
 	{
 		return static::get( Admin_Managers_ReturnOfGoods::class );
 	}
-	
 	
 	public static function Customer() : Admin_Managers_Customer|Application_Module
 	{
@@ -494,9 +223,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_SupplierGoodsOrders::class );
 	}
 	
-	public static function LossOrDestruction() : Admin_Managers_LossOrDestruction|Application_Module|null
+	public static function LossOrDestruction() : Admin_Managers_WarehouseManagementLossOrDestruction|Application_Module|null
 	{
-		return static::get( Admin_Managers_LossOrDestruction::class );
+		return static::get( Admin_Managers_WarehouseManagementLossOrDestruction::class );
 	}
 	
 	public static function Note() : Admin_Managers_Note|Application_Module|null
@@ -504,4 +233,8 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Note::class );
 	}
 	
+	public static function Signpost() : Admin_Managers_Signpost|Application_Module|null
+	{
+		return static::get( Admin_Managers_Signpost::class );
+	}
 }

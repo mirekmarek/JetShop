@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use JetApplication\Order;
 
 class ListingHandler_DispatchAllReady_Main extends ListingHandler {
 	public const KEY = 'dispatch_all_ready';

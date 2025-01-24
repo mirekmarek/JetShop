@@ -11,6 +11,7 @@ use JetApplication\Order;
 
 abstract class Core_Invoices {
 	
+	
 	public static function getManager() : Invoice_Manager|Application_Module
 	{
 		return Managers_General::Invoices();

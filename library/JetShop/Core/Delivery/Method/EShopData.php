@@ -374,12 +374,24 @@ abstract class Core_Delivery_Method_EShopData extends Entity_WithEShopData_EShop
 	
 	public function isPersonalTakeover() : bool
 	{
-		return $this->kind == Delivery_Kind::KIND_PERSONAL_TAKEOVER;
+		return
+			$this->kind == Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL ||
+			$this->kind == Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL;
+	}
+	
+	public function isInternalPersonalTakeover() : bool
+	{
+		return $this->kind == Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL;
+	}
+	
+	public function isExternalPersonalTakeover() : bool
+	{
+		return $this->kind == Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL;
 	}
 	
 	public function isEDelivery() : bool
 	{
-		return $this->kind == Delivery_Kind::KIND_E_DELIVERY;
+		return $this->kind == Delivery_Kind::E_DELIVERY;
 	}
 	
 	/**
@@ -664,7 +676,7 @@ abstract class Core_Delivery_Method_EShopData extends Entity_WithEShopData_EShop
 			foreach( $methods as $method ) {
 				if(
 					$has_only_personal_takeover &&
-					$method->getKindCode()!=Delivery_Kind::KIND_PERSONAL_TAKEOVER
+					$method->getKindCode()!=Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL
 				) {
 					//There is something what is available only as "personal take over item" in the order. So only personal takeover methods are allowed
 					continue;
@@ -672,7 +684,7 @@ abstract class Core_Delivery_Method_EShopData extends Entity_WithEShopData_EShop
 				
 				if(
 					$has_only_e_delivery &&
-					$method->getKindCode()!=Delivery_Kind::KIND_E_DELIVERY
+					$method->getKindCode()!=Delivery_Kind::E_DELIVERY
 				) {
 					//There is something virtual and nothing else. So only e-delivery is allowed
 					continue;
@@ -680,7 +692,7 @@ abstract class Core_Delivery_Method_EShopData extends Entity_WithEShopData_EShop
 				
 				if(
 					!$has_only_e_delivery &&
-					$method->getKindCode()==Delivery_Kind::KIND_E_DELIVERY
+					$method->getKindCode()==Delivery_Kind::E_DELIVERY
 				) {
 					//There is something physical. So e-delivery is not allowed
 					continue;

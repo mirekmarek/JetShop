@@ -12,7 +12,6 @@ use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\Entity_WithEShopRelation;
@@ -23,7 +22,7 @@ use JetApplication\WarehouseManagement_StockCard;
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_WarehouseManagementOverview
+class Main extends Application_Module implements Admin_Managers_WarehouseManagementOverview
 {
 	use Admin_EntityManager_WithEShopRelation_Trait;
 	
@@ -49,12 +48,6 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_RECALCULATE );
 	}
 	
-	
-	public static function showActiveState( int $id ): string
-	{
-		return '';
-	}
-	
 	public static function getCurrentUserCanCreate(): bool
 	{
 		return false;
@@ -67,17 +60,12 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 	
 	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
-		return new StockCard();
+		return new WarehouseManagement_StockCard();
 	}
 	
 	public static function getEntityNameReadable(): string
 	{
-		return 'Warehouse stock card';
-	}
-	
-	public static function getStockCardDetailURL( WarehouseManagement_StockCard $card ) : string
-	{
-		return self::getEditUrl( $card->getId() );
+		return 'Warehouse Management - Stock card';
 	}
 	
 	public function renderProductStockStatusInfo( Product $product ) : string

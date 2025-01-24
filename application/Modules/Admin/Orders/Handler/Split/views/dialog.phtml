@@ -12,7 +12,7 @@ use Jet\UI_button;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
 use JetApplication\Order_Item;
-
+use JetApplication\Order;
 
 /**
  * @var MVC_View $this
@@ -59,7 +59,7 @@ echo $dialog->start();
 					<td style="text-align: right"><b><?=Locale::float($item->getNumberOfUnits()) ?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></b></td>
 					<td>
 						<?php if( $item->isPhysicalProduct() || $item->isVirtualProduct() ): ?>
-							<a href="<?=$product_manager->getEditURL( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
+							<a href="<?=$product_manager->getProductEditURL( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
 						<?php else: ?>
 							<?=$item->getTitle() ?>
 						<?php endif; ?>
@@ -102,7 +102,7 @@ echo $dialog->start();
 							<td style="text-align: center"></td>
 							<td style="text-align: right"><b><?=Locale::float($set_item->getNumberOfUnits()) ?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b></td>
 							<td>
-								<a href="<?=$product_manager->getEditURL( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
+								<a href="<?=$product_manager->getProductEditURL( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
 							</td>
 							<td>
 								<?=$set_item->getNumberOfUnitsAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?>

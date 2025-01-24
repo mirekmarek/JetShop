@@ -10,6 +10,10 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Admin_Managers_ContentArticles;
 use JetApplication\Content_Article_Author;
 use JetApplication\Content_Article_Category;
 use JetApplication\Content_Article_KindOfArticle;
@@ -17,15 +21,20 @@ use JetApplication\Content_Article_EShopData;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShops;
 use JetApplication\EShop;
-
+use JetApplication\JetShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'content_article',
 	database_table_name: 'content_articles',
 )]
-abstract class Core_Content_Article extends Entity_WithEShopData
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_ContentArticles::class
+)]
+abstract class Core_Content_Article extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
 {
+	use Admin_Entity_WithEShopData_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -78,6 +87,19 @@ abstract class Core_Content_Article extends Entity_WithEShopData
 	
 	
 	protected ?array $category_ids = null;
+	
+	public function defineImages() : void
+	{
+		$this->defineImage(
+			image_class:  'header_1',
+			image_title:  Tr::_('Header 1'),
+		);
+		$this->defineImage(
+			image_class:  'header_2',
+			image_title:  Tr::_('Header 2'),
+		);
+	}
+	
 	
 	public function afterAdd(): void
 	{

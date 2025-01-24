@@ -1,13 +1,21 @@
 <?php
 namespace JetShop;
 
+use Jet\Tr;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Float;
+use Jet\Form_Field_Input;
 use Jet\Logger;
+use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Admin_Managers_WarehouseManagementStockVerification;
 use JetApplication\Entity_Simple;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
@@ -18,17 +26,23 @@ use JetApplication\WarehouseManagement_StockVerification_Item;
 use JetApplication\WarehouseManagement_StockVerification;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
-use Jet\Tr;
 use JetApplication\WarehouseManagement_Warehouse;
 
 #[DataModel_Definition(
 	name: 'whm_stock_verification',
 	database_table_name: 'whm_stock_verification',
 )]
-class Core_WarehouseManagement_StockVerification extends Entity_Simple implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagementStockVerification::class
+)]
+abstract class Core_WarehouseManagement_StockVerification extends Entity_Simple implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_Simple_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
+	use Admin_Entity_Simple_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_DONE = 'done';
@@ -112,6 +126,17 @@ class Core_WarehouseManagement_StockVerification extends Entity_Simple implement
 	)]
 	protected array $items = [];
 	
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return false;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Warehouse management - stock verification';
+	}
 	
 	public static function getStatusScope(): array
 	{
@@ -416,6 +441,88 @@ class Core_WarehouseManagement_StockVerification extends Entity_Simple implement
 		);
 		
 		return true;
+	}
+	
+	public function getAdminTitle() : string
+	{
+		return $this->number;
+	}
+	
+	
+	protected function setupForm( Form $form ) : void
+	{
+		foreach($this->items as $p_id=>$item) {
+			$qty_reality = new Form_Field_Float( '/item_'.$p_id.'/qty_reality', '' );
+			$qty_reality->setDefaultValue( $item->getNumberOfUnitsReality() );
+			$qty_reality->setFieldValueCatcher( function( float $v ) use ($item) : void {
+				$item->setNumberOfUnitsReality( $v );
+			} );
+			$form->addField( $qty_reality );
+			
+			
+			$sector = new Form_Field_Input( '/item_'.$p_id.'/sector', '' );
+			$sector->setDefaultValue( $item->getSector() );
+			$sector->setFieldValueCatcher( function( string $v ) use ($item) : void {
+				$item->setSector( $v );
+			} );
+			$form->addField( $sector );
+			
+			
+			$rack = new Form_Field_Input( '/item_'.$p_id.'/rack', '' );
+			$rack->setDefaultValue( $item->getRack() );
+			$rack->setFieldValueCatcher( function( string $v ) use ($item) : void {
+				$item->setRack( $v );
+			} );
+			$form->addField( $rack );
+			
+			
+			$position = new Form_Field_Input( '/item_'.$p_id.'/position', '' );
+			$position->setDefaultValue( $item->getPosition() );
+			$position->setFieldValueCatcher( function( string $v ) use ($item) : void {
+				$item->setPosition( $v );
+			} );
+			$form->addField( $position );
+		}
+	}
+	
+	protected function catchForm( Form $form ) : bool
+	{
+		
+		if(!$form->catch()) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
+	public function setupAddForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+	}
+	
+	
+	
+	public function catchAddForm() : bool
+	{
+		return $this->catchForm( $this->getAddForm() );
+	}
+	
+	public function setupEditForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+		
+		
+		if($this->getStatus()!=static::STATUS_PENDING) {
+			$form->setIsReadonly();
+		}
+	}
+	
+	public function catchEditForm() : bool
+	{
+		return $this->catchForm( $this->getEditForm() );
 	}
 	
 }

@@ -51,4 +51,5 @@ return [
 	'Please enter name' => '',
 	'Name:' => '',
 	'Landing page <b>%ITEM_NAME%</b> has been updated' => '',
+	'e-shop' => '',
 ];

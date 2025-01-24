@@ -49,7 +49,7 @@ interface Core_Admin_Managers_Entity_Edit_Common extends Admin_Managers_Entity_E
 		?callable $reason_renderer = null
 	): string;
 	
-	public function renderShowName( int $id, Entity_Common|Admin_Entity_Interface $entity ): string;
+	public function renderShowName( int $id, null|Entity_Common|Admin_Entity_Interface $item ): string;
 	
 	public function renderEntityActivation(
 		Entity_Common|Admin_Entity_Common_Interface $entity,

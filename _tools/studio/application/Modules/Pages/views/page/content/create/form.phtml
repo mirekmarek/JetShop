@@ -1,0 +1,150 @@
+<?php
+
+namespace JetStudioModule\Pages;
+
+use Jet\Application_Modules;
+use Jet\Tr;
+use Jet\MVC_View;
+use JetStudio\JetStudio_UI;
+
+/**
+ * @var MVC_View $this
+ * @var Page $page
+ */
+
+$page = $this->getRaw( 'page' );
+
+$form = $page->getContentCreateForm();
+
+
+
+$selected_content_kind = $form->field( 'content_kind' )->getValue();
+
+echo $form->start();
+?>
+<?=$form->getCommonMessage();?>
+
+<div class="form-fields">
+	<?=$form->field( 'content_kind' );?>
+	
+	<?=$form->field( 'output_position' );?>
+	<?=$form->field( 'output_position_order' );?>
+	<?=$form->field( 'is_cacheable' );?>
+	<?=$form->field( 'params' );?>
+
+</div>
+
+	<?php
+
+$tabs_suffix = '_' . $page->getBaseId() . '_' . $page->getId();
+
+$form_id = $form->getId();
+?>
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link<?= $selected_content_kind == Page_Content::CONTENT_KIND_MODULE ? ' active' : '' ?>"
+			   data-toggle="tab" href="#tab_content_module<?= $tabs_suffix ?>"
+			   onclick="$('#<?= $form_id ?>__content_kind').val('<?= Page_Content::CONTENT_KIND_MODULE ?>')"><?= Tr::_( 'Module' ) ?></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link<?= $selected_content_kind == Page_Content::CONTENT_KIND_CLASS ? ' active' : '' ?>"
+			   data-toggle="tab" href="#tab_content_class<?= $tabs_suffix ?>"
+			   onclick="$('#<?= $form_id ?>__content_kind').val('<?= Page_Content::CONTENT_KIND_CLASS ?>')"><?= Tr::_( 'Controller class' ) ?></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link<?= $selected_content_kind == Page_Content::CONTENT_KIND_STATIC ? ' active' : '' ?>"
+			   data-toggle="tab" href="#tab_content_static<?= $tabs_suffix ?>"
+			   onclick="$('#<?= $form_id ?>__content_kind').val('<?= Page_Content::CONTENT_KIND_STATIC ?>')"><?= Tr::_( 'Static content' ) ?></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link<?= $selected_content_kind == Page_Content::CONTENT_KIND_CALLBACK ? ' active' : '' ?>"
+			   data-toggle="tab" href="#tab_content_callback<?= $tabs_suffix ?>"
+			   onclick="$('#<?= $form_id ?>__content_kind').val('<?= Page_Content::CONTENT_KIND_CALLBACK ?>')"><?= Tr::_( 'Callback' ) ?></a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="tab_content_module<?= $tabs_suffix ?>"
+		     class="tab-pane fade<?= $selected_content_kind == Page_Content::CONTENT_KIND_MODULE ? ' show active' : '' ?>"
+		     style="padding-top: 10px;min-height: 400px;">
+			
+			<div style="display: grid;grid-template-columns: 1fr 1fr;gap: 20px;">
+				
+					<div class="card">
+						<div class="card-header"><?=Tr::_('Module:')?></div>
+						<div class="card-body">
+							
+							<?=JetStudio_UI::search(
+									id: 'create_page_content_module_search',
+									placeholder: Tr::_('Search for module ...'),
+									search_action: 'Pages.editPage.content.moduleSearch.search();',
+									search_reset_action: 'Pages.editPage.content.moduleSearch.reset();') ?>
+							
+							<div style="height: 250px;overflow: auto;">
+								<table class="table table-striped">
+									<?php foreach(Application_Modules::allModulesList() as $module): ?>
+										<tr
+												class="create_page_content_module_row"
+												id="create_page_content_module_row_<?=$module->getName()?>"
+												onclick="Pages.editPage.content.moduleSelected('<?=$module->getName()?>', this )"
+												data-name="<?=$module->getName()?>"
+												data-label="<?=$module->getLabel()?>"
+										>
+											<td><a href="#"><?=$module->getName()?></a></td>
+											<td><a href="#"><?=$module->getLabel()?></a></td>
+										</tr>
+									<?php endforeach; ?>
+								</table>
+								
+								<?=$form->field( 'module_name' );?>
+							</div>
+						</div>
+					</div>
+				
+				
+					<div class="card" id="create_page_content_module_controller" style="visibility: hidden;">
+						<div class="card-header"><?=Tr::_('Module controller:')?></div>
+						<div class="card-body">
+							<?php
+							$form->field( 'controller_name' )->input()->addJsAction( 'onchange', 'Pages.editPage.content.controllerSelected(this.value)' );
+							echo $form->field( 'controller_name' );
+							echo $form->field( 'controller_action' );
+							?>
+						</div>
+					</div>
+				
+			</div>
+		</div>
+
+		<div id="tab_content_class<?= $tabs_suffix ?>"
+		     class="tab-pane fade<?= $selected_content_kind == Page_Content::CONTENT_KIND_CLASS ? ' show active' : '' ?>"
+		     style="padding-top: 10px;min-height: 400px;">
+			
+			<?php
+			echo $form->field( 'controller_class' );
+			echo $form->field( 'controller_class_action' );
+			?>
+		</div>
+
+
+		<div id="tab_content_static<?= $tabs_suffix ?>"
+		     class="tab-pane fade<?= $selected_content_kind == Page_Content::CONTENT_KIND_STATIC ? ' show active' : '' ?>"
+		     style="padding-top: 10px;min-height: 400px;">
+			<?php
+			$form->field( 'output' )->input()->addCustomCssStyle( 'height: 380px' );
+			?>
+			<?= $form->field( 'output' )->input() ?>
+		</div>
+
+		<div id="tab_content_callback<?= $tabs_suffix ?>"
+		     class="tab-pane fade<?= $selected_content_kind == Page_Content::CONTENT_KIND_CALLBACK ? ' show active' : '' ?>"
+		     style="padding-top: 10px;min-height: 400px;">
+			
+			
+			<?=$form->field( 'output_callback' )?>
+		</div>
+
+	</div>
+
+	<?php
+echo $form->end();

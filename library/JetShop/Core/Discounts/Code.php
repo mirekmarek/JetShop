@@ -7,14 +7,21 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Data_DateTime;
 
+use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Admin_Managers_DiscountCodesDefinition;
 use JetApplication\Discounts;
 use JetApplication\Discounts_Code;
+use JetApplication\Discounts_Code_Module;
 use JetApplication\Entity_Marketing;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Order;
 use JetApplication\Pricelists;
 use JetApplication\EShop_Managers;
@@ -23,7 +30,6 @@ use JetApplication\EShop;
 use JetApplication\Discounts_Code_Usage;
 
 use JetApplication\Discounts_Discount;
-use JetApplicationModule\Discounts\Code\Main as DiscountModule;
 
 /**
  *
@@ -32,8 +38,13 @@ use JetApplicationModule\Discounts\Code\Main as DiscountModule;
 	name: 'discounts_code',
 	database_table_name: 'discounts_codes',
 )]
-class Core_Discounts_Code extends Entity_Marketing
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_DiscountCodesDefinition::class
+)]
+class Core_Discounts_Code extends Entity_Marketing implements Admin_Entity_Marketing_Interface
 {
+	use Admin_Entity_Marketing_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
 		is_key: true,
@@ -117,14 +128,7 @@ class Core_Discounts_Code extends Entity_Marketing
 			'id !=' => $skip_id
 		]);
 	}
-
 	
-	
-	public static function get( int $id ): static|null
-	{
-		return static::load( $id );
-	}
-
 	public static function getByCode( string $discount_code, ?EShop $eshop=null ): ?static
 	{
 		if(!$eshop) {
@@ -285,11 +289,19 @@ class Core_Discounts_Code extends Entity_Marketing
 		
 		if($this->getDoNotCombine()) {
 			/**
-			 * @var DiscountModule $module
+			 * @var Discounts_Code_Module $module
 			 */
-			$module = Discounts::Manager()->getActiveModule('Code');
+			$modules = Discounts::Manager()->getActiveModules();
+			$module = null;
+			foreach($modules as $m) {
+				if( $module instanceof Discounts_Code_Module ) {
+					$module = $m;
+					break;
+				}
+			}
 			
-			$used_coupons = $module->getUsedCodesRaw();
+			
+			$used_coupons = $module?->getUsedCodesRaw()??[];
 			
 			$i = array_search( $this->getId(), $used_coupons );
 			if($i!==false) {
@@ -435,5 +447,54 @@ class Core_Discounts_Code extends Entity_Marketing
 	}
 	
 	
+	protected function setupAddForm( Form $form ): void
+	{
+		$this->setupForm( $form );
+	}
+	
+	protected function setupEditForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+	}
+	
+	public function hasImages(): bool
+	{
+		return false;
+	}
+	
+	
+	protected function setupForm( Form $form ) : void
+	{
+		$eshop = new Form_Field_Select('eshop', 'e-shop');
+		$eshop->setSelectOptions( EShops::getScope() );
+		$eshop->setDefaultValue( $this->getEshop()->getKey() );
+		$eshop->setErrorMessages([
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+		]);
+		$eshop->setFieldValueCatcher( function( string $eshop_key ) {
+			$eshop = EShops::get( $eshop_key );
+			$this->setEshop( $eshop );
+		} );
+		
+		$form->addField( $eshop );
+		
+		$code = $form->getField('code');
+		
+		$code->setValidator(function( Form_Field_Input $field ) {
+			$value = $field->getValue();
+			if($value==='') {
+				return true;
+			}
+			
+			if(static::codeExists($value, $this->getId())) {
+				$field->setError('code_exists');
+				
+				return false;
+			}
+			
+			return true;
+		});
+		
+	}
 	
 }

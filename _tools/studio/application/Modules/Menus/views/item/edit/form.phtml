@@ -1,0 +1,62 @@
+<?php
+namespace JetStudioModule\Menus;
+
+use Jet\Tr;
+use Jet\MVC_View;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Menu_Item $item
+ */
+
+$item = $this->getRaw( 'item' );
+
+$form = $item->getEditForm();
+
+
+$tabs = UI::tabsJS( 'create_menu_item_target_tabs', [
+	'tab_direct_mvc'  => Tr::_( 'MVC link' ),
+	'tab_direct_link' => Tr::_( 'Direct link' ),
+], $item->getUrl() ? 'tab_direct_link' : 'tab_direct_mvc' );
+
+
+?>
+<?= $form->start() ?>
+
+<?= $form->getCommonMessage(); ?>
+
+<div class="form-fields">
+	<?= $form->field( 'id' ) ?>
+	<?= $form->field( 'label' ) ?>
+	<?= $form->field( 'icon' ) ?>
+	<?= $form->field( 'index' ) ?>
+	
+	<?= $form->field( 'separator_before' ) ?>
+	<?= $form->field( 'separator_after' ) ?>
+</div>
+
+<?= $tabs->start() ?>
+
+<?= $tabs->tab( 'tab_direct_mvc' )->content()->start() ?>
+
+<div class="form-fields">
+	<?= $form->field( 'base_id' ) ?>
+	<?= $form->field( 'page_id' ) ?>
+	<?= $form->field( 'locale' ) ?>
+	<?= $form->field( 'URL_parts' );?>
+	<?= $form->field( 'GET_params' );?>
+
+</div>
+<?= $tabs->tab( 'tab_direct_mvc' )->content()->end() ?>
+
+
+<?= $tabs->tab( 'tab_direct_link' )->content()->start() ?>
+<div class="form-fields">
+	<?= $form->field( 'URL' ) ?>
+</div>
+<?= $tabs->tab( 'tab_direct_link' )->content()->end() ?>
+
+<?= $tabs->end() ?>
+
+<?= $form->end() ?>

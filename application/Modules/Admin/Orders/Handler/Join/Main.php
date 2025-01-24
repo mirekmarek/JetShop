@@ -12,6 +12,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
+use JetApplication\Order;
 
 class Handler_Join_Main extends Handler
 {

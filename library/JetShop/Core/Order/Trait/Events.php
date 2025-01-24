@@ -12,6 +12,7 @@ trait Core_Order_Trait_Events {
 	public const EVENT_CANCEL = 'Cancel';
 	public const EVENT_PAID = 'Paid';
 	public const EVENT_UPDATED = 'Updated';
+	
 	public const EVENT_READY_FOR_DISPATCH = 'ReadyForDispatch';
 	public const EVENT_NOT_READY_FOR_DISPATCH = 'NotReadyForDispatch';
 	public const EVENT_DISPATCH_STARTED = 'DispatchStarted';
@@ -20,6 +21,10 @@ trait Core_Order_Trait_Events {
 	public const EVENT_DELIVERED = 'Delivered';
 	
 	public const EVENT_RETURNED = 'Returned';
+	
+	public const EVENT_PERSONAL_RECEIPT_PREPARATION_STARTED = 'PersonalReceiptPreparationStarted';
+	public const EVENT_PERSONAL_RECEIPT_PREPARED = 'PersonalReceiptPrepared';
+	public const EVENT_PERSONAL_RECEIPT_HANDED_OVER = 'PersonalReceiptHandedOver';
 	
 	public const EVENT_MESSAGE_FOR_CUSTOMER = 'MessageForCustomer';
 	public const EVENT_INTERNAL_NOTE = 'InternalNote';
@@ -248,4 +253,68 @@ trait Core_Order_Trait_Events {
 		$event->handleImmediately();
 	}
 	
+	
+	public function handedOver() : void
+	{
+		$this->ready_for_dispatch = true;
+		$this->dispatch_started = true;
+		$this->dispatched = true;
+		$this->delivered = true;
+		
+		$this->saveDispatchStateFlags();
+		
+		Logger::info(
+			event: 'order:handed_over',
+			event_message: 'Order '.$this->getNumber().' was handed over',
+			context_object_id:
+			$this->id,context_object_name: $this->getNumber(),
+			context_object_data: $this
+		);
+		
+		TODO: $this->createEvent( Order::EVENT_PERSONAL_RECEIPT_HANDED_OVER )->handleImmediately();
+	}
+	
+	
+	public function personalReceiptPreparationStarted() : void
+	{
+		$this->ready_for_dispatch = true;
+		$this->dispatch_started = true;
+		$this->dispatched = false;
+		$this->delivered = false;
+		
+		$this->saveDispatchStateFlags();
+		
+		Logger::info(
+			event: 'order:personal_peceipt_preparation_started',
+			event_message: 'Order '.$this->getNumber().' personal peceipt preparation started',
+			context_object_id:
+			$this->id,context_object_name: $this->getNumber(),
+			context_object_data: $this
+		);
+		
+		
+		
+		$this->createEvent( Order::EVENT_PERSONAL_RECEIPT_PREPARATION_STARTED )->handleImmediately();
+	}
+	
+	
+	public function personalReceiptPrepared() : void
+	{
+		$this->ready_for_dispatch = true;
+		$this->dispatch_started = true;
+		$this->dispatched = true;
+		$this->delivered = false;
+		
+		$this->saveDispatchStateFlags();
+		
+		Logger::info(
+			event: 'order:personal_peceipt_prepared',
+			event_message: 'Order '.$this->getNumber().' personal peceipt prepared',
+			context_object_id:
+			$this->id,context_object_name: $this->getNumber(),
+			context_object_data: $this
+		);
+		
+		$this->createEvent( Order::EVENT_PERSONAL_RECEIPT_PREPARED )->handleImmediately();
+	}
 }

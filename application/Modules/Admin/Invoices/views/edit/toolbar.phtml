@@ -9,7 +9,7 @@ use JetApplication\Admin_Managers_Entity_Listing;
 
 use Jet\UI;
 use Jet\MVC_View;
-
+use JetApplication\Invoice;
 
 /**
  * @var MVC_View $this
@@ -43,7 +43,7 @@ $next_url = $listing->getNextEditUrl( $invoice->getId() );
 		<?php if($invoice->getIsCorrectionInvoice()): ?>
 			<b class="text-danger" style="font-size: 1.2rem"><?=$invoice->getNumber()?></b>
 			<div style="font-size: 0.9rem;"><?=Tr::_('Correction of: <a href="%URL%">%NUMBER%</a>', [
-					'URL' => Main::getEditUrl( $invoice->getCorrectionOfInvoiceId() ),
+					'URL' => Invoice::get($invoice->getCorrectionOfInvoiceId())->getEditURL(),
 					'NUMBER'=>$invoice->getCorrectionOfInvoiceNumber()
 				])?></div>
 			

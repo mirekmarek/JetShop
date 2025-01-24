@@ -1,0 +1,42 @@
+<?php
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\OrderPersonalReceipt;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderPersonalReceipt $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+require __DIR__.'/toolbar/'.$dispatch->getStatus().'.phtml';
+
+echo UI::button(Tr::_('Goto next pending (alt+n)'))->setClass(UI_button::CLASS_INFO)->setOnClick("Control.nextPending();");
+?>
+<div style="display: inline-block;padding-left: 50px;" class="select_item_whisperer_area">
+	<input type="search" class="form-control" placeholder="<?=Tr::_('Search ... (shift+f)')?>" style="width: 300px" id="search_input" onkeyup="Search.search(this.value)">
+	<div class="search-whisperer-area">
+		<div id="search_whisperer">
+		</div>
+	</div>
+</div>
+
+<?php
+
+if(in_array($dispatch->getStatus(), [
+	OrderPersonalReceipt::STATUS_IN_PROGRESS,
+	OrderPersonalReceipt::STATUS_PREPARED,
+	OrderPersonalReceipt::STATUS_HANDED_OVER
+])) {
+	
+	echo UI::button(Tr::_('Rollback'))
+		->setUrl( Http_Request::currentURI(['action'=>'rollback']) )
+		->setSize(UI_button::SIZE_EXTRA_SMALL)
+		->addCustomCssStyle('margin-left: 100px;');
+}

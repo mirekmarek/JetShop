@@ -11,6 +11,7 @@ use Jet\AJAX;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
+use JetApplication\Order;
 
 class Handler_Split_Main extends Handler
 {

@@ -10,9 +10,11 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Signpost;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Signpost_Category;
 use JetApplication\Signpost_EShopData;
 use JetApplication\EShop;
@@ -20,6 +22,9 @@ use JetApplication\EShop;
 #[DataModel_Definition(
 	name: 'signposts',
 	database_table_name: 'signposts',
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Signpost::class
 )]
 abstract class Core_Signpost extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
@@ -184,12 +189,6 @@ abstract class Core_Signpost extends Entity_WithEShopData implements FulltextSea
 		$this->category_ids = null;
 		
 		return true;
-	}
-	
-	public function getEditURL() : string
-	{
-		return '';
-		//TODO: return Admin_Managers::Signpost()->getEditURL( $this->id );
 	}
 	
 	public function defineImages() : void

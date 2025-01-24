@@ -378,4 +378,6 @@ return [
 	'Total amount<br><span style="font-weight: normal">with VAT</span>' => 'Celková částka<br> <span style="font-weight: normal">s DPH</span>',
 	'without VAT' => 'bez DPH',
 	'with VAT' => 's DPH',
+	'Personal receipt of the order' => '',
+	'Handed over - %DATE_TIME%' => '',
 ];

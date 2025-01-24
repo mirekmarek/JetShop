@@ -133,13 +133,11 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit_Mark
 		return $view->render( 'delete/not-possible' );
 	}
 	
-	public function renderShowName( int $id, Entity_Marketing|Admin_Entity_Marketing_Interface $entity ): string
+	public function renderShowName( int $id, null|Entity_Marketing|Admin_Entity_Marketing_Interface $item ): string
 	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
-			function() use ($id, $entity) {
-				$item = $entity::get($id);
-				
+			function() use ($item, $id) {
 				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 				$view->setVar('id', $id);
 				

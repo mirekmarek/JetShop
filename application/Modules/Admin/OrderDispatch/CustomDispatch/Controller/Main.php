@@ -19,7 +19,6 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
 use JetApplication\Carrier;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Complaint;
@@ -331,7 +330,7 @@ class Controller_Main extends MVC_Controller_Default
 			$carrier = Carrier::get( $carrier_code );
 			$service = $carrier->getService( $service_code );
 			
-			if($service->getCompatibleKindOfDelivery()!=Delivery_Kind::KIND_PERSONAL_TAKEOVER) {
+			if($service->getCompatibleKindOfDelivery()!=Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL) {
 				return true;
 			}
 			
@@ -510,7 +509,7 @@ class Controller_Main extends MVC_Controller_Default
 			$dispatch->save();
 			UI_messages::success( Tr::_('Custom order dispatch has been created') );
 			Http_Headers::movedTemporary(
-				Admin_Managers::OrderDispatch()->getOrderDispatchURL( $dispatch->getId() )
+				$dispatch->getEditURL()
 			);
 
 		}

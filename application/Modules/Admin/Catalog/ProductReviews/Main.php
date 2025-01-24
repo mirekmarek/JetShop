@@ -9,14 +9,15 @@ namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_ProductReviews;
 use JetApplication\Entity_WithEShopRelation;
+use JetApplication\ProductReview;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface
+class Main extends Application_Module implements Admin_Managers_ProductReviews
 {
 	use Admin_EntityManager_WithEShopRelation_Trait;
 	

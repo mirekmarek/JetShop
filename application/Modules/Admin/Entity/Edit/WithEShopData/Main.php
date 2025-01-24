@@ -14,6 +14,7 @@ use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Http_Request;
 use Jet\MVC_View;
+use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
 use JetApplication\Admin_Entity_Interface;
@@ -159,33 +160,24 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit_With
 		return $this->render( 'delete/not-possible' );
 	}
 	
-	public function renderShowName( int $id, Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $entity ): string
+	public function renderShowName( int $id, null|Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $item ): string
 	{
-		$item = $entity::get( $id );
-		
-		$this->view->setVar( 'id', $id );
-		
-		if( $item ) {
-			$this->view->setVar( 'item', $item );
-			return $this->render( 'show-name/known' );
-		}
-		
-		return $this->render( 'show-name/unknown' );
+		return Translator::setCurrentDictionaryTemporary(
+			$this->module_manifest->getName(),
+			function() use ($id, $item) {
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				$view->setVar('id', $id);
+				
+				if($item) {
+					$view->setVar('item', $item);
+					return $view->render('show-name/known');
+				}
+				
+				return $view->render('show-name/unknown');
+			}
+		);
 	}
 	
-	public function showActiveState( int $id, Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $entity ): string
-	{
-		$item = $entity::get( $id );
-		
-		$this->view->setVar( 'id', $id );
-		
-		if( $item ) {
-			$this->view->setVar( 'item', $item );
-			return $this->render( 'active-state' );
-		}
-		
-		return '';
-	}
 	
 	public function renderActiveState( Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $item ): string
 	{

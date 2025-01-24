@@ -87,7 +87,7 @@ echo Admin_Managers::EntityListing()->renderListingFilter(
 			
 			<?php foreach( $filter->getSelectedCategoryIds() as $c_id ): ?>
 				<div style="margin: 3px;display: inline-block;padding: 3px;">
-					<?=UI::button(' '.Admin_Managers::Category()->getName( $c_id ) )
+					<?=UI::button(' '.Admin_Managers::Category()->showName( $c_id ) )
 						->setIcon('trash')
 						->setClass('light')
 						->setSize(UI_button::SIZE_EXTRA_SMALL)

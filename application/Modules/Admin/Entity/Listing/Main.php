@@ -17,6 +17,7 @@ use Jet\Http_Request;
 use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Admin_Entity_Interface;
 use JetApplication\Admin_EntityManager_Interface;
+use JetApplication\Entity_Basic;
 
 /**
  *
@@ -153,6 +154,11 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 	public function setCreateBtnRenderer( callable $renderer ): void
 	{
 		$this->create_btn_renderer = $renderer;
+	}
+	
+	public function getEditUrl( Entity_Basic $item ): string
+	{
+		return $this->listing->getEditUrl( $item );
 	}
 	
 	public function getPrevEditUrl( int $current_id ): string

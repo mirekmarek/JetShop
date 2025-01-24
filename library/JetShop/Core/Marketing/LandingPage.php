@@ -3,19 +3,29 @@ namespace JetShop;
 
 use Jet\Data_Text;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Http_Request;
+use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Entity_Marketing_Trait;
 use JetApplication\Entity_Marketing;
 use Jet\DataModel;
+use JetApplication\JetShopEntity_Definition;
+use JetApplication\Marketing_LandingPage;
 
 
 #[DataModel_Definition(
 	name: 'marketing_landing_page',
 	database_table_name: 'marketing_landing_pages',
 )]
-abstract class Core_Marketing_LandingPage extends Entity_Marketing
+#[JetShopEntity_Definition(
+	admin_manager_interface: Marketing_LandingPage::class
+)]
+abstract class Core_Marketing_LandingPage extends Entity_Marketing implements Admin_Entity_Marketing_Interface
 {
+	use Admin_Entity_Marketing_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
@@ -157,6 +167,48 @@ abstract class Core_Marketing_LandingPage extends Entity_Marketing
 	public function checkPreviewKey() : bool
 	{
 		return Http_Request::GET()->getString('pvk')==$this->generatePreviewKey();
+	}
+	
+	public function hasImages(): bool
+	{
+		return false;
+	}
+	
+	public function setupForm( Form $form ): void
+	{
+		$form->removeField('relevance_mode');
+	}
+	
+	protected function setupAddForm( Form $form ): void
+	{
+		$this->setupForm( $form );
+	}
+	
+	protected function setupEditForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+	}
+	
+	
+	public ?Form $landing_page_edit_form = null;
+	
+	public function getLandingPageEditForm() : Form
+	{
+		if(!$this->landing_page_edit_form) {
+			$this->landing_page_edit_form = $this->createForm('landing_page_edit_form', [
+				'landing_page_title',
+				'landing_page_description',
+				'landing_page_url',
+				'landing_page_html',
+			]);
+		}
+		
+		return $this->landing_page_edit_form;
+	}
+	
+	public function catchLandingPageEditForm() : bool
+	{
+		return $this->getLandingPageEditForm()->catch();
 	}
 	
 }

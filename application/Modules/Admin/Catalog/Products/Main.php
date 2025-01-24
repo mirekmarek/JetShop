@@ -3,6 +3,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Auth;
 use Jet\Factory_MVC;
+use Jet\MVC;
 use Jet\Tr;
 use Jet\Application_Module;
 use JetApplication\Product;
@@ -28,8 +29,16 @@ class Main extends Application_Module implements Admin_Managers_Product
 	public const ACTION_DELETE = 'delete_product';
 	public const ACTION_SET_PRICE = 'set_price';
 	public const ACTION_SET_AVAILABILITY = 'set_availability';
-
-
+	
+	
+	public function getProductEditURL( int $product_id ) : string
+	{
+		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
+		
+		$get_params['id'] = $product_id;
+		
+		return $page->getURL([], $get_params);
+	}
 	
 	public function renderSelectWidget( string $on_select,
 	                                    int $selected_product_id=0,

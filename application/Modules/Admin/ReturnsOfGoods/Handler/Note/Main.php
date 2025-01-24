@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\ReturnOfGoods_Note;
+use JetApplication\ReturnOfGoods;
 
 class Handler_Note_Main extends Handler
 {

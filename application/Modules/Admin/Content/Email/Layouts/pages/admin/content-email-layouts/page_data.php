@@ -1,8 +1,8 @@
 <?php
 return [
-	'name' => 'E-mail layouts administration',
+	'name' => 'E-mail layouts',
 	'is_active' => true,
-	'title' => 'E-mail layouts administration',
+	'title' => 'E-mail layouts',
 	'icon' => 'square-envelope',
 	'contents' => [
 		[

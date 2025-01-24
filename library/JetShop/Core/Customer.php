@@ -12,6 +12,9 @@ use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
 use Jet\DataModel_Query;
 
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_Customer;
 use JetApplication\Customer_Address;
 use JetApplication\Customer;
 use JetApplication\EMailMarketing;
@@ -19,6 +22,7 @@ use JetApplication\Entity_WithEShopRelation;
 use JetApplication\EShops;
 use JetApplication\EMailMarketing_Subscribe;
 use JetApplication\EShop;
+use JetApplication\JetShopEntity_Definition;
 
 
 #[DataModel_Definition(
@@ -32,8 +36,13 @@ use JetApplication\EShop;
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 )]
-abstract class Core_Customer extends Entity_WithEShopRelation implements Auth_User_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Customer::class
+)]
+abstract class Core_Customer extends Entity_WithEShopRelation implements Auth_User_Interface, Admin_Entity_WithEShopRelation_Interface
 {
+	use Admin_Entity_WithEShopRelation_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		do_not_export: true,
@@ -216,11 +225,6 @@ abstract class Core_Customer extends Entity_WithEShopRelation implements Auth_Us
 	public function encryptPassword( string $plain_password ) : string
 	{
 		return password_hash( $plain_password, PASSWORD_DEFAULT );
-	}
-
-	public static function get( string|int $id ) : static|null
-	{
-		return static::load( $id );
 	}
 	
 	/**
@@ -773,6 +777,36 @@ abstract class Core_Customer extends Entity_WithEShopRelation implements Auth_Us
 			'AND',
 			'oauth_key' => $oauth_key
 		] );
+	}
+	
+	public function isEditable(): bool
+	{
+		return false;
+	}
+	
+	public function setEditable( bool $editable ): void
+	{
+	}
+	
+	
+	public function getAddForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
 	}
 	
 }

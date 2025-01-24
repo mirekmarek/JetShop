@@ -229,4 +229,5 @@ return [
 	'Valid till' => '',
 	'General' => '',
 	'Gift' => '',
+	'e-shop' => '',
 ];

@@ -53,27 +53,27 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function generateText_add_msg() : string
 	{
-		return Tr::_( ucfirst($this->getEntityNameReadable()).' <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $this->current_item->getAdminTitle() ] );
+		return Tr::_( $this->getEntityNameReadable().' <b>%ITEM_NAME%</b> has been created', [ 'ITEM_NAME' => $this->current_item->getAdminTitle() ] );
 	}
 	
 	protected function generateText_edit_main_msg() : string
 	{
-		return Tr::_( ucfirst($this->getEntityNameReadable()).' <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $this->current_item->getAdminTitle() ] );
+		return Tr::_( $this->getEntityNameReadable().' <b>%ITEM_NAME%</b> has been updated', [ 'ITEM_NAME' => $this->current_item->getAdminTitle() ] );
 	}
 	
 	protected function generateText_delete_msg() : string
 	{
-		return Tr::_( ucfirst($this->getEntityNameReadable()).' <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $this->current_item->getAdminTitle() ] );
+		return Tr::_( $this->getEntityNameReadable().' <b>%ITEM_NAME%</b> has been deleted', [ 'ITEM_NAME' => $this->current_item->getAdminTitle() ] );
 	}
 	
 	protected function generateText_delete_confirm_msg() : string
 	{
-		return Tr::_( 'Do you really want to delete this '.ucfirst($this->getEntityNameReadable()).'?' );
+		return Tr::_( 'Do you really want to delete this '.$this->getEntityNameReadable().'?' );
 	}
 	
 	protected function generateText_delete_not_possible_msg() : string
 	{
-		return Tr::_( 'It is not possible to delete this '.ucfirst($this->getEntityNameReadable()) );
+		return Tr::_( 'It is not possible to delete this '.$this->getEntityNameReadable() );
 	}
 	
 	protected function getTabs() : array

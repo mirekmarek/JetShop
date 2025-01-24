@@ -378,10 +378,26 @@ abstract class Core_Payment_Method_EShopData extends Entity_WithEShopData_EShopD
 	public function getOptions() : array
 	{
 		if($this->options===null) {
-			$this->options = Payment_Method_Option_EShopData::getListForMethod( $this->entity_id );
+			$this->options = Payment_Method_Option_EShopData::getListForMethod( $this->entity_id, $this->getEshop() );
 		}
 		
 		return $this->options;
+	}
+	
+	/**
+	 * @return Payment_Method_Option_EShopData[]
+	 */
+	public function getActiveOptions() : array
+	{
+		$options = [];
+		
+		foreach($this->getOptions() as $o) {
+			if( $o->isActive() ) {
+				$options[$o->getInternalCode()] = $o;
+			}
+		}
+		
+		return $options;
 	}
 	
 	public function getOrderConfirmationEmailInfoText( Order $order ) : string

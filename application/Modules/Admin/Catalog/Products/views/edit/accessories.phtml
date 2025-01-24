@@ -31,6 +31,10 @@ $form->renderer()->setDefaultFieldWidth([
 $form->field('groups')->input()->addCustomCssStyle("height: calc(100vh - 250px)");
 ?>
 <div id="main-col">
+	
+	<?=$this->getRaw('tabs')?>
+	<br>
+	
 	<?=$form->start()?>
 	<?=$form->field('groups')?>
 	<?=$form->end()?>

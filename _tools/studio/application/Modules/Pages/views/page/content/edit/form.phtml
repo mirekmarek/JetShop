@@ -1,0 +1,26 @@
+<?php
+namespace JetStudioModule\Pages;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Page $page
+ */
+
+$page = $this->getRaw( 'page' );
+
+$form = $page->getEditForm_content();
+
+?>
+
+<?= $form->start() ?>
+<div style="min-height: 600px;margin-bottom: 40px;">
+	<div id="content_list_area">
+		<?= $this->render( 'page/content/edit/form/list' ); ?>
+	</div>
+</div>
+<?= $form->end() ?>
+
+<?= $this->render( 'page/content/delete/dialog' ); ?>
+<?= $this->render( 'page/content/create/dialog' ); ?>

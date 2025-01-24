@@ -45,4 +45,5 @@ return [
 	'Status' => '',
 	'Source' => '',
 	'Name:' => '',
+	'e-shop' => '',
 ];

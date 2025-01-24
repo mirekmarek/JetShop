@@ -25,7 +25,7 @@ trait Core_NumberSeries_Entity_Trait
 		$this->number = $number;
 	}
 	
-	public function getNumberSeriesEntityType(): string
+	public static function getNumberSeriesEntityType(): string
 	{
 		return static::getEntityType();
 	}

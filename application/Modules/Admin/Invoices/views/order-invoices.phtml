@@ -5,6 +5,7 @@ use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
+use JetApplication\Invoice;
 
 /**
  * @var MVC_View $this
@@ -45,12 +46,12 @@ $price_formatter = Admin_Managers::PriceFormatter();
 			</td>
 			<td>
 				<?php if($invoice->getIsCorrectionInvoice()): ?>
-					<a href="<?=Main::getEditUrl( $invoice->getId() );?>" class="text-info"><?=$invoice->getNumber();?></a>
+					<a href="<?=$invoice->getEditURL();?>" class="text-info"><?=$invoice->getNumber();?></a>
 				<?php else: ?>
 					<?php if(!$invoice->hasCorrections()): ?>
-						<a href="<?=Main::getEditUrl( $invoice->getId() );?>"><?=$invoice->getNumber();?></a>
+						<a href="<?=$invoice->getEditURL();?>"><?=$invoice->getNumber();?></a>
 					<?php else: ?>
-						<a href="<?=Main::getEditUrl( $invoice->getId() );?>" class="text-danger"><?=$invoice->getNumber();?></a>
+						<a href="<?=$invoice->getEditURL();?>" class="text-danger"><?=$invoice->getNumber();?></a>
 					<?php endif; ?>
 				<?php endif; ?>
 			</td>

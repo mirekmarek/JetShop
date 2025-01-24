@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Orders;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\Order_Note;
+use JetApplication\Order;
 
 class Handler_Note_Main extends Handler
 {

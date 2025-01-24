@@ -5,6 +5,10 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use Jet\Form;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_Order;
 use JetApplication\Availabilities;
 use JetApplication\Availability;
 use JetApplication\Context_ProvidesContext_Interface;
@@ -13,6 +17,7 @@ use JetApplication\Currency;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Entity_WithEShopRelation;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
@@ -42,8 +47,15 @@ use JetApplication\Context_ProvidesContext_Trait;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Order::class
+)]
+abstract class Core_Order extends Entity_WithEShopRelation implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_WithEShopRelation_Interface
 {
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	
 	use Context_ProvidesContext_Trait;
@@ -469,6 +481,15 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 		$this->availability_code = $availability_code;
 	}
 	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return true;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Orders';
+	}
 	
 	public function getNumberSeriesEntityData(): ?Data_DateTime
 	{
@@ -814,7 +835,7 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 		
 	}
 
-	public function getDeliveryMethod() : Delivery_Method_EShopData
+	public function getDeliveryMethod() : ?Delivery_Method_EShopData
 	{
 		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
 	}
@@ -836,7 +857,7 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 	
 	
 	
-	public function setPaymentMethod( Payment_Method_EShopData $payment_method, string $payment_option_id='' ) : void
+	public function setPaymentMethod( Payment_Method_EShopData $payment_method, string $payment_option_code='' ) : void
 	{
 		/**
 		 * @var Order $order
@@ -852,11 +873,11 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 			!$payment_method->getKind()->isCOD()
 		);
 		
-		if($payment_option_id) {
-			$payment_option = $payment_method->getOptions()[$payment_option_id]??null;
+		if($payment_option_code) {
+			$payment_option = $payment_method->getOptions()[$payment_option_code]??null;
 			if($payment_option) {
-				$order->setPaymentMethodSpecification( $payment_option->getId() );
-				$payment_order_item->setSubCode($payment_option->getId());
+				$order->setPaymentMethodSpecification( $payment_option->getInternalCode() );
+				$payment_order_item->setSubCode($payment_option->getInternalCode());
 				$payment_order_item->setDescription( $payment_option->getTitle() );
 			}
 		}
@@ -875,7 +896,7 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 		$this->payment_method_id = $payment_method_id;
 	}
 
-	public function getPaymentMethod() : Payment_Method_EShopData
+	public function getPaymentMethod() : ?Payment_Method_EShopData
 	{
 		return Payment_Method_EShopData::get( $this->getPaymentMethodId(), $this->getEshop() );
 	}
@@ -885,7 +906,7 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 		return $this->payment_method_specification;
 	}
 
-	public function setPaymentMethodSpecification( int $payment_method_specification ) : void
+	public function setPaymentMethodSpecification( string $payment_method_specification ) : void
 	{
 		$this->payment_method_specification = $payment_method_specification;
 	}
@@ -1098,11 +1119,6 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 		$this->generateNumber();
 	}
 	
-	
-	public static function get( int $id ) : static|null
-	{
-		return static::load( $id );
-	}
 
 	public static function getByKey( string $key ) : Order|null
 	{
@@ -1439,6 +1455,50 @@ abstract class Core_Order extends Entity_WithEShopRelation implements NumberSeri
 		$new_order->setPaymentMethod( $this->getPaymentMethod(), $this->getPaymentMethodSpecification() );
 		
 		return $new_order;
+	}
+	
+	public function isEditable(): bool
+	{
+		if( !static::getAdminManager()::getCurrentUserCanEdit() ) {
+			return false;
+		}
+		
+		if(
+			$this->cancelled ||
+			$this->delivered ||
+			$this->dispatch_started
+		) {
+			return false;
+		}
+		
+		
+		return true;
+	}
+	
+
+	
+	public function setEditable( bool $editable ): void
+	{
+	}
+	
+	public function getAddForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
 	}
 	
 }

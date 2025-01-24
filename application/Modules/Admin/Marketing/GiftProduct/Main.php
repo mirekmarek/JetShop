@@ -1,17 +1,17 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\GiftProduct;
 
-use JetApplication\Admin_EntityManager_Marketing_Interface;
+use JetApplication\Admin_Managers_MarketingGiftsProducts;
 use JetApplication\Admin_EntityManager_Marketing_Trait;
-
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Marketing_Interface;
 use JetApplication\Entity_Marketing;
+use JetApplication\Marketing_Gift_Product;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Marketing_Interface
+class Main extends Application_Module implements Admin_Managers_MarketingGiftsProducts
 {
 	use Admin_EntityManager_Marketing_Trait;
 
@@ -25,12 +25,12 @@ class Main extends Application_Module implements Admin_EntityManager_Marketing_I
 	
 	public static function getEntityInstance(): Entity_Marketing|Admin_Entity_Marketing_Interface
 	{
-		return new Gift();
+		return new Marketing_Gift_Product();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'Gift - product';
+		return 'Marketing - Gift for product';
 	}
 
 }

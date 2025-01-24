@@ -15,12 +15,14 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Product;
 use JetApplication\Availabilities;
 use JetApplication\Category;
 use JetApplication\Delivery_Class;
 use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\KindOfProduct;
 
 use JetApplication\Managers;
@@ -63,7 +65,9 @@ use JetApplication\Supplier;
 		],
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
-
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Product::class
 )]
 abstract class Core_Product extends Entity_WithEShopData implements
 	FulltextSearch_IndexDataProvider,
@@ -717,17 +721,6 @@ abstract class Core_Product extends Entity_WithEShopData implements
 		}
 		
 		return true;
-	}
-	
-	
-	public function renderActiveState() : string
-	{
-		return Admin_Managers::Product()->renderActiveState( $this );
-	}
-	
-	public function getEditURL() : string
-	{
-		return Admin_Managers::Product()->getEditURL( $this->id );
 	}
 	
 	protected ?Form $_description_edit_form = null;

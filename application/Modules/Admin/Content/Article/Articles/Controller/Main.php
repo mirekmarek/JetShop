@@ -5,6 +5,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Content_Article;
 
 class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
@@ -60,7 +61,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		
 		if( $this->current_item->isEditable() ) {
 			/**
-			 * @var Article $article
+			 * @var Content_Article $article
 			 */
 			$article = $this->current_item;
 			$GET = Http_Request::GET();

@@ -5,7 +5,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\JetShopEntity_Definition;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Product;
 
@@ -56,6 +56,11 @@ abstract class Core_Product_KindOfFile_EShopData extends Entity_WithEShopData_ES
 	)]
 	protected string $description = '';
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	protected bool $show_on_product_detail = true;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -100,6 +105,17 @@ abstract class Core_Product_KindOfFile_EShopData extends Entity_WithEShopData_ES
 	{
 		$this->short_description = $short_description;
 	}
+	
+	public function getShowOnProductDetail(): bool
+	{
+		return $this->show_on_product_detail;
+	}
+	
+	public function setShowOnProductDetail( bool $show_on_product_detail ): void
+	{
+		$this->show_on_product_detail = $show_on_product_detail;
+	}
+	
 	
 	public function setImageMain( string $image_main ) : void
 	{

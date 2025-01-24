@@ -10,14 +10,14 @@ namespace JetApplicationModule\Admin\Catalog\AccessoriesGroups;
 use Jet\Application_Module;
 use JetApplication\Accessories_Group;
 use JetApplication\Entity_Common;
-use JetApplication\Admin_EntityManager_Common_Interface;
+use JetApplication\Admin_Managers_AccessoriesGroups;
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Admin_EntityManager_Common_Trait;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Common_Interface
+class Main extends Application_Module implements Admin_Managers_AccessoriesGroups
 {
 	use Admin_EntityManager_Common_Trait;
 	
@@ -36,7 +36,7 @@ class Main extends Application_Module implements Admin_EntityManager_Common_Inte
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'accessories group';
+		return 'Catalog - products - accessories groups';
 	}
 	
 }

@@ -160,14 +160,6 @@ trait Core_OrderDispatch_Trait_Workflow
 	}
 	
 	
-	public function isEditable() : bool
-	{
-		if($this->status!=static::STATUS_PENDING) {
-			return false;
-		}
-		
-		return true;
-	}
 	
 	
 	public function isReadyToCreateConsignment() : bool

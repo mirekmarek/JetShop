@@ -1,9 +1,0 @@
-<?php
-namespace JetApplication;
-
-use JetShop\Core_Admin_Managers_TransferBetweenWarehouses;
-
-interface Admin_Managers_TransferBetweenWarehouses extends Core_Admin_Managers_TransferBetweenWarehouses
-{
-
-}

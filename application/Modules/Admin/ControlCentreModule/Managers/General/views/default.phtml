@@ -25,7 +25,21 @@ endforeach;
 ?>
 <table class="table table-striped">
 
-	<?php foreach($managers as $manager): ?>
+	<?php foreach($managers as $manager):
+		$selected = '';
+		
+		if(array_key_exists($manager->getInterfaceClassName(), $config)) {
+			$selected = $config[$manager->getInterfaceClassName()];
+		} else {
+			foreach($manager->getPossibleModulesScope() as $module_name => $module) {
+				if($module_name) {
+					$selected = $module_name;
+					break;
+				}
+			}
+		}
+		
+		?>
 	<tr>
 		<td>
 			<b><?=$manager->getName()?></b>
@@ -48,13 +62,9 @@ endforeach;
 				<div style="display: grid;align-items: center;gap: 10px;grid-template-columns: 1fr 100px;">
 					<select name="manager" class="form-control">
 						
-						<?php foreach($manager->getPossibleModulesScope() as $module_name => $module):
-							$selected = $config[$manager->getInterfaceClassName()]??'';
-							?>
+						<?php foreach($manager->getPossibleModulesScope() as $module_name => $module): ?>
 						<option value="<?=$module_name?>" <?=$module_name==$selected?'selected="selected"':''?>>
-							
-							<?php if(is_string($module)): ?>
-							<?php else: ?>
+							<?php if(is_object($module)): ?>
 								<?=$module->getModuleManifest()->getName()?> (<?=$module_name?>)
 							<?php endif; ?>
 						</option>

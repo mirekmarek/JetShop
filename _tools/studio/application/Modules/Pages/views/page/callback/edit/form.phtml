@@ -1,0 +1,22 @@
+<?php
+namespace JetStudioModule\Pages;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Page $page
+ */
+
+$page = $this->getRaw( 'page' );
+
+$form = $page->getEditForm_callback();
+?>
+<?= $form->start() ?>
+
+<div style="display: grid;align-items: center;grid-template-columns: 150px 1fr;gap: 10px;margin: 20px;">
+	<?=$form->field('output_callback')->getLabel()?>
+	<?=$form->field('output_callback')->input();?>
+</div>
+
+<?= $form->end() ?>

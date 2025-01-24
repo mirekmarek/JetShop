@@ -13,6 +13,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Simple_Controller;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 /**
  *
@@ -86,9 +87,9 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	
 	public function add_Action() : void
 	{
-		$this->current_item = new Transfer();
+		$this->current_item = new WarehouseManagement_TransferBetweenWarehouses();
 		
-		$this->setBreadcrumbNavigation( Tr::_('New Receipt Of Goods') );
+		$this->setBreadcrumbNavigation( Tr::_('New Transfare between warehouses') );
 		
 		$GET = Http_Request::GET();
 		
@@ -134,7 +135,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function sent_Action() : void
 	{
 		/**
-		 * @var Transfer $transfer
+		 * @var WarehouseManagement_TransferBetweenWarehouses $transfer
 		 */
 		$transfer = $this->current_item;
 		
@@ -149,7 +150,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function received_Action() : void
 	{
 		/**
-		 * @var Transfer $transfer
+		 * @var WarehouseManagement_TransferBetweenWarehouses $transfer
 		 */
 		$transfer = $this->current_item;
 		
@@ -164,7 +165,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function cancel_Action() : void
 	{
 		/**
-		 * @var Transfer $transfer
+		 * @var WarehouseManagement_TransferBetweenWarehouses $transfer
 		 */
 		$transfer = $this->current_item;
 		

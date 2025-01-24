@@ -120,4 +120,5 @@ return [
 	'Search ... (shift+f)' => '',
 	'Dispatch %dn%' => '',
 	'Receipt Of Goods' => '',
+	'Warehouse:' => '',
 ];

@@ -8,11 +8,16 @@ use JetApplication\Accessories_Group_Product;
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Admin_Entity_Common_Trait;
 use JetApplication\Entity_Common;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Product;
+use JetApplication\Admin_Managers_AccessoriesGroups;
 
 #[DataModel_Definition(
 	name: 'accessories_group',
 	database_table_name: 'accessories_groups',
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_AccessoriesGroups::class
 )]
 abstract class Core_Accessories_Group extends Entity_Common implements Admin_Entity_Common_Interface
 {
@@ -27,12 +32,10 @@ abstract class Core_Accessories_Group extends Entity_Common implements Admin_Ent
 	)]
 	protected array $products = [];
 	
-	public function getEditURL() : string
+	public function defineImages() : void
 	{
-		//TODO:
-		return '';
-	}
 	
+	}
 	
 	public function getProductIds() : array
 	{

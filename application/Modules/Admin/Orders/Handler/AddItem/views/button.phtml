@@ -2,6 +2,7 @@
 
 use Jet\UI;
 use Jet\UI_button;
+use Jet\Tr;
 
 ?>
-<?=UI::button_create('Add item')->addCustomCssClass('dropdown-item')->setOnClick("addItem()")->setClass( UI_button::CLASS_SUCCESS )?>
+<?=UI::button_create( Tr::_('Add item') )->addCustomCssClass('dropdown-item')->setOnClick("addItem()")->setClass( UI_button::CLASS_SUCCESS )?>

@@ -2,8 +2,16 @@
 namespace JetShop;
 
 use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Catalog - Brands',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 interface Core_Admin_Managers_Brand extends Admin_EntityManager_WithEShopData_Interface
 {
 	public function renderSelectWidget( string $on_select,

@@ -53,4 +53,6 @@ return [
 	'General' => '',
 	'Please enter name' => '',
 	'Name:' => '',
+	'Deactivate' => '',
+	'Activate' => '',
 ];

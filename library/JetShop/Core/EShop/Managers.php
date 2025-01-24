@@ -69,194 +69,7 @@ class Core_EShop_Managers extends Managers
 	
 	protected static function registerManagers() : void
 	{
-
-		static::registerManager(
-			interface_class_name: EShop_Managers_Image::class,
-			is_mandatory: true,
-			name: 'Images',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_PriceFormatter::class,
-			is_mandatory: true,
-			name: 'Price formatter',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_ShoppingCart::class,
-			is_mandatory: true,
-			name: 'Shopping Cart',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_CashDesk::class,
-			is_mandatory: true,
-			name: 'Cash Desk',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_FulltextSearch::class,
-			is_mandatory: true,
-			name: 'Fulltext Search',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_ProductListing::class,
-			is_mandatory: true,
-			name: 'Product Listing',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_CustomerLogin::class,
-			is_mandatory: true,
-			name: 'Customer Login',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_CustomerPasswordReset::class,
-			is_mandatory: true,
-			name: 'Customer Password Reset',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_UI::class,
-			is_mandatory: true,
-			name: 'UI',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_AutoOffers::class,
-			is_mandatory: false,
-			name: 'Auto Offers',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_Compare::class,
-			is_mandatory: false,
-			name: 'Compare products',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_Wishlist::class,
-			is_mandatory: false,
-			name: 'Wishlist',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_Banners::class,
-			is_mandatory: false,
-			name: 'Banners',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_Catalog::class,
-			is_mandatory: false,
-			name: 'Catalog',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_OAuth::class,
-			is_mandatory: false,
-			name: 'OAuth',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_ProductReviews::class,
-			is_mandatory: false,
-			name: 'Product reviews',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_ProductQuestions::class,
-			is_mandatory: false,
-			name: 'Product questions',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_PromoAreas::class,
-			is_mandatory: false,
-			name: 'Promo areas',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_Articles::class,
-			is_mandatory: false,
-			name: 'Articles',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_MagicTags::class,
-			is_mandatory: false,
-			name: 'Magic tags',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_Analytics::class,
-			is_mandatory: false,
-			name: 'Analytics',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		
-		static::registerManager(
-			interface_class_name: EShop_CookieSettings_Manager::class,
-			is_mandatory: false,
-			name: 'Cookie Settings',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		static::registerManager(
-			interface_class_name: EShop_Managers_CustomerSection::class,
-			is_mandatory: false,
-			name: 'Customer Section',
-			description: '',
-			module_name_prefix: 'EShop.'
-		);
-		
-		
+		static::_registerManagers( Manager_MetaInfo::GROUP_ESHOP );
 	}
 	
 	
@@ -305,7 +118,6 @@ class Core_EShop_Managers extends Managers
 		return static::get( EShop_Managers_AutoOffers::class );
 	}
 	
-	
 	public static function Compare() : EShop_Managers_Compare|Application_Module|null
 	{
 		return static::get( EShop_Managers_Compare::class );
@@ -320,7 +132,6 @@ class Core_EShop_Managers extends Managers
 	{
 		return static::get( EShop_Managers_Catalog::class );
 	}
-	
 	
 	public static function OAuth() : EShop_Managers_OAuth|Application_Module|null
 	{
@@ -376,7 +187,4 @@ class Core_EShop_Managers extends Managers
 	{
 		return static::get( EShop_Managers_CustomerSection::class );
 	}
-
-
-	
 }

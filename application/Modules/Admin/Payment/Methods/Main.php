@@ -9,16 +9,17 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 
 use Jet\Application_Module;
 use Jet\Auth;
-use JetApplication\Admin_EntityManager_WithEShopData_Interface;
 use JetApplication\Admin_EntityManager_WithEShopData_Trait;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Managers_PaymentMethods;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\Payment_Method;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface
+class Main extends Application_Module implements Admin_Managers_PaymentMethods
 {
 	use Admin_EntityManager_WithEShopData_Trait;
 
@@ -32,7 +33,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	
 	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
-		return new PaymentMethod();
+		return new Payment_Method();
 	}
 	
 	public static function getCurrentUserCanSetPrice() : bool
@@ -42,7 +43,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'payment method';
+		return 'Payment method';
 	}
 
 }

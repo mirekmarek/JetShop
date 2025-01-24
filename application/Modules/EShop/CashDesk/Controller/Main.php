@@ -9,6 +9,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 
 use Jet\Exception;
 use Jet\Http_Headers;
+use Jet\Http_Request;
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
@@ -121,35 +122,51 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function payment_Action() : void
 	{
-		$payment_method = $this->order->getPaymentMethod();
-		
 		/**
 		 * @var Main $main;
 		 */
 		$main = $this->module;
-
+		
+		$payment_method = $this->order->getPaymentMethod();
 		$module = $payment_method->getBackendModule();
 		if(!$module) {
 			Http_Headers::movedTemporary( EShop_Pages::CashDeskConfirmation()->getURL([$this->order->getKey()]) );
 		}
 		
-		$result = $module->handlePayment($this->order, $payment_method);
-		
-		$this->view->setVar('order', $this->order );
-
-		if( $result===true ) {
-			$this->order->paid();
+		if(!$this->order->getPaid()) {
 			
+			$action = Http_Request::GET()->getString( 'a' );
+			
+			$this->view->setVar('order', $this->order );
+			
+			$return_url = EShop_Pages::CashDeskPayment()->getURL([$this->order->getKey()],['a'=>'handle_return']);
+			
+			switch( $action ) {
+				case 'handle_return':
+					if(!$module->handlePaymentReturn( $this->order )) {
+						$this->output('payment-result/error');
+						
+						return;
+					}
+					break;
+				case 'try_again':
+				default:
+					if(!$module->handlePayment($this->order, $return_url)) {
+						$this->output('payment-result/error');
+						
+						return;
+					}
+					break;
+			}
+		}
+		
+		
+		if($this->order->getPaid()) {
 			$this->output('payment-result/paid');
-			return;
-		}
-		
-		if($result===false) {
+		} else {
+			$this->view->setVar( 'try_again_url', Http_Request::currentURI(set_GET_params: ['a'=>'try_again']) );
 			$this->output('payment-result/not-paid');
-			return;
 		}
-		
-		$this->output('payment-result/error');
 		
 	}
 

@@ -18,6 +18,7 @@ use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use JetApplication\EMail_Sent;
+use JetApplication\Order;
 
 
 class Controller_Main extends MVC_Controller_Default

@@ -37,6 +37,6 @@ interface Core_Admin_Managers_Entity_Edit_WithEShopRelation extends Admin_Manage
 		?callable $reason_renderer = null
 	): string;
 	
-	public function renderShowName( int $id, Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface $entity ): string;
+	public function renderShowName( int $id, null|Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface $item ): string;
 	
 }

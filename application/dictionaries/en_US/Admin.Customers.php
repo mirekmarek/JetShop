@@ -55,4 +55,5 @@ return [
 	'Registration' => '',
 	'Please enter a value' => '',
 	'Invalid value' => '',
+	'e-shop' => '',
 ];

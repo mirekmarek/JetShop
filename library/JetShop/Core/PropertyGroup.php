@@ -7,8 +7,10 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_PropertyGroup;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\PropertyGroup_EShopData;
 use JetApplication\EShop;
 use JetApplication\KindOfProduct_PropertyGroup;
@@ -16,6 +18,9 @@ use JetApplication\KindOfProduct_PropertyGroup;
 #[DataModel_Definition(
 	name: 'property_group',
 	database_table_name: 'property_groups',
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_PropertyGroup::class
 )]
 abstract class Core_PropertyGroup extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
@@ -88,10 +93,6 @@ abstract class Core_PropertyGroup extends Entity_WithEShopData implements Fullte
 		);
 	}
 	
-	public function getEditURL() : string
-	{
-		return Admin_Managers::PropertyGroup()->getEditUrl( $this->id );
-	}
 	
 	public function defineImages() : void
 	{

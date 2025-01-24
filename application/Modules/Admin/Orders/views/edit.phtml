@@ -35,6 +35,7 @@ require 'edit/toolbar.phtml';
 	<fieldset class="o_section">
 		<legend><?=UI::icon('boxes-packing')?> <?=Tr::_('Order dispatch')?></legend>
 		<?=Admin_Managers::OrderDispatch()->showDispatches( $order->getProvidesContext() )?>
+		<?=Admin_Managers::OrderPersonalReceipt()->showDispatches( $order->getProvidesContext() )?>
 	</fieldset>
 
 	<div id="o_invoices" class="o_anchor"></div>

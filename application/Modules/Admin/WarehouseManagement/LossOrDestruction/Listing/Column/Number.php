@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 
 class Listing_Column_Number extends DataListing_Column
 {
@@ -36,7 +37,7 @@ class Listing_Column_Number extends DataListing_Column
 	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
 		/**
-		 * @var LossOrDestruction $item
+		 * @var WarehouseManagement_LossOrDestruction $item
 		 */
 		return $item->getNumber();
 	}

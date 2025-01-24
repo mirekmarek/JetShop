@@ -7,6 +7,10 @@
  */
 namespace JetApplicationModule\Payment\GoPay;
 
+use Jet\Data_DateTime;
+use JetApplication\EShops;
+use JetApplication\Order;
+
 class GoPay {
 	public const ERROR_AUT_TOKEN_GET_FAILED = 'aut_token_get_failed';
 	public const ERROR_PAYMENT_CREATE_FAILED = 'payment_create_failed';
@@ -40,7 +44,6 @@ class GoPay {
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
-		
 		
 		$URL = $this->config->getAPIUrl().'oauth2/token';
 		
@@ -82,16 +85,14 @@ class GoPay {
 	}
 	
 	public function createPayment(
-		GoPay_Order         $order,
-		string              $return_url,
-		string              $notification_url,
-		GoPay_PaymentMethod $payment_method,
-		?GoPay_Bank         $selected_bank=null
-	) : ?GoPay_CreatedPayment
+		GoPay_Order $order,
+		string      $return_url,
+		string      $notification_url,
+		string      $payment_method,
+		?string     $selected_bank = ''
+	): ?GoPay_CreatedPayment
 	{
-		
-		
-		$this->logger?->start('create payment start: '.$payment_method->value.':'.$order->getOderNumber() );
+		$this->logger?->start('create payment start: '.$payment_method.':'.$order->getOderNumber() );
 		
 		
 		$token = $this->getAuthToken('payment-create');
@@ -127,8 +128,8 @@ class GoPay {
 			],
 			'payer' => [
 				//"allowed_payment_instruments" => array_keys(static::`$allowed_payment_methods`),
-				"allowed_payment_instruments" => [$payment_method->value],
-				"default_payment_instrument" => $payment_method->value,
+				"allowed_payment_instruments" => [$payment_method],
+				"default_payment_instrument" => $payment_method,
 				'contact' => [
 					"first_name" => $order->getFirstname(),
 					"last_name" => $order->getLastname(),
@@ -153,7 +154,7 @@ class GoPay {
 		
 		if($selected_bank) {
 			unset($payment_data['payer']['default_payment_instrument']);
-			$payment_data['payer']['allowed_payment_instruments'] = ['BANK_ACCOUNT'];
+			$payment_data['payer']['allowed_payment_instruments'] = [GoPay_PaymentMethod::BANK_ACCOUNT];
 			$payment_data['payer']['allowed_swifts'] = [$selected_bank];
 			$payment_data['payer']['default_swift'] = $selected_bank;
 		}
@@ -168,6 +169,7 @@ class GoPay {
 			];
 		}
 		
+		
 		$this->logger?->step('Payment data: '.json_encode($payment_data));
 		
 		curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($payment_data));
@@ -175,7 +177,7 @@ class GoPay {
 		$response = curl_exec($curl_handle);
 		
 		$response_data = json_decode(trim( $response ), true);
-		
+
 		curl_close($curl_handle);
 		
 		if( empty($response_data['gw_url'])) {
@@ -199,8 +201,10 @@ class GoPay {
 	}
 	
 	
-	public function verifyPayment( int $payment_id ) : bool|null
+	public function verifyPayment( PaymentPair $payment ) : bool|null
 	{
+		$payment_id = $payment->getPaymentId();
+		
 		$this->logger?->start('verify payment start: '.$payment_id );
 		
 		$token = $this->getAuthToken('payment-all');
@@ -244,11 +248,49 @@ class GoPay {
 		$this->logger->step('OK - Payment status:: '.$response_data['state']);
 		$this->logger->doneSuccess();
 		
+		$payment->setPaymentStatus( $response_data['state'] );
+		
 		if($response_data['state']!='PAID') {
 			return false;
 		}
 		
 		return true;
+	}
+	
+	public function checkPayments() : void
+	{
+		$order_ids = Order::dataFetchCol(select: ['id'], where: [
+			EShops::getCurrent()->getWhere(),
+			'AND',
+			'paid' => false,
+			'AND',
+			'date_purchased <=' => new Data_DateTime('-2 day')
+		]);
+		
+		if(!$order_ids) {
+			return;
+		}
+		
+		$payments = PaymentPair::fetch([''=>[
+			'payment_status' => [
+				'',
+				'CREATED',
+				'PAYMENT_METHOD_CHOSEN',
+			],
+			'AND',
+			'order_id' => $order_ids
+		]]);
+		
+		foreach($payments as $payment) {
+			echo $payment->getOrderId()." : ".$payment->getPaymentId()."\n";
+			
+			if($this->verifyPayment( $payment )) {
+				$order = Order::get( $payment->getOrderId() );
+				$order?->paid();
+			}
+			
+			echo "\t".$payment->getPaymentStatus()."\n";
+		}
 	}
 	
 }

@@ -37,12 +37,9 @@ interface Core_Admin_Managers_Entity_Edit_WithEShopData extends Admin_Managers_E
 	
 	public function renderShowName(
 		int $id,
-		Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $entity
+		null|Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $item
 	): string;
 	
-	public function showActiveState(
-		int $id, Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $entity
-	): string;
 	public function renderActiveState(
 		Entity_WithEShopData|Admin_Entity_WithEShopData_Interface $item
 	): string;

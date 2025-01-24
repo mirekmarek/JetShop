@@ -14,6 +14,7 @@ use JetApplication\Availabilities;
 use JetApplication\DeliveryTerm;
 use JetApplication\OrderDispatch;
 use JetApplication\Order;
+use JetApplication\OrderPersonalReceipt;
 use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_EShopData;
@@ -219,7 +220,22 @@ class Main extends Application_Module implements WarehouseManagement_Manager
 	
 	public function manageNewOrder( Order $order ) : void {
 		
-		$warehouse = WarehouseManagement_Warehouse::get( $order->getEshop()->getDefaultWarehouseId() );
+		$warehouse = null;
+		
+		$delivery_point_code = $order->getDeliveryPersonalTakeoverDeliveryPointCode();
+		if($delivery_point_code) {
+			$delivery_point = $order->getDeliveryMethod()?->getPersonalTakeoverDeliveryPoint( $delivery_point_code );
+			if(
+				$delivery_point &&
+				$delivery_point->getDedicatetWarehouseId()
+			) {
+				$warehouse = WarehouseManagement_Warehouse::get( $delivery_point->getDedicatetWarehouseId() );
+			}
+		}
+		
+		if(!$warehouse) {
+			$warehouse = WarehouseManagement_Warehouse::get( $order->getEshop()->getDefaultWarehouseId() );
+		}
 		
 		$order->setWarehouse( $warehouse );
 		
@@ -303,6 +319,33 @@ class Main extends Application_Module implements WarehouseManagement_Manager
 		
 		$this->actualizeProductsAvailability( $product_ids );
 	}
+	
+	
+	public function manageOrderPersonalReceiptHandedOver( OrderPersonalReceipt $order_personal_receipt ): void
+	{
+		$product_ids = [];
+		$warehouse = $order_personal_receipt->getWarehouse();
+		
+		
+		foreach($order_personal_receipt->getItems() as $item) {
+			$product_ids[$item->getProductId()] = $item->getProductId();
+			
+			$warehouse->unblock(
+				product_id: $item->getProductId(),
+				number_of_units: $item->getNumberOfUnits(),
+				context: $order_personal_receipt->getContext()
+			);
+			
+			$warehouse->out(
+				product_id: $item->getProductId(),
+				number_of_units: $item->getNumberOfUnits(),
+				context: $order_personal_receipt->getProvidesContext(),
+			);
+		}
+		
+		$this->actualizeProductsAvailability( $product_ids );
+	}
+	
 	
 	public function manageReceiptOfGoods( WarehouseManagement_ReceiptOfGoods $rcp ) : void
 	{
@@ -516,7 +559,6 @@ class Main extends Application_Module implements WarehouseManagement_Manager
 		
 		$this->actualizeProductsAvailability( [$loss_or_destruction->getProductId()] );
 	}
-	
 }
 
 

@@ -1,0 +1,50 @@
+<?php
+namespace JetStudioModule\Menus;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$set = Main::getCurrentMenuSet();
+
+$form = $set->getEditForm();
+
+?>
+
+<?= $form->start() ?>
+<?= $form->getCommonMessage(); ?>
+
+<div class="form-fields">
+	<?= $form->field( 'menu_set_name' ) ?>
+
+	<label class="control-label"><?= Tr::_( 'Menus:' ) ?></label>
+	<div id="items_sort_area">
+		<?php foreach( $set->getMenus() as $item ): ?>
+			<div class="list-group-item menu-item-sort-item" data-id="<?= $item->getId() ?>" style="display: flex;align-items: center;gap: 10px;">
+				<input type="hidden" name="items_sort[]" value="<?= $item->getId() ?>">
+
+				<div><span class="fa fa-arrows-v" style="font-size:16px;padding-right: 5px"></span></div>
+				<div><a href="<?= Main::getActionUrl( '', [], null, $item->getId() ) ?>"><?= UI::icon( 'sitemap' ) ?> <?= $item->getLabel() ?></a></div>
+
+			</div>
+		<?php endforeach; ?>
+	</div>
+
+</div>
+
+
+<?= $form->end() ?>
+
+
+<?= $this->render( 'menu/create/dialog' ); ?>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		Menus.initSort();
+	});
+</script>
+

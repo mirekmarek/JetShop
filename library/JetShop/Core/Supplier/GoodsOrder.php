@@ -5,12 +5,20 @@ namespace JetShop;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Float;
+use Jet\Form_Field_Input;
 use Jet\Locale;
 use Jet\Logger;
 use Jet\Tr;
+use Jet\UI_messages;
+use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Admin_Managers_SupplierGoodsOrders;
 use JetApplication\Entity_Basic;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
@@ -26,8 +34,12 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'supplier_goods_order',
 	database_table_name: 'supplier_goods_orders',
 )]
-abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSeries_Entity_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_SupplierGoodsOrders::class
+)]
+abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSeries_Entity_Interface, Admin_Entity_Simple_Interface
 {
+	use Admin_Entity_Simple_Trait;
 	use NumberSeries_Entity_Trait;
 	
 	public const STATUS_PENDING = 'pending';
@@ -219,6 +231,17 @@ abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSe
 		data_model_class: Supplier_GoodsOrder_Item::class
 	)]
 	protected array $items = [];
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return false;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Orders of goods from suppliers';
+	}
 	
 	public static function getStatusScope() : array
 	{
@@ -655,6 +678,87 @@ abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSe
 		]]);
 		
 		return $orders;
+	}
+	
+	protected function setupForm( Form $form ) : void
+	{
+		foreach($this->items as $item) {
+			$qty = new Form_Field_Float( '/order/'.$item->getProductId(), '' );
+			$qty->setDefaultValue( $item->getUnitsOrdered() );
+			$qty->setFieldValueCatcher( function( float $v ) use ($item) : void {
+				$item->setUnitsOrdered( $v );
+			} );
+			$form->addField( $qty );
+		}
+	}
+	
+	public function getAdminTitle() : string
+	{
+		return $this->supplier_company_name . ' / '.$this->number;
+	}
+	
+	protected function setupAddForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+	}
+	
+	protected function setupEditForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+		
+		if(!in_array($this->status, [
+			static::STATUS_PENDING,
+			static::STATUS_PROBLEM_DURING_SENDING
+		])) {
+			$form->setIsReadonly();
+		}
+	}
+	
+	protected function catchForm( Form $form ) : bool
+	{
+		if(!$form->catch()) {
+			return false;
+		}
+		
+		$everything_zero = true;
+		foreach($this->getItems() as $item) {
+			if($item->getUnitsOrdered()>0) {
+				$everything_zero = false;
+				break;
+			}
+		}
+		
+		if($everything_zero) {
+			$form->setCommonMessage(
+				UI_messages::createDanger(Tr::_('Please specify at least one item to order'))
+			);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function catchAddForm() : bool
+	{
+		return $this->catchForm( $this->getAddForm() );
+	}
+	
+	public function catchEditForm() : bool
+	{
+		return $this->catchForm( $this->getEditForm() );
+	}
+	
+	public function getSetSupplierOrderNumberForm() : Form
+	{
+		$number = new Form_Field_Input('number', 'Order number: ');
+		$number->setDefaultValue( $this->getNumberBySupplier() );
+		$number->setFieldValueCatcher( function( string $value ) {
+			$this->setNumberBySupplier( $value );
+		} );
+		
+		$form = new Form('set_supplier_order_number', [$number]);
+		
+		return $form;
 	}
 	
 }

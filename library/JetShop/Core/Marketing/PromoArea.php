@@ -5,17 +5,26 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
+use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Entity_Marketing_Trait;
 use JetApplication\Entity_Marketing;
 use Jet\DataModel;
 use JetApplication\Marketing_PromoAreaDefinition;
+use JetApplication\Admin_Managers_MarketingPromoAreas;
+use JetApplication\JetShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'promo_area',
 	database_table_name: 'promo_areas',
 )]
-abstract class Core_Marketing_PromoArea extends Entity_Marketing
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_MarketingPromoAreas::class
+)]
+abstract class Core_Marketing_PromoArea extends Entity_Marketing implements Admin_Entity_Marketing_Interface
 {
+	use Admin_Entity_Marketing_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true
@@ -66,5 +75,9 @@ abstract class Core_Marketing_PromoArea extends Entity_Marketing
 		$this->html = $html;
 	}
 	
+	public function hasImages(): bool
+	{
+		return false;
+	}
 	
 }

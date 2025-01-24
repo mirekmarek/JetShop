@@ -4,6 +4,7 @@ namespace JetShop;
 use JetApplication\Managers_General;
 use JetApplication\OrderDispatch;
 use JetApplication\Order;
+use JetApplication\OrderPersonalReceipt;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement;
 use JetApplication\WarehouseManagement_LossOrDestruction;
@@ -31,10 +32,6 @@ abstract class Core_WarehouseManagement {
 		WarehouseManagement::getManager()?->manageOrderCancelled( $order );
 	}
 	
-	public static function manageOrderDispatch( OrderDispatch $order_dispatch ) : void {
-		WarehouseManagement::getManager()?->manageOrderDispatchSent( $order_dispatch );
-	}
-	
 	public static  function manageOrderCancelled( Order $order ) : void
 	{
 		WarehouseManagement::getManager()?->manageOrderCancelled( $order );
@@ -44,6 +41,13 @@ abstract class Core_WarehouseManagement {
 	{
 		WarehouseManagement::getManager()?->manageOrderDispatchSent( $order_dispatch );
 	}
+	
+	
+	public static function manageOrderPersonalReceiptHandedOver( OrderPersonalReceipt $order_personal_receipt ) : void
+	{
+		WarehouseManagement::getManager()?->manageOrderPersonalReceiptHandedOver( $order_personal_receipt );
+	}
+	
 	
 	public static function manageReceiptOfGoods( WarehouseManagement_ReceiptOfGoods $rcp ) : void
 	{

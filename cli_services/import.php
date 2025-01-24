@@ -109,23 +109,23 @@ $category_cactive_column = 'category_view';
 
 
 class Migration {
-	const CZ_ESHOP_ID = 1;
-	const SK_ESHOP_ID = 2;
-	const HU_ESHOP_ID = 3;
-	const RO_ESHOP_ID = 4;
-	const B2B_ESHOP_ID = 99;
+	public const CZ_ESHOP_ID = 1;
+	public const SK_ESHOP_ID = 2;
+	public const HU_ESHOP_ID = 3;
+	public const RO_ESHOP_ID = 4;
+	public const B2B_ESHOP_ID = 99;
 	
 	
-	const CZ_LANG_ID = 5;
-	const EN_LANG_ID = 11;
-	const DE_LANG_ID = 12;
-	const SK_LANG_ID = 20;
-	const HU_LANG_ID = 40;
-	const RO_LANG_ID = 41;
+	public const CZ_LANG_ID = 5;
+	public const EN_LANG_ID = 11;
+	public const DE_LANG_ID = 12;
+	public const SK_LANG_ID = 20;
+	public const HU_LANG_ID = 40;
+	public const RO_LANG_ID = 41;
 	
-	const B2B_GROUP_CZ = 2;
-	const B2B_GROUP_EU = 3;
-	const B2B_GROUP_SK = 4;
+	public const B2B_GROUP_CZ = 2;
+	public const B2B_GROUP_EU = 3;
+	public const B2B_GROUP_SK = 4;
 	
 	protected int $default_language;
 	

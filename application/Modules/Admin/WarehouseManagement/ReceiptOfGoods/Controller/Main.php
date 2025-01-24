@@ -15,6 +15,7 @@ use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Simple_Controller;
+use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 /**
  *
@@ -81,7 +82,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	
 	public function add_Action() : void
 	{
-		$this->current_item = new ReceiptOfGoods();
+		$this->current_item = new WarehouseManagement_ReceiptOfGoods();
 		
 		$this->setBreadcrumbNavigation( Tr::_('New Receipt Of Goods') );
 		
@@ -156,7 +157,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function done_Action() : void
 	{
 		/**
-		 * @var ReceiptOfGoods $order
+		 * @var WarehouseManagement_ReceiptOfGoods $order
 		 */
 		$order = $this->current_item;
 		
@@ -170,7 +171,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function cancel_Action() : void
 	{
 		/**
-		 * @var ReceiptOfGoods $order
+		 * @var WarehouseManagement_ReceiptOfGoods $order
 		 */
 		$order = $this->current_item;
 		

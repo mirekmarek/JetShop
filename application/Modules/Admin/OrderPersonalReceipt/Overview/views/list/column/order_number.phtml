@@ -1,0 +1,24 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\OrderPersonalReceipt;
+
+/**
+ * @var MVC_View $this
+ * @var Admin_Managers_Entity_Listing $listing
+ * @var OrderPersonalReceipt $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+
+echo Admin_Managers::Order()->showName( $item->getOrderId() );

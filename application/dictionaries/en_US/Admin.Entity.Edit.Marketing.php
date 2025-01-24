@@ -20,4 +20,9 @@ return [
 	'Min:' => '',
 	'Max:' => '',
 	'Exclude products' => '',
+	'- all -' => '',
+	'Not active' => '',
+	'Active' => '',
+	'CSV' => '',
+	'XLSX' => '',
 ];

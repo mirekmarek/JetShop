@@ -36,7 +36,7 @@ class Main extends Application_Module implements Admin_Managers_KindOfProductFil
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'kind of product file';
+		return 'Kind of product file';
 	}
 	
 }

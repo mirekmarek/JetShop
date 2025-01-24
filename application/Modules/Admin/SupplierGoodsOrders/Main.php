@@ -1,17 +1,17 @@
 <?php
 namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
-use JetApplication\Admin_EntityManager_Simple_Interface;
 use JetApplication\Admin_EntityManager_Simple_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Simple_Interface;
 use JetApplication\Entity_Simple;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
+use JetApplication\Supplier_GoodsOrder;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Simple_Interface, Admin_Managers_SupplierGoodsOrders
+class Main extends Application_Module implements Admin_Managers_SupplierGoodsOrders
 {
 	use Admin_EntityManager_Simple_Trait;
 
@@ -25,7 +25,7 @@ class Main extends Application_Module implements Admin_EntityManager_Simple_Inte
 	
 	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface
 	{
-		return new Order();
+		return new Supplier_GoodsOrder();
 	}
 	
 	public static function getEntityNameReadable() : string

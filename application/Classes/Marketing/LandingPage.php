@@ -8,6 +8,7 @@ use Jet\DataModel_Definition;
 use JetShop\Core_Marketing_LandingPage;
 
 #[DataModel_Definition]
+#[JetShopEntity_Definition]
 class Marketing_LandingPage extends Core_Marketing_LandingPage
 {
 }

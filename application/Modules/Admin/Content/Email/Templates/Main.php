@@ -9,14 +9,15 @@ namespace JetApplicationModule\Admin\Content\Email\Templates;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_EntityManager_WithEShopData_Interface;
 use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_Managers_ContentEMailTemplates;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\EMail_TemplateText;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface
+class Main extends Application_Module implements Admin_Managers_ContentEMailTemplates
 {
 	use Admin_EntityManager_WithEShopData_Trait;
 	
@@ -35,7 +36,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	
 	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
-		return new EmailTemplateText();
+		return new EMail_TemplateText();
 	}
 	
 	public static function getCurrentUserCanCreate() : bool

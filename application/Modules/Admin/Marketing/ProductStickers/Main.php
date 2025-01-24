@@ -1,17 +1,18 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\ProductStickers;
 
-use JetApplication\Admin_EntityManager_Marketing_Interface;
 use JetApplication\Admin_EntityManager_Marketing_Trait;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Managers_MarketingProductStickers;
 use JetApplication\Entity_Marketing;
+use JetApplication\Marketing_ProductSticker;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Marketing_Interface
+class Main extends Application_Module implements Admin_Managers_MarketingProductStickers
 {
 	use Admin_EntityManager_Marketing_Trait;
 
@@ -25,12 +26,12 @@ class Main extends Application_Module implements Admin_EntityManager_Marketing_I
 	
 	public static function getEntityInstance(): Entity_Marketing|Admin_Entity_Marketing_Interface
 	{
-		return new ProductSticker();
+		return new Marketing_ProductSticker();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'automatic offer';
+		return 'Marketing - product sticker';
 	}
 
 }

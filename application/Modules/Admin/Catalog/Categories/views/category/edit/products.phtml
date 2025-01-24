@@ -25,10 +25,7 @@ $p_manager = Admin_Managers::Product();
 echo $this->render('lj_start');
 ?>
 
-
-
 	
-
 	<?php if($editable): ?>
 		<?php if(!$auto_append): ?>
 		
@@ -86,13 +83,18 @@ echo $this->render('lj_start');
 	</div>
 	<?php endif; ?>
 
-
-
+	
 
 
 	<br>
 	<div id="products_sort_area" class="card card-body">
-		<?php foreach($category->getProductIds() as $p_id): ?>
+		<?php foreach($category->getProductIds() as $p_id):
+
+			$product = Product::load( $p_id );
+			if(!$product) {
+				continue;
+			}
+			?>
 		<div
 			class="sort_item"
 			style="display: grid;grid-template-columns: 30px 200px 1fr 40px;align-items: center;gap: 5px;padding:5px;border-bottom: 1px solid #c9c9c9;background-color: #ffffff"
@@ -105,8 +107,8 @@ echo $this->render('lj_start');
 				
 			</div>
 			
-			<div><?=$p_manager->showActiveState($p_id)?></div>
-			<div><?=$p_manager->showName($p_id)?></div>
+			<div><?=$p_manager->renderActiveState($product)?></div>
+			<div><?=$p_manager->showName($product)?></div>
 			<div>
 				<?php if($editable && !$auto_append): ?>
 					<?=UI::button_delete(' ')

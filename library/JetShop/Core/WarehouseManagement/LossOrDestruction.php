@@ -4,12 +4,17 @@ namespace JetShop;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Logger;
+use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Admin_Managers_WarehouseManagementLossOrDestruction;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Entity_Simple;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
 use JetApplication\NumberSeries_Entity_Interface;
@@ -27,10 +32,17 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_loss_or_destruction',
 	database_table_name: 'whm_loss_or_destruction',
 )]
-class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagementLossOrDestruction::class
+)]
+class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_Simple_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
+	use Admin_Entity_Simple_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_DONE = 'done';
@@ -144,6 +156,17 @@ class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implement
 		type: DataModel::TYPE_FLOAT,
 	)]
 	protected float $total = 0.0;
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return false;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Warehouse management - loss or destruction';
+	}
 	
 	
 	public static function getStatusScope(): array
@@ -384,6 +407,58 @@ class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implement
 		);
 		
 		return true;
+	}
+	
+	
+	public function getAdminTitle() : string
+	{
+		return $this->number;
+	}
+	
+	
+	protected function setupForm( Form $form ) : void
+	{
+		$form->field('product_id')->setFieldValueCatcher( function( string $id ) {
+			$this->setProduct( (int)$id );
+		} );
+	}
+	
+	protected function catchForm( Form $form ) : bool
+	{
+		if(!$form->catch()) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
+	public function setupAddForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+	}
+	
+	
+	
+	public function catchAddForm() : bool
+	{
+		return $this->catchForm( $this->getAddForm() );
+	}
+	
+	public function setupEditForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+		
+		if($this->getStatus()!=static::STATUS_PENDING) {
+			$form->setIsReadonly();
+		}
+	}
+	
+	public function catchEditForm() : bool
+	{
+		return $this->catchForm( $this->getEditForm() );
 	}
 	
 }

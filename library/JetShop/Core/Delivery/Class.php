@@ -10,10 +10,14 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
+use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_Entity_Common_Trait;
 use JetApplication\Delivery_Class_Method;
 use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Kind;
 use JetApplication\Entity_Common;
+use JetApplication\JetShopEntity_Definition;
+use JetApplication\Admin_Managers_DeliveryClasses;
 
 /**
  *
@@ -22,8 +26,12 @@ use JetApplication\Entity_Common;
 	name: 'delivery_class',
 	database_table_name: 'delivery_classes',
 )]
-abstract class Core_Delivery_Class extends Entity_Common
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_DeliveryClasses::class
+)]
+abstract class Core_Delivery_Class extends Entity_Common implements Admin_Entity_Common_Interface
 {
+	use Admin_Entity_Common_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL
@@ -102,7 +110,7 @@ abstract class Core_Delivery_Class extends Entity_Common
 	public function isPersonalTakeOverOnly() : bool
 	{
 		foreach( $this->getKinds() as $code=>$kind ) {
-			if($code!=Delivery_Kind::KIND_PERSONAL_TAKEOVER) {
+			if($code!=Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL) {
 				return false;
 			}
 		}
@@ -113,7 +121,7 @@ abstract class Core_Delivery_Class extends Entity_Common
 	public function isEDelivery() : bool
 	{
 		foreach( $this->getKinds() as $code=>$kind ) {
-			if($code!=Delivery_Kind::KIND_E_DELIVERY) {
+			if($code!=Delivery_Kind::E_DELIVERY) {
 				return false;
 			}
 		}

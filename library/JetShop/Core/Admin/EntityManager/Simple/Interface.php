@@ -9,7 +9,4 @@ use JetApplication\Admin_Entity_Simple_Interface;
 interface Core_Admin_EntityManager_Simple_Interface extends Admin_EntityManager_Interface {
 	
 	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface;
-	
-	public static function getEntityNameReadable() : string;
-	
 }

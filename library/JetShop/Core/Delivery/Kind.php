@@ -12,9 +12,10 @@ use JetApplication\Delivery_Kind;
 
 abstract class Core_Delivery_Kind {
 
-	public const KIND_E_DELIVERY = 'e-delivery';
-	public const KIND_PERSONAL_TAKEOVER = 'personal-takeover';
-	public const KIND_DELIVERY = 'delivery';
+	public const E_DELIVERY = 'e-delivery';
+	public const PERSONAL_TAKEOVER_EXTERNAL = 'personal-takeover-external';
+	public const PERSONAL_TAKEOVER_INTERNAL = 'personal-takeover-internal';
+	public const DELIVERY = 'delivery';
 
 	protected string $code = '';
 
@@ -95,25 +96,39 @@ abstract class Core_Delivery_Kind {
 		if(static::$list===null) {
 			static::$list = [];
 
-			$e_delivery = new Delivery_Kind();
-			$e_delivery->setCode( Delivery_Kind::KIND_E_DELIVERY );
-			$e_delivery->setTitle( Tr::_('e-Delivery') );
 
-			$personal_takeover = new Delivery_Kind();
-			$personal_takeover->setCode( Delivery_Kind::KIND_PERSONAL_TAKEOVER );
-			$personal_takeover->setTitle( Tr::_('Personal takeover') );
-			$personal_takeover->setModuleIsRequired( true );
-
+			$personal_takeover_external = new Delivery_Kind();
+			$personal_takeover_external->setCode( Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL );
+			$personal_takeover_external->setTitle( Tr::_('Personal takeover - external') );
+			$personal_takeover_external->setModuleIsRequired( true );
+			static::add( $personal_takeover_external );
+			
+			
+			$personal_takeover_internal = new Delivery_Kind();
+			$personal_takeover_internal->setCode( Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL );
+			$personal_takeover_internal->setTitle( Tr::_('Personal takeover - internal') );
+			$personal_takeover_internal->setModuleIsRequired( true );
+			static::add( $personal_takeover_internal );
+			
+			
 			$delivery = new Delivery_Kind();
-			$delivery->setCode( Delivery_Kind::KIND_DELIVERY );
+			$delivery->setCode( Delivery_Kind::DELIVERY );
 			$delivery->setTitle( Tr::_('Delivery') );
-
-			static::$list[$delivery->getCode()] = $delivery;
-			static::$list[$personal_takeover->getCode()] = $personal_takeover;
-			static::$list[$e_delivery->getCode()] = $e_delivery;
+			static::add( $delivery );
+			
+			
+			$e_delivery = new Delivery_Kind();
+			$e_delivery->setCode( Delivery_Kind::E_DELIVERY );
+			$e_delivery->setTitle( Tr::_('e-Delivery') );
+			static::add( $e_delivery );
 		}
 
 		return static::$list;
+	}
+	
+	public static function add( Delivery_Kind $kind ) : void
+	{
+		static::$list[$kind->getCode()] = $kind;
 	}
 
 	public static function getScope() : array

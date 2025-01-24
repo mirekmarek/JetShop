@@ -18,10 +18,11 @@ use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\Application_Admin;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Module;
+use JetApplication\Payment_Method_Option;
 
 class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 {
-	protected ?PaymentMethod_Option $option = null;
+	protected ?Payment_Method_Option $option = null;
 	
 	
 	public function getTabs(): array
@@ -56,9 +57,9 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		parent::currentItemGetter();
 		
 		if( $this->current_item ) {
-			$option_id = Http_Request::GET()->getInt( 'option_id' );
-			if($option_id) {
-				$this->option = $this->current_item->getOption( $option_id );
+			$option_code = Http_Request::GET()->getString( 'option' );
+			if( $option_code ) {
+				$this->option = $this->current_item->getOption( $option_code );
 				$this->option?->setEditable(Main::getCurrentUserCanEdit());
 			}
 		}
@@ -85,7 +86,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 				return $this->current_item && !$this->option && $selected_tab=='options' && !$action;
 			})
 			->setURICreator(function( int $id ) {
-				return Http_Request::currentURI( ['id'=>$id, 'page'=>'properties'], ['option_id', 'action'] );
+				return Http_Request::currentURI( ['id'=>$id, 'page'=>'properties'], ['option', 'action'] );
 			});
 		
 		$this->router->addAction('edit_options_sort', Main::ACTION_GET)
@@ -98,15 +99,15 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 			->setResolver(function() use ($action, $selected_tab) {
 				return $this->option && $selected_tab=='main' && !$action;
 			})
-			->setURICreator(function( int $id ) {
-				return Http_Request::currentURI( ['option_id'=>$id, 'page'=>'main'], ['action'] );
+			->setURICreator(function( string $code ) {
+				return Http_Request::currentURI( ['option'=>$code, 'page'=>'main'], ['action'] );
 			});
 		$this->router->addAction('edit_option_images', Main::ACTION_GET)
 			->setResolver(function() use ($action, $selected_tab) {
 				return $this->option && $selected_tab=='images' && !$action;
 			})
-			->setURICreator(function( int $id ) {
-				return Http_Request::currentURI( ['option_id'=>$id, 'page'=>'images'], ['action'] );
+			->setURICreator(function( string $code ) {
+				return Http_Request::currentURI( ['option'=>$code, 'page'=>'images'], ['action'] );
 			});
 	}
 	
@@ -115,11 +116,12 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 	{
 		$this->setBreadcrumbNavigation( Tr::_('Options') );
 		/**
-		 * @var PaymentMethod $method
+		 * @var Payment_Method $method
 		 */
 		$method = $this->current_item;
+		$method->actualizeOptions();
 		
-		$new_option = new PaymentMethod_Option();
+		$new_option = new Payment_Method_Option();
 		
 		if($new_option->catchAddForm()) {
 			$method->addOption( $new_option );
@@ -141,7 +143,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 	public function edit_options_sort_Action() : void
 	{
 		/**
-		 * @var PaymentMethod $method
+		 * @var Payment_Method $method
 		 */
 		$method = $this->current_item;
 		
@@ -159,7 +161,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		
 		
 		/**
-		 * @var PaymentMethod $method
+		 * @var Payment_Method $method
 		 */
 		$method = $this->current_item;
 		$option = $this->option;
@@ -168,12 +170,14 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		
 		$this->setBreadcrumbNavigation(
 			Tr::_( 'Options' ),
-			Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id'])
+			Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option'])
 		);
 		
 		Navigation_Breadcrumb::addURL( $option->getInternalName() );
 		
 		$form = $option->getEditForm();
+		
+		$form->field('internal_code')->setIsReadonly( true );
 		
 		if( $option->catchEditForm() ) {
 			
@@ -199,14 +203,14 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		Application_Admin::handleUploadTooLarge();
 		
 		/**
-		 * @var PaymentMethod $method
+		 * @var Payment_Method $method
 		 */
 		$method = $this->current_item;
 		$option = $this->option;
 		
 		$this->setBreadcrumbNavigation(
 			Tr::_( 'Options' ),
-			Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id'])
+			Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option'])
 		);
 		
 		Navigation_Breadcrumb::addURL( $option->getInternalName() .' - '.Tr::_('Images') );

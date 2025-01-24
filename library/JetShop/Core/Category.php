@@ -9,11 +9,13 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Category;
 use JetApplication\Category;
 use JetApplication\Category_Product;
 use JetApplication\Category_EShopData;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter;
@@ -29,6 +31,9 @@ use JetApplication\EShop;
 	id_controller_options: [
 		'id_property_name' => 'id'
 	]
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Category::class
 )]
 abstract class Core_Category extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface {
 	use Admin_Entity_WithEShopData_Trait;
@@ -990,10 +995,6 @@ abstract class Core_Category extends Entity_WithEShopData implements FulltextSea
 		EShop_Managers::FulltextSearch()->deleteIndex( $this );
 	}
 	
-	public function getEditURL() : string
-	{
-		return Admin_Managers::Category()->getEditUrl( $this->id );
-	}
 	
 	public function defineImages(): void
 	{

@@ -1,16 +1,17 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\BannerGroups;
 
-use JetApplication\Admin_EntityManager_Common_Interface;
+use JetApplication\Admin_Managers_MarketingBannerGroups;
 use JetApplication\Admin_EntityManager_Common_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Entity_Common;
+use JetApplication\Marketing_BannerGroup;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Common_Interface
+class Main extends Application_Module implements Admin_Managers_MarketingBannerGroups
 {
 	use Admin_EntityManager_Common_Trait;
 
@@ -24,12 +25,12 @@ class Main extends Application_Module implements Admin_EntityManager_Common_Inte
 	
 	public static function getEntityInstance(): Entity_Common|Admin_Entity_Common_Interface
 	{
-		return new BannerGroup();
+		return new Marketing_BannerGroup();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'banner group';
+		return 'Marketing - banner group';
 	}
 
 }

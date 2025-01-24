@@ -15,6 +15,7 @@ use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\MVC_Controller_Default;
 use Jet\Navigation_Breadcrumb;
 use JetApplication\Order;
+use JetApplication\OrderDispatch;
 
 
 class Controller_Main extends MVC_Controller_Default

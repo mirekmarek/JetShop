@@ -100,4 +100,6 @@ return [
 	'Allowed delivery point types:' => '',
 	'Free delivery limit:' => '',
 	'Set' => '',
+	'Personal takeover - external' => '',
+	'Personal takeover - internal' => '',
 ];

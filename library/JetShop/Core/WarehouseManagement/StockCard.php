@@ -9,10 +9,16 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use Jet\Form;
 use Jet\Logger;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_WarehouseManagementOverview;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Entity_Basic;
+use JetApplication\JetShopEntity_Definition;
+use JetApplication\Product;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_StockMovement;
@@ -26,8 +32,12 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'warehouse_stock_card',
 	database_table_name: 'whm_stock_cards',
 )]
-class Core_WarehouseManagement_StockCard extends Entity_Basic
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagementOverview::class
+)]
+abstract class Core_WarehouseManagement_StockCard extends Entity_Basic implements Admin_Entity_WithEShopRelation_Interface
 {
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -610,6 +620,45 @@ class Core_WarehouseManagement_StockCard extends Entity_Basic
 		
 		return $transfers;
 		
+	}
+	
+	
+	public function getAdminTitle() : string
+	{
+		$warehouse = $this->getWarehouse();
+		$product = Product::get( $this->product_id );
+		
+		return $warehouse->getInternalName() .' / '.$product->getAdminTitle();
+	}
+	
+	
+	public function isEditable(): bool
+	{
+		return false;
+	}
+	
+	public function setEditable( bool $editable ): void
+	{
+	}
+	
+	public function getAddForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
 	}
 	
 }

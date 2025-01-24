@@ -8,7 +8,6 @@ use Jet\Form_Field_Int;
 use JetApplication\Availabilities;
 use JetApplication\Availability;
 use JetApplication\Product_Availability;
-use JetApplicationModule\Admin\Catalog\Products\Main;
 
 trait Core_Product_Trait_Availability
 {
@@ -33,8 +32,7 @@ trait Core_Product_Trait_Availability
 	{
 		if(
 			$this->isVariantMaster() ||
-			$this->isSet() ||
-			!Main::getCurrentUserCanSetAvailability()
+			$this->isSet()
 		) {
 			return null;
 		}

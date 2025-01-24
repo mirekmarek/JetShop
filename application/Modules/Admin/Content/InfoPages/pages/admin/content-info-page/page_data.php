@@ -1,8 +1,8 @@
 <?php
 return [
-	'name' => 'Content Info Page administration',
+	'name' => 'Content Info Page',
 	'is_active' => true,
-	'title' => 'Info Pages administration',
+	'title' => 'Info Pages',
 	'icon' => 'file-code',
 	'contents' => [
 		[

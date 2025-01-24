@@ -1,0 +1,113 @@
+<script>
+	const tools = {
+		unselectAll: (form_id) => {
+			const form = document.getElementById(form_id);
+			for( let i=0; i<form.elements.length; i++ ) {
+				if( form.elements[i].type=='checkbox' ) {
+					form.elements[i].checked = false;
+				}
+			}
+		},
+
+		selectAll: (form_id) => {
+			const form = document.getElementById(form_id);
+			for( let i=0; i<form.elements.length; i++ ) {
+				if( form.elements[i].type=='checkbox' ) {
+					form.elements[i].checked = true;
+				}
+			}
+		},
+		
+		actionSingleItem : (form_id, action, id) => {
+			const form = document.getElementById( form_id );
+			form.elements['list_action'].value = action;
+
+			for( let i=0; i<form.elements.length; i++ ) {
+				if( form.elements[i].type=='checkbox' ) {
+					form.elements[i].checked = form.elements[i].value==id;
+				}
+			}
+			form.submit();
+		},
+		
+		actionSelectedItems: ( form_id, action ) => {
+			const form = document.getElementById( form_id );
+			form.elements['list_action'].value = action;
+			form.submit();
+		}
+		
+	};
+	
+	const WaitingForCreation = {
+		unselectAll: () => {
+			tools.unselectAll( 'waiting_for_creation_form' );
+		},
+
+		selectAll: () => {
+			tools.selectAll( 'waiting_for_creation_form' );
+		},
+		
+		create: ( id ) => {
+			tools.actionSingleItem( 'waiting_for_creation_form', 'create', id );
+		},
+
+		createSelected: () => {
+			tools.actionSelectedItems( 'waiting_for_creation_form', 'create' );
+		}
+	};
+
+	const Problematic = {
+		unselectAll: () => {
+			tools.unselectAll( 'problematic_form' );
+		},
+
+		selectAll: () => {
+			tools.selectAll( 'problematic_form' );
+		},
+
+		tryAgain: ( id ) => {
+			tools.actionSingleItem( 'problematic_form', 'try_again', id );
+		},
+
+		tryAgainSelected: () => {
+			tools.actionSelectedItems( 'problematic_form', 'try_again' );
+		}
+	};
+
+	const Ready = {
+		unselectAll: ( carrier_code ) => {
+			tools.unselectAll( 'ready_'+carrier_code+'_form' );
+		},
+
+		selectAll: ( carrier_code ) => {
+			tools.selectAll( 'ready_'+carrier_code+'_form' );
+		},
+
+		showLabel: ( carrier_code, id ) => {
+			document.getElementById('ready_'+carrier_code+'_form').target = '_blank';
+			tools.actionSingleItem( 'ready_'+carrier_code+'_form', 'show_labels', id );
+		},
+
+		showLabelsSelected: ( carrier_code ) => {
+			document.getElementById('ready_'+carrier_code+'_form').target = '_blank';
+			tools.actionSelectedItems( 'ready_'+carrier_code+'_form', 'show_labels' );
+		},
+
+
+		showDeliveryNoteSelected: ( carrier_code ) => {
+			document.getElementById('ready_'+carrier_code+'_form').target = '_blank';
+			tools.actionSelectedItems( 'ready_'+carrier_code+'_form', 'show_delivery_notes' );
+		},
+
+		sent: ( carrier_code, id ) => {
+			document.getElementById('ready_'+carrier_code+'_form').target = '';
+			tools.actionSingleItem( 'ready_'+carrier_code+'_form', 'sent', id );
+		},
+
+		sentSelected: ( carrier_code ) => {
+			document.getElementById('ready_'+carrier_code+'_form').target = '';
+			tools.actionSelectedItems( 'ready_'+carrier_code+'_form', 'sent' );
+		}
+	};
+	
+</script>

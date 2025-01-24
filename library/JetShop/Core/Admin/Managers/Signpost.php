@@ -1,0 +1,8 @@
+<?php
+namespace JetShop;
+
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+
+interface Core_Admin_Managers_Signpost extends Admin_EntityManager_WithEShopData_Interface
+{
+}

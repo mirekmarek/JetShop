@@ -3,6 +3,7 @@ namespace JetShop;
 
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
+use JetApplication\OrderPersonalReceipt;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
@@ -17,6 +18,8 @@ interface Core_WarehouseManagement_Manager {
 	public function manageOrderCancelled( Order $order ) : void;
 	
 	public function manageOrderDispatchSent( OrderDispatch $order_dispatch ) : void;
+	
+	public function manageOrderPersonalReceiptHandedOver( OrderPersonalReceipt $order_personal_receipt ) : void;
 	
 	public function manageReceiptOfGoods( WarehouseManagement_ReceiptOfGoods $rcp ) : void;
 	

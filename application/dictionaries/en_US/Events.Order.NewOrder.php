@@ -13,4 +13,6 @@ return [
 	'Order item description' => '',
 	'Order item unit price' => '',
 	'Order item price' => '',
+	'Number of units' => '',
+	'Measure unit' => '',
 ];

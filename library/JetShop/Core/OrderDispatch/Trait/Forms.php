@@ -5,8 +5,8 @@ use Jet\Form;
 use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Textarea;
+use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Packet;
-use JetApplicationModule\Admin\OrderDispatch\Overview\OrderDispatch;
 
 trait Core_OrderDispatch_Trait_Forms {
 	

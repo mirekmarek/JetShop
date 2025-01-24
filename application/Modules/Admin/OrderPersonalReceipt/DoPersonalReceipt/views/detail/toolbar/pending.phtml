@@ -1,0 +1,25 @@
+<?php
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
+use Jet\Http_Request;
+use Jet\Mvc_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\OrderPersonalReceipt;
+
+/**
+ * @var Mvc_View $this
+ * @var OrderPersonalReceipt $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+
+echo UI::button_save( Tr::_('Preparation started (alt+s)') )->setUrl( Http_Request::currentURI(['action'=>'set_preparation_started']) )->setId('save_button');
+
+
+if( $dispatch->getIsCustom() ):
+	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	echo UI::button_delete( Tr::_('Cancel') )->setUrl( Http_Request::currentURI(['action'=>'cancel']) );
+endif;
+

@@ -9,7 +9,8 @@ namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
-use JetApplicationModule\Admin\Suppliers\Supplier;
+use JetApplication\Supplier;
+use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 class Listing_Column_Supplier extends DataListing_Column
 {
@@ -42,7 +43,7 @@ class Listing_Column_Supplier extends DataListing_Column
 	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
 		/**
-		 * @var ReceiptOfGoods $item
+		 * @var WarehouseManagement_ReceiptOfGoods $item
 		 */
 		$supplier = Supplier::get( $item->getSupplierId() );
 		if(!$supplier) {

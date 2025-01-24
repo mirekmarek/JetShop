@@ -1,0 +1,139 @@
+<?php
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\OrderPersonalReceipt;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View   $this
+ * @var WarehouseManagement_Warehouse $warehouse
+ */
+
+$warehouse = $this->getRaw('warehouse');
+
+$pending = OrderPersonalReceipt::getListOfPending( $warehouse );
+$in_progress = OrderPersonalReceipt::getListOfInProgress( $warehouse );
+$to_be_canceled = OrderPersonalReceipt::getListOfToBeCanceled( $warehouse );
+$prepared = OrderPersonalReceipt::getListOfPrepared( $warehouse );
+$handed_over = OrderPersonalReceipt::getListOfHandedOver( $warehouse );
+
+
+require 'list/js.phtml';
+?>
+<div style="display: flex;gap: 20px;align-items: center;margin: 20px;">
+	<div><b><?=Tr::_('Warehouse:')?></b></div>
+	<?php foreach(WarehouseManagement_Warehouse::getList() as $wh):
+		if(
+				$wh->getIsVirtual() ||
+				!$wh->isActive()
+		) {
+			continue;
+		}
+		
+		if($wh->getId()==$warehouse->getId()): ?>
+			<div><b class="btn btn-success"><?=$wh->getInternalName()?></b></div>
+		<?php else:  ?>
+			<div><a href="<?=Http_Request::currentURI(set_GET_params: ['warehouse'=>$wh->getId()])?>" class="btn btn-light"><?=$wh->getInternalName()?></a></div>
+		<?php endif;
+		
+	endforeach; ?>
+</div>
+
+<?php
+$showList = function( $list )  {
+	?>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th></th>
+			<th><?=Tr::_('Order number')?></th>
+			<th><?=Tr::_('Context')?></th>
+		</tr>
+		</thead>
+		<?php foreach( $list as $dispatch):
+			$this->setVar('dispatch', $dispatch)
+			?>
+			<tr>
+				<td><?php require 'link.phtml';  ?></td>
+				<td><?php require 'order.phtml'; ?></td>
+				<td><?php require 'context.phtml'; ?></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+	<?php
+};
+?>
+
+<div style="display: grid;grid-template-columns: 1fr 1.5fr 1fr;gap: 10px;padding: 10px;">
+	
+	<div>
+		<?php if(count($pending)): ?>
+		<div class="card">
+			<div class="card-header bg-info text-white">
+				<?=Tr::_('Pending (%cnt%)', ['cnt'=>count($pending)])?>
+			</div>
+			<div class="card-body">
+				<?php $showList($pending); ?>
+			</div>
+		</div>
+		<br><br>
+		<?php endif; ?>
+		
+		
+		<?php if(count($in_progress)): ?>
+			<div class="card">
+				<div class="card-header bg-info text-white">
+					<?=Tr::_('In progress (%cnt%)', ['cnt'=>count($in_progress)])?>
+				</div>
+				<div class="card-body">
+					<?php $showList($in_progress); ?>
+				</div>
+			</div>
+			<br><br>
+		<?php endif; ?>
+		
+		
+		<?php if(count($to_be_canceled)): ?>
+			<div class="card">
+				<div class="card-header bg-dark text-white">
+					<?=Tr::_('To be canceled (%cnt%)', ['cnt'=>count($to_be_canceled)])?>
+				</div>
+				<div class="card-body">
+					<?php $showList($to_be_canceled); ?>
+				</div>
+			</div>
+			<br><br>
+		<?php endif; ?>
+		
+	</div>
+
+	<div>
+		<?php if(count($prepared)): ?>
+			<div class="card">
+				<div class="card-header bg-success text-white">
+					<?=Tr::_('Prepared (%cnt%)', ['cnt'=>count($prepared)])?>
+				</div>
+				<div class="card-body">
+					<?php $showList($prepared); ?>
+				</div>
+			</div>
+		<?php endif; ?>
+	</div>
+
+
+	<div class="card">
+		<?php if(count($handed_over)): ?>
+			<div class="card-header bg-secondary text-white">
+				<?=Tr::_('Headed over today (%cnt%)', ['cnt'=>count($handed_over)])?>
+			</div>
+			<div class="card-body">
+				<?php $showList($handed_over); ?>
+			</div>
+		<?php endif; ?>
+	</div>
+	
+</div>
+

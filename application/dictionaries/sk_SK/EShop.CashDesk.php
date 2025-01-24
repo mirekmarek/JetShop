@@ -97,4 +97,6 @@ return [
 	'Today I prefer to continue without logging in' => 'Dnes radšej pokračujem bez prihlásenia',
 	'I forget password ...' => 'zabudol som heslo...',
 	'Incorrect password' => 'nesprávne heslo',
+	'I agree with <a href="%PAGE_URL:terms-and-conditions%">terms and conditions</a>' => '',
+	'Personal takeover place' => '',
 ];

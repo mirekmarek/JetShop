@@ -6,7 +6,9 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace Jet;
+namespace JetShop;
+
+use Jet\BaseObject;
 
 use Attribute;
 

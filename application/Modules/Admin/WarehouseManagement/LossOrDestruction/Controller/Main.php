@@ -12,6 +12,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Simple_Controller;
 
@@ -83,7 +84,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	
 	public function add_Action() : void
 	{
-		$this->current_item = new LossOrDestruction();
+		$this->current_item = new WarehouseManagement_LossOrDestruction();
 		
 		$this->setBreadcrumbNavigation( Tr::_('New loss or destruction') );
 		
@@ -121,12 +122,12 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function done_Action() : void
 	{
 		/**
-		 * @var LossOrDestruction $order
+		 * @var WarehouseManagement_LossOrDestruction $item
 		 */
-		$order = $this->current_item;
+		$item = $this->current_item;
 		
-		if($order->done()) {
-			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been completed', ['number'=>$order->getNumber()]) );
+		if($item->done()) {
+			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been completed', ['number'=>$item->getNumber()]) );
 		}
 		
 		Http_Headers::reload(unset_GET_params: ['action']);
@@ -135,12 +136,12 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function cancel_Action() : void
 	{
 		/**
-		 * @var LossOrDestruction $order
+		 * @var WarehouseManagement_LossOrDestruction $item
 		 */
-		$order = $this->current_item;
+		$item = $this->current_item;
 		
-		if($order->cancel()) {
-			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been cancelled', ['number'=>$order->getNumber()]) );
+		if($item->cancel()) {
+			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been cancelled', ['number'=>$item->getNumber()]) );
 		}
 		
 		Http_Headers::reload(unset_GET_params: ['action']);

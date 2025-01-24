@@ -1,0 +1,124 @@
+<?php
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;use JetApplication\OrderPersonalReceipt;
+
+
+/**
+ * @var MVC_View   $this
+ * @var OrderPersonalReceipt $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+$is_editable = $dispatch->isEditable();
+
+$packet_default_params = [];
+
+?>
+<script type="text/javascript">
+	
+	const Notes = {
+		saveOurNoteForm: () => {
+			JetAjaxForm.submit('our_note_form');
+		},
+		saveRecipientNoteForm: () => {
+			JetAjaxForm.submit('recipient_note_form');
+		},
+		saveDriverNoteForm: () => {
+			JetAjaxForm.submit('driver_note_form');
+		}
+	};
+	
+	const Control = {
+		init: () => {
+			document.addEventListener('keydown', e => {
+				if (e.altKey && e.key === 'n') {
+					Control.nextPending();
+				}
+				if (e.altKey && e.key === 's') {
+					Control.save();
+				}
+				if (e.shiftKey && e.key === 'F') {
+					e.stopPropagation();
+					e.preventDefault();
+					Search.focus();
+				}
+			});
+		},
+		
+		nextPending: async ()=> {
+
+			const _resp = await fetch('<?=Http_Request::currentURI(['action' =>'goto_next_pending'])?>' );
+			const resp = await _resp.json();
+
+			if(resp['URL']) {
+				location = resp['URL'];
+				return;
+			}
+
+			if(resp['done']) {
+				alert('<?=Tr::_('Everything done 😊')?>');
+			}
+		},
+		
+		save: () => {
+			const save_btn = document.getElementById('save_button');
+			if(save_btn) {
+				save_btn.click();
+			}
+		}
+		
+	};
+	
+	Control.init();
+	
+	const Search = {
+		fetch: null,
+		search: ( q ) => {
+			fetch( '<?=Http_Request::currentURI(['action'=>'search'])?>&q='+encodeURIComponent(q) ).then( async (response) => {
+				if(!response.ok) {
+					return;
+				}
+				
+				const resp = await response.json();
+				
+				if(resp['found']) {
+					location = resp['URL'];
+				}
+			})
+		},
+
+		focus: () => {
+			document.getElementById('search_input').focus();
+			document.getElementById('search_input').value = '';
+		}
+	};
+	
+	
+</script>
+
+<style>
+	.packages-form-row {
+		display: grid;
+		align-items: center;
+		grid-template-columns: 30px 200px 50px 120px 50px 120px 50px 120px 50px 120px 100px 350px 1fr;
+		gap: 10px;
+		margin-bottom: 5px;
+		padding-bottom: 5px;
+		border-bottom: 1px solid #c9c9c9;
+	}
+	
+	.packages-field {
+		display: grid;
+		align-items: center;
+		gap: 5px;
+		grid-template-columns: 1fr 30px ;
+	}
+
+	.packages-field input {
+		width: 100%;
+	}
+</style>

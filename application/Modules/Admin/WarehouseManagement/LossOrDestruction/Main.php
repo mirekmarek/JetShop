@@ -8,16 +8,16 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Simple_Interface;
 use JetApplication\Admin_EntityManager_Simple_Trait;
-use JetApplication\Admin_Managers_LossOrDestruction;
+use JetApplication\Admin_Managers_WarehouseManagementLossOrDestruction;
 use JetApplication\Entity_Simple;
 use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Simple_Interface, Admin_Managers_LossOrDestruction
+class Main extends Application_Module implements Admin_Managers_WarehouseManagementLossOrDestruction
 {
 	use Admin_EntityManager_Simple_Trait;
 	
@@ -31,12 +31,12 @@ class Main extends Application_Module implements Admin_EntityManager_Simple_Inte
 	
 	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface
 	{
-		return new LossOrDestruction();
+		return new WarehouseManagement_LossOrDestruction();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'Loss or destruction';
+		return 'Warehouse Management - Loss or destruction';
 	}
 	
 	public static function getCurrentUserCanDelete() : bool

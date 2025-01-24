@@ -2,12 +2,10 @@
 namespace JetShop;
 
 
+use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Order;
 
-interface Core_Admin_Managers_DeliveryNote
+interface Core_Admin_Managers_DeliveryNote extends Admin_EntityManager_WithEShopRelation_Interface
 {
-	public function showName( int $id ): string;
-	
 	public function showOrderInvoices( Order $order ) : string;
-	
 }

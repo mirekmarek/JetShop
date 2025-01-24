@@ -12,6 +12,7 @@ use JetApplication\Admin_Entity_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Entity_WithEShopRelation;
+use JetApplication\OrderDispatch;
 
 /**
  *
@@ -23,12 +24,6 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 	public const ADMIN_MAIN_PAGE = 'order-dispatch-overview';
 
 	public const ACTION_GET = 'get_order_dispatch';
-	
-	
-	public static function showActiveState( int $id ): string
-	{
-		return '';
-	}
 	
 	public static function getCurrentUserCanCreate(): bool
 	{

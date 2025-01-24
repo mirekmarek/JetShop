@@ -6,7 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\JetShopEntity_Definition;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 

@@ -81,4 +81,8 @@ class Debug
 	}
 
 
+	public static function varDump( ... $vars ) : void
+	{
+		new Debug_VarDump( $vars );
+	}
 }

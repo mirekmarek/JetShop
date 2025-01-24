@@ -9,12 +9,11 @@ namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
-use Jet\Form;
-use Jet\MVC;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_Managers;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Admin_Managers_OrderDispatch;
 use JetApplication\Context;
+use JetApplication\Entity_WithEShopRelation;
 use JetApplication\OrderDispatch;
 
 /**
@@ -22,8 +21,9 @@ use JetApplication\OrderDispatch;
  */
 class Main extends Application_Module implements Admin_Managers_OrderDispatch
 {
-	public const PAGE_ID = 'do-dispatch';
+	use Admin_EntityManager_WithEShopRelation_Trait;
 	
+	public const ADMIN_MAIN_PAGE = 'do-dispatch';
 	
 	public function showDispatches( Context $context ) : string
 	{
@@ -46,11 +46,6 @@ class Main extends Application_Module implements Admin_Managers_OrderDispatch
 		
 	}
 	
-	public function getOrderDispatchURL( int $id ): string
-	{
-		return MVC::getPage( Main::PAGE_ID )->getURL( GET_params: ['id'=>$id] );
-	}
-	
 	public function showRecipient( OrderDispatch $dispatch ) : string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
@@ -60,45 +55,13 @@ class Main extends Application_Module implements Admin_Managers_OrderDispatch
 		return $view->render('recipient');
 	}
 	
-	public function showName( int $id ): string
+	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
 	{
-		$entity = new class extends OrderDispatch implements Admin_Entity_Common_Interface {
-			public function setEditable( bool $editable ): void
-			{
-			
-			}
-			
-			public function getAdminTitle() : string
-			{
-				return $this->getNumber();
-			}
-			
-			public function getEditURL(): string
-			{
-				return MVC::getPage( Main::PAGE_ID )->getURL( GET_params: ['id'=>$this->id] );
-			}
-			
-			public function getAddForm(): Form
-			{
-				return new Form('', []);
-			}
-			
-			public function catchAddForm(): bool
-			{
-				return false;
-			}
-			
-			public function getEditForm(): Form
-			{
-				return new Form('', []);
-			}
-			
-			public function catchEditForm(): bool
-			{
-				return false;
-			}
-		};
-		
-		return Admin_Managers::EntityEdit_Common()->renderShowName( $id, $entity );
+		return new OrderDispatch();
+	}
+	
+	public static function getEntityNameReadable(): string
+	{
+		return 'Order dispatch';
 	}
 }

@@ -24,7 +24,7 @@ use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Carrier_DeliveryPoint_OpeningHours;
 use JetApplication\Carrier_DeliveryPoint;
-
+use JetApplication\WarehouseManagement_Warehouse;
 
 
 /**
@@ -232,6 +232,20 @@ class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition
 		data_model_class: Carrier_DeliveryPoint_OpeningHours::class
 	)]
 	protected array $opening_hours = [];
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Dedicated warehouse:',
+		select_options_creator: [
+			WarehouseManagement_Warehouse::class,
+			'getScope'
+		],
+	)]
+	protected int $dedicatet_warehouse_id = 0;
 	
 	protected ?Form $add_form = null;
 	protected ?Form $edit_form = null;
@@ -551,6 +565,18 @@ class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition
 	{
 		return $this->longitude;
 	}
+	
+	public function getDedicatetWarehouseId(): int
+	{
+		return $this->dedicatet_warehouse_id;
+	}
+	
+	public function setDedicatetWarehouseId( int $dedicatet_warehouse_id ): void
+	{
+		$this->dedicatet_warehouse_id = $dedicatet_warehouse_id;
+	}
+	
+	
 
 
 	public function addImage( string $image ) : void

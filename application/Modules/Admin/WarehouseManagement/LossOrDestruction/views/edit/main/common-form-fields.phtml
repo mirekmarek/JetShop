@@ -6,11 +6,12 @@ use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Supplier_GoodsOrder;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 use JetApplication\WarehouseManagement_Warehouse;
 
 /**
  * @var MVC_View   $this
- * @var LossOrDestruction $rcp
+ * @var WarehouseManagement_LossOrDestruction $rcp
  * @var Controller_Main $controller
  * @var Supplier_GoodsOrder $order
  */
@@ -52,13 +53,13 @@ $form->field('notes')->input()->addCustomCssStyle("height: 500px");
 		<div class="row">
 			<div class="col-md-1" style="padding: 15px"><?=Tr::_('Price per unit:')?></div>
 			<div class="col-md-8" style="font-weight: bolder;padding: 15px;">
-				<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $rcp->getCurrency(), $rcp->getPricePerUnit() )?> / <?=$rcp->getMeasureUnit()?->getName()?>
+				<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $rcp->getCurrency(), $rcp->getPricePerUnit() )?> / <?=$rcp->getMeasureUnit()?->getName()?>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-1" style="padding: 15px"><?=Tr::_('Total:')?></div>
 			<div class="col-md-8" style="font-weight: bolder;padding: 15px;">
-				<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $rcp->getCurrency(), ($rcp->getNumberOfUnits() * $rcp->getPricePerUnit()) )?>
+				<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $rcp->getCurrency(), ($rcp->getNumberOfUnits() * $rcp->getPricePerUnit()) )?>
 			</div>
 		</div>
 		

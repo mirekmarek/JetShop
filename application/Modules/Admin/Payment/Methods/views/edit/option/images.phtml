@@ -15,7 +15,7 @@ use JetApplication\Admin_Managers;
 $image_manager = Admin_Managers::Image();
 ?>
 <div class="toolbar" id="main-toolbar">
-	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option_id']))?>
+	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option']))?>
 </div>
 
 <div id="main-col">

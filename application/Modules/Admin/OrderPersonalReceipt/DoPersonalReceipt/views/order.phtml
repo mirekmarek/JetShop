@@ -1,0 +1,19 @@
+<?php
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
+use JetApplication\Admin_Managers;
+use JetApplication\OrderPersonalReceipt;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View   $this
+ * @var OrderPersonalReceipt $dispatch
+ */
+
+$dispatch = $this->getRaw('dispatch');
+
+if(!$dispatch->getOrderId()) {
+	return;
+}
+
+echo Admin_Managers::Order()->showName( $dispatch->getOrderId() );

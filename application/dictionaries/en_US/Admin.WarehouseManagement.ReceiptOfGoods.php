@@ -69,4 +69,7 @@ return [
 	'Position' => '',
 	'Positioning' => '',
 	'Receipt of goods <b>%number%</b> has been completed' => '',
+	'Currency used by the supplier:' => '',
+	'Warehouse currency:' => '',
+	'Cancel' => '',
 ];

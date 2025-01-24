@@ -8,11 +8,12 @@ use Jet\Application_Module;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\Signpost;
+use JetApplication\Admin_Managers_Signpost;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface
+class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface, Admin_Managers_Signpost
 {
 	use Admin_EntityManager_WithEShopData_Trait;
 
@@ -31,7 +32,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'signpost';
+		return 'Signpost';
 	}
 
 }

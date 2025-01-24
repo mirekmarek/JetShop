@@ -7,11 +7,12 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
+use JetApplication\Marketing_Banner;
 use JetApplication\Marketing_BannerGroup;
 
 /**
  * @var MVC_View  $this
- * @var Banner[]  $list
+ * @var Marketing_Banner[]  $list
  * @var Marketing_BannerGroup $group
  */
 
@@ -21,7 +22,7 @@ $group = $this->getRaw('selected_group');
 
 $editable = Main::getCurrentUserCanEdit();
 
-$showValidFrom = function( Banner $item ) {
+$showValidFrom = function( Marketing_Banner $item ) {
 	if($item->isActiveByTimePlan()) {
 		$class = 'active';
 	} else {
@@ -44,7 +45,7 @@ $showValidFrom = function( Banner $item ) {
 	<?php
 };
 
-$showValidTill = function( Banner $item ) {
+$showValidTill = function( Marketing_Banner $item ) {
 	if($item->isActiveByTimePlan()) {
 		$class = 'active';
 	} else {

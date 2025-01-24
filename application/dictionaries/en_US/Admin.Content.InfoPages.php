@@ -66,4 +66,5 @@ return [
 	'Content - Info Page <b>%ITEM_NAME%</b> has been updated' => '',
 	'Internal name:' => '',
 	'Internal code:' => '',
+	'Info Pages' => '',
 ];

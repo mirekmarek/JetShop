@@ -8,15 +8,16 @@
 namespace JetApplicationModule\Admin\Delivery\Classes;
 
 use Jet\Application_Module;
+use JetApplication\Admin_Managers_DeliveryClasses;
+use JetApplication\Delivery_Class;
 use JetApplication\Entity_Common;
-use JetApplication\Admin_EntityManager_Common_Interface;
 use JetApplication\Admin_Entity_Common_Interface;
 use JetApplication\Admin_EntityManager_Common_Trait;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Common_Interface
+class Main extends Application_Module implements Admin_Managers_DeliveryClasses
 {
 	use Admin_EntityManager_Common_Trait;
 
@@ -30,12 +31,12 @@ class Main extends Application_Module implements Admin_EntityManager_Common_Inte
 	
 	public static function getEntityInstance(): Entity_Common|Admin_Entity_Common_Interface
 	{
-		return new DeliveryClass();
+		return new Delivery_Class();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'delivery class';
+		return 'Delivery class';
 	}
 	
 }

@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use Jet\Http_Headers;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Controller;
+use JetApplication\ProductQuestion;
 
 
 class Controller_Main extends Admin_EntityManager_WithEShopRelation_Controller

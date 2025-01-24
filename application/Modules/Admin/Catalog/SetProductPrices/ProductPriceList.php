@@ -17,7 +17,7 @@ use JetApplication\Product;
 use JetApplication\Product_Price;
 use JetApplication\Product_EShopData;
 use JetApplication\EShops;
-use JetApplicationModule\Admin\Suppliers\Supplier;
+use JetApplication\Supplier;
 use XLSXReader\XLSXReader;
 
 class ProductPriceList {

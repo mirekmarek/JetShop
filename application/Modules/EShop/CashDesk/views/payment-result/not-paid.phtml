@@ -16,3 +16,7 @@ $order = $this->getRaw('order');
 <h1>Order <?=$order->getNumber()?></h1>
 
 <h2>Sorry - not paid</h2>
+
+<p>
+	<a href="<?=$this->getRaw('try_again_url')?>">Try again</a>
+</p>

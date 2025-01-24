@@ -9,4 +9,5 @@ return [
 	'Subscribe' => '',
 	'Unsubscribe' => '',
 	'Mail change' => '',
+	'Unsubscribed' => '',
 ];

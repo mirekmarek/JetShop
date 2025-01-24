@@ -36,4 +36,6 @@ return [
 	'Items:' => '',
 	'Product:' => '',
 	'Quantity:' => '',
+	'e-shop:' => '',
+	'Number of units:' => '',
 ];

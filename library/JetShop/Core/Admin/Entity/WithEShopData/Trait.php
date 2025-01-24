@@ -1,13 +1,15 @@
 <?php
 namespace JetShop;
 
+use Jet\Application_Module;
 use Jet\Attributes;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Definition_Model;
 use Jet\DataModel_Definition_Property_DataModel;
 use Jet\Form;
 use Jet\Form_Field_Input;
-use Jet\JetShopEntity_Definition;
+use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Admin_Entity_Common_Trait;
 use JetApplication\Application_Admin;
 use JetApplication\Admin_Managers;
@@ -20,6 +22,22 @@ trait Core_Admin_Entity_WithEShopData_Trait {
 	use Admin_Entity_Common_Trait;
 	
 	protected ?Form $_description_edit_form = null;
+	
+	public function renderActiveState() : string
+	{
+		return $this->getAdminManager()->renderActiveState( $this );
+	}
+	
+	
+	public function getAdminManager() : null|Application_Module|Admin_EntityManager_WithEShopData_Interface
+	{
+		$ifc = $this->getAdminManagerInterface();
+		if(!$ifc) {
+			return null;
+		}
+		
+		return Admin_Managers::get( $ifc );
+	}
 	
 	public function handleImages() : void
 	{

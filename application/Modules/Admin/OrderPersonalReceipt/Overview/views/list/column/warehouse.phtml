@@ -1,0 +1,21 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
+
+use Jet\MVC_View;
+use JetApplication\OrderPersonalReceipt;
+use JetApplication\WarehouseManagement_Warehouse;
+
+/**
+ * @var MVC_View $this
+ * @var OrderPersonalReceipt $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=WarehouseManagement_Warehouse::getScope()[$item->getWarehouseId()]?>

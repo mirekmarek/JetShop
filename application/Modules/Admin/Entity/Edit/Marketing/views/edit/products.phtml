@@ -69,7 +69,12 @@ echo $edit_manager->renderToolbar();
 			<th></th>
 		</tr>
 		</thead>
-		<?php foreach( $item->getProductIds() as $p_id): ?>
+		<?php foreach( $item->getProductIds() as $p_id):
+			$product = Product::load( $p_id );
+			if(!$product) {
+				continue;
+			}
+			?>
 			<tr>
 				<td>
 					<?php if($editable): ?>
@@ -77,8 +82,8 @@ echo $edit_manager->renderToolbar();
 					<?php endif; ?>
 				</td>
 				
-				<td><?=$p_manager->showActiveState($p_id)?></td>
-				<td><?=$p_manager->showName($p_id)?></td>
+				<td><?=$p_manager->renderActiveState($product)?></td>
+				<td><?=$p_manager->showName($product)?></td>
 			</tr>
 		<?php endforeach; ?>
 	</table>

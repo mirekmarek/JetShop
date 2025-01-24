@@ -8,43 +8,44 @@
 namespace JetApplicationModule\Payment\GoPay;
 
 use Jet\Http_Headers;
+use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\EShops;
 use JetApplication\Order;
-use JetApplication\Payment_Method_Module;
+use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_EShopData;
-use JetApplication\EShop_Pages;
+use JetApplication\Payment_Method_Module;
+use JetApplication\SysServices_Definition;
+use JetApplication\SysServices_Provider_Interface;
 
 class Main extends Payment_Method_Module implements
 	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
-	Admin_ControlCentre_Module_Interface
+	Admin_ControlCentre_Module_Interface,
+	SysServices_Provider_Interface
 {
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	public function handlePayment( Order $order, Payment_Method_EShopData $payment_method ): bool
+	public function getPaymentMethodOptionsList( Payment_Method|Payment_Method_EShopData $payment_method ) : array
 	{
-		/**
-		 * @var Config_PerShop $config
-		 */
+		if( $payment_method->getBackendModulePaymentMethodSpecification()!=GoPay_PaymentMethod::BANK_ACCOUNT ) {
+			return [];
+		}
+		
+		return GoPay_Bank::getList();
+	}
+	
+	
+	protected function startPayment( Order $order, string $return_url ) : bool
+	{
 		$config = $this->getEshopConfig( $order->getEshop() );
-
 		
 		$gopay = new GoPay( $config->getGoPayConfig() );
 		$gopay->setLogger( new Logger() );
-		
-		$payment_id = PaymentPair::getPaymentId( $order->getId() );
-		
-		if($payment_id) {
-			if( $gopay->verifyPayment( $payment_id ) ) {
-				return true;
-			}
-			
-			return false;
-		}
 		
 		$o = new GoPay_Order();
 		$o->setOderNumber( $order->getNumber() );
@@ -58,7 +59,7 @@ class Main extends Payment_Method_Module implements
 		$o->setStreet( $order->getBillingAddressStreetNo() );
 		$o->setPostalCode( $order->getBillingAddressZip() );
 		$o->setCountryCode( $order->getBillingAddressCountry() );
-
+		
 		foreach($order->getItems() as $item) {
 			$o_item = new GoPay_Order_Item();
 			$o_item->setName( $item->getDescription() );
@@ -66,19 +67,10 @@ class Main extends Payment_Method_Module implements
 			$o_item->setAmount( $item->getTotalAmount() );
 		}
 		
-		$return_url = EShop_Pages::CashDeskPayment()->getURL([$order->getKey()]);
 		$notification_url = '';
 		
-		$selected_bank = GoPay_Bank::get( $order->getPaymentMethodSpecification() );
-		
-		$gopay_pm = null;
-		foreach( GoPay_PaymentMethod::cases() as $_gopay_pm ) {
-			if( $_gopay_pm->value == $payment_method->getBackendModulePaymentMethodSpecification() ) {
-				$gopay_pm = $_gopay_pm;
-				break;
-			}
-		}
-		
+		$gopay_pm =  $order->getPaymentMethod()->getBackendModulePaymentMethodSpecification();
+		$selected_bank = $order->getPaymentMethodSpecification();
 		
 		$payment = $gopay->createPayment(
 			order: $o,
@@ -89,37 +81,65 @@ class Main extends Payment_Method_Module implements
 		);
 		
 		
-		if($payment) {
-			PaymentPair::setPaymentId(
-				$order->getId(),
-				$payment->getPaymentId()
-			);
-			
-			Http_Headers::movedTemporary( $payment->getURL() );
+		if(!$payment) {
+			return false;
+		}
+		
+		PaymentPair::setPaymentId(
+			$order->getId(),
+			$payment->getPaymentId()
+		);
+		
+		Http_Headers::movedTemporary( $payment->getURL() );
+		
+		return true;
+	}
+	
+	public function handlePayment( Order $order, string $return_url ): bool
+	{
+		return $this->startPayment( $order, $return_url );
+		
+	}
+	
+	public function tryAgain( Order $order, string $return_url ): bool
+	{
+		return $this->startPayment( $order, $return_url );
+		
+	}
+	
+	public function handlePaymentReturn( Order $order ): bool
+	{
+		if($order->getPaid()) {
 			return true;
 		}
 		
 		
-		return false;
+		/**
+		 * @var Config_PerShop $config
+		 */
+		$config = $this->getEshopConfig( $order->getEshop() );
+		
+		$gopay = new GoPay( $config->getGoPayConfig() );
+		$gopay->setLogger( new Logger() );
+		
+		$payments = PaymentPair::getPayments( $order->getId() );
+		
+		
+		foreach($payments as $payment ) {
+			if( $gopay->verifyPayment( $payment ) ) {
+				$order->paid();
+				return true;
+			}
+		}
+		
+		return true;
 	}
+	
 	
 	
 	public function getPaymentMethodSpecificationList(): array
 	{
-		$options = [
-			GoPay_PaymentMethod::PAYMENT_CARD->value,
-			GoPay_PaymentMethod::BANK_ACCOUNT->value,
-			GoPay_PaymentMethod::GOPAY->value,
-			GoPay_PaymentMethod::GPAY->value,
-			GoPay_PaymentMethod::PRSMS->value,
-			GoPay_PaymentMethod::MPAYMENT->value,
-			GoPay_PaymentMethod::PAYSAFECARD->value,
-			GoPay_PaymentMethod::SUPERCASH->value,
-			GoPay_PaymentMethod::PAYPAL->value,
-			GoPay_PaymentMethod::BITCOIN->value,
-		];
-		
-		return array_combine( $options, $options );
+		return GoPay_PaymentMethod::getList();
 	}
 	
 	public function getControlCentreGroup(): string
@@ -146,5 +166,30 @@ class Main extends Payment_Method_Module implements
 	public function getControlCentrePerShopMode(): bool
 	{
 		return true;
+	}
+	
+	public function getSysServicesDefinitions(): array
+	{
+		$check_payments = new SysServices_Definition(
+			module:        $this,
+			name:          Tr::_( 'GoPay - check payments' ),
+			description:   Tr::_( 'Verify that all payments have been processed.' ),
+			service_code: 'go_pay_check_payments',
+			service:       function() {
+				/**
+				 * @var Config_PerShop $config
+				 */
+				$config = $this->getEshopConfig( EShops::getCurrent() );
+				
+				$gopay = new GoPay( $config->getGoPayConfig() );
+				$gopay->setLogger( new Logger() );
+
+				$gopay->checkPayments();
+			}
+		);
+		$check_payments->setIsPeriodicallyTriggeredService( true );
+		$check_payments->setServiceRequiresEshopDesignation( true );
+		
+		return [ $check_payments ];
 	}
 }

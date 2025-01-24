@@ -21,6 +21,7 @@ use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Entity_Edit;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use JetApplication\Marketing_Banner;
 use JetApplication\Marketing_BannerGroup;
 
 class Controller_Main extends Admin_EntityManager_Marketing_Controller
@@ -37,7 +38,7 @@ class Controller_Main extends Admin_EntityManager_Marketing_Controller
 		
 		if(
 			($id = $GET->getInt('id')) &&
-			($banner=Banner::get($id))
+			($banner=Marketing_Banner::get($id))
 		) {
 			$this->current_item = $banner;
 			$this->current_item->setEditable( Main::getCurrentUserCanEdit() );
@@ -101,9 +102,9 @@ class Controller_Main extends Admin_EntityManager_Marketing_Controller
 	
 	public function default_Action() : void
 	{
-		Banner::handleTimePlan();
+		Marketing_Banner::handleTimePlan();
 		
-		$list = Banner::getByGroup( $this->selected_eshop, $this->selected_group );
+		$list = Marketing_Banner::getByGroup( $this->selected_eshop, $this->selected_group );
 		
 		if(Main::getCurrentUserCanEdit()) {
 			$GET = Http_Request::GET();
@@ -129,10 +130,10 @@ class Controller_Main extends Admin_EntityManager_Marketing_Controller
 	
 	public function add_Action() : void
 	{
-		$this->current_item = new Banner();
+		$this->current_item = new Marketing_Banner();
 		$this->current_item->setEshop( $this->selected_eshop );
 		$this->current_item->setGroupId( $this->selected_group->getId() );
-		$this->current_item->setPosition( count(Banner::getByGroup( $this->selected_eshop, $this->selected_group ))+1 );
+		$this->current_item->setPosition( count(Marketing_Banner::getByGroup( $this->selected_eshop, $this->selected_group ))+1 );
 		
 		Navigation_Breadcrumb::addURL( Tr::_('New banner') );
 		
@@ -160,10 +161,10 @@ class Controller_Main extends Admin_EntityManager_Marketing_Controller
 	
 	public function edit_Action() : void
 	{
-		Banner::handleTimePlan();
+		Marketing_Banner::handleTimePlan();
 		
 		/**
-		 * @var Banner $banner
+		 * @var Marketing_Banner $banner
 		 */
 		$banner = $this->current_item;
 		

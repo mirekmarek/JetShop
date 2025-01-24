@@ -246,4 +246,7 @@ return [
 	'Supplier code:' => '',
 	'Allow to order when sold out' => '',
 	'Available units:' => '',
+	'Availability:' => '',
+	'Accessories' => '',
+	'Groups:' => '',
 ];

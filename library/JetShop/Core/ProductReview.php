@@ -6,8 +6,11 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Admin_Managers;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_ProductReviews;
 use JetApplication\Entity_WithEShopRelation;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 
@@ -15,8 +18,12 @@ use JetApplication\Product_EShopData;
 	name: 'product_reviews',
 	database_table_name: 'product_reviews',
 )]
-abstract class Core_ProductReview extends Entity_WithEShopRelation
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_ProductReviews::class
+)]
+abstract class Core_ProductReview extends Entity_WithEShopRelation implements Admin_Entity_WithEShopRelation_Interface
 {
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -395,7 +402,8 @@ abstract class Core_ProductReview extends Entity_WithEShopRelation
 
 	public function getAdminTitle() : string
 	{
-		$title = Admin_Managers::Product()->getName( $this->product_id );
+		$product = Product::get( $this->product_id );
+		$title = $product?->getAdminTitle()??$this->product_id;
 		$title .= ' / ';
 		$title .= $this->author_name;
 		

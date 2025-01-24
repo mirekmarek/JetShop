@@ -57,10 +57,10 @@ $price_list = $this->getRaw('price_list');
 	</thead>
 	<?php foreach($price_list->getItems() as $item): ?>
 	<tr>
-		<td><a href="<?=Admin_Managers::Product()->getEditURL($item->getId())?>"><?=$item->getId()?></a></td>
+		<td><a href="<?=Admin_Managers::Product()->getProductEditURL($item->getId())?>"><?=$item->getId()?></a></td>
 		<td><?=$item->getEan()?></td>
 		<td><?=$item->getInternalCode()?></td>
-		<td><a href="<?=Admin_Managers::Product()->getEditURL($item->getId())?>"><?=$item->getName()?></a></td>
+		<td><a href="<?=Admin_Managers::Product()->getProductEditURL($item->getId())?>"><?=$item->getName()?></a></td>
 		<td><?=$item->getPrice()?></td>
 		
 		<?php if($item->getNewPrice()===null): ?>

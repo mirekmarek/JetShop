@@ -1,0 +1,22 @@
+<?php
+/**
+ *
+ * @copyright
+ * @license
+ * @author
+ */
+namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use JetApplication\OrderPersonalReceipt;
+
+/**
+ * @var MVC_View $this
+ * @var OrderPersonalReceipt $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?=Locale::date( $item->getDispatchDate() );?>
+

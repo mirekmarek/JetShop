@@ -11,7 +11,7 @@ use Jet\Form_Definition_Interface;
 use Jet\Form_Definition_Trait;
 use Jet\Form_Field;
 use Jet\Tr;
-use JetApplicationModule\Admin\Payment\Methods\PaymentMethod;
+use JetApplication\Payment_Method;
 
 class Config_PaymentMapItem extends Config_Section implements Form_Definition_Interface
 {
@@ -24,7 +24,7 @@ class Config_PaymentMapItem extends Config_Section implements Form_Definition_In
 		type: Form_Field::TYPE_SELECT,
 		label: 'Payment method: ',
 		select_options_creator: [
-			PaymentMethod::class,
+			Payment_Method::class,
 			'getScope'
 		]
 	)]

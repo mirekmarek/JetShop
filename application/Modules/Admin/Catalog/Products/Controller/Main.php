@@ -311,6 +311,10 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 	
 	public function handleSetAvailability() : void
 	{
+		if(!Main::getCurrentUserCanSetAvailability()) {
+			return;
+		}
+		
 		/**
 		 * @var Product $product
 		 */

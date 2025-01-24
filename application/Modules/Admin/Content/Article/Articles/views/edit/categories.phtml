@@ -6,11 +6,13 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Admin_Managers;
+use JetApplication\Category;
+use JetApplication\Content_Article;
 
 /**
  * @var MVC_View   $this
  * @var Controller_Main $controller
- * @var Article $article
+ * @var Content_Article $article
  */
 $controller = $this->getController();
 $editable = $this->getBool( 'editable' );
@@ -42,7 +44,12 @@ echo $this->getRaw('tabs');
 
 <div id="main-col">
 <div id="categories_sort_area">
-	<?php foreach( $article->getCategoryIds() as $c_id): ?>
+	<?php foreach( $article->getCategoryIds() as $c_id):
+		$category = Category::load( $c_id );
+		if(!$category) {
+			continue;
+		}
+		?>
 		<div
 			class="sort_item"
 			style="display: grid;grid-template-columns: 30px 200px 1fr 40px;align-items: center;gap: 5px;padding:5px;border-bottom: 1px solid #c9c9c9;"
@@ -55,8 +62,8 @@ echo $this->getRaw('tabs');
 			
 			</div>
 			
-			<div><?=$c_manager->showActiveState($c_id)?></div>
-			<div><?=$c_manager->showName($c_id)?></div>
+			<div><?=$c_manager->renderActiveState($category)?></div>
+			<div><?=$c_manager->showName($category)?></div>
 			<div>
 				<?php if($editable): ?>
 					<?=UI::button_delete(' ')

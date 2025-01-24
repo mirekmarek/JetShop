@@ -78,17 +78,6 @@ trait Core_ReturnOfGoods_Trait_Status
 		return $this->completed;
 	}
 	
-	public function isEditable(): bool
-	{
-		if(
-			$this->cancelled
-		) {
-			return false;
-		}
-		
-		
-		return true;
-	}
 	
 	
 	public function setEditable( bool $editable ): void

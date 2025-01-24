@@ -8,11 +8,15 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Locale;
+use JetApplication\Admin_Entity_Common_Interface;
+use JetApplication\Admin_Entity_Common_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Supplier;
 use JetApplication\Currencies;
 use JetApplication\DataList;
 use JetApplication\Entity_Common;
 use JetApplication\FulltextSearch_IndexDataProvider;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Managers;
 use JetApplication\EShop;
 use JetApplication\Supplier;
@@ -23,7 +27,14 @@ use JetApplication\Supplier_Backend_Module;
 	name: 'suppliers',
 	database_table_name: 'suppliers'
 )]
-abstract class Core_Supplier extends Entity_Common implements FulltextSearch_IndexDataProvider {
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Supplier::class
+)]
+abstract class Core_Supplier extends Entity_Common implements
+	FulltextSearch_IndexDataProvider,
+	Admin_Entity_Common_Interface
+{
+	use Admin_Entity_Common_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,

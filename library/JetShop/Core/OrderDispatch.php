@@ -7,6 +7,9 @@ use Jet\DataModel_Definition;
 
 use Jet\DataModel_Fetch_Instances;
 use Jet\Tr;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_OrderDispatch;
 use JetApplication\Carrier;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Document;
@@ -20,6 +23,7 @@ use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Entity_WithEShopRelation;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\OrderDispatch;
@@ -37,13 +41,21 @@ use JetApplication\OrderDispatch_Trait_Workflow;
 	name: 'order_dispatch',
 	database_table_name: 'order_dispatches',
 )]
-abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_HasContext_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_OrderDispatch::class
+)]
+abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements
+	NumberSeries_Entity_Interface,
+	Context_HasContext_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_WithEShopRelation_Interface
 {
 	use OrderDispatch_Trait_Forms;
 	use OrderDispatch_Trait_Workflow;
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	
@@ -318,6 +330,16 @@ abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements Nu
 	
 	protected ?OrderDispatch_Packet $new_packet = null;
 	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return false;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Order dispatch';
+	}
+	
 	
 	public static function getDimensionsUnits() : string
 	{
@@ -332,11 +354,6 @@ abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements Nu
 	public static function getWeightUnits() : string
 	{
 		return 'kg';
-	}
-	
-	public static function get( int $id ) : ?static
-	{
-		return static::load( $id );
 	}
 	
 	public static function getContextScope() : array
@@ -497,7 +514,6 @@ abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements Nu
 	{
 		return $this->getEshop();
 	}
-	
 	
 	public function getWarehouseId(): int
 	{
@@ -1128,4 +1144,19 @@ abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements Nu
 				break;
 		}
 	}
+	
+	public function getAdminTitle(): string
+	{
+		return $this->number;
+	}
+	
+	public function isEditable() : bool
+	{
+		if($this->status!=static::STATUS_PENDING) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 }

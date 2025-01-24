@@ -1,16 +1,32 @@
 <?php
 namespace JetShop;
 
+use Jet\Application_Module;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use JetApplication\Admin_Entity_Trait;
+use JetApplication\Admin_EntityManager_Common_Interface;
 use JetApplication\Application_Admin;
 use JetApplication\Admin_Managers;
 
 trait Core_Admin_Entity_Common_Trait {
-	
-	
 	use Admin_Entity_Trait;
+	
+	public function getAdminManager() : null|Application_Module|Admin_EntityManager_Common_Interface
+	{
+		$ifc = $this->getAdminManagerInterface();
+		if(!$ifc) {
+			return null;
+		}
+		
+		return Admin_Managers::get( $ifc );
+	}
+	
+	
+	public function defineImages() : void
+	{
+	
+	}
 	
 	public function handleImages() : void
 	{

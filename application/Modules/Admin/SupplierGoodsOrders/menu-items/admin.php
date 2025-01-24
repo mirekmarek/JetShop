@@ -2,9 +2,9 @@
 return [
 	'goods-operations' => [
 		'supplier-goods-orders' => [
-			'index' => 0,
+			'index' => 5,
+			'separator_after' => true,
 			'page_id' => 'supplier-goods-orders',
-			'separator_after' => true
 		],
 	],
 ];

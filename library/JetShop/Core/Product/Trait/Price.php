@@ -8,7 +8,6 @@ use JetApplication\Pricelist;
 use JetApplication\Pricelists;
 use JetApplication\Product_Price;
 use JetApplication\Product_PriceHistory;
-use JetApplicationModule\Admin\Catalog\Products\Main;
 
 trait Core_Product_Trait_Price
 {
@@ -43,8 +42,7 @@ trait Core_Product_Trait_Price
 	{
 		if(
 			$this->isVariantMaster() ||
-			$this->isSet() ||
-			!Main::getCurrentUserCanSetPrice()
+			$this->isSet()
 		) {
 			return null;
 		}

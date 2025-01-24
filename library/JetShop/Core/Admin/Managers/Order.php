@@ -1,13 +1,12 @@
 <?php
 namespace JetShop;
 
+use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Order;
 use JetApplication\Customer;
 
-interface Core_Admin_Managers_Order
+interface Core_Admin_Managers_Order extends Admin_EntityManager_WithEShopRelation_Interface
 {
-	public function showName( int $id ): string;
-	
 	public function showOrderStatus( Order $order ) : string;
 	
 	public function showOrdersOfCustomer( Customer $customer ) : string;

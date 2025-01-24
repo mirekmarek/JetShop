@@ -10,8 +10,10 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Property;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Product_Parameter;
 use JetApplication\ProductFilter;
 use JetApplication\Property;
@@ -25,6 +27,9 @@ use JetApplication\KindOfProduct_Property;
 #[DataModel_Definition(
 	name: 'property',
 	database_table_name: 'properties',
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Property::class
 )]
 abstract class Core_Property extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
@@ -427,11 +432,6 @@ abstract class Core_Property extends Entity_WithEShopData implements FulltextSea
 		}
 		
 		$this->getTypeInstance()->setupForm( $form );
-	}
-	
-	public function getEditURL() : string
-	{
-		return Admin_Managers::Property()->getEditUrl( $this->id );
 	}
 	
 	public function defineImages() : void

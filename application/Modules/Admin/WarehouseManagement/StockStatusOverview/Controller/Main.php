@@ -23,13 +23,14 @@ use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\MVC_Controller_Default;
 use Jet\Navigation_Breadcrumb;
 use JetApplication\Product;
+use JetApplication\WarehouseManagement_StockCard;
 
 
 class Controller_Main extends MVC_Controller_Default
 {
 	
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-	protected ?StockCard $stock_card = null;
+	protected ?WarehouseManagement_StockCard $stock_card = null;
 	
 	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
 
@@ -40,7 +41,7 @@ class Controller_Main extends MVC_Controller_Default
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
-					return (bool)($this->stock_card = StockCard::get((int)$id));
+					return (bool)($this->stock_card = WarehouseManagement_StockCard::get((int)$id));
 				},
 				[
 					'listing'=> Main::ACTION_GET,

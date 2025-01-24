@@ -4,11 +4,19 @@ namespace JetShop;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Float;
+use Jet\Form_Field_Input;
+use Jet\UI_messages;
+use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Entity_Simple;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement_StockCard;
@@ -24,10 +32,17 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_transfer_between_warehouses',
 	database_table_name: 'whm_transfer_between_warehouses',
 )]
-class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Simple implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses::class
+)]
+class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Simple implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_Simple_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
+	use Admin_Entity_Simple_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_SENT = 'sent';
@@ -94,6 +109,18 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Simple i
 		data_model_class: WarehouseManagement_TransferBetweenWarehouses_Item::class
 	)]
 	protected array $items = [];
+	
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return false;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Warehouse management - transfer between warehouses';
+	}
 	
 	public static function getStatusScope(): array
 	{
@@ -357,6 +384,113 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Simple i
 		]]);
 		
 		return $orders;
+	}
+	
+	public function getAdminTitle() : string
+	{
+		return $this->number;
+	}
+	
+	protected function setupForm( Form $form ) : void
+	{
+		$source_wh = $this->getSourceWarehouse();
+		
+		foreach($this->items as $p_id=>$item) {
+			$qty = new Form_Field_Float( '/item_'.$p_id.'/qty', '' );
+			$qty->setMaxValue( $source_wh->getCard( $item->getProductId() )->getInStock() );
+			$qty->setDefaultValue( $item->getNumberOfUnits() );
+			$qty->setFieldValueCatcher( function( float $v ) use ($item) : void {
+				$item->setNumberOfUnits( $v );
+			} );
+			$form->addField( $qty );
+			
+		}
+		
+	}
+	
+	protected function catchForm( Form $form ) : bool
+	{
+		if(!$form->catch()) {
+			return false;
+		}
+		
+		$everything_zero = true;
+		foreach($this->getItems() as $item) {
+			if($item->getNumberOfUnits()>0) {
+				$everything_zero = false;
+				break;
+			}
+		}
+		
+		if($everything_zero) {
+			$form->setCommonMessage(
+				UI_messages::createDanger(Tr::_('Please specify at least one item'))
+			);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
+	public function setupAddForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+	}
+	
+	
+	
+	public function catchAddForm() : bool
+	{
+		return $this->catchForm( $this->getAddForm() );
+	}
+	
+	public function setupEditForm( Form $form ) : void
+	{
+		$this->setupForm( $form );
+		
+		foreach($this->items as $p_id=>$item) {
+			if( $this->getStatus()==static::STATUS_SENT ) {
+				$form->field('/item_'.$p_id.'/qty')->setIsReadonly(true);
+			}
+			
+			$sector = new Form_Field_Input( '/item_'.$p_id.'/sector', '' );
+			$sector->setDefaultValue( $item->getTargetSector() );
+			$sector->setFieldValueCatcher( function( string $v ) use ($item) : void {
+				$item->setTargetSector( $v );
+			} );
+			$form->addField( $sector );
+			
+			
+			$rack = new Form_Field_Input( '/item_'.$p_id.'/rack', '' );
+			$rack->setDefaultValue( $item->getTargetRack() );
+			$rack->setFieldValueCatcher( function( string $v ) use ($item) : void {
+				$item->setTargetRack( $v );
+			} );
+			$form->addField( $rack );
+			
+			$position = new Form_Field_Input( '/item_'.$p_id.'/position', '' );
+			$position->setDefaultValue( $item->getTargetPosition() );
+			$position->setFieldValueCatcher( function( string $v ) use ($item) : void {
+				$item->setTargetPosition( $v );
+			} );
+			$form->addField( $position );
+			
+		}
+		
+		
+		if(
+			$this->getStatus()==static::STATUS_RECEIVED ||
+			$this->getStatus()==static::STATUS_CANCELLED
+		) {
+			$form->setIsReadonly();
+		}
+	}
+	
+	public function catchEditForm() : bool
+	{
+		return $this->catchForm( $this->getEditForm() );
 	}
 	
 }

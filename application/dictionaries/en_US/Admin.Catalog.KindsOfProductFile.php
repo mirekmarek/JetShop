@@ -32,4 +32,8 @@ return [
 	'Please select option' => '',
 	'General' => '',
 	'Please enter name' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
+	'Show on product detail' => '',
 ];

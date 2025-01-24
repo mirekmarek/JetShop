@@ -8,7 +8,6 @@
 namespace JetApplicationModule\FilesManager;
 
 use Jet\Application_Module;
-use Jet\Form_Field_File_UploadedFile;
 use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
@@ -33,18 +32,17 @@ class Main extends Application_Module implements Files_Manager
 	}
 	
 	
-	public function uploadFile( Entity_WithEShopData_EShopData|Entity_Common|Entity_WithEShopData $entity, Form_Field_File_UploadedFile $file ): string
+	public function uploadFile( Entity_WithEShopData_EShopData|Entity_Common|Entity_WithEShopData $entity, string $file_name, string $srouce_file_paths ): string
 	{
-		$_file = $file->getFileName();
 		
-		$path = $this->getFilePath( $entity, $_file );
-		IO_File::moveUploadedFile(
-			source_path: $file->getTmpFilePath(),
+		$path = $this->getFilePath( $entity, $file_name );
+		IO_File::copy(
+			source_path: $srouce_file_paths,
 			target_path: $path,
 			overwrite_if_exists: true
 		);
 		
-		return $_file;
+		return $file_name;
 	}
 	
 	public function getFilePath( Entity_WithEShopData_EShopData|Entity_Common|Entity_WithEShopData $entity, string $file ): string

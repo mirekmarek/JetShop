@@ -2,15 +2,14 @@
 namespace JetShop;
 
 use JetApplication\Entity_Basic;
-use JetApplication\Admin_Entity_Interface;
 
 interface Core_Admin_EntityManager_Interface {
 	
-	public static function getName( int $id ) : string;
+	public function showName( int|object $id_or_item ) : string;
 	
-	public function showName( int $id ) : string;
+	public static function getEntityNameReadable() : string;
 	
-	public static function getEditUrl( int $id, array $get_params=[] ) : string;
+	public static function getEditUrl( Entity_Basic $item, array $get_params=[] ) : string;
 	
 	public static function getCurrentUserCanEdit() : bool;
 	
@@ -18,5 +17,4 @@ interface Core_Admin_EntityManager_Interface {
 	
 	public static function getCurrentUserCanDelete() : bool;
 	
-	public static function getEntityInstance(): Entity_Basic|Admin_Entity_Interface;
 }

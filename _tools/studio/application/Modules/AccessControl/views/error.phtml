@@ -1,0 +1,9 @@
+<?php
+namespace JetStudio;
+
+use Jet\UI_messages;
+
+foreach( UI_messages::get() as $message ):
+	$message->setCloseable( false );
+	echo $message;
+endforeach;

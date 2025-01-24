@@ -5,7 +5,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\JetShopEntity_Definition;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Availability;
 use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;

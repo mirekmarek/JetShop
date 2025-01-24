@@ -52,4 +52,7 @@ return [
 	'Only products' => '',
 	'All but products' => '',
 	'Shop' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
 ];

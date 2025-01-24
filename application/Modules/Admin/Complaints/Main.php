@@ -15,7 +15,7 @@ use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Admin_Managers_Complaint;
 use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Order;
-use JetApplication\Complaint as Application_Complaint;
+use JetApplication\Complaint;
 
 /**
  *
@@ -29,10 +29,6 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 	public const ACTION_GET = 'get_complaint';
 	public const ACTION_UPDATE = 'update_complaint';
 	
-	public static function showActiveState( int $id ): string
-	{
-		return '';
-	}
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
@@ -54,7 +50,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 		return 'Complaint';
 	}
 	
-	public function showComplaintStatus( Application_Complaint $complaint ): string
+	public function showComplaintStatus( Complaint $complaint ): string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		$view->setVar('complaint', $complaint);

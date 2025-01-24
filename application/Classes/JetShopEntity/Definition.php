@@ -6,7 +6,8 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace Jet;
+namespace JetApplication;
+use JetShop\Core_JetShopEntity_Definition;
 
 use Attribute;
 

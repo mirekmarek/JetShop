@@ -9,14 +9,15 @@ namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_EntityManager_Common_Interface;
 use JetApplication\Admin_EntityManager_Common_Trait;
+use JetApplication\Admin_Managers_WarehouseManagementWarehouses;
 use JetApplication\Entity_Common;
+use JetApplication\WarehouseManagement_Warehouse;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Common_Interface
+class Main extends Application_Module implements Admin_Managers_WarehouseManagementWarehouses
 {
 	use Admin_EntityManager_Common_Trait;
 	
@@ -30,12 +31,12 @@ class Main extends Application_Module implements Admin_EntityManager_Common_Inte
 	
 	public static function getEntityInstance(): Entity_Common|Admin_Entity_Common_Interface
 	{
-		return new WareHouse();
+		return new WarehouseManagement_Warehouse();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'Warehouse';
+		return 'Warehouse Management - Warehouse';
 	}
 
 }

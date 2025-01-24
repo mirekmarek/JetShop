@@ -22,4 +22,8 @@ return [
 	'General' => '',
 	'Name:' => '',
 	'Promo area definition <b>%ITEM_NAME%</b> has been updated' => '',
+	'Deactivate' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
 ];

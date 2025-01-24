@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Complaints;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\Complaint_Note;
+use JetApplication\Complaint;
 
 class Handler_Note_Main extends Handler
 {

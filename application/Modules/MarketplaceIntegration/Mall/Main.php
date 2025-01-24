@@ -24,8 +24,8 @@ use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_PerShop;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\EShop;
-use JetShop\Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 
 
 class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_Module_Interface, EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface
@@ -33,7 +33,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 	public const IMPORT_SOURCE = 'Mall';
 	
 	use Admin_ControlCentre_Module_Trait;
-	use Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	
 	public function getTitle(): string
 	{

@@ -6,7 +6,8 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_EntityManager_Simple_Controller;
-use JetApplicationModule\Admin\Suppliers\Supplier;
+use JetApplication\Supplier;
+use JetApplication\Supplier_GoodsOrder;
 
 class Controller_Main extends Admin_EntityManager_Simple_Controller
 {
@@ -65,7 +66,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 		$default_supplier_id = $suppliers[0];
 		$supplier_id = (int)Http_Request::GET()->getString('supplier', default_value: $default_supplier_id, valid_values: $suppliers );
 		
-		$this->current_item = Order::prepareNew( Supplier::get($supplier_id) );
+		$this->current_item = Supplier_GoodsOrder::prepareNew( Supplier::get($supplier_id) );
 		
 		$this->setBreadcrumbNavigation( Tr::_('Create new order') );
 		
@@ -99,7 +100,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function edit_main_handleActivation() : void
 	{
 		/**
-		 * @var Order $order
+		 * @var Supplier_GoodsOrder $order
 		 */
 		$order = $this->current_item;
 		
@@ -113,7 +114,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function send_Action() : void
 	{
 		/**
-		 * @var Order $order
+		 * @var Supplier_GoodsOrder $order
 		 */
 		$order = $this->current_item;
 		
@@ -127,7 +128,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function cancel_Action() : void
 	{
 		/**
-		 * @var Order $order
+		 * @var Supplier_GoodsOrder $order
 		 */
 		$order = $this->current_item;
 		

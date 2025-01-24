@@ -183,19 +183,6 @@ trait Core_Order_Trait_Status {
 	
 	
 	
-	public function isEditable(): bool
-	{
-		if(
-			$this->cancelled ||
-			$this->delivered ||
-			$this->dispatch_started
-		) {
-			return false;
-		}
-		
-		
-		return true;
-	}
 	
 	
 	

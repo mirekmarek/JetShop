@@ -72,6 +72,12 @@ abstract class Core_Entity_Price extends Entity_Basic
 		return static::$loaded[static::class][$pricelist->getCode()][$entity_id];
 	}
 	
+	/**
+	 * @param Pricelist $pricelist
+	 * @param array $entity_ids
+	 *
+	 * @return static[]
+	 */
 	public static function prefetch( Pricelist $pricelist, array $entity_ids ) : array
 	{
 		if(!$entity_ids) {
@@ -101,6 +107,37 @@ abstract class Core_Entity_Price extends Entity_Basic
 		
 		return $prices;
 	}
+	
+	
+	/**
+	 * @param Pricelist $pricelist
+	 *
+	 * @return static[]
+	 */
+	public static function prefetchAll( Pricelist $pricelist ) : array
+	{
+		$prices = static::fetch([''=>[
+			'pricelist_code' => $pricelist->getCode()
+		]]);
+		
+		$custoun_discount_mtp = $pricelist->getCustomDiscountMtp( static::class );
+		
+		if($custoun_discount_mtp) {
+			foreach( $prices as $price ) {
+				$price->setPrice( $price->getPrice()*$custoun_discount_mtp );
+				
+				static::$loaded[ static::class ][$pricelist->getCode()][$price->getEntityId()] = $price;
+			}
+		} else {
+			foreach( $prices as $price ) {
+				static::$loaded[ static::class ][$pricelist->getCode()][$price->getEntityId()] = $price;
+			}
+			
+		}
+		
+		return $prices;
+	}
+	
 	
 	public static function getPriceMap( Pricelist $pricelist, array $entity_ids ) : array
 	{

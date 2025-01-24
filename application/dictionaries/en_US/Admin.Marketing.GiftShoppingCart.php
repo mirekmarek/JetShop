@@ -48,4 +48,5 @@ return [
 	'General' => '',
 	'Name:' => '',
 	'Gift  shopping cart <b>%ITEM_NAME%</b> has been updated' => '',
+	'e-shop' => '',
 ];

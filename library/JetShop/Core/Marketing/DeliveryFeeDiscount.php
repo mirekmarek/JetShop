@@ -5,17 +5,26 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
+use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Admin_Managers_MarketingDeliveryFeeDiscounts;
 use JetApplication\Delivery_Method;
 use JetApplication\Entity_Marketing;
 use Jet\DataModel;
+use JetApplication\JetShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'delivery_fee_discount',
 	database_table_name: 'delivery_fee_discounts',
 )]
-abstract class Core_Marketing_DeliveryFeeDiscount extends Entity_Marketing
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_MarketingDeliveryFeeDiscounts::class
+)]
+abstract class Core_Marketing_DeliveryFeeDiscount extends Entity_Marketing implements Admin_Entity_Marketing_Interface
 {
+	use Admin_Entity_Marketing_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true
@@ -101,6 +110,11 @@ abstract class Core_Marketing_DeliveryFeeDiscount extends Entity_Marketing
 	public function setAmountLimit( float $amount_limit ): void
 	{
 		$this->amount_limit = $amount_limit;
+	}
+	
+	public function hasImages(): bool
+	{
+		return false;
 	}
 	
 	

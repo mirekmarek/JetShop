@@ -70,4 +70,5 @@ return [
 	'Internal code:' => 'Interní kód:',
 	'Activate' => 'Aktivovat',
 	'Is active - %what%' => 'Je aktivní – %what%',
+	'Info Pages' => '',
 ];

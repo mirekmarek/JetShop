@@ -24,7 +24,7 @@ use Jet\UI_tabs;
 use JetApplication\Brand;
 use JetApplication\Pricelists;
 use JetApplication\Pricelist;
-use JetApplicationModule\Admin\Suppliers\Supplier;
+use JetApplication\Supplier;
 use XLSXReader\XLSXReader;
 
 class Controller_Main extends MVC_Controller_Default
@@ -60,7 +60,7 @@ class Controller_Main extends MVC_Controller_Default
 					{
 						return Http_Request::currentURI(set_GET_params: ['p'=>$tab]);
 					},
-					selected_tab_id: Http_Request::GET()->getString('p')
+					selected_tab_id: Http_Request::GET()->getString('p', default_value: 'manually')
 				);
 				
 			}
@@ -100,7 +100,7 @@ class Controller_Main extends MVC_Controller_Default
 			'supplier' => Tr::_('Supplier'),
 			'brand'    => Tr::_('Brand'),
 		];
-		$this->select_by = $GET->getString('select_by', '', array_keys($select_by_scope));
+		$this->select_by = $GET->getString('select_by', default_value: 'supplier');
 		$this->view->setVar( 'select_by_scope', $select_by_scope);
 		$this->view->setVar( 'select_by', $this->select_by);
 		
@@ -120,7 +120,6 @@ class Controller_Main extends MVC_Controller_Default
 				$this->view->setVar('brand_id', $this->brand_id);
 				break;
 		}
-		
 		
 		if(
 			$this->selected_pricelist &&
@@ -146,6 +145,7 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$this->setBreadcrumbNavigation();
 		
+		$this->output('manually');
 	}
 	
 	protected function readPriceList() : ProductPriceList
@@ -261,6 +261,5 @@ class Controller_Main extends MVC_Controller_Default
 		}
 		
 		$this->output('manually');
-		
 	}
 }

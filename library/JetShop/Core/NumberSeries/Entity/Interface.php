@@ -7,7 +7,11 @@ use JetApplication\EShop;
 
 interface Core_NumberSeries_Entity_Interface
 {
-	public function getNumberSeriesEntityType() : string;
+	public static function getNumberSeriesEntityType() : string;
+	
+	public static function getNumberSeriesEntityTitle() : string;
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool;
 	
 	public function getNumberSeriesEntityId() : int;
 	

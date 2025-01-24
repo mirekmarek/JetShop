@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\WarehouseManagement_StockVerification;
 
 class Listing_Column_Number extends DataListing_Column
 {
@@ -36,7 +37,7 @@ class Listing_Column_Number extends DataListing_Column
 	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
 		/**
-		 * @var Verification $item
+		 * @var WarehouseManagement_StockVerification $item
 		 */
 		return $item->getNumber();
 	}

@@ -5,10 +5,15 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use Jet\Form;
 use Jet\Logger;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_DeliveryNote;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Entity_AccountingDocument;
 use JetApplication\DeliveryNote_Item;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\Order;
 
@@ -16,8 +21,15 @@ use JetApplication\Order;
 	name: 'delivery_note',
 	database_table_name: 'delivery_notes',
 )]
-abstract class Core_DeliveryNote extends Entity_AccountingDocument implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_DeliveryNote::class
+)]
+abstract class Core_DeliveryNote extends Entity_AccountingDocument implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_WithEShopRelation_Interface
 {
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME
@@ -45,6 +57,18 @@ abstract class Core_DeliveryNote extends Entity_AccountingDocument implements Nu
 	
 	protected ?bool $has_correction = null;
 	protected ?array $corrections = null;
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return true;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Delivery note';
+	}
+	
 	
 	/**
 	 * @return DeliveryNote_Item[]
@@ -104,6 +128,41 @@ abstract class Core_DeliveryNote extends Entity_AccountingDocument implements Nu
 			context_object_name: $this->getNumber(),
 			context_object_data: $this
 		);
+	}
+	
+	
+	public function isEditable(): bool
+	{
+		if( !static::getAdminManager()::getCurrentUserCanEdit() ) {
+			return false;
+		}
+		
+		return parent::isEditable();
+	}
+	
+	
+	public function setEditable( bool $editable ): void
+	{
+	}
+	
+	public function getAddForm(): Form
+	{
+		return new Form( '', [] );
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form( '', [] );
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
 	}
 	
 }

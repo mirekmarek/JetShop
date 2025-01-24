@@ -16,6 +16,7 @@ use Jet\Tr;
 
 use JetApplication\CashDesk;
 use JetApplication\Discounts_Code;
+use JetApplication\Discounts_Code_Module;
 use JetApplication\Discounts_Discount;
 use JetApplication\Discounts_Module;
 use JetApplication\Order;
@@ -25,7 +26,7 @@ use JetApplication\EShop_Managers;
 /**
  *
  */
-class Main extends Discounts_Module
+class Main extends Discounts_Module implements Discounts_Code_Module
 {
 	public const DISCOUNT_MODULE = 'Code';
 

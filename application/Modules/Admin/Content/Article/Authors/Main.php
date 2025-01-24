@@ -1,16 +1,17 @@
 <?php
 namespace JetApplicationModule\Admin\Content\Article\Authors;
 
-use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\Admin_Managers_ContentArticleAuthors;
 use JetApplication\Admin_EntityManager_WithEShopData_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Content_Article_Author;
 use JetApplication\Entity_WithEShopData;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface
+class Main extends Application_Module implements Admin_Managers_ContentArticleAuthors
 {
 	use Admin_EntityManager_WithEShopData_Trait;
 
@@ -23,12 +24,12 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'article author';
+		return 'Content - article author';
 	}
 	
 	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
 	{
-		return new Author();
+		return new Content_Article_Author();
 	}
 	
 	

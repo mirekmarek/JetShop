@@ -1,11 +1,10 @@
-<?php return [
+<?php
+return [
 	'system' => [
 		'administrator_roles' => [
+			'index' => 201,
 			'separator_after' => true,
-			//'label'   => 'Administrators - User roles',
 			'page_id' => 'administrators-roles',
-			//'icon'    => 'user-circle',
-			'index'   => 201,
 		],
 	],
 ];

@@ -38,4 +38,5 @@ return [
 	'Layout TXT:' => 'Rozložení TXT:',
 	'Activate' => 'Aktivovat',
 	'Activate completely' => 'Aktivovat kompletně',
+	'E-mail layouts' => '',
 ];

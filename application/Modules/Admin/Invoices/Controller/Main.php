@@ -19,6 +19,7 @@ use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use JetApplication\Invoices;
+use JetApplication\Invoice;
 
 
 class Controller_Main extends MVC_Controller_Default

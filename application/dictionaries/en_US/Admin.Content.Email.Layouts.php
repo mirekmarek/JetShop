@@ -29,4 +29,11 @@ return [
 	'General' => '',
 	'Please enter name' => '',
 	'Name:' => '',
+	'E-mail layouts' => '',
+	'Please select file' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
+	'Layout HTML:' => '',
+	'Layout TXT:' => '',
 ];

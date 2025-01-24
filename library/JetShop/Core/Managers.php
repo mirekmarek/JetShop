@@ -88,21 +88,28 @@ abstract class Core_Managers {
 		return static::$managers_meta_info[ $interface_class_name ];
 	}
 	
-	
-	protected static function registerManager( string $interface_class_name, bool $is_mandatory, string $name, string $description, string $module_name_prefix ) : Manager_MetaInfo
+	protected static function _registerManager( Manager_MetaInfo $manager ) : void
 	{
-		$manager = new Manager_MetaInfo(
-			$interface_class_name,
-			$is_mandatory,
-			$name,
-			$description,
-			$module_name_prefix
-		);
-		
 		static::$managers_meta_info[$manager->getInterfaceClassName()] = $manager;
-		
-		return $manager;
+	
 	}
+	
+	protected static function _registerManagers( string $group ) : void
+	{
+		$defimnitions = Manager_MetaInfo::getManagers( $group );
+		
+		
+		static::$managers_meta_info = [];
+		
+		foreach($defimnitions as $manager) {
+			static::_registerManager( $manager );
+		}
+		
+		uasort( static::$managers_meta_info, function( Manager_MetaInfo $a, Manager_MetaInfo $b ) {
+			return strcmp( $a->getName(), $b->getName() );
+		} );
+	}
+
 	
 	/**
 	 * @return Manager_MetaInfo[]
@@ -192,12 +199,15 @@ abstract class Core_Managers {
 		
 		static::loadCfg();
 		if(!array_key_exists($manager_interface, static::$config)) {
+
 			$meta_info = static::getManagerMetaInfo( $manager_interface );
 			
 			foreach(static::findManagers( $manager_interface, $meta_info->getModuleNamePrefix() ) as $manager) {
+				
 				static::$config[$manager_interface] = $manager->getModuleManifest()->getName();
-				static::saveCfg();
 				static::$managers[$manager_interface] = $manager;
+				
+				static::saveCfg();
 				
 				return static::$managers[$manager_interface];
 			}

@@ -8,15 +8,24 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Tr;
+use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Admin_Managers_MarketingAutoOffers;
 use JetApplication\Entity_Marketing;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Marketing_AutoOffer;
 
 #[DataModel_Definition(
 	name: 'auto_offers',
 	database_table_name: 'auto_offers',
 )]
-abstract class Core_Marketing_AutoOffer extends Entity_Marketing
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_MarketingAutoOffers::class
+)]
+abstract class Core_Marketing_AutoOffer extends Entity_Marketing implements Admin_Entity_Marketing_Interface
 {
+	use Admin_Entity_Marketing_Trait;
+	
 	public const SHOW_MODE_NORMAL = 'normal';
 	public const SHOW_MODE_NO_LINK = 'no_link';
 	
@@ -204,5 +213,16 @@ abstract class Core_Marketing_AutoOffer extends Entity_Marketing
 		return parent::isRelevant( $product_ids );
 	}
 	
+	public function defineImages() : void
+	{
+		$this->defineImage(
+			image_class:  'main',
+			image_title:  Tr::_('Main image'),
+		);
+		$this->defineImage(
+			image_class:  'pictogram',
+			image_title:  Tr::_('Pictogram image'),
+		);
+	}
 	
 }

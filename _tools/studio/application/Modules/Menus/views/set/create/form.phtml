@@ -1,0 +1,17 @@
+<?php
+
+namespace JetStudioModule\Menus;
+
+$form = MenuSet::getCreateForm();
+
+$form->renderer()->addJsAction( 'onsubmit', 'Menus.createSet.createSend();return false;' );
+
+echo $form->start();
+echo $form->getCommonMessage();
+?>
+	<div class="form-fields" style="grid-template-columns: 0.6fr 2fr;">
+		<?=$form->field( 'menu_set_name' );?>
+	</div>
+<?php
+echo $form->end();
+

@@ -18,6 +18,7 @@ use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
+use JetApplication\InvoiceInAdvance;
 use JetApplication\Invoices;
 
 
@@ -25,7 +26,7 @@ class Controller_Main extends MVC_Controller_Default
 {
 	
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-	protected ?Invoice $invoice = null;
+	protected ?InvoiceInAdvance $invoice = null;
 	
 	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
 	
@@ -36,7 +37,7 @@ class Controller_Main extends MVC_Controller_Default
 			$this->router = new MVC_Controller_Router_AddEditDelete(
 				$this,
 				function($id) {
-					return (bool)($this->invoice = Invoice::get((int)$id));
+					return (bool)($this->invoice = InvoiceInAdvance::get((int)$id));
 				},
 				[
 					'listing'=> Main::ACTION_GET,
@@ -152,7 +153,7 @@ class Controller_Main extends MVC_Controller_Default
 	public function edit_Action() : void
 	{
 		/**
-		 * @var Invoice $invoice
+		 * @var InvoiceInAdvance $invoice
 		 */
 		$invoice = $this->invoice;
 		

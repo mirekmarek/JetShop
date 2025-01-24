@@ -18,6 +18,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Order;
 
 class Handler_ChangeDeliveryMethod_Main extends Handler
 {

@@ -2,6 +2,7 @@
 namespace JetApplicationModule\NumberSeriesManager;
 
 use Jet\Form_Renderer_Field_Label;
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\UI;
@@ -26,6 +27,8 @@ $showForm = function( Form $form ) : void
 		Form_Renderer_Field_Label::LJ_SIZE_MEDIUM => 2
 	]);
 	
+	$form->setAction( Http_Request::currentURI().'#'.$form->getId() );
+	
 	echo $form->start();
 	echo $form->field('counter_class');
 	echo $form->field('prefix');
@@ -48,27 +51,26 @@ endforeach;
 
 foreach($entities as $entity):
 	$e = $entity['entity'];
-	
-	if($entity['per_eshop']):
-		foreach( EShops::getList() as $eshop):
-			?>
-			<fieldset>
-				<legend><?=$entity['title']?> - <?=UI::flag($eshop->getLocale())?> <?=$eshop->getName()?></legend>
-				<?php $showForm( $forms[$e.'_'.$eshop->getKey()] ); ?>
-			</fieldset>
-			<br><br>
-			<?php
-		endforeach;
-		continue;
-	endif;
-	
 	?>
-	
 	<fieldset>
 		<legend><?=$entity['title']?></legend>
-	<?php $showForm( $forms[$e] ); ?>
+		
+		<?php if($entity['per_eshop']): ?>
+			<?php foreach( EShops::getList() as $eshop): ?>
+			<div class="card">
+				<div class="card-header">
+					<?=UI::flag($eshop->getLocale())?> <?=$eshop->getName()?>
+				</div>
+				<div class="card-body">
+					<?php $showForm( $forms[$e.'_'.$eshop->getKey()] ); ?>
+				</div>
+			</div>
+			<br><br>
+			<?php endforeach; ?>
+		<?php else:
+			$showForm( $forms[$e] );
+		endif; ?>
 	</fieldset>
 	<br><br>
-	
 	<?php
 endforeach;

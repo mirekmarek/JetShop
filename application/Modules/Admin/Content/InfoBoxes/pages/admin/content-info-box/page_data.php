@@ -1,8 +1,8 @@
 <?php
 return [
-	'name' => 'Content Info Boxes administration',
+	'name' => 'Content Info Boxes',
 	'is_active' => true,
-	'title' => 'Info Boxes administration',
+	'title' => 'Info Boxes',
 	'icon' => 'circle-info',
 	'contents' => [
 		[

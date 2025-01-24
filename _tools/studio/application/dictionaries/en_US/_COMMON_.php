@@ -1,6 +1,5 @@
 <?php
 return [
-	'Save' => '',
 	'Project settings' => '',
 	'Application configuration' => '',
 	'Bases' => '',
@@ -9,14 +8,16 @@ return [
 	'Modules' => '',
 	'DataModel' => '',
 	'Loading ...' => '',
-	'Edit' => '',
+	'Save' => '',
 	'Delete' => '',
+	'Edit' => '',
 	'Something went wrong!<br/><br/>%error%' => '',
-	'The access configuration file does not exist' => '',
-	'The access configuration file is not readable' => '',
-	'The access configuration is corrupted' => '',
-	'Module wizard' => '',
-	'Select locale' => '',
 	'Search for locale ...' => '',
-	'Forms' => '',
+	'Select locale' => '',
+	'Logout' => '',
+	'PHP Jet Documentation' => '',
+	'Ask a question' => '',
+	'https://www.php-jet.net/doc/' => '',
+	'https://questions.php-jet.net/' => '',
+	
 ];

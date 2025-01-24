@@ -12,6 +12,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Supplier;
+use JetApplication\WarehouseManagement_StockVerification;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Simple_Controller;
 use JetApplication\KindOfProduct;
@@ -75,7 +76,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	
 	public function add_Action() : void
 	{
-		$this->current_item = new Verification();
+		$this->current_item = new WarehouseManagement_StockVerification();
 		
 		$this->setBreadcrumbNavigation( Tr::_('New stock verification') );
 		
@@ -162,12 +163,12 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function done_Action() : void
 	{
 		/**
-		 * @var Verification $order
+		 * @var WarehouseManagement_StockVerification $item
 		 */
-		$order = $this->current_item;
+		$item = $this->current_item;
 		
-		if($order->done()) {
-			UI_messages::success( Tr::_('Stock verification <b>%number%</b> has been completed', ['number'=>$order->getNumber()]) );
+		if($item->done()) {
+			UI_messages::success( Tr::_('Stock verification <b>%number%</b> has been completed', ['number'=>$item->getNumber()]) );
 		}
 		
 		Http_Headers::reload(unset_GET_params: ['action']);
@@ -176,12 +177,12 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 	public function cancel_Action() : void
 	{
 		/**
-		 * @var Verification $order
+		 * @var WarehouseManagement_StockVerification $item
 		 */
-		$order = $this->current_item;
+		$item = $this->current_item;
 		
-		if($order->cancel()) {
-			UI_messages::success( Tr::_('Stock verification <b>%number%</b> has been cancelled', ['number'=>$order->getNumber()]) );
+		if($item->cancel()) {
+			UI_messages::success( Tr::_('Stock verification <b>%number%</b> has been cancelled', ['number'=>$item->getNumber()]) );
 		}
 		
 		Http_Headers::reload(unset_GET_params: ['action']);

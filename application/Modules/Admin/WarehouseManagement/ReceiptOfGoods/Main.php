@@ -13,6 +13,7 @@ use JetApplication\Admin_EntityManager_Simple_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
 use JetApplication\Entity_Simple;
 use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 /**
  *
@@ -31,12 +32,12 @@ class Main extends Application_Module implements Admin_EntityManager_Simple_Inte
 	
 	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface
 	{
-		return new ReceiptOfGoods();
+		return new WarehouseManagement_ReceiptOfGoods();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'Receipt Of Goods';
+		return 'Warehouse Management - Receipt Of Goods';
 	}
 	
 	public static function getCurrentUserCanDelete() : bool

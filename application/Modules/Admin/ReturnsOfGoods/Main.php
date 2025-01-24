@@ -10,17 +10,16 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Admin_Managers_ReturnOfGoods;
 use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Order;
-use JetApplication\ReturnOfGoods as Application_ReturnOfGoods;
+use JetApplication\ReturnOfGoods;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_ReturnOfGoods
+class Main extends Application_Module implements Admin_Managers_ReturnOfGoods
 {
 	use Admin_EntityManager_WithEShopRelation_Trait;
 	
@@ -28,11 +27,6 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 
 	public const ACTION_GET = 'get_return_of_goods';
 	public const ACTION_UPDATE = 'update_return_of_goods';
-	
-	public static function showActiveState( int $id ): string
-	{
-		return '';
-	}
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
@@ -56,7 +50,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 	
 	
 	
-	public function showReturnOfGoodsStatus( Application_ReturnOfGoods $return_of_goods ): string
+	public function showReturnOfGoodsStatus( ReturnOfGoods $return_of_goods ): string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		$view->setVar('return_of_goods', $return_of_goods);

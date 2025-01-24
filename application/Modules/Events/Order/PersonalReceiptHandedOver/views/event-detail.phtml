@@ -1,0 +1,14 @@
+<?php
+namespace JetApplicationModule\Events\Order\PersonalReceiptHandedOver;
+
+use Jet\MVC_View;
+use JetApplication\Order_Event;
+
+/**
+ * @var MVC_View $this
+ * @var Order_Event $event
+ * @var Main $handler
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');

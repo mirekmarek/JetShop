@@ -16,13 +16,14 @@ use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\Order_Event;
 use JetApplication\OrderDispatch;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
+use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
-use JetApplicationModule\Admin\Orders\Order;
-use JetShop\Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\Order;
+
 
 
 class Main extends MarketplaceIntegration_Module implements
@@ -31,7 +32,7 @@ class Main extends MarketplaceIntegration_Module implements
 	SysServices_Provider_Interface
 {
 	use Admin_ControlCentre_Module_Trait;
-	use Core_EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	
 	public const IMPORT_SOURCE = 'Heureka';
 	

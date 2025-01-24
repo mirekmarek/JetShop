@@ -13,6 +13,7 @@ use JetApplication\EMail_Template;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop;
 use JetApplication\Product;
+use JetApplication\ProductQuestion;
 
 class EmailTemplate_Answer extends EMail_Template
 {

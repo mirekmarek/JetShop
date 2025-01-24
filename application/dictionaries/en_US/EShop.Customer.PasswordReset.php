@@ -16,4 +16,7 @@ return [
 	'Sorry, unknown e-mail address' => '',
 	'Validation code has expired' => '',
 	'Sorry, but the deadline for entering the validation code has passed. If you want, we can send you a new code.' => '',
+	'Customer password reset - email with code' => '',
+	'Authorization code that will be sent to the user.' => '',
+	'Customer password reset - password reset confirmation' => '',
 ];

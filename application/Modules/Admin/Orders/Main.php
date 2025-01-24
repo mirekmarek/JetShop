@@ -11,17 +11,16 @@ use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
 use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
 use JetApplication\Customer;
 use JetApplication\Admin_Managers_Order;
 use JetApplication\Entity_WithEShopRelation;
-use JetApplication\Order as Application_Order;
+use JetApplication\Order;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_Order
+class Main extends Application_Module implements Admin_Managers_Order
 {
 	use Admin_EntityManager_WithEShopRelation_Trait;
 	
@@ -29,11 +28,6 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 
 	public const ACTION_GET = 'get_order';
 	public const ACTION_UPDATE = 'update_order';
-	
-	public static function showActiveState( int $id ): string
-	{
-		return '';
-	}
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
@@ -55,7 +49,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 		return 'Order';
 	}
 	
-	public function showOrderStatus( Application_Order $order ): string
+	public function showOrderStatus( Order $order ): string
 	{
 		
 		return Tr::setCurrentDictionaryTemporary(

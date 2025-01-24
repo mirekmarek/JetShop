@@ -5,10 +5,15 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use Jet\Form;
 use Jet\Logger;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_InvoiceInAdvance;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Entity_AccountingDocument;
 use JetApplication\InvoiceInAdvance_Item;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\Order;
 
@@ -16,8 +21,15 @@ use JetApplication\Order;
 	name: 'invoice_in_advance',
 	database_table_name: 'invoices_in_advances',
 )]
-abstract class Core_InvoiceInAdvance extends Entity_AccountingDocument implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_InvoiceInAdvance::class
+)]
+abstract class Core_InvoiceInAdvance extends Entity_AccountingDocument implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_WithEShopRelation_Interface
 {
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME
@@ -52,6 +64,18 @@ abstract class Core_InvoiceInAdvance extends Entity_AccountingDocument implement
 	
 	protected ?bool $has_correction = null;
 	protected ?array $corrections = null;
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return true;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Invoices in advance';
+	}
+	
 	
 	/**
 	 * @return InvoiceInAdvance_Item[]
@@ -125,4 +149,29 @@ abstract class Core_InvoiceInAdvance extends Entity_AccountingDocument implement
 		);
 	}
 	
+	
+	public function getAddForm(): Form
+	{
+		return new Form( '', [] );
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form( '', [] );
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
+	}
+	
+	public function isEditable() : bool
+	{
+		return false;
+	}
 }

@@ -41,4 +41,6 @@ return [
 	'Carrier' => '',
 	'Tracking number' => '',
 	'Complaint' => '',
+	'Warehouse' => '',
+	'e-shop' => '',
 ];

@@ -27,10 +27,10 @@ $p = $this->getRaw('property');
 			<?php endif; ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->showName( $p->getPropertyId() ) ?>
+			<?=Admin_Managers::Property()->showName( $p ) ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->showActiveState( $p->getPropertyId() ) ?>
+			<?=Admin_Managers::Property()->renderActiveState( $p ) ?>
 		</div>
 		<div>
 			<?=Admin_Managers::Property()->showType( $p->getPropertyType() ) ?>

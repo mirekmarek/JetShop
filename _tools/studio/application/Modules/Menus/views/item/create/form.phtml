@@ -1,0 +1,57 @@
+<?php
+
+namespace JetStudioModule\Menus;
+
+use Jet\Tr;
+use Jet\UI;
+
+$form = Menu_Item::getCreateForm();
+
+$form->getField( 'label' )->input()->addJsAction( 'onkeyup', 'Menus.createMenuItem.generateId(this.value);' );
+
+
+echo $form->start();
+echo $form->getCommonMessage();
+?>
+<div class="form-fields" style="grid-template-columns: 0.6fr 2fr;">
+<?php
+echo $form->field( 'label' );
+echo $form->field( 'id' );
+echo $form->field( 'icon' );
+echo $form->field( 'index' );
+
+echo $form->field( 'separator_before' );
+echo $form->field( 'separator_after' );
+?>
+</div>
+
+
+<?php
+$tabs = UI::tabsJS( 'create_menu_item_target_tabs', [
+	'tab_direct_mvc'  => Tr::_( 'MVC link' ),
+	'tab_direct_link' => Tr::_( 'Direct link' ),
+] );
+?>
+
+<?= $tabs->start() ?>
+<?= $tabs->tab( 'tab_direct_mvc' )->content()->start() ?>
+	<div class="form-fields" style="grid-template-columns: 0.6fr 2fr;">
+		<?= $form->field( 'base_id' ) ?>
+		<?= $form->field( 'page_id' ) ?>
+		<?= $form->field( 'locale' ) ?>
+		<?= $form->field( 'URL_parts' ) ?>
+		<?= $form->field( 'GET_params' ) ?>
+	</div>
+
+<?= $tabs->tab( 'tab_direct_mvc' )->content()->end() ?>
+
+<?= $tabs->tab( 'tab_direct_link' )->content()->start() ?>
+	<div class="form-fields" style="grid-template-columns: 0.6fr 2fr;">
+		<?= $form->field( 'URL' ) ?>
+	</div>
+<?= $tabs->tab( 'tab_direct_link' )->content()->end() ?>
+<?= $tabs->end() ?>
+
+	<?php
+echo $form->end();
+

@@ -11,6 +11,10 @@ use Jet\Form_Field;
 use Jet\Form_Field_FileImage;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Image;
 use JetApplication\Context_ProvidesContext_Interface;
@@ -20,6 +24,7 @@ use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Entity_WithEShopRelation;
 use JetApplication\Complaint;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Order;
@@ -41,7 +46,13 @@ use JetApplication\Complaint_Trait_Changes;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Complaint extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Complaint::class
+)]
+abstract class Core_Complaint extends Entity_WithEShopRelation implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_WithEShopRelation_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
@@ -49,6 +60,7 @@ abstract class Core_Complaint extends Entity_WithEShopRelation implements Number
 	use Complaint_Trait_Status;
 	use Complaint_Trait_Events;
 	use Complaint_Trait_Changes;
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	
 	
@@ -182,6 +194,17 @@ abstract class Core_Complaint extends Entity_WithEShopRelation implements Number
 	protected string $delivery_personal_takeover_delivery_point_code = '';
 	
 	protected ?Form $upload_images_form = null;
+	
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return true;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Complaint';
+	}
 	
 	
 	public static function startNew(
@@ -492,11 +515,6 @@ abstract class Core_Complaint extends Entity_WithEShopRelation implements Number
 	}
 	
 	
-	public static function get( int $id ) : static|null
-	{
-		return static::load( $id );
-	}
-	
 	public static function getByKey( string $key ) : ?Complaint
 	{
 		$complaints = Complaint::fetch(['complaint' => [
@@ -775,5 +793,46 @@ abstract class Core_Complaint extends Entity_WithEShopRelation implements Number
 		$this->newComplaintFinished();
 	}
 	
+	public function setEditable( bool $editable ): void
+	{
+	}
+	
+	public function isEditable(): bool
+	{
+		if(!Admin_Managers::Complaint()::getCurrentUserCanEdit()) {
+			return false;
+		}
+		
+		if(
+			$this->cancelled ||
+			$this->delivered ||
+			$this->dispatch_started
+		) {
+			return false;
+		}
+		
+		
+		return true;
+	}
+	
+	public function getAddForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
+	}
 	
 }

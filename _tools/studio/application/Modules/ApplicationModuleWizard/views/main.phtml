@@ -1,0 +1,35 @@
+<?php
+namespace JetStudioModule\ApplicationModuleWizard;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetStudio\JetStudio_UI;
+
+$wizard = ModuleWizards::getCurrentWizard();
+?>
+<div style="padding-left: 20%;padding-right: 20%;padding-top: 20px;">
+
+	<?php if( $wizard ): ?>
+		<h4><?= $wizard->getTitle() ?></h4>
+		<p><?= $wizard->getDescription() ?></p>
+		<hr/>
+		<div>
+			<?= JetStudio_UI::messages(); ?>
+			<?= $wizard->handle(); ?>
+		</div>
+	<?php else: ?>
+		<br>
+		<?php foreach( ModuleWizards::getList() as $wizard ): ?>
+			<div class="card card-body shadow" style="margin-bottom: 60px;">
+				<b><?= $wizard->getTitle() ?></b>
+				<p><?= $wizard->getDescription() ?></p>
+				<div>
+					<?= UI::button( Tr::_( 'Create' ) )->setClass( UI_button::CLASS_INFO )->setUrl( Http_Request::currentURI( ['wizard' => $wizard->getName()] ) ) ?>
+				</div>
+			</div>
+		<?php endforeach; ?>
+		
+	<?php endif; ?>
+

@@ -126,7 +126,7 @@ class Main extends Application_Module implements DeliveryTerm_Manager
 	
 	public function setupOrder( Order $order ) : void
 	{
-		$lod = $delivery_method = $order->getDeliveryMethod()->getLengthOfDeliveryInWorkingDays();
+		$lod = $order->getDeliveryMethod()?->getLengthOfDeliveryInWorkingDays()??0;
 		
 		foreach( $order->getItems() as $item ) {
 			if(!$item->isPhysicalProduct()) {

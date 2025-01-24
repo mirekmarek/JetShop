@@ -8,4 +8,6 @@ return [
 	'Client secret: ' => '',
 	'Go ID: ' => '',
 	'Configuration has been saved' => '',
+	'GoPay - check payments' => '',
+	'Verify that all payments have been processed.' => '',
 ];

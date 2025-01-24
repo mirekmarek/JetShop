@@ -7,15 +7,20 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Brand;
 use JetApplication\Brand_EShopData;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop;
+use JetApplication\JetShopEntity_Definition;
 
 #[DataModel_Definition(
 	name: 'brands',
 	database_table_name: 'brands',
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Brand::class
 )]
 abstract class Core_Brand extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
@@ -74,11 +79,6 @@ abstract class Core_Brand extends Entity_WithEShopData implements FulltextSearch
 	{
 		Admin_Managers::FulltextSearch()->deleteIndex( $this );
 		EShop_Managers::FulltextSearch()->deleteIndex( $this );
-	}
-	
-	public function getEditURL() : string
-	{
-		return Admin_Managers::Brand()->getEditURL( $this->id );
 	}
 	
 	public function getDescriptionMode() : bool

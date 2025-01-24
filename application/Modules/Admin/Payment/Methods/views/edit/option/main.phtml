@@ -6,12 +6,15 @@ use Jet\Form_Renderer;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
 use JetApplication\EShop;
+use JetApplication\Payment_Method;
+use JetApplication\Payment_Method_Option;
+
 
 /**
  * @var MVC_View   $this
  * @var Form $form
- * @var PaymentMethod $method
- * @var PaymentMethod_Option $option
+ * @var Payment_Method $method
+ * @var Payment_Method_Option $option
  */
 $method = $this->getRaw('method');
 $option = $this->getRaw('option');

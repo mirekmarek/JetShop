@@ -1,9 +1,8 @@
 <?php
 namespace JetShop;
 
+use JetApplication\Admin_EntityManager_Simple_Interface;
 
-interface Core_Admin_Managers_ReceiptOfGoods
+interface Core_Admin_Managers_ReceiptOfGoods extends Admin_EntityManager_Simple_Interface
 {
-	public function showName( int $id ) : string;
-	
 }

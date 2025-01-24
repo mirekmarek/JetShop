@@ -8,18 +8,26 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Admin_Managers_ContentInfoBoxes;
 use JetApplication\Content_InfoBox_EShopData;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShop;
-
+use JetApplication\JetShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'content_info_box',
 	database_table_name: 'content_info_box',
 )]
-abstract class Core_Content_InfoBox extends Entity_WithEShopData
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_ContentInfoBoxes::class
+)]
+abstract class Core_Content_InfoBox extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
 {
+	use Admin_Entity_WithEShopData_Trait;
+	
 	/**
 	 * @var Content_InfoBox_EShopData[]
 	 */

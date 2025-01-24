@@ -16,9 +16,11 @@ use Jet\Tr;
 use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_KindOfProduct;
 use JetApplication\Category;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\KindOfProduct_PropertyGroup;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\KindOfProduct;
@@ -38,6 +40,9 @@ use JetApplication\MeasureUnit;
 #[DataModel_Definition(
 	name: 'kind_of_product',
 	database_table_name: 'kind_of_product',
+)]
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_KindOfProduct::class
 )]
 abstract class Core_KindOfProduct extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
 {
@@ -593,12 +598,6 @@ abstract class Core_KindOfProduct extends Entity_WithEShopData implements Fullte
 			$this->getEshopData( $eshop )->setVirtualProductHandler( $value );
 		}
 	}
-	
-	public function getEditURL() : string
-	{
-		return Admin_Managers::KindOfProduct()->getEditURL( $this->id );
-	}
-	
 	
 	public function defineImages() : void
 	{

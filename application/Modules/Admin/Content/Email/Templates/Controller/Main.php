@@ -16,6 +16,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 use JetApplication\EMail_Template;
+use JetApplication\EMail_TemplateText;
 use JetApplication\EShops;
 
 class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
@@ -46,7 +47,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 			'layout'
 		]);
 		
-		$this->templates = EmailTemplateText::actualizeList();
+		$this->templates = EMail_TemplateText::actualizeList();
 		$this->view->setVar('templates', $this->templates);
 	}
 	
@@ -81,7 +82,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		
 		$eshop = EShops::get( $eshop_key );
 		
-		$this->templates = EmailTemplateText::actualizeList();
+		$this->templates = EMail_TemplateText::actualizeList();
 		
 		$template = $this->templates[$this->current_item->getInternalCode()];
 		$test_email = $template->createTestEmail( $eshop );
@@ -103,7 +104,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		
 		$eshop = EShops::get( $eshop_key );
 		
-		$this->templates = EmailTemplateText::actualizeList();
+		$this->templates = EMail_TemplateText::actualizeList();
 		
 		$template = $this->templates[$this->current_item->getInternalCode()];
 		$test_email = $template->createTestEmail( $eshop );
@@ -131,7 +132,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		
 		$eshop = EShops::get( $eshop_key );
 		
-		$this->templates = EmailTemplateText::actualizeList();
+		$this->templates = EMail_TemplateText::actualizeList();
 		
 		$template = $this->templates[$this->current_item->getInternalCode()];
 		$test_email = $template->createTestEmail( $eshop );

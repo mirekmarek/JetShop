@@ -3,29 +3,39 @@ namespace JetShop;
 
 use Jet\DataModel_Definition;
 use Jet\DataModel;
+use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
 use Jet\Form_Field_Color;
+use Jet\Form_Field_File;
 use Jet\Form_Field_File_UploadedFile;
+use Jet\Form_Field_FileImage;
 use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
+use JetApplication\Admin_Entity_Marketing_Interface;
+use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Admin_Managers_MarketingBanners;
 use JetApplication\Entity_Marketing;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Marketing_Banner;
 use JetApplication\Marketing_BannerGroup;
 use JetApplication\EShops;
 use JetApplication\EShop;
-use JetApplicationModule\Admin\Marketing\BannerGroups\BannerGroup;
 
 
 #[DataModel_Definition(
 	name: 'banners',
 	database_table_name: 'banners',
 )]
-abstract class Core_Marketing_Banner extends Entity_Marketing
+#[JetShopEntity_Definition(
+	admin_managers_interface: Admin_Managers_MarketingBanners::class
+)]
+abstract class Core_Marketing_Banner extends Entity_Marketing implements Admin_Entity_Marketing_Interface
 {
+	use Admin_Entity_Marketing_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -361,12 +371,12 @@ abstract class Core_Marketing_Banner extends Entity_Marketing
 	}
 	
 	/**
-	 * @param BannerGroup $group
+	 * @param Marketing_BannerGroup $group
 	 * @param EShop|null $eshop
 	 *
 	 * @return static[]
 	 */
-	public static function getActiveByGroup( BannerGroup $group, ?EShop $eshop=null ): array
+	public static function getActiveByGroup( Marketing_BannerGroup $group, ?EShop $eshop=null ): array
 	{
 		$eshop = $eshop?:EShops::getCurrent();
 		
@@ -418,6 +428,142 @@ abstract class Core_Marketing_Banner extends Entity_Marketing
 		}
 		
 		return null;
+	}
+	
+	
+	protected function setupAddForm( Form $form ): void
+	{
+		$this->setupForm( $form );
+	}
+	
+	protected function setupEditForm( Form $form ): void
+	{
+		$this->setupForm( $form );
+	}
+	
+	protected function setupForm( Form $form ) : void
+	{
+		$form->removeField('relevance_mode');
+	}
+	
+	
+	
+	
+	protected array $upload_forms = [];
+	
+	protected function catchUploadForm( Form $form ) : bool
+	{
+		if($form->catchInput()) {
+			$form->catch();
+			
+			return true;
+		}
+		return false;
+	}
+	
+	protected function getUploadImageForm($form_name, callable $setter ) : Form
+	{
+		if(!isset($this->upload_forms[$form_name])) {
+			$image = new Form_Field_FileImage('image');
+			
+			$image->setFieldValueCatcher( function() use ($image, $setter) {
+				foreach($image->getValidFiles() as $file) {
+					$setter( $file );
+				}
+			} );
+			$this->upload_forms[$form_name] = new Form($form_name, [$image]);
+		}
+		
+		return $this->upload_forms[$form_name];
+	}
+	
+	protected function getUploadVideoForm($form_name, callable $setter ) : Form
+	{
+		if(!isset($this->upload_forms[$form_name])) {
+			$video = new Form_Field_File('video');
+			$video->setAllowedMimeTypes([
+				'video/mp4'
+			]);
+			$video->setErrorMessages([
+				Form_Field_File::ERROR_CODE_DISALLOWED_FILE_TYPE => 'Please upload video'
+			]);
+			
+			$video->setFieldValueCatcher( function() use ($video, $setter) {
+				foreach($video->getValidFiles() as $file) {
+					$setter( $file );
+				}
+			} );
+			$this->upload_forms[$form_name] = new Form($form_name, [$video]);
+		}
+		
+		return $this->upload_forms[$form_name];
+	}
+	
+	public function getUploadForm_MainImage() : Form
+	{
+		return $this->getUploadImageForm(
+			'upload_form_main_image',
+			function(Form_Field_File_UploadedFile $file) {
+				$this->setImageMain($file);
+				$this->save();
+			}
+		);
+	}
+	
+	public function catchUploadForm_MainImage() : bool
+	{
+		return $this->catchUploadForm( $this->getUploadForm_MainImage() );
+	}
+	
+	public function getUploadForm_MobileImage() : Form
+	{
+		return $this->getUploadImageForm(
+			'upload_form_mobile_image',
+			function(Form_Field_File_UploadedFile $file) {
+				$this->setImageMobile($file);
+				$this->save();
+			}
+		);
+	}
+	
+	public function catchUploadForm_MobileImage() : bool
+	{
+		return $this->catchUploadForm( $this->getUploadForm_MobileImage() );
+	}
+	
+	
+	
+	
+	public function getUploadForm_MainVideo() : Form
+	{
+		return $this->getUploadVideoForm(
+			'upload_form_main_video',
+			function(Form_Field_File_UploadedFile $file) {
+				$this->setVideoMain($file);
+				$this->save();
+			}
+		);
+	}
+	
+	public function catchUploadForm_MainVideo() : bool
+	{
+		return $this->catchUploadForm( $this->getUploadForm_MainVideo() );
+	}
+	
+	public function getUploadForm_MobileVideo() : Form
+	{
+		return $this->getUploadVideoForm(
+			'upload_form_mobile_video',
+			function(Form_Field_File_UploadedFile $file) {
+				$this->setVideoMobile($file);
+				$this->save();
+			}
+		);
+	}
+	
+	public function catchUploadForm_MobileVideo() : bool
+	{
+		return $this->catchUploadForm( $this->getUploadForm_MobileVideo() );
 	}
 	
 }

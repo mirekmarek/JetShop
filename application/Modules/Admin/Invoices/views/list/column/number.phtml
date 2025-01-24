@@ -9,11 +9,12 @@ namespace JetApplicationModule\Admin\Invoices;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplicationModule\Admin\Entity\Listing\Listing;
+use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\Invoice;
 
 /**
  * @var MVC_View $this
- * @var Listing $listing
+ * @var Admin_Managers_Entity_Listing $listing
  * @var Invoice $item
  */
 
@@ -30,7 +31,7 @@ $item = $this->getRaw('item');
 <?php if($item->getIsCorrectionInvoice()): ?>
 <div class="text-danger">
 <?=Tr::_('Correction of:<br><a href="%URL%">%NUMBER%</a>', [
-		'URL' => Main::getEditUrl( $item->getCorrectionOfInvoiceId() ),
+		'URL' => Invoice::get($item->getCorrectionOfInvoiceId())?->getEditURL(),
 		'NUMBER' => $item->getCorrectionOfInvoiceNumber()
 	])?>
 </div>

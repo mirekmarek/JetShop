@@ -1,7 +1,8 @@
 <?php
 namespace JetShop;
 
-interface Core_Admin_Managers_SupplierGoodsOrders
+use JetApplication\Admin_EntityManager_Simple_Interface;
+
+interface Core_Admin_Managers_SupplierGoodsOrders extends Admin_EntityManager_Simple_Interface
 {
-	public function showName( int $id ): string;
 }

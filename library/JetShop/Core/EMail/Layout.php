@@ -8,19 +8,25 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Admin_Managers_ContentEMailLayouts;
 use JetApplication\EMail_Layout_EShopData;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShop;
-
+use JetApplication\JetShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'email_layout',
 	database_table_name: 'email_layout',
 )]
-abstract class Core_EMail_Layout extends Entity_WithEShopData
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_ContentEMailLayouts::class
+)]
+abstract class Core_EMail_Layout extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
 {
-	
+	use Admin_Entity_WithEShopData_Trait;
 	
 	/**
 	 * @var EMail_Layout_EShopData[]

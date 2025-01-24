@@ -8,15 +8,16 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 
 use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Simple_Interface;
 use JetApplication\Admin_EntityManager_Simple_Trait;
+use JetApplication\Admin_Managers_WarehouseManagementStockVerification;
 use JetApplication\Entity_Simple;
 use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\WarehouseManagement_StockVerification;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Simple_Interface
+class Main extends Application_Module implements Admin_Managers_WarehouseManagementStockVerification
 {
 	use Admin_EntityManager_Simple_Trait;
 	
@@ -30,12 +31,12 @@ class Main extends Application_Module implements Admin_EntityManager_Simple_Inte
 	
 	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface
 	{
-		return new Verification();
+		return new WarehouseManagement_StockVerification();
 	}
 	
 	public static function getEntityNameReadable() : string
 	{
-		return 'Stock verification';
+		return 'Warehouse Management - Stock verification';
 	}
 	
 	public static function getCurrentUserCanDelete() : bool

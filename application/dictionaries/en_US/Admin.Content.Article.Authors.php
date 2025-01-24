@@ -25,4 +25,8 @@ return [
 	'Please enter name' => '',
 	'Name:' => '',
 	'Author <b>%ITEM_NAME%</b> has been updated' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
+	'About author:' => '',
 ];

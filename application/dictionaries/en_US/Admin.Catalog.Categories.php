@@ -163,4 +163,9 @@ return [
 	'Automatic product appending filter' => '',
 	'Save filter settings and append products' => '',
 	'Disable auto append mode' => '',
+	'Primary kind of product:' => '',
+	'Internal name:' => '',
+	'Internal code:' => '',
+	'Internal notes:' => '',
+	'Inactive' => '',
 ];

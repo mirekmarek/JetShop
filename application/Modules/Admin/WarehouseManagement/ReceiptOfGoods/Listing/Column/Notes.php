@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 class Listing_Column_Notes extends DataListing_Column
 {
@@ -41,7 +42,7 @@ class Listing_Column_Notes extends DataListing_Column
 	public function getExportData( mixed $item ): float|int|bool|string|array
 	{
 		/**
-		 * @var ReceiptOfGoods $item
+		 * @var WarehouseManagement_ReceiptOfGoods $item
 		 */
 		return $item->getNumber();
 	}

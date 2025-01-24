@@ -6,7 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\JetShopEntity_Definition;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\Brand;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\EShop;

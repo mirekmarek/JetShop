@@ -2,16 +2,33 @@
 
 namespace JetApplicationModule\Payment\GoPay;
 
-enum GoPay_PaymentMethod : string {
-	case PAYMENT_CARD = 'PAYMENT_CARD';
-	case BANK_ACCOUNT = 'BANK_ACCOUNT';
-	case GOPAY = 'GOPAY';
-	case GPAY = 'GPAY';
-	case PRSMS = 'PRSMS';
-	case MPAYMENT = 'MPAYMENT';
-	case PAYSAFECARD = 'PAYSAFECARD';
-	case SUPERCASH = 'SUPERCASH';
-	case PAYPAL = 'PAYPAL';
-	case BITCOIN = 'BITCOIN';
+use Jet\Tr;
+
+class GoPay_PaymentMethod {
+	public const PAYMENT_CARD = 'PAYMENT_CARD';
+	public const BANK_ACCOUNT = 'BANK_ACCOUNT';
+	public const GOPAY = 'GOPAY';
+	public const GPAY = 'GPAY';
+	public const PRSMS = 'PRSMS';
+	public const MPAYMENT = 'MPAYMENT';
+	public const PAYSAFECARD = 'PAYSAFECARD';
+	public const SUPERCASH = 'SUPERCASH';
+	public const PAYPAL = 'PAYPAL';
+	public const BITCOIN = 'BITCOIN';
 	
+	public static function getList() : array
+	{
+		return [
+			static::PAYMENT_CARD => Tr::_('Card'),
+			static::BANK_ACCOUNT => Tr::_('Bank Account'),
+			static::GOPAY        => Tr::_('GoPay'),
+			static::GPAY         => Tr::_('Google Pay'),
+			static::PRSMS        => Tr::_('Premium SMS'),
+			static::MPAYMENT     => Tr::_('M Payment'),
+			static::PAYSAFECARD  => Tr::_('Pay Safe Card'),
+			static::SUPERCASH    => Tr::_('Super Cash'),
+			static::PAYPAL       => Tr::_('Pay Pal'),
+			static::BITCOIN      => Tr::_('Bit Coin'),
+		];
+	}
 }

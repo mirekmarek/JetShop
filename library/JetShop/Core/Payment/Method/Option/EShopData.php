@@ -6,6 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShop;
 use JetApplication\Payment_Method_Option;
 
 #[DataModel_Definition(
@@ -159,13 +160,17 @@ abstract class Core_Payment_Method_Option_EShopData extends Entity_WithEShopData
 	}
 	
 	
-	public static function getListForMethod( int $method_id ) : array
+	public static function getListForMethod( int $method_id, EShop $eshop ) : array
 	{
 		return static::fetch(
-			where_per_model: [''=>['method_id'=>$method_id]],
-			item_key_generator: function( Core_Payment_Method_Option_EShopData $item ) : int
+			where_per_model: [''=>[
+				'method_id'=>$method_id,
+				'AND',
+				$eshop->getWhere()
+			]],
+			item_key_generator: function( Core_Payment_Method_Option_EShopData $item ) : string
 			{
-				return $item->getId();
+				return $item->getInternalCode();
 			}
 		);
 	}

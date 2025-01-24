@@ -56,4 +56,5 @@ return [
 	'Is virtual' => '',
 	'Address - name:' => '',
 	'Backend module:' => '',
+	'Unknown item %ID%' => '',
 ];

@@ -10,8 +10,12 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
+use JetApplication\Admin_Entity_WithEShopRelation_Interface;
+use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Admin_Managers_ReceiptOfGoods;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
+use JetApplication\JetShopEntity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\ReturnOfGoods_Event;
@@ -40,7 +44,13 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+#[JetShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
+)]
+abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface,
+	Admin_Entity_WithEShopRelation_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
@@ -48,6 +58,8 @@ abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements Nu
 	use ReturnOfGoods_Trait_Status;
 	use ReturnOfGoods_Trait_Events;
 	use ReturnOfGoods_Trait_Changes;
+	
+	use Admin_Entity_WithEShopRelation_Trait;
 	
 	
 	#[DataModel_Definition(
@@ -179,6 +191,16 @@ abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements Nu
 	protected string $delivery_personal_takeover_delivery_point_code = '';
 	
 	protected ?Form $upload_images_form = null;
+	
+	public static function getNumberSeriesEntityIsPerShop() : bool
+	{
+		return true;
+	}
+	
+	public static function getNumberSeriesEntityTitle() : string
+	{
+		return 'Return of goods';
+	}
 	
 	
 	public static function startNew(
@@ -507,11 +529,6 @@ abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements Nu
 	}
 	
 	
-	public static function get( int $id ) : static|null
-	{
-		return static::load( $id );
-	}
-	
 	public static function getByKey( string $key ) : ?ReturnOfGoods
 	{
 		$returns = ReturnOfGoods::fetch(['return_of_goods' => [
@@ -668,7 +685,40 @@ abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements Nu
 	{
 		$this->newReturnOfGoodsFinished();
 	}
-
 	
+	public function isEditable(): bool
+	{
+		if(
+			$this->cancelled
+		) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function setEditable( bool $editable ): void
+	{
+	}
+	
+	public function getAddForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchAddForm(): bool
+	{
+		return false;
+	}
+	
+	public function getEditForm(): Form
+	{
+		return new Form('', []);
+	}
+	
+	public function catchEditForm(): bool
+	{
+		return false;
+	}
 	
 }

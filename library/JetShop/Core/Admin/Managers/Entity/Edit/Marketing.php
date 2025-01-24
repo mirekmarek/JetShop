@@ -37,7 +37,7 @@ interface Core_Admin_Managers_Entity_Edit_Marketing extends Admin_Managers_Entit
 		?callable $reason_renderer = null
 	): string;
 	
-	public function renderShowName( int $id, Entity_Marketing|Admin_Entity_Marketing_Interface $entity ): string;
+	public function renderShowName( int $id, null|Entity_Marketing|Admin_Entity_Marketing_Interface $item ): string;
 	
 	public function renderEditProducts( Entity_Marketing|Admin_Entity_Marketing_Interface $item ): string;
 	

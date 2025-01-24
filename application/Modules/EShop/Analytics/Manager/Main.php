@@ -18,7 +18,6 @@ use JetApplication\EShop_Analytics_Service;
 use JetApplication\EShop_Managers_Analytics;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
-use JetApplicationModule\EShop\Analytics\Service;
 
 class Main extends Application_Module implements EShop_Managers_Analytics
 {

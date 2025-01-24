@@ -169,4 +169,6 @@ return [
 	'Deactivate' => 'Deaktivovat',
 	'Description' => 'Popis',
 	'Accessories' => 'Příslušenství',
+	'Personal takeover - external' => '',
+	'Personal takeover - internal' => '',
 ];

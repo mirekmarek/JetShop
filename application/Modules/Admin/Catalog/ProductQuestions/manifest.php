@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_product_question' => 'Get product question data',
-		'add_product_question' => 'Add new product question',
-		'update_product_question' => 'Update product question',
-		'delete_product_question' => 'Delete product question',
+		'get' => 'Get product question data',
+		'add' => 'Add new product question',
+		'update' => 'Update product question',
+		'delete' => 'Delete product question',
 	],
 ];

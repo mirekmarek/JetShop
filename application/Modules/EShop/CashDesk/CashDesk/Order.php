@@ -78,12 +78,8 @@ trait CashDesk_Order {
 		}
 		
 		$order->setDeliveryMethod( $delivery_method, $point_code );
-
-		if(($payment_option=$this->getSelectedPaymentMethodOption())) {
-			$payment_option = $payment_option->getId();
-		} else {
-			$payment_option = 0;
-		}
+		
+		$payment_option=$this->getSelectedPaymentMethodOption()?->getInternalCode()??'';
 		
 		$order->setPaymentMethod( $payment_method, $payment_option );
 		

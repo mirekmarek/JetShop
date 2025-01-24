@@ -136,7 +136,7 @@ abstract class Core_Property_Options_Option extends Entity_WithEShopData impleme
 		);
 	}
 	
-	public function getEditURL(): string
+	public function getEditURL( array $get_params=[] ): string
 	{
 		return '';
 	}
