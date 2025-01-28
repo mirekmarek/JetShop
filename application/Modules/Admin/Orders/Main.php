@@ -10,11 +10,10 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Customer;
 use JetApplication\Admin_Managers_Order;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\Order;
 
 /**
@@ -22,7 +21,7 @@ use JetApplication\Order;
  */
 class Main extends Application_Module implements Admin_Managers_Order
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'orders';
 
@@ -39,7 +38,7 @@ class Main extends Application_Module implements Admin_Managers_Order
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Order();
 	}

@@ -18,7 +18,6 @@ use Jet\MVC_Controller_Default;
 use Jet\MVC_Layout;
 use JetApplication\Application_Admin;
 use JetApplication\Entity_WithEShopData;
-use JetApplication\EShops;
 use JetApplication\Timer;
 
 /**
@@ -39,16 +38,12 @@ class Controller_Main extends MVC_Controller_Default
 		$entity_type = $GET->getString('entity_type');
 		$entity_class = $GET->getString('entity_class');
 		$entity_id = $GET->getString('entity_id');
-		$eshop_key = $GET->getString('eshop_key');
 		
 		if(
-			!class_exists($entity_class) ||
-			!EShops::exists($eshop_key)
+			!class_exists($entity_class)
 		) {
 			die();
 		}
-		
-		$eshop = EShops::get( $eshop_key );
 		
 		/**
 		 * @var Entity_WithEShopData $entity
@@ -59,7 +54,7 @@ class Controller_Main extends MVC_Controller_Default
 			die();
 		}
 		
-		$actions = $entity->getEshopData( $eshop )->getAvailableTimerActions();
+		$actions = $entity->getAvailableTimerActions();
 		$this->view->setVar('actions', $actions);
 		
 		
@@ -78,7 +73,6 @@ class Controller_Main extends MVC_Controller_Default
 			'entity_type' => $entity_type,
 			'entity_class' => $entity_class,
 			'entity_id' => $entity_id,
-			'eshop_key' => $eshop_key,
 			'reload_settings' => true
 		]);
 		
@@ -94,10 +88,10 @@ class Controller_Main extends MVC_Controller_Default
 					Form_Field_DateTime::ERROR_CODE_INVALID_FORMAT => 'Invalid value'
 				]);
 				
-				$form = new Form('set_form_'.$action->getKey(), [$date_time]);
-				$form->setAction( Http_Request::currentURI(set_GET_params: ['set_action'=>$action->getKey()]) );
+				$form = new Form('set_form_'.$action->getAction(), [$date_time]);
+				$form->setAction( Http_Request::currentURI(set_GET_params: ['set_action'=>$action->getAction()]) );
 				$action->updateForm( $form );
-				$forms[$action->getKey()] = $form;
+				$forms[$action->getAction()] = $form;
 			}
 			
 			foreach($forms as $action_key=>$form) {
@@ -109,9 +103,8 @@ class Controller_Main extends MVC_Controller_Default
 					if($date_time>Data_DateTime::now()) {
 						Timer::newTimer(
 							entity: $entity,
-							eshop: $eshop,
 							date_time: $date_time,
-							action: $action_key,
+							action: $action,
 							action_context: $context_value
 						)->save();
 					}
@@ -123,7 +116,7 @@ class Controller_Main extends MVC_Controller_Default
 			$this->view->setVar('forms', $forms);
 		}
 		
-		$scheduled = Timer::getScheduled( $entity, $eshop );
+		$scheduled = Timer::getScheduled( $entity );
 		
 		if( ($cancel=$GET->getInt('cancel')) ) {
 			if(Main::getCurrentUserCanCancel()) {

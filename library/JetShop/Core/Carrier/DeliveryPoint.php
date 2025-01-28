@@ -331,7 +331,7 @@ class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition
 	}
 
 
-	public static function get( int $id ) : ?static
+	public static function get( int|string $id ) : ?static
 	{
 		return static::load( $id );
 	}

@@ -14,14 +14,19 @@ use Jet\UI_messages;
 use JetApplication\Supplier;
 use JetApplication\WarehouseManagement_StockVerification;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplication\Admin_EntityManager_Simple_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\KindOfProduct;
 
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_Simple_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Warehouse Management - Stock verification';
+	}
+	
 	
 	public function setupListing(): void
 	{

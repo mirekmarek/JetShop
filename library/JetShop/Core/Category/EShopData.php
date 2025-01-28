@@ -5,7 +5,11 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_HasURL_Interface;
+use JetApplication\Entity_HasURL_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Category;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\EShops;
@@ -16,8 +20,15 @@ use JetApplication\EShop;
 	database_table_name: 'categories_eshop_data',
 	parent_model_class: Category::class,
 )]
-abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
-	
+#[Entity_Definition(
+	URL_template: '%NAME%-c-%ID%'
+)]
+abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData implements
+	Entity_HasImages_Interface,
+	Entity_HasURL_Interface
+{
+	use Entity_HasImages_Trait;
+	use Entity_HasURL_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -45,7 +56,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -58,7 +69,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Alternative name:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $second_name = '';
@@ -71,7 +82,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 		type:  Form_Field::TYPE_WYSIWYG,
 		label:  'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -84,7 +95,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Title:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $seo_title = '';
@@ -97,7 +108,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $seo_description = '';
@@ -110,7 +121,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Keywords:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $seo_keywords = '';
@@ -192,6 +203,11 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 	{
 		parent::_deactivate();
 		Category::actualizeBranchProductAssoc( $this->root_id );
+	}
+	
+	public function getURLNameDataSource(): string
+	{
+		return $this->URL_path_part ? : $this->name;
 	}
 	
 	
@@ -326,26 +342,6 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData {
 			);
 		}
 	}
-
-	public function getURL() : string
-	{
-		return $this->getEshop()->getURL( [$this->URL_path_part] );
-	}
-
-	public function generateURLPathPart() : void
-	{
-		if(!$this->entity_id) {
-			return;
-		}
-		
-		$this->setURLPathPart( $this->_generateURLPathPart( $this->name, 'c' ) );
-	}
-
-	public function afterAdd(): void
-	{
-		$this->generateURLPathPart();
-	}
-	
 	
 	public function setImageMain( string $image_main ) : void
 	{

@@ -35,9 +35,9 @@ $price_formatter = Admin_Managers::PriceFormatter();
 			<td><?=Tr::_('Delivery note')?></td>
 			<td>
 				<?php if(!$invoice->isCancelled()): ?>
-					<a href="<?=$invoice->getEditURL();?>"><?=$invoice->getNumber();?></a>
+					<a href="<?=$invoice->getEditUrl();?>"><?=$invoice->getNumber();?></a>
 				<?php else: ?>
-					<a href="<?=$invoice->getEditURL();?>" style="text-decoration: line-through;color: red;"><?=$invoice->getNumber();?></a>
+					<a href="<?=$invoice->getEditUrl();?>" style="text-decoration: line-through;color: red;"><?=$invoice->getNumber();?></a>
 				<?php endif; ?>
 			</td>
 			<td>

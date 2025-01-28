@@ -159,7 +159,7 @@ $correction_form->renderer()->setDefaultFieldWidth([
 				</td>
 				<td>
 					<?php if( $item->isPhysicalProduct() || $item->isVirtualProduct() ): ?>
-						<a href="<?=$product_manager->getProductEditURL( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
+						<a href="<?=$product_manager::getEditUrl( $item->getItemId() )?>"><?=$item->getTitle() ?></a>
 					<?php else: ?>
 						<?=$item->getTitle() ?>
 					<?php endif; ?>
@@ -219,7 +219,7 @@ $correction_form->renderer()->setDefaultFieldWidth([
 						</td>
 						<td style="text-align: right"><b><?=Locale::float($set_item->getNumberOfUnits()) ?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b></td>
 						<td>
-							<a href="<?=$product_manager->getProductEditURL( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
+							<a href="<?=$product_manager::getEditUrl( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
 						</td>
 
 

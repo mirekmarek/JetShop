@@ -24,11 +24,7 @@ use JetApplication\Admin_Managers_Image;
 use JetApplication\Admin_Managers_UI;
 use JetApplication\Admin_Managers_FulltextSearch;
 use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Admin_Managers_Entity_Edit_WithEShopData;
-use JetApplication\Admin_Managers_Entity_Edit_Simple;
-use JetApplication\Admin_Managers_Entity_Edit_Common;
-use JetApplication\Admin_Managers_Entity_Edit_WithEShopRelation;
-use JetApplication\Admin_Managers_Entity_Edit_Marketing;
+use JetApplication\Admin_Managers_Entity_Edit;
 use JetApplication\Admin_Managers_ProductFilter;
 use JetApplication\Admin_Managers_PriceFormatter;
 use JetApplication\Admin_Managers_Order;
@@ -113,30 +109,11 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Entity_Listing::class );
 	}
 	
-	public static function EntityEdit_WithEShopData() : Admin_Managers_Entity_Edit_WithEShopData|Application_Module
+	public static function EntityEdit() : Admin_Managers_Entity_Edit|Application_Module
 	{
-		return static::get( Admin_Managers_Entity_Edit_WithEShopData::class );
+		return static::get( Admin_Managers_Entity_Edit::class );
 	}
-	
-	public static function EntityEdit_Simple() : Admin_Managers_Entity_Edit_Simple|Application_Module
-	{
-		return static::get( Admin_Managers_Entity_Edit_Simple::class );
-	}
-	
-	public static function EntityEdit_Common() : Admin_Managers_Entity_Edit_Common|Application_Module
-	{
-		return static::get( Admin_Managers_Entity_Edit_Common::class );
-	}
-	
-	public static function EntityEdit_WithEShopRelation() : Admin_Managers_Entity_Edit_WithEShopRelation|Application_Module
-	{
-		return static::get( Admin_Managers_Entity_Edit_WithEShopRelation::class );
-	}
-	
-	public static function EntityEdit_Marketing() : Admin_Managers_Entity_Edit_Marketing|Application_Module
-	{
-		return static::get( Admin_Managers_Entity_Edit_Marketing::class );
-	}
+
 	
 	public static function ProductFilter() : Admin_Managers_ProductFilter|Application_Module
 	{

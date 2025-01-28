@@ -3,28 +3,35 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Brand;
 use JetApplication\Brand_EShopData;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 #[DataModel_Definition(
 	name: 'brands',
 	database_table_name: 'brands',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_Brand::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_Brand::class,
+	description_mode: true,
+	images: [
+		'logo' => 'Logo',
+		'big_logo' => 'Big logo',
+		'title' => 'Title image',
+	]
 )]
-abstract class Core_Brand extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
+abstract class Core_Brand extends Entity_WithEShopData implements
+	FulltextSearch_IndexDataProvider,
+	Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	/**
 	 * @var Brand_EShopData[]
@@ -79,28 +86,6 @@ abstract class Core_Brand extends Entity_WithEShopData implements FulltextSearch
 	{
 		Admin_Managers::FulltextSearch()->deleteIndex( $this );
 		EShop_Managers::FulltextSearch()->deleteIndex( $this );
-	}
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
-	}
-	
-	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'logo',
-			image_title:  Tr::_('Logo'),
-		);
-		$this->defineImage(
-			image_class:  'big_logo',
-			image_title:  Tr::_('Big logo'),
-		);
-		$this->defineImage(
-			image_class:  'title',
-			image_title:  Tr::_('Title image'),
-		);
 	}
 	
 }

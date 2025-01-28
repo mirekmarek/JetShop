@@ -9,19 +9,18 @@ namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
 use Jet\Application_Module;
 use Jet\Tr;
+use JetApplication\Entity_Basic;
 use JetApplication\PropertyGroup;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_PropertyGroup;
-use JetApplication\Entity_WithEShopData;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_PropertyGroup
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'property-group';
 
@@ -47,20 +46,14 @@ class Main extends Application_Module implements Admin_Managers_PropertyGroup
 			object_type_filter: null,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditURL()
+			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 		
 	}
 	
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new PropertyGroup();
 	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'property group';
-	}
-	
 }

@@ -7,6 +7,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Logger;
+use JetApplication\FulltextSearch_IndexDataProvider;
 
 #[DataModel_Definition(
 	name: '',
@@ -34,6 +35,7 @@ abstract class Core_Entity_Basic extends DataModel
 		is_key: true,
 	)]
 	protected ?Data_DateTime $last_update = null;
+	
 	
 	
 	public function getId(): int
@@ -98,6 +100,11 @@ abstract class Core_Entity_Basic extends DataModel
 			context_object_id: $this->getId(),
 			context_object_data: $this
 		);
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->updateFulltextSearchIndex();
+		}
+		
 	}
 	
 	public function afterDelete(): void
@@ -108,6 +115,11 @@ abstract class Core_Entity_Basic extends DataModel
 			context_object_id: $this->getId(),
 			context_object_data: $this
 		);
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->removeFulltextSearchIndex();
+		}
+		
 	}
 	
 	public function afterAdd(): void
@@ -118,11 +130,15 @@ abstract class Core_Entity_Basic extends DataModel
 			context_object_id: $this->getId(),
 			context_object_data: $this
 		);
+		
+		if($this instanceof FulltextSearch_IndexDataProvider) {
+			$this->updateFulltextSearchIndex();
+		}
+		
 	}
 	
 	public function isItPossibleToDelete() : bool
 	{
 		return true;
 	}
-	
 }

@@ -11,11 +11,10 @@ use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Property;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Admin_EntityManager_Trait;
+use JetApplication\Entity_Basic;
 use JetApplication\Property;
 
 /**
@@ -23,7 +22,7 @@ use JetApplication\Property;
  */
 class Main extends Application_Module implements Admin_Managers_Property
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'properties';
 
@@ -49,20 +48,15 @@ class Main extends Application_Module implements Admin_Managers_Property
 			object_type_filter: $only_type_filter,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditURL()
+			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 		
 	}
 
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Property();
-	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'property';
 	}
 	
 	public function showType( string $type ) : string

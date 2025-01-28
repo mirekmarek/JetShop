@@ -8,13 +8,15 @@ use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Logger;
-use JetApplication\Admin_Entity_Simple_Interface;
-use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_WarehouseManagementLossOrDestruction;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Entity_Simple;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
 use JetApplication\NumberSeries_Entity_Interface;
@@ -32,17 +34,19 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_loss_or_destruction',
 	database_table_name: 'whm_loss_or_destruction',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_WarehouseManagementLossOrDestruction::class
 )]
-class Core_WarehouseManagement_LossOrDestruction extends Entity_Simple implements
+class Core_WarehouseManagement_LossOrDestruction extends Entity_Basic implements
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_Simple_Interface
+	Entity_Admin_Interface,
+	Entity_HasGet_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
-	use Admin_Entity_Simple_Trait;
+	use Entity_Admin_Trait;
+	use Entity_HasGet_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_DONE = 'done';

@@ -16,8 +16,7 @@ use Jet\Translator;
 use JetApplication\Admin_Managers_Timer;
 use JetApplication\Application_Admin;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\EShops;
+use JetApplication\Entity_HasTimer_Interface;
 
 /**
  *
@@ -52,12 +51,12 @@ class Main extends Application_Module implements Admin_Managers_Timer
 		);
 	}
 	
-	public function renderEntityEdit( Entity_WithEShopData $entity, bool $editable ) : string
+	public function renderEntityEdit( Entity_HasTimer_Interface $entity, bool $editable ) : string
 	{
 		return '<div id="timmer_settings">'.$this->_renderEntityEdit($entity, $editable).'</div>';
 	}
 	
-	public function _renderEntityEdit( Entity_WithEShopData $entity, bool $editable ) : string
+	public function _renderEntityEdit( Entity_HasTimer_Interface $entity, bool $editable ) : string
 	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
@@ -74,15 +73,7 @@ class Main extends Application_Module implements Admin_Managers_Timer
 				
 				$res = '';
 				
-				$res .= $view->render('entity-edit/header');
-				
-				foreach(EShops::getListSorted() as $eshop) {
-					$view->setVar('eshop', $eshop);
-					
-					$res .= $view->render('entity-edit/item');
-				}
-				
-				$res .= $view->render('entity-edit/footer');
+				$res .= $view->render('entity-edit');
 				
 				return $res;
 			}

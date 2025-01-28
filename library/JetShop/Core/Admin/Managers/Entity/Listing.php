@@ -7,13 +7,13 @@ use Jet\Application_Module;
 use Jet\DataListing_Column;
 use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
-use JetApplication\Admin_EntityManager_Common_Interface;
+use JetApplication\Admin_EntityManager_Interface;
 use JetApplication\Entity_Basic;
 
 interface Core_Admin_Managers_Entity_Listing
 {
 	public function setUp(
-		Admin_EntityManager_Common_Interface|Application_Module $entity_manager
+		Admin_EntityManager_Interface|Application_Module $entity_manager
 	) : void;
 	
 	public function renderListing() : string;

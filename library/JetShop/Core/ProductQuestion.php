@@ -6,11 +6,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_ProductQuestions;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
 use JetApplication\Entity_WithEShopRelation;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 
@@ -18,12 +20,13 @@ use JetApplication\Product_EShopData;
 	name: 'product_questions',
 	database_table_name: 'product_questions',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_ProductQuestions::class
 )]
-abstract class Core_ProductQuestion extends Entity_WithEShopRelation implements Admin_Entity_WithEShopRelation_Interface
+abstract class Core_ProductQuestion extends Entity_WithEShopRelation implements Entity_Admin_Interface, Entity_HasGet_Interface
 {
-	use Admin_Entity_WithEShopRelation_Trait;
+	use Entity_Admin_Trait;
+	use Entity_HasGet_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

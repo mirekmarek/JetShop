@@ -345,4 +345,6 @@ return [
 	'Personal receipt of the order' => '',
 	'Handed over' => '',
 	'Handed over - %DATE_TIME%' => '',
+	'CSV' => '',
+	'XLSX' => '',
 ];

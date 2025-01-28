@@ -1,0 +1,15 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\WithEShopData;
+
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_WithEShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithEShopData|Entity_Admin_Interface     $item
+ */
+$item = $this->getRaw('item');
+?>
+<?=$item->getAdminTitle()?> <a href="<?=$item->getEditUrl()?>"><?=UI::icon('link')?></a>

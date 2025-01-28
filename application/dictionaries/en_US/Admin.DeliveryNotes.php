@@ -54,4 +54,5 @@ return [
 	'Tax' => '',
 	'Set discount:' => '',
 	'Round:' => '',
+	'Cancelled' => '',
 ];

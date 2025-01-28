@@ -10,13 +10,18 @@ namespace JetApplicationModule\Admin\Catalog\AccessoriesGroups;
 use Jet\AJAX;
 use Jet\Http_Request;
 use JetApplication\Accessories_Group;
-use JetApplication\Admin_EntityManager_Common_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_Common_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Accessories groups';
+	}
+	
 	
 	public function edit_main_Action() : void
 	{

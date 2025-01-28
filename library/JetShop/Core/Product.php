@@ -12,17 +12,17 @@ use Jet\DataModel_Query;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Product;
 use JetApplication\Availabilities;
 use JetApplication\Category;
 use JetApplication\Delivery_Class;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
 use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\KindOfProduct;
 
 use JetApplication\Managers;
@@ -66,13 +66,14 @@ use JetApplication\Supplier;
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_Product::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_Product::class,
+	description_mode: true
 )]
 abstract class Core_Product extends Entity_WithEShopData implements
 	FulltextSearch_IndexDataProvider,
 	Entity_HasPrice_Interface,
-	Admin_Entity_WithEShopData_Interface
+	Entity_Admin_WithEShopData_Interface
 {
 	
 	use Product_Trait_Availability;
@@ -88,7 +89,7 @@ abstract class Core_Product extends Entity_WithEShopData implements
 	use Product_Trait_Boxes;
 	use Product_Trait_Accessories;
 	
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 
 	public const PRODUCT_TYPE_REGULAR        = 'regular';
@@ -613,14 +614,8 @@ abstract class Core_Product extends Entity_WithEShopData implements
 	}
 	
 	
-	public function defineImages(): void
-	{
-	}
-	
-	
 	protected function _setupForm( Form $form ) : void
 	{
-		
 		$this->_setupForm_regular( $form );
 		$this->_setupForm_set( $form );
 		$this->_setupForm_variant( $form );
@@ -769,11 +764,4 @@ abstract class Core_Product extends Entity_WithEShopData implements
 		$this->save();
 		return true;
 	}
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
-	}
-	
-
 }

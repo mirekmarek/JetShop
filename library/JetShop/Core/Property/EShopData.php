@@ -4,7 +4,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Product_Parameter;
 use JetApplication\Property;
@@ -15,7 +17,9 @@ use JetApplication\Property_Type;
 	database_table_name: 'properties_eshop_data',
 	parent_model_class: Property::class
 )]
-abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
+abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
+{
+	use Entity_HasImages_Trait;
 	
 	protected ?Property_Type $_type_instance = null;
 	
@@ -39,7 +43,7 @@ abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $label = '';
@@ -52,7 +56,7 @@ abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -77,7 +81,7 @@ abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Description for YES:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $bool_yes_description='';
@@ -90,7 +94,7 @@ abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $url_param = '';
@@ -103,7 +107,7 @@ abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Units (mm, cm, ...):',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $units = '';
@@ -161,7 +165,7 @@ abstract class Core_Property_EShopData extends Entity_WithEShopData_EShopData {
 			return;
 		}
 		$this->label = $label;
-		$this->url_param = $this->_generateURLParam( $this->label );
+		//TODO: $this->url_param = $this->_generateURLParam( $this->label );
 	}
 
 	public function getLabel() : string

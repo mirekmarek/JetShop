@@ -1,11 +1,11 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
+use JetApplication\Admin_EntityManager_Interface;
 use JetApplication\Context;
 use JetApplication\OrderDispatch;
 
-interface Core_Admin_Managers_OrderDispatch extends Admin_EntityManager_WithEShopRelation_Interface
+interface Core_Admin_Managers_OrderDispatch extends Admin_EntityManager_Interface
 {
 	public function showDispatches( Context $context ) : string;
 	

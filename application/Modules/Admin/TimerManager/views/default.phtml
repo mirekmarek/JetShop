@@ -65,7 +65,7 @@ if(Main::getCurrentUserCanSet()):
 		
 		<?php
 		foreach($actions as $action):
-			$form = $forms[$action->getKey()];
+			$form = $forms[$action->getAction()];
 			
 			$form->renderer()->setDefaultLabelWidth([
 				Form_Renderer::LJ_SIZE_EXTRA_SMALL => 3,

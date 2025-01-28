@@ -4,7 +4,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\PropertyGroup;
 
@@ -13,8 +15,9 @@ use JetApplication\PropertyGroup;
 	database_table_name: 'property_groups_eshop_data',
 	parent_model_class: PropertyGroup::class
 )]
-abstract class Core_PropertyGroup_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_PropertyGroup_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
 {
+	use Entity_HasImages_Trait;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -24,7 +27,7 @@ abstract class Core_PropertyGroup_EShopData extends Entity_WithEShopData_EShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $label = '';
@@ -37,7 +40,7 @@ abstract class Core_PropertyGroup_EShopData extends Entity_WithEShopData_EShopDa
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';

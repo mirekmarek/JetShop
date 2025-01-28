@@ -1,0 +1,75 @@
+<?php
+namespace JetApplicationModule\Admin\TimerManager;
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasTimer_Interface;
+use JetApplication\EShop;
+use JetApplication\Timer;
+
+/**
+ * @var MVC_View   $this
+ * @var Entity_Basic|Entity_HasTimer_Interface $entity
+ * @var EShop $eshop
+ */
+
+$entity = $this->getRaw('entity');
+$eshop = $this->getRaw('eshop');
+
+$actions = $entity->getAvailableTimerActions();
+
+$class = $this->getRaw('class');
+
+$scheduled = Timer::getScheduled( $entity );
+
+?>
+<div class="card card-body" style="margin-bottom: 20px;">
+	
+	<h4><?= Tr::_('Timer', dictionary: Tr::COMMON_DICTIONARY)?></h4>
+	<div style="display: grid;justify-content:left ;grid-template-columns: auto auto auto;gap: 10px;align-items: center;margin: 10px;">
+		
+		<div>
+			<?php if($this->getBool('editable')):
+				echo UI::button( Tr::_('Setup timer') )
+					->setIcon('clock')
+					->setClass( $scheduled ? UI_button::CLASS_INFO : UI_button::CLASS_LIGHT )
+					->setOnClick("TimerManager.open('{$entity::getEntityType()}', '{$class}',{$entity->getId()})");
+			endif; ?>
+		</div>
+		<div>
+			<?php
+			if($scheduled):
+				?>
+				<div class="card">
+					<div class="card-header bg-info"><?=Tr::_('Scheduled timers')?></div>
+					<div class="card-body">
+						<table class="table table-striped">
+							<thead>
+							<tr>
+								<th nowrap=""><?=Tr::_('Scheduled date and time')?></th>
+								<th nowrap=""><?=Tr::_('Action')?></th>
+								<th nowrap=""><?=Tr::_('Context value')?></th>
+							</tr>
+							</thead>
+							<?php foreach($scheduled as $item): ?>
+								<tr>
+									<td nowrap=""><?=Locale::dateAndTime( $item->getDateTime() )?></td>
+									<td nowrap=""><b><?=$actions[$item->getAction()]?->getTitle()?></b></td>
+									<td nowrap=""><?=$actions[$item->getAction()]?->formatActionContextValue( $item->getActionContext() )?></td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+				</div>
+			<?php
+			else:
+				echo Tr::_('No timer is scheduled');
+			endif;
+			?>
+		</div>
+	</div>
+</div>

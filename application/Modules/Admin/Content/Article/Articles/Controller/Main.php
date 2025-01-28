@@ -4,18 +4,23 @@ namespace JetApplicationModule\Admin\Content\Article\Articles;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Content_Article;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Article';
+	}
+	
+	
 	public function getTabs(): array
 	{
-		return [
-			'main'   => Tr::_( 'Main data' ),
-			'categories' => Tr::_('Categories'),
-			'images' => Tr::_( 'Images' ),
-		];
+		$tabs = parent::getTabs();
+		$tabs['categories'] = Tr::_('Categories');
+
+		return $tabs;
 	}
 	
 	public function setupListing(): void

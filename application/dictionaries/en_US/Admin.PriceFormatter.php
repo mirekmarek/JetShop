@@ -4,4 +4,5 @@ return [
 	'VAT rate:' => '',
 	'Price:' => '',
 	'Price (with VAT):' => '',
+	'Discount:' => '',
 ];

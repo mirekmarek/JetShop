@@ -46,12 +46,12 @@ $price_formatter = Admin_Managers::PriceFormatter();
 			</td>
 			<td>
 				<?php if($invoice->getIsCorrectionInvoice()): ?>
-					<a href="<?=$invoice->getEditURL();?>" class="text-info"><?=$invoice->getNumber();?></a>
+					<a href="<?=$invoice->getEditUrl();?>" class="text-info"><?=$invoice->getNumber();?></a>
 				<?php else: ?>
 					<?php if(!$invoice->hasCorrections()): ?>
-						<a href="<?=$invoice->getEditURL();?>"><?=$invoice->getNumber();?></a>
+						<a href="<?=$invoice->getEditUrl();?>"><?=$invoice->getNumber();?></a>
 					<?php else: ?>
-						<a href="<?=$invoice->getEditURL();?>" class="text-danger"><?=$invoice->getNumber();?></a>
+						<a href="<?=$invoice->getEditUrl();?>" class="text-danger"><?=$invoice->getNumber();?></a>
 					<?php endif; ?>
 				<?php endif; ?>
 			</td>

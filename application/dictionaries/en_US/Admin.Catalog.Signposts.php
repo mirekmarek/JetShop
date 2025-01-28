@@ -27,4 +27,10 @@ return [
 	'Priority:' => '',
 	'Description:' => '',
 	'URL parameter:' => '',
+	'Images' => '',
+	'Main image' => '',
+	'Pictogram image' => '',
+	'Categories' => '',
+	'Add category:' => '',
+	'Inactive' => '',
 ];

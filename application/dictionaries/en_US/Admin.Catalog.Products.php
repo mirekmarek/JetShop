@@ -249,4 +249,6 @@ return [
 	'Availability:' => '',
 	'Accessories' => '',
 	'Groups:' => '',
+	'Description' => '',
+	'product <b>%ITEM_NAME%</b> has been updated' => '',
 ];

@@ -1,0 +1,110 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit;
+
+use Jet\Locale;
+use Jet\UI_tabs;
+use JetApplication\Admin_Managers;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasActivation_Interface;
+use JetApplication\Entity_HasActivationByTimePlan_Interface;
+use JetApplication\Entity_HasTimer_Interface;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShop;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Entity_Basic $item
+ * @var Main $module
+ * @var UI_tabs $tabs
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+$tabs = $this->getRaw('tabs');
+
+$module = $this->getRaw('module');
+
+$common_data_fields_renderer = $this->getRaw('common_data_fields_renderer');
+$eshop_data_fields_renderer = $this->getRaw('eshop_data_fields_renderer');
+$description_fields_renderer = $this->getRaw('description_fields_renderer');
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [
+	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 3,
+	Form_Renderer::LJ_SIZE_LARGE => 2
+] );
+$form->renderer()->setDefaultFieldWidth( [
+	Form_Renderer::LJ_SIZE_EXTRA_SMALL => 12,
+	Form_Renderer::LJ_SIZE_SMALL => 12,
+	Form_Renderer::LJ_SIZE_MEDIUM => 8,
+	Form_Renderer::LJ_SIZE_LARGE => 8
+] );
+
+?>
+
+<?php require 'toolbar.phtml'; ?>
+
+
+<div id="main-col">
+		<?php
+		if(count($tabs->getTabs())>1) {
+			echo $tabs;
+		}
+		
+		echo '<br>';
+		
+		if(
+			$item instanceof Entity_HasActivation_Interface &&
+			!($item instanceof Entity_HasActivationByTimePlan_Interface)
+		) {
+			echo $module->renderEntityActivation(
+				entity: $item,
+				editable: !$form->getIsReadonly(),
+			);
+		}
+		
+		if( $item instanceof Entity_HasTimer_Interface ) {
+			echo Admin_Managers::Timer()?->renderEntityEdit( $item, !$form->getIsReadonly() );
+		}
+		
+		echo $form->start();
+		
+		echo $module->renderEntityFormCommonFields( $form );
+		
+		if($common_data_fields_renderer) {
+			$common_data_fields_renderer( $item, $form );
+		}
+		
+		if($item instanceof Entity_WithEShopData) {
+			if($eshop_data_fields_renderer) {
+				echo $module->renderShopDataBlocks(
+					form: $form,
+					renderer: function( EShop $eshop, string $eshop_key ) use ($item, $form, $eshop_data_fields_renderer ) : void {
+						$eshop_data = $item->getEshopData( $eshop );
+						
+						$eshop_data_fields_renderer( $eshop, $eshop_key, $item, $form );
+					});
+			}
+			
+			if($description_fields_renderer) {
+				echo $module->renderDescriptionBlocks(
+					form: $form,
+					renderer: function( Locale $locale, string $locale_str ) use ($item, $form, $description_fields_renderer ) : void {
+						$description_fields_renderer( $locale, $locale_str, $item, $form );
+					});
+				
+			}
+			
+		}
+		
+		echo $form->end();
+		?>
+</div>
+
+<?=Admin_Managers::Timer()?->renderIntegration()?>

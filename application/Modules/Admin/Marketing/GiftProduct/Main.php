@@ -2,10 +2,9 @@
 namespace JetApplicationModule\Admin\Marketing\GiftProduct;
 
 use JetApplication\Admin_Managers_MarketingGiftsProducts;
-use JetApplication\Admin_EntityManager_Marketing_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Entity_Marketing;
+use JetApplication\Entity_Basic;
 use JetApplication\Marketing_Gift_Product;
 
 /**
@@ -13,7 +12,7 @@ use JetApplication\Marketing_Gift_Product;
  */
 class Main extends Application_Module implements Admin_Managers_MarketingGiftsProducts
 {
-	use Admin_EntityManager_Marketing_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'gifts-products';
 
@@ -23,14 +22,9 @@ class Main extends Application_Module implements Admin_Managers_MarketingGiftsPr
 	public const ACTION_DELETE = 'delete_gift_product';
 	
 	
-	public static function getEntityInstance(): Entity_Marketing|Admin_Entity_Marketing_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Marketing_Gift_Product();
 	}
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Marketing - Gift for product';
-	}
-
 }

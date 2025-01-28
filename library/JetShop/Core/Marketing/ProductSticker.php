@@ -6,24 +6,32 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 
 use Jet\Form_Field;
-use Jet\Tr;
-use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_MarketingProductStickers;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
 use JetApplication\Entity_Marketing;
 use JetApplication\EShops;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 #[DataModel_Definition(
 	name: 'product_stickers',
 	database_table_name: 'product_stickers',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingProductStickers::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_MarketingProductStickers::class,
+	images: [
+		'pictogram_product_detail' => 'Pictogram - Product detail',
+		'pictogram_product_listing' => 'Pictogram - Product listing',
+	]
 )]
-abstract class Core_Marketing_ProductSticker extends Entity_Marketing implements Admin_Entity_Marketing_Interface
+abstract class Core_Marketing_ProductSticker extends Entity_Marketing implements
+	Entity_HasImages_Interface,
+	Entity_Admin_Interface
 {
-	use Admin_Entity_Marketing_Trait;
+	use Entity_HasImages_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -175,18 +183,5 @@ abstract class Core_Marketing_ProductSticker extends Entity_Marketing implements
 
 		return $stickers;
 	}
-	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'pictogram_product_detail',
-			image_title:  Tr::_('Pictogram - Product detail'),
-		);
-		
-		$this->defineImage(
-			image_class:  'pictogram_product_listing',
-			image_title:  Tr::_('Pictogram - Product listing'),
-		);
-	}
-	
+
 }

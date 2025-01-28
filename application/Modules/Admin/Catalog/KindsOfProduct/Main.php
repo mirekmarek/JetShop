@@ -10,11 +10,10 @@ namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_KindOfProduct;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Admin_EntityManager_Trait;
+use JetApplication\Entity_Basic;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 use JetApplication\KindOfProduct;
@@ -24,7 +23,7 @@ use JetApplication\KindOfProduct;
  */
 class Main extends Application_Module implements Admin_Managers_KindOfProduct
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 	
 	
 	public const ADMIN_MAIN_PAGE = 'kind-of-product';
@@ -50,18 +49,13 @@ class Main extends Application_Module implements Admin_Managers_KindOfProduct
 			object_type_filter: null,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditURL()
+			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new KindOfProduct();
-	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'kind of product';
 	}
 	
 	public function renderMarketPlaceIntegrationForm(

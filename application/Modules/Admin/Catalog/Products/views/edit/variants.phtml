@@ -56,7 +56,7 @@ $kind = $product->getKindOfProduct();
 echo $this->controller->getEditorManager()->renderToolbar(
 	form:  $variants_update_form,
 	toolbar_renderer: function() use ($add_form, $product) {
-		echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $product );
+		echo Admin_Managers::EntityEdit()->renderPreviewButton( $product );
 		
 		if($add_form) {
 			echo '&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -98,13 +98,13 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 					<div style="padding-right: 20px;">
 						<div style="display: flex;align-items: center;gap: 5px;">
 							<div>
-								<?php echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $variant ); ?>
+								<?php echo Admin_Managers::EntityEdit()->renderPreviewButton( $variant ); ?>
 							</div>
 							<div>
-								<?=Tr::_('ID:')?><a href="<?=$variant->getEditURL()?>" target="_blank"><?=$variant->getId()?></a>
+								<?=Tr::_('ID:')?><a href="<?=$variant->getEditUrl()?>" target="_blank"><?=$variant->getId()?></a>
 							</div>
 							<div style="padding-left: 50px;">
-								<?=Admin_Managers::EntityEdit_WithEShopData()->renderEntityActivation(
+								<?=Admin_Managers::EntityEdit()->renderEntityActivation(
 									entity: $variant,
 									editable: !$variants_update_form->getIsReadonly(),
 									deactivate_url_creator: function() use ($variant) : string {
@@ -213,7 +213,7 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 	<?=$add_form->field('internal_name_of_variant')?>
 	<?=$add_form->field('internal_code')?>
 	
-	<?=Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
+	<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
 		form: $add_form,
 		renderer: function( EShop $eshop, string $eshop_key ) use ($add_form) : void {
 			?>

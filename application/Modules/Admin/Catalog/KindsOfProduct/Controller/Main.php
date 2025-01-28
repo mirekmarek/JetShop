@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 
 use Jet\Application;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\EShops;
 use JetApplication\Exports;
@@ -18,9 +18,12 @@ use JetApplication\KindOfProduct;
 use Jet\Http_Request;
 use Jet\Tr;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	
+	public function getEntityNameReadable() : string
+	{
+		return 'Kind of product';
+	}
 	
 	
 	public function getTabs(): array

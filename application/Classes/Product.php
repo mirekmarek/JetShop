@@ -10,6 +10,6 @@ use JetShop\Core_Product;
  *
  */
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class Product extends Core_Product {
 }

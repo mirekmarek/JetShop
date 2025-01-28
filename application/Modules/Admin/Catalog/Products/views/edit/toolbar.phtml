@@ -26,7 +26,7 @@ $set_price_form = $this->getRaw('set_price_form');
 $set_availability_form = $this->getRaw('set_availability_form');
 
 
-echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $item );
+echo Admin_Managers::EntityEdit()->renderPreviewButton( $item );
 ?>
 
 <div style="display: inline-block">
@@ -34,7 +34,7 @@ echo Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $item );
 		$variant_master = $item->getVariantMasterProduct();
 		?>
 		<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
-		'URL' => $variant_master->getEditURL(),
+		'URL' => $variant_master->getEditUrl(),
 		'NAME' => $variant_master->getAdminTitle()
 	]))->setCloseable(false)?>
 	<?php endif; ?>

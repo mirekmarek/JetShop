@@ -74,12 +74,12 @@ echo $this->controller->getEditorManager()->renderToolbar();
 		<?php
 		echo $add_form->start();
 		?>
-		<?=Admin_Managers::EntityEdit_WithEShopData()->renderEntityFormCommonFields($add_form)?>
+		<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields($add_form)?>
 		
 		<?php
 		
 		if($new_option->getDescriptionMode()) {
-			echo Admin_Managers::EntityEdit_WithEShopData()->renderDescriptionBlocks(
+			echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
 				form: $add_form,
 				renderer: function( Locale $locale, string $locale_str ) use ($new_option, $add_form) : void {
 					?>
@@ -91,7 +91,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 						</fieldset>
 				<?php });
 		} else {
-			echo Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
+			echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
 				form: $add_form,
 				renderer: function( EShop $eshop, string $eshop_key ) use ($new_option, $add_form) : void {
 					?>

@@ -49,9 +49,8 @@ require 'select.phtml';
 <div id="main-col">
 	<?=$form->start()?>
 	
-	<?=Admin_Managers::EntityEdit_Common()->renderEntityFormCommonFields( $form );?>
-	
-	<?=$form->field('is_active')?>
+	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
+
 	<?=$form->field('active_from')?>
 	<?=$form->field('active_till')?>
 	<?php if($group->getHasText()):

@@ -3,21 +3,23 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\EShops;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Brand';
+	}
+	
 	public function getTabs(): array
 	{
-		$_tabs = [
-			'main'   => Tr::_( 'Main data' ),
-			'images' => Tr::_( 'Images' ),
-			'marketplaces'    => Tr::_( 'Marketplaces' ),
-		];
+		$tabs = parent::getTabs();
+		$tabs['marketplaces'] = Tr::_( 'Marketplaces' );
 		
-		return $_tabs;
+		return $tabs;
 	}
 	
 	protected function setupRouter( string $action, string $selected_tab ) : void

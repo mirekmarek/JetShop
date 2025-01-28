@@ -5,7 +5,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasURL_Interface;
+use JetApplication\Entity_HasURL_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Availability;
 use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;
@@ -31,7 +33,15 @@ use JetApplication\Product_EShopData_Trait_Accessories;
 	database_table_name: 'products_eshop_data',
 	parent_model_class: Product::class
 )]
-abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasPrice_Interface {
+#[Entity_Definition(
+	URL_template: '%NAME%-p-%ID%'
+)]
+abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData implements
+	Entity_HasPrice_Interface,
+	Entity_HasURL_Interface
+{
+	use Entity_HasURL_Trait;
+	
 	use Product_EShopData_Trait_Price;
 	use Product_EShopData_Trait_Set;
 	use Product_EShopData_Trait_Variants;
@@ -42,6 +52,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 	use Product_EShopData_Trait_Boxes;
 	use Product_EShopData_Trait_SimilarProducts;
 	use Product_EShopData_Trait_Accessories;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -104,7 +115,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -117,7 +128,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Short description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $short_description = '';
@@ -130,7 +141,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -143,7 +154,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_INPUT,
 		label: 'Title:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $seo_title = '';
@@ -156,7 +167,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $seo_description = '';
@@ -169,7 +180,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Keywords:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $seo_keywords = '';
@@ -207,6 +218,20 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 	
 	protected KindOfProduct_EShopData|null|bool $kind = null;
 	
+	public function getURLNameDataSource(): string
+	{
+		return $this->URL_path_part ? : $this->getFullName();
+	}
+	
+	public function getURLPathPart() : string
+	{
+		return $this->URL_path_part;
+	}
+	
+	public function setURLPathPart( string $URL_path_part ) : void
+	{
+		$this->URL_path_part = $URL_path_part;
+	}
 	
 	
 	public function _activate(): void
@@ -452,45 +477,6 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 	{
 		$this->seo_keywords = $seo_keywords;
 	}
-
-	public function getURLPathPart() : string
-	{
-		return $this->URL_path_part;
-	}
-
-	public function setURLPathPart( string $URL_path_part ) : void
-	{
-		$this->URL_path_part = $URL_path_part;
-	}
-
-	public function getURL() : string
-	{
-		return $this->getEshop()->getURL( [$this->URL_path_part] );
-	}
-
-	public function generateURLPathPart() : void
-	{
-		if(!$this->entity_id) {
-			return;
-		}
-
-		$this->URL_path_part = $this->_generateURLPathPart( $this->getFullName(), 'p' );
-		
-		$where = $this->getEshop()->getWhere();
-		$where[] = 'AND';
-		$where['entity_id'] = $this->entity_id;
-		
-		static::updateData(
-			['URL_path_part'=>$this->URL_path_part],
-			$where
-		);
-		
-	}
-	
-	public function afterAdd(): void
-	{
-		$this->generateURLPathPart();
-	}
 	
 	public function getReviewCount(): int
 	{
@@ -511,5 +497,4 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 	{
 		return DeliveryTerm::getInfo( $this, $availability );
 	}
-	
 }

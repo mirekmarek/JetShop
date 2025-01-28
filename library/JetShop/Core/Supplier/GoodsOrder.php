@@ -14,11 +14,11 @@ use Jet\Locale;
 use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Entity_Simple_Interface;
-use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
 use JetApplication\Entity_Basic;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
@@ -34,12 +34,12 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'supplier_goods_order',
 	database_table_name: 'supplier_goods_orders',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_SupplierGoodsOrders::class
 )]
-abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSeries_Entity_Interface, Admin_Entity_Simple_Interface
+abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSeries_Entity_Interface, Entity_Admin_Interface
 {
-	use Admin_Entity_Simple_Trait;
+	use Entity_Admin_Trait;
 	use NumberSeries_Entity_Trait;
 	
 	public const STATUS_PENDING = 'pending';

@@ -5,25 +5,25 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
-use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_MarketingDeliveryFeeDiscounts;
 use JetApplication\Delivery_Method;
 use JetApplication\Entity_Marketing;
 use Jet\DataModel;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'delivery_fee_discount',
 	database_table_name: 'delivery_fee_discounts',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_MarketingDeliveryFeeDiscounts::class
 )]
-abstract class Core_Marketing_DeliveryFeeDiscount extends Entity_Marketing implements Admin_Entity_Marketing_Interface
+abstract class Core_Marketing_DeliveryFeeDiscount extends Entity_Marketing implements Entity_Admin_Interface
 {
-	use Admin_Entity_Marketing_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

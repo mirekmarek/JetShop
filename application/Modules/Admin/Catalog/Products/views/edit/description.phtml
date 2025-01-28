@@ -40,7 +40,7 @@ require '_toolbar.phtml';
 	<?php
 	
 	if( $d_mode ) {
-		echo Admin_Managers::EntityEdit_WithEShopData()->renderDescriptionBlocks(form: $form, renderer: function( Locale $locale, string $locale_str ) use ($form) {
+		echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(form: $form, renderer: function( Locale $locale, string $locale_str ) use ($form) {
 		?>
 		<fieldset>
 			<?=$form->field('/description/'.$locale_str.'/name')?>
@@ -60,7 +60,7 @@ require '_toolbar.phtml';
 		<?php
 		});
 	} else {
-		echo Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(form: $form, renderer: function( EShop $eshop ) use ($form) {
+		echo Admin_Managers::EntityEdit()->renderShopDataBlocks(form: $form, renderer: function( EShop $eshop ) use ($form) {
 			$eshop_key = $eshop->getKey();
 			?>
 			<fieldset>

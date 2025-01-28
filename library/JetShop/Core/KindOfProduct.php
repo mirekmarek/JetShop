@@ -12,15 +12,16 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_KindOfProduct;
 use JetApplication\Category;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\KindOfProduct_PropertyGroup;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\KindOfProduct;
@@ -41,12 +42,21 @@ use JetApplication\MeasureUnit;
 	name: 'kind_of_product',
 	database_table_name: 'kind_of_product',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_KindOfProduct::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_KindOfProduct::class,
+	description_mode: true,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
 )]
-abstract class Core_KindOfProduct extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
+abstract class Core_KindOfProduct extends Entity_WithEShopData implements
+	Entity_HasImages_Interface,
+	FulltextSearch_IndexDataProvider,
+	Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -597,23 +607,5 @@ abstract class Core_KindOfProduct extends Entity_WithEShopData implements Fullte
 		foreach( EShops::getList() as $eshop ) {
 			$this->getEshopData( $eshop )->setVirtualProductHandler( $value );
 		}
-	}
-	
-	public function defineImages() : void
-	{
-		
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image')
-		);
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram image')
-		);
-	}
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
 	}
 }

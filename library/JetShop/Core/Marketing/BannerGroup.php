@@ -6,23 +6,23 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_Entity_Common_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_MarketingBannerGroups;
 use JetApplication\Entity_Common;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'banner_groups',
 	database_table_name: 'banner_groups',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_MarketingBannerGroups::class
 )]
-abstract class Core_Marketing_BannerGroup extends Entity_Common implements Admin_Entity_Common_Interface
+abstract class Core_Marketing_BannerGroup extends Entity_Common implements Entity_Admin_Interface
 {
-	use Admin_Entity_Common_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL

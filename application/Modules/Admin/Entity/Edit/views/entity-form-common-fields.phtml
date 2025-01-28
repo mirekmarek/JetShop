@@ -1,0 +1,21 @@
+<?php
+use Jet\Form;
+use Jet\MVC_View;
+use JetApplication\Entity_HasInternalParams_Interface;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+
+
+if($item instanceof Entity_HasInternalParams_Interface) {
+	echo $form->field('internal_name');
+	echo $form->field('internal_code');
+	echo $form->field('internal_notes');
+	
+}
+

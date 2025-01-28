@@ -10,13 +10,13 @@ use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\UI_messages;
-use JetApplication\Admin_Entity_Simple_Interface;
-use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
-use JetApplication\Entity_Simple;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement_StockCard;
@@ -32,17 +32,17 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_transfer_between_warehouses',
 	database_table_name: 'whm_transfer_between_warehouses',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses::class
 )]
-class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Simple implements
+class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Basic implements
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_Simple_Interface
+	Entity_Admin_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
-	use Admin_Entity_Simple_Trait;
+	use Entity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_SENT = 'sent';

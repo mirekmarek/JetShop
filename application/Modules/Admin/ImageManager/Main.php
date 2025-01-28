@@ -23,8 +23,6 @@ use JetApplication\EShop;
  */
 class Main extends Application_Module implements Admin_Managers_Image
 {
-	public const SHOP_SYNC_MODE = true;
-	
 	
 	/**
 	 * @var Image[]
@@ -109,7 +107,7 @@ class Main extends Application_Module implements Admin_Managers_Image
 		
 		foreach( $this->defined_images as $image ) {
 			if( $image->catchUploadForm() !== null ) {
-				if( static::SHOP_SYNC_MODE ) {
+				if( $this->getEshopSyncMode() ) {
 					$this->cloneImageToOtherShops( $image );
 				}
 				
@@ -120,7 +118,7 @@ class Main extends Application_Module implements Admin_Managers_Image
 				return true;
 			}
 			if( $image->catchImageDeleteForm() !== null ) {
-				if( static::SHOP_SYNC_MODE ) {
+				if( $this->getEshopSyncMode() ) {
 					$this->cloneImageToOtherShops( $image );
 				}
 				

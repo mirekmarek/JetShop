@@ -128,7 +128,7 @@ class Controller_Main extends MVC_Controller_Default
 	
 	public function edit_Action() : void
 	{
-		Http_Headers::movedTemporary( $this->order_dispatch->getEditURL() );
+		Http_Headers::movedTemporary( $this->order_dispatch->getEditUrl() );
 	}
 	
 	

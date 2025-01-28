@@ -9,17 +9,16 @@ namespace JetApplicationModule\Admin\Catalog\AccessoriesGroups;
 
 use Jet\Application_Module;
 use JetApplication\Accessories_Group;
-use JetApplication\Entity_Common;
+use JetApplication\Entity_Basic;
 use JetApplication\Admin_Managers_AccessoriesGroups;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_EntityManager_Common_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_AccessoriesGroups
 {
-	use Admin_EntityManager_Common_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'accesories-groups';
 	
@@ -29,14 +28,9 @@ class Main extends Application_Module implements Admin_Managers_AccessoriesGroup
 	public const ACTION_DELETE = 'delete_accessories_group';
 	
 	
-	public static function getEntityInstance(): Entity_Common|Admin_Entity_Common_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Accessories_Group();
-	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Catalog - products - accessories groups';
 	}
 	
 }

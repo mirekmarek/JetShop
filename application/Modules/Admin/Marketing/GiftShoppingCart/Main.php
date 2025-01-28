@@ -2,11 +2,10 @@
 namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
 
 use JetApplication\Admin_Managers_MarketingGiftsShoppingCart;
-use JetApplication\Admin_EntityManager_Marketing_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Entity_Marketing;
+use JetApplication\Entity_Basic;
 use JetApplication\Marketing_Gift_ShoppingCart;
 
 /**
@@ -14,7 +13,7 @@ use JetApplication\Marketing_Gift_ShoppingCart;
  */
 class Main extends Application_Module implements Admin_Managers_MarketingGiftsShoppingCart
 {
-	use Admin_EntityManager_Marketing_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'gifts-shopping-cart';
 
@@ -24,14 +23,9 @@ class Main extends Application_Module implements Admin_Managers_MarketingGiftsSh
 	public const ACTION_DELETE = 'delete_gift_shopping_cart';
 	
 	
-	public static function getEntityInstance(): Entity_Marketing|Admin_Entity_Marketing_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Marketing_Gift_ShoppingCart();
 	}
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Marketing - Gift from shopping cart';
-	}
-
 }

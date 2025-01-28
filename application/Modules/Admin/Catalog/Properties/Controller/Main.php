@@ -7,8 +7,8 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Application_Admin;
 use JetApplication\Property_Options_Option;
 use JetApplication\Entity_WithEShopData;
@@ -20,11 +20,15 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	protected ?Property_Options_Option $option = null;
 	
 	
+	public function getEntityNameReadable() : string
+	{
+		return 'Property';
+	}
 	
 	public function getTabs(): array
 	{
@@ -130,7 +134,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		} );
 	}
 	
-	protected function newItemFactory() : Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	protected function newItemFactory() : Entity_WithEShopData|Entity_Admin_Interface
 	{
 		$type = Http_Request::GET()->getString( key: 'type', valid_values: array_keys(Property::getTypesScope()));
 		if(!$type) {

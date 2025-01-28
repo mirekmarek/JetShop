@@ -10,14 +10,16 @@ use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
 use JetApplication\Entity_Basic;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasEShopRelation_Trait;
 
 /**
  *
  */
 #[DataModel_Definition]
-abstract class Core_Entity_Event extends Entity_WithEShopRelation
+abstract class Core_Entity_Event extends Entity_Basic implements Entity_HasEShopRelation_Interface
 {
+	use Entity_HasEShopRelation_Trait;
 	protected static string $handler_module_name_prefix = '';
 	
 	#[DataModel_Definition(
@@ -125,15 +127,6 @@ abstract class Core_Entity_Event extends Entity_WithEShopRelation
 	public static function setHandlerModuleNamePrefix( string $handler_module_name_prefix ): void
 	{
 		static::$handler_module_name_prefix = $handler_module_name_prefix;
-	}
-	
-	/**
-	 * @param int $id
-	 * @return static|null
-	 */
-	public static function get( int $id ) : static|null
-	{
-		return static::load( $id );
 	}
 	
 	/**

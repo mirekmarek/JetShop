@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_Entity_HasProductsRelation_Interface;
+
+interface Entity_HasProductsRelation_Interface extends Core_Entity_HasProductsRelation_Interface
+{
+}

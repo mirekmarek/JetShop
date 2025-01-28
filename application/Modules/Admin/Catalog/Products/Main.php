@@ -3,23 +3,21 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Auth;
 use Jet\Factory_MVC;
-use Jet\MVC;
 use Jet\Tr;
 use Jet\Application_Module;
+use JetApplication\Entity_Basic;
 use JetApplication\Product;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Product;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_WithEShopData;
 use JetApplication\Exports_Module_Controller_ProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 
 
 class Main extends Application_Module implements Admin_Managers_Product
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'products';
 
@@ -30,15 +28,6 @@ class Main extends Application_Module implements Admin_Managers_Product
 	public const ACTION_SET_PRICE = 'set_price';
 	public const ACTION_SET_AVAILABILITY = 'set_availability';
 	
-	
-	public function getProductEditURL( int $product_id ) : string
-	{
-		$page = MVC::getPage( static::ADMIN_MAIN_PAGE );
-		
-		$get_params['id'] = $product_id;
-		
-		return $page->getURL([], $get_params);
-	}
 	
 	public function renderSelectWidget( string $on_select,
 	                                    int $selected_product_id=0,
@@ -57,19 +46,14 @@ class Main extends Application_Module implements Admin_Managers_Product
 			object_type_filter: $only_type_filter,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getAdminTitle(),
-			selected_entity_edit_URL: $selected?->getEditURL()
+			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 	}
 	
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Product();
-	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'product';
 	}
 	
 	public static function getCurrentUserCanSetPrice() : bool

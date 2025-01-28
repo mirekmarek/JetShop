@@ -14,29 +14,30 @@ use Jet\Http_Request;
 use Jet\Navigation_Breadcrumb;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Application_Admin;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Module;
 use JetApplication\Payment_Method_Option;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	protected ?Payment_Method_Option $option = null;
 	
+	public function getEntityNameReadable() : string
+	{
+		return 'Payment method';
+	}
 	
 	public function getTabs(): array
 	{
-		$_tabs = [
-			'main'    => Tr::_( 'Main data' ),
-			'images'  => Tr::_( 'Images' ),
-		];
+		$tabs = parent::getTabs();
 		
 		if(!$this->option) {
-			$_tabs['options'] = Tr::_( 'Options' );
+			$tabs['options'] = Tr::_( 'Options' );
 		}
 		
-		return $_tabs;
+		return $tabs;
 	}
 	
 	public function setupListing(): void

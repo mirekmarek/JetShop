@@ -7,13 +7,15 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Property;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Product_Parameter;
 use JetApplication\ProductFilter;
 use JetApplication\Property;
@@ -28,12 +30,21 @@ use JetApplication\KindOfProduct_Property;
 	name: 'property',
 	database_table_name: 'properties',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_Property::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_Property::class,
+	description_mode: true,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
 )]
-abstract class Core_Property extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
+abstract class Core_Property extends Entity_WithEShopData implements
+	FulltextSearch_IndexDataProvider,
+	Entity_Admin_WithEShopData_Interface,
+	Entity_HasImages_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	public const PROPERTY_TYPE_NUMBER  = 'Number';
 	public const PROPERTY_TYPE_BOOL    = 'Bool';
@@ -432,23 +443,6 @@ abstract class Core_Property extends Entity_WithEShopData implements FulltextSea
 		}
 		
 		$this->getTypeInstance()->setupForm( $form );
-	}
-	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image')
-		);
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram image')
-		);
-	}
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
 	}
 	
 }

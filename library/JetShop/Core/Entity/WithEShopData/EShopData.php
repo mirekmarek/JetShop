@@ -1,7 +1,6 @@
 <?php
 namespace JetShop;
 
-use Jet\Data_Text;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Definition_Model_Related_1toN;
@@ -9,22 +8,37 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 use Jet\Form;
 use Jet\Locale;
-use Jet\Tr;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasEShopRelation_Trait;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\Entity_WithEShopData_EShopData;
-use JetApplication\EShop_Managers;
 use JetApplication\EShops;
 use JetApplication\EShop;
-use JetApplication\Timer_Action;
 
 #[DataModel_Definition(
 	database_table_name: '',
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Entity_WithEShopData::class
 )]
-abstract class Core_Entity_WithEShopData_EShopData extends DataModel_Related_1toN
+abstract class Core_Entity_WithEShopData_EShopData extends DataModel_Related_1toN implements
+	Entity_HasEShopRelation_Interface
 {
-	protected ?EShop $_eshop = null;
+	use Entity_HasEShopRelation_Trait;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true,
+		is_id: true
+	)]
+	protected string $eshop_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_LOCALE,
+		is_key: true,
+		is_id: true
+	)]
+	protected ?Locale $locale = null;
 	
 	
 	#[DataModel_Definition(
@@ -33,22 +47,6 @@ abstract class Core_Entity_WithEShopData_EShopData extends DataModel_Related_1to
 		related_to: 'main.id',
 	)]
 	protected int $entity_id = 0;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-		is_id: true,
-	)]
-	protected string $eshop_code = '';
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_LOCALE,
-		is_key: true,
-		is_id: true,
-	)]
-	protected ?Locale $locale = null;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -213,34 +211,6 @@ abstract class Core_Entity_WithEShopData_EShopData extends DataModel_Related_1to
 		return $where;
 	}
 	
-	
-	
-	public function setEshop( EShop $eshop ) : void
-	{
-		$this->eshop_code = $eshop->getCode();
-		$this->locale = $eshop->getLocale();
-		$this->_eshop = $eshop;
-	}
-	
-	public function getEshopCode() : string
-	{
-		return $this->eshop_code;
-	}
-	
-	public function getEshop() : EShop
-	{
-		if(!$this->_eshop) {
-			$this->_eshop = EShops::get( $this->getEshopKey() );
-		}
-		
-		return $this->_eshop;
-	}
-	
-	public function getEshopKey() : string
-	{
-		return $this->eshop_code.'_'.$this->locale;
-	}
-	
 	public function getId() : int
 	{
 		return $this->getEntityId();
@@ -350,163 +320,6 @@ abstract class Core_Entity_WithEShopData_EShopData extends DataModel_Related_1to
 		}
 		
 		return parent::createForm( $form_name, $only_fields, $exclude_fields );
-	}
-	
-	public function _generateURLPathPart( string $name, $type ) : string
-	{
-		$name = Data_Text::removeAccents( $name );
-		
-		$name = strtolower($name);
-		$name = preg_replace('/([^0-9a-zA-Z ])+/', '', $name);
-		$name = preg_replace( '/([[:blank:]])+/', '-', $name);
-		
-		
-		$min_len = 2;
-		
-		$parts = explode('-', $name);
-		$valid_parts = array();
-		foreach( $parts as $value ) {
-			
-			if (strlen($value) > $min_len) {
-				$valid_parts[] = $value;
-			}
-		}
-		
-		$name = count($valid_parts) > 1 ? implode('-', $valid_parts) : $name;
-		
-		return $name.'-'.$type.'-'.$this->getEntityId();
-	}
-	
-	public function _generateURLParam( string $name,string $url_param_property='url_param' ) : string
-	{
-		$name = Data_Text::removeAccents( $name );
-		
-		$name = strtolower($name);
-		$name = preg_replace('/([^0-9a-zA-Z ])+/', '', $name);
-		$name = preg_replace( '/([[:blank:]])+/', '-', $name);
-		
-		
-		$min_len = 2;
-		
-		$parts = explode('-', $name);
-		$valid_parts = array();
-		foreach( $parts as $value ) {
-			
-			if (strlen($value) > $min_len) {
-				$valid_parts[] = $value;
-			}
-		}
-		
-		$url_param_base = count($valid_parts) > 1 ? implode('-', $valid_parts) : $name;
-		$url_param = $url_param_base;
-		
-		$exists = function() use (&$url_param, $url_param_base, $url_param_property) : bool
-		{
-			$where = $this->getEshop()->getWhere();
-			$where[] = 'AND';
-			$where[$url_param_property]=$url_param;
-			$where[] = 'AND';
-			$where['entity_id !='] = $this->entity_id;
-			
-			return (bool)count(static::dataFetchCol(['entity_id'], $where));
-		};
-		
-		$suffix = 0;
-		while($exists()) {
-			$suffix++;
-			$url_param = $url_param_base.$suffix;
-		}
-		
-		return $url_param;
-		
-		
-	}
-	
-	public function getImage( string $image_class ) : string
-	{
-		return $this->{"image_{$image_class}"};
-	}
-	
-	public function setImage( string $image_class, $image ) : void
-	{
-		$this->{"image_{$image_class}"} = $image;
-	}
-	
-	public function getImageThumbnailUrl( string $image_class, int $max_w, int $max_h ): string
-	{
-		return EShop_Managers::Image()->getThumbnailUrl(
-			$this->getImage( $image_class ),
-			$max_w,
-			$max_h
-		);
-	}
-	
-	public function getImageUrl( string $image_class ): string
-	{
-		return EShop_Managers::Image()->getUrl(
-			$this->getImage( $image_class )
-		);
-	}
-	
-	
-	/**
-	 * @return Timer_Action[]
-	 */
-	public function getAvailableTimerActions() : array
-	{
-		$eshop = $this->getEshop();
-		
-		$activate = new class( $eshop ) extends Timer_Action {
-			public function __construct( EShop $eshop )
-			{
-				$this->setEshop( $eshop );
-			}
-			
-			public function getKey(): string
-			{
-				return 'activate';
-			}
-			
-			public function getTitle(): string
-			{
-				return Tr::_('Activate');
-			}
-			
-			public function perform( Entity_WithEShopData $entity, mixed $action_context ): bool
-			{
-				$entity->activateEShopData( $this->eshop );
-				return true;
-			}
-		};
-		
-		$deactivate = new class($eshop) extends Timer_Action {
-			public function __construct( EShop $eshop )
-			{
-				$this->setEshop( $eshop );
-			}
-			
-			public function getKey(): string
-			{
-				return 'deactivate';
-			}
-			
-			public function getTitle(): string
-			{
-				return Tr::_('Deactivate');
-			}
-			
-			public function perform( Entity_WithEShopData $entity, mixed $action_context ): bool
-			{
-				$entity->deactivateEShopData( $this->eshop );
-				return true;
-			}
-		};
-		
-		
-		return [
-			$activate->getKey() => $activate,
-			$deactivate->getKey() => $deactivate
-		];
 	}
 	
 }

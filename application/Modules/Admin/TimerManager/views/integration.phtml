@@ -20,13 +20,12 @@ echo $dialog->end();
 ?>
 <script>
 	const TimerManager = {
-		open: ( entity_type, entity_class, entity_id, eshop_key ) => {
+		open: ( entity_type, entity_class, entity_id ) => {
 			document.getElementById('timer_editing').src =
 				'<?=$this->getRaw('page_url')?>'
 				+'?entity_type='+encodeURIComponent(entity_type)
 				+'&entity_class='+encodeURIComponent(entity_class)
-				+'&entity_id='+entity_id
-				+'&eshop_key='+encodeURIComponent(eshop_key);
+				+'&entity_id='+entity_id;
 				
 			$('#timer_dialog').modal('show');
 		}

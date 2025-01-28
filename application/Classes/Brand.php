@@ -5,7 +5,7 @@ use Jet\DataModel_Definition;
 use JetShop\Core_Brand;
 
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class Brand extends Core_Brand {
 
 }

@@ -15,7 +15,7 @@ use Jet\DataListing_Filter;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
 use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Admin_Entity_Interface;
+use JetApplication\Entity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Interface;
 use JetApplication\Entity_Basic;
 
@@ -24,7 +24,7 @@ use JetApplication\Entity_Basic;
  */
 class Main extends Application_Module implements Admin_Managers_Entity_Listing
 {
-	protected Admin_Entity_Interface $entity;
+	protected Entity_Admin_Interface $entity;
 	protected Admin_EntityManager_Interface $entity_manager;
 	
 	protected Listing $listing;
@@ -60,7 +60,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 		
 	}
 	
-	public function getEntity(): Admin_Entity_Interface
+	public function getEntity(): Entity_Admin_Interface
 	{
 		return $this->entity;
 	}

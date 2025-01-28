@@ -10,15 +10,15 @@ use Jet\Form_Field_Date;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_Invoice;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Entity_AccountingDocument;
 use JetApplication\Entity_Price;
 use JetApplication\Invoice;
 use JetApplication\Invoice_VATOverviewItem;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\Invoice_Item;
 use JetApplication\Order;
@@ -28,15 +28,15 @@ use JetApplication\Payment_Kind;
 	name: 'invoice',
 	database_table_name: 'invoices',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_Invoice::class
 )]
 abstract class Core_Invoice extends Entity_AccountingDocument implements
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_WithEShopRelation_Interface
+	Entity_Admin_Interface
 {
-	use Admin_Entity_WithEShopRelation_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL

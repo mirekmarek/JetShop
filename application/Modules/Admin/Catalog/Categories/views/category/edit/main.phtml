@@ -26,7 +26,7 @@ $editable = !$form->getIsReadonly();
 <?=$this->render('lj_start')?>
 	<br>
 
-<?=Admin_Managers::EntityEdit_WithEShopData()->renderEntityActivation( $category, !$form->getIsReadonly() )?>
+<?=Admin_Managers::EntityEdit()->renderEntityActivation( $category, !$form->getIsReadonly() )?>
 
 
 <div class="row" style="align-items: center">
@@ -67,10 +67,10 @@ $editable = !$form->getIsReadonly();
 
 <?=$form->start();?>
 
-	<?=Admin_Managers::EntityEdit_WithEShopData()->renderEntityFormCommonFields( $form );?>
+	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
 
 	<?php if($category->getDescriptionMode()):
-		echo Admin_Managers::EntityEdit_WithEShopData()->renderDescriptionBlocks(
+		echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
 			form: $form,
 			renderer: function( Locale $locale ) use ($category, $form) : void {
 				$locale = $locale->toString();
@@ -89,7 +89,7 @@ $editable = !$form->getIsReadonly();
 					</fieldset>
 			<?php });
 	else:
-		echo Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
+		echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( EShop $eshop, string $eshop_key ) use ($category, $form) : void {
 				?>

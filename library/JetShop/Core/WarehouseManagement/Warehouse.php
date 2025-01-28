@@ -11,8 +11,8 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_Entity_Common_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_WarehouseManagementWarehouses;
 use JetApplication\Context;
 use JetApplication\Currencies;
@@ -24,19 +24,19 @@ use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_StockMovement;
 use JetApplication\WarehouseManagement_StockMovement_Type;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'warehouse',
 	database_table_name: 'whm_warehouses',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_WarehouseManagementWarehouses::class
 )]
-class Core_WarehouseManagement_Warehouse extends Entity_Common implements Admin_Entity_Common_Interface
+class Core_WarehouseManagement_Warehouse extends Entity_Common implements Entity_Admin_Interface
 {
-	use Admin_Entity_Common_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

@@ -8,19 +8,18 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Simple_Interface;
-use JetApplication\Admin_EntityManager_Simple_Trait;
+use JetApplication\Admin_EntityManager_Interface;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
-use JetApplication\Entity_Simple;
-use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\Entity_Basic;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_Simple_Interface, Admin_Managers_ReceiptOfGoods
+class Main extends Application_Module implements Admin_EntityManager_Interface, Admin_Managers_ReceiptOfGoods
 {
-	use Admin_EntityManager_Simple_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'receipt-of-goods';
 	
@@ -30,14 +29,9 @@ class Main extends Application_Module implements Admin_EntityManager_Simple_Inte
 	public const ACTION_DELETE = 'delete_receipt_of_goods';
 	
 	
-	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new WarehouseManagement_ReceiptOfGoods();
-	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Warehouse Management - Receipt Of Goods';
 	}
 	
 	public static function getCurrentUserCanDelete() : bool

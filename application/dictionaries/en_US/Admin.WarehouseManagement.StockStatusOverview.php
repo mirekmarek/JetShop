@@ -87,4 +87,6 @@ return [
 	'Transported to another warehouse' => '',
 	'Loss or destruction' => '',
 	'Loss or damage' => '',
+	'CSV' => '',
+	'XLSX' => '',
 ];

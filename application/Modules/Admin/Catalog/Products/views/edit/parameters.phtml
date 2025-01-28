@@ -61,7 +61,7 @@ $show = function( Product $product, string $main_prefix = '' ) use ($form, $prop
 				}
 				?>
 				<fieldset>
-					<legend><a href="<?=$set_item_product->getEditURL()?>"><?=$set_item_product->getAdminTitle()?></a></legend>
+					<legend><a href="<?=$set_item_product->getEditUrl()?>"><?=$set_item_product->getAdminTitle()?></a></legend>
 					<?php $show( $set_item_product, '/set_item/'. $set_item_product->getId()  ); ?>
 				</fieldset>
 				<?php

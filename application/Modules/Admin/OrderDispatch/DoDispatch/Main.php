@@ -9,11 +9,10 @@ namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_OrderDispatch;
 use JetApplication\Context;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\OrderDispatch;
 
 /**
@@ -21,7 +20,7 @@ use JetApplication\OrderDispatch;
  */
 class Main extends Application_Module implements Admin_Managers_OrderDispatch
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'do-dispatch';
 	
@@ -55,7 +54,7 @@ class Main extends Application_Module implements Admin_Managers_OrderDispatch
 		return $view->render('recipient');
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new OrderDispatch();
 	}

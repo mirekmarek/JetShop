@@ -1,0 +1,32 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\WithEShopData;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var Entity_WithEShopData|Entity_Admin_Interface     $item
+ */
+$item = $this->getRaw('item');
+
+$eshops = EShops::getListSorted();
+
+if($item->isActive()):
+	?><span class="badge badge-success"> <?=Tr::_('Active')?> </span> <?php
+else:
+	?><span class="badge badge-danger"><?=Tr::_('Inactive')?></span> <?php
+endif;
+
+if( count($eshops)>1 ):
+	foreach( $eshops as $eshop):
+		if($item->getEshopData($eshop)->isActiveForShop()):
+			?><span class="badge badge-success"><?=$eshop->getName()?></span> <?php
+		else:
+			?><span class="badge badge-danger"><?=$eshop->getName()?></span> <?php
+		endif;
+	endforeach;
+endif;

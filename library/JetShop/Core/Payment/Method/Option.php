@@ -3,11 +3,12 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\DataModel;
 
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_WithEShopData;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Payment_Method_Option_EShopData;
 use JetApplication\EShops;
 use JetApplication\EShop;
@@ -16,10 +17,20 @@ use JetApplication\EShop;
 	name: 'payment_methods_options',
 	database_table_name: 'payment_methods_options',
 )]
-#[JetShopEntity_Definition]
-abstract class Core_Payment_Method_Option extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface {
+#[Entity_Definition(
+	images: [
+		'icon1' => 'Icon 1',
+		'icon2' => 'Icon 2',
+		'icon3' => 'Icon 3',
+	]
+)]
+abstract class Core_Payment_Method_Option extends Entity_WithEShopData implements
+	Entity_HasImages_Interface,
+	Entity_Admin_WithEShopData_Interface
+{
 	
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_Admin_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -91,26 +102,9 @@ abstract class Core_Payment_Method_Option extends Entity_WithEShopData implement
 		return $res;
 	}
 	
-	public function getEditURL( array $get_params=[] ) : string
+	public function getEditUrl( array $get_params=[] ) : string
 	{
 		return '';
-	}
-	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'icon1',
-			image_title:  Tr::_('Icon 1'),
-		);
-		$this->defineImage(
-			image_class:  'icon2',
-			image_title:  Tr::_('Icon 3'),
-		);
-		$this->defineImage(
-			image_class:  'icon3',
-			image_title:  Tr::_('Icon 3'),
-		);
-		
 	}
 	
 }

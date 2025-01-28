@@ -5,10 +5,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\Accessories_Group_Product;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_Entity_Common_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Entity_Common;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Product;
 use JetApplication\Admin_Managers_AccessoriesGroups;
 
@@ -16,12 +16,12 @@ use JetApplication\Admin_Managers_AccessoriesGroups;
 	name: 'accessories_group',
 	database_table_name: 'accessories_groups',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_AccessoriesGroups::class
 )]
-abstract class Core_Accessories_Group extends Entity_Common implements Admin_Entity_Common_Interface
+abstract class Core_Accessories_Group extends Entity_Common implements Entity_Admin_Interface
 {
-	use Admin_Entity_Common_Trait;
+	use Entity_Admin_Trait;
 	
 	/**
 	 * @var Accessories_Group_Product[]
@@ -32,10 +32,6 @@ abstract class Core_Accessories_Group extends Entity_Common implements Admin_Ent
 	)]
 	protected array $products = [];
 	
-	public function defineImages() : void
-	{
-	
-	}
 	
 	public function getProductIds() : array
 	{

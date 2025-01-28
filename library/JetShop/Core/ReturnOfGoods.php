@@ -10,12 +10,14 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\ReturnOfGoods_Event;
@@ -44,14 +46,16 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
 )]
 abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements
+	Entity_HasGet_Interface,
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_WithEShopRelation_Interface
+	Entity_Admin_Interface
 {
+	use Entity_HasGet_Trait;
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
 	
@@ -59,7 +63,7 @@ abstract class Core_ReturnOfGoods extends Entity_WithEShopRelation implements
 	use ReturnOfGoods_Trait_Events;
 	use ReturnOfGoods_Trait_Changes;
 	
-	use Admin_Entity_WithEShopRelation_Trait;
+	use Entity_Admin_Trait;
 	
 	
 	#[DataModel_Definition(

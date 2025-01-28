@@ -9,11 +9,10 @@ namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_OrderPersonalReceipt;
 use JetApplication\Context;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\OrderPersonalReceipt;
 
 /**
@@ -21,7 +20,7 @@ use JetApplication\OrderPersonalReceipt;
  */
 class Main extends Application_Module implements Admin_Managers_OrderPersonalReceipt
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'do-personal-receipt';
 	
@@ -47,7 +46,7 @@ class Main extends Application_Module implements Admin_Managers_OrderPersonalRec
 		
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new OrderPersonalReceipt();
 	}

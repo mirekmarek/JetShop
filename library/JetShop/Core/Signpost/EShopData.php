@@ -5,7 +5,11 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_HasURL_Interface;
+use JetApplication\Entity_HasURL_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Signpost;
 use JetApplication\Signpost_Category;
@@ -15,7 +19,13 @@ use JetApplication\Signpost_Category;
 	database_table_name: 'signposts_eshop_data',
 	parent_model_class: Signpost::class
 )]
-abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
+#[Entity_Definition(
+	URL_template: '%NAME%-t-%ID%'
+)]
+abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasURL_Interface, Entity_HasImages_Interface
+{
+	use Entity_HasImages_Trait;
+	use Entity_HasURL_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -25,7 +35,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -39,7 +49,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -52,7 +62,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $URL_path_part = '';
@@ -79,7 +89,13 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 	
 	protected ?array $category_ids = null;
 	
-
+	
+	public function getURLNameDataSource(): string
+	{
+		return $this->name;
+	}
+	
+	
 	public function getName(): string
 	{
 		return $this->name;
@@ -94,7 +110,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 		$this->name = $name;
 		$this->generateURLPathPart();
 	}
-
+	
 	
 	
 	
@@ -107,31 +123,15 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 	{
 		$this->description = $description;
 	}
-
-	public function getURL() : string
-	{
-		return $this->getEshop()->getURL( [$this->URL_path_part] );
-	}
-	
-
-	public function getURLPathPart(): string
-	{
-		return $this->URL_path_part;
-	}
-	
-	public function setURLPathPart( string $URL_path_part ): void
-	{
-	}
 	
 	
 	
-
 	public function getImageMain(): string
 	{
 		return $this->image_main;
 	}
 	
-
+	
 	public function setImageMain( string $image_main ): void
 	{
 		$this->image_main = $image_main;
@@ -142,13 +142,13 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 		return $this->getImageThumbnailUrl('main', $max_w, $max_h);
 	}
 	
-
+	
 	public function getImagePictogram(): string
 	{
 		return $this->image_pictogram;
 	}
 	
-
+	
 	public function setImagePictogram( string $image_pictogram ): void
 	{
 		$this->image_pictogram = $image_pictogram;
@@ -158,8 +158,6 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 	{
 		return $this->getImageThumbnailUrl('pictogram', $max_w, $max_h);
 	}
-
-	
 	
 	
 	
@@ -172,7 +170,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 	{
 		$this->priority = $priority;
 	}
-
+	
 	
 	public function getCategoryIds() : array|bool
 	{
@@ -187,32 +185,4 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData {
 		
 		return $this->category_ids;
 	}
-	
-	public function afterAdd(): void
-	{
-		$this->generateURLPathPart();
-	}
-	
-	
-	public function generateURLPathPart() : void
-	{
-		if(!$this->entity_id) {
-			return;
-		}
-		
-		$this->URL_path_part = $this->_generateURLPathPart( $this->getName(), 't' );
-		
-		$where = $this->getEshop()->getWhere();
-		$where[] = 'AND';
-		$where['entity_id'] = $this->entity_id;
-		
-		
-		static::updateData(
-			['URL_path_part'=>$this->URL_path_part],
-			$where
-		);
-		
-	}
-	
-	
 }

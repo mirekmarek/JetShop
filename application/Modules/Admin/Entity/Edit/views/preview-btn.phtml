@@ -1,0 +1,64 @@
+<?php
+use Jet\UI;
+use Jet\MVC_View;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasURL_Interface;
+use JetApplication\Entity_WithEShopData;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ */
+
+$item = $this->getRaw('item');
+
+$URLs = [];
+
+if($item instanceof Entity_WithEShopData){
+	foreach( EShops::getListSorted() as $eshop ) {
+		$sd = $item->getEshopData($eshop);
+		if($sd instanceof Entity_HasURL_Interface) {
+			$URLs[$eshop->getKey()] = $sd->getURL(['cache_prevent_'=>time()]);
+		}
+	}
+} else {
+	if(
+		$item instanceof Entity_HasURL_Interface &&
+		$item instanceof Entity_HasEShopRelation_Interface
+	) {
+		$URLs[$item->getEshopKey()] = $item->getURL(['cache_prevent_'=>time()]);
+	}
+}
+
+if(!$URLs) {
+	return;
+}
+
+
+if(count($URLs)>1):
+	?>
+	
+	<div class="dropdown">
+		<button class="btn btn-info dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('eye');?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<?php foreach( $URLs as $eshop_key=>$URL ):
+				$eshop = EShops::get( $eshop_key );
+				?>
+					<a class="dropdown-item" href="<?=$URL?>?cache_prevent_<?=uniqid()?>" target="_blank">
+						<?=UI::icon('arrow-up-right-from-square')->addCustomCssStyle('opacity:0.5');?>
+						<?=$eshop->getName()?>
+					</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+<?php
+else:
+	foreach( $URLs as $eshop_key=>$URL ):
+	?>
+		<a href="<?=$URL?>" target="_blank" class="btn btn-info"><?=UI::icon('eye');?></a>
+	<?php
+	endforeach;
+endif;
+?>

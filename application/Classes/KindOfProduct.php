@@ -9,7 +9,7 @@ use Jet\DataModel_Definition;
 use JetShop\Core_KindOfProduct;
 
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class KindOfProduct extends Core_KindOfProduct
 {
 

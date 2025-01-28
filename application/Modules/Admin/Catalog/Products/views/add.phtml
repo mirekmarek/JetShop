@@ -44,7 +44,7 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] 
 		<?=$form->field('brand_id')?>
 		<?=$form->field('supplier_id')?>
 		
-		<?=Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
+		<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( EShop $eshop, string $eshop_key ) use ($product, $form) : void {
 				?>

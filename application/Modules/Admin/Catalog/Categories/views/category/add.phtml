@@ -25,9 +25,9 @@ $form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
 <br/>
 <?=$form->start();?>
 
-	<?=Admin_Managers::EntityEdit_WithEShopData()->renderEntityFormCommonFields( $form );?>
+	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
 
-	<?=Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
+	<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
 		form: $form,
 		renderer: function( EShop $eshop, string $eshop_key ) use ($new_category, $form) : void {
 			?>

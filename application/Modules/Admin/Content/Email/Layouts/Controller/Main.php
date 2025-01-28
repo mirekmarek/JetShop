@@ -7,28 +7,14 @@
  */
 namespace JetApplicationModule\Admin\Content\Email\Layouts;
 
-use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	protected function getTabs() : array
+	public function getEntityNameReadable() : string
 	{
-		return [
-			'main'   => Tr::_( 'Main data' ),
-		];
+		return 'E-mail layout';
 	}
-	
-	public function setupListing(): void
-	{
-		$this->listing_manager->setDefaultColumnsSchema([
-			'id',
-			'internal_name',
-			'internal_code',
-			'internal_notes'
-		]);
-	}
-	
 	
 }

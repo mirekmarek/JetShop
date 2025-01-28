@@ -13,9 +13,14 @@ use Jet\Http_Request;
 use JetApplication\Content_Article_Author_EShopData;
 use JetApplication\Content_Article_Category;
 use JetApplication\Content_Article_KindOfArticle;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_HasURL_Interface;
+use JetApplication\Entity_HasURL_Trait;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Content_Article;
 use JetApplication\EShop;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
@@ -23,8 +28,17 @@ use JetApplication\EShop;
 	database_table_name: 'content_articles_eshop_data',
 	parent_model_class: Content_Article::class
 )]
-abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShopData
+#[Entity_Definition(
+	URL_template: '%NAME%-a-%ID%'
+)]
+
+abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShopData implements
+	Entity_HasURL_Interface,
+	Entity_HasImages_Interface
 {
+	use Entity_HasURL_Trait;
+	use Entity_HasImages_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -105,37 +119,36 @@ abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShop
 	)]
 	protected string $image_header_2 = '';
 	
-	public function afterAdd(): void
+	public function getURLNameDataSource(): string
 	{
-		parent::afterAdd();
-		$this->generateURLPathPart();
+		return $this->URL_path_part ? : $this->title;
 	}
 	
 	public function getPriority(): int
 	{
 		return $this->priority;
 	}
-
+	
 	public function setPriority( int $priority ): void
 	{
 		$this->priority = $priority;
 	}
-
+	
 	public function getKindId(): int
 	{
 		return $this->kind_id;
 	}
-
+	
 	public function setKindId( int $kind_id ): void
 	{
 		$this->kind_id = $kind_id;
 	}
-
+	
 	public function getAuthorId(): int
 	{
 		return $this->author_id;
 	}
-
+	
 	public function setAuthorId( int $author_id ): void
 	{
 		$this->author_id = $author_id;
@@ -170,12 +183,12 @@ abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShop
 	{
 		return $this->seo_title;
 	}
-
+	
 	public function setSeoTitle( string $seo_title ): void
 	{
 		$this->seo_title = $seo_title;
 	}
-
+	
 	public function getPerex(): string
 	{
 		return $this->perex;
@@ -185,7 +198,7 @@ abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShop
 	{
 		$this->perex = $perex;
 	}
-
+	
 	public function setText( string $value ) : void
 	{
 		$this->text = $value;
@@ -248,33 +261,11 @@ abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShop
 		$this->URL_path_part = $URL_path_part;
 	}
 	
-	public function getURL() : string
-	{
-		return $this->getEshop()->getURL( [$this->URL_path_part] );
-	}
-	
-	public function generateURLPathPart() : void
-	{
-		if(!$this->entity_id) {
-			return;
-		}
-		
-		$this->URL_path_part = $this->_generateURLPathPart( $this->getTitle(), 'a' );
-		
-		$where = $this->getEshop()->getWhere();
-		$where[] = 'AND';
-		$where['entity_id'] = $this->entity_id;
-		
-		static::updateData(
-			['URL_path_part'=>$this->URL_path_part],
-			$where
-		);
-		
-	}
-	
 	public function getPreviewURL() : string
 	{
-		return $this->getEshop()->getURL( [$this->getURLPathPart()], GET_params: ['pvk' =>$this->generatePreviewKey()] );
+		return $this->getURL([
+			'pvk' =>$this->generatePreviewKey()
+		]);
 	}
 	
 	public function generatePreviewKey() : string
@@ -302,7 +293,7 @@ abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShop
 	{
 		return Http_Request::GET()->getString('pvk')==$this->generatePreviewKey();
 	}
-
+	
 	public function getAuthor() : ?Content_Article_Author_EShopData
 	{
 		if($this->author_id) {

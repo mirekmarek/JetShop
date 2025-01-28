@@ -8,10 +8,9 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
 
 use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Simple_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses;
-use JetApplication\Entity_Simple;
-use JetApplication\Admin_Entity_Simple_Interface;
+use JetApplication\Entity_Basic;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 /**
@@ -19,7 +18,7 @@ use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
  */
 class Main extends Application_Module implements Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses
 {
-	use Admin_EntityManager_Simple_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'transfer-between-warehouses';
 	
@@ -29,14 +28,9 @@ class Main extends Application_Module implements Admin_Managers_WarehouseManagem
 	public const ACTION_DELETE = 'delete_transfer_between_warehouses';
 	
 	
-	public static function getEntityInstance(): Entity_Simple|Admin_Entity_Simple_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new WarehouseManagement_TransferBetweenWarehouses();
-	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Warehouse Management - Transfer between warehouses';
 	}
 	
 	public static function getCurrentUserCanDelete() : bool

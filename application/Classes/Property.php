@@ -10,7 +10,7 @@ use JetShop\Core_Property;
  *
  */
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class Property extends Core_Property {
 
 

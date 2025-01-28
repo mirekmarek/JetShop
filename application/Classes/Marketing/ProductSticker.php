@@ -10,6 +10,6 @@ use JetShop\Core_Marketing_ProductSticker;
  *
  */
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class Marketing_ProductSticker extends Core_Marketing_ProductSticker {
 }

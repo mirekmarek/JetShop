@@ -11,7 +11,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\KindOfProduct;
 use JetApplication\KindOfProduct_Property;
@@ -31,8 +33,9 @@ use JetApplication\EShop;
 	database_table_name: 'kind_of_product_eshop_data',
 	parent_model_class: KindOfProduct::class,
 )]
-abstract class Core_KindOfProduct_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_KindOfProduct_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
 {
+	use Entity_HasImages_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -42,7 +45,7 @@ abstract class Core_KindOfProduct_EShopData extends Entity_WithEShopData_EShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -74,7 +77,7 @@ abstract class Core_KindOfProduct_EShopData extends Entity_WithEShopData_EShopDa
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -93,7 +96,7 @@ abstract class Core_KindOfProduct_EShopData extends Entity_WithEShopData_EShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Variant select description:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $variant_select_description = '';
@@ -106,7 +109,7 @@ abstract class Core_KindOfProduct_EShopData extends Entity_WithEShopData_EShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Similar product select description:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $similar_product_select_description = '';

@@ -6,8 +6,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_Order;
 use JetApplication\Availabilities;
 use JetApplication\Availability;
@@ -16,8 +16,10 @@ use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
 use JetApplication\Entity_WithEShopRelation;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
@@ -47,15 +49,17 @@ use JetApplication\Context_ProvidesContext_Trait;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_Order::class
 )]
 abstract class Core_Order extends Entity_WithEShopRelation implements
+	Entity_HasGet_Interface,
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_WithEShopRelation_Interface
+	Entity_Admin_Interface
 {
-	use Admin_Entity_WithEShopRelation_Trait;
+	use Entity_HasGet_Trait;
+	use Entity_Admin_Trait;
 	
 	
 	use Context_ProvidesContext_Trait;

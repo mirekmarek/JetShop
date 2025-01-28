@@ -9,7 +9,6 @@ namespace JetApplicationModule\EShop\Catalog;
 
 
 use Jet\ErrorPages;
-use Jet\Http_Headers;
 use Jet\MVC;
 use JetApplication\Brand_EShopData;
 
@@ -33,11 +32,9 @@ trait Controller_Main_Brand
 		
 		if(static::$brand) {
 			
-			if(static::$brand->getURLPathPart()!=$URL_path ) {
-				MVC::getRouter()->setIsRedirect( static::$brand->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
+			if(!static::$brand->checkURL( $URL_path )) {
 				return false;
 			}
-			
 			if(!static::$brand->isActive()) {
 				return 'brand_not_active';
 			} else {

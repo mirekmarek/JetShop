@@ -4,7 +4,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Property_Options_Option;
 
@@ -13,8 +15,9 @@ use JetApplication\Property_Options_Option;
 	database_table_name: 'properties_options_eshop_data',
 	parent_model_class: Property_Options_Option::class
 )]
-abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
 {
+	use Entity_HasImages_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -38,7 +41,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Filter label:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $filter_label = '';
@@ -51,7 +54,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Product detail label:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $product_detail_label = '';
@@ -64,7 +67,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $url_param = '';
@@ -77,7 +80,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -134,7 +137,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 			return;
 		}
 		$this->filter_label = $filter_label;
-		$this->url_param = $this->_generateURLParam( $this->filter_label );
+		//TODO: $this->url_param = $this->_generateURLParam( $this->filter_label );
 		
 	}
 

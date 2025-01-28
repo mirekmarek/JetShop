@@ -14,26 +14,26 @@ use Jet\Form_Field;
 
 use Jet\Form_Field_Input;
 use Jet\MVC;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers_ContentInfoPages;
 use JetApplication\Content_InfoPage_EShopData;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShops;
 use JetApplication\EShop;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'content_info_page',
 	database_table_name: 'content_info_page',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_ContentInfoPages::class
 )]
-abstract class Core_Content_InfoPage extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
+abstract class Core_Content_InfoPage extends Entity_WithEShopData implements Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -220,11 +220,6 @@ abstract class Core_Content_InfoPage extends Entity_WithEShopData implements Adm
 		}
 		
 		return true;
-	}
-	
-	
-	public function defineImages() : void
-	{
 	}
 	
 }

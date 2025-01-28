@@ -230,4 +230,5 @@ return [
 	'General' => '',
 	'Gift' => '',
 	'e-shop' => '',
+	'Marketing - Automatic offer <b>%ITEM_NAME%</b> has been updated' => '',
 ];

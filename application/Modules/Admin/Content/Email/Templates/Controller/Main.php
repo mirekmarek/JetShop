@@ -14,23 +14,22 @@ use Jet\Mailing;
 use Jet\MVC_Layout;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateText;
 use JetApplication\EShops;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	/**
 	 * @var EMail_Template[]
 	 */
 	protected array $templates;
 	
-	protected function getTabs() : array
+	
+	public function getEntityNameReadable() : string
 	{
-		return [
-			'main'   => Tr::_( 'Main data' ),
-		];
+		return 'E-mail template';
 	}
 	
 	public function setupListing(): void
@@ -156,7 +155,6 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 		echo $eml;
 		
 		Application::end();
-
 	}
 	
 }

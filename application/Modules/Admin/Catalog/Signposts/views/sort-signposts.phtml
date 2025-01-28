@@ -27,7 +27,7 @@ echo $dialog->start();
 				<div class="sortable-item card card-body" data-id="<?=$sp->getId()?>" style="margin: 10px;padding: 5px;">
 					<div style="display: flex;align-items: center;gap: 20px;">
 						<?=UI::icon('arrows-v')?>
-						<a href="<?=$sp->getEditURL()?>"><?=$sp->getAdminTitle()?></a>
+						<a href="<?=$sp->getEditUrl()?>"><?=$sp->getAdminTitle()?></a>
 					</div>
 				</div>
 			<?php endforeach; ?>

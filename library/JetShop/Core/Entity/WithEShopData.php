@@ -1,88 +1,41 @@
 <?php
 namespace JetShop;
 
-use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Definition_Property_DataModel;
 use Jet\Form_Definition;
-use Jet\Form_Field;
 use Jet\Logger;
+use Jet\Tr;
 use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasActivation_Interface;
+use JetApplication\Entity_HasActivation_Trait;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
+use JetApplication\Entity_HasInternalParams_Interface;
+use JetApplication\Entity_HasInternalParams_Trait;
+use JetApplication\Entity_HasTimer_Interface;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use JetApplication\Timer_Action;
 
 #[DataModel_Definition]
-abstract class Core_Entity_WithEShopData extends Entity_Basic
+abstract class Core_Entity_WithEShopData extends Entity_Basic implements
+	Entity_HasInternalParams_Interface,
+	Entity_HasGet_Interface,
+	Entity_HasActivation_Interface,
+	Entity_HasTimer_Interface
 {
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal name:'
-	)]
-	protected string $internal_name = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Internal code:',
-		error_messages: [
-			'code_used' => 'This code is already used'
-		]
-	)]
-	protected string $internal_code = '';
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 65536
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Internal notes:'
-	)]
-	protected string $internal_notes = '';
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL,
-	)]
-	protected bool $is_active = false;
-	
+	use Entity_HasInternalParams_Trait;
+	use Entity_HasGet_Trait;
+	use Entity_HasActivation_Trait;
 	
 	/**
 	 * @var Entity_WithEShopData_EShopData[]
 	 */
 	#[Form_Definition(is_sub_forms: true)]
 	protected array $eshop_data = [];
-	
-	protected static array $scope = [];
-	
-	protected static array $loaded_items = [];
-	
-	
-	public static function get( int $id ) : ?static
-	{
-		$key = get_called_class().':'.$id;
-		
-		if(!array_key_exists($key, static::$loaded_items)) {
-			$where['id'] = $id;
-			
-			static::$loaded_items[ $key ] = static::load( $where );
-		}
-		
-		
-		return static::$loaded_items[ $key ];
-	}
 	
 	public function __construct()
 	{
@@ -134,85 +87,11 @@ abstract class Core_Entity_WithEShopData extends Entity_Basic
 		}
 	}
 	
-	public static function internalCodeUsed( string $internal_code, int $skip_id=0 ) : bool
-	{
-		return (bool)static::dataFetchCol(['id'], [
-			'internal_code'=>$internal_code,
-			'AND',
-			'id !=' => $skip_id
-		]);
-	}
-	
-	public static function getScope() : array
-	{
-		if(isset(static::$scope[static::class])) {
-			return static::$scope[static::class];
-		}
-		
-		static::$scope[static::class] = static::dataFetchPairs(
-				select: [
-					'id',
-					'internal_name'
-				], order_by: ['internal_name']);
-		
-		return static::$scope[static::class];
-	}
-	
-	public static function getOptionsScope() : array
-	{
-		return [0=>'']+static::getScope();
-	}
-	
-	
 	
 	public function isActive() : bool
 	{
 		return $this->is_active;
 	}
-	
-	
-	public function getId() : int
-	{
-		return $this->id;
-	}
-	
-	
-	public function getInternalName(): string
-	{
-		return $this->internal_name;
-	}
-	
-	public function setInternalName( string $internal_name ): void
-	{
-		$this->internal_name = $internal_name;
-	}
-	
-	
-	public function getInternalCode() : string
-	{
-		return $this->internal_code;
-	}
-	
-	public function setInternalCode( string $internal_code ) : void
-	{
-		$this->internal_code = $internal_code;
-		foreach( EShops::getList() as $eshop ) {
-			$this->getEshopData( $eshop )->setInternalCode( $this->internal_code );
-		}
-		
-	}
-	
-	
-	public function getInternalNotes(): string
-	{
-		return $this->internal_notes;
-	}
-	
-	public function setInternalNotes( string $internal_notes ): void
-	{
-		$this->internal_notes = $internal_notes;
-	}
-	
 	
 	public function activate() : void
 	{
@@ -386,42 +265,127 @@ abstract class Core_Entity_WithEShopData extends Entity_Basic
 		return $this->eshop_data[$eshop->getKey()];
 	}
 	
-	
 	abstract public function getEshopData( ?EShop $eshop = null ): Entity_WithEShopData_EShopData;
 	
-	public function getAdminTitle() : string
+	public static function getEntityShopDataInstance() : Entity_WithEShopData_EShopData
 	{
-		$code = $this->internal_code?:$this->id;
+		$def = static::getDataModelDefinition();
 		
-		return $this->internal_name.' ('.$code.')';
+		/**
+		 * @var DataModel_Definition_Property_DataModel $prop
+		 */
+		$prop = $def->getProperty('eshop_data');
+		
+		$class = $prop->getValueDataModelClass();
+		
+		return new $class();
 	}
 	
-	public function afterAdd(): void
+	/**
+	 * @return Timer_Action[]
+	 */
+	public function getAvailableTimerActions() : array
 	{
-		parent::afterAdd();
+		$actions = [];
 		
-		if($this instanceof FulltextSearch_IndexDataProvider) {
-			$this->updateFulltextSearchIndex();
-		}
-	}
-	
-	public function afterUpdate(): void
-	{
-		parent::afterAdd();
+		$activate = new class() extends Timer_Action {
+			
+			public function getAction(): string
+			{
+				return 'activate';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Activate - master switch');
+			}
+			
+			public function perform( Entity_Basic|Entity_HasActivation_Interface $entity, mixed $action_context ): bool
+			{
+				$entity->activate();
+				return true;
+			}
+		};
+		$actions[$activate->getAction()] = $activate;
 		
-		if($this instanceof FulltextSearch_IndexDataProvider) {
-			$this->updateFulltextSearchIndex();
-		}
-	}
-	
-	
-	public function afterDelete(): void
-	{
-		parent::afterAdd();
+		$deactivate = new class() extends Timer_Action {
+			
+			public function getAction(): string
+			{
+				return 'deactivate';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Deactivate - master switch');
+			}
+			
+			public function perform( Entity_Basic|Entity_HasActivation_Interface $entity, mixed $action_context ): bool
+			{
+				$entity->deactivate();
+				return true;
+			}
+		};
+		$actions[$deactivate->getAction()] = $deactivate;
 		
-		if($this instanceof FulltextSearch_IndexDataProvider) {
-			$this->removeFulltextSearchIndex();
+		
+		
+		foreach(EShops::getListSorted() as $eshop) {
+			$activate = new class( $eshop ) extends Timer_Action {
+				protected EShop $eshop;
+				public function __construct( EShop $eshop )
+				{
+					$this->eshop = $eshop;
+				}
+				
+				public function getAction(): string
+				{
+					return 'activate:'.$this->eshop->getKey();
+				}
+				
+				public function getTitle(): string
+				{
+					return Tr::_('Activate - %ESHOP%', ['ESHOP'=>$this->eshop->getName()]);
+				}
+				
+				public function perform( Entity_Basic $entity, mixed $action_context ): bool
+				{
+					$entity->activateEShopData( $this->eshop );
+					return true;
+				}
+			};
+			$actions[$activate->getAction()] = $activate;
+			
+			$deactivate = new class($eshop) extends Timer_Action {
+				protected EShop $eshop;
+				public function __construct( EShop $eshop )
+				{
+					$this->eshop = $eshop;
+				}
+				
+				public function getAction(): string
+				{
+					return 'deactivate:'.$this->eshop->getKey();
+				}
+				
+				public function getTitle(): string
+				{
+					return Tr::_('Deactivate - %ESHOP%', ['ESHOP'=>$this->eshop->getName()]);
+				}
+				
+				public function perform( Entity_Basic $entity, mixed $action_context ): bool
+				{
+					$entity->deactivateEShopData( $this->eshop );
+					return true;
+				}
+			};
+			
+			$actions[$deactivate->getAction()] = $deactivate;
+			
 		}
+		
+		
+		return $actions;
 	}
 	
 }

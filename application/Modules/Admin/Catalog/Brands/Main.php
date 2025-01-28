@@ -3,12 +3,10 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithEShopData_Interface;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_Basic;
 use JetApplication\Admin_Managers_Brand;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 use JetApplication\Brand;
@@ -16,9 +14,9 @@ use JetApplication\Brand;
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface, Admin_Managers_Brand
+class Main extends Application_Module implements Admin_Managers_Brand
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'brands';
 
@@ -27,12 +25,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	public const ACTION_UPDATE = 'update_brand';
 	public const ACTION_DELETE = 'delete_brand';
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'brand';
-	}
-	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Brand();
 	}
@@ -53,7 +46,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 			object_type_filter: null,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditURL()
+			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 	}
 	

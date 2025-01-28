@@ -1,10 +1,14 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\GiftProduct;
 
-use JetApplication\Admin_EntityManager_Marketing_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
-class Controller_Main extends Admin_EntityManager_Marketing_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Gift for product';
+	}
 	
 	public function setupListing(): void
 	{

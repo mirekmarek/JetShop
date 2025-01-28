@@ -101,7 +101,7 @@ require '_toolbar.phtml';
 					</td>
 					<td><?=$edit_form->field('/p'.$p_id.'/count')->input()?></td>
 					<td><?=$edit_form->field('/p'.$p_id.'/sort_order')->input()?></td>
-					<td style="padding-top: 17px;"><?=$item_product->renderActiveState()?> <a href="<?=$item_product->getEditURL()?>"><?=$item_product->getAdminTitle()?></a></td>
+					<td style="padding-top: 17px;"><?=$item_product->renderActiveState()?> <a href="<?=$item_product->getEditUrl()?>"><?=$item_product->getAdminTitle()?></a></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

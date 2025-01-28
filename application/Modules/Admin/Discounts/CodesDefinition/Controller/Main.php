@@ -7,14 +7,19 @@
  */
 namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
-use JetApplication\Admin_EntityManager_Marketing_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
 
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_Marketing_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable(): string
+	{
+		return 'Discount code definition';
+	}
+	
 	
 	public function setupListing() : void
 	{

@@ -6,15 +6,16 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 
 use Jet\Form_Field;
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Signpost;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Signpost_Category;
 use JetApplication\Signpost_EShopData;
 use JetApplication\EShop;
@@ -23,12 +24,21 @@ use JetApplication\EShop;
 	name: 'signposts',
 	database_table_name: 'signposts',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_Signpost::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_Signpost::class,
+	description_mode: true,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
 )]
-abstract class Core_Signpost extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface
+abstract class Core_Signpost extends Entity_WithEShopData implements
+	Entity_HasImages_Interface,
+	FulltextSearch_IndexDataProvider,
+	Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATA_MODEL,
@@ -188,25 +198,6 @@ abstract class Core_Signpost extends Entity_WithEShopData implements FulltextSea
 		
 		$this->category_ids = null;
 		
-		return true;
-	}
-	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image'),
-		);
-		
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram - Product detail'),
-		);
-		
-	}
-	
-	public function getDescriptionMode() : bool
-	{
 		return true;
 	}
 }

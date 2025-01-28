@@ -37,4 +37,11 @@ return [
 	'Delete user account <b>%USERNAME%</b>' => '',
 	'Do you really want to delete this user?' => '',
 	'Admin / User management / Administrators' => '',
+	'Yes' => '',
+	'No' => '',
+	'Is blocked' => '',
+	'Please enter a value' => '',
+	'Invalid value' => '',
+	'Is blocked:' => '',
+	'User is not blocked' => '',
 ];

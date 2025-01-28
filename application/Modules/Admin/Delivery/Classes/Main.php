@@ -10,16 +10,15 @@ namespace JetApplicationModule\Admin\Delivery\Classes;
 use Jet\Application_Module;
 use JetApplication\Admin_Managers_DeliveryClasses;
 use JetApplication\Delivery_Class;
-use JetApplication\Entity_Common;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Admin_EntityManager_Common_Trait;
+use JetApplication\Entity_Basic;
+use JetApplication\Admin_EntityManager_Trait;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_DeliveryClasses
 {
-	use Admin_EntityManager_Common_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'delivery-class';
 
@@ -29,14 +28,8 @@ class Main extends Application_Module implements Admin_Managers_DeliveryClasses
 	public const ACTION_DELETE = 'delete_delivery_class';
 	
 	
-	public static function getEntityInstance(): Entity_Common|Admin_Entity_Common_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Delivery_Class();
 	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Delivery class';
-	}
-	
 }

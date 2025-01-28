@@ -7,13 +7,13 @@ use Jet\DataModel_Definition;
 
 use Jet\Form;
 use Jet\Logger;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_InvoiceInAdvance;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Entity_AccountingDocument;
 use JetApplication\InvoiceInAdvance_Item;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\Order;
 
@@ -21,15 +21,15 @@ use JetApplication\Order;
 	name: 'invoice_in_advance',
 	database_table_name: 'invoices_in_advances',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_InvoiceInAdvance::class
 )]
 abstract class Core_InvoiceInAdvance extends Entity_AccountingDocument implements
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_WithEShopRelation_Interface
+	Entity_Admin_Interface
 {
-	use Admin_Entity_WithEShopRelation_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME

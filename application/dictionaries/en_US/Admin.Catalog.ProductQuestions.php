@@ -46,4 +46,6 @@ return [
 	'Source' => '',
 	'Name:' => '',
 	'e-shop' => '',
+	'CSV' => '',
+	'XLSX' => '',
 ];

@@ -48,7 +48,7 @@ $invoice = $this->getRaw( 'invoice' );
 					<?php if( $invoice->getIsCorrectionInvoice() ): ?>
 					<tr class="text-danger">
 						<td><b><?=Tr::_('Correction of: ');?></b></td>
-						<td><a href="<?=Invoice::get($invoice->getCorrectionOfInvoiceId())?->getEditURL()?>"><?=$invoice->getCorrectionOfInvoiceNumber()?></a></td>
+						<td><a href="<?=Invoice::get($invoice->getCorrectionOfInvoiceId())?->getEditUrl()?>"><?=$invoice->getCorrectionOfInvoiceNumber()?></a></td>
 					</tr>
 					<tr>
 						<td><b><?=Tr::_('Reason of correction: ');?></b></td>
@@ -85,7 +85,7 @@ $invoice = $this->getRaw( 'invoice' );
 						<?php foreach($corrections as $correction): ?>
 						<tr>
 							<td><?=Locale::date( $correction->getInvoiceDate() )?></td>
-							<td><a href="<?=$correction->getEditURL()?>"><?=$correction->getNumber()?></a></td>
+							<td><a href="<?=$correction->getEditUrl()?>"><?=$correction->getNumber()?></a></td>
 							<td><?=nl2br($correction->getCorrectionReason())?></td>
 						</tr>
 						<?php endforeach; ?>

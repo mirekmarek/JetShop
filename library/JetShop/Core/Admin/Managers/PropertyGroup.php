@@ -1,9 +1,9 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Admin_EntityManager_WithEShopData_Interface;
+use JetApplication\Admin_EntityManager_Interface;
 
-interface Core_Admin_Managers_PropertyGroup extends Admin_EntityManager_WithEShopData_Interface
+interface Core_Admin_Managers_PropertyGroup extends Admin_EntityManager_Interface
 {
 	
 	public function renderSelectWidget(

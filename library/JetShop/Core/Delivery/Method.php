@@ -14,15 +14,20 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_DeliveryMethods;
 use JetApplication\Carrier;
+use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Method_Price;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Entity_HasPrice_Trait;
 use JetApplication\Entity_WithEShopData;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Pricelist;
 use JetApplication\EShop;
 use JetApplication\Delivery_Kind;
@@ -33,18 +38,29 @@ use JetApplication\Payment_Method;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\EShops;
 use JetApplication\Pricelists;
+use JetApplication\Timer_Action;
+use JetApplication\Timer_Action_SetPrice;
 
 #[DataModel_Definition(
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_DeliveryMethods::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_DeliveryMethods::class,
+	images: [
+		'icon1' => 'Icon 1',
+		'icon2' => 'Icon 2',
+		'icon3' => 'Icon 3',
+	]
 )]
-abstract class Core_Delivery_Method extends Entity_WithEShopData implements Entity_HasPrice_Interface, Admin_Entity_WithEShopData_Interface
+abstract class Core_Delivery_Method extends Entity_WithEShopData implements
+	Entity_HasPrice_Interface,
+	Entity_HasImages_Interface,
+	Entity_Admin_WithEShopData_Interface
 {
+	use Entity_WithEShopData_HasImages_Trait;
 	use Entity_HasPrice_Trait;
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -283,25 +299,6 @@ abstract class Core_Delivery_Method extends Entity_WithEShopData implements Enti
 	
 	protected ?Form $set_price_form = null;
 	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'icon1',
-			image_title:  Tr::_('Icon 1'),
-		);
-		
-		$this->defineImage(
-			image_class:  'icon2',
-			image_title:  Tr::_('Icon 2'),
-		);
-		
-		$this->defineImage(
-			image_class:  'icon3',
-			image_title:  Tr::_('Icon 3'),
-		);
-		
-	}
-	
 	public function setupEditForm( Form $form ): void
 	{
 		$carrier_code = $form->field('carrier_code')->getValueRaw();
@@ -430,6 +427,94 @@ abstract class Core_Delivery_Method extends Entity_WithEShopData implements Enti
 		}
 		
 		return $this->set_price_form;
+	}
+	
+	
+	
+	/**
+	 * @return Timer_Action[]
+	 */
+	public function getAvailableTimerActions() : array
+	{
+		$actions = parent::getAvailableTimerActions();
+		
+		
+		foreach(Pricelists::getList() as $pricelist ) {
+			$set_price = new class( $pricelist, $this->getPrice( $pricelist ) ) extends Timer_Action_SetPrice {
+				public function perform( Entity_Basic|Entity_HasPrice_Interface $entity, mixed $action_context ): bool
+				{
+					$p = $entity->getPriceEntity( $this->pricelist );
+					$p->setPrice( (float)$action_context );
+					$p->save();
+					
+					return true;
+				}
+			};
+			
+			$actions[$set_price->getAction()] = $set_price;
+		}
+		
+		
+		foreach(EShops::getListSorted() as $eshop) {
+			$set_free_limit = new class( $eshop, $this->getEshopData($eshop)->getFreeDeliveryLimit() ) extends Timer_Action {
+				protected float $free_delivery_limit;
+				protected EShop $eshop;
+				
+				public function __construct( EShop $eshop, float $free_delivery_limit ) {
+					$this->eshop = $eshop;
+					$this->free_delivery_limit = $free_delivery_limit;
+				}
+				
+				public function perform( Entity_Basic $entity, mixed $action_context ): bool
+				{
+					/**
+					 * @var Delivery_Method $entity
+					 */
+					$sd = $entity->getEshopData( $this->eshop );
+					$sd->setFreeDeliveryLimit( (float)$action_context );
+					$sd->save();
+					
+					return true;
+				}
+				
+				public function getAction(): string
+				{
+					return 'set_free_limit:'.$this->eshop->getKey();
+				}
+				
+				public function getTitle(): string
+				{
+					return Tr::_('Set free limit - %ESHOP%', ['ESHOP'=>$this->eshop->getName()]);
+				}
+				
+				public function updateForm( Form $form ): void
+				{
+					$price = new Form_Field_Float('free_limit', 'Free limit:');
+					$price->setDefaultValue( $this->free_delivery_limit );
+					
+					$form->addField( $price );
+				}
+				
+				public function catchActionContextValue( Form $form ) : mixed
+				{
+					return $form->field('free_limit')->getValue();
+				}
+				
+				public function formatActionContextValue( mixed $action_context ) : string
+				{
+					return Admin_Managers::PriceFormatter()->formatWithCurrency(
+						$this->eshop->getDefaultPricelist(), (float)$action_context
+					);
+				}
+				
+			};
+			
+			$actions[$set_free_limit->getAction()] = $set_free_limit;
+			
+		}
+		
+		
+		return $actions;
 	}
 	
 }

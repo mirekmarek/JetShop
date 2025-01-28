@@ -11,11 +11,13 @@ use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\Logger;
-use JetApplication\Admin_Entity_Simple_Interface;
-use JetApplication\Admin_Entity_Simple_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_WarehouseManagementStockVerification;
-use JetApplication\Entity_Simple;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
@@ -32,17 +34,19 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_stock_verification',
 	database_table_name: 'whm_stock_verification',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_WarehouseManagementStockVerification::class
 )]
-abstract class Core_WarehouseManagement_StockVerification extends Entity_Simple implements
+abstract class Core_WarehouseManagement_StockVerification extends Entity_Basic implements
 	NumberSeries_Entity_Interface,
 	Context_ProvidesContext_Interface,
-	Admin_Entity_Simple_Interface
+	Entity_Admin_Interface,
+	Entity_HasGet_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
-	use Admin_Entity_Simple_Trait;
+	use Entity_Admin_Trait;
+	use Entity_HasGet_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_DONE = 'done';

@@ -1,21 +1,19 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Signposts;
 
-use JetApplication\Admin_EntityManager_WithEShopData_Interface;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_Basic;
 use JetApplication\Signpost;
 use JetApplication\Admin_Managers_Signpost;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopData_Interface, Admin_Managers_Signpost
+class Main extends Application_Module implements Admin_Managers_Signpost
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'signposts';
 
@@ -25,14 +23,9 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopDa
 	public const ACTION_DELETE = 'delete_signpost';
 	
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Signpost();
 	}
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Signpost';
-	}
-
 }

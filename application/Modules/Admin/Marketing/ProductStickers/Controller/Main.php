@@ -1,10 +1,15 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\ProductStickers;
 
-use JetApplication\Admin_EntityManager_Marketing_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
-class Controller_Main extends Admin_EntityManager_Marketing_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable(): string
+	{
+		return 'Product sticker';
+	}
+	
 	public function setupListing(): void
 	{
 		

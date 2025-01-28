@@ -46,14 +46,7 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 			
 			$entity = $listing->getEntity();
 			
-			$this->multi_eshop_mode = ($entity instanceof Entity_WithEShopData);
-			
-			if(
-				$this->multi_eshop_mode &&
-				!EShops::isMultiEShopMode()
-			)  {
-				$this->multi_eshop_mode = false;
-			}
+			$this->multi_eshop_mode = ($entity instanceof Entity_WithEShopData) && EShops::isMultiEShopMode();
 			
 			if($this->multi_eshop_mode) {
 				foreach( EShops::getListSorted() as $code => $eshop) {

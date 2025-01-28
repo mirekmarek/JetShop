@@ -11,7 +11,7 @@ use JetShop\Core_Content_Article_Author;
  *
  */
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class Content_Article_Author extends Core_Content_Article_Author
 {
 }

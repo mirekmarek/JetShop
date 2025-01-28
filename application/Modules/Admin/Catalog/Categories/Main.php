@@ -4,18 +4,17 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Category;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Category;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_Basic;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_Category
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'categories';
 
@@ -41,19 +40,13 @@ class Main extends Application_Module implements Admin_Managers_Category
 			object_type_filter: null,
 			object_is_active_filter: $only_active_filter,
 			selected_entity_title: $selected?->getPathName(),
-			selected_entity_edit_URL: $selected?->getEditURL()
+			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Category();
 	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'category';
-	}
-	
 
 }

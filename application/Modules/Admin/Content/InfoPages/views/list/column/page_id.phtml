@@ -20,7 +20,7 @@ use JetApplication\Content_InfoPage;
 $item = $this->getRaw('item');
 ?>
 <div style="display: flex;align-items: center">
-	<div><?=Admin_Managers::EntityEdit_WithEShopData()->renderPreviewButton( $item )?></div>
+	<div><?=Admin_Managers::EntityEdit()->renderPreviewButton( $item )?></div>
 	<div style="padding-left: 10px;"><?=$item->getPageId();?></div>
 </div>
 

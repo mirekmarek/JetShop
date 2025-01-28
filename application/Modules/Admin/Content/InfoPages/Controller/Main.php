@@ -7,18 +7,15 @@
  */
 namespace JetApplicationModule\Admin\Content\InfoPages;
 
-use Jet\Tr;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	protected function getTabs() : array
-	{
-		return [
-			'main'   => Tr::_( 'Main data' ),
-		];
-	}
 	
+	public function getEntityNameReadable() : string
+	{
+		return 'Info Page';
+	}
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Page() );

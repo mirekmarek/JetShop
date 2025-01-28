@@ -7,12 +7,17 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Signpost;
 
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Signpost';
+	}
+	
 	public function getTabs(): array
 	{
 		$tabs = parent::getTabs();

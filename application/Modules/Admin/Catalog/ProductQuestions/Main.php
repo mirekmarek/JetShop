@@ -8,11 +8,10 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ProductQuestions;
 use JetApplication\EMail_TemplateProvider;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\ProductQuestion;
 
 /**
@@ -20,7 +19,7 @@ use JetApplication\ProductQuestion;
  */
 class Main extends Application_Module implements Admin_Managers_ProductQuestions, EMail_TemplateProvider
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'product-questions';
 	
@@ -30,12 +29,7 @@ class Main extends Application_Module implements Admin_Managers_ProductQuestions
 	public const ACTION_DELETE = 'delete';
 	
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Product question';
-	}
-	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new ProductQuestion();
 	}

@@ -175,4 +175,9 @@ return [
 	'Awaiting processing' => '',
 	'Cancelled' => '',
 	'Ready to send' => '',
+	'CSV' => '',
+	'XLSX' => '',
+	'e-shop' => '',
+	'Note' => '',
+	'Complaint dispatch' => '',
 ];

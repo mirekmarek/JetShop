@@ -67,4 +67,5 @@ return [
 	'Internal name:' => '',
 	'Internal code:' => '',
 	'Info Pages' => '',
+	'Please select file' => '',
 ];

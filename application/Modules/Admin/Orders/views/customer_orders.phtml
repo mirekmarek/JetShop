@@ -26,7 +26,7 @@ $orders = $this->getRaw( 'orders' );
 	</thead>
 	<?php foreach($orders as $order): ?>
 	<tr>
-		<td><a href="<?=$order->getEditURL()?>"><?=$order->getNumber()?></a></td>
+		<td><a href="<?=$order->getEditUrl()?>"><?=$order->getNumber()?></a></td>
 		<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $order->getTotalAmount_WithVAT() )?></td>
 		<td>
 			<ul>

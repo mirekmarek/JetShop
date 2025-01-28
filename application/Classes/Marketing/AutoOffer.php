@@ -6,6 +6,6 @@ use Jet\DataModel_Definition;
 use JetShop\Core_Marketing_AutoOffer;
 
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class Marketing_AutoOffer extends Core_Marketing_AutoOffer {
 }

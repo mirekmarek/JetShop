@@ -12,14 +12,19 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplication\Admin_EntityManager_Simple_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_Simple_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Warehouse Management - Transfer between warehouses';
+	}
+	
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
 		parent::setupRouter( $action, $selected_tab );

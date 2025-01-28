@@ -1,0 +1,17 @@
+<?php
+namespace JetApplicationModule\Events\Complaint\NewComplaintFinished;
+
+use Jet\MVC_View;
+use JetApplication\Complaint_Event;
+use JetApplication\Complaint_Note;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint_Event $event
+ * @var Main $handler
+ * @var Complaint_Note $note
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');
+

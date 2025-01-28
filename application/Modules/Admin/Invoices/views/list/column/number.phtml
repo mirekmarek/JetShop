@@ -31,7 +31,7 @@ $item = $this->getRaw('item');
 <?php if($item->getIsCorrectionInvoice()): ?>
 <div class="text-danger">
 <?=Tr::_('Correction of:<br><a href="%URL%">%NUMBER%</a>', [
-		'URL' => Invoice::get($item->getCorrectionOfInvoiceId())?->getEditURL(),
+		'URL' => Invoice::get($item->getCorrectionOfInvoiceId())?->getEditUrl(),
 		'NUMBER' => $item->getCorrectionOfInvoiceNumber()
 	])?>
 </div>

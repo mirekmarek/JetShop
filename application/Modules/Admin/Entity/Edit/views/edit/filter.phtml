@@ -1,0 +1,58 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\Marketing;
+
+use Jet\MVC_View;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Admin_Managers;
+use Jet\Form;
+use JetApplication\Admin_Managers_Entity_Edit;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View   $this
+ * @var Entity_Admin_Interface $item
+ * @var Admin_Managers_Entity_Edit $edit_manager
+ * @var Form $form
+ */
+
+$item = $this->getRaw('item');
+$edit_manager = $this->getRaw('edit_manager');
+$form = $this->getRaw('filter_form');
+$editable = $item->isEditable();
+
+$p_manager = Admin_Managers::Product();
+
+echo $edit_manager->renderToolbar( $form );
+
+?>
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+
+	
+	<br>
+	<?=$form->start();?>
+	<div class="card card-body">
+		<?=Admin_Managers::ProductFilter()->renderFilterForm(); ?>
+	</div>
+	<?=$form->end();?>
+	
+	<br>
+
+	<div class="card card-body">
+	<table class="table table-striped">
+		<?php foreach( $item->getProductIds() as $p_id):
+			$product = Product::load( $p_id );
+			if(!$product) {
+				continue;
+			}
+			?>
+			<tr>
+				<td style="width: 200px;"><?=$p_manager->renderActiveState($product)?></td>
+				<td><?=$p_manager->showName($product)?></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+	</div>
+
+
+</div>

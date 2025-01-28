@@ -5,12 +5,17 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_EntityManager_Simple_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 
-class Controller_Main extends Admin_EntityManager_Simple_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Order goods from supplier';
+	}
+	
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Number() );
@@ -96,12 +101,10 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 			)
 		);
 	}
-	
+
+	/*
 	public function edit_main_handleActivation() : void
 	{
-		/**
-		 * @var Supplier_GoodsOrder $order
-		 */
 		$order = $this->current_item;
 		
 		if( $order->getSetSupplierOrderNumberForm()->catch() ) {
@@ -110,6 +113,7 @@ class Controller_Main extends Admin_EntityManager_Simple_Controller
 		}
 		
 	}
+	*/
 	
 	public function send_Action() : void
 	{

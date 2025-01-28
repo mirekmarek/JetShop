@@ -29,4 +29,7 @@ return [
 	'Date:' => '',
 	'Number of units:' => '',
 	'Notes:' => '',
+	'CSV' => '',
+	'XLSX' => '',
+	'ID' => '',
 ];

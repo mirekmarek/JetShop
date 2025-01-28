@@ -8,7 +8,6 @@
 namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\ErrorPages;
-use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC;
 use JetApplication\Product_EShopData;
@@ -28,8 +27,7 @@ trait Controller_Main_Product
 		static::$product = Product_EShopData::get($object_id);
 
 		if(static::$product) {
-			if(static::$product->getURLPathPart()!=$path[0] ) {
-				MVC::getRouter()->setIsRedirect( static::$product->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
+			if(!static::$product->checkURL( $path[0] )) {
 				return false;
 			}
 

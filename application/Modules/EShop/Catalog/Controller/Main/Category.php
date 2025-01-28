@@ -10,7 +10,6 @@ namespace JetApplicationModule\EShop\Catalog;
 use JetApplication\Category_EShopData;
 
 use Jet\ErrorPages;
-use Jet\Http_Headers;
 use Jet\MVC;
 use JetApplication\EShop_Managers;
 
@@ -33,12 +32,10 @@ trait Controller_Main_Category
 
 
 		if(static::$category) {
-			if(static::$category->getURLPathPart()!=$category_URL_path ) {
-				MVC::getRouter()->setIsRedirect( static::$category->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
+			if(!static::$category->checkURL( $category_URL_path )) {
 				return false;
 			}
-
-
+			
 			if(!static::$category->isActive()) {
 				return 'category_not_active';
 			} else {

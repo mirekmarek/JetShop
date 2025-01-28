@@ -6,11 +6,15 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\DataModel_Definition_Property_DataModel;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasEShopRelation_Trait;
 use JetApplication\Entity_ChangeHistory_Item;
 
 #[DataModel_Definition]
-abstract class Core_Entity_ChangeHistory extends Entity_WithEShopRelation {
+abstract class Core_Entity_ChangeHistory extends Entity_Basic implements Entity_HasEShopRelation_Interface
+{
+	use Entity_HasEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

@@ -10,18 +10,17 @@ namespace JetApplicationModule\Admin\Delivery\Methods;
 use Jet\Application_Module;
 use Jet\Auth;
 use JetApplication\Admin_Managers_DeliveryMethods;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\Delivery_Method;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_Basic;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_DeliveryMethods
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'delivery-method';
 
@@ -32,7 +31,7 @@ class Main extends Application_Module implements Admin_Managers_DeliveryMethods
 	public const ACTION_SET_PRICE = 'set_price';
 	
 	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Delivery_Method();
 	}
@@ -41,12 +40,5 @@ class Main extends Application_Module implements Admin_Managers_DeliveryMethods
 	{
 		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_SET_PRICE );
 	}
-	
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Delivery method';
-	}
-	
 	
 }

@@ -29,4 +29,8 @@ return [
 	'SEO' => '',
 	'Title:' => '',
 	'Keywords:' => '',
+	'Images' => '',
+	'Logo' => '',
+	'Big logo' => '',
+	'Title image' => '',
 ];

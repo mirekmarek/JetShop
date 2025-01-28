@@ -166,4 +166,7 @@ return [
 	'Incomplete' => '',
 	'New' => '',
 	'Rejected' => '',
+	'Accepted - New products' => '',
+	'Accepted - Repaired' => '',
+	'Accepted - Sent for repair' => '',
 ];

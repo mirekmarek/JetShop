@@ -7,7 +7,7 @@
  */
 namespace JetApplicationModule\Admin\Marketing\LandingPages;
 
-use JetApplication\Admin_EntityManager_Marketing_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
 use Jet\UI_messages;
 use Jet\Http_Headers;
@@ -17,8 +17,14 @@ use JetApplication\Marketing_LandingPage;
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_Marketing_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	
+	public function getEntityNameReadable(): string
+	{
+		return 'Landing page';
+	}
+	
 	
 	public function getTabs(): array
 	{

@@ -25,4 +25,10 @@ return [
 	'Free limit:' => '',
 	'Setup timer' => '',
 	'No timer is scheduled' => '',
+	'Activate - %ESHOP%' => '',
+	'Deactivate - %ESHOP%' => '',
+	'Set price %PRICELIST%' => '',
+	'Set free limit - %ESHOP%' => '',
+	'Activate - master switch' => '',
+	'Deactivate - master switch' => '',
 ];

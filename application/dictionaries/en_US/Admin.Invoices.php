@@ -62,4 +62,6 @@ return [
 	'Tax base - correction' => '',
 	'Tax - before correction' => '',
 	'Tax - correction' => '',
+	'CSV' => '',
+	'XLSX' => '',
 ];

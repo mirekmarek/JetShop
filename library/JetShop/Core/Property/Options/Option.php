@@ -4,10 +4,12 @@ use Jet\DataModel_Definition;
 use Jet\DataModel;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Property;
 use JetApplication\Property_Options_Option_EShopData;
 use JetApplication\EShops;
@@ -21,9 +23,19 @@ use JetApplication\EShop;
 	default_order_by: ['priority'],
 	parent_model_class: Property::class
 )]
-abstract class Core_Property_Options_Option extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
+#[Entity_Definition(
+	description_mode: true,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
+)]
+abstract class Core_Property_Options_Option extends Entity_WithEShopData implements
+	Entity_HasImages_Interface,
+	Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -124,25 +136,8 @@ abstract class Core_Property_Options_Option extends Entity_WithEShopData impleme
 		return $res;
 	}
 	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image')
-		);
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram image')
-		);
-	}
-	
-	public function getEditURL( array $get_params=[] ): string
+	public function getEditUrl( array $get_params=[] ): string
 	{
 		return '';
-	}
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
 	}
 }

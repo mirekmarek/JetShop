@@ -7,6 +7,7 @@ use Jet\MVC_Page_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasActivation_Interface;
 
 trait Core_Admin_EntityManager_Trait {
 	
@@ -20,17 +21,23 @@ trait Core_Admin_EntityManager_Trait {
 		return MVC::getPage( static::getAdminMainPageID() );
 	}
 	
-	public static function getEditUrl( Entity_Basic $item, array $get_params=[] ) : string
+	public static function getEditUrl( int|Entity_Basic $id_or_item, array $get_params=[] ) : string
 	{
+		if($id_or_item instanceof Entity_Basic) {
+			$id = $id_or_item->getId();
+		} else {
+			$id = $id_or_item;
+		}
+		
 		$page = static::getAdminMainPage();
 		
-		$get_params['id'] = $item->getId();
+		$get_params['id'] = $id;
 		
 		return $page->getURL([], $get_params);
 		
 	}
 	
-	public function showName( int|object $id_or_item ): string
+	public function showName( int|Entity_Basic $id_or_item ): string
 	{
 		if(is_int($id_or_item)) {
 			$id = $id_or_item;
@@ -40,7 +47,7 @@ trait Core_Admin_EntityManager_Trait {
 			$id = $item->getId();
 		}
 		
-		return Admin_Managers::EntityEdit_Common()->renderShowName( $id, $item );
+		return Admin_Managers::EntityEdit()->renderShowName( $id, $item );
 	}
 	
 	public static function getCurrentUserCanEdit() : bool
@@ -56,6 +63,11 @@ trait Core_Admin_EntityManager_Trait {
 	public static function getCurrentUserCanDelete() : bool
 	{
 		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_DELETE );
+	}
+	
+	public function renderActiveState( Entity_HasActivation_Interface $item ) : string
+	{
+		return Admin_Managers::EntityEdit()->renderActiveState( $item );
 	}
 	
 }

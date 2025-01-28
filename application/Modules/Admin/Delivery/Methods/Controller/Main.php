@@ -10,12 +10,17 @@ namespace JetApplicationModule\Admin\Delivery\Methods;
 use Jet\AJAX;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Carrier;
 use JetApplication\Delivery_Method;
 
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Delivery method';
+	}
+	
 	public function edit_main_Action(): void
 	{
 		$this->handleSetPrice();

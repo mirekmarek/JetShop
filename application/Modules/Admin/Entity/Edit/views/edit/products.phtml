@@ -1,0 +1,93 @@
+<?php
+namespace JetApplicationModule\Admin\Entity\Edit\Marketing;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_Entity_Edit;
+use JetApplication\Product;
+use Jet\Form;
+
+/**
+ * @var MVC_View   $this
+ * @var Entity_Admin_Interface $item
+ * @var Admin_Managers_Entity_Edit $edit_manager
+ * @var Form $form
+ */
+
+$item = $this->getRaw('item');
+$edit_manager = $this->getRaw('edit_manager');
+$editable = $item->isEditable();
+
+$p_manager = Admin_Managers::Product();
+
+echo $edit_manager->renderToolbar();
+
+?>
+<div id="main-col">
+		<?=$this->getRaw('tabs')?>
+		
+<fieldset>
+	<legend><?=Tr::_('Products')?></legend>
+	
+	
+		<?php if($editable): ?>
+			
+			<div class="toolbar" style="display: grid;grid-template-columns: 150px 300px 1fr;align-items: center">
+				<div style="padding-left: 20px;">
+					<?=UI::icon('plus')?>
+					<?=Tr::_('Add product:')?>
+				</div>
+				<div>
+					<?=Admin_Managers::Product()->renderSelectWidget(
+						on_select: "location='".Http_Request::currentURI()."&add_product='+selected_item.id",
+						only_type_filter:[
+							Product::PRODUCT_TYPE_REGULAR,
+							Product::PRODUCT_TYPE_VARIANT_MASTER,
+							Product::PRODUCT_TYPE_SET
+						] )?>
+				</div>
+				<div style="padding-left: 40px;">
+					<?=UI::button(Tr::_('Remove all products'))
+						->setUrl( Http_Request::currentURI(['action'=>'remove_all_products']) )
+						->setClass(UI_button::CLASS_DANGER)
+					?>
+				</div>
+			</div>
+		<?php endif; ?>
+
+	
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th style="width: 30px;"></th>
+			<th style="width: 100px;"></th>
+			<th></th>
+		</tr>
+		</thead>
+		<?php foreach( $item->getProductIds() as $p_id):
+			$product = Product::load( $p_id );
+			if(!$product) {
+				continue;
+			}
+			?>
+			<tr>
+				<td>
+					<?php if($editable): ?>
+						<?=UI::button_delete(' ')->setUrl(Http_Request::currentURI(set_GET_params: ['remove_product'=>$p_id]))?>
+					<?php endif; ?>
+				</td>
+				
+				<td><?=$p_manager->renderActiveState($product)?></td>
+				<td><?=$p_manager->showName($product)?></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+
+</fieldset>
+
+</div>

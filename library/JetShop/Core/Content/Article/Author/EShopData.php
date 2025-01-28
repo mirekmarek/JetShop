@@ -9,6 +9,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Content_Article_Author;
 
@@ -18,8 +20,10 @@ use JetApplication\Content_Article_Author;
 	database_table_name: 'content_articles_authors_eshop_data',
 	parent_model_class: Content_Article_Author::class
 )]
-abstract class Core_Content_Article_Author_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_Content_Article_Author_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
 {
+	use Entity_HasImages_Trait;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,

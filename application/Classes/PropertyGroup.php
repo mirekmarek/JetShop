@@ -10,7 +10,7 @@ use JetShop\Core_PropertyGroup;
  *
  */
 #[DataModel_Definition]
-#[JetShopEntity_Definition]
+#[Entity_Definition]
 class PropertyGroup extends Core_PropertyGroup {
 
 }

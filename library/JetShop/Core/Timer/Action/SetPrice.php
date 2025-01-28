@@ -6,29 +6,28 @@ use Jet\Form;
 use Jet\Form_Field_Float;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasPrice_Interface;
 use JetApplication\Pricelist;
-use JetApplication\EShop;
 use JetApplication\Timer_Action;
 
 abstract class Core_Timer_Action_SetPrice extends Timer_Action {
 	protected Pricelist $pricelist;
 	protected float $current_price;
 	
-	public function __construct( EShop $eshop, Pricelist $pricelist, float $current_price ) {
-		$this->setEshop( $eshop );
+	public function __construct( Pricelist $pricelist, float $current_price ) {
 		$this->pricelist = $pricelist;
 		$this->current_price = $current_price;
 	}
 	
-	public function getKey(): string
+	public function getAction() : string
 	{
-		return 'set_price:'.$this->eshop->getKey().':'.$this->pricelist->getCode();
+		return 'set_price:'.$this->pricelist->getCode();
 	}
 	
 	public function getTitle(): string
 	{
-		return Tr::_('Set price %pricelist%', ['pricelist'=>$this->pricelist->getName()]);
+		return Tr::_('Set price %PRICELIST%', ['PRICELIST'=>$this->pricelist->getName()]);
 	}
 	
 	public function updateForm( Form $form ): void
@@ -51,6 +50,6 @@ abstract class Core_Timer_Action_SetPrice extends Timer_Action {
 		);
 	}
 	
-	abstract public function perform( Entity_WithEShopData $entity, mixed $action_context ): bool;
+	abstract public function perform( Entity_Basic|Entity_HasPrice_Interface $entity, mixed $action_context ): bool;
 	
 }

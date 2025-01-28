@@ -509,7 +509,7 @@ class Controller_Main extends MVC_Controller_Default
 			$dispatch->save();
 			UI_messages::success( Tr::_('Custom order dispatch has been created') );
 			Http_Headers::movedTemporary(
-				$dispatch->getEditURL()
+				$dispatch->getEditUrl()
 			);
 
 		}

@@ -8,8 +8,8 @@ use Jet\Locale;
 use Jet\Tr;
 
 use Jet\UI_messages;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
 use JetApplication\Availabilities;
 use JetApplication\Delivery_Class;
@@ -24,7 +24,7 @@ use JetApplication\Product_Price;
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	use Controller_Main_Edit_Images;
 	use Controller_Main_Edit_Files;
@@ -38,9 +38,13 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 	use Controller_Main_Edit_Export;
 	use Controller_Main_Edit_Accessories;
 	
+	public function getEntityNameReadable() : string
+	{
+		return 'Product';
+	}
 	
 	
-	protected function newItemFactory(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	protected function newItemFactory(): Entity_WithEShopData|Entity_Admin_Interface
 	{
 		/**
 		 * @var Product $new_item

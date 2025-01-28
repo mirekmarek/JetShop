@@ -34,4 +34,7 @@ return [
 	'Number of units - expected' => '',
 	'Number of units - reality' => '',
 	'Notes:' => '',
+	'CSV' => '',
+	'XLSX' => '',
+	'ID' => '',
 ];

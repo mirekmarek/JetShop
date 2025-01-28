@@ -11,14 +11,18 @@ use Jet\DataModel_IDController_AutoIncrement;
 
 use Jet\IO_Dir;
 use Jet\IO_File;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasEShopRelation_Trait;
 use JetApplication\Entity_Note_File;
 
 #[DataModel_Definition(
 	id_controller_class: DataModel_IDController_AutoIncrement::class,
 	id_controller_options: ['id_property_name'=>'id']
 )]
-abstract class Core_Entity_Note extends Entity_WithEShopRelation {
+abstract class Core_Entity_Note extends Entity_Basic implements Entity_HasEShopRelation_Interface
+{
+	use Entity_HasEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

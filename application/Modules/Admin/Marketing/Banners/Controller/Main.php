@@ -9,27 +9,29 @@ namespace JetApplicationModule\Admin\Marketing\Banners;
 
 use Jet\AJAX;
 use Jet\Application;
-use Jet\Application_Module;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Navigation_Breadcrumb;
 use Jet\Tr;
 use Jet\UI_messages;
 use Jet\UI_tabs;
-use JetApplication\Admin_EntityManager_Marketing_Controller;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Entity_Edit;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Marketing_Banner;
 use JetApplication\Marketing_BannerGroup;
 
-class Controller_Main extends Admin_EntityManager_Marketing_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	
 	protected ?EShop $selected_eshop = null;
 	
 	protected ?Marketing_BannerGroup $selected_group = null;
+	
+	public function getEntityNameReadable(): string
+	{
+		return 'Banner';
+	}
 	
 	
 	public function resolve() : bool|string
@@ -255,9 +257,4 @@ class Controller_Main extends Admin_EntityManager_Marketing_Controller
 		
 	}
 	
-	
-	protected function createEntityEditorModule(): Application_Module|Admin_Managers_Entity_Edit
-	{
-		return Admin_Managers::EntityEdit_Common();
-	}
 }

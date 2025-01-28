@@ -8,23 +8,32 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_MarketingAutoOffers;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_HasImages_Trait;
 use JetApplication\Entity_Marketing;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Marketing_AutoOffer;
 
 #[DataModel_Definition(
 	name: 'auto_offers',
 	database_table_name: 'auto_offers',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingAutoOffers::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_MarketingAutoOffers::class,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
 )]
-abstract class Core_Marketing_AutoOffer extends Entity_Marketing implements Admin_Entity_Marketing_Interface
+abstract class Core_Marketing_AutoOffer extends Entity_Marketing implements
+	Entity_HasImages_Interface,
+	Entity_Admin_Interface
 {
-	use Admin_Entity_Marketing_Trait;
+	use Entity_HasImages_Trait;
+	use Entity_Admin_Trait;
 	
 	public const SHOW_MODE_NORMAL = 'normal';
 	public const SHOW_MODE_NO_LINK = 'no_link';
@@ -212,17 +221,4 @@ abstract class Core_Marketing_AutoOffer extends Entity_Marketing implements Admi
 		
 		return parent::isRelevant( $product_ids );
 	}
-	
-	public function defineImages() : void
-	{
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image'),
-		);
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram image'),
-		);
-	}
-	
 }

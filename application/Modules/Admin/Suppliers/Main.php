@@ -2,10 +2,9 @@
 namespace JetApplicationModule\Admin\Suppliers;
 
 use JetApplication\Admin_Managers_Supplier;
-use JetApplication\Admin_EntityManager_Common_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_Common_Interface;
-use JetApplication\Entity_Common;
+use JetApplication\Entity_Basic;
 use JetApplication\Supplier;
 
 /**
@@ -13,7 +12,7 @@ use JetApplication\Supplier;
  */
 class Main extends Application_Module implements Admin_Managers_Supplier
 {
-	use Admin_EntityManager_Common_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'suppliers';
 
@@ -23,14 +22,8 @@ class Main extends Application_Module implements Admin_Managers_Supplier
 	public const ACTION_DELETE = 'delete_supplier';
 	
 	
-	public static function getEntityInstance(): Entity_Common|Admin_Entity_Common_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Supplier();
 	}
-	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Supplier';
-	}
-
 }

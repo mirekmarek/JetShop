@@ -9,7 +9,6 @@ namespace JetApplicationModule\EShop\Catalog;
 
 
 use Jet\ErrorPages;
-use Jet\Http_Headers;
 use Jet\MVC;
 use JetApplication\Signpost_EShopData;
 
@@ -32,9 +31,7 @@ trait Controller_Main_Signpost
 		
 		
 		if(static::$signpost) {
-			
-			if(static::$signpost->getURLPathPart()!=$URL_path ) {
-				MVC::getRouter()->setIsRedirect( static::$signpost->getURL(), Http_Headers::CODE_301_MOVED_PERMANENTLY );
+			if(!static::$signpost->checkURL( $URL_path )) {
 				return false;
 			}
 			

@@ -11,6 +11,7 @@ use JetShop\Core_Content_Article_EShopData;
  *
  */
 #[DataModel_Definition]
+#[Entity_Definition]
 class Content_Article_EShopData extends Core_Content_Article_EShopData
 {
 }

@@ -13,6 +13,6 @@ use JetApplication\OrderDispatch;
 
 $dispatch = $this->getRaw('dispatch');
 
-$URL = $dispatch->getEditURL(['warehouse'=>$dispatch->getWarehouseId()]);
+$URL = $dispatch->getEditUrl(['warehouse'=>$dispatch->getWarehouseId()]);
 ?>
 <?=$dispatch->getNumber()?> <a href="<?=$URL?>"><?=UI::icon('link')?></a>

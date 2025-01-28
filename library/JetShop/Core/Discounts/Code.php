@@ -14,14 +14,14 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Data_DateTime;
 
-use JetApplication\Admin_Entity_Marketing_Interface;
-use JetApplication\Admin_Entity_Marketing_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_DiscountCodesDefinition;
 use JetApplication\Discounts;
 use JetApplication\Discounts_Code;
 use JetApplication\Discounts_Code_Module;
 use JetApplication\Entity_Marketing;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Order;
 use JetApplication\Pricelists;
 use JetApplication\EShop_Managers;
@@ -38,12 +38,12 @@ use JetApplication\Discounts_Discount;
 	name: 'discounts_code',
 	database_table_name: 'discounts_codes',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_DiscountCodesDefinition::class
 )]
-class Core_Discounts_Code extends Entity_Marketing implements Admin_Entity_Marketing_Interface
+class Core_Discounts_Code extends Entity_Marketing implements Entity_Admin_Interface
 {
-	use Admin_Entity_Marketing_Trait;
+	use Entity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,
@@ -455,11 +455,6 @@ class Core_Discounts_Code extends Entity_Marketing implements Admin_Entity_Marke
 	protected function setupEditForm( Form $form ) : void
 	{
 		$this->setupForm( $form );
-	}
-	
-	public function hasImages(): bool
-	{
-		return false;
 	}
 	
 	

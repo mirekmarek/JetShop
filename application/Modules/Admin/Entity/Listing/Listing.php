@@ -8,13 +8,13 @@ use Jet\Factory_MVC;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use JetApplication\Admin_EntityManager_Interface;
-use JetApplication\Admin_Entity_Interface;
+use JetApplication\Entity_Admin_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Entity_Basic;
-use JetApplication\Entity_Common;
-use JetApplication\Entity_Marketing;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_HasActivation_Interface;
+use JetApplication\Entity_HasActivationByTimePlan_Interface;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasInternalParams_Interface;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 
@@ -24,7 +24,7 @@ use JetApplication\EShops;
 class Listing extends DataListing {
 	
 	
-	protected Entity_Basic|Admin_Entity_Interface $entity;
+	protected Entity_Basic|Entity_Admin_Interface $entity;
 	protected Admin_EntityManager_Interface $entity_manager;
 	protected MVC_View $column_view;
 	protected MVC_View $filter_view;
@@ -44,26 +44,65 @@ class Listing extends DataListing {
 		$this->column_view = $column_view;
 		$this->filter_view = $filter_view;
 		
+		$default_schema = [];
+		$default_order_by = '-id';
 		
-		if( ($this->entity instanceof Entity_Basic) ) {
-			$this->init_Basic();
+		$this->addFilter( $this->init_SearchFilter() );
+		$this->addColumn( new Listing_Column_Edit() );
+		$this->addColumn( new Listing_Column_ID() );
+		
+		$default_schema[] = Listing_Column_ID::KEY;
+		
+		$this->addExport( new Listing_Export_CSV() );
+		$this->addExport( new Listing_Export_XLSX() );
+		
+		
+		
+		if(
+			($this->entity instanceof Entity_HasEShopRelation_Interface ) &&
+			EShops::isMultiEShopMode()
+		) {
+			$this->addColumn( new Listing_Column_EShop() );
+			
+			$this->addFilter( new Listing_Filter_EShop() );
+			
+			$default_schema[] = Listing_Column_EShop::KEY;
 		}
 		
-		if( ($this->entity instanceof Entity_WithEShopRelation) ) {
-			$this->init_WithEShopRelation();
+		
+		if(
+			$this->entity instanceof Entity_HasActivation_Interface
+		) {
+			$this->addColumn( new Listing_Column_ActiveState() );
+			
+			$default_schema[] = Listing_Column_ActiveState::KEY;
+			
+			$this->addFilter( new Listing_Filter_IsActive() );
 		}
 		
-		if( ($this->entity instanceof Entity_Marketing) ) {
-			$this->init_Marketing();
+		if( $this->entity instanceof Entity_HasActivationByTimePlan_Interface ) {
+			$this->addColumn( new Listing_Column_ValidFrom() );
+			$this->addColumn( new Listing_Column_ValidTill() );
+
+			$default_schema[] = Listing_Column_ValidFrom::KEY;
+			$default_schema[] = Listing_Column_ValidTill::KEY;
 		}
 		
-		if( ($this->entity instanceof Entity_Common) ) {
-			$this->init_Common();
+		if( $this->entity instanceof Entity_HasInternalParams_Interface ) {
+			$this->addColumn( new Listing_Column_InternalName() );
+			$this->addColumn( new Listing_Column_InternalCode() );
+			$this->addColumn( new Listing_Column_InternalNotes() );
+			
+			$default_schema[] = Listing_Column_InternalName::KEY;
+			$default_schema[] = Listing_Column_InternalCode::KEY;
+			$default_schema[] = Listing_Column_InternalNotes::KEY;
+			
+			$default_order_by = '+internal_name';
 		}
 		
-		if( ($this->entity instanceof Entity_WithEShopData) ) {
-			$this->init_WithEShopData();
-		}
+		$this->setDefaultColumnsSchema( $default_schema );
+		
+		$this->setDefaultSort($default_order_by);
 		
 	}
 	
@@ -96,125 +135,12 @@ class Listing extends DataListing {
 		return $search;
 	}
 	
-	protected function init_Basic() : void
-	{
-		$this->addColumn( new Listing_Column_Edit() );
-		
-		$this->addFilter( $this->init_SearchFilter() );
-		
-		$this->setDefaultColumnsSchema([
-		] );
-		
-		
-		$this->setDefaultSort('-id');
-	}
 	
 	
-	protected function init_WithEShopRelation() : void
-	{
-		$this->addColumn( new Listing_Column_Edit() );
-		$this->addColumn( new Listing_Column_ID() );
-		
-		
-		if( EShops::isMultiEShopMode() ) {
-			$this->addColumn( new Listing_Column_EShop() );
-			$this->addFilter( new Listing_Filter_EShop() );
-		}
-		
-		$this->addFilter( $this->init_SearchFilter() );
-		
-		$this->setDefaultColumnsSchema([
-			Listing_Column_ID::KEY,
-			Listing_Column_EShop::KEY,
-		] );
-		
-		
-		$this->setDefaultSort('-id');
-	}
-	
-	protected function init_Marketing() : void
-	{
-		$this->addColumn( new Listing_Column_Edit() );
-		$this->addColumn( new Listing_Column_ID() );
-		
-		if( EShops::isMultiEShopMode() ) {
-			$this->addColumn( new Listing_Column_EShop() );
-			$this->addFilter( new Listing_Filter_EShop() );
-		}
-		
-		$this->addColumn( new Listing_Column_ActiveState() );
-		
-		$this->addColumn( new Listing_Column_InternalName() );
-		$this->addColumn( new Listing_Column_InternalCode() );
-		
-		$this->addColumn( new Listing_Column_ValidFrom() );
-		$this->addColumn( new Listing_Column_ValidTill() );
-		
-		$this->addColumn( new Listing_Column_InternalNotes() );
-		
-		
-		$this->setDefaultColumnsSchema([
-			Listing_Column_ID::KEY,
-			Listing_Column_EShop::KEY,
-			Listing_Column_ActiveState::KEY,
-			Listing_Column_InternalName::KEY,
-			Listing_Column_InternalCode::KEY,
-			
-			Listing_Column_ValidFrom::KEY,
-			Listing_Column_ValidTill::KEY,
-			
-			Listing_Column_InternalNotes::KEY
-		] );
-		
-		
-		$this->addFilter( $this->init_SearchFilter() );
-		$this->addFilter( new Listing_Filter_IsActive() );
-		
-		$this->addExport( new Listing_Export_CSV() );
-		$this->addExport( new Listing_Export_XLSX() );
-		
-		
-		$this->setDefaultSort('+internal_name');
-	}
-	
-	protected function init_WithEShopData() : void
-	{
-		$this->init_Common();
-	}
-	
-	protected function init_Common() : void
-	{
-		$this->addColumn( new Listing_Column_Edit() );
-		$this->addColumn( new Listing_Column_ID() );
-		
-		$this->addColumn( new Listing_Column_ActiveState() );
-		
-		$this->addColumn( new Listing_Column_InternalName() );
-		$this->addColumn( new Listing_Column_InternalCode() );
-		$this->addColumn( new Listing_Column_InternalNotes() );
-		
-		
-		$this->setDefaultColumnsSchema([
-			Listing_Column_ID::KEY,
-			Listing_Column_ActiveState::KEY,
-			Listing_Column_InternalName::KEY,
-			Listing_Column_InternalCode::KEY,
-			Listing_Column_InternalNotes::KEY
-		] );
-		
-		
-		$this->addFilter( $this->init_SearchFilter() );
-		
-		$this->addFilter( new Listing_Filter_IsActive() );
-		$this->addExport( new Listing_Export_CSV() );
-		$this->addExport( new Listing_Export_XLSX() );
-		
-		
-		$this->setDefaultSort('+internal_name');
-	}
 	
 	
-	public function getEntity(): Admin_Entity_Interface|Entity_Basic
+	
+	public function getEntity(): Entity_Admin_Interface|Entity_Basic
 	{
 		return $this->entity;
 	}

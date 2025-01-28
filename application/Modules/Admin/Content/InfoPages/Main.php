@@ -8,18 +8,17 @@
 namespace JetApplicationModule\Admin\Content\InfoPages;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_EntityManager_WithEShopData_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ContentInfoPages;
 use JetApplication\Content_InfoPage;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_Basic;
 
 /**
  *
  */
 class Main extends Application_Module implements Admin_Managers_ContentInfoPages
 {
-	use Admin_EntityManager_WithEShopData_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'content-info-page';
 
@@ -28,13 +27,9 @@ class Main extends Application_Module implements Admin_Managers_ContentInfoPages
 	public const ACTION_UPDATE = 'update_content_info_page';
 	public const ACTION_DELETE = 'delete_content_info_page';
 	
+
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Content - Info Page';
-	}
-	
-	public static function getEntityInstance(): Entity_WithEShopData|Admin_Entity_WithEShopData_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Content_InfoPage();
 	}

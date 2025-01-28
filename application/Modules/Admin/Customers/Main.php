@@ -10,18 +10,16 @@ namespace JetApplicationModule\Admin\Customers;
 use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Customer;
 use JetApplication\Entity_Address;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\Customer;
 use JetApplication\EShop;
 
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_Customer
+class Main extends Application_Module implements Admin_Managers_Customer
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'customers';
 
@@ -49,7 +47,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Customer();
 	}
@@ -59,9 +57,13 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 		return 'Customer';
 	}
 	
-	public function showName( int|object $id_or_item ): string
+	public function showName( int|Entity_Basic $id_or_item ): string
 	{
-		$customer = $id_or_item instanceof Customer ? $id_or_item : Customer::get($id_or_item);
+		if(!$id_or_item) {
+			$customer = $id_or_item;
+		} else {
+			$customer = $id_or_item instanceof Customer ? $id_or_item : Customer::get($id_or_item);
+		}
 		
 		return Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),

@@ -5,17 +5,18 @@ use Jet\Data_Tree;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Category;
 use JetApplication\Category;
 use JetApplication\Category_Product;
 use JetApplication\Category_EShopData;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
 use JetApplication\Entity_WithEShopData;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter;
@@ -32,11 +33,21 @@ use JetApplication\EShop;
 		'id_property_name' => 'id'
 	]
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_Category::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_Category::class,
+	description_mode: true,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
 )]
-abstract class Core_Category extends Entity_WithEShopData implements FulltextSearch_IndexDataProvider, Admin_Entity_WithEShopData_Interface {
-	use Admin_Entity_WithEShopData_Trait;
+abstract class Core_Category extends Entity_WithEShopData implements
+	Entity_HasImages_Interface,
+	FulltextSearch_IndexDataProvider,
+	Entity_Admin_WithEShopData_Interface
+{
+	use Entity_Admin_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
 	
 	public const SORT_NAME = 'name';
 	public const SORT_PRIORITY = 'priority';
@@ -996,21 +1007,4 @@ abstract class Core_Category extends Entity_WithEShopData implements FulltextSea
 	}
 	
 	
-	public function defineImages(): void
-	{
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image'),
-		);
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram image'),
-		);
-	}
-	
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
-	}
 }

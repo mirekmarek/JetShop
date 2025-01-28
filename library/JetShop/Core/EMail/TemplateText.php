@@ -9,26 +9,26 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers_ContentEMailTemplates;
 use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateText_EShopData;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShop;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'email_templates',
 	database_table_name: 'email_templates',
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_ContentEMailTemplates::class
 )]
-abstract class Core_EMail_TemplateText extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
+abstract class Core_EMail_TemplateText extends Entity_WithEShopData implements Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	/**
 	 * @var EMail_TemplateText_EShopData[]
@@ -87,10 +87,6 @@ abstract class Core_EMail_TemplateText extends Entity_WithEShopData implements A
 	}
 	
 	protected function setupAddForm( Form $form ): void
-	{
-	}
-	
-	public function defineImages() : void
 	{
 	}
 	

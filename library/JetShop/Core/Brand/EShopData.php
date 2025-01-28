@@ -6,7 +6,9 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_HasURL_Interface;
+use JetApplication\Entity_HasURL_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Brand;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\EShop;
@@ -20,8 +22,12 @@ use JetApplication\EShop;
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Brand::class
 )]
-abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
+#[Entity_Definition(
+	URL_template: '%NAME%-m-%ID%'
+)]
+abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasURL_Interface {
 	
+	use Entity_HasURL_Trait;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -31,7 +37,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setName'
 	)]
@@ -45,7 +51,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Alternative name:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setSecondName'
 	)]
@@ -59,7 +65,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setDescription'
 	)]
@@ -73,7 +79,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'Title:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setSeoTitle'
 	)]
@@ -87,7 +93,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setSeoDescription'
 	)]
@@ -101,7 +107,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Keywords:'
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setSeoKeywords'
 	)]
@@ -115,7 +121,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[JetShopEntity_Definition(
+	#[Entity_Definition(
 		is_description: true,
 		setter: 'setUrlParam'
 	)]
@@ -140,6 +146,10 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 	)]
 	protected string $image_title = '';
 	
+	public function getURLNameDataSource(): string
+	{
+		return $this->url_param ? : $this->name;
+	}
 	
 	public static function getNameMap( EShop $eshop ) : array
 	{
@@ -224,17 +234,6 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData {
 	{
 		return $this->url_param;
 	}
-	
-	public function getURLPathPart() : string
-	{
-		return $this->getUrlParam().'-m-'.$this->getId();
-	}
-	
-	public function getURL() : string
-	{
-		return $this->getEshop()->getURL( [$this->getURLPathPart()] );
-	}
-	
 	
 	public function setUrlParam( string $url_param ): void
 	{

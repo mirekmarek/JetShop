@@ -8,12 +8,17 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use Jet\Http_Headers;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\ProductQuestion;
 
 
-class Controller_Main extends Admin_EntityManager_WithEShopRelation_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Product question';
+	}
+	
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
 		parent::setupRouter( $action, $selected_tab );

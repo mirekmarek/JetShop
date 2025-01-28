@@ -11,10 +11,9 @@ use Jet\Application_Module;
 use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\Product;
 use JetApplication\Admin_Managers_WarehouseManagementOverview;
 use JetApplication\WarehouseManagement_StockCard;
@@ -24,7 +23,7 @@ use JetApplication\WarehouseManagement_StockCard;
  */
 class Main extends Application_Module implements Admin_Managers_WarehouseManagementOverview
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'stock-status-overview';
 
@@ -58,7 +57,7 @@ class Main extends Application_Module implements Admin_Managers_WarehouseManagem
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new WarehouseManagement_StockCard();
 	}

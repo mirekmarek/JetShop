@@ -1,12 +1,11 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\ProductStickers;
 
-use JetApplication\Admin_EntityManager_Marketing_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Entity_Marketing_Interface;
 use JetApplication\Admin_Managers_MarketingProductStickers;
-use JetApplication\Entity_Marketing;
+use JetApplication\Entity_Basic;
 use JetApplication\Marketing_ProductSticker;
 
 /**
@@ -14,7 +13,7 @@ use JetApplication\Marketing_ProductSticker;
  */
 class Main extends Application_Module implements Admin_Managers_MarketingProductStickers
 {
-	use Admin_EntityManager_Marketing_Trait;
+	use Admin_EntityManager_Trait;
 
 	public const ADMIN_MAIN_PAGE = 'auto_offers';
 
@@ -24,14 +23,9 @@ class Main extends Application_Module implements Admin_Managers_MarketingProduct
 	public const ACTION_DELETE = 'delete_auto_offer';
 	
 	
-	public static function getEntityInstance(): Entity_Marketing|Admin_Entity_Marketing_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Marketing_ProductSticker();
 	}
 	
-	public static function getEntityNameReadable() : string
-	{
-		return 'Marketing - product sticker';
-	}
-
 }

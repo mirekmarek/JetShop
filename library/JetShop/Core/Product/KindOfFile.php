@@ -10,11 +10,12 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use Jet\Tr;
-use JetApplication\Admin_Entity_WithEShopData_Interface;
-use JetApplication\Admin_Entity_WithEShopData_Trait;
 use JetApplication\Admin_Managers_KindOfProductFile;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
+use JetApplication\Entity_Admin_WithEShopData_Trait;
+use JetApplication\Entity_HasImages_Interface;
+use JetApplication\Entity_WithEShopData_HasImages_Trait;
+use JetApplication\Entity_Definition;
 use JetApplication\Product_KindOfFile_EShopData;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShop;
@@ -23,12 +24,20 @@ use JetApplication\EShop;
 	name: 'products_kind_of_file',
 	database_table_name: 'products_kind_of_file',
 )]
-#[JetShopEntity_Definition(
-	admin_manager_interface: Admin_Managers_KindOfProductFile::class
+#[Entity_Definition(
+	admin_manager_interface: Admin_Managers_KindOfProductFile::class,
+	description_mode: true,
+	images: [
+		'main' => 'Main image',
+		'pictogram' => 'Pictogram image',
+	]
 )]
-abstract class Core_Product_KindOfFile extends Entity_WithEShopData implements Admin_Entity_WithEShopData_Interface
+abstract class Core_Product_KindOfFile extends Entity_WithEShopData implements
+	Entity_HasImages_Interface,
+	Entity_Admin_WithEShopData_Interface
 {
-	use Admin_Entity_WithEShopData_Trait;
+	use Entity_WithEShopData_HasImages_Trait;
+	use Entity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL
@@ -67,22 +76,5 @@ abstract class Core_Product_KindOfFile extends Entity_WithEShopData implements A
 			$sd->setShowOnProductDetail( $show_on_product_detail );
 		}
 	}
-	
-	public function defineImages() : void
-	{
-		
-		$this->defineImage(
-			image_class:  'main',
-			image_title:  Tr::_('Main image')
-		);
-		$this->defineImage(
-			image_class:  'pictogram',
-			image_title:  Tr::_('Pictogram image')
-		);
-	}
-	
-	public function getDescriptionMode() : bool
-	{
-		return true;
-	}
+
 }

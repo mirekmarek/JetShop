@@ -43,7 +43,7 @@ $next_url = $listing->getNextEditUrl( $invoice->getId() );
 		<?php if($invoice->getIsCorrectionInvoice()): ?>
 			<b class="text-danger" style="font-size: 1.2rem"><?=$invoice->getNumber()?></b>
 			<div style="font-size: 0.9rem;"><?=Tr::_('Correction of: <a href="%URL%">%NUMBER%</a>', [
-					'URL' => Invoice::get($invoice->getCorrectionOfInvoiceId())->getEditURL(),
+					'URL' => Invoice::get($invoice->getCorrectionOfInvoiceId())->getEditUrl(),
 					'NUMBER'=>$invoice->getCorrectionOfInvoiceNumber()
 				])?></div>
 			

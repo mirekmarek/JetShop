@@ -12,7 +12,11 @@ use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Entity_AccountingDocument_Item;
 use JetApplication\Entity_Address;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
+use JetApplication\Entity_HasEShopRelation_Interface;
+use JetApplication\Entity_HasEShopRelation_Trait;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
 use JetApplication\Invoice_VATOverviewItem;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
@@ -32,10 +36,14 @@ use JetApplication\Order;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-abstract class Core_Entity_AccountingDocument extends Entity_WithEShopRelation implements NumberSeries_Entity_Interface, Context_ProvidesContext_Interface
+abstract class Core_Entity_AccountingDocument extends Entity_Basic implements
+	Entity_HasEShopRelation_Interface,
+	Entity_HasGet_Interface,
+	NumberSeries_Entity_Interface,
+	Context_ProvidesContext_Interface
 {
-	
-	
+	use Entity_HasEShopRelation_Trait;
+	use Entity_HasGet_Trait;
 	use Context_ProvidesContext_Trait;
 	use NumberSeries_Entity_Trait;
 	
@@ -776,12 +784,6 @@ abstract class Core_Entity_AccountingDocument extends Entity_WithEShopRelation i
 	{
 		parent::afterAdd();
 		$this->generateNumber();
-	}
-	
-	
-	public static function get( int $id ) : static|null
-	{
-		return static::load( $id );
 	}
 	
 	public static function getByKey( string $key ) : static|null

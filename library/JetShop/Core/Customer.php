@@ -12,17 +12,19 @@ use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
 use Jet\DataModel_Query;
 
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_Entity_WithEShopRelation_Trait;
+use JetApplication\Entity_Admin_Interface;
+use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_Customer;
 use JetApplication\Customer_Address;
 use JetApplication\Customer;
 use JetApplication\EMailMarketing;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
 use JetApplication\Entity_WithEShopRelation;
 use JetApplication\EShops;
 use JetApplication\EMailMarketing_Subscribe;
 use JetApplication\EShop;
-use JetApplication\JetShopEntity_Definition;
+use JetApplication\Entity_Definition;
 
 
 #[DataModel_Definition(
@@ -36,12 +38,16 @@ use JetApplication\JetShopEntity_Definition;
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 )]
-#[JetShopEntity_Definition(
+#[Entity_Definition(
 	admin_manager_interface: Admin_Managers_Customer::class
 )]
-abstract class Core_Customer extends Entity_WithEShopRelation implements Auth_User_Interface, Admin_Entity_WithEShopRelation_Interface
+abstract class Core_Customer extends Entity_WithEShopRelation implements
+	Auth_User_Interface,
+	Entity_Admin_Interface,
+	Entity_HasGet_Interface
 {
-	use Admin_Entity_WithEShopRelation_Trait;
+	use Entity_Admin_Trait;
+	use Entity_HasGet_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

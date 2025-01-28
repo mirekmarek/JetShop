@@ -4,10 +4,10 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 use Jet\Application;
 use Jet\Data_Tree;
 use Jet\MVC_Controller_Router;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
 use JetApplication\Category;
-use JetApplication\Admin_EntityManager_WithEShopData_Controller;
 
 use Jet\UI_messages;
 
@@ -21,13 +21,19 @@ use Jet\Data_Tree_Node;
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	
 	protected ?MVC_Controller_Router $router = null;
 
 	
 	protected ?Data_Tree $tree = null;
+	
+	public function getEntityNameReadable() : string
+	{
+		return 'Category';
+	}
+	
 	
 	protected function getTabs() : array
 	{
@@ -346,7 +352,7 @@ class Controller_Main extends Admin_EntityManager_WithEShopData_Controller
 				Tr::_( 'Category <b>%NAME%</b> has been created', [ 'NAME' => $new_category->getPathName() ] )
 			);
 			
-			Http_Headers::movedTemporary( $new_category->getEditURL() );
+			Http_Headers::movedTemporary( $new_category->getEditUrl() );
 		}
 		
 		$this->view->setVar( 'new_category', $new_category );

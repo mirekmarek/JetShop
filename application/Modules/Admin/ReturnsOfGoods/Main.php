@@ -9,10 +9,9 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ReturnOfGoods;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\Order;
 use JetApplication\ReturnOfGoods;
 
@@ -21,7 +20,7 @@ use JetApplication\ReturnOfGoods;
  */
 class Main extends Application_Module implements Admin_Managers_ReturnOfGoods
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'returns-of-goods';
 
@@ -38,7 +37,7 @@ class Main extends Application_Module implements Admin_Managers_ReturnOfGoods
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new ReturnOfGoods();
 	}

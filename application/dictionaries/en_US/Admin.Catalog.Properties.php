@@ -87,4 +87,6 @@ return [
 	'Create' => '',
 	'Please enter a value' => '',
 	'General' => '',
+	'Out of range' => '',
+	'Usage' => '',
 ];

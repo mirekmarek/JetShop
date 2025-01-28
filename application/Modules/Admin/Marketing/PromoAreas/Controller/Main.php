@@ -7,19 +7,20 @@
  */
 namespace JetApplicationModule\Admin\Marketing\PromoAreas;
 
-use JetApplication\Admin_EntityManager_Marketing_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
 
 
 /**
  *
  */
-class Controller_Main extends Admin_EntityManager_Marketing_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function setupRouter( string $action, string $selected_tab ): void
+	public function getEntityNameReadable(): string
 	{
-		parent::setupRouter( $action, $selected_tab );
+		return 'Promo area';
 	}
+	
 	
 	public function setupListing(): void
 	{

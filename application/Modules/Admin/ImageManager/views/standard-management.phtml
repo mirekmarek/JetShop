@@ -21,7 +21,7 @@ if($image_manager->getEshopSyncMode()):
 	endforeach;
 else:
 	echo '<br>';
-	echo Admin_Managers::EntityEdit_WithEShopData()->renderShopDataBlocks(
+	echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
 		inline_mode: true,
 		renderer: function( EShop $eshop, string $eshop_key ) use ($image_manager) : void {
 			echo $image_manager->renderImageWidgets( $eshop );

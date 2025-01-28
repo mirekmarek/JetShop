@@ -7,8 +7,13 @@
  */
 namespace JetApplicationModule\Admin\Delivery\Classes;
 
-use JetApplication\Admin_EntityManager_Common_Controller;
+use JetApplication\Admin_EntityManager_Controller;
 
-class Controller_Main extends Admin_EntityManager_Common_Controller
+class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getEntityNameReadable() : string
+	{
+		return 'Delivery class';
+	}
+	
 }

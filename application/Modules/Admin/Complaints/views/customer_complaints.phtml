@@ -25,7 +25,7 @@ $complaints = $this->getRaw( 'complaints' );
 	</thead>
 	<?php foreach( $complaints as $complaint): ?>
 	<tr>
-		<td><a href="<?=$complaint->getEditURL()?>"><?=$complaint->getNumber()?></a></td>
+		<td><a href="<?=$complaint->getEditUrl()?>"><?=$complaint->getNumber()?></a></td>
 		<td>
 			<?=Admin_Managers::Product()->showName( $complaint->getProductId() )?>
 		</td>

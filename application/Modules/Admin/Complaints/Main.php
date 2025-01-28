@@ -9,20 +9,18 @@ namespace JetApplicationModule\Admin\Complaints;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
-use JetApplication\Admin_Entity_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Interface;
-use JetApplication\Admin_EntityManager_WithEShopRelation_Trait;
+use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Complaint;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\Entity_Basic;
 use JetApplication\Order;
 use JetApplication\Complaint;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_EntityManager_WithEShopRelation_Interface, Admin_Managers_Complaint
+class Main extends Application_Module implements Admin_Managers_Complaint
 {
-	use Admin_EntityManager_WithEShopRelation_Trait;
+	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'complaints';
 
@@ -40,7 +38,7 @@ class Main extends Application_Module implements Admin_EntityManager_WithEShopRe
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_WithEShopRelation|Admin_Entity_WithEShopRelation_Interface
+	public static function getEntityInstance(): Entity_Basic
 	{
 		return new Complaint();
 	}
