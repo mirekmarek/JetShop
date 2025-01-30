@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_ChangeHistory;
+use JetApplication\EShopEntity_ChangeHistory;
 use JetApplication\Complaint;
 use JetApplication\Complaint_ChangeHistory_Item;
 
@@ -12,7 +12,7 @@ use JetApplication\Complaint_ChangeHistory_Item;
 	name: 'complaints_change_history',
 	database_table_name: 'complaints_change_history'
 )]
-abstract class Core_Complaint_ChangeHistory extends Entity_ChangeHistory {
+abstract class Core_Complaint_ChangeHistory extends EShopEntity_ChangeHistory {
 	
 	
 	/**

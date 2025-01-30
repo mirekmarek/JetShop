@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Brand;
 use JetApplication\Category;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\KindOfProduct;
 use JetApplication\Product;
 use JetApplication\Property;
@@ -58,7 +58,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 	public function updateIndex( string $class ) : void
 	{
 		/**
-		 * @var Entity_WithEShopData $class
+		 * @var EShopEntity_WithEShopData $class
 		 */
 		$et = $class::getEntityType();
 		

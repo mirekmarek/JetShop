@@ -11,15 +11,15 @@ use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\Logger;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagementStockVerification;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_WarehouseManagement_StockVerification;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement;
@@ -34,19 +34,19 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_stock_verification',
 	database_table_name: 'whm_stock_verification',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_WarehouseManagementStockVerification::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagement_StockVerification::class
 )]
-abstract class Core_WarehouseManagement_StockVerification extends Entity_Basic implements
-	NumberSeries_Entity_Interface,
+abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Basic implements
+	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface,
-	Entity_HasGet_Interface
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasGet_Interface
 {
 	use Context_ProvidesContext_Trait;
-	use NumberSeries_Entity_Trait;
-	use Entity_Admin_Trait;
-	use Entity_HasGet_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasGet_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_DONE = 'done';

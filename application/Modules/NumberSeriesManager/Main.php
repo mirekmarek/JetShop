@@ -14,7 +14,7 @@ use JetApplication\NumberSeries_Counter_Day;
 use JetApplication\NumberSeries_Counter_Month;
 use JetApplication\NumberSeries_Counter_Total;
 use JetApplication\NumberSeries_Counter_Year;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\NumberSeries_Manager;
 
 
@@ -22,7 +22,7 @@ class Main extends NumberSeries_Manager implements Admin_ControlCentre_Module_In
 {
 	use Admin_ControlCentre_Module_Trait;
 	
-	public function generateNumber( NumberSeries_Entity_Interface $entity ): string
+	public function generateNumber( EShopEntity_HasNumberSeries_Interface $entity ): string
 	{
 		$config = new EntityConfig( $entity->getNumberSeriesEntityType(), $entity->getNumberSeriesEntityShop() );
 		

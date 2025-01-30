@@ -8,7 +8,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
 /**
@@ -18,7 +18,7 @@ use JetApplication\EShop;
 	name: 'mailing_subscribe',
 	database_table_name: 'mailing_subscribe',
 )]
-abstract class Core_EMailMarketing_Subscribe extends Entity_WithEShopRelation
+abstract class Core_EMailMarketing_Subscribe extends EShopEntity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(

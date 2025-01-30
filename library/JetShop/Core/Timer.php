@@ -5,8 +5,8 @@ use Error;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasTimer_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasTimer_Interface;
 use JetApplication\Timer;
 use JetApplication\Timer_Action;
 
@@ -15,7 +15,7 @@ use JetApplication\Timer_Action;
 	name: 'timers',
 	database_table_name: 'timers'
 )]
-abstract class Core_Timer extends Entity_Basic
+abstract class Core_Timer extends EShopEntity_Basic
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME,
@@ -134,10 +134,10 @@ abstract class Core_Timer extends Entity_Basic
 	}
 	
 	public static function newTimer(
-		Entity_HasTimer_Interface|Entity_Basic $entity,
-		Data_DateTime   $date_time,
-		Timer_Action    $action,
-		mixed           $action_context
+		EShopEntity_HasTimer_Interface|EShopEntity_Basic $entity,
+		Data_DateTime                                    $date_time,
+		Timer_Action                                     $action,
+		mixed                                            $action_context
 	) : static
 	{
 		$timer = new static();
@@ -153,7 +153,7 @@ abstract class Core_Timer extends Entity_Basic
 		return $timer;
 	}
 	
-	protected static function getWhere( Entity_HasTimer_Interface $entity ) : array
+	protected static function getWhere( EShopEntity_HasTimer_Interface $entity ) : array
 	{
 		$where = [
 			'action_entity_type' => $entity::getEntityType(),
@@ -167,7 +167,7 @@ abstract class Core_Timer extends Entity_Basic
 	/**
 	 * @return static[]
 	 */
-	public static function getScheduled( Entity_HasTimer_Interface $entity ) : array
+	public static function getScheduled( EShopEntity_HasTimer_Interface $entity ) : array
 	{
 		$where = static::getWhere( $entity );
 		$where[] = 'AND';
@@ -207,7 +207,7 @@ abstract class Core_Timer extends Entity_Basic
 		return $to_perform;
 	}
 	
-	public static function hasNotProcessed( Entity_HasTimer_Interface $entity ) : bool
+	public static function hasNotProcessed( EShopEntity_HasTimer_Interface $entity ) : bool
 	{
 		$where = static::getWhere( $entity );
 		$where[] = 'AND';
@@ -222,7 +222,7 @@ abstract class Core_Timer extends Entity_Basic
 	public function perform() : bool
 	{
 		/**
-		 * @var Entity_HasTimer_Interface $class
+		 * @var EShopEntity_HasTimer_Interface $class
 		 */
 		$class = $this->action_entity_class;
 		

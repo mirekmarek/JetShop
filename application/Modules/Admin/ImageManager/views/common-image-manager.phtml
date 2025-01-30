@@ -68,7 +68,7 @@ $image_field->input()->addJsAction('onchange', "CommonImageManager.upload()");
 			element.select();
 			element.setSelectionRange(0, 99999);
 
-			document.execCommand("copy");
+			document['execCommand']("copy");
 		}
 		
 		

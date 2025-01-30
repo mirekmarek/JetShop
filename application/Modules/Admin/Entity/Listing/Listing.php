@@ -8,13 +8,13 @@ use Jet\Factory_MVC;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use JetApplication\Admin_EntityManager_Interface;
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasActivation_Interface;
-use JetApplication\Entity_HasActivationByTimePlan_Interface;
-use JetApplication\Entity_HasEShopRelation_Interface;
-use JetApplication\Entity_HasInternalParams_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasActivation_Interface;
+use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasInternalParams_Interface;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 
@@ -24,7 +24,7 @@ use JetApplication\EShops;
 class Listing extends DataListing {
 	
 	
-	protected Entity_Basic|Entity_Admin_Interface $entity;
+	protected EShopEntity_Basic|EShopEntity_Admin_Interface $entity;
 	protected Admin_EntityManager_Interface $entity_manager;
 	protected MVC_View $column_view;
 	protected MVC_View $filter_view;
@@ -59,7 +59,7 @@ class Listing extends DataListing {
 		
 		
 		if(
-			($this->entity instanceof Entity_HasEShopRelation_Interface ) &&
+			($this->entity instanceof EShopEntity_HasEShopRelation_Interface ) &&
 			EShops::isMultiEShopMode()
 		) {
 			$this->addColumn( new Listing_Column_EShop() );
@@ -71,7 +71,7 @@ class Listing extends DataListing {
 		
 		
 		if(
-			$this->entity instanceof Entity_HasActivation_Interface
+			$this->entity instanceof EShopEntity_HasActivation_Interface
 		) {
 			$this->addColumn( new Listing_Column_ActiveState() );
 			
@@ -80,7 +80,7 @@ class Listing extends DataListing {
 			$this->addFilter( new Listing_Filter_IsActive() );
 		}
 		
-		if( $this->entity instanceof Entity_HasActivationByTimePlan_Interface ) {
+		if( $this->entity instanceof EShopEntity_HasActivationByTimePlan_Interface ) {
 			$this->addColumn( new Listing_Column_ValidFrom() );
 			$this->addColumn( new Listing_Column_ValidTill() );
 
@@ -88,7 +88,7 @@ class Listing extends DataListing {
 			$default_schema[] = Listing_Column_ValidTill::KEY;
 		}
 		
-		if( $this->entity instanceof Entity_HasInternalParams_Interface ) {
+		if( $this->entity instanceof EShopEntity_HasInternalParams_Interface ) {
 			$this->addColumn( new Listing_Column_InternalName() );
 			$this->addColumn( new Listing_Column_InternalCode() );
 			$this->addColumn( new Listing_Column_InternalNotes() );
@@ -140,7 +140,7 @@ class Listing extends DataListing {
 	
 	
 	
-	public function getEntity(): Entity_Admin_Interface|Entity_Basic
+	public function getEntity(): EShopEntity_Admin_Interface|EShopEntity_Basic
 	{
 		return $this->entity;
 	}
@@ -216,7 +216,7 @@ class Listing extends DataListing {
 	
 	
 	/**
-	 * @return Entity_Basic[]|DataModel_Fetch_Instances
+	 * @return EShopEntity_Basic[]|DataModel_Fetch_Instances
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function getItemList(): DataModel_Fetch_Instances
@@ -247,7 +247,7 @@ class Listing extends DataListing {
 		return $this->column_view;
 	}
 	
-	public function itemGetter( int|string $id ): ?Entity_Basic
+	public function itemGetter( int|string $id ): ?EShopEntity_Basic
 	{
 		return $this->entity::get( $id );
 	}
@@ -290,7 +290,7 @@ class Listing extends DataListing {
 		return '';
 	}
 	
-	public function getEditUrl( Entity_Basic $item ): string
+	public function getEditUrl( EShopEntity_Basic $item ): string
 	{
 		return Http_Request::currentURI( ['id' => $item->getId()] );
 	}

@@ -6,7 +6,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\DeliveryTerm_Info;
-use JetApplication\Entity_AccountingDocument_Item_SetItem;
+use JetApplication\EShopEntity_AccountingDocument_Item_SetItem;
 use JetApplication\Order_Item;
 
 #[DataModel_Definition(
@@ -14,7 +14,7 @@ use JetApplication\Order_Item;
 	database_table_name: 'orders_items_set_items',
 	parent_model_class: Order_Item::class
 )]
-abstract class Core_Order_Item_SetItem extends Entity_AccountingDocument_Item_SetItem {
+abstract class Core_Order_Item_SetItem extends EShopEntity_AccountingDocument_Item_SetItem {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

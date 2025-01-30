@@ -4,10 +4,10 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 use Jet\Locale;
 use Jet\UI_tabs;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasActivation_Interface;
-use JetApplication\Entity_HasTimer_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasActivation_Interface;
+use JetApplication\EShopEntity_HasTimer_Interface;
 use JetApplication\EShop;
 
 use Jet\MVC_View;
@@ -17,7 +17,7 @@ use Jet\Form_Renderer;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_Basic $item
+ * @var EShopEntity_Basic $item
  * @var Main $module
  * @var UI_tabs $tabs
  */
@@ -60,7 +60,7 @@ $form->renderer()->setDefaultFieldWidth( [
 		echo '<br>';
 		
 		if(
-			$item instanceof Entity_HasActivation_Interface
+			$item instanceof EShopEntity_HasActivation_Interface
 		) {
 			echo $module->renderEntityActivation(
 				entity: $item,
@@ -68,7 +68,7 @@ $form->renderer()->setDefaultFieldWidth( [
 			);
 		}
 		
-		if( $item instanceof Entity_HasTimer_Interface ) {
+		if( $item instanceof EShopEntity_HasTimer_Interface ) {
 			echo Admin_Managers::Timer()?->renderEntityEdit( $item, !$form->getIsReadonly() );
 		}
 		
@@ -81,7 +81,7 @@ $form->renderer()->setDefaultFieldWidth( [
 		}
 		
 		if(
-			$item instanceof Entity_Admin_WithEShopData_Interface &&
+			$item instanceof EShopEntity_Admin_WithEShopData_Interface &&
 			!$item->getSeparateTabFormShopData()
 		) {
 			if(!$item->getDescriptionMode()) {

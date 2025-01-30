@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 
 class Listing_Column_EShop extends Listing_Column_Abstract
 {
@@ -50,7 +50,7 @@ class Listing_Column_EShop extends Listing_Column_Abstract
 	public function getExportData( mixed $item ): string
 	{
 		/**
-		 * @var Entity_WithEShopRelation $item
+		 * @var EShopEntity_WithEShopRelation $item
 		 */
 		return $item->getEshopKey();
 	}

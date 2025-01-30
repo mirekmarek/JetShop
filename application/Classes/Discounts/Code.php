@@ -10,6 +10,6 @@ use JetShop\Core_Discounts_Code;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Discounts_Code extends Core_Discounts_Code {
 }

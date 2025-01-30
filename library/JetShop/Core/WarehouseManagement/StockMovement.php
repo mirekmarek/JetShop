@@ -14,7 +14,7 @@ use JetApplication\Context_HasContext_Interface;
 use JetApplication\Context_HasContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
 use JetApplication\WarehouseManagement_StockCard;
@@ -26,7 +26,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'warehouse_stock_movement',
 	database_table_name: 'whm_stock_movements',
 )]
-class Core_WarehouseManagement_StockMovement extends Entity_Basic implements Context_HasContext_Interface
+class Core_WarehouseManagement_StockMovement extends EShopEntity_Basic implements Context_HasContext_Interface
 {
 	use Context_HasContext_Trait;
 	

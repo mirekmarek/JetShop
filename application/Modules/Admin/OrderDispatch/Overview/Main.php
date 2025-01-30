@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\OrderDispatch\Overview;
 use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Interface;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\OrderDispatch;
 
 /**
@@ -34,7 +34,7 @@ class Main extends Application_Module implements Admin_EntityManager_Interface
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new OrderDispatch();
 	}

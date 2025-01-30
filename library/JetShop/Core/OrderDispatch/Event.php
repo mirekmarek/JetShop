@@ -10,7 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
 use JetApplication\OrderDispatch_Event_HandlerModule;
@@ -22,7 +22,7 @@ use JetApplication\OrderDispatch_Event_HandlerModule;
 	name: 'order_dispatch_event',
 	database_table_name: 'orders_dispatch_events',
 )]
-class Core_OrderDispatch_Event extends Entity_Event
+class Core_OrderDispatch_Event extends EShopEntity_Event
 {
 	
 	protected static string $handler_module_name_prefix = 'Events.OrderDispatch.';

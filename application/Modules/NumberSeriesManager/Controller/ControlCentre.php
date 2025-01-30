@@ -16,7 +16,7 @@ use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
 use JetApplication\EShops;
 use Error;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use ReflectionClass;
 
 /**
@@ -67,7 +67,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 					
 					if(
 						!$reflection->isAbstract() &&
-						$reflection->implementsInterface( NumberSeries_Entity_Interface::class )
+						$reflection->implementsInterface( EShopEntity_HasNumberSeries_Interface::class )
 					) {
 						$this->classes[$class] = $reflection;
 					}
@@ -92,7 +92,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		foreach( $finder->getClasses() as $class_name=>$reflection ) {
 			/**
-			 * @var NumberSeries_Entity_Interface $class_name
+			 * @var EShopEntity_HasNumberSeries_Interface $class_name
 			 */
 			
 			$entities[] = [

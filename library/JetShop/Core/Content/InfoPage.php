@@ -14,27 +14,27 @@ use Jet\Form_Field;
 
 use Jet\Form_Field_Input;
 use Jet\MVC;
-use JetApplication\Admin_Managers_ContentInfoPages;
+use JetApplication\Admin_Managers_Content_InfoPages;
 use JetApplication\Content_InfoPage_EShopData;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShops;
 use JetApplication\EShop;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'content_info_page',
 	database_table_name: 'content_info_page',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_ContentInfoPages::class,
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Content_InfoPages::class,
 	separate_tab_form_shop_data: true
 )]
-abstract class Core_Content_InfoPage extends Entity_WithEShopData implements Entity_Admin_WithEShopData_Interface
+abstract class Core_Content_InfoPage extends EShopEntity_WithEShopData implements EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

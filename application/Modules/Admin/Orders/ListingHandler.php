@@ -10,14 +10,14 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\Factory_MVC;
 use Jet\IO_Dir;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
 
 
 abstract class ListingHandler {
 	protected string $base_dir;
 	protected MVC_View $view;
 	protected MVC_View $main_view;
-	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
+	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
 	
 	protected bool $has_dialog = false;
 	
@@ -28,7 +28,7 @@ abstract class ListingHandler {
 		return static::KEY;
 	}
 	
-	public function __construct( string $base_dir, MVC_View $main_view, Admin_Managers_Entity_Listing $listing_manager )
+	public function __construct( string $base_dir, MVC_View $main_view, Admin_Managers_EShopEntity_Listing $listing_manager )
 	{
 		$this->base_dir = $base_dir;
 		$this->main_view = $main_view;
@@ -88,7 +88,7 @@ abstract class ListingHandler {
 	
 	protected static ?array $handlers = null;
 	
-	public static function initHandlers( MVC_View $main_view, Admin_Managers_Entity_Listing $listing_manager ) : void
+	public static function initHandlers( MVC_View $main_view, Admin_Managers_EShopEntity_Listing $listing_manager ) : void
 	{
 		static::$handlers = [];
 		

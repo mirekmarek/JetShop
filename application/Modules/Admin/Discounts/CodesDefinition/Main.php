@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use JetApplication\Admin_Managers_DiscountCodesDefinition;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Discounts_Code;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_DiscountCodesDef
 	public const ACTION_DELETE = 'delete_discounts_code';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Discounts_Code();
 	}

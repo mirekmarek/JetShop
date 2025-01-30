@@ -10,15 +10,15 @@ use Jet\Application_Module;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 
 
 abstract class Core_Event_HandlerModule extends Application_Module
 {
 	
-	abstract public function init( Entity_Event $event ) : void;
+	abstract public function init( EShopEntity_Event $event ) : void;
 	
-	abstract public function getEvent(): Entity_Event;
+	abstract public function getEvent(): EShopEntity_Event;
 	
 	
 	public function handle() : bool

@@ -10,39 +10,39 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Admin_Managers_ContentArticles;
+use JetApplication\Admin_Managers_Content_Articles;
 use JetApplication\Content_Article_Author;
 use JetApplication\Content_Article_Category;
 use JetApplication\Content_Article_KindOfArticle;
 use JetApplication\Content_Article_EShopData;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
 use JetApplication\EShops;
 use JetApplication\EShop;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'content_article',
 	database_table_name: 'content_articles',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_ContentArticles::class,
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Content_Articles::class,
 	images: [
 		'header_1' => 'Header 1',
 		'header_2' => 'Header 2',
 	],
 	separate_tab_form_shop_data: true
 )]
-abstract class Core_Content_Article extends Entity_WithEShopData implements
-	Entity_HasImages_Interface,
-	Entity_Admin_WithEShopData_Interface
+abstract class Core_Content_Article extends EShopEntity_WithEShopData implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

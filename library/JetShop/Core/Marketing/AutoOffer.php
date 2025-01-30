@@ -8,32 +8,32 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_MarketingAutoOffers;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_Marketing;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_Marketing_AutoOffers;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_Marketing;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_AutoOffer;
 
 #[DataModel_Definition(
 	name: 'auto_offers',
 	database_table_name: 'auto_offers',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingAutoOffers::class,
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Marketing_AutoOffers::class,
 	images: [
 		'main' => 'Main image',
 		'pictogram' => 'Pictogram image',
 	]
 )]
-abstract class Core_Marketing_AutoOffer extends Entity_Marketing implements
-	Entity_HasImages_Interface,
-	Entity_Admin_Interface
+abstract class Core_Marketing_AutoOffer extends EShopEntity_Marketing implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_Interface
 {
-	use Entity_HasImages_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasImages_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	public const SHOW_MODE_NORMAL = 'normal';
 	public const SHOW_MODE_NO_LINK = 'no_link';

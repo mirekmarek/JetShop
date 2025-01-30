@@ -7,11 +7,11 @@ use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Http_Request;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Entity_Marketing;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_LandingPage;
 
 
@@ -19,12 +19,12 @@ use JetApplication\Marketing_LandingPage;
 	name: 'marketing_landing_page',
 	database_table_name: 'marketing_landing_pages',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Marketing_LandingPage::class
 )]
-abstract class Core_Marketing_LandingPage extends Entity_Marketing implements Entity_Admin_Interface
+abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

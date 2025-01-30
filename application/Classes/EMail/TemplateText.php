@@ -11,7 +11,7 @@ use JetShop\Core_EMail_TemplateText;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class EMail_TemplateText extends Core_EMail_TemplateText
 {
 }

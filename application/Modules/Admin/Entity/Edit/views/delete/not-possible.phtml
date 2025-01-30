@@ -1,8 +1,8 @@
 <?php
 namespace JetApplicationModule\Admin\Entity\Edit;
 
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 
 use Jet\Http_Request;
 use Jet\UI;
@@ -10,7 +10,7 @@ use Jet\MVC_View;
 
 /**
  * @var MVC_View $this
- * @var Entity_WithEShopData|Entity_Admin_Interface     $item
+ * @var EShopEntity_WithEShopData|EShopEntity_Admin_Interface     $item
  * @var ?callable $reason_renderer
  */
 $item = $this->getRaw( 'item' );

@@ -13,7 +13,7 @@ use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use JetApplication\Complaint_Image;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Complaint;
 
 #[DataModel_Definition(
@@ -23,7 +23,7 @@ use JetApplication\Complaint;
 	id_controller_options: ['id_property_name' => 'id'],
 	parent_model_class: Complaint::class
 )]
-abstract class Core_Complaint_Image extends Entity_Basic
+abstract class Core_Complaint_Image extends EShopEntity_Basic
 {
 	
 	#[DataModel_Definition(

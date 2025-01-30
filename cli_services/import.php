@@ -1378,7 +1378,7 @@ class Migration {
 		
 		$updateIndex = function( string $class ) {
 			/**
-			 * @var Entity_WithEShopData $class
+			 * @var EShopEntity_WithEShopData $class
 			 */
 			$et = $class::getEntityType();
 			

@@ -369,7 +369,7 @@ class Main extends MarketplaceIntegration_Module implements Admin_ControlCentre_
 		}
 		
 		for($i=0;;$i++) {
-			$img = $product->getImgUrl( $i );
+			$img = $product->getImageURL( $i );
 			if(!$img) {
 				break;
 			}

@@ -18,11 +18,11 @@ use JetApplication\Delivery_Method_PaymentMethods;
 use JetApplication\Delivery_Method_Price;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Carrier_DeliveryPoint;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_HasPrice_Interface;
-use JetApplication\Entity_HasPrice_Trait;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_HasPrice_Interface;
+use JetApplication\EShopEntity_HasPrice_Trait;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Order;
 use JetApplication\Payment_Method_EShopData;
 use JetApplication\Pricelist;
@@ -34,12 +34,12 @@ use JetApplication\Product_EShopData;
 	database_table_name: 'delivery_methods_eshop_data',
 	parent_model_class: Delivery_Method::class
 )]
-abstract class Core_Delivery_Method_EShopData extends Entity_WithEShopData_EShopData implements
-	Entity_HasPrice_Interface,
-	Entity_HasImages_Interface
+abstract class Core_Delivery_Method_EShopData extends EShopEntity_WithEShopData_EShopData implements
+	EShopEntity_HasPrice_Interface,
+	EShopEntity_HasImages_Interface
 {
-	use Entity_HasImages_Trait;
-	use Entity_HasPrice_Trait;
+	use EShopEntity_HasImages_Trait;
+	use EShopEntity_HasPrice_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

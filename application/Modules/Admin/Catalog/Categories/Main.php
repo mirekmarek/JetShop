@@ -7,7 +7,7 @@ use JetApplication\Category;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Category;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
@@ -44,7 +44,7 @@ class Main extends Application_Module implements Admin_Managers_Category
 		);
 	}
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Category();
 	}

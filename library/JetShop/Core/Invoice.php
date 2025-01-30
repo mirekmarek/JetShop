@@ -10,16 +10,16 @@ use Jet\Form_Field_Date;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_Invoice;
 use JetApplication\Context_ProvidesContext_Interface;
-use JetApplication\Entity_AccountingDocument;
-use JetApplication\Entity_Price;
+use JetApplication\EShopEntity_AccountingDocument;
+use JetApplication\EShopEntity_Price;
 use JetApplication\Invoice;
 use JetApplication\Invoice_VATOverviewItem;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\Invoice_Item;
 use JetApplication\Order;
 use JetApplication\Payment_Kind;
@@ -28,15 +28,15 @@ use JetApplication\Payment_Kind;
 	name: 'invoice',
 	database_table_name: 'invoices',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_Invoice::class
 )]
-abstract class Core_Invoice extends Entity_AccountingDocument implements
-	NumberSeries_Entity_Interface,
+abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
+	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL
@@ -499,7 +499,7 @@ abstract class Core_Invoice extends Entity_AccountingDocument implements
 				$per_unit_without_vat->input()->setDataAttribute('round_vat', $pricelist->getRoundPrecision_VAT());
 				$per_unit_without_vat->input()->addJsAction('onchange', "CorrectionInvoice.calcItem_WithoutVAT(this);");
 				$per_unit_without_vat->setFieldValueCatcher( function( float $value ) use ($item) {
-					$price = new class extends Entity_Price {};
+					$price = new class extends EShopEntity_Price {};
 					
 					$price->setPricelistCode( $this->getPricelistCode() );
 					$price->setVatRate( $item->getVatRate() );

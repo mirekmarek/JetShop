@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_AccountingDocument_Item_SetItem;
+use JetApplication\EShopEntity_AccountingDocument_Item_SetItem;
 use JetApplication\Invoice_Item;
 
 #[DataModel_Definition(
@@ -12,7 +12,7 @@ use JetApplication\Invoice_Item;
 	database_table_name: 'invoices_items_set_items',
 	parent_model_class: Invoice_Item::class
 )]
-abstract class Core_Invoice_Item_SetItem extends Entity_AccountingDocument_Item_SetItem {
+abstract class Core_Invoice_Item_SetItem extends EShopEntity_AccountingDocument_Item_SetItem {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

@@ -8,14 +8,14 @@ use Jet\DataModel_Definition;
 use JetApplication\DeliveryTerm_Info;
 use JetApplication\Order;
 use JetApplication\Order_Item_SetItem;
-use JetApplication\Entity_AccountingDocument_Item;
+use JetApplication\EShopEntity_AccountingDocument_Item;
 
 #[DataModel_Definition(
 	name: 'order_item',
 	database_table_name: 'orders_items',
 	parent_model_class: Order::class
 )]
-abstract class Core_Order_Item extends Entity_AccountingDocument_Item {
+abstract class Core_Order_Item extends EShopEntity_AccountingDocument_Item {
 
 	
 	#[DataModel_Definition(

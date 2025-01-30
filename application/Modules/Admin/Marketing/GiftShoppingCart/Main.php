@@ -1,17 +1,17 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
 
-use JetApplication\Admin_Managers_MarketingGiftsShoppingCart;
+use JetApplication\Admin_Managers_Marketing_GiftsShoppingCart;
 use JetApplication\Admin_EntityManager_Trait;
 
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_Gift_ShoppingCart;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingGiftsShoppingCart
+class Main extends Application_Module implements Admin_Managers_Marketing_GiftsShoppingCart
 {
 	use Admin_EntityManager_Trait;
 
@@ -23,7 +23,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingGiftsSh
 	public const ACTION_DELETE = 'delete_gift_shopping_cart';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_Gift_ShoppingCart();
 	}

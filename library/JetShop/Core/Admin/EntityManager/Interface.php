@@ -1,21 +1,21 @@
 <?php
 namespace JetShop;
 
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasActivation_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasActivation_Interface;
 
 interface Core_Admin_EntityManager_Interface {
 	
-	public static function getEntityInstance(): Entity_Basic;
+	public static function getEntityInstance(): EShopEntity_Basic;
 	
-	public function showName( int|Entity_Basic $id_or_item ) : string;
+	public function showName( int|EShopEntity_Basic $id_or_item ) : string;
 	
-	public static function getEditUrl( int|Entity_Basic $id_or_item, array $get_params=[] ) : string;
+	public static function getEditUrl( int|EShopEntity_Basic $id_or_item, array $get_params=[] ) : string;
 	
 	public static function getCurrentUserCanEdit() : bool;
 	public static function getCurrentUserCanCreate() : bool;
 	public static function getCurrentUserCanDelete() : bool;
 	
-	public function renderActiveState( Entity_HasActivation_Interface $item ) : string;
+	public function renderActiveState( EShopEntity_HasActivation_Interface $item ) : string;
 	
 }

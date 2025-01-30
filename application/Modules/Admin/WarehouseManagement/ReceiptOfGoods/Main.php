@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Interface;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 /**
@@ -29,7 +29,7 @@ class Main extends Application_Module implements Admin_EntityManager_Interface, 
 	public const ACTION_DELETE = 'delete_receipt_of_goods';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new WarehouseManagement_ReceiptOfGoods();
 	}

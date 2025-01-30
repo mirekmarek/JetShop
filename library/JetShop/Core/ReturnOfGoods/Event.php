@@ -10,7 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 use JetApplication\ReturnOfGoods;
 use JetApplication\ReturnOfGoods_Event_HandlerModule;
 use JetApplication\ReturnOfGoods_event;
@@ -22,7 +22,7 @@ use JetApplication\ReturnOfGoods_event;
 	name: 'return_of_goods_event',
 	database_table_name: 'returns_of_goods_events',
 )]
-class Core_ReturnOfGoods_Event extends Entity_Event
+class Core_ReturnOfGoods_Event extends EShopEntity_Event
 {
 
 	protected static string $handler_module_name_prefix = 'Events.ReturnOfGoods.';

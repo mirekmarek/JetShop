@@ -4,7 +4,7 @@ namespace JetApplicationModule\Admin\Suppliers;
 use JetApplication\Admin_Managers_Supplier;
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Supplier;
 
 /**
@@ -22,7 +22,7 @@ class Main extends Application_Module implements Admin_Managers_Supplier
 	public const ACTION_DELETE = 'delete_supplier';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Supplier();
 	}

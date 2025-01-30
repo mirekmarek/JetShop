@@ -17,7 +17,7 @@ use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
 
 use Jet\MVC_Controller_Router_AddEditDelete;
 use Jet\MVC_Controller_Default;
@@ -32,7 +32,7 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;
 	protected ?WarehouseManagement_StockCard $stock_card = null;
 	
-	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
+	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
 
 
 	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
@@ -61,7 +61,7 @@ class Controller_Main extends MVC_Controller_Default
 		}
 	}
 	
-	public function getListing() : Admin_Managers_Entity_Listing
+	public function getListing() : Admin_Managers_EShopEntity_Listing
 	{
 		if(!$this->listing_manager) {
 			$this->listing_manager = Admin_Managers::EntityListing();

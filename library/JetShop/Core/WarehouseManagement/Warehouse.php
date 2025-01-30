@@ -11,32 +11,32 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagementWarehouses;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_WarehouseManagement_Warehouses;
 use JetApplication\Context;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\DataList;
-use JetApplication\Entity_Common;
+use JetApplication\EShopEntity_Common;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_StockMovement;
 use JetApplication\WarehouseManagement_StockMovement_Type;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'warehouse',
 	database_table_name: 'whm_warehouses',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_WarehouseManagementWarehouses::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagement_Warehouses::class
 )]
-class Core_WarehouseManagement_Warehouse extends Entity_Common implements Entity_Admin_Interface
+class Core_WarehouseManagement_Warehouse extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

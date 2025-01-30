@@ -14,8 +14,8 @@ use Jet\MVC_View;
 use Jet\Translator;
 use JetApplication\Admin_Managers_Image;
 
-use JetApplication\Product;
-use JetApplication\Product_Image;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
+use JetApplication\ImageGallery_Image;
 use JetApplication\EShop;
 
 /**
@@ -228,26 +228,26 @@ class Main extends Application_Module implements Admin_Managers_Image
 	}
 	
 	
-	protected ProductImageManager $product_image_manager;
+	protected ImageGalleryManager $image_gallery_manager;
 	
 	
-	public function handleProductImageManagement( Product $product ): void
+	public function handleImageGalleryManagement( EShopEntity_HasImageGallery_Interface $item ): void
 	{
-		$this->product_image_manager = new ProductImageManager( $product, $this->initView(), $this->editable );
+		$this->image_gallery_manager = new ImageGalleryManager( $item, $this->initView(), $this->editable );
 		if($this->editable) {
-			$this->product_image_manager->handle();
+			$this->image_gallery_manager->handle();
 		}
 		
 	}
 	
-	public function uploadProductImages( Product $product, array $images ) : void
+	public function uploadImageGallery( EShopEntity_HasImageGallery_Interface $item, array $images ) : void
 	{
 		$def = new Image(
-			entity: $product->getEntityType(),
-			object_id: $product->getId(),
-			image_property_setter: function( $value ) use ($product) {
-				$product->addImage( $value );
-				$product->save();
+			entity: $item->getEntityType(),
+			object_id: $item->getId(),
+			image_property_setter: function( $value ) use ($item) {
+				$item->addImage( $value );
+				$item->save();
 			}
 		);
 		
@@ -256,33 +256,33 @@ class Main extends Application_Module implements Admin_Managers_Image
 		}
 	}
 	
-	public function renderProductImageManagement(): string
+	public function renderImageGalleryManagement(): string
 	{
 		return Translator::setCurrentDictionaryTemporary( $this->module_manifest->getName(), function() {
-			return $this->product_image_manager->render();
+			return $this->image_gallery_manager->render();
 		} );
 		
 		
 		return $res;
 	}
 	
-	public function getProductImageURL( Product_Image $image ): string
+	public function getImageGalleryImageURL( ImageGallery_Image $image ): string
 	{
-		$this->product_image_manager->getProductDefinedImage()->setImagePropertyGetter( function() use ( $image ) {
+		$this->image_gallery_manager->getDefinedImage()->setImagePropertyGetter( function() use ( $image ) {
 			return $image->getImageFile();
 		} );
 		
-		return $this->product_image_manager->getProductDefinedImage()->getUrl();
+		return $this->image_gallery_manager->getDefinedImage()->getUrl();
 	}
 	
 	
-	public function getProductImageThumbnailUrl( Product_Image $image, int $max_w, int $max_h ): string
+	public function getImageGalleryImageThumbnailUrl( ImageGallery_Image $image, int $max_w, int $max_h ): string
 	{
-		$this->product_image_manager->getProductDefinedImage()->setImagePropertyGetter( function() use ( $image ) {
+		$this->image_gallery_manager->getDefinedImage()->setImagePropertyGetter( function() use ( $image ) {
 			return $image->getImageFile();
 		} );
 		
-		return $this->product_image_manager->getProductDefinedImage()->getThumbnailUrl( $max_w, $max_h );
+		return $this->image_gallery_manager->getDefinedImage()->getThumbnailUrl( $max_w, $max_h );
 	}
 	
 	

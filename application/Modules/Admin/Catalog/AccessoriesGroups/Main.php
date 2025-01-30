@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\AccessoriesGroups;
 
 use Jet\Application_Module;
 use JetApplication\Accessories_Group;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Admin_Managers_AccessoriesGroups;
 use JetApplication\Admin_EntityManager_Trait;
 
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_AccessoriesGroup
 	public const ACTION_DELETE = 'delete_accessories_group';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Accessories_Group();
 	}

@@ -6,11 +6,11 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_MarketingGiftsProducts;
-use JetApplication\Entity_Marketing;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_Marketing_GiftsProducts;
+use JetApplication\EShopEntity_Marketing;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_Gift;
 use JetApplication\Marketing_Gift_Product;
 use JetApplication\Product_EShopData;
@@ -20,12 +20,12 @@ use JetApplication\ShoppingCart;
 	name: 'gift_product',
 	database_table_name: 'gifts_product',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingGiftsProducts::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Marketing_GiftsProducts::class
 )]
-abstract class Core_Marketing_Gift_Product extends Entity_Marketing implements Entity_Admin_Interface
+abstract class Core_Marketing_Gift_Product extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

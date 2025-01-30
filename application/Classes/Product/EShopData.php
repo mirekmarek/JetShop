@@ -9,6 +9,6 @@ use JetShop\Core_Product_EShopData;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Product_EShopData extends Core_Product_EShopData {
 }

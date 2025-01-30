@@ -6,7 +6,7 @@
 namespace JetShop;
 
 
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 use JetApplication\Event_HandlerModule;
 use JetApplication\Order_Event;
 use JetApplication\EShop;
@@ -21,7 +21,7 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 	protected Order $order;
 
 
-	public function init( Entity_Event $event ) : void
+	public function init( EShopEntity_Event $event ) : void
 	{
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;

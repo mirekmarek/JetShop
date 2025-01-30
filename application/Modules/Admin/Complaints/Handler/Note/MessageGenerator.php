@@ -10,10 +10,10 @@ namespace JetApplicationModule\Admin\Complaints;
 use Jet\Factory_MVC;
 use Jet\IO_Dir;
 use Jet\MVC_View;
-use JetApplication\Entity_Note_MessageGenerator;
+use JetApplication\EShopEntity_Note_MessageGenerator;
 use JetApplication\Complaint;
 
-abstract class Handler_Note_MessageGenerator extends Entity_Note_MessageGenerator {
+abstract class Handler_Note_MessageGenerator extends EShopEntity_Note_MessageGenerator {
 	protected MVC_View $view;
 	protected Complaint $complaint;
 	

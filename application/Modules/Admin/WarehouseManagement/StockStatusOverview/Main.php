@@ -13,15 +13,15 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
-use JetApplication\Admin_Managers_WarehouseManagementOverview;
+use JetApplication\Admin_Managers_WarehouseManagement_Overview;
 use JetApplication\WarehouseManagement_StockCard;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagementOverview
+class Main extends Application_Module implements Admin_Managers_WarehouseManagement_Overview
 {
 	use Admin_EntityManager_Trait;
 	
@@ -57,7 +57,7 @@ class Main extends Application_Module implements Admin_Managers_WarehouseManagem
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new WarehouseManagement_StockCard();
 	}

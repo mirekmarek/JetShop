@@ -6,8 +6,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_Order;
 use JetApplication\Availabilities;
 use JetApplication\Availability;
@@ -16,13 +16,13 @@ use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\Entity_WithEShopRelation;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_WithEShopRelation;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
-use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Order_Item;
 use JetApplication\Order_ProductOverviewItem;
 use JetApplication\Order_Trait_Events;
@@ -49,21 +49,21 @@ use JetApplication\Context_ProvidesContext_Trait;
 		'type' => DataModel::KEY_TYPE_UNIQUE
 	]
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_Order::class
 )]
-abstract class Core_Order extends Entity_WithEShopRelation implements
-	Entity_HasGet_Interface,
-	NumberSeries_Entity_Interface,
+abstract class Core_Order extends EShopEntity_WithEShopRelation implements
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
-	use Entity_HasGet_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasGet_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	
 	use Context_ProvidesContext_Trait;
-	use NumberSeries_Entity_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
 	
 	use Order_Trait_Events;
 	use Order_Trait_Changes;

@@ -3,7 +3,7 @@ namespace JetShop;
 
 use Jet\DataModel_Definition;
 use JetApplication\NumberSeries_Counter;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 
 #[DataModel_Definition(
 name: 'number_series_counter_total',
@@ -12,7 +12,7 @@ name: 'number_series_counter_total',
 abstract class Core_NumberSeries_Counter_Total extends NumberSeries_Counter
 {
 	
-	public static function generate( NumberSeries_Entity_Interface $entity, int $pad ) : string
+	public static function generate( EShopEntity_HasNumberSeries_Interface $entity, int $pad ) : string
 	{
 		$where = [
 			'entity' => $entity->getNumberSeriesEntityType()

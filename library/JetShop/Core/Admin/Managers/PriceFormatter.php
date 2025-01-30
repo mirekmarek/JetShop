@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use JetApplication\Currency;
-use JetApplication\Entity_Price;
+use JetApplication\EShopEntity_Price;
 use JetApplication\Pricelist;
 
 interface Core_Admin_Managers_PriceFormatter {
@@ -25,7 +25,7 @@ interface Core_Admin_Managers_PriceFormatter {
 	
 	public function formatWithCurrency_WithVAT( Currency $currency, float $price ): string;
 	
-	public function showPriceInfo( Entity_Price $price ) : string;
+	public function showPriceInfo( EShopEntity_Price $price ) : string;
 	
 	
 }

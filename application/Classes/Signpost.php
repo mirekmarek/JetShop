@@ -5,7 +5,7 @@ use Jet\DataModel_Definition;
 use JetShop\Core_Signpost;
 
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Signpost extends Core_Signpost {
 
 }

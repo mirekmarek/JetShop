@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\NumberSeries_Counter;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 
 #[DataModel_Definition(
 	name: 'number_series_counter_year',
@@ -20,7 +20,7 @@ abstract class Core_NumberSeries_Counter_Year extends NumberSeries_Counter
 	)]
 	protected string $year = '';
 	
-	public static function generate( NumberSeries_Entity_Interface $entity, int $pad ) : string
+	public static function generate( EShopEntity_HasNumberSeries_Interface $entity, int $pad ) : string
 	{
 		$where = [
 			'entity' => $entity->getNumberSeriesEntityType()

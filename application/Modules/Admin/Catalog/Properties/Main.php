@@ -14,7 +14,7 @@ use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Property;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Property;
 
 /**
@@ -54,7 +54,7 @@ class Main extends Application_Module implements Admin_Managers_Property
 	}
 
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Property();
 	}

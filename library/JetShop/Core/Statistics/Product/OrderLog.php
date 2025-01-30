@@ -6,7 +6,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Locale;
-use JetApplication\Entity_AccountingDocument_Item;
+use JetApplication\EShopEntity_AccountingDocument_Item;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 
@@ -98,8 +98,8 @@ abstract class Core_Statistics_Product_OrderLog extends DataModel {
 	{
 		foreach($order->getItems() as $order_item) {
 			if(
-				$order_item->getType()!=Entity_AccountingDocument_Item::ITEM_TYPE_PRODUCT &&
-				$order_item->getType()!=Entity_AccountingDocument_Item::ITEM_TYPE_VIRTUAL_PRODUCT
+				$order_item->getType()!=EShopEntity_AccountingDocument_Item::ITEM_TYPE_PRODUCT &&
+				$order_item->getType()!=EShopEntity_AccountingDocument_Item::ITEM_TYPE_VIRTUAL_PRODUCT
 			) {
 				return;
 			}

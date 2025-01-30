@@ -12,7 +12,7 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_Managers_PriceFormatter;
 use JetApplication\Currency;
-use JetApplication\Entity_Price;
+use JetApplication\EShopEntity_Price;
 use JetApplication\Pricelist;
 
 /**
@@ -97,7 +97,7 @@ class Main extends Application_Module implements Admin_Managers_PriceFormatter
 		return $currency->getSymbolLeft_WithVAT().$this->format_WithVAT( $currency, $price ).$currency->getSymbolRight_WithVAT();
 	}
 	
-	public function showPriceInfo( Entity_Price $price ) : string
+	public function showPriceInfo( EShopEntity_Price $price ) : string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		$view->setVar('price', $price);

@@ -10,13 +10,13 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Delivery_Class_Method;
 use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Kind;
-use JetApplication\Entity_Common;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Common;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Admin_Managers_DeliveryClasses;
 
 /**
@@ -26,12 +26,12 @@ use JetApplication\Admin_Managers_DeliveryClasses;
 	name: 'delivery_class',
 	database_table_name: 'delivery_classes',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_DeliveryClasses::class
 )]
-abstract class Core_Delivery_Class extends Entity_Common implements Entity_Admin_Interface
+abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL

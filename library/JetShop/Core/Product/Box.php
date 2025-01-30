@@ -9,13 +9,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 #[DataModel_Definition(
 	name: 'product_boxes',
 	database_table_name: 'product_boxes',
 )]
-abstract class Core_Product_Box extends Entity_Basic
+abstract class Core_Product_Box extends EShopEntity_Basic
 {
 	
 	#[DataModel_Definition(

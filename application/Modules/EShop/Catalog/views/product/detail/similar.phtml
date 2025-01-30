@@ -33,7 +33,7 @@ if(!$title) {
 		if($s->getId()==$product->getId()):
 			?>
 			<div class="variant-selected">
-				<img src="<?= $s->getImgThumbnailUrl( 0, 150, 150 ) ?>"/>
+				<img src="<?= $s->getImageThumbnailUrl( 0, 150, 150 ) ?>"/>
 				<b><?=$s->getFullName()?></b>
 			</div>
 		<?php
@@ -41,7 +41,7 @@ if(!$title) {
 			?>
 			<div class="variant">
 				<a href="<?=$s->getURL()?>" title="<?= $s->getVariantName() ?>">
-					<img src="<?= $s->getImgThumbnailUrl( 0, 150, 150 ) ?>"/>
+					<img src="<?= $s->getImageThumbnailUrl( 0, 150, 150 ) ?>"/>
 				</a>
 				<a href="<?=$s->getURL()?>"><?=$s->getFullName()?></a>
 			</div>

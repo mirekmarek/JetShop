@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 
 #[DataModel_Definition(
 	name: '',
@@ -32,5 +32,5 @@ abstract class Core_NumberSeries_Counter extends DataModel
 	)]
 	protected int $count = 0;
 	
-	abstract public static function generate( NumberSeries_Entity_Interface $entity, int $pad ) : string;
+	abstract public static function generate( EShopEntity_HasNumberSeries_Interface $entity, int $pad ) : string;
 }

@@ -4,7 +4,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_Price;
+use JetApplication\EShopEntity_Price;
 use JetApplication\Product;
 use JetApplication\Product_PriceHistory;
 use JetApplication\Product_SetItem;
@@ -13,7 +13,7 @@ use JetApplication\Product_SetItem;
 	name: 'products_price',
 	database_table_name: 'products_price'
 )]
-abstract class Core_Product_Price extends Entity_Price
+abstract class Core_Product_Price extends EShopEntity_Price
 {
 	
 	#[DataModel_Definition(

@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
 
@@ -12,7 +12,7 @@ use JetApplication\EShop;
 	name: 'exports_join_product',
 	database_table_name: 'exports_join_product',
 )]
-abstract class Core_Exports_Join_Product extends Entity_WithEShopRelation
+abstract class Core_Exports_Join_Product extends EShopEntity_WithEShopRelation
 {
 	
 	

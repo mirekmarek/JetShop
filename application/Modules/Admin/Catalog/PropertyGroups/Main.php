@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 
 use Jet\Application_Module;
 use Jet\Tr;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\PropertyGroup;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_EntityManager_Trait;
@@ -52,7 +52,7 @@ class Main extends Application_Module implements Admin_Managers_PropertyGroup
 	}
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new PropertyGroup();
 	}

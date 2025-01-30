@@ -6,8 +6,8 @@ use Jet\Form;
 use Jet\Form_Field_Float;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasPrice_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasPrice_Interface;
 use JetApplication\Pricelist;
 use JetApplication\Timer_Action;
 
@@ -50,6 +50,6 @@ abstract class Core_Timer_Action_SetPrice extends Timer_Action {
 		);
 	}
 	
-	abstract public function perform( Entity_Basic|Entity_HasPrice_Interface $entity, mixed $action_context ): bool;
+	abstract public function perform( EShopEntity_Basic|EShopEntity_HasPrice_Interface $entity, mixed $action_context ): bool;
 	
 }

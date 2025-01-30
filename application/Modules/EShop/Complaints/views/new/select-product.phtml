@@ -25,8 +25,8 @@ $showProduct = function( Product_EShopData $product ) use ($order) {
 	<div class="card card-body complaints-select-product-item">
 		<div class="complaints-product">
 			<div>
-				<?php if($product->getImg(0)): ?>
-					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 150, 150)?>"></a>
+				<?php if($product->getImage(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImageThumbnailUrl(0, 150, 150)?>"></a>
 				<?php endif; ?>
 			</div>
 			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>

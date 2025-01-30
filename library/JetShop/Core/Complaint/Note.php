@@ -6,14 +6,14 @@ use Jet\DataModel_Definition;
 
 use Jet\IO_Dir;
 use Jet\SysConf_Path;
-use JetApplication\Entity_Note;
+use JetApplication\EShopEntity_Note;
 use JetApplication\Complaint;
 
 #[DataModel_Definition(
 	name: 'complaints_notes',
 	database_table_name: 'complaints_notes',
 )]
-abstract class Core_Complaint_Note extends Entity_Note {
+abstract class Core_Complaint_Note extends EShopEntity_Note {
 	
 	protected ?Complaint $complaint = null;
 	

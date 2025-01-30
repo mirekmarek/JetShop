@@ -10,7 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 use JetApplication\Complaint_Event_HandlerModule;
 use JetApplication\Complaint;
 use JetApplication\Complaint_event;
@@ -22,7 +22,7 @@ use JetApplication\Complaint_event;
 	name: 'complaint_event',
 	database_table_name: 'complaints_events',
 )]
-class Core_Complaint_Event extends Entity_Event
+class Core_Complaint_Event extends EShopEntity_Event
 {
 
 	protected static string $handler_module_name_prefix = 'Events.Complaint.';

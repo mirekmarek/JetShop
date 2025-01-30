@@ -8,15 +8,15 @@
 namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Managers_MarketingDeliveryFeeDiscounts;
+use JetApplication\Admin_Managers_Marketing_DeliveryFeeDiscounts;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_DeliveryFeeDiscount;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingDeliveryFeeDiscounts
+class Main extends Application_Module implements Admin_Managers_Marketing_DeliveryFeeDiscounts
 {
 	use Admin_EntityManager_Trait;
 	
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingDeliver
 	public const ACTION_DELETE = 'delete_delivery_fee_discount';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_DeliveryFeeDiscount();
 	}

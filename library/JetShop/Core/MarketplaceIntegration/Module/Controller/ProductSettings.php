@@ -15,7 +15,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
@@ -28,7 +28,7 @@ use JetApplication\EShop;
  */
 abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings extends MVC_Controller_Default
 {
-	protected Product|Entity_Admin_Interface $product;
+	protected Product|EShopEntity_Admin_Interface $product;
 	
 	protected EShop $eshop;
 	
@@ -44,7 +44,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 	
 	protected ?Form $parameters_form;
 	
-	public function getProduct(): Entity_Admin_Interface|Product
+	public function getProduct(): EShopEntity_Admin_Interface|Product
 	{
 		return $this->product;
 	}
@@ -92,9 +92,9 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 	
 	
 	public function init(
-		Product|Entity_Admin_Interface $product,
-		EShop                          $eshop,
-		MarketplaceIntegration_Module  $marketplace
+		Product|EShopEntity_Admin_Interface $product,
+		EShop                               $eshop,
+		MarketplaceIntegration_Module       $marketplace
 	): void
 	{
 		$this->product = $product;

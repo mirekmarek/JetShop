@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_EShopEntity_HasInternalParams_Interface;
+
+interface EShopEntity_HasInternalParams_Interface extends Core_EShopEntity_HasInternalParams_Interface
+{
+}

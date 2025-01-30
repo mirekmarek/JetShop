@@ -16,8 +16,8 @@ use Jet\MVC;
 use Jet\MVC_Page_Interface;
 use Jet\SysConf_Jet_MVC;
 use Jet\UI_messages;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Content_InfoPage;
 
 
@@ -26,7 +26,7 @@ use JetApplication\Content_InfoPage;
 	database_table_name: 'content_info_page_eshop_data',
 	parent_model_class: Content_InfoPage::class
 )]
-abstract class Core_Content_InfoPage_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasURL_Interface
+abstract class Core_Content_InfoPage_EShopData extends EShopEntity_WithEShopData_EShopData implements EShopEntity_HasURL_Interface
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

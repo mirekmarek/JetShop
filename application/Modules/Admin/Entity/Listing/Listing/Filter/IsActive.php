@@ -12,7 +12,7 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShops;
 
 
@@ -46,7 +46,7 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 			
 			$entity = $listing->getEntity();
 			
-			$this->multi_eshop_mode = ($entity instanceof Entity_WithEShopData) && EShops::isMultiEShopMode();
+			$this->multi_eshop_mode = ($entity instanceof EShopEntity_WithEShopData) && EShops::isMultiEShopMode();
 			
 			if($this->multi_eshop_mode) {
 				foreach( EShops::getListSorted() as $code => $eshop) {

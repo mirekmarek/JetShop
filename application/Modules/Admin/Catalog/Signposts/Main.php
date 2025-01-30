@@ -4,7 +4,7 @@ namespace JetApplicationModule\Admin\Catalog\Signposts;
 use JetApplication\Admin_EntityManager_Trait;
 
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Signpost;
 use JetApplication\Admin_Managers_Signpost;
 
@@ -23,7 +23,7 @@ class Main extends Application_Module implements Admin_Managers_Signpost
 	public const ACTION_DELETE = 'delete_signpost';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Signpost();
 	}

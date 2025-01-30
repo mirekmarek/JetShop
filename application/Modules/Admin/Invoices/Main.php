@@ -12,7 +12,7 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Invoice;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\Invoice;
 
@@ -38,7 +38,7 @@ class Main extends Application_Module implements Admin_Managers_Invoice
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Invoice();
 	}

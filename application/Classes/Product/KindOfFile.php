@@ -9,5 +9,6 @@ use JetShop\Core_Product_KindOfFile;
  *
  */
 #[DataModel_Definition]
+#[EShopEntity_Definition]
 class Product_KindOfFile extends Core_Product_KindOfFile {
 }

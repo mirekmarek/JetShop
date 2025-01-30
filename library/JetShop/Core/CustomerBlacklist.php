@@ -6,7 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\Form_Field;
 use Jet\Form_Definition;
 use JetApplication\CustomerBlacklist;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
 
@@ -14,7 +14,7 @@ use JetApplication\EShop;
 	name: 'customer_blacklist',
 	database_table_name: 'customers_blacklist',
 )]
-abstract class Core_CustomerBlacklist extends Entity_WithEShopRelation
+abstract class Core_CustomerBlacklist extends EShopEntity_WithEShopRelation
 {
 
 	#[DataModel_Definition(

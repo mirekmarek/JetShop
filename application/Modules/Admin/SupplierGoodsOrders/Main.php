@@ -3,7 +3,7 @@ namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
 use JetApplication\Supplier_GoodsOrder;
 
@@ -22,7 +22,7 @@ class Main extends Application_Module implements Admin_Managers_SupplierGoodsOrd
 	public const ACTION_DELETE = 'delete_supplier_order';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Supplier_GoodsOrder();
 	}

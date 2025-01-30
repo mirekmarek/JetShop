@@ -10,6 +10,6 @@ use JetShop\Core_WarehouseManagement_StockCard;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class WarehouseManagement_StockCard extends Core_WarehouseManagement_StockCard {
 }

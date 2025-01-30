@@ -1,0 +1,81 @@
+<?php
+namespace JetApplicationModule\Admin\ImageManager;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplication\EShop;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
+
+/**
+ * @var MVC_View $this
+ * @var EShop $eshop
+ * @var Form $images_form
+ * @var Form $image_delete_form
+ * @var EShopEntity_HasImageGallery_Interface $item
+ */
+
+$image_manager = Admin_Managers::Image();
+
+$editable = $this->getBool('editable');
+
+$item = $this->getRaw('item');
+
+
+foreach( $item->getImages() as $image):
+	$id = $image->getId();
+
+	$url = $image_manager->getImageGalleryImageURL( $image );
+	$thb_url = $image_manager->getImageGalleryImageThumbnailUrl($image, 150,150);
+	
+	if($editable):
+	?>
+
+	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
+		<div class="image-thumbnail" data-image="<?=$id?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
+			<div style="position: absolute;bottom: 5px;right: 5px;">
+				<input type="checkbox" value="<?=$id?>" data-url="<?=$url?>" class="select_image_checkbox"/>
+			</div>
+		</div>
+		<div style="width: 180px;height: 55px;padding: 5px;">
+			<table style="width: 100%">
+				<tr>
+					<td style="width: 30px;">
+						<?=UI::icon('exchange-alt')?>
+					</td>
+					<td style="width: 30px;">
+						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
+					</td>
+					<td style="padding-right: 5px; text-align: right">
+						<a href="javascript:ImageGalleryHandler.deleteImage('<?=$id?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<?php
+	else:
+    ?>
+	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
+		<div class="image-thumbnail" data-image="<?=$id?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
+		</div>
+		<div style="width: 180px;height: 55px;padding: 5px;">
+			<table style="width: 100%">
+				<tr>
+					<td style="width: 30px;">
+					</td>
+					<td style="width: 30px;">
+						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
+					</td>
+					<td style="padding-right: 5px; text-align: right">
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<?php
+	endif;
+endforeach; ?>
+

@@ -9,14 +9,14 @@ namespace JetApplicationModule\Admin\Content\InfoPages;
 
 use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Admin_Managers_ContentInfoPages;
+use JetApplication\Admin_Managers_Content_InfoPages;
 use JetApplication\Content_InfoPage;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_ContentInfoPages
+class Main extends Application_Module implements Admin_Managers_Content_InfoPages
 {
 	use Admin_EntityManager_Trait;
 	
@@ -29,7 +29,7 @@ class Main extends Application_Module implements Admin_Managers_ContentInfoPages
 	
 
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Content_InfoPage();
 	}

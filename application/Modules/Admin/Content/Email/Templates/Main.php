@@ -9,14 +9,14 @@ namespace JetApplicationModule\Admin\Content\Email\Templates;
 
 use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Admin_Managers_ContentEMailTemplates;
-use JetApplication\Entity_Basic;
+use JetApplication\Admin_Managers_Content_EMailTemplates;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\EMail_TemplateText;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_ContentEMailTemplates
+class Main extends Application_Module implements Admin_Managers_Content_EMailTemplates
 {
 	use Admin_EntityManager_Trait;
 	
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_ContentEMailTemp
 	public const ACTION_DELETE = 'delete_email_template';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new EMail_TemplateText();
 	}

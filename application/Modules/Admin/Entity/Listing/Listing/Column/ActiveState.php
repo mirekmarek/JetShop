@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShops;
 
 class Listing_Column_ActiveState extends Listing_Column_Abstract
@@ -34,7 +34,7 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 			
 			$entity = $listing->getEntity();
 			
-			$this->multi_eshop_mode = ($entity instanceof Entity_WithEShopData);
+			$this->multi_eshop_mode = ($entity instanceof EShopEntity_WithEShopData);
 			
 			if(
 				$this->multi_eshop_mode &&
@@ -81,7 +81,7 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 	public function getExportData( mixed $item ): array
 	{
 		/**
-		 * @var Entity_WithEShopData $item
+		 * @var EShopEntity_WithEShopData $item
 		 */
 		
 		$data = [

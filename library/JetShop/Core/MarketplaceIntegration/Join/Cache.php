@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
 
@@ -12,7 +12,7 @@ use JetApplication\EShop;
 	name: 'marketplace_join_cache',
 	database_table_name: 'marketplace_join_cache',
 )]
-abstract class Core_MarketplaceIntegration_Join_Cache extends Entity_WithEShopRelation
+abstract class Core_MarketplaceIntegration_Join_Cache extends EShopEntity_WithEShopRelation
 {
 	
 	

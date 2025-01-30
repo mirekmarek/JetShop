@@ -1,13 +1,13 @@
 <?php
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Entity_Price;
+use JetApplication\EShopEntity_Price;
 use JetApplication\Admin_Managers;
 use JetApplication\Product_Price;
 
 /**
  * @var MVC_View $this
- * @var Entity_Price $price
+ * @var EShopEntity_Price $price
  */
 $price = $this->getRaw('price');
 $pricelist = $price->getPricelist();

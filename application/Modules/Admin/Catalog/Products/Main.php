@@ -5,7 +5,7 @@ use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Product;
@@ -51,7 +51,7 @@ class Main extends Application_Module implements Admin_Managers_Product
 	}
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Product();
 	}

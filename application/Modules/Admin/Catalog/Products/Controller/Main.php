@@ -5,12 +5,12 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
 use JetApplication\Availabilities;
 use JetApplication\Delivery_Class;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\Exports;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Pricelists;
@@ -23,7 +23,6 @@ use JetApplication\Product_Price;
  */
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	use Controller_Main_Edit_Images;
 	use Controller_Main_Edit_Files;
 	use Controller_Main_Edit_Parameters;
 	use Controller_Main_Edit_Categories;
@@ -41,7 +40,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 	}
 	
 	
-	protected function newItemFactory(): Entity_WithEShopData|Entity_Admin_Interface
+	protected function newItemFactory(): EShopEntity_WithEShopData|EShopEntity_Admin_Interface
 	{
 		/**
 		 * @var Product $new_item
@@ -74,10 +73,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 				return $this->current_item && $selected_tab=='parameters';
 			} );
 		
-		$this->router->addAction('edit_images', Main::ACTION_UPDATE)
-			->setResolver( function() use ($action, $selected_tab) {
-				return $this->current_item && $selected_tab=='images';
-			} );
 		
 		$this->router->addAction('edit_categories', Main::ACTION_UPDATE)
 			->setResolver( function() use ($action, $selected_tab) {
@@ -136,7 +131,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$_tabs = array_merge(
 			$_tabs,
 			[
-				'images'           => Tr::_('Images'),
 				'files'            => Tr::_('Files'),
 				'parameters'       => Tr::_('Parameters'),
 				'categories'       => Tr::_('Categories'),

@@ -9,8 +9,8 @@ use Jet\Form;
 use Jet\Form_Field_Textarea;
 use Jet\Logger;
 use Jet\Tr;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_OrderPersonalReceipt;
 use JetApplication\Complaint;
 use JetApplication\Context;
@@ -21,13 +21,13 @@ use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Delivery_Method_EShopData;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Order;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Item;
@@ -39,21 +39,21 @@ use JetApplication\OrderPersonalReceipt_Event;
 	name: 'order_personal_receipt',
 	database_table_name: 'order_personal_receipt',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_OrderPersonalReceipt::class
 )]
-abstract class Core_OrderPersonalReceipt extends Entity_WithEShopRelation implements
-	Entity_HasGet_Interface,
-	NumberSeries_Entity_Interface,
+abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation implements
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasNumberSeries_Interface,
 	Context_HasContext_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
-	use Entity_HasGet_Trait;
+	use EShopEntity_HasGet_Trait;
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
-	use NumberSeries_Entity_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_IN_PROGRESS = 'in_progress';

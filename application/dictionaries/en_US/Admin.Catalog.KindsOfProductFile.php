@@ -36,4 +36,9 @@ return [
 	'Internal code:' => '',
 	'Internal notes:' => '',
 	'Show on product detail' => '',
+	'Description' => '',
+	'File is too large' => '',
+	'Please select file' => '',
+	'Please upload image' => '',
+	'Select and upload images' => '',
 ];

@@ -13,14 +13,14 @@ use Jet\Http_Request;
 use JetApplication\Content_Article_Author_EShopData;
 use JetApplication\Content_Article_Category;
 use JetApplication\Content_Article_KindOfArticle;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_HasURL_Trait;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_HasURL_Trait;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Content_Article;
 use JetApplication\EShop;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 
 #[DataModel_Definition(
@@ -28,16 +28,16 @@ use JetApplication\Entity_Definition;
 	database_table_name: 'content_articles_eshop_data',
 	parent_model_class: Content_Article::class
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	URL_template: '%NAME%-a-%ID%'
 )]
 
-abstract class Core_Content_Article_EShopData extends Entity_WithEShopData_EShopData implements
-	Entity_HasURL_Interface,
-	Entity_HasImages_Interface
+abstract class Core_Content_Article_EShopData extends EShopEntity_WithEShopData_EShopData implements
+	EShopEntity_HasURL_Interface,
+	EShopEntity_HasImages_Interface
 {
-	use Entity_HasURL_Trait;
-	use Entity_HasImages_Trait;
+	use EShopEntity_HasURL_Trait;
+	use EShopEntity_HasImages_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

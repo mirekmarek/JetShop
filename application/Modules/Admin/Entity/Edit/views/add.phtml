@@ -3,9 +3,9 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 
 use Jet\Locale;
 use Jet\UI;
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -15,7 +15,7 @@ use JetApplication\EShop;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_WithEShopData|Entity_Admin_Interface     $item
+ * @var EShopEntity_WithEShopData|EShopEntity_Admin_Interface     $item
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
@@ -58,7 +58,7 @@ $form->renderer()->setDefaultFieldWidth( [
 		}
 		
 		
-		if($item instanceof Entity_WithEShopData) {
+		if($item instanceof EShopEntity_WithEShopData) {
 			if($eshop_data_fields_renderer) {
 				echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
 					form: $form,

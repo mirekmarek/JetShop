@@ -17,12 +17,14 @@ use JetApplication\Admin_Managers_Product;
 use JetApplication\Availabilities;
 use JetApplication\Category;
 use JetApplication\Delivery_Class;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_HasPrice_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
+use JetApplication\EShopEntity_HasImageGallery_Trait;
+use JetApplication\EShopEntity_HasPrice_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\KindOfProduct;
 
 use JetApplication\Managers;
@@ -35,7 +37,6 @@ use JetApplication\Product_Price;
 use JetApplication\Product_EShopData;
 use JetApplication\Product_Trait_Accessories;
 use JetApplication\Product_Trait_Availability;
-use JetApplication\Product_Trait_Images;
 use JetApplication\Product_Trait_Files;
 use JetApplication\Product_Trait_Price;
 use JetApplication\Product_Trait_Set;
@@ -66,20 +67,22 @@ use JetApplication\Supplier;
 		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_JOIN
 	]
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_Product::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 )]
-abstract class Core_Product extends Entity_WithEShopData implements
+abstract class Core_Product extends EShopEntity_WithEShopData implements
 	FulltextSearch_IndexDataProvider,
-	Entity_HasPrice_Interface,
-	Entity_Admin_WithEShopData_Interface
+	EShopEntity_HasPrice_Interface,
+	EShopEntity_HasImageGallery_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
+	use EShopEntity_Admin_WithEShopData_Trait;
+	use EShopEntity_HasImageGallery_Trait;
 	
 	use Product_Trait_Availability;
 	use Product_Trait_Price;
-	use Product_Trait_Images;
 	use Product_Trait_Files;
 	use Product_Trait_Set;
 	use Product_Trait_Variants;
@@ -90,7 +93,6 @@ abstract class Core_Product extends Entity_WithEShopData implements
 	use Product_Trait_Boxes;
 	use Product_Trait_Accessories;
 	
-	use Entity_Admin_WithEShopData_Trait;
 	
 
 	public const PRODUCT_TYPE_REGULAR        = 'regular';
@@ -198,6 +200,15 @@ abstract class Core_Product extends Entity_WithEShopData implements
 	#[Form_Definition(is_sub_forms: true)]
 	protected array $eshop_data = [];
 	
+	public function getEntityTypeForImageGallery() : string
+	{
+		return 'product';
+	}
+	
+	public function getEntityIdForImageGallery() : string|int
+	{
+		return $this->getId();
+	}
 	
 	
 	public static function getProductTypes() : array

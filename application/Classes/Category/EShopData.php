@@ -8,6 +8,6 @@ use JetShop\Core_Category_EShopData;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Category_EShopData extends Core_Category_EShopData {
 }

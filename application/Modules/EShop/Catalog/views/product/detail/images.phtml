@@ -18,21 +18,21 @@ $count = 0;
 $previews = array();
 
 for ($i = 0; $i <= 9; $i++) {
-	if ($img = $product->getImg($i)) {
+	if ($img = $product->getImage($i)) {
 		$previews[] = array(
-			'url' => $product->getImgUrl( $i ),
-			'image' => $product->getImgThumbnailUrl($i, 110, 110 )
+			'url' => $product->getImageURL( $i ),
+			'image' => $product->getImageThumbnailUrl($i, 110, 110 )
 		);
 	}
 }
 ?>
-	<?php if( $product->getImg( 0 ) ): ?>
-		<a href="<?= $product->getImgUrl( 0 ) ?>"
+	<?php if( $product->getImage( 0 ) ): ?>
+		<a href="<?= $product->getImageURL( 0 ) ?>"
 		   title="<?= $product->getFullName() ?>"
 		   class="product-image"
 		   onclick="return false;"
 		>
-			<img src="<?= $product->getImgThumbnailUrl( 0, 650, 650 ) ?>" class="main-image"/>
+			<img src="<?= $product->getImageThumbnailUrl( 0, 650, 650 ) ?>" class="main-image"/>
 		</a>
 	<?php endif; ?>
 	

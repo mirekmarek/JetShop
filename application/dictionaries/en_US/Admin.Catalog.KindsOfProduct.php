@@ -180,4 +180,8 @@ return [
 	'Plavecké pásy' => '',
 	'General' => '',
 	'Please enter name' => '',
+	'Unit of measure:' => '',
+	'Is virtual product' => '',
+	'Virtual product handler:' => '',
+	'Usage' => '',
 ];

@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_AccountingDocument_Item_SetItem;
+use JetApplication\EShopEntity_AccountingDocument_Item_SetItem;
 use JetApplication\DeliveryNote_Item;
 
 #[DataModel_Definition(
@@ -12,7 +12,7 @@ use JetApplication\DeliveryNote_Item;
 	database_table_name: 'delivery_notes_items_set_items',
 	parent_model_class: DeliveryNote_Item::class
 )]
-abstract class Core_DeliveryNote_Item_SetItem extends Entity_AccountingDocument_Item_SetItem {
+abstract class Core_DeliveryNote_Item_SetItem extends EShopEntity_AccountingDocument_Item_SetItem {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

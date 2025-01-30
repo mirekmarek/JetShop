@@ -9,14 +9,14 @@ namespace JetApplicationModule\Admin\Marketing\Banners;
 
 use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Admin_Managers_MarketingBanners;
-use JetApplication\Entity_Basic;
+use JetApplication\Admin_Managers_Marketing_Banners;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_Banner;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingBanners
+class Main extends Application_Module implements Admin_Managers_Marketing_Banners
 {
 	use Admin_EntityManager_Trait;
 	
@@ -27,7 +27,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingBanners
 	public const ACTION_UPDATE = 'update_banner';
 	public const ACTION_DELETE = 'delete_banner';
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_Banner();
 	}

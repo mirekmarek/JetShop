@@ -6,32 +6,32 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 
 use Jet\Form_Field;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_MarketingProductStickers;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_Marketing;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_Marketing_ProductStickers;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShops;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 #[DataModel_Definition(
 	name: 'product_stickers',
 	database_table_name: 'product_stickers',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingProductStickers::class,
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Marketing_ProductStickers::class,
 	images: [
 		'pictogram_product_detail' => 'Pictogram - Product detail',
 		'pictogram_product_listing' => 'Pictogram - Product listing',
 	]
 )]
-abstract class Core_Marketing_ProductSticker extends Entity_Marketing implements
-	Entity_HasImages_Interface,
-	Entity_Admin_Interface
+abstract class Core_Marketing_ProductSticker extends EShopEntity_Marketing implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_Interface
 {
-	use Entity_HasImages_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasImages_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

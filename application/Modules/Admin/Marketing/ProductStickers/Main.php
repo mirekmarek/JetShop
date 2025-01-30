@@ -4,14 +4,14 @@ namespace JetApplicationModule\Admin\Marketing\ProductStickers;
 use JetApplication\Admin_EntityManager_Trait;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Managers_MarketingProductStickers;
-use JetApplication\Entity_Basic;
+use JetApplication\Admin_Managers_Marketing_ProductStickers;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_ProductSticker;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingProductStickers
+class Main extends Application_Module implements Admin_Managers_Marketing_ProductStickers
 {
 	use Admin_EntityManager_Trait;
 
@@ -23,7 +23,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingProduct
 	public const ACTION_DELETE = 'delete_auto_offer';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_ProductSticker();
 	}

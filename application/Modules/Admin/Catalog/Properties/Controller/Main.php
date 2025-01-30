@@ -7,11 +7,11 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Application_Admin;
 use JetApplication\Property_Options_Option;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\Property;
 
 use Jet\UI_messages;
@@ -134,7 +134,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		} );
 	}
 	
-	protected function newItemFactory() : Entity_WithEShopData|Entity_Admin_Interface
+	protected function newItemFactory() : EShopEntity_WithEShopData|EShopEntity_Admin_Interface
 	{
 		$type = Http_Request::GET()->getString( key: 'type', valid_values: array_keys(Property::getTypesScope()));
 		if(!$type) {

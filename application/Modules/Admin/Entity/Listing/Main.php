@@ -14,17 +14,17 @@ use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
-use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Interface;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_Entity_Listing
+class Main extends Application_Module implements Admin_Managers_EShopEntity_Listing
 {
-	protected Entity_Admin_Interface $entity;
+	protected EShopEntity_Admin_Interface $entity;
 	protected Admin_EntityManager_Interface $entity_manager;
 	
 	protected Listing $listing;
@@ -60,7 +60,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 		
 	}
 	
-	public function getEntity(): Entity_Admin_Interface
+	public function getEntity(): EShopEntity_Admin_Interface
 	{
 		return $this->entity;
 	}
@@ -156,7 +156,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Listing
 		$this->create_btn_renderer = $renderer;
 	}
 	
-	public function getEditUrl( Entity_Basic $item ): string
+	public function getEditUrl( EShopEntity_Basic $item ): string
 	{
 		return $this->listing->getEditUrl( $item );
 	}

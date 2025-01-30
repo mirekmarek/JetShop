@@ -19,15 +19,15 @@ use JetApplication\Admin_Managers_DeliveryMethods;
 use JetApplication\Carrier;
 use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Method_Price;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasPrice_Interface;
-use JetApplication\Entity_HasPrice_Trait;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasPrice_Interface;
+use JetApplication\EShopEntity_HasPrice_Trait;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Pricelist;
 use JetApplication\EShop;
 use JetApplication\Delivery_Kind;
@@ -45,7 +45,7 @@ use JetApplication\Timer_Action_SetPrice;
 	name: 'delivery_method',
 	database_table_name: 'delivery_methods',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_DeliveryMethods::class,
 	images: [
 		'icon1' => 'Icon 1',
@@ -53,14 +53,14 @@ use JetApplication\Timer_Action_SetPrice;
 		'icon3' => 'Icon 3',
 	]
 )]
-abstract class Core_Delivery_Method extends Entity_WithEShopData implements
-	Entity_HasPrice_Interface,
-	Entity_HasImages_Interface,
-	Entity_Admin_WithEShopData_Interface
+abstract class Core_Delivery_Method extends EShopEntity_WithEShopData implements
+	EShopEntity_HasPrice_Interface,
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
-	use Entity_HasPrice_Trait;
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_HasPrice_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -441,7 +441,7 @@ abstract class Core_Delivery_Method extends Entity_WithEShopData implements
 		
 		foreach(Pricelists::getList() as $pricelist ) {
 			$set_price = new class( $pricelist, $this->getPrice( $pricelist ) ) extends Timer_Action_SetPrice {
-				public function perform( Entity_Basic|Entity_HasPrice_Interface $entity, mixed $action_context ): bool
+				public function perform( EShopEntity_Basic|EShopEntity_HasPrice_Interface $entity, mixed $action_context ): bool
 				{
 					$p = $entity->getPriceEntity( $this->pricelist );
 					$p->setPrice( (float)$action_context );
@@ -465,7 +465,7 @@ abstract class Core_Delivery_Method extends Entity_WithEShopData implements
 					$this->free_delivery_limit = $free_delivery_limit;
 				}
 				
-				public function perform( Entity_Basic $entity, mixed $action_context ): bool
+				public function perform( EShopEntity_Basic $entity, mixed $action_context ): bool
 				{
 					/**
 					 * @var Delivery_Method $entity

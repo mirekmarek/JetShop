@@ -9,7 +9,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EMail_Layout;
 
 
@@ -18,7 +18,7 @@ use JetApplication\EMail_Layout;
 	database_table_name: 'email_layout_eshop_data',
 	parent_model_class: EMail_Layout::class
 )]
-abstract class Core_EMail_Layout_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_EMail_Layout_EShopData extends EShopEntity_WithEShopData_EShopData
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

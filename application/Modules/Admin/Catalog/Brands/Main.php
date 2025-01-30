@@ -6,7 +6,7 @@ use Jet\Tr;
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Admin_Managers_Brand;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 use JetApplication\Brand;
@@ -25,7 +25,7 @@ class Main extends Application_Module implements Admin_Managers_Brand
 	public const ACTION_UPDATE = 'update_brand';
 	public const ACTION_DELETE = 'delete_brand';
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Brand();
 	}

@@ -1,16 +1,16 @@
 <?php
 namespace JetApplicationModule\Admin\Content\Article\Authors;
 
-use JetApplication\Admin_Managers_ContentArticleAuthors;
+use JetApplication\Admin_Managers_Content_ArticleAuthors;
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
 use JetApplication\Content_Article_Author;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_ContentArticleAuthors
+class Main extends Application_Module implements Admin_Managers_Content_ArticleAuthors
 {
 	use Admin_EntityManager_Trait;
 
@@ -21,7 +21,7 @@ class Main extends Application_Module implements Admin_Managers_ContentArticleAu
 	public const ACTION_UPDATE = 'update_author';
 	public const ACTION_DELETE = 'delete_author';
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Content_Article_Author();
 	}

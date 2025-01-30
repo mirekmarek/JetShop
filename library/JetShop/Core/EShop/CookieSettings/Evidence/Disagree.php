@@ -10,13 +10,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 
 #[DataModel_Definition(
 	name: 'cookie_settings_evidence_disagree',
 	database_table_name: 'cookie_settings_evidence_disagree'
 )]
-class Core_EShop_CookieSettings_Evidence_Disagree extends Entity_WithEShopRelation
+class Core_EShop_CookieSettings_Evidence_Disagree extends EShopEntity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(

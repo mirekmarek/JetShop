@@ -5,10 +5,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
-use JetApplication\Entity_Definition;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Product;
 
 #[DataModel_Definition(
@@ -16,9 +16,9 @@ use JetApplication\Product;
 	database_table_name: 'products_kind_of_file_eshop_data',
 	parent_model_class: Product::class
 )]
-abstract class Core_Product_KindOfFile_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
+abstract class Core_Product_KindOfFile_EShopData extends EShopEntity_WithEShopData_EShopData implements EShopEntity_HasImages_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
+	use EShopEntity_HasImages_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -28,7 +28,7 @@ abstract class Core_Product_KindOfFile_EShopData extends Entity_WithEShopData_ES
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -41,7 +41,7 @@ abstract class Core_Product_KindOfFile_EShopData extends Entity_WithEShopData_ES
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Short description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $short_description = '';
@@ -54,7 +54,7 @@ abstract class Core_Product_KindOfFile_EShopData extends Entity_WithEShopData_ES
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';

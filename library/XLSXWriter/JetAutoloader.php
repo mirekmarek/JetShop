@@ -14,23 +14,13 @@ use Jet\SysConf_Path;
  */
 return new class extends Autoloader_Loader
 {
-	/**
-	 * @return string
-	 */
 	public function getAutoloaderName() : string
 	{
 		return 'library/XLSXWriter';
 	}
 	
-	/**
-	 *
-	 * @param string $class_name
-	 *
-	 * @return bool|string
-	 */
 	public function getScriptPath( string $class_name ): bool|string
 	{
-		
 		if(!str_starts_with($class_name, 'XLSXWriter\\')) {
 			return false;
 		}

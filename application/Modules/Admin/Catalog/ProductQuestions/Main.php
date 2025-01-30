@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ProductQuestions;
 use JetApplication\EMail_TemplateProvider;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\ProductQuestion;
 
 /**
@@ -29,7 +29,7 @@ class Main extends Application_Module implements Admin_Managers_ProductQuestions
 	public const ACTION_DELETE = 'delete';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new ProductQuestion();
 	}

@@ -6,14 +6,14 @@ use Jet\DataModel_Definition;
 
 use Jet\IO_Dir;
 use Jet\SysConf_Path;
-use JetApplication\Entity_Note;
+use JetApplication\EShopEntity_Note;
 use JetApplication\Order;
 
 #[DataModel_Definition(
 	name: 'orders_notes',
 	database_table_name: 'orders_notes',
 )]
-abstract class Core_Order_Note extends Entity_Note {
+abstract class Core_Order_Note extends EShopEntity_Note {
 	
 	protected ?Order $order = null;
 	

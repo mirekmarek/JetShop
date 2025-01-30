@@ -51,8 +51,8 @@ if($units) {
 	
 	<div class="product_listing_item_images">
 		<a href="<?=$URL?>" class="product_listing_item_main_image">
-			<?php if($product->getImgUrl(0)): ?>
-				<img src="<?=$product->getImgThumbnailUrl( 0, 220, 220 )?>"/>
+			<?php if($product->getImageURL(0)): ?>
+				<img src="<?=$product->getImageThumbnailUrl( 0, 220, 220 )?>"/>
 			<?php endif; ?>
 		</a>
 	</div>

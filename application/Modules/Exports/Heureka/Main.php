@@ -210,7 +210,7 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			if(isset($brand_map[$sd->getBrandId()])) {
 				$f->tagPair( 'MANUFACTURER', $brand_map[$sd->getBrandId()] );
 			}
-			$f->tagPair( 'IMGURL', $sd->getImgUrl(0) );
+			$f->tagPair( 'IMGURL', $sd->getImageURL(0) );
 			
 			//$f->tagPair( 'WARRANTY', '' );
 			//$f->tagPair( 'DELIVERY_DATE', '' );

@@ -1,16 +1,16 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\PromoAreaDefinition;
 
-use JetApplication\Admin_Managers_MarketingPromoAreaDefinitions;
+use JetApplication\Admin_Managers_Marketing_PromoAreaDefinitions;
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_PromoAreaDefinition;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingPromoAreaDefinitions
+class Main extends Application_Module implements Admin_Managers_Marketing_PromoAreaDefinitions
 {
 	use Admin_EntityManager_Trait;
 
@@ -22,7 +22,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingPromoAr
 	public const ACTION_DELETE = 'delete_promo_area_definition';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_PromoAreaDefinition();
 	}

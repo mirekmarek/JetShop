@@ -8,15 +8,15 @@
 namespace JetApplicationModule\Admin\Marketing\PromoAreas;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Managers_MarketingPromoAreas;
+use JetApplication\Admin_Managers_Marketing_PromoAreas;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_PromoArea;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingPromoAreas
+class Main extends Application_Module implements Admin_Managers_Marketing_PromoAreas
 {
 	use Admin_EntityManager_Trait;
 	
@@ -27,7 +27,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingPromoAr
 	public const ACTION_UPDATE = 'update_promo_area';
 	public const ACTION_DELETE = 'delete_promo_area';
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_PromoArea();
 	}

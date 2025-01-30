@@ -4,14 +4,14 @@ namespace JetShop;
 use Jet\Auth;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'administrator_signature',
 	database_table_name: 'administrators_signatures',
 )]
-class Core_AdministratorSignatures extends Entity_WithEShopRelation
+class Core_AdministratorSignatures extends EShopEntity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(

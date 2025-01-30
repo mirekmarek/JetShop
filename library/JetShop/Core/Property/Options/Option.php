@@ -4,12 +4,12 @@ use Jet\DataModel_Definition;
 use Jet\DataModel;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Property;
 use JetApplication\Property_Options_Option_EShopData;
 use JetApplication\EShops;
@@ -23,7 +23,7 @@ use JetApplication\EShop;
 	default_order_by: ['priority'],
 	parent_model_class: Property::class
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 	images: [
@@ -31,12 +31,12 @@ use JetApplication\EShop;
 		'pictogram' => 'Pictogram image',
 	]
 )]
-abstract class Core_Property_Options_Option extends Entity_WithEShopData implements
-	Entity_HasImages_Interface,
-	Entity_Admin_WithEShopData_Interface
+abstract class Core_Property_Options_Option extends EShopEntity_WithEShopData implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

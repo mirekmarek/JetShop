@@ -5,25 +5,25 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Entity_Marketing;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
 use JetApplication\Marketing_PromoAreaDefinition;
-use JetApplication\Admin_Managers_MarketingPromoAreas;
-use JetApplication\Entity_Definition;
+use JetApplication\Admin_Managers_Marketing_PromoAreas;
+use JetApplication\EShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'promo_area',
 	database_table_name: 'promo_areas',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingPromoAreas::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Marketing_PromoAreas::class
 )]
-abstract class Core_Marketing_PromoArea extends Entity_Marketing implements Entity_Admin_Interface
+abstract class Core_Marketing_PromoArea extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

@@ -6,14 +6,14 @@ use Jet\DataModel_Definition;
 
 use JetApplication\DeliveryNote;
 use JetApplication\DeliveryNote_Item_SetItem;
-use JetApplication\Entity_AccountingDocument_Item;
+use JetApplication\EShopEntity_AccountingDocument_Item;
 
 #[DataModel_Definition(
 	name: 'delivery_note_item',
 	database_table_name: 'delivery_notes_items',
 	parent_model_class: DeliveryNote::class
 )]
-abstract class Core_DeliveryNote_Item extends Entity_AccountingDocument_Item {
+abstract class Core_DeliveryNote_Item extends EShopEntity_AccountingDocument_Item {
 	
 	
 	#[DataModel_Definition(

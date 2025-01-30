@@ -9,14 +9,14 @@ namespace JetApplicationModule\Admin\Content\InfoBoxes;
 
 use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Admin_Managers_ContentInfoBoxes;
+use JetApplication\Admin_Managers_Content_InfoBoxes;
 use JetApplication\Content_InfoBox;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_ContentInfoBoxes
+class Main extends Application_Module implements Admin_Managers_Content_InfoBoxes
 {
 	use Admin_EntityManager_Trait;
 	
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_ContentInfoBoxes
 	public const ACTION_DELETE = 'delete_content_info_box';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Content_InfoBox();
 	}

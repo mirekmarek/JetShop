@@ -19,7 +19,7 @@ use Jet\Form_Field_Input;
 use Jet\Locale;
 use JetApplication\Carrier;
 use JetApplication\Delivery_Method_EShopData;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Carrier_DeliveryPoint_OpeningHours;
@@ -34,7 +34,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'delivery_points',
 	database_table_name: 'delivery_points',
 )]
-class Core_Carrier_DeliveryPoint extends Entity_Basic implements Form_Definition_Interface
+class Core_Carrier_DeliveryPoint extends EShopEntity_Basic implements Form_Definition_Interface
 {
 	use Form_Definition_Trait;
 	

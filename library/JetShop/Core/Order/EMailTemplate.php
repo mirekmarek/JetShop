@@ -91,7 +91,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		
 		$img_property = $items_block->addProperty('img', Tr::_('Product image'));
 		$img_property->setPropertyValueCreator( function( Order_Item $item, array $params ) : string {
-			$url = $this->getProduct( $item )?->getImgThumbnailUrl(
+			$url = $this->getProduct( $item )?->getImageThumbnailUrl(
 				0,
 				$params['max_w'],
 				$params['max_h']

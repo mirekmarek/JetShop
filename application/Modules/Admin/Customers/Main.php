@@ -12,8 +12,8 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Customer;
-use JetApplication\Entity_Address;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Address;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Customer;
 use JetApplication\EShop;
 
@@ -47,7 +47,7 @@ class Main extends Application_Module implements Admin_Managers_Customer
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Customer();
 	}
@@ -57,7 +57,7 @@ class Main extends Application_Module implements Admin_Managers_Customer
 		return 'Customer';
 	}
 	
-	public function showName( int|Entity_Basic $id_or_item ): string
+	public function showName( int|EShopEntity_Basic $id_or_item ): string
 	{
 		if(!$id_or_item) {
 			$customer = $id_or_item;
@@ -77,7 +77,7 @@ class Main extends Application_Module implements Admin_Managers_Customer
 		);
 	}
 	
-	public function formatAddress( EShop $eshop, Entity_Address $address ) : string
+	public function formatAddress( EShop $eshop, EShopEntity_Address $address ) : string
 	{
 		return Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),

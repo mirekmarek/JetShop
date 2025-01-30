@@ -2,10 +2,10 @@
 namespace JetShop;
 
 use Jet\Application_Module;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 
 abstract class Core_NumberSeries_Manager extends Application_Module {
 	
-	abstract public function generateNumber( NumberSeries_Entity_Interface $entity ) : string;
+	abstract public function generateNumber( EShopEntity_HasNumberSeries_Interface $entity ) : string;
 	
 }

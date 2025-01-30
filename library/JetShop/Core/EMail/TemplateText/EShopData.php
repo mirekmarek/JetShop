@@ -11,7 +11,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use JetApplication\EMail_Layout;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EMail_TemplateText;
 
 
@@ -20,7 +20,7 @@ use JetApplication\EMail_TemplateText;
 	database_table_name: 'email_templates_eshop_data',
 	parent_model_class: EMail_TemplateText::class
 )]
-abstract class Core_EMail_TemplateText_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopData_EShopData
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

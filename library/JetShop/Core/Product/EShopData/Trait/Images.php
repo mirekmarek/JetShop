@@ -1,62 +1,29 @@
 <?php
 namespace JetShop;
 
-
-use JetApplication\Product_Image;
-use JetApplication\EShop_Managers;
+use JetApplication\EShopEntity_HasImageGallery_Trait;
+use JetApplication\ImageGallery_Image;
 
 trait Core_Product_EShopData_Trait_Images
 {
-	/**
-	 * @var Product_Image[]
-	 */
-	protected ?array $images = null;
-	
+	use EShopEntity_HasImageGallery_Trait;
 	
 	/**
-	 * @return Product_Image[]
+	 * @return ImageGallery_Image[]
 	 */
-	public function getAllImages(): array
+	public function getImages(): array
 	{
 		if( $this->images === null ) {
-			$this->images = Product_Image::getImages( $this->entity_id );
+			$this->images = ImageGallery_Image::getImages( $this );
 			
 			if(
 				!$this->images &&
 				$this->isVariant()
 			) {
-				$this->images = Product_Image::getImages( $this->getVariantMasterProductId() );
+				$this->images = ImageGallery_Image::getImages( $this->getVariantMasterProduct() );
 			}
 		}
 		
 		return $this->images;
 	}
-	
-	public function getImg( int $image_index ): string
-	{
-		$this->getAllImages();
-		
-		$image = $this->images[$image_index] ?? null;
-		
-		return $image?->getImageFile() ? : '';
-	}
-	
-	
-	public function getImgThumbnailUrl( int $image_index, int $max_w, int $max_h ): string
-	{
-		return EShop_Managers::Image()->getThumbnailUrl(
-			$this->getImg( $image_index ),
-			$max_w,
-			$max_h
-		);
-	}
-	
-	public function getImgUrl( int $image_index ): string
-	{
-		return EShop_Managers::Image()->getUrl(
-			$this->getImg( $image_index )
-		);
-	}
-
-	
 }

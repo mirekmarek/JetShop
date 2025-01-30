@@ -6,19 +6,21 @@ use Jet\DataModel_Definition;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Brand;
 use JetApplication\Brand_EShopData;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 #[DataModel_Definition(
 	name: 'brands',
 	database_table_name: 'brands',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_Brand::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
@@ -28,11 +30,13 @@ use JetApplication\Entity_Definition;
 		'title' => 'Title image',
 	]
 )]
-abstract class Core_Brand extends Entity_WithEShopData implements
+abstract class Core_Brand extends EShopEntity_WithEShopData implements
 	FulltextSearch_IndexDataProvider,
-	Entity_Admin_WithEShopData_Interface
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	/**
 	 * @var Brand_EShopData[]

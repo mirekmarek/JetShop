@@ -11,7 +11,7 @@ use JetShop\Core_Content_InfoBox;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Content_InfoBox extends Core_Content_InfoBox
 {
 }

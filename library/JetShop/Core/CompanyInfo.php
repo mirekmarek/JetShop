@@ -6,8 +6,8 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\DataList;
-use JetApplication\Entity_Address;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_Address;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\Invoices;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop;
@@ -18,7 +18,7 @@ use Jet\Form;
 	name: 'company_info',
 	database_table_name: 'company_info',
 )]
-abstract class Core_CompanyInfo extends Entity_WithEShopRelation {
+abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -477,7 +477,7 @@ abstract class Core_CompanyInfo extends Entity_WithEShopRelation {
 	
 	
 	
-	public function setAddress( Entity_Address $address ) : void
+	public function setAddress( EShopEntity_Address $address ) : void
 	{
 		$this->setCompanyName( $address->getCompanyName() );
 		$this->setCompanyId( $address->getCompanyId() );
@@ -490,9 +490,9 @@ abstract class Core_CompanyInfo extends Entity_WithEShopRelation {
 		$this->setAddressCountry( $address->getAddressCountry() );
 	}
 	
-	public function getAddress() : Entity_Address
+	public function getAddress() : EShopEntity_Address
 	{
-		$address = new Entity_Address();
+		$address = new EShopEntity_Address();
 		
 		$address->setCompanyName( $this->getCompanyName( ) );
 		$address->setCompanyId( $this->getCompanyId( ) );

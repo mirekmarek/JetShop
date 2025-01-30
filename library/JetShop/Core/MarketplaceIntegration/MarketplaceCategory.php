@@ -3,7 +3,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 use JetApplication\EShop;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory;
@@ -12,7 +12,7 @@ use JetApplication\MarketplaceIntegration_MarketplaceCategory;
 	name: 'marketplace_category',
 	database_table_name: 'marketplace_categories',
 )]
-class Core_MarketplaceIntegration_MarketplaceCategory extends Entity_WithEShopRelation
+class Core_MarketplaceIntegration_MarketplaceCategory extends EShopEntity_WithEShopRelation
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

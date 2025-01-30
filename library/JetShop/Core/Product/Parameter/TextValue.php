@@ -5,7 +5,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\Property;
 use JetApplication\Product;
 
@@ -13,7 +13,7 @@ use JetApplication\Product;
 	name: 'products_text_parameters',
 	database_table_name: 'products_text_parameters',
 )]
-abstract class Core_Product_Parameter_TextValue extends Entity_WithEShopRelation
+abstract class Core_Product_Parameter_TextValue extends EShopEntity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(

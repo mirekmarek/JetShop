@@ -1,10 +1,10 @@
 <?php
 namespace JetApplicationModule\Admin\Entity\Edit;
 
-use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -13,8 +13,8 @@ use Jet\UI;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_Basic $item
- * @var Admin_Managers_Entity_Listing $listing
+ * @var EShopEntity_Basic $item
+ * @var Admin_Managers_EShopEntity_Listing $listing
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
@@ -50,7 +50,7 @@ $next_url = $listing?->getNextEditUrl( $item->getId() );
 			<?php
 		endif;
 		
-		if( $item instanceof Entity_HasURL_Interface || $item instanceof Entity_WithEShopData ) {
+		if( $item instanceof EShopEntity_HasURL_Interface || $item instanceof EShopEntity_WithEShopData ) {
 			echo $this->render('preview-btn');
 		}
 		

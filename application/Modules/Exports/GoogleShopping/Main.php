@@ -166,9 +166,9 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			$f->tagPair( 'description', $sd->getDescription() );
 			$f->tagPair( 'link', $sd->getURL() );
 
-			$f->tagPair( 'g:image_link', $sd->getImgUrl(0) );
-			if( $sd->getImgUrl( 1 ) ) {
-				$f->tagPair( 'g:additional_image_link', $sd->getImgUrl( 1 ) );
+			$f->tagPair( 'g:image_link', $sd->getImageURL(0) );
+			if( $sd->getImageURL( 1 ) ) {
+				$f->tagPair( 'g:additional_image_link', $sd->getImageURL( 1 ) );
 			}
 			
 			if( $sd->getDiscountPercentage( $pricelist ) ) {

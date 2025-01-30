@@ -1,9 +1,9 @@
 <?php
 use Jet\UI;
 use Jet\MVC_View;
-use JetApplication\Entity_HasEShopRelation_Interface;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShops;
 
 /**
@@ -14,17 +14,17 @@ $item = $this->getRaw('item');
 
 $URLs = [];
 
-if($item instanceof Entity_WithEShopData){
+if($item instanceof EShopEntity_WithEShopData){
 	foreach( EShops::getListSorted() as $eshop ) {
 		$sd = $item->getEshopData($eshop);
-		if($sd instanceof Entity_HasURL_Interface) {
+		if($sd instanceof EShopEntity_HasURL_Interface) {
 			$URLs[$eshop->getKey()] = $sd->getURL(['cache_prevent_'=>time()]);
 		}
 	}
 } else {
 	if(
-		$item instanceof Entity_HasURL_Interface &&
-		$item instanceof Entity_HasEShopRelation_Interface
+		$item instanceof EShopEntity_HasURL_Interface &&
+		$item instanceof EShopEntity_HasEShopRelation_Interface
 	) {
 		$URLs[$item->getEshopKey()] = $item->getURL(['cache_prevent_'=>time()]);
 	}

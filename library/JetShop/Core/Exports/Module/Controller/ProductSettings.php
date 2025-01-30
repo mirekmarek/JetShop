@@ -15,7 +15,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
-use JetApplication\Entity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_Module;
@@ -27,7 +27,7 @@ use JetApplication\EShop;
  */
 abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Controller_Default
 {
-	protected Product|Entity_Admin_Interface $product;
+	protected Product|EShopEntity_Admin_Interface $product;
 	
 	protected EShop $eshop;
 	
@@ -43,7 +43,7 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	protected ?Form $parameters_form;
 	
-	public function getProduct(): Entity_Admin_Interface|Product
+	public function getProduct(): EShopEntity_Admin_Interface|Product
 	{
 		return $this->product;
 	}
@@ -91,9 +91,9 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	
 	public function init(
-		Product|Entity_Admin_Interface $product,
-		EShop                          $eshop,
-		Exports_Module                 $export
+		Product|EShopEntity_Admin_Interface $product,
+		EShop                               $eshop,
+		Exports_Module                      $export
 	): void
 	{
 		$this->product = $product;

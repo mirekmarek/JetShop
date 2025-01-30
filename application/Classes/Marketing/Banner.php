@@ -11,7 +11,7 @@ use JetShop\Core_Marketing_Banner;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Marketing_Banner extends Core_Marketing_Banner
 {
 }

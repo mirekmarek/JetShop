@@ -7,7 +7,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\Availabilities;
 use JetApplication\Availability;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_SetItem;
@@ -16,7 +16,7 @@ use JetApplication\Product_SetItem;
 	name: 'products_availability',
 	database_table_name: 'products_availability'
 )]
-abstract class Core_Product_Availability extends Entity_Basic
+abstract class Core_Product_Availability extends EShopEntity_Basic
 {
 	
 	#[DataModel_Definition(

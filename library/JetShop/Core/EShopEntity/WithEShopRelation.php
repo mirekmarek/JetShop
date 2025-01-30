@@ -1,0 +1,14 @@
+<?php
+namespace JetShop;
+
+use Jet\DataModel_Definition;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasEShopRelation_Trait;
+
+#[DataModel_Definition]
+abstract class Core_EShopEntity_WithEShopRelation extends EShopEntity_Basic implements
+	EShopEntity_HasEShopRelation_Interface
+{
+	use EShopEntity_HasEShopRelation_Trait;
+}

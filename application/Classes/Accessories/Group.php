@@ -7,7 +7,7 @@ use JetShop\Core_Accessories_Group;
 
 
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Accessories_Group extends Core_Accessories_Group {
 
 }

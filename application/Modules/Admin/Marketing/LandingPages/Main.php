@@ -8,15 +8,15 @@
 namespace JetApplicationModule\Admin\Marketing\LandingPages;
 
 use Jet\Application_Module;
-use JetApplication\Admin_Managers_MarketingLandingPages;
+use JetApplication\Admin_Managers_Marketing_LandingPages;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_LandingPage;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingLandingPages
+class Main extends Application_Module implements Admin_Managers_Marketing_LandingPages
 {
 	use Admin_EntityManager_Trait;
 	
@@ -27,7 +27,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingLanding
 	public const ACTION_UPDATE = 'update_landing_page';
 	public const ACTION_DELETE = 'delete_landing_page';
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_LandingPage();
 	}

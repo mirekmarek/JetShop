@@ -7,29 +7,29 @@ use Jet\DataModel_Definition;
 
 use Jet\Form;
 use Jet\Logger;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_DeliveryNote;
 use JetApplication\Context_ProvidesContext_Interface;
-use JetApplication\Entity_AccountingDocument;
+use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\DeliveryNote_Item;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\Order;
 
 #[DataModel_Definition(
 	name: 'delivery_note',
 	database_table_name: 'delivery_notes',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_DeliveryNote::class
 )]
-abstract class Core_DeliveryNote extends Entity_AccountingDocument implements
-	NumberSeries_Entity_Interface,
+abstract class Core_DeliveryNote extends EShopEntity_AccountingDocument implements
+	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME

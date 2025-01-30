@@ -23,8 +23,8 @@ use JetApplication\Admin_Managers_KindOfProduct;
 use JetApplication\Admin_Managers_Image;
 use JetApplication\Admin_Managers_UI;
 use JetApplication\Admin_Managers_FulltextSearch;
-use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Admin_Managers_Entity_Edit;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Admin_Managers_ProductFilter;
 use JetApplication\Admin_Managers_PriceFormatter;
 use JetApplication\Admin_Managers_Order;
@@ -32,10 +32,10 @@ use JetApplication\Admin_Managers_Complaint;
 use JetApplication\Admin_Managers_ReturnOfGoods;
 use JetApplication\Admin_Managers_Customer;
 use JetApplication\Admin_Managers_Timer;
-use JetApplication\Admin_Managers_WarehouseManagementOverview;
+use JetApplication\Admin_Managers_WarehouseManagement_Overview;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
-use JetApplication\Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses;
-use JetApplication\Admin_Managers_WarehouseManagementLossOrDestruction;
+use JetApplication\Admin_Managers_WarehouseManagement_TransferBetweenWarehouses;
+use JetApplication\Admin_Managers_WarehouseManagement_LossOrDestruction;
 
 
 class Core_Admin_Managers extends Managers {
@@ -104,14 +104,14 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_FulltextSearch::class );
 	}
 	
-	public static function EntityListing() : Admin_Managers_Entity_Listing|Application_Module
+	public static function EntityListing() : Admin_Managers_EShopEntity_Listing|Application_Module
 	{
-		return static::get( Admin_Managers_Entity_Listing::class );
+		return static::get( Admin_Managers_EShopEntity_Listing::class );
 	}
 	
-	public static function EntityEdit() : Admin_Managers_Entity_Edit|Application_Module
+	public static function EntityEdit() : Admin_Managers_EShopEntity_Edit|Application_Module
 	{
-		return static::get( Admin_Managers_Entity_Edit::class );
+		return static::get( Admin_Managers_EShopEntity_Edit::class );
 	}
 
 	
@@ -160,9 +160,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_ReceiptOfGoods::class );
 	}
 	
-	public static function TransferBetweenWarehouses() : Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses|Application_Module
+	public static function TransferBetweenWarehouses() : Admin_Managers_WarehouseManagement_TransferBetweenWarehouses|Application_Module
 	{
-		return static::get( Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses::class );
+		return static::get( Admin_Managers_WarehouseManagement_TransferBetweenWarehouses::class );
 	}
 	
 	public static function Complaint() : Admin_Managers_Complaint|Application_Module
@@ -185,9 +185,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Timer::class );
 	}
 	
-	public static function WarehouseManagementOverview() : Admin_Managers_WarehouseManagementOverview|Application_Module|null
+	public static function WarehouseManagementOverview() : Admin_Managers_WarehouseManagement_Overview|Application_Module|null
 	{
-		return static::get( Admin_Managers_WarehouseManagementOverview::class );
+		return static::get( Admin_Managers_WarehouseManagement_Overview::class );
 	}
 	
 	public static function Context() : Admin_Managers_Context|Application_Module
@@ -200,9 +200,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_SupplierGoodsOrders::class );
 	}
 	
-	public static function LossOrDestruction() : Admin_Managers_WarehouseManagementLossOrDestruction|Application_Module|null
+	public static function LossOrDestruction() : Admin_Managers_WarehouseManagement_LossOrDestruction|Application_Module|null
 	{
-		return static::get( Admin_Managers_WarehouseManagementLossOrDestruction::class );
+		return static::get( Admin_Managers_WarehouseManagement_LossOrDestruction::class );
 	}
 	
 	public static function Note() : Admin_Managers_Note|Application_Module|null

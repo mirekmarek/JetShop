@@ -6,11 +6,13 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_HasURL_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_HasURL_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Brand;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EShop;
 
 /**
@@ -22,12 +24,16 @@ use JetApplication\EShop;
 	id_controller_class: DataModel_IDController_Passive::class,
 	parent_model_class: Brand::class
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	URL_template: '%NAME%-m-%ID%'
 )]
-abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasURL_Interface {
+abstract class Core_Brand_EShopData extends EShopEntity_WithEShopData_EShopData implements
+	EShopEntity_HasURL_Interface,
+	EShopEntity_HasImages_Interface
+{
 	
-	use Entity_HasURL_Trait;
+	use EShopEntity_HasURL_Trait;
+	use EShopEntity_HasImages_Trait;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -37,7 +43,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setName'
 	)]
@@ -51,7 +57,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_INPUT,
 		label: 'Alternative name:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setSecondName'
 	)]
@@ -65,7 +71,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setDescription'
 	)]
@@ -79,7 +85,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_INPUT,
 		label: 'Title:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setSeoTitle'
 	)]
@@ -93,7 +99,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setSeoDescription'
 	)]
@@ -107,7 +113,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Keywords:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setSeoKeywords'
 	)]
@@ -121,7 +127,7 @@ abstract class Core_Brand_EShopData extends Entity_WithEShopData_EShopData imple
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true,
 		setter: 'setUrlParam'
 	)]

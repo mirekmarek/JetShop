@@ -17,15 +17,15 @@ use Jet\MVC_View;
 use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Admin_Managers_Entity_Edit;
-use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasActivation_Interface;
-use JetApplication\Entity_HasActivationByTimePlan_Interface;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasActivation_Interface;
+use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 use JetApplication\EShops;
 use Closure;
@@ -33,10 +33,10 @@ use Closure;
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_Entity_Edit
+class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
 {
-	protected null|Entity_Basic|Entity_Admin_WithEShopData_Interface $item = null;
-	protected ?Admin_Managers_Entity_Listing $listing = null;
+	protected null|EShopEntity_Basic|EShopEntity_Admin_WithEShopData_Interface $item = null;
+	protected ?Admin_Managers_EShopEntity_Listing $listing = null;
 	protected ?UI_tabs $tabs = null;
 	protected MVC_View $view;
 	protected Closure|null $common_data_fields_renderer = null;
@@ -76,13 +76,13 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	
 	
 	public function init(
-		Entity_Basic|Entity_Admin_Interface $item, ?
-		Admin_Managers_Entity_Listing $listing = null,
-		?UI_tabs $tabs = null,
-		?Closure $common_data_fields_renderer = null,
-		?Closure $toolbar_renderer = null,
-		?Closure $eshop_data_fields_renderer = null,
-		?Closure $description_fields_renderer = null
+		EShopEntity_Basic|EShopEntity_Admin_Interface $item, ?
+		Admin_Managers_EShopEntity_Listing            $listing = null,
+		?UI_tabs                                      $tabs = null,
+		?Closure                                      $common_data_fields_renderer = null,
+		?Closure                                      $toolbar_renderer = null,
+		?Closure                                      $eshop_data_fields_renderer = null,
+		?Closure                                      $description_fields_renderer = null
 	): void
 	{
 		$this->item = $item;
@@ -134,6 +134,12 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		return $this->render( 'edit/images', [] );
 	}
 	
+	public function renderEditImageGallery(): string
+	{
+		return $this->render( 'edit/image-gallery', [] );
+	}
+	
+	
 	public function renderAdd( Form $form ): string
 	{
 		$params = [
@@ -167,7 +173,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		return $this->render( 'delete/not-possible', $params );
 	}
 	
-	public function renderShowName( int $id, null|Entity_WithEShopData|Entity_Admin_Interface $item ): string
+	public function renderShowName( int $id, null|EShopEntity_WithEShopData|EShopEntity_Admin_Interface $item ): string
 	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
@@ -186,7 +192,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	}
 	
 	
-	public function renderActiveState( Entity_HasActivation_Interface $item ): string
+	public function renderActiveState( EShopEntity_HasActivation_Interface $item ): string
 	{
 		$params = [
 			'item' => $item,
@@ -338,7 +344,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	}
 	
 	
-	public function renderPreviewButton( Entity_HasURL_Interface|Entity_Basic $item ) : string
+	public function renderPreviewButton( EShopEntity_HasURL_Interface|EShopEntity_Basic $item ) : string
 	{
 		$params = ['item'=>$item];
 		
@@ -346,16 +352,16 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	}
 	
 	public function renderEntityActivation(
-		Entity_Basic $entity,
-		bool $editable,
-		?Closure $deactivate_url_creator = null,
-		?Closure $activate_url_creator = null,
-		?Closure $activate_completely_url_creator = null,
-		?Closure $deactivate_per_eshop_url_creator = null,
-		?Closure $activate_per_eshop_url_creator = null
+		EShopEntity_Basic $entity,
+		bool              $editable,
+		?Closure          $deactivate_url_creator = null,
+		?Closure          $activate_url_creator = null,
+		?Closure          $activate_completely_url_creator = null,
+		?Closure          $deactivate_per_eshop_url_creator = null,
+		?Closure          $activate_per_eshop_url_creator = null
 	) : string
 	{
-		if( !$entity instanceof Entity_HasActivation_Interface ) {
+		if( !$entity instanceof EShopEntity_HasActivation_Interface ) {
 			return '';
 		}
 		
@@ -363,7 +369,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 			'entity' => $entity
 		];
 		
-		if($entity instanceof Entity_HasActivationByTimePlan_Interface) {
+		if($entity instanceof EShopEntity_HasActivationByTimePlan_Interface) {
 			return $this->render( 'entity-activation-by-timeplan', $params );
 		}
 		
@@ -378,7 +384,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 			};
 		}
 		
-		if( $entity instanceof Entity_WithEShopData ) {
+		if( $entity instanceof EShopEntity_WithEShopData ) {
 			
 			if(!$activate_completely_url_creator) {
 				$activate_completely_url_creator = function() : string {
@@ -411,14 +417,14 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 			$params['deactivate_url'] = $deactivate_url_creator();
 			$params['activate_url'] = $activate_url_creator();
 			
-			if( $entity instanceof Entity_WithEShopData ) {
+			if( $entity instanceof EShopEntity_WithEShopData ) {
 				$params['activate_completely_url'] = $activate_completely_url_creator();
 			}
 			
 			$res .=  $this->render( 'entity-activation/editable', $params );
 		}
 		
-		if( $entity instanceof Entity_WithEShopData ) {
+		if( $entity instanceof EShopEntity_WithEShopData ) {
 			foreach(EShops::getListSorted() as $eshop) {
 				$params['eshop_data'] = $entity->getEshopData($eshop);
 				$params['eshop'] = $eshop;
@@ -452,7 +458,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	}
 	
 	
-	public function renderEditProducts( Entity_Basic $item ): string
+	public function renderEditProducts( EShopEntity_Basic $item ): string
 	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
@@ -468,7 +474,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		);
 	}
 	
-	public function renderEditFilter( Entity_Basic $item, Form $form ): string
+	public function renderEditFilter( EShopEntity_Basic $item, Form $form ): string
 	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),

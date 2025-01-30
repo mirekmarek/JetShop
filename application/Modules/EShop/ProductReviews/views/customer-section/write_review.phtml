@@ -29,8 +29,8 @@ $form->field('negative')->input()->addCustomCssStyle('height:200px');
 	
 	<div class="product-write-review">
 		<div>
-			<?php if($p->getImg(0)): ?>
-				<a href="<?=$p->getURL()?>"><img src="<?=$p->getImgThumbnailUrl(0, 80, 80)?>"></a>
+			<?php if($p->getImage(0)): ?>
+				<a href="<?=$p->getURL()?>"><img src="<?=$p->getImageThumbnailUrl(0, 80, 80)?>"></a>
 			<?php endif; ?>
 		</div>
 		<div>

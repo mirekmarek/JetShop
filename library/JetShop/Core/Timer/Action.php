@@ -3,7 +3,7 @@
 namespace JetShop;
 
 use Jet\Form;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 
 abstract class Core_Timer_Action {
@@ -27,5 +27,5 @@ abstract class Core_Timer_Action {
 	}
 
 	
-	abstract public function perform( Entity_Basic $entity, mixed $action_context ) : bool;
+	abstract public function perform( EShopEntity_Basic $entity, mixed $action_context ) : bool;
 }

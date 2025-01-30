@@ -11,15 +11,15 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\Logger;
 use Jet\UI_messages;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\Supplier;
@@ -36,17 +36,17 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_receipt_of_goods',
 	database_table_name: 'whm_receipt_of_goods',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
 )]
-abstract class Core_WarehouseManagement_ReceiptOfGoods extends Entity_Basic implements
-	NumberSeries_Entity_Interface,
+abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic implements
+	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
 	use Context_ProvidesContext_Trait;
-	use NumberSeries_Entity_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_DONE = 'done';

@@ -5,8 +5,8 @@ use Closure;
 use Jet\Locale;
 use Jet\UI_tabs;
 use JetApplication\Admin_Managers;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 
 use Jet\MVC_View;
@@ -16,7 +16,7 @@ use Jet\Form_Renderer;
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var Entity_WithEShopData|Entity_Admin_WithEShopData_Interface $item
+ * @var EShopEntity_WithEShopData|EShopEntity_Admin_WithEShopData_Interface $item
  * @var Main $module
  * @var UI_tabs $tabs
  * @var Closure|null $eshop_data_fields_renderer

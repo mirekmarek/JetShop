@@ -2,8 +2,8 @@
 namespace JetShop;
 
 use JetApplication\EShop;
-use JetApplication\Product;
-use JetApplication\Product_Image;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
+use JetApplication\ImageGallery_Image;
 
 interface Core_Admin_Managers_Image
 {
@@ -47,16 +47,14 @@ interface Core_Admin_Managers_Image
 	public function commonImageManager( string $entity, int $entity_id ) : string;
 
 	
+	public function handleImageGalleryManagement( EShopEntity_HasImageGallery_Interface $item ) : void;
 	
+	public function uploadImageGallery( EShopEntity_HasImageGallery_Interface $item, array $images ) : void;
 	
-	public function handleProductImageManagement( Product $product ) : void;
+	public function renderImageGalleryManagement() : string;
 	
-	public function uploadProductImages( Product $product, array $images ) : void;
+	public function getImageGalleryImageURL( ImageGallery_Image $image ): string;
 	
-	public function renderProductImageManagement() : string;
-	
-	public function getProductImageURL( Product_Image $image ): string;
-	
-	public function getProductImageThumbnailUrl( Product_Image $image, int $max_w, int $max_h ): string;
+	public function getImageGalleryImageThumbnailUrl( ImageGallery_Image $image, int $max_w, int $max_h ): string;
 	
 }

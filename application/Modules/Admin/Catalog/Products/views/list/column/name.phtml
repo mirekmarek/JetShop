@@ -5,14 +5,14 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Entity_Listing;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShops;
 use JetApplication\Product;
 
 /**
  * @var MVC_View $this
  * @var Product $item
- * @var Admin_Managers_Entity_Listing $listing
+ * @var Admin_Managers_EShopEntity_Listing $listing
  */
 
 $item = $this->getRaw('item');
@@ -21,7 +21,7 @@ $listing = $this->getRaw('listing');
 
 $edit_uri = $listing->getEditUrl($item);
 
-$img = $item->getEshopData(EShops::getCurrent())->getImgThumbnailUrl(0, 120, 120);
+$img = $item->getEshopData(EShops::getCurrent())->getImageThumbnailUrl(0, 120, 120);
 ?>
 
 <div style="display: flex;align-items: center">

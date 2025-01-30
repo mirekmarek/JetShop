@@ -16,7 +16,6 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Data_Tree_Node;
-use JetApplication\Entity_WithEShopData;
 
 
 /**

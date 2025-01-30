@@ -9,7 +9,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Content_InfoBox;
 
 
@@ -18,7 +18,7 @@ use JetApplication\Content_InfoBox;
 	database_table_name: 'content_info_box_eshop_data',
 	parent_model_class: Content_InfoBox::class
 )]
-abstract class Core_Content_InfoBox_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_Content_InfoBox_EShopData extends EShopEntity_WithEShopData_EShopData
 {
 	
 	/**

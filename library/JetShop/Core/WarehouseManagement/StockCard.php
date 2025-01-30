@@ -11,15 +11,15 @@ use Jet\DataModel_Definition;
 
 use Jet\Form;
 use Jet\Logger;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagementOverview;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_WarehouseManagement_Overview;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_StockCard;
@@ -34,15 +34,15 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'warehouse_stock_card',
 	database_table_name: 'whm_stock_cards',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_WarehouseManagementOverview::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagement_Overview::class
 )]
-abstract class Core_WarehouseManagement_StockCard extends Entity_Basic implements
-	Entity_Admin_Interface,
-	Entity_HasGet_Interface
+abstract class Core_WarehouseManagement_StockCard extends EShopEntity_Basic implements
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasGet_Interface
 {
-	use Entity_HasGet_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasGet_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

@@ -5,10 +5,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\Accessories_Group_Product;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Entity_Common;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\EShopEntity_Common;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Admin_Managers_AccessoriesGroups;
 
@@ -16,12 +16,12 @@ use JetApplication\Admin_Managers_AccessoriesGroups;
 	name: 'accessories_group',
 	database_table_name: 'accessories_groups',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_AccessoriesGroups::class
 )]
-abstract class Core_Accessories_Group extends Entity_Common implements Entity_Admin_Interface
+abstract class Core_Accessories_Group extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	/**
 	 * @var Accessories_Group_Product[]

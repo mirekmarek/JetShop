@@ -3,7 +3,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\Exports_ExportCategory_Parameter;
 use JetApplication\EShop;
 use JetApplication\Exports_ExportCategory;
@@ -12,7 +12,7 @@ use JetApplication\Exports_ExportCategory;
 	name: 'exports_category',
 	database_table_name: 'exports_categories',
 )]
-class Core_Exports_ExportCategory extends Entity_WithEShopRelation
+class Core_Exports_ExportCategory extends EShopEntity_WithEShopRelation
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,

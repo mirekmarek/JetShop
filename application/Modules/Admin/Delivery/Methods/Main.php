@@ -13,7 +13,7 @@ use JetApplication\Admin_Managers_DeliveryMethods;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\Delivery_Method;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 /**
  *
@@ -31,7 +31,7 @@ class Main extends Application_Module implements Admin_Managers_DeliveryMethods
 	public const ACTION_SET_PRICE = 'set_price';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Delivery_Method();
 	}

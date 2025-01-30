@@ -17,7 +17,7 @@ use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Layout;
 use JetApplication\Application_Admin;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\Timer;
 
 /**
@@ -46,7 +46,7 @@ class Controller_Main extends MVC_Controller_Default
 		}
 		
 		/**
-		 * @var Entity_WithEShopData $entity
+		 * @var EShopEntity_WithEShopData $entity
 		 */
 		$entity = $entity_class::load( $entity_id );
 		

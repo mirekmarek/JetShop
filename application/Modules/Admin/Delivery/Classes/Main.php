@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Delivery\Classes;
 use Jet\Application_Module;
 use JetApplication\Admin_Managers_DeliveryClasses;
 use JetApplication\Delivery_Class;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Admin_EntityManager_Trait;
 
 /**
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_DeliveryClasses
 	public const ACTION_DELETE = 'delete_delivery_class';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Delivery_Class();
 	}

@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Entity_ChangeHistory;
+use JetApplication\EShopEntity_ChangeHistory;
 use JetApplication\ReturnOfGoods;
 use JetApplication\ReturnOfGoods_ChangeHistory_Item;
 
@@ -12,7 +12,7 @@ use JetApplication\ReturnOfGoods_ChangeHistory_Item;
 	name: 'return_of_goods_change_history',
 	database_table_name: 'returns_of_goods_change_history'
 )]
-abstract class Core_ReturnOfGoods_ChangeHistory extends Entity_ChangeHistory {
+abstract class Core_ReturnOfGoods_ChangeHistory extends EShopEntity_ChangeHistory {
 	
 	/**
 	 * @var ReturnOfGoods_ChangeHistory_Item[]

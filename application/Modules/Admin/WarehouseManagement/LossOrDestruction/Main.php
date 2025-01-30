@@ -9,14 +9,14 @@ namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 use Jet\Application_Module;
 use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Admin_Managers_WarehouseManagementLossOrDestruction;
-use JetApplication\Entity_Basic;
+use JetApplication\Admin_Managers_WarehouseManagement_LossOrDestruction;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagementLossOrDestruction
+class Main extends Application_Module implements Admin_Managers_WarehouseManagement_LossOrDestruction
 {
 	use Admin_EntityManager_Trait;
 	
@@ -28,7 +28,7 @@ class Main extends Application_Module implements Admin_Managers_WarehouseManagem
 	public const ACTION_DELETE = 'delete_loss_or_destruction';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new WarehouseManagement_LossOrDestruction();
 	}

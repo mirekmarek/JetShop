@@ -11,7 +11,7 @@ use JetShop\Core_Content_InfoPage;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Content_InfoPage extends Core_Content_InfoPage
 {
 }

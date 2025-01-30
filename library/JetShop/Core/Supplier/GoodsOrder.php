@@ -14,15 +14,15 @@ use Jet\Locale;
 use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_Definition;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\Supplier;
@@ -36,17 +36,17 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'supplier_goods_order',
 	database_table_name: 'supplier_goods_orders',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_SupplierGoodsOrders::class
 )]
-abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements
-	NumberSeries_Entity_Interface,
-	Entity_Admin_Interface,
-	Entity_HasGet_Interface
+abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
+	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasGet_Interface
 {
-	use Entity_Admin_Trait;
-	use Entity_HasGet_Trait;
-	use NumberSeries_Entity_Trait;
+	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_PROBLEM_DURING_SENDING = 'problem_during_sending';

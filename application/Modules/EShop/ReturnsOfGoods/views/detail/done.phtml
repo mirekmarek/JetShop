@@ -28,8 +28,8 @@ echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
 
 		<div class="return-of-goods-product">
 			<div>
-				<?php if($product->getImg(0)): ?>
-					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImgThumbnailUrl(0, 50, 50)?>"></a>
+				<?php if($product->getImage(0)): ?>
+					<a href="<?=$product->getURL()?>"><img src="<?=$product->getImageThumbnailUrl(0, 50, 50)?>"></a>
 				<?php endif; ?>
 			</div>
 			<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>

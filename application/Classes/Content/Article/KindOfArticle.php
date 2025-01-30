@@ -11,7 +11,7 @@ use JetShop\Core_Content_Article_KindOfArticle;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Content_Article_KindOfArticle extends Core_Content_Article_KindOfArticle
 {
 }

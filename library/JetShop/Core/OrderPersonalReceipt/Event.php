@@ -10,7 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
 use JetApplication\OrderPersonalReceipt_Event_HandlerModule;
@@ -22,7 +22,7 @@ use JetApplication\OrderPersonalReceipt_Event_HandlerModule;
 	name: 'order_personal_receipt_event',
 	database_table_name: 'order_personal_receipts_events',
 )]
-class Core_OrderPersonalReceipt_Event extends Entity_Event
+class Core_OrderPersonalReceipt_Event extends EShopEntity_Event
 {
 	
 	protected static string $handler_module_name_prefix = 'Events.OrderPersonalReceipt.';

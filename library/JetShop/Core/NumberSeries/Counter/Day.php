@@ -3,7 +3,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\NumberSeries_Counter;
 
 #[DataModel_Definition(
@@ -20,7 +20,7 @@ abstract class Core_NumberSeries_Counter_Day extends NumberSeries_Counter
 	protected string $date = '';
 
 	
-	public static function generate( NumberSeries_Entity_Interface $entity, int $pad ) : string
+	public static function generate( EShopEntity_HasNumberSeries_Interface $entity, int $pad ) : string
 	{
 		$where = [
 			'entity' => $entity->getNumberSeriesEntityType()

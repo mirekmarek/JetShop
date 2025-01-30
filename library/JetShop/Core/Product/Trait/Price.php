@@ -11,7 +11,7 @@ use JetApplication\Product_PriceHistory;
 
 trait Core_Product_Trait_Price
 {
-	use Core_Entity_HasPrice_Trait;
+	use Core_EShopEntity_HasPrice_Trait;
 	
 	protected ?Form $set_price_form = null;
 	

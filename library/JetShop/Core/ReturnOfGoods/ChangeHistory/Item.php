@@ -2,7 +2,7 @@
 namespace JetShop;
 
 use Jet\DataModel_Definition;
-use JetApplication\Entity_ChangeHistory_Item;
+use JetApplication\EShopEntity_ChangeHistory_Item;
 use JetApplication\ReturnOfGoods_ChangeHistory;
 
 #[DataModel_Definition(
@@ -10,6 +10,6 @@ use JetApplication\ReturnOfGoods_ChangeHistory;
 	database_table_name: 'returns_of_goods_change_history_items',
 	parent_model_class: ReturnOfGoods_ChangeHistory::class
 )]
-abstract class Core_ReturnOfGoods_ChangeHistory_Item extends Entity_ChangeHistory_Item {
+abstract class Core_ReturnOfGoods_ChangeHistory_Item extends EShopEntity_ChangeHistory_Item {
 
 }

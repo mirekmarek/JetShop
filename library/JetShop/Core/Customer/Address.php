@@ -9,7 +9,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\Customer_Address;
-use JetApplication\Entity_Address;
+use JetApplication\EShopEntity_Address;
 
 /**
  *
@@ -18,7 +18,7 @@ use JetApplication\Entity_Address;
 	name: 'customer_address',
 	database_table_name: 'customers_addresses',
 )]
-abstract class Core_Customer_Address extends Entity_Address
+abstract class Core_Customer_Address extends EShopEntity_Address
 {
 	
 	#[DataModel_Definition(

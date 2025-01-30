@@ -12,7 +12,7 @@ use Jet\DataModel_Definition;
 use JetShop\Core_ProductQuestion;
 
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class ProductQuestion extends Core_ProductQuestion
 {
 }

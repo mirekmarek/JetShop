@@ -6,7 +6,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 
@@ -38,7 +38,7 @@ trait Core_Product_EShopData_Trait_Variants
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name of variant:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $variant_name = '';

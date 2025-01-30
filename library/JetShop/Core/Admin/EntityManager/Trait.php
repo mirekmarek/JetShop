@@ -6,8 +6,8 @@ use Jet\MVC;
 use Jet\MVC_Page_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\Auth_Administrator_Role;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasActivation_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasActivation_Interface;
 
 trait Core_Admin_EntityManager_Trait {
 	
@@ -21,9 +21,9 @@ trait Core_Admin_EntityManager_Trait {
 		return MVC::getPage( static::getAdminMainPageID() );
 	}
 	
-	public static function getEditUrl( int|Entity_Basic $id_or_item, array $get_params=[] ) : string
+	public static function getEditUrl( int|EShopEntity_Basic $id_or_item, array $get_params=[] ) : string
 	{
-		if($id_or_item instanceof Entity_Basic) {
+		if($id_or_item instanceof EShopEntity_Basic) {
 			$id = $id_or_item->getId();
 		} else {
 			$id = $id_or_item;
@@ -37,7 +37,7 @@ trait Core_Admin_EntityManager_Trait {
 		
 	}
 	
-	public function showName( int|Entity_Basic $id_or_item ): string
+	public function showName( int|EShopEntity_Basic $id_or_item ): string
 	{
 		if(is_int($id_or_item)) {
 			$id = $id_or_item;
@@ -65,7 +65,7 @@ trait Core_Admin_EntityManager_Trait {
 		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_DELETE );
 	}
 	
-	public function renderActiveState( Entity_HasActivation_Interface $item ) : string
+	public function renderActiveState( EShopEntity_HasActivation_Interface $item ) : string
 	{
 		return Admin_Managers::EntityEdit()->renderActiveState( $item );
 	}

@@ -1,0 +1,8 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_EShopEntity_HasImageGallery_Interface;
+
+interface EShopEntity_HasImageGallery_Interface extends Core_EShopEntity_HasImageGallery_Interface
+{
+}

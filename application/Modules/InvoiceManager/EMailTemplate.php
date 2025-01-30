@@ -11,21 +11,21 @@ namespace JetApplicationModule\InvoiceManager;
 use Jet\Tr;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
-use JetApplication\Entity_AccountingDocument;
+use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\Order;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop;
 
 abstract class EMailTemplate extends EMail_Template {
 	
-	protected null|Entity_AccountingDocument $invoice = null;
+	protected null|EShopEntity_AccountingDocument $invoice = null;
 	
-	public function getInvoice(): ?Entity_AccountingDocument
+	public function getInvoice(): ?EShopEntity_AccountingDocument
 	{
 		return $this->invoice;
 	}
 	
-	public function setInvoice( Entity_AccountingDocument $invoice ): void
+	public function setInvoice( EShopEntity_AccountingDocument $invoice ): void
 	{
 		$this->invoice = $invoice;
 	}

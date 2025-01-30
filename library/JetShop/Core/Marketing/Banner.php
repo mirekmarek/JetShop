@@ -15,11 +15,11 @@ use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_MarketingBanners;
-use JetApplication\Entity_Marketing;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_Marketing_Banners;
+use JetApplication\EShopEntity_Marketing;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_Banner;
 use JetApplication\Marketing_BannerGroup;
 use JetApplication\EShops;
@@ -30,12 +30,12 @@ use JetApplication\EShop;
 	name: 'banners',
 	database_table_name: 'banners',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_MarketingBanners::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Marketing_Banners::class
 )]
-abstract class Core_Marketing_Banner extends Entity_Marketing implements Entity_Admin_Interface
+abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
-	use Entity_Admin_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

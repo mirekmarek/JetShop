@@ -10,7 +10,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\ProductFilter;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Storage_Value;
@@ -26,7 +26,7 @@ use JetApplication\ProductFilter_Storage_Value;
 		'id_property_name' => 'id'
 	]
 )]
-abstract class Core_ProductFilter_Storage extends Entity_WithEShopRelation
+abstract class Core_ProductFilter_Storage extends EShopEntity_WithEShopRelation
 {
 	
 	#[DataModel_Definition(

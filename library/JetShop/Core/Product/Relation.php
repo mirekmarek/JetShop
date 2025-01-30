@@ -4,7 +4,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_Passive;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 #[DataModel_Definition(
 	name: 'product_relation',
@@ -67,7 +67,7 @@ abstract class Core_Product_Relation extends DataModel
 		$this->entity_id = $entity_id;
 	}
 	
-	public static function add( Entity_Basic $entity, int $product_id ) : void
+	public static function add( EShopEntity_Basic $entity, int $product_id ) : void
 	{
 		$new = new static();
 		$new->setEntityType( $entity::getEntityType() );
@@ -76,7 +76,7 @@ abstract class Core_Product_Relation extends DataModel
 		$new->save();
 	}
 	
-	public static function remove( Entity_Basic $entity, int $product_id ) : void
+	public static function remove( EShopEntity_Basic $entity, int $product_id ) : void
 	{
 		static::dataDelete([
 			'entity_type' => $entity::getEntityType(),
@@ -88,7 +88,7 @@ abstract class Core_Product_Relation extends DataModel
 		
 	}
 	
-	public static function removeAll( Entity_Basic $entity ) : void
+	public static function removeAll( EShopEntity_Basic $entity ) : void
 	{
 		static::dataDelete([
 			'entity_type' => $entity::getEntityType(),
@@ -98,7 +98,7 @@ abstract class Core_Product_Relation extends DataModel
 		
 	}
 	
-	public static function get( Entity_Basic $entity ) : array
+	public static function get( EShopEntity_Basic $entity ) : array
 	{
 		return static::dataFetchCol(
 			['product_id'],

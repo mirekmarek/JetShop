@@ -20,8 +20,8 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\AdministratorSignatures;
-use JetApplication\Entity_Note;
-use JetApplication\Entity_Note_MessageGenerator;
+use JetApplication\EShopEntity_Note;
+use JetApplication\EShopEntity_Note_MessageGenerator;
 use Closure;
 
 /**
@@ -29,7 +29,7 @@ use Closure;
  */
 class Main extends Application_Module implements Admin_Managers_Note
 {
-	protected Entity_Note $new_note;
+	protected EShopEntity_Note $new_note;
 	protected string $generated_subject;
 	protected string $customer_email_address;
 	protected Closure $after_add;
@@ -41,7 +41,7 @@ class Main extends Application_Module implements Admin_Managers_Note
 	protected ?Form $internal_note_form = null;
 	protected ?Form $customer_message_form = null;
 	
-	public function init( Entity_Note $new_note, string $generated_subject, string $customer_email_address, Closure $after_add ) : void
+	public function init( EShopEntity_Note $new_note, string $generated_subject, string $customer_email_address, Closure $after_add ) : void
 	{
 		$this->after_add = $after_add;
 		$this->customer_email_address = $customer_email_address;
@@ -65,14 +65,14 @@ class Main extends Application_Module implements Admin_Managers_Note
 		$this->view->setVar( 'message_generators', $this->message_generators);
 	}
 	
-	public function addMessageGenerator( Entity_Note_MessageGenerator $generator ) : void
+	public function addMessageGenerator( EShopEntity_Note_MessageGenerator $generator ) : void
 	{
 		$this->message_generators[$generator->getKey()] = $generator;
 		$this->view->setVar('message_generators', $this->message_generators);
 	}
 	
 	/**
-	 * @return Entity_Note_MessageGenerator[]
+	 * @return EShopEntity_Note_MessageGenerator[]
 	 */
 	public function getMessageGenerators() : array
 	{
@@ -219,7 +219,7 @@ class Main extends Application_Module implements Admin_Managers_Note
 	}
 	
 	
-	public function showNote( Entity_Note $note ) : string
+	public function showNote( EShopEntity_Note $note ) : string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		$view->setVar('note', $note);

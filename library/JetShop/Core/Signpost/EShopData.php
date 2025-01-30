@@ -5,12 +5,12 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_HasURL_Trait;
-use JetApplication\Entity_Definition;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_HasURL_Trait;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Signpost;
 use JetApplication\Signpost_Category;
 
@@ -19,13 +19,13 @@ use JetApplication\Signpost_Category;
 	database_table_name: 'signposts_eshop_data',
 	parent_model_class: Signpost::class
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	URL_template: '%NAME%-t-%ID%'
 )]
-abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasURL_Interface, Entity_HasImages_Interface
+abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopData implements EShopEntity_HasURL_Interface, EShopEntity_HasImages_Interface
 {
-	use Entity_HasImages_Trait;
-	use Entity_HasURL_Trait;
+	use EShopEntity_HasImages_Trait;
+	use EShopEntity_HasURL_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -35,7 +35,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -49,7 +49,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -62,7 +62,7 @@ abstract class Core_Signpost_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $URL_path_part = '';

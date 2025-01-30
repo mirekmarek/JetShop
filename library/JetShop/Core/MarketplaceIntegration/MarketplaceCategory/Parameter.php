@@ -3,7 +3,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 
@@ -11,7 +11,7 @@ use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 	name: 'marketplace_category_param',
 	database_table_name: 'marketplace_categories_params',
 )]
-class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends Entity_WithEShopRelation
+class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEntity_WithEShopRelation
 {
 	public const PARAM_TYPE_OPTIONS = 'options';
 	public const PARAM_TYPE_NUMBER = 'number';

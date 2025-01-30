@@ -5,13 +5,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_HasURL_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_HasURL_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Category;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EShops;
 use JetApplication\EShop;
 
@@ -20,15 +20,15 @@ use JetApplication\EShop;
 	database_table_name: 'categories_eshop_data',
 	parent_model_class: Category::class,
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	URL_template: '%NAME%-c-%ID%'
 )]
-abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData implements
-	Entity_HasImages_Interface,
-	Entity_HasURL_Interface
+abstract class Core_Category_EShopData extends EShopEntity_WithEShopData_EShopData implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_HasURL_Interface
 {
-	use Entity_HasImages_Trait;
-	use Entity_HasURL_Trait;
+	use EShopEntity_HasImages_Trait;
+	use EShopEntity_HasURL_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -56,7 +56,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -69,7 +69,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_INPUT,
 		label: 'Alternative name:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $second_name = '';
@@ -82,7 +82,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData im
 		type:  Form_Field::TYPE_WYSIWYG,
 		label:  'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -95,7 +95,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_INPUT,
 		label: 'Title:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $seo_title = '';
@@ -108,7 +108,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $seo_description = '';
@@ -121,7 +121,7 @@ abstract class Core_Category_EShopData extends Entity_WithEShopData_EShopData im
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Keywords:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $seo_keywords = '';

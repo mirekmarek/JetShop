@@ -7,8 +7,8 @@ use Jet\DataModel_Definition;
 
 use Jet\DataModel_Fetch_Instances;
 use Jet\Tr;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_OrderDispatch;
 use JetApplication\Carrier;
 use JetApplication\Carrier_DeliveryPoint;
@@ -22,12 +22,12 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\Entity_WithEShopRelation;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_WithEShopRelation;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Item;
 use JetApplication\OrderDispatch_Packet;
@@ -43,23 +43,23 @@ use JetApplication\OrderDispatch_Trait_Workflow;
 	name: 'order_dispatch',
 	database_table_name: 'order_dispatches',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_OrderDispatch::class
 )]
-abstract class Core_OrderDispatch extends Entity_WithEShopRelation implements
-	Entity_HasGet_Interface,
-	NumberSeries_Entity_Interface,
+abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implements
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasNumberSeries_Interface,
 	Context_HasContext_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
-	use Entity_HasGet_Trait;
+	use EShopEntity_HasGet_Trait;
 	use OrderDispatch_Trait_Forms;
 	use OrderDispatch_Trait_Workflow;
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
-	use NumberSeries_Entity_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	

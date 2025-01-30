@@ -12,7 +12,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 
 use JetApplication\EMailMarketing_Subscribe_Log;
-use JetApplication\Entity_WithEShopRelation;
+use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
 /**
@@ -22,7 +22,7 @@ use JetApplication\EShop;
 	name: 'mailing_subscribe_log',
 	database_table_name: 'mailing_subscribe_log',
 )]
-abstract class Core_EMailMarketing_Subscribe_Log extends Entity_WithEShopRelation
+abstract class Core_EMailMarketing_Subscribe_Log extends EShopEntity_WithEShopRelation
 {
 	public const EVENT_SUBSCRIBE = 'subscribe';
 	public const EVENT_UNSUBSCRIBE = 'unsubscribe';

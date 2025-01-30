@@ -11,20 +11,20 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Admin_Managers_KindOfProductFile;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Product_KindOfFile_EShopData;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'products_kind_of_file',
 	database_table_name: 'products_kind_of_file',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_KindOfProductFile::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
@@ -33,12 +33,12 @@ use JetApplication\EShop;
 		'pictogram' => 'Pictogram image',
 	]
 )]
-abstract class Core_Product_KindOfFile extends Entity_WithEShopData implements
-	Entity_HasImages_Interface,
-	Entity_Admin_WithEShopData_Interface
+abstract class Core_Product_KindOfFile extends EShopEntity_WithEShopData implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL

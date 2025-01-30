@@ -7,13 +7,13 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 
 #[DataModel_Definition(
 	name: 'product_files',
 	database_table_name: 'product_files',
 )]
-abstract class Core_Product_File extends Entity_Basic
+abstract class Core_Product_File extends EShopEntity_Basic
 {
 	
 	#[DataModel_Definition(

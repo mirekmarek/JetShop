@@ -1,0 +1,9 @@
+<?php
+namespace JetApplication;
+
+use JetShop\Core_EShopEntity_HasActivationByTimePlan_Interface;
+
+interface EShopEntity_HasActivationByTimePlan_Interface extends Core_EShopEntity_HasActivationByTimePlan_Interface
+{
+
+}

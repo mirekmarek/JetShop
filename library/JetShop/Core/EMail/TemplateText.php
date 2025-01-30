@@ -9,26 +9,26 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
-use JetApplication\Admin_Managers_ContentEMailTemplates;
+use JetApplication\Admin_Managers_Content_EMailTemplates;
 use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateText_EShopData;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 
 
 #[DataModel_Definition(
 	name: 'email_templates',
 	database_table_name: 'email_templates',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_ContentEMailTemplates::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_Content_EMailTemplates::class
 )]
-abstract class Core_EMail_TemplateText extends Entity_WithEShopData implements Entity_Admin_WithEShopData_Interface
+abstract class Core_EMail_TemplateText extends EShopEntity_WithEShopData implements EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	/**
 	 * @var EMail_TemplateText_EShopData[]

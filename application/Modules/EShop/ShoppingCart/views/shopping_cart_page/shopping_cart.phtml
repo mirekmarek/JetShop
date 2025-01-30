@@ -38,7 +38,7 @@ $selected_product_gifts = $cart->getSelectedProductGifts();
 <div id="shopping-cart-gifts">
 <?php foreach($selected_product_gifts as $gift): ?>
 	<div></div>
-	<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+	<div><img src="<?=$gift->getGiftProduct()->getImageThumbnailUrl(0, 50, 50)?>"></div>
 	<div><?=$gift->getGiftProduct()->getName()?></div>
 <?php endforeach; ?>
 
@@ -49,16 +49,16 @@ $selected_product_gifts = $cart->getSelectedProductGifts();
 
 	<?php if($gift->getAutoAppend()): ?>
 		<div></div>
-		<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+		<div><img src="<?=$gift->getGiftProduct()->getImageThumbnailUrl(0, 50, 50)?>"></div>
 		<div><?=$gift->getGiftProduct()->getName()?></div>
 	<?php else: ?>
 		<?php if(in_array($gift_id, $selected_gift_ids)): ?>
 			<div><input type="checkbox" checked value="<?=$gift_id?>" onclick="ShoppingCart.Gifts.unselect(<?=$gift_id?>);"></div>
-			<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+			<div><img src="<?=$gift->getGiftProduct()->getImageThumbnailUrl(0, 50, 50)?>"></div>
 			<div><?=$gift->getGiftProduct()->getName()?></div>
 		<?php else: ?>
 			<div><input type="checkbox" value="<?=$gift_id?>" onclick="ShoppingCart.Gifts.select(<?=$gift_id?>);"></div>
-			<div><img src="<?=$gift->getGiftProduct()->getImgThumbnailUrl(0, 50, 50)?>"></div>
+			<div><img src="<?=$gift->getGiftProduct()->getImageThumbnailUrl(0, 50, 50)?>"></div>
 			<div><?=$gift->getGiftProduct()->getName()?></div>
 		<?php endif; ?>
 	<?php endif; ?>

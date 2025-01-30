@@ -18,15 +18,15 @@ use Jet\Form_Field_Select;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_PaymentMethods;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasPrice_Interface;
-use JetApplication\Entity_HasPrice_Trait;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasPrice_Interface;
+use JetApplication\EShopEntity_HasPrice_Trait;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Managers;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method_Module;
@@ -47,23 +47,23 @@ use JetApplication\Timer_Action_SetPrice;
 	name: 'payment_method',
 	database_table_name: 'payment_methods'
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_PaymentMethods::class,
-	separate_tab_form_shop_data: true,
+	separate_tab_form_shop_data: false,
 	images: [
 		'icon1' => 'Icon 1',
 		'icon2' => 'Icon 2',
 		'icon3' => 'Icon 3',
 	]
 )]
-abstract class Core_Payment_Method extends Entity_WithEShopData implements
-	Entity_HasImages_Interface,
-	Entity_HasPrice_Interface,
-	Entity_Admin_WithEShopData_Interface
+abstract class Core_Payment_Method extends EShopEntity_WithEShopData implements
+	EShopEntity_HasImages_Interface,
+	EShopEntity_HasPrice_Interface,
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
-	use Entity_HasPrice_Trait;
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_HasPrice_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	protected static array $loaded = [];
 
@@ -526,7 +526,7 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements
 		
 		foreach(Pricelists::getList() as $pricelist ) {
 			$set_price = new class( $pricelist, $this->getPrice( $pricelist ) ) extends Timer_Action_SetPrice {
-				public function perform( Entity_Basic|Entity_HasPrice_Interface $entity, mixed $action_context ): bool
+				public function perform( EShopEntity_Basic|EShopEntity_HasPrice_Interface $entity, mixed $action_context ): bool
 				{
 					$p = $entity->getPriceEntity( $this->pricelist );
 					$p->setPrice( (float)$action_context );
@@ -550,7 +550,7 @@ abstract class Core_Payment_Method extends Entity_WithEShopData implements
 					$this->free_delivery_limit = $free_delivery_limit;
 				}
 				
-				public function perform( Entity_Basic $entity, mixed $action_context ): bool
+				public function perform( EShopEntity_Basic $entity, mixed $action_context ): bool
 				{
 					/**
 					 * @var Payment_Method $entity

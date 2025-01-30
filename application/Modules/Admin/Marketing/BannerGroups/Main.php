@@ -1,16 +1,16 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\BannerGroups;
 
-use JetApplication\Admin_Managers_MarketingBannerGroups;
+use JetApplication\Admin_Managers_Marketing_BannerGroups;
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_BannerGroup;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingBannerGroups
+class Main extends Application_Module implements Admin_Managers_Marketing_BannerGroups
 {
 	use Admin_EntityManager_Trait;
 
@@ -22,7 +22,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingBannerG
 	public const ACTION_DELETE = 'delete_banner_group';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_BannerGroup();
 	}

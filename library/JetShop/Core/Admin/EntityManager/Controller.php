@@ -22,16 +22,17 @@ use Jet\Navigation_Breadcrumb;
 use Jet\UI_tabs;
 
 use JetApplication\Admin_EntityManager_Interface;
-use JetApplication\Admin_Managers_Entity_Listing;
-use JetApplication\Admin_Managers_Entity_Edit;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_HasEShopRelation_Interface;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasProductsRelation_Interface;
-use JetApplication\Entity_WithEShopData;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasProductsRelation_Interface;
+use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 use JetApplication\EShops;
 use Closure;
@@ -50,14 +51,14 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected ?MVC_Controller_Router $router = null;
 	
-	protected ?Admin_Managers_Entity_Listing $listing_manager = null;
+	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
 	
 	protected ?UI_tabs $tabs = null;
 	
-	protected ?Admin_Managers_Entity_Edit $editor_manager = null;
+	protected ?Admin_Managers_EShopEntity_Edit $editor_manager = null;
 	
 	/**
-	 * @var Entity_Basic|null
+	 * @var EShopEntity_Basic|null
 	 */
 	protected mixed $current_item = null;
 	
@@ -97,13 +98,13 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		$tabs['main'] = Tr::_( 'Main data' );
 		
 		if(
-			$item instanceof Entity_Admin_WithEShopData_Interface &&
+			$item instanceof EShopEntity_Admin_WithEShopData_Interface &&
 			$item->getSeparateTabFormShopData()
 		) {
 			$tabs['description'] = Tr::_('Description');
 		}
 		
-		if($item instanceof Entity_HasProductsRelation_Interface) {
+		if($item instanceof EShopEntity_HasProductsRelation_Interface) {
 			switch( $this->current_item->getRelevanceMode() ) {
 				case $item::RELEVANCE_MODE_ALL:
 					break;
@@ -124,7 +125,8 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		}
 		
 		if(
-			$item instanceof Entity_HasImages_Interface
+			$item instanceof EShopEntity_HasImages_Interface ||
+			$item instanceof EShopEntity_HasImageGallery_Interface
 		) {
 			$tabs['images'] = Tr::_( 'Images' );
 		}
@@ -215,7 +217,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 			});
 		
 		if(
-			$this->current_item instanceof Entity_Admin_WithEShopData_Interface &&
+			$this->current_item instanceof EShopEntity_Admin_WithEShopData_Interface &&
 			$this->current_item->getSeparateTabFormShopData()
 		) {
 			$this->router->addAction('edit_description', $this->module::ACTION_UPDATE)
@@ -228,7 +230,10 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		}
 		
 		
-		if($this->current_item instanceof Entity_HasImages_Interface)
+		if(
+			$this->current_item instanceof EShopEntity_HasImages_Interface ||
+			$this->current_item instanceof EShopEntity_HasImageGallery_Interface
+		)
 		{
 			$this->router->addAction('edit_images', $this->module::ACTION_UPDATE)
 				->setResolver(function() use ($action, $selected_tab) {
@@ -240,7 +245,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		}
 		
 		
-		if($this->current_item instanceof Entity_HasProductsRelation_Interface) {
+		if($this->current_item instanceof EShopEntity_HasProductsRelation_Interface) {
 			$this->router->addAction('edit_filter', $this->module::ACTION_UPDATE)
 				->setResolver( function() use ($action, $selected_tab) {
 					return $this->current_item && $selected_tab=='filter';
@@ -255,7 +260,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	}
 	
 	
-	public function getListing() : Admin_Managers_Entity_Listing
+	public function getListing() : Admin_Managers_EShopEntity_Listing
 	{
 		if(!$this->listing_manager) {
 			$this->listing_manager = Admin_Managers::EntityListing();
@@ -285,7 +290,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	{
 		$new_item =  $this->module::getEntityInstance();
 		
-		if($new_item instanceof Entity_HasEShopRelation_Interface) {
+		if($new_item instanceof EShopEntity_HasEShopRelation_Interface) {
 			$new_item->setEShop( EShops::getCurrent() );
 		}
 		
@@ -359,7 +364,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function getDescriptionMode(): bool
 	{
-		if(!$this->current_item instanceof Entity_WithEShopData) {
+		if(!$this->current_item instanceof EShopEntity_WithEShopData) {
 			return false;
 		}
 		
@@ -432,7 +437,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function getEditToolbarRenderer() : ?Closure
 	{
-		return function( Entity_Basic $item, ?Form $form=null ) {
+		return function( EShopEntity_Basic $item, ?Form $form=null ) {
 			$this->view->setVar('item', $item);
 			$this->view->setVar('form', $form);
 			
@@ -442,7 +447,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function getEditCommonDataFieldsRenderer() : ?Closure
 	{
-		return function( Entity_Basic $item, Form $form ) {
+		return function( EShopEntity_Basic $item, Form $form ) {
 			$this->view->setVar('item', $item);
 			$this->view->setVar('form', $form);
 			
@@ -452,7 +457,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function getEditEshopDataFieldsRenderer() : ?Closure
 	{
-		return function( EShop $eshop, string $eshop_key, Entity_Basic $item, Form $form  ) {
+		return function( EShop $eshop, string $eshop_key, EShopEntity_Basic $item, Form $form  ) {
 			$this->view->setVar('eshop', $eshop);
 			$this->view->setVar('item', $item);
 			$this->view->setVar('form', $form);
@@ -462,7 +467,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function getEditDescriptionFieldsRenderer() : ?Closure
 	{
-		return function( Locale $locale, string $locale_str, Entity_Basic $item, Form $form ) {
+		return function( Locale $locale, string $locale_str, EShopEntity_Basic $item, Form $form ) {
 			
 			$this->view->setVar('locale', $locale);
 			$this->view->setVar('locale_str', $locale_str);
@@ -529,7 +534,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	}
 	
 	
-	public function edit_main_handleActivation( ?Entity_WithEShopData $item=null ) : void
+	public function edit_main_handleActivation( ?EShopEntity_WithEShopData $item=null ) : void
 	{
 		$item = $item?:$this->current_item;
 		$entity_type = $item->getEntityType();
@@ -579,13 +584,30 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		Application_Admin::handleUploadTooLarge();
 		
 		$item = $this->current_item;
-		$item->handleImages();
 		
-		$this->view->setVar( 'item', $item );
-		
-		$this->content->output(
-			$this->getEditorManager()->renderEditImages()
-		);
+		if($item instanceof EShopEntity_HasImageGallery_Interface) {
+			$this->view->setVar('item', $this->current_item);
+			
+			$manager = Admin_Managers::Image();
+			
+			$manager->setEditable( $this->module::getCurrentUserCanEdit() );
+			
+			$manager->handleImageGalleryManagement( $item );
+			
+			$this->content->output(
+				$this->getEditorManager()->renderEditImageGallery()
+			);
+			
+		} else {
+			$item->handleImages();
+			
+			$this->view->setVar( 'item', $item );
+			
+			$this->content->output(
+				$this->getEditorManager()->renderEditImages()
+			);
+			
+		}
 	}
 	
 	
@@ -598,7 +620,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		
 		/**
-		 * @var Entity_HasProductsRelation_Interface $item
+		 * @var EShopEntity_HasProductsRelation_Interface $item
 		 */
 		if($item->isEditable()) {
 			
@@ -657,7 +679,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		
 		/**
-		 * @var Entity_HasProductsRelation_Interface $item
+		 * @var EShopEntity_HasProductsRelation_Interface $item
 		 */
 		if($item->isEditable()) {
 			if(Admin_Managers::ProductFilter()->handleFilterForm()) {
@@ -678,7 +700,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	
 	
-	public function getEditorManager(): Admin_Managers_Entity_Edit|Application_Module
+	public function getEditorManager(): Admin_Managers_EShopEntity_Edit|Application_Module
 	{
 		if(!$this->editor_manager) {
 			$this->editor_manager = Admin_Managers::EntityEdit();

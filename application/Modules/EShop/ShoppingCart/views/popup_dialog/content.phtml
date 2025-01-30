@@ -22,7 +22,7 @@ $product = $item->getProduct();
 
 <div class="shopping-cart-popup-contetn">
 	<div class="image">
-		<?php if(($img=$product->getImgThumbnailUrl( 0, 100, 100))): ?>
+		<?php if(($img=$product->getImageThumbnailUrl( 0, 100, 100))): ?>
 			<img src="<?=$img?>"/>
 		<?php endif; ?>
 	</div>

@@ -257,7 +257,7 @@ if(!window['Whisperers']) {
 				whisperer.whisperer_items_area.find('.' + whisperer.item_class).click(function (e) {
 					const row = $(e.currentTarget);
 					whisperer._handleItemSelect(row);
-					window.event.stopPropagation();
+					window['event']['stopPropagation']();
 				});
 			} else {
 				const message = whisperer.whisperer_items_area.find('.' + whisperer.message_class);

@@ -6,13 +6,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ProductReviews;
-use JetApplication\Entity_HasGet_Interface;
-use JetApplication\Entity_HasGet_Trait;
-use JetApplication\Entity_WithEShopRelation;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_WithEShopRelation;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 
@@ -20,13 +20,13 @@ use JetApplication\Product_EShopData;
 	name: 'product_reviews',
 	database_table_name: 'product_reviews',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_ProductReviews::class
 )]
-abstract class Core_ProductReview extends Entity_WithEShopRelation implements Entity_Admin_Interface, Entity_HasGet_Interface
+abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implements EShopEntity_Admin_Interface, EShopEntity_HasGet_Interface
 {
-	use Entity_HasGet_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasGet_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

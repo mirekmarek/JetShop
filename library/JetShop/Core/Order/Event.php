@@ -11,7 +11,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Data_DateTime;
 
-use JetApplication\Entity_Event;
+use JetApplication\EShopEntity_Event;
 use JetApplication\Order_Event_HandlerModule;
 use JetApplication\Order;
 use JetApplication\Order_Event;
@@ -23,7 +23,7 @@ use JetApplication\Order_Event;
 	name: 'order_event',
 	database_table_name: 'orders_events',
 )]
-class Core_Order_Event extends Entity_Event
+class Core_Order_Event extends EShopEntity_Event
 {
 
 	protected static string $handler_module_name_prefix = 'Events.Order.';

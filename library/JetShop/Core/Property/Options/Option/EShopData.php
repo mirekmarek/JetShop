@@ -4,10 +4,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_HasImages_Trait;
-use JetApplication\Entity_Definition;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_HasImages_Trait;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Property_Options_Option;
 
 #[DataModel_Definition(
@@ -15,9 +15,9 @@ use JetApplication\Property_Options_Option;
 	database_table_name: 'properties_options_eshop_data',
 	parent_model_class: Property_Options_Option::class
 )]
-abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasImages_Interface
+abstract class Core_Property_Options_Option_EShopData extends EShopEntity_WithEShopData_EShopData implements EShopEntity_HasImages_Interface
 {
-	use Entity_HasImages_Trait;
+	use EShopEntity_HasImages_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -41,7 +41,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Filter label:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $filter_label = '';
@@ -54,7 +54,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Product detail label:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $product_detail_label = '';
@@ -67,7 +67,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'URL parameter:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $url_param = '';
@@ -80,7 +80,7 @@ abstract class Core_Property_Options_Option_EShopData extends Entity_WithEShopDa
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:',
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';

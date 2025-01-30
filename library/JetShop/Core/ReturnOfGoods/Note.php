@@ -6,14 +6,14 @@ use Jet\DataModel_Definition;
 
 use Jet\IO_Dir;
 use Jet\SysConf_Path;
-use JetApplication\Entity_Note;
+use JetApplication\EShopEntity_Note;
 use JetApplication\ReturnOfGoods;
 
 #[DataModel_Definition(
 	name: 'return_of_goods_notes',
 	database_table_name: 'return_of_goods_notes',
 )]
-abstract class Core_ReturnOfGoods_Note extends Entity_Note {
+abstract class Core_ReturnOfGoods_Note extends EShopEntity_Note {
 	
 	
 	protected ?ReturnOfGoods $return_of_goods = null;

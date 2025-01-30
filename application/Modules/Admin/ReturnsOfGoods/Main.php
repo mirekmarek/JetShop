@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use Jet\Factory_MVC;
 use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ReturnOfGoods;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\ReturnOfGoods;
 
@@ -37,7 +37,7 @@ class Main extends Application_Module implements Admin_Managers_ReturnOfGoods
 		return false;
 	}
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new ReturnOfGoods();
 	}

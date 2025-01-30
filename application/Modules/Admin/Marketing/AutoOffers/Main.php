@@ -1,15 +1,15 @@
 <?php
 namespace JetApplicationModule\Admin\Marketing\AutoOffers;
-use JetApplication\Admin_Managers_MarketingAutoOffers;
+use JetApplication\Admin_Managers_Marketing_AutoOffers;
 use JetApplication\Admin_EntityManager_Trait;
 use Jet\Application_Module;
-use JetApplication\Entity_Basic;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_AutoOffer;
 
 /**
  *
  */
-class Main extends Application_Module implements Admin_Managers_MarketingAutoOffers
+class Main extends Application_Module implements Admin_Managers_Marketing_AutoOffers
 {
 	use Admin_EntityManager_Trait;
 
@@ -21,7 +21,7 @@ class Main extends Application_Module implements Admin_Managers_MarketingAutoOff
 	public const ACTION_DELETE = 'delete_auto_offer';
 	
 	
-	public static function getEntityInstance(): Entity_Basic
+	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Marketing_AutoOffer();
 	}

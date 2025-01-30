@@ -8,6 +8,6 @@ use JetShop\Core_Supplier;
  *
  */
 #[DataModel_Definition]
-#[Entity_Definition]
+#[EShopEntity_Definition]
 class Supplier extends Core_Supplier {
 }

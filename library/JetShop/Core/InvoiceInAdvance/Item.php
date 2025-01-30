@@ -6,14 +6,14 @@ use Jet\DataModel_Definition;
 
 use JetApplication\InvoiceInAdvance;
 use JetApplication\InvoiceInAdvance_Item_SetItem;
-use JetApplication\Entity_AccountingDocument_Item;
+use JetApplication\EShopEntity_AccountingDocument_Item;
 
 #[DataModel_Definition(
 	name: 'invoice_in_advance_item',
 	database_table_name: 'invoices_in_advance_items',
 	parent_model_class: InvoiceInAdvance::class
 )]
-abstract class Core_InvoiceInAdvance_Item extends Entity_AccountingDocument_Item {
+abstract class Core_InvoiceInAdvance_Item extends EShopEntity_AccountingDocument_Item {
 	
 	
 	#[DataModel_Definition(

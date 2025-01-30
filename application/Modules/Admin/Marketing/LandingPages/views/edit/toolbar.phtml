@@ -29,6 +29,6 @@ $item = $this->getRaw('item');
 		const copyText = document.getElementById("URL");
 		copyText.select();
 		copyText.setSelectionRange(0, 99999);
-		document.execCommand("copy");
+		document['execCommand']("copy");
 	}
 </script>

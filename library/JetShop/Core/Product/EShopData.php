@@ -5,21 +5,22 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Entity_HasURL_Interface;
-use JetApplication\Entity_HasURL_Trait;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_HasURL_Trait;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\Availability;
 use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;
-use JetApplication\Entity_HasPrice_Interface;
-use JetApplication\Entity_WithEShopData_EShopData;
+use JetApplication\EShopEntity_HasPrice_Interface;
+use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\MeasureUnit;
 use JetApplication\Product;
+use JetApplication\Product_EShopData_Trait_Images;
 use JetApplication\Product_EShopData_Trait_Price;
 use JetApplication\Product_EShopData_Trait_Set;
 use JetApplication\Product_EShopData_Trait_Variants;
-use JetApplication\Product_EShopData_Trait_Images;
 use JetApplication\Product_EShopData_Trait_Availability;
 use JetApplication\Product_EShopData_Trait_Files;
 use JetApplication\Product_EShopData_Trait_Categories;
@@ -33,25 +34,26 @@ use JetApplication\Product_EShopData_Trait_Accessories;
 	database_table_name: 'products_eshop_data',
 	parent_model_class: Product::class
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	URL_template: '%NAME%-p-%ID%'
 )]
-abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData implements
-	Entity_HasPrice_Interface,
-	Entity_HasURL_Interface
+abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopData implements
+	EShopEntity_HasPrice_Interface,
+	EShopEntity_HasImageGallery_Interface,
+	EShopEntity_HasURL_Interface
 {
-	use Entity_HasURL_Trait;
+	use EShopEntity_HasURL_Trait;
 	
 	use Product_EShopData_Trait_Price;
 	use Product_EShopData_Trait_Set;
 	use Product_EShopData_Trait_Variants;
-	use Product_EShopData_Trait_Images;
 	use Product_EShopData_Trait_Availability;
 	use Product_EShopData_Trait_Files;
 	use Product_EShopData_Trait_Categories;
 	use Product_EShopData_Trait_Boxes;
 	use Product_EShopData_Trait_SimilarProducts;
 	use Product_EShopData_Trait_Accessories;
+	use Product_EShopData_Trait_Images;
 	
 	
 	#[DataModel_Definition(
@@ -115,7 +117,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_INPUT,
 		label: 'Name:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $name = '';
@@ -128,7 +130,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Short description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $short_description = '';
@@ -141,7 +143,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $description = '';
@@ -154,7 +156,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_INPUT,
 		label: 'Title:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $seo_title = '';
@@ -167,7 +169,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Description:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $seo_description = '';
@@ -180,7 +182,7 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Keywords:'
 	)]
-	#[Entity_Definition(
+	#[EShopEntity_Definition(
 		is_description: true
 	)]
 	protected string $seo_keywords = '';
@@ -217,6 +219,17 @@ abstract class Core_Product_EShopData extends Entity_WithEShopData_EShopData imp
 	protected bool $allow_to_order_when_sold_out = true;
 	
 	protected KindOfProduct_EShopData|null|bool $kind = null;
+	
+	public function getEntityTypeForImageGallery() : string
+	{
+		return 'product';
+	}
+	
+	public function getEntityIdForImageGallery() : string|int
+	{
+		return $this->getEntityId();
+	}
+	
 	
 	public function getURLNameDataSource(): string
 	{

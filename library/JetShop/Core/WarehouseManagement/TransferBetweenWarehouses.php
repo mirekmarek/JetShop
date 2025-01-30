@@ -10,20 +10,20 @@ use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\UI_messages;
-use JetApplication\Entity_Admin_Interface;
-use JetApplication\Entity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\Admin_Managers_WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
-use JetApplication\Entity_Basic;
-use JetApplication\Entity_Definition;
-use JetApplication\NumberSeries_Entity_Interface;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Item;
 use JetApplication\WarehouseManagement;
-use JetApplication\NumberSeries_Entity_Trait;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use Jet\Tr;
 use Jet\Logger;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -32,17 +32,17 @@ use JetApplication\WarehouseManagement_Warehouse;
 	name: 'whm_transfer_between_warehouses',
 	database_table_name: 'whm_transfer_between_warehouses',
 )]
-#[Entity_Definition(
-	admin_manager_interface: Admin_Managers_WarehouseManagementTransferTransferBetweenWarehouses::class
+#[EShopEntity_Definition(
+	admin_manager_interface: Admin_Managers_WarehouseManagement_TransferBetweenWarehouses::class
 )]
-class Core_WarehouseManagement_TransferBetweenWarehouses extends Entity_Basic implements
-	NumberSeries_Entity_Interface,
+class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Basic implements
+	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
-	Entity_Admin_Interface
+	EShopEntity_Admin_Interface
 {
 	use Context_ProvidesContext_Trait;
-	use NumberSeries_Entity_Trait;
-	use Entity_Admin_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	public const STATUS_SENT = 'sent';

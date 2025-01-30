@@ -5,13 +5,13 @@ use Jet\DataModel_Definition;
 
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_PropertyGroup;
-use JetApplication\Entity_Admin_WithEShopData_Interface;
-use JetApplication\Entity_Admin_WithEShopData_Trait;
-use JetApplication\Entity_HasImages_Interface;
-use JetApplication\Entity_WithEShopData;
-use JetApplication\Entity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
+use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\Entity_Definition;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\PropertyGroup_EShopData;
 use JetApplication\EShop;
 use JetApplication\KindOfProduct_PropertyGroup;
@@ -20,7 +20,7 @@ use JetApplication\KindOfProduct_PropertyGroup;
 	name: 'property_group',
 	database_table_name: 'property_groups',
 )]
-#[Entity_Definition(
+#[EShopEntity_Definition(
 	admin_manager_interface: Admin_Managers_PropertyGroup::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
@@ -29,13 +29,13 @@ use JetApplication\KindOfProduct_PropertyGroup;
 		'pictogram' => 'Pictogram image',
 	]
 )]
-abstract class Core_PropertyGroup extends Entity_WithEShopData implements
-	Entity_HasImages_Interface,
+abstract class Core_PropertyGroup extends EShopEntity_WithEShopData implements
+	EShopEntity_HasImages_Interface,
 	FulltextSearch_IndexDataProvider,
-	Entity_Admin_WithEShopData_Interface
+	EShopEntity_Admin_WithEShopData_Interface
 {
-	use Entity_WithEShopData_HasImages_Trait;
-	use Entity_Admin_WithEShopData_Trait;
+	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_Admin_WithEShopData_Trait;
 	
 	/**
 	 * @var PropertyGroup_EShopData[]
