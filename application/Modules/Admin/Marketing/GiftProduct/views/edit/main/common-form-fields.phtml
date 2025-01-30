@@ -15,11 +15,6 @@ use JetApplication\Marketing_Gift_Product;
 $form = $this->getRaw('form');
 $item = $this->getRaw('item');
 
-echo $form->field( 'eshop' );
-echo $form->field( 'internal_name' );
-echo $form->field( 'internal_code' );
-echo $form->field( 'internal_notes' );
-
 ?>
 	<div class="row form-group">
 		<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?= Tr::_('Gift:')?></label>
@@ -32,10 +27,6 @@ echo $form->field( 'internal_notes' );
 	</div>
 	<?php
 echo $form->field( 'gift_product_id' );
-
-
-echo $form->field( 'active_from' );
-echo $form->field( 'active_till' );
 echo $form->field( 'priority' );
 echo $form->field( 'relevance_mode' );
 echo $form->field( 'product_price_limit_min' );

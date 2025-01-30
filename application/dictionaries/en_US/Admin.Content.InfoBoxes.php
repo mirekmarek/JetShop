@@ -37,4 +37,5 @@ return [
 	'Text:' => '',
 	'Content Info Boxes' => '',
 	'Info Boxes' => '',
+	'Description' => '',
 ];

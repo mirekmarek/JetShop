@@ -1,28 +1,24 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
+use Jet\Form;
 use Jet\Form_Renderer;
-use Jet\Http_Request;
+use Jet\Locale;
 use Jet\Tr;
 use Jet\MVC_View;
-use Jet\UI;
 use JetApplication\Admin_Managers;
-use Jet\Form;
-use JetApplication\Category;
 use JetApplication\EShop;
-use Jet\Locale;
 
 /**
  * @var MVC_View   $this
  * @var Controller_Main $controller
  * @var Form $form
- * @var Category $category
  */
 $controller = $this->controller;
 
-$category = $controller->getCurrentItem();
-
 $form = $this->getRaw('form');
+
+$category = $controller->getCurrentItem();
 
 $form->renderer()->setDefaultLabelWidth([Form_Renderer::LJ_SIZE_MEDIUM=>2]);
 $form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
@@ -30,70 +26,34 @@ $form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
 $editable = !$form->getIsReadonly();
 ?>
 <?=$this->render('lj_start')?>
-	<br>
-
-<?=Admin_Managers::EntityEdit()->renderEntityActivation( $category, !$form->getIsReadonly() )?>
-
-
-<div class="row" style="align-items: center">
-	<label class="col-md-2">
-		<?=Tr::_('Primary kind of product:')?>
-	</label>
-	<div class="col-md-8">
-		<?php if($editable): ?>
-			<form action="<?=Http_Request::currentURI(['action'=>'change_kind_of_product'])?>" method="post">
-				<input type="hidden" name="kind_of_product_id" id="kind_of_product_id" value="0"/>
-
-
-				<div style="display: grid;grid-template-columns: 400px 150px;align-items: center">
-					<div>
-						<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
-							"$('#kind_of_product_id').val(selected_item.id);",
-							$category->getKindOfProductId()
-						)?>
-					</div>
-					<div><?=UI::button_save(Tr::_('Change')); ?></div>
-				</div>
-
-			</form>
-		<?php else:
-			if(($kind_id=$category->getKindOfProductId())):
-				?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
-			else:
-				?><b><?=Tr::_('- kind of product is not set -')?></b><?php
-			endif;
-		endif; ?>
-	</div>
-</div>
 <br>
 
-
-
-
+<?=Admin_Managers::Image()->commonImageManager( $category::getEntityType(), $category->getId() );?>
 
 <?=$form->start();?>
 
-	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
 
-	<?php
-	if(!$category->getSeparateTabFormShopData()):
-	if($category->getDescriptionMode()):
+<?php if($category->getDescriptionMode()):
 		echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
 			form: $form,
 			renderer: function( Locale $locale ) use ($category, $form) : void {
-				$locale = $locale->toString();
+				
 				?>
 					<fieldset>
+						<div class="container-fluid">
 						<?=$form->field('/description/'.$locale.'/name')?>
 						<?=$form->field('/description/'.$locale.'/second_name')?>
 						<?=$form->field('/description/'.$locale.'/description')?>
+						</div>
 					</fieldset>
 
 					<fieldset>
 						<legend class="sub"><?=Tr::_('SEO')?></legend>
+						<div class="container-fluid">
 						<?=$form->field('/description/'.$locale.'/seo_title')?>
 						<?=$form->field('/description/'.$locale.'/seo_description')?>
 						<?=$form->field('/description/'.$locale.'/seo_keywords')?>
+						</div>
 					</fieldset>
 			<?php });
 	else:
@@ -114,17 +74,16 @@ $editable = !$form->getIsReadonly();
 						<?=$form->field('/eshop_data/'.$eshop_key.'/seo_keywords')?>
 					</fieldset>
 			<?php });
-	endif;
-	endif;
-	?>
+	endif; ?>
+
 
 <?=$form->end();?>
 
 
 <?=$this->render('lj_end')?>
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\Banners;
+
+use JetApplication\Admin_Managers;
+
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Marketing_Banner;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Marketing_Banner   $item
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+$group = $item->getGroup();
+
+
+echo Admin_Managers::EntityEdit()->renderToolbar();
+?>
+<?=$this->getRaw('tabs')?>
+
+<div id="main-col">
+	<?php if($group->getHasMainImage()): ?>
+		<div id="image-main" style="margin: 20px;">
+			<?php require 'banners/image-main.phtml'; ?>
+		</div>
+	<?php endif; ?>
+	<?php if($group->getHasMobileImage()): ?>
+		<div id="image-mobile" style="margin: 20px;">
+			<?php require 'banners/image-mobile.phtml'; ?>
+		</div>
+	<?php endif; ?>
+	<?php if($group->getHasMainVideo()): ?>
+		<div id="video-main" style="margin: 20px;">
+			<?php require 'banners/video-main.phtml'; ?>
+		</div>
+	<?php endif; ?>
+	<?php if($group->getHasMobileVideo()): ?>
+		<div id="video-mobile" style="margin: 20px;">
+			<?php require 'banners/video-mobile.phtml'; ?>
+		</div>
+	<?php endif; ?>
+</div>
+

@@ -21,6 +21,7 @@ use JetApplication\Entity_Definition;
 #[Entity_Definition(
 	admin_manager_interface: Admin_Managers_Brand::class,
 	description_mode: true,
+	separate_tab_form_shop_data: true,
 	images: [
 		'logo' => 'Logo',
 		'big_logo' => 'Big logo',

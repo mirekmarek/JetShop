@@ -22,7 +22,7 @@ class Listing_Column_ID extends Listing_Column_Abstract
 	
 	public function getTitle(): string
 	{
-		return Tr::_('ID');
+		return Tr::_('ID', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function initializer( UI_dataGrid_column $column ) : void
@@ -32,7 +32,7 @@ class Listing_Column_ID extends Listing_Column_Abstract
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('ID');
+		return Tr::_('ID', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getExportData( mixed $item ): string

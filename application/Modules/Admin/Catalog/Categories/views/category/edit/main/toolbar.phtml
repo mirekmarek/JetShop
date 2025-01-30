@@ -3,15 +3,17 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\MVC_View;
 use Jet\UI;
+use Jet\Form;
 
 /**
  * @var MVC_View   $this
  * @var Controller_Main $controller
+ * @var Form $form
  */
 $controller = $this->controller;
 $category = $this->controller->getCurrentItem();
 
-$form = $category->getEditForm();
+$form = $this->getRaw('form');
 
 if($form->getIsReadonly()) {
 	return;

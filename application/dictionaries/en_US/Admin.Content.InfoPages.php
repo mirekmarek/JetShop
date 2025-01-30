@@ -68,4 +68,6 @@ return [
 	'Internal code:' => '',
 	'Info Pages' => '',
 	'Please select file' => '',
+	'Description' => '',
+	'Info Page description <b>%NAME%</b> has been updated' => '',
 ];

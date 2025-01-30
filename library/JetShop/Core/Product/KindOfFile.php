@@ -27,6 +27,7 @@ use JetApplication\EShop;
 #[Entity_Definition(
 	admin_manager_interface: Admin_Managers_KindOfProductFile::class,
 	description_mode: true,
+	separate_tab_form_shop_data: true,
 	images: [
 		'main' => 'Main image',
 		'pictogram' => 'Pictogram image',

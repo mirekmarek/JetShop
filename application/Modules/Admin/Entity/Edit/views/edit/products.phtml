@@ -32,7 +32,7 @@ echo $edit_manager->renderToolbar();
 		<?=$this->getRaw('tabs')?>
 		
 <fieldset>
-	<legend><?=Tr::_('Products')?></legend>
+	<legend><?=Tr::_('Products', dictionary: Tr::COMMON_DICTIONARY)?></legend>
 	
 	
 		<?php if($editable): ?>
@@ -40,7 +40,7 @@ echo $edit_manager->renderToolbar();
 			<div class="toolbar" style="display: grid;grid-template-columns: 150px 300px 1fr;align-items: center">
 				<div style="padding-left: 20px;">
 					<?=UI::icon('plus')?>
-					<?=Tr::_('Add product:')?>
+					<?=Tr::_('Add product:', dictionary: Tr::COMMON_DICTIONARY)?>
 				</div>
 				<div>
 					<?=Admin_Managers::Product()->renderSelectWidget(
@@ -52,7 +52,7 @@ echo $edit_manager->renderToolbar();
 						] )?>
 				</div>
 				<div style="padding-left: 40px;">
-					<?=UI::button(Tr::_('Remove all products'))
+					<?=UI::button(Tr::_('Remove all products', dictionary: Tr::COMMON_DICTIONARY))
 						->setUrl( Http_Request::currentURI(['action'=>'remove_all_products']) )
 						->setClass(UI_button::CLASS_DANGER)
 					?>

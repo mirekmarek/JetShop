@@ -57,7 +57,7 @@ if(
 	&nbsp;&nbsp;
 	<div class="dropdown">
 		<button class="btn btn-secondary dropdown-toggle" type="button" id="export-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			<?=Tr::_('Export', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?>
+			<?=Tr::_('Export', dictionary: Tr::COMMON_DICTIONARY)?>
 		</button>
 		<div class="dropdown-menu" aria-labelledby="export-menu">
 			<?php foreach($listing->getExportTypes() as $type=>$title): ?>

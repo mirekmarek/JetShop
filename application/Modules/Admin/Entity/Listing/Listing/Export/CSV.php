@@ -8,7 +8,7 @@ class Listing_Export_CSV extends DataListing_Export_CSV
 {
 	public function getTitle() : string
 	{
-		return Tr::_('CSV');
+		return Tr::_('CSV', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getKey() : string

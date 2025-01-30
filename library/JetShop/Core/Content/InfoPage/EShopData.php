@@ -16,6 +16,7 @@ use Jet\MVC;
 use Jet\MVC_Page_Interface;
 use Jet\SysConf_Jet_MVC;
 use Jet\UI_messages;
+use JetApplication\Entity_HasURL_Interface;
 use JetApplication\Entity_WithEShopData_EShopData;
 use JetApplication\Content_InfoPage;
 
@@ -25,7 +26,7 @@ use JetApplication\Content_InfoPage;
 	database_table_name: 'content_info_page_eshop_data',
 	parent_model_class: Content_InfoPage::class
 )]
-abstract class Core_Content_InfoPage_EShopData extends Entity_WithEShopData_EShopData
+abstract class Core_Content_InfoPage_EShopData extends Entity_WithEShopData_EShopData implements Entity_HasURL_Interface
 {
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -376,7 +377,7 @@ abstract class Core_Content_InfoPage_EShopData extends Entity_WithEShopData_ESho
 	}
 	
 	
-	public function getURL() : string
+	public function getURL( array $GET_params=[] ) : string
 	{
 		$eshop = $this->getEshop();
 		
@@ -387,9 +388,24 @@ abstract class Core_Content_InfoPage_EShopData extends Entity_WithEShopData_ESho
 		);
 		
 		if($page) {
-			return $page->getURL();
+			return $page->getURL( GET_params: $GET_params );
 		}
 		
+		return '';
+	}
+	
+	public function getURLNameDataSource() : string
+	{
+		return '';
+	}
+	
+	public function checkURL( string $URL_path ) : bool
+	{
+		return true;
+	}
+	
+	public function generateURLPathPart() : string
+	{
 		return '';
 	}
 	

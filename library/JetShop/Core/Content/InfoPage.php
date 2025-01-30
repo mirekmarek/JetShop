@@ -29,7 +29,8 @@ use JetApplication\Entity_Definition;
 	database_table_name: 'content_info_page',
 )]
 #[Entity_Definition(
-	admin_manager_interface: Admin_Managers_ContentInfoPages::class
+	admin_manager_interface: Admin_Managers_ContentInfoPages::class,
+	separate_tab_form_shop_data: true
 )]
 abstract class Core_Content_InfoPage extends Entity_WithEShopData implements Entity_Admin_WithEShopData_Interface
 {

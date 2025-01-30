@@ -29,4 +29,9 @@ return [
 	'Internal code:' => '',
 	'Internal notes:' => '',
 	'About author:' => '',
+	'Description' => '',
+	'File is too large' => '',
+	'Please select file' => '',
+	'Please upload image' => '',
+	'Select and upload images' => '',
 ];

@@ -21,6 +21,9 @@ interface Core_Entity_Admin_Interface {
 	public function getEditForm() : Form;
 	public function catchEditForm() : bool;
 	
+	public function getEditMainForm() : Form;
+	public function catchEditMainForm() : bool;
+	
 	public function getAdminManagerInterface() : ?string;
 	
 	public function renderActiveState() : string;

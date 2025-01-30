@@ -33,4 +33,10 @@ return [
 	'Categories' => '',
 	'Add category:' => '',
 	'Inactive' => '',
+	'Description' => '',
+	'File is too large' => '',
+	'Please select file' => '',
+	'Please upload image' => '',
+	'Select and upload images' => '',
+	'Create new' => '',
 ];

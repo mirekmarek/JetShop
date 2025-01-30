@@ -21,7 +21,7 @@ foreach($group->getProducts() as $p): ?>
 		data-id="<?=$p->getProductId()?>"
 	>
 		<div><?=UI::icon('up-down')?></div>
-		<div><?=$p_manager->showName( $p )?></div>
+		<div><?=$p_manager->showName( $p->getProductId() )?></div>
 		<div><?= UI::button_delete(' ')->setOnClick("Products.remove({$p->getProductId()})")->setSize( UI_button::SIZE_EXTRA_SMALL)?></div>
 	</div>
 <?php endforeach;

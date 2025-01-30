@@ -15,10 +15,6 @@ use JetApplication\Marketing_AutoOffer;
 $form = $this->getRaw('form');
 $item = $this->getRaw('item');
 
-echo $form->field( 'eshop' );
-echo $form->field( 'internal_name' );
-echo $form->field( 'internal_code' );
-echo $form->field( 'internal_notes' );
 
 ?>
 	<div class="row form-group">
@@ -33,9 +29,6 @@ echo $form->field( 'internal_notes' );
 <?php
 echo $form->field( 'offer_product_id' );
 
-
-echo $form->field( 'active_from' );
-echo $form->field( 'active_till' );
 echo $form->field( 'priority' );
 echo $form->field( 'relevance_mode' );
 echo $form->field( 'show_mode' );

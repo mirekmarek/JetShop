@@ -34,8 +34,8 @@ use JetApplication\Entity_Definition;
 	images: [
 		'header_1' => 'Header 1',
 		'header_2' => 'Header 2',
-	]
-	
+	],
+	separate_tab_form_shop_data: true
 )]
 abstract class Core_Content_Article extends Entity_WithEShopData implements
 	Entity_HasImages_Interface,

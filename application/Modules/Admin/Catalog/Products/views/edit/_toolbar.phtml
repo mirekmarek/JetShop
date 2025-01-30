@@ -9,9 +9,4 @@ use Jet\MVC_View;
  */
 $controller = $this->getController();
 
-echo $this->controller->getEditorManager()->renderToolbar(
-	form: $this->getRaw('form'),
-	toolbar_renderer: function() {
-		require 'toolbar.phtml';
-	}
-);
+echo $this->controller->getEditorManager()->renderToolbar( form: $this->getRaw('form'));

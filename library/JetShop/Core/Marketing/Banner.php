@@ -31,7 +31,7 @@ use JetApplication\EShop;
 	database_table_name: 'banners',
 )]
 #[Entity_Definition(
-	admin_managers_interface: Admin_Managers_MarketingBanners::class
+	admin_manager_interface: Admin_Managers_MarketingBanners::class
 )]
 abstract class Core_Marketing_Banner extends Entity_Marketing implements Entity_Admin_Interface
 {
@@ -40,6 +40,14 @@ abstract class Core_Marketing_Banner extends Entity_Marketing implements Entity_
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Group:',
+		select_options_creator: [
+			Marketing_BannerGroup::class,
+			'getScope'
+		]
 	)]
 	protected int $group_id = 0;
 	

@@ -9,4 +9,4 @@ use Jet\Tr;
  */
 $id = $this->getInt('id');
 ?>
-<b class="bg-danger"><?=Tr::_('Unknown item %ID%', ['ID'=>$id])?></b>
+<b class="bg-danger"><?=Tr::_('Unknown item %ID%', ['ID'=>$id], dictionary: Tr::COMMON_DICTIONARY)?></b>

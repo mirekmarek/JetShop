@@ -22,7 +22,8 @@ use JetApplication\Entity_Definition;
 	database_table_name: 'content_info_box',
 )]
 #[Entity_Definition(
-	admin_manager_interface: Admin_Managers_ContentInfoBoxes::class
+	admin_manager_interface: Admin_Managers_ContentInfoBoxes::class,
+	separate_tab_form_shop_data: true
 )]
 abstract class Core_Content_InfoBox extends Entity_WithEShopData implements Entity_Admin_WithEShopData_Interface
 {

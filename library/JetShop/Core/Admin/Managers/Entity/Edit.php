@@ -16,39 +16,26 @@ interface Core_Admin_Managers_Entity_Edit
 	public function init(
 		Entity_Basic|Entity_Admin_Interface $item,
 		?Admin_Managers_Entity_Listing      $listing = null,
-		?UI_tabs                            $tabs = null
+		?UI_tabs                            $tabs = null,
+		?Closure $common_data_fields_renderer = null,
+		?Closure $toolbar_renderer = null,
+		?Closure $eshop_data_fields_renderer = null,
+		?Closure $description_fields_renderer = null
 	) : void;
 	
-	public function renderToolbar(
-		?Form                               $form = null,
-		?callable                           $toolbar_renderer = null
-	): string;
+	public function renderToolbar( ?Form $form = null, ?Closure $toolbar_renderer=null  ): string;
 	
-	public function renderEditMain(
-		?callable $common_data_fields_renderer = null,
-		?callable $toolbar_renderer = null,
-		?callable $eshop_data_fields_renderer = null,
-		?callable $description_fields_renderer = null
-	): string;
+	public function renderEditMain( Form $form ): string;
 	
-	public function renderEditImages(
-		?callable $toolbar_renderer = null
-	): string;
+	public function renderEditDescription( Form $form ) : string;
 	
-	public function renderAdd(
-		?callable $common_data_fields_renderer = null,
-		?callable $eshop_data_fields_renderer = null,
-		?callable $description_fields_renderer = null
-	): string;
+	public function renderEditImages(): string;
 	
-	public function renderDeleteConfirm(
-		string $message
-	): string;
+	public function renderAdd( Form $form ): string;
 	
-	public function renderDeleteNotPossible(
-		string    $message,
-		?callable $reason_renderer = null
-	): string;
+	public function renderDeleteConfirm( string $message ): string;
+	
+	public function renderDeleteNotPossible( string    $message, ?callable $reason_renderer = null ): string;
 	
 	public function renderShowName(
 		int $id,
@@ -87,15 +74,6 @@ interface Core_Admin_Managers_Entity_Edit
 	) : string;
 	
 	public function renderEntityFormCommonFields( Form $form ) : string;
-	
-	
-	public function getActivationDisabled(): bool;
-	
-	public function setActivationDisabled( bool $activation_disabled ): void;
-	
-	public function getTimerDisabled(): bool;
-	
-	public function setTimerDisabled( bool $timer_disabled ): void;
 	
 	public function renderEditProducts( Entity_Basic $item ): string;
 	

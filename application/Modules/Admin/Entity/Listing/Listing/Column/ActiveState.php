@@ -50,7 +50,7 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 	
 	public function getTitle(): string
 	{
-		return Tr::_('Is active');
+		return Tr::_('Is active', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getDisallowSort(): bool
@@ -66,12 +66,12 @@ class Listing_Column_ActiveState extends Listing_Column_Abstract
 	
 	public function getExportHeader(): array
 	{
-		$titles = ['general'=> Tr::_('Is active')];
+		$titles = ['general'=> Tr::_('Is active', dictionary: Tr::COMMON_DICTIONARY)];
 		
 		if($this->isMultiEShopMode()) {
 			$eshops = EShops::getListSorted();
 			foreach($eshops as $eshop) {
-				$titles[$eshop->getKey()] = Tr::_('Is active - %what%', ['what'=>$eshop->getName()]);
+				$titles[$eshop->getKey()] = Tr::_('Is active - %what%', ['what'=>$eshop->getName()], dictionary: Tr::COMMON_DICTIONARY);
 			}
 		}
 		

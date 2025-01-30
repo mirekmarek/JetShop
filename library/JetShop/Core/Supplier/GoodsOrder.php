@@ -19,6 +19,8 @@ use JetApplication\Entity_Admin_Trait;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
 use JetApplication\Entity_Basic;
 use JetApplication\Entity_Definition;
+use JetApplication\Entity_HasGet_Interface;
+use JetApplication\Entity_HasGet_Trait;
 use JetApplication\NumberSeries_Entity_Interface;
 use JetApplication\NumberSeries_Entity_Trait;
 use JetApplication\Product;
@@ -37,9 +39,13 @@ use JetApplication\WarehouseManagement_Warehouse;
 #[Entity_Definition(
 	admin_manager_interface: Admin_Managers_SupplierGoodsOrders::class
 )]
-abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements NumberSeries_Entity_Interface, Entity_Admin_Interface
+abstract class Core_Supplier_GoodsOrder extends Entity_Basic implements
+	NumberSeries_Entity_Interface,
+	Entity_Admin_Interface,
+	Entity_HasGet_Interface
 {
 	use Entity_Admin_Trait;
+	use Entity_HasGet_Trait;
 	use NumberSeries_Entity_Trait;
 	
 	public const STATUS_PENDING = 'pending';

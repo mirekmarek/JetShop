@@ -120,7 +120,8 @@ trait Core_Entity_HasActivationByTimePlan_Trait {
 		}
 		
 		$now = Data_DateTime::now();
-		return $now<$this->active_till;
+		
+		return $now>$this->active_till;
 	}
 	
 	public function isWaitingByTimePlan() : bool

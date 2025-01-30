@@ -16,6 +16,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\Data_Tree_Node;
+use JetApplication\Entity_WithEShopData;
 
 
 /**
@@ -40,11 +41,23 @@ class Controller_Main extends Admin_EntityManager_Controller
 		if(!$this->current_item) {
 			return [];
 		}
-		return [
-			'main'     => Tr::_( 'Main data' ),
-			'images'   => Tr::_( 'Images' ),
-			'products' => Tr::_( 'Products (%count%)', ['count'=>count($this->current_item->getProductIds())] ),
-		];
+		
+		/**
+		 * @var Category $current_item
+		 */
+		$current_item = $this->current_item;
+		
+		
+		$tabs = [];
+		
+		$tabs['main'] = Tr::_( 'Main data' );
+		if( $current_item->getSeparateTabFormShopData() ) {
+			$tabs['description'] = Tr::_( 'Description' );
+		}
+		$tabs['images'] = Tr::_( 'Images' );
+		$tabs['products'] = Tr::_( 'Products (%count%)', ['count'=>count($this->current_item->getProductIds())] );
+		
+		return $tabs;
 		
 	}
 	
@@ -71,6 +84,11 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->router->addAction( 'edit_images', Main::ACTION_GET )->setResolver(function() use ($action, $selected_tab) {
 			return $this->current_item && $selected_tab=='images';
 		});
+		
+		$this->router->addAction( 'edit_description', Main::ACTION_GET )->setResolver(function() use ($action, $selected_tab) {
+			return $this->current_item && $selected_tab=='description';
+		});
+		
 		
 		$this->router->addAction( 'edit_products', Main::ACTION_GET )->setResolver(function() use ($action, $selected_tab) {
 			return $this->current_item && $selected_tab=='products';
@@ -204,7 +222,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 				Http_Headers::reload( unset_GET_params: ['action'] );
 			}
 			
-			if( $category->catchEditForm() ) {
+			if( $category->catchEditMainForm() ) {
 				$category->save();
 				
 				UI_messages::success(
@@ -216,12 +234,38 @@ class Controller_Main extends Admin_EntityManager_Controller
 			}
 		}
 		
-		
+		$this->view->setVar('form', $category->getEditMainForm() );
 		$this->view->setVar('toolbar', 'category/edit/main/toolbar');
 		
 		
 		$this->output( 'category/edit/main' );
 	}
+	
+	public function edit_description_Action() : void
+	{
+		$this->_setBreadcrumbNavigation( Tr::_( 'Edit' ) );
+		$category = $this->getCurrentItem();
+		
+		if($category->isEditable()) {
+			if( $category->catchDescriptionEditForm() ) {
+				$category->save();
+				
+				UI_messages::success(
+					Tr::_( 'Category <b>%NAME%</b> has been updated', [ 'NAME' => $category->getPathName() ] )
+				);
+				
+				Http_Headers::reload();
+				
+			}
+		}
+		
+		$this->view->setVar('form', $category->getDescriptionEditForm() );
+		$this->view->setVar('toolbar', 'category/edit/main/toolbar');
+		
+		
+		$this->output( 'category/edit/description' );
+	}
+	
 	
 	public function edit_products_Action() : void
 	{

@@ -2,7 +2,6 @@
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
 use JetApplication\Content_Article;
 
 /**
@@ -11,9 +10,3 @@ use JetApplication\Content_Article;
  */
 
 $item = $this->getRaw('item');
-
-echo Admin_Managers::EntityEdit()->renderPreviewButton( $item );
-
-if($item->isEditable()) {
-	echo Admin_Managers::Image()->commonImageManager( 'info_page', $item->getId() );
-}

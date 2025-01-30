@@ -21,7 +21,7 @@ class Listing_Column_ValidFrom extends Listing_Column_Abstract
 	
 	public function getTitle(): string
 	{
-		return Tr::_( 'Valid from' );
+		return Tr::_( 'Valid from', dictionary: Tr::COMMON_DICTIONARY );
 	}
 	
 	public function initializer( UI_dataGrid_column $column ): void

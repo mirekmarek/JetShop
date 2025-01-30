@@ -38,4 +38,6 @@ return [
 	'Text:' => 'Text:',
 	'Activate' => 'Aktivovat',
 	'Content - Info Box <b>%ITEM_NAME%</b> has been created' => 'Obsah – informační pole <b>%ITEM_NAME%</b> bylo vytvořeno',
+	'Content Info Boxes' => '',
+	'Info Boxes' => '',
 ];

@@ -25,7 +25,7 @@ $video_field->input()
 
 ?>
 <div class="card card-body">
-	<h5><?=Tr::_('Main video')?></h5>
+	<h5><?=Tr::_('Main video (%W%px x %H%px)', ['W'=>$group->getMainVideoW(), 'H'=>$group->getMainVideoH()])?></h5>
 	
 	<?php if($item->isEditable()): ?>
 		<?=$upload_form->start()?>

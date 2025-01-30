@@ -15,10 +15,6 @@ use JetApplication\Marketing_Gift_ShoppingCart;
 $form = $this->getRaw('form');
 $item = $this->getRaw('item');
 
-echo $form->field( 'eshop' );
-echo $form->field( 'internal_name' );
-echo $form->field( 'internal_code' );
-echo $form->field( 'internal_notes' );
 
 ?>
 	<div class="row form-group">
@@ -32,10 +28,6 @@ echo $form->field( 'internal_notes' );
 	</div>
 	<?php
 echo $form->field( 'gift_product_id' );
-
-
-echo $form->field( 'active_from' );
-echo $form->field( 'active_till' );
 echo $form->field( 'priority' );
 echo $form->field( 'order_amount_limit_min' );
 echo $form->field( 'order_amount_limit_max' );

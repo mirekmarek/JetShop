@@ -22,7 +22,7 @@ class Listing_Column_EShop extends Listing_Column_Abstract
 	
 	public function getTitle(): string
 	{
-		return Tr::_('e-shop');
+		return Tr::_('e-shop', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	
@@ -34,7 +34,7 @@ class Listing_Column_EShop extends Listing_Column_Abstract
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('e-shop');
+		return Tr::_('e-shop', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getOrderByAsc(): array|string

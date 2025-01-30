@@ -1,7 +1,6 @@
 <?php
 use Jet\Form;
 use Jet\MVC_View;
-use JetApplication\Entity_HasInternalParams_Interface;
 
 /**
  * @var MVC_View $this
@@ -10,12 +9,18 @@ use JetApplication\Entity_HasInternalParams_Interface;
 $form = $this->getRaw('form');
 $item = $this->getRaw('item');
 
+$schema = [
+	'eshop',
+	'internal_name',
+	'internal_code',
+	'internal_notes',
+	'active_from',
+	'active_till',
+];
 
 
-if($item instanceof Entity_HasInternalParams_Interface) {
-	echo $form->field('internal_name');
-	echo $form->field('internal_code');
-	echo $form->field('internal_notes');
-	
+foreach($schema as $f) {
+	if($form->fieldExists($f)) {
+		echo $form->field($f);
+	}
 }
-

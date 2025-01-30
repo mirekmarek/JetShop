@@ -58,4 +58,5 @@ return [
 	'General' => '',
 	'Name:' => '',
 	'e-shop' => '',
+	'Delivery Fee Discount <b>%ITEM_NAME%</b> has been created' => '',
 ];

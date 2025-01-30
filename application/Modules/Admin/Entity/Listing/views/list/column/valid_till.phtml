@@ -10,12 +10,11 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Entity_Marketing;
+use JetApplication\Entity_HasActivationByTimePlan_Interface;
 
 /**
  * @var MVC_View $this
- * @var Entity_Marketing $item
+ * @var Entity_HasActivationByTimePlan_Interface $item
  */
 
 
@@ -34,7 +33,7 @@ if($item->isActiveByTimePlan()) {
 
 if(!$item->getActiveTill()):
 	?>
-	<div class="time-interval time-interval-<?=$class?>"><?=Tr::_('Unlimited', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></div>
+	<div class="time-interval time-interval-<?=$class?>"><?=Tr::_('Unlimited', dictionary: Tr::COMMON_DICTIONARY)?></div>
 	<?php
 	return;
 endif;

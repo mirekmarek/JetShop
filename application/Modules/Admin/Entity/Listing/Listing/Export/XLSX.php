@@ -9,7 +9,7 @@ class Listing_Export_XLSX extends DataListing_Export
 {
 	public function getTitle() : string
 	{
-		return Tr::_('XLSX');
+		return Tr::_('XLSX', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getKey() : string

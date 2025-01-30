@@ -6,7 +6,6 @@ use Jet\UI;
 use Jet\Tr;
 use Jet\MVC_View;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View     $this
@@ -39,7 +38,7 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 	<div style="display: grid;grid-template-columns: 300px 1fr;align-items: center">
 		<div class="dropdown">
 			<button class="btn btn-light dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<?=Tr::_('Predefined schemas', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?>
+				<?=Tr::_('Predefined schemas', dictionary: Tr::COMMON_DICTIONARY)?>
 			</button>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 				<?php foreach( Listing_Schema::getList() as $schema ): ?>
@@ -50,7 +49,7 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 			</div>
 		</div>
 
-		<div><?=Tr::_('Current schema <b>%SCHEMA%</b>', ['SCHEMA'=>$selected_schema->getName()], dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></div>
+		<div><?=Tr::_('Current schema <b>%SCHEMA%</b>', ['SCHEMA'=>$selected_schema->getName()], dictionary: Tr::COMMON_DICTIONARY)?></div>
 	</div>
 
 
@@ -59,7 +58,7 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 	<div style="padding: 10px;" class="row">
 		<div class="col-12 col-lg-6">
 			<div class="card">
-				<div class="card-header bg-info"><?=Tr::_('Available columns', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></div>
+				<div class="card-header bg-info"><?=Tr::_('Available columns', dictionary: Tr::COMMON_DICTIONARY)?></div>
 				<div class="list-group" id="columns_not_selected">
 				</div>
 			</div>
@@ -68,7 +67,7 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 
 		<div class="col-12 col-lg-6">
 			<div class="card">
-				<div class="card-header bg-success"><?=Tr::_('Selected columns', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></div>
+				<div class="card-header bg-success"><?=Tr::_('Selected columns', dictionary: Tr::COMMON_DICTIONARY)?></div>
 				
 				<div id="columns_selected" class="list-group" style="padding: 10px;">
 				</div>
@@ -80,9 +79,9 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 		<div class="col-12 col-lg-6">
 		</div>
 		<div class="col-12 col-lg-6">
-			<?=UI::button(Tr::_('Set', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName()))->setOnClick("DisplayedColumnsSetting.set()")->setClass(UI_button::CLASS_PRIMARY)->setIcon('check')?>
-			<?=UI::button(Tr::_('Update current schema', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName()))->setOnClick("DisplayedColumnsSetting.updateCurrentSchema()")->setClass(UI_button::CLASS_PRIMARY)->setIcon('save')?>
-			<?=UI::button(Tr::_('Save as new schema', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName()))->setOnClick("DisplayedColumnsSetting.saveNewSchema()")->setClass(UI_button::CLASS_PRIMARY)->setIcon('save')?>
+			<?=UI::button(Tr::_('Set', dictionary: Tr::COMMON_DICTIONARY))->setOnClick("DisplayedColumnsSetting.set()")->setClass(UI_button::CLASS_PRIMARY)->setIcon('check')?>
+			<?=UI::button(Tr::_('Update current schema', dictionary: Tr::COMMON_DICTIONARY))->setOnClick("DisplayedColumnsSetting.updateCurrentSchema()")->setClass(UI_button::CLASS_PRIMARY)->setIcon('save')?>
+			<?=UI::button(Tr::_('Save as new schema', dictionary: Tr::COMMON_DICTIONARY))->setOnClick("DisplayedColumnsSetting.saveNewSchema()")->setClass(UI_button::CLASS_PRIMARY)->setIcon('save')?>
 			<br><br>
 		</div>
 	</div>

@@ -46,4 +46,5 @@ return [
 	'Perex:' => '',
 	'Text:' => '',
 	'Content - Article <b>%ITEM_NAME%</b> has been updated' => '',
+	'Description' => '',
 ];

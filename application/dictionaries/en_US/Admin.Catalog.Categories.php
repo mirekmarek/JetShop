@@ -168,4 +168,8 @@ return [
 	'Internal code:' => '',
 	'Internal notes:' => '',
 	'Inactive' => '',
+	'Description' => '',
+	'File is too large' => '',
+	'Please select file' => '',
+	'Select and upload images' => '',
 ];

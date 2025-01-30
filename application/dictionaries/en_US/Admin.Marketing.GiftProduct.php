@@ -52,4 +52,6 @@ return [
 	'Name:' => '',
 	'Gift - product <b>%ITEM_NAME%</b> has been updated' => '',
 	'e-shop' => '',
+	'Delete' => '',
+	'Do you really want to delete this Gift for product?' => '',
 ];

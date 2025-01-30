@@ -22,7 +22,7 @@ $field->input()->addCustomCssStyle('width:500px');
 
 echo Admin_Managers::EntityListing()->renderListingFilter(
 	filter:      $filter,
-	title:       Tr::_('Search', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName()),
+	title:       Tr::_('Search', dictionary: Tr::COMMON_DICTIONARY),
 	form_fields: [$field],
 	is_active:   $field->getValue(),
 	renderer:    function() use ($field) {

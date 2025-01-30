@@ -28,7 +28,8 @@ use JetApplication\Entity_Definition;
 	images: [
 		'avatar_1' => 'Avatar 1',
 		'avatar_2' => 'Avatar 2',
-	]
+	],
+	separate_tab_form_shop_data: true
 )]
 abstract class Core_Content_Article_Author extends Entity_WithEShopData implements
 	Entity_HasImages_Interface,

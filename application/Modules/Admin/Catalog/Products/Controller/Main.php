@@ -1,13 +1,10 @@
 <?php
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Closure;
 use Jet\Http_Headers;
 use Jet\Http_Request;
-use Jet\Locale;
 use Jet\Tr;
 
-use Jet\UI_messages;
 use JetApplication\Entity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
@@ -72,12 +69,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		parent::setupRouter( $action, $selected_tab );
 		
-		$this->router->addAction('edit_description', Main::ACTION_UPDATE)
-			->setResolver( function() use ($action, $selected_tab) {
-				return $this->current_item && $selected_tab=='description';
-			} );
-		
-		
 		$this->router->addAction('edit_parameters', Main::ACTION_UPDATE)
 			->setResolver( function() use ($action, $selected_tab) {
 				return $this->current_item && $selected_tab=='parameters';
@@ -140,15 +131,19 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		$product = $this->current_item;
 		
-		$_tabs = [
-			'main'             => Tr::_('Main data'),
-			'description'      => Tr::_('Description'),
-			'images'           => Tr::_('Images'),
-			'files'            => Tr::_('Files'),
-			'parameters'       => Tr::_('Parameters'),
-			'categories'       => Tr::_('Categories'),
-			'accessories'      => Tr::_('Accessories'),
-		];
+		$_tabs = parent::getTabs();
+		
+		$_tabs = array_merge(
+			$_tabs,
+			[
+				'images'           => Tr::_('Images'),
+				'files'            => Tr::_('Files'),
+				'parameters'       => Tr::_('Parameters'),
+				'categories'       => Tr::_('Categories'),
+				'accessories'      => Tr::_('Accessories'),
+			]
+		);
+		
 		
 		
 		switch($product->getType()) {
@@ -251,30 +246,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 	}
 	
-	protected function getEditEshopDataFieldsRenderer() : ?Closure
-	{
-		return null;
-	}
-	
-	protected function getAddEshopDataFieldsRenderer() : ?Closure
-	{
-		return null;
-	}
-	
-	protected function getEditDescriptionFieldsRenderer() : ?Closure
-	{
-		return null;
-	}
-	
-	protected function getAddDescriptionFieldsRenderer() : ?Closure
-	{
-		return function( Locale $locale, string $locale_str ) {
-			$this->view->setVar('locale', $locale);
-			echo $this->view->render('add/description-form-fields');
-		};
-	}
-	
-	
 	public function edit_main_Action(): void
 	{
 		$this->handleSetAvailability();
@@ -286,31 +257,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$this->view->render('edit/main/set-price')
 		);
 		
-	}
-	
-	public function edit_description_Action() : void
-	{
-		$this->setBreadcrumbNavigation( Tr::_('Description') );
-		
-		/**
-		 * @var Product $product
-		 */
-		$product = $this->current_item;
-		
-		$this->view->setVar('item', $product);
-		
-
-		if( $product->catchDescriptionEditForm() ) {
-			
-			UI_messages::success(
-				Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $product->getAdminTitle() ] )
-			);
-			
-			Http_Headers::reload();
-		}
-		
-		$this->output( 'edit/description' );
-	
 	}
 	
 	public function handleSetAvailability() : void

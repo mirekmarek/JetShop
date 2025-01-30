@@ -19,6 +19,8 @@ use JetApplication\Marketing_BannerGroup;
 $list = $this->getRaw('list');
 
 $group = $this->getRaw('selected_group');
+$selected_eshop = $this->getRaw('selected_eshop')?:null;
+$selected_eshop_key = $selected_eshop?->getKey();
 
 $editable = Main::getCurrentUserCanEdit();
 
@@ -75,7 +77,7 @@ require 'select.phtml';
 ?>
 <div class="toolbar">
 	<?php if(Main::getCurrentUserCanCreate()): ?>
-		<?=UI::button_create( Tr::_('Create') )->setClass(UI_button::CLASS_SUCCESS)->setUrl( Http_Request::currentURI(['create'=>1]) )?>
+		<?=UI::button_create( Tr::_('Create') )->setClass(UI_button::CLASS_SUCCESS)->setUrl( Http_Request::currentURI(['action'=>'add', 'group'=>$group->getId(),'ehop'=>$selected_eshop_key]) )?>
 	<?php endif; ?>
 </div>
 

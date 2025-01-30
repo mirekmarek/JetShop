@@ -16,9 +16,9 @@ $item = $this->getRaw('item');
 $eshops = EShops::getListSorted();
 
 if($item->isActive()):
-	?><span class="badge badge-success"> <?=Tr::_('Active')?> </span> <?php
+	?><span class="badge badge-success"> <?=Tr::_('Active', dictionary: Tr::COMMON_DICTIONARY)?> </span> <?php
 else:
-	?><span class="badge badge-danger"><?=Tr::_('Inactive')?></span> <?php
+	?><span class="badge badge-danger"><?=Tr::_('Not active', dictionary: Tr::COMMON_DICTIONARY)?></span> <?php
 endif;
 
 if( count($eshops)>1 ):

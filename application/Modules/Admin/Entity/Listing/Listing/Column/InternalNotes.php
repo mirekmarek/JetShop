@@ -21,7 +21,7 @@ class Listing_Column_InternalNotes extends Listing_Column_Abstract
 	
 	public function getTitle(): string
 	{
-		return Tr::_('Internal notes');
+		return Tr::_('Internal notes', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getDisallowSort(): bool
@@ -32,7 +32,7 @@ class Listing_Column_InternalNotes extends Listing_Column_Abstract
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('Internal notes');
+		return Tr::_('Internal notes', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getExportData( mixed $item ): string

@@ -25,6 +25,7 @@ use JetApplication\EShop;
 )]
 #[Entity_Definition(
 	description_mode: true,
+	separate_tab_form_shop_data: true,
 	images: [
 		'main' => 'Main image',
 		'pictogram' => 'Pictogram image',

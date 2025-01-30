@@ -68,7 +68,8 @@ use JetApplication\Supplier;
 )]
 #[Entity_Definition(
 	admin_manager_interface: Admin_Managers_Product::class,
-	description_mode: true
+	description_mode: true,
+	separate_tab_form_shop_data: true,
 )]
 abstract class Core_Product extends Entity_WithEShopData implements
 	FulltextSearch_IndexDataProvider,

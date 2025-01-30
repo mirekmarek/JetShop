@@ -22,7 +22,7 @@ class Listing_Column_InternalCode extends Listing_Column_Abstract
 	
 	public function getTitle(): string
 	{
-		return Tr::_('Internal code');
+		return Tr::_('Internal code', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	
@@ -34,7 +34,7 @@ class Listing_Column_InternalCode extends Listing_Column_Abstract
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('Internal code');
+		return Tr::_('Internal code', dictionary: Tr::COMMON_DICTIONARY);
 	}
 	
 	public function getExportData( mixed $item ): string

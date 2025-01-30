@@ -9,11 +9,8 @@ namespace JetApplicationModule\Admin\Marketing\Banners;
 
 use Jet\AJAX;
 use Jet\Application;
-use Jet\Http_Headers;
 use Jet\Http_Request;
-use Jet\Navigation_Breadcrumb;
 use Jet\Tr;
-use Jet\UI_messages;
 use Jet\UI_tabs;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\EShops;
@@ -33,41 +30,35 @@ class Controller_Main extends Admin_EntityManager_Controller
 		return 'Banner';
 	}
 	
+	public function getTabs() : array
+	{
+		$tabs = parent::getTabs();
+		
+		$tabs['banners'] = Tr::_('Banners');
+		
+		return $tabs;
+	}
 	
-	public function resolve() : bool|string
+	public function setupRouter( string $action, string $selected_tab ) : void
+	{
+		Marketing_Banner::handleTimePlan();
+		
+		parent::setupRouter( $action, $selected_tab );
+		
+		$this->router->addAction('edit_banners', $this->module::ACTION_UPDATE)
+			->setResolver(function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='banners' && $action=='';
+			})
+			->setURICreator(function( int $id ) {
+				return Http_Request::currentURI( ['id'=>$id, 'page'=>'banners'], ['action'] );
+			});
+		
+	}
+	
+	
+	public function listing_Action() : void
 	{
 		$GET = Http_Request::GET();
-		
-		if(
-			($id = $GET->getInt('id')) &&
-			($banner=Marketing_Banner::get($id))
-		) {
-			$this->current_item = $banner;
-			$this->current_item->setEditable( Main::getCurrentUserCanEdit() );
-			
-			$this->selected_eshop = $banner->getEshop();
-			$this->selected_group = Marketing_BannerGroup::load( $banner->getGroupId() );
-			
-			$groups = Marketing_BannerGroup::getScope();
-			$selected_group_id = $this->selected_group->getId();
-			
-			$this->tabs = new UI_tabs($groups, function( $group ) {
-				return '';
-			}, $selected_group_id);
-			$this->view->setVar('selected_eshop', $this->selected_eshop );
-			$this->view->setVar('tabs', $this->tabs);
-			
-			
-			if(
-				$GET->getString('action')=='delete' &&
-				Main::getCurrentUserCanDelete()
-			) {
-				return 'delete';
-			}
-			
-			
-			return 'edit';
-		}
 		
 		
 		
@@ -90,21 +81,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->view->setVar('tabs', $this->tabs);
 		$this->view->setVar('selected_group', $this->selected_group);
 		
-		if(
-			Main::getCurrentUserCanCreate() &&
-			$GET->exists('create')
-		) {
-			return 'add';
-		}
-		
-		
-		
-		return true;
-	}
-	
-	public function default_Action() : void
-	{
-		Marketing_Banner::handleTimePlan();
 		
 		$list = Marketing_Banner::getByGroup( $this->selected_eshop, $this->selected_group );
 		
@@ -130,50 +106,33 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->output('list');
 	}
 	
-	public function add_Action() : void
+	public function newItemFactory() : mixed
 	{
-		$this->current_item = new Marketing_Banner();
-		$this->current_item->setEshop( $this->selected_eshop );
-		$this->current_item->setGroupId( $this->selected_group->getId() );
-		$this->current_item->setPosition( count(Marketing_Banner::getByGroup( $this->selected_eshop, $this->selected_group ))+1 );
+		$GET = Http_Request::GET();
 		
-		Navigation_Breadcrumb::addURL( Tr::_('New banner') );
+		$item = parent::newItemFactory();
+		
+		$eshop_key = $GET->getString('eshop',
+			default_value: EShops::getCurrentKey()
+			,valid_values: array_keys(EShops::getList()));
+		$selected_eshop = EShops::get( $eshop_key );
+		
+		$groups = Marketing_BannerGroup::getScope();
+		$selected_group_id = Http_Request::GET()->getInt('group', array_keys($groups)[0]);
+		
+		$item->setGroupId( $selected_group_id );
+		$item->setEshop( $selected_eshop );
 		
 		
-		$form = $this->current_item->getAddForm();
-		
-		if( $this->current_item->catchAddForm() ) {
-			$this->current_item->save();
-			
-			
-			UI_messages::success( $this->generateText_add_msg() );
-			
-			Http_Headers::reload(
-				set_GET_params: ['id'=>$this->current_item->getId()],
-				unset_GET_params: ['action','create']
-			);
-		}
-		
-		$this->view->setVar( 'form', $form );
-		$this->view->setVar( 'item', $this->current_item );
-		
-		$this->output('add');
-		
+		return $item;
 	}
 	
-	public function edit_Action() : void
+	public function edit_banners_Action() : void
 	{
-		Marketing_Banner::handleTimePlan();
-		
-		/**
-		 * @var Marketing_Banner $banner
-		 */
 		$banner = $this->current_item;
 		
-		Navigation_Breadcrumb::addURL( Tr::_('Banner %b%', ['b'=>$banner->getAdminTitle()]) );
+		$this->setBreadcrumbNavigation( Tr::_('Banners') );
 		
-		$form = $banner->getEditForm();
-		$this->view->setVar( 'form', $form );
 		$this->view->setVar( 'item', $this->current_item );
 		
 		if($banner->isEditable()) {
@@ -185,23 +144,19 @@ class Controller_Main extends Admin_EntityManager_Controller
 				switch($delete_media) {
 					case 'image_main':
 						$banner->deleteImageMain();
-						echo $this->view->render('edit/image-main');
-						Application::end();
+						AJAX::snippetResponse( $this->view->render('edit/banners/image-main') );
 						break;
 					case 'image_mobile':
 						$banner->deleteImageMobile();
-						echo $this->view->render('edit/image-mobile');
-						Application::end();
+						AJAX::snippetResponse( $this->view->render('edit/banners/image-mobile') );
 						break;
 					case 'video_main':
 						$banner->deleteVideoMain();
-						echo $this->view->render('edit/video-main');
-						Application::end();
+						AJAX::snippetResponse( $this->view->render('edit/banners/video-main') );
 						break;
 					case 'video_mobile':
 						$banner->deleteVideoMobile();
-						echo $this->view->render('edit/video-mobile');
-						Application::end();
+						AJAX::snippetResponse( $this->view->render('edit/banners/video-mobile') );
 						break;
 				}
 			}
@@ -211,7 +166,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 				$banner->catchUploadForm_MainImage()
 			) {
 				AJAX::operationResponse(true, snippets: [
-					'image-main' => $this->view->render('edit/image-main')
+					'image-main' => $this->view->render('edit/banners/image-main')
 				]);
 			}
 			
@@ -220,7 +175,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 				$banner->catchUploadForm_MobileImage()
 			) {
 				AJAX::operationResponse(true, snippets: [
-					'image-mobile' => $this->view->render('edit/image-mobile')
+					'image-mobile' => $this->view->render('edit/banners/image-mobile')
 				]);
 			}
 			
@@ -230,7 +185,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 				$banner->catchUploadForm_MainVideo()
 			) {
 				AJAX::operationResponse(true, snippets: [
-					'video-main' => $this->view->render('edit/video-main')
+					'video-main' => $this->view->render('edit/banners/video-main')
 				]);
 			}
 			
@@ -239,21 +194,13 @@ class Controller_Main extends Admin_EntityManager_Controller
 				$banner->catchUploadForm_MobileVideo()
 			) {
 				AJAX::operationResponse(true, snippets: [
-					'video-mobile' => $this->view->render('edit/video-mobile')
+					'video-mobile' => $this->view->render('edit/banners/video-mobile')
 				]);
-			}
-			
-			
-			if( $banner->catchEditForm() ) {
-				$banner->save();
-				
-				UI_messages::success( $this->generateText_edit_main_msg() );
-				Http_Headers::reload();
 			}
 		}
 		
 		
-		$this->output('edit');
+		$this->output('edit/banners');
 		
 	}
 	

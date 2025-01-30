@@ -4,7 +4,6 @@ namespace JetShop;
 
 use JetApplication\Product_Image;
 use JetApplication\EShop_Managers;
-use Exception;
 
 trait Core_Product_EShopData_Trait_Images
 {
@@ -13,26 +12,6 @@ trait Core_Product_EShopData_Trait_Images
 	 */
 	protected ?array $images = null;
 	
-	public function getImage( string $image_class ) : string
-	{
-		throw new Exception('Product entity has special image methods. Use: getAllImages, getImg, getImgThumbnailUrl, getImgUrl');
-	}
-	
-	public function setImage( string $image_class, $image ) : void
-	{
-		throw new Exception('Product entity has special image methods. Use: getAllImages, getImg, getImgThumbnailUrl, getImgUrl');
-	}
-	
-	public function getImageThumbnailUrl( string $image_class, int $max_w, int $max_h ): string
-	{
-		throw new Exception('Product entity has special image methods. Use: getAllImages, getImg, getImgThumbnailUrl, getImgUrl');
-	}
-	
-	public function getImageUrl( string $image_class ): string
-	{
-		throw new Exception('Product entity has special image methods. Use: getAllImages, getImg, getImgThumbnailUrl, getImgUrl');
-	}
-
 	
 	/**
 	 * @return Product_Image[]

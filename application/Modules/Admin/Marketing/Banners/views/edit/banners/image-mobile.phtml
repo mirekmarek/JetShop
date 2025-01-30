@@ -24,7 +24,7 @@ $image_field->input()
 
 ?>
 <div class="card card-body">
-	<h5><?=Tr::_('Mobile image')?></h5>
+	<h5><?=Tr::_('Mobile image (%W%px x %H%px)', ['W'=>$group->getMobileImageW(), 'H'=>$group->getMobileImageH()])?></h5>
 	
 	<?php if($item->isEditable()): ?>
 		<?=$upload_form->start()?>

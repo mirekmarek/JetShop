@@ -1,0 +1,29 @@
+<?php
+namespace JetApplicationModule\Admin\Marketing\Banners;
+
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Marketing_Banner;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Marketing_Banner   $item
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+$group = $item->getGroup();
+?>
+
+<?=$form->field('group_id')?>
+<?php if($group->getHasText()):
+	echo $form->field('text');
+	if($group->getHasColor()):
+		echo $form->field('text_color');
+	endif;
+endif; ?>
+<?=$form->field('URL')?>
+<?=$form->field('nofollow')?>
+<?=$form->field('open_in_new_window')?>
+

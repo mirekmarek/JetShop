@@ -56,7 +56,6 @@ $kind = $product->getKindOfProduct();
 echo $this->controller->getEditorManager()->renderToolbar(
 	form:  $variants_update_form,
 	toolbar_renderer: function() use ($add_form, $product) {
-		echo Admin_Managers::EntityEdit()->renderPreviewButton( $product );
 		
 		if($add_form) {
 			echo '&nbsp;&nbsp;&nbsp;&nbsp;';

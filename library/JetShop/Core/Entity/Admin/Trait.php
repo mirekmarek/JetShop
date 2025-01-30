@@ -46,6 +46,17 @@ trait Core_Entity_Admin_Trait {
 		return $this->getAdminManager()->getEditUrl( $this, $get_params );
 	}
 	
+	protected ?Form $_edit_main_form = null;
+	
+	public function getEditMainForm() : Form
+	{
+		return $this->getEditForm();
+	}
+	
+	public function catchEditMainForm() : bool
+	{
+		return $this->catchEditForm();
+	}
 	
 	
 	

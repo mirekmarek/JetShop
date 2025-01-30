@@ -55,4 +55,12 @@ return [
 	'Internal name:' => '',
 	'Internal code:' => '',
 	'Internal notes:' => '',
+	'e-shop' => '',
+	'Name:' => '',
+	'Group:' => '',
+	'Main image (%W% x %H%)' => '',
+	'Main image (%W%px x %H%px)' => '',
+	'Mobile image (%W%px x %H%px)' => '',
+	'Main video (%W%px x %H%px)' => '',
+	'Mobile video (%W%px x %H%px)' => '',
 ];

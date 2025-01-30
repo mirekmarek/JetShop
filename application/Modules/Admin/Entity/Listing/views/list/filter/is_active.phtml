@@ -52,13 +52,13 @@ if($filter->isMultiEShopMode()) {
 
 echo Admin_Managers::EntityListing()->renderListingFilter(
 	filter:      $filter,
-	title:       Tr::_('Is active', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName()),
+	title:       Tr::_('Is active', dictionary: Tr::COMMON_DICTIONARY),
 	form_fields: $fields,
 	is_active:   $is_active,
 	renderer:    function() use ($show_filter, $filter_form, $filter) {
 		$show_filter(
 			$filter_form->field('is_active_general'),
-			Tr::_('General')
+			Tr::_('General', dictionary: Tr::COMMON_DICTIONARY)
 		);
 		
 		if( $filter->isMultiEShopMode() ):

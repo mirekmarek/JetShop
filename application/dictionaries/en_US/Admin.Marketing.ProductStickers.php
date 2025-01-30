@@ -38,4 +38,7 @@ return [
 	'Text color:' => '',
 	'Background color:' => '',
 	'Text:' => '',
+	'Images' => '',
+	'Pictogram - Product detail' => '',
+	'Pictogram - Product listing' => '',
 ];

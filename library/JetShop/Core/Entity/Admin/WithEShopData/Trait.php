@@ -21,6 +21,12 @@ trait Core_Entity_Admin_WithEShopData_Trait {
 		return (bool)Entity_Definition::get( $this )->getDescriptionMode();
 	}
 	
+	public function getSeparateTabFormShopData() : bool
+	{
+		return (bool)Entity_Definition::get( $this )->getSeparateTabFormShopData();
+	}
+	
+	
 	public function getDescriptionEditFormFieldMap() : array
 	{
 		/**
@@ -53,41 +59,56 @@ trait Core_Entity_Admin_WithEShopData_Trait {
 	{
 		if(!$this->_description_edit_form) {
 			$fields = [];
-			
 			$map = $this->getDescriptionEditFormFieldMap();
 			
-			foreach( EShops::getAvailableLocales() as $locale ) {
-				
-				$locale_str = $locale->toString();
-				
-				foreach(EShops::getListSorted() as $eshop ) {
-					if($eshop->getLocale()->toString()!=$locale_str) {
-						continue;
+			
+			if(!$this->getDescriptionMode()) {
+				foreach($this->getEditForm()->getFields() as $field) {
+					$name = explode('/', $field->getName());
+					if(
+						isset($name[3]) &&
+						$name[1]=='eshop_data' &&
+						isset($map[$name[3]])
+					) {
+						$fields[$field->getName()] = $field;
 					}
-					
-					$ed = $this->getEshopData( $eshop );
-					$edit_form = $ed->createForm('');
-					
-					foreach($map as $name=>$setter) {
-						$field = $edit_form->getField( $name );
-						$field->setName( '/description/'.$locale_str.'/'.$name );
-						$field->setFieldValueCatcher( function( string $value ) use ($locale_str, $setter) {
-							
-							foreach(EShops::getList() as $eshop) {
-								$sd = $this->getEshopData($eshop);
-								
-								if($sd->getLocale()->toString()==$locale_str) {
-									$setter( $sd, $value );
-								}
-							}
-
-						} );
-						
-						$fields[] = $field;
-					}
-					
-					continue 2;
 				}
+			} else {
+				
+				foreach( EShops::getAvailableLocales() as $locale ) {
+					
+					$locale_str = $locale->toString();
+					
+					foreach(EShops::getListSorted() as $eshop ) {
+						if($eshop->getLocale()->toString()!=$locale_str) {
+							continue;
+						}
+						
+						$ed = $this->getEshopData( $eshop );
+						$edit_form = $ed->createForm('');
+						
+						foreach($map as $name=>$setter) {
+							$field = $edit_form->getField( $name );
+							$field->setName( '/description/'.$locale_str.'/'.$name );
+							$field->setFieldValueCatcher( function( string $value ) use ($locale_str, $setter) {
+								
+								foreach(EShops::getList() as $eshop) {
+									$sd = $this->getEshopData($eshop);
+									
+									if($sd->getLocale()->toString()==$locale_str) {
+										$setter( $sd, $value );
+									}
+								}
+								
+							} );
+							
+							$fields[$field->getName()] = $field;
+						}
+						
+						continue 2;
+					}
+				}
+				
 			}
 			
 			$this->_description_edit_form = new Form('description_edit_form', $fields);
@@ -105,6 +126,45 @@ trait Core_Entity_Admin_WithEShopData_Trait {
 		$this->save();
 		return true;
 	}
+	
+	public function getEditMainForm() : Form
+	{
+		
+		if( $this->getSeparateTabFormShopData() ) {
+			if(!$this->_edit_main_form) {
+				$map = $this->getDescriptionEditFormFieldMap();
+				
+				$this->_edit_main_form = $this->getEditForm();
+				
+				foreach($this->_edit_main_form->getFields() as $field) {
+					$name = explode('/', $field->getName());
+					if(
+						isset($name[3]) &&
+						$name[1]=='eshop_data' &&
+						isset($map[$name[3]])
+					) {
+						$this->_edit_main_form->removeField( $field->getName() );
+					}
+				}
+			}
+			
+			return $this->_edit_main_form;
+			
+		} else {
+			return $this->getEditForm();
+		}
+	}
+	
+	public function catchEditMainForm() : bool
+	{
+		if( $this->getSeparateTabFormShopData() ) {
+			return $this->getEditMainForm()->catch();
+		} else {
+			return $this->catchEditForm();
+		}
+		
+	}
+	
 	
 	
 	public function getAddForm() : Form

@@ -8,6 +8,7 @@
 namespace JetShop;
 
 use Jet\Application_Module;
+use Jet\Form;
 use Jet\Locale;
 use Jet\UI;
 
@@ -25,6 +26,7 @@ use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Admin_Managers_Entity_Edit;
 use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
+use JetApplication\Entity_Admin_WithEShopData_Interface;
 use JetApplication\Entity_Basic;
 use JetApplication\Entity_HasEShopRelation_Interface;
 use JetApplication\Entity_HasImages_Interface;
@@ -93,6 +95,13 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		$tabs = [];
 		$tabs['main'] = Tr::_( 'Main data' );
+		
+		if(
+			$item instanceof Entity_Admin_WithEShopData_Interface &&
+			$item->getSeparateTabFormShopData()
+		) {
+			$tabs['description'] = Tr::_('Description');
+		}
 		
 		if($item instanceof Entity_HasProductsRelation_Interface) {
 			switch( $this->current_item->getRelevanceMode() ) {
@@ -204,6 +213,20 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 			->setURICreator(function( int $id ) {
 				return Http_Request::currentURI( ['id'=>$id], ['page','action'] );
 			});
+		
+		if(
+			$this->current_item instanceof Entity_Admin_WithEShopData_Interface &&
+			$this->current_item->getSeparateTabFormShopData()
+		) {
+			$this->router->addAction('edit_description', $this->module::ACTION_UPDATE)
+				->setResolver(function() use ($action, $selected_tab) {
+					return $this->current_item && $selected_tab=='description' && $action=='';
+				})
+				->setURICreator(function( int $id ) {
+					return Http_Request::currentURI( ['id'=>$id, 'page'=>'description'], ['action'] );
+				});
+		}
+		
 		
 		if($this->current_item instanceof Entity_HasImages_Interface)
 		{
@@ -402,52 +425,77 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		
 		$this->content->output(
-			$this->getEditorManager()->renderAdd(
-				common_data_fields_renderer: $this->getAddCommonFieldsRenderer(),
-				eshop_data_fields_renderer: $this->getAddEshopDataFieldsRenderer(),
-				description_fields_renderer: $this->getAddDescriptionFieldsRenderer(),
-			)
+			$this->getEditorManager()->renderAdd( $form )
 		);
 		
 	}
 	
 	protected function getEditToolbarRenderer() : ?Closure
 	{
-		return function() {
+		return function( Entity_Basic $item, ?Form $form=null ) {
+			$this->view->setVar('item', $item);
+			$this->view->setVar('form', $form);
+			
 			echo $this->view->render('edit/toolbar');
 		};
 	}
 	
 	protected function getEditCommonDataFieldsRenderer() : ?Closure
 	{
-		return function() {
+		return function( Entity_Basic $item, Form $form ) {
+			$this->view->setVar('item', $item);
+			$this->view->setVar('form', $form);
+			
 			echo $this->view->render('edit/main/common-form-fields');
 		};
 	}
 	
 	protected function getEditEshopDataFieldsRenderer() : ?Closure
 	{
-		if($this->getDescriptionMode()) {
-			return null;
-		}
-		
-		return function( EShop $eshop ) {
+		return function( EShop $eshop, string $eshop_key, Entity_Basic $item, Form $form  ) {
 			$this->view->setVar('eshop', $eshop);
+			$this->view->setVar('item', $item);
+			$this->view->setVar('form', $form);
 			echo $this->view->render('edit/main/shop-data-form-fields');
 		};
 	}
 	
 	protected function getEditDescriptionFieldsRenderer() : ?Closure
 	{
-		if(!$this->getDescriptionMode()) {
-			return null;
-		}
-		
-		return function( Locale $locale, string $locale_str ) {
+		return function( Locale $locale, string $locale_str, Entity_Basic $item, Form $form ) {
+			
 			$this->view->setVar('locale', $locale);
 			$this->view->setVar('locale_str', $locale_str);
+			$this->view->setVar('item', $item);
+			$this->view->setVar('form', $form);
 			echo $this->view->render('edit/main/description-form-fields');
 		};
+	}
+	
+	public function edit_description_Action() : void
+	{
+		$this->setBreadcrumbNavigation( Tr::_('Description') );
+		
+		$item = $this->current_item;
+		
+		$this->view->setVar('item', $item);
+		
+		$form = $item->getDescriptionEditForm();
+		
+		if( $item->catchDescriptionEditForm() ) {
+			
+			UI_messages::success(
+				Tr::_( $this->getEntityNameReadable().' description <b>%NAME%</b> has been updated', [ 'NAME' => $item->getAdminTitle() ] )
+			);
+			
+			Http_Headers::reload();
+		}
+		
+		$this->content->output(
+			$this->getEditorManager()->renderEditDescription( $form )
+		);
+		
+
 	}
 	
 	public function edit_main_Action() : void
@@ -458,9 +506,9 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		$this->edit_main_handleActivation();
 		
-		$form = $item->getEditForm();
+		$form = $item->getEditMainForm();
 		
-		if( $item->catchEditForm() ) {
+		if( $item->catchEditMainForm() ) {
 			
 			$item->save();
 			
@@ -475,12 +523,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		$this->view->setVar( 'item', $item );
 		
 		$this->content->output(
-			$this->getEditorManager()->renderEditMain(
-				common_data_fields_renderer: $this->getEditCommonDataFieldsRenderer(),
-				toolbar_renderer: $this->getEditToolbarRenderer(),
-				eshop_data_fields_renderer: $this->getEditEshopDataFieldsRenderer(),
-				description_fields_renderer: $this->getEditDescriptionFieldsRenderer()
-			)
+			$this->getEditorManager()->renderEditMain( $form )
 		);
 		
 	}
@@ -640,9 +683,13 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		if(!$this->editor_manager) {
 			$this->editor_manager = Admin_Managers::EntityEdit();
 			$this->editor_manager->init(
-				$this->current_item,
-				$this->getListing(),
-				$this->tabs
+				item: $this->current_item,
+				listing: $this->getListing(),
+				tabs: $this->tabs,
+				common_data_fields_renderer: $this->getEditCommonDataFieldsRenderer(),
+				toolbar_renderer: $this->getEditToolbarRenderer(),
+				eshop_data_fields_renderer: $this->getEditEshopDataFieldsRenderer(),
+				description_fields_renderer: $this->getEditDescriptionFieldsRenderer()
 			);
 		}
 		

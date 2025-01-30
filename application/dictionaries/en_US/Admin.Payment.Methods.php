@@ -111,4 +111,8 @@ return [
 	'Set price' => '',
 	'Price:' => '',
 	'Set' => '',
+	'Description' => '',
+	'File is too large' => '',
+	'Please select file' => '',
+	'Select and upload images' => '',
 ];

@@ -23,6 +23,7 @@ use JetApplication\Admin_Managers_Entity_Edit;
 use JetApplication\Admin_Managers_Entity_Listing;
 use JetApplication\Entity_Basic;
 use JetApplication\Entity_HasActivation_Interface;
+use JetApplication\Entity_HasActivationByTimePlan_Interface;
 use JetApplication\Entity_HasURL_Interface;
 use JetApplication\Entity_WithEShopData;
 use JetApplication\EShop;
@@ -34,119 +35,122 @@ use Closure;
  */
 class Main extends Application_Module implements Admin_Managers_Entity_Edit
 {
-	protected Entity_Basic|Entity_Admin_WithEShopData_Interface $item;
+	protected null|Entity_Basic|Entity_Admin_WithEShopData_Interface $item = null;
 	protected ?Admin_Managers_Entity_Listing $listing = null;
 	protected ?UI_tabs $tabs = null;
 	protected MVC_View $view;
-	
-	protected bool $activation_disabled = false;
-	protected bool $timer_disabled = false;
+	protected Closure|null $common_data_fields_renderer = null;
+	protected Closure|null $toolbar_renderer = null;
+	protected Closure|null $eshop_data_fields_renderer = null;
+	protected Closure|null $description_fields_renderer = null;
 	
 	
 	public function __construct( Application_Module_Manifest $manifest )
 	{
 		parent::__construct( $manifest );
-		$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		$this->view->setVar('module', $this);
 	}
 	
-	protected function render( $script ) : string
+	protected function render( $script, array $params ) : string
 	{
+		$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		
+		$this->view->setVar('module', $this);
+		
+		$this->view->setVar( 'item', $this->item );
+		$this->view->setVar( 'listing', $this->listing );
+		$this->view->setVar( 'tabs', $this->tabs );
+		
+		$this->view->setVar( 'toolbar_renderer', $this->toolbar_renderer );
+		$this->view->setVar( 'common_data_fields_renderer', $this->common_data_fields_renderer );
+		$this->view->setVar( 'eshop_data_fields_renderer', $this->eshop_data_fields_renderer );
+		$this->view->setVar( 'description_fields_renderer', $this->description_fields_renderer );
+		
+		foreach($params as $k=>$v) {
+			$this->view->setVar($k, $v);
+		}
+		
+		
 		return $this->view->render($script);
 	}
 	
 	
 	
 	public function init(
-		Entity_Basic|Entity_Admin_Interface $item,
-		?Admin_Managers_Entity_Listing      $listing = null,
-		?UI_tabs                            $tabs = null
+		Entity_Basic|Entity_Admin_Interface $item, ?
+		Admin_Managers_Entity_Listing $listing = null,
+		?UI_tabs $tabs = null,
+		?Closure $common_data_fields_renderer = null,
+		?Closure $toolbar_renderer = null,
+		?Closure $eshop_data_fields_renderer = null,
+		?Closure $description_fields_renderer = null
 	): void
 	{
 		$this->item = $item;
 		$this->listing = $listing;
 		$this->tabs = $tabs;
-	}
-	
-	
-	public function renderToolbar(
-		?Form     $form = null,
-		?callable $toolbar_renderer = null
-	): string
-	{
 		
-		
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'listing', $this->listing );
-		$this->view->setVar( 'form', $form );
-		
-		$this->view->setVar( 'toolbar_renderer', $toolbar_renderer );
-		
-		return $this->render( 'edit/toolbar' );
+		$this->common_data_fields_renderer = $common_data_fields_renderer;
+		$this->toolbar_renderer = $toolbar_renderer;
+		$this->eshop_data_fields_renderer = $eshop_data_fields_renderer;
+		$this->description_fields_renderer = $description_fields_renderer;
 		
 	}
 	
-	public function renderEditMain(
-		?callable $common_data_fields_renderer = null,
-		?callable $toolbar_renderer = null,
-		?callable $eshop_data_fields_renderer = null,
-		?callable $description_fields_renderer = null
-	): string
+	
+	public function renderToolbar( ?Form $form = null, ?Closure $toolbar_renderer=null ): string
 	{
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'listing', $this->listing );
-		$this->view->setVar( 'tabs', $this->tabs );
-		$this->view->setVar( 'form', $this->item->getEditForm() );
+		$params = [
+			'form' => $form
+		];
+		if($toolbar_renderer) {
+			$params['toolbar_renderer'] = $toolbar_renderer;
+		}
 		
-		$this->view->setVar( 'toolbar_renderer', $toolbar_renderer );
+		return $this->render( 'edit/toolbar', $params );
+	}
+	
+	public function renderEditMain( Form $form ): string
+	{
+		$params = [
+			'form' => $form
+		];
 		
-		$this->view->setVar( 'common_data_fields_renderer', $common_data_fields_renderer );
-		$this->view->setVar( 'eshop_data_fields_renderer', $eshop_data_fields_renderer );
-		$this->view->setVar( 'description_fields_renderer', $description_fields_renderer );
+		return $this->render( 'edit/main', $params );
+	}
+	
+	public function renderEditDescription( Form $form ): string
+	{
+		$params = [
+			'form' => $form
+		];
 		
-		
-		return $this->render( 'edit/main' );
+		return $this->render( 'edit/description', $params );
 		
 	}
 	
-	public function renderEditImages(
-		?callable $toolbar_renderer = null
-	): string
+	
+	public function renderEditImages(): string
 	{
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'listing', $this->listing );
-		$this->view->setVar( 'tabs', $this->tabs );
-		$this->view->setVar( 'toolbar_renderer', $toolbar_renderer );
+		return $this->render( 'edit/images', [] );
+	}
+	
+	public function renderAdd( Form $form ): string
+	{
+		$params = [
+			'form' => $form
+		];
 		
-		return $this->render( 'edit/images' );
+		return $this->render( 'add', $params );
 		
 	}
 	
-	public function renderAdd(
-		?callable $common_data_fields_renderer = null,
-		?callable $eshop_data_fields_renderer = null,
-		?callable $description_fields_renderer = null
-	): string
+	public function renderDeleteConfirm( string $message ): string
 	{
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'tabs', $this->tabs );
-		$this->view->setVar( 'form', $this->item->getAddForm() );
-		$this->view->setVar( 'common_data_fields_renderer', $common_data_fields_renderer );
-		$this->view->setVar( 'eshop_data_fields_renderer', $eshop_data_fields_renderer );
-		$this->view->setVar( 'description_fields_renderer', $description_fields_renderer );
+		$params = [
+			'message' => $message
+		];
 		
-		return $this->render( 'add' );
-		
-	}
-	
-	public function renderDeleteConfirm(
-		string $message
-	): string
-	{
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'message', $message );
-		
-		return $this->render( 'delete/confirm' );
+		return $this->render( 'delete/confirm', $params );
 		
 	}
 	
@@ -155,11 +159,12 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		?callable $reason_renderer = null
 	): string
 	{
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'message', $message );
-		$this->view->setVar( 'reason_renderer', $reason_renderer );
+		$params = [
+			'message' => $message,
+			'reason_renderer' => $reason_renderer
+		];
 		
-		return $this->render( 'delete/not-possible' );
+		return $this->render( 'delete/not-possible', $params );
 	}
 	
 	public function renderShowName( int $id, null|Entity_WithEShopData|Entity_Admin_Interface $item ): string
@@ -183,8 +188,11 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	
 	public function renderActiveState( Entity_HasActivation_Interface $item ): string
 	{
-		$this->view->setVar( 'item', $item );
-		return $this->render( 'active-state' );
+		$params = [
+			'item' => $item,
+		];
+		
+		return $this->render( 'active-state', $params );
 	}
 	
 	
@@ -211,20 +219,25 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		$res = '';
 		
 		if($inline_mode) {
-			$this->view->setVar('form', $form);
-			$this->view->setVar('eshops', $eshops);
+			$params = [
+				'form' => $form,
+				'eshops' => $eshops
+			];
 			
-			$res .= $this->render('eshop-data-block/inline/start');
+			$res .= $this->render('eshop-data-block/inline/start', $params);
 			foreach( $eshops as $eshop) {
-				$this->view->setVar('eshop', $eshop );
+				$params['eshop'] = $eshop;
 				
-				$res .= $this->render('eshop-data-block/inline/block-start');
+				$res .= $this->render('eshop-data-block/inline/block-start', $params);
+				
 				ob_start();
 				$renderer( $eshop, $eshop->getKey() );
 				$res .= ob_get_clean();
-				$res .= $this->render('eshop-data-block/inline/block-end');
+				
+				$res .= $this->render('eshop-data-block/inline/block-end', $params);
+				
 			}
-			$res .= $this->render('eshop-data-block/inline/end');
+			$res .= $this->render('eshop-data-block/inline/end', $params);
 			
 		} else {
 			
@@ -242,22 +255,25 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 				selected_tab_id: $selected_tab_id
 			);
 			
-			$this->view->setVar('tabs', $eshop_block_tabs);
-			$this->view->setVar('form', $form);
-			$this->view->setVar('eshops', $eshops);
+			$params = [
+				'tabs' => $eshop_block_tabs,
+				'form' => $form,
+				'eshops' => $eshops
+			];
 			
-			$res .= $this->render('eshop-data-block/tabs/tabs-start');
+			
+			$res .= $this->render('eshop-data-block/tabs/tabs-start', $params);
 			foreach( $eshops as $eshop) {
-				$this->view->setVar('eshop', $eshop );
-				$this->view->setVar('tab', $eshop_block_tabs->tab($eshop->getKey()) );
+				$params['eshop'] = $eshop;
+				$params['tab'] = $eshop_block_tabs->tab($eshop->getKey());
 				
-				$res .= $this->render('eshop-data-block/tabs/block-start');
+				$res .= $this->render('eshop-data-block/tabs/block-start', $params);
 				ob_start();
 				$renderer( $eshop, $eshop->getKey() );
 				$res .= ob_get_clean();
-				$res .= $this->render('eshop-data-block/tabs/block-end');
+				$res .= $this->render('eshop-data-block/tabs/block-end', $params);
 			}
-			$res .= $this->render('eshop-data-block/tabs/tabs-end');
+			$res .= $this->render('eshop-data-block/tabs/tabs-end', $params);
 		}
 		
 		return $res;
@@ -297,24 +313,26 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 			selected_tab_id: $selected_tab_id
 		);
 		
-		$this->view->setVar('tabs', $tabs);
-		$this->view->setVar('form', $form);
-		$this->view->setVar('locales', $locales);
+		$params = [
+			'tabs' => $tabs,
+			'form' => $form,
+			'locales' => $locales,
+		];
 		
-		$res .= $this->render('description-block/tabs-start');
+		$res .= $this->render('description-block/tabs-start', $params);
 		foreach( $locales as $locale) {
 			$locale_str = $locale->toString();
 			
-			$this->view->setVar('locale', $locale );
-			$this->view->setVar('tab', $tabs->tab($locale_str) );
+			$params['locale'] = $locale;
+			$params['tab'] = $tabs->tab($locale_str);
 			
-			$res .= $this->render('description-block/block-start');
+			$res .= $this->render('description-block/block-start', $params);
 			ob_start();
 			$renderer( $locale, $locale_str );
 			$res .= ob_get_clean();
-			$res .= $this->render('description-block/block-end');
+			$res .= $this->render('description-block/block-end', $params);
 		}
-		$res .= $this->render('description-block/tabs-end');
+		$res .= $this->render('description-block/tabs-end', $params);
 		
 		return $res;
 	}
@@ -322,9 +340,9 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	
 	public function renderPreviewButton( Entity_HasURL_Interface|Entity_Basic $item ) : string
 	{
-		$this->view->setVar('item', $item);
+		$params = ['item'=>$item];
 		
-		return $this->render( 'preview-btn' );
+		return $this->render( 'preview-btn', $params );
 	}
 	
 	public function renderEntityActivation(
@@ -337,11 +355,17 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		?Closure $activate_per_eshop_url_creator = null
 	) : string
 	{
-		if($this->activation_disabled) {
+		if( !$entity instanceof Entity_HasActivation_Interface ) {
 			return '';
 		}
 		
-		$this->view->setVar('entity', $entity);
+		$params = [
+			'entity' => $entity
+		];
+		
+		if($entity instanceof Entity_HasActivationByTimePlan_Interface) {
+			return $this->render( 'entity-activation-by-timeplan', $params );
+		}
 		
 		if(!$deactivate_url_creator) {
 			$deactivate_url_creator = function() : string {
@@ -379,42 +403,39 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 		
 		$res = '';
 		
-		$res .= $this->render( 'entity-activation/header' );
+		$res .= $this->render( 'entity-activation/header', $params );
 		
 		if(!$editable) {
-			$res .= $this->render( 'entity-activation/readonly' );
-			
+			$res .= $this->render( 'entity-activation/readonly', $params );
 		} else {
-			$this->view->setVar('deactivate_url', $deactivate_url_creator() );
-			$this->view->setVar('activate_url',  $activate_url_creator() );
+			$params['deactivate_url'] = $deactivate_url_creator();
+			$params['activate_url'] = $activate_url_creator();
 			
 			if( $entity instanceof Entity_WithEShopData ) {
-				$this->view->setVar('activate_completely_url', $activate_completely_url_creator() );
+				$params['activate_completely_url'] = $activate_completely_url_creator();
 			}
 			
-			$res .=  $this->render( 'entity-activation/editable' );
+			$res .=  $this->render( 'entity-activation/editable', $params );
 		}
 		
 		if( $entity instanceof Entity_WithEShopData ) {
 			foreach(EShops::getListSorted() as $eshop) {
-				$this->view->setVar('eshop_data', $entity->getEshopData($eshop));
-				$this->view->setVar('eshop', $eshop);
-				
+				$params['eshop_data'] = $entity->getEshopData($eshop);
+				$params['eshop'] = $eshop;
 				
 				if(!$editable) {
-					$res .= $this->render( 'entity-activation/shop-data/readonly' );
+					$res .= $this->render( 'entity-activation/shop-data/readonly', $params );
 				} else {
+					$params['deactivate_url'] = $deactivate_per_eshop_url_creator( $eshop );
+					$params['activate_url'] = $activate_per_eshop_url_creator( $eshop );
 					
-					$this->view->setVar('deactivate_url', $deactivate_per_eshop_url_creator( $eshop ) );
-					$this->view->setVar('activate_url', $activate_per_eshop_url_creator( $eshop ) );
-					
-					$res .= $this->render( 'entity-activation/shop-data/editable' );
+					$res .= $this->render( 'entity-activation/shop-data/editable', $params );
 				}
 			}
 			
 		}
 		
-		$res .= $this->render( 'entity-activation/footer' );
+		$res .= $this->render( 'entity-activation/footer', $params );
 		
 		return $res;
 		
@@ -423,30 +444,11 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 	
 	public function renderEntityFormCommonFields( Form $form ) : string
 	{
-		$this->view->setVar('form', $form);
+		$params = [
+			'form' => $form
+		];
 		
-		return $this->render( 'entity-form-common-fields' );
-		
-	}
-	
-	public function getActivationDisabled(): bool
-	{
-		return $this->activation_disabled;
-	}
-	
-	public function setActivationDisabled( bool $activation_disabled ): void
-	{
-		$this->activation_disabled = $activation_disabled;
-	}
-	
-	public function getTimerDisabled(): bool
-	{
-		return $this->timer_disabled;
-	}
-	
-	public function setTimerDisabled( bool $timer_disabled ): void
-	{
-		$this->timer_disabled = $timer_disabled;
+		return $this->render( 'entity-form-common-fields', $params );
 	}
 	
 	
@@ -477,6 +479,7 @@ class Main extends Application_Module implements Admin_Managers_Entity_Edit
 				$view->setVar('item', $item);
 				$view->setVar('tabs', $this->tabs);
 				$view->setVar('edit_manager',  $this);
+
 				return $view->render('edit/filter');
 			}
 		);

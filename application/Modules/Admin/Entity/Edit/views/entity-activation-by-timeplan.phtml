@@ -1,0 +1,48 @@
+<?php
+use Jet\Tr;
+use Jet\UI;
+use Jet\Locale;
+use JetApplication\Entity_HasActivationByTimePlan_Interface;
+
+/**
+ * @var Jet\MVC_View $this
+ * @var Entity_HasActivationByTimePlan_Interface $item
+ */
+$item = $this->getRaw('item');
+?>
+<style>
+	.tp-active,
+	.tp-waiting,
+	.tp-expired
+	{
+		border-radius: 10px;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-top: 3px;
+		padding-bottom: 3px;
+	}
+</style>
+<div class="card card-body" style="display: grid;justify-content:left ;grid-template-columns: auto auto auto;gap: 10px;align-items: center;margin: 10px;;margin-bottom: 20px;">
+		<div><?=UI::icon('clock')?></div>
+		<div style="font-weight: bolder"><?= Tr::_('Activation status', dictionary: Tr::COMMON_DICTIONARY)?></div>
+
+		<?php if($item->isActive()): ?>
+			<div class="bg-success text-white tp-active"><?= UI::icon('check');?> <?=Tr::_('Active', dictionary: Tr::COMMON_DICTIONARY)?></div>
+		<?php else:
+			
+			if($item->isWaitingByTimePlan()):
+				?>
+				<div class="bg-info text-white tp-waiting"><?= UI::icon('circle-xmark');?> <?=Tr::_('Waiting till %DATE_TIME%', ['DATE_TIME'=> Locale::dateAndTime($item->getActiveFrom())], dictionary: Tr::COMMON_DICTIONARY)?></div>
+				<?php
+			elseif($item->isExpiredByTimePlan()):
+				?>
+				<div class="bg-danger text-white tp-expired"><?= UI::icon('circle-xmark');?> <?=Tr::_('Expired %DATE_TIME%', ['DATE_TIME'=> Locale::dateAndTime($item->getActiveTill())], dictionary: Tr::COMMON_DICTIONARY)?></div>
+				<?php
+			else:
+				?>
+				<div class="bg-danger text-white tp-expired"><?= UI::icon('circle-xmark');?> <?=Tr::_('Not active', dictionary: Tr::COMMON_DICTIONARY)?></div>
+			<?php
+			endif;
+		endif; ?>
+	
+</div>

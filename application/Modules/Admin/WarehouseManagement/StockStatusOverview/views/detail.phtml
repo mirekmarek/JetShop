@@ -31,13 +31,13 @@ $m_unit = Product::getProductMeasureUnit( $card->getProductId() )?->getName();
 
 $change_location_form = $this->getRaw('change_location_form');
 
-Admin_Managers::EntityEdit()->init( $card, $this->getRaw('listing') );
-
-echo Admin_Managers::EntityEdit()->renderToolbar( toolbar_renderer: function() {
+Admin_Managers::EntityEdit()->init( $card, $this->getRaw('listing'), toolbar_renderer: function() {
 	echo UI::button( Tr::_('Determine inventory status on a specific date') )
 		->setClass(UI_button::CLASS_INFO)
 		->setOnClick("$('#status_on_date_dialog').modal('show');");
-});
+} );
+
+echo Admin_Managers::EntityEdit()->renderToolbar();
 
 $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine inventory status on a specific date'), UI_dialog::SIZE_EXTRA_LARGE);
 

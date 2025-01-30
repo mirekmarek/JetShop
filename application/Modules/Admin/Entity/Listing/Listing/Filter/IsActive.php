@@ -85,9 +85,9 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 	public function generateFormFields( Form $form ): void
 	{
 		$options = [
-			'' => Tr::_('- all -'),
-			'-1' => Tr::_('Not active'),
-			'1' => Tr::_('Active'),
+			'' => Tr::_('- all -', dictionary: Tr::COMMON_DICTIONARY),
+			'-1' => Tr::_('Not active', dictionary: Tr::COMMON_DICTIONARY),
+			'1' => Tr::_('Active', dictionary: Tr::COMMON_DICTIONARY),
 		];
 		
 		$error_messages = [

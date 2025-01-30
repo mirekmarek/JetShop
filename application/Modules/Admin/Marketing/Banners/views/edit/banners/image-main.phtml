@@ -25,7 +25,7 @@ $image_field->input()
 
 ?>
 <div class="card card-body">
-	<h5><?=Tr::_('Main image')?></h5>
+	<h5><?=Tr::_('Main image (%W%px x %H%px)', ['W'=>$group->getMainImageW(), 'H'=>$group->getMainImageH()])?></h5>
 	
 	<?php if($item->isEditable()): ?>
 		<?=$upload_form->start()?>

@@ -94,11 +94,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->view->setVar( 'item', $this->current_item );
 		
 		$this->content->output(
-			$this->getEditorManager()->renderAdd(
-				common_data_fields_renderer: function() {
-					echo $this->view->render('add/common-form-fields');
-				}
-			)
+			$this->getEditorManager()->renderAdd( $form )
 		);
 	}
 

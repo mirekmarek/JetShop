@@ -49,6 +49,7 @@ use JetApplication\Timer_Action_SetPrice;
 )]
 #[Entity_Definition(
 	admin_manager_interface: Admin_Managers_PaymentMethods::class,
+	separate_tab_form_shop_data: true,
 	images: [
 		'icon1' => 'Icon 1',
 		'icon2' => 'Icon 2',

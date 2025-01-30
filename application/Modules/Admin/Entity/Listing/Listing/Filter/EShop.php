@@ -34,7 +34,7 @@ class Listing_Filter_EShop extends Listing_Filter_Abstract
 	protected function getScope() : array
 	{
 		$options = [
-			'' => Tr::_('- all -'),
+			'' => Tr::_('- all -', dictionary: Tr::COMMON_DICTIONARY),
 		];
 		
 		foreach( EShops::getListSorted() as $eshop) {

@@ -4,7 +4,6 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
 
 /**
  * @var MVC_View $this
@@ -25,13 +24,13 @@ $filter_enabled = (bool)$listing->getFilterWhere();
 	<a href="" onclick="Filter.toggle();return false;" class="btn btn-primary">
 		<?=UI::icon('caret-down')->setId('filter_caret_down')->addCustomCssStyle('display:'.(!$filter_enabled?'':'none'))?>
 		<?=UI::icon('caret-up')->setId('filter_caret_up')->addCustomCssStyle('display:'.($filter_enabled?'':'none'))?>
-		<?=Tr::_('Filter', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?>
+		<?=Tr::_('Filter', dictionary: Tr::COMMON_DICTIONARY)?>
 	</a>
 
 	<a href="" onclick="DisplayedColumnsSetting.toggle();return false;" class="btn btn-info">
 		<?=UI::icon('caret-down')->setId('column_schema_settings_caret_down')?>
 		<?=UI::icon('caret-up')->setId('column_schema_settings_caret_up')->addCustomCssStyle('display:none')?>
-		<?=Tr::_('Displayed columns setting', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?>
+		<?=Tr::_('Displayed columns setting', dictionary: Tr::COMMON_DICTIONARY)?>
 	</a>
 	
 </div>

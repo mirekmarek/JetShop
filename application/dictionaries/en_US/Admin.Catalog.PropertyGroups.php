@@ -50,4 +50,9 @@ return [
 	'Please select option' => '',
 	'General' => '',
 	'Please enter name' => '',
+	'Usage' => '',
+	'Description' => '',
+	'Property group description <b>%NAME%</b> has been updated' => '',
+	'Please select file' => '',
+	'Select and upload images' => '',
 ];

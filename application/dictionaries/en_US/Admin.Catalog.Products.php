@@ -251,4 +251,7 @@ return [
 	'Groups:' => '',
 	'Description' => '',
 	'product <b>%ITEM_NAME%</b> has been updated' => '',
+	'Number of available:' => '',
+	'Please upload image' => '',
+	'Product description <b>%NAME%</b> has been updated' => '',
 ];

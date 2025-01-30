@@ -24,6 +24,7 @@ abstract class Core_Entity_Definition extends BaseObject
 	protected ?string $URL_template = null;
 	protected ?array $images = null;
 	protected ?bool $description_mode = null;
+	protected ?bool $separate_tab_form_shop_data = null;
 	
 	/**
 	 * @var Entity_Definition_Property[]
@@ -89,6 +90,11 @@ abstract class Core_Entity_Definition extends BaseObject
 	public function getDescriptionMode(): ?bool
 	{
 		return $this->description_mode;
+	}
+	
+	public function getSeparateTabFormShopData(): ?bool
+	{
+		return $this->separate_tab_form_shop_data;
 	}
 
 	

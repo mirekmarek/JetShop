@@ -45,6 +45,7 @@ use JetApplication\MeasureUnit;
 #[Entity_Definition(
 	admin_manager_interface: Admin_Managers_KindOfProduct::class,
 	description_mode: true,
+	separate_tab_form_shop_data: true,
 	images: [
 		'main' => 'Main image',
 		'pictogram' => 'Pictogram image',
