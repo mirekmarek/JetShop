@@ -11,6 +11,8 @@ namespace JetApplication;
 
 require __DIR__.'/../application/bootstrap_cli_service.php';
 
+
+/*
 $eshop = EShops::get('cz_cs_CZ');
 
 $invoice = Invoice::get(8);
@@ -39,7 +41,7 @@ var_dump( Calendar::getPrevBusinessDate( $eshop, 5, $start_date )->format('Y-m-d
 var_dump( Calendar::getPrevBusinessDate( $eshop, 6, $start_date )->format('Y-m-d') );
 */
 
-var_dump( Calendar::howManyWorkingDays( $eshop, '2024-08-13', '2024-08-26' ) );
+//var_dump( Calendar::howManyWorkingDays( $eshop, '2024-08-13', '2024-08-26' ) );
 
 
 /*
