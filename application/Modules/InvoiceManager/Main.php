@@ -6,7 +6,7 @@
  */
 
 /** @noinspection PhpUndefinedClassInspection */
-namespace JetApplicaTionModule\InvoiceManager;
+namespace JetApplicationModule\InvoiceManager;
 
 
 use Closure;

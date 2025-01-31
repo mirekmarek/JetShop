@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\Events\Order\PersonalReceiptPrepared;
+namespace JetApplicationModule\Events\Order\PersonalReceiptPrepared;
 
 
 use Jet\Tr;

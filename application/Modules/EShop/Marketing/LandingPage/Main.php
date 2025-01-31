@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\EShop\Marketing\LandingPage;
+namespace JetApplicationModule\EShop\Marketing\LandingPage;
 
 
 use Jet\Application_Module;

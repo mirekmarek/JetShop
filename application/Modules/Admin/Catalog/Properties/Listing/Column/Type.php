@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\Admin\Catalog\Properties;
+namespace JetApplicationModule\Admin\Catalog\Properties;
 
 
 use Jet\DataListing_Column;

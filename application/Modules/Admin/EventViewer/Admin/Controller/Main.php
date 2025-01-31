@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\Admin\EventViewer\Admin;
+namespace JetApplicationModule\Admin\EventViewer\Admin;
 
 
 use Jet\Factory_MVC;

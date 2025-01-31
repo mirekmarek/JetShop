@@ -366,7 +366,7 @@ class Installer_Step_Install_Controller extends Installer_Step_Controller
 	{
 		$code = 'default';
 		
-		$base = MVC::getBase('eship');
+		$base = MVC::getBase('eshop');
 		
 		$has_default = false;
 		foreach(Installer::getSelectedEshopLocales() as $locale) {

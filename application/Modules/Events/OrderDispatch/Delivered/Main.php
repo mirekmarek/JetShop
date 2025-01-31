@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\Events\OrderDispatch\Delivered;
+namespace JetApplicationModule\Events\OrderDispatch\Delivered;
 
 
 use JetApplication\OrderDispatch_Event_HandlerModule;

@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\Exports\GoogleShopping;
+namespace JetApplicationModule\Exports\GoogleShopping;
 
 
 use JetApplication\Exports_Module_Controller_ProductSettings;

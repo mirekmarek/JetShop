@@ -6,7 +6,7 @@
  */
 
 /** @noinspection SpellCheckingInspection */
-namespace JetApplicaTionModule\Payment\GP;
+namespace JetApplicationModule\Payment\GP;
 
 
 use Jet\Tr;

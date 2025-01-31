@@ -6,7 +6,7 @@
  */
 
 /** @noinspection SpellCheckingInspection */
-namespace JetApplicaTionModule\MarketplaceIntegration\Heureka;
+namespace JetApplicationModule\MarketplaceIntegration\Heureka;
 
 
 use Jet\Tr;

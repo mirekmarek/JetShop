@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\Events\Complaint\NewGoodsDispatched;
+namespace JetApplicationModule\Events\Complaint\NewGoodsDispatched;
 
 
 use JetApplication\Complaint_Event_HandlerModule;

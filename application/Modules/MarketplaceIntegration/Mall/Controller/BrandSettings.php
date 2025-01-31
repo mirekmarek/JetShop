@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\MarketplaceIntegration\Mall;
+namespace JetApplicationModule\MarketplaceIntegration\Mall;
 
 
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;

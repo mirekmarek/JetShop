@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\EShop\CashDesk;
+namespace JetApplicationModule\EShop\CashDesk;
 
 
 use Jet\Data_DateTime;

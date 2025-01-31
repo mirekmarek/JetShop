@@ -6,7 +6,7 @@
  */
 
 /** @noinspection SpellCheckingInspection */
-namespace JetApplicaTionModule\Payment\GoPay;
+namespace JetApplicationModule\Payment\GoPay;
 
 
 use Jet\Tr;
