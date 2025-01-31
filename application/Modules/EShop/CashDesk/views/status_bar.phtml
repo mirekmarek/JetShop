@@ -4,8 +4,8 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicaTionModule\EShop\CashDesk;
 
+namespace JetApplicaTionModule\EShop\CashDesk;
 
 use Jet\MVC_View;
 
@@ -14,7 +14,6 @@ use Jet\MVC_View;
  * @var CashDesk $cash_desk
  */
 $cash_desk = $this->getRaw('cash_desk');
-
 
 require 'status_bar/'.$cash_desk->getCurrentStep().'.phtml';
 

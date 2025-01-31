@@ -178,7 +178,6 @@ trait Core_Product_Trait_Variants
 			$this->syncVariant( $v );
 		}
 		
-		/** @noinspection PhpParamsInspection */
 		Product_Parameter_Value::syncVariants(
 			$this
 		);
