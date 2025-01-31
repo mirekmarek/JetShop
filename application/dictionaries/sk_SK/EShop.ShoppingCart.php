@@ -21,5 +21,5 @@ return [
 	'To complete the order, it is necessary to agree to the terms and conditions' => 'Pre dokončenie objednávky je potrebné súhlasiť s obchodnými podmienkami',
 	'I disagree with the survey' => 'Nesúhlasím s prieskumom',
 	'I agree with newsletter registration' => 'Súhlasím s registráciou newslettera',
-	'Zľavový kód' => '',
+	'Zľavový kód' => 'Zľavový kód',
 ];

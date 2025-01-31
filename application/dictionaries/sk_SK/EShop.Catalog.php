@@ -22,5 +22,5 @@ return [
 	'Yes' => 'Áno',
 	'Show full description' => 'Zobraziť celý popis',
 	'Cancel filter' => 'Zrušiť filter',
-	'Sorry, this product is no longer available.' => '',
+	'Sorry, this product is no longer available.' => 'Ľutujeme, tento produkt už nie je dostupný.',
 ];
