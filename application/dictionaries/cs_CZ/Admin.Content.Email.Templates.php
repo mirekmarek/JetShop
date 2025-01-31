@@ -61,5 +61,5 @@ return [
 	'Attachments:' => 'Přílohy:',
 	'Download e-mail message file' => 'Stáhnout soubor e-mailové zprávy',
 	'Activate completely' => 'Aktivovat kompletně',
-	'E-mail templates' => '',
+	'E-mail templates' => 'Šablony e-mailů',
 ];

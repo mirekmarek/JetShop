@@ -1,4 +1,4 @@
 <?php
 return [
-	'Do Personal Receipt' => '',
+	'Do Personal Receipt' => 'Proveďte osobní převzetí',
 ];
