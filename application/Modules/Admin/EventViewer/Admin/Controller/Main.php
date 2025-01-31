@@ -5,7 +5,13 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\EventViewer\Admin;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\EventViewer\Admin;
+
 
 use Jet\Factory_MVC;
 use Jet\Http_Request;
@@ -14,9 +20,7 @@ use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	

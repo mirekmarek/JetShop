@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+namespace JetApplicaTionModule\Admin\OrderDispatch\DoDispatch;
+
 
 use Jet\AJAX;
 use Jet\Http_Headers;
@@ -19,9 +19,7 @@ use JetApplication\OrderDispatch;
 use JetApplication\WarehouseManagement_Warehouse;
 use Jet\Navigation_Breadcrumb;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	

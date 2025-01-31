@@ -1,19 +1,17 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Events\OrderDispatch\Sent;
+namespace JetApplicaTionModule\Events\OrderDispatch\Sent;
+
 
 use JetApplication\Order;
 use JetApplication\OrderDispatch_Event_HandlerModule;
 use JetApplication\WarehouseManagement;
 
-/**
- *
- */
+
 class Main extends OrderDispatch_Event_HandlerModule
 {
 	public function handleExternals(): bool

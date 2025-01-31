@@ -567,7 +567,7 @@ class Installer
 		
 		$eshop = Factory_MVC::getBaseInstance();
 		$eshop->setName( 'e-shop' );
-		$eshop->setId( Application_EShop::getBaseId() );
+		$eshop->setId( 'eshop' );
 		
 		$default_added = false;
 		foreach( Installer::getSelectedEshopLocales() as $locale ) {

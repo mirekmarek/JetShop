@@ -1,29 +1,23 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Brands;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Brands;
+
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_Trait;
-use Jet\Application_Module;
 use JetApplication\Admin_Managers;
-use JetApplication\EShopEntity_Basic;
 use JetApplication\Admin_Managers_Brand;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 use JetApplication\Brand;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_Brand
+class Main extends Admin_Managers_Brand
 {
-	use Admin_EntityManager_Trait;
-
 	public const ADMIN_MAIN_PAGE = 'brands';
-
-	public const ACTION_GET = 'get_brand';
-	public const ACTION_ADD = 'add_brand';
-	public const ACTION_UPDATE = 'update_brand';
-	public const ACTION_DELETE = 'delete_brand';
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

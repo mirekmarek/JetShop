@@ -1,31 +1,22 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\ReturnsOfGoods;
+namespace JetApplicaTionModule\Admin\ReturnsOfGoods;
 
-use Jet\Application_Module;
+
 use Jet\Factory_MVC;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_ReturnOfGoods;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\ReturnOfGoods;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_ReturnOfGoods
-{
-	use Admin_EntityManager_Trait;
-	
-	public const ADMIN_MAIN_PAGE = 'returns-of-goods';
 
-	public const ACTION_GET = 'get_return_of_goods';
-	public const ACTION_UPDATE = 'update_return_of_goods';
+class Main extends Admin_Managers_ReturnOfGoods
+{
+	public const ADMIN_MAIN_PAGE = 'returns-of-goods';
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
@@ -41,13 +32,6 @@ class Main extends Application_Module implements Admin_Managers_ReturnOfGoods
 	{
 		return new ReturnOfGoods();
 	}
-	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Return of goods';
-	}
-	
-	
 	
 	public function showReturnOfGoodsStatus( ReturnOfGoods $return_of_goods ): string
 	{

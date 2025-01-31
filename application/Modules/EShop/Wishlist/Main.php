@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\Wishlist;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\Wishlist;
+
 
 use Jet\Application_Module;
 use Jet\MVC_Page_Interface;
@@ -16,9 +22,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
-/**
- *
- */
+
 class Main extends Application_Module implements EShop_Managers_Wishlist, EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;

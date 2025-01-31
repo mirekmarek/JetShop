@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright
- * @license
- * @author
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Catalog\ProductReviews;
+namespace JetApplicaTionModule\Admin\Catalog\ProductReviews;
+
 
 use Jet\Locale;
 use Jet\MVC_View;
@@ -23,5 +23,5 @@ $listing = $this->getRaw('listing');
 
 ?>
 <a href="<?=$listing->getEditUrl( $item );?>"><?=Locale::dateAndTime( $item->getCreated() );?></a>
-<?php
+
 

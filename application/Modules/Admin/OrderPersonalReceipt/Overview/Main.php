@@ -1,28 +1,21 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
+namespace JetApplicaTionModule\Admin\OrderPersonalReceipt\Overview;
 
-use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Interface;
-use JetApplication\Admin_EntityManager_Trait;
+
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\OrderPersonalReceipt;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_EntityManager_Interface
+
+class Main extends Admin_EntityManager_Module
 {
-	use Admin_EntityManager_Trait;
 	
 	public const ADMIN_MAIN_PAGE = 'order-dispatch-overview';
-
-	public const ACTION_GET = 'get_order_dispatch';
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
@@ -38,11 +31,4 @@ class Main extends Application_Module implements Admin_EntityManager_Interface
 	{
 		return new OrderPersonalReceipt();
 	}
-	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Order Personal Receipt dispatch';
-	}
-	
-	
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
@@ -7,7 +6,13 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetApplicationModule\Admin\ManageAccess\Administrators\Roles;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\ManageAccess\Administrators\Roles;
+
 
 use Jet\Logger;
 use JetApplication\Auth_Administrator_Role as Role;
@@ -23,9 +28,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	protected ?MVC_Controller_Router_AddEditDelete $router = null;

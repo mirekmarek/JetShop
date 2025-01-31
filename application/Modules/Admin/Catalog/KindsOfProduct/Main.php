@@ -1,38 +1,25 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
+namespace JetApplicaTionModule\Admin\Catalog\KindsOfProduct;
 
-use Jet\Application_Module;
+
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_KindOfProduct;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 use JetApplication\KindOfProduct;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_KindOfProduct
-{
-	use Admin_EntityManager_Trait;
-	
-	
-	public const ADMIN_MAIN_PAGE = 'kind-of-product';
 
-	public const ACTION_GET = 'get_kind_of_product';
-	public const ACTION_ADD = 'add_kind_of_product';
-	public const ACTION_UPDATE = 'update_kind_of_product';
-	public const ACTION_DELETE = 'delete_kind_of_product';
-	
+class Main extends Admin_Managers_KindOfProduct
+{
+	public const ADMIN_MAIN_PAGE = 'kind-of-product';
 	
 	public function renderSelectWidget( string $on_select,
                                         int $selected_kind_of_product_id=0,

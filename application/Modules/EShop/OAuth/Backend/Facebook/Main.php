@@ -1,12 +1,17 @@
 <?php
-
 /**
  *
  * @copyright 
  * @license  
  * @author  
  */
-namespace JetApplicationModule\EShop\OAuth\Backend\Facebook;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\OAuth\Backend\Facebook;
+
 
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
@@ -21,9 +26,7 @@ use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 
-/**
- *
- */
+
 class Main extends EShop_OAuth_BackendModule implements
 	EShop_ModuleUsingTemplate_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,

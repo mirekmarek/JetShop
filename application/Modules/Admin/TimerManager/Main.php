@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\TimerManager;
+namespace JetApplicaTionModule\Admin\TimerManager;
+
 
 use Jet\Application_Module;
 use Jet\Auth;
@@ -18,9 +18,7 @@ use JetApplication\Application_Admin;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\EShopEntity_HasTimer_Interface;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_Managers_Timer
 {
 	public const ACTION_VIEW_TIMERS = 'view_timers';

@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\Analytics\Service\Internal;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\Analytics\Service\Internal;
+
 
 use Jet\Session;
 use JetApplication\CashDesk;
@@ -23,9 +29,7 @@ use JetApplication\Statistics_Order_SourceLog;
 use JetApplication\Statistics_Product_OrderLog;
 use JetApplication\Statistics_Product_ViewLog;
 
-/**
- *
- */
+
 class Main extends EShop_Analytics_Service
 {
 	protected string $currency_code;

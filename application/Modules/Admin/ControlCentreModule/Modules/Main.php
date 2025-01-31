@@ -1,20 +1,18 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\ControlCentreModule\Modules;
+namespace JetApplicaTionModule\Admin\ControlCentreModule\Modules;
+
 
 use Jet\Application_Module;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_ControlCentre_Module_Interface
 {
 	use Admin_ControlCentre_Module_Trait;

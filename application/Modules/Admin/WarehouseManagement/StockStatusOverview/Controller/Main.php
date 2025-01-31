@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\StockStatusOverview;
+
 
 use Jet\AJAX;
 use Jet\Data_DateTime;
@@ -16,63 +16,19 @@ use Jet\Http_Request;
 use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-
-use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\MVC_Controller_Default;
 use Jet\Navigation_Breadcrumb;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockCard;
 
 
-class Controller_Main extends MVC_Controller_Default
+class Controller_Main extends Admin_EntityManager_Controller
 {
 	
-	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-	protected ?WarehouseManagement_StockCard $stock_card = null;
-	
-	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
-
-
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getEntityNameReadable(): string
 	{
-		if( !$this->router ) {
-			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function($id) {
-					return (bool)($this->stock_card = WarehouseManagement_StockCard::get((int)$id));
-				},
-				[
-					'listing'=> Main::ACTION_GET,
-					'view'   => '',
-					'edit'   => '',
-				]
-			);
-		}
-
-		return $this->router;
-	}
-	
-	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
-	{
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
-		}
-	}
-	
-	public function getListing() : Admin_Managers_EShopEntity_Listing
-	{
-		if(!$this->listing_manager) {
-			$this->listing_manager = Admin_Managers::EntityListing();
-			$this->listing_manager->setUp(
-				$this->module
-			);
-			
-			$this->setupListing();
-		}
-		
-		return $this->listing_manager;
+		return '';
 	}
 	
 	public function setupListing() : void
@@ -127,43 +83,40 @@ class Controller_Main extends MVC_Controller_Default
 		]);
 	}
 	
-	public function listing_Action() : void
-	{
-		$this->setBreadcrumbNavigation();
-		
-		$this->content->output( $this->getListing()->renderListing() );
-	}
-
-
 	public function add_Action() : void
 	{
 	}
 	
-	public function edit_Action() : void
+	public function edit_main_Action() : void
 	{
-		Navigation_Breadcrumb::addURL( $this->stock_card->getAdminTitle() );
+		/**
+		 * @var WarehouseManagement_StockCard $stock_card
+		 */
+		$stock_card = $this->current_item;
 		
-		$this->view->setVar('card', $this->stock_card);
+		Navigation_Breadcrumb::addURL( $stock_card->getAdminTitle() );
+		
+		$this->view->setVar('card', $stock_card);
 		
 		
 		
 		
 		$sector = new Form_Field_Input('sector', '');
-		$sector->setDefaultValue( $this->stock_card->getSector() );
-		$sector->setFieldValueCatcher( function( string $v ) {
-			$this->stock_card->setSector( $v );
+		$sector->setDefaultValue( $stock_card->getSector() );
+		$sector->setFieldValueCatcher( function( string $v ) use ($stock_card) {
+			$stock_card->setSector( $v );
 		} );
 		
 		$rack = new Form_Field_Input('rack', '');
-		$rack->setDefaultValue( $this->stock_card->getRack() );
-		$rack->setFieldValueCatcher( function( string $v ) {
-			$this->stock_card->setRack( $v );
+		$rack->setDefaultValue( $stock_card->getRack() );
+		$rack->setFieldValueCatcher( function( string $v ) use ($stock_card) {
+			$stock_card->setRack( $v );
 		} );
 		
 		$position = new Form_Field_Input('position', '');
-		$position->setDefaultValue( $this->stock_card->getPosition() );
-		$position->setFieldValueCatcher( function( string $v ) {
-			$this->stock_card->setPosition( $v );
+		$position->setDefaultValue( $stock_card->getPosition() );
+		$position->setFieldValueCatcher( function( string $v ) use ($stock_card) {
+			$stock_card->setPosition( $v );
 		} );
 		
 		$change_location_form = new Form('change_location', [
@@ -175,12 +128,12 @@ class Controller_Main extends MVC_Controller_Default
 				UI_messages::success(Tr::_('Location has been changed'));
 				Logger::info(
 					event: 'stock_card_updated',
-					event_message: 'Stock card '.$this->stock_card->getAdminTitle().' updated',
-					context_object_id: $this->stock_card->getId(),
-					context_object_name: $this->stock_card->getAdminTitle(),
-					context_object_data: $this->stock_card
+					event_message: 'Stock card '.$stock_card->getAdminTitle().' updated',
+					context_object_id: $stock_card->getId(),
+					context_object_name: $stock_card->getAdminTitle(),
+					context_object_data: $stock_card
 				);
-				$this->stock_card->save();
+				$stock_card->save();
 				Http_Headers::reload();
 			}
 		} else {
@@ -195,15 +148,15 @@ class Controller_Main extends MVC_Controller_Default
 				$action=='reactivate' &&
 				Main::getCurrentUserCanCancelOrReactivate()
 			) {
-				$this->stock_card->reactivate();
+				$stock_card->reactivate();
 			}
 			
 			if(
 				$action=='cancel' &&
-				$this->stock_card->getInStock()<=0 &&
+				$stock_card->getInStock()<=0 &&
 				Main::getCurrentUserCanCancelOrReactivate()
 			) {
-				$this->stock_card->cancel();
+				$stock_card->cancel();
 			}
 			
 			if(
@@ -212,7 +165,7 @@ class Controller_Main extends MVC_Controller_Default
 			) {
 				UI_messages::success(Tr::_('Stock card data has been calculated'));
 				
-				$this->stock_card->recalculate();
+				$stock_card->recalculate();
 			}
 			
 			if(
@@ -220,7 +173,7 @@ class Controller_Main extends MVC_Controller_Default
 			) {
 				$date = new Data_DateTime( $GET->getString('date') );
 				
-				$this->stock_card->recalculateTillDateTime( $date );
+				$stock_card->recalculateTillDateTime( $date );
 				
 				AJAX::snippetResponse(
 					$this->view->render('status')
@@ -237,6 +190,5 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$this->output('detail');
 	}
-	
 	
 }

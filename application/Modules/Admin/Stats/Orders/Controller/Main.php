@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Stats\Orders;
+namespace JetApplicaTionModule\Admin\Stats\Orders;
+
 
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
@@ -21,9 +21,7 @@ use JetApplication\Order_Status_WaitingForGoodsToBeStocked;
 use JetApplication\Order_Status_WaitingForPayment;
 use JetApplication\Order_Status_Returned;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	/**

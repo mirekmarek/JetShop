@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\WarehouseManagement\StockStatusOverview;
+
 
 use Jet\Data_DateTime;
 use Jet\Form;
@@ -156,7 +162,6 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 			?>
 			<div><?=Locale::float( $ntr ).' '.$m_unit?></div>
 			<?php
-
 			if($ntr>0):
 				$transfers = $card->getRelevantTransfersToAnotherWarehouse();
 				foreach( $transfers as $tr ):

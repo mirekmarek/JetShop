@@ -1,14 +1,20 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetShop;
 
-use JetApplication\Admin_EntityManager_Interface;
+
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Context;
 use JetApplication\OrderPersonalReceipt;
 
-interface Core_Admin_Managers_OrderPersonalReceipt extends Admin_EntityManager_Interface
+abstract class Core_Admin_Managers_OrderPersonalReceipt extends Admin_EntityManager_Module
 {
-	public function showDispatches( Context $context ) : string;
+	abstract public function showDispatches( Context $context ) : string;
 	
-	public function showOrderPersonalReceiptStatus( OrderPersonalReceipt $dispatch ) : string;
+	abstract public function showOrderPersonalReceiptStatus( OrderPersonalReceipt $dispatch ) : string;
 	
 }

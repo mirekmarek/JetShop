@@ -1,21 +1,27 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetShop;
 
-use Jet\Form;
-use JetApplication\Admin_EntityManager_Interface;
 
-interface Core_Admin_Managers_Property extends Admin_EntityManager_Interface
+use Jet\Form;
+use JetApplication\Admin_EntityManager_Module;
+
+abstract class Core_Admin_Managers_Property extends Admin_EntityManager_Module
 {
 	
-	public function showType( string $type ) : string;
+	abstract public function showType( string $type ) : string;
 	
-	public function renderSelectWidget( string $on_select,
+	abstract public function renderSelectWidget( string $on_select,
 	                                                   int $selected_property_id=0,
 	                                                   ?string $only_type_filter=null,
 	                                                   ?bool $only_active_filter=null,
 	                                                   string $name='select_property' ) : string;
 	
-	public function renderProductPropertyEditFormField(
+	abstract public function renderProductPropertyEditFormField(
 		Form $form,
 		int $property_id,
 		string $form_field_name_prefix=''

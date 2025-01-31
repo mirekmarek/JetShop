@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\CalendarManager;
+namespace JetApplicaTionModule\CalendarManager;
+
 
 use Jet\Application_Module;
 use Jet\Data_DateTime;
@@ -19,9 +19,7 @@ use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 
-/**
- *
- */
+
 class Main extends Application_Module implements
 										Calendar_Manager,
 										EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,

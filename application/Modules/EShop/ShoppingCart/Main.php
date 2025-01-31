@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\ShoppingCart;
+namespace JetApplicaTionModule\EShop\ShoppingCart;
+
 
 use Jet\Application_Module;
 use JetApplication\Availabilities;
@@ -17,9 +17,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\ShoppingCart;
 use JetApplication\EShops;
 
-/**
- *
- */
+
 class Main extends Application_Module implements EShop_Managers_ShoppingCart, EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;

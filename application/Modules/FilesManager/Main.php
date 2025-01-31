@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\FilesManager;
+namespace JetApplicaTionModule\FilesManager;
+
 
 use Jet\Application_Module;
 use Jet\IO_Dir;
@@ -17,9 +17,7 @@ use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Files_Manager;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Files_Manager
 {
 	public function deleteFile( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file ): void

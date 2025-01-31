@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Products;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Products;
+
 
 
 use Jet\UI_messages;
@@ -8,9 +14,7 @@ use Jet\Http_Headers;
 use Jet\Tr;
 use JetApplication\Product;
 
-/**
- *
- */
+
 trait Controller_Main_Edit_Parameters
 {
 	public function edit_parameters_Action() : void

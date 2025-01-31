@@ -14,7 +14,6 @@ use Jet\SysConf_Path;
 use JetApplication\Application_Admin;
 use JetApplication\Application_Exports;
 use JetApplication\Application_Services;
-use JetApplication\Application_EShop;
 use JetApplication\EShop_Template;
 use JetApplication\EShopConfig;
 
@@ -91,7 +90,7 @@ class Installer_Step_DirsCheck_Controller extends Installer_Step_Controller
 				'is_required'  => true,
 				'is_writeable' => false,
 			],
-			SysConf_Path::getBases() . Application_EShop::getBaseId() . '/'  => [
+			SysConf_Path::getBases() . 'eshop' . '/'  => [
 				'is_required'  => true,
 				'is_writeable' => false,
 			],

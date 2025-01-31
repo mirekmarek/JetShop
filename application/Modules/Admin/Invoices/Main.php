@@ -1,32 +1,23 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Invoices;
+namespace JetApplicaTionModule\Admin\Invoices;
 
-use Jet\Application_Module;
+
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Invoice;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\Invoice;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_Invoice
+
+class Main extends Admin_Managers_Invoice
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'invoices';
-	
-	public const ACTION_GET = 'get_invoice';
-	public const ACTION_UPDATE = 'update_invoice';
 	
 	public static function getCurrentUserCanCreate(): bool
 	{

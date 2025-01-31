@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\Articles;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\Articles;
+
 
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
@@ -14,9 +20,7 @@ use Jet\Navigation_Breadcrumb;
 use JetApplication\Content_Article_EShopData;
 use JetApplication\EShops;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 

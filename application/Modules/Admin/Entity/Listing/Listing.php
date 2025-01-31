@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\Entity\Listing;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Entity\Listing;
+
 
 use Jet\DataListing_Column;
 use Jet\DataModel_Fetch_Instances;
@@ -7,7 +13,7 @@ use Jet\DataListing;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
 use Jet\MVC_View;
-use JetApplication\Admin_EntityManager_Interface;
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Basic;
@@ -18,14 +24,12 @@ use JetApplication\EShopEntity_HasInternalParams_Interface;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 
-/**
- *
- */
+
 class Listing extends DataListing {
 	
 	
 	protected EShopEntity_Basic|EShopEntity_Admin_Interface $entity;
-	protected Admin_EntityManager_Interface $entity_manager;
+	protected Admin_EntityManager_Module $entity_manager;
 	protected MVC_View $column_view;
 	protected MVC_View $filter_view;
 	
@@ -208,7 +212,7 @@ class Listing extends DataListing {
 	}
 	
 	
-	public function getEntityManager(): Admin_EntityManager_Interface
+	public function getEntityManager(): Admin_EntityManager_Module
 	{
 		return $this->entity_manager;
 	}

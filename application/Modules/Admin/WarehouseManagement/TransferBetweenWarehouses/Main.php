@@ -1,32 +1,20 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
 
-use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Trait;
+
 use JetApplication\Admin_Managers_WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagement_TransferBetweenWarehouses
+
+class Main extends Admin_Managers_WarehouseManagement_TransferBetweenWarehouses
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'transfer-between-warehouses';
-	
-	public const ACTION_GET = 'get_transfer_between_warehouses';
-	public const ACTION_ADD = 'add_transfer_between_warehouses';
-	public const ACTION_UPDATE = 'update_transfer_between_warehouses';
-	public const ACTION_DELETE = 'delete_transfer_between_warehouses';
-	
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

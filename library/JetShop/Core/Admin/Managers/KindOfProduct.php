@@ -1,33 +1,39 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetShop;
 
-use JetApplication\Admin_EntityManager_Interface;
+
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
 
-interface Core_Admin_Managers_KindOfProduct extends Admin_EntityManager_Interface
+abstract class Core_Admin_Managers_KindOfProduct extends Admin_EntityManager_Module
 {
 	
-	public function renderSelectWidget( string $on_select,
+	abstract public function renderSelectWidget( string $on_select,
 	                                    int $selected_kind_of_product_id=0,
 	                                    ?bool $only_active_filter=null,
 	                                    string $name='select_kind_of_product' ) : string;
 	
-	public function renderMarketPlaceIntegrationForm(
+	abstract public function renderMarketPlaceIntegrationForm(
 		MarketplaceIntegration_Module_Controller_KindOfProductSettings $controller
 	) : string;
 	
-	public function renderMarketPlaceIntegrationCategories(
+	abstract public function renderMarketPlaceIntegrationCategories(
 		MarketplaceIntegration_Module_Controller_KindOfProductSettings $controller,
 		string $dialog_selected_category
 	) : string;
 	
 	
-	public function renderExportsForm(
+	abstract public function renderExportsForm(
 		Exports_Module_Controller_KindOfProductSettings $controller
 	) : string;
 	
-	public function renderExportsCategories(
+	abstract public function renderExportsCategories(
 		Exports_Module_Controller_KindOfProductSettings $controller,
 		string $dialog_selected_category
 	) : string;

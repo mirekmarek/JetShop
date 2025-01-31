@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Customer\CustomerSection;
+namespace JetApplicaTionModule\EShop\Customer\CustomerSection;
+
 
 use Jet\Form;
 use Jet\Form_Field_Email;
@@ -20,9 +20,7 @@ use JetApplication\EShops;
 use JetApplication\Customer;
 use JetApplication\Order;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	protected ?UI_tabs $tabs = null;

@@ -1,17 +1,21 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\Events\Complaint\NewUnfinishedComplaint;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Events\Complaint\NewUnfinishedComplaint;
+
 
 use JetApplication\Complaint_Event_HandlerModule;
 
-/**
- *
- */
+
 class Main extends Complaint_Event_HandlerModule
 {
 	

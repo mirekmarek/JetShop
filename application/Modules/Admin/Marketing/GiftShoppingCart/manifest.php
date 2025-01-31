@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_gift_shopping_cart' => 'View gift - shopping cart',
-		'add_gift_shopping_cart' => 'Add new gift - shopping cart',
-		'update_gift_shopping_cart' => 'Update gift - shopping cart',
-		'delete_gift_shopping_cart' => 'Delete gift - shopping cart',
+		'get' => 'View gift - shopping cart',
+		'add' => 'Add new gift - shopping cart',
+		'update' => 'Update gift - shopping cart',
+		'delete' => 'Delete gift - shopping cart',
 	],
 ];

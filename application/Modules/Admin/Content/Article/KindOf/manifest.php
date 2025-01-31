@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_kind_od_article' => 'View suppliers',
-		'add_kind_od_article' => 'Add new supplier',
-		'update_kind_od_article' => 'Update supplier',
-		'delete_kind_od_article' => 'Delete supplier',
+		'get' => 'View kind of article',
+		'add' => 'Add new kind of article',
+		'update' => 'Update kind of article',
+		'delete' => 'Delete kind of article',
 	],
 ];

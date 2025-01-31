@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_stock_verification' => 'Get stock verification',
-		'add_stock_verification' => 'Add stock verification',
-		'update_stock_verification' => 'Update stock verification',
-		'delete_stock_verification' => 'Delete stock verification',
+		'get' => 'Get stock verification',
+		'add' => 'Add stock verification',
+		'update' => 'Update stock verification',
+		'delete' => 'Delete stock verification',
 	],
 ];

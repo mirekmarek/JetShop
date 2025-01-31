@@ -1,74 +1,28 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\ReturnsOfGoods;
+namespace JetApplicaTionModule\Admin\ReturnsOfGoods;
+
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC_Layout;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-
-use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\MVC_Controller_Default;
+use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use Jet\Navigation_Breadcrumb;
 use JetApplication\EMail_Sent;
 use JetApplication\ReturnOfGoods;
 
 
-class Controller_Main extends MVC_Controller_Default
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	
-	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-	protected ?ReturnOfGoods $return = null;
-	
-	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
-
-
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getEntityNameReadable(): string
 	{
-		if( !$this->router ) {
-			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function($id) {
-					return (bool)($this->return = ReturnOfGoods::get((int)$id));
-				},
-				[
-					'listing'=> Main::ACTION_GET,
-					'view'   => Main::ACTION_GET,
-					'edit'   => Main::ACTION_UPDATE,
-				]
-			);
-		}
-
-		return $this->router;
+		return 'Returns of Goods';
 	}
 	
-	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
-	{
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
-		}
-	}
-	
-	public function getListing() : Admin_Managers_EShopEntity_Listing
-	{
-		if(!$this->listing_manager) {
-			$this->listing_manager = Admin_Managers::EntityListing();
-			$this->listing_manager->setUp(
-				$this->module
-			);
-			
-			$this->setupListing();
-		}
-		
-		return $this->listing_manager;
-	}
 	
 	public function setupListing() : void
 	{
@@ -130,25 +84,17 @@ class Controller_Main extends MVC_Controller_Default
 		]);
 		
 	}
-	
-	public function listing_Action() : void
-	{
-		$this->setBreadcrumbNavigation();
-		
-		$this->content->output( $this->getListing()->renderListing() );
-	}
-
 
 	public function add_Action() : void
 	{
 	}
 	
-	public function edit_Action() : void
+	public function edit_main_Action() : void
 	{
 		/**
 		 * @var ReturnOfGoods $return
 		 */
-		$return = $this->return;
+		$return = $this->current_item;
 		
 		if(($sent_email_id=Http_Request::GET()->getInt('show_sent_email'))) {
 			$sent_email = EMail_Sent::load( $sent_email_id );

@@ -1,9 +1,11 @@
 <?php
 /**
- * 
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetShop;
+
 
 use Jet\Application_Module;
 use Jet\Application_Modules;
@@ -24,9 +26,6 @@ use JetApplication\Payment_Method_Option_EShopData;
 use JetApplication\Pricelist;
 use JetApplication\Payment_Method_Price;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'payment_method_eshop_data',
 	database_table_name: 'payment_methods_eshop_data',

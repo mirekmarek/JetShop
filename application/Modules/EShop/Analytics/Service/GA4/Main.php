@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Analytics\Service\GA4;
+namespace JetApplicaTionModule\EShop\Analytics\Service\GA4;
+
 
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
@@ -27,9 +27,7 @@ use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\EShops;
 
-/**
- *
- */
+
 class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
 {
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;

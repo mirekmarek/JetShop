@@ -6,7 +6,13 @@
  * @license  
  * @author  
  */
-namespace JetApplicationModule\InvoiceManager;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\InvoiceManager;
+
 
 use Closure;
 use Jet\Application_Module;

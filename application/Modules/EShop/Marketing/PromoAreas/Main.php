@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\Marketing\PromoAreas;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\Marketing\PromoAreas;
+
 
 use Jet\Application_Module;
 use JetApplication\Marketing_PromoArea;

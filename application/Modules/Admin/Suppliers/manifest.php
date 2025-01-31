@@ -4,9 +4,9 @@ return [
 	'label' => 'Catalog suppliers management',
 	'description' => '',
 	'ACL_actions' => [
-		'get_supplier' => 'View suppliers',
-		'add_supplier' => 'Add new supplier',
-		'update_supplier' => 'Update supplier',
-		'delete_supplier' => 'Delete supplier',
+		'get' => 'View suppliers',
+		'add' => 'Add new supplier',
+		'update' => 'Update supplier',
+		'delete' => 'Delete supplier',
 	],
 ];

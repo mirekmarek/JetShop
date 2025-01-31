@@ -1,89 +1,41 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Invoices;
+namespace JetApplicaTionModule\Admin\Invoices;
+
 
 use Jet\Application;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-
-use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\MVC_Controller_Default;
+use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use Jet\Navigation_Breadcrumb;
 use JetApplication\Invoices;
 use JetApplication\Invoice;
 
 
-class Controller_Main extends MVC_Controller_Default
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	
-	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-	protected ?Invoice $invoice = null;
-	
-	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
-	
-	
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getEntityNameReadable(): string
 	{
-		if( !$this->router ) {
-			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function($id) {
-					return (bool)($this->invoice = Invoice::get((int)$id));
-				},
-				[
-					'listing'=> Main::ACTION_GET,
-					'view'   => Main::ACTION_GET,
-					'edit'   => Main::ACTION_UPDATE,
-					'create_correction_invoice' => Main::ACTION_UPDATE
-				]
-			);
-			
-			$this->router->addAction('create_correction_invoice')
-				->setResolver( function() : bool {
-					if(
-						(!$id = Http_Request::GET()->getInt('id')) ||
-						!($this->invoice = Invoice::get($id)) ||
-						Http_Request::GET()->getString('action')!='create_correction_invoice'
-					) {
-						return false;
-					}
-					
-					return true;
-				} );
-		}
+		return 'Invoice';
+	}
+	
+	
+	public function setupRouter( string $action, string $selected_tab ) : void
+	{
+		parent::setupRouter( $action, $selected_tab );
 		
-		return $this->router;
-	}
-	
-	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
-	{
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
-		}
-	}
-	
-	public function getListing() : Admin_Managers_EShopEntity_Listing
-	{
-		if(!$this->listing_manager) {
-			$this->listing_manager = Admin_Managers::EntityListing();
-			$this->listing_manager->setUp(
-				$this->module
-			);
-			
-			$this->setupListing();
-		}
 		
-		return $this->listing_manager;
+		$this->router->addAction('create_correction_invoice')
+			->setResolver( function() use ($action) : bool {
+				return $this->current_item && $action=='create_correction_invoice';
+			} );
 	}
+	
 	
 	public function setupListing() : void
 	{
@@ -150,26 +102,17 @@ class Controller_Main extends MVC_Controller_Default
 		*/
 	}
 	
-	public function listing_Action() : void
-	{
-		$this->setBreadcrumbNavigation();
-		
-		$output = $this->getListing()->renderListing();
-		
-		$this->content->output( $output );
-	}
-	
 	
 	public function add_Action() : void
 	{
 	}
 	
-	public function edit_Action() : void
+	public function edit_main_Action() : void
 	{
 		/**
 		 * @var Invoice $invoice
 		 */
-		$invoice = $this->invoice;
+		$invoice = $this->current_item;
 		
 		
 		$this->setBreadcrumbNavigation(
@@ -216,7 +159,10 @@ class Controller_Main extends MVC_Controller_Default
 	
 	public function create_correction_invoice_Action() : void
 	{
-		$invoice = $this->invoice;
+		/**
+		 * @var Invoice $invoice
+		 */
+		$invoice = $this->current_item;
 		
 		$this->setBreadcrumbNavigation(
 			Tr::_( 'Create correction invoice for <b>%NUMBER%</b>', [ 'NUMBER' => $invoice->getNumber() ] )

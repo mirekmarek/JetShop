@@ -1,31 +1,20 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\Warehouses;
 
-use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Trait;
+
 use JetApplication\Admin_Managers_WarehouseManagement_Warehouses;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_Warehouse;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagement_Warehouses
-{
-	use Admin_EntityManager_Trait;
-	
-	public const ADMIN_MAIN_PAGE = 'warehouses';
 
-	public const ACTION_GET = 'get_warehouse';
-	public const ACTION_ADD = 'add_warehouse';
-	public const ACTION_UPDATE = 'update_warehouse';
-	public const ACTION_DELETE = 'delete_warehouse';
+class Main extends Admin_Managers_WarehouseManagement_Warehouses
+{
+	public const ADMIN_MAIN_PAGE = 'warehouses';
 	
 	
 	public static function getEntityInstance(): EShopEntity_Basic

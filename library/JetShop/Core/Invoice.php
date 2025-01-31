@@ -1,5 +1,11 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetShop;
+
 
 use Jet\Data_DateTime;
 use Jet\DataModel;
@@ -481,7 +487,7 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 				$fields[] = $number_of_units;
 				
 				$per_unit_with_vat = new Form_Field_Float('/price_per_unit_with_vat/'.$i, '' );
-				$per_unit_with_vat->setDefaultValue( $pricelist->round_WithVAT( -1*$item->getPricePerUnitWithVat() ) );
+				$per_unit_with_vat->setDefaultValue( $pricelist->round_WithVAT( -1*$item->getPricePerUnit_WithVat() ) );
 				$per_unit_with_vat->input()->setDataAttribute('i', $i);
 				$per_unit_with_vat->input()->setDataAttribute('vat', $item->getVatRate());
 				$per_unit_with_vat->input()->setDataAttribute('round_with_vat', $pricelist->getRoundPrecision_WithVAT());
@@ -491,7 +497,7 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 				$fields[] = $per_unit_with_vat;
 				
 				$per_unit_without_vat = new Form_Field_Float('/price_per_unit_without_vat/'.$i, '' );
-				$per_unit_without_vat->setDefaultValue( $pricelist->round_WithoutVAT( -1*$item->getPricePerUnitWithoutVat() ) );
+				$per_unit_without_vat->setDefaultValue( $pricelist->round_WithoutVAT( -1*$item->getPricePerUnit_WithoutVat() ) );
 				$per_unit_without_vat->input()->setDataAttribute('i', $i);
 				$per_unit_without_vat->input()->setDataAttribute('vat', $item->getVatRate());
 				$per_unit_without_vat->input()->setDataAttribute('round_with_vat', $pricelist->getRoundPrecision_WithVAT());
@@ -517,12 +523,12 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 				$fields[] = $vat_rate;
 				
 				$total_amount_without_vat = new Form_Field_Float('/total_amount_without_vat/'.$i, '' );
-				$total_amount_without_vat->setDefaultValue( $pricelist->round_WithoutVAT( -1*$item->getTotalAmountWithoutVat() ) );
+				$total_amount_without_vat->setDefaultValue( $pricelist->round_WithoutVAT( -1*$item->getTotalAmount_WithoutVat() ) );
 				$total_amount_without_vat->setIsReadonly( true );
 				$fields[] = $total_amount_without_vat;
 				
 				$total_amount_with_vat = new Form_Field_Float('/total_amount_with_vat/'.$i, '' );
-				$total_amount_with_vat->setDefaultValue( $pricelist->round_WithVAT( -1*$item->getTotalAmountWithVat() ) );
+				$total_amount_with_vat->setDefaultValue( $pricelist->round_WithVAT( -1*$item->getTotalAmount_WithVat() ) );
 				$total_amount_with_vat->setIsReadonly( true );
 				$fields[] = $total_amount_with_vat;
 			}

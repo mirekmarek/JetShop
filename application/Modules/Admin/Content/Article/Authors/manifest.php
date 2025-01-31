@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_author' => 'View authors',
-		'add_author' => 'Add new author',
-		'update_author' => 'Update author',
-		'delete_author' => 'Delete author',
+		'get' => 'View authors',
+		'add' => 'Add new author',
+		'update' => 'Update author',
+		'delete' => 'Delete author',
 	],
 ];

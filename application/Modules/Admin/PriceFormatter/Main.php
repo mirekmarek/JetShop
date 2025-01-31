@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\PriceFormatter;
+namespace JetApplicaTionModule\Admin\PriceFormatter;
+
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
@@ -15,9 +15,7 @@ use JetApplication\Currency;
 use JetApplication\EShopEntity_Price;
 use JetApplication\Pricelist;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_Managers_PriceFormatter
 {
 	

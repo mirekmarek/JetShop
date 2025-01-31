@@ -1,8 +1,9 @@
 <?php
 /**
- * 
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetShop;
 
 use Jet\DataModel;
@@ -15,9 +16,6 @@ use JetApplication\EMailMarketing_Subscribe_Log;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'mailing_subscribe_log',
 	database_table_name: 'mailing_subscribe_log',

@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\Exports\Heureka;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Exports\Heureka;
+
 
 use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
@@ -28,9 +34,7 @@ use JetApplication\EShops;
 use JetApplication\EShop;
 use SimpleXMLElement;
 
-/**
- *
- */
+
 class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
 {
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;

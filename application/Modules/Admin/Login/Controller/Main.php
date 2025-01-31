@@ -5,7 +5,13 @@
  *
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Login;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Login;
+
 
 use Jet\Logger;
 use Jet\Session;
@@ -20,9 +26,7 @@ use Jet\Translator;
 
 use JetApplication\Auth_Administrator_User as User;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	

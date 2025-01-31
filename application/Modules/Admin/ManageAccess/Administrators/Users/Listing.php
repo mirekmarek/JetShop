@@ -6,7 +6,13 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
-namespace JetApplicationModule\Admin\ManageAccess\Administrators\Users;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\ManageAccess\Administrators\Users;
+
 
 use JetApplication\Auth_Administrator_User as User;
 
@@ -15,9 +21,7 @@ use Jet\MVC_View;
 use Jet\DataListing;
 
 
-/**
- *
- */
+
 class Listing extends DataListing
 {
 	

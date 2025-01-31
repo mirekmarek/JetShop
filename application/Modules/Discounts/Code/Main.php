@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Discounts\Code;
+namespace JetApplicaTionModule\Discounts\Code;
+
 
 use Jet\Form;
 use Jet\Form_Field;
@@ -23,9 +23,7 @@ use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\EShop_Managers;
 
-/**
- *
- */
+
 class Main extends Discounts_Module implements Discounts_Code_Module
 {
 	public const DISCOUNT_MODULE = 'Code';

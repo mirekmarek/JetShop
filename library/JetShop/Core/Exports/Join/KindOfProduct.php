@@ -1,8 +1,9 @@
 <?php
 /**
- * 
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetShop;
 
 use Jet\DataModel;
@@ -11,9 +12,6 @@ use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'exports_join_kind_of_product',
 	database_table_name: 'exports_join_kind_of_product',

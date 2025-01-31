@@ -5,15 +5,19 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\EventViewer\Exports;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\EventViewer\Exports;
+
 
 use Jet\DataListing;
 use Jet\DataModel_Fetch_Instances;
 use Jet\MVC_View;
 
-/**
- *
- */
+
 class Listing extends DataListing {
 	
 	protected MVC_View $column_view;

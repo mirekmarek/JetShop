@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\CashDesk;
+namespace JetApplicaTionModule\EShop\CashDesk;
+
 
 use Jet\Application_Module;
 use JetApplication\Admin_ControlCentre;
@@ -21,9 +21,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShops;
 
-/**
- *
- */
+
 class Main extends Application_Module implements
 	EShop_Managers_CashDesk,
 	EShop_ModuleUsingTemplate_Interface,

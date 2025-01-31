@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\SysServices\Manager;
+namespace JetApplicaTionModule\SysServices\Manager;
+
 
 use Error;
 use Jet\Application;
@@ -34,9 +34,7 @@ use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Manager;
 use JetApplication\EShopConfig_ModuleConfig_General;
 
-/**
- *
- */
+
 class Main extends SysServices_Manager implements
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface

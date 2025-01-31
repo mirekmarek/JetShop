@@ -1,71 +1,24 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\OrderDispatch\Overview;
+namespace JetApplicaTionModule\Admin\OrderDispatch\Overview;
+
 
 use Jet\Http_Headers;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-
-use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\MVC_Controller_Default;
-use Jet\Navigation_Breadcrumb;
+use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Order;
-use JetApplication\OrderDispatch;
 
 
-class Controller_Main extends MVC_Controller_Default
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	
-	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-	protected ?OrderDispatch $order_dispatch = null;
-	
-	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
-
-
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getEntityNameReadable(): string
 	{
-		if( !$this->router ) {
-			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function($id) {
-					return (bool)($this->order_dispatch = OrderDispatch::get((int)$id));
-				},
-				[
-					'listing'=> Main::ACTION_GET,
-					'view'   => '',
-					'edit'   => '',
-				]
-			);
-		}
-
-		return $this->router;
+		return 'Order dispatch';
 	}
 	
-	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
-	{
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
-		}
-	}
-	
-	public function getListing() : Admin_Managers_EShopEntity_Listing
-	{
-		if(!$this->listing_manager) {
-			$this->listing_manager = Admin_Managers::EntityListing();
-			$this->listing_manager->setUp(
-				$this->module
-			);
-			
-			$this->setupListing();
-		}
-		
-		return $this->listing_manager;
-	}
 	
 	public function setupListing() : void
 	{
@@ -143,21 +96,14 @@ class Controller_Main extends MVC_Controller_Default
 		
 	}
 	
-	public function listing_Action() : void
-	{
-		$this->setBreadcrumbNavigation();
-		
-		$this->content->output( $this->getListing()->renderListing() );
-	}
-
 
 	public function add_Action() : void
 	{
 	}
 	
-	public function edit_Action() : void
+	public function edit_main_Action() : void
 	{
-		Http_Headers::movedTemporary( $this->order_dispatch->getEditUrl() );
+		Http_Headers::movedTemporary( $this->current_item->getEditUrl() );
 	}
 	
 	

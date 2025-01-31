@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Customer\Login;
+namespace JetApplicaTionModule\EShop\Customer\Login;
+
 
 use Jet\AJAX;
 use Jet\Auth;
@@ -20,9 +20,7 @@ use Jet\UI_messages;
 use JetApplication\EShop_Pages;
 use JetApplication\Customer;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	protected ?MVC_Controller_Router $router = null;

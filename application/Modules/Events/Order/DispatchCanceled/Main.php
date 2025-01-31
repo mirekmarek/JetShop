@@ -1,19 +1,23 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\Events\Order\DispatchCanceled;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Events\Order\DispatchCanceled;
+
 
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order_Event_HandlerModule;
 use JetApplication\OrderDispatch;
 
-/**
- *
- */
+
 class Main extends Order_Event_HandlerModule
 {
 	public function sendNotifications(): bool

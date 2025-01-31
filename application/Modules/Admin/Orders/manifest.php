@@ -6,7 +6,7 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_order' => 'Get order data',
-		'update_order' => 'Update order',
+		'get' => 'Get order data',
+		'update' => 'Update order',
 	],
 ];

@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
+
 
 use Jet\Http_Request;
 use Jet\Mvc_View;
@@ -28,7 +34,6 @@ echo UI::button(Tr::_('Goto next pending (alt+n)'))->setClass(UI_button::CLASS_I
 </div>
 
 <?php
-
 if(in_array($dispatch->getStatus(), [
 	OrderPersonalReceipt::STATUS_IN_PROGRESS,
 	OrderPersonalReceipt::STATUS_PREPARED,

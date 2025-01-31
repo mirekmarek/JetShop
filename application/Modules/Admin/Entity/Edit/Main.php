@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @copyright
- * @license
- * @author
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+namespace JetApplicaTionModule\Admin\Entity\Edit;
 
-namespace JetApplicationModule\Admin\Entity\Edit;
 
 use Jet\Application_Module;
 use Jet\Application_Module_Manifest;
@@ -30,9 +29,7 @@ use JetApplication\EShop;
 use JetApplication\EShops;
 use Closure;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
 {
 	protected null|EShopEntity_Basic|EShopEntity_Admin_WithEShopData_Interface $item = null;

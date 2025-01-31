@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Stats\CookieConsents;
+namespace JetApplicaTionModule\Admin\Stats\CookieConsents;
+
 
 use Jet\Application;
 use Jet\Data_DateTime;
@@ -18,9 +18,7 @@ use JetApplication\EShop_CookieSettings_Evidence_Disagree;
 use JetApplication\EShops;
 use XLSXWriter\XLSXWriter;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 

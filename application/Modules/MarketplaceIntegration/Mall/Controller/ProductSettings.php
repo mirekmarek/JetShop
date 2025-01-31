@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright
- * @license
- * @author
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\MarketplaceIntegration\Mall;
+namespace JetApplicaTionModule\MarketplaceIntegration\Mall;
+
 
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
@@ -17,9 +17,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 
-/**
- *
- */
+
 class Controller_ProductSettings extends MarketplaceIntegration_Module_Controller_ProductSettings
 {
 	

@@ -347,4 +347,5 @@ return [
 	'Handed over - %DATE_TIME%' => '',
 	'CSV' => '',
 	'XLSX' => '',
+	'Paid:' => '',
 ];

@@ -1,6 +1,11 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Carrier\PPL;
 
-namespace JetApplicationModule\Carrier\PPL;
 
 use Jet\Form;
 use Jet\Form_Renderer;
@@ -43,7 +48,6 @@ echo $form->field('URL_JSON_branches');
 		</div>
 	</div>
 	<?php
-
 echo $form->field('courier_packaging_has_dimensions');
 echo $form->field('courier_packaging_has_weight');
 
@@ -56,7 +60,6 @@ echo $form->field('courier_packaging_has_weight');
 		</div>
 	</div>
 	<?php
-
 echo $form->field('delivery_point_packaging_has_dimensions');
 echo $form->field('delivery_point_packaging_has_weight');
 ?>
@@ -68,7 +71,6 @@ echo $form->field('delivery_point_packaging_has_weight');
 		</div>
 	</div>
 	<?php
-
 echo $form->field('box_packaging_has_dimensions');
 echo $form->field('box_packaging_has_weight');
 ?>

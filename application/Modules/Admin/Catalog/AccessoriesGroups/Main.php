@@ -1,32 +1,18 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Catalog\AccessoriesGroups;
+namespace JetApplicaTionModule\Admin\Catalog\AccessoriesGroups;
 
-use Jet\Application_Module;
 use JetApplication\Accessories_Group;
-use JetApplication\EShopEntity_Basic;
 use JetApplication\Admin_Managers_AccessoriesGroups;
-use JetApplication\Admin_EntityManager_Trait;
+use JetApplication\EShopEntity_Basic;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_AccessoriesGroups
+class Main extends Admin_Managers_AccessoriesGroups
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'accesories-groups';
-	
-	public const ACTION_GET = 'get_accessories_group';
-	public const ACTION_ADD = 'add_accessories_group';
-	public const ACTION_UPDATE = 'update_accessories_group';
-	public const ACTION_DELETE = 'delete_accessories_group';
-	
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

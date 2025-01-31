@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_content_info_box' => 'Get info box data',
-		'add_content_info_box' => 'Add new info box',
-		'update_content_info_box' => 'Update info box',
-		'delete_content_info_box' => 'Delete info box',
+		'get' => 'Get info box data',
+		'add' => 'Add new info box',
+		'update' => 'Update info box',
+		'delete' => 'Delete info box',
 	],
 ];

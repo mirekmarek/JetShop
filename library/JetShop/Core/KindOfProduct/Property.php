@@ -1,8 +1,9 @@
 <?php
 /**
- * 
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetShop;
 
 use Jet\DataModel;
@@ -12,10 +13,6 @@ use Jet\DataModel_Related_1toN;
 
 use JetApplication\KindOfProduct;
 
-
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'kind_of_product_property',
 	database_table_name: 'kind_of_product_property',

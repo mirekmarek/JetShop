@@ -1,32 +1,20 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\LossOrDestruction;
 
-use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Trait;
+
 use JetApplication\Admin_Managers_WarehouseManagement_LossOrDestruction;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagement_LossOrDestruction
+
+class Main extends Admin_Managers_WarehouseManagement_LossOrDestruction
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'loss-or-destruction';
-	
-	public const ACTION_GET = 'get_loss_or_destruction';
-	public const ACTION_ADD = 'add_loss_or_destruction';
-	public const ACTION_UPDATE = 'update_loss_or_destruction';
-	public const ACTION_DELETE = 'delete_loss_or_destruction';
-	
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

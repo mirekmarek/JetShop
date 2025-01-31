@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\InvoicesInAdvance;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\InvoicesInAdvance;
+
 
 use Jet\Locale;
 use Jet\Tr;
@@ -106,18 +112,18 @@ $has_VAT = $invoice->hasVAT();
 
 
 
-						<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $set_item->getPricePerUnitWithoutVat() )?></td>
+						<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $set_item->getPricePerUnit_WithoutVat() )?></td>
 						<?php if($has_VAT): ?>
-							<td><?=$price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $set_item->getPricePerUnitVat() )?></td>
+							<td><?=$price_formatter->formatWithCurrency_VAT( $invoice->getCurrency(), $set_item->getPricePerUnit_Vat() )?></td>
 						<?php endif; ?>
 						<td><?=$item->getVatRate()?>%</td>
 						
 						<?php if($has_VAT): ?>
-							<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $set_item->getPricePerUnitWithVat()*$item->getNumberOfUnits() )?></td>
+							<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $set_item->getPricePerUnit_WithVat()*$item->getNumberOfUnits() )?></td>
 						<?php endif; ?>
-						<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $set_item->getTotalAmountWithoutVat()*$item->getNumberOfUnits() )?></td>
+						<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $invoice->getCurrency(), $set_item->getTotalAmount_WithoutVat()*$item->getNumberOfUnits() )?></td>
 						<?php if($has_VAT): ?>
-							<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $set_item->getTotalAmountWithVat()*$item->getNumberOfUnits() )?></td>
+							<td><?=$price_formatter->formatWithCurrency_WithVAT( $invoice->getCurrency(), $set_item->getTotalAmount_WithVat()*$item->getNumberOfUnits() )?></td>
 						<?php endif; ?>
 						
 						

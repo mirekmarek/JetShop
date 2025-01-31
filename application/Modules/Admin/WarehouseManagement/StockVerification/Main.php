@@ -1,31 +1,20 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\StockVerification;
 
-use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Trait;
+
 use JetApplication\Admin_Managers_WarehouseManagement_StockVerification;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_StockVerification;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagement_StockVerification
+
+class Main extends Admin_Managers_WarehouseManagement_StockVerification
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'stock-verification';
-	
-	public const ACTION_GET = 'get_stock_verification';
-	public const ACTION_ADD = 'add_stock_verification';
-	public const ACTION_UPDATE = 'update_stock_verification';
-	public const ACTION_DELETE = 'delete_stock_verification';
 	
 	
 	public static function getEntityInstance(): EShopEntity_Basic

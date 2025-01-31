@@ -1,12 +1,17 @@
 <?php
-
 /**
  *
  * @copyright 
  * @license  
  * @author  
  */
-namespace JetApplicationModule\WarehouseManagement\Manage;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\WarehouseManagement\Manage;
+
 
 use Jet\Application_Module;
 use Jet\Data_DateTime;
@@ -29,9 +34,7 @@ use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
-/**
- *
- */
+
 class Main extends Application_Module implements WarehouseManagement_Manager
 {
 	public function actualizeProductsAvailability( array $product_ids ): void

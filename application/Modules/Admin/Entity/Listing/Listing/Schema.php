@@ -3,7 +3,13 @@
  * 
  */
 
-namespace JetApplicationModule\Admin\Entity\Listing;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Entity\Listing;
+
 
 use Jet\DataListing_Column;
 use Jet\DataModel;
@@ -17,9 +23,7 @@ use Jet\Form_Field_Input;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 
-/**
- *
- */
+
 #[DataModel_Definition(
 	name: 'listing_schema',
 	database_table_name: 'listing_schema',

@@ -1,19 +1,23 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\OAuth\Manager;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\OAuth\Manager;
+
 
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use JetApplication\EShop_OAuth_BackendModule;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	protected EShop_OAuth_BackendModule $current_module;

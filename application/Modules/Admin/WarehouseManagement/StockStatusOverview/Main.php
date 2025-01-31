@@ -1,33 +1,26 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\StockStatusOverview;
 
-use Jet\Application_Module;
+
 use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
 use JetApplication\Admin_Managers_WarehouseManagement_Overview;
 use JetApplication\WarehouseManagement_StockCard;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_WarehouseManagement_Overview
-{
-	use Admin_EntityManager_Trait;
-	
-	public const ADMIN_MAIN_PAGE = 'stock-status-overview';
 
-	public const ACTION_GET = 'get_stock_card';
+class Main extends Admin_Managers_WarehouseManagement_Overview
+{
+	public const ADMIN_MAIN_PAGE = 'stock-status-overview';
+	
 	public const ACTION_CHANGE_LOCATION = 'change_location';
 	public const ACTION_CANCEL_OR_REACTIVATE = 'cancel_or_reactivate';
 	public const ACTION_RECALCULATE = 'recalculate';

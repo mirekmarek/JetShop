@@ -1,6 +1,11 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\MarketplaceIntegration\Heureka;
 
-namespace JetApplicationModule\MarketplaceIntegration\Heureka;
 
 use Jet\Form;
 use Jet\Form_Renderer;
@@ -52,11 +57,9 @@ $saveBtn = function() {
 <div class="card card-body">
 <h3><?=Tr::_('Heureka API')?></h3>
 <?php
-
 foreach( UI_messages::get(context: 'CC') as $message ):
 	echo $message;
 endforeach;
-
 
 echo $main_form->getCommonMessage();
 echo $main_form->start();

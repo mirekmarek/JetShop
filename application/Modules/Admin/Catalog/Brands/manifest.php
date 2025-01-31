@@ -4,9 +4,9 @@ return [
 	'label' => 'Catalog brands management',
 	'description' => '',
 	'ACL_actions' => [
-		'get_brand' => 'View brands',
-		'add_brand' => 'Add new brand',
-		'update_brand' => 'Update brand',
-		'delete_brand' => 'Delete brand',
+		'get' => 'View brands',
+		'add' => 'Add new brand',
+		'update' => 'Update brand',
+		'delete' => 'Delete brand',
 	],
 ];

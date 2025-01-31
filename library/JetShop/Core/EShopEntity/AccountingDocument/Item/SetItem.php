@@ -1,5 +1,11 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetShop;
+
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -269,17 +275,17 @@ abstract class Core_EShopEntity_AccountingDocument_Item_SetItem extends DataMode
 		return $this->price_per_unit;
 	}
 	
-	public function getPricePerUnitWithVat(): float
+	public function getPricePerUnit_WithVat(): float
 	{
 		return $this->price_per_unit_with_vat;
 	}
 	
-	public function getPricePerUnitWithoutVat(): float
+	public function getPricePerUnit_WithoutVat(): float
 	{
 		return $this->price_per_unit_without_vat;
 	}
 	
-	public function getPricePerUnitVat(): float
+	public function getPricePerUnit_Vat(): float
 	{
 		return $this->price_per_unit_vat;
 	}
@@ -290,17 +296,17 @@ abstract class Core_EShopEntity_AccountingDocument_Item_SetItem extends DataMode
 		return $this->total_amount;
 	}
 	
-	public function getTotalAmountWithVat(): float
+	public function getTotalAmount_WithVat(): float
 	{
 		return $this->total_amount_with_vat;
 	}
 	
-	public function getTotalAmountWithoutVat(): float
+	public function getTotalAmount_WithoutVat(): float
 	{
 		return $this->total_amount_without_vat;
 	}
 	
-	public function getTotalAmountVat(): float
+	public function getTotalAmount_Vat(): float
 	{
 		return $this->total_amount_vat;
 	}

@@ -1,27 +1,21 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
+namespace JetApplicaTionModule\Admin\OrderDispatch\DoDispatch;
 
-use Jet\Application_Module;
+
 use Jet\Factory_MVC;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_OrderDispatch;
 use JetApplication\Context;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\OrderDispatch;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_OrderDispatch
+
+class Main extends Admin_Managers_OrderDispatch
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'do-dispatch';
 	
 	public function showDispatches( Context $context ) : string
@@ -58,9 +52,5 @@ class Main extends Application_Module implements Admin_Managers_OrderDispatch
 	{
 		return new OrderDispatch();
 	}
-	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Order dispatch';
-	}
+
 }

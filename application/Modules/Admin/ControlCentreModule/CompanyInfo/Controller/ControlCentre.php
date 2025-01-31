@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\ControlCentreModule\CompanyInfo;
+namespace JetApplicaTionModule\Admin\ControlCentreModule\CompanyInfo;
+
 
 use Jet\Http_Headers;
 use Jet\Tr;
@@ -15,9 +15,7 @@ use JetApplication\Admin_Managers;
 use JetApplication\Application_Admin;
 use JetApplication\CompanyInfo;
 
-/**
- *
- */
+
 class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 {
 

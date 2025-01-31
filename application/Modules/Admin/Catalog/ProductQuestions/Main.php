@@ -1,33 +1,20 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
+namespace JetApplicaTionModule\Admin\Catalog\ProductQuestions;
 
-use Jet\Application_Module;
-use JetApplication\Admin_EntityManager_Trait;
+
 use JetApplication\Admin_Managers_ProductQuestions;
-use JetApplication\EMail_TemplateProvider;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\ProductQuestion;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_ProductQuestions, EMail_TemplateProvider
+
+class Main extends Admin_Managers_ProductQuestions
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'product-questions';
-	
-	public const ACTION_GET = 'get';
-	public const ACTION_ADD = 'add';
-	public const ACTION_UPDATE = 'update';
-	public const ACTION_DELETE = 'delete';
-	
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

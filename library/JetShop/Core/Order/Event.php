@@ -1,8 +1,9 @@
 <?php
 /**
- * 
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetShop;
 
 use Jet\Application_Modules;
@@ -16,9 +17,6 @@ use JetApplication\Order_Event_HandlerModule;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'order_event',
 	database_table_name: 'orders_events',

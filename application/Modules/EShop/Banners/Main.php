@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Banners;
+namespace JetApplicaTionModule\EShop\Banners;
+
 
 use Jet\Application_Module;
 use JetApplication\Marketing_Banner;
@@ -13,9 +13,7 @@ use JetApplication\Marketing_BannerGroup;
 use JetApplication\EShop_Managers_Banners;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-/**
- *
- */
+
 class Main extends Application_Module implements EShop_Managers_Banners
 {
 	use EShop_ModuleUsingTemplate_Trait;

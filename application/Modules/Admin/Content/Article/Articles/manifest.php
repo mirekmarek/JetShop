@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_article' => 'View articles',
-		'add_article' => 'Add new article',
-		'update_article' => 'Update article',
-		'delete_article' => 'Delete article',
+		'get' => 'View articles',
+		'add' => 'Add new article',
+		'update' => 'Update article',
+		'delete' => 'Delete article',
 	],
 ];

@@ -1,30 +1,28 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Products;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Products;
+
 
 use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use Jet\Application_Module;
+use JetApplication\Admin_Managers_Product;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Product;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\Exports_Module_Controller_ProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 
 
-class Main extends Application_Module implements Admin_Managers_Product
+class Main extends Admin_Managers_Product
 {
-	use Admin_EntityManager_Trait;
-
 	public const ADMIN_MAIN_PAGE = 'products';
 
-	public const ACTION_GET = 'get_product';
-	public const ACTION_ADD = 'add_product';
-	public const ACTION_UPDATE = 'update_product';
-	public const ACTION_DELETE = 'delete_product';
 	public const ACTION_SET_PRICE = 'set_price';
 	public const ACTION_SET_AVAILABILITY = 'set_availability';
 	

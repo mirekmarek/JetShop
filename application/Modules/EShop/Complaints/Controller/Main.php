@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Complaints;
+namespace JetApplicaTionModule\EShop\Complaints;
+
 
 use Jet\AJAX;
 use Jet\Form;
@@ -24,9 +24,7 @@ use JetApplication\Product_EShopData;
 use JetApplication\EShops;
 use JetApplication\Complaint;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 

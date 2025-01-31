@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright
- * @license
- * @author
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 namespace JetShop;
+
 
 use Jet\Application_Module;
 use Jet\Form;
@@ -21,7 +21,7 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\UI_tabs;
 
-use JetApplication\Admin_EntityManager_Interface;
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Admin_Managers;
@@ -37,15 +37,11 @@ use JetApplication\EShop;
 use JetApplication\EShops;
 use Closure;
 
-/**
- *
- */
 abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Default
 {
 	
 	/**
-	 * @var Application_Module|null|Admin_EntityManager_Interface
-	 * @noinspection PhpDocFieldTypeMismatchInspection
+	 * @var Admin_EntityManager_Module|null
 	 */
 	protected ?Application_Module $module = null;
 	
@@ -186,47 +182,59 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function setupRouter( string $action, string $selected_tab ) : void
 	{
-		$this->router->setDefaultAction('listing', $this->module::ACTION_GET);
+		$this->router->setDefaultAction('listing');
 		$this->router->getAction('listing')->setResolver(function() use ($action) {
 			return (!$this->current_item && !$action) ;
 		});
 		
-		$this->router->addAction('add', $this->module::ACTION_ADD)
+		$this->router->addAction('add')
 			->setResolver(function() use ($action) {
 				return ($action=='add' && !$this->current_item);
 			})
 			->setURICreator(function() {
 				return Http_Request::currentURI( ['action' => 'add'], ['id', 'page'] );
-			});
+			})
+			->setAuthorizer( function() {
+				return $this->module::getCurrentUserCanCreate();
+			} );
 		
-		$this->router->addAction('delete', $this->module::ACTION_DELETE)
+		$this->router->addAction('delete')
 			->setResolver(function() use ($action) {
 				return $this->current_item && $action=='delete';
 			})
 			->setURICreator(function( int $id ) {
 				return Http_Request::currentURI( ['id'=>$id, 'action'=>'delete'], ['page'] );
-			});
+			})
+			->setAuthorizer( function() {
+				return $this->module::getCurrentUserCanDelete();
+			} );
 		
 		
-		$this->router->addAction('edit_main', $this->module::ACTION_UPDATE)
+		$this->router->addAction('edit_main')
 			->setResolver(function() use ($action, $selected_tab) {
 				return $this->current_item && $selected_tab=='main' && $action=='';
 			})
 			->setURICreator(function( int $id ) {
 				return Http_Request::currentURI( ['id'=>$id], ['page','action'] );
-			});
+			})
+			->setAuthorizer( function() {
+				return $this->module::getCurrentUserCanEdit();
+			} );
 		
 		if(
 			$this->current_item instanceof EShopEntity_Admin_WithEShopData_Interface &&
 			$this->current_item->getSeparateTabFormShopData()
 		) {
-			$this->router->addAction('edit_description', $this->module::ACTION_UPDATE)
+			$this->router->addAction('edit_description')
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->current_item && $selected_tab=='description' && $action=='';
 				})
 				->setURICreator(function( int $id ) {
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'description'], ['action'] );
-				});
+				})
+				->setAuthorizer( function() {
+					return $this->module::getCurrentUserCanEdit();
+				} );
 		}
 		
 		
@@ -235,25 +243,31 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 			$this->current_item instanceof EShopEntity_HasImageGallery_Interface
 		)
 		{
-			$this->router->addAction('edit_images', $this->module::ACTION_UPDATE)
+			$this->router->addAction('edit_images')
 				->setResolver(function() use ($action, $selected_tab) {
 					return $this->current_item && $selected_tab=='images' && $action=='';
 				})
 				->setURICreator(function( int $id ) {
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'images'], ['action'] );
-				});
+				})
+				->setAuthorizer( function() {
+					return $this->module::getCurrentUserCanEdit();
+				} );
 		}
 		
 		
 		if($this->current_item instanceof EShopEntity_HasProductsRelation_Interface) {
-			$this->router->addAction('edit_filter', $this->module::ACTION_UPDATE)
+			$this->router->addAction('edit_filter')
 				->setResolver( function() use ($action, $selected_tab) {
 					return $this->current_item && $selected_tab=='filter';
 				} );
 			
-			$this->router->addAction('edit_products', $this->module::ACTION_UPDATE)
+			$this->router->addAction('edit_products')
 				->setResolver( function() use ($action, $selected_tab) {
 					return $this->current_item && $selected_tab=='products';
+				} )
+				->setAuthorizer( function() {
+					return $this->module::getCurrentUserCanEdit();
 				} );
 		}
 		

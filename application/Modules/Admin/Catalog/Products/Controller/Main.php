@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Products;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Products;
+
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -18,9 +24,7 @@ use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_Price;
 
-/**
- *
- */
+
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	use Controller_Main_Edit_Files;

@@ -1,73 +1,22 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Customers;
+namespace JetApplicaTionModule\Admin\Customers;
 
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-use JetApplication\Customer as Customer;
 
-use Jet\MVC_Controller_Router_AddEditDelete;
-use Jet\MVC_Controller_Default;
+use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use Jet\Navigation_Breadcrumb;
 
-/**
- *
- */
-class Controller_Main extends MVC_Controller_Default
+
+class Controller_Main extends Admin_EntityManager_Controller
 {
-	protected ?MVC_Controller_Router_AddEditDelete $router = null;
-
-	protected ?Customer $customer = null;
 	
-	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
-	
-	public function getControllerRouter() : MVC_Controller_Router_AddEditDelete
+	public function getEntityNameReadable(): string
 	{
-		if( !$this->router ) {
-			$this->router = new MVC_Controller_Router_AddEditDelete(
-				$this,
-				function($id) {
-					return (bool)($this->customer = Customer::get($id));
-				},
-				[
-					'listing'=> Main::ACTION_GET,
-					'view'   => Main::ACTION_GET,
-					'add'    => '',
-					'edit'   => Main::ACTION_UPDATE,
-					'delete' => '',
-				]
-			);
-		}
-
-		return $this->router;
-	}
-	
-	
-	protected function setBreadcrumbNavigation( string $current_label = '' ) : void
-	{
-		if( $current_label ) {
-			Navigation_Breadcrumb::addURL( $current_label );
-		}
-	}
-	
-	public function getListing() : Admin_Managers_EShopEntity_Listing
-	{
-		if(!$this->listing_manager) {
-			$this->listing_manager = Admin_Managers::EntityListing();
-			$this->listing_manager->setUp(
-				$this->module
-			);
-			
-			$this->setupListing();
-		}
-		
-		return $this->listing_manager;
+		return 'Customer';
 	}
 	
 	public function setupListing() : void
@@ -99,32 +48,17 @@ class Controller_Main extends MVC_Controller_Default
 
 	}
 	
-
-	public function listing_Action() : void
+	public function edit_main_Action() : void
 	{
-		$this->setBreadcrumbNavigation();
+		$customer = $this->current_item;
 		
-		$this->content->output( $this->getListing()->renderListing() );
-	}
-
-
-	public function edit_Action() : void
-	{
-		$this->view_Action();
-	}
-
-	public function view_Action() : void
-	{
-		$customer = $this->customer;
-
 		$this->setBreadcrumbNavigation(
 			Tr::_( 'Customer detail <b>%ITEM_NAME%</b>', [ 'ITEM_NAME' => $customer->getEmail() ] )
 		);
-
+		
 		$this->view->setVar( 'customer', $customer );
-
+		
 		$this->output( 'edit' );
 	}
-
 
 }

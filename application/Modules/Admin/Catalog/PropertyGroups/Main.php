@@ -1,34 +1,22 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
+namespace JetApplicaTionModule\Admin\Catalog\PropertyGroups;
 
-use Jet\Application_Module;
+
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\PropertyGroup;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_PropertyGroup;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_PropertyGroup
-{
-	use Admin_EntityManager_Trait;
-	
-	public const ADMIN_MAIN_PAGE = 'property-group';
 
-	public const ACTION_GET = 'get_property_group';
-	public const ACTION_ADD = 'add_property_group';
-	public const ACTION_UPDATE = 'update_property_group';
-	public const ACTION_DELETE = 'delete_property_group';
-	
+class Main extends Admin_Managers_PropertyGroup
+{
+	public const ADMIN_MAIN_PAGE = 'property-group';
 	
 	public function renderSelectWidget( string $on_select,
 	                                    int $selected_property_group_id=0,

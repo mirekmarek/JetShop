@@ -5,13 +5,17 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\EventViewer\Services;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\EventViewer\Services;
+
 
 use Jet\DataListing_Filter_Search;
 
-/**
- *
- */
+
 class Listing_Filter_Search extends DataListing_Filter_Search {
 	
 	public const KEY = 'search';

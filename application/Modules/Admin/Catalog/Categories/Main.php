@@ -1,28 +1,22 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Categories;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Categories;
 
-use Jet\Application_Module;
+
 use Jet\Tr;
+use JetApplication\Admin_Managers_Category;
 use JetApplication\Category;
 use JetApplication\Admin_Managers;
-use JetApplication\Admin_EntityManager_Trait;
-use JetApplication\Admin_Managers_Category;
 use JetApplication\EShopEntity_Basic;
 
-/**
- *
- */
-class Main extends Application_Module implements Admin_Managers_Category
+
+class Main extends Admin_Managers_Category
 {
-	use Admin_EntityManager_Trait;
-
 	public const ADMIN_MAIN_PAGE = 'categories';
-
-	public const ACTION_GET = 'get_category';
-	public const ACTION_ADD = 'add_category';
-	public const ACTION_UPDATE = 'update_category';
-	public const ACTION_DELETE = 'delete_category';
-
 	
 	public function renderSelectWidget( string $on_select,
                                        int $selected_category_id=0,

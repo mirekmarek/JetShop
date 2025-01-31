@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Discounts\FreePayment;
+namespace JetApplicaTionModule\Discounts\FreePayment;
+
 
 use JetApplication\CashDesk;
 use JetApplication\Discounts_Module;

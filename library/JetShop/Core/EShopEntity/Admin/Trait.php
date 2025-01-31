@@ -1,10 +1,15 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetShop;
 
-use Jet\Application_Module;
+
 use Jet\Form;
 use Jet\Form_Field_Input;
-use JetApplication\Admin_EntityManager_Interface;
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasInternalParams_Interface;
@@ -20,13 +25,14 @@ trait Core_EShopEntity_Admin_Trait {
 	
 	protected bool $editable;
 	
-	public function getAdminManager() : null|Application_Module|Admin_EntityManager_Interface
+	public function getAdminManager() : ?Admin_EntityManager_Module
 	{
 		$ifc = $this->getAdminManagerInterface();
 		if(!$ifc) {
 			return null;
 		}
 		
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return Admin_Managers::get( $ifc );
 	}
 	

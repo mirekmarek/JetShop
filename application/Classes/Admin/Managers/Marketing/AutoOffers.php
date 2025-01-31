@@ -1,5 +1,11 @@
 <?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
 namespace JetApplication;
+
 
 use JetShop\Core_Admin_Managers_Marketing_AutoOffers;
 
@@ -10,6 +16,6 @@ use JetShop\Core_Admin_Managers_Marketing_AutoOffers;
 	description: '',
 	module_name_prefix: 'Admin.'
 )]
-interface Admin_Managers_Marketing_AutoOffers extends Core_Admin_Managers_Marketing_AutoOffers
+abstract class Admin_Managers_Marketing_AutoOffers extends Core_Admin_Managers_Marketing_AutoOffers
 {
 }

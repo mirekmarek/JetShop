@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_signpost' => 'View signposts',
-		'add_signpost' => 'Add new signpost',
-		'update_signpost' => 'Update signpost',
-		'delete_signpost' => 'Delete signpost',
+		'get' => 'View signposts',
+		'add' => 'Add new signpost',
+		'update' => 'Update signpost',
+		'delete' => 'Delete signpost',
 	],
 ];

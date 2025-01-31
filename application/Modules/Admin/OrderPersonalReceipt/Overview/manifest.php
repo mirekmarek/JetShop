@@ -6,6 +6,6 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_order_dispatch' => 'Get order dispatch data',
+		'get' => 'Get order dispatch data',
 	],
 ];

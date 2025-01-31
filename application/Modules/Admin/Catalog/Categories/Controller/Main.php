@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Categories;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Categories;
+
 
 use Jet\Application;
 use Jet\Data_Tree;
@@ -18,9 +24,7 @@ use Jet\Navigation_Breadcrumb;
 use Jet\Data_Tree_Node;
 
 
-/**
- *
- */
+
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	

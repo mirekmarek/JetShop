@@ -1,5 +1,11 @@
 <?php
-namespace JetApplicationModule\EShop\ShoppingCart;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\ShoppingCart;
+
 
 use Jet\MVC_View;
 use Jet\Tr;
@@ -30,11 +36,7 @@ $delivery_info = $product->getDeliveryInfo();
 			<div><?=$mu?->getName()?></div>
 			<?=UI::button(Tr::_('Buy'))->setOnclick("ShoppingCart.buy({$p_id},document.getElementById('qty_{$p_id}').value);")->setClass(UI_button::CLASS_SECONDARY)->setSize(UI_button::SIZE_SMALL)?>
 		</div>
-		<?php
-
-
-		if($gifts):
-			?>
+		<?php if($gifts): ?>
 		<div class="shopping-cart-product-gifts">
 			<div class="title"><?=Tr::_('Gift:')?></div>
 			<?php foreach($gifts as $gift): ?>

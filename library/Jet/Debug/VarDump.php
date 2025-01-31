@@ -17,12 +17,17 @@ require_once 'VarDump/BacktraceItem.php';
 class Debug_VarDump
 {
 	
-	protected array $vars = [];
+	protected mixed $var = [];
 	
 	/**
 	 * @var Debug_VarDump_BacktraceItem[]
 	 */
 	protected array $backtrace = [];
+	
+	protected string $caption = '';
+	
+
+	
 	
 	public static array $var_dumps = [];
 	
@@ -30,10 +35,11 @@ class Debug_VarDump
 	
 	protected static ?Closure $displayer = null;
 	
-	public function __construct( array $vars )
+	public function __construct( mixed $var, string $caption='' )
 	{
-		$this->vars = $vars;
+		$this->var = $var;
 		$this->backtrace = Debug_Profiler_Run::getBacktrace( 2 );
+		$this->caption = $caption;
 		
 		static::$var_dumps[] = $this;
 		
@@ -51,12 +57,12 @@ class Debug_VarDump
 	
 	public function getCation() : string
 	{
-		return $this->backtrace[0]->getFileDisplayable().':'.$this->backtrace[0]->getLine();
+		return $this->caption ? : $this->backtrace[0]->getFileDisplayable().':'.$this->backtrace[0]->getLine();
 	}
 	
-	public function getVars(): array
+	public function getVar(): mixed
 	{
-		return $this->vars;
+		return $this->var;
 	}
 	
 	/**

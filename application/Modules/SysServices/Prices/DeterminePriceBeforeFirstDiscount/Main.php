@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\SysServices\Prices\DeterminePriceBeforeFirstDiscount;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\SysServices\Prices\DeterminePriceBeforeFirstDiscount;
+
 
 use Jet\Application_Module;
 use Jet\Tr;
@@ -17,9 +23,7 @@ use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
 
 
-/**
- *
- */
+
 class Main extends Application_Module implements SysServices_Provider_Interface
 {
 	

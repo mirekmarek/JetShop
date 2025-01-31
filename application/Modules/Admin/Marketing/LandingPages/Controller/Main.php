@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Marketing\LandingPages;
+namespace JetApplicaTionModule\Admin\Marketing\LandingPages;
+
 
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
@@ -14,9 +14,7 @@ use Jet\Http_Headers;
 use JetApplication\Marketing_LandingPage;
 
 
-/**
- *
- */
+
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	

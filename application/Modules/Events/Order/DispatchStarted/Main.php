@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Events\Order\DispatchStarted;
+namespace JetApplicaTionModule\Events\Order\DispatchStarted;
+
 
 use JetApplication\Delivery_Kind;
 use JetApplication\MarketplaceIntegration;
@@ -13,9 +13,7 @@ use JetApplication\OrderDispatch;
 use JetApplication\Order_Event_HandlerModule;
 use JetApplication\OrderPersonalReceipt;
 
-/**
- *
- */
+
 class Main extends Order_Event_HandlerModule
 {
 	public function sendNotifications(): bool

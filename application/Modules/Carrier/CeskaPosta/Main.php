@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\Carrier\CeskaPosta;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Carrier\CeskaPosta;
+
 
 use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
@@ -19,9 +25,7 @@ use JetApplication\EShopConfig_ModuleConfig_General;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 
-/**
- *
- */
+
 class Main extends Carrier implements EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface, Admin_ControlCentre_Module_Interface
 {
 	use EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;

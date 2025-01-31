@@ -21,8 +21,7 @@ class Attributes
 	protected static function getClasses( ReflectionClass $reflection ) : array
 	{
 		$classes = [$reflection->getName() => $reflection];
-		
-		
+
 		if( ($parent = $reflection->getParentClass()) ) {
 			do {
 				$classes[$parent->getName()] = $parent;

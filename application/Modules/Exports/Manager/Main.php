@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Exports\Manager;
+namespace JetApplicaTionModule\Exports\Manager;
+
 
 use Error;
 use Jet\Application;
@@ -33,9 +33,7 @@ use JetApplication\EShop;
 use JetApplication\EShopConfig_ModuleConfig_General;
 use JetApplication\Logger_Exports;
 
-/**
- *
- */
+
 class Main extends Exports_Manager implements
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface

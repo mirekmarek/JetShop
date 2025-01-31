@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Customer\PasswordReset;
+namespace JetApplicaTionModule\EShop\Customer\PasswordReset;
+
 
 use Jet\Application_Module;
 use Jet\Auth;
@@ -19,9 +19,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 use JetApplication\EMail_TemplateProvider;
 
-/**
- *
- */
+
 class Main extends Application_Module implements EShop_Managers_CustomerPasswordReset, EMail_TemplateProvider, EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;

@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Entity\Listing;
+namespace JetApplicaTionModule\Admin\Entity\Listing;
+
 
 use Closure;
 use Jet\Application_Module;
@@ -14,18 +14,16 @@ use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_EntityManager_Interface;
 use JetApplication\EShopEntity_Basic;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_Managers_EShopEntity_Listing
 {
 	protected EShopEntity_Admin_Interface $entity;
-	protected Admin_EntityManager_Interface $entity_manager;
+	protected Admin_EntityManager_Module $entity_manager;
 	
 	protected Listing $listing;
 	
@@ -50,7 +48,7 @@ class Main extends Application_Module implements Admin_Managers_EShopEntity_List
 	protected $custom_btn_renderer = null;
 	
 	public function setUp(
-		Admin_EntityManager_Interface|Application_Module $entity_manager
+		Admin_EntityManager_Module $entity_manager
 	): void
 	{
 		$this->entity_manager = $entity_manager;
@@ -65,7 +63,7 @@ class Main extends Application_Module implements Admin_Managers_EShopEntity_List
 		return $this->entity;
 	}
 
-	public function getEntityManager(): Admin_EntityManager_Interface
+	public function getEntityManager(): Admin_EntityManager_Module
 	{
 		return $this->entity_manager;
 	}

@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Articles;
+namespace JetApplicaTionModule\EShop\Articles;
+
 
 use Jet\Application_Module;
 use JetApplication\Content_Article_EShopData;
@@ -14,9 +14,7 @@ use JetApplication\EShop_Managers_Articles;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-/**
- *
- */
+
 class Main extends Application_Module implements EShop_Managers_Articles, EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;

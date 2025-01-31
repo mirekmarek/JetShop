@@ -1,5 +1,10 @@
 <?php
-namespace JetApplicationModule\EShop\ProductQuestions;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\ProductQuestions;
 
 use Jet\Form;
 use Jet\Locale;
@@ -39,10 +44,7 @@ $dialog = UI::dialog('new_product_question_dialog', Tr::_('Ask a question'), UI_
 
 
 <?=UI::button(Tr::_('Ask a question'))->setClass(UI_button::CLASS_INFO)->setOnClick("dialog.open('new_product_question_dialog');")?>
-<?php
-
-foreach($questions as $q):
-	?>
+<?php foreach($questions as $q): ?>
 	<div class="product-question">
 		<div class="date-time"><?=Locale::date($q->getCreated())?></div>
 		<div class="question">

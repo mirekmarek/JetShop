@@ -6,7 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_complaint' => 'Get complaint data',
-		'update_complaint' => 'Update complaint',
+		'get' => 'Get complaint data',
+		'add' => 'Add complaint data',
+		'delete' => 'Delete complaint data',
+		'update' => 'Update complaint',
 	],
 ];

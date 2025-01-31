@@ -5,16 +5,20 @@
  * @license http://www.php-jet.net/license/license.txt
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\EventViewer\Services;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\EventViewer\Services;
+
 
 use Jet\DataListing_Filter_OptionSelect;
 use Jet\Form_Field_Select;
 use Jet\Logger;
 use Jet\Tr;
 
-/**
- *
- */
+
 class Listing_Filter_EventClass extends DataListing_Filter_OptionSelect {
 	
 	public const KEY = 'event_class';

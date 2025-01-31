@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright
- * @license
- * @author
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
+namespace JetApplicaTionModule\Admin\Marketing\DeliveryFeeDiscount;
+
 
 use Jet\DataListing_Filter;
 use Jet\Form;
@@ -14,9 +14,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Delivery_Method;
 
-/**
- *
- */
+
 class Listing_Filter_DeliveryMethod extends DataListing_Filter {
 	
 	public const KEY = 'delivery_method';

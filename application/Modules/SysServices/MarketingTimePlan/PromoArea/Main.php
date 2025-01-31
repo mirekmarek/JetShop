@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\SysServices\MarketingTimePlan\PromoArea;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\SysServices\MarketingTimePlan\PromoArea;
+
 
 use Jet\Application_Module;
 use Jet\Tr;
@@ -13,9 +19,7 @@ use JetApplication\Marketing_PromoArea;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
 
-/**
- *
- */
+
 class Main extends Application_Module implements SysServices_Provider_Interface
 {
 	public function getSysServicesDefinitions(): array

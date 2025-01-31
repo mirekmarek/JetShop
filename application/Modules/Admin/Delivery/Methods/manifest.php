@@ -6,10 +6,10 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_delivery_method' => 'Get delivery_method data',
-		'add_delivery_method' => 'Add new delivery_method',
-		'update_delivery_method' => 'Update delivery_method',
-		'delete_delivery_method' => 'Delete delivery_method',
+		'get' => 'Get delivery method data',
+		'add' => 'Add new delivery method',
+		'update' => 'Update delivery method',
+		'delete' => 'Delete delivery method',
 		'set_price' => 'Set price',
 	],
 ];

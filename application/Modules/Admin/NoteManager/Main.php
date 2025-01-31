@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\NoteManager;
+namespace JetApplicaTionModule\Admin\NoteManager;
+
 
 use Jet\AJAX;
 use Jet\Application;
@@ -24,9 +24,7 @@ use JetApplication\EShopEntity_Note;
 use JetApplication\EShopEntity_Note_MessageGenerator;
 use Closure;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_Managers_Note
 {
 	protected EShopEntity_Note $new_note;

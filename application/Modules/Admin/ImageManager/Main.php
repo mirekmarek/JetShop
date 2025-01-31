@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\ImageManager;
+namespace JetApplicaTionModule\Admin\ImageManager;
+
 
 use Jet\AJAX;
 use Jet\Application_Module;
@@ -18,9 +18,7 @@ use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\ImageGallery_Image;
 use JetApplication\EShop;
 
-/**
- *
- */
+
 class Main extends Application_Module implements Admin_Managers_Image
 {
 	

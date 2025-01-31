@@ -1,11 +1,17 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\Customer\PasswordReset;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\Customer\PasswordReset;
+
 
 use Jet\AJAX;
 use Jet\Form;
@@ -20,9 +26,7 @@ use Jet\UI_messages;
 use JetApplication\Customer;
 use JetApplication\EShop_Pages;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 	

@@ -1,30 +1,23 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Customers;
+namespace JetApplicaTionModule\Admin\Customers;
 
-use Jet\Application_Module;
+
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_EntityManager_Trait;
 use JetApplication\Admin_Managers_Customer;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Customer;
 use JetApplication\EShop;
 
-class Main extends Application_Module implements Admin_Managers_Customer
+class Main extends Admin_Managers_Customer
 {
-	use Admin_EntityManager_Trait;
-	
 	public const ADMIN_MAIN_PAGE = 'customers';
-
-	public const ACTION_GET = 'get_customer';
-	public const ACTION_UPDATE = 'update_customer';
 	
 	
 	public static function getName( int $id ): string

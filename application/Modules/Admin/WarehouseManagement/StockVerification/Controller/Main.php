@@ -1,11 +1,11 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
+namespace JetApplicaTionModule\Admin\WarehouseManagement\StockVerification;
+
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -17,9 +17,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\KindOfProduct;
 
-/**
- *
- */
+
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	public function getEntityNameReadable() : string

@@ -1,13 +1,17 @@
 <?php
-namespace JetApplicationModule\Admin\Catalog\Products;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\Admin\Catalog\Products;
+
 
 
 use Jet\Tr;
 use JetApplication\Product;
 
-/**
- *
- */
+
 trait Controller_Main_Edit_Categories
 {
 	

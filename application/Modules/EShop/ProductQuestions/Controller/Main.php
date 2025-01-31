@@ -1,17 +1,21 @@
 <?php
 /**
  *
- * @copyright 
- * @license  
- * @author  
+ * @copyright
+ * @license
+ * @author
  */
-namespace JetApplicationModule\EShop\ProductQuestions;
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicaTionModule\EShop\ProductQuestions;
+
 
 use Jet\MVC_Controller_Default;
 
-/**
- *
- */
+
 class Controller_Main extends MVC_Controller_Default
 {
 

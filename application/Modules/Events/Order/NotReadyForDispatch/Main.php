@@ -1,18 +1,16 @@
 <?php
 /**
- *
- * @copyright 
- * @license  
- * @author  
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Events\Order\NotReadyForDispatch;
+namespace JetApplicaTionModule\Events\Order\NotReadyForDispatch;
+
 
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order_Event_HandlerModule;
 
-/**
- *
- */
+
 class Main extends Order_Event_HandlerModule
 {
 	

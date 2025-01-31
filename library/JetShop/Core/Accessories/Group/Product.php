@@ -1,8 +1,9 @@
 <?php
 /**
- *
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-
 namespace JetShop;
 
 use Jet\DataModel;
@@ -12,10 +13,6 @@ use Jet\DataModel_Related_1toN;
 
 use JetApplication\Accessories_Group;
 
-
-/**
- *
- */
 #[DataModel_Definition(
 	name: 'accessories_group_product',
 	database_table_name: 'accessories_groups_products',

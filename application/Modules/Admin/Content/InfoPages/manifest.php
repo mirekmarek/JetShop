@@ -6,9 +6,9 @@ return [
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [
-		'get_content_info_page' => 'Get info page data',
-		'add_content_info_page' => 'Add new info page',
-		'update_content_info_page' => 'Update info page',
-		'delete_content_info_page' => 'Delete info page',
+		'get' => 'Get info page data',
+		'add' => 'Add new info page',
+		'update' => 'Update info page',
+		'delete' => 'Delete info page',
 	],
 ];

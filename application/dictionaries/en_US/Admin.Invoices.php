@@ -64,4 +64,8 @@ return [
 	'Tax - correction' => '',
 	'CSV' => '',
 	'XLSX' => '',
+	'Create correction invoice for <b>%NUMBER%</b>' => '',
+	'Please enter the reason of invoice correction' => '',
+	'Out of range' => '',
+	'Reason of correction:' => '',
 ];
