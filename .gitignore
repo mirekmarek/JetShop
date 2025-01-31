@@ -9,7 +9,6 @@ application/sites/**/site_data.php
 logs/**
 tmp/**
 cache/**
-cli_services
 css/packages/**
 js/packages/**
 _tools/studio/css/packages/**
@@ -18,3 +17,4 @@ _tools/studio/js/packages/**
 TODO.txt
 _test.php
 cleanup.sh
+/cli_services/
