@@ -29,50 +29,32 @@ class Translator {
 	protected array $html_tags_to_be_ignored = ['pre', 'code'];
 	
 	protected array $languages = [];
-	
-	/**
-	 * @return int
-	 */
+
 	public static function getTextLengthLimit(): int
 	{
 		return self::$text_length_limit;
 	}
-	
-	/**
-	 * @param int $text_length_limit
-	 */
+
 	public static function setTextLengthLimit( int $text_length_limit ): void
 	{
 		self::$text_length_limit = $text_length_limit;
 	}
 	
-	/**
-	 * @return string
-	 */
 	public static function getGooogleAPIBaseURL(): string
 	{
 		return self::$gooogle_API_base_URL;
 	}
 	
-	/**
-	 * @param string $gooogle_API_base_URL
-	 */
 	public static function setGooogleAPIBaseURL( string $gooogle_API_base_URL ): void
 	{
 		self::$gooogle_API_base_URL = $gooogle_API_base_URL;
 	}
 	
-	/**
-	 * @return array
-	 */
 	public static function getSentenceSeparators(): array
 	{
 		return self::$sentence_separators;
 	}
 	
-	/**
-	 * @param array $sentence_separators
-	 */
 	public static function setSentenceSeparators( array $sentence_separators ): void
 	{
 		self::$sentence_separators = $sentence_separators;

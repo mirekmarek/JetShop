@@ -13,14 +13,20 @@ use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Admin_Managers;
 use JetApplication\KindOfProduct_Property;
+use JetApplication\Property;
 
 /**
  * @var MVC_View   $this
- * @var KindOfProduct_Property $property
+ * @var KindOfProduct_Property $p
  */
 
 $editable = $this->getBool('editable');
 $p = $this->getRaw('property');
+
+$property = Property::get($p->getPropertyId());
+if(!$property) {
+	return;
+}
 ?>
 	
 	<div
@@ -33,10 +39,10 @@ $p = $this->getRaw('property');
 			<?php endif; ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->showName( $p ) ?>
+			<?=Admin_Managers::Property()->showName( $property ) ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->renderActiveState( $p ) ?>
+			<?=Admin_Managers::Property()->renderActiveState( $property ) ?>
 		</div>
 		<div>
 			<?=Admin_Managers::Property()->showType( $p->getPropertyType() ) ?>

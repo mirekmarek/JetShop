@@ -89,4 +89,8 @@ return [
 	'General' => '',
 	'Out of range' => '',
 	'Usage' => '',
+	'Description' => '',
+	'Please select file' => '',
+	'Select and upload images' => '',
+	'Property description <b>%NAME%</b> has been updated' => '',
 ];

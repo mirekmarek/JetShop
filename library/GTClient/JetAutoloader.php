@@ -11,7 +11,6 @@ use Jet\SysConf_Path;
 
 return new class extends Autoloader_Loader
 {
-
 	public function getAutoloaderName() : string
 	{
 		return 'library/GTClient';

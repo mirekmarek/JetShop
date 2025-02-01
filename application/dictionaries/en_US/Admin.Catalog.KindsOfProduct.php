@@ -184,4 +184,7 @@ return [
 	'Is virtual product' => '',
 	'Virtual product handler:' => '',
 	'Usage' => '',
+	'Description' => '',
+	'Please select file' => '',
+	'Select and upload images' => '',
 ];

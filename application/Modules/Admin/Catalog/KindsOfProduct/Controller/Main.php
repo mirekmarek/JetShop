@@ -28,14 +28,15 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function getTabs(): array
 	{
-		$_tabs = [
-			'main'   => Tr::_( 'Main data' ),
-			'images' => Tr::_( 'Images' ),
-			'properties' => Tr::_( 'Properties' ),
-			'exports'    => Tr::_( 'Exports' ),
-			'marketplaces'    => Tr::_( 'Marketplaces' ),
-		
-		];
+		$_tabs = parent::getTabs();
+		$_tabs = array_merge(
+			$_tabs,
+			[
+				'properties' => Tr::_( 'Properties' ),
+				'exports'    => Tr::_( 'Exports' ),
+				'marketplaces'    => Tr::_( 'Marketplaces' ),
+			]
+		);
 		
 		
 		return $_tabs;

@@ -32,10 +32,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function getTabs(): array
 	{
-		$_tabs = [
-			'main'   => Tr::_( 'Main data' ),
-			'images' => Tr::_( 'Images' ),
-		];
+		$_tabs = parent::getTabs();
 		
 		if(
 			$this->current_item->getType()==Property::PROPERTY_TYPE_OPTIONS &&

@@ -40,4 +40,7 @@ return [
 	'Select and upload images' => '',
 	'Create new' => '',
 	'Signpost <b>%ITEM_NAME%</b> has been created' => '',
+	'Delete' => '',
+	'Do you really want to delete this Signpost?' => '',
+	'Signpost <b>%ITEM_NAME%</b> has been deleted' => '',
 ];

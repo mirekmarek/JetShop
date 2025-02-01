@@ -8,9 +8,6 @@
 
 namespace GTClient;
 
-/**
- *
- */
 class Translator_RESTClient
 {
 	public const METHOD_POST = 'POST';
@@ -18,77 +15,23 @@ class Translator_RESTClient
 	
 	public const HTTP_STATUS_OK = 200;
 	
-	
-	/**
-	 * @var string
-	 */
 	protected string $API_URL = '';
-	
-	/**
-	 * @var string
-	 */
 	protected string $API_key = '';
-	
-	/**
-	 * @var string
-	 */
 	protected string $error_message = '';
-	
-	/**
-	 * @var string
-	 */
 	protected string $request = '';
-	
-	/**
-	 * @var ?array
-	 */
 	protected ?array $request_data = null;
-	
-	/**
-	 * @var string|array
-	 */
 	protected string|array $request_body = '';
-	
-	/**
-	 * @var int
-	 */
 	protected int $response_status = 0;
-	
-	/**
-	 * @var string
-	 */
 	protected string $response_header = '';
-	
-	/**
-	 * @var string
-	 */
 	protected string $response_body = '';
-	
-	/**
-	 * @var array|null
-	 */
 	protected array|null $response_data = null;
 	
-	/**
-	 * @param string $API_URL
-	 * @param string $API_key
-	 */
 	public function __construct( string $API_URL, string $API_key )
 	{
 		$this->API_URL = $API_URL;
 		$this->API_key = $API_key;
 	}
 	
-	
-	/**
-	 *
-	 * @param string $method
-	 * @param string $object
-	 * @param array $post_data
-	 * @param array $get_params
-	 *
-	 * @return bool
-	 */
 	public function exec( string $method,
 	                      string $object,
 	                      array  $post_data = [],
@@ -179,24 +122,12 @@ class Translator_RESTClient
 		return $result;
 	}
 	
-	/**
-	 * @param string $object
-	 * @param array $get_params
-	 *
-	 * @return bool
-	 */
 	public function get( string $object, array $get_params = [] ): bool
 	{
 		return $this->exec( method: static::METHOD_GET, object: $object, get_params: $get_params );
 	}
 	
 	
-	/**
-	 * @param string $object
-	 * @param array $data
-	 * @param array $get_params
-	 * @return bool
-	 */
 	public function post( string $object, array $data, array $get_params = [] ): bool
 	{
 		return $this->exec(
@@ -207,71 +138,44 @@ class Translator_RESTClient
 		);
 	}
 	
-	
-	
-	/**
-	 * @return string
-	 */
 	public function request(): string
 	{
 		return $this->request;
 	}
-	
-	/**
-	 * @return string|array
-	 */
+
 	public function requestBody(): string|array
 	{
 		return $this->request_body;
 	}
-	
-	/**
-	 * @return array|null
-	 */
+
 	public function requestData(): array|null
 	{
 		return $this->request_data;
 	}
-	
-	/**
-	 * @return string
-	 */
+
 	public function errorMessage(): string
 	{
 		return $this->error_message;
 	}
-	
-	/**
-	 * @return int
-	 */
+
 	public function responseStatus(): int
 	{
 		return $this->response_status;
 	}
-	
-	/**
-	 * @return string
-	 */
+
 	public function responseHeader(): string
 	{
 		return $this->response_header;
 	}
-	
-	/**
-	 * @return string
-	 */
+
 	public function responseBody(): string
 	{
 		return $this->response_body;
 	}
-	
-	/**
-	 * @return array|null
-	 */
+
 	public function responseData(): array|null
 	{
 		return $this->response_data;
 	}
-	
 	
 }
