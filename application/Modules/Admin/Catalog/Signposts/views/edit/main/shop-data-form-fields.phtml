@@ -18,9 +18,7 @@ $form = $this->getRaw('form');
 $eshop = $this->getRaw('eshop');
 $eshop_key = $eshop->getKey();
 
-$form->field('/eshop_data/'.$eshop_key.'/URL_path_part')->setIsReadonly(true);
 ?>
 
 <?=$form->field('/eshop_data/'.$eshop_key.'/name');?>
 <?=$form->field('/eshop_data/'.$eshop_key.'/description');?>
-<?=$form->field('/eshop_data/'.$eshop_key.'/URL_path_part');?>

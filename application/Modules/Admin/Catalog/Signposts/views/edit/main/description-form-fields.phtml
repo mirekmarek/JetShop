@@ -17,9 +17,7 @@ $form = $this->getRaw('form');
 $locale = $this->getRaw('locale');
 $locale = $locale->toString();
 
-$form->field('/description/'.$locale.'/URL_path_part')->setIsReadonly(true);
 ?>
 
 <?=$form->field('/description/'.$locale.'/name');?>
 <?=$form->field('/description/'.$locale.'/description');?>
-<?=$form->field('/description/'.$locale.'/URL_path_part');?>

@@ -66,9 +66,8 @@ trait Core_EShopEntity_HasURL_Trait {
 	}
 	
 	
-	public function _generateURLParam( string $name,string $url_param_property='url_param' ) : string
+	public function generateURLParam( string $name, string $url_param_property='url_param' ) : string
 	{
-		//TODO: WTF?
 		$name = Data_Text::removeAccents( $name );
 		
 		$name = strtolower($name);

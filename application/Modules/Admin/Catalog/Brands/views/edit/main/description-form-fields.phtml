@@ -19,7 +19,6 @@ $form = $this->getRaw('form');
 $locale = $this->getRaw('locale');
 $locale_str = $locale->toString();
 
-$form->field('/description/'.$locale_str.'/url_param')->setIsReadonly(true);
 ?>
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
@@ -27,7 +26,6 @@ $form->field('/description/'.$locale_str.'/url_param')->setIsReadonly(true);
 	<?=$form->field('/description/'.$locale_str.'/name');?>
 	<?=$form->field('/description/'.$locale_str.'/second_name');?>
 	<?=$form->field('/description/'.$locale_str.'/description');?>
-	<?=$form->field('/description/'.$locale_str.'/url_param');?>
 </fieldset>
 <fieldset>
 	<legend class="sub"><?=Tr::_('SEO')?></legend>

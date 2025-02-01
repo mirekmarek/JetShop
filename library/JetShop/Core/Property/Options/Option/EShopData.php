@@ -69,13 +69,6 @@ abstract class Core_Property_Options_Option_EShopData extends EShopEntity_WithES
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'URL parameter:',
-	)]
-	#[EShopEntity_Definition(
-		is_description: true
-	)]
 	protected string $url_param = '';
 
 	#[DataModel_Definition(

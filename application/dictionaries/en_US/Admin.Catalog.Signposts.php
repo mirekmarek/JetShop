@@ -39,4 +39,5 @@ return [
 	'Please upload image' => '',
 	'Select and upload images' => '',
 	'Create new' => '',
+	'Signpost <b>%ITEM_NAME%</b> has been created' => '',
 ];

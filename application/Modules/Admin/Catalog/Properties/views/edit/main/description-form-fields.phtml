@@ -33,9 +33,5 @@ $locale = $locale->toString();
 	if($form->fieldExists('/description/'.$locale.'/units')) {
 		echo $form->field( '/description/' . $locale . '/units' );
 	}
-	if($form->fieldExists('/description/'.$locale.'/url_param')) {
-		$form->field( '/description/' . $locale . '/url_param' )->setIsReadonly(true);
-		echo $form->field( '/description/' . $locale . '/url_param' );
-	}
 	?>
 </fieldset>

@@ -19,7 +19,6 @@ $form = $this->getRaw('form');
 $eshop = $this->getRaw('eshop');
 $eshop_key = $eshop->getKey();
 
-$form->field('/eshop_data/'.$eshop_key.'/url_param')->setIsReadonly(true);
 ?>
 <fieldset>
 	<legend class="sub"><?=Tr::_('Main data')?></legend>
@@ -27,7 +26,6 @@ $form->field('/eshop_data/'.$eshop_key.'/url_param')->setIsReadonly(true);
 	<?=$form->field('/eshop_data/'.$eshop_key.'/name');?>
 	<?=$form->field('/eshop_data/'.$eshop_key.'/second_name');?>
 	<?=$form->field('/eshop_data/'.$eshop_key.'/description');?>
-	<?=$form->field('/eshop_data/'.$eshop_key.'/url_param');?>
 </fieldset>
 <fieldset>
 	<legend class="sub"><?=Tr::_('SEO')?></legend>

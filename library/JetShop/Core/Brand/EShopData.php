@@ -129,14 +129,6 @@ abstract class Core_Brand_EShopData extends EShopEntity_WithEShopData_EShopData 
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'URL parameter:',
-	)]
-	#[EShopEntity_Definition(
-		is_description: true,
-		setter: 'setUrlParam'
-	)]
 	protected string $url_param = '';
 
 
@@ -188,7 +180,7 @@ abstract class Core_Brand_EShopData extends EShopEntity_WithEShopData_EShopData 
 			return;
 		}
 		$this->name = $name;
-		$this->url_param = $this->_generateURLParam( $this->name );
+		$this->url_param = $this->generateURLParam( $this->name );
 	}
 
 	public function getSecondName() : string

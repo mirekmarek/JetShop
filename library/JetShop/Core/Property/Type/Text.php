@@ -71,8 +71,7 @@ abstract class Core_Property_Type_Text extends Property_Type
 		foreach($form->getFields() as $f) {
 			if(
 				str_ends_with($f->getName(),'/bool_yes_description') ||
-				str_ends_with($f->getName(),'/units') ||
-				str_ends_with($f->getName(),'/url_param')
+				str_ends_with($f->getName(),'/units')
 			) {
 				$form->removeField( $f->getName() );
 			}
