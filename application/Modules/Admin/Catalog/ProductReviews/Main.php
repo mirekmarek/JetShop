@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
 
-use JetApplication\Admin_Managers_ProductQuestions;
+use JetApplication\Admin_Managers_ProductReviews;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\ProductReview;
 
 
-class Main extends Admin_Managers_ProductQuestions
+class Main extends Admin_Managers_ProductReviews
 {
 	public const ADMIN_MAIN_PAGE = 'product-reviews';
 	
