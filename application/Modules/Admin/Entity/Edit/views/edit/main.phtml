@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Entity\Edit;
 
 
+use Jet\Form_Field_WYSIWYG;
 use Jet\Locale;
 use Jet\UI_tabs;
 use JetApplication\Admin_Managers;
@@ -52,10 +53,20 @@ $form->renderer()->setDefaultFieldWidth( [
 	Form_Renderer::LJ_SIZE_LARGE => 8
 ] );
 
+$has_wysiwyg_editor = false;
+foreach($form->getFields() as $field) {
+	if( $field instanceof Form_Field_WYSIWYG ) {
+		$has_wysiwyg_editor = true;
+	}
+}
+
 ?>
 
 <?php require 'toolbar.phtml'; ?>
 
+<?php if( $has_wysiwyg_editor ) {
+	echo Admin_Managers::EntityEdit()->renderEditorTools( $item );
+} ?>
 
 <div id="main-col">
 		<?php

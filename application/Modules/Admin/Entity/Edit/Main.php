@@ -16,6 +16,7 @@ use Jet\MVC_View;
 use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
+use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Edit;
@@ -488,5 +489,15 @@ class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
 		);
 	}
 	
-	
+	public function renderEditorTools( EShopEntity_Basic $item ) : string
+	{
+		$res = '';
+		if($item->getId() && $item->isEditable()) {
+			$res .= Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
+			//TODO: magic tags
+		}
+		
+		return $res;
+		
+	}
 }

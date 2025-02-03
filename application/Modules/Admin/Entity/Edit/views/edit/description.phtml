@@ -30,7 +30,7 @@ use Jet\Form_Renderer;
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
-$tabs = $this->getRaw('tabs');
+$tabs = $this->getRaw( 'tabs' );
 
 $module = $this->getRaw('module');
 
@@ -52,7 +52,7 @@ $form->renderer()->setDefaultFieldWidth( [
 ] );
 
 if($item->getId() && $item->isEditable()) {
-	echo Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
+	echo Admin_Managers::EntityEdit()->renderEditorTools( $item );
 }
 
 ?>

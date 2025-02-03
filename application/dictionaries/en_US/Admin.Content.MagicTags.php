@@ -19,4 +19,6 @@ return [
 	'Product avatar' => '',
 	'Category URL' => '',
 	'Category link' => '',
+	'Date and time' => '',
+	'What to display:' => '',
 ];

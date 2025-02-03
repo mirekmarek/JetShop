@@ -30,12 +30,10 @@ echo $this->controller->getEditorManager()->renderToolbar(
 	$this->getRaw('form'),
 	function() use ($item) {
 		require 'toolbar.phtml';
-		
-		if($item->isEditable()) {
-			echo Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
-		}
 	}
 );
+
+echo Admin_Managers::EntityEdit()->renderEditorTools( $item );
 ?>
 <div id="main-col">
 	<?=$this->getRaw('tabs')?>

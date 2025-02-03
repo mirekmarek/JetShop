@@ -18,6 +18,3 @@ use JetApplication\Marketing_DeliveryFeeDiscount;
 
 $item = $this->getRaw('item');
 
-if($item->isEditable()) {
-	echo Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
-}

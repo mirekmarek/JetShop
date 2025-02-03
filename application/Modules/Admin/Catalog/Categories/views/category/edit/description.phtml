@@ -34,7 +34,7 @@ $editable = !$form->getIsReadonly();
 <?=$this->render('lj_start')?>
 <br>
 
-<?=Admin_Managers::Image()->commonImageManager( $category::getEntityType(), $category->getId() );?>
+<?=Admin_Managers::EntityEdit()->renderEditorTools( $category );?>
 
 <?=$form->start();?>
 

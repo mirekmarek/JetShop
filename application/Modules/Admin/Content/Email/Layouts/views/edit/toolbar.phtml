@@ -8,7 +8,6 @@ namespace JetApplicationModule\Admin\Content\Email\Layouts;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
 use JetApplication\EMail_Layout;
 
 /**
@@ -17,7 +16,3 @@ use JetApplication\EMail_Layout;
  */
 
 $item = $this->getRaw('item');
-
-if($item->isEditable()) {
-	echo Admin_Managers::Image()->commonImageManager( 'email_layout', $item->getId() );
-}

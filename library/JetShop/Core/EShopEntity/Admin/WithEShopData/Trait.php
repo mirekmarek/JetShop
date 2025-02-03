@@ -69,14 +69,26 @@ trait Core_EShopEntity_Admin_WithEShopData_Trait {
 			
 			
 			if(!$this->getDescriptionMode()) {
-				foreach($this->getEditForm()->getFields() as $field) {
-					$name = explode('/', $field->getName());
-					if(
-						isset($name[3]) &&
-						$name[1]=='eshop_data' &&
-						isset($map[$name[3]])
-					) {
-						$fields[$field->getName()] = $field;
+				if($map) {
+					foreach($this->getEditForm()->getFields() as $field) {
+						$name = explode('/', $field->getName());
+						if(
+							isset($name[3]) &&
+							$name[1]=='eshop_data' &&
+							isset($map[$name[3]])
+						) {
+							$fields[$field->getName()] = $field;
+						}
+					}
+				} else {
+					foreach($this->getEditForm()->getFields() as $field) {
+						$name = explode('/', $field->getName());
+						if(
+							isset($name[3]) &&
+							$name[1]=='eshop_data'
+						) {
+							$fields[$field->getName()] = $field;
+						}
 					}
 				}
 			} else {

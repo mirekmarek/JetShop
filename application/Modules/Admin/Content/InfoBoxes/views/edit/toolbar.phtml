@@ -6,9 +6,7 @@
  */
 namespace JetApplicationModule\Admin\Content\InfoBoxes;
 
-
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
 use JetApplication\Content_InfoBox;
 
 /**
@@ -17,7 +15,3 @@ use JetApplication\Content_InfoBox;
  */
 
 $item = $this->getRaw('item');
-
-if($item->isEditable()) {
-	echo Admin_Managers::Image()->commonImageManager( 'info_box', $item->getId() );
-}

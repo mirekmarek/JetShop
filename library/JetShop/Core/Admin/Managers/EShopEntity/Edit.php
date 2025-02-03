@@ -87,4 +87,6 @@ interface Core_Admin_Managers_EShopEntity_Edit
 	
 	public function renderEditFilter( EShopEntity_Basic $item, Form $form ): string;
 	
+	public function renderEditorTools( EShopEntity_Basic $item ) : string;
+	
 }
