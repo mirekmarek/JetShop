@@ -31,7 +31,12 @@ $images = $this->getRaw('images');
 		<td>
 			<a href="" onclick="CommonImageManager.copyURL('img_<?=$img->getId()?>');return false;"><?=$img->getName()?></a><br>
 			
-			<input type="text" readonly value="<?=$img->getURL()?>" id="img_<?=$img->getId()?>" style="font-size:10px;opacity: 0.5;width: 100%"/><br/>
+			<input
+				type="text"
+				readonly
+				onclick="CommonImageManager.copyURL('img_<?=$img->getId()?>');return false;"
+				value="<?=$img->getURL()?>" id="img_<?=$img->getId()?>" style="font-size:10px;opacity: 0.5;width: 100%"
+			/><br/>
 			
 			<span style="font-size: 0.8rem"><?=Locale::size($img->getFileSize())?></span><br>
 			<span style="font-size: 0.8rem"><?=$img->getWidth()?>x<?=$img->getHeight()?></span>
