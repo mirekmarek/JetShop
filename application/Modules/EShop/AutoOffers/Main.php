@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\AutoOffers;
 
-
-use Jet\Application_Module;
 use JetApplication\Marketing_AutoOffer;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop_Managers_AutoOffers;
@@ -16,7 +14,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShops;
 
 
-class Main extends Application_Module implements EShop_Managers_AutoOffers, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_AutoOffers implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

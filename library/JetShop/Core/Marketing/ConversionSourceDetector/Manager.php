@@ -7,17 +7,26 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
 
-interface Core_Marketing_ConversionSourceDetector_Manager
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_GENERAL,
+	is_mandatory: false,
+	name: 'Conversion source detector',
+	description: '',
+	module_name_prefix: ''
+)]
+abstract class Core_Marketing_ConversionSourceDetector_Manager extends Application_Module
 {
 	/**
 	 * @return Marketing_ConversionSourceDetector_Source[]
 	 */
-	public function getAllSources() : array;
+	abstract public function getAllSources() : array;
 	
-	public function performDetection() : void;
+	abstract public function performDetection() : void;
 	
-	public function reset() : void;
+	abstract public function reset() : void;
 	
 }

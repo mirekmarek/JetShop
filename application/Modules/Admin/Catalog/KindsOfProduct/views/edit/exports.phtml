@@ -6,11 +6,9 @@
  */
 namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
-
-
 use Jet\Http_Request;
-use Jet\UI;
 use Jet\MVC_View;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Exports;
 use JetApplication\Exports_Module;
 use JetApplication\EShops;
@@ -22,6 +20,7 @@ use JetApplication\KindOfProduct;
  * @var Exports_Module $selected_exp
  * @var EShop $selected_exp_eshop
  * @var KindOfProduct $kind_of_product
+ * @var Admin_Managers_EShopEntity_Edit $editor_manager
  */
 
 $modules = Exports::getExportModulesList();
@@ -33,13 +32,11 @@ $selected_exp_eshop_key = $this->getString('selected_exp_eshop_key');
 
 $kind_of_product = $this->getRaw('kind_of_product');
 
+$editor_manager = $this->getRaw('editor_manager');
 
 
-
+echo $editor_manager->renderToolbar();
 ?>
-<div class="toolbar" id="main-toolbar">
-	<?=UI::button_goBack()?>
-</div>
 <div id="main-col">
 	<?=$this->getRaw('tabs')?>
 	<br>

@@ -7,17 +7,26 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use Jet\Form;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\ProductFilter;
 
-interface Core_Admin_Managers_ProductFilter
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Product Filter',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
+abstract class Core_Admin_Managers_ProductFilter extends Application_Module
 {
-	public function init( ProductFilter $filter ) : Form;
+	abstract public function init( ProductFilter $filter ) : Form;
 	
-	public function renderFilterForm() : string;
+	abstract public function renderFilterForm() : string;
 	
-	public function handleFilterForm() : bool;
+	abstract public function handleFilterForm() : bool;
 	
-	public function getFilter() : ProductFilter;
+	abstract public function getFilter() : ProductFilter;
 	
 }

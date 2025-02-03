@@ -10,8 +10,16 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Data_DateTime;
 use JetApplication\EShop;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\SysServices_Definition;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_GENERAL,
+	is_mandatory: true,
+	name: 'System services',
+	description: '',
+	module_name_prefix: ''
+)]
 abstract class Core_SysServices_Manager extends Application_Module {
 
 	abstract public function handleSysServices() : void;

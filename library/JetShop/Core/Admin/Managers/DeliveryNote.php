@@ -8,8 +8,16 @@ namespace JetShop;
 
 
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Order;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Delivery note',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 abstract class Core_Admin_Managers_DeliveryNote extends Admin_EntityManager_Module
 {
 	abstract public function showOrderInvoices( Order $order ) : string;

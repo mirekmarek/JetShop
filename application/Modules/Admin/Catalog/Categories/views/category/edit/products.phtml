@@ -114,7 +114,7 @@ echo $this->render('lj_start');
 			</div>
 			
 			<div><?=$p_manager->renderActiveState($product)?></div>
-			<div><?=$p_manager->showName($product)?></div>
+			<div><?=$p_manager->renderItemName($product)?></div>
 			<div>
 				<?php if($editable && !$auto_append): ?>
 					<?=UI::button_delete(' ')

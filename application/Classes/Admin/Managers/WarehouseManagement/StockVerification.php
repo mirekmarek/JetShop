@@ -9,13 +9,7 @@ namespace JetApplication;
 
 use JetShop\Core_Admin_Managers_WarehouseManagement_StockVerification;
 
-#[Manager_MetaInfo(
-	group: Manager_MetaInfo::GROUP_ADMIN,
-	is_mandatory: false,
-	name: 'Warehouse Management - Stock Verification',
-	description: '',
-	module_name_prefix: 'Admin.'
-)]
+#[Manager_MetaInfo]
 abstract class Admin_Managers_WarehouseManagement_StockVerification extends Core_Admin_Managers_WarehouseManagement_StockVerification
 {
 

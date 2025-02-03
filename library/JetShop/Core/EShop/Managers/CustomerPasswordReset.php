@@ -7,8 +7,17 @@
 namespace JetShop;
 
 
-interface Core_EShop_Managers_CustomerPasswordReset {
-	
-	public function renderIntegration() : string;
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: true,
+	name: 'Customer Password Reset',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_CustomerPasswordReset extends Application_Module
+{
+	abstract public function renderIntegration() : string;
 }

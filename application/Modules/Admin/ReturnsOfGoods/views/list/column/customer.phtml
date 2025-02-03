@@ -24,7 +24,7 @@ $item = $this->getRaw('item');
 <?php if($item->getDeliveryCompanyName()): ?>
 <?=$item->getDeliveryCompanyName()?><br>
 <?php endif; ?>
-<?=$item->getDeliveryFirstName()?> <?=$item->getDeliverySurname()?> (<?=Admin_Managers::Customer()->showName( $item->getCustomerId() )?>)<br>
+<?=$item->getDeliveryFirstName()?> <?=$item->getDeliverySurname()?> (<?=Admin_Managers::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
 <a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
 <?=$item->getPhone()?><br>
 

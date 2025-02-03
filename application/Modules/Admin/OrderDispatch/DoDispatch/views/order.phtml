@@ -22,4 +22,4 @@ if(!$dispatch->getOrderId()) {
 	return;
 }
 
-echo Admin_Managers::Order()->showName( $dispatch->getOrderId() );
+echo Admin_Managers::Order()->renderItemName( $dispatch->getOrderId() );

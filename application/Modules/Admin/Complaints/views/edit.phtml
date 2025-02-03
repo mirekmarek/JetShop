@@ -37,7 +37,7 @@ $complaint = $this->getRaw( 'complaint' );
 		<div class="card card-body" style="margin: 10px;">
 			<h5><?=Tr::_('Product')?></h5>
 		
-			<p><?=Admin_Managers::Product()->showName( $complaint->getProductId() )?></p>
+			<p><?=Admin_Managers::Product()->renderItemName( $complaint->getProductId() )?></p>
 		</div>
 	</fieldset>
 

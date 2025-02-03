@@ -8,8 +8,8 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 
 use Jet\Http_Request;
-use Jet\UI;
 use Jet\MVC_View;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\EShops;
@@ -21,9 +21,12 @@ use JetApplication\Brand;
  * @var MarketplaceIntegration_Module $selected_mp
  * @var EShop $selected_mp_eshop
  * @var Brand $brand
+ * @var Admin_Managers_EShopEntity_Edit $editor_manager
  */
 
 $modules = MarketplaceIntegration::getActiveModules();
+
+$editor_manager = $this->getRaw('editor_manager');
 
 $selected_mp = $this->getRaw('selected_mp');
 $selected_mp_eshop = $this->getRaw('selected_mp_eshop');
@@ -32,10 +35,8 @@ $selected_mp_eshop_key = $this->getString('selected_mp_eshop_key');
 
 $brand = $this->getRaw('brand');
 
+echo $editor_manager->renderToolbar();
 ?>
-<div class="toolbar" id="main-toolbar">
-	<?=UI::button_goBack()?>
-</div>
 <div id="main-col">
 	<?=$this->getRaw('tabs')?>
 

@@ -11,8 +11,16 @@ namespace JetShop;
 use Jet\Application_Module;
 use JetApplication\Discounts_Module;
 use JetApplication\CashDesk;
+use JetApplication\Manager_MetaInfo;
 
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_GENERAL,
+	is_mandatory: true,
+	name: 'Discounts',
+	description: '',
+	module_name_prefix: ''
+)]
 abstract class Core_Discounts_Manager extends Application_Module {
 	
 	/**

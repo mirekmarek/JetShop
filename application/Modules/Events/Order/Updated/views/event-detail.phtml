@@ -100,7 +100,7 @@ $formatters = [
 			return;
 		}
 		
-		echo Tr::_('New order ').Admin_Managers::Order()->showName( $value );
+		echo Tr::_('New order ').Admin_Managers::Order()->renderItemName( $value );
 	},
 	
 	'order_joined' => function ( $value ) {
@@ -108,7 +108,7 @@ $formatters = [
 			return;
 		}
 		
-		echo Tr::_('Old order ').Admin_Managers::Order()->showName( $value );
+		echo Tr::_('Old order ').Admin_Managers::Order()->renderItemName( $value );
 	},
 
 ];

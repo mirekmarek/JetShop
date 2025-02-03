@@ -6,22 +6,31 @@
  */
 namespace JetShop;
 
-
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\ShoppingCart;
 use JetApplication\Product_EShopData;
 
-interface Core_EShop_Managers_ShoppingCart {
-	public function getCart() : ShoppingCart;
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: true,
+	name: 'Shopping Cart',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_ShoppingCart extends Application_Module
+{
+	abstract public function getCart() : ShoppingCart;
 	
-	public function saveCart() : void;
+	abstract public function saveCart() : void;
 	
-	public function resetCart() : void;
+	abstract public function resetCart() : void;
 	
-	public function renderIntegration() : string;
+	abstract public function renderIntegration() : string;
 	
-	public function renderIcon() : string;
+	abstract public function renderIcon() : string;
 	
-	public function renderBuyButton_listing( Product_EShopData $product ) : string;
+	abstract public function renderBuyButton_listing( Product_EShopData $product ) : string;
 	
-	public function renderBuyButton_detail( Product_EShopData $product ) : string;
+	abstract public function renderBuyButton_detail( Product_EShopData $product ) : string;
 }

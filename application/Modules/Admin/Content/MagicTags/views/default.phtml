@@ -9,7 +9,6 @@ namespace JetApplicationModule\Admin\Content\MagicTags;
 
 use Jet\Form;
 use Jet\Form_Renderer;
-use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
@@ -20,25 +19,48 @@ use JetApplication\Content_MagicTag;
 /**
  * @var MVC_View   $this
  * @var Content_MagicTag[]  $list
- * @var Form $form
+ * @var Form[] $forms
  */
 
 $list = $this->getRaw('list');
-$selected_tag_id = $this->getString('selected_tag_id');
-$form = $this->getRaw('form');
-$generated = $this->getRaw('generated');
+$forms = $this->getRaw('forms');
+$generated = '';
 ?>
-<div id="main-col" style="display: grid;grid-template-columns: 1fr 3fr;gap: 10px">
-	<div>
+<script>
+	const MagicTag = {
+		select: (id) => {
+			$('.magic_tag_form').hide();
+			$('#magic_tag_'+id).show();
+			$('#generated').val( '' );
+		},
+		generate: ( form_id ) => {
+			JetAjaxForm.submit( form_id, {
+				showProgressIndicator: () => {},
+				hideProgressIndicator: () => {},
+				onProgress: () => {},
+				onSuccess: (form, data) => {
+					$('#generated').val( data['generated'] );
+				}
+			} );
+		},
+		copy: () => {
+			const element = document.getElementById('generated');
+
+			element.select();
+			element.setSelectionRange(0, 99999);
+
+			document['execCommand']("copy");
+			
+		}
+	}
+</script>
+<div style="display: grid;grid-template-columns: 1fr 3fr;gap: 10px;margin: 10px;">
+	<div style="padding-top: 10px;padding-bottom: 10px;">
 		<table class="table table-striped">
 			<?php foreach($list as $mt): ?>
 			<tr>
 				<td>
-					<?php if($mt->getId()==$selected_tag_id): ?>
-						<b><?=$mt->getTitle()?></b>
-					<?php else: ?>
-						<a href="<?=Http_Request::currentURI(['tag'=>$mt->getId()])?>"><?=$mt->getTitle()?></a>
-					<?php endif; ?>
+					<a href="" onclick="MagicTag.select('<?=$mt->getId()?>');return false;"><?=$mt->getTitle()?></a>
 					<br>
 					<?=$mt->getDescription()?>
 				</td>
@@ -46,15 +68,20 @@ $generated = $this->getRaw('generated');
 			<?php endforeach; ?>
 		</table>
 	</div>
-	<div>
-		<?php if($form):
+	<div style="padding: 10px;">
+		<?php foreach($list as $mt):
+			$form = $forms[$mt->getId()];
 			$form->renderer()->setDefaultLabelWidth([
-				Form_Renderer::LJ_SIZE_MEDIUM => 2
-			]);
-			$form->renderer()->setDefaultFieldWidth([
 				Form_Renderer::LJ_SIZE_MEDIUM => 5
 			]);
+			$form->renderer()->setDefaultFieldWidth([
+				Form_Renderer::LJ_SIZE_MEDIUM => 7
+			]);
+			$form->renderer()->addJsAction('onsubmit', "MagicTag.generate(this.id);;return false;");
 			?>
+			<div id="magic_tag_<?=$mt->getId()?>" style="display: none;" class="magic_tag_form">
+				<h4><?=$mt->getTitle()?></h4>
+				<p><?=$mt->getDescription()?></p>
 			<?=$form->start()?>
 				<?php foreach($form->getFields() as $field):
 					echo $field;
@@ -62,8 +89,8 @@ $generated = $this->getRaw('generated');
 					if(str_starts_with($field->getName(), 'product_id:')):
 						?>
 						<div class="row" style="align-items: center">
-							<div class="col-md-2"><?=$field->getLabel()?></div>
-							<div class="col-md-5" style="padding: 15px"><?=Admin_Managers::Product()->renderSelectWidget("document.getElementById('{$field->getId()}').value=selected_item.id")?></div>
+							<div class="col-md-5"><?=$field->getLabel()?></div>
+							<div class="col-md-7" style="padding: 15px"><?=Admin_Managers::Product()->renderSelectWidget("document.getElementById('{$field->getId()}').value=selected_item.id")?></div>
 						</div>
 						<?php
 					endif;
@@ -72,8 +99,8 @@ $generated = $this->getRaw('generated');
 					if(str_starts_with($field->getName(), 'category_id:')):
 						?>
 						<div class="row" style="align-items: center">
-							<div class="col-md-2"><?=$field->getLabel()?></div>
-							<div class="col-md-5" style="padding: 15px"><?=Admin_Managers::Category()->renderSelectWidget("document.getElementById('{$field->getId()}').value=selected_item.id")?></div>
+							<div class="col-md-5"><?=$field->getLabel()?></div>
+							<div class="col-md-7" style="padding: 15px"><?=Admin_Managers::Category()->renderSelectWidget("document.getElementById('{$field->getId()}').value=selected_item.id")?></div>
 						</div>
 						<?php
 					endif;
@@ -81,19 +108,17 @@ $generated = $this->getRaw('generated');
 					
 				endforeach; ?>
 
-			<div class="row" style="align-items: center">
-				<div class="col-md-2"></div>
-				<div class="col-md-5" style="padding: 15px">
-					<?=UI::button(Tr::_('Generate'))->setClass(UI_button::CLASS_PRIMARY)->setIcon('play')->setType(UI_button::TYPE_SUBMIT)?>
-					
-				</div>
+			<div style="text-align: right">
+				<?=UI::button(Tr::_('Generate'))->setClass(UI_button::CLASS_PRIMARY)->setIcon('play')->setType(UI_button::TYPE_SUBMIT)?>
 			</div>
 			<?=$form->end()?>
+			</div>
 		
-			<?php if($generated): ?>
-			<div class="card card-body"><textarea style="border: none;background-color: transparent;"><?=$generated?></textarea></div>
-			<?php endif ?>
 		
-		<?php endif;?>
+		<?php endforeach; ?>
+
+		<div class="card card-body" style="margin-top: 20px;">
+			<textarea style="border: none;background-color: transparent;" id="generated" onclick="MagicTag.copy();"></textarea>
+		</div>
 	</div>
 </div>

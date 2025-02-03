@@ -7,8 +7,19 @@
 namespace JetShop;
 
 
-interface Core_EShop_Managers_Banners {
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
+
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Banners',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_Banners extends Application_Module
+{
 	
-	public function renderPosition( string $banner_group_code ) : string;
+	abstract public function renderPosition( string $banner_group_code ) : string;
 	
 }

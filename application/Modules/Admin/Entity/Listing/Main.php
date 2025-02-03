@@ -6,9 +6,7 @@
  */
 namespace JetApplicationModule\Admin\Entity\Listing;
 
-
 use Closure;
-use Jet\Application_Module;
 use Jet\DataListing_Column;
 use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
@@ -20,7 +18,7 @@ use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Application_Module implements Admin_Managers_EShopEntity_Listing
+class Main extends Admin_Managers_EShopEntity_Listing
 {
 	protected EShopEntity_Admin_Interface $entity;
 	protected Admin_EntityManager_Module $entity_manager;

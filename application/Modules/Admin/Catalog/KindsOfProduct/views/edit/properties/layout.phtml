@@ -34,7 +34,7 @@ foreach($layout  as $k=>$v):
 	if(is_array($v)):
 		$group_id = $k;
 		$properties = $kind_of_product->getProperties();
-		$group_name = Admin_Managers::PropertyGroup()->showName( $group_id );
+		$group_name = Admin_Managers::PropertyGroup()->renderItemName( $group_id );
 		
 		?>
 		<div class="card sortable-item group-start" style="margin-top: 30px;" data-id="<?=$group_id?>">

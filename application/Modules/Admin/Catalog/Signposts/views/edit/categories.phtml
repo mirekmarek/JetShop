@@ -76,7 +76,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 							<?php endif; ?>
 						</td>
 						<td><?=$c_manager->renderActiveState($category)?></td>
-						<td><?=$c_manager->showName($category)?></td>
+						<td><?=$c_manager->renderItemName($category)?></td>
 						<td style="width: 20px;">
 							<?php if($editable): ?>
 								<?=UI::button_delete(' ')->setUrl(Http_Request::currentURI(set_GET_params: ['remove_category'=>$c_id]))?>

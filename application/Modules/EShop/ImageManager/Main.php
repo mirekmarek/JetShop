@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\ImageManager;
 
-
-use Jet\Application_Module;
 use Jet\Data_Image;
 use Jet\IO_Dir;
 use Jet\IO_File;
@@ -15,8 +13,7 @@ use Jet\SysConf_Path;
 use Jet\SysConf_URI;
 use JetApplication\EShop_Managers_Image;
 
-
-class Main extends Application_Module implements EShop_Managers_Image
+class Main extends EShop_Managers_Image
 {
 	protected string $thb_dir = '_thb';
 	

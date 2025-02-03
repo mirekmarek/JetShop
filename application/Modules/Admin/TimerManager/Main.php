@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\Admin\TimerManager;
 
-
-use Jet\Application_Module;
 use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\MVC;
@@ -19,7 +17,7 @@ use JetApplication\Auth_Administrator_Role;
 use JetApplication\EShopEntity_HasTimer_Interface;
 
 
-class Main extends Application_Module implements Admin_Managers_Timer
+class Main extends Admin_Managers_Timer
 {
 	public const ACTION_VIEW_TIMERS = 'view_timers';
 	public const ACTION_SET_TIMER = 'set_timer';

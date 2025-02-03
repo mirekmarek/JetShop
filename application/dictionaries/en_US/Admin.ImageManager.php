@@ -10,4 +10,5 @@ return [
 	'Download image' => '',
 	'Delete image' => '',
 	'Please select file' => '',
+	'Images' => '',
 ];

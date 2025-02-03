@@ -7,14 +7,24 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Product_EShopData;
 
-interface Core_EShop_Managers_Wishlist {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Wishlist',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_Wishlist extends Application_Module
+{
 	
-	public function renderIntegration() : string;
+	abstract public function renderIntegration() : string;
 	
-	public function renderProductButton( Product_EShopData $product, bool $container=true ) : string;
+	abstract public function renderProductButton( Product_EShopData $product, bool $container=true ) : string;
 	
-	public function renderIcon() : string;
+	abstract public function renderIcon() : string;
 	
 }

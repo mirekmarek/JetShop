@@ -6,9 +6,17 @@
  */
 namespace JetShop;
 
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_EShop_Managers_CustomerSection {
-
-	public function showMenu( string $selected_section ) : string;
-
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Customer Section',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_CustomerSection extends Application_Module
+{
+	abstract public function showMenu( string $selected_section ) : string;
 }

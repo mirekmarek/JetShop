@@ -38,7 +38,7 @@ $category_ids = $item->getUsageCategoryIds();
 				<table class="table table-striped">
 					<?php foreach($category_ids as $id): ?>
 						<tr>
-							<td><?= Admin_Managers::Category()->showName( $id )?></td>
+							<td><?= Admin_Managers::Category()->renderItemName( $id )?></td>
 						</tr>
 					<?php endforeach; ?>
 				</table>

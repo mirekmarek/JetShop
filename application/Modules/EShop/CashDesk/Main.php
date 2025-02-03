@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\CashDesk;
 
-
-use Jet\Application_Module;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
@@ -22,8 +20,7 @@ use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShops;
 
 
-class Main extends Application_Module implements
-	EShop_Managers_CashDesk,
+class Main extends EShop_Managers_CashDesk implements
 	EShop_ModuleUsingTemplate_Interface,
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface

@@ -7,7 +7,6 @@
 namespace JetApplicationModule\Admin\UI;
 
 
-use Jet\Application_Module;
 use Jet\Application_Module_Manifest;
 use Jet\Factory_MVC;
 use Jet\Form;
@@ -22,7 +21,7 @@ use JetApplication\EShops;
 
 
 
-class Main extends Application_Module implements Admin_Managers_UI
+class Main extends Admin_Managers_UI
 {
 
 	protected MVC_View $view;

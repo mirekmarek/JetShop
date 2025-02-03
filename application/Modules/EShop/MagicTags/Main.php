@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\MagicTags;
 
-
-use Jet\Application_Module;
 use Jet\IO_Dir;
 use Jet\MVC_Layout;
 use Jet\Translator;
@@ -16,7 +14,7 @@ use JetApplication\EShop_Managers_MagicTags;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-class Main extends Application_Module implements EShop_Managers_MagicTags, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_MagicTags implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

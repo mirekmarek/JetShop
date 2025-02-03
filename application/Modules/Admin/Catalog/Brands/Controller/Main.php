@@ -83,6 +83,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$this->view->setVar( 'brand', $brand );
 		}
 		
+		$this->view->setVar('editor_manager', $this->getEditorManager() );
 		
 		
 		$this->output( 'edit/marketplace' );

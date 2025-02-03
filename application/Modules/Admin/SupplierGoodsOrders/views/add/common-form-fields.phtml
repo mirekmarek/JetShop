@@ -85,7 +85,7 @@ $item = $this->getRaw('item');
 		</thead>
 	<?php foreach($item->getItems() as $i): ?>
 	<tr>
-		<td nowrap=""><?=Admin_Managers::Product()->showName($i->getProductId())?></td>
+		<td nowrap=""><?=Admin_Managers::Product()->renderItemName($i->getProductId())?></td>
 		<td nowrap=""><?=$i->getProductEan()?></td>
 		<td nowrap=""><?=$i->getProductInternalCode()?></td>
 		<td nowrap=""><?=$i->getProductSupplierCode()?></td>

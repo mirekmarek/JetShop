@@ -43,7 +43,7 @@ $show = function( Product $product, string $main_prefix = '' ) use ($form, $prop
 		<br>
 		<div class="form-group row">
 			<div class="col-md-1"><?=Tr::_('Kind of product:')?></div>
-			<div class="col-md-8"><?=Admin_Managers::KindOfProduct()->showName($kind->getId())?></div>
+			<div class="col-md-8"><?=Admin_Managers::KindOfProduct()->renderItemName($kind->getId())?></div>
 		</div>
 		<br>
 		<?php

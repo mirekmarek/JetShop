@@ -21,4 +21,4 @@ use JetApplication\OrderPersonalReceipt;
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 
-echo Admin_Managers::Order()->showName( $item->getOrderId() );
+echo Admin_Managers::Order()->renderItemName( $item->getOrderId() );

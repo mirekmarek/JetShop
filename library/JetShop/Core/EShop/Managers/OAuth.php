@@ -9,7 +9,15 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use JetApplication\EShop_OAuth_BackendModule;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'OAuth',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
 abstract class Core_EShop_Managers_OAuth extends Application_Module
 {
 	

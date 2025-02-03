@@ -53,7 +53,7 @@ require '_toolbar.phtml';
 				<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['delete'=>$s->getSimilarProductId()]) )?>
 				<?php endif;?>
 			</div>
-			<div><?=Admin_Managers::Product()->showName( $s->getSimilarProductId() )?></div>
+			<div><?=Admin_Managers::Product()->renderItemName( $s->getSimilarProductId() )?></div>
 		</div>
 		<?php endforeach; ?>
 	</div>

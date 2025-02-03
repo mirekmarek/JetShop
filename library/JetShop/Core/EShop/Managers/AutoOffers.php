@@ -7,8 +7,17 @@
 namespace JetShop;
 
 
-interface Core_EShop_Managers_AutoOffers {
-	
-	public function handleShoppingCart() : string;
-	
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
+
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Auto Offers',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_AutoOffers extends Application_Module
+{
+	abstract public function handleShoppingCart() : string;
 }

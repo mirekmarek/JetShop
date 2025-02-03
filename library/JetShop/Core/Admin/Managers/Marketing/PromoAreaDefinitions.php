@@ -8,7 +8,15 @@ namespace JetShop;
 
 
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: false,
+	name: 'Marketing - Promo area definitions',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 abstract class Core_Admin_Managers_Marketing_PromoAreaDefinitions extends Admin_EntityManager_Module
 {
 }

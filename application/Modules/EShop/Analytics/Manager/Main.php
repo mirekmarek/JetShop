@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Manager;
 
-
-use Jet\Application_Module;
 use Jet\Session;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
@@ -19,7 +17,7 @@ use JetApplication\EShop_Managers_Analytics;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 
-class Main extends Application_Module implements EShop_Managers_Analytics
+class Main extends EShop_Managers_Analytics
 {
 	
 	/**

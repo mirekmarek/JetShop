@@ -6,13 +6,19 @@
  */
 namespace JetShop;
 
-
-
 use Jet\Application_Module;
 use JetApplication\EMailMarketing_Subscribe;
 use JetApplication\EMailMarketing_Subscribe_Log;
 use JetApplication\EShop;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_GENERAL,
+	is_mandatory: true,
+	name: 'E-mail marketing subscribe',
+	description: '',
+	module_name_prefix: ''
+)]
 abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 {
 	public function subscribe( EShop $eshop, string $email_address, string $source, string $comment='' ) : void

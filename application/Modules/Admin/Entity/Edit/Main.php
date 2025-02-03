@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\Admin\Entity\Edit;
 
-
-use Jet\Application_Module;
 use Jet\Application_Module_Manifest;
 use Jet\Factory_MVC;
 use Jet\Form;
@@ -16,7 +14,6 @@ use Jet\MVC_View;
 use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
-use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Edit;
@@ -31,7 +28,7 @@ use JetApplication\EShops;
 use Closure;
 
 
-class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
+class Main extends Admin_Managers_EShopEntity_Edit
 {
 	protected null|EShopEntity_Basic|EShopEntity_Admin_WithEShopData_Interface $item = null;
 	protected ?Admin_Managers_EShopEntity_Listing $listing = null;
@@ -171,7 +168,7 @@ class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
 		return $this->render( 'delete/not-possible', $params );
 	}
 	
-	public function renderShowName( int $id, null|EShopEntity_WithEShopData|EShopEntity_Admin_Interface $item ): string
+	public function renderItemName( int $id, null|EShopEntity_WithEShopData|EShopEntity_Admin_Interface $item ): string
 	{
 		return Translator::setCurrentDictionaryTemporary(
 			$this->module_manifest->getName(),
@@ -181,10 +178,10 @@ class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
 				
 				if($item) {
 					$view->setVar('item', $item);
-					return $view->render('show-name/known');
+					return $view->render('item-name/known');
 				}
 				
-				return $view->render('show-name/unknown');
+				return $view->render('item-name/unknown');
 			}
 		);
 	}
@@ -491,13 +488,11 @@ class Main extends Application_Module implements Admin_Managers_EShopEntity_Edit
 	
 	public function renderEditorTools( EShopEntity_Basic $item ) : string
 	{
-		$res = '';
-		if($item->getId() && $item->isEditable()) {
-			$res .= Admin_Managers::Image()->commonImageManager( $item::getEntityType(), $item->getId() );
-			//TODO: magic tags
-		}
+		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		
-		return $res;
+		$view->setVar('item', $item);
+		$view->setVar('edit_manager',  $this);
 		
+		return $view->render('editor-tools');
 	}
 }

@@ -21,4 +21,5 @@ return [
 	'Category link' => '',
 	'Date and time' => '',
 	'What to display:' => '',
+	'Magic tags' => '',
 ];

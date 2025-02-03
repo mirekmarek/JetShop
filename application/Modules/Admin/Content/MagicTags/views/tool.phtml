@@ -1,0 +1,57 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Content\MagicTags;
+
+use Jet\UI;
+use Jet\UI_button;
+use Jet\Tr;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Handler $handler
+ */
+$handler = $this->getRaw('handler');
+?>
+<style>
+	#magic_tags {
+		position: fixed;
+		top: 60px;
+		right: 0px;
+		height: calc(100% - 70px);
+		width: 600px;
+		background-color: #333940;
+		z-index: 999999;
+		padding: 5px;
+	}
+
+</style>
+<script>
+	const MagicTagsTool = {
+		open: () => {
+			$('#magic_tags').fadeIn();
+		},
+		close: () => {
+			$('#magic_tags').fadeOut();
+		}
+	};
+</script>
+
+
+<?= UI::button( Tr::_('Magic tags') )->setIcon('code')->setOnClick("MagicTagsTool.open()")->setClass( UI_button::CLASS_INFO)?>
+
+<div id="magic_tags" style="display: none;">
+	<div style="display: flex;align-items: center">
+		<div>
+			<?= UI::button('')->setIcon('xmark')->setOnClick("MagicTagsTool.close()")?>
+		</div>
+	</div>
+	<div style="background-color: #ffffff;">
+		<?=$handler->handle()?>
+	</div>
+</div>
+

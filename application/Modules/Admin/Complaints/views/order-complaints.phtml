@@ -23,7 +23,7 @@ $complaints = $this->getRaw('complaints');
 <table>
 	<?php foreach($complaints  as $complaint ): ?>
 		<tr>
-			<td><?=Admin_Managers::Complaint()->showName( $complaint->getId() )?></td>
+			<td><?=Admin_Managers::Complaint()->renderItemName( $complaint->getId() )?></td>
 			<td><?=Admin_Managers::Complaint()->showComplaintStatus( $complaint )?></td>
 		</tr>
 	<?php endforeach; ?>

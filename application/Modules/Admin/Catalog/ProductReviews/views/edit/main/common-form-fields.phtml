@@ -41,7 +41,7 @@ $form->field('our_comments')->input()->addCustomCssStyle('height:400px');
 		<div class="card card-body">
 			<?=$item->getEshop()->getName()?> / <?=Locale::dateAndTime($item->getCreated())?>
 			<div style="padding: 10px;">
-				<?=Admin_Managers::Product()->showName( $item->getProductId() ) ?>
+				<?=Admin_Managers::Product()->renderItemName( $item->getProductId() ) ?>
 			</div>
 			
 			

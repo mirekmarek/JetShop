@@ -50,7 +50,7 @@ class Main extends Admin_Managers_Customer
 		return 'Customer';
 	}
 	
-	public function showName( int|EShopEntity_Basic $id_or_item ): string
+	public function renderItemName( int|EShopEntity_Basic $id_or_item ): string
 	{
 		if(!$id_or_item) {
 			$customer = $id_or_item;

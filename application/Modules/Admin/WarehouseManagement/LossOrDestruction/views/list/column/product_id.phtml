@@ -21,4 +21,4 @@ use JetApplication\WarehouseManagement_LossOrDestruction;
 $item = $this->getRaw('item');
 $listing = $this->getRaw('listing');
 
-echo Admin_Managers::Product()->showName( $item->getProductId() );
+echo Admin_Managers::Product()->renderItemName( $item->getProductId() );

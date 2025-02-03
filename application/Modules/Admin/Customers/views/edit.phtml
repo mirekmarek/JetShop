@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Customers;
 
 use Jet\Locale;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Customer as Customer;
 
 use Jet\UI;
@@ -23,22 +24,19 @@ use JetApplication\EMailMarketing_Subscribe_Log;
  * @var MVC_View $this
  * @var Form     $form
  * @var Customer     $customer
+ * @var Admin_Managers_EShopEntity_Edit $edit_manager
  */
 
 
 $customer = $this->getRaw( 'customer' );
+$edit_manager = $this->getRaw('edit_manager' );
 
 $eshop = $customer->getEshop();
 
 $mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getEshop(), $customer->getEmail() );
+
+echo $edit_manager->renderToolbar();
 ?>
-
-
-
-<div class="toolbar" id="main-toolbar">
-	<?=UI::button_goBack()?>
-</div>
-
 <div id="main-col">
 		<legend><?=Tr::_('Main data')?></legend>
 

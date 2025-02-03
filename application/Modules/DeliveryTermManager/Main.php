@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\DeliveryTermManager;
 
-
-use Jet\Application_Module;
 use Jet\Data_DateTime;
 use JetApplication\Availabilities;
 use JetApplication\Calendar;
@@ -19,7 +17,7 @@ use JetApplication\Product_EShopData;
 use JetApplication\Availability;
 
 
-class Main extends Application_Module implements DeliveryTerm_Manager
+class Main extends DeliveryTerm_Manager
 {
 	public function getInfo( Product_EShopData $product, ?Availability $availability=null ) : DeliveryTerm_Info
 	{

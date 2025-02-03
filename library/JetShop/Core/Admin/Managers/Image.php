@@ -7,19 +7,28 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\ImageGallery_Image;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_Admin_Managers_Image
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Images',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
+abstract class Core_Admin_Managers_Image extends Application_Module
 {
-	public function setEshopSyncMode( bool $eshop_sync_mode ): void;
+	abstract public function setEshopSyncMode( bool $eshop_sync_mode ): void;
 	
-	public function getEshopSyncMode(): bool;
+	abstract public function getEshopSyncMode(): bool;
 	
-	public function resetDefinedImages() : void;
+	abstract public function resetDefinedImages() : void;
 	
-	public function defineImage(
+	abstract public function defineImage(
 		string $entity,
 		string|int $object_id,
 		?string $image_class='',
@@ -29,7 +38,7 @@ interface Core_Admin_Managers_Image
 		?EShop $eshop=null
 	);
 	
-	public function uploadImage(
+	abstract public function uploadImage(
 		string $tmp_file_path,
 		string $file_name,
 		string $entity,
@@ -38,29 +47,29 @@ interface Core_Admin_Managers_Image
 		?EShop $eshop = null
 	) : void;
 	
-	public function getEditable(): bool;
+	abstract public function getEditable(): bool;
 	
-	public function setEditable( bool $editable ): void;
+	abstract public function setEditable( bool $editable ): void;
 	
-	public function handleSelectImageWidgets() : bool;
+	abstract public function handleSelectImageWidgets() : bool;
 	
-	public function renderMain() : string;
+	abstract public function renderMain() : string;
 	
-	public function renderImageWidgets( ?EShop $eshop=null ) : string;
+	abstract public function renderImageWidgets( ?EShop $eshop=null ) : string;
 	
-	public function renderStandardManagement() : string;
+	abstract public function renderStandardManagement() : string;
 	
-	public function commonImageManager( string $entity, int $entity_id ) : string;
-
+	abstract public function commonImageManager( string $entity, int $entity_id ) : string;
 	
-	public function handleImageGalleryManagement( EShopEntity_HasImageGallery_Interface $item ) : void;
 	
-	public function uploadImageGallery( EShopEntity_HasImageGallery_Interface $item, array $images ) : void;
+	abstract public function handleImageGalleryManagement( EShopEntity_HasImageGallery_Interface $item ) : void;
 	
-	public function renderImageGalleryManagement() : string;
+	abstract public function uploadImageGallery( EShopEntity_HasImageGallery_Interface $item, array $images ) : void;
 	
-	public function getImageGalleryImageURL( ImageGallery_Image $image ): string;
+	abstract public function renderImageGalleryManagement() : string;
 	
-	public function getImageGalleryImageThumbnailUrl( ImageGallery_Image $image, int $max_w, int $max_h ): string;
+	abstract public function getImageGalleryImageURL( ImageGallery_Image $image ): string;
+	
+	abstract public function getImageGalleryImageThumbnailUrl( ImageGallery_Image $image, int $max_w, int $max_h ): string;
 	
 }

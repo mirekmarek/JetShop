@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use Jet\Form;
 use Jet\UI_tabs;
 use JetApplication\EShopEntity_Basic;
@@ -16,10 +17,18 @@ use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 use Closure;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_Admin_Managers_EShopEntity_Edit
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Entity editor',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
+abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 {
-	public function init(
+	abstract public function init(
 		EShopEntity_Basic|EShopEntity_Admin_Interface $item,
 		?Admin_Managers_EShopEntity_Listing           $listing = null,
 		?UI_tabs                                      $tabs = null,
@@ -29,49 +38,49 @@ interface Core_Admin_Managers_EShopEntity_Edit
 		?Closure                                      $description_fields_renderer = null
 	) : void;
 	
-	public function renderToolbar( ?Form $form = null, ?Closure $toolbar_renderer=null  ): string;
+	abstract public function renderToolbar( ?Form $form = null, ?Closure $toolbar_renderer=null  ): string;
 	
-	public function renderEditMain( Form $form ): string;
+	abstract public function renderEditMain( Form $form ): string;
 	
-	public function renderEditDescription( Form $form ) : string;
+	abstract public function renderEditDescription( Form $form ) : string;
 	
-	public function renderEditImages(): string;
+	abstract public function renderEditImages(): string;
 	
-	public function renderEditImageGallery(): string;
+	abstract public function renderEditImageGallery(): string;
 	
-	public function renderAdd( Form $form ): string;
+	abstract public function renderAdd( Form $form ): string;
 	
-	public function renderDeleteConfirm( string $message ): string;
+	abstract public function renderDeleteConfirm( string $message ): string;
 	
-	public function renderDeleteNotPossible( string    $message, ?callable $reason_renderer = null ): string;
+	abstract public function renderDeleteNotPossible( string    $message, ?callable $reason_renderer = null ): string;
 	
-	public function renderShowName(
+	abstract public function renderItemName(
 		int $id,
 		null|EShopEntity_WithEShopData|EShopEntity_Admin_Interface $item
 	): string;
 	
-	public function renderActiveState(
+	abstract public function renderActiveState(
 		EShopEntity_HasActivation_Interface $item
 	): string;
 	
 	
-	public function renderShopDataBlocks(
+	abstract public function renderShopDataBlocks(
 		?Form     $form=null,
 		?array    $eshops=null,
 		bool      $inline_mode=false,
 		?callable $renderer=null
 	) : string;
 	
-	public function renderDescriptionBlocks(
+	abstract public function renderDescriptionBlocks(
 		?Form $form=null,
 		?array $locales=null,
 		?callable $renderer=null
 	) : string;
 	
 	
-	public function renderPreviewButton( EShopEntity_Basic|EShopEntity_HasURL_Interface $item ) : string;
+	abstract public function renderPreviewButton( EShopEntity_Basic|EShopEntity_HasURL_Interface $item ) : string;
 	
-	public function renderEntityActivation(
+	abstract public function renderEntityActivation(
 		EShopEntity_Basic $entity,
 		bool              $editable,
 		?Closure          $deactivate_url_creator = null,
@@ -81,12 +90,12 @@ interface Core_Admin_Managers_EShopEntity_Edit
 		?Closure          $activate_per_eshop_url_creator = null
 	) : string;
 	
-	public function renderEntityFormCommonFields( Form $form ) : string;
+	abstract public function renderEntityFormCommonFields( Form $form ) : string;
 	
-	public function renderEditProducts( EShopEntity_Basic $item ): string;
+	abstract public function renderEditProducts( EShopEntity_Basic $item ): string;
 	
-	public function renderEditFilter( EShopEntity_Basic $item, Form $form ): string;
+	abstract public function renderEditFilter( EShopEntity_Basic $item, Form $form ): string;
 	
-	public function renderEditorTools( EShopEntity_Basic $item ) : string;
+	abstract public function renderEditorTools( EShopEntity_Basic $item ) : string;
 	
 }

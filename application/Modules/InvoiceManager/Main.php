@@ -10,7 +10,6 @@ namespace JetApplicationModule\InvoiceManager;
 
 
 use Closure;
-use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\IO_Dir;
 use Jet\Locale;
@@ -26,7 +25,7 @@ use JetApplication\Order;
 use TCPDF;
 
 
-class Main extends Application_Module implements Invoice_Manager, EMail_TemplateProvider
+class Main extends Invoice_Manager implements EMail_TemplateProvider
 {
 	
 	public function createInvoiceForOrder( Order $order ) : Invoice

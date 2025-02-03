@@ -69,7 +69,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 			<div><?=$warehouse->getInternalName()?></div>
 			
 			<div><?=Tr::_('Product:')?></div>
-			<div><?=Admin_Managers::Product()->showName( $card->getProductId() )?></div>
+			<div><?=Admin_Managers::Product()->renderItemName( $card->getProductId() )?></div>
 
 			<div></div>
 			<div style="gap: 10px;display: flex;align-items: center">
@@ -129,7 +129,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 				
 				foreach( $orders as $o ):
 					?>
-					<?=UI::badge( UI_badge::INFO, Admin_Managers::SupplierGoodsOrders()->showName($o->getId()) )?>
+					<?=UI::badge( UI_badge::INFO, Admin_Managers::SupplierGoodsOrders()->renderItemName($o->getId()) )?>
 					<?php
 				endforeach;
 			endif;
@@ -148,7 +148,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 				$transfers = $card->getRelevantTransfersFromAnotherWarehouse();
 				foreach( $transfers as $tr ):
 					?>
-					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->showName( $tr->getId() ))?></div>
+					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->renderItemName( $tr->getId() ))?></div>
 					<?php
 				endforeach;
 			endif;
@@ -166,7 +166,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 				$transfers = $card->getRelevantTransfersToAnotherWarehouse();
 				foreach( $transfers as $tr ):
 					?>
-					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->showName( $tr->getId() ))?></div>
+					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->renderItemName( $tr->getId() ))?></div>
 				<?php
 				endforeach;
 			endif;

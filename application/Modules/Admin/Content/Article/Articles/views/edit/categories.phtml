@@ -69,7 +69,7 @@ echo $this->getRaw('tabs');
 			</div>
 			
 			<div><?=$c_manager->renderActiveState($category)?></div>
-			<div><?=$c_manager->showName($category)?></div>
+			<div><?=$c_manager->renderItemName($category)?></div>
 			<div>
 				<?php if($editable): ?>
 					<?=UI::button_delete(' ')

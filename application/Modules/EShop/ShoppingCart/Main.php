@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\ShoppingCart;
 
-
-use Jet\Application_Module;
 use JetApplication\Availabilities;
 use JetApplication\Pricelists;
 use JetApplication\Product_EShopData;
@@ -17,8 +15,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\ShoppingCart;
 use JetApplication\EShops;
 
-
-class Main extends Application_Module implements EShop_Managers_ShoppingCart, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_ShoppingCart implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\CalendarManager;
 
-
-use Jet\Application_Module;
 use Jet\Data_DateTime;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
@@ -20,8 +18,7 @@ use JetApplication\EShops;
 use JetApplication\EShop;
 
 
-class Main extends Application_Module implements
-										Calendar_Manager,
+class Main extends Calendar_Manager implements
 										EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
 										Admin_ControlCentre_Module_Interface
 {

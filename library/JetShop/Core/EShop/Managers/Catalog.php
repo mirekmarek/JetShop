@@ -6,7 +6,17 @@
  */
 namespace JetShop;
 
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_EShop_Managers_Catalog {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Catalog',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_Catalog extends Application_Module
+{
 
 }

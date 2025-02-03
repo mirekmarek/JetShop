@@ -109,7 +109,7 @@ $form->renderer()->setDefaultFieldWidth([
 				$p_id = $item->getProductId();
 				?>
 				<tr style="<?php if(!$item->getNumberOfUnits()):?>opacity: 0.5<?php endif;?>">
-					<td><?=Admin_Managers::Product()->showName($item->getProductId())?></td>
+					<td><?=Admin_Managers::Product()->renderItemName($item->getProductId())?></td>
 
 					<td><?=$item->getProductEan()?></td>
 					<td><?=$item->getProductInternalCode()?></td>

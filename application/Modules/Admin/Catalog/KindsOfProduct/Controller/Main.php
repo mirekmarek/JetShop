@@ -155,6 +155,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 			
 		}
 		
+		$this->view->setVar('editor_manager', $this->getEditorManager());
+		
 		
 		$this->output( 'edit/properties' );
 	}
@@ -201,7 +203,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$this->view->setVar( 'kind_of_product', $kind_of_product );
 		}
 		
-		
+		$this->view->setVar('editor_manager', $this->getEditorManager());
 		
 		$this->output( 'edit/exports' );
 	}
@@ -248,7 +250,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$this->view->setVar( 'kind_of_product', $kind_of_product );
 		}
 		
-		
+		$this->view->setVar('editor_manager', $this->getEditorManager());
 		
 		$this->output( 'edit/marketplace' );
 		

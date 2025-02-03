@@ -53,7 +53,7 @@ abstract class Core_Admin_EntityManager_Module extends Application_Module {
 		
 	}
 	
-	public function showName( int|EShopEntity_Basic $id_or_item ): string
+	public function renderItemName( int|EShopEntity_Basic $id_or_item ): string
 	{
 		if(is_int($id_or_item)) {
 			$id = $id_or_item;
@@ -63,7 +63,7 @@ abstract class Core_Admin_EntityManager_Module extends Application_Module {
 			$id = $item->getId();
 		}
 		
-		return Admin_Managers::EntityEdit()->renderShowName( $id, $item );
+		return Admin_Managers::EntityEdit()->renderItemName( $id, $item );
 	}
 	
 	public static function getCurrentUserCanEdit() : bool

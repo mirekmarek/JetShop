@@ -18,5 +18,5 @@ use JetApplication\Product;
 
 $item = $this->getRaw('item');
 
-echo Admin_Managers::KindOfProduct()->showName( $item->getKindId() );
+echo Admin_Managers::KindOfProduct()->renderItemName( $item->getKindId() );
 

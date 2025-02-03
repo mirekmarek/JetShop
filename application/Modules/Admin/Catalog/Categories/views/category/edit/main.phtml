@@ -64,7 +64,7 @@ $editable = !$form->getIsReadonly();
 			</form>
 		<?php else:
 			if(($kind_id=$category->getKindOfProductId())):
-				?><?=Admin_Managers::KindOfProduct()->showName($kind_id)?><?php
+				?><?=Admin_Managers::KindOfProduct()->renderItemName($kind_id)?><?php
 			else:
 				?><b><?=Tr::_('- kind of product is not set -')?></b><?php
 			endif;

@@ -7,13 +7,22 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\EShopEntity_HasTimer_Interface;
+use JetApplication\Manager_MetaInfo;
 
 
-interface Core_Admin_Managers_Timer
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: false,
+	name: 'Timer',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
+abstract class Core_Admin_Managers_Timer extends Application_Module
 {
-	public function renderIntegration() : string;
+	abstract public function renderIntegration() : string;
 	
-	public function renderEntityEdit( EShopEntity_HasTimer_Interface $entity, bool $editable ) : string;
+	abstract public function renderEntityEdit( EShopEntity_HasTimer_Interface $entity, bool $editable ) : string;
 
 }

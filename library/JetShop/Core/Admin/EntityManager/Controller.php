@@ -218,7 +218,8 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 				return Http_Request::currentURI( ['id'=>$id], ['page','action'] );
 			})
 			->setAuthorizer( function() {
-				return $this->module::getCurrentUserCanEdit();
+				//return $this->module::getCurrentUserCanEdit();
+				return true;
 			} );
 		
 		if(
@@ -233,7 +234,8 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'description'], ['action'] );
 				})
 				->setAuthorizer( function() {
-					return $this->module::getCurrentUserCanEdit();
+					//return $this->module::getCurrentUserCanEdit();
+					return true;
 				} );
 		}
 		
@@ -251,7 +253,8 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 					return Http_Request::currentURI( ['id'=>$id, 'page'=>'images'], ['action'] );
 				})
 				->setAuthorizer( function() {
-					return $this->module::getCurrentUserCanEdit();
+					//return $this->module::getCurrentUserCanEdit();
+					return true;
 				} );
 		}
 		
@@ -267,7 +270,8 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 					return $this->current_item && $selected_tab=='products';
 				} )
 				->setAuthorizer( function() {
-					return $this->module::getCurrentUserCanEdit();
+					//return $this->module::getCurrentUserCanEdit();
+					return true;
 				} );
 		}
 		

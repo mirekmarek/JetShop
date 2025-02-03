@@ -8,9 +8,17 @@ namespace JetShop;
 
 
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Catalog - Kind of products',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 abstract class Core_Admin_Managers_KindOfProduct extends Admin_EntityManager_Module
 {
 	

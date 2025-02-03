@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
+use JetApplication\Admin_Managers_Content_MagicTags;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\Admin_Managers_OrderPersonalReceipt;
 use JetApplication\Admin_Managers_Signpost;
@@ -99,6 +100,12 @@ class Core_Admin_Managers extends Managers {
 	{
 		return static::get( Admin_Managers_Image::class );
 	}
+	
+	public static function MagicTags() : Admin_Managers_Content_MagicTags|Application_Module
+	{
+		return static::get( Admin_Managers_Content_MagicTags::class );
+	}
+	
 	
 	public static function UI() : Admin_Managers_UI|Application_Module
 	{

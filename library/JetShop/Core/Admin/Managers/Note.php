@@ -7,30 +7,33 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\EShopEntity_Note;
 use Closure;
 use JetApplication\EShopEntity_Note_MessageGenerator;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_Admin_Managers_Note
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: false,
+	name: 'Internal notes and messages for customer',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
+abstract class Core_Admin_Managers_Note extends Application_Module
 {
-	public function init( EShopEntity_Note $new_note, string $generated_subject, string $customer_email_address, Closure $after_add ) : void;
+	abstract public function init( EShopEntity_Note $new_note, string $generated_subject, string $customer_email_address, Closure $after_add ) : void;
 	
+	abstract public function handle() : void;
 	
-	public function handle() : void;
+	abstract public function showDialog() : string;
 	
+	abstract public function showNote( EShopEntity_Note $note ) : string;
 	
-	public function showDialog() : string;
-	
-	
-	public function showNote( EShopEntity_Note $note ) : string;
-	
-	public function addMessageGenerator( EShopEntity_Note_MessageGenerator $generator ) : void;
+	abstract public function addMessageGenerator( EShopEntity_Note_MessageGenerator $generator ) : void;
 	
 	/**
 	 * @return EShopEntity_Note_MessageGenerator[]
 	 */
-	public function getMessageGenerators() : array;
-	
-	
-	
+	abstract public function getMessageGenerators() : array;
 }

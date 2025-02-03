@@ -59,14 +59,14 @@ $order = $this->getRaw( 'order' );
 					<?php if($order->getSplitSourceOrderId()): ?>
 					<tr>
 						<td style="font-weight: bolder;font-size: 1.1rem"><?=Tr::_('Comes from a split order:')?></td>
-						<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->showName($order->getSplitSourceOrderId())?></td>
+						<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->renderItemName($order->getSplitSourceOrderId())?></td>
 					</tr>
 					<?php endif; ?>
 					
 					<?php if($order->getJoinedWithOrderId()): ?>
 						<tr>
 							<td style="font-weight: bolder;font-size: 1.1rem"><?=Tr::_('Joined with order:')?></td>
-							<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->showName($order->getJoinedWithOrderId())?></td>
+							<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->renderItemName($order->getJoinedWithOrderId())?></td>
 						</tr>
 					<?php endif; ?>
 					
@@ -140,7 +140,7 @@ $order = $this->getRaw( 'order' );
 					<tr>
 						<td></td>
 						<td>
-							<?=Admin_Managers::Customer()->showName( $order->getCustomerId() )?>
+							<?=Admin_Managers::Customer()->renderItemName( $order->getCustomerId() )?>
 							<br>
 						</td>
 					</tr>

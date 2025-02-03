@@ -53,7 +53,7 @@ $complaint = $this->getRaw( 'complaint' );
 					</tr>
 					<tr>
 						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
-						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->showName($complaint->getOrderId())?></td>
+						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->renderItemName($complaint->getOrderId())?></td>
 					</tr>
 				</table>
 			</div>
@@ -67,7 +67,7 @@ $complaint = $this->getRaw( 'complaint' );
 					<tr>
 						<td></td>
 						<td>
-							<?=Admin_Managers::Customer()->showName( $complaint->getCustomerId() )?>
+							<?=Admin_Managers::Customer()->renderItemName( $complaint->getCustomerId() )?>
 							<br>
 						</td>
 					</tr>

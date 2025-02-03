@@ -40,7 +40,7 @@ $kind_of_product_ids = $item->getUsageKindOfProductIds();
 				<table class="table table-striped">
 					<?php foreach($kind_of_product_ids as $id): ?>
 						<tr>
-							<td><?= Admin_Managers::KindOfProduct()->showName( $id )?></td>
+							<td><?= Admin_Managers::KindOfProduct()->renderItemName( $id )?></td>
 						</tr>
 					<?php endforeach; ?>
 				</table>

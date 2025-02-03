@@ -9,7 +9,6 @@ namespace JetApplicationModule\Admin\NoteManager;
 
 use Jet\AJAX;
 use Jet\Application;
-use Jet\Application_Module;
 use Jet\Auth;
 use Jet\Data_DateTime;
 use Jet\Factory_MVC;
@@ -25,7 +24,7 @@ use JetApplication\EShopEntity_Note_MessageGenerator;
 use Closure;
 
 
-class Main extends Application_Module implements Admin_Managers_Note
+class Main extends Admin_Managers_Note
 {
 	protected EShopEntity_Note $new_note;
 	protected string $generated_subject;

@@ -6,9 +6,7 @@
  */
 namespace JetApplicationModule\EShop\ProductListing;
 
-
 use Jet\Application;
-use Jet\Application_Module;
 use Jet\Http_Request;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductListing;
@@ -16,8 +14,7 @@ use JetApplication\EShop_Managers_ProductListing;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-
-class Main extends Application_Module implements EShop_Managers_ProductListing, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

@@ -7,8 +7,17 @@
 namespace JetShop;
 
 
-interface Core_EShop_Managers_PromoAreas {
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 
-	public function renderArea( string $area_code, array $list_of_product_ids_to_check_relevance=[] ) : string;
-
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Promo areas',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_PromoAreas extends Application_Module
+{
+	abstract public function renderArea( string $area_code, array $list_of_product_ids_to_check_relevance=[] ) : string;
 }

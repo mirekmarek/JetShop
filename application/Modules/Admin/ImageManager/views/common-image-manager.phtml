@@ -21,12 +21,6 @@ $image_field = $form->getField('image');
 $image_field->input()->addJsAction('onchange', "CommonImageManager.upload()");
 ?>
 <style>
-	#common_image_manager_btn {
-		position: fixed;
-		top: 60px;
-		right: 0px;
-	}
-	
 	#common_image_manager {
 		position: fixed;
 		top: 60px;
@@ -79,9 +73,9 @@ $image_field->input()->addJsAction('onchange', "CommonImageManager.upload()");
 		
 	};
 </script>
-<div id="common_image_manager_btn">
-	<?= UI::button( Tr::_('Images') )->setIcon('image')->setOnClick("CommonImageManager.open()")->setClass( UI_button::CLASS_SUCCESS)?>
-</div>
+
+<?= UI::button( Tr::_('Images') )->setIcon('image')->setOnClick("CommonImageManager.open()")->setClass( UI_button::CLASS_SUCCESS)?>
+
 <div id="common_image_manager" style="display: none;">
 	<div style="display: flex;align-items: center">
 		<div>

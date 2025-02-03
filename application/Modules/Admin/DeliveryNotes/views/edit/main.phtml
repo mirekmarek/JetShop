@@ -48,7 +48,7 @@ $invoice = $this->getRaw( 'invoice' );
 					<?php if($invoice->getOrderId()): ?>
 					<tr>
 						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
-						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->showName(  $invoice->getOrderId() )?></td>
+						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->renderItemName(  $invoice->getOrderId() )?></td>
 					</tr>
 					<?php endif; ?>
 					
@@ -75,7 +75,7 @@ $invoice = $this->getRaw( 'invoice' );
 		<div class="card">
 			<div class="card-header"><b><?=Tr::_('Customer')?></b></div>
 			<div class="card-body">
-				<?=Admin_Managers::Customer()->showName( $invoice->getCustomerId() )?>
+				<?=Admin_Managers::Customer()->renderItemName( $invoice->getCustomerId() )?>
 				<br>
 				
 				<?=Admin_Managers::Customer()->formatAddress( $invoice->getEshop(), $invoice->getCustomerAddress() )?>

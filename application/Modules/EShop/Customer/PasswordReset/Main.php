@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\Customer\PasswordReset;
 
-
-use Jet\Application_Module;
 use Jet\Auth;
 use Jet\IO_File;
 use Jet\Logger;
@@ -19,8 +17,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 use JetApplication\EMail_TemplateProvider;
 
-
-class Main extends Application_Module implements EShop_Managers_CustomerPasswordReset, EMail_TemplateProvider, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_CustomerPasswordReset implements EMail_TemplateProvider, EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

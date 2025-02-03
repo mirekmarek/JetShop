@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\Articles;
 
-
-use Jet\Application_Module;
 use JetApplication\Content_Article_EShopData;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Managers_Articles;
@@ -15,7 +13,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
 
-class Main extends Application_Module implements EShop_Managers_Articles, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_Articles implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

@@ -7,16 +7,24 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\Content_MagicTag;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_EShop_Managers_MagicTags
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Magic tags',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_MagicTags extends Application_Module
 {
 	/**
 	 * @return Content_MagicTag[]
 	 */
-	public function getList() : array;
+	abstract public function getList() : array;
 	
-	
-	public function init() : void;
+	abstract public function init() : void;
 	
 }

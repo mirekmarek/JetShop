@@ -8,7 +8,6 @@ namespace JetApplicationModule\Admin\ProductFilterManager;
 
 
 use Jet\AJAX;
-use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
@@ -24,7 +23,7 @@ use JetApplication\ProductFilter;
 use JetApplication\Property;
 
 
-class Main extends Application_Module implements Admin_Managers_ProductFilter
+class Main extends Admin_Managers_ProductFilter
 {
 	protected ?Category $category = null;
 	protected ?Form $form = null;

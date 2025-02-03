@@ -6,12 +6,19 @@
  */
 namespace JetShop;
 
-
 use Jet\Application_Module;
 use Jet\Data_DateTime;
 use JetApplication\EShop;
 use JetApplication\Exports_Definition;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_GENERAL,
+	is_mandatory: false,
+	name: 'Data exports',
+	description: '',
+	module_name_prefix: 'Exports.'
+)]
 abstract class Core_Exports_Manager extends Application_Module {
 	
 	abstract public function handleExports() : void;

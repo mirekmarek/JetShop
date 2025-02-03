@@ -57,6 +57,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		);
 		
 		$this->view->setVar( 'customer', $customer );
+		$this->view->setVar( 'edit_manager', $this->getEditorManager() );
 		
 		$this->output( 'edit' );
 	}

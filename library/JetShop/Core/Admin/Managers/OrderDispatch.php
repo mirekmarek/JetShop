@@ -9,8 +9,16 @@ namespace JetShop;
 
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Context;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\OrderDispatch;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Order dispatch',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 abstract class Core_Admin_Managers_OrderDispatch extends Admin_EntityManager_Module
 {
 	abstract public function showDispatches( Context $context ) : string;

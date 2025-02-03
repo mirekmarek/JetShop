@@ -6,14 +6,11 @@
  */
 namespace JetApplicationModule\EShop\UI;
 
-
-use Jet\Application_Module;
 use JetApplication\EShop_Managers_UI;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-
-class Main extends Application_Module implements EShop_Managers_UI, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_UI implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

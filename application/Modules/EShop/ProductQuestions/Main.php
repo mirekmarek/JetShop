@@ -6,9 +6,7 @@
  */
 namespace JetApplicationModule\EShop\ProductQuestions;
 
-
 use Jet\AJAX;
-use Jet\Application_Module;
 use Jet\Form;
 use Jet\Form_Field_Email;
 use Jet\Form_Field_Input;
@@ -23,7 +21,7 @@ use JetApplication\EShops;
 use JetApplication\Customer;
 
 
-class Main extends Application_Module implements EShop_Managers_ProductQuestions, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_ProductQuestions implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

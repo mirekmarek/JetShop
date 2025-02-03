@@ -6,16 +6,13 @@
  */
 namespace JetApplicationModule\EShop\Marketing\PromoAreas;
 
-
-use Jet\Application_Module;
 use JetApplication\Marketing_PromoArea;
 use JetApplication\Marketing_PromoAreaDefinition;
 use JetApplication\EShop_Managers_PromoAreas;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-
-class Main extends Application_Module implements EShop_Managers_PromoAreas, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_PromoAreas implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

@@ -9,7 +9,15 @@ namespace JetShop;
 
 use Jet\Form;
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'Catalog - property',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 abstract class Core_Admin_Managers_Property extends Admin_EntityManager_Module
 {
 	

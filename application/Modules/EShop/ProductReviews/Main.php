@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\ProductReviews;
 
-
-use Jet\Application_Module;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Translator;
@@ -17,7 +15,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
 
-class Main extends Application_Module implements EShop_Managers_ProductReviews, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_ProductReviews implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

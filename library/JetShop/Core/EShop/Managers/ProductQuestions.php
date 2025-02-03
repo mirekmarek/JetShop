@@ -7,10 +7,20 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Product_EShopData;
 
-interface Core_EShop_Managers_ProductQuestions {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Product questions',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_ProductQuestions extends Application_Module
+{
 	
-	public function renderQuestions( Product_EShopData $product ): string;
+	abstract public function renderQuestions( Product_EShopData $product ): string;
 	
 }

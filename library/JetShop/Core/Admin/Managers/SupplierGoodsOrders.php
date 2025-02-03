@@ -6,9 +6,16 @@
  */
 namespace JetShop;
 
-
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Manager_MetaInfo;
 
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: false,
+	name: 'Supplier - Goods Orders',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
 abstract class Core_Admin_Managers_SupplierGoodsOrders extends Admin_EntityManager_Module
 {
 }

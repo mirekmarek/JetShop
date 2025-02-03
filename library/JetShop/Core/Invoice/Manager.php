@@ -7,27 +7,36 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\DeliveryNote;
 use JetApplication\Invoice;
 use JetApplication\InvoiceInAdvance;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Order;
 
-interface Core_Invoice_Manager
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_GENERAL,
+	is_mandatory: true,
+	name: 'Invoices',
+	description: '',
+	module_name_prefix: ''
+)]
+abstract class Core_Invoice_Manager extends Application_Module
 {
-	public function getInvoicePDFTemplates() : array;
-	public function getInvoiceInAdvancePDFTemplates() : array;
-	public function getDeliveryNotePDFTemplates() : array;
+	abstract public function getInvoicePDFTemplates() : array;
+	abstract public function getInvoiceInAdvancePDFTemplates() : array;
+	abstract public function getDeliveryNotePDFTemplates() : array;
 	
-	public function createInvoiceForOrder( Order $order ) : Invoice;
-	public function createInvoiceInAdvanceForOrder( Order $order ) : InvoiceInAdvance;
-	public function createDeliveryNoteForOrder( Order $order ) : DeliveryNote;
+	abstract public function createInvoiceForOrder( Order $order ) : Invoice;
+	abstract public function createInvoiceInAdvanceForOrder( Order $order ) : InvoiceInAdvance;
+	abstract public function createDeliveryNoteForOrder( Order $order ) : DeliveryNote;
 	
-	public function generateInvoicePDF( Invoice $invoice, string $force_template=''  ) : string;
-	public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice, string $force_template=''  ) : string;
-	public function generateDeliveryNotePDF( DeliveryNote $invoice, string $force_template=''  ) : string;
+	abstract public function generateInvoicePDF( Invoice $invoice, string $force_template=''  ) : string;
+	abstract public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice, string $force_template=''  ) : string;
+	abstract public function generateDeliveryNotePDF( DeliveryNote $invoice, string $force_template=''  ) : string;
 	
-	public function sendInvoice( Invoice $invoice ) : void;
-	public function sendInvoiceInAdvance( InvoiceInAdvance $invoice ) : void;
-	public function sendDeliveryNote( DeliveryNote $invoice ) : void;
+	abstract public function sendInvoice( Invoice $invoice ) : void;
+	abstract public function sendInvoiceInAdvance( InvoiceInAdvance $invoice ) : void;
+	abstract public function sendDeliveryNote( DeliveryNote $invoice ) : void;
 	
 }

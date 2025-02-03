@@ -38,7 +38,7 @@ if(!is_array($items)) {
 			<?=UI::button_delete(' ')->setOnClick("CustomOD.removeItem({$id})")->setSize(UI_button::SIZE_EXTRA_SMALL)?>
 		</td>
 		<td style="width: 80px"><?=$qty?>x</td>
-		<td><?=Admin_Managers::Product()->showName( $id )?></td>
+		<td><?=Admin_Managers::Product()->renderItemName( $id )?></td>
 	</tr>
 	<?php endforeach; ?>
 </table>

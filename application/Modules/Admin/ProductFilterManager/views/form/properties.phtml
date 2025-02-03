@@ -27,7 +27,7 @@ $property_manager = Admin_Managers::Property();
 
 <?php foreach($properties as $property): ?>
 	<div>
-		<h5><?=$property_manager->showName( $property->getId() )?></h5>
+		<h5><?=$property_manager->renderItemName( $property->getId() )?></h5>
 		<hr>
 		<?php
 		if($property->getType()==Property::PROPERTY_TYPE_OPTIONS):

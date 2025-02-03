@@ -7,13 +7,22 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Product_EShopData;
 
-interface Core_EShop_Managers_ProductListing
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: true,
+	name: 'Product Listing',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_ProductListing extends Application_Module
 {
-	public function init( array $product_ids, int $category_id=0, string $category_name='', ?string $optional_URL_parameter = null ) : void;
+	abstract public function init( array $product_ids, int $category_id=0, string $category_name='', ?string $optional_URL_parameter = null ) : void;
 	
-	public function render() : string;
+	abstract public function render() : string;
 	
-	public function renderItem( Product_EShopData $item ) : string;
+	abstract public function renderItem( Product_EShopData $item ) : string;
 }

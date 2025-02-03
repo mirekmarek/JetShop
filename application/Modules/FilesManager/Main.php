@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\FilesManager;
 
-
-use Jet\Application_Module;
 use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
@@ -18,7 +16,7 @@ use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Files_Manager;
 
 
-class Main extends Application_Module implements Files_Manager
+class Main extends Files_Manager
 {
 	public function deleteFile( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file ): void
 	{

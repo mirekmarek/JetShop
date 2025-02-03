@@ -7,13 +7,22 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use Jet\Form;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_Admin_Managers_UI
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ADMIN,
+	is_mandatory: true,
+	name: 'UI',
+	description: '',
+	module_name_prefix: 'Admin.'
+)]
+abstract class Core_Admin_Managers_UI extends Application_Module
 {
-	public function handleCurrentPreferredShop();
+	abstract public function handleCurrentPreferredShop();
 	
-	public function renderSelectEntityWidget(
+	abstract public function renderSelectEntityWidget(
 		string $name,
 		string $caption,
 		string $on_select,
@@ -25,6 +34,6 @@ interface Core_Admin_Managers_UI
 	) : string;
 	
 	
-	public function renderEntityToolbar( Form $form, ?callable $buttons_renderer=null ) : string;
+	abstract public function renderEntityToolbar( Form $form, ?callable $buttons_renderer=null ) : string;
 	
 }

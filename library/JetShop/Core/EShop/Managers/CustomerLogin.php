@@ -7,14 +7,24 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\Customer;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_EShop_Managers_CustomerLogin {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: true,
+	name: 'Customer Login',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_CustomerLogin extends Application_Module
+{
 
-	public function handleLogin(): void;
-	public function handleIsNotActivated( Customer $customer ) : void;
-	public function handleIsBlocked( Customer $customer ) : void;
-	public function handleMustChangePassword( Customer $customer ) : void;
+	abstract public function handleLogin(): void;
+	abstract public function handleIsNotActivated( Customer $customer ) : void;
+	abstract public function handleIsBlocked( Customer $customer ) : void;
+	abstract public function handleMustChangePassword( Customer $customer ) : void;
 	
-	public function renderCustomerIcon() : string;
+	abstract public function renderCustomerIcon() : string;
 }

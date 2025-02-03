@@ -6,16 +6,13 @@
  */
 namespace JetApplicationModule\EShop\PriceFormatter;
 
-
-use Jet\Application_Module;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\EShop_Managers_PriceFormatter;
 use JetApplication\Pricelist;
 use JetApplication\Pricelists;
 
-
-class Main extends Application_Module implements EShop_Managers_PriceFormatter
+class Main extends EShop_Managers_PriceFormatter
 {
 	
 	public function format( float $price, ?Pricelist $pricelist=null  ): string

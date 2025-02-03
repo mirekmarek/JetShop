@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\EShop\Customer\Login;
 
-use Jet\Application_Module;
 use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Form_Field;
@@ -21,7 +20,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
 
-class Main extends Application_Module implements EShop_Managers_CustomerLogin, EShop_ModuleUsingTemplate_Interface
+class Main extends EShop_Managers_CustomerLogin implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

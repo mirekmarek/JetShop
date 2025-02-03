@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\EShop\Customer\CustomerSection;
 
-
-use Jet\Application_Module;
 use Jet\MVC;
 use Jet\Tr;
 use Jet\UI;
@@ -20,7 +18,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
 
-class Main extends Application_Module implements EShop_ModuleUsingTemplate_Interface, EShop_Managers_CustomerSection
+class Main extends EShop_Managers_CustomerSection implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

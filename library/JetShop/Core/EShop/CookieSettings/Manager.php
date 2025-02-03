@@ -14,8 +14,17 @@ use JetApplication\EShop_CookieSettings_Evidence_Agree;
 use JetApplication\EShop_CookieSettings_Evidence_Disagree;
 use JetApplication\EShop_CookieSettings_Group;
 use JetApplication\EShops;
+use JetApplication\Manager_MetaInfo;
 
-abstract class Core_EShop_CookieSettings_Manager extends Application_Module {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Cookie Settings',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_CookieSettings_Manager extends Application_Module
+{
 	
 
 	protected ?array $groups = null;

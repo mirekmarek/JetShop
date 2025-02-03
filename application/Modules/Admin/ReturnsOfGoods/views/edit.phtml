@@ -34,7 +34,7 @@ $return = $this->getRaw( 'return' );
 		<div class="card card-body" style="margin: 10px;">
 			<h5><?=Tr::_('Product')?></h5>
 
-			<p><?=Admin_Managers::Product()->showName( $return->getProductId() )?></p>
+			<p><?=Admin_Managers::Product()->renderItemName( $return->getProductId() )?></p>
 		</div>
 	</fieldset>
 

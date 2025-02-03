@@ -7,10 +7,20 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\CashDesk;
+use JetApplication\Manager_MetaInfo;
 
-interface Core_EShop_Managers_CashDesk {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: true,
+	name: 'Cash Desk',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_CashDesk extends Application_Module
+{
 	
-	public function getCashDesk() : CashDesk;
+	abstract public function getCashDesk() : CashDesk;
 	
 }

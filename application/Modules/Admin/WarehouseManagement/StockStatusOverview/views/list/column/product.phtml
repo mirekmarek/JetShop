@@ -22,6 +22,6 @@ use JetApplication\Admin_Managers_EShopEntity_Listing;
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 ?>
-	<?=Admin_Managers::Product()->showName( $item->getProductId() ) ?><br>
+	<?=Admin_Managers::Product()->renderItemName( $item->getProductId() ) ?><br>
 	<a href="<?=$listing->getEditUrl( $item );?>"><?=Tr::_('Show stock card');?></a>
 <?php

@@ -7,33 +7,42 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
+use JetApplication\Manager_MetaInfo;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 
-interface Core_EShop_Managers_Analytics {
+#[Manager_MetaInfo(
+	group: Manager_MetaInfo::GROUP_ESHOP,
+	is_mandatory: false,
+	name: 'Analytics',
+	description: '',
+	module_name_prefix: 'EShop.'
+)]
+abstract class Core_EShop_Managers_Analytics extends Application_Module
+{
 	
 	/**
 	 * @return EShop_Analytics_Service[]
 	 */
-	public function getServices() : array;
-		
-		
-	public function header() : string;
+	abstract public function getServices() : array;
 	
-	public function documentStart() : string;
+	abstract public function header() : string;
 	
-	public function documentEnd() : string;
+	abstract public function documentStart() : string;
 	
-	public function catchConversionSourceInfo() : void;
+	abstract public function documentEnd() : string;
 	
-	public function viewCategory( Category_EShopData $category ) : string;
+	abstract public function catchConversionSourceInfo() : void;
 	
-	public function customEvent( string $evetnt, array $event_data=[] ) : string;
+	abstract public function viewCategory( Category_EShopData $category ) : string;
+	
+	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
 	
 	/**
 	 * @param array $list
@@ -42,22 +51,22 @@ interface Core_EShop_Managers_Analytics {
 	 * @param int|null $category_id
 	 * @return string
 	 */
-	public function viewProductsList( array $list, ?Category_EShopData $category=null, ?string $category_name='', ?int $category_id=null ) : string;
+	abstract public function viewProductsList( array $list, ?Category_EShopData $category=null, ?string $category_name='', ?int $category_id=null ) : string;
 	
-	public function viewProductDetail( Product_EShopData $product ) : string;
+	abstract public function viewProductDetail( Product_EShopData $product ) : string;
 	
-	public function addToCart( ShoppingCart_Item $new_cart_item ) : string;
+	abstract public function addToCart( ShoppingCart_Item $new_cart_item ) : string;
 	
-	public function removeFromCart( ShoppingCart_Item $cart_item ): string;
+	abstract public function removeFromCart( ShoppingCart_Item $cart_item ): string;
 	
-	public function viewCart( ShoppingCart $cart ) : string;
+	abstract public function viewCart( ShoppingCart $cart ) : string;
 	
-	public function beginCheckout( CashDesk $cash_desk ) : string;
+	abstract public function beginCheckout( CashDesk $cash_desk ) : string;
 	
-	public function addDeliveryInfo( CashDesk $cash_desk ) : string;
-		
-	public function addPaymentInfo( CashDesk $cash_desk ) : string;
+	abstract public function addDeliveryInfo( CashDesk $cash_desk ) : string;
 	
-	public function purchase( Order $order ) : string;
+	abstract public function addPaymentInfo( CashDesk $cash_desk ) : string;
+	
+	abstract public function purchase( Order $order ) : string;
 
 }

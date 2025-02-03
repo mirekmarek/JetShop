@@ -8,9 +8,9 @@ namespace JetApplicationModule\Admin\ImageManager;
 
 
 use Jet\AJAX;
-use Jet\Application_Module;
 use Jet\Factory_MVC;
 use Jet\MVC_View;
+use Jet\Tr;
 use Jet\Translator;
 use JetApplication\Admin_Managers_Image;
 
@@ -19,7 +19,7 @@ use JetApplication\ImageGallery_Image;
 use JetApplication\EShop;
 
 
-class Main extends Application_Module implements Admin_Managers_Image
+class Main extends Admin_Managers_Image
 {
 	
 	/**
@@ -286,8 +286,13 @@ class Main extends Application_Module implements Admin_Managers_Image
 	
 	public function commonImageManager( string $entity, int $entity_id ): string
 	{
-		$manager = new CommonImageManager($entity, $entity_id, $this->initView());
-		return $manager->handle();
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($entity, $entity_id) {
+				$manager = new CommonImageManager($entity, $entity_id, $this->initView());
+				return $manager->handle();
+			}
+		);
 	}
 	
 }

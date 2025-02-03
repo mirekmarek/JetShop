@@ -33,7 +33,7 @@ $complaints = $this->getRaw( 'complaints' );
 	<tr>
 		<td><a href="<?=$complaint->getEditUrl()?>"><?=$complaint->getNumber()?></a></td>
 		<td>
-			<?=Admin_Managers::Product()->showName( $complaint->getProductId() )?>
+			<?=Admin_Managers::Product()->renderItemName( $complaint->getProductId() )?>
 		</td>
 		<td>
 			<?=Locale::dateAndTime( $complaint->getDateStarted() );?>

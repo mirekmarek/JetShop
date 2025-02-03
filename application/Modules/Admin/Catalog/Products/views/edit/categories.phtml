@@ -38,7 +38,7 @@ require '_toolbar.phtml';
 						<div style="display: flex;gap: 5px;align-items: center">
 							<div><?=Admin_Managers::EntityEdit()->renderPreviewButton( $category )?></div>
 							<div><?=Admin_Managers::Category()->renderActiveState( $category )?></div>
-							<div><?=Admin_Managers::Category()->showName( $category )?></div>
+							<div><?=Admin_Managers::Category()->renderItemName( $category )?></div>
 						</div>
 					</td>
 				</tr>

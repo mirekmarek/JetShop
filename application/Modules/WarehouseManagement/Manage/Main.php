@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\WarehouseManagement\Manage;
 
-
-use Jet\Application_Module;
 use Jet\Data_DateTime;
 use JetApplication\Availabilities;
 use JetApplication\DeliveryTerm;
@@ -29,7 +27,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 
-class Main extends Application_Module implements WarehouseManagement_Manager
+class Main extends WarehouseManagement_Manager
 {
 	public function actualizeProductsAvailability( array $product_ids ): void
 	{
