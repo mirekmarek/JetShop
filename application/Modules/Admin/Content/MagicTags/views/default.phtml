@@ -26,12 +26,20 @@ $list = $this->getRaw('list');
 $forms = $this->getRaw('forms');
 $generated = '';
 ?>
+<style>
+	.magic_tag_link.selected a {
+		font-weight: bolder;
+		color: black;
+	}
+</style>
 <script>
 	const MagicTag = {
 		select: (id) => {
 			$('.magic_tag_form').hide();
 			$('#magic_tag_'+id).show();
 			$('#generated').val( '' );
+			$('.magic_tag_link').removeClass('selected');
+			$('#magic_tag_list_'+id).addClass('selected');
 		},
 		generate: ( form_id ) => {
 			JetAjaxForm.submit( form_id, {
@@ -59,7 +67,7 @@ $generated = '';
 		<table class="table table-striped">
 			<?php foreach($list as $mt): ?>
 			<tr>
-				<td>
+				<td class="magic_tag_link" id="magic_tag_list_<?=$mt->getId()?>">
 					<a href="" onclick="MagicTag.select('<?=$mt->getId()?>');return false;"><?=$mt->getTitle()?></a>
 					<br>
 					<?=$mt->getDescription()?>
@@ -72,10 +80,10 @@ $generated = '';
 		<?php foreach($list as $mt):
 			$form = $forms[$mt->getId()];
 			$form->renderer()->setDefaultLabelWidth([
-				Form_Renderer::LJ_SIZE_MEDIUM => 5
+				Form_Renderer::LJ_SIZE_MEDIUM => 12
 			]);
 			$form->renderer()->setDefaultFieldWidth([
-				Form_Renderer::LJ_SIZE_MEDIUM => 7
+				Form_Renderer::LJ_SIZE_MEDIUM => 12
 			]);
 			$form->renderer()->addJsAction('onsubmit', "MagicTag.generate(this.id);;return false;");
 			?>
@@ -89,8 +97,13 @@ $generated = '';
 					if(str_starts_with($field->getName(), 'product_id:')):
 						?>
 						<div class="row" style="align-items: center">
-							<div class="col-md-5"><?=$field->getLabel()?></div>
-							<div class="col-md-7" style="padding: 15px"><?=Admin_Managers::Product()->renderSelectWidget("document.getElementById('{$field->getId()}').value=selected_item.id")?></div>
+							<div class="col-md-12"><?=$field->getLabel()?></div>
+							<div class="col-md-12" style="padding: 15px">
+								<?=Admin_Managers::Product()->renderSelectWidget(
+									on_select: "document.getElementById('{$field->getId()}').value=selected_item.id",
+									name: $mt->getId()."_select_product"
+								)?>
+							</div>
 						</div>
 						<?php
 					endif;
@@ -99,8 +112,13 @@ $generated = '';
 					if(str_starts_with($field->getName(), 'category_id:')):
 						?>
 						<div class="row" style="align-items: center">
-							<div class="col-md-5"><?=$field->getLabel()?></div>
-							<div class="col-md-7" style="padding: 15px"><?=Admin_Managers::Category()->renderSelectWidget("document.getElementById('{$field->getId()}').value=selected_item.id")?></div>
+							<div class="col-md-12"><?=$field->getLabel()?></div>
+							<div class="col-md-12" style="padding: 15px">
+								<?=Admin_Managers::Category()->renderSelectWidget(
+									on_select: "document.getElementById('{$field->getId()}').value=selected_item.id",
+									name: $mt->getId()."_select_category"
+								)?>
+							</div>
 						</div>
 						<?php
 					endif;

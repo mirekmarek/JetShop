@@ -22,7 +22,7 @@ $handler = $this->getRaw('handler');
 		position: fixed;
 		top: 60px;
 		right: 0px;
-		height: calc(100% - 70px);
+		height: calc(100vh - 100px);
 		width: 600px;
 		background-color: #333940;
 		z-index: 999999;
@@ -45,12 +45,10 @@ $handler = $this->getRaw('handler');
 <?= UI::button( Tr::_('Magic tags') )->setIcon('code')->setOnClick("MagicTagsTool.open()")->setClass( UI_button::CLASS_INFO)?>
 
 <div id="magic_tags" style="display: none;">
-	<div style="display: flex;align-items: center">
-		<div>
+	<div style="padding: 5px;">
 			<?= UI::button('')->setIcon('xmark')->setOnClick("MagicTagsTool.close()")?>
-		</div>
 	</div>
-	<div style="background-color: #ffffff;">
+	<div style="background-color: #ffffff;height: calc(100vh - 160px);overflow: auto;">
 		<?=$handler->handle()?>
 	</div>
 </div>

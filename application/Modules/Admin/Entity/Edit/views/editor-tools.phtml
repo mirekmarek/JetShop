@@ -23,7 +23,7 @@ if(!$item->getId() || !$item->isEditable()) {
 	return;
 }
 ?>
-<div style="position: fixed;top: 60px;right: 2px;z-index: 999998;">
+<div style="position: fixed;top: 60px;right: 2px;z-index: 998;">
 	<?=Admin_Managers::Image()?->commonImageManager( $item::getEntityType(), $item->getId() );?>
 	<?=Admin_Managers::MagicTags()?->renderTool();?>
 </div>
