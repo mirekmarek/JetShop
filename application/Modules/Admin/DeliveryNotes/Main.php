@@ -34,11 +34,6 @@ class Main extends Admin_Managers_DeliveryNote
 		return new DeliveryNote();
 	}
 	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Invoice';
-	}
-	
 	public function showOrderInvoices( Order $order ) : string
 	{
 		return Tr::setCurrentDictionaryTemporary(

@@ -13,6 +13,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Logger;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\FulltextSearch_IndexDataProvider;
 
 #[DataModel_Definition(
@@ -146,5 +147,10 @@ abstract class Core_EShopEntity_Basic extends DataModel
 	public function isItPossibleToDelete() : bool
 	{
 		return true;
+	}
+	
+	public static function getEntityDefinition() : EShopEntity_Definition
+	{
+		return EShopEntity_Definition::get( static::class );
 	}
 }

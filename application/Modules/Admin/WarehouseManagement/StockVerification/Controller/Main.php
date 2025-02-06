@@ -20,11 +20,6 @@ use JetApplication\KindOfProduct;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Warehouse Management - Stock verification';
-	}
-	
 	
 	public function setupListing(): void
 	{

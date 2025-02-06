@@ -40,6 +40,7 @@ use JetApplication\EShop;
 	]
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Category',
 	admin_manager_interface: Admin_Managers_Category::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

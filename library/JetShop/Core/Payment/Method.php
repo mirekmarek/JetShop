@@ -50,6 +50,7 @@ use JetApplication\Timer_Action_SetPrice;
 	database_table_name: 'payment_methods'
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Payment method',
 	admin_manager_interface: Admin_Managers_PaymentMethods::class,
 	separate_tab_form_shop_data: false,
 	images: [

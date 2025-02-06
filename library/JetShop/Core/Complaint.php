@@ -55,6 +55,7 @@ use JetApplication\Complaint_Trait_Changes;
 	]
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Complaint',
 	admin_manager_interface: Admin_Managers_Complaint::class
 )]
 abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements

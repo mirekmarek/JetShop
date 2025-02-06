@@ -48,6 +48,7 @@ use JetApplication\Timer_Action_SetPrice;
 	database_table_name: 'delivery_methods',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Delivery method',
 	admin_manager_interface: Admin_Managers_DeliveryMethods::class,
 	images: [
 		'icon1' => 'Icon 1',

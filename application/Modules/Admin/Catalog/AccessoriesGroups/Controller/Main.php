@@ -15,11 +15,6 @@ use JetApplication\Admin_EntityManager_Controller;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Accessories groups';
-	}
-	
 	
 	public function edit_main_Action() : void
 	{

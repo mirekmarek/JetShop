@@ -45,6 +45,7 @@ use JetApplication\EShopEntity_Definition;
 	]
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Customer',
 	admin_manager_interface: Admin_Managers_Customer::class
 )]
 abstract class Core_Customer extends EShopEntity_WithEShopRelation implements

@@ -15,11 +15,6 @@ use JetApplication\EShops;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Brand';
-	}
-	
 	public function getTabs(): array
 	{
 		$tabs = parent::getTabs();

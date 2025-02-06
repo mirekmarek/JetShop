@@ -53,6 +53,7 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 	]
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Return of goods',
 	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
 )]
 abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implements

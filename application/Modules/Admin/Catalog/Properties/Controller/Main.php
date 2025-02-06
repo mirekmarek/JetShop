@@ -24,12 +24,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 {
 	protected ?Property_Options_Option $option = null;
 	
-	
-	public function getEntityNameReadable() : string
-	{
-		return 'Property';
-	}
-	
 	public function getTabs(): array
 	{
 		$_tabs = parent::getTabs();

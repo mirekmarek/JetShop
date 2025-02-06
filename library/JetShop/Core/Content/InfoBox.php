@@ -24,6 +24,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'content_info_box',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Info box',
 	admin_manager_interface: Admin_Managers_Content_InfoBoxes::class,
 	separate_tab_form_shop_data: true
 )]

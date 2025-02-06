@@ -28,6 +28,7 @@ use JetApplication\Marketing_AutoOffer;
 	database_table_name: 'auto_offers',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Automatic offer',
 	admin_manager_interface: Admin_Managers_Marketing_AutoOffers::class,
 	images: [
 		'main' => 'Main image',

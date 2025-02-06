@@ -11,11 +11,6 @@ use JetApplication\Admin_EntityManager_Controller;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Gift for product';
-	}
-	
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Gift() );

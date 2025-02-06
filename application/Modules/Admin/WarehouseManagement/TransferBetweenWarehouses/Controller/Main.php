@@ -18,10 +18,6 @@ use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Warehouse Management - Transfer between warehouses';
-	}
 	
 	public function setupRouter( string $action, string $selected_tab ): void
 	{

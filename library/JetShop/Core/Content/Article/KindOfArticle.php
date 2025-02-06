@@ -20,6 +20,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'content_articles_kind_of'
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Kind of article',
 	admin_manager_interface: Admin_Managers_Content_ArticleKindOfArticle::class
 )]
 abstract class Core_Content_Article_KindOfArticle extends EShopEntity_Common implements EShopEntity_Admin_Interface

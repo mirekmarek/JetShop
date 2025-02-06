@@ -31,6 +31,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'content_info_page',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Info page',
 	admin_manager_interface: Admin_Managers_Content_InfoPages::class,
 	separate_tab_form_shop_data: true
 )]

@@ -14,11 +14,6 @@ use JetApplication\ProductQuestion;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Product question';
-	}
-	
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
 		parent::setupRouter( $action, $selected_tab );

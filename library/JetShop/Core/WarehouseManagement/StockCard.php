@@ -37,6 +37,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	database_table_name: 'whm_stock_cards',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Warehouse management - stock card',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_Overview::class
 )]
 abstract class Core_WarehouseManagement_StockCard extends EShopEntity_Basic implements

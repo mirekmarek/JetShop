@@ -41,6 +41,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	database_table_name: 'whm_stock_verification',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Warehouse management - stock verification',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_StockVerification::class
 )]
 abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Basic implements

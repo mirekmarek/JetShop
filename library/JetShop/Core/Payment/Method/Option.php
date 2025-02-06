@@ -24,6 +24,7 @@ use JetApplication\EShop;
 	database_table_name: 'payment_methods_options',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Payment method option',
 	separate_tab_form_shop_data: false,
 	images: [
 		'icon1' => 'Icon 1',

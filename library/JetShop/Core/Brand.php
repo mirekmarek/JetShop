@@ -27,6 +27,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'brands',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Brand',
 	admin_manager_interface: Admin_Managers_Brand::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

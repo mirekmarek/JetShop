@@ -45,9 +45,4 @@ class Main extends Admin_Managers_OrderPersonalReceipt
 		return new OrderPersonalReceipt();
 	}
 	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Order Personal Receipt dispatch';
-	}
-	
 }

@@ -25,6 +25,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'promo_areas',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Promotion area',
 	admin_manager_interface: Admin_Managers_Marketing_PromoAreas::class
 )]
 abstract class Core_Marketing_PromoArea extends EShopEntity_Marketing implements EShopEntity_Admin_Interface

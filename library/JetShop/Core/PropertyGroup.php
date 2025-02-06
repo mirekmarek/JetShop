@@ -27,6 +27,7 @@ use JetApplication\KindOfProduct_PropertyGroup;
 	database_table_name: 'property_groups',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Property group',
 	admin_manager_interface: Admin_Managers_PropertyGroup::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

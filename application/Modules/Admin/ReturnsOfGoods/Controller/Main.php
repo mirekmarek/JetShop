@@ -18,11 +18,6 @@ use JetApplication\ReturnOfGoods;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Returns of Goods';
-	}
-	
 	
 	public function setupListing() : void
 	{

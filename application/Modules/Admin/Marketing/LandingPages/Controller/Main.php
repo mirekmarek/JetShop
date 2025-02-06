@@ -18,12 +18,6 @@ use JetApplication\Marketing_LandingPage;
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	
-	public function getEntityNameReadable(): string
-	{
-		return 'Landing page';
-	}
-	
-	
 	public function getTabs(): array
 	{
 		$tabs = parent::getTabs();

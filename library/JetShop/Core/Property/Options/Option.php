@@ -30,6 +30,7 @@ use JetApplication\EShop;
 	parent_model_class: Property::class
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Property option',
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 	images: [

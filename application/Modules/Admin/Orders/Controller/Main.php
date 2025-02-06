@@ -18,11 +18,6 @@ use JetApplication\Order;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Order';
-	}
-
 	
 	public function setupListing() : void
 	{

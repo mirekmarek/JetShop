@@ -24,11 +24,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 {
 	protected ?Payment_Method_Option $option = null;
 	
-	public function getEntityNameReadable() : string
-	{
-		return 'Payment method';
-	}
-	
 	public function getTabs(): array
 	{
 		$tabs = parent::getTabs();

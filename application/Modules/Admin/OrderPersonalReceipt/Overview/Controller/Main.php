@@ -14,10 +14,6 @@ use JetApplication\Order;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Order Personal Receipt';
-	}
 	
 	public function setupListing() : void
 	{

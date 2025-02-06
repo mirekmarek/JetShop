@@ -33,11 +33,6 @@ class Main extends Admin_Managers_Complaint
 		return new Complaint();
 	}
 	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Complaint';
-	}
-	
 	public function showComplaintStatus( Complaint $complaint ): string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );

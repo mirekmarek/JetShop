@@ -19,11 +19,6 @@ use JetApplication\DeliveryNote;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Delivery note';
-	}
-	
 	
 	public function setupListing() : void
 	{

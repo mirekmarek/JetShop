@@ -28,6 +28,7 @@ use JetApplication\Order;
 	database_table_name: 'invoices_in_advances',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Invoice in advance',
 	admin_manager_interface: Admin_Managers_InvoiceInAdvance::class
 )]
 abstract class Core_InvoiceInAdvance extends EShopEntity_AccountingDocument implements

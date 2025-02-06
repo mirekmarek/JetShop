@@ -6,19 +6,12 @@
  */
 namespace JetApplicationModule\Admin\OrderDispatch\Overview;
 
-
 use Jet\Http_Headers;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Order;
 
-
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Order dispatch';
-	}
-	
 	
 	public function setupListing() : void
 	{

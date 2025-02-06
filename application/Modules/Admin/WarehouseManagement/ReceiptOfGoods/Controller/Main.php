@@ -20,10 +20,6 @@ use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Warehouse Management - Receipt Of Goods';
-	}
 	
 	public function setupListing(): void
 	{

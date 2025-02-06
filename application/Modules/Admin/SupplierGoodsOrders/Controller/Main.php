@@ -17,10 +17,6 @@ use JetApplication\Supplier_GoodsOrder;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Order goods from supplier';
-	}
 	
 	public function setupListing(): void
 	{

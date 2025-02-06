@@ -19,11 +19,6 @@ use JetApplication\Invoices;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Invoices In Advance';
-	}
-	
 	
 	public function setupListing() : void
 	{

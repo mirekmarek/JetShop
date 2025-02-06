@@ -43,6 +43,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	database_table_name: 'whm_receipt_of_goods',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Warehouse management - Receipt of goods',
 	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
 )]
 abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic implements

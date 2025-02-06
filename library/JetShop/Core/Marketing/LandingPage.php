@@ -26,6 +26,7 @@ use JetApplication\Marketing_LandingPage;
 	database_table_name: 'marketing_landing_pages',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Landing page',
 	admin_manager_interface: Marketing_LandingPage::class
 )]
 abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implements EShopEntity_Admin_Interface

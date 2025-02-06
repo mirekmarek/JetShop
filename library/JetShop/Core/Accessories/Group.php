@@ -23,6 +23,7 @@ use JetApplication\Admin_Managers_AccessoriesGroups;
 	database_table_name: 'accessories_groups',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Accessory group',
 	admin_manager_interface: Admin_Managers_AccessoriesGroups::class
 )]
 abstract class Core_Accessories_Group extends EShopEntity_Common implements EShopEntity_Admin_Interface

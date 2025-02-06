@@ -27,6 +27,7 @@ use JetApplication\ShoppingCart;
 	database_table_name: 'gifts_product',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Gift - product',
 	admin_manager_interface: Admin_Managers_Marketing_GiftsProducts::class
 )]
 abstract class Core_Marketing_Gift_Product extends EShopEntity_Marketing implements EShopEntity_Admin_Interface

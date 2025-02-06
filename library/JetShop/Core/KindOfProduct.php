@@ -45,6 +45,7 @@ use JetApplication\MeasureUnit;
 	database_table_name: 'kind_of_product',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Kind of product',
 	admin_manager_interface: Admin_Managers_KindOfProduct::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

@@ -88,4 +88,8 @@ abstract class Core_Admin_EntityManager_Module extends Application_Module {
 	
 	abstract public static function getEntityInstance(): EShopEntity_Basic|EShopEntity_Admin_Interface;
 
+	public static function getEntityNameReadable() : string
+	{
+		return static::getEntityInstance()::getEntityDefinition()->getEntityNameReadable();
+	}
 }

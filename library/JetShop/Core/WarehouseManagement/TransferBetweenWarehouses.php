@@ -39,6 +39,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	database_table_name: 'whm_transfer_between_warehouses',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Warehouse management - Transfer between warehouses',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_TransferBetweenWarehouses::class
 )]
 class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Basic implements

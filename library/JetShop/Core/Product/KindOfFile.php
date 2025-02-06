@@ -27,6 +27,7 @@ use JetApplication\EShop;
 	database_table_name: 'products_kind_of_file',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Kind of product file',
 	admin_manager_interface: Admin_Managers_KindOfProductFile::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

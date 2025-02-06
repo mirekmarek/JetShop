@@ -33,6 +33,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'whm_warehouses',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Warehouse management - Warehouse',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_Warehouses::class
 )]
 class Core_WarehouseManagement_Warehouse extends EShopEntity_Common implements EShopEntity_Admin_Interface

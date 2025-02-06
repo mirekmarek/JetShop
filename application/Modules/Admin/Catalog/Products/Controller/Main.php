@@ -38,12 +38,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	use Controller_Main_Edit_Export;
 	use Controller_Main_Edit_Accessories;
 	
-	public function getEntityNameReadable() : string
-	{
-		return 'Product';
-	}
-	
-	
 	protected function newItemFactory(): EShopEntity_WithEShopData|EShopEntity_Admin_Interface
 	{
 		/**

@@ -55,11 +55,6 @@ class Main extends Admin_Managers_WarehouseManagement_Overview
 		return new WarehouseManagement_StockCard();
 	}
 	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Warehouse Management - Stock card';
-	}
-	
 	public function renderProductStockStatusInfo( Product $product ) : string
 	{
 		return Tr::setCurrentDictionaryTemporary(

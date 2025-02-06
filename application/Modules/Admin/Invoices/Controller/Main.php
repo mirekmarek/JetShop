@@ -19,11 +19,6 @@ use JetApplication\Invoice;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable(): string
-	{
-		return 'Invoice';
-	}
-	
 	
 	public function setupRouter( string $action, string $selected_tab ) : void
 	{

@@ -31,6 +31,7 @@ use JetApplication\EShop;
 	database_table_name: 'signposts',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Signpost',
 	admin_manager_interface: Admin_Managers_Signpost::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

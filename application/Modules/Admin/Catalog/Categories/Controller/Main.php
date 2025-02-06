@@ -30,14 +30,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	protected ?MVC_Controller_Router $router = null;
 
-	
 	protected ?Data_Tree $tree = null;
-	
-	public function getEntityNameReadable() : string
-	{
-		return 'Category';
-	}
-	
 	
 	protected function getTabs() : array
 	{

@@ -27,6 +27,7 @@ use JetApplication\Product_EShopData;
 	database_table_name: 'product_questions',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Product question',
 	admin_manager_interface: Admin_Managers_ProductQuestions::class
 )]
 abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implements EShopEntity_Admin_Interface, EShopEntity_HasGet_Interface

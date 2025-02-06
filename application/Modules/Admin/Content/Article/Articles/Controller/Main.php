@@ -15,12 +15,6 @@ use JetApplication\Content_Article;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Article';
-	}
-	
-	
 	public function getTabs(): array
 	{
 		$tabs = parent::getTabs();

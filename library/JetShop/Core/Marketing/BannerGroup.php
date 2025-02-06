@@ -24,6 +24,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'banner_groups',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Banner group',
 	admin_manager_interface: Admin_Managers_Marketing_BannerGroups::class
 )]
 abstract class Core_Marketing_BannerGroup extends EShopEntity_Common implements EShopEntity_Admin_Interface

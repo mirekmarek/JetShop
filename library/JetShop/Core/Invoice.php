@@ -35,6 +35,7 @@ use JetApplication\Payment_Kind;
 	database_table_name: 'invoices',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Invoice',
 	admin_manager_interface: Admin_Managers_Invoice::class
 )]
 abstract class Core_Invoice extends EShopEntity_AccountingDocument implements

@@ -25,11 +25,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	protected ?Marketing_BannerGroup $selected_group = null;
 	
-	public function getEntityNameReadable(): string
-	{
-		return 'Banner';
-	}
-	
 	public function getTabs() : array
 	{
 		$tabs = parent::getTabs();

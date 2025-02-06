@@ -40,6 +40,7 @@ use JetApplication\Discounts_Discount;
 	database_table_name: 'discounts_codes',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Discount code',
 	admin_manager_interface: Admin_Managers_DiscountCodesDefinition::class
 )]
 class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_Admin_Interface

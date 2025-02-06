@@ -26,6 +26,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'product_stickers',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Product sticker',
 	admin_manager_interface: Admin_Managers_Marketing_ProductStickers::class,
 	images: [
 		'pictogram_product_detail' => 'Pictogram - Product detail',

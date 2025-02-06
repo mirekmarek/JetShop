@@ -37,6 +37,7 @@ use JetApplication\KindOfProduct_Property;
 	database_table_name: 'properties',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Property',
 	admin_manager_interface: Admin_Managers_Property::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

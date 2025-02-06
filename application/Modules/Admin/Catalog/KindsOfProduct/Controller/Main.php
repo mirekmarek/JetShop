@@ -20,11 +20,6 @@ use Jet\Tr;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Kind of product';
-	}
-	
 	
 	public function getTabs(): array
 	{

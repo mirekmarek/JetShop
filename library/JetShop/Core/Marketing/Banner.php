@@ -37,6 +37,7 @@ use JetApplication\EShop;
 	database_table_name: 'banners',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Banner',
 	admin_manager_interface: Admin_Managers_Marketing_Banners::class
 )]
 abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements EShopEntity_Admin_Interface

@@ -46,6 +46,7 @@ use JetApplication\OrderPersonalReceipt_Event;
 	database_table_name: 'order_personal_receipt',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Order personal receipt dispatch',
 	admin_manager_interface: Admin_Managers_OrderPersonalReceipt::class
 )]
 abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation implements

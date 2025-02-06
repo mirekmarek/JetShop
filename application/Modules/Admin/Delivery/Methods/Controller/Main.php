@@ -16,11 +16,6 @@ use JetApplication\Delivery_Method;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Delivery method';
-	}
-	
 	public function edit_main_Action(): void
 	{
 		$this->handleSetPrice();

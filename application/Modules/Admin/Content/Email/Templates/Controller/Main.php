@@ -27,11 +27,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	protected array $templates;
 	
 	
-	public function getEntityNameReadable() : string
-	{
-		return 'E-mail template';
-	}
-	
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Sender() );

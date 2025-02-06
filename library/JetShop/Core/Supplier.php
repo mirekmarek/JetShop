@@ -34,6 +34,7 @@ use JetApplication\Supplier_Backend_Module;
 	database_table_name: 'suppliers'
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Supplier',
 	admin_manager_interface: Admin_Managers_Supplier::class
 )]
 abstract class Core_Supplier extends EShopEntity_Common implements

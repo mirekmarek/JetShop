@@ -41,6 +41,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	database_table_name: 'whm_loss_or_destruction',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Warehouse management - Loss or destruction',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_LossOrDestruction::class
 )]
 class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic implements

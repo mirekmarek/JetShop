@@ -18,8 +18,8 @@ use ReflectionClass;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
 abstract class Core_EShopEntity_Definition extends BaseObject
 {
-	
 	protected ?string $admin_manager_interface = null;
+	protected ?string $entity_name_readable = null;
 	protected ?string $URL_template = null;
 	protected ?array $images = null;
 	protected ?bool $description_mode = null;
@@ -74,6 +74,12 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 	{
 		return $this->admin_manager_interface;
 	}
+	
+	public function getEntityNameReadable(): ?string
+	{
+		return $this->entity_name_readable;
+	}
+	
 	
 	public function getURLTemplate(): ?string
 	{

@@ -15,11 +15,6 @@ use JetApplication\Admin_EntityManager_Controller;
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	
-	public function getEntityNameReadable(): string
-	{
-		return 'Delivery Fee Discount';
-	}
-	
 	public function setupListing(): void
 	{
 		$this->listing_manager->addFilter( new Listing_Filter_DeliveryMethod() );

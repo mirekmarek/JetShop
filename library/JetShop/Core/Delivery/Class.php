@@ -29,6 +29,7 @@ use JetApplication\Admin_Managers_DeliveryClasses;
 	database_table_name: 'delivery_classes',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Delivery class',
 	admin_manager_interface: Admin_Managers_DeliveryClasses::class
 )]
 abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEntity_Admin_Interface

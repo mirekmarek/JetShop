@@ -50,6 +50,7 @@ use JetApplication\OrderDispatch_Trait_Workflow;
 	database_table_name: 'order_dispatches',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Order dispatch',
 	admin_manager_interface: Admin_Managers_OrderDispatch::class
 )]
 abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implements

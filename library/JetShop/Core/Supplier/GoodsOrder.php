@@ -43,6 +43,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 	database_table_name: 'supplier_goods_orders',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Goods order',
 	admin_manager_interface: Admin_Managers_SupplierGoodsOrders::class
 )]
 abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements

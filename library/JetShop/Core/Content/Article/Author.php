@@ -26,6 +26,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'content_articles_authors',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Article author',
 	admin_manager_interface: Admin_Managers_Content_ArticleAuthors::class,
 	images: [
 		'avatar_1' => 'Avatar 1',

@@ -26,6 +26,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'email_templates',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'E-mail template',
 	admin_manager_interface: Admin_Managers_Content_EMailTemplates::class
 )]
 abstract class Core_EMail_TemplateText extends EShopEntity_WithEShopData implements EShopEntity_Admin_WithEShopData_Interface

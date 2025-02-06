@@ -74,6 +74,7 @@ use JetApplication\Supplier;
 	]
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Product',
 	admin_manager_interface: Admin_Managers_Product::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,

@@ -25,6 +25,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'delivery_fee_discounts',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Delivery fee discount',
 	admin_manager_interface: Admin_Managers_Marketing_DeliveryFeeDiscounts::class
 )]
 abstract class Core_Marketing_DeliveryFeeDiscount extends EShopEntity_Marketing implements EShopEntity_Admin_Interface

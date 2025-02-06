@@ -45,11 +45,6 @@ class Main extends Admin_Managers_Customer
 		return new Customer();
 	}
 	
-	public static function getEntityNameReadable(): string
-	{
-		return 'Customer';
-	}
-	
 	public function renderItemName( int|EShopEntity_Basic $id_or_item ): string
 	{
 		if(!$id_or_item) {

@@ -28,6 +28,7 @@ use JetApplication\Order;
 	database_table_name: 'delivery_notes',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Delivery note',
 	admin_manager_interface: Admin_Managers_DeliveryNote::class
 )]
 abstract class Core_DeliveryNote extends EShopEntity_AccountingDocument implements

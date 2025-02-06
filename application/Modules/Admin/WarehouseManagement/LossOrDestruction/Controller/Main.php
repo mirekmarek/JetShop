@@ -19,11 +19,6 @@ use JetApplication\Admin_EntityManager_Controller;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getEntityNameReadable() : string
-	{
-		return 'Warehouse Management - Loss or destruction';
-	}
-	
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Number() );

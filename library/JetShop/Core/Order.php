@@ -56,6 +56,7 @@ use JetApplication\Context_ProvidesContext_Trait;
 	]
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Order',
 	admin_manager_interface: Admin_Managers_Order::class
 )]
 abstract class Core_Order extends EShopEntity_WithEShopRelation implements

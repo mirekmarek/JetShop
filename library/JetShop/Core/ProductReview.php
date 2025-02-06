@@ -27,6 +27,7 @@ use JetApplication\Product_EShopData;
 	database_table_name: 'product_reviews',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Product review',
 	admin_manager_interface: Admin_Managers_ProductReviews::class
 )]
 abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implements EShopEntity_Admin_Interface, EShopEntity_HasGet_Interface

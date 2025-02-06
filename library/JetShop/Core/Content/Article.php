@@ -32,6 +32,7 @@ use JetApplication\EShopEntity_Definition;
 	database_table_name: 'content_articles',
 )]
 #[EShopEntity_Definition(
+	entity_name_readable: 'Article',
 	admin_manager_interface: Admin_Managers_Content_Articles::class,
 	images: [
 		'header_1' => 'Header 1',
