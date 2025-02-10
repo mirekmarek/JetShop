@@ -258,4 +258,5 @@ return [
 	'Source locale' => '',
 	'Target locale' => '',
 	'Product - kind of product is used' => '',
+	'Product - brand is used' => '',
 ];

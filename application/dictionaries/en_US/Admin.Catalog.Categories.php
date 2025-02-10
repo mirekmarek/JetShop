@@ -173,4 +173,6 @@ return [
 	'Please select file' => '',
 	'Select and upload images' => '',
 	'Category - kind of product is used' => '',
+	'New category' => '',
+	'<b>Create new category</b>' => '',
 ];

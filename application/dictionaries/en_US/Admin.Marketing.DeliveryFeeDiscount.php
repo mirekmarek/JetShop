@@ -59,4 +59,5 @@ return [
 	'Name:' => '',
 	'e-shop' => '',
 	'Delivery Fee Discount <b>%ITEM_NAME%</b> has been created' => '',
+	'Do you really want to delete this Delivery fee discount?' => '',
 ];

@@ -44,4 +44,6 @@ return [
 	'yes' => '',
 	'e-shop' => '',
 	'no' => '',
+	'Delete' => '',
+	'Do you really want to delete this Product review?' => '',
 ];

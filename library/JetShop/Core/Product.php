@@ -794,7 +794,6 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	 */
 	public static function checkIfItCanBeDeleted( EShopEntity_Basic $entity_to_be_deleted, array &$reasons=[] ) : bool
 	{
-		/** @noinspection PhpSwitchStatementWitSingleBranchInspection */
 		switch( get_class($entity_to_be_deleted) ) {
 			case KindOfProduct::class:
 				$ids = Product::dataFetchCol(
@@ -804,6 +803,20 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 				if($ids) {
 					$reasons[] = static::createCanNotBeDeletedReason(
 						reason: 'Product - kind of product is used',
+						ids:    $ids
+					);
+					
+					return false;
+				}
+				break;
+			case Brand::class:
+				$ids = Product::dataFetchCol(
+					select: [ 'id' ],
+					where: ['brand_id' => $entity_to_be_deleted->getId() ]
+				);
+				if($ids) {
+					$reasons[] = static::createCanNotBeDeletedReason(
+						reason: 'Product - brand is used',
 						ids:    $ids
 					);
 					

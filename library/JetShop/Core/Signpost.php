@@ -14,8 +14,11 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Signpost;
+use JetApplication\Category;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
@@ -208,4 +211,33 @@ abstract class Core_Signpost extends EShopEntity_WithEShopData implements
 		
 		return true;
 	}
+	
+	/**
+	 * @param EShopEntity_Basic $entity_to_be_deleted
+	 * @param EShopEntity_CanNotBeDeletedReason[] &$reasons
+	 * @return bool
+	 */
+	public static function checkIfItCanBeDeleted( EShopEntity_Basic $entity_to_be_deleted, array &$reasons=[] ) : bool
+	{
+		/** @noinspection PhpSwitchStatementWitSingleBranchInspection */
+		switch( get_class($entity_to_be_deleted) ) {
+			case Category::class:
+				$ids = Signpost_Category::dataFetchCol(
+					select: [ 'signpost_id' ],
+					where: ['category_id' => $entity_to_be_deleted->getId() ]
+				);
+				if($ids) {
+					$reasons[] = static::createCanNotBeDeletedReason(
+						reason: 'Signpost - category is used',
+						ids:    $ids
+					);
+					
+					return false;
+				}
+				break;
+		}
+		
+		return true;
+	}
+	
 }

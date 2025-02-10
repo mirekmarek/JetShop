@@ -42,4 +42,6 @@ return [
 	'Select and upload images' => '',
 	'Accessories groups <b>%ITEM_NAME%</b> has been updated' => '',
 	'Brand <b>%ITEM_NAME%</b> has been updated' => '',
+	'Delete' => '',
+	'It is not possible to delete this Brand' => '',
 ];
