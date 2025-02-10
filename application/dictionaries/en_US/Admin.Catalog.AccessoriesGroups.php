@@ -25,4 +25,5 @@ return [
 	'Catalog - products - accessories groups <b>%ITEM_NAME%</b> has been created' => '',
 	'Add product:' => '',
 	'Accessories groups <b>%ITEM_NAME%</b> has been updated' => '',
+	'Accessory group <b>%ITEM_NAME%</b> has been updated' => '',
 ];

@@ -55,4 +55,6 @@ return [
 	'Property group description <b>%NAME%</b> has been updated' => '',
 	'Please select file' => '',
 	'Select and upload images' => '',
+	'Delete' => '',
+	'It is not possible to delete this Property group' => '',
 ];

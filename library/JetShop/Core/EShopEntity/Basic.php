@@ -13,6 +13,9 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Logger;
+use JetApplication\EShopEntity;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\FulltextSearch_IndexDataProvider;
 
@@ -144,13 +147,40 @@ abstract class Core_EShopEntity_Basic extends DataModel
 		
 	}
 	
-	public function isItPossibleToDelete() : bool
+	/**
+	 * @param EShopEntity_CanNotBeDeletedReason[] &$reasons
+	 * @return bool
+	 */
+	public function canBeDeleted( array &$reasons = [] ) : bool
 	{
-		return true;
+		$reasons = [];
+		/**
+		 * @var EShopEntity_Basic $this
+		 */
+		return EShopEntity::checkIfItCanBeDeleted( $this, $reasons );
 	}
 	
 	public static function getEntityDefinition() : EShopEntity_Definition
 	{
 		return EShopEntity_Definition::get( static::class );
+	}
+	
+	protected static function createCanNotBeDeletedReason( string $reason, array $ids  ) : EShopEntity_CanNotBeDeletedReason
+	{
+		return new EShopEntity_CanNotBeDeletedReason(
+			entity_class: static::class,
+			reason: $reason,
+			entity_ids: $ids
+		);
+	}
+	
+	/**
+	 * @param EShopEntity_Basic $entity_to_be_deleted
+	 * @param EShopEntity_CanNotBeDeletedReason[] &$reasons
+	 * @return bool
+	 */
+	public static function checkIfItCanBeDeleted( EShopEntity_Basic $entity_to_be_deleted, array &$reasons=[] ) : bool
+	{
+		return true;
 	}
 }

@@ -102,4 +102,7 @@ return [
 	'Set' => '',
 	'Personal takeover - external' => '',
 	'Personal takeover - internal' => '',
+	'Copy content' => '',
+	'Source e-shop' => '',
+	'Target e-shop' => '',
 ];

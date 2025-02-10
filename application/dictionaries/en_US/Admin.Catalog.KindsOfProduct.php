@@ -187,4 +187,9 @@ return [
 	'Description' => '',
 	'Please select file' => '',
 	'Select and upload images' => '',
+	'Kind of product - property is used' => '',
+	'Kind of product - property group is used' => '',
+	'Delete' => '',
+	'It is not possible to delete this Kind of product' => '',
+	'Do you really want to delete this Kind of product?' => '',
 ];

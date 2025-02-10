@@ -5,13 +5,30 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 use Jet\MVC_View;
+use Jet\UI;
 use Jet\UI_tabsJS_tab;
+use JetApplication\EShops;
+use Jet\Locale;
+use Jet\Tr;
+
 
 /**
  * @var MVC_View $this
  * @var UI_tabsJS_tab $tab
+ * @var Locale $locale
  */
 
 $tab = $this->getRaw('tab');
+$locale = $this->getRaw('locale');
 
 echo $tab->content()->start();
+
+if(EShops::isMultiEShopMode()):
+?>
+<div style="padding: 5px;padding-bottom: 15px">
+	<?=UI::button( Tr::_('Copy', dictionary: Tr::COMMON_DICTIONARY) )
+		->setOnClick("UI_DescriptionBlock.copyContentStart('{$locale}', this.form);")
+		->setIcon('copy')?>
+</div>
+<?php
+endif;

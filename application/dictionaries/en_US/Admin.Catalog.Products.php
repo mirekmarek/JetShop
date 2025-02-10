@@ -254,4 +254,8 @@ return [
 	'Number of available:' => '',
 	'Please upload image' => '',
 	'Product description <b>%NAME%</b> has been updated' => '',
+	'Copy content' => '',
+	'Source locale' => '',
+	'Target locale' => '',
+	'Product - kind of product is used' => '',
 ];

@@ -19,6 +19,7 @@ use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
@@ -155,14 +156,19 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		
 	}
 	
+	/**
+	 * @param string $message
+	 * @param EShopEntity_CanNotBeDeletedReason[] $reasons
+	 * @return string
+	 */
 	public function renderDeleteNotPossible(
-		string    $message,
-		?callable $reason_renderer = null
+		string  $message,
+		array   $reasons
 	): string
 	{
 		$params = [
 			'message' => $message,
-			'reason_renderer' => $reason_renderer
+			'reasons' => $reasons
 		];
 		
 		return $this->render( 'delete/not-possible', $params );

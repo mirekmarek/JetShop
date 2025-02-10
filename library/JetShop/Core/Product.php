@@ -25,6 +25,8 @@ use JetApplication\Category;
 use JetApplication\Delivery_Class;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\EShopEntity_HasImageGallery_Trait;
 use JetApplication\EShopEntity_HasPrice_Interface;
@@ -783,4 +785,34 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		$this->save();
 		return true;
 	}
+	
+	
+	/**
+	 * @param EShopEntity_Basic $entity_to_be_deleted
+	 * @param EShopEntity_CanNotBeDeletedReason[] &$reasons
+	 * @return bool
+	 */
+	public static function checkIfItCanBeDeleted( EShopEntity_Basic $entity_to_be_deleted, array &$reasons=[] ) : bool
+	{
+		/** @noinspection PhpSwitchStatementWitSingleBranchInspection */
+		switch( get_class($entity_to_be_deleted) ) {
+			case KindOfProduct::class:
+				$ids = Product::dataFetchCol(
+					select: [ 'id' ],
+					where: ['kind_id' => $entity_to_be_deleted->getId() ]
+				);
+				if($ids) {
+					$reasons[] = static::createCanNotBeDeletedReason(
+						reason: 'Product - kind of product is used',
+						ids:    $ids
+					);
+					
+					return false;
+				}
+				break;
+		}
+		
+		return true;
+	}
+	
 }

@@ -136,8 +136,6 @@ abstract class Core_Property_Options_Option_EShopData extends EShopEntity_WithES
 			return;
 		}
 		$this->filter_label = $filter_label;
-		//TODO: $this->url_param = $this->_generateURLParam( $this->filter_label );
-		
 	}
 
 	public function getProductDetailLabel() : string

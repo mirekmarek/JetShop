@@ -172,4 +172,5 @@ return [
 	'File is too large' => '',
 	'Please select file' => '',
 	'Select and upload images' => '',
+	'Category - kind of product is used' => '',
 ];

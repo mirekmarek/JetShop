@@ -327,7 +327,8 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		$this->view->setVar( 'item', $item );
 		
-		if($item->isItPossibleToDelete()) {
+		$reasons = [];
+		if( $item->canBeDeleted( $reasons ) ) {
 			if( Http_Request::POST()->getString( 'delete' )=='yes' ) {
 				$item->delete();
 				
@@ -349,9 +350,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 			$this->content->output(
 				$this->getEditorManager()->renderDeleteNotPossible(
 					message: $this->generateText_delete_not_possible_msg(),
-					reason_renderer: function() {
-						//TODO:
-					}
+					reasons: $reasons
 				)
 			);
 		}

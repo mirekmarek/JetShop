@@ -193,4 +193,13 @@ return [
 	'Inactive' => '',
 	'Unlimited' => '',
 	'Unknown item %ID%' => '',
+	'Is active - %what%' => '',
+	'Source locale' => '',
+	'Target locale' => '',
+	'Source e-shop' => '',
+	'Target e-shop' => '',
+	'Copy' => '',
+	'... and more' => '',
+	'... and more (%TOTAL%)' => '',
+	'... and more (%TOTAL% in total)' => '',
 ];

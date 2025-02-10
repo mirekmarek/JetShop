@@ -19,6 +19,8 @@ use JetApplication\Admin_Managers_KindOfProduct;
 use JetApplication\Category;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
@@ -611,5 +613,49 @@ abstract class Core_KindOfProduct extends EShopEntity_WithEShopData implements
 		foreach( EShops::getList() as $eshop ) {
 			$this->getEshopData( $eshop )->setVirtualProductHandler( $value );
 		}
+	}
+	
+	
+	/**
+	 * @param EShopEntity_Basic $entity_to_be_deleted
+	 * @param EShopEntity_CanNotBeDeletedReason[] &$reasons
+	 * @return bool
+	 */
+	public static function checkIfItCanBeDeleted( EShopEntity_Basic $entity_to_be_deleted, array &$reasons=[] ) : bool
+	{
+		switch( get_class($entity_to_be_deleted) ) {
+			case Property::class:
+					$ids = KindOfProduct_Property::dataFetchCol(
+						select: [ 'kind_of_product_id' ],
+						where: ['property_id' => $entity_to_be_deleted->getId() ]
+					);
+					if($ids) {
+						$reasons[] = static::createCanNotBeDeletedReason(
+							reason: 'Kind of product - property is used',
+							ids:    $ids
+						);
+						
+						return false;
+					}
+				break;
+			case PropertyGroup::class:
+				$ids = KindOfProduct_PropertyGroup::dataFetchCol(
+					select: [ 'kind_of_product_id' ],
+					where: [ 'group_id' => $entity_to_be_deleted->getId() ]
+				);
+				if($ids) {
+					$reasons[] = static::createCanNotBeDeletedReason(
+						reason: 'Kind of product - property group is used',
+						ids:    $ids
+					);
+					
+					return false;
+				}
+				break;
+			default:
+				return true;
+		}
+		
+		return true;
 	}
 }

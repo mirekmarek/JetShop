@@ -6,6 +6,9 @@
  */
 use Jet\MVC_View;
 use Jet\UI_tabsJS_tab;
+use Jet\UI;
+use Jet\Tr;
+use JetApplication\EShops;
 use JetApplication\EShop;
 
 /**
@@ -15,6 +18,18 @@ use JetApplication\EShop;
  */
 
 $eshop = $this->getRaw('eshop');
+$eshop_key = $eshop->getKey();
+
 $tab = $this->getRaw('tab');
 
 echo $tab->content()->start();
+
+if(EShops::isMultiEShopMode()):
+?>
+<div style="padding: 5px;padding-bottom: 15px">
+	<?=UI::button( Tr::_('Copy', dictionary: Tr::COMMON_DICTIONARY ) )
+		->setOnClick("UI_EShopBlock.copyContentStart('{$eshop_key}', this.form);")
+		->setIcon('copy')?>
+</div>
+<?php
+endif;

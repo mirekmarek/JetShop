@@ -18,11 +18,14 @@ use JetApplication\Category_Product;
 use JetApplication\Category_EShopData;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\KindOfProduct;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter;
@@ -1014,5 +1017,33 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 		EShop_Managers::FulltextSearch()->deleteIndex( $this );
 	}
 	
+	
+	/**
+	 * @param EShopEntity_Basic $entity_to_be_deleted
+	 * @param EShopEntity_CanNotBeDeletedReason[] &$reasons
+	 * @return bool
+	 */
+	public static function checkIfItCanBeDeleted( EShopEntity_Basic $entity_to_be_deleted, array &$reasons=[] ) : bool
+	{
+		/** @noinspection PhpSwitchStatementWitSingleBranchInspection */
+		switch( get_class($entity_to_be_deleted) ) {
+			case KindOfProduct::class:
+				$ids = Category::dataFetchCol(
+					select: [ 'id' ],
+					where: ['kind_of_product_id' => $entity_to_be_deleted->getId() ]
+				);
+				if($ids) {
+					$reasons[] = static::createCanNotBeDeletedReason(
+						reason: 'Category - kind of product is used',
+						ids:    $ids
+					);
+					
+					return false;
+				}
+				break;
+		}
+		
+		return true;
+	}
 	
 }

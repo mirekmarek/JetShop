@@ -93,4 +93,5 @@ return [
 	'Please select file' => '',
 	'Select and upload images' => '',
 	'Property description <b>%NAME%</b> has been updated' => '',
+	'It is not possible to delete this Property' => '',
 ];

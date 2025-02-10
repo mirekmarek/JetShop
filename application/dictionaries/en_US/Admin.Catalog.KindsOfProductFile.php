@@ -41,4 +41,5 @@ return [
 	'Please select file' => '',
 	'Please upload image' => '',
 	'Select and upload images' => '',
+	'Kind of product file description <b>%NAME%</b> has been updated' => '',
 ];

@@ -164,7 +164,6 @@ abstract class Core_Property_EShopData extends EShopEntity_WithEShopData_EShopDa
 			return;
 		}
 		$this->label = $label;
-		//TODO: $this->url_param = $this->_generateURLParam( $this->label );
 	}
 
 	public function getLabel() : string

@@ -18,4 +18,4 @@ use JetApplication\EShopEntity_WithEShopData;
  */
 $item = $this->getRaw('item');
 ?>
-<?=$item->getAdminTitle()?> <a href="<?=$item->getEditUrl()?>"><?=UI::icon('link')?></a>
+<a href="<?=$item->getEditUrl()?>" style="color: #000000;"><?=UI::icon('eye')->addCustomCssStyle("opacity:0.3")?> <?=$item->getAdminTitle()?></a>

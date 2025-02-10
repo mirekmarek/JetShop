@@ -7,7 +7,11 @@
 namespace JetApplicationModule\Admin\Entity\Edit;
 
 
+use Jet\Tr;
+use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_WithEShopData;
 
 use Jet\Http_Request;
@@ -17,23 +21,57 @@ use Jet\MVC_View;
 /**
  * @var MVC_View $this
  * @var EShopEntity_WithEShopData|EShopEntity_Admin_Interface     $item
- * @var ?callable $reason_renderer
+ * @var EShopEntity_CanNotBeDeletedReason[] $reasons
  */
 $item = $this->getRaw( 'item' );
-$reason_renderer = $this->getRaw('reason_renderer');
+$reasons = $this->getRaw('reasons');
 ?>
 <div class="col d-flex justify-content-center">
 	
 	<div class="card" style="margin-top:50px;">
 		<div class="card-body">
-			<div>
+			<div style="margin: 20px;">
 				<?=$this->getRaw('message')?>
 				<br/>
 				<a href="<?=$item->getEditUrl();?>" style="font-weight: bolder;font-size: 20px;"><?=$item->getInternalName();?> (<?=$item->getId();?>)</a>
 			</div>
 			
 			<div>
-				<?php if($reason_renderer) $reason_renderer(); ?>
+				<?php foreach($reasons as $reason):
+					if(
+						!($manager_ifc = $reason->getEntityDefinitio()->getAdminManagerInterface()) ||
+						!($manager = Admin_Managers::get( $manager_ifc ))
+					) {
+						continue;
+					}
+					
+					/**
+					 * @var Admin_EntityManager_Module $manager
+					 */
+					?>
+				<div style="margin-bottom: 20px;" class="card card-body">
+					<div style="padding: 10px;font-weight: bolder;"><?=Tr::_($reason->getReason(), dictionary: $manager->getModuleManifest()->getName() )?></div>
+					<div style="padding: 5px;padding-left: 15px;padding-right: 15px;">
+						<?php
+						$limit = 50;
+						$c = 0;
+						foreach($reason->getEntityIds() as $id):
+							$c++;
+							?>
+							<div style="padding: 3px"><?=$manager->renderItemName( $id ) ?></div>
+							<?php
+							if(
+								$c==$limit &&
+								count($reason->getEntityIds())>$limit
+							): ?>
+								<div style="padding: 3px"><?=Tr::_('... and more (%TOTAL% in total)', ['TOTAL'=>count($reason->getEntityIds())],dictionary: Tr::COMMON_DICTIONARY)?></div>
+								<?php
+								break;
+							endif;
+						endforeach; ?>
+					</div>
+				</div>
+				<?php endforeach; ?>
 			</div>
 			
 			<div style="display: inline-block;width: 50%">

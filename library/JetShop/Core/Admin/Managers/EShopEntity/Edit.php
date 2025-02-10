@@ -13,6 +13,7 @@ use Jet\UI_tabs;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_WithEShopData;
@@ -52,7 +53,12 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	
 	abstract public function renderDeleteConfirm( string $message ): string;
 	
-	abstract public function renderDeleteNotPossible( string    $message, ?callable $reason_renderer = null ): string;
+	/**
+	 * @param string $message
+	 * @param EShopEntity_CanNotBeDeletedReason[] $reasons
+	 * @return string
+	 */
+	abstract public function renderDeleteNotPossible( string $message, array $reasons ): string;
 	
 	abstract public function renderItemName(
 		int $id,
