@@ -8,4 +8,5 @@ return [
 	'XLSX' => 'XLSX',
 	'Please enter a value' => 'Zadejte hodnotu',
 	'Inactive' => 'Neaktivní',
+	'Entity edit services' => '',
 ];

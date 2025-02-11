@@ -9,6 +9,7 @@ namespace JetApplication;
 
 use JetShop\Core_Translator_Manager;
 
+#[Manager_MetaInfo]
 abstract class Translator_Manager extends Core_Translator_Manager {
 
 }

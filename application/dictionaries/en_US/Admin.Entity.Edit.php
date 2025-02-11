@@ -8,4 +8,7 @@ return [
 	'XLSX' => '',
 	'Please enter a value' => '',
 	'Inactive' => '',
+	'Entity edit services' => '',
+	'Unknown locale: from' => '',
+	'Error during translation: %ERROR%' => '',
 ];
