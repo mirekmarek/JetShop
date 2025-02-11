@@ -160,6 +160,22 @@ class Translator {
 					}
 				}
 			}
+		}
+		
+		if($html && !$texts) {
+			$text = $this->splitLongText( $html );
+			
+			foreach($text as $t) {
+				$t = trim($t);
+				if(!$t) {
+					continue;
+				}
+				
+				$texts[] = [
+					'original'    => $t,
+					'translation' => ''
+				];
+			}
 			
 		}
 		

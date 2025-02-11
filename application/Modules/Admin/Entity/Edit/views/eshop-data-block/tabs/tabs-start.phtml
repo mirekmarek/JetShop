@@ -8,20 +8,37 @@ use Jet\MVC_View;
 use Jet\UI_tabsJS;
 use Jet\UI;
 use Jet\Tr;
+use Jet\Form;
 use Jet\UI_button;
-use JetApplication\EShop;
+use Jet\MVC;
 use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
- * @var EShop $eshop
  * @var UI_tabsJS $tabs
+ * @var Form $form
  */
 
-$eshop = $this->getRaw('eshop');
 $tabs = $this->getRaw('tabs');
+$form = $this->getRaw('form');
 
-if(EShops::isMultiEShopMode()):
+$form_fields = [];
+if(
+	$form &&
+	!$form->getIsReadonly() &&
+	EShops::isMultiEShopMode()
+) {
+	foreach($form->getFields() as $field) {
+		if( str_starts_with( $field->getName(), '/eshop_data/' ) ) {
+			$name = explode( '/', $field->getName() );
+			$form_fields[ $name[3] ] = str_replace(':', ' ', $field->getLabel()).' ('.str_replace('_', ' ', $name[3]).')';
+		}
+	}
+}
+
+
+
+if($form_fields):
 	foreach( EShops::getList() as $eshop) {
 		$tabs->tab( $eshop->getKey() )->addJsAction('onclick', "UI_EShopBlock.onSelect('".$eshop->getKey()."');");
 	}
@@ -30,19 +47,28 @@ if(EShops::isMultiEShopMode()):
 	
 	echo $copy_dialog->start();
 	?>
+	<h5><?=Tr::_('Form fields', dictionary: Tr::COMMON_DICTIONARY)?></h5>
+	<div style="display: grid;grid-template-columns: 20px auto; gap: 10px;align-items: center;margin: 20px;">
+		<?php foreach( $form_fields as $name=>$label): ?>
+			<div><input type="checkbox" name="__copy_form_field_<?=$name?>" id="__copy_form_field_<?=$name?>" value="<?=$name?>" class="__copy_form_field"></div>
+			<div><label for="__copy_form_field_<?=$name?>" style="margin: 0px;padding: 0px;"><?=$label;?></label></div>
+		<?php endforeach; ?>
+	</div>
+
+
 	<h5><?=Tr::_('Source e-shop', dictionary: Tr::COMMON_DICTIONARY)?></h5>
 	<div style="display: grid;grid-template-columns: 20px auto; gap: 10px;align-items: center;margin: 20px;">
 		<?php foreach( EShops::getListSorted() as $eshop_key=>$eshop): ?>
-			<div><input type="radio" name="__copy_source_eshop" id="__copy_source_eshop_<?=$eshop_key?>" value="<?=$eshop_key?>" class="__copy_source" onclick="UI_EShopBlock.copyContentSourceSelected('<?=$eshop_key?>');"></div>
-			<div><label for="__copy_source_eshop_<?=$eshop_key?>" style="margin: 0px;padding: 0px;"><?=UI::flag( $eshop->getLocale() )?> <?=$eshop->getName()?></label></div>
+			<div><input type="radio" name="__copy_source" id="__copy_source_<?=$eshop_key?>" value="<?=$eshop_key?>" class="__copy_source" onclick="UI_EShopBlock.copyContentSourceSelected('<?=$eshop_key?>');"></div>
+			<div><label for="__copy_source_<?=$eshop_key?>" style="margin: 0px;padding: 0px;"><?=UI::flag( $eshop->getLocale() )?> <?=$eshop->getName()?></label></div>
 		<?php endforeach; ?>
 	</div>
 
 	<h5><?=Tr::_('Target e-shop', dictionary: Tr::COMMON_DICTIONARY)?></h5>
 	<div style="display: grid;grid-template-columns: 20px auto; gap: 10px;align-items: center;margin: 20px;">
 		<?php foreach( EShops::getListSorted() as $eshop_key=>$eshop): ?>
-			<div><input type="checkbox" name="__copy_target_locale_<?=$eshop_key?>" id="__copy_target_locale_<?=$eshop_key?>" value="<?=$eshop_key?>" class="__copy_target"></div>
-			<div><label for="__copy_target_locale_<?=$eshop_key?>" style="margin: 0px;padding: 0px;"><?=UI::flag( $eshop->getLocale() )?> <?=$eshop->getName()?></label></div>
+			<div><input type="checkbox" name="__copy_target_<?=$eshop_key?>" id="__copy_target_<?=$eshop_key?>" value="<?=$eshop_key?>" class="__copy_target"></div>
+			<div><label for="__copy_target_<?=$eshop_key?>" style="margin: 0px;padding: 0px;"><?=UI::flag( $eshop->getLocale() )?> <?=$eshop->getName()?></label></div>
 		<?php endforeach; ?>
 	</div>
 	
@@ -52,11 +78,15 @@ if(EShops::isMultiEShopMode()):
 		->setOnClick("UI_EShopBlock.copyContent();")
 		->setClass( UI_button::CLASS_PRIMARY );
 	echo $copy_dialog->end();
+	
+	
+	
 	?>
 	<script>
 		
 		const UI_EShopBlock = {
 			copy_form: null,
+			translate_content: false,
 			
 			onSelect: ( eshop_key ) => {
 				Cookies.set('selected_eshop_block_key', eshop_key, undefined, '/');
@@ -69,10 +99,13 @@ if(EShops::isMultiEShopMode()):
 					$('.nav-tabs a[href="#' + tab + '"]').tab('show');
 				}
 			},
+			
+			
 
-			copyContentStart: ( source_eshop, form) => {
+			copyContentStart: ( source_eshop, form, translate_content ) => {
 				UI_EShopBlock.copy_form = form;
-
+				UI_EShopBlock.translate_content = translate_content;
+				
 				[...document.getElementsByClassName('__copy_source')].forEach( ( el ) => {
 					el.checked = el.value == source_eshop;
 				} );
@@ -92,13 +125,22 @@ if(EShops::isMultiEShopMode()):
 				} );
 			},
 
-			copyContent: () => {
+			copyContent: async () => {
+				$('#__progress__').show();
+				
 				let source_eshop = '';
 				let target_eshops = [];
+				let form_fields = [];
 
 				[...document.getElementsByClassName('__copy_source')].forEach( ( el ) => {
 					if(el.checked) {
 						source_eshop = el.value;
+					}
+				} );
+
+				[...document.getElementsByClassName('__copy_form_field')].forEach( ( el ) => {
+					if(el.checked) {
+						form_fields.push(el.value);
 					}
 				} );
 
@@ -142,44 +184,84 @@ if(EShops::isMultiEShopMode()):
 						
 					}
 				} );
-				
-				console.debug(source_data);
-				
 
-				[...UI_EShopBlock.copy_form.elements].forEach( ( el ) => {
-					[...target_eshops].forEach( ( target_eshop ) => {
-						if(el.name.startsWith('eshop_data['+target_eshop+'][')) {
-							let name = el.name.substring( ('eshop_data['+target_eshop+']').length );
-							name = name.replace('[', '');
-							name = name.replace(']', '');
+				for( let c=0;c<UI_EShopBlock.copy_form.elements.length;c++ ) {
+					const el = UI_EShopBlock.copy_form.elements[c];
 
-							switch(el.type) {
-								case 'checkbox':
-								case 'radio':
-									el.checked = source_data[name];
-									break;
-								case 'select-one':
-									[...el.options].forEach( ( option ) => {
-										option.selected = source_data[name] == option.value;
-									} );
-									break;
-								case 'select-multiple':
-									[...el.options].forEach( ( option ) => {
-										option.selected = source_data[name].includes( option.value );
-									} );
-									break;
-								default:
+					if(!el.name.startsWith('eshop_data[')) {
+						continue;
+					}
+
+
+					for(let l=0;l<target_eshops.length;l++) {
+						let target_eshop = target_eshops[l];
+
+						if(!el.name.startsWith('eshop_data['+target_eshop+'][')) {
+							continue;
+						}
+						
+						let name = el.name.substring( ('eshop_data['+target_eshop+']').length );
+						name = name.replace('[', '');
+						name = name.replace(']', '');
+
+						if(!form_fields.includes(name)) {
+							continue;
+						}
+						
+
+						switch(el.type) {
+							case 'checkbox':
+							case 'radio':
+								el.checked = source_data[name];
+								break;
+							case 'select-one':
+								[...el.options].forEach( ( option ) => {
+									option.selected = source_data[name] == option.value;
+								} );
+								break;
+							case 'select-multiple':
+								[...el.options].forEach( ( option ) => {
+									option.selected = source_data[name].includes( option.value );
+								} );
+								break;
+							case 'number':
+								el.value = source_data[name];
+								break;
+							default:
+								if(UI_EShopBlock.translate_content) {
+									let rq = new FormData();
+									rq.set('from_eshop', source_eshop);
+									rq.set('to_eshop', target_eshop);
+									rq.set('text', source_data[name]);
+
+									const response = await fetch(
+										'<?=MVC::getPage('entity-edit-services')->getURLPath(GET_params: ['action'=>'translate'])?>',
+										{
+											method: 'POST',
+											body: rq
+										});
+
+									const data = await response.json();
+
+									if(data['result']=='ok') {
+										el.value = data['data']['translation'];
+									} else {
+										alert( data['data']['error_message'] );
+									}
+								
+								} else {
 									el.value = source_data[name];
-									break;
-							}
+								}
+								break;
 						}
 
-					} );
-				} );
+					}
+				}
 
+				$('#__progress__').hide();
 				$('#copy_dialog').modal('hide');
 			}
-			
+
 		};
 		
 	</script>

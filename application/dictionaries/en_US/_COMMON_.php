@@ -202,4 +202,8 @@ return [
 	'... and more' => '',
 	'... and more (%TOTAL%)' => '',
 	'... and more (%TOTAL% in total)' => '',
+	'Content' => '',
+	'Copy and translate' => '',
+	'Translate' => '',
+	'Form fields' => '',
 ];

@@ -10,25 +10,40 @@ use Jet\UI_tabsJS_tab;
 use JetApplication\EShops;
 use Jet\Locale;
 use Jet\Tr;
-
+use Jet\Form;
+use JetApplication\Managers_General;
 
 /**
  * @var MVC_View $this
  * @var UI_tabsJS_tab $tab
  * @var Locale $locale
+ * @var Form $form
  */
 
 $tab = $this->getRaw('tab');
 $locale = $this->getRaw('locale');
+$form = $this->getRaw('form');
 
 echo $tab->content()->start();
 
-if(EShops::isMultiEShopMode()):
+if(
+	EShops::isMultilanguageMode() &&
+	$form &&
+	!$form->getIsReadonly()
+):
 ?>
 <div style="padding: 5px;padding-bottom: 15px">
-	<?=UI::button( Tr::_('Copy', dictionary: Tr::COMMON_DICTIONARY) )
-		->setOnClick("UI_DescriptionBlock.copyContentStart('{$locale}', this.form);")
-		->setIcon('copy')?>
+	<?php
+	echo UI::button( Tr::_('Copy', dictionary: Tr::COMMON_DICTIONARY) )
+		->setOnClick("UI_DescriptionBlock.copyContentStart('{$locale}', this.form, false );")
+		->setIcon('copy');
+	
+	if( Managers_General::Translator()):
+		echo UI::button( Tr::_('Copy and translate', dictionary: Tr::COMMON_DICTIONARY) )
+			->setOnClick("UI_DescriptionBlock.copyContentStart('{$locale}', this.form, true );")
+			->setIcon('earth-europe');
+	endif;
+	?>
 </div>
 <?php
 endif;

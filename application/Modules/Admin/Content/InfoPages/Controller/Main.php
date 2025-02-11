@@ -7,10 +7,22 @@
 namespace JetApplicationModule\Admin\Content\InfoPages;
 
 
+use Jet\Tr;
 use JetApplication\Admin_EntityManager_Controller;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
+	public function getTabs(): array
+	{
+		$tabs = parent::getTabs();
+		
+		if(isset($tabs['description'])) {
+			$tabs['description'] = Tr::_('Content');
+		}
+		
+		return $tabs;
+	}
+	
 
 	public function setupListing(): void
 	{

@@ -10,26 +10,42 @@ use Jet\UI;
 use Jet\Tr;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use Jet\Form;
+use JetApplication\Managers_General;
 
 /**
  * @var MVC_View $this
  * @var EShop $eshop
  * @var UI_tabsJS_tab $tab
+ * @var Form $form
  */
 
 $eshop = $this->getRaw('eshop');
 $eshop_key = $eshop->getKey();
+$form = $this->getRaw('form');
 
 $tab = $this->getRaw('tab');
 
 echo $tab->content()->start();
 
-if(EShops::isMultiEShopMode()):
+if(
+	EShops::isMultiEShopMode() &&
+	$form &&
+	!$form->getIsReadonly()
+):
 ?>
 <div style="padding: 5px;padding-bottom: 15px">
-	<?=UI::button( Tr::_('Copy', dictionary: Tr::COMMON_DICTIONARY ) )
-		->setOnClick("UI_EShopBlock.copyContentStart('{$eshop_key}', this.form);")
-		->setIcon('copy')?>
+	<?php
+	echo UI::button( Tr::_('Copy', dictionary: Tr::COMMON_DICTIONARY ) )
+		->setOnClick("UI_EShopBlock.copyContentStart('{$eshop_key}', this.form, false );")
+		->setIcon('copy');
+	
+	if( Managers_General::Translator()):
+		echo UI::button( Tr::_('Copy and translate', dictionary: Tr::COMMON_DICTIONARY) )
+			->setOnClick("UI_EShopBlock.copyContentStart('{$eshop_key}', this.form, true );")
+			->setIcon('earth-europe');
+	endif;
+	?>
 </div>
 <?php
 endif;

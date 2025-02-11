@@ -86,6 +86,11 @@ class Core_EShops {
 		return count(static::getList())>1;
 	}
 	
+	public static function isMultilanguageMode() : bool
+	{
+		return count(static::getAvailableLocales())>1;
+	}
+	
 	/**
 	 * @return EShop[]
 	 */
