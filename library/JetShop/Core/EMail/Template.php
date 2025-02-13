@@ -175,15 +175,31 @@ abstract class Core_EMail_Template {
 		);
 		
 		if(!$template) {
-			$template = new EMail_TemplateText();
-			$template->checkShopData();
-			$template->setInternalCode( $this->getInternalCode() );
-			$template->setInternalName( $this->getInternalName() );
-			$template->setInternalNotes( $this->getInternalNotes() );
 			
-			$template->save();
+			$template_master = EMail_TemplateText::getByInternalCode( $this->getInternalCode() );
 			
-			$template->activateCompletely();
+			if(!$template_master) {
+				$template_master = new EMail_TemplateText();
+				$template_master->checkShopData();
+				$template_master->setInternalCode( $this->getInternalCode() );
+				$template_master->setInternalName( $this->getInternalName() );
+				$template_master->setInternalNotes( $this->getInternalNotes() );
+				
+				$template_master->save();
+				
+				$template_master->activateCompletely();
+			} else {
+				$template_master->checkShopData();
+				$template_master->setInternalCode( $this->getInternalCode() );
+				$template_master->save();
+				$template_master->activateCompletely();
+			}
+			
+			$template = EMail_TemplateText_EShopData::getByInternalCode(
+				$this->getInternalCode(),
+				$eshop
+			);
+			
 		}
 		
 		$placeholder = '%body%';
