@@ -1046,4 +1046,19 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 		return true;
 	}
 	
+	public function hasChildren() : bool
+	{
+		return (bool)$this->children;
+	}
+	
+	public function getChildrenIds() : array
+	{
+		return $this->children ? explode(',', $this->children) : [];
+	}
+	
+	public function getBranchChildrenIds() : array
+	{
+		return $this->branch_children ? explode(',', $this->children) : [];
+	}
+	
 }

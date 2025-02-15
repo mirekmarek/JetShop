@@ -348,7 +348,7 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 		return $this->getURI() . rawurlencode( $this->video_mobile );
 	}
 	
-	public function isNofollow(): bool
+	public function getNofollow(): bool
 	{
 		return $this->nofollow;
 	}
@@ -358,7 +358,7 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 		$this->nofollow = $nofollow;
 	}
 	
-	public function isOpenInNewWindow(): bool
+	public function getOpenInNewWindow(): bool
 	{
 		return $this->open_in_new_window;
 	}

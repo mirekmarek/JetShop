@@ -11,6 +11,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\EShops;
 
 trait Core_EShopEntity_HasInternalParams_Trait {
 	
@@ -80,6 +82,12 @@ trait Core_EShopEntity_HasInternalParams_Trait {
 	public function setInternalCode( string $internal_code ): void
 	{
 		$this->internal_code = $internal_code;
+		
+		if($this instanceof EShopEntity_WithEShopData) {
+			foreach(EShops::getList() as $eshop) {
+				$this->getEshopData( $eshop )->setInternalCode( $internal_code );
+			}
+		}
 	}
 	
 	public function getInternalNotes(): string

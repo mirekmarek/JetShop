@@ -11,6 +11,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use JetApplication\EShop;
 use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_HasURL_Trait;
@@ -23,6 +24,7 @@ use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\MeasureUnit;
 use JetApplication\Product;
+use JetApplication\Product_EShopData;
 use JetApplication\Product_EShopData_Trait_Images;
 use JetApplication\Product_EShopData_Trait_Price;
 use JetApplication\Product_EShopData_Trait_Set;
@@ -515,5 +517,25 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	public function getDeliveryInfo( ?Availability $availability=null ) : DeliveryTerm_Info
 	{
 		return DeliveryTerm::getInfo( $this, $availability );
+	}
+	
+	public static function getActiveProductsIds( EShop $eshop, array $product_ids ): array
+	{
+		$ids = Product_EShopData::dataFetchCol(
+			select:['entity_id'],
+			where: [
+				'entity_id' => $product_ids,
+				'AND',
+				Product_EShopData::getActiveQueryWhere( $eshop ),
+				'AND',
+				'type' => [
+					Product::PRODUCT_TYPE_REGULAR,
+					Product::PRODUCT_TYPE_SET,
+					Product::PRODUCT_TYPE_VARIANT_MASTER
+				]
+			]
+		);
+		
+		return $ids;
 	}
 }

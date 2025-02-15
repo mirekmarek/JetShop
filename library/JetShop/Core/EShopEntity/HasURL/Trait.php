@@ -35,6 +35,7 @@ trait Core_EShopEntity_HasURL_Trait {
 	public function generateURLPathPart() : string
 	{
 		$name = $this->getURLNameDataSource();
+		
 		$template = EShopEntity_Definition::get($this)->getURLTemplate();
 		
 		$name = Data_Text::removeAccents( $name );

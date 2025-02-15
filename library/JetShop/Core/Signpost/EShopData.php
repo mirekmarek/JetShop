@@ -11,12 +11,14 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use JetApplication\Category_EShopData;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasImages_Trait;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_HasURL_Trait;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
+use JetApplication\Product_EShopData;
 use JetApplication\Signpost;
 use JetApplication\Signpost_Category;
 
@@ -87,6 +89,9 @@ abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopDa
 	protected int $priority = 0;
 	
 	protected ?array $category_ids = null;
+	protected ?array $categories = null;
+	protected ?array $all_product_ids = null;
+	protected ?array $active_product_ids = null;
 	
 	
 	public function getURLNameDataSource(): string
@@ -184,4 +189,64 @@ abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopDa
 		
 		return $this->category_ids;
 	}
+	
+	
+	/**
+	 * @return Category_EShopData[]
+	 */
+	public function getCategories(): array
+	{
+		if($this->categories===null) {
+			$this->categories = [];
+			$ids = $this->getCategoryIds();
+			if($ids) {
+				$this->categories = Category_EShopData::getActiveList( $ids, $this->getEshop() );
+			}
+		}
+		
+		return $this->categories;
+	}
+	
+	public function getAllProductIds() : array
+	{
+		if( $this->all_product_ids===null ) {
+			$this->all_product_ids = [];
+			
+			foreach( $this->getCategories() as $sc ) {
+				
+				$ids = $sc->getBranchProductIds();
+
+				if($ids) {
+					$this->all_product_ids += $sc->getBranchProductIds();
+				}
+			}
+			
+			$this->all_product_ids = array_unique( $this->all_product_ids );
+		}
+		
+		return $this->all_product_ids;
+	}
+	
+	public function getActiveProductIds() : array
+	{
+		if($this->active_product_ids===null) {
+			$this->active_product_ids = [];
+			
+			if($this->getAllProductIds()) {
+				$this->active_product_ids = Product_EShopData::getActiveProductsIds(
+					$this->getEshop(),
+					$this->getAllProductIds()
+				);
+			}
+		}
+		
+		return $this->active_product_ids;
+	}
+	
+	public function getActiveProductsCount() : int
+	{
+		return count( $this->getActiveProductIds() );
+		
+	}
+	
 }

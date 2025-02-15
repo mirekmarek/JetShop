@@ -20,6 +20,10 @@ use JetApplication\Category;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use JetApplication\Pricelist;
+use JetApplication\Pricelists;
+use JetApplication\Product_EShopData;
+use JetApplication\Product_Price;
 
 #[DataModel_Definition(
 	name: 'category_eshop_data',
@@ -564,6 +568,72 @@ abstract class Core_Category_EShopData extends EShopEntity_WithEShopData_EShopDa
 		} else {
 			return implode($path_str_glue, $result);
 		}
+	}
+	
+	public function hasChildren() : bool
+	{
+		return (bool)$this->active_branch_children;
+	}
+	
+	public function getTheBestDiscountPercentage( ?Pricelist $pricelist = null ) : ?float
+	{
+		$pricelist = $pricelist??Pricelists::getCurrent();
+		
+		$product_ids = $this->getBranchProductIds();
+		if(!$product_ids) {
+			return null;
+		}
+		
+		$prices = Product_Price::prefetch( $pricelist, $product_ids );
+		
+		$best_discount_percentage = 0;
+		foreach($prices as $price) {
+			if($price->getDiscountPercentage()>$best_discount_percentage) {
+				$best_discount_percentage = $price->getDiscountPercentage();
+			}
+		}
+		
+		return $best_discount_percentage;
+	}
+	
+	/**
+	 * @param int $max_count
+	 * @param Pricelist|null $pricelist
+	 * @param EShop|null $eshop
+	 * @return Product_EShopData[]
+	 */
+	public function getTheBestDiscountProducts( int $max_count = 0, ?Pricelist $pricelist = null, ?EShop $eshop=null ) : array
+	{
+		$pricelist = $pricelist??Pricelists::getCurrent();
+		
+		$product_ids = $this->getBranchProductIds();
+		if(!$product_ids) {
+			return [];
+		}
+		
+		$prices = Product_Price::prefetch( $pricelist, $product_ids );
+		
+		$discounts = [];
+		$best_discount_percentage = 0;
+		foreach($prices as $price) {
+			if($price->getDiscountPercentage()>0) {
+				$discounts[ $price->getEntityId() ] = $price->getDiscountPercentage();
+			}
+		}
+		
+		if(!$discounts) {
+			return [];
+		}
+		
+		arsort( $discounts );
+		
+		$products = Product_EShopData::getActiveList( array_keys($discounts), $eshop );
+		
+		if($max_count) {
+			$products = array_slice( $products, 0, $max_count );
+		}
+		
+		return $products;
 	}
 	
 }
