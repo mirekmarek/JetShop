@@ -1,0 +1,32 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Catalog\Properties;
+
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasImages_Interface;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var EShopEntity_Basic|EShopEntity_HasImages_Interface $item
+ */
+
+$image_manager = Admin_Managers::Image();
+$image_manager->setEditable( false );
+$image_manager->resetDefinedImages();
+
+
+$item = $this->getRaw('item');
+$item->defineImages();
+
+?>
+<div style="display: flex;align-items: center;gap:10px;">
+<?=$image_manager->renderImageWidgets( EShops::getCurrent() );?>
+</div>

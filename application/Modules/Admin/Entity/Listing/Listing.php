@@ -20,6 +20,7 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasInternalParams_Interface;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
@@ -102,6 +103,10 @@ class Listing extends DataListing {
 			$default_schema[] = Listing_Column_InternalNotes::KEY;
 			
 			$default_order_by = '+internal_name';
+		}
+		
+		if( $this->entity instanceof EShopEntity_HasImages_Interface ) {
+			$this->addColumn( new Listing_Column_Images() );
 		}
 		
 		$this->setDefaultColumnsSchema( $default_schema );

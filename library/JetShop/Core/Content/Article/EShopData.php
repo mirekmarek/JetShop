@@ -33,7 +33,6 @@ use JetApplication\EShopEntity_Definition;
 #[EShopEntity_Definition(
 	URL_template: '%NAME%-a-%ID%'
 )]
-
 abstract class Core_Content_Article_EShopData extends EShopEntity_WithEShopData_EShopData implements
 	EShopEntity_HasURL_Interface,
 	EShopEntity_HasImages_Interface
