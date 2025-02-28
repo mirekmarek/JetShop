@@ -107,5 +107,5 @@ if(Main::getCurrentUserCanSet()):
 <?php endif; ?>
 
 <script>
-	window.parent.postMessage('<?=$this->getRaw('reload_URL')?>', '*');
+	window.parent.postMessage('timer_reload:<?=$this->getRaw('reload_URL')?>', '*');
 </script>

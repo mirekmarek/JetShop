@@ -38,6 +38,8 @@ echo $dialog->end();
 	};
 
 	window.addEventListener('message', function(event) {
-		$('#timmer_settings').load( event.data );
+		if(event.data.startsWith('timer_reload:')) {
+			$('#timmer_settings').load( event.data.substring(13) );
+		}
 	});
 </script>

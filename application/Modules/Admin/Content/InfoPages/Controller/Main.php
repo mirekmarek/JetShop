@@ -22,7 +22,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		return $tabs;
 	}
-	
 
 	public function setupListing(): void
 	{

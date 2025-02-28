@@ -1,0 +1,58 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ */
+?>
+<script>
+	const TODO = {
+		add: () => {
+			JetAjaxForm.submit('todo_item_add_form', {
+				onSuccess: () => {
+					$('#todo_add_form').hide();
+
+					parent.postMessage("todo_reload_button","*");
+				}
+			});
+		},
+		done: ( id ) => {
+			$('#todo_items').load( '<?=Http_Request::currentURI()?>&done='+id, () => {
+				parent.postMessage("todo_reload_button","*");
+			} );
+		},
+		edit: ( id ) => {
+			$('#todo_item_detail_'+id).toggle();
+			$('#todo_item_edit_'+id).toggle();
+		},
+
+		editSave: (id) => {
+			JetAjaxForm.submit('toto_item_edit_form_'+id, {
+				onSuccess: () => {
+				}
+			});
+			
+		}
+	};
+</script>
+
+<div class="toolbar">
+	<?=UI::button_create('')->setOnClick("$('#todo_add_form').toggle();")?>
+</div>
+
+<div id="todo_add_form" class="card card-body" style="display: none;">
+	<?php  require 'todo/add_form.phtml'; ?>
+</div>
+
+<div id="todo_items">
+	<?php  require 'todo/items.phtml'; ?>
+</div>

@@ -28,4 +28,6 @@ return [
 	'Orders and Customers' => '',
 	'Your signature' => '',
 	'Goods operations' => '',
+	'Edit homepage menu' => '',
+	'Edit' => '',
 ];

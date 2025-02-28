@@ -11,6 +11,7 @@ use Jet\Attributes;
 use Jet\BaseObject;
 
 use Attribute;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_Definition_Property;
 use ReflectionClass;
@@ -20,6 +21,7 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 {
 	protected ?string $admin_manager_interface = null;
 	protected ?string $entity_name_readable = null;
+	protected ?string $entity_type = null;
 	protected ?string $URL_template = null;
 	protected ?array $images = null;
 	protected ?bool $description_mode = null;
@@ -52,6 +54,13 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 			$def->properties[$property_name] = EShopEntity_Definition_Property::read( $definition );
 		}
 		
+		/**
+		 * @var EShopEntity_Basic $class
+		 */
+		$class = $reflection->getName();
+		
+		$def->entity_type = $class::getEntityType();
+		
 		return $def;
 	}
 	
@@ -78,6 +87,11 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 	public function getEntityNameReadable(): ?string
 	{
 		return $this->entity_name_readable;
+	}
+	
+	public function getEntityType(): ?string
+	{
+		return $this->entity_type;
 	}
 	
 	

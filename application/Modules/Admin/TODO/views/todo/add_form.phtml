@@ -1,0 +1,37 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+
+$form = $this->getRaw('add_form');
+
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+$form->renderer()->addJsAction('onsubmit', 'TODO.add();return false;');
+?>
+<?=$form->start()?>
+<?=$form->field('priority')?>
+<?=$form->field('visible_for')?>
+<?=$form->field('task')?>
+
+<?=UI::button_save()?>
+<?=$form->end()?>

@@ -18,8 +18,11 @@ class Controller_Main extends Admin_EntityManager_Controller
 	public function getTabs(): array
 	{
 		$tabs = parent::getTabs();
-		$tabs['categories'] = Tr::_('Categories');
-
+		
+		if(isset($tabs['description'])) {
+			$tabs['description'] = Tr::_('Content');
+		}
+		
 		return $tabs;
 	}
 	

@@ -19,52 +19,56 @@ use ReflectionClass;
 
 abstract class Core_EShopEntity {
 	
+	protected static ?array $known_entities = null;
+	
 	/**
 	 * @return EShopEntity_Definition[]
 	 */
 	public static function findEntities() : array
 	{
-		$finder = new class {
-			/**
-			 * @var EShopEntity_Definition[]
-			 */
-			protected array $classes = [];
-			protected string $dir = '';
-			
-			public function __construct()
-			{
-				$this->dir = SysConf_Path::getApplication() . 'Classes/';
-				$this->find();
-			}
-			
-			
-			public function find(): void
-			{
-				$this->readDir( $this->dir );
+		
+		if(static::$known_entities === null) {
+			$finder = new class {
+				/**
+				 * @var EShopEntity_Definition[]
+				 */
+				protected array $classes = [];
+				protected string $dir = '';
 				
-				ksort( $this->classes );
-			}
-			
-			protected function readDir( string $dir ): void
-			{
-				$dirs = IO_Dir::getList( $dir, '*', true, false );
-				$files = IO_Dir::getList( $dir, '*.php', false, true );
+				public function __construct()
+				{
+					$this->dir = SysConf_Path::getApplication() . 'Classes/';
+					$this->find();
+				}
 				
-				foreach( $files as $path => $name ) {
-					$class = str_replace($this->dir, '', $path);
-					$class = str_replace('.php', '', $class);
+				
+				public function find(): void
+				{
+					$this->readDir( $this->dir );
 					
-					$class = str_replace('/', '_', $class);
-					$class = str_replace('\\', '_', $class);
+					ksort( $this->classes );
+				}
+				
+				protected function readDir( string $dir ): void
+				{
+					$dirs = IO_Dir::getList( $dir, '*', true, false );
+					$files = IO_Dir::getList( $dir, '*.php', false, true );
 					
-					$class = '\\JetApplication\\'.$class;
-					
-					$reflection = new ReflectionClass( $class );
-
-					if($reflection->isSubclassOf(DataModel_Related::class)) {
-						continue;
-					}
-
+					foreach( $files as $path => $name ) {
+						$class = str_replace($this->dir, '', $path);
+						$class = str_replace('.php', '', $class);
+						
+						$class = str_replace('/', '_', $class);
+						$class = str_replace('\\', '_', $class);
+						
+						$class = '\\JetApplication\\'.$class;
+						
+						$reflection = new ReflectionClass( $class );
+						
+						if($reflection->isSubclassOf(DataModel_Related::class)) {
+							continue;
+						}
+						
 						$attributes = Attributes::getClassDefinition(
 							$reflection,
 							EShopEntity_Definition::class,
@@ -73,24 +77,38 @@ abstract class Core_EShopEntity {
 						if($attributes) {
 							$this->classes[$class] = EShopEntity_Definition::get( $class );
 						}
-
+						
+					}
+					
+					foreach( $dirs as $path => $name ) {
+						$this->readDir( $path );
+					}
 				}
 				
-				foreach( $dirs as $path => $name ) {
-					$this->readDir( $path );
+				/**
+				 * @return EShopEntity_Definition[]
+				 */
+				public function getClasses(): array
+				{
+					return $this->classes;
 				}
-			}
+			};
 			
-			/**
-			 * @return EShopEntity_Definition[]
-			 */
-			public function getClasses(): array
-			{
-				return $this->classes;
-			}
-		};
+			static::$known_entities = $finder->getClasses();
+		}
 		
-		return $finder->getClasses();
+		return static::$known_entities;
+	}
+	
+	public static function getEntityDefinitionByType( string $type ): ?EShopEntity_Definition
+	{
+		foreach(static::findEntities() as $definition) {
+			if($definition->getEntityType()==$type) {
+				return $definition;
+			}
+		}
+		
+		return null;
 	}
 	
 	

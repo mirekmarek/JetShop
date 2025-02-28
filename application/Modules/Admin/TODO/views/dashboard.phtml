@@ -1,0 +1,53 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use JetApplication\Admin_Managers;
+use JetApplication\EShopEntity;
+use Jet\Tr;
+
+
+$items = Item::getDashboard();
+if(!$items->getCount()) {
+	return;
+}
+
+?>
+<div class="card">
+	<div class="card-header"><?= Tr::_('TODO (%CNT%)', ['CNT'=>$items->getCount()])?></div>
+	<div class="card-body" style="max-height: 400px;overflow: auto">
+		<?php
+		foreach( $items as $item ):
+			$entity_definition = EShopEntity::getEntityDefinitionByType( $item->getContextEntityType() );
+			if(!$entity_definition) {
+				continue;
+			}
+			
+			$manager = Admin_Managers::get( $entity_definition->getAdminManagerInterface() );
+			if(!$manager) {
+				continue;
+			}
+			?>
+			<div class="card card-body" style="margin-bottom: 10px;padding: 5px;">
+				<div style="display: grid;grid-template-columns: 1fr 8fr;">
+					<div><?=$item->getPriorityTag()?></div>
+					<div style="opacity: 0.8">
+						<?=$entity_definition->getEntityNameReadable()?>
+						<?=$manager->renderItemName( $item->getContextEntityId() )?>
+					</div>
+				</div>
+				
+				<div style="font-size: 0.8rem;padding: 4px;">
+					<?=nl2br( $item->getTask() )?>
+				</div>
+			</div>
+			<?php
+		endforeach;
+		?>
+	</div>
+</div>
+<br>

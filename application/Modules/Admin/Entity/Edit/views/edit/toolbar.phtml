@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Entity\Edit;
 
 
+use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasURL_Interface;
@@ -65,3 +66,8 @@ $next_url = $listing?->getNextEditUrl( $item->getId() );
 		endif;
 		?>
 </div>
+
+<div style="position: fixed;right: 2px;top: 100px;z-index: 998;">
+	<?=Admin_Managers::TODO()?->renderTool( $item::getEntityType(), $item->getId() );?>
+</div>
+

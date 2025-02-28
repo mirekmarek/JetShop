@@ -12,6 +12,7 @@ use JetApplication\Admin_Managers_Content_MagicTags;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\Admin_Managers_OrderPersonalReceipt;
 use JetApplication\Admin_Managers_Signpost;
+use JetApplication\Admin_Managers_Todo;
 use JetApplication\EShopConfig;
 use JetApplication\Managers;
 use JetApplication\Manager_MetaInfo;
@@ -106,6 +107,10 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Content_MagicTags::class );
 	}
 	
+	public static function TODO() : Admin_Managers_Todo|Application_Module|null
+	{
+		return static::get( Admin_Managers_Todo::class );
+	}
 	
 	public static function UI() : Admin_Managers_UI|Application_Module
 	{

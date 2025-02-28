@@ -1,0 +1,92 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\MVC;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$entity_type = $this->getString('entity_type');
+$entity_id = $this->getInt('entity_id');
+
+//$scheduled = Timer::getScheduled( $entity );
+
+?>
+<style>
+	#todo {
+		position: fixed;
+		top: 60px;
+		right: 0px;
+		height: calc(100% - 70px);
+		width: 600px;
+		background-color: #333940;
+		z-index: 999999;
+		padding: 5px;
+	}
+
+	#todo_items {
+		height: calc(100% - 70px);
+		width: 100%;
+		overflow: hidden;
+		padding: 0px;
+		background-color: #ffffff;
+	}
+</style>
+<script>
+	const TODO = {
+		open: () => {
+			$('#todo').fadeIn();
+		},
+
+		close: () => {
+			$('#todo').fadeOut();
+		},
+		
+		eventListener: ( event ) => {
+			if(event.data==='todo_reload_button') {
+				$('#todo_button').load( '<?=MVC::getPage('todo')->getURL(GET_params: [
+						'entity_type' => $entity_type,
+						'entity_id' => $entity_id,
+						'reload_button'=>1
+				])?>' );
+			}
+
+		}
+	};
+
+	window.addEventListener(
+		"message",
+		TODO.eventListener,
+		false,
+	);
+</script>
+
+<div id="todo_button" style="display: inline-block">
+	<?php require 'entity-edit/button.phtml'; ?>
+</div>
+
+<div id="todo" style="display: none;">
+	<div style="display: flex;align-items: center;margin-bottom: 5px">
+		<div>
+			<?= UI::button('')->setIcon('xmark')->setOnClick("TODO.close()")?>
+		</div>
+
+		<div>
+		</div>
+	</div>
+
+	<div id="todo_items">
+		<iframe src="<?=MVC::getPage('todo')->getURL(GET_params: ['entity_type'=>$entity_type, 'entity_id'=>$entity_id])?>" style="width:100%;height:100%;border: none;"></iframe>
+	</div>
+</div>

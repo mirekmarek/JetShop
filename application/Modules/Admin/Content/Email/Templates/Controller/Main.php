@@ -26,6 +26,17 @@ class Controller_Main extends Admin_EntityManager_Controller
 	 */
 	protected array $templates;
 	
+	public function getTabs(): array
+	{
+		$tabs = parent::getTabs();
+		
+		if(isset($tabs['description'])) {
+			$tabs['description'] = Tr::_('Content');
+		}
+		
+		return $tabs;
+	}
+	
 	
 	public function setupListing(): void
 	{

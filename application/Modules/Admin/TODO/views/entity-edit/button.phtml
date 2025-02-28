@@ -1,0 +1,26 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View   $this
+ */
+
+$entity_type = $this->getString('entity_type');
+$entity_id = $this->getInt('entity_id');
+?>
+
+<?= UI::button( Tr::_('TODO').'&nbsp;&nbsp;'.UI::badge( UI_badge::DANGER, Item::getItemsCount( $entity_type, $entity_id ) ) )
+	->setIcon('image')
+	->setOnClick("TODO.open()")
+	->setClass( UI_button::CLASS_PRIMARY)?>

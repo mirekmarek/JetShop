@@ -6,13 +6,19 @@
  */
 
 use Jet\Form;
+use Jet\Http_Request;
 use Jet\Navigation_MenuSet;
 use Jet\Navigation_Menu;
 use Jet\Navigation_Menu_Item;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
 use Jet\UI_icon;
 use Jet\MVC_View;
+use Jet\UI_tabsJS;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_UserSettings;
 use JetApplication\EShops;
 
 /**
@@ -22,14 +28,46 @@ use JetApplication\EShops;
 
 $signatures_form = $this->getRaw('admin_signatures_form');
 
+$settings = Admin_UserSettings::get();
 
 
-$showMenu = function( Navigation_Menu $menu, callable $separator_renderer, callable $item_renderer ) {
+$showMenu = function( bool $handle_disabled, Navigation_Menu $menu, callable $titel_renderer, callable $separator_renderer, callable $item_renderer ) use ($settings) {
 	$separator_allowed = false;
+	
+	if( $handle_disabled ) {
+		
+		if(in_array($menu->getId(), $settings->getHidenMenus())) {
+			return;
+		}
+		
+		$something_visible = false;
+		foreach( $menu->getItems() as $item ) {
+			if(
+				!in_array( $item->getId(), $settings->getHidenItems() )
+			) {
+				$something_visible = true;
+			}
+		}
+		
+		if(!$something_visible) {
+			return;
+		}
+	}
+	
+	echo '<div style="padding: 5px" class="card card-body shadow">';
+	
+	$titel_renderer( $menu );
 	
 	$count = count($menu->getItems());
 	$i=0;
 	foreach( $menu->getItems() as $item ) {
+		if(
+			$handle_disabled &&
+			in_array($item->getId(), $settings->getHidenItems())
+		) {
+			continue;
+		}
+		
 		$i++;
 		$is_last = $i==$count;
 		
@@ -53,6 +91,8 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 			$separator_allowed = false;
 		}
 	}
+	
+	echo '</div>';
 };
 
 $_menus = Navigation_MenuSet::get('admin')->getMenus();
@@ -64,55 +104,132 @@ foreach($_menus as $menu) {
 	}
 }
 
+
+$edit_menu_dialog = UI::dialog('edit_menu_dialog', Tr::_('Edit homepage menu'), UI_dialog::SIZE_EXTRA_LARGE);
 ?>
-<div class="col-md-12 main-col">
-	<div style="display: grid;grid-template-columns: repeat(5, 1fr); gap: 20px;margin-top: 20px;margin-bottom: 30px;">
+<?=$edit_menu_dialog->start();?>
+	<form action="<?= Http_Request::currentURI(['action' =>'setup_menu'])?>" method="POST">
+	
+	<div style="display: grid;grid-template-columns: repeat(auto-fit, 320px); gap: 20px;margin-top: 20px;margin-bottom: 30px;">
+	<?php foreach( $menus as $menu ):
+			$showMenu(
+				handle_disabled: false,
+				menu: $menu,
+				titel_renderer: function( Navigation_Menu $menu ) use ($settings) {
+					
+					$cheched = in_array($menu->getId(), $settings->getHidenMenus()) ? '' : 'checked';
+					?>
+					<div style="display: grid;grid-template-columns: 40px 1fr;align-items: center;margin: 5px;">
+						<div>
+							<input type="checkbox" name="visible_menu[]" value="<?=$menu->getId()?>" <?=$cheched?>>
+						</div>
+						<div>
+							<b><?=$menu->getLabel()?></b>
+						</div>
+					</div>
+						<div class="dropdown-divider"></div>
+					<?php
+				},
+				separator_renderer: function() {
+					?><div class="dropdown-divider"></div><?php
+				},
+				item_renderer: function( Navigation_Menu_Item $item) use ($settings) {
+					
+					$cheched = in_array($item->getId(), $settings->getHidenItems()) ? '' : 'checked';
+					?>
+	
+						<div style="display: grid;grid-template-columns: 40px 40px 1fr;align-items: center;margin: 5px;">
+							<div><input type="checkbox" name="visible_menu_items[]" value="<?=$item->getId()?>" <?=$cheched?>></div>
+							<div><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?></div>
+							<div><?=$item->getLabel()?></div>
+						</div>
+					<?php
+				}
+			);
+	endforeach; ?>
+	</div>
+	<?=$edit_menu_dialog->footer();?>
+	<?=UI::button_save()?>
+	</form>
+<?=$edit_menu_dialog->end();?>
 
 
-	<?php foreach( $menus as $menu ): ?>
-		<div style="padding: 5px" class="card card-body shadow">
-			<h5 style="margin: 10px;"><?=$menu->getLabel()?></h5>
-			<div class="dropdown-divider"></div>
-			
-		<?php $showMenu(
-			menu: $menu,
-			separator_renderer: function() {
-				?><div class="dropdown-divider"></div><?php
-			},
-			item_renderer: function( Navigation_Menu_Item $item) {
-				?>
-				
-				<div style="display: grid;grid-template-columns: 40px 1fr;align-items: center;margin: 10px;">
-					<div><a href="<?=$item->getUrl()?>" style="color: #363636"><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?></a></div>
-					<div><a href="<?=$item->getUrl()?>"><?=$item->getLabel()?></a></div>
-				</div>
-				<?php
-			}
-		); ?>
+<div class="main-col" style="padding: 10px;display: grid;grid-template-columns: 3fr 2fr;gap: 20px;">
+	<div>
+		<?=UI::button(Tr::_('Edit'))->setIcon('edit')->setOnClick("$('#edit_menu_dialog').modal('show');")->setClass( UI_button::CLASS_LINK)->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+		<div style="display: grid;grid-template-columns: repeat(auto-fit, 320px); gap: 20px;margin-top: 20px;margin-bottom: 30px;">
+			<?php foreach( $menus as $menu ):
+				$showMenu(
+					handle_disabled: true,
+					menu: $menu,
+					titel_renderer: function( Navigation_Menu $menu ) {
+						?>
+							<h5 style="margin: 10px;"><?=$menu->getLabel()?></h5>
+							<div class="dropdown-divider"></div>
+						<?php
+					},
+					separator_renderer: function() {
+						?><div class="dropdown-divider"></div><?php
+					},
+					item_renderer: function( Navigation_Menu_Item $item) {
+						?>
+
+							<div style="display: grid;grid-template-columns: 40px 1fr;align-items: center;margin: 10px;">
+								<div><a href="<?=$item->getUrl()?>" style="color: #363636"><?=UI::icon( $item->getIcon() )->setSize( UI_icon::SIZE_LARGE )?></a></div>
+								<div><a href="<?=$item->getUrl()?>"><?=$item->getLabel()?></a></div>
+							</div>
+						<?php
+					}
+				);
+			endforeach; ?>
 		</div>
-	<?php endforeach; ?>
+		
 	</div>
 	
-	<div class="card">
-		<div class="card-header"><?= Tr::_('Your signature')?></div>
-		<div class="card-body">
-			<div>
-				<?=$signatures_form->start()?>
-				
-				<?php foreach( EShops::getList() as $eshop):
-					$signatures_form->field('/signature/'.$eshop->getKey())->input()->addCustomCssStyle('height: 250px;')
+	<div>
+		<?php if(Admin_Managers::TODO()):
+			echo Admin_Managers::TODO()->renderDashboard();
+		endif; ?>
+		
+		
+		<div class="card">
+			<div class="card-header"><?= Tr::_('Your signature')?></div>
+			<div class="card-body">
+				<div>
+					<?php
+					$_tabs = [];
+					foreach(EShops::getListSorted() as $eshop) {
+						$_tabs[$eshop->getKey()] = UI::flag($eshop->getLocale()).' '.$eshop->getName();
+					}
+					
+					$tabs = new UI_tabsJS( EShops::getCurrentKey(), $_tabs );
+					
+					echo $signatures_form->start();
+					
+					echo $tabs->start();
+					
+					foreach( EShops::getList() as $eshop):
+						$signatures_form->field('/signature/'.$eshop->getKey())->input()->addCustomCssStyle('height: 250px;');
+					
+						echo $tabs->tab($eshop->getKey())->content()->start();
+						echo $signatures_form->field('/signature/'.$eshop->getKey())->input();
+						echo $tabs->tab($eshop->getKey())->content()->end();
+					endforeach;
+					
+					echo $tabs->end();
+					
+					echo UI::button_save();
+					
+					echo $signatures_form->end();
+					
+					
 					?>
-					<?=$eshop->getName()?>:
-					<?=$signatures_form->field('/signature/'.$eshop->getKey())->input()?>
-					<br>
-				<?php endforeach; ?>
-				
-				<?=UI::button_save()?>
-				
-				<?=$signatures_form->end()?>
+					
+				</div>
+
 			</div>
-			
 		</div>
+		
 	</div>
-	<br><br><br>
+	
 </div>
