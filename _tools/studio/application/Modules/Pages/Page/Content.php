@@ -16,7 +16,7 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Int;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
-use JetApplication\MVC_Page_Content;
+use Jet\MVC_Page_Content;
 use JetStudio\Form_Field_AssocArray;
 use JetStudio\JetStudio;
 use JetStudio\Form_Field_Callable;

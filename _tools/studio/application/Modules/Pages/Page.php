@@ -19,7 +19,7 @@ use Jet\IO_File;
 use Jet\MVC;
 use Jet\MVC_Controller;
 use Jet\MVC_Layout;
-use JetApplication\MVC_Page;
+use Jet\MVC_Page;
 use Jet\Form;
 use Jet\Form_Field;
 use Jet\Form_Field_Input;

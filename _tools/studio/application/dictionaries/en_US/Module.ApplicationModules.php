@@ -175,8 +175,4 @@ To umožní aktualizovat slovníky pro další distribuci a instalaci modulu.<br
 	'Please enter a value' => '',
 	'Application modules' => '',
 	'Logs and statistics' => '',
-	'Catalog' => '',
-	'Orders and Customers' => '',
-	'Goods operations' => '',
-	'Marketing' => '',
 ];

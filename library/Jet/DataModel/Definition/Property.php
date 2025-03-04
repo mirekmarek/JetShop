@@ -292,6 +292,14 @@ abstract class DataModel_Definition_Property extends BaseObject
 	 * @param mixed &$value
 	 */
 	abstract public function checkValueType( mixed &$value ): void;
+	
+	/**
+	 *
+	 * @param mixed &$value
+	 * @return string|int|float|null|bool
+	 */
+	abstract public function getCheckSumData( mixed &$value ): string|int|float|null|bool;
+	
 
 	/**
 	 * @param string $backend_type
@@ -318,9 +326,11 @@ abstract class DataModel_Definition_Property extends BaseObject
 			return;
 		}
 
-		$property = $data[$this->getName()];
-
-		$this->checkValueType( $property );
+		$value = $data[$this->getName()];
+		
+		$this->checkValueType( $value );
+		
+		$property = $value;
 	}
 
 	/**
