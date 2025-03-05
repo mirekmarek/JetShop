@@ -75,8 +75,11 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		$GET = Http_Request::GET();
 		
 		$selected_page_id = $GET->getString('page', default_value: MVC::HOMEPAGE_ID);
-		
 		$selected_page = MVC::getPage( $selected_page_id, $selected_locale, $selected_base->getId() );
+		if(!$selected_page) {
+			$selected_page_id = MVC::HOMEPAGE_ID;
+			$selected_page = MVC::getPage( $selected_page_id, $selected_locale, $selected_base->getId() );
+		}
 		
 		
 		$edit_form = new Form('edit_form', []);
