@@ -58,4 +58,6 @@ return [
 	'Blocks' => '',
 	'Block properties:' => '',
 	'E-mail templates' => '',
+	'Body - HTML:' => '',
+	'Body - TXT:' => '',
 ];
