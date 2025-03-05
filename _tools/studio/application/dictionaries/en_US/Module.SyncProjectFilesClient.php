@@ -13,4 +13,5 @@ return [
 	'Set' => '',
 	'Connection is working' => '',
 	'Everything is up to date' => '',
+	'Connection error: %ERROR%' => '',
 ];
