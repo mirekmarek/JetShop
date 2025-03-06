@@ -1,13 +1,15 @@
 <?php
+/** @noinspection ALL */
+
 //============================================================+
 // File name   : tcpdf.php
-// Version     : 6.7.5
+// Version     : 6.8.2
 // Begin       : 2002-08-03
-// Last Update : 2024-03-18
+// Last Update : 2024-12-23
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2002-2024 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2002-2025 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -104,7 +106,7 @@
  * Tools to encode your unicode fonts are on fonts/utils directory.</p>
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 6.6.5
+ * @version 6.8.2
  */
 
 // TCPDF configuration
@@ -128,7 +130,7 @@ require_once(dirname(__FILE__).'/include/tcpdf_static.php');
  * TCPDF project (http://www.tcpdf.org) has been originally derived in 2002 from the Public Domain FPDF class by Olivier Plathey (http://www.fpdf.org), but now is almost entirely rewritten.<br>
  * @package com.tecnick.tcpdf
  * @brief PHP class for generating PDF documents without requiring external extensions.
- * @version 6.7.5
+ * @version 6.8.2
  * @author Nicola Asuni - info@tecnick.com
  * @IgnoreAnnotation("protected")
  * @IgnoreAnnotation("public")
@@ -3007,6 +3009,7 @@ class TCPDF {
 	public function Error($msg) {
 		// unset all class variables
 		$this->_destroy(true);
+		$msg = htmlspecialchars($msg, ENT_QUOTES, 'UTF-8');
 		if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') AND !K_TCPDF_THROW_EXCEPTION_ERROR) {
 			die('<strong>TCPDF ERROR: </strong>'.$msg);
 		} else {
@@ -4860,7 +4863,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		// recalculate coordinates to account for graphic transformations
 		if (isset($this->transfmatrix) AND !empty($this->transfmatrix)) {
 			for ($i=$this->transfmatrix_key; $i > 0; --$i) {
@@ -5190,7 +5193,7 @@ class TCPDF {
 		}
 		$k = $this->k;
 		// check page for no-write regions and adapt page margins if necessary
-		list($this->x, $this->y) = $this->checkPageRegions($h, $this->x, $this->y);
+		[$this->x, $this->y] = $this->checkPageRegions($h, $this->x, $this->y);
 		if ($this->rtl) {
 			$x = $this->x - $this->cell_margin['R'];
 		} else {
@@ -5903,7 +5906,7 @@ class TCPDF {
 			$x = $this->GetX();
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions(0, $x, $y);
+		[$x, $y] = $this->checkPageRegions(0, $x, $y);
 		// apply margins
 		$oy = $y + $mc_margin['T'];
 		if ($this->rtl) {
@@ -6390,7 +6393,7 @@ class TCPDF {
 	 */
 	public function Write($h, $txt, $link='', $fill=false, $align='', $ln=false, $stretch=0, $firstline=false, $firstblock=false, $maxh=0, $wadj=0, $margin=null) {
 		// check page for no-write regions and adapt page margins if necessary
-		list($this->x, $this->y) = $this->checkPageRegions($h, $this->x, $this->y);
+		[$this->x, $this->y] = $this->checkPageRegions($h, $this->x, $this->y);
 		if (strlen($txt) == 0) {
 			// fix empty text
 			$txt = ' ';
@@ -6819,7 +6822,7 @@ class TCPDF {
 	 * @protected
 	 */
 	protected function getRemainingWidth() {
-		list($this->x, $this->y) = $this->checkPageRegions(0, $this->x, $this->y);
+		[$this->x, $this->y] = $this->checkPageRegions(0, $this->x, $this->y);
 		if ($this->rtl) {
 			return ($this->x - $this->lMargin);
 		} else {
@@ -6946,7 +6949,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		$exurl = ''; // external streams
 		$imsize = FALSE;
 
@@ -7005,7 +7008,7 @@ class TCPDF {
 		// file hash
 		$filehash = md5($file);
 		// get original image width and height in pixels
-		list($pixw, $pixh) = $imsize;
+		[$pixw, $pixh] = $imsize;
 		// calculate image width and height on document
 		if (($w <= 0) AND ($h <= 0)) {
 			// convert image size to document unit
@@ -7075,7 +7078,7 @@ class TCPDF {
 			}
 		}
 		// fit the image on available space
-		list($w, $h, $x, $y) = $this->fitBlock($w, $h, $x, $y, $fitonpage);
+		[$w, $h, $x, $y] = $this->fitBlock($w, $h, $x, $y, $fitonpage);
 		// calculate new minimum dimensions in pixels
 		$neww = round($w * $this->k * $dpi / $this->dpi);
 		$newh = round($h * $this->k * $dpi / $this->dpi);
@@ -8042,7 +8045,7 @@ class TCPDF {
 				$replace[] = array($ptga, $ptg_num_chars, 7, $pnalias[2]['a']);
 				$replace[] = array($pngu, $png_num_chars, 9, $pnalias[3]['u']);
 				$replace[] = array($pnga, $png_num_chars, 7, $pnalias[3]['a']);
-				list($temppage, $gdiff) = TCPDF_STATIC::replacePageNumAliases($temppage, $replace, $gdiff);
+				[$temppage, $gdiff] = TCPDF_STATIC::replacePageNumAliases($temppage, $replace, $gdiff);
 			}
 			// replace page numbers
 			$replace = array();
@@ -8050,7 +8053,7 @@ class TCPDF {
 			$replace[] = array($ptpa, $ptp_num_chars, 7, $pnalias[0]['a']);
 			$replace[] = array($pnpu, $pnp_num_chars, 9, $pnalias[1]['u']);
 			$replace[] = array($pnpa, $pnp_num_chars, 7, $pnalias[1]['a']);
-			list($temppage, $pdiff) = TCPDF_STATIC::replacePageNumAliases($temppage, $replace, $pdiff);
+			[$temppage, $pdiff] = TCPDF_STATIC::replacePageNumAliases($temppage, $replace, $pdiff);
 			// replace right shift alias
 			$temppage = $this->replaceRightShiftPageNumAliases($temppage, $pnalias[4], max($pdiff, $gdiff));
 			// replace EPS marker
@@ -8164,7 +8167,7 @@ class TCPDF {
 	 * @since 5.0.010 (2010-05-17)
 	 */
 	protected function _getannotsrefs($n) {
-		if (!(isset($this->PageAnnots[$n]) OR ($this->sign AND isset($this->signature_data['cert_type'])))) {
+		if (!(isset($this->PageAnnots[$n]) OR count($this->empty_signature_appearance)>0 OR ($this->sign AND isset($this->signature_data['cert_type'])))) {
 			return '';
 		}
 		$out = ' /Annots [';
@@ -8310,15 +8313,15 @@ class TCPDF {
 										break;
 									}
 									case 'locked': {
-										$fval += 1 << 8;
+										$fval += 1 << 7;
 										break;
 									}
 									case 'togglenoview': {
-										$fval += 1 << 9;
+										$fval += 1 << 8;
 										break;
 									}
 									case 'lockedcontents': {
-										$fval += 1 << 10;
+										$fval += 1 << 9;
 										break;
 									}
 									default: {
@@ -8532,7 +8535,7 @@ class TCPDF {
 						}
 						case 'freetext': {
 							if (isset($pl['opt']['da']) AND !empty($pl['opt']['da'])) {
-								$annots .= ' /DA ('.$pl['opt']['da'].')';
+								$annots .= ' /DA '.$this->_datastring($pl['opt']['da']);
 							}
 							if (isset($pl['opt']['q']) AND ($pl['opt']['q'] >= 0) AND ($pl['opt']['q'] <= 2)) {
 								$annots .= ' /Q '.intval($pl['opt']['q']);
@@ -8789,7 +8792,7 @@ class TCPDF {
 								$annots .= ' /AA << '.$pl['opt']['aa'].' >>';
 							}
 							if (isset($pl['opt']['da']) AND !empty($pl['opt']['da'])) {
-								$annots .= ' /DA ('.$pl['opt']['da'].')';
+								$annots .= ' /DA '.$this->_datastring($pl['opt']['da']);
 							}
 							if (isset($pl['opt']['q']) AND ($pl['opt']['q'] >= 0) AND ($pl['opt']['q'] <= 2)) {
 								$annots .= ' /Q '.intval($pl['opt']['q']);
@@ -9939,7 +9942,7 @@ class TCPDF {
 				$out .= ' >> >>';
 			}
 			$font = $this->getFontBuffer((($this->pdfa_mode) ? 'pdfa' : '') .'helvetica');
-			$out .= ' /DA (/F'.$font['i'].' 0 Tf 0 g)';
+			$out .= ' /DA ' . $this->_datastring('/F'.$font['i'].' 0 Tf 0 g');
 			$out .= ' /Q '.(($this->rtl)?'2':'0');
 			//$out .= ' /XFA ';
 			$out .= ' >>';
@@ -11046,7 +11049,7 @@ class TCPDF {
 				$this->encryptdata['V'] = 4;
 				$this->encryptdata['Length'] = 128;
 				$this->encryptdata['CF']['CFM'] = 'AESV2';
-				$this->encryptdata['CF']['Length'] = 128;
+				$this->encryptdata['CF']['Length'] = 16;
 				if ($this->encryptdata['pubkey']) {
 					$this->encryptdata['SubFilter'] = 'adbe.pkcs7.s5';
 					$this->encryptdata['Recipients'] = array();
@@ -11057,7 +11060,7 @@ class TCPDF {
 				$this->encryptdata['V'] = 5;
 				$this->encryptdata['Length'] = 256;
 				$this->encryptdata['CF']['CFM'] = 'AESV3';
-				$this->encryptdata['CF']['Length'] = 256;
+				$this->encryptdata['CF']['Length'] = 32;
 				if ($this->encryptdata['pubkey']) {
 					$this->encryptdata['SubFilter'] = 'adbe.pkcs7.s5';
 					$this->encryptdata['Recipients'] = array();
@@ -11765,7 +11768,7 @@ class TCPDF {
 		}
 		$this->_outPoint($x0, $y0);
 		foreach ($segments as $segment) {
-			list($x1, $y1, $x2, $y2, $x3, $y3) = $segment;
+			[$x1, $y1, $x2, $y2, $x3, $y3] = $segment;
 			$this->_outCurve($x1, $y1, $x2, $y2, $x3, $y3);
 		}
 		$this->_out($op);
@@ -12791,7 +12794,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		if ($js) {
 			$this->_addfield('text', $name, $x, $y, $w, $h, $prop);
 			return;
@@ -12912,7 +12915,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($w, $x, $y);
+		[$x, $y] = $this->checkPageRegions($w, $x, $y);
 		if ($js) {
 			$this->_addfield('radiobutton', $name, $x, $y, $w, $w, $prop);
 			return;
@@ -13015,7 +13018,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		if ($js) {
 			$this->_addfield('listbox', $name, $x, $y, $w, $h, $prop);
 			$s = '';
@@ -13101,7 +13104,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		if ($js) {
 			$this->_addfield('combobox', $name, $x, $y, $w, $h, $prop);
 			$s = '';
@@ -13188,7 +13191,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($w, $x, $y);
+		[$x, $y] = $this->checkPageRegions($w, $x, $y);
 		if ($js) {
 			$this->_addfield('checkbox', $name, $x, $y, $w, $w, $prop);
 			return;
@@ -13268,7 +13271,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		if ($js) {
 			$this->_addfield('button', $name, $this->x, $this->y, $w, $h, $prop);
 			$this->javascript .= 'f'.$name.".buttonSetCaption('".addslashes($caption)."');\n";
@@ -13936,8 +13939,8 @@ class TCPDF {
 	 * @since 3.0.000 (2008-03-27)
 	 */
 	protected function addExtGState($parms) {
-		if ($this->pdfa_mode || $this->pdfa_version >= 2) {
-			// transparencies are not allowed in PDF/A mode
+		if (($this->pdfa_mode && $this->pdfa_version < 2) || ($this->state != 2)) {
+			// transparency is not allowed in PDF/A-1 mode
 			return;
 		}
 		// check if this ExtGState already exist
@@ -14991,7 +14994,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		$k = $this->k;
 		if ($file[0] === '@') { // image from string
 			$data = substr($file, 1);
@@ -15022,7 +15025,7 @@ class TCPDF {
 		// find BoundingBox params
 		preg_match("/%%BoundingBox:([^\r\n]+)/", $data, $regs);
 		if (count($regs) > 1) {
-			list($x1, $y1, $x2, $y2) = explode(' ', trim($regs[1]));
+			[$x1, $y1, $x2, $y2] = explode(' ', trim($regs[1]));
 		} else {
 			$this->Error('No BoundingBox found in EPS/AI file: '.$file);
 		}
@@ -15051,7 +15054,7 @@ class TCPDF {
 			$h = ($y2 - $y1) / $k * ($w / (($x2 - $x1) / $k));
 		}
 		// fit the image on available space
-		list($w, $h, $x, $y) = $this->fitBlock($w, $h, $x, $y, $fitonpage);
+		[$w, $h, $x, $y] = $this->fitBlock($w, $h, $x, $y, $fitonpage);
 		if ($this->rasterize_vector_images) {
 			// convert EPS to raster image using GD or ImageMagick libraries
 			return $this->Image($file, $x, $y, $w, $h, 'EPS', $link, $align, true, 300, $palign, false, false, $border, false, false, $fitonpage);
@@ -15175,11 +15178,11 @@ class TCPDF {
 				case 'x': {// custom fill color
 					if (empty($color_name)) {
 						// CMYK color
-						list($col_c, $col_m, $col_y, $col_k) = $chunks;
+						[$col_c, $col_m, $col_y, $col_k] = $chunks;
 						$this->_out(''.$col_c.' '.$col_m.' '.$col_y.' '.$col_k.' k');
 					} else {
 						// Spot Color (CMYK + tint)
-						list($col_c, $col_m, $col_y, $col_k, $col_t) = $chunks;
+						[$col_c, $col_m, $col_y, $col_k, $col_t] = $chunks;
 						$this->AddSpotColor($color_name, ($col_c * 100), ($col_m * 100), ($col_y * 100), ($col_k * 100));
 						$color_cmd = sprintf('/CS%d cs %F scn', $this->spot_colors[$color_name]['i'], (1 - $col_t));
 						$this->_out($color_cmd);
@@ -15189,11 +15192,11 @@ class TCPDF {
 				case 'X': { // custom stroke color
 					if (empty($color_name)) {
 						// CMYK color
-						list($col_c, $col_m, $col_y, $col_k) = $chunks;
+						[$col_c, $col_m, $col_y, $col_k] = $chunks;
 						$this->_out(''.$col_c.' '.$col_m.' '.$col_y.' '.$col_k.' K');
 					} else {
 						// Spot Color (CMYK + tint)
-						list($col_c, $col_m, $col_y, $col_k, $col_t) = $chunks;
+						[$col_c, $col_m, $col_y, $col_k, $col_t] = $chunks;
 						$this->AddSpotColor($color_name, ($col_c * 100), ($col_m * 100), ($col_y * 100), ($col_k * 100));
 						$color_cmd = sprintf('/CS%d CS %F SCN', $this->spot_colors[$color_name]['i'], (1 - $col_t));
 						$this->_out($color_cmd);
@@ -15408,7 +15411,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		if (TCPDF_STATIC::empty_string($w) OR ($w <= 0)) {
 			if ($this->rtl) {
 				$w = $x - $this->lMargin;
@@ -15511,7 +15514,7 @@ class TCPDF {
 			$barh = $h - $text_height - (2 * $vpadding);
 		}
 		// fit the barcode on available space
-		list($w, $h, $x, $y) = $this->fitBlock($w, $h, $x, $y, false);
+		[$w, $h, $x, $y] = $this->fitBlock($w, $h, $x, $y, false);
 		// set alignment
 		$this->img_rb_y = $y + $h;
 		// set alignment
@@ -15713,7 +15716,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		// number of barcode columns and rows
 		$rows = $arrcode['num_rows'];
 		$cols = $arrcode['num_cols'];
@@ -15779,7 +15782,7 @@ class TCPDF {
 			}
 		}
 		// fit the barcode on available space
-		list($w, $h, $x, $y) = $this->fitBlock($w, $h, $x, $y, false);
+		[$w, $h, $x, $y] = $this->fitBlock($w, $h, $x, $y, false);
 		// set alignment
 		$this->img_rb_y = $y + $h;
 		// set alignment
@@ -16440,7 +16443,7 @@ class TCPDF {
 			)
 		);
 
-		if(empty($html)) {
+		if($html === '' || $html === null) {
 			return $dom;
 		}
 		// array of CSS styles ( selector => properties).
@@ -16725,7 +16728,7 @@ class TCPDF {
                     }
 					if (!empty($css)) {
 						// merge CSS style to current style
-						list($dom[$key]['csssel'], $dom[$key]['cssdata']) = TCPDF_STATIC::getCSSdataArray($dom, $key, $css);
+						[$dom[$key]['csssel'], $dom[$key]['cssdata']] = TCPDF_STATIC::getCSSdataArray($dom, $key, $css);
 						$dom[$key]['attribute']['style'] = TCPDF_STATIC::getTagStyleFromCSSarray($dom[$key]['cssdata']);
 					}
 					// split style attributes
@@ -17259,7 +17262,7 @@ class TCPDF {
 		$hlen = intval(substr($data, 0, $hpos));
 		$hash = substr($data, $hpos + 1, $hlen);
 		$encoded = substr($data, $hpos + 2 + $hlen);
-		if ($hash != $this->hashTCPDFtag($encoded)) {
+		if (!hash_equals( $this->hashTCPDFtag($encoded), $hash)) {
 			$this->Error('Invalid parameters');
 		}
 		return json_decode(urldecode($encoded), true);
@@ -19010,29 +19013,29 @@ class TCPDF {
 				$this->setLineWidth($hrHeight);
 
 				$lineStyle = array();
-                    		if (isset($tag['fgcolor'])) {
-		                        $lineStyle['color'] = $tag['fgcolor'];
-                    		}
+				if (isset($tag['fgcolor'])) {
+					$lineStyle['color'] = $tag['fgcolor'];
+				}
 
-                    		if (isset($tag['fgcolor'])) {
-                        		$lineStyle['color'] = $tag['fgcolor'];
-                    		}
+				if (isset($tag['fgcolor'])) {
+					$lineStyle['color'] = $tag['fgcolor'];
+				}
 
-                    		if (isset($tag['style']['cap'])) {
-                        		$lineStyle['cap'] = $tag['style']['cap'];
-                    		}
+				if (isset($tag['style']['cap'])) {
+					$lineStyle['cap'] = $tag['style']['cap'];
+				}
 
-                    		if (isset($tag['style']['join'])) {
-                        		$lineStyle['join'] = $tag['style']['join'];
-                    		}
+				if (isset($tag['style']['join'])) {
+					$lineStyle['join'] = $tag['style']['join'];
+				}
 
-                    		if (isset($tag['style']['dash'])) {
-                        		$lineStyle['dash'] = $tag['style']['dash'];
-                    		}
+				if (isset($tag['style']['dash'])) {
+					$lineStyle['dash'] = $tag['style']['dash'];
+				}
 
-                    		if (isset($tag['style']['phase'])) {
-                        		$lineStyle['phase'] = $tag['style']['phase'];
-                    		}
+				if (isset($tag['style']['phase'])) {
+					$lineStyle['phase'] = $tag['style']['phase'];
+				}
 
 				$lineStyle = array_filter($lineStyle);
 
@@ -19055,15 +19058,18 @@ class TCPDF {
 				if ($imgsrc[0] === '@') {
 					// data stream
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));
-					$type = '';
+					$type = preg_match('/<svg\s+[^>]*[^>]*>.*<\/svg>/is', $imgsrc) ? 'svg' : '';
 				} else if (preg_match('@^data:image/([^;]*);base64,(.*)@', $imgsrc, $reg)) {
 					$imgsrc = '@'.base64_decode($reg[2]);
 					$type = $reg[1];
+				} elseif (strpos($imgsrc, '../') !== false) {
+					// accessing parent folders is not allowed
+					break;
 				} elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
-                    // get image type from a local file path
-                    $imgsrc = substr($imgsrc, 7);
-                    $type = TCPDF_IMAGES::getImageFileType($imgsrc);
-                } else {
+					// get image type from a local file path
+					$imgsrc = substr($imgsrc, 7);
+					$type = TCPDF_IMAGES::getImageFileType($imgsrc);
+				} else {
 					if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 						// fix image path
 						$findroot = strpos($imgsrc, $_SERVER['DOCUMENT_ROOT']);
@@ -19121,7 +19127,7 @@ class TCPDF {
 				$imglink = '';
 				if (isset($this->HREF['url']) AND !TCPDF_STATIC::empty_string($this->HREF['url'])) {
 					$imglink = $this->HREF['url'];
-					if ($imglink[0] == '#') {
+					if ($imglink[0] == '#' AND is_numeric($imglink[1])) {
 						// convert url to internal link
 						$lnkdata = explode(',', $imglink);
 						if (isset($lnkdata[0])) {
@@ -22606,7 +22612,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		$ow = $this->xobjects[$id]['w'];
 		if ($ow <= 0) {
 			$ow = 1;
@@ -22625,7 +22631,7 @@ class TCPDF {
 			$h = $w * $oh / $ow;
 		}
 		// fit the template on available space
-		list($w, $h, $x, $y) = $this->fitBlock($w, $h, $x, $y, $fitonpage);
+		[$w, $h, $x, $y] = $this->fitBlock($w, $h, $x, $y, $fitonpage);
 		// set page alignment
 		$rb_y = $y + $h;
 		// set alignment
@@ -22971,7 +22977,7 @@ class TCPDF {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
-		list($x, $y) = $this->checkPageRegions($h, $x, $y);
+		[$x, $y] = $this->checkPageRegions($h, $x, $y);
 		$k = $this->k;
 		$ox = 0;
 		$oy = 0;
@@ -23051,7 +23057,7 @@ class TCPDF {
 			$h = $w * $oh / $ow;
 		}
 		// fit the image on available space
-		list($w, $h, $x, $y) = $this->fitBlock($w, $h, $x, $y, $fitonpage);
+		[$w, $h, $x, $y] = $this->fitBlock($w, $h, $x, $y, $fitonpage);
 		if ($this->rasterize_vector_images) {
 			// convert SVG to raster image using GD or ImageMagick libraries
 			return $this->Image($file, $x, $y, $w, $h, 'SVG', $link, $align, true, 300, $palign, false, false, $border, false, false, false);
@@ -23170,14 +23176,12 @@ class TCPDF {
 		$this->_out(sprintf('%F %F %F %F %F %F cm', $svgscale_x, 0, 0, $svgscale_y, ($e + $svgoffset_x), ($f + $svgoffset_y)));
 		// creates a new XML parser to be used by the other XML functions
 		$parser = xml_parser_create('UTF-8');
-		// the following function allows to use parser inside object
-		xml_set_object($parser, $this);
 		// disable case-folding for this XML parser
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
 		// sets the element handler functions for the XML parser
-		xml_set_element_handler($parser, 'startSVGElementHandler', 'endSVGElementHandler');
+		xml_set_element_handler($parser, [$this, 'startSVGElementHandler'], [$this, 'endSVGElementHandler']);
 		// sets the character data handler function for the XML parser
-		xml_set_character_data_handler($parser, 'segSVGContentHandler');
+		xml_set_character_data_handler($parser, [$this, 'segSVGContentHandler']);
 		// start parsing an XML document
 		if (!xml_parse($parser, $svgdata)) {
 			$error_message = sprintf('SVG Error: %s at line %d', xml_error_string(xml_get_error_code($parser)), xml_get_current_line_number($parser));
@@ -23327,7 +23331,7 @@ class TCPDF {
 		$text_color = TCPDF_COLORS::convertHTMLColorToDec($svgstyle['text-color'], $this->spot_colors);
 		$this->setTextColorArray($text_color);
 		// clip
-		if (preg_match('/rect\(([a-z0-9\-\.]*)[\s]*([a-z0-9\-\.]*)[\s]*([a-z0-9\-\.]*)[\s]*([a-z0-9\-\.]*)\)/si', $svgstyle['clip'], $regs)) {
+		if (preg_match('/rect\(([a-z0-9\-\.]*+)[\s]*+([a-z0-9\-\.]*+)[\s]*+([a-z0-9\-\.]*+)[\s]*+([a-z0-9\-\.]*+)\)/si', $svgstyle['clip'], $regs)) {
 			$top = (isset($regs[1])?$this->getHTMLUnitToUnits($regs[1], 0, $this->svgunit, false):0);
 			$right = (isset($regs[2])?$this->getHTMLUnitToUnits($regs[2], 0, $this->svgunit, false):0);
 			$bottom = (isset($regs[3])?$this->getHTMLUnitToUnits($regs[3], 0, $this->svgunit, false):0);
@@ -23366,7 +23370,7 @@ class TCPDF {
 			if (!empty($clip_function) AND method_exists($this, $clip_function)) {
 				$bbox = call_user_func_array(array($this, $clip_function), $clip_params);
 				if ((!isset($gradient['type']) OR ($gradient['type'] != 3)) AND is_array($bbox) AND (count($bbox) == 4)) {
-					list($x, $y, $w, $h) = $bbox;
+					[$x, $y, $w, $h] = $bbox;
 				}
 			}
 			if ($gradient['mode'] == 'measure') {
@@ -23444,8 +23448,8 @@ class TCPDF {
 				$cy -= $h;
 			}
 			$this->_out(sprintf('%F 0 0 %F %F %F cm', ($w * $this->k), ($h * $this->k), ($x * $this->k), ($cy * $this->k)));
-			if (count($gradient['stops']) > 1) {
-				$this->Gradient($gradient['type'], $gradient['coords'], $gradient['stops'], array(), false);
+			if ((is_array($gradient['stops']) || $gradient['stops'] instanceof Countable) && count($gradient['stops']) > 1) {
+				$this->Gradient($gradient['type'], $gradient['coords'], $gradient['stops']);
 			}
 		} elseif ($svgstyle['fill'] != 'none') {
 			$fill_color = TCPDF_COLORS::convertHTMLColorToDec($svgstyle['fill'], $this->spot_colors);
@@ -23484,7 +23488,7 @@ class TCPDF {
 			if (preg_match('/font-family[\s]*:[\s]*([^\;\"]*)/si', $svgstyle['font'], $regs)) {
 				$font_family = $this->getFontFamilyName($regs[1]);
 			} else {
-				$font_family = $svgstyle['font-family'];
+				$font_family = $this->getFontFamilyName($svgstyle['font-family']);
 			}
 			if (preg_match('/font-size[\s]*:[\s]*([^\s\;\"]*)/si', $svgstyle['font'], $regs)) {
 				$font_size = trim($regs[1]);
@@ -23639,7 +23643,8 @@ class TCPDF {
 			$params = array();
 			if (isset($val[2])) {
 				// get curve parameters
-				$rawparams = preg_split('/([\,\s]+)/si', trim($val[2]));
+				preg_match_all('/-?\d*\.?\d+/', trim($val[2]), $matches);
+				$rawparams = $matches[0];
 				$params = array();
 				foreach ($rawparams as $ck => $cp) {
 					$params[$ck] = $this->getHTMLUnitToUnits($cp, 0, $this->svgunit, false);
@@ -23924,7 +23929,7 @@ class TCPDF {
 								if (($key == 0) AND (isset($paths[($key + 1)][1])) AND (trim($paths[($key + 1)][1]) == 'z')) {
 									$pie = true;
 								}
-								list($axmin, $aymin, $axmax, $aymax) = $this->_outellipticalarc($cx, $cy, $rx, $ry, $ang, $angs, $angf, $pie, 2, false, ($fs == 0), true);
+								[$axmin, $aymin, $axmax, $aymax] = $this->_outellipticalarc($cx, $cy, $rx, $ry, $ang, $angs, $angf, $pie, 2, false, ($fs == 0), true);
 								$xmin = min($xmin, $x, $axmin);
 								$ymin = min($ymin, $y, $aymin);
 								$xmax = max($xmax, $x, $axmax);
@@ -24464,6 +24469,10 @@ class TCPDF {
 						$img = '@'.base64_decode(substr($img, strlen($m[0])));
 					} else {
 						// fix image path
+						if (strpos($img, '../') !== false) {
+							// accessing parent folders is not allowed
+							break;
+						}
 						if (!TCPDF_STATIC::empty_string($this->svgdir) AND (($img[0] == '.') OR (basename($img) == $img))) {
 							// replace relative path with full server path
 							$img = $this->svgdir.'/'.$img;

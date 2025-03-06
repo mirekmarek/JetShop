@@ -12,13 +12,13 @@ use JetApplication\PDF_Generator;
 use Jet\Locale;
 use TCPDF;
 
-require 'TCPDF/tcpdf.php';
 
 class Main extends PDF_Generator
 {
 	
 	public function generate( PDF $pdf ): string
 	{
+		require 'TCPDF/tcpdf.php';
 		
 		$eshop = $pdf->getEshop();
 		
