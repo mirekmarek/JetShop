@@ -54,4 +54,6 @@ return [
 	'VAT Overview' => '',
 	'Tax base' => '',
 	'Tax' => '',
+	'Maximal image width' => '',
+	'Maximal image height' => '',
 ];

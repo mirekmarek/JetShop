@@ -16,6 +16,7 @@ use JetApplication\EShopEntity_AccountingDocument_Item;
 use JetApplication\Order;
 use JetApplication\PDF;
 use JetApplication\PDF_Template;
+use JetApplication\PDF_Template_Property_Param;
 use JetApplication\Invoice_VATOverviewItem;
 
 abstract class PDFTemplate extends PDF_Template {
@@ -60,10 +61,12 @@ abstract class PDFTemplate extends PDF_Template {
 			->setConditionEvaluator( function() : bool {
 				return (bool)$this->company_info->getStampAndSignature();
 			});
+		
 		$this->addCondition('logo', 'Logo is defined')
 			->setConditionEvaluator( function() : bool {
 				return (bool)$this->company_info->getLogo();
 			});
+		
 		
 		$this->addCondition('has_order', 'Order is associadet to the invoice')
 			->setConditionEvaluator( function() : bool {
@@ -92,14 +95,26 @@ abstract class PDFTemplate extends PDF_Template {
 				return $order?->getNumber()??'';
 			} );
 		
-		$this->addProperty('logo', Tr::_('Logo'))
-			->setPropertyValueCreator(function() : string {
-				return $this->company_info->getLogoThbUrl( 70, 70 );
+		$logo = $this->addProperty('logo', Tr::_('Logo'));
+		$logo->setPropertyValueCreator(function() : string {
+				return $this->company_info->getLogoThbUrl(
+					$params['max_w']??70,
+					$params['max_h']??70
+				);
 			});
-		$this->addProperty('stamp', Tr::_('Stamp'))
-			->setPropertyValueCreator(function() : string {
-				return $this->company_info->getStampAndSignatureThbUrl( 200, 80 );
+		$logo->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
+		$logo->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
+		
+		
+		$stamp = $this->addProperty('stamp', Tr::_('Stamp'));
+		$stamp->setPropertyValueCreator(function( $params ) : string {
+				return $this->company_info->getStampAndSignatureThbUrl(
+					$params['max_w']??200,
+					$params['max_h']??80
+				);
 			});
+		$stamp->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
+		$stamp->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
 		
 		$this->addProperty('issuer_company_name', Tr::_('Issuer - company name'))
 			->setPropertyValueCreator(function() : string {
@@ -220,7 +235,7 @@ abstract class PDFTemplate extends PDF_Template {
 		
 		$this->addProperty( 'payment_method', Tr::_( 'Payment method' ) )
 			->setPropertyValueCreator( function() : string {
-				return $this->invoice->getPaymentKind()?->getTitleInvoice();
+				return $this->invoice->getPaymentKind()?->getTitleInvoice()??'';
 			} );
 		
 		
