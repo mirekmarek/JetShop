@@ -36,4 +36,5 @@ return [
 	'Internal notes:' => '',
 	'Layout HTML:' => '',
 	'Layout TXT:' => '',
+	'Description' => '',
 ];

@@ -38,36 +38,19 @@ abstract class Core_Invoices {
 		return static::getManager()->createDeliveryNoteForOrder( $order );
 	}
 	
-	
-	public static function getInvoicePDFTemplates() : array
+	public static function generateInvoicePDF( Invoice $invoice ) : string
 	{
-		return static::getManager()->getInvoicePDFTemplates();
+		return static::getManager()->generateInvoicePDF( $invoice );
 	}
 	
-	public static function getInvoiceInAdvancePDFTemplates() : array
+	public static function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice ) : string
 	{
-		return static::getManager()->getInvoiceInAdvancePDFTemplates();
+		return static::getManager()->generateInvoiceInAdvancePDF( $invoice );
 	}
 	
-	public static function getDeliveryNotePDFTemplates() : array
+	public static function generateDeliveryNotePDF( DeliveryNote $invoice ) : string
 	{
-		return static::getManager()->getDeliveryNotePDFTemplates();
-	}
-	
-	
-	public static function generateInvoicePDF( Invoice $invoice, string $force_template='' ) : string
-	{
-		return static::getManager()->generateInvoicePDF( $invoice, $force_template );
-	}
-	
-	public static function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice, string $force_template='' ) : string
-	{
-		return static::getManager()->generateInvoiceInAdvancePDF( $invoice, $force_template );
-	}
-	
-	public static function generateDeliveryNotePDF( DeliveryNote $invoice, string $force_template='' ) : string
-	{
-		return static::getManager()->generateDeliveryNotePDF( $invoice, $force_template );
+		return static::getManager()->generateDeliveryNotePDF( $invoice );
 	}
 	
 	

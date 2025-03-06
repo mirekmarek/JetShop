@@ -295,7 +295,7 @@ abstract class Core_Content_InfoPage_EShopData extends EShopEntity_WithEShopData
 			
 		}
 		
-		$page->setName( $this->getTitle() );
+		$page->setName( Content_InfoPage::getScope()[$this->getId()] );
 		$page->setTitle( $this->getTitle() );
 		$page->setMenuTitle( $this->getMenuTitle() );
 		$page->setBreadcrumbTitle( $this->getBreadcrumbTitle() );

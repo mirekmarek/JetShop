@@ -1,0 +1,56 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Content\PDF\Templates;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\Tr;
+
+use JetApplication\PDF_TemplateText;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var PDF_TemplateText $item
+ */
+
+$item = $this->getRaw('item');
+
+if(!$item->isEditable()) {
+	return;
+}
+?>
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<?php if(EShops::isMultiEShopMode()): ?>
+	<div class="dropdown">
+		<button class="btn btn-info dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('eye');?> <?=Tr::_('Preview')?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<?php foreach( EShops::getListSorted() as $eshop ):
+				$URL = Http_Request::currentURI(['action'=>'preview','eshop'=>$eshop->getKey()]);
+				?>
+				<a class="dropdown-item" href="<?=$URL?>" target="_blank">
+					<?=UI::icon('arrow-up-right-from-square')->addCustomCssStyle('opacity:0.5');?>
+					<?=$eshop->getName()?>
+				</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+<?php
+else:
+	$eshop = EShops::getDefault();
+	$URL = Http_Request::currentURI(['action'=>'preview','eshop'=>$eshop->getKey()]);
+	?>
+	<a href="<?=$URL?>" target="_blank" class="btn btn-info"><?=UI::icon('eye');?> <?=Tr::_('Preview')?></a>
+	<?php
+endif;
+

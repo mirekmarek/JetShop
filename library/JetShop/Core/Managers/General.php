@@ -19,6 +19,7 @@ use JetApplication\EMailMarketing_Subscribe_Manager;
 use JetApplication\Exports_Manager;
 use JetApplication\Files_Manager;
 use JetApplication\NumberSeries_Manager;
+use JetApplication\PDF_Generator;
 use JetApplication\SysServices_Manager;
 use JetApplication\Translator_Manager;
 use JetApplication\WarehouseManagement_Manager;
@@ -103,6 +104,11 @@ class Core_Managers_General extends Managers {
 	public static function Translator() : Translator_Manager|Application_Module|null
 	{
 		return static::get( Translator_Manager::class );
+	}
+	
+	public static function PDFGenerator() : PDF_Generator|Application_Module|null
+	{
+		return static::get( PDF_Generator::class );
 	}
 	
 }

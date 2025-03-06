@@ -54,6 +54,26 @@ $template = $templates[$item->getInternalCode()]??null;
 	</div>
 	<div>
 		<?php if($template): ?>
+			<?php if($template->getConditions()): ?>
+				<div class="card">
+					<div class="card-header"><?=Tr::_('Conditions')?></div>
+					<div class="card-body">
+						<?php foreach($template->getConditions() as $p): ?>
+							<div>
+								<b><?=$p->getInstructionTemplate()?></b>
+							</div>
+							<div>
+								<?=$p->getDescription()?>
+							</div>
+							<hr>
+						<?php endforeach; ?>
+
+					</div>
+				</div>
+				<br>
+			<?php endif; ?>
+		
+			<?php if($template->getProperties()): ?>
 			<div class="card">
 				<div class="card-header"><?=Tr::_('Properties')?></div>
 				<div class="card-body">
@@ -70,6 +90,7 @@ $template = $templates[$item->getInternalCode()]??null;
 				</div>
 			</div>
 			<br>
+			<?php endif; ?>
 		
 			<?php if($template->getBlocks()): ?>
 			<div class="card">

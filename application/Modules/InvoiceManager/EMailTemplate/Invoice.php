@@ -18,7 +18,7 @@ class EMailTemplate_Invoice extends EMailTemplate {
 	
 	protected function init(): void
 	{
-		$this->setInternalName(Tr::_('Correction Invoice'));
+		$this->setInternalName(Tr::_('Invoice'));
 		$this->setInternalNotes('');
 		
 		$this->initCommonFields();

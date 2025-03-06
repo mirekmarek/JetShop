@@ -1,0 +1,125 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+
+use Jet\Tr;
+use JetApplication\PDF_Template;
+use JetApplication\PDF_TemplateText;
+use JetApplication\EShop;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var EShop $eshop
+ * @var PDF_Template[] $templates
+ * @var PDF_TemplateText $item
+ */
+
+$eshop = $this->getRaw('eshop');
+$form = $this->getRaw('form');
+$eshop_key = $eshop->getKey();
+$item = $this->getRaw('item');
+
+$templates = $this->getRaw('templates');
+
+$template = $templates[$item->getInternalCode()]??null;
+?>
+
+<div style="display: grid;grid-template-columns: 2fr 1fr;gap: 10px;margin: 10px;">
+	
+	<div>
+		<div>
+			<div><?= Tr::_('Header');?></div>
+			<?=$form->field('/eshop_data/'.$eshop_key.'/template_header')->input()?>
+		</div>
+
+		<div>
+			<div><?= Tr::_('Footer');?></div>
+			<?=$form->field('/eshop_data/'.$eshop_key.'/template_footer')->input()?>
+		</div>
+		
+		<div><?= Tr::_('Template - HTML');?></div>
+		<?=$form->field('/eshop_data/'.$eshop_key.'/template_html')->input()?>
+	</div>
+	<div>
+		<?php if($template): ?>
+			<?php if($template->getConditions()): ?>
+			<div class="card">
+				<div class="card-header"><?=Tr::_('Conditions')?></div>
+				<div class="card-body">
+					<?php foreach($template->getConditions() as $p): ?>
+						<div>
+							<b><?=$p->getInstructionTemplate()?></b>
+						</div>
+						<div>
+							<?=$p->getDescription()?>
+						</div>
+						<hr>
+					<?php endforeach; ?>
+
+				</div>
+			</div>
+			<br>
+			<?php endif; ?>
+		
+			<div class="card">
+				<div class="card-header"><?=Tr::_('Properties')?></div>
+				<div class="card-body">
+					<?php foreach($template->getProperties() as $p): ?>
+					<div>
+						<b><?=$p->getInstructionTemplate()?></b>
+					</div>
+					<div>
+						<?=$p->getDescription()?>
+					</div>
+					<hr>
+					<?php endforeach; ?>
+					
+				</div>
+			</div>
+			<br>
+		
+			<?php if($template->getBlocks()): ?>
+			<div class="card">
+				<div class="card-header"><?=Tr::_('Blocks')?></div>
+				<div class="card-body">
+					<?php foreach($template->getBlocks() as $b): ?>
+						<div>
+							<b><?=$b->getInstructionTemplate()?></b>
+						</div>
+						<div>
+							<?=$b->getDescription()?>
+						</div>
+						<div style="padding: 20px;padding-left: 30px;padding-right: 30px;">
+							<i><?=Tr::_('Block properties:')?></i><br><br>
+							
+							<?php foreach($b->getProperties() as $p): ?>
+								<div>
+									<b><?=$p->getInstructionTemplate()?></b>
+								</div>
+								<div>
+									<?=$p->getDescription()?>
+								</div>
+							<?php endforeach; ?>
+							
+						</div>
+
+						<hr>
+					<?php endforeach; ?>
+
+				</div>
+			</div>
+			<?php endif; ?>
+		
+		<?php endif; ?>
+	</div>
+</div>
+<br><br><br><br>
+

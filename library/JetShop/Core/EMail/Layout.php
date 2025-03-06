@@ -24,7 +24,8 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'E-mail layout',
-	admin_manager_interface: Admin_Managers_Content_EMailLayouts::class
+	admin_manager_interface: Admin_Managers_Content_EMailLayouts::class,
+	separate_tab_form_shop_data: true
 )]
 abstract class Core_EMail_Layout extends EShopEntity_WithEShopData implements EShopEntity_Admin_WithEShopData_Interface
 {

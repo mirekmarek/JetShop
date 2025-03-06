@@ -1,0 +1,21 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Content\PDF\Templates;
+
+
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\PDF_TemplateText;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var PDF_TemplateText $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');

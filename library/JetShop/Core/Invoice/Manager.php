@@ -23,17 +23,14 @@ use JetApplication\Order;
 )]
 abstract class Core_Invoice_Manager extends Application_Module
 {
-	abstract public function getInvoicePDFTemplates() : array;
-	abstract public function getInvoiceInAdvancePDFTemplates() : array;
-	abstract public function getDeliveryNotePDFTemplates() : array;
 	
 	abstract public function createInvoiceForOrder( Order $order ) : Invoice;
 	abstract public function createInvoiceInAdvanceForOrder( Order $order ) : InvoiceInAdvance;
 	abstract public function createDeliveryNoteForOrder( Order $order ) : DeliveryNote;
 	
-	abstract public function generateInvoicePDF( Invoice $invoice, string $force_template=''  ) : string;
-	abstract public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice, string $force_template=''  ) : string;
-	abstract public function generateDeliveryNotePDF( DeliveryNote $invoice, string $force_template=''  ) : string;
+	abstract public function generateInvoicePDF( Invoice $invoice  ) : string;
+	abstract public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice ) : string;
+	abstract public function generateDeliveryNotePDF( DeliveryNote $invoice ) : string;
 	
 	abstract public function sendInvoice( Invoice $invoice ) : void;
 	abstract public function sendInvoiceInAdvance( InvoiceInAdvance $invoice ) : void;

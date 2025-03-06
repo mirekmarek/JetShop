@@ -13,7 +13,6 @@ use Jet\Form_Field;
 use JetApplication\DataList;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\Invoices;
 use JetApplication\EShop_Managers;
 use JetApplication\EShop;
 
@@ -160,52 +159,6 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 		label: 'Is VAT payer'
 	)]
 	protected bool $is_vat_payer = true;
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'Invoice PDF template:',
-		is_required: true,
-		select_options_creator: [
-			Invoices::class,
-			'getInvoicePDFTemplates'
-		],
-	)]
-	protected string $invoice_pdf_template = 'default';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'Invoice in advance PDF template:',
-		is_required: true,
-		select_options_creator: [
-			Invoices::class,
-			'getInvoiceInAdvancePDFTemplates'
-		],
-	)]
-	protected string $invoice_in_advance_pdf_template = 'default';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'Delivery note PDF template:',
-		is_required: true,
-		select_options_creator: [
-			Invoices::class,
-			'getDeliveryNotePDFTemplates'
-		],
-	)]
-	protected string $delivery_note_pdf_template = 'default';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -383,26 +336,6 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 	public function setIsVatPayer( bool $is_vat_payer ): void
 	{
 		$this->is_vat_payer = $is_vat_payer;
-	}
-	
-	public function getInvoicePdfTemplate(): string
-	{
-		return $this->invoice_pdf_template;
-	}
-	
-	public function setInvoicePdfTemplate( string $invoice_pdf_template ): void
-	{
-		$this->invoice_pdf_template = $invoice_pdf_template;
-	}
-	
-	public function getInvoiceInAdvancePdfTemplate(): string
-	{
-		return $this->invoice_in_advance_pdf_template;
-	}
-	
-	public function setInvoiceInAdvancePdfTemplate( string $invoice_in_advance_pdf_template ): void
-	{
-		$this->invoice_in_advance_pdf_template = $invoice_in_advance_pdf_template;
 	}
 	
 	

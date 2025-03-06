@@ -31,9 +31,6 @@ abstract class EMailTemplate extends EMail_Template {
 	
 	protected function initCommonFields(): void
 	{
-		$this->setInternalName(Tr::_('Correction Invoice'));
-		$this->setInternalNotes('');
-		
 		$order_number = $this->addProperty( 'invoice_number', Tr::_( 'Delivery note number' ) );
 		$order_number->setPropertyValueCreator( function() : string {
 			return $this->invoice->getNumber();

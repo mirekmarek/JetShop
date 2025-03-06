@@ -8,13 +8,6 @@
 /** @noinspection PhpUndefinedClassInspection */
 namespace JetApplicationModule\InvoiceManager;
 
-
-use Closure;
-use Jet\Factory_MVC;
-use Jet\IO_Dir;
-use Jet\Locale;
-use Jet\Tr;
-use JetApplication\CompanyInfo;
 use JetApplication\DeliveryNote;
 use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateProvider;
@@ -22,10 +15,11 @@ use JetApplication\Invoice;
 use JetApplication\Invoice_Manager;
 use JetApplication\InvoiceInAdvance;
 use JetApplication\Order;
+use JetApplication\PDF_TemplateProvider;
 use TCPDF;
 
 
-class Main extends Invoice_Manager implements EMail_TemplateProvider
+class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_TemplateProvider
 {
 	
 	public function createInvoiceForOrder( Order $order ) : Invoice
@@ -58,73 +52,29 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider
 		return $invoice;
 	}
 	
-	public function generateInvoicePDF( Invoice $invoice, string $force_template=''  ) : string
+	public function generateInvoicePDF( Invoice $invoice ) : string
 	{
-		if(!$force_template) {
-			$force_template = CompanyInfo::get( $invoice->getEshop() )->getInvoicePdfTemplate();
-			if(!$force_template) {
-				$force_template = 'default';
-			}
-		}
+		$template = new PDFTemplate_Invoice();
+		$template->setInvoice( $invoice );
 		
-		
-		return $this->generatePDF(
-			$invoice,
-			$force_template,
-			'pdf-templates/invoice/'
-		);
+		return $template->generatePDF( $invoice->getEshop() );
 	}
 	
-	public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice, string $force_template=''  ) : string
+	public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice ) : string
 	{
-		if(!$force_template) {
-			$force_template = CompanyInfo::get( $invoice->getEshop() )->getInvoiceInAdvancePdfTemplate();
-			if(!$force_template) {
-				$force_template = 'default';
-			}
-		}
+		$template = new PDFTemplate_InvoiceInAdvance();
+		$template->setInvoice( $invoice );
 		
-		
-		return $this->generatePDF(
-			$invoice,
-			$force_template,
-			'pdf-templates/invoice-in-advance/'
-		);
+		return $template->generatePDF( $invoice->getEshop() );
 	}
 	
 	
-	public function generateDeliveryNotePDF( DeliveryNote $invoice, string $force_template=''  ) : string
+	public function generateDeliveryNotePDF( DeliveryNote $invoice  ) : string
 	{
-		if(!$force_template) {
-			$force_template = CompanyInfo::get( $invoice->getEshop() )->getInvoiceInAdvancePdfTemplate();
-			if(!$force_template) {
-				$force_template = 'default';
-			}
-		}
+		$template = new PDFTemplate_DeliveryNote();
+		$template->setInvoice( $invoice );
 		
-		
-		return $this->generatePDF(
-			$invoice,
-			$force_template,
-			'pdf-templates/delivery-note/'
-		);
-	}
-	
-	
-	
-	public function getInvoicePDFTemplates() : array
-	{
-		return $this->getTemplates( 'pdf-templates/invoice/' );
-	}
-	
-	public function getInvoiceInAdvancePDFTemplates() : array
-	{
-		return $this->getTemplates( 'pdf-templates/invoice-in-advance/' );
-	}
-	
-	public function getDeliveryNotePDFTemplates() : array
-	{
-		return $this->getTemplates( 'pdf-templates/delivery-note/' );
+		return $template->generatePDF( $invoice->getEshop() );
 	}
 	
 	
@@ -153,81 +103,6 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider
 	}
 	
 	
-	
-	
-	protected function getTemplates( string $dir ) : array
-	{
-		$views = IO_Dir::getFilesList( $this->getViewsDir().$dir, '*.phtml' );
-		
-		$templates = [];
-		
-		foreach($views as $path=>$name) {
-			$name = str_replace( '.phtml', '', $name );
-			$templates[$name] = $name;
-		}
-		
-		return $templates;
-	}
-	
-	
-	/** @noinspection PhpUndefinedClassInspection
-	 * @noinspection PhpMethodParametersCountMismatchInspection
-	 */
-	protected function generatePDF( Invoice|InvoiceInAdvance|DeliveryNote $invoice, string $force_template, string $template_dir  ) : string
-	{
-		return Tr::setCurrentDictionaryTemporary(
-			dictionary: $this->module_manifest->getName(),
-			action: function() use ($invoice, $force_template, $template_dir) {
-				$current_locale = Locale::getCurrentLocale();
-				Locale::setCurrentLocale( $invoice->getEshop()->getLocale() );
-				Tr::setCurrentLocale( $invoice->getEshop()->getLocale() );
-				
-				$tcpdf = new class(
-					'P',
-					'mm',
-					'A4',
-					true,
-					'UTF-8'
-				) extends TCPDF {
-					public Invoice|InvoiceInAdvance|DeliveryNote $invoice;
-					public ?Closure $header_generator = null;
-					public ?Closure $footer_generator = null;
-					
-					/** @noinspection PhpMissingReturnTypeInspection */
-					public function Header() {
-						$this->header_generator?->call( $this, $this, $this->invoice );
-					}
-					
-					/** @noinspection PhpMissingReturnTypeInspection */
-					public function Footer()  {
-						$this->footer_generator?->call( $this, $this, $this->invoice );
-					}
-				};
-				
-				$tcpdf->invoice = $invoice;
-				
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar( 'invoice', $invoice );
-				$view->setVar( 'tcpdf', $tcpdf );
-				
-				$html = $view->render( $template_dir.$force_template );
-				
-				$tcpdf->AddPage();
-				
-				$tcpdf->writeHTML( $html );
-				
-				$output = $tcpdf->Output('', 'S');
-				
-				
-				Tr::setCurrentLocale( $current_locale );
-				Locale::setCurrentLocale( $current_locale );
-				
-				return $output;
-				
-			}
-		);
-	}
-	
 	/**
 	 * @return EMail_Template[]
 	 */
@@ -237,6 +112,24 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider
 		$correction_invoice = new EMailTemplate_CorrectionInvoice();
 		$invoice_in_advance = new EMailTemplate_InvoiceInAdvance();
 		$delivery_note = new EMailTemplate_DeliveryNote();
+		
+		return [
+			$invoice,
+			$invoice_in_advance,
+			$correction_invoice,
+			$delivery_note
+		];
+	}
+	
+	/**
+	 * @return PDF_Template[]
+	 */
+	public function getPDFTemplates(): array
+	{
+		$invoice = new PDFTemplate_Invoice();
+		$correction_invoice = new PDFTemplate_CorrectionInvoice();
+		$invoice_in_advance = new PDFTemplate_InvoiceInAdvance();
+		$delivery_note = new PDFTemplate_DeliveryNote();
 		
 		return [
 			$invoice,

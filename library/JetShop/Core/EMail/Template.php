@@ -11,6 +11,7 @@ use Jet\Translator;
 use JetApplication\EMail;
 use JetApplication\EMail_Layout_EShopData;
 use JetApplication\EMail_Template_Block;
+use JetApplication\EMail_Template_Condition;
 use JetApplication\EMail_Template_Property;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\EMail_TemplateText;
@@ -34,6 +35,11 @@ abstract class Core_EMail_Template {
 	 */
 	protected ?array $blocks = null;
 	
+	/**
+	 * @var EMail_Template_Condition[]
+	 */
+	protected ?array $conditions = null;
+	
 	protected bool $initialized = false;
 	
 	protected static ?array $all_templates = null;
@@ -51,6 +57,7 @@ abstract class Core_EMail_Template {
 		
 		$this->properties = [];
 		$this->blocks = [];
+		$this->conditions = [];
 		
 		$this->init();
 		
@@ -112,6 +119,14 @@ abstract class Core_EMail_Template {
 		return $this->blocks;
 	}
 	
+	/**
+	 * @return EMail_Template_Condition[]
+	 */
+	public function getConditions(): array
+	{
+		$this->initialize();
+		return $this->conditions;
+	}
 	
 	
 	public function addProperty( string $name, string $description ) : EMail_Template_Property
@@ -144,6 +159,12 @@ abstract class Core_EMail_Template {
 		$subject = $email->getSubject();
 		$body_txt = $email->getBodyTxt();
 		$body_html = $email->getBodyHtml();
+		
+		foreach($this->getConditions() as $condition) {
+			$condition->processText( $template_html );
+			$condition->processText( $template_header );
+			$condition->processText( $template_footer );
+		}
 		
 		foreach($this->getProperties() as $property) {
 			$property->processText( $subject );
