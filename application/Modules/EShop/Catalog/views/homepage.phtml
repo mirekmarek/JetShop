@@ -48,7 +48,7 @@ if(!$categories) {
 
 echo EShop_Managers::Banners()?->renderPosition('hp');
 ?>
-<?=Content_InfoBox_EShopData::getActiveByInternalCode('homepage')?->getText()?>
+<?=Content_InfoBox_EShopData::show('homepage')?>
 
 <div id="hp-signpost" class="categories">
 
