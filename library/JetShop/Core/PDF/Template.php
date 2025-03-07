@@ -22,13 +22,6 @@ abstract class Core_PDF_Template extends Template {
 	protected static ?array $all_templates = null;
 	
 	
-	protected function applyProperties( EShop $eshop, PDF $pdf ) : void
-	{
-		$pdf->setTemplateHtml( $this->process( $pdf->getTemplateHtml() ) );
-		$pdf->setTemplateFooter( $this->process( $pdf->getTemplateFooter() ) );
-		$pdf->setTemplateHeader( $this->process( $pdf->getTemplateHeader() ) );
-	}
-	
 	public function preparePDF( EShop $eshop ) : PDF
 	{
 		/**
@@ -72,13 +65,12 @@ abstract class Core_PDF_Template extends Template {
 		$pdf->setEshop( $eshop );
 		$pdf->setTemplate( $template );
 		$pdf->setTemplateCode( $template->getInternalCode() );
-		$pdf->setTemplateHtml( $template->getTemplateHTML() );
-		$pdf->setTemplateFooter( $template->getTemplateFooter() );
-		$pdf->setTemplateHeader( $template->getTemplateHeader() );
+		
+		$pdf->setTemplateHtml( $this->process( $template->getTemplateHTML() ) );
+		$pdf->setTemplateFooter( $this->process( $template->getTemplateFooter() ) );
+		$pdf->setTemplateHeader( $this->process( $template->getTemplateHeader() ) );
 		
 		$this->setupPDF( $eshop, $pdf );
-		
-		$this->applyProperties( $eshop, $pdf );
 		
 		return $pdf;
 		

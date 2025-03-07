@@ -23,13 +23,6 @@ abstract class Core_EMail_Template extends Template
 	protected static ?array $all_templates = null;
 	
 	
-	protected function applyProperties( EShop $eshop, EMail $email ) : void
-	{
-		$email->setSubject( $this->process( $email->getSubject() ) );
-		$email->setBodyTxt( $this->process( $email->getBodyTxt() ) );
-		$email->setBodyHtml( $this->process( $email->getBodyHtml() ) );
-	}
-	
 
 	public function createEmail( EShop $eshop ) : EMail
 	{
@@ -95,16 +88,16 @@ abstract class Core_EMail_Template extends Template
 		
 		$email = new EMail();
 		$email->setEshop( $eshop );
+		
 		$email->setTemplateCode( $template->getInternalCode() );
 		$email->setSenderEmail( $template->getSenderEmail() );
 		$email->setSenderName( $template->getSenderName() );
-		$email->setSubject( $template->getSubject() );
-		$email->setBodyTxt( $body_txt );
-		$email->setBodyHtml( $body_html );
+		
+		$email->setSubject( $this->process( $template->getSubject() ) );
+		$email->setBodyTxt( $this->process( $body_txt ) );
+		$email->setBodyHtml( $this->process( $body_html ) );
 		
 		$this->setupEMail( $eshop, $email );
-		
-		$this->applyProperties( $eshop, $email );
 		
 		return $email;
 	}
