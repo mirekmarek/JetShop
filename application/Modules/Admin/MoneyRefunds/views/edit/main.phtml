@@ -1,0 +1,102 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\MoneyRefunds;
+
+
+use Jet\Form;
+use Jet\Locale;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+
+use Jet\MVC_View;
+use JetApplication\EShops;
+use JetApplication\MoneyRefund;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var MoneyRefund     $money_refund
+ * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Form $add_bl_form
+ */
+
+$money_refund = $this->getRaw( 'money_refund' );
+?>
+
+
+	<div style="display: flex">
+		<div style="margin: 10px" class="card">
+			
+			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
+			<div class="card-body">
+				
+				<?=Admin_Managers::MoneyRefund()->showMoneyRefundStatus( $money_refund )?>
+				
+				<table style="margin: 10px">
+					<?php if(EShops::isMultiEShopMode()): ?>
+						<tr>
+							<td><b><?=Tr::_('e-shop')?></b></td>
+							<td><?=$money_refund->getEshop()->getName()?></td>
+						</tr>
+					<?php endif; ?>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Request date and time:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($money_refund->getDateStarted()) ?></td>
+					</tr>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->renderItemName($money_refund->getOrderId())?></td>
+					</tr>
+					<?php if( $money_refund->getContext()->getContextType()!=Order::getProvidesContextType() ): ?>
+					<tr>
+						<td><b><?=Tr::_('Context:')?></b></td>
+						<td>
+							<?=Admin_Managers::Context()->showContext( $money_refund->getContext() )?>
+						</td>
+					</tr>
+					<?php endif; ?>
+				</table>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;margin-left: 80px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Customer')?></b></div>
+			<div class="card-body">
+				
+				<table>
+					<tr>
+						<td></td>
+						<td>
+							<?=Admin_Managers::Customer()->renderItemName( $money_refund->getCustomerId() )?>
+							<br>
+						</td>
+					</tr>
+					<tr>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Phone:')?></td>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=$money_refund->getPhone()?></td>
+					</tr>
+					<tr>
+						<td><?=Tr::_('e-mail:')?></td>
+						<td><a href="mailto:<?=$money_refund->getEmail()?>"><u><?=$money_refund->getEmail()?></u></a></td>
+					</tr>
+				</table>
+				
+			</div>
+		</div>
+
+		<div style="margin: 10px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Customer')?></b></div>
+			<div class="card-body">
+				<?=Admin_Managers::Customer()->formatAddress( $money_refund->getEshop(), $money_refund->getAddress() )?>
+			</div>
+		</div>
+		
+		<div style="margin: 10px;">
+		</div>
+	</div>
+

@@ -26,9 +26,10 @@ $history = $return->getHistory();
 <table class="table table-striped">
 	<thead>
 	<tr>
-		<th style="width: 150px;"><?=Tr::_('Date and time')?></th>
+		<th style="width: 200px;"><?=Tr::_('Date and time')?></th>
 		<th style="width: 250px;"></th>
 		<th></th>
+		<th style="width: 200px;"><?=Tr::_('Administrator')?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -53,6 +54,9 @@ $history = $return->getHistory();
 				<?php endif; ?>
 				
 				<?=$handler->showEventDetails(); ?>
+			</td>
+			<td>
+				<?=$event->getAdministrator() ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

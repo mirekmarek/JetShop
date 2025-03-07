@@ -41,7 +41,7 @@ abstract class Core_Complaint_Status extends BaseObject {
 	
 	
 	
-	public function getCode(): string
+	public static function getCode(): string
 	{
 		return static::CODE;
 	}

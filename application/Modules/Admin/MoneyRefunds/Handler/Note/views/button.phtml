@@ -1,0 +1,29 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\MoneyRefunds;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+echo UI::button(Tr::_('Note'))
+	->setClass(UI_button::CLASS_INFO)
+	->setIcon('pen-to-square')
+	->setOnClick("NoteHandler.showDialog();");
+
+
+

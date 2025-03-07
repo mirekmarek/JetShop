@@ -20,6 +20,17 @@ use JetApplication\Order;
 
 $order = $this->getRaw( 'order' );
 
+$invoices = Admin_Managers::Invoice()->showOrderInvoices( $order ).
+	Admin_Managers::InvoiceInAdvance()->showOrderInvoices( $order ).
+	Admin_Managers::DeliveryNote()->showOrderInvoices( $order );
+
+$dispatch = Admin_Managers::OrderDispatch()->showDispatches( $order->getProvidesContext() ).
+	Admin_Managers::OrderPersonalReceipt()->showDispatches( $order->getProvidesContext() );
+
+
+$money_refunds=Admin_Managers::MoneyRefund()?->showOrderMoneyRefunds( $order );
+
+
 require 'edit/js.phtml';
 require 'edit/toolbar.phtml';
 
@@ -37,23 +48,31 @@ require 'edit/toolbar.phtml';
 		<?php require 'edit/items.phtml';?>
 	</fieldset>
 
+	<?php if($dispatch): ?>
 	<div id="o_dispatch" class="o_anchor"></div>
 	<fieldset class="o_section">
 		<legend><?=UI::icon('boxes-packing')?> <?=Tr::_('Order dispatch')?></legend>
-		<?=Admin_Managers::OrderDispatch()->showDispatches( $order->getProvidesContext() )?>
-		<?=Admin_Managers::OrderPersonalReceipt()->showDispatches( $order->getProvidesContext() )?>
+		<?=$dispatch?>
 	</fieldset>
+	<?php endif; ?>
 
+	<?php if( $invoices ): ?>
 	<div id="o_invoices" class="o_anchor"></div>
 	<fieldset class="o_section">
 		<legend><?=UI::icon('file-invoice-dollar')?> <?=Tr::_('Invoices')?></legend>
-		
-		<?=Admin_Managers::Invoice()->showOrderInvoices( $order )?>
-		<?=Admin_Managers::InvoiceInAdvance()->showOrderInvoices( $order )?>
-		<?=Admin_Managers::DeliveryNote()->showOrderInvoices( $order )?>
-		
+		<?=$invoices?>
 	</fieldset>
+	<?php endif; ?>
 
+	<?php if( $money_refunds ): ?>
+	<div id="o_money_refund" class="o_anchor"></div>
+	<fieldset class="o_section">
+		<legend><?=UI::icon('money-bill-transfer')?> <?=Tr::_('Money refundation requests')?></legend>
+		<?=$money_refunds?>
+	</fieldset>
+	<?php endif; ?>
+	
+	
 	<div id="o_history" class="o_anchor"></div>
 	<fieldset class="o_section">
 		<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('Order history')?></legend>

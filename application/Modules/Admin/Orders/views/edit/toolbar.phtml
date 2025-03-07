@@ -91,6 +91,8 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 			<?=Handler::getHandler(Handler_Cancel_Main::KEY)?->renderButton()?>
 		<?php endif; ?>
 		
+		<?=Handler::getHandler(Handler_MoneyRefund_Main::KEY)?->renderButton()?>
+		
 		&nbsp;&nbsp;&nbsp;
 		<?=Handler::getHandler(Handler_Dispatch_Main::KEY)?->renderButton()?>
 		&nbsp;&nbsp;&nbsp;
@@ -101,8 +103,16 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 	<div style="display: flex;gap:30px;padding: 5px;">
 		<a class="order-navi" data-tg="o_main" style="cursor: pointer"><?=UI::icon('circle-info')?> <?=Tr::_('Main info')?></a>
 		<a class="order-navi" data-tg="o_items" style="cursor: pointer"><?=UI::icon('list')?> <?=Tr::_('Order items')?></a>
+		<?php if(!empty($dispatch)): ?>
 		<a class="order-navi" data-tg="o_dispatch" style="cursor: pointer"><?=UI::icon('boxes-packing')?> <?=Tr::_('Order dispatch')?></a>
+		<?php endif; ?>
+		<?php if(!empty($invoices)): ?>
 		<a class="order-navi" data-tg="o_invoices" style="cursor: pointer"><?=UI::icon('file-invoice-dollar')?> <?=Tr::_('Invoices')?></a>
+		<?php endif; ?>
+		<?php if(!empty($money_refunds)): ?>
+			<a class="order-navi" data-tg="o_money_refund" style="cursor: pointer"><?=UI::icon('money-bill-transfer')?> <?=Tr::_('Money refundation requests')?></a>
+		<?php endif; ?>
+		
 		<a class="order-navi" data-tg="o_history" style="cursor: pointer"><?=UI::icon('clock-rotate-left')?> <?=Tr::_('Order history')?></a>
 		<a class="order-navi" data-tg="o_sent_emails" style="cursor: pointer"><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></a>
 		

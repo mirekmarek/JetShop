@@ -26,9 +26,10 @@ $history = $complaint->getHistory();
 <table class="table table-striped">
 	<thead>
 	<tr>
-		<th style="width: 150px;"><?=Tr::_('Date and time')?></th>
+		<th style="width: 200px;"><?=Tr::_('Date and time')?></th>
 		<th style="width: 250px;"></th>
 		<th></th>
+		<th style="width: 200px;"><?=Tr::_('Administrator')?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -41,8 +42,6 @@ $history = $complaint->getHistory();
 		<tr>
 			<td>
 				<?=Locale::dateAndTime( $event->getDateAdded() )?>
-				<br>
-				<?=$event->getAdministrator() ?>
 			</td>
 			<td><div style="padding: 10px;font-weight: bolder;<?=$handler->getEventStyle()?>"><?=$handler->showEventName()?></div></td>
 			<td>
@@ -53,6 +52,9 @@ $history = $complaint->getHistory();
 				<?php endif; ?>
 				
 				<?=$handler->showEventDetails(); ?>
+			</td>
+			<td>
+				<?=$event->getAdministrator() ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

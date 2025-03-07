@@ -38,7 +38,7 @@ abstract class Core_ReturnOfGoods_Status extends BaseObject {
 	
 	
 	
-	public function getCode(): string
+	public static function getCode(): string
 	{
 		return static::CODE;
 	}

@@ -1,0 +1,58 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\MoneyRefunds;
+
+
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+
+use Jet\UI;
+use Jet\MVC_View;
+use JetApplication\MoneyRefund;
+
+
+/**
+ * @var MVC_View $this
+ * @var MoneyRefund     $money_refund
+ * @var Admin_Managers_EShopEntity_Listing $listing
+ */
+
+$money_refund = $this->getRaw( 'money_refund' );
+$listing = $this->getRaw('listing');
+
+$is_editable = $money_refund->isEditable();
+
+$prev_url = $listing->getPrevEditUrl( $money_refund->getId() );
+$next_url = $listing->getNextEditUrl( $money_refund->getId() );
+
+?>
+<div class="toolbar" id="main-toolbar" style="display: grid;grid-template-columns: 1fr;gap:10px;">
+	<div style="display: flex;align-items: center;gap: 10px;">
+		<div>
+			<?=UI::button_goBack()?>
+		</div>
+		
+		<div style="padding-left:20px;width: 80px;text-align: center">
+			<?php if($prev_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+			<?php endif; ?>
+		</div>
+		
+		
+		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+			<b><?=$money_refund->getNumber()?></b>
+		</div>
+		
+		<div style="width: 50px;text-align: center">
+			<?php if($next_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+			<?php endif; ?>
+		</div>
+		
+		<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
+		<?=Handler::getHandler(Handler_SetStatus_Main::KEY)->renderButton()?>
+	</div>
+</div>

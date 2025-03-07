@@ -1,0 +1,22 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Events\MoneyRefund\Done;
+
+
+use Jet\MVC_View;
+use JetApplication\Complaint_Event;
+use JetApplication\Complaint_Note;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint_Event $event
+ * @var Main $handler
+ * @var Complaint_Note $note
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');

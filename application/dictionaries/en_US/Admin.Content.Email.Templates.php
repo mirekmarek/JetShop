@@ -109,4 +109,5 @@ return [
 	'Tax base' => '',
 	'Tax' => '',
 	'Attachments:' => '',
+	'E-mail template description <b>%NAME%</b> has been updated' => '',
 ];

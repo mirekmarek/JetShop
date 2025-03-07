@@ -1,0 +1,21 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\MoneyRefunds;
+
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+echo UI::button( Tr::_('Start processing') )
+	->setClass( UI_button::CLASS_PRIMARY )
+	->setUrl( Http_Request::currentURI(['set_status'=>'start_processing']) );
+
+
+echo UI::button( Tr::_('Cancel') )
+	->setClass( UI_button::CLASS_DANGER )
+	->setUrl( Http_Request::currentURI(['set_status'=>'cancel']) );

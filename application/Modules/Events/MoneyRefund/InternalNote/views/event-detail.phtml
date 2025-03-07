@@ -1,0 +1,30 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Events\MoneyRefund\InternalNote;
+
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\MoneyRefund_Event;
+use JetApplication\MoneyRefund_Note;
+
+/**
+ * @var MVC_View $this
+ * @var MoneyRefund_Event $event
+ * @var Main $handler
+ * @var MoneyRefund_Note $note
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');
+
+$note = $event->getContext();
+if(!$note) {
+	return;
+}
+
+echo Admin_Managers::Note()?->showNote( $note );

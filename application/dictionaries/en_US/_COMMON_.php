@@ -206,4 +206,6 @@ return [
 	'Copy and translate' => '',
 	'Translate' => '',
 	'Form fields' => '',
+	'Done' => '',
+	'In Processing' => '',
 ];

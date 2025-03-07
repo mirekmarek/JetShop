@@ -9,6 +9,7 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Managers_Content_MagicTags;
+use JetApplication\Admin_Managers_MoneyRefund;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\Admin_Managers_OrderPersonalReceipt;
 use JetApplication\Admin_Managers_Signpost;
@@ -187,6 +188,12 @@ class Core_Admin_Managers extends Managers {
 	{
 		return static::get( Admin_Managers_Complaint::class );
 	}
+	
+	public static function MoneyRefund() : Admin_Managers_MoneyRefund|Application_Module|null
+	{
+		return static::get( Admin_Managers_MoneyRefund::class );
+	}
+	
 	
 	public static function ReturnOfGoods() : Admin_Managers_ReturnOfGoods|Application_Module
 	{

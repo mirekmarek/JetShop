@@ -1,0 +1,47 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\MoneyRefunds;
+
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
+use JetApplication\MoneyRefund;
+
+/**
+ * @var MVC_View $this
+ * @var MoneyRefund[]     $money_refunds
+ */
+
+$money_refunds = $this->getRaw( 'money_refunds' );
+?>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th><?=Tr::_('Number')?></th>
+		<th><?=Tr::_('Amount')?></th>
+		<th><?=Tr::_('Request date')?></th>
+		<th><?=Tr::_('Status')?></th>
+	</tr>
+	</thead>
+	<?php foreach( $money_refunds as $money_refund): ?>
+	<tr>
+		<td><a href="<?=$money_refund->getEditUrl()?>"><?=$money_refund->getNumber()?></a></td>
+		<td>
+			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?>
+		</td>
+		<td>
+			<?=Locale::dateAndTime( $money_refund->getDateStarted() );?>
+		</td>
+		<td>
+			<?=Admin_Managers::MoneyRefund()->showMoneyRefundStatus( $money_refund )?>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>
+

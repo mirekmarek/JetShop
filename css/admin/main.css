@@ -430,3 +430,31 @@ h4.inherited {
 	color: #111111;
 }
 
+
+
+.money-refund-status {
+	padding: 5px;
+	margin: 5px;
+}
+
+.money-refund-status-kind {
+	font-weight: bolder;
+}
+
+.money-refund-status-new {
+	background-color: #00ddc1;
+}
+
+
+.money-refund-status-in_processing {
+	background-color: #00ddc1;
+}
+
+.money-refund-status-done {
+	background-color: #9faaFF;
+	color: #111111;
+}
+.money-refund-status-cancelled {
+	background-color: #ffaaaaaa;
+	color: #111111;
+}

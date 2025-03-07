@@ -1,0 +1,36 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\MoneyRefunds;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplication\CustomerBlacklist;
+use JetApplication\MoneyRefund;
+
+/**
+ * @var MVC_View $this
+ * @var MoneyRefund $item
+ */
+
+$item = $this->getRaw('item');
+?>
+<?php if($item->getCompanyName()): ?>
+<?=$item->getCompanyName()?><br>
+<?php endif; ?>
+<?=$item->getFirstName()?> <?=$item->getSurname()?> (<?=Admin_Managers::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
+<a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
+<?=$item->getPhone()?><br>
+
+
+<?php if( CustomerBlacklist::customerIsBlacklisted( $item->getEmail() ) ): ?>
+	<div class="alert alert-danger" role="alert">
+		<?=UI::icon('skull-crossbones')?> <?=Tr::_('Customer is blacklisted')?>
+	</div>
+<?php endif; ?>
