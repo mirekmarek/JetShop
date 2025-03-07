@@ -7,8 +7,8 @@
 namespace JetApplication;
 
 
-use JetShop\Core_EMail_Template_Property;
+use JetShop\Core_Template_Block;
 
-class EMail_Template_Property extends Core_EMail_Template_Property
+class Template_Block extends Core_Template_Block
 {
 }

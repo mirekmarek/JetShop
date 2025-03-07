@@ -7,8 +7,8 @@
 namespace JetApplication;
 
 
-use JetShop\Core_EMail_Template_Condition;
+use JetShop\Core_Template_Condition;
 
-class EMail_Template_Condition extends Core_EMail_Template_Condition
+class Template_Condition extends Core_Template_Condition
 {
 }

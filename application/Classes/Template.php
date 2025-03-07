@@ -7,8 +7,8 @@
 namespace JetApplication;
 
 
-use JetShop\Core_PDF_Template_Property_Param;
+use JetShop\Core_Template;
 
-class PDF_Template_Property_Param extends Core_PDF_Template_Property_Param
+abstract class Template extends Core_Template
 {
 }

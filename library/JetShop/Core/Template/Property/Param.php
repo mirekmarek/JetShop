@@ -9,7 +9,7 @@ namespace JetShop;
 
 use Exception;
 
-abstract class Core_EMail_Template_Property_Param {
+abstract class Core_Template_Property_Param {
 	
 	public const TYPE_INT = 'int';
 	public const TYPE_FLOAT = 'float';

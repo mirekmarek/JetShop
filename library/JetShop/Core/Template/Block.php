@@ -8,16 +8,16 @@ namespace JetShop;
 
 
 use Closure;
-use JetApplication\PDF_Template_Property;
+use JetApplication\Template_Property;
 
-abstract class Core_PDF_Template_Block {
+abstract class Core_Template_Block {
 	
 	protected string $name = '';
 	
 	protected string $description = '';
 	
 	/**
-	 * @var Core_PDF_Template_Property[]
+	 * @var Core_Template_Property[]
 	 */
 	protected array $properties = [];
 	
@@ -56,9 +56,9 @@ abstract class Core_PDF_Template_Block {
 	}
 	
 	
-	public function addProperty( string $name, string $description ) : PDF_Template_Property
+	public function addProperty( string $name, string $description ) : Template_Property
 	{
-		$property = new PDF_Template_Property();
+		$property = new Template_Property();
 		$property->setName( $name );
 		$property->setDescription( $description );
 		$this->properties[$property->getName()] = $property;
@@ -67,14 +67,14 @@ abstract class Core_PDF_Template_Block {
 	}
 	
 	/**
-	 * @return Core_PDF_Template_Property[]
+	 * @return Template_Property[]
 	 */
 	public function getProperties(): array
 	{
 		return $this->properties;
 	}
 	
-	public function processText( string &$text  ) : void
+	public function process( string &$text  ) : void
 	{
 		$list_creator = $this->getItemListCreator();
 		
@@ -96,7 +96,7 @@ abstract class Core_PDF_Template_Block {
 				$new_block_txt = $block_template;
 				
 				foreach( $this->getProperties() as $property ) {
-					$property->processText( $new_block_txt, $item );
+					$property->process( $new_block_txt, $item );
 				}
 				
 				$block_txt .= $new_block_txt;

@@ -10,177 +10,24 @@ namespace JetShop;
 use Jet\Translator;
 use JetApplication\EMail;
 use JetApplication\EMail_Layout_EShopData;
-use JetApplication\EMail_Template_Block;
-use JetApplication\EMail_Template_Condition;
-use JetApplication\EMail_Template_Property;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\EMail_TemplateText;
 use JetApplication\EMail_TemplateText_EShopData;
 use JetApplication\Managers;
 use JetApplication\EShop;
+use JetApplication\Template;
 
-abstract class Core_EMail_Template {
-	
-	protected string $internal_name = '';
-	
-	protected string $internal_notes = '';
-	
-	/**
-	 * @var EMail_Template_Property[]
-	 */
-	protected ?array $properties = null;
-	
-	/**
-	 * @var EMail_Template_Block[]
-	 */
-	protected ?array $blocks = null;
-	
-	/**
-	 * @var EMail_Template_Condition[]
-	 */
-	protected ?array $conditions = null;
-	
-	protected bool $initialized = false;
+abstract class Core_EMail_Template extends Template
+{
 	
 	protected static ?array $all_templates = null;
-
-	
-	public function __construct()
-	{
-	}
-	
-	protected function initialize() : void
-	{
-		if($this->properties!==null) {
-			return;
-		}
-		
-		$this->properties = [];
-		$this->blocks = [];
-		$this->conditions = [];
-		
-		$this->init();
-		
-	}
-	
-	public function initTest( EShop $eshop ) : void
-	{
-	
-	}
-	
-	abstract protected function init() : void;
-	
-	public function getInternalName(): string
-	{
-		$this->initialize();
-		return $this->internal_name;
-	}
-	
-	public function setInternalName( string $internal_name ): void
-	{
-		$this->internal_name = $internal_name;
-	}
-
-	public function getInternalCode(): string
-	{
-		return get_class($this);
-	}
-
-	public function setInternalCode( string $internal_code ): void
-	{
-	}
-	
-	public function getInternalNotes(): string
-	{
-		$this->initialize();
-		return $this->internal_notes;
-	}
-	
-	public function setInternalNotes( string $internal_notes ): void
-	{
-		$this->internal_notes = $internal_notes;
-	}
-	
-	/**
-	 * @return EMail_Template_Property[]
-	 */
-	public function getProperties(): array
-	{
-		$this->initialize();
-		return $this->properties;
-	}
-	
-	/**
-	 * @return EMail_Template_Block[]
-	 */
-	public function getBlocks(): array
-	{
-		$this->initialize();
-		return $this->blocks;
-	}
-	
-	/**
-	 * @return EMail_Template_Condition[]
-	 */
-	public function getConditions(): array
-	{
-		$this->initialize();
-		return $this->conditions;
-	}
-	
-	
-	public function addProperty( string $name, string $description ) : EMail_Template_Property
-	{
-		$property = new EMail_Template_Property();
-		$property->setName( $name );
-		$property->setDescription( $description );
-		$this->properties[$property->getName()] = $property;
-		
-		return $property;
-	}
-	
-	public function addPropertyBlock( string $name, string $description ) : EMail_Template_Block
-	{
-		$block = new EMail_Template_Block();
-		$block->setName( $name );
-		$block->setDescription( $description );
-		$this->blocks[$block->getName()] = $block;
-		
-		return $block;
-	}
-	
-
 	
 	
 	protected function applyProperties( EShop $eshop, EMail $email ) : void
 	{
-		$data = [];
-		
-		$subject = $email->getSubject();
-		$body_txt = $email->getBodyTxt();
-		$body_html = $email->getBodyHtml();
-		
-		foreach($this->getConditions() as $condition) {
-			$condition->processText( $template_html );
-			$condition->processText( $template_header );
-			$condition->processText( $template_footer );
-		}
-		
-		foreach($this->getProperties() as $property) {
-			$property->processText( $subject );
-			$property->processText( $body_txt );
-			$property->processText( $body_html );
-		}
-		
-		foreach($this->getBlocks() as $block ) {
-			$block->processText( $subject );
-			$block->processText( $body_txt );
-			$block->processText( $body_html );
-		}
-		
-		$email->setSubject( $subject );
-		$email->setBodyTxt( $body_txt );
-		$email->setBodyHtml( $body_html );
+		$email->setSubject( $this->process( $email->getSubject() ) );
+		$email->setBodyTxt( $this->process( $email->getBodyTxt() ) );
+		$email->setBodyHtml( $this->process( $email->getBodyHtml() ) );
 	}
 	
 

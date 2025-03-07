@@ -8,7 +8,7 @@ namespace JetShop;
 
 use Closure;
 
-abstract class Core_EMail_Template_Condition {
+abstract class Core_Template_Condition {
 	
 	protected string $name = '';
 	
@@ -50,7 +50,7 @@ abstract class Core_EMail_Template_Condition {
 	
 	
 	
-	public function processText( string &$text  ) : void
+	public function process( string &$text  ) : void
 	{
 		$reg_exp = '/{IF%'.$this->name.'}([^{}]*){'.$this->name.'%IF}/';
 		

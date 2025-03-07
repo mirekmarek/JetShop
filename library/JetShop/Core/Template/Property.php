@@ -8,9 +8,9 @@ namespace JetShop;
 
 
 use Closure;
-use JetApplication\EMail_Template_Property_Param;
+use JetApplication\Template_Property_Param;
 
-abstract class Core_EMail_Template_Property {
+abstract class Core_Template_Property {
 
 	protected string $name = '';
 	
@@ -19,7 +19,7 @@ abstract class Core_EMail_Template_Property {
 	protected Closure $property_value_creator;
 	
 	/**
-	 * @var EMail_Template_Property_Param[]
+	 * @var Template_Property_Param[]
 	 */
 	protected array $params = [];
 	
@@ -69,9 +69,9 @@ abstract class Core_EMail_Template_Property {
 		$this->property_value_creator = $property_value_creator;
 	}
 	
-	public function addParam( string $type, string $name, string $description='' ) : EMail_Template_Property_Param
+	public function addParam( string $type, string $name, string $description='' ) : Template_Property_Param
 	{
-		$param = new EMail_Template_Property_Param();
+		$param = new Template_Property_Param();
 		$param->setType( $type );
 		$param->setName( $name );
 		$param->setDescription( $description );
@@ -100,7 +100,7 @@ abstract class Core_EMail_Template_Property {
 		return $reg_exp;
 	}
 	
-	public function processText( string &$text, mixed $block_item=null  ) : void
+	public function process( string &$text, mixed $block_item=null  ) : void
 	{
 		if(!preg_match($this->createRegExp(), $text, $matches)) {
 			return;

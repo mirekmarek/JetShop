@@ -10,186 +10,23 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Translator;
 use JetApplication\PDF;
-use JetApplication\PDF_Template_Block;
-use JetApplication\PDF_Template_Condition;
-use JetApplication\PDF_Template_Property;
 use JetApplication\PDF_TemplateProvider;
 use JetApplication\PDF_TemplateText;
 use JetApplication\PDF_TemplateText_EShopData;
 use JetApplication\Managers;
 use JetApplication\EShop;
+use JetApplication\Template;
 
-abstract class Core_PDF_Template {
-	
-	protected string $internal_name = '';
-	
-	protected string $internal_notes = '';
-	
-	/**
-	 * @var PDF_Template_Property[]
-	 */
-	protected ?array $properties = null;
-	
-	/**
-	 * @var PDF_Template_Block[]
-	 */
-	protected ?array $blocks = null;
-	/**
-	 * @var PDF_Template_Condition[]
-	 */
-	protected ?array $conditions = null;
-	
-	protected bool $initialized = false;
+abstract class Core_PDF_Template extends Template {
 	
 	protected static ?array $all_templates = null;
-
-	
-	public function __construct()
-	{
-	}
-	
-	protected function initialize() : void
-	{
-		if($this->properties!==null) {
-			return;
-		}
-		
-		$this->properties = [];
-		$this->blocks = [];
-		$this->conditions = [];
-		
-		$this->init();
-		
-	}
-	
-	public function initTest( EShop $eshop ) : void
-	{
-	
-	}
-	
-	abstract protected function init() : void;
-	
-	public function getInternalName(): string
-	{
-		$this->initialize();
-		return $this->internal_name;
-	}
-	
-	public function setInternalName( string $internal_name ): void
-	{
-		$this->internal_name = $internal_name;
-	}
-
-	public function getInternalCode(): string
-	{
-		return get_class($this);
-	}
-
-	public function setInternalCode( string $internal_code ): void
-	{
-	}
-	
-	public function getInternalNotes(): string
-	{
-		$this->initialize();
-		return $this->internal_notes;
-	}
-	
-	public function setInternalNotes( string $internal_notes ): void
-	{
-		$this->internal_notes = $internal_notes;
-	}
-	
-	/**
-	 * @return PDF_Template_Property[]
-	 */
-	public function getProperties(): array
-	{
-		$this->initialize();
-		return $this->properties;
-	}
-	
-	/**
-	 * @return PDF_Template_Block[]
-	 */
-	public function getBlocks(): array
-	{
-		$this->initialize();
-		return $this->blocks;
-	}
-	
-	/**
-	 * @return PDF_Template_Condition[]
-	 */
-	public function getConditions(): array
-	{
-		$this->initialize();
-		return $this->conditions;
-	}
-	
-	
-	
-	public function addProperty( string $name, string $description ) : PDF_Template_Property
-	{
-		$property = new PDF_Template_Property();
-		$property->setName( $name );
-		$property->setDescription( $description );
-		$this->properties[$property->getName()] = $property;
-		
-		return $property;
-	}
-	
-	public function addPropertyBlock( string $name, string $description ) : PDF_Template_Block
-	{
-		$block = new PDF_Template_Block();
-		$block->setName( $name );
-		$block->setDescription( $description );
-		$this->blocks[$block->getName()] = $block;
-		
-		return $block;
-	}
-	
-	public function addCondition( string $name, string $description ) : PDF_Template_Condition
-	{
-		$condition = new PDF_Template_Condition();
-		$condition->setName( $name );
-		$condition->setDescription( $description );
-		$this->conditions[$condition->getName()] = $condition;
-		
-		return $condition;
-	}
-
 	
 	
 	protected function applyProperties( EShop $eshop, PDF $pdf ) : void
 	{
-		$data = [];
-		
-		$template_html = $pdf->getTemplateHtml();
-		$template_header = $pdf->getTemplateHeader();
-		$template_footer = $pdf->getTemplateFooter();
-		
-		foreach($this->getConditions() as $condition) {
-			$condition->processText( $template_html );
-			$condition->processText( $template_header );
-			$condition->processText( $template_footer );
-		}
-		
-		foreach($this->getProperties() as $property) {
-			$property->processText( $template_html );
-			$property->processText( $template_header );
-			$property->processText( $template_footer );
-		}
-		
-		foreach($this->getBlocks() as $block ) {
-			$block->processText( $template_html );
-			$block->processText( $template_header );
-			$block->processText( $template_footer );
-		}
-		
-		$pdf->setTemplateHtml( $template_html );
-		$pdf->setTemplateFooter( $template_footer );
-		$pdf->setTemplateHeader( $template_header );
+		$pdf->setTemplateHtml( $this->process( $pdf->getTemplateHtml() ) );
+		$pdf->setTemplateFooter( $this->process( $pdf->getTemplateFooter() ) );
+		$pdf->setTemplateHeader( $this->process( $pdf->getTemplateHeader() ) );
 	}
 	
 	public function preparePDF( EShop $eshop ) : PDF

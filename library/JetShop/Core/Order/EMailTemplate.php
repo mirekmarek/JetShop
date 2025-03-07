@@ -12,7 +12,7 @@ use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
-use JetApplication\EMail_Template_Property_Param;
+use JetApplication\Template_Property_Param;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Item;
@@ -108,8 +108,8 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 			
 			return '<img src="'.$url.'">';
 		} );
-		$img_property->addParam( EMail_Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
-		$img_property->addParam( EMail_Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
+		$img_property->addParam( Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
+		$img_property->addParam( Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
 		
 		$name_property = $items_block->addProperty('name', Tr::_('Order item name'));
 		$name_property->setPropertyValueCreator( function( Order_Item $item ) : string {

@@ -16,7 +16,7 @@ use JetApplication\EShopEntity_AccountingDocument_Item;
 use JetApplication\Order;
 use JetApplication\PDF;
 use JetApplication\PDF_Template;
-use JetApplication\PDF_Template_Property_Param;
+use JetApplication\Template_Property_Param;
 use JetApplication\Invoice_VATOverviewItem;
 
 abstract class PDFTemplate extends PDF_Template {
@@ -102,8 +102,8 @@ abstract class PDFTemplate extends PDF_Template {
 					$params['max_h']??70
 				);
 			});
-		$logo->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
-		$logo->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
+		$logo->addParam( Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
+		$logo->addParam( Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
 		
 		
 		$stamp = $this->addProperty('stamp', Tr::_('Stamp'));
@@ -113,8 +113,8 @@ abstract class PDFTemplate extends PDF_Template {
 					$params['max_h']??80
 				);
 			});
-		$stamp->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
-		$stamp->addParam( PDF_Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
+		$stamp->addParam( Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
+		$stamp->addParam( Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
 		
 		$this->addProperty('issuer_company_name', Tr::_('Issuer - company name'))
 			->setPropertyValueCreator(function() : string {

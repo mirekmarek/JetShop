@@ -26,4 +26,7 @@ class EMailTemplate_Done extends EMail_Template {
 	
 	}
 	
+	public function initTest( EShop $eshop ): void
+	{
+	}
 }
