@@ -370,7 +370,7 @@ abstract class Core_EShopEntity_Event extends EShopEntity_Basic implements EShop
 	
 	public function getHandlerModuleName() : string
 	{
-		return static::getHandlerModuleNamePrefix().$this->event;
+		return static::getHandlerModuleNamePrefix().$this::getCode();
 	}
 	
 	

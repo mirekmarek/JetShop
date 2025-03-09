@@ -11,7 +11,7 @@ use Jet\DataModel_Definition;
 
 use JetApplication\EShopEntity_Event;
 use JetApplication\Complaint;
-use JetApplication\Complaint_event;
+use JetApplication\Complaint_Event;
 
 /**
  *
