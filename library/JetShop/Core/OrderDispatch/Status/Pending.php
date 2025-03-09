@@ -18,10 +18,12 @@ abstract class Core_OrderDispatch_Status_Pending extends OrderDispatch_Status {
 	
 	public const CODE = 'pending';
 	
+	protected static bool $is_editable = true;
+	protected static bool $is_in_progress = true;
+	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Pending', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Awaiting processing', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 1;
 	}
 	

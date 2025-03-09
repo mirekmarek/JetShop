@@ -19,11 +19,74 @@ abstract class Core_OrderDispatch_Status extends EShopEntity_Status {
 	
 	protected static array $flags_map = [];
 	
+	protected static bool $is_editable = false;
+	protected static bool $is_in_progress = false;
+	protected static bool $is_prepared = false;
+	
+	protected static bool $is_sent = false;
+	
 	protected static ?array $list = null;
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, string $previouse_status_code ): null|EShopEntity_Event|OrderDispatch_Event
 	{
 		return null;
+	}
+	
+	public static function isEditable(): bool
+	{
+		return self::$is_editable;
+	}
+	
+	public static function isInProgress(): bool
+	{
+		return self::$is_in_progress;
+	}
+	
+	public static function isPrepared(): bool
+	{
+		return self::$is_prepared;
+	}
+	
+	public static function isSent(): bool
+	{
+		return self::$is_sent;
+	}
+	
+	public static function getInProgressStatusCodes(): array
+	{
+		$res = [];
+		
+		foreach( static::getList() as $status ) {
+			if( $status::isInProgress() ) {
+				$res[] = $status::getCode();
+			}
+		}
+		
+		return $res;
+	}
+	
+	public static function getPreparedStatusCodes(): array
+	{
+		$res = [];
+		foreach( static::getList() as $status ) {
+			if( $status::isPrepared() ) {
+				$res[] = $status::getCode();
+			}
+		}
+		
+		return $res;
+	}
+	
+	public static function getSentStatusCodes(): array
+	{
+		$res = [];
+		foreach( static::getList() as $status ) {
+			if( $status::isSent() ) {
+				$res[] = $status::getCode();
+			}
+		}
+		
+		return $res;
 	}
 	
 }

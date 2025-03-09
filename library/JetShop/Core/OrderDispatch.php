@@ -28,6 +28,7 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
+use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
@@ -39,14 +40,13 @@ use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\OrderDispatch;
+use JetApplication\OrderDispatch_Event;
 use JetApplication\OrderDispatch_Item;
 use JetApplication\OrderDispatch_Packet;
 use JetApplication\Order;
+use JetApplication\OrderDispatch_Status;
 use JetApplication\OrderDispatch_Status_Cancel;
 use JetApplication\OrderDispatch_Status_Pending;
-use JetApplication\OrderDispatch_Status_PreparedConsignmentCreated;
-use JetApplication\OrderDispatch_Status_PreparedConsignmentCreateProblem;
-use JetApplication\OrderDispatch_Status_PreparedConsignmentNotCreated;
 use JetApplication\OrderDispatch_TrackingHistory;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -401,12 +401,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$list =  static::fetchInstances( [
 			$context->getWhere(),
 			'AND',
-			'status_code' => [
-				OrderDispatch_Status_Pending::getCode(),
-				OrderDispatch_Status_PreparedConsignmentCreated::getCode(),
-				OrderDispatch_Status_PreparedConsignmentNotCreated::getCode(),
-				OrderDispatch_Status_PreparedConsignmentCreateProblem::getCode()
-			]
+			'status_code' => OrderDispatch_Status::getInProgressStatusCodes()
 		] );
 		
 		$list->getQuery()->setOrderBy(['created']);
@@ -433,11 +428,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfPrepared( WarehouseManagement_Warehouse $warehouse ) : DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status_code' => [
-				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
-				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM
-			],
+			'status_code' => OrderDispatch_Status::getPreparedStatusCodes(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -462,10 +453,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$list =  static::fetchInstances( [
 			'warehouse_id' => $warehouse->getId(),
 			'AND',
-			'status_code' => [
-				static::STATUS_SENT,
-				static::STATUS_ON_THE_WAY,
-			],
+			'status_code' => OrderDispatch_Status::getSentStatusCodes(),
 			'AND',
 			'dispatch_date' => $dispatch_date
 		] );
@@ -1046,28 +1034,6 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		return $this->getCarrier()->actualizeTracking( $this, $error_message );
 	}
 	
-	public static function getStatusScope() : array
-	{
-		return [
-			static::STATUS_PENDING => Tr::_('Awaiting processing'),
-			
-			static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED    => Tr::_('Waiting for consignment to be created at the carrier'),
-			static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM => Tr::_('Consignment creation problem'),
-			static::STATUS_PREPARED_CONSIGNMENT_CREATED        => Tr::_('Ready to send'),
-			
-			static::STATUS_SENT       => Tr::_('Sent'),
-			static::STATUS_ON_THE_WAY => Tr::_('On the way'),
-			static::STATUS_DELIVERED  => Tr::_('Delivered'),
-			static::STATUS_RETURNING  => Tr::_('Returning'),
-			static::STATUS_RETURNED   => Tr::_('Returned'),
-			static::STATUS_LOST       => Tr::_('Lost'),
-			
-			static::STATUS_CANCEL   => Tr::_('Cancellation in progress'),
-			static::STATUS_CANCELED => Tr::_('Canceled'),
-		
-		];
-	}
-	
 	/**
 	 * @return OrderDispatch_TrackingHistory[]
 	 */
@@ -1078,13 +1044,13 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	
 	/**
 	 * @param OrderDispatch_TrackingHistory[] $new_tracking_history
-	 * @param string $new_status
+	 * @param OrderDispatch_Status $new_status
 	 *
 	 * @return void
 	 */
 	public function setTrackingData(
 		array $new_tracking_history,
-		string $new_status
+		OrderDispatch_Status $new_status
 	) : void
 	{
 		if(!$new_tracking_history) {
@@ -1108,6 +1074,10 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 			
 		}
 		
+		$this->setStatus( $new_status );
+		
+		/*
+		//TODO:
 		switch($new_status) {
 			case static::STATUS_ON_THE_WAY:
 				if( $this->status_code==static::STATUS_SENT ) {
@@ -1128,6 +1098,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 				$this->delivered();
 				break;
 		}
+		*/
 	}
 	
 	public function getAdminTitle(): string
@@ -1137,11 +1108,27 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	
 	public function isEditable() : bool
 	{
-		if($this->status_code!=static::STATUS_PENDING) {
-			return false;
-		}
+		/**
+		 * @var OrderDispatch_Status $status
+		 */
+		$status = $this->getStatus();
 		
-		return true;
+		return $status::isEditable();
 	}
+	
+	
+	public static function getStatusList(): array
+	{
+		return OrderDispatch_Status::getList();
+	}
+	
+	public function createEvent( EShopEntity_Event|OrderDispatch_Event $event ): OrderDispatch_Event
+	{
+		$event->init( $this->getEshop() );
+		$event->setOrderDispatch( $this );
+		
+		return $event;
+	}
+	
 	
 }

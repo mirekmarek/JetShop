@@ -14,5 +14,4 @@ use JetShop\Core_OrderPersonalReceipt;
 #[EShopEntity_Definition]
 class OrderPersonalReceipt extends Core_OrderPersonalReceipt
 {
-	
 }

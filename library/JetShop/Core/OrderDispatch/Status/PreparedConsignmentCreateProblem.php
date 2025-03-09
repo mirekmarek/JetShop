@@ -18,10 +18,12 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreateProblem extend
 	
 	public const CODE = 'prepared_consignment_create_problem';
 	
+	protected static bool $is_in_progress = true;
+	protected static bool $is_prepared = true;
+	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Prepared Consignment Create Problem', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Consignment creation problem', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 3;
 	}
 	

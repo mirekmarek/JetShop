@@ -18,9 +18,10 @@ abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 	
 	public const CODE = 'sent';
 	
+	protected static bool $is_sent = true;
+	
 	public function __construct()
 	{
-		//TODO:
 		$this->title = Tr::_('Sent', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 5;
 	}

@@ -27,6 +27,7 @@ use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Delivery_Method_EShopData;
+use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
@@ -42,6 +43,7 @@ use JetApplication\Order;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event_PreparationStarted;
 use JetApplication\OrderPersonalReceipt_Item;
+use JetApplication\OrderPersonalReceipt_Status;
 use JetApplication\Product_EShopData;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\OrderPersonalReceipt_Event;
@@ -741,6 +743,19 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public function catchEditForm(): bool
 	{
 		return false;
+	}
+	
+	public static function getStatusList(): array
+	{
+		return OrderPersonalReceipt_Status::getList();
+	}
+	
+	public function createEvent( EShopEntity_Event|OrderPersonalReceipt_Event $event ): OrderPersonalReceipt_Event
+	{
+		$event->init( $this->getEshop() );
+		$event->setOrderPersonalReceipt( $this );
+		
+		return $event;
 	}
 	
 }

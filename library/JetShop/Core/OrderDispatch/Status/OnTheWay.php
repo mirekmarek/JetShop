@@ -18,10 +18,11 @@ abstract class Core_OrderDispatch_Status_OnTheWay extends OrderDispatch_Status {
 	
 	public const CODE = 'on_the_way';
 	
+	protected static bool $is_sent = true;
+	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('On The Way', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('On the way', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 6;
 	}
 	

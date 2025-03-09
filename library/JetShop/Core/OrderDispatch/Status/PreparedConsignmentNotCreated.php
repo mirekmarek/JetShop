@@ -18,10 +18,13 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentNotCreated extends O
 	
 	public const CODE = 'prepared_consignment_not_created';
 	
+	protected static bool $is_in_progress = true;
+	protected static bool $is_prepared = true;
+	
+	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Prepared Consignment Not Created', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Waiting for consignment to be created at the carrier', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 2;
 	}
 	

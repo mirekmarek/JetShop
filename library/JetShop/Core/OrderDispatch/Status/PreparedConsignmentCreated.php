@@ -18,10 +18,12 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends Orde
 	
 	public const CODE = 'prepared_consignment_created';
 	
+	protected static bool $is_in_progress = true;
+	protected static bool $is_prepared = true;
+	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Prepared Consignment Created', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Ready to send', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 4;
 	}
 	

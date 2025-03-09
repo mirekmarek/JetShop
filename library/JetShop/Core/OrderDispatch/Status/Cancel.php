@@ -20,8 +20,7 @@ abstract class Core_OrderDispatch_Status_Cancel extends OrderDispatch_Status {
 	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Cancel', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Cancellation in progress', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 11;
 	}
 	

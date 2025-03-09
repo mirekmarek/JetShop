@@ -15,6 +15,7 @@ use JetApplication\Carrier_Document;
 use JetApplication\OrderDispatch;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use JetApplication\OrderDispatch_Status_Sent;
 use SoapClient;
 use SoapFault;
 
@@ -476,7 +477,7 @@ class Client
 		}
 		
 
-		$new_status = OrderDispatch::STATUS_SENT;
+		$new_status = OrderDispatch_Status_Sent::get();
 		
 		$tracking_data = [];
 		
