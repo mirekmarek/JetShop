@@ -42,6 +42,11 @@ use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Item;
 use JetApplication\OrderDispatch_Packet;
 use JetApplication\Order;
+use JetApplication\OrderDispatch_Status_Cancel;
+use JetApplication\OrderDispatch_Status_Pending;
+use JetApplication\OrderDispatch_Status_PreparedConsignmentCreated;
+use JetApplication\OrderDispatch_Status_PreparedConsignmentCreateProblem;
+use JetApplication\OrderDispatch_Status_PreparedConsignmentNotCreated;
 use JetApplication\OrderDispatch_TrackingHistory;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -75,22 +80,6 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	use OrderDispatch_Trait_Workflow;
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
-	
-	public const STATUS_PENDING = 'pending';
-	
-	public const STATUS_PREPARED_CONSIGNMENT_NOT_CREATED = 'prepared_consignment_not_created';
-	public const STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM = 'prepared_consignment_create_problem';
-	public const STATUS_PREPARED_CONSIGNMENT_CREATED = 'prepared_consignment_created';
-	
-	public const STATUS_SENT = 'sent';
-	public const STATUS_ON_THE_WAY = 'on_the_way';
-	public const STATUS_DELIVERED = 'delivered';
-	public const STATUS_RETURNING = 'returning';
-	public const STATUS_RETURNED = 'returned';
-	public const STATUS_LOST = 'lost';
-	
-	public const STATUS_CANCEL = 'cancel';
-	public const STATUS_CANCELED = 'canceled';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -378,7 +367,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfToBeCanceled( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status_code' => static::STATUS_CANCEL,
+			'status_code' => OrderDispatch_Status_Cancel::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -394,7 +383,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfPending( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status_code' => static::STATUS_PENDING,
+			'status_code' => OrderDispatch_Status_Pending::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -413,10 +402,10 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 			$context->getWhere(),
 			'AND',
 			'status_code' => [
-				static::STATUS_PENDING,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
-				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM
+				OrderDispatch_Status_Pending::getCode(),
+				OrderDispatch_Status_PreparedConsignmentCreated::getCode(),
+				OrderDispatch_Status_PreparedConsignmentNotCreated::getCode(),
+				OrderDispatch_Status_PreparedConsignmentCreateProblem::getCode()
 			]
 		] );
 		
