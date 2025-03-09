@@ -20,6 +20,7 @@ abstract class Core_OrderDispatch_Status_Pending extends OrderDispatch_Status {
 	
 	protected static bool $is_editable = true;
 	protected static bool $is_in_progress = true;
+	protected static bool $can_be_cancelled = true;
 	
 	public function __construct()
 	{

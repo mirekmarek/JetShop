@@ -22,6 +22,11 @@ abstract class Core_OrderDispatch_Status extends EShopEntity_Status {
 	protected static bool $is_editable = false;
 	protected static bool $is_in_progress = false;
 	protected static bool $is_prepared = false;
+	protected static bool $is_ready_to_create_consignment = false;
+	protected static bool $is_consignment_created = false;
+	protected static bool $can_create_consignment = false;
+	protected static bool $is_rollback_possible = false;
+	protected static bool $can_be_cancelled = false;
 	
 	protected static bool $is_sent = false;
 	
@@ -34,23 +39,50 @@ abstract class Core_OrderDispatch_Status extends EShopEntity_Status {
 	
 	public static function isEditable(): bool
 	{
-		return self::$is_editable;
+		return static::$is_editable;
 	}
 	
 	public static function isInProgress(): bool
 	{
-		return self::$is_in_progress;
+		return static::$is_in_progress;
 	}
 	
 	public static function isPrepared(): bool
 	{
-		return self::$is_prepared;
+		return static::$is_prepared;
 	}
 	
 	public static function isSent(): bool
 	{
-		return self::$is_sent;
+		return static::$is_sent;
 	}
+	
+	public static function isReadyToCreateConsignment() : bool
+	{
+		return static::$is_ready_to_create_consignment;
+	}
+	
+	public static function isConsignmentCreated() : bool
+	{
+		return static::$is_consignment_created;
+	}
+	
+	public static function canCreateConsignment(): bool
+	{
+		return static::$can_create_consignment;
+	}
+	
+	public static function isRollbackPossible(): bool
+	{
+		return static::$is_rollback_possible;
+	}
+	
+	public static function canBeCancelled(): bool
+	{
+		return static::$can_be_cancelled;
+	}
+	
+	
 	
 	public static function getInProgressStatusCodes(): array
 	{

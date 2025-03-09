@@ -20,6 +20,9 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends Orde
 	
 	protected static bool $is_in_progress = true;
 	protected static bool $is_prepared = true;
+	protected static bool $is_consignment_created = true;
+	protected static bool $is_rollback_possible = true;
+	protected static bool $can_be_cancelled = true;
 	
 	public function __construct()
 	{

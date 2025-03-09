@@ -20,6 +20,11 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreateProblem extend
 	
 	protected static bool $is_in_progress = true;
 	protected static bool $is_prepared = true;
+	protected static bool $is_ready_to_create_consignment = false;
+	protected static bool $can_create_consignment = true;
+	protected static bool $is_rollback_possible = true;
+	protected static bool $can_be_cancelled = true;
+	
 	
 	public function __construct()
 	{

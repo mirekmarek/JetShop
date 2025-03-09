@@ -18,9 +18,10 @@ abstract class Core_OrderDispatch_Status_Canceled extends OrderDispatch_Status {
 	
 	public const CODE = 'canceled';
 	
+	protected static bool $is_rollback_possible = true;
+	
 	public function __construct()
 	{
-		//TODO:
 		$this->title = Tr::_('Canceled', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 12;
 	}

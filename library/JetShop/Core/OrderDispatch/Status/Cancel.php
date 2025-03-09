@@ -18,6 +18,8 @@ abstract class Core_OrderDispatch_Status_Cancel extends OrderDispatch_Status {
 	
 	public const CODE = 'cancel';
 	
+	protected static bool $is_rollback_possible = true;
+	
 	public function __construct()
 	{
 		$this->title = Tr::_('Cancellation in progress', dictionary: Tr::COMMON_DICTIONARY);

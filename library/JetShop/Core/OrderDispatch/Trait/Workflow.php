@@ -6,21 +6,22 @@
  */
 namespace JetShop;
 
-
 use Jet\Data_DateTime;
-use Jet\Logger;
 use Jet\UI_messages;
 use JetApplication\Complaint;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Item;
+use JetApplication\OrderDispatch_Status;
 use JetApplication\OrderDispatch_Status_Cancel;
 use JetApplication\OrderDispatch_Status_Canceled;
 use JetApplication\OrderDispatch_Status_Delivered;
 use JetApplication\OrderDispatch_Status_Lost;
+use JetApplication\OrderDispatch_Status_Pending;
 use JetApplication\OrderDispatch_Status_PreparedConsignmentCreated;
 use JetApplication\OrderDispatch_Status_PreparedConsignmentCreateProblem;
+use JetApplication\OrderDispatch_Status_PreparedConsignmentNotCreated;
 use JetApplication\OrderDispatch_Status_Returned;
 use JetApplication\OrderDispatch_Status_Returning;
 use JetApplication\OrderDispatch_Status_Sent;
@@ -47,9 +48,6 @@ trait Core_OrderDispatch_Trait_Workflow
 		$dispatch->setOrderId( $complaint->getOrderId() );
 		
 		$dispatch->setWarehouse( $_order->getWarehouse() );
-		
-		$dispatch->setStatus( OrderDispatch::STATUS_PENDING );
-		
 		
 		$dispatch->setRecipientEmail( $complaint->getEmail() );
 		$dispatch->setRecipientPhone( $complaint->getPhone() );
@@ -84,18 +82,10 @@ trait Core_OrderDispatch_Trait_Workflow
 		$dispatch_item->setEAN( $product->getEan() );
 		
 		$dispatch->items[] = $dispatch_item;
-
-		
 		
 		$dispatch->save();
 		
-		Logger::info(
-			event: 'order_dispatch:created',
-			event_message: 'Order dispatch has been created',
-			context_object_id: $dispatch->getId(),
-			context_object_name: 'dispatch',
-			context_object_data:$dispatch
-		);
+		$dispatch->setStatus( OrderDispatch_Status_Pending::get() );
 		
 		return $dispatch;
 	}
@@ -114,9 +104,6 @@ trait Core_OrderDispatch_Trait_Workflow
 		$dispatch->setContext( $order->getProvidesContext() );
 		
 		$dispatch->setOrderId( $order->getId() );
-		
-		$dispatch->setStatus( OrderDispatch::STATUS_PENDING );
-		
 		
 		$dispatch->setRecipientEmail( $order->getEmail() );
 		$dispatch->setRecipientPhone( $order->getPhone() );
@@ -162,13 +149,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		
 		$dispatch->save();
 		
-		Logger::info(
-			event: 'order_dispatch:created',
-			event_message: 'Order dispatch has been created',
-			context_object_id: $dispatch->getId(),
-			context_object_name: 'dispatch',
-			context_object_data:$dispatch
-		);
+		$dispatch->setStatus( OrderDispatch_Status_Pending::get() );
 		
 		return $dispatch;
 	}
@@ -178,12 +159,13 @@ trait Core_OrderDispatch_Trait_Workflow
 	
 	public function isReadyToCreateConsignment() : bool
 	{
+		/**
+		 * @var OrderDispatch_Status $status
+		 */
+		$status = $this->getStatus();
+		
 		if(
-			in_array($this->status_code, [
-				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
-				static::STATUS_CANCEL,
-				static::STATUS_CANCELED
-			]) ||
+			!$status::isReadyToCreateConsignment() ||
 			count($this->packets)==0
 		) {
 			return false;
@@ -195,7 +177,12 @@ trait Core_OrderDispatch_Trait_Workflow
 	
 	public function isConsignmentCreated() : bool
 	{
-		return $this->status_code==static::STATUS_PREPARED_CONSIGNMENT_CREATED;
+		/**
+		 * @var OrderDispatch_Status $status
+		 */
+		$status = $this->getStatus();
+		
+		return $status::isConsignmentCreated();
 	}
 	
 	
@@ -205,22 +192,22 @@ trait Core_OrderDispatch_Trait_Workflow
 			return;
 		}
 		
-		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED;
-		$this->save();
-		
+		$this->setStatus( OrderDispatch_Status_PreparedConsignmentNotCreated::get() );
 	}
 
 	
 	public function createConsignment() : bool
 	{
 		/**
+		 * @var OrderDispatch_Status $status
+		 */
+		$status = $this->getStatus();
+		
+		/**
 		 * @var OrderDispatch $this
 		 */
-		if(
-			$this->getStatus()==static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED ||
-			$this->getStatus()==static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM
-		) {
-			$this->getCarrier()->createConsignment( $this );
+		if( $status::canCreateConsignment() ) {
+			return $this->getCarrier()->createConsignment( $this );
 		}
 		
 		return false;
@@ -230,19 +217,11 @@ trait Core_OrderDispatch_Trait_Workflow
 	public function rollBack( bool $ignore_errors ) : bool
 	{
 		/**
-		 * @var OrderDispatch $this
+		 * @var OrderDispatch_Status $status
 		 */
+		$status = $this->getStatus();
 		
-		if(!in_array(
-			$this->status_code,
-			[
-				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
-				static::STATUS_CANCEL,
-				static::STATUS_CANCELED,
-			]
-		)) {
+		if(!$status::isRollbackPossible()) {
 			return false;
 		}
 		
@@ -258,7 +237,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		}
 		
 		$this->consignment_create_error_message = '';
-		$this->status_code = static::STATUS_PENDING;
+		$this->status_code = OrderDispatch_Status_Pending::get()::getCode();
 		$this->consignment_id = '';
 		$this->tracking_number = '';
 		
@@ -289,19 +268,14 @@ trait Core_OrderDispatch_Trait_Workflow
 	
 	public function cancel() : void
 	{
-		/*
-		//TODO:
-		if(
-			!in_array($this->status_code, [
-				static::STATUS_PENDING,
-				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM,
-				static::STATUS_PREPARED_CONSIGNMENT_CREATED
-			])
-		) {
+		/**
+		 * @var OrderDispatch_Status $status
+		 */
+		$status = $this->getStatus();
+		
+		if(!$status::canBeCancelled()) {
 			return;
 		}
-		*/
 		
 		$this->setStatus( OrderDispatch_Status_Cancel::get() );
 	}
