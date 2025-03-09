@@ -44,12 +44,7 @@ abstract class Core_Order_Status_Cancelled extends Order_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #ffaaaaaa;color: #111111;font-weight: bolder;';
+		return 'status-cancelled';
 	}
 	
 	public function createEvent( Order|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ) : Order_Event

@@ -47,12 +47,7 @@ abstract class Core_Order_Status_ReadyForDispatch extends Order_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
+		return 'status-processing';
 	}
 	
 	public static function resolve( EShopEntity_HasStatus_Interface|Order $item ) : bool

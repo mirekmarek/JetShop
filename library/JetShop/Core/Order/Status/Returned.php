@@ -39,7 +39,7 @@ abstract class Core_Order_Status_Returned extends Order_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
+		return 'status-cancelled';
 	}
 	
 	public function getShowAdminCSSStyle() : string

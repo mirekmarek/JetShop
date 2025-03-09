@@ -42,12 +42,7 @@ abstract class Core_Order_Status_DispatchStarted extends Order_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
+		return 'status-processing';
 	}
 	
 	public function createEvent( Order|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ) : Order_Event

@@ -331,6 +331,30 @@ h4.inherited {
 	margin: 5px;
 }
 
+.status-cancelled {
+	background-color: #ffaaaaaa;
+	color: #111111;
+	font-weight: bolder;
+}
+
+.status-done {
+	background-color: #00ffc1;
+}
+
+.status-warning {
+	background-color: #ffaaaaaa;
+	color: #111111;
+	font-weight: bolder;
+}
+
+.status-in-progress {
+	background-color: #9faaFF;
+	color: #111111;
+}
+
+.status-processing {
+	background-color: #00ddc1;
+}
 
 .return-of-goods-status-new {
 

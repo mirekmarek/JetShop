@@ -94,7 +94,10 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	
 	abstract public function getShowAdminCSSClass() : string;
 	
-	abstract public function getShowAdminCSSStyle() : string;
+	public function getShowAdminCSSStyle() : string
+	{
+		return '';
+	}
 	
 	
 	

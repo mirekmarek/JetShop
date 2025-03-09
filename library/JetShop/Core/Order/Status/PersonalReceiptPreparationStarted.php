@@ -42,13 +42,9 @@ abstract class Core_Order_Status_PersonalReceiptPreparationStarted extends Order
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
+		return 'status-processing';
 	}
 	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
-	}
 	
 	public function createEvent( Order|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ) : Order_Event
 	{
