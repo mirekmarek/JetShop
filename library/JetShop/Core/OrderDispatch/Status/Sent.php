@@ -7,11 +7,13 @@
 namespace JetShop;
 
 
+use Jet\Data_DateTime;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
+use JetApplication\OrderDispatch_Event_Sent;
 use JetApplication\OrderDispatch_Status;
 
 abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
@@ -39,8 +41,7 @@ abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, string $previouse_status_code ): null|EShopEntity_Event|OrderDispatch_Event
 	{
-		//TODO:
-		return null;
+		return OrderDispatch_Event_Sent::new();
 	}
 	
 	
@@ -49,6 +50,12 @@ abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 		$res = [];
 		//TODO:
 		return $res;
+	}
+	
+	public function setupObjectAfterStatusUpdated( EShopEntity_Basic|OrderDispatch $item, array $params=[] ): void
+	{
+		$item->setDispatchDate( Data_DateTime::now() );
+		$item->save();
 	}
 	
 }

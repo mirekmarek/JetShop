@@ -12,6 +12,7 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
+use JetApplication\OrderDispatch_Event_Returned;
 use JetApplication\OrderDispatch_Status;
 
 abstract class Core_OrderDispatch_Status_Returned extends OrderDispatch_Status {
@@ -38,8 +39,7 @@ abstract class Core_OrderDispatch_Status_Returned extends OrderDispatch_Status {
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, string $previouse_status_code ): null|EShopEntity_Event|OrderDispatch_Event
 	{
-		//TODO:
-		return null;
+		return OrderDispatch_Event_Returned::new();
 	}
 	
 	

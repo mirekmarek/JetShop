@@ -50,6 +50,14 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends Orde
 		$res = [];
 		//TODO:
 		return $res;
+
+	}
+	
+	public function setupObjectAfterStatusUpdated( EShopEntity_Basic|OrderDispatch $item, array $params=[] ): void
+	{
+		$item->setConsignmentId( $params['consignment_id'] );
+		$item->setTrackingNumber( $params['tracking_number'] );
+		$item->save();
 	}
 	
 }

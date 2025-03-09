@@ -14,8 +14,16 @@ use JetApplication\Complaint;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
-use JetApplication\OrderDispatch_Event;
 use JetApplication\OrderDispatch_Item;
+use JetApplication\OrderDispatch_Status_Cancel;
+use JetApplication\OrderDispatch_Status_Canceled;
+use JetApplication\OrderDispatch_Status_Delivered;
+use JetApplication\OrderDispatch_Status_Lost;
+use JetApplication\OrderDispatch_Status_PreparedConsignmentCreated;
+use JetApplication\OrderDispatch_Status_PreparedConsignmentCreateProblem;
+use JetApplication\OrderDispatch_Status_Returned;
+use JetApplication\OrderDispatch_Status_Returning;
+use JetApplication\OrderDispatch_Status_Sent;
 use JetApplication\Product_EShopData;
 
 
@@ -200,14 +208,6 @@ trait Core_OrderDispatch_Trait_Workflow
 		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED;
 		$this->save();
 		
-		Logger::info(
-			event: 'order_dispatch:set_is_prepared',
-			event_message: 'Order dispatch is prepared',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-		
 	}
 
 	
@@ -264,14 +264,6 @@ trait Core_OrderDispatch_Trait_Workflow
 		
 		$this->save();
 		
-		Logger::info(
-			event: 'order_dispatch:rollback',
-			event_message: 'Order dispatch rollback',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-		
 		
 		return true;
 	}
@@ -279,40 +271,26 @@ trait Core_OrderDispatch_Trait_Workflow
 	
 	public function setConsignmentCreateError( string $error_message ) : void
 	{
-		$this->consignment_create_error_message = $error_message;
-		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM;
+		$this->setConsignmentCreateErrorMessage( $error_message );
 		$this->save();
 		
-		Logger::info(
-			event: 'order_dispatch:consignment_create_error',
-			event_message: 'Consignment creation error: '.$error_message,
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
+		$this->setStatus( OrderDispatch_Status_PreparedConsignmentCreateProblem::get() );
 		
 	}
 	
 	public function setConsignmentCreated( string $consignment_id, $tracking_number ) : void
 	{
-		$this->consignment_create_error_message = '';
-		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_CREATED;
-		$this->consignment_id = $consignment_id;
-		$this->tracking_number = $tracking_number;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:consignment_created',
-			event_message: 'Consignment created',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
+		$this->setStatus( OrderDispatch_Status_PreparedConsignmentCreated::get(), params: [
+			'consignment_id' => $consignment_id,
+			'tracking_number' => $tracking_number
+		] );
 		
 	}
 	
 	public function cancel() : void
 	{
+		/*
+		//TODO:
 		if(
 			!in_array($this->status_code, [
 				static::STATUS_PENDING,
@@ -323,186 +301,43 @@ trait Core_OrderDispatch_Trait_Workflow
 		) {
 			return;
 		}
+		*/
 		
-		$this->status_code = static::STATUS_CANCEL;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:cancel',
-			event_message: 'Order dispatch cancel',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-		
+		$this->setStatus( OrderDispatch_Status_Cancel::get() );
 	}
 	
 	public function confirmCancellation() : void
 	{
-		if(
-			$this->status_code != static::STATUS_CANCEL
-		) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_CANCELED;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:cancelled',
-			event_message: 'Order dispatch cancellation confirmed',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-		
-		
+		$this->setStatus( OrderDispatch_Status_Canceled::get() );
 	}
 	
 	
 	public function sent() : void
 	{
-		/**
-		 * @var OrderDispatch $this
-		 */
-
-		if(
-			$this->status_code != static::STATUS_PREPARED_CONSIGNMENT_CREATED
-		) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_SENT;
-		$this->dispatch_date = Data_DateTime::now();
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:sent',
-			event_message: 'Order dispatched and sent',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-		
-		OrderDispatch_Event::newEvent(
-			$this,
-			OrderDispatch::EVENT_SENT
-		)->handleImmediately();
+		$this->setStatus( OrderDispatch_Status_Sent::get() );
 	}
 	
 	
 	public function delivered() : void
 	{
-		/**
-		 * @var OrderDispatch $this
-		 */
-		
-		if( $this->status_code == static::STATUS_DELIVERED ) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_DELIVERED;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:delivered',
-			event_message: 'Consignment Delivered',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-
-		
-		OrderDispatch_Event::newEvent(
-			$this,
-			OrderDispatch::EVENT_DELIVERED
-		)->handleImmediately();
+		$this->setStatus( OrderDispatch_Status_Delivered::get() );
 	}
 	
 	
 	public function returning() : void
 	{
-		/**
-		 * @var OrderDispatch $this
-		 */
-		
-		if( $this->status_code == static::STATUS_RETURNING ) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_RETURNING;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:returning',
-			event_message: 'Consignment Returning',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-
-		
-		OrderDispatch_Event::newEvent(
-			$this,
-			OrderDispatch::EVENT_RETURNING
-		)->handleImmediately();
+		$this->setStatus( OrderDispatch_Status_Returning::get() );
 	}
 	
 	
 	public function returned() : void
 	{
-		/**
-		 * @var OrderDispatch $this
-		 */
-		
-		if( $this->status_code == static::STATUS_RETURNED ) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_RETURNED;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:returned',
-			event_message: 'Consignment Returned',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-
-		
-		OrderDispatch_Event::newEvent(
-			$this,
-			OrderDispatch::EVENT_RETURNED
-		)->handleImmediately();
+		$this->setStatus( OrderDispatch_Status_Returned::get() );
 	}
 	
 	public function lost() : void
 	{
-		/**
-		 * @var OrderDispatch $this
-		 */
-		
-		if( $this->status_code == static::STATUS_LOST ) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_LOST;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_dispatch:lost',
-			event_message: 'Consignment Lost',
-			context_object_id: $this->getId(),
-			context_object_name: 'dispatch',
-			context_object_data: $this
-		);
-		
-		
-		OrderDispatch_Event::newEvent(
-			$this,
-			OrderDispatch::EVENT_LOST
-		)->handleImmediately();
+		$this->setStatus( OrderDispatch_Status_Lost::get() );
 	}
 	
 }

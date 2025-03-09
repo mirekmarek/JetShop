@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Closure;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Logger;
@@ -59,7 +60,12 @@ trait Core_EShopEntity_HasStatus_Trait {
 		}
 	}
 	
-	public function setStatus( EShopEntity_Status|EShopEntity_VirtualStatus $status, bool $handle_event=true ) : void
+	public function setStatus(
+		EShopEntity_Status|EShopEntity_VirtualStatus $status,
+		bool $handle_event=true,
+		array $params=[],
+		?Closure $event_setup=null
+	) : void
 	{
 		if( $status instanceof EShopEntity_VirtualStatus ) {
 			$status::handle( $this );
@@ -85,6 +91,8 @@ trait Core_EShopEntity_HasStatus_Trait {
 		
 		$this->setFlags( $status::getFlagsMap() );
 		
+		$status->setupObjectAfterStatusUpdated( $this, $params );
+		
 		Logger::info(
 			event: static::getEntityType().':status_updated',
 			event_message: 'Status updated. New status: '.$status->getCode(),
@@ -98,6 +106,10 @@ trait Core_EShopEntity_HasStatus_Trait {
 			$handle_event &&
 			($event=$status->createEvent( $this, $prev_status_code ))
 		) {
+			if($event_setup) {
+				$event_setup( $event );
+			}
+			
 			$event->handleImmediately();
 		}
 	}

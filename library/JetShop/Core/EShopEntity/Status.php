@@ -182,4 +182,8 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 		return [];
 	}
 	
+	public function setupObjectAfterStatusUpdated( EShopEntity_Basic $item, array $params ) : void
+	{
+	
+	}
 }
