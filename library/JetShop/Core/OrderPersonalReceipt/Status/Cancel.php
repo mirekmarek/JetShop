@@ -27,18 +27,11 @@ abstract class Core_OrderPersonalReceipt_Status_Cancel extends OrderPersonalRece
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		//TODO:
-		return '';
+		return 'status-warning';
 	}
 	
 	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderPersonalReceipt_Event
 	{
-		//TODO:
 		return null;
 	}
 	

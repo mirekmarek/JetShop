@@ -35,12 +35,7 @@ abstract class Core_MoneyRefund_Status_InProcessing extends MoneyRefund_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
+		return 'status-in-progress';
 	}
 	
 	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event

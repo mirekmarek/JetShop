@@ -30,13 +30,7 @@ abstract class Core_OrderPersonalReceipt_Status_HandedOver extends OrderPersonal
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		//TODO:
-		return '';
+		return 'status-done';
 	}
 	
 	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderPersonalReceipt_Event

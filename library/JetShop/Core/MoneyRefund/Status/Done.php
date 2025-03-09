@@ -33,12 +33,7 @@ abstract class Core_MoneyRefund_Status_Done extends MoneyRefund_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #9faaFF;color: #111111;';
+		return 'status-done';
 	}
 	
 	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event

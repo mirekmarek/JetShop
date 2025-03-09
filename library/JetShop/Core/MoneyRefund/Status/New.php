@@ -34,14 +34,8 @@ abstract class Core_MoneyRefund_Status_New extends MoneyRefund_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
+		return 'status-pending';
 	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
-	}
-	
 	
 	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event
 	{
