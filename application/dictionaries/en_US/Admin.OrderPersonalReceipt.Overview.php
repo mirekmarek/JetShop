@@ -39,4 +39,5 @@ return [
 	'Prepared' => '',
 	'Haded over' => '',
 	'Handed over - %DATE_TIME%' => '',
+	'Status:' => '',
 ];
