@@ -45,7 +45,7 @@ $orders = $this->getRaw( 'orders' );
 			<?=Locale::dateAndTime( $order->getDatePurchased() );?>
 		</td>
 		<td>
-			<?=Admin_Managers::Order()->showOrderStatus( $order )?>
+			<?=$order->getStatus()->showAdmin()?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

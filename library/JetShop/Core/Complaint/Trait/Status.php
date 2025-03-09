@@ -10,9 +10,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Complaint;
 use JetApplication\Complaint_Status;
-use JetApplication\Complaint_DispatchStatus;
 
 trait Core_Complaint_Trait_Status {
 	
@@ -31,15 +29,6 @@ trait Core_Complaint_Trait_Status {
 		'sent_for_repair',
 		'repaired',
 		'send_new_products',
-	];
-	
-	protected static array $dispatch_flags =  [
-		'ready_for_dispatch',
-		'dispatch_started',
-		
-		'dispatched',
-		'delivered',
-		'returned',
 	];
 	
 	
@@ -172,102 +161,10 @@ trait Core_Complaint_Trait_Status {
 			$this->ready_for_dispatch  = false;
 		}
 	}
-	
-	
-	
-	public function getFlags() : array
-	{
-		$res = [];
-		foreach( static::$flags as $flag ) {
-			$res[$flag] = $this->{$flag};
-		}
-		
-		return $res;
-	}
-	
-	public function setFlags( array $flags ) : void
-	{
-		foreach( static::$flags as $flag ) {
-			if(
-				!array_key_exists($flag, $flags) ||
-				$flags[$flag] === null
-			) {
-				continue;
-			}
-			
-			$this->{$flag} = (bool)$flags[$flag];
-		}
-		
-	}
-	
-	
-	public function getStatus() : ?Complaint_Status
-	{
-		/**
-		 * @var Complaint $this
-		 */
-		foreach(Complaint_Status::getList() as $status) {
-			if($status::resolve( $this )) {
-				return $status;
-			}
-		}
-		
-		return null;
-	}
-	
-	
-	
-	
-	
-	
-	public function getDispatchFlags() : array
-	{
-		$res = [];
-		foreach( static::$dispatch_flags as $flag ) {
-			$res[$flag] = $this->{$flag};
-		}
-		
-		return $res;
-	}
-	
-	public function setDispatchFlags( array $flags ) : void
-	{
-		foreach( static::$dispatch_flags as $flag ) {
-			if(
-				!array_key_exists($flag, $flags) ||
-				$flags[$flag] === null
-			) {
-				continue;
-			}
-			
-			$this->{$flag} = (bool)$flags[$flag];
-		}
-		
-	}
-	
-	
-	public function getDispatchStatus() : ?Complaint_DispatchStatus
-	{
-		if(
-			$this->cancelled ||
-			(
-				!$this->repaired &&
-				!$this->send_new_products
-			)
-		) {
-			return null;
-		}
-		
-		/**
-		 * @var Complaint $this
-		 */
-		foreach(Complaint_DispatchStatus::getList() as $status) {
-			if($status::resolve( $this )) {
-				return $status;
-			}
-		}
-		
-		return null;
-	}
 
+
+	public static function getStatusList() : array
+	{
+		return Complaint_Status::getList();
+	}
 }

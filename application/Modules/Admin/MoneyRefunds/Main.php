@@ -33,14 +33,6 @@ class Main extends Admin_Managers_MoneyRefund
 		return new MoneyRefund();
 	}
 	
-	public function showMoneyRefundStatus( MoneyRefund $refund ): string
-	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		$view->setVar('money_refund', $refund);
-		
-		return $view->render('money_refund_status');
-	}
-	
 	public function showOrderMoneyRefunds( Order $order ) : string
 	{
 		$money_refunds= MoneyRefund::getByOrder( $order );

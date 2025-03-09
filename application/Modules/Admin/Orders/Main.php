@@ -33,20 +33,6 @@ class Main extends Admin_Managers_Order
 	{
 		return new Order();
 	}
-
-	public function showOrderStatus( Order $order ): string
-	{
-		
-		return Tr::setCurrentDictionaryTemporary(
-			dictionary: $this->module_manifest->getName(),
-			action: function() use ($order) {
-				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-				$view->setVar('order', $order );
-				
-				return $view->render('order_status');
-			}
-		);
-	}
 	
 	public function showOrdersOfCustomer( Customer $customer ) : string
 	{

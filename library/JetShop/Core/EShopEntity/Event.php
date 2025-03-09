@@ -7,13 +7,20 @@
 namespace JetShop;
 
 
+use Jet\Application_Modules;
+use Jet\Auth;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_PropertyFilter;
 use Jet\Data_DateTime;
 
+use JetApplication\EShop;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
+use JetApplication\Event_HandlerModule;
+use ReflectionClass;
 
 /**
  *
@@ -23,6 +30,8 @@ abstract class Core_EShopEntity_Event extends EShopEntity_Basic implements EShop
 {
 	use EShopEntity_HasEShopRelation_Trait;
 	protected static string $handler_module_name_prefix = '';
+	
+	protected static string $event_base_class_name = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -120,6 +129,10 @@ abstract class Core_EShopEntity_Event extends EShopEntity_Basic implements EShop
 	)]
 	protected int $administrator_id = 0;
 	
+	public static function new() : static
+	{
+		return new static();
+	}
 	
 	public static function getHandlerModuleNamePrefix(): string
 	{
@@ -361,13 +374,76 @@ abstract class Core_EShopEntity_Event extends EShopEntity_Basic implements EShop
 	}
 	
 	
-	abstract public function handle() : bool;
+	public function getHandlerModule() : ?Event_HandlerModule
+	{
+		
+		if(!Application_Modules::moduleIsActivated( $this->getHandlerModuleName() )) {
+			return null;
+		}
+		
+		$module = Application_Modules::moduleInstance( $this->getHandlerModuleName() );
+		/**
+		 * @var Event_HandlerModule $module
+		 * @var EShopEntity_Event $this
+		 */
+		$module->init( $this );
+		
+		return $module;
+	}
+	
+	public function handle() : bool
+	{
+		$this->save();
+		
+		return $this->getHandlerModule()?->handle()??false;
+	}
 	
 	public function handleImmediately() : bool
 	{
 		$this->handled_immediately = true;
+		$this->save();
 		
 		return $this->handle();
 	}
 	
+	public static function getCode() : string
+	{
+		return str_replace( static::$event_base_class_name.'_', '', static::class );
+	}
+	
+	public function init( EShop $eshop ) : void
+	{
+		$this->setEshop( $eshop );
+		$this->event = static::getCode();
+		$this->created_date_time = Data_DateTime::now();
+		
+		$admin = Auth::getCurrentUser();
+		if($admin) {
+			$this->setAdministrator( $admin->getName() );
+			$this->setAdministratorId( $admin->getId() );
+		}
+	}
+	
+	public static function initByData( array $this_data, array $related_data = [], DataModel_PropertyFilter $load_filter = null) : static
+	{
+		$ref = new ReflectionClass(static::class);
+		if(!$ref->isAbstract()) {
+			return parent::initByData( $this_data, $related_data, $load_filter );
+		}
+		
+		$class = static::$event_base_class_name.'_'.$this_data['event'];
+		/**
+		 * @var EShopEntity_Event $class
+		 */
+		
+		return $class::initByData( $this_data, $related_data, $load_filter );
+		
+	}
+	
+	/**
+	 * @param int $entity_id
+	 *
+	 * @return static[]
+	 */
+	abstract public static function getEventsList( int $entity_id ) : array;
 }

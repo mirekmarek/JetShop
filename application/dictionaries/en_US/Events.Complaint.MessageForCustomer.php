@@ -5,4 +5,7 @@ return [
 	'Date and time of complaint' => '',
 	'Complaint URL' => '',
 	'Message text' => '',
+	'File name' => '',
+	'Type' => '',
+	'Size' => '',
 ];

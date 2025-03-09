@@ -24,11 +24,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_Order() );
 		$this->listing_manager->addColumn( new Listing_Column_Customer() );
 		$this->listing_manager->addColumn( new Listing_Column_DateStarted() );
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_Amount() );
-		
-		
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
 			$search_separated = explode( ' ', $search );

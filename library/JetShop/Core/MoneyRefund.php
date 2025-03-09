@@ -18,18 +18,23 @@ use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\MoneyRefund;
 use JetApplication\MoneyRefund_Event;
+use JetApplication\MoneyRefund_Event_InternalNote;
+use JetApplication\MoneyRefund_Event_MessageForCustomer;
+use JetApplication\MoneyRefund_Event_NewRequest;
 use JetApplication\MoneyRefund_Note;
 use JetApplication\MoneyRefund_Status;
-use JetApplication\MoneyRefund_Status_Cancelled;
-use JetApplication\MoneyRefund_Status_Done;
-use JetApplication\MoneyRefund_Status_InProcessing;
 use JetApplication\MoneyRefund_Status_New;
+use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 use JetApplication\Order;
 use JetApplication\Admin_Managers_MoneyRefund;
 
@@ -41,23 +46,20 @@ use JetApplication\Admin_Managers_MoneyRefund;
 	entity_name_readable: 'Money refundation',
 	admin_manager_interface: Admin_Managers_MoneyRefund::class
 )]
-class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
+abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface,
 	EShopEntity_Admin_Interface,
 	EShopEntity_HasNumberSeries_Interface,
 	Context_HasContext_Interface
 {
-	public const EVENT_NEW_REQUEST = 'NewRequest';
-	public const EVENT_MESSAGE_FOR_CUSTOMER = 'MessageForCustomer';
-	public const EVENT_INTERNAL_NOTE = 'InternalNote';
-	
-	public const EVENT_PROCESSING_STARTED = 'ProcessingStarted';
-	public const EVENT_CANCELLED = 'Cancelled';
-	public const EVENT_DONE = 'Done';
-	public const EVENT_ROLLBACK = 'Rollback';
+	protected static array $flags = [];
 	
 	
 	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_HasEvents_Trait;
 	use EShopEntity_Admin_Trait;
 	use Core_EShopEntity_HasNumberSeries_Trait;
 	use Context_HasContext_Trait;
@@ -175,18 +177,12 @@ class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	)]
 	protected string $currency_code = '';
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-		is_key: true,
-	)]
-	protected string $status_code = '';
 	
 	public function afterAdd(): void
 	{
 		$this->generateNumber();
 		
-		$this->createEvent( static::EVENT_NEW_REQUEST )->handleImmediately();
+		$this->initEvent( MoneyRefund_Event_NewRequest::new() )->handleImmediately();
 	}
 	
 	
@@ -276,21 +272,6 @@ class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	public function setInternalSummary( string $internal_summary ): void
 	{
 		$this->internal_summary = $internal_summary;
-	}
-	
-	public function getStatusCode(): string
-	{
-		return $this->status_code;
-	}
-	
-	public function setStatusCode( string $status_code ): void
-	{
-		$this->status_code = $status_code;
-	}
-	
-	public function getStatus() : ?MoneyRefund_Status
-	{
-		return MoneyRefund_Status::get( $this->status_code );
 	}
 	
 	public function getDateStarted(): ?Data_DateTime
@@ -452,14 +433,12 @@ class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	
 	
 	
-	public function createEvent( string $event ) : MoneyRefund_Event
+	public function initEvent( MoneyRefund_Event $event ) : MoneyRefund_Event
 	{
-		/**
-		 * @var MoneyRefund $this
-		 */
-		$e = MoneyRefund_Event::newEvent( $this, $event );
+		$event->setMoneyRefund( $this );
+		$event->init( $this->getEshop() );
 		
-		return $e;
+		return $event;
 	}
 	
 	
@@ -474,14 +453,14 @@ class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	
 	public function messageForCustomer( MoneyRefund_Note $note ) : void
 	{
-		$event = $this->createEvent( MoneyRefund::EVENT_MESSAGE_FOR_CUSTOMER );
+		$event = $this->initEvent( MoneyRefund_Event_MessageForCustomer::new() );
 		$event->setContext( $note );
 		$event->handleImmediately();
 	}
 	
 	public function internalNote( MoneyRefund_Note $note ) : void
 	{
-		$event = $this->createEvent( MoneyRefund::EVENT_INTERNAL_NOTE );
+		$event = $this->initEvent( MoneyRefund_Event_InternalNote::new() );
 		$event->setContext( $note );
 		$event->handleImmediately();
 	}
@@ -491,7 +470,7 @@ class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	 */
 	public function getHistory() : array
 	{
-		return MoneyRefund_Event::getForMoneyRefund( $this->getId() );
+		return MoneyRefund_Event::getEventsList( $this->getId() );
 	}
 	
 	public function getAddress() : Customer_Address
@@ -512,36 +491,22 @@ class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 		return $address;
 	}
 	
-	public function startProcessing() : void
+	public static function getStatusList(): array
 	{
-		$this->setStatusCode( MoneyRefund_Status_InProcessing::getCode() );
-		$this->save();
-
-		$this->createEvent(static::EVENT_PROCESSING_STARTED)->handleImmediately();
+		return MoneyRefund_Status::getList();
 	}
 	
-	public function cancel() : void
-	{
-		$this->setStatusCode( MoneyRefund_Status_Cancelled::getCode() );
-		$this->save();
-
-		$this->createEvent(static::EVENT_CANCELLED)->handleImmediately();
-	}
-	
-	public function done() : void
-	{
-		$this->setStatusCode( MoneyRefund_Status_Done::getCode() );
-		$this->save();
-		
-		$this->createEvent(static::EVENT_DONE)->handleImmediately();
-	}
 	
 	public function rollback() : void
 	{
-		$this->setStatusCode( MoneyRefund_Status_New::getCode() );
-		$this->save();
-		
-		$this->createEvent(static::EVENT_ROLLBACK)->handleImmediately();
+		$this->setStatus( MoneyRefund_VirtualStatus_Rollback::get() );
 	}
-
+	
+	public function createEvent( EShopEntity_Event|MoneyRefund_Event $event ): MoneyRefund_Event
+	{
+		$event->init( $this->getEshop() );
+		$event->setMoneyRefund( $this );
+		
+		return $event;
+	}
 }

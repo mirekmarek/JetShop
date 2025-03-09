@@ -121,5 +121,4 @@ class Main extends Admin_Managers_UI
 	{
 		return $this->render( 'main-menu' );
 	}
-	
 }

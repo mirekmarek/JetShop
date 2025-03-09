@@ -10,6 +10,8 @@ namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Product;
+use JetApplication\ProductQuestion;
 
 class Listing_Column_Product extends DataListing_Column
 {
@@ -34,4 +36,18 @@ class Listing_Column_Product extends DataListing_Column
 	{
 		return true;
 	}
+	
+	public function getExportHeader() : null|string|array
+	{
+		return Tr::_('Created');
+	}
+	
+	public function getExportData( mixed $item ) : float|int|bool|string|array
+	{
+		/**
+		 * @var ProductQuestion $item
+		 */
+		return Product::get( $item->getProductId() )?->getAdminTitle()??$item->getProductId();
+	}
+	
 }

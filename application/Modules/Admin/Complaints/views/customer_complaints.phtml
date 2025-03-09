@@ -39,7 +39,7 @@ $complaints = $this->getRaw( 'complaints' );
 			<?=Locale::dateAndTime( $complaint->getDateStarted() );?>
 		</td>
 		<td>
-			<?=Admin_Managers::Complaint()->showComplaintStatus( $complaint )?>
+			<?=$complaint->getStatus()->showAdmin()?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

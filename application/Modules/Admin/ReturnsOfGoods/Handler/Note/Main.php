@@ -9,8 +9,8 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
+use JetApplication\ReturnOfGoods_Event_MessageForCustomer;
 use JetApplication\ReturnOfGoods_Note;
-use JetApplication\ReturnOfGoods;
 
 class Handler_Note_Main extends Handler
 {
@@ -32,7 +32,7 @@ class Handler_Note_Main extends Handler
 			/**
 			 * @var \JetApplicationModule\Events\ReturnOfGoods\MessageForCustomer\Main $event_handler
 			 */
-			$event_handler = $this->return_of_goods->createEvent( ReturnOfGoods::EVENT_MESSAGE_FOR_CUSTOMER )->getHandlerModule();
+			$event_handler = $this->return_of_goods->createEvent( ReturnOfGoods_Event_MessageForCustomer::new() )->getHandlerModule();
 			$template = $event_handler->getEMailTemplates()[0];
 			$template->setReturnOfGoods( $this->return_of_goods );
 			$generated_subject = $template->createEmail( $this->return_of_goods->getEshop() )->getSubject();

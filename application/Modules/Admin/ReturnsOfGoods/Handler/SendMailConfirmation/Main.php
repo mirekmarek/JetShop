@@ -11,8 +11,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\ReturnOfGoods_Event;
-use JetApplication\ReturnOfGoods;
+use JetApplication\ReturnOfGoods_Event_InternalNote;
 
 class Handler_SendMailConfirmation_Main extends Handler
 {
@@ -26,7 +25,7 @@ class Handler_SendMailConfirmation_Main extends Handler
 	{
 		if(Http_Request::GET()->getString('send_email')=='confirm') {
 			
-			$handler = ReturnOfGoods_Event::getEventHandlerModule( ReturnOfGoods::EVENT_RETURN_OF_GOODS_FINISHED );
+			$handler = $this->return_of_goods->createEvent( ReturnOfGoods_Event_InternalNote::new() )->getHandlerModule();
 			
 			if( $handler->sendNewReturnOfGoodsEmail( $this->return_of_goods ) ) {
 				UI_messages::success( Tr::_('Return of goods confirmation e-mail has been sent') );

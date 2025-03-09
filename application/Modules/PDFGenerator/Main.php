@@ -16,6 +16,7 @@ use TCPDF;
 class Main extends PDF_Generator
 {
 	
+	/** @noinspection PhpMethodParametersCountMismatchInspection */
 	public function generate( PDF $pdf ): string
 	{
 		require 'TCPDF/tcpdf.php';

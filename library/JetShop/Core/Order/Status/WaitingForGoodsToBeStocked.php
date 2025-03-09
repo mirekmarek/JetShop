@@ -32,6 +32,16 @@ abstract class Core_Order_Status_WaitingForGoodsToBeStocked extends Order_Status
 		$this->title = Tr::_('Waiting for goods to be stocked', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 20;
 	}
-
+	
+	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #ffaaaaaa;color: #111111;font-weight: bolder;';
+	}
 	
 }

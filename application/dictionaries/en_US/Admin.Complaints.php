@@ -180,4 +180,6 @@ return [
 	'e-shop' => '',
 	'Note' => '',
 	'Complaint dispatch' => '',
+	'Administrator' => '',
+	'Complaint - rejected' => '',
 ];

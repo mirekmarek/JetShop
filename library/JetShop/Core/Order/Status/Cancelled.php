@@ -8,6 +8,10 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\Order;
+use JetApplication\Order_Event;
+use JetApplication\Order_Event_Cancel;
 use JetApplication\Order_Status;
 
 abstract class Core_Order_Status_Cancelled extends Order_Status {
@@ -35,6 +39,21 @@ abstract class Core_Order_Status_Cancelled extends Order_Status {
 	{
 		$this->title = Tr::_('Cancelled', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 80;
+	}
+	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #ffaaaaaa;color: #111111;font-weight: bolder;';
+	}
+	
+	public function createEvent( Order|EShopEntity_Basic $item, string $previouse_status_code ) : Order_Event
+	{
+		return $item->createEvent( Order_Event_Cancel::new() );
 	}
 	
 }

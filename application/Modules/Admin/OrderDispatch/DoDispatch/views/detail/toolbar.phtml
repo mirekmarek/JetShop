@@ -20,7 +20,7 @@ use JetApplication\OrderDispatch;
 
 $dispatch = $this->getRaw('dispatch');
 
-require __DIR__.'/toolbar/'.$dispatch->getStatus().'.phtml';
+require __DIR__.'/toolbar/'.$dispatch->getStatusCode().'.phtml';
 
 echo UI::button(Tr::_('Goto next pending (alt+n)'))->setClass(UI_button::CLASS_INFO)->setOnClick("Control.nextPending();");
 ?>

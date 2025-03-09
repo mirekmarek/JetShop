@@ -53,7 +53,7 @@ $order = $this->getRaw( 'order' );
 			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
 			<div class="card-body">
 				
-				<?=Admin_Managers::Order()->showOrderStatus( $order )?>
+				<?=$order->getStatus()->showAdmin()?>
 				
 				<table style="margin: 10px">
 					<?php if($order->getSplitSourceOrderId()): ?>

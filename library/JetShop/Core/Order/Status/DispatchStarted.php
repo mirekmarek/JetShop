@@ -8,6 +8,11 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\Order;
+use JetApplication\Order_Event;
+use JetApplication\Order_Event_DispatchStarted;
 use JetApplication\Order_Status;
 
 abstract class Core_Order_Status_DispatchStarted extends Order_Status {
@@ -26,14 +31,36 @@ abstract class Core_Order_Status_DispatchStarted extends Order_Status {
 		
 		'ready_for_dispatch' => true,
 		'dispatch_started' => true,
-	
-	
 	];
 	
 	public function __construct()
 	{
 		$this->title = Tr::_('Dispatch started', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 40;
+	}
+	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #00ddc1;';
+	}
+	
+	public function createEvent( Order|EShopEntity_Basic $item, string $previouse_status_code ) : Order_Event
+	{
+		return $item->createEvent( Order_Event_DispatchStarted::new() );
+	}
+	
+	public static function resolve( EShopEntity_HasStatus_Interface|Order $item ) : bool
+	{
+		if($item->getDeliveryMethod()->isPersonalTakeover()) {
+			return false;
+		}
+		
+		return parent::resolve( $item );
 	}
 	
 }

@@ -11,8 +11,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Order_Event;
-use JetApplication\Order;
+use JetApplication\Order_Event_NewOrder;
 
 class Handler_SendMailConfirmation_Main extends Handler
 {
@@ -26,7 +25,7 @@ class Handler_SendMailConfirmation_Main extends Handler
 	{
 		if(Http_Request::GET()->getString('send_email')=='confirm') {
 			
-			$handler = Order_Event::getEventHandlerModule( Order::EVENT_NEW_ORDER );
+			$handler = $this->order->createEvent( Order_Event_NewOrder::new() )->getHandlerModule();
 			
 			if( $handler->sendNewOrderEmail( $this->order ) ) {
 				UI_messages::success( Tr::_('Order confirmation e-mail has been sent') );
@@ -39,7 +38,5 @@ class Handler_SendMailConfirmation_Main extends Handler
 		}
 		
 	}
-	
-	
-	
+
 }

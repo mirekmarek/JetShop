@@ -1,0 +1,22 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+
+/** @noinspection BadExpressionStatementJS */
+
+use Jet\MVC_View;
+use JetApplication\EShopEntity_Status;
+
+/**
+ * @var MVC_View $this
+ * @var EShopEntity_Status $status
+ */
+
+$status = $this->getRaw('status');
+?>
+<div class="status <?=$status->getShowAdminCSSClass()?>" style="<?=$status->getShowAdminCSSStyle()?>">
+<?=$status->getTitle()?>
+</div>

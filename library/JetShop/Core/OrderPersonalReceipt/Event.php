@@ -6,16 +6,12 @@
  */
 namespace JetShop;
 
-
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Data_DateTime;
 
 use JetApplication\EShopEntity_Event;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
-use JetApplication\OrderPersonalReceipt_Event_HandlerModule;
 
 /**
  *
@@ -24,10 +20,12 @@ use JetApplication\OrderPersonalReceipt_Event_HandlerModule;
 	name: 'order_personal_receipt_event',
 	database_table_name: 'order_personal_receipts_events',
 )]
-class Core_OrderPersonalReceipt_Event extends EShopEntity_Event
+abstract class Core_OrderPersonalReceipt_Event extends EShopEntity_Event
 {
 	
 	protected static string $handler_module_name_prefix = 'Events.OrderPersonalReceipt.';
+	
+	protected static string $event_base_class_name = OrderPersonalReceipt_Event::class;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -35,23 +33,12 @@ class Core_OrderPersonalReceipt_Event extends EShopEntity_Event
 	)]
 	protected int $order_personal_receipt_id = 0;
 	
-	protected ?OrderPersonalReceipt $_order_dispatch = null;
-	
-	
-	public static function getEventHandlerModule( string $event_name ) : OrderPersonalReceipt_Event_HandlerModule
+	protected ?OrderPersonalReceipt $_order_personal_receipt = null;
+
+	public function setOrderPersonalReceipt( OrderPersonalReceipt $value ) : static
 	{
-		/**
-		 * @var OrderPersonalReceipt_Event $this
-		 * @var OrderPersonalReceipt_Event_HandlerModule $module
-		 */
-		$module = Application_Modules::moduleInstance( static::getHandlerModuleNamePrefix().$event_name );
-		
-		return $module;
-	}
-	
-	public function setOrderPersonalReceiptId( int $value ) : static
-	{
-		$this->order_personal_receipt_id = $value;
+		$this->_order_personal_receipt = $value;
+		$this->order_personal_receipt_id = $value->getId();
 		
 		return $this;
 	}
@@ -63,42 +50,26 @@ class Core_OrderPersonalReceipt_Event extends EShopEntity_Event
 	
 	public function getOrderPersonalReceipt() : OrderPersonalReceipt
 	{
-		if($this->_order_dispatch===null) {
-			$this->_order_dispatch = OrderPersonalReceipt::load($this->order_personal_receipt_id);
+		if($this->_order_personal_receipt===null) {
+			$this->_order_personal_receipt = OrderPersonalReceipt::load($this->order_personal_receipt_id);
 		}
 		
-		return $this->_order_dispatch;
+		return $this->_order_personal_receipt;
 	}
 	
-	public function getHandlerModule() : ?OrderPersonalReceipt_Event_HandlerModule
-	{
-		/**
-		 * @var OrderPersonalReceipt_Event $this
-		 * @var OrderPersonalReceipt_Event_HandlerModule $module
-		 */
-		if(!Application_Modules::moduleIsActivated( $this->getHandlerModuleName() )) {
-			return null;
-		}
-		
-		$module = Application_Modules::moduleInstance( $this->getHandlerModuleName() );
-		$module->init( $this );
-		
-		return $module;
-	}
 	
-	public function handle() : bool
+	/**
+	 * @param int $entity_id
+	 *
+	 * @return static[]
+	 */
+	public static function getEventsList( int $entity_id ) : array
 	{
-		return $this->getHandlerModule()->handle();
-	}
-	
-	public static function newEvent( OrderPersonalReceipt $order_dispatch, string $event ) : OrderPersonalReceipt_Event
-	{
-		$e = new OrderPersonalReceipt_Event();
-		$e->setEvent( $event );
-		$e->setEshop( $order_dispatch->getEshop() );
-		$e->setOrderPersonalReceiptId( $order_dispatch->getId() );
-		$e->created_date_time = Data_DateTime::now();
-		
-		return $e;
+		return static::fetch(
+			[''=>[
+				'order_personal_receipt_id' => $entity_id
+			]],
+			order_by: ['-id']
+		);
 	}
 }

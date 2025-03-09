@@ -34,7 +34,7 @@ $complaint = $this->getRaw( 'complaint' );
 			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
 			<div class="card-body">
 				
-				<?=Admin_Managers::Complaint()->showComplaintStatus( $complaint )?>
+				<?=$complaint->getStatus()->showAdmin()?>
 				
 				<table style="margin: 10px">
 					<?php if(EShops::isMultiEShopMode()): ?>

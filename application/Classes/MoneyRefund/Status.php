@@ -9,6 +9,6 @@ namespace JetApplication;
 
 use JetShop\Core_MoneyRefund_Status;
 
-class MoneyRefund_Status extends Core_MoneyRefund_Status
+abstract class MoneyRefund_Status extends Core_MoneyRefund_Status
 {
 }

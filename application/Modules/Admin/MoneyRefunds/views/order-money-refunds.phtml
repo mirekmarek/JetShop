@@ -31,7 +31,7 @@ $money_refunds = $this->getRaw('money_refunds');
 	<?php foreach( $money_refunds as $money_refund ): ?>
 		<tr>
 			<td nowrap=""><?=Admin_Managers::MoneyRefund()->renderItemName( $money_refund->getId() )?></td>
-			<td nowrap=""><?=Admin_Managers::MoneyRefund()->showMoneyRefundStatus( $money_refund )?></td>
+			<td nowrap=""><?=$money_refund->getStatus()->showAdmin()?></td>
 			<td nowrap=""><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></td>
 			<td></td>
 		</tr>

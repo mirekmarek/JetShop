@@ -34,4 +34,14 @@ abstract class Core_ReturnOfGoods_Status_Incomplete extends ReturnOfGoods_Status
 		$this->priority = 10;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #ffaaaaaa;color: #111111;';
+	}
+	
 }

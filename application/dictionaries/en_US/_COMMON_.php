@@ -208,4 +208,8 @@ return [
 	'Form fields' => '',
 	'Done' => '',
 	'In Processing' => '',
+	'Unknown status' => '',
+	'Handed over' => '',
+	'Personal Receipt Preparation Started' => '',
+	'Personal receipt prepared' => '',
 ];

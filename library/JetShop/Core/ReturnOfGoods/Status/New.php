@@ -35,4 +35,14 @@ abstract class Core_ReturnOfGoods_Status_New extends ReturnOfGoods_Status {
 		$this->priority = 20;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #00ddc1;';
+	}
+	
 }

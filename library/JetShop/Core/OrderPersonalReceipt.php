@@ -27,8 +27,12 @@ use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Delivery_Method_EShopData;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_Definition;
@@ -36,6 +40,7 @@ use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Order;
 use JetApplication\OrderPersonalReceipt;
+use JetApplication\OrderPersonalReceipt_Event_PreparationStarted;
 use JetApplication\OrderPersonalReceipt_Item;
 use JetApplication\Product_EShopData;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -52,14 +57,18 @@ use JetApplication\OrderPersonalReceipt_Event;
 abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface,
 	Context_HasContext_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
 	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
-	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
@@ -68,11 +77,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public const STATUS_HANDED_OVER = 'handed_over';
 	public const STATUS_CANCEL = 'cancel';
 	public const STATUS_CANCELED = 'canceled';
-	
-	public const EVENT_PREPARATION_STARTED = 'PreparationStarted';
-	public const EVENT_PREPARED = 'Prepared';
-	public const EVENT_HANDED_OVER = 'HandedOver';
-	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -96,13 +100,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	protected int $warehouse_id = 0;
 	
 	protected ?WarehouseManagement_Warehouse $warehouse = null;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50
-	)]
-	protected string $status = self::STATUS_PENDING;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE
@@ -355,15 +352,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		$this->order_id = $order_id;
 	}
 	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-	
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
 	
 	public function getDispatchDate(): ?Data_DateTime
 	{
@@ -590,7 +578,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function isEditable() : bool
 	{
-		if($this->status!=static::STATUS_PENDING) {
+		if($this->status_code!=static::STATUS_PENDING) {
 			return false;
 		}
 		
@@ -600,37 +588,22 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function isPrepared() : bool
 	{
-		return $this->status==static::STATUS_PREPARED;
+		return $this->status_code==static::STATUS_PREPARED;
 	}
 	
 	public function preparationStarted() : void
 	{
-		$this->status = static::STATUS_IN_PROGRESS;
+		$this->status_code = static::STATUS_IN_PROGRESS;
 		$this->save();
 		
-		Logger::info(
-			event: 'order_personal_receipt:preparation_started',
-			event_message: 'Order personal receipt preparation started',
-			context_object_id: $this->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data: $this
-		);
-		
-		/**
-		 * @var OrderPersonalReceipt $this
-		 */
-		OrderPersonalReceipt_Event::newEvent(
-			$this,
-			static::EVENT_PREPARATION_STARTED
-		)->handleImmediately();
-		
+		$this->createEvent( OrderPersonalReceipt_Event_PreparationStarted::new() )->handleImmediately();
 	}
 	
 	
 	
 	public function prepared() : void
 	{
-		$this->status = static::STATUS_PREPARED;
+		$this->status_code = static::STATUS_PREPARED;
 		$this->save();
 		
 		Logger::info(
@@ -655,7 +628,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function rollBack() : bool
 	{
-		$this->status = static::STATUS_PENDING;
+		$this->status_code = static::STATUS_PENDING;
 		$this->headed_over_date = null;
 		$this->headed_over_date_time = null;
 		
@@ -674,7 +647,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function cancel() : void
 	{
-		$this->status = static::STATUS_CANCEL;
+		$this->status_code = static::STATUS_CANCEL;
 		$this->save();
 		
 		Logger::info(
@@ -691,12 +664,12 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public function confirmCancellation() : void
 	{
 		if(
-			$this->status != static::STATUS_CANCEL
+			$this->status_code != static::STATUS_CANCEL
 		) {
 			return;
 		}
 		
-		$this->status = static::STATUS_CANCELED;
+		$this->status_code = static::STATUS_CANCELED;
 		$this->save();
 		
 		Logger::info(
@@ -713,22 +686,14 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function handedOver() : void
 	{
-		if( $this->status != static::STATUS_PREPARED ) {
+		if( $this->status_code != static::STATUS_PREPARED ) {
 			return;
 		}
 		
-		$this->status = static::STATUS_HANDED_OVER;
+		$this->status_code = static::STATUS_HANDED_OVER;
 		$this->headed_over_date = Data_DateTime::now();
 		$this->headed_over_date_time = Data_DateTime::now();
 		$this->save();
-		
-		Logger::info(
-			event: 'order_personal_receipt:handed_over',
-			event_message: 'Order personal receipt handed over',
-			context_object_id: $this->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data:$this
-		);
 		
 		
 		/**

@@ -34,4 +34,14 @@ abstract class Core_ReturnOfGoods_Status_ClarificationRequired extends ReturnOfG
 		$this->priority = 40;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #ffaaaaaa;color: #111111;';
+	}
+	
 }

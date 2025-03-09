@@ -34,4 +34,14 @@ abstract class Core_ReturnOfGoods_Status_BeingProcessed extends ReturnOfGoods_St
 		$this->priority = 30;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #00ddc1;';
+	}
+	
 }

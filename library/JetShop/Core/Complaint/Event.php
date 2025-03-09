@@ -6,14 +6,10 @@
  */
 namespace JetShop;
 
-
-use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use Jet\Data_DateTime;
 
 use JetApplication\EShopEntity_Event;
-use JetApplication\Complaint_Event_HandlerModule;
 use JetApplication\Complaint;
 use JetApplication\Complaint_event;
 
@@ -29,6 +25,8 @@ class Core_Complaint_Event extends EShopEntity_Event
 
 	protected static string $handler_module_name_prefix = 'Events.Complaint.';
 	
+	protected static string $event_base_class_name = Complaint_Event::class;
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -38,20 +36,10 @@ class Core_Complaint_Event extends EShopEntity_Event
 	protected ?Complaint $_complaint = null;
 	
 	
-	public static function getEventHandlerModule( string $event_name ) : Complaint_Event_HandlerModule
+	public function setComplaint( Complaint $complaint ) : static
 	{
-		/**
-		 * @var Complaint_Event $this
-		 * @var Complaint_Event_HandlerModule $module
-		 */
-		$module = Application_Modules::moduleInstance( static::getHandlerModuleNamePrefix().$event_name );
-		
-		return $module;
-	}
-
-	public function setComplaintId( int $value ) : static
-	{
-		$this->complaint_id = $value;
+		$this->_complaint = $complaint;
+		$this->complaint_id = $complaint->getId();
 
 		return $this;
 	}
@@ -70,56 +58,16 @@ class Core_Complaint_Event extends EShopEntity_Event
 		return $this->_complaint;
 	}
 	
-	public function getHandlerModule() : ?Complaint_Event_HandlerModule
-	{
-		/**
-		 * @var Complaint_event $this
-		 * @var Complaint_Event_HandlerModule $module
-		 */
-		if(!Application_Modules::moduleIsActivated( $this->getHandlerModuleName() )) {
-			return null;
-		}
-		
-		$module = Application_Modules::moduleInstance( $this->getHandlerModuleName() );
-		$module->init( $this );
-
-		return $module;
-	}
-
-	public function handle() : bool
-	{
-		return $this->getHandlerModule()->handle();
-	}
-
-	public function handleImmediately() : bool
-	{
-		$this->handled_immediately = true;
-
-		return $this->handle();
-	}
-
-	public static function newEvent( Complaint $complaint, string $event ) : Complaint_Event
-	{
-		$e = new Complaint_Event();
-		$e->setEvent( $event );
-		$e->setEshop( $complaint->getEshop() );
-		$e->setComplaintId( $complaint->getId() );
-		$e->created_date_time = Data_DateTime::now();
-
-		return $e;
-	}
-	
-	
 	/**
-	 * @param int $complaint_id
+	 * @param int $entity_id
 	 *
 	 * @return static[]
 	 */
-	public static function getForComplaint( int $complaint_id ) : array
+	public static function getEventsList( int $entity_id ) : array
 	{
 		return static::fetch(
 			[''=>[
-				'complaint_id' => $complaint_id
+				'complaint_id' => $entity_id
 			]],
 			order_by: ['-id']
 		);

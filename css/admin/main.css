@@ -326,135 +326,27 @@ h4.inherited {
 	color: #ffffff;
 }
 
-.order-status {
+.status {
 	padding: 5px;
 	margin: 5px;
 }
 
-
-.order-status-cancelled,
-.order-status-waiting_for_payment,
-.order-status-waiting_for_goods_to_be_stocked,
-.order-status-returned {
-	background-color: #ffaaaaaa;
-	color: #111111;
-	font-weight: bolder;
-}
-
-.order-status-dispatch_started {
-	background-color: #00ddc1;
-}
-
-.order-status-dispatched {
-	background-color: #9faaFF;
-	color: #111111;
-}
-
-.order-status-ready_for_dispatch {
-	background-color: #00ddc1;
-}
-
-.order-status-delivered {
-	background-color: #00ffc1;
-}
-
-
-
-
-
-.complaint-status {
-	padding: 5px;
-	margin: 5px;
-}
-
-.complaint-status-kind {
-	font-weight: bolder;
-}
-
-.complaint-status-new {
-	background-color: #00ddc1;
-}
-
-.complaint-status-incomplete {
-	background-color: #ffaaaaaa;
-	color: #111111;
-}
-
-.complaint-status-being_processed {
-	background-color: #00ddc1;
-}
-
-.complaint-status-done_accepted {
-	background-color: #9faaFF;
-	color: #111111;
-}
-.complaint-status-done_rejected {
-	background-color: #ffaaaaaa;
-	color: #111111;
-}
-
-
-
-
-
-
-
-.return-of-goods-status {
-	padding: 5px;
-	margin: 5px;
-}
-
-.return-of-goods-status-kind {
-	font-weight: bolder;
-}
 
 .return-of-goods-status-new {
-	background-color: #00ddc1;
+
 }
 
 .return-of-goods-status-incomplete {
-	background-color: #ffaaaaaa;
-	color: #111111;
+	background-color: #ffaaaaaa;color: #111111;
 }
 
 .return-of-goods-status-being_processed {
-	background-color: #00ddc1;
+
 }
 
 .return-of-goods-status-done_accepted {
-	background-color: #9faaFF;
-	color: #111111;
+	background-color: #9faaFF;color: #111111;
 }
 .return-of-goods-status-done_rejected {
-	background-color: #ffaaaaaa;
-	color: #111111;
-}
 
-
-
-.money-refund-status {
-	padding: 5px;
-	margin: 5px;
-}
-
-.money-refund-status-kind {
-	font-weight: bolder;
-}
-
-.money-refund-status-new {
-	background-color: #00ddc1;
-}
-
-
-.money-refund-status-in_processing {
-	background-color: #00ddc1;
-}
-
-.money-refund-status-done {
-	background-color: #9faaFF;
-	color: #111111;
-}
-.money-refund-status-cancelled {
-	background-color: #ffaaaaaa;
-	color: #111111;
 }

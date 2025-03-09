@@ -13,6 +13,7 @@ use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
+use JetApplication\ReturnOfGoods_Event_DoneRejected;
 
 class Handler_DoneRejected_Main extends Handler
 {
@@ -33,7 +34,7 @@ class Handler_DoneRejected_Main extends Handler
 	public function handle() : void
 	{
 		if($this->form->catch()) {
-			$event = $this->return_of_goods->createEvent( $this->return_of_goods::EVENT_DONE_REJECTED );
+			$event = $this->return_of_goods->createEvent( ReturnOfGoods_Event_DoneRejected::new() );
 			
 			$event->setNoteForCustomer( $this->form->field('comment')->getValue() );
 			$event->handleImmediately();

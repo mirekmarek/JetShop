@@ -10,7 +10,7 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Order;
+use JetApplication\EShopEntity_Status;
 use JetApplication\Order_Status;
 
 trait Core_Order_Trait_Status {
@@ -82,6 +82,15 @@ trait Core_Order_Trait_Status {
 		is_key: true
 	)]
 	protected bool $returned = false;
+	
+	
+	/**
+	 * @return EShopEntity_Status[]
+	 */
+	public static function getStatusList(): array
+	{
+		return Order_Status::getList();
+	}
 	
 	
 	public function isCancelled() : bool
@@ -160,79 +169,8 @@ trait Core_Order_Trait_Status {
 		$this->delivered = $delivered;
 	}
 	
-	
-	
-	public function checkIsReady() : void
-	{
-		if(
-			(
-				$this->paid ||
-				!$this->payment_required
-			) &&
-			$this->all_items_available
-		) {
-			if(!$this->ready_for_dispatch) {
-				$this->ready_for_dispatch  = true;
-				$this->save();
-				
-				$this->readyForDispatch();
-			}
-		} else {
-			if($this->ready_for_dispatch) {
-				$this->ready_for_dispatch  = false;
-				$this->save();
-				
-				$this->notReadyForDispatch();
-			}
-		}
-	}
-	
-	
-	
-	
-	
-	
 	public function setEditable( bool $editable ): void
 	{
 	}
-	
-	public function getFlags() : array
-	{
-		$res = [];
-		foreach( static::$flags as $flag ) {
-			$res[$flag] = $this->{$flag};
-		}
-		
-		return $res;
-	}
-	
-	public function setFlags( array $flags ) : void
-	{
-		foreach( static::$flags as $flag ) {
-			if(
-				!array_key_exists($flag, $flags) ||
-				$flags[$flag] === null
-			) {
-				continue;
-			}
-			
-			$this->{$flag} = (bool)$flags[$flag];
-		}
-		
-	}
-	
-	public function getStatus() : ?Order_Status
-	{
-		/**
-		 * @var Order $this
-		 */
-		foreach(Order_Status::getList() as $status) {
-			if($status::resolve( $this )) {
-				return $status;
-			}
-		}
-		
-		return null;
-	}
-	
+
 }

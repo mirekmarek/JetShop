@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use JetShop\Core_MoneyRefund_Status_Cancelled;
 
 class MoneyRefund_Status_Cancelled extends Core_MoneyRefund_Status_Cancelled

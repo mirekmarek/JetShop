@@ -7,234 +7,156 @@
 namespace JetShop;
 
 
-use Jet\Logger;
-use JetApplication\Order;
+use JetApplication\EShopEntity_Event;
 use JetApplication\Order_ChangeHistory;
 use JetApplication\Order_Event;
+use JetApplication\Order_Event_DispatchCanceled;
+use JetApplication\Order_Event_InternalNote;
+use JetApplication\Order_Event_MessageForCustomer;
+use JetApplication\Order_Event_NewOrder;
+use JetApplication\Order_Event_NotReadyForDispatch;
+use JetApplication\Order_Event_Paid;
+use JetApplication\Order_Event_Updated;
 use JetApplication\Order_Note;
+use JetApplication\Order_Status_Cancelled;
+use JetApplication\Order_Status_Delivered;
+use JetApplication\Order_Status_Dispatched;
+use JetApplication\Order_Status_DispatchStarted;
+use JetApplication\Order_Status_PersonalReceiptPreparationStarted;
+use JetApplication\Order_Status_PersonalReceiptPrepared;
+use JetApplication\Order_Status_ReadyForDispatch;
+use JetApplication\Order_Status_HandedOver;
 
 trait Core_Order_Trait_Events {
-	public const EVENT_NEW_ORDER = 'NewOrder';
-	public const EVENT_CANCEL = 'Cancel';
-	public const EVENT_PAID = 'Paid';
-	public const EVENT_UPDATED = 'Updated';
 	
-	public const EVENT_READY_FOR_DISPATCH = 'ReadyForDispatch';
-	public const EVENT_NOT_READY_FOR_DISPATCH = 'NotReadyForDispatch';
-	public const EVENT_DISPATCH_STARTED = 'DispatchStarted';
-	public const EVENT_DISPATCH_CANCELED = 'DispatchCanceled';
-	public const EVENT_DISPATCHED = 'Dispatched';
-	public const EVENT_DELIVERED = 'Delivered';
-	
-	public const EVENT_RETURNED = 'Returned';
-	
-	public const EVENT_PERSONAL_RECEIPT_PREPARATION_STARTED = 'PersonalReceiptPreparationStarted';
-	public const EVENT_PERSONAL_RECEIPT_PREPARED = 'PersonalReceiptPrepared';
-	public const EVENT_PERSONAL_RECEIPT_HANDED_OVER = 'PersonalReceiptHandedOver';
-	
-	public const EVENT_MESSAGE_FOR_CUSTOMER = 'MessageForCustomer';
-	public const EVENT_INTERNAL_NOTE = 'InternalNote';
-	
-	
-	public function createEvent( string $event ) : Order_Event
+	public function createEvent( EShopEntity_Event|Order_Event $event ) : Order_Event
 	{
-		/**
-		 * @var Order $this
-		 */
-		$e = Order_Event::newEvent( $this, $event );
+		$event->init( $this->getEshop() );
+		$event->setOrder( $this );
 		
-		return $e;
+		return $event;
 	}
 	
-	
-	protected function saveDispatchStateFlags() : void
-	{
-		static::updateData(
-			data: [
-				'ready_for_dispatch' => $this->ready_for_dispatch,
-				'dispatch_started' => $this->dispatch_started,
-				'dispatched' => $this->dispatched,
-				'delivered' => $this->delivered,
-			],
-			where: [
-				'id' => $this->id
-			]
-		);
-		
-	}
 	
 	public function newOrder() : void
 	{
-		$this->createEvent( Order::EVENT_NEW_ORDER )->handleImmediately();
+		$this->createEvent( Order_Event_NewOrder::new() )->handleImmediately();
 	}
-	
-	public function readyForDispatch() : void
-	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = false;
-		$this->dispatched = false;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:ready_for_dispatch',
-			event_message: 'Order '.$this->getNumber().' is ready for dispatch',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		$this->createEvent( Order::EVENT_READY_FOR_DISPATCH )->handleImmediately();
-	}
-	
-	public function notReadyForDispatch() : void
-	{
-		$this->ready_for_dispatch = false;
-		$this->dispatch_started = false;
-		$this->dispatched = false;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:not_ready_for_dispatch',
-			event_message: 'Order '.$this->getNumber().' is not ready for dispatch',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		$this->createEvent( Order::EVENT_NOT_READY_FOR_DISPATCH )->handleImmediately();
-	}
-	
 	
 	
 	public function dispatchStarted() : void
 	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = true;
-		$this->dispatched = false;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:dispatch_started',
-			event_message: 'Order '.$this->getNumber().' dispatch started',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		$this->createEvent( Order::EVENT_DISPATCH_STARTED )->handleImmediately();
-	}
-	
-	public function cancelDispatch() : void
-	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = false;
-		$this->dispatched = false;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:dispatch_canceled',
-			event_message: 'Order '.$this->getNumber().' dispatch canceled',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		$this->createEvent( Order::EVENT_DISPATCH_CANCELED )->handleImmediately();
+		$this->setStatus( Order_Status_DispatchStarted::get() );
 	}
 	
 	public function dispatched() : void
 	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = true;
-		$this->dispatched = true;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:dispatched',
-			event_message: 'Order '.$this->getNumber().' was dispatched',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		$this->createEvent( Order::EVENT_DISPATCHED )->handleImmediately();
+		$this->setStatus( Order_Status_Dispatched::get() );
 	}
 	
 	public function delivered() : void
 	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = true;
-		$this->dispatched = true;
-		$this->delivered = true;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:delivered',
-			event_message: 'Order '.$this->getNumber().' was delivered',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
+		$this->setStatus( Order_Status_Delivered::get() );
+	}
+	
+	
+	public function handedOver() : void
+	{
+		$this->setStatus( Order_Status_HandedOver::get() );
+	}
+	
+	
+	public function personalReceiptPreparationStarted() : void
+	{
+		$this->setStatus( Order_Status_PersonalReceiptPreparationStarted::get() );
+	}
+	
+	
+	public function personalReceiptPrepared() : void
+	{
+		$this->setStatus( Order_Status_PersonalReceiptPrepared::get() );
+	}
+	
+	
+	public function cancelDispatch() : void
+	{
+		//TODO: virtual status
+		$this->setFlags(
+			[
+				'ready_for_dispatch' => true,
+				'dispatch_started' => false,
+				'dispatched' => false,
+				'delivered' => false,
+			]
 		);
+		$this->setStatusByFlagState();
 		
-		$this->createEvent( Order::EVENT_DELIVERED )->handleImmediately();
+		$this->createEvent( Order_Event_DispatchCanceled::new() )->handleImmediately();
 	}
 	
 	public function paid() : void
 	{
+		//TODO: virtual status
 		if($this->paid) {
 			return;
 		}
 		
-		Logger::info(
-			event: 'order:paid',
-			event_message: 'Order '.$this->getNumber().' was paid',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
+		$this->setFlags([
+			'paid' => true,
+		]);
+		$this->setStatusByFlagState();
 		
-		$this->paid = true;
-		$this->save();
-		
-		$this->createEvent(Order::EVENT_PAID)->handleImmediately();
+		$this->createEvent(Order_Event_Paid::new())->handleImmediately();
 		
 		$this->checkIsReady();
 	}
 	
-	
-	public function updated( Order_ChangeHistory $change ) : void
+	public function checkIsReady() : void
 	{
-		$event = $this->createEvent( Order::EVENT_UPDATED );
-		$event->setContext( $change );
-		
-		$event->handleImmediately();
+		//TODO: virtual status
+		if(
+			(
+				$this->paid ||
+				!$this->payment_required
+			) &&
+			$this->all_items_available
+		) {
+			if(!$this->ready_for_dispatch) {
+				$this->setStatus( Order_Status_ReadyForDispatch::get() );
+			}
+		} else {
+			if($this->ready_for_dispatch) {
+				
+				$this->setFlags(
+					[
+						'ready_for_dispatch' => false,
+						'dispatch_started' => false,
+						'dispatched' => false,
+						'delivered' => false,
+					]
+				);
+				$this->setStatusByFlagState();
+				
+				$this->createEvent( Order_Event_NotReadyForDispatch::new() )->handleImmediately();
+			}
+		}
 	}
 	
 	
 	public function cancel( string $comments ) : void
 	{
-		if($this->cancelled) {
-			return;
-		}
+		$this->setStatus( Order_Status_Cancelled::get(), true );
+	}
+	
+	
+	public function updated( Order_ChangeHistory $change ) : void
+	{
+		$event = $this->createEvent( Order_Event_Updated::new() );
+		$event->setContext( $change );
 		
-		$this->cancelled = true;
-		$this->save();
-		
-		$event = $this->createEvent( Order::EVENT_CANCEL );
-		$event->setNoteForCustomer( $comments );
 		$event->handleImmediately();
 	}
+	
 	
 	public function newNote( Order_Note $note ) : void
 	{
@@ -247,80 +169,16 @@ trait Core_Order_Trait_Events {
 	
 	public function messageForCustomer( Order_Note $note ) : void
 	{
-		$event = $this->createEvent( Order::EVENT_MESSAGE_FOR_CUSTOMER );
+		$event = $this->createEvent( Order_Event_MessageForCustomer::new() );
 		$event->setContext( $note );
 		$event->handleImmediately();
 	}
 	
 	public function internalNote( Order_Note $note ) : void
 	{
-		$event = $this->createEvent( Order::EVENT_INTERNAL_NOTE );
+		$event = $this->createEvent( Order_Event_InternalNote::new() );
 		$event->setContext( $note );
 		$event->handleImmediately();
 	}
 	
-	
-	public function handedOver() : void
-	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = true;
-		$this->dispatched = true;
-		$this->delivered = true;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:handed_over',
-			event_message: 'Order '.$this->getNumber().' was handed over',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		TODO: $this->createEvent( Order::EVENT_PERSONAL_RECEIPT_HANDED_OVER )->handleImmediately();
-	}
-	
-	
-	public function personalReceiptPreparationStarted() : void
-	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = true;
-		$this->dispatched = false;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:personal_peceipt_preparation_started',
-			event_message: 'Order '.$this->getNumber().' personal peceipt preparation started',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		
-		
-		$this->createEvent( Order::EVENT_PERSONAL_RECEIPT_PREPARATION_STARTED )->handleImmediately();
-	}
-	
-	
-	public function personalReceiptPrepared() : void
-	{
-		$this->ready_for_dispatch = true;
-		$this->dispatch_started = true;
-		$this->dispatched = true;
-		$this->delivered = false;
-		
-		$this->saveDispatchStateFlags();
-		
-		Logger::info(
-			event: 'order:personal_peceipt_prepared',
-			event_message: 'Order '.$this->getNumber().' personal peceipt prepared',
-			context_object_id:
-			$this->id,context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		$this->createEvent( Order::EVENT_PERSONAL_RECEIPT_PREPARED )->handleImmediately();
-	}
 }

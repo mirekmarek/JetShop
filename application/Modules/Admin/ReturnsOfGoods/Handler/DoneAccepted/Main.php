@@ -13,6 +13,7 @@ use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
+use JetApplication\ReturnOfGoods_Event_DoneAccepted;
 
 class Handler_DoneAccepted_Main extends Handler {
 	public const KEY = 'done_accepted';
@@ -31,7 +32,7 @@ class Handler_DoneAccepted_Main extends Handler {
 	public function handle() : void
 	{
 		if($this->form->catch()) {
-			$event = $this->return_of_goods->createEvent( $this->return_of_goods::EVENT_DONE_ACCEPTED );
+			$event = $this->return_of_goods->createEvent( ReturnOfGoods_Event_DoneAccepted::new() );
 
 			$event->setNoteForCustomer( $this->form->field('comment')->getValue() );
 			$event->handleImmediately();

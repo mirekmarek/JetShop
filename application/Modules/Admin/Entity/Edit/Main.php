@@ -23,6 +23,7 @@ use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 use JetApplication\EShops;
@@ -500,5 +501,11 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		$view->setVar('edit_manager',  $this);
 		
 		return $view->render('editor-tools');
+	}
+	public function renderShowStatus( EShopEntity_Status $status ): string
+	{
+		return $this->render('status', [
+			'status' => $status
+		]);
 	}
 }

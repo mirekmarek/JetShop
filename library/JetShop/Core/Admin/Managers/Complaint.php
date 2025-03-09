@@ -8,7 +8,6 @@ namespace JetShop;
 
 
 use JetApplication\Admin_EntityManager_Module;
-use JetApplication\Complaint;
 use JetApplication\Manager_MetaInfo;
 use JetApplication\Order;
 
@@ -21,7 +20,5 @@ use JetApplication\Order;
 )]
 abstract class Core_Admin_Managers_Complaint extends Admin_EntityManager_Module
 {
-	abstract public function showComplaintStatus( Complaint $complaint ) : string;
-	
 	abstract public function showOrderComplaints( Order $order ) : void;
 }

@@ -9,8 +9,8 @@ namespace JetApplicationModule\Admin\Complaints;
 
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
+use JetApplication\Complaint_Event_MessageForCustomer;
 use JetApplication\Complaint_Note;
-use JetApplication\Complaint;
 
 class Handler_Note_Main extends Handler
 {
@@ -33,7 +33,7 @@ class Handler_Note_Main extends Handler
 			/**
 			 * @var \JetApplicationModule\Events\Complaint\MessageForCustomer\Main $event_handler
 			 */
-			$event_handler = $this->complaint->createEvent( Complaint::EVENT_MESSAGE_FOR_CUSTOMER )->getHandlerModule();
+			$event_handler = $this->complaint->createEvent( Complaint_Event_MessageForCustomer::new() )->getHandlerModule();
 			$template = $event_handler->getEMailTemplates()[0];
 			$template->setComplaint( $this->complaint );
 			$generated_subject = $template->createEmail( $this->complaint->getEshop() )->getSubject();

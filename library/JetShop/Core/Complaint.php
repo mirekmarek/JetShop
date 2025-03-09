@@ -30,6 +30,8 @@ use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\Complaint;
 use JetApplication\EShopEntity_Definition;
@@ -61,12 +63,15 @@ use JetApplication\Complaint_Trait_Changes;
 abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_HasStatus_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
-	use EShopEntity_HasGet_Trait;
 	use Context_ProvidesContext_Trait;
+	
+	use EShopEntity_HasGet_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_HasStatus_Trait;
 	
 	use Complaint_Trait_Status;
 	use Complaint_Trait_Events;
@@ -493,7 +498,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	 */
 	public function getHistory() : array
 	{
-		return Complaint_Event::getForComplaint( $this->getId() );
+		return Complaint_Event::getEventsList( $this->getId() );
 	}
 
 	

@@ -52,4 +52,5 @@ return [
 	'Rollback' => '',
 	'Done' => '',
 	'Administrator' => '',
+	'Status:' => '',
 ];

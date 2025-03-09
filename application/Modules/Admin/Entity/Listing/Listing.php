@@ -22,6 +22,7 @@ use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasInternalParams_Interface;
+use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 
@@ -91,6 +92,16 @@ class Listing extends DataListing {
 
 			$default_schema[] = Listing_Column_ValidFrom::KEY;
 			$default_schema[] = Listing_Column_ValidTill::KEY;
+		}
+		
+		if( $this->entity instanceof EShopEntity_HasStatus_Interface ) {
+			$this->addColumn( new Listing_Column_Status() );
+			
+			$default_schema[] = Listing_Column_Status::KEY;
+			
+			$status_filter = new Listing_Filter_Status();
+			$status_filter->setStatusList( $this->entity::getStatusList() );
+			$this->addFilter( $status_filter );
 		}
 		
 		if( $this->entity instanceof EShopEntity_HasInternalParams_Interface ) {

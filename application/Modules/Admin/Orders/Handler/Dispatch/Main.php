@@ -51,21 +51,6 @@ class Handler_Dispatch_Main extends Handler
 				$this->order->save();
 				
 				break;
-			/*
-			case 'set_ready':
-				if(!$this->order->getReadyForDispatch()) {
-					$this->order->readyForDispatch();
-				}
-				break;
-			case 'set_not_ready':
-				if(
-					$this->order->getReadyForDispatch() &&
-					!$this->order->getDispatchStarted()
-				) {
-					$this->order->notReadyForDispatch();
-				}
-				break;
-			*/
 			case 'start_dispatch':
 				if(
 					$this->order->getReadyForDispatch() &&

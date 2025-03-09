@@ -35,7 +35,7 @@ $money_refund = $this->getRaw( 'money_refund' );
 			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
 			<div class="card-body">
 				
-				<?=Admin_Managers::MoneyRefund()->showMoneyRefundStatus( $money_refund )?>
+				<?=$money_refund->getStatus()->showAdmin()?>
 				
 				<table style="margin: 10px">
 					<?php if(EShops::isMultiEShopMode()): ?>

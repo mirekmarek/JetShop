@@ -26,9 +26,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_TotalAmount() );
 		$this->listing_manager->addColumn( new Listing_Column_Items() );
 		$this->listing_manager->addColumn( new Listing_Column_DatePurchased() );
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_Source() );
 		$this->listing_manager->addFilter( new Listing_Filter_Cancelled() );
 		$this->listing_manager->addFilter( new Listing_Filter_PaymentRequired() );
@@ -101,7 +99,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			Listing_Column_TotalAmount::KEY,
 			Listing_Column_Items::KEY,
 			Listing_Column_DatePurchased::KEY,
-			Listing_Column_Status::KEY
+			'status_code'
 		]);
 		
 		$this->listing_manager->setCustomBtnRenderer( function() : string {

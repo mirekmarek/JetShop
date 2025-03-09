@@ -15,6 +15,10 @@ use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\Order_Event;
+use JetApplication\Order_Event_Cancel;
+use JetApplication\Order_Event_Delivered;
+use JetApplication\Order_Event_Dispatched;
+use JetApplication\Order_Event_Returned;
 use JetApplication\OrderDispatch;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
@@ -23,8 +27,6 @@ use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
-use JetApplication\Order;
-
 
 
 class Main extends MarketplaceIntegration_Module implements
@@ -142,11 +144,11 @@ class Main extends MarketplaceIntegration_Module implements
 	
 	public function handleOrderEvent( Order_Event $order_event ): bool
 	{
-		return match ($order_event->getEvent()) {
-			Order::EVENT_CANCEL => $this->handleEvent_cancel( $order_event ),
-			Order::EVENT_DISPATCHED => $this->handleEvent_dispatched( $order_event ),
-			Order::EVENT_DELIVERED => $this->handleEvent_delivered( $order_event ),
-			Order::EVENT_RETURNED => $this->handleEvent_returned( $order_event ),
+		return match ( $order_event->getEvent() ) {
+			Order_Event_Cancel::getCode() => $this->handleEvent_cancel( $order_event ),
+			Order_Event_Dispatched::getCode() => $this->handleEvent_dispatched( $order_event ),
+			Order_Event_Delivered::getCode() => $this->handleEvent_delivered( $order_event ),
+			Order_Event_Returned::getCode() => $this->handleEvent_returned( $order_event ),
 			default => true,
 		};
 

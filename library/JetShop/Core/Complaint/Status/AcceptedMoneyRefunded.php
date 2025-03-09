@@ -37,4 +37,14 @@ abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Sta
 		$this->priority = 70;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #9faaFF;color: #111111;';
+	}
+	
 }

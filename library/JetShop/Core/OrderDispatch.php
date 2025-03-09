@@ -28,8 +28,12 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
@@ -55,18 +59,22 @@ use JetApplication\OrderDispatch_Trait_Workflow;
 )]
 abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
+	EShopEntity_HasEvents_Interface,
+	EShopEntity_HasStatus_Interface,
 	EShopEntity_HasNumberSeries_Interface,
 	Context_HasContext_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
 	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_Admin_Trait;
 	use OrderDispatch_Trait_Forms;
 	use OrderDispatch_Trait_Workflow;
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
-	use EShopEntity_HasNumberSeries_Trait;
-	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';
 	
@@ -83,12 +91,6 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	
 	public const STATUS_CANCEL = 'cancel';
 	public const STATUS_CANCELED = 'canceled';
-	
-	public const EVENT_SENT = 'Sent';
-	public const EVENT_DELIVERED = 'Delivered';
-	public const EVENT_RETURNING = 'Returning';
-	public const EVENT_RETURNED = 'Returned';
-	public const EVENT_LOST = 'Lost';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -112,13 +114,6 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	protected int $warehouse_id = 0;
 	
 	protected ?WarehouseManagement_Warehouse $warehouse = null;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50
-	)]
-	protected string $status = self::STATUS_PENDING;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE
@@ -383,7 +378,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfToBeCanceled( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status' => static::STATUS_CANCEL,
+			'status_code' => static::STATUS_CANCEL,
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -399,7 +394,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfPending( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status' => static::STATUS_PENDING,
+			'status_code' => static::STATUS_PENDING,
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -417,7 +412,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$list =  static::fetchInstances( [
 			$context->getWhere(),
 			'AND',
-			'status' => [
+			'status_code' => [
 				static::STATUS_PENDING,
 				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
 				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
@@ -449,7 +444,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfPrepared( WarehouseManagement_Warehouse $warehouse ) : DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status' => [
+			'status_code' => [
 				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
 				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
 				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM
@@ -478,7 +473,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$list =  static::fetchInstances( [
 			'warehouse_id' => $warehouse->getId(),
 			'AND',
-			'status' => [
+			'status_code' => [
 				static::STATUS_SENT,
 				static::STATUS_ON_THE_WAY,
 			],
@@ -567,16 +562,6 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$this->order_id = $order_id;
 	}
 	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
-
 	public function getDispatchDate(): ?Data_DateTime
 	{
 		return $this->dispatch_date;
@@ -1136,8 +1121,8 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		
 		switch($new_status) {
 			case static::STATUS_ON_THE_WAY:
-				if( $this->status==static::STATUS_SENT ) {
-					$this->status = static::STATUS_ON_THE_WAY;
+				if( $this->status_code==static::STATUS_SENT ) {
+					$this->status_code = static::STATUS_ON_THE_WAY;
 					$this->save();
 				}
 				break;
@@ -1163,7 +1148,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	
 	public function isEditable() : bool
 	{
-		if($this->status!=static::STATUS_PENDING) {
+		if($this->status_code!=static::STATUS_PENDING) {
 			return false;
 		}
 		

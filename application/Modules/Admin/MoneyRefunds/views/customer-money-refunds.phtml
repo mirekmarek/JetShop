@@ -39,7 +39,7 @@ $money_refunds = $this->getRaw( 'money_refunds' );
 			<?=Locale::dateAndTime( $money_refund->getDateStarted() );?>
 		</td>
 		<td>
-			<?=Admin_Managers::MoneyRefund()->showMoneyRefundStatus( $money_refund )?>
+			<?=$money_refund->getStatus()->showAdmin()?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

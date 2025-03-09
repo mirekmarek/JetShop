@@ -34,4 +34,14 @@ abstract class Core_ReturnOfGoods_Status_AcceptedMoneyRefunded extends ReturnOfG
 		$this->priority = 70;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #9faaFF;color: #111111;';
+	}
+	
 }

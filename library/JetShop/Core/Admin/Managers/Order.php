@@ -9,7 +9,6 @@ namespace JetShop;
 
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Manager_MetaInfo;
-use JetApplication\Order;
 use JetApplication\Customer;
 
 #[Manager_MetaInfo(
@@ -21,7 +20,5 @@ use JetApplication\Customer;
 )]
 abstract class Core_Admin_Managers_Order extends Admin_EntityManager_Module
 {
-	abstract public function showOrderStatus( Order $order ) : string;
-	
 	abstract public function showOrdersOfCustomer( Customer $customer ) : string;
 }

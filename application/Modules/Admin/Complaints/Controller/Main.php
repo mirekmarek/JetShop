@@ -25,11 +25,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_Product() );
 		$this->listing_manager->addColumn( new Listing_Column_Customer() );
 		$this->listing_manager->addColumn( new Listing_Column_DateStarted() );
-		$this->listing_manager->addColumn( new Listing_Column_StatusId() );
-		$this->listing_manager->addColumn( new Listing_Column_DateStarted() );
 		
 		
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_Product() );
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
@@ -74,7 +71,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			'total_amount',
 			'items',
 			'date_purchased',
-			'status_id'
+			'status_code'
 		]);
 		
 	}

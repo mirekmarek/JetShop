@@ -9,8 +9,8 @@ namespace JetApplicationModule\Admin\Orders;
 
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
+use JetApplication\Order_Event_MessageForCustomer;
 use JetApplication\Order_Note;
-use JetApplication\Order;
 
 class Handler_Note_Main extends Handler
 {
@@ -33,7 +33,7 @@ class Handler_Note_Main extends Handler
 			/**
 			 * @var \JetApplicationModule\Events\Order\MessageForCustomer\Main $event_handler
 			 */
-			$event_handler = $this->order->createEvent( Order::EVENT_MESSAGE_FOR_CUSTOMER )->getHandlerModule();
+			$event_handler = $this->order->createEvent( Order_Event_MessageForCustomer::new() )->getHandlerModule();
 			$template = $event_handler->getEMailTemplates()[0];
 			$template->setOrder( $this->order );
 			$generated_subject = $template->createEmail( $this->order->getEshop() )->getSubject();

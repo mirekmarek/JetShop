@@ -35,4 +35,14 @@ abstract class Core_Order_Status_WaitingForPayment extends Order_Status {
 		$this->priority = 10;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #ffaaaaaa;color: #111111;font-weight: bolder;';
+	}
+	
 }

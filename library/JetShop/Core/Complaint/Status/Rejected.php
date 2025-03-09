@@ -36,4 +36,14 @@ abstract class Core_Complaint_Status_Rejected extends Complaint_Status {
 		$this->priority = 50;
 	}
 	
+	public function getShowAdminCSSClass() : string
+	{
+		return '';
+	}
+	
+	public function getShowAdminCSSStyle() : string
+	{
+		return 'background-color: #ffaaaaaa;color: #111111;';
+	}
+	
 }

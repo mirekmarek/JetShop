@@ -9,8 +9,8 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Note;
+use JetApplication\MoneyRefund_Event_MessageForCustomer;
 use JetApplication\MoneyRefund_Note;
-use JetApplication\MoneyRefund;
 
 class Handler_Note_Main extends Handler
 {
@@ -33,7 +33,7 @@ class Handler_Note_Main extends Handler
 			/**
 			 * @var \JetApplicationModule\Events\MoneyRefund\MessageForCustomer\Main $event_handler
 			 */
-			$event_handler = $this->money_refund->createEvent( MoneyRefund::EVENT_MESSAGE_FOR_CUSTOMER )->getHandlerModule();
+			$event_handler = $this->money_refund->initEvent( MoneyRefund_Event_MessageForCustomer::new() )->getHandlerModule();
 			$template = $event_handler->getEMailTemplates()[0];
 			$template->setMoneyRefund( $this->money_refund );
 			$generated_subject = $template->createEmail( $this->money_refund->getEshop() )->getSubject();

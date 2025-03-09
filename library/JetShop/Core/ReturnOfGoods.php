@@ -26,8 +26,9 @@ use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\ReturnOfGoods_Event;
-use JetApplication\ReturnOfGoods_Status;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
@@ -58,13 +59,15 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 )]
 abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
+	EShopEntity_HasStatus_Interface,
 	EShopEntity_HasNumberSeries_Interface,
-	Context_ProvidesContext_Interface,
-	EShopEntity_Admin_Interface
+	EShopEntity_Admin_Interface,
+	Context_ProvidesContext_Interface
 {
 	use EShopEntity_HasGet_Trait;
-	use Context_ProvidesContext_Trait;
+	use EShopEntity_HasStatus_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
+	use Context_ProvidesContext_Trait;
 	
 	use ReturnOfGoods_Trait_Status;
 	use ReturnOfGoods_Trait_Events;
@@ -486,19 +489,6 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	
 	
 	
-	public function getStatus() : ?ReturnOfGoods_Status
-	{
-		/**
-		 * @var ReturnOfGoods $this
-		 */
-		foreach(ReturnOfGoods_Status::getList() as $status) {
-			if($status::resolve( $this )) {
-				return $status;
-			}
-		}
-		
-		return null;
-	}
 	
 
 	
@@ -507,7 +497,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	 */
 	public function getHistory() : array
 	{
-		return ReturnOfGoods_Event::getForReturnOfGoods( $this->getId() );
+		return ReturnOfGoods_Event::getEventsList( $this->getId() );
 	}
 	
 	

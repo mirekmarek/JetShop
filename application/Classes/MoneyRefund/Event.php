@@ -11,6 +11,6 @@ use Jet\DataModel_Definition;
 use JetShop\Core_MoneyRefund_Event;
 
 #[DataModel_Definition]
-class MoneyRefund_Event extends Core_MoneyRefund_Event
+abstract class MoneyRefund_Event extends Core_MoneyRefund_Event
 {
 }

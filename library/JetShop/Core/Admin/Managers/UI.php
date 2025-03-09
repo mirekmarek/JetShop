@@ -35,5 +35,4 @@ abstract class Core_Admin_Managers_UI extends Application_Module
 	
 	
 	abstract public function renderEntityToolbar( Form $form, ?callable $buttons_renderer=null ) : string;
-	
 }

@@ -22,8 +22,11 @@ use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
+use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
@@ -62,11 +65,15 @@ use JetApplication\Context_ProvidesContext_Trait;
 abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasStatus_Trait;
+	use Core_EShopEntity_HasEvents_Trait;
 	
 	
 	use Context_ProvidesContext_Trait;
@@ -1003,7 +1010,7 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	 */
 	public function getHistory() : array
 	{
-		return Order_Event::getForOrder( $this->getId() );
+		return Order_Event::getEventsList( $this->getId() );
 	}
 	
 	public function getWarehouseId(): int

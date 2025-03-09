@@ -171,7 +171,7 @@ trait Core_OrderDispatch_Trait_Workflow
 	public function isReadyToCreateConsignment() : bool
 	{
 		if(
-			in_array($this->status, [
+			in_array($this->status_code, [
 				static::STATUS_PREPARED_CONSIGNMENT_CREATED,
 				static::STATUS_CANCEL,
 				static::STATUS_CANCELED
@@ -187,7 +187,7 @@ trait Core_OrderDispatch_Trait_Workflow
 	
 	public function isConsignmentCreated() : bool
 	{
-		return $this->status==static::STATUS_PREPARED_CONSIGNMENT_CREATED;
+		return $this->status_code==static::STATUS_PREPARED_CONSIGNMENT_CREATED;
 	}
 	
 	
@@ -197,7 +197,7 @@ trait Core_OrderDispatch_Trait_Workflow
 			return;
 		}
 		
-		$this->status = static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED;
+		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED;
 		$this->save();
 		
 		Logger::info(
@@ -234,7 +234,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		 */
 		
 		if(!in_array(
-			$this->status,
+			$this->status_code,
 			[
 				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
 				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM,
@@ -258,7 +258,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		}
 		
 		$this->consignment_create_error_message = '';
-		$this->status = static::STATUS_PENDING;
+		$this->status_code = static::STATUS_PENDING;
 		$this->consignment_id = '';
 		$this->tracking_number = '';
 		
@@ -280,7 +280,7 @@ trait Core_OrderDispatch_Trait_Workflow
 	public function setConsignmentCreateError( string $error_message ) : void
 	{
 		$this->consignment_create_error_message = $error_message;
-		$this->status = static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM;
+		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM;
 		$this->save();
 		
 		Logger::info(
@@ -296,7 +296,7 @@ trait Core_OrderDispatch_Trait_Workflow
 	public function setConsignmentCreated( string $consignment_id, $tracking_number ) : void
 	{
 		$this->consignment_create_error_message = '';
-		$this->status = static::STATUS_PREPARED_CONSIGNMENT_CREATED;
+		$this->status_code = static::STATUS_PREPARED_CONSIGNMENT_CREATED;
 		$this->consignment_id = $consignment_id;
 		$this->tracking_number = $tracking_number;
 		$this->save();
@@ -314,7 +314,7 @@ trait Core_OrderDispatch_Trait_Workflow
 	public function cancel() : void
 	{
 		if(
-			!in_array($this->status, [
+			!in_array($this->status_code, [
 				static::STATUS_PENDING,
 				static::STATUS_PREPARED_CONSIGNMENT_NOT_CREATED,
 				static::STATUS_PREPARED_CONSIGNMENT_CREATE_PROBLEM,
@@ -324,7 +324,7 @@ trait Core_OrderDispatch_Trait_Workflow
 			return;
 		}
 		
-		$this->status = static::STATUS_CANCEL;
+		$this->status_code = static::STATUS_CANCEL;
 		$this->save();
 		
 		Logger::info(
@@ -340,12 +340,12 @@ trait Core_OrderDispatch_Trait_Workflow
 	public function confirmCancellation() : void
 	{
 		if(
-			$this->status != static::STATUS_CANCEL
+			$this->status_code != static::STATUS_CANCEL
 		) {
 			return;
 		}
 		
-		$this->status = static::STATUS_CANCELED;
+		$this->status_code = static::STATUS_CANCELED;
 		$this->save();
 		
 		Logger::info(
@@ -367,12 +367,12 @@ trait Core_OrderDispatch_Trait_Workflow
 		 */
 
 		if(
-			$this->status != static::STATUS_PREPARED_CONSIGNMENT_CREATED
+			$this->status_code != static::STATUS_PREPARED_CONSIGNMENT_CREATED
 		) {
 			return;
 		}
 		
-		$this->status = static::STATUS_SENT;
+		$this->status_code = static::STATUS_SENT;
 		$this->dispatch_date = Data_DateTime::now();
 		$this->save();
 		
@@ -397,11 +397,11 @@ trait Core_OrderDispatch_Trait_Workflow
 		 * @var OrderDispatch $this
 		 */
 		
-		if( $this->status == static::STATUS_DELIVERED ) {
+		if( $this->status_code == static::STATUS_DELIVERED ) {
 			return;
 		}
 		
-		$this->status = static::STATUS_DELIVERED;
+		$this->status_code = static::STATUS_DELIVERED;
 		$this->save();
 		
 		Logger::info(
@@ -426,11 +426,11 @@ trait Core_OrderDispatch_Trait_Workflow
 		 * @var OrderDispatch $this
 		 */
 		
-		if( $this->status == static::STATUS_RETURNING ) {
+		if( $this->status_code == static::STATUS_RETURNING ) {
 			return;
 		}
 		
-		$this->status = static::STATUS_RETURNING;
+		$this->status_code = static::STATUS_RETURNING;
 		$this->save();
 		
 		Logger::info(
@@ -455,11 +455,11 @@ trait Core_OrderDispatch_Trait_Workflow
 		 * @var OrderDispatch $this
 		 */
 		
-		if( $this->status == static::STATUS_RETURNED ) {
+		if( $this->status_code == static::STATUS_RETURNED ) {
 			return;
 		}
 		
-		$this->status = static::STATUS_RETURNED;
+		$this->status_code = static::STATUS_RETURNED;
 		$this->save();
 		
 		Logger::info(
@@ -483,11 +483,11 @@ trait Core_OrderDispatch_Trait_Workflow
 		 * @var OrderDispatch $this
 		 */
 		
-		if( $this->status == static::STATUS_LOST ) {
+		if( $this->status_code == static::STATUS_LOST ) {
 			return;
 		}
 		
-		$this->status = static::STATUS_LOST;
+		$this->status_code = static::STATUS_LOST;
 		$this->save();
 		
 		Logger::info(
