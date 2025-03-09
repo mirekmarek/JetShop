@@ -367,7 +367,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfToBeCanceled( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status_code' => OrderDispatch_Status_Cancel::getCode(),
+			'status' => OrderDispatch_Status_Cancel::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -383,7 +383,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfPending( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status_code' => OrderDispatch_Status_Pending::getCode(),
+			'status' => OrderDispatch_Status_Pending::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -401,7 +401,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$list =  static::fetchInstances( [
 			$context->getWhere(),
 			'AND',
-			'status_code' => OrderDispatch_Status::getInProgressStatusCodes()
+			'status' => OrderDispatch_Status::getInProgressStatusCodes()
 		] );
 		
 		$list->getQuery()->setOrderBy(['created']);
@@ -428,7 +428,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	public static function getListOfPrepared( WarehouseManagement_Warehouse $warehouse ) : DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status_code' => OrderDispatch_Status::getPreparedStatusCodes(),
+			'status' => OrderDispatch_Status::getPreparedStatusCodes(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -453,7 +453,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		$list =  static::fetchInstances( [
 			'warehouse_id' => $warehouse->getId(),
 			'AND',
-			'status_code' => OrderDispatch_Status::getSentStatusCodes(),
+			'status' => OrderDispatch_Status::getSentStatusCodes(),
 			'AND',
 			'dispatch_date' => $dispatch_date
 		] );
@@ -1080,8 +1080,8 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 		//TODO:
 		switch($new_status) {
 			case static::STATUS_ON_THE_WAY:
-				if( $this->status_code==static::STATUS_SENT ) {
-					$this->status_code = static::STATUS_ON_THE_WAY;
+				if( $this->status==static::STATUS_SENT ) {
+					$this->status = static::STATUS_ON_THE_WAY;
 					$this->save();
 				}
 				break;

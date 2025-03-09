@@ -99,7 +99,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			Listing_Column_TotalAmount::KEY,
 			Listing_Column_Items::KEY,
 			Listing_Column_DatePurchased::KEY,
-			'status_code'
+			'status'
 		]);
 		
 		$this->listing_manager->setCustomBtnRenderer( function() : string {

@@ -24,7 +24,7 @@ abstract class Core_OrderPersonalReceipt_Status extends EShopEntity_Status {
 	
 	protected static ?array $list = null;
 	
-	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, string $previouse_status_code ): null|EShopEntity_Event|OrderPersonalReceipt_Event
+	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderPersonalReceipt_Event
 	{
 		return null;
 	}

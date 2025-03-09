@@ -11,7 +11,7 @@ use Jet\Tr;
 
 class Listing_Column_Status extends Listing_Column_Abstract
 {
-	public const KEY = 'status_code';
+	public const KEY = 'status';
 	
 	public function getKey(): string
 	{

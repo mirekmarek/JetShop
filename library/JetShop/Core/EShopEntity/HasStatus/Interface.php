@@ -20,8 +20,6 @@ interface Core_EShopEntity_HasStatus_Interface {
 	
 	public function getStatus() : ?EShopEntity_Status;
 	
-	public function getStatusCode() : string;
-	
 	public function setStatusByFlagState( bool $set=true ) : ?EShopEntity_Status;
 	
 	/**

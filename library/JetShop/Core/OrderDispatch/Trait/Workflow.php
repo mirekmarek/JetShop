@@ -237,7 +237,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		}
 		
 		$this->consignment_create_error_message = '';
-		$this->status_code = OrderDispatch_Status_Pending::get()::getCode();
+		$this->status = OrderDispatch_Status_Pending::get()::getCode();
 		$this->consignment_id = '';
 		$this->tracking_number = '';
 		

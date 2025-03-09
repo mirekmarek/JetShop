@@ -23,7 +23,7 @@ trait Core_EShopEntity_HasStatus_Trait {
 		max_len: 50,
 		is_key: true,
 	)]
-	protected string $status_code = '';
+	protected string $status = '';
 	
 	public function getFlags() : array
 	{
@@ -72,17 +72,17 @@ trait Core_EShopEntity_HasStatus_Trait {
 			return;
 		}
 		
-		if( $this->status_code == $status->getCode() ) {
+		if( $this->status == $status->getCode() ) {
 			return;
 		}
 		
-		$prev_status_code = $this->status_code;
+		$prev_status = $this->getStatus();
 		
-		$this->status_code = $status->getCode();
+		$this->status = $status->getCode();
 		
 		static::updateData(
 			data: [
-				'status_code' => $this->status_code,
+				'status' => $this->status,
 			],
 			where: [
 				'id' => $this->id
@@ -104,7 +104,7 @@ trait Core_EShopEntity_HasStatus_Trait {
 		if(
 			$this instanceof EShopEntity_HasEvents_Interface &&
 			$handle_event &&
-			($event=$status->createEvent( $this, $prev_status_code ))
+			($event=$status->createEvent( $this, $prev_status ))
 		) {
 			if($event_setup) {
 				$event_setup( $event );
@@ -116,12 +116,12 @@ trait Core_EShopEntity_HasStatus_Trait {
 	
 	public function getStatus() : EShopEntity_Status
 	{
-		$status = static::getStatusList()[$this->status_code]??null;
+		$status = static::getStatusList()[$this->status]??null;
 		if($status) {
 			return $status;
 		}
 		
-		if(!$this->status_code) {
+		if(!$this->status) {
 			$status = $this->setStatusByFlagState( handle_event: false );
 			if($status) {
 				return $status;
@@ -148,20 +148,15 @@ trait Core_EShopEntity_HasStatus_Trait {
 
 	}
 	
-	public function getStatusCode() : string
-	{
-		return $this->status_code;
-	}
-	
 	public function setStatusByFlagState( bool $set=true, bool $handle_event=true ) : ?EShopEntity_Status
 	{
 		foreach(static::getStatusList() as $status) {
 			if($status::resolve( $this )) {
-				if($status->getCode()==$this->status_code) {
+				if($status->getCode()==$this->status) {
 					return $status;
 				}
 				
-				$this->status_code = $status->getCode();
+				$this->status = $status->getCode();
 				
 				if($set) {
 					$this->setStatus( $status, $handle_event );

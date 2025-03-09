@@ -552,7 +552,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function isPrepared() : bool
 	{
-		return $this->status_code==OrderPersonalReceipt_Status_Prepared::getCode();
+		return $this->status==OrderPersonalReceipt_Status_Prepared::getCode();
 	}
 	
 	public function preparationStarted() : void

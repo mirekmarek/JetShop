@@ -19,7 +19,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_Created() );
 		$this->listing_manager->addColumn( new Listing_Column_DispatchDate() );
 		$this->listing_manager->addColumn( new Listing_Column_Number() );
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_Recipient() );
 		$this->listing_manager->addColumn( new Listing_Column_Order() );
 		$this->listing_manager->addColumn( new Listing_Column_Context() );
@@ -28,7 +27,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Warehouse() );
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_Carrier() );
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {

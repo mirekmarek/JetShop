@@ -10,6 +10,7 @@ namespace JetShop;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_Status;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
 use JetApplication\OrderPersonalReceipt_Status;
@@ -35,7 +36,7 @@ abstract class Core_OrderPersonalReceipt_Status_Cancel extends OrderPersonalRece
 		return '';
 	}
 	
-	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, string $previouse_status_code ): null|EShopEntity_Event|OrderPersonalReceipt_Event
+	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderPersonalReceipt_Event
 	{
 		//TODO:
 		return null;

@@ -43,7 +43,7 @@ abstract class Core_MoneyRefund_Status_InProcessing extends MoneyRefund_Status {
 		return 'background-color: #00ddc1;';
 	}
 	
-	public function createEvent( EShopEntity_Basic|MoneyRefund $item, string $previouse_status_code ): null|EShopEntity_Event|MoneyRefund_Event
+	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event
 	{
 		return $item->initEvent( MoneyRefund_Event_ProcessingStarted::new() );
 	}

@@ -227,7 +227,7 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 		$this->address_country = $ba->getAddressCountry();
 		
 		$this->currency_code = $order->getCurrency()->getCode();
-		$this->status_code = MoneyRefund_Status_New::getCode();
+		$this->status = MoneyRefund_Status_New::getCode();
 		
 		$this->date_started = Data_DateTime::now();
 	}

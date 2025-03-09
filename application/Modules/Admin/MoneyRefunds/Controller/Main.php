@@ -69,7 +69,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			'eshop',
 			'number',
 			'customer',
-			'status_code',
+			'status',
 			'order_number',
 			'date_started',
 			'amount_to_be_refunded'

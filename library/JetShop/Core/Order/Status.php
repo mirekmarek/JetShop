@@ -31,7 +31,7 @@ abstract class Core_Order_Status extends EShopEntity_Status {
 	
 	protected static ?array $list = null;
 	
-	public function createEvent( EShopEntity_Basic|Order $item, string $previouse_status_code ): null|EShopEntity_Event|Order_Event
+	public function createEvent( EShopEntity_Basic|Order $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|Order_Event
 	{
 		return null;
 	}

@@ -21,7 +21,7 @@ abstract class Core_MoneyRefund_Status extends EShopEntity_Status {
 	
 	protected static ?array $list = null;
 	
-	public function createEvent( EShopEntity_Basic|MoneyRefund $item, string $previouse_status_code ): null|EShopEntity_Event|MoneyRefund_Event
+	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event
 	{
 		return null;
 	}

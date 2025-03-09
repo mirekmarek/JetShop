@@ -23,8 +23,6 @@ abstract class Core_Admin_Managers_OrderDispatch extends Admin_EntityManager_Mod
 {
 	abstract public function showDispatches( Context $context ) : string;
 	
-	abstract public function showOrderDispatchStatus( OrderDispatch $dispatch ) : string;
-	
 	abstract public function showRecipient( OrderDispatch $dispatch ) : string;
 	
 }

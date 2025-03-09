@@ -10,6 +10,7 @@ namespace JetShop;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_Status;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Event_PersonalReceiptHandedOver;
@@ -50,7 +51,7 @@ abstract class Core_Order_Status_HandedOver extends Order_Status {
 		return 'background-color: #00ffc1;';
 	}
 	
-	public function createEvent( Order|EShopEntity_Basic $item, string $previouse_status_code ) : Order_Event
+	public function createEvent( Order|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ) : Order_Event
 	{
 		return $item->createEvent( Order_Event_PersonalReceiptHandedOver::new() );
 	}

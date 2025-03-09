@@ -29,16 +29,6 @@ class Main extends Admin_Managers_OrderDispatch
 		return $view->render('dispatches');
 	}
 	
-	public function showOrderDispatchStatus( OrderDispatch $dispatch ) : string
-	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		
-		$view->setVar('dispatch', $dispatch);
-		
-		return $view->render('status');
-		
-	}
-	
 	public function showRecipient( OrderDispatch $dispatch ) : string
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );

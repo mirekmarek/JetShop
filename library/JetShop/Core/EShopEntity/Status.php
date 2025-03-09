@@ -74,27 +74,12 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	
 	public static function getStatusQueryWhere() : array
 	{
-		$where = [
-			'status_code' => static::getCode()
+		return [
+			'status' => static::getCode()
 		];
-		/*
-		foreach(static::$flags_map as $flag => $value ) {
-			if($value===null) {
-				continue;
-			}
-			
-			if($where) {
-				$where[] = 'AND';
-			}
-			
-			$where[$flag] = $value;
-		}
-		*/
-		
-		return $where;
 	}
 	
-	public function createEvent( EShopEntity_Basic $item, string $previouse_status_code ): ?EShopEntity_Event
+	public function createEvent( EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?EShopEntity_Event
 	{
 		return null;
 	}

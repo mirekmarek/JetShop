@@ -73,7 +73,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			'total_amount',
 			'items',
 			'date_purchased',
-			'status_code'
+			'status'
 		]);
 		
 	}

@@ -11,6 +11,7 @@ use Jet\Data_DateTime;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_Status;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
 use JetApplication\OrderDispatch_Event_Sent;
@@ -39,7 +40,7 @@ abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 		return '';
 	}
 	
-	public function createEvent( EShopEntity_Basic|OrderDispatch $item, string $previouse_status_code ): null|EShopEntity_Event|OrderDispatch_Event
+	public function createEvent( EShopEntity_Basic|OrderDispatch $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderDispatch_Event
 	{
 		return OrderDispatch_Event_Sent::new();
 	}

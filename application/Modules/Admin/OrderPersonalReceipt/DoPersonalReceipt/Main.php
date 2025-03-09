@@ -30,16 +30,6 @@ class Main extends Admin_Managers_OrderPersonalReceipt
 		return $view->render('dispatches');
 	}
 	
-	public function showOrderPersonalReceiptStatus( OrderPersonalReceipt $dispatch ) : string
-	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		
-		$view->setVar('dispatch', $dispatch);
-		
-		return $view->render('status');
-		
-	}
-	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new OrderPersonalReceipt();

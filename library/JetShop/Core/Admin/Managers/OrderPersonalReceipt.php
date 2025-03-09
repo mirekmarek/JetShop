@@ -10,7 +10,6 @@ namespace JetShop;
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Context;
 use JetApplication\Manager_MetaInfo;
-use JetApplication\OrderPersonalReceipt;
 
 #[Manager_MetaInfo(
 	group: Manager_MetaInfo::GROUP_ADMIN,
@@ -22,7 +21,5 @@ use JetApplication\OrderPersonalReceipt;
 abstract class Core_Admin_Managers_OrderPersonalReceipt extends Admin_EntityManager_Module
 {
 	abstract public function showDispatches( Context $context ) : string;
-	
-	abstract public function showOrderPersonalReceiptStatus( OrderPersonalReceipt $dispatch ) : string;
 	
 }
