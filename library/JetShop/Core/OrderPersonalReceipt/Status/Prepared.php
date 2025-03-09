@@ -12,6 +12,7 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
+use JetApplication\OrderPersonalReceipt_Event_Prepared;
 use JetApplication\OrderPersonalReceipt_Status;
 
 abstract class Core_OrderPersonalReceipt_Status_Prepared extends OrderPersonalReceipt_Status {
@@ -20,7 +21,6 @@ abstract class Core_OrderPersonalReceipt_Status_Prepared extends OrderPersonalRe
 	
 	public function __construct()
 	{
-		//TODO:
 		$this->title = Tr::_('Prepared', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 3;
 	}
@@ -38,8 +38,7 @@ abstract class Core_OrderPersonalReceipt_Status_Prepared extends OrderPersonalRe
 	
 	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, string $previouse_status_code ): null|EShopEntity_Event|OrderPersonalReceipt_Event
 	{
-		//TODO:
-		return null;
+		return OrderPersonalReceipt_Event_Prepared::new();
 	}
 	
 	

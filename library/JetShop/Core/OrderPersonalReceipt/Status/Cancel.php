@@ -20,8 +20,7 @@ abstract class Core_OrderPersonalReceipt_Status_Cancel extends OrderPersonalRece
 	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Cancel', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Cancellation in progress', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 5;
 	}
 	

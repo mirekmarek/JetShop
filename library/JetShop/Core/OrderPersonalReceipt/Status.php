@@ -17,6 +17,9 @@ abstract class Core_OrderPersonalReceipt_Status extends EShopEntity_Status {
 	
 	protected static string $base_status_class = OrderPersonalReceipt_Status::class;
 	
+	
+	protected static bool $is_editable = false;
+	
 	protected static array $flags_map = [];
 	
 	protected static ?array $list = null;
@@ -25,5 +28,11 @@ abstract class Core_OrderPersonalReceipt_Status extends EShopEntity_Status {
 	{
 		return null;
 	}
+	
+	public static function isEditable(): bool
+	{
+		return self::$is_editable;
+	}
+	
 	
 }

@@ -12,6 +12,7 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
+use JetApplication\OrderPersonalReceipt_Event_HandedOver;
 use JetApplication\OrderPersonalReceipt_Status;
 
 abstract class Core_OrderPersonalReceipt_Status_HandedOver extends OrderPersonalReceipt_Status {
@@ -20,8 +21,7 @@ abstract class Core_OrderPersonalReceipt_Status_HandedOver extends OrderPersonal
 	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Handed Over', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Handed over', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 4;
 	}
 	
@@ -38,8 +38,7 @@ abstract class Core_OrderPersonalReceipt_Status_HandedOver extends OrderPersonal
 	
 	public function createEvent( EShopEntity_Basic|OrderPersonalReceipt $item, string $previouse_status_code ): null|EShopEntity_Event|OrderPersonalReceipt_Event
 	{
-		//TODO:
-		return null;
+		return OrderPersonalReceipt_Event_HandedOver::new();
 	}
 	
 	

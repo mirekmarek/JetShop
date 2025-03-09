@@ -20,7 +20,6 @@ abstract class Core_OrderPersonalReceipt_Status_Canceled extends OrderPersonalRe
 	
 	public function __construct()
 	{
-		//TODO:
 		$this->title = Tr::_('Canceled', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 6;
 	}

@@ -18,10 +18,11 @@ abstract class Core_OrderPersonalReceipt_Status_Pending extends OrderPersonalRec
 	
 	public const CODE = 'pending';
 	
+	protected static bool $is_editable = true;
+	
 	public function __construct()
 	{
-		//TODO:
-		$this->title = Tr::_('Pending', dictionary: Tr::COMMON_DICTIONARY);
+		$this->title = Tr::_('Awaiting processing', dictionary: Tr::COMMON_DICTIONARY);
 		$this->priority = 1;
 	}
 	

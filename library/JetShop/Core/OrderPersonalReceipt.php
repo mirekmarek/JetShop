@@ -13,7 +13,6 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Form;
 use Jet\Form_Field_Textarea;
-use Jet\Logger;
 use Jet\Tr;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
@@ -40,10 +39,14 @@ use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\Order;
-use JetApplication\OrderPersonalReceipt;
-use JetApplication\OrderPersonalReceipt_Event_PreparationStarted;
 use JetApplication\OrderPersonalReceipt_Item;
 use JetApplication\OrderPersonalReceipt_Status;
+use JetApplication\OrderPersonalReceipt_Status_Cancel;
+use JetApplication\OrderPersonalReceipt_Status_Canceled;
+use JetApplication\OrderPersonalReceipt_Status_HandedOver;
+use JetApplication\OrderPersonalReceipt_Status_InProgress;
+use JetApplication\OrderPersonalReceipt_Status_Pending;
+use JetApplication\OrderPersonalReceipt_Status_Prepared;
 use JetApplication\Product_EShopData;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\OrderPersonalReceipt_Event;
@@ -72,13 +75,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	use Context_HasContext_Trait;
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_Admin_Trait;
-	
-	public const STATUS_PENDING = 'pending';
-	public const STATUS_IN_PROGRESS = 'in_progress';
-	public const STATUS_PREPARED = 'prepared';
-	public const STATUS_HANDED_OVER = 'handed_over';
-	public const STATUS_CANCEL = 'cancel';
-	public const STATUS_CANCELED = 'canceled';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -457,24 +453,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		}
 	}
 	
-	public static function getStatusScope() : array
-	{
-		return [
-			static::STATUS_PENDING     => Tr::_( 'Awaiting processing' ),
-			static::STATUS_IN_PROGRESS => Tr::_( 'In progress' ),
-			static::STATUS_PREPARED    => Tr::_( 'Prepared' ),
-			static::STATUS_HANDED_OVER => Tr::_( 'Haded over' ),
-			static::STATUS_CANCEL      => Tr::_( 'Cancellation in progress' ),
-			static::STATUS_CANCELED    => Tr::_( 'Canceled' ),
-		
-		];
-	}
-	
-	
-	
-	
-	
-	
 	
 	public static function newByComplaint( Complaint $complaint, int $product_id, int $delivery_method, string $delivery_point_code ) : static
 	{
@@ -494,8 +472,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		
 		$dispatch->setWarehouse( $_order->getWarehouse() );
 		
-		$dispatch->setStatus( static::STATUS_PENDING );
-		
 		$dispatch->setCurrency( $_order->getCurrency() );
 		
 		$dispatch_item = new OrderPersonalReceipt_Item();
@@ -506,17 +482,9 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		$dispatch_item->setEAN( $product->getEan() );
 		
 		$dispatch->items[] = $dispatch_item;
-		
-		
 		$dispatch->save();
 		
-		Logger::info(
-			event: 'order_personal_receipt:created',
-			event_message: 'Order personal receipt has been created',
-			context_object_id: $dispatch->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data:$dispatch
-		);
+		$dispatch->setStatus( OrderPersonalReceipt_Status_Pending::get() );
 		
 		return $dispatch;
 	}
@@ -531,7 +499,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		$dispatch->setEshop( $order->getEshop() );
 		$dispatch->setContext( $order->getProvidesContext() );
 		$dispatch->setOrderId( $order->getId() );
-		$dispatch->setStatus( static::STATUS_PENDING );
 		
 		
 		if($order->getPaymentMethod()->getKind()->isCOD()) {
@@ -561,13 +528,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		
 		$dispatch->save();
 		
-		Logger::info(
-			event: 'order_personal_receipt:created',
-			event_message: 'Order personal receipt has been created',
-			context_object_id: $dispatch->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data:$dispatch
-		);
+		$dispatch->setStatus( OrderPersonalReceipt_Status_Pending::get() );
 		
 		return $dispatch;
 	}
@@ -580,131 +541,64 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	
 	public function isEditable() : bool
 	{
-		if($this->status_code!=static::STATUS_PENDING) {
-			return false;
-		}
+		$status = $this->getStatus();
+		/**
+		 * @var OrderPersonalReceipt_Status $status
+		 */
 		
-		return true;
+		return $status::isEditable();
 	}
 	
 	
 	public function isPrepared() : bool
 	{
-		return $this->status_code==static::STATUS_PREPARED;
+		return $this->status_code==OrderPersonalReceipt_Status_Prepared::getCode();
 	}
 	
 	public function preparationStarted() : void
 	{
-		$this->status_code = static::STATUS_IN_PROGRESS;
-		$this->save();
-		
-		$this->createEvent( OrderPersonalReceipt_Event_PreparationStarted::new() )->handleImmediately();
+		$this->setStatus( OrderPersonalReceipt_Status_InProgress::get() );
 	}
 	
 	
 	
 	public function prepared() : void
 	{
-		$this->status_code = static::STATUS_PREPARED;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_personal_receipt:set_is_prepared',
-			event_message: 'Order personal receipt is prepared',
-			context_object_id: $this->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data: $this
-		);
-		
-		/**
-		 * @var OrderPersonalReceipt $this
-		 */
-		OrderPersonalReceipt_Event::newEvent(
-			$this,
-			static::EVENT_PREPARED
-		)->handleImmediately();
-		
+		$this->setStatus( OrderPersonalReceipt_Status_Prepared::get() );
 	}
 	
 	
 	
 	public function rollBack() : bool
 	{
-		$this->status_code = static::STATUS_PENDING;
+		//TODO: virtual status
+		$this->setStatus(OrderPersonalReceipt_Status_Pending::get(), handle_event: false );
+		
 		$this->headed_over_date = null;
 		$this->headed_over_date_time = null;
-		
 		$this->save();
-		
-		Logger::info(
-			event: 'order_personal_receipt:rollback',
-			event_message: 'Order personal receipt rollback',
-			context_object_id: $this->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data:$this
-		);
 		
 		return true;
 	}
 	
 	public function cancel() : void
 	{
-		$this->status_code = static::STATUS_CANCEL;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_personal_receipt:cancel',
-			event_message: 'Order personal receipt cancel',
-			context_object_id: $this->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data:$this
-		);
-
-		
+		$this->setStatus( OrderPersonalReceipt_Status_Cancel::get() );
 	}
 	
 	public function confirmCancellation() : void
 	{
-		if(
-			$this->status_code != static::STATUS_CANCEL
-		) {
-			return;
-		}
-		
-		$this->status_code = static::STATUS_CANCELED;
-		$this->save();
-		
-		Logger::info(
-			event: 'order_personal_receipt:cancelled',
-			event_message: 'Order personal receipt cancelled',
-			context_object_id: $this->getId(),
-			context_object_name: 'order_personal_receipt',
-			context_object_data:$this
-		);
-		
-		
+		$this->setStatus( OrderPersonalReceipt_Status_Canceled::get() );
 	}
 	
 	
 	public function handedOver() : void
 	{
-		if( $this->status_code != static::STATUS_PREPARED ) {
-			return;
-		}
+		$this->setStatus( OrderPersonalReceipt_Status_HandedOver::get() );
 		
-		$this->status_code = static::STATUS_HANDED_OVER;
 		$this->headed_over_date = Data_DateTime::now();
 		$this->headed_over_date_time = Data_DateTime::now();
 		$this->save();
-		
-		
-		/**
-		 * @var OrderPersonalReceipt $this
-		 */
-		OrderPersonalReceipt_Event::newEvent(
-			$this,
-			static::EVENT_HANDED_OVER
-		)->handleImmediately();
 	}
 	
 	public function getOurNoteForm() : Form
