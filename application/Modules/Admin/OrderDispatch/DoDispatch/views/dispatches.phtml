@@ -48,7 +48,7 @@ if(!count($dispatches)) {
 			<td><?php require 'link.phtml'; ?></td>
 			<td><?=Locale::dateAndTime( $dispatch->getCreated() )?></td>
 			<td><?=Locale::date( $dispatch->getDispatchDate() )?></td>
-			<td><?php require 'status.phtml'; ?></td>
+			<td><?=$dispatch->getStatus()->showAdmin();?></td>
 			<td><?=$dispatch->getCarrier()?->getName()?></td>
 			<td><?=$dispatch->getCarrierService()?->getName() ?></td>
 			<td><?=$dispatch->getConsignmentId()?></td>

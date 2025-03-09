@@ -19,6 +19,7 @@ abstract class Core_OrderPersonalReceipt_Status extends EShopEntity_Status {
 	
 	
 	protected static bool $is_editable = false;
+	protected static bool $is_rollback_possible = false;
 	
 	protected static array $flags_map = [];
 	
@@ -31,7 +32,12 @@ abstract class Core_OrderPersonalReceipt_Status extends EShopEntity_Status {
 	
 	public static function isEditable(): bool
 	{
-		return self::$is_editable;
+		return static::$is_editable;
+	}
+	
+	public static function isIsRollbackPossible(): bool
+	{
+		return static::$is_rollback_possible;
 	}
 	
 	

@@ -178,7 +178,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public static function getListOfToBeCanceled( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status' => static::STATUS_CANCEL,
+			'status' => OrderPersonalReceipt_Status_Canceled::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -194,7 +194,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public static function getListOfPending( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status' => static::STATUS_PENDING,
+			'status' => OrderPersonalReceipt_Status_Pending::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -210,7 +210,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public static function getListOfInProgress( WarehouseManagement_Warehouse $warehouse ): DataModel_Fetch_Instances|iterable
 	{
 		$list =  static::fetchInstances( [
-			'status' => static::STATUS_IN_PROGRESS,
+			'status' => OrderPersonalReceipt_Status_InProgress::getCode(),
 			'AND',
 			'warehouse_id' => $warehouse->getId()
 		] );
@@ -240,7 +240,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	{
 		$list =  static::fetchInstances( [
 			'status' => [
-				static::STATUS_PREPARED
+				OrderPersonalReceipt_Status_Prepared::getCode()
 			],
 			'AND',
 			'warehouse_id' => $warehouse->getId()
@@ -261,7 +261,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		
 		$list =  static::fetchInstances( [
 			'status' => [
-				static::STATUS_HANDED_OVER
+				OrderPersonalReceipt_Status_HandedOver::getCode()
 			],
 			'AND',
 			'warehouse_id' => $warehouse->getId(),

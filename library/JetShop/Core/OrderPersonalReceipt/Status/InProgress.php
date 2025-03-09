@@ -20,6 +20,9 @@ abstract class Core_OrderPersonalReceipt_Status_InProgress extends OrderPersonal
 	
 	public const CODE = 'in_progress';
 	
+	protected static bool $is_rollback_possible = true;
+	
+	
 	public function __construct()
 	{
 		$this->title = Tr::_('In progress', dictionary: Tr::COMMON_DICTIONARY);

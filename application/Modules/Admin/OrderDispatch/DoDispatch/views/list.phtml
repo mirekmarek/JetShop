@@ -234,7 +234,7 @@ require 'list/js.phtml';
 								<td><?php require 'order.phtml'; ?></td>
 								<td><?php require 'context.phtml'; ?></td>
 								<td>
-									<?php require 'status.phtml';  ?>
+									<?=$dispatch->getStatus()->showAdmin();?>
 									<br>
 									<?=$dispatch->getConsignmentCreateErrorMessage()?>
 									<br>

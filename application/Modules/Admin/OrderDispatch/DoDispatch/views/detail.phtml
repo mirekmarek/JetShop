@@ -61,9 +61,7 @@ require 'detail/js.phtml';
 		<div style="display: flex;align-items: center;gap: 10px;">
 			<div><?=$dispatch->getNumber()?></div>
 			<div>
-				<?php
-				require 'status.phtml';
-				?>
+				<?=$dispatch->getStatus()->showAdmin();?>
 			</div>
 		</div>
 		

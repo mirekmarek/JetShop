@@ -20,6 +20,8 @@ abstract class Core_OrderPersonalReceipt_Status_HandedOver extends OrderPersonal
 	
 	public const CODE = 'handed_over';
 	
+	protected static bool $is_rollback_possible = true;
+	
 	public function __construct()
 	{
 		$this->title = Tr::_('Handed over', dictionary: Tr::COMMON_DICTIONARY);

@@ -43,4 +43,5 @@ return [
 	'Complaint' => '',
 	'Warehouse' => '',
 	'e-shop' => '',
+	'Status:' => '',
 ];

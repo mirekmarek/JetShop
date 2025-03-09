@@ -34,11 +34,7 @@ echo UI::button(Tr::_('Goto next pending (alt+n)'))->setClass(UI_button::CLASS_I
 </div>
 
 <?php
-if(in_array($dispatch->getStatus(), [
-	OrderPersonalReceipt::STATUS_IN_PROGRESS,
-	OrderPersonalReceipt::STATUS_PREPARED,
-	OrderPersonalReceipt::STATUS_HANDED_OVER
-])) {
+if($dispatch->getStatus()::isIsRollbackPossible()) {
 	
 	echo UI::button(Tr::_('Rollback'))
 		->setUrl( Http_Request::currentURI(['action'=>'rollback']) )

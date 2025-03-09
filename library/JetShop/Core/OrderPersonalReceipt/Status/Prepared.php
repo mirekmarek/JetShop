@@ -20,6 +20,8 @@ abstract class Core_OrderPersonalReceipt_Status_Prepared extends OrderPersonalRe
 	
 	public const CODE = 'prepared';
 	
+	protected static bool $is_rollback_possible = true;
+	
 	public function __construct()
 	{
 		$this->title = Tr::_('Prepared', dictionary: Tr::COMMON_DICTIONARY);

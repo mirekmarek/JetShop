@@ -43,7 +43,7 @@ if(!count($dispatches)) {
 			<td><?php require 'link.phtml'; ?></td>
 			<td><?=Locale::dateAndTime( $dispatch->getCreated() )?></td>
 			<td><?=Locale::date( $dispatch->getDispatchDate() )?></td>
-			<td><?php require 'status.phtml'; ?></td>
+			<td><?=$dispatch->getStatus()->showAdmin();?></td>
 		</tr>
 	<?php endforeach; ?>
 	</table>

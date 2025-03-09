@@ -222,4 +222,6 @@ return [
 	'Waiting for consignment to be created at the carrier' => '',
 	'Returning' => '',
 	'Sent' => '',
+	'In progress' => '',
+	'Prepared' => '',
 ];
