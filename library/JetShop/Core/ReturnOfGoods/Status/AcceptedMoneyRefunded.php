@@ -8,6 +8,11 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Status;
+use JetApplication\ReturnOfGoods;
+use JetApplication\ReturnOfGoods_Event;
+use JetApplication\ReturnOfGoods_Event_DoneAccepted;
 use JetApplication\ReturnOfGoods_Status;
 
 abstract class Core_ReturnOfGoods_Status_AcceptedMoneyRefunded extends ReturnOfGoods_Status {
@@ -37,6 +42,11 @@ abstract class Core_ReturnOfGoods_Status_AcceptedMoneyRefunded extends ReturnOfG
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-done';
+	}
+	
+	public function createEvent( EShopEntity_Basic|ReturnOfGoods $item, EShopEntity_Status $previouse_status ): ?ReturnOfGoods_Event
+	{
+		return $item->initEvent( ReturnOfGoods_Event_DoneAccepted::new() );
 	}
 	
 }

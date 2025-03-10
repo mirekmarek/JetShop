@@ -28,6 +28,8 @@ use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method_EShopData;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
@@ -64,6 +66,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
@@ -72,6 +75,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_HasEvents_Trait;
 	
 	use Complaint_Trait_Status;
 	use Complaint_Trait_Events;

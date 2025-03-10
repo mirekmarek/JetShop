@@ -21,6 +21,8 @@ use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_Definition;
@@ -60,6 +62,7 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface,
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_Admin_Interface,
 	Context_ProvidesContext_Interface
@@ -67,6 +70,8 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_HasStatus_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_HasEvents_Trait;
+	
 	use Context_ProvidesContext_Trait;
 	
 	use ReturnOfGoods_Trait_Status;
@@ -721,5 +726,4 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	{
 		return false;
 	}
-	
 }

@@ -242,4 +242,10 @@ return [
 	'Internal notes:' => '',
 	'Set status: Cancelled' => '',
 	'Set status: Rollback' => '',
+	'Start processing' => '',
+	'Set status: Being processed' => '',
+	'Note for custommer:' => '',
+	'Do not send notifications to the customer' => '',
+	'Set status: Rejected' => '',
+	'Set status: Clarification required' => '',
 ];

@@ -18,14 +18,14 @@ use JetApplication\ReturnOfGoods_Note;
 
 trait Core_ReturnOfGoods_Trait_Events
 {
-	
 	public function createEvent( EShopEntity_Event|ReturnOfGoods_Event $event ) : ReturnOfGoods_Event
 	{
-		$event->init( $this->getEshop() );
 		$event->setReturnOfGoods( $this );
+		$event->init( $this->getEshop() );
 		
 		return $event;
 	}
+	
 	
 	public function newUnfinishedReturnOfGoods() : void
 	{

@@ -8,11 +8,16 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Status;
+use JetApplication\ReturnOfGoods;
+use JetApplication\ReturnOfGoods_Event;
+use JetApplication\ReturnOfGoods_Event_DoneRejected;
 use JetApplication\ReturnOfGoods_Status;
 
 abstract class Core_ReturnOfGoods_Status_Rejected extends ReturnOfGoods_Status {
 	
-	public const CODE = 'clarification_required';
+	public const CODE = 'rejected';
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -38,6 +43,11 @@ abstract class Core_ReturnOfGoods_Status_Rejected extends ReturnOfGoods_Status {
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-warning';
+	}
+	
+	public function createEvent( EShopEntity_Basic|ReturnOfGoods $item, EShopEntity_Status $previouse_status ): ?ReturnOfGoods_Event
+	{
+		return $item->initEvent( ReturnOfGoods_Event_DoneRejected::new() );
 	}
 	
 }

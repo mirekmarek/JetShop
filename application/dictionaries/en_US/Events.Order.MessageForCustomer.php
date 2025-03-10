@@ -15,4 +15,7 @@ return [
 	'Order item unit price' => '',
 	'Order item price' => '',
 	'Message text' => '',
+	'File name' => '',
+	'Type' => '',
+	'Size' => '',
 ];

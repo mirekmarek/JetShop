@@ -39,4 +39,5 @@ abstract class Core_ReturnOfGoods_Status_Cancelled extends ReturnOfGoods_Status 
 		return 'status-cancelled';
 	}
 	
+	
 }

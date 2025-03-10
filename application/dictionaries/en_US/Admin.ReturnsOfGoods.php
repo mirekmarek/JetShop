@@ -131,4 +131,5 @@ return [
 	'XLSX' => '',
 	'Administrator' => '',
 	'History' => '',
+	'Do not send notifications to the customer' => '',
 ];

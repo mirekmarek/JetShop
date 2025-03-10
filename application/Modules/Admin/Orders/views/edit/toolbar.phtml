@@ -53,6 +53,9 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 			<?php endif; ?>
 		</div>
 		
+		<?=Plugin::get(Plugin_Note_Main::KEY)->renderButton()?>
+		
+		
 		<?php if($is_editable): ?>
 			<div class="dropdown">
 				<button class="btn btn-secondary dropdown-toggle" type="button" id="change-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -69,12 +72,6 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 					</div>
 				</div>
 			</div>
-		<?php endif; ?>
-			
-			<?=Plugin::get(Plugin_Note_Main::KEY)->renderButton()?>
-		
-		
-		<?php if($is_editable): ?>
 			<div class="dropdown">
 				<button class="btn btn-secondary dropdown-toggle" type="button" id="change-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<?=Tr::_('Send e-mail')?>
@@ -87,14 +84,10 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 			</div>
 			
 			<?=Plugin::get(Plugin_Invoicing_Main::KEY)->renderButton()?>
-			
-			<?=Plugin::get(Plugin_Cancel_Main::KEY)?->renderButton()?>
 		<?php endif; ?>
 		
 		<?=Plugin::get(Plugin_MoneyRefund_Main::KEY)?->renderButton()?>
-		
-		&nbsp;&nbsp;&nbsp;
-		<?=Plugin::get(Plugin_Dispatch_Main::KEY)?->renderButton()?>
+		<?=Plugin::get(Plugin_SetStatus_Main::KEY)?->renderButton()?>
 		&nbsp;&nbsp;&nbsp;
 		
 		<a href="<?=Http_Request::currentURI(['print'=>1])?>" target="_blank" class="btn btn-primary"><?=UI::icon('print')?> <?=Tr::_('Print')?></a>
