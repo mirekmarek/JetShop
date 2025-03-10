@@ -9,11 +9,15 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 use Jet\Application_Module_Manifest;
 use Jet\Factory_MVC;
 use Jet\Form;
+use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\MVC_Layout;
 use Jet\MVC_View;
+use Jet\Tr;
 use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
+use JetApplication\EMail_Sent;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Edit;
@@ -22,8 +26,10 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
+use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureState;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 use JetApplication\EShops;
@@ -49,25 +55,30 @@ class Main extends Admin_Managers_EShopEntity_Edit
 	
 	protected function render( $script, array $params ) : string
 	{
-		$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		
-		$this->view->setVar('module', $this);
-		
-		$this->view->setVar( 'item', $this->item );
-		$this->view->setVar( 'listing', $this->listing );
-		$this->view->setVar( 'tabs', $this->tabs );
-		
-		$this->view->setVar( 'toolbar_renderer', $this->toolbar_renderer );
-		$this->view->setVar( 'common_data_fields_renderer', $this->common_data_fields_renderer );
-		$this->view->setVar( 'eshop_data_fields_renderer', $this->eshop_data_fields_renderer );
-		$this->view->setVar( 'description_fields_renderer', $this->description_fields_renderer );
-		
-		foreach($params as $k=>$v) {
-			$this->view->setVar($k, $v);
-		}
-		
-		
-		return $this->view->render($script);
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: Tr::COMMON_DICTIONARY,
+			action: function() use ($script, $params) {
+				$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				
+				$this->view->setVar('module', $this);
+				
+				$this->view->setVar( 'item', $this->item );
+				$this->view->setVar( 'listing', $this->listing );
+				$this->view->setVar( 'tabs', $this->tabs );
+				
+				$this->view->setVar( 'toolbar_renderer', $this->toolbar_renderer );
+				$this->view->setVar( 'common_data_fields_renderer', $this->common_data_fields_renderer );
+				$this->view->setVar( 'eshop_data_fields_renderer', $this->eshop_data_fields_renderer );
+				$this->view->setVar( 'description_fields_renderer', $this->description_fields_renderer );
+				
+				foreach($params as $k=>$v) {
+					$this->view->setVar($k, $v);
+				}
+				
+				
+				return $this->view->render($script);
+			}
+		);
 	}
 	
 	
@@ -508,4 +519,61 @@ class Main extends Admin_Managers_EShopEntity_Edit
 			'status' => $status
 		]);
 	}
+	
+	public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item ) : string
+	{
+		return $this->render('event-history', [
+			'history' => $item->getHistory()
+		]);
+	}
+	
+	public function renderSentEmails( EShopEntity_Basic $item ) : string
+	{
+		return $this->render('sent-emails', [
+			'item' => $item
+		]);
+	}
+	
+	public function handleShowSentEmail( EShopEntity_Basic $item ) : ?string
+	{
+		if(($sent_email_id=Http_Request::GET()->getInt('show_sent_email'))) {
+			$sent_email = EMail_Sent::load( $sent_email_id );
+			if(!$sent_email) {
+				Http_Headers::reload(unset_GET_params: ['show_sent_email']);
+			}
+			MVC_Layout::getCurrentLayout()->setScriptName('dialog');
+			
+			
+			return $this->render('sent-email', [
+				'sent_email' => $sent_email
+			]);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @return string
+	 */
+	public function renderEntitySetStatusButtons( array $future_statuses ) : string
+	{
+		return $this->render('set-status/buttons', [
+			'future_statuses' => $future_statuses
+		]);
+	}
+	
+	/**
+	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @param Form[] $forms
+	 * @return string
+	 */
+	public function renderEntitySetStatusDialogs( array $future_statuses, array $forms ) : string
+	{
+		return $this->render('set-status/dialogs', [
+			'future_statuses' => $future_statuses,
+			'forms' => $forms
+		]);
+	}
+	
 }

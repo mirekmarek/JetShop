@@ -58,7 +58,7 @@ abstract class Core_MoneyRefund_EMailTemplate extends EMail_Template {
 	
 	public function setupEMail( EShop $eshop, EMail $email ): void
 	{
-		$email->setContext('money_refund');
+		$email->setContext( MoneyRefund::getEntityType() );
 		$email->setContextId( $this->money_refund->getId() );
 		$email->setContextCustomerId( $this->money_refund->getCustomerId() );
 		$email->setSaveHistoryAfterSend( true );

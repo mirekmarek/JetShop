@@ -7,12 +7,9 @@
 namespace JetApplicationModule\Admin\MoneyRefunds;
 
 
-use Jet\Http_Headers;
-use Jet\Http_Request;
-use Jet\MVC_Layout;
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use JetApplication\EMail_Sent;
+use JetApplication\Admin_Managers;
 use JetApplication\MoneyRefund;
 
 
@@ -85,32 +82,26 @@ class Controller_Main extends Admin_EntityManager_Controller
 	public function edit_main_Action() : void
 	{
 		/**
-		 * @var MoneyRefund $refund
+		 * @var MoneyRefund $item
 		 */
-		$refund = $this->current_item;
+		$item = $this->current_item;
 		
-		if(($sent_email_id=Http_Request::GET()->getInt('show_sent_email'))) {
-			$sent_email = EMail_Sent::load( $sent_email_id );
-			if(!$sent_email) {
-				Http_Headers::reload(unset_GET_params: ['show_sent_email']);
-			}
-			$this->view->setVar('sent_email', $sent_email);
-			
-			MVC_Layout::getCurrentLayout()->setScriptName('dialog');
-			
-			$this->output( 'sent_email' );
+		if(($sent_email=Admin_Managers::EntityEdit()->handleShowSentEmail( $item ))) {
+			$this->content->output( $sent_email );
 			return;
 		}
 		
 		$this->setBreadcrumbNavigation(
-			Tr::_( 'Money refundation <b>%NUMBER%</b>', [ 'NUMBER' => $refund->getNumber() ] )
+			Tr::_( 'Money refundation <b>%NUMBER%</b>', [ 'NUMBER' => $item->getNumber() ] )
 		);
 		
-		$this->view->setVar( 'money_refund', $refund );
+		$this->view->setVar( 'money_refund', $item );
 		$this->view->setVar('listing', $this->getListing());
 		
-		Handler::initHandlers( $this->view, $refund );
-		Handler::handleHandlers();
+		if(Main::getCurrentUserCanEdit()) {
+			Plugin::initPlugins( $this->view, $item );
+			Plugin::handlePlugins();
+		}
 		
 		$this->output( 'edit' );
 

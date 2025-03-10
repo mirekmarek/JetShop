@@ -12,6 +12,7 @@ use Jet\BaseObject;
 use Jet\IO_Dir;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_VirtualStatus;
+use Closure;
 
 abstract class Core_EShopEntity_VirtualStatus extends BaseObject {
 	public const CODE = null;
@@ -27,8 +28,14 @@ abstract class Core_EShopEntity_VirtualStatus extends BaseObject {
 		return static::CODE;
 	}
 	
+	abstract public function getTitle(): string;
 	
-	abstract public static function handle( EShopEntity_HasStatus_Interface $item ) : void;
+	abstract public static function handle(
+		EShopEntity_HasStatus_Interface $item,
+		bool $handle_event=true,
+		array $params=[],
+		?Closure $event_setup=null
+	) : void;
 	
 	
 	/**

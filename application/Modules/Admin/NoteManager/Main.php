@@ -17,6 +17,9 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
 use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\AdministratorSignatures;
 use JetApplication\EShopEntity_Note;
@@ -223,4 +226,11 @@ class Main extends Admin_Managers_Note
 		return $view->render( 'note' );
 	}
 	
+	public function showButton(): string
+	{
+		return UI::button(Tr::_('Note'))
+			->setClass(UI_button::CLASS_INFO)
+			->setIcon('pen-to-square')
+			->setOnClick("NoteHandler.showDialog();")->toString();
+	}
 }

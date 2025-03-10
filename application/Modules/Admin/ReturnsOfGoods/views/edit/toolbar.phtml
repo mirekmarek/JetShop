@@ -51,11 +51,11 @@ $next_url = $listing->getNextEditUrl( $return->getId() );
 			<?php endif; ?>
 		</div>
 		
-		<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
+		<?=Plugin::get(Plugin_Note_Main::KEY)->renderButton()?>
 		
-		<?=Handler::getHandler( Handler_SendMailConfirmation_Main::KEY )->renderButton()?>
-		<?=Handler::getHandler( Handler_DoneAccepted_Main::KEY )->renderButton()?>
-		<?=Handler::getHandler( Handler_DoneRejected_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_SendMailConfirmation_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_DoneAccepted_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_DoneRejected_Main::KEY )->renderButton()?>
 	
 	</div>
 </div>

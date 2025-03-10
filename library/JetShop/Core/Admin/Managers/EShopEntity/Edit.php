@@ -15,8 +15,10 @@ use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasActivation_Interface;
+use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureState;
 use JetApplication\EShopEntity_WithEShopData;
 use Closure;
 use JetApplication\Manager_MetaInfo;
@@ -106,4 +108,23 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	abstract public function renderEditorTools( EShopEntity_Basic $item ) : string;
 	
 	abstract public function renderShowStatus( EShopEntity_Status $status ) : string;
+	
+	abstract public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item ) : string;
+	
+	abstract public function renderSentEmails( EShopEntity_Basic $item ) : string;
+	
+	abstract public function handleShowSentEmail( EShopEntity_Basic $item ) : ?string;
+	
+	/**
+	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @return string
+	 */
+	abstract public function renderEntitySetStatusButtons( array $future_statuses ) : string;
+	
+	/**
+	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @param Form[] $forms
+	 * @return string
+	 */
+	abstract public function renderEntitySetStatusDialogs( array $future_statuses, array $forms ) : string;
 }

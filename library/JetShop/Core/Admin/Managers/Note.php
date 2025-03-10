@@ -28,6 +28,8 @@ abstract class Core_Admin_Managers_Note extends Application_Module
 	
 	abstract public function showDialog() : string;
 	
+	abstract public function showButton() : string;
+	
 	abstract public function showNote( EShopEntity_Note $note ) : string;
 	
 	abstract public function addMessageGenerator( EShopEntity_Note_MessageGenerator $generator ) : void;

@@ -1,0 +1,66 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+use Jet\Http_Request;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('item');
+
+if(
+	$order->isCancelled() ||
+	!main::getCurrentUserCanEdit() ||
+	$order->getDelivered() ||
+	$order->getDispatched()
+) {
+	return;
+}
+
+echo UI::button(Tr::_('Check ready for dispatch'))
+	->setClass(UI_button::CLASS_SUCCESS)
+	->setIcon('check')
+	->setUrl(Http_Request::currentURI(set_GET_params: ['dispatch_action'=>'recheck_is_ready']));
+
+
+if( $order->getReadyForDispatch() ):
+	if( !$order->getDispatchStarted() ):
+		/*
+		echo UI::button(Tr::_('Not ready for dispatch'))
+			->setClass(UI_button::CLASS_DANGER)
+			->setIcon('xmark')
+			->setOnClick("$('#set_not_ready_for_dispatch_dialog').modal('show')");
+		*/
+		
+		echo UI::button(Tr::_('Start dispatch'))
+			->setClass(UI_button::CLASS_SUCCESS)
+			->setIcon('check')
+			->setOnClick("$('#start_dispatch_dialog').modal('show')");
+		
+	else:
+		echo UI::button(Tr::_('Cancel dispatch'))
+			->setClass(UI_button::CLASS_DANGER)
+			->setIcon('xmark')
+			->setOnClick("$('#cancel_dispatch_dialog').modal('show')");
+		
+	endif;
+	
+	
+endif;
+

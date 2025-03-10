@@ -183,4 +183,6 @@ return [
 	'Administrator' => '',
 	'Complaint - rejected' => '',
 	'Error during complaint confirmation e-mail sending' => '',
+	'History' => '',
+	'Complaint - changed' => '',
 ];

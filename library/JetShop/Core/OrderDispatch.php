@@ -1131,4 +1131,8 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	}
 	
 	
+	public function getHistory(): array
+	{
+		return OrderDispatch_Event::getEventsList( $this->getId() );
+	}
 }

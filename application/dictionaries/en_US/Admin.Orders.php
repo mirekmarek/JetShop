@@ -360,4 +360,5 @@ return [
 	'Request status' => '',
 	'Amount to be refunded' => '',
 	'Administrator' => '',
+	'History' => '',
 ];

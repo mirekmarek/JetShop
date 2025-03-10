@@ -130,4 +130,5 @@ return [
 	'CSV' => '',
 	'XLSX' => '',
 	'Administrator' => '',
+	'History' => '',
 ];

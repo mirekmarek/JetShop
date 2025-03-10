@@ -68,7 +68,7 @@ abstract class EMailTemplate extends EMail_Template {
 	
 	public function setupEMail( EShop $eshop, EMail $email ) : void
 	{
-		$email->setContext('order');
+		$email->setContext( Order::getEntityType() );
 		$email->setContextId( $this->invoice->getOrderId() );
 		$email->setContextCustomerId( $this->invoice->getCustomerId() );
 		$email->setSaveHistoryAfterSend( true );

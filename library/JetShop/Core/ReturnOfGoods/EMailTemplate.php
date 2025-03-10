@@ -52,7 +52,7 @@ abstract class Core_ReturnOfGoods_EMailTemplate extends EMail_Template {
 	
 	public function setupEMail( EShop $eshop, EMail $email ): void
 	{
-		$email->setContext('return_of_goods');
+		$email->setContext( ReturnOfGoods::getEntityType() );
 		$email->setContextId( $this->return_of_goods->getId() );
 		$email->setContextCustomerId( $this->return_of_goods->getCustomerId() );
 		$email->setSaveHistoryAfterSend( true );

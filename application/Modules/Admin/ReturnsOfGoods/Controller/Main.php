@@ -7,12 +7,9 @@
 namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 
-use Jet\Http_Headers;
-use Jet\Http_Request;
-use Jet\MVC_Layout;
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use JetApplication\EMail_Sent;
+use JetApplication\Admin_Managers;
 use JetApplication\ReturnOfGoods;
 
 
@@ -89,16 +86,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 		 */
 		$return = $this->current_item;
 		
-		if(($sent_email_id=Http_Request::GET()->getInt('show_sent_email'))) {
-			$sent_email = EMail_Sent::load( $sent_email_id );
-			if(!$sent_email) {
-				Http_Headers::reload(unset_GET_params: ['show_sent_email']);
-			}
-			$this->view->setVar('sent_email', $sent_email);
-			
-			MVC_Layout::getCurrentLayout()->setScriptName('dialog');
-			
-			$this->output( 'sent_email' );
+		if(($sent_email=Admin_Managers::EntityEdit()->handleShowSentEmail( $return ))) {
+			$this->content->output( $sent_email );
 			return;
 		}
 		
@@ -109,8 +98,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->view->setVar( 'return', $return );
 		$this->view->setVar('listing', $this->getListing());
 		
-		Handler::initHandlers( $this->view, $return );
-		Handler::handleHandlers();
+		if(Main::getCurrentUserCanEdit()) {
+			Plugin::initPlugins( $this->view, $return );
+			Plugin::handlePlugins();
+		}
 		
 		$this->output( 'edit' );
 

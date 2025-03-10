@@ -1,0 +1,32 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\MVC_View;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('item');
+if(!$order->isEditable()) {
+	return;
+}
+
+echo UI::button(Tr::_('Cancel order'))
+	->setClass(UI_button::CLASS_DANGER)
+	->setIcon('xmark')
+	->setOnClick("$('#cancel_order_dialog').modal('show');");
+	

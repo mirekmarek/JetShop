@@ -1,0 +1,52 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Edit;
+
+use Jet\Form;
+use Jet\Form_Field_Textarea;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+use Jet\Form_Renderer;
+use JetApplication\EShopEntity_Status_PossibleFutureState;
+
+/**
+ * @var MVC_View $this
+ * @var EShopEntity_Status_PossibleFutureState[] $future_statuses
+ * @var Form[] $forms
+ */
+
+$future_statuses = $this->getRaw( 'future_statuses' );
+$forms = $this->getRaw('forms');
+
+foreach( $future_statuses as $state ):
+	$form = $forms[$state->getStatus()::getCode()];
+	$form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+	$form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+	
+	$dialog = UI::dialog(
+		"set_status_dialog_{$state->getStatus()::getCode()}",
+		Tr::_('Set status: '.$state->getStatus()->getTitle()),
+		UI_dialog::SIZE_EXTRA_LARGE
+	);
+
+	echo $dialog->start();
+	echo $form->start();
+	
+		foreach($form->getFields() as $field):
+			if($field instanceof Form_Field_Textarea) {
+				$field->input()->addCustomCssStyle("height: 300px;");
+			}
+			echo $field;
+		endforeach;
+	
+	echo $dialog->footer();
+	echo UI::button_save( Tr::_('Set') );
+	echo $form->end();
+	echo $dialog->end();
+endforeach;

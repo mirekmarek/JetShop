@@ -9,6 +9,7 @@ namespace JetShop;
 
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_VirtualStatus;
+use Closure;
 
 interface Core_EShopEntity_HasStatus_Interface {
 	
@@ -16,7 +17,12 @@ interface Core_EShopEntity_HasStatus_Interface {
 	
 	public function setFlags( array $flags ) : void;
 	
-	public function setStatus( EShopEntity_Status|EShopEntity_VirtualStatus $status, bool $handle_event=true ) : void;
+	public function setStatus(
+		EShopEntity_Status|EShopEntity_VirtualStatus $status,
+		bool $handle_event=true,
+		array $params=[],
+		?Closure $event_setup=null
+	) : void;
 	
 	public function getStatus() : ?EShopEntity_Status;
 	

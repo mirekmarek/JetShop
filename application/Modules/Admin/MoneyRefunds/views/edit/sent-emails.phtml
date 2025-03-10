@@ -33,7 +33,7 @@ $money_refund = $this->getRaw( 'money_refund' );
 			<th><?=Tr::_('Attachments')?></th>
 		</tr>
 		</thead>
-		<?php foreach( EMail_Sent::getByContext( 'money_refund', $money_refund->getId() ) as $sent_email): ?>
+		<?php foreach( EMail_Sent::getByContext( $money_refund::getEntityType(), $money_refund->getId() ) as $sent_email): ?>
 			<tr>
 				<td><a href="<?=Http_Request::currentURI(set_GET_params: ['show_sent_email'=>$sent_email->getId()])?>" target="_blank"><?=UI::icon('eye')?></a></td>
 				<td><?=Locale::dateAndTime($sent_email->getCreated())?></td>

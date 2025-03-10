@@ -58,7 +58,7 @@ abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 	
 	public function setupEMail( EShop $eshop, EMail $email ): void
 	{
-		$email->setContext('complaint');
+		$email->setContext( Complaint::getEntityType() );
 		$email->setContextId( $this->complaint->getId() );
 		$email->setContextCustomerId( $this->complaint->getCustomerId() );
 		$email->setSaveHistoryAfterSend( true );

@@ -60,18 +60,18 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 				</button>
 				<div class="dropdown-menu" aria-labelledby="change-menu">
 					<div style="width:300px;display: grid;grid-template-columns: 1fr;gap: 10px;padding: 10px;">
-						<?=Handler::getHandler(Handler_ChangePaymentMethod_Main::KEY)?->renderButton()?>
-						<?=Handler::getHandler(Handler_ChangeDeliveryMethod_Main::KEY)?->renderButton()?>
-						<?=Handler::getHandler(Handler_AddItem_Main::KEY)->renderButton()?>
-						<?=Handler::getHandler(Handler_UpdateItemQty_Main::KEY)?->renderDeleteButton()?>
-						<?=Handler::getHandler(Handler_Split_Main::KEY)->renderButton()?>
-						<?=Handler::getHandler(Handler_Join_Main::KEY)->renderButton()?>
+						<?=Plugin::get(Plugin_ChangePaymentMethod_Main::KEY)?->renderButton()?>
+						<?=Plugin::get(Plugin_ChangeDeliveryMethod_Main::KEY)?->renderButton()?>
+						<?=Plugin::get(Plugin_AddItem_Main::KEY)->renderButton()?>
+						<?=Plugin::get(Plugin_UpdateItemQty_Main::KEY)?->renderDeleteButton()?>
+						<?=Plugin::get(Plugin_Split_Main::KEY)->renderButton()?>
+						<?=Plugin::get(Plugin_Join_Main::KEY)->renderButton()?>
 					</div>
 				</div>
 			</div>
 		<?php endif; ?>
 			
-			<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
+			<?=Plugin::get(Plugin_Note_Main::KEY)->renderButton()?>
 		
 		
 		<?php if($is_editable): ?>
@@ -81,20 +81,20 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 				</button>
 				<div class="dropdown-menu" aria-labelledby="change-menu">
 					<div style="width:400px;display: grid;grid-template-columns: 1fr;gap: 10px;padding: 10px;">
-						<?=Handler::getHandler(Handler_SendMailConfirmation_Main::KEY)?->renderButton()?>
+						<?=Plugin::get(Plugin_SendMailConfirmation_Main::KEY)?->renderButton()?>
 					</div>
 				</div>
 			</div>
 			
-			<?=Handler::getHandler(Handler_Invoicing_Main::KEY)->renderButton()?>
+			<?=Plugin::get(Plugin_Invoicing_Main::KEY)->renderButton()?>
 			
-			<?=Handler::getHandler(Handler_Cancel_Main::KEY)?->renderButton()?>
+			<?=Plugin::get(Plugin_Cancel_Main::KEY)?->renderButton()?>
 		<?php endif; ?>
 		
-		<?=Handler::getHandler(Handler_MoneyRefund_Main::KEY)?->renderButton()?>
+		<?=Plugin::get(Plugin_MoneyRefund_Main::KEY)?->renderButton()?>
 		
 		&nbsp;&nbsp;&nbsp;
-		<?=Handler::getHandler(Handler_Dispatch_Main::KEY)?->renderButton()?>
+		<?=Plugin::get(Plugin_Dispatch_Main::KEY)?->renderButton()?>
 		&nbsp;&nbsp;&nbsp;
 		
 		<a href="<?=Http_Request::currentURI(['print'=>1])?>" target="_blank" class="btn btn-primary"><?=UI::icon('print')?> <?=Tr::_('Print')?></a>

@@ -1,0 +1,38 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods     $return_of_goods
+ * @var Form $form
+ */
+
+$return_of_goods = $this->getRaw( 'item' );
+$form = $this->getRaw('delivery_address_form');
+
+
+if(!$return_of_goods->isEditable()) {
+	return;
+}
+
+?>
+<div style="text-align: center;padding: 10px;">
+<?=UI::button(Tr::_('Edit'))->setIcon('pen-to-square')
+	->setClass(UI_button::CLASS_PRIMARY)
+	->setOnClick("$('#delivery_address_dialog').modal('show');")?>
+</div>
+

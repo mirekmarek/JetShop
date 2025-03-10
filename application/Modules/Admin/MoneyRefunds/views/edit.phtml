@@ -39,12 +39,12 @@ $money_refund = $this->getRaw( 'money_refund' );
 		</div>
 	</div>
 	<br><br><br><br>
-
+	
 	<div id="o_history" class="o_anchor"></div>
 	<fieldset class="o_section">
-		<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('Money refund history')?></legend>
-		<div id="money-refund-history">
-			<?php require 'edit/history.phtml';?>
+		<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('History')?></legend>
+		<div id="event-history">
+			<?=Admin_Managers::EntityEdit()->renderEventHistory( $money_refund )?>
 		</div>
 	</fieldset>
 
@@ -55,27 +55,15 @@ $money_refund = $this->getRaw( 'money_refund' );
 		<legend><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></legend>
 
 		<div id="sent-emails">
-			<?php require 'edit/sent-emails.phtml'; ?>
+			<?=Admin_Managers::EntityEdit()->renderSentEmails( $money_refund )?>
 		</div>
 	</fieldset>
 
 	<br><br><br><br>
 </div>
 
-<style>
-	.o_section {
-		padding: 10px;
-		margin-bottom: 50px;
-	}
-
-	.o_anchor {
-		position: relative;
-		top: -80px;
-	}
-</style>
-
 <?php
-foreach(Handler::getHandlers() as $handler):
-	echo $handler->renderDialog();
+foreach( Plugin::getPlugins() as $plugin):
+	echo $plugin->renderDialog();
 endforeach;
-?>
+

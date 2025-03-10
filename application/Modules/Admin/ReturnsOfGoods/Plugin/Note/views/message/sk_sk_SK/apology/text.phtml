@@ -1,0 +1,21 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+use Jet\MVC_View;
+use JetApplication\Discounts_Code;
+
+/**
+ * @var MVC_View $this
+ * @var Discounts_Code $discounts_code
+ */
+
+$discounts_code = $this->getRaw('discounts_code');
+?>
+Vážený zákazník,
+
+ospravedlňujeme sa za problémy s vašou vratkou <?=$this->getRaw('order_number')?>.
+
+Prijmite prosím zľavový kupón <?=$discounts_code->getCode()?> v hodnote <?=$discounts_code->getDiscount()?> € ako ospravedlnenie.

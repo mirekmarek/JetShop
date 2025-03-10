@@ -1,0 +1,25 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Edit;
+
+use Jet\MVC_View;
+use JetApplication\EShopEntity_Status_PossibleFutureState;
+
+/**
+ * @var MVC_View $this
+ * @var EShopEntity_Status_PossibleFutureState[] $future_statuses
+ */
+
+$future_statuses = $this->getRaw( 'future_statuses' );
+
+foreach( $future_statuses as $state ):
+
+	$btn = $state->getButton();
+	$btn->setOnClick("$('#set_status_dialog_{$state->getStatus()::getCode()}').modal('show');");
+
+	echo $btn;
+endforeach;

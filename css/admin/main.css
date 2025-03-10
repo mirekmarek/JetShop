@@ -379,3 +379,13 @@ h4.inherited {
 .return-of-goods-status-done_rejected {
 
 }
+
+.o_section {
+	padding: 10px;
+	margin-bottom: 50px;
+}
+
+.o_anchor {
+	position: relative;
+	top: -80px;
+}

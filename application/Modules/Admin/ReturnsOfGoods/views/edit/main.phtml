@@ -81,7 +81,7 @@ $return = $this->getRaw( 'return' );
 					</tr>
 				</table>
 				
-				<?=Handler::getHandler( Handler_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>
+				<?=Plugin::get( Plugin_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		
@@ -89,7 +89,7 @@ $return = $this->getRaw( 'return' );
 			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
 			<div class="card-body">
 				<?=Admin_Managers::Customer()->formatAddress( $return->getEshop(), $return->getDeliveryAddress() )?>
-				<?=Handler::getHandler( Handler_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
+				<?=Plugin::get( Plugin_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		

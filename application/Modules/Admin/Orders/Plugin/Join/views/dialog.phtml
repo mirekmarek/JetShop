@@ -1,0 +1,67 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+use JetApplication\Admin_Managers;
+use JetApplication\Order_Item;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('item');
+if(!$order->isEditable()) {
+	return;
+}
+
+$price_formatter = Admin_Managers::PriceFormatter();
+$product_manager = Admin_Managers::Product();
+$icons = Order_Item::getItemIcons();
+
+
+$dialog = new UI_dialog( 'join_order_dialog', Tr::_('Join order'), UI_dialog::SIZE_DEFAULT );
+
+echo $dialog->start();
+?>
+<div>
+	<form method="post" action="<?=Http_Request::currentURI(set_GET_params: ['join_order'=>1])?>" id="join_order_form" onsubmit="joinOrder.submit();return false;">
+		<div style="display: flex;align-items: center;gap: 10px;">
+			<div style="white-space: nowrap;"><?=Tr::_('Order number:')?></div>
+			<input class="form-control" id="join_order_number" onblur="joinOrder.search();">
+		</div>
+		<div id="join_order_info" style="padding: 10px">
+		
+		</div>
+	</form>
+</div>
+<?php
+echo $dialog->end();
+
+
+?>
+<script>
+	const joinOrder = {
+		showDialog: () => {
+			$('#join_order_dialog').modal('show');
+		},
+		search: () => {
+			const order_number = document.getElementById('join_order_number').value;
+			$('#join_order_info').load( '<?=Http_Request::currentURI()?>&join_order_search='+order_number );
+		}
+	};
+
+</script>

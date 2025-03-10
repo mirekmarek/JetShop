@@ -98,7 +98,7 @@ abstract class ListingHandler {
 			$class_name = ListingHandler::class.'_'.$dir.'_Main';
 			
 			/**
-			 * @var Handler $handler
+			 * @var Plugin $handler
 			 */
 			$handler = new $class_name( $path, $main_view, $listing_manager );
 			

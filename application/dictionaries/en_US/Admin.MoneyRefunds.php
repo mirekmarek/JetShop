@@ -53,4 +53,12 @@ return [
 	'Done' => '',
 	'Administrator' => '',
 	'Status:' => '',
+	'Set status: In Processing' => '',
+	'Set status: Cancelled' => '',
+	'Set' => '',
+	'Internal notes:' => '',
+	'Set status: Done' => '',
+	'Set status: Rollback' => '',
+	'History' => '',
+	'Internal notes' => '',
 ];

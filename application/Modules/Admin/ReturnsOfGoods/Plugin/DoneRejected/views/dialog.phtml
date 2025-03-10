@@ -1,0 +1,54 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\ReturnsOfGoods;
+
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var ReturnOfGoods $return_of_goods
+ */
+
+$return_of_goods = $this->getRaw('item');
+if(!$return_of_goods->isEditable()) {
+	return;
+}
+
+$form = $this->getRaw('done_rejected_form');
+
+$dialog = new UI_dialog( 'done_rejected_form_dialog', Tr::_('Done - accepted'), UI_dialog::SIZE_LARGE );
+
+$form->field('comment')->input()->addCustomCssStyle("height:400px");
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 12
+]);
+
+
+echo $dialog->start();
+echo $form->start();
+
+foreach($form->getFields() as $field) {
+	echo $field;
+}
+
+echo $dialog->footer();
+	echo UI::button_delete(Tr::_('Done - rejected'))->setType(UI_button::TYPE_SUBMIT);
+echo $form->end();
+echo $dialog->end();

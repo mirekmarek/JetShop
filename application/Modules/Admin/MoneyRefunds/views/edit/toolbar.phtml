@@ -52,7 +52,7 @@ $next_url = $listing->getNextEditUrl( $money_refund->getId() );
 			<?php endif; ?>
 		</div>
 		
-		<?=Handler::getHandler(Handler_Note_Main::KEY)->renderButton()?>
-		<?=Handler::getHandler(Handler_SetStatus_Main::KEY)->renderButton()?>
+		<?=Plugin::get( Plugin_Note_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_SetStatus_Main::KEY )->renderButton()?>
 	</div>
 </div>

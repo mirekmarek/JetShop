@@ -652,4 +652,8 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		return $event;
 	}
 	
+	public function getHistory(): array
+	{
+		return OrderPersonalReceipt_Event::getEventsList( $this->getId() );
+	}
 }

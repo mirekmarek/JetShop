@@ -1,0 +1,35 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\MVC_View;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Complaint $complaint
+ */
+
+$complaint = $this->getRaw('item');
+if(!$complaint->isEditable()) {
+	return;
+}
+echo '&nbsp;';
+
+//TODO: add states aroud dispatching like orders do
+
+echo UI::button(Tr::_('Dispatch new goods'))
+	->setClass(UI_button::CLASS_SUCCESS)
+	->setIcon('truck')
+	->setOnClick("$('#dispatch_new_goods_dialog').modal('show');");
+

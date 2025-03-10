@@ -1,0 +1,58 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint     $complaint
+ * @var Form $form
+ */
+
+$complaint = $this->getRaw( 'item' );
+$form = $this->getRaw('delivery_address_form');
+
+if(!$complaint->isEditable()) {
+	return;
+}
+
+
+if(!$form) {
+	return;
+}
+
+
+$form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 3
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 8
+]);
+
+
+$delivery_address_dialog = new UI_dialog( 'delivery_address_dialog', Tr::_('Update delivery address'), UI_dialog::SIZE_EXTRA_LARGE );
+
+echo $delivery_address_dialog->start();
+echo $form->start();
+
+foreach($form->getFields() as $field) {
+	echo $field;
+}
+
+echo $delivery_address_dialog->footer();
+echo UI::button_save(Tr::_('Update'));
+echo $form->end();
+echo $delivery_address_dialog->end();

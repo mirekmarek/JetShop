@@ -7,9 +7,13 @@
 namespace JetShop;
 
 
+use Jet\Autoloader;
+use Jet\IO_Dir;
 use Jet\MVC_View;
 use JetApplication\AdministratorSignatures;
 use JetApplication\EShop;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Note_MessageGenerator;
 
 abstract class Core_EShopEntity_Note_MessageGenerator {
 	
@@ -44,5 +48,30 @@ abstract class Core_EShopEntity_Note_MessageGenerator {
 		
 		return $text;
 	}
+	
+	/**
+	 * @param MVC_View $view
+	 * @param EShopEntity_Basic $item
+	 *
+	 * @return static[]
+	 */
+	public static function initGenerators( MVC_View $view, EShopEntity_Basic $item ) : array
+	{
+		$files = IO_Dir::getList( dirname(Autoloader::getScriptPath(static::class)).'/MessageGenerator', '*.php' );
+		
+		$generators = [];
+		foreach($files as $name) {
+			$class_name = static::class.'_'.substr($name,0,-4);
+			
+			/**
+			 * @var EShopEntity_Note_MessageGenerator $generator
+			 */
+			$generator = new $class_name( $view, $item );
+			$generators[$generator->getKey()] = $generator;
+		}
+		
+		return $generators;
+	}
+	
 
 }

@@ -68,7 +68,7 @@ trait Core_EShopEntity_HasStatus_Trait {
 	) : void
 	{
 		if( $status instanceof EShopEntity_VirtualStatus ) {
-			$status::handle( $this );
+			$status::handle( $this, $handle_event, $params, $event_setup );
 			return;
 		}
 		

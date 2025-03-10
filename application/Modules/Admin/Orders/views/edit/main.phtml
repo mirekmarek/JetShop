@@ -155,8 +155,8 @@ $order = $this->getRaw( 'order' );
 				</table>
 				
 				
-				<?=Handler::getHandler( Handler_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>
-				<?=Handler::getHandler( Handler_Blacklist_Main::KEY )?->renderButton()?>
+				<?=Plugin::get( Plugin_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>
+				<?=Plugin::get( Plugin_Blacklist_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		
@@ -165,7 +165,7 @@ $order = $this->getRaw( 'order' );
 			<div class="card-body">
 				<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getBillingAddress() )?>
 				
-				<?=Handler::getHandler( Handler_ChangeBillingAddress_Main::KEY )?->renderButton()?>
+				<?=Plugin::get( Plugin_ChangeBillingAddress_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		
@@ -175,7 +175,7 @@ $order = $this->getRaw( 'order' );
 			<div class="card-body">
 				<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getDeliveryAddress() )?>
 				
-				<?=Handler::getHandler( Handler_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
+				<?=Plugin::get( Plugin_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		
