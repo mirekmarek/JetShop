@@ -36,12 +36,7 @@ abstract class Core_ReturnOfGoods_Status_Incomplete extends ReturnOfGoods_Status
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #ffaaaaaa;color: #111111;';
+		return 'status-warning';
 	}
 	
 }

@@ -39,12 +39,7 @@ abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Sta
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
+		return 'status-warning';
 	}
 	
 }

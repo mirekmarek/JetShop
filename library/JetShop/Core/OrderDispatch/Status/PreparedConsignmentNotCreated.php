@@ -35,13 +35,7 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentNotCreated extends O
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		//TODO:
-		return '';
+		return 'status-in-progress';
 	}
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderDispatch_Event

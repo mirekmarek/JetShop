@@ -29,13 +29,7 @@ abstract class Core_OrderDispatch_Status_Cancel extends OrderDispatch_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		//TODO:
-		return '';
+		return 'status-cancelled';
 	}
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderDispatch_Event

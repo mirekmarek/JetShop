@@ -34,7 +34,7 @@ $return = $this->getRaw( 'return' );
 			<div class="card-header"><b><?=Tr::_('Common information')?></b></div>
 			<div class="card-body">
 				
-				<?=Admin_Managers::ReturnOfGoods()->showReturnOfGoodsStatus( $return )?>
+				<?=$return->getStatus()->showAdmin()?>
 				
 				<table style="margin: 10px">
 					<?php if(EShops::isMultiEShopMode()): ?>

@@ -33,14 +33,6 @@ class Main extends Admin_Managers_ReturnOfGoods
 		return new ReturnOfGoods();
 	}
 	
-	public function showReturnOfGoodsStatus( ReturnOfGoods $return_of_goods ): string
-	{
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		$view->setVar('return_of_goods', $return_of_goods);
-		
-		return $view->render('return_of_goods_status');
-	}
-	
 	public function showOrderReturnsOfGoods( Order $order ): void
 	{
 		$returns= ReturnOfGoods::getByOrder( $order );

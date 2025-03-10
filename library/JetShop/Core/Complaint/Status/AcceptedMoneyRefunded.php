@@ -39,12 +39,7 @@ abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Sta
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #9faaFF;color: #111111;';
+		return 'status-done';
 	}
 	
 }

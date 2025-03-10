@@ -9,7 +9,6 @@ namespace JetShop;
 
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Manager_MetaInfo;
-use JetApplication\ReturnOfGoods;
 use JetApplication\Order;
 
 #[Manager_MetaInfo(
@@ -21,7 +20,5 @@ use JetApplication\Order;
 )]
 abstract class Core_Admin_Managers_ReturnOfGoods extends Admin_EntityManager_Module
 {
-	abstract public function showReturnOfGoodsStatus( ReturnOfGoods $return_of_goods ) : string;
-	
 	abstract public function showOrderReturnsOfGoods( Order $order ) : void;
 }

@@ -39,12 +39,8 @@ abstract class Core_Complaint_Status_AcceptedSentForRepair extends Complaint_Sta
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
+		return 'status-in-progress';
 	}
 	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #9faaFF;color: #111111;';
-	}
 	
 }

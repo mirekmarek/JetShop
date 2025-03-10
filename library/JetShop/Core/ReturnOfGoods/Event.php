@@ -12,7 +12,7 @@ use Jet\DataModel_Definition;
 
 use JetApplication\EShopEntity_Event;
 use JetApplication\ReturnOfGoods;
-use JetApplication\ReturnOfGoods_event;
+use JetApplication\ReturnOfGoods_Event;
 
 /**
  *

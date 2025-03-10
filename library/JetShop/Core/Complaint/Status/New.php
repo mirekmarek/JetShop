@@ -40,12 +40,7 @@ abstract class Core_Complaint_Status_New extends Complaint_Status {
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return '';
-	}
-	
-	public function getShowAdminCSSStyle() : string
-	{
-		return 'background-color: #00ddc1;';
+		return 'status-pending';
 	}
 	
 }

@@ -182,4 +182,5 @@ return [
 	'Complaint dispatch' => '',
 	'Administrator' => '',
 	'Complaint - rejected' => '',
+	'Error during complaint confirmation e-mail sending' => '',
 ];

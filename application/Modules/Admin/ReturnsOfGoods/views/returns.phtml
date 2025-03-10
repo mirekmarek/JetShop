@@ -24,7 +24,7 @@ $returns = $this->getRaw('returns');
 	<?php foreach( $returns as $return ): ?>
 		<tr>
 			<td><?=Admin_Managers::ReturnOfGoods()->renderItemName( $return->getId() )?></td>
-			<td><?=Admin_Managers::ReturnOfGoods()->showReturnOfGoodsStatus( $return )?></td>
+			<td><?=$return->getStatus()->showAdmin()?></td>
 		</tr>
 	<?php endforeach; ?>
 </table>
