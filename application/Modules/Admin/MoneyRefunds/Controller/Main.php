@@ -17,7 +17,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 {
 	public function setupListing() : void
 	{
-		$this->listing_manager->addColumn( new Listing_Column_Number() );
 		$this->listing_manager->addColumn( new Listing_Column_Order() );
 		$this->listing_manager->addColumn( new Listing_Column_Customer() );
 		$this->listing_manager->addColumn( new Listing_Column_DateStarted() );

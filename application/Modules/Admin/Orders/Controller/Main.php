@@ -20,7 +20,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function setupListing() : void
 	{
-		$this->listing_manager->addColumn( new Listing_Column_Number() );
 		$this->listing_manager->addColumn( new Listing_Column_Customer() );
 		$this->listing_manager->addColumn( new Listing_Column_TotalAmount() );
 		$this->listing_manager->addColumn( new Listing_Column_Items() );
@@ -93,7 +92,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'eshop',
-			Listing_Column_Number::KEY,
+			'number',
 			Listing_Column_Customer::KEY,
 			Listing_Column_TotalAmount::KEY,
 			Listing_Column_Items::KEY,

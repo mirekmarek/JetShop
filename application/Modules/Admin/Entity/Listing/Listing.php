@@ -22,6 +22,7 @@ use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasInternalParams_Interface;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
@@ -53,28 +54,34 @@ class Listing extends DataListing {
 		$default_schema = [];
 		$default_order_by = '-id';
 		
+		$this->addExport( new Listing_Export_CSV() );
+		$this->addExport( new Listing_Export_XLSX() );
+		
+		
 		$this->addFilter( $this->init_SearchFilter() );
 		$this->addColumn( new Listing_Column_Edit() );
 		$this->addColumn( new Listing_Column_ID() );
 		
 		$default_schema[] = Listing_Column_ID::KEY;
 		
-		$this->addExport( new Listing_Export_CSV() );
-		$this->addExport( new Listing_Export_XLSX() );
-		
-		
-		
 		if(
 			($this->entity instanceof EShopEntity_HasEShopRelation_Interface ) &&
 			EShops::isMultiEShopMode()
 		) {
 			$this->addColumn( new Listing_Column_EShop() );
-			
 			$this->addFilter( new Listing_Filter_EShop() );
 			
 			$default_schema[] = Listing_Column_EShop::KEY;
 		}
 		
+		
+		if(
+			$this->entity instanceof EShopEntity_HasNumberSeries_Interface
+		) {
+			$this->addColumn( new Listing_Column_Number() );
+			$default_schema[] = Listing_Column_Number::KEY;
+		}
+
 		
 		if(
 			$this->entity instanceof EShopEntity_HasActivation_Interface

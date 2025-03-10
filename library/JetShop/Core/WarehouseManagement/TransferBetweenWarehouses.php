@@ -23,6 +23,8 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShop;
 use JetApplication\WarehouseManagement_StockCard;
@@ -44,11 +46,13 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_HasGet_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
 	
 	public const STATUS_PENDING = 'pending';

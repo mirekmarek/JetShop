@@ -4,17 +4,15 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\MoneyRefunds;
-
+namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-use JetApplication\MoneyRefund;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
 
 /**
  * @var MVC_View $this
- * @var Admin_Managers_EShopEntity_Listing $listing
- * @var MoneyRefund $item
+ * @var Listing $listing
+ * @var EShopEntity_HasNumberSeries_Interface $item
  */
 
 $listing = $this->getRaw('listing');

@@ -13,6 +13,10 @@ use JetApplication\EShop;
 
 interface Core_EShopEntity_HasNumberSeries_Interface
 {
+	public function getNumber() : string;
+	
+	public function setNumber( string $number ) : void;
+	
 	public static function getNumberSeriesEntityType() : string;
 	
 	public static function getNumberSeriesEntityTitle() : string;

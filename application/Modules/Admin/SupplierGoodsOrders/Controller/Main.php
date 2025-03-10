@@ -20,7 +20,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function setupListing(): void
 	{
-		$this->listing_manager->addColumn( new Listing_Column_Number() );
 		$this->listing_manager->addColumn( new Listing_Column_Supplier() );
 		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_OrderCreatedDate() );
@@ -33,7 +32,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
 		
 		$this->listing_manager->setDefaultColumnsSchema( [
-			Listing_Column_Number::KEY,
+			'status',
 			Listing_Column_Supplier::KEY,
 			Listing_Column_Status::KEY,
 			Listing_Column_OrderCreatedDate::KEY,

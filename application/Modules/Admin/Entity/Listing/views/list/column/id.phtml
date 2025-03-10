@@ -20,5 +20,5 @@ use JetApplication\EShopEntity_WithEShopData;
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 ?>
-	<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getId();?></a>
+<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getId();?></a>
 <?php

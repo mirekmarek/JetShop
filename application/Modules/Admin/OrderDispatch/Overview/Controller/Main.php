@@ -18,7 +18,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_Warehouse() );
 		$this->listing_manager->addColumn( new Listing_Column_Created() );
 		$this->listing_manager->addColumn( new Listing_Column_DispatchDate() );
-		$this->listing_manager->addColumn( new Listing_Column_Number() );
 		$this->listing_manager->addColumn( new Listing_Column_Recipient() );
 		$this->listing_manager->addColumn( new Listing_Column_Order() );
 		$this->listing_manager->addColumn( new Listing_Column_Context() );
@@ -74,9 +73,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'eshop',
+			'number',
 			'created',
 			'dispatch_date',
-			'number',
 			'status',
 			'recipient',
 			'order_number',
