@@ -129,4 +129,5 @@ return [
 	'Note' => '',
 	'CSV' => '',
 	'XLSX' => '',
+	'Administrator' => '',
 ];
