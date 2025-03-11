@@ -11,7 +11,8 @@ use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 
-class Listing_Column_FreeLimit extends DataListing_Column {
+class Listing_Column_FreeLimit extends DataListing_Column
+{
 	
 	public function getKey(): string
 	{

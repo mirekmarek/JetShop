@@ -14,4 +14,5 @@ return [
 	'TOP' => '',
 	'Task:' => '',
 	'TODO (%CNT%)' => '',
+	'Visible for all' => '',
 ];
