@@ -28,8 +28,4 @@ class Listing_Column_FreeLimit extends DataListing_Column {
 		$column->addCustomCssStyle('width:250px');
 	}
 	
-	public function getDisallowSort(): bool
-	{
-		return true;
-	}
 }

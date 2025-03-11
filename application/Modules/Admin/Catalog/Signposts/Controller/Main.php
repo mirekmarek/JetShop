@@ -53,7 +53,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 
 		$this->listing_manager->setDefaultColumnsSchema([
-			'id|active_state',
+			'id',
+			'active_state',
 			'priority',
 			'internal_name',
 			'internal_code',
