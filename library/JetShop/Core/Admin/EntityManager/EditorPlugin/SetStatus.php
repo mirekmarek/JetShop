@@ -14,12 +14,12 @@ use Jet\Http_Headers;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasStatus_Interface;
-use JetApplication\EShopEntity_Status_PossibleFutureState;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 
 trait Core_Admin_EntityManager_EditorPlugin_SetStatus
 {
 	/**
-	 * @var EShopEntity_Status_PossibleFutureState[]
+	 * @var EShopEntity_Status_PossibleFutureStatus[]
 	 */
 	protected array $future_statuses = [];
 	
@@ -35,7 +35,7 @@ trait Core_Admin_EntityManager_EditorPlugin_SetStatus
 	
 	protected function init() : void
 	{
-		$this->future_statuses = $this->item->getStatus()->getPossibleFutureStates();
+		$this->future_statuses = $this->item->getStatus()->getPossibleFutureStatuses();
 		
 		foreach( $this->future_statuses as $future_state) {
 			$code = $future_state->getStatus()::getCode();

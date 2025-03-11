@@ -28,7 +28,7 @@ abstract class Core_MoneyRefund_VirtualStatus_Rollback extends MoneyRefund_Virtu
 		$item->setStatus( MoneyRefund_Status_New::get(), handle_event: false );
 		
 		if($handle_event) {
-			$event = $item->initEvent( MoneyRefund_Event_Rollback::new() );
+			$event = $item->createEvent( MoneyRefund_Event_Rollback::new() );
 			if($event_setup) {
 				$event_setup( $event );
 			}

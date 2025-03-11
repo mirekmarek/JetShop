@@ -40,8 +40,8 @@ class Main extends Order_Event_HandlerModule
 		return 'Order is not ready for dispatch';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #f1002f;color: #ffffff;';
+		return 'event-not-ready';
 	}
 }

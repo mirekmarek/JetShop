@@ -43,7 +43,7 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends Orde
 	}
 	
 	
-	public function getPossibleFutureStates(): array
+	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
 		//TODO:

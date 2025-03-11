@@ -53,8 +53,8 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		return 'New finished return of goods';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-done-success';
 	}
 }

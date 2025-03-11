@@ -47,8 +47,8 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		return 'Personal Receipt Preparation Started';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #00ddc1;color: #111111;';
+		return 'event-preparation-started';
 	}
 }

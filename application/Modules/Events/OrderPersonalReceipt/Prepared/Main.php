@@ -44,8 +44,8 @@ class Main extends OrderPersonalReceipt_Event_HandlerModule
 		return 'Prepared';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'evetn-dispatched';
 	}
 }

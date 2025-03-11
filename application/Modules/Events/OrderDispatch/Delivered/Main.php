@@ -32,8 +32,8 @@ class Main extends OrderDispatch_Event_HandlerModule
 		return true;
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return true;
+		return 'event-done-success';
 	}
 }

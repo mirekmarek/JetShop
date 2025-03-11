@@ -182,7 +182,7 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	{
 		$this->generateNumber();
 		
-		$this->initEvent( MoneyRefund_Event_NewRequest::new() )->handleImmediately();
+		$this->createEvent( MoneyRefund_Event_NewRequest::new() )->handleImmediately();
 	}
 	
 	
@@ -430,16 +430,7 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 		return static::fetch( [''=>$where], order_by: ['-id'] );
 		
 	}
-	
-	
-	
-	public function initEvent( MoneyRefund_Event $event ) : MoneyRefund_Event
-	{
-		$event->setMoneyRefund( $this );
-		$event->init( $this->getEshop() );
-		
-		return $event;
-	}
+
 	
 	
 	public function newNote( MoneyRefund_Note $note ) : void
@@ -453,14 +444,14 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	
 	public function messageForCustomer( MoneyRefund_Note $note ) : void
 	{
-		$event = $this->initEvent( MoneyRefund_Event_MessageForCustomer::new() );
+		$event = $this->createEvent( MoneyRefund_Event_MessageForCustomer::new() );
 		$event->setContext( $note );
 		$event->handleImmediately();
 	}
 	
 	public function internalNote( MoneyRefund_Note $note ) : void
 	{
-		$event = $this->initEvent( MoneyRefund_Event_InternalNote::new() );
+		$event = $this->createEvent( MoneyRefund_Event_InternalNote::new() );
 		$event->setContext( $note );
 		$event->handleImmediately();
 	}

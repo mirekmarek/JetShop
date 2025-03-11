@@ -41,7 +41,7 @@ abstract class Core_OrderDispatch_Status_Pending extends OrderDispatch_Status {
 	}
 	
 	
-	public function getPossibleFutureStates(): array
+	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
 		//TODO:

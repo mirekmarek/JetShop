@@ -40,8 +40,8 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		return 'Internal note';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background: #b9b9b9';
+		return 'event-internal-note';
 	}
 }

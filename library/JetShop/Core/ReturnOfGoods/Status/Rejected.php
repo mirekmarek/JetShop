@@ -47,7 +47,12 @@ abstract class Core_ReturnOfGoods_Status_Rejected extends ReturnOfGoods_Status {
 	
 	public function createEvent( EShopEntity_Basic|ReturnOfGoods $item, EShopEntity_Status $previouse_status ): ?ReturnOfGoods_Event
 	{
-		return $item->initEvent( ReturnOfGoods_Event_DoneRejected::new() );
+		return $item->createEvent( ReturnOfGoods_Event_DoneRejected::new() );
+	}
+	
+	public function getPossibleFutureStatuses(): array
+	{
+		return [];
 	}
 	
 }

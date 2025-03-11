@@ -40,8 +40,8 @@ class Main extends MoneyRefund_Event_HandlerModule implements EMail_TemplateProv
 		return 'New request created';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #c29595;';
+		return 'event-dispatch-started';
 	}
 }

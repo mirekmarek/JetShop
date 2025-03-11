@@ -8,6 +8,11 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Status;
+use JetApplication\Order;
+use JetApplication\Order_Event;
+use JetApplication\Order_Event_Returned;
 use JetApplication\Order_Status;
 
 abstract class Core_Order_Status_Returned extends Order_Status {
@@ -40,6 +45,16 @@ abstract class Core_Order_Status_Returned extends Order_Status {
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-cancelled';
+	}
+	
+	public function createEvent( EShopEntity_Basic|Order $item, EShopEntity_Status $previouse_status ): ?Order_Event
+	{
+		return $item->createEvent( Order_Event_Returned::new() );
+	}
+	
+	public function getPossibleFutureStatuses(): array
+	{
+		return [];
 	}
 	
 }

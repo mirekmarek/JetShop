@@ -38,7 +38,7 @@ class Plugin_Note_Main extends Plugin
 		 */
 		
 		$item = $this->item;
-		$event_handler = $item->initEvent( MoneyRefund_Event_MessageForCustomer::new() )->getHandlerModule();
+		$event_handler = $item->createEvent( MoneyRefund_Event_MessageForCustomer::new() )->getHandlerModule();
 		$template = $event_handler->getEMailTemplates()[0];
 		$template->setMoneyRefund( $item );
 		

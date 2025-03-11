@@ -29,7 +29,7 @@ use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_Status;
-use JetApplication\EShopEntity_Status_PossibleFutureState;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
 use JetApplication\EShops;
@@ -553,7 +553,7 @@ class Main extends Admin_Managers_EShopEntity_Edit
 	}
 	
 	/**
-	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @param EShopEntity_Status_PossibleFutureStatus[] $future_statuses
 	 * @return string
 	 */
 	public function renderEntitySetStatusButtons( array $future_statuses ) : string
@@ -564,7 +564,7 @@ class Main extends Admin_Managers_EShopEntity_Edit
 	}
 	
 	/**
-	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @param EShopEntity_Status_PossibleFutureStatus[] $future_statuses
 	 * @param Form[] $forms
 	 * @return string
 	 */

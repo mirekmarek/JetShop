@@ -47,8 +47,8 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		return 'Personal Receipt - Handed Over';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #00ffc1;color:#000000;';
+		return 'event-done-success';
 	}
 }

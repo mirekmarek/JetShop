@@ -65,8 +65,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		return 'Message for customer';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #c29595;';
+		return 'event-message-for-customer';
 	}
 }

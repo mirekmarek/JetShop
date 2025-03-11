@@ -11,9 +11,8 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
-use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
-use JetApplication\EShopEntity_Status_PossibleFutureState;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\MoneyRefund;
 use JetApplication\MoneyRefund_Event;
@@ -36,15 +35,15 @@ abstract class Core_MoneyRefund_Status_Done extends MoneyRefund_Status {
 		return 'status-done';
 	}
 	
-	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event
+	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): ?MoneyRefund_Event
 	{
-		return $item->initEvent( MoneyRefund_Event_Done::new() );
+		return $item->createEvent( MoneyRefund_Event_Done::new() );
 	}
 	
 	
-	public function getPossibleFutureStates(): array
+	public function getPossibleFutureStatuses(): array
 	{
-		$res[] = new class extends EShopEntity_Status_PossibleFutureState {
+		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
 			
 			public function getButton(): UI_button
 			{

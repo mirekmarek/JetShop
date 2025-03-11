@@ -48,8 +48,8 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		return 'Done - rejected';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-rejected';
 	}
 }

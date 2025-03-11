@@ -33,8 +33,8 @@ class Main extends Complaint_Event_HandlerModule
 		return 'New unfinished complaint';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-not-completed';
 	}
 }

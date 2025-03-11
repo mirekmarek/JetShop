@@ -45,8 +45,8 @@ class Main extends Order_Event_HandlerModule
 		return 'Order dispatch cancelled';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #ffaaaaaa;color: #111111;';
+		return 'event-cancelation-during-process';
 	}
 }

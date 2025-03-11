@@ -53,8 +53,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		return 'Complaint updated';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'color: #ffffff;background-color: #808080;';
+		return 'event-updated';
 	}
 }

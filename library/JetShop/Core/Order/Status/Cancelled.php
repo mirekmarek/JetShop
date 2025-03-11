@@ -52,4 +52,9 @@ abstract class Core_Order_Status_Cancelled extends Order_Status {
 		return $item->createEvent( Order_Event_Cancel::new() );
 	}
 	
+	public function getPossibleFutureStatuses(): array
+	{
+		return [];
+	}
+	
 }

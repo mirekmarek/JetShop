@@ -40,7 +40,7 @@ $history = $this->getRaw( 'history' );
 			<td>
 				<?=Locale::dateAndTime( $event->getDateAdded() )?>
 			</td>
-			<td><div style="padding: 10px;font-weight: bolder;<?=$handler->getEventStyle()?>"><?=$handler->showEventName()?></div></td>
+			<td><div class="event <?=$handler->getEventCSSClass()?>"><?=$handler->showEventName()?></div></td>
 			<td>
 				<?php if($event->getInternalNote()): ?>
 				<div class="card card-body">

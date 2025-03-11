@@ -45,7 +45,7 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreateProblem extend
 	}
 	
 	
-	public function getPossibleFutureStates(): array
+	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
 		//TODO:

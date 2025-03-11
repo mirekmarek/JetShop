@@ -8,6 +8,11 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Status;
+use JetApplication\ReturnOfGoods;
+use JetApplication\ReturnOfGoods_Event;
+use JetApplication\ReturnOfGoods_Event_Cancelled;
 use JetApplication\ReturnOfGoods_Status;
 
 abstract class Core_ReturnOfGoods_Status_Cancelled extends ReturnOfGoods_Status {
@@ -39,5 +44,15 @@ abstract class Core_ReturnOfGoods_Status_Cancelled extends ReturnOfGoods_Status 
 		return 'status-cancelled';
 	}
 	
+	
+	public function createEvent( ReturnOfGoods|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?ReturnOfGoods_Event
+	{
+		return $item->createEvent( ReturnOfGoods_Event_Cancelled::new() );
+	}
+	
+	public function getPossibleFutureStatuses(): array
+	{
+		return [];
+	}
 	
 }

@@ -40,8 +40,8 @@ class Main extends MoneyRefund_Event_HandlerModule implements EMail_TemplateProv
 		return 'Cancelled';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background: #DC3545;color: #fff;';
+		return 'event-cancel';
 	}
 }

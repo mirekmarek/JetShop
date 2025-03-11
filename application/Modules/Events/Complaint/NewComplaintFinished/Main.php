@@ -52,8 +52,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		return 'New complaint finished';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-new';
 	}
 }

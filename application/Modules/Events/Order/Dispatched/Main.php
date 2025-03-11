@@ -47,8 +47,8 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		return 'Order dispatched';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #9faaFF;color: #111111;';
+		return 'evetn-dispatched';
 	}
 }

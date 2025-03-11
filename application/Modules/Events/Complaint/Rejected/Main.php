@@ -50,8 +50,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		return 'Rejected';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-rejected';
 	}
 }

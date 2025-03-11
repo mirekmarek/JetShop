@@ -16,7 +16,7 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
-use JetApplication\EShopEntity_Status_PossibleFutureState;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 
 abstract class Core_EShopEntity_Status extends BaseObject {
 	public const CODE = null;
@@ -77,11 +77,6 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 		return [
 			'status' => static::getCode()
 		];
-	}
-	
-	public function createEvent( EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?EShopEntity_Event
-	{
-		return null;
 	}
 	
 	public function showAdmin() : string
@@ -162,16 +157,17 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	}
 	
 	
-	/**
-	 * @return EShopEntity_Status_PossibleFutureState[]
-	 */
-	public function getPossibleFutureStates() : array
-	{
-		return [];
-	}
-	
 	public function setupObjectAfterStatusUpdated( EShopEntity_Basic $item, array $params ) : void
 	{
 	
 	}
+	
+	
+	abstract public function createEvent( EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?EShopEntity_Event;
+	
+	/**
+	 * @return EShopEntity_Status_PossibleFutureStatus[]
+	 */
+	abstract public function getPossibleFutureStatuses() : array;
+	
 }

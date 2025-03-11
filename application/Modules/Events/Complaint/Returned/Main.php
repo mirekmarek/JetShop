@@ -34,8 +34,8 @@ class Main extends Complaint_Event_HandlerModule
 		return 'Returned';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-rejected';
 	}
 }

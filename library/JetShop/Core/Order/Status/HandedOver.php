@@ -59,4 +59,10 @@ abstract class Core_Order_Status_HandedOver extends Order_Status {
 		
 		return parent::resolve( $item );
 	}
+	
+	public function getPossibleFutureStatuses(): array
+	{
+		return [];
+	}
+	
 }

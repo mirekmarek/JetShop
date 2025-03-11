@@ -50,8 +50,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		return 'Repaired product dispatched';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-done-success';
 	}
 }

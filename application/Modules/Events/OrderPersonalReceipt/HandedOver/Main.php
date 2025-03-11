@@ -47,8 +47,8 @@ class Main extends OrderPersonalReceipt_Event_HandlerModule
 		return 'Handed Over';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-done-success';
 	}
 }

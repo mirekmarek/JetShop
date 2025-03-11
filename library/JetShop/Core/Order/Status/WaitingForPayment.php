@@ -8,6 +8,10 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Status;
+use JetApplication\Order;
+use JetApplication\Order_Event;
 use JetApplication\Order_Status;
 
 abstract class Core_Order_Status_WaitingForPayment extends Order_Status {
@@ -38,6 +42,11 @@ abstract class Core_Order_Status_WaitingForPayment extends Order_Status {
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-warning';
+	}
+	
+	public function createEvent( EShopEntity_Basic|Order $item, EShopEntity_Status $previouse_status ): ?Order_Event
+	{
+		return null;
 	}
 	
 }

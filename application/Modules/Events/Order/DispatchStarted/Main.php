@@ -82,8 +82,8 @@ class Main extends Order_Event_HandlerModule
 		return 'Order dispatch started';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #00ddc1;color: #111111;';
+		return 'event-dispatch-started';
 	}
 }

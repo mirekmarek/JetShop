@@ -51,8 +51,8 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		return 'Order cancelled';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #ff0000;color:#ffffff;';
+		return 'event-cancel';
 	}
 }

@@ -95,7 +95,7 @@ abstract class Core_Event_HandlerModule extends Application_Module
 	
 	abstract public function getEventNameReadable() : string;
 	
-	abstract public function getEventStyle() : string;
+	abstract public function getEventCSSClass() : string;
 	
 	public function getEventNameReadableTranslated() : string
 	{

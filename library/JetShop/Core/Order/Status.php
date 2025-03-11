@@ -7,7 +7,6 @@
 namespace JetShop;
 
 use JetApplication\EShopEntity_Basic;
-use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
 use JetApplication\Order;
 use JetApplication\Order_Event;
@@ -31,9 +30,6 @@ abstract class Core_Order_Status extends EShopEntity_Status {
 	
 	protected static ?array $list = null;
 	
-	public function createEvent( EShopEntity_Basic|Order $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|Order_Event
-	{
-		return null;
-	}
+	abstract public function createEvent( EShopEntity_Basic|Order $item, EShopEntity_Status $previouse_status ): ?Order_Event;
 	
 }

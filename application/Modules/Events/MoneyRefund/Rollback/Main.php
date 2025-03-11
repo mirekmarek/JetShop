@@ -40,8 +40,8 @@ class Main extends MoneyRefund_Event_HandlerModule implements EMail_TemplateProv
 		return 'Rollback';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background: #F8F9FA;color: #000000;';
+		return 'event-rollback';
 	}
 }

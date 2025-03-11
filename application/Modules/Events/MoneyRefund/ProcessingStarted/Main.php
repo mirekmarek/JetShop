@@ -40,8 +40,8 @@ class Main extends MoneyRefund_Event_HandlerModule implements EMail_TemplateProv
 		return 'Processing started';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background: #007BFF;color: #fff;';
+		return 'event-dispatch-started';
 	}
 }

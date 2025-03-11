@@ -53,8 +53,8 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		return 'Return of goods updated';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'color: #ffffff;background-color: #808080;';
+		return 'event-updated';
 	}
 }

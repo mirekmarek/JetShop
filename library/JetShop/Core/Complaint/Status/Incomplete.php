@@ -8,7 +8,11 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\Complaint;
+use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Status;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Status;
 
 abstract class Core_Complaint_Status_Incomplete extends Complaint_Status {
 	
@@ -38,6 +42,11 @@ abstract class Core_Complaint_Status_Incomplete extends Complaint_Status {
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-warning';
+	}
+	
+	public function createEvent( Complaint|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?Complaint_Event
+	{
+		return null;
 	}
 	
 }

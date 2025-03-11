@@ -39,7 +39,7 @@ abstract class Core_OrderPersonalReceipt_Status_Prepared extends OrderPersonalRe
 	}
 	
 	
-	public function getPossibleFutureStates(): array
+	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
 		//TODO:

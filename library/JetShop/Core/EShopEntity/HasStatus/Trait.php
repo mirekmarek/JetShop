@@ -12,6 +12,8 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Logger;
 use Jet\Tr;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_VirtualStatus;
@@ -101,6 +103,7 @@ trait Core_EShopEntity_HasStatus_Trait {
 		);
 		
 		
+		/** @noinspection PhpInstanceofIsAlwaysTrueInspection */
 		if(
 			$this instanceof EShopEntity_HasEvents_Interface &&
 			$handle_event &&
@@ -137,12 +140,17 @@ trait Core_EShopEntity_HasStatus_Trait {
 			
 			public function getShowAdminCSSClass(): string
 			{
-				return '';
+				return 'status-warning';
 			}
 			
-			public function getShowAdminCSSStyle(): string
+			public function createEvent( EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?EShopEntity_Event
 			{
-				return 'background:red';
+				return null;
+			}
+			
+			public function getPossibleFutureStatuses(): array
+			{
+				return [];
 			}
 		};
 

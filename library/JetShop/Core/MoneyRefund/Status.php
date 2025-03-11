@@ -7,7 +7,6 @@
 namespace JetShop;
 
 use JetApplication\EShopEntity_Basic;
-use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
 use JetApplication\MoneyRefund;
 use JetApplication\MoneyRefund_Event;
@@ -21,9 +20,6 @@ abstract class Core_MoneyRefund_Status extends EShopEntity_Status {
 	
 	protected static ?array $list = null;
 	
-	public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|MoneyRefund_Event
-	{
-		return null;
-	}
+	abstract public function createEvent( EShopEntity_Basic|MoneyRefund $item, EShopEntity_Status $previouse_status ): ?MoneyRefund_Event;
 	
 }

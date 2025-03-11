@@ -40,7 +40,7 @@ abstract class Core_OrderPersonalReceipt_Status_InProgress extends OrderPersonal
 	}
 	
 	
-	public function getPossibleFutureStates(): array
+	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
 		//TODO:

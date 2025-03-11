@@ -50,8 +50,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		return 'Processing started';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'event-dispatch-started';
 	}
 }

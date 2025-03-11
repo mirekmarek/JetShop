@@ -40,8 +40,8 @@ class Main extends MoneyRefund_Event_HandlerModule implements EMail_TemplateProv
 		return 'Internal note';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background: #b9b9b9';
+		return 'event-internal-note';
 	}
 }

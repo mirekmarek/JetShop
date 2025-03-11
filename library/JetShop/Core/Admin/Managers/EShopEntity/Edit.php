@@ -18,7 +18,7 @@ use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_Status;
-use JetApplication\EShopEntity_Status_PossibleFutureState;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_WithEShopData;
 use Closure;
 use JetApplication\Manager_MetaInfo;
@@ -116,13 +116,13 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	abstract public function handleShowSentEmail( EShopEntity_Basic $item ) : ?string;
 	
 	/**
-	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @param EShopEntity_Status_PossibleFutureStatus[] $future_statuses
 	 * @return string
 	 */
 	abstract public function renderEntitySetStatusButtons( array $future_statuses ) : string;
 	
 	/**
-	 * @param EShopEntity_Status_PossibleFutureState[] $future_statuses
+	 * @param EShopEntity_Status_PossibleFutureStatus[] $future_statuses
 	 * @param Form[] $forms
 	 * @return string
 	 */

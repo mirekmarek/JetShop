@@ -46,8 +46,8 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		return 'Internal note';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background: #b9b9b9';
+		return 'event-internal-note';
 	}
 }

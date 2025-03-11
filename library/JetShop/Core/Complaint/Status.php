@@ -6,7 +6,10 @@
  */
 namespace JetShop;
 
+use JetApplication\Complaint;
+use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Status;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 
 abstract class Core_Complaint_Status extends EShopEntity_Status {
@@ -31,5 +34,7 @@ abstract class Core_Complaint_Status extends EShopEntity_Status {
 	];
 	
 	protected static ?array $list = null;
+	
+	abstract public function createEvent( EShopEntity_Basic|Complaint $item, EShopEntity_Status $previouse_status ): ?Complaint_Event;
 	
 }

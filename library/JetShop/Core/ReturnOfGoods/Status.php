@@ -6,7 +6,10 @@
  */
 namespace JetShop;
 
+use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
+use JetApplication\ReturnOfGoods;
+use JetApplication\ReturnOfGoods_Event;
 use JetApplication\ReturnOfGoods_Status;
 
 abstract class Core_ReturnOfGoods_Status extends EShopEntity_Status {
@@ -28,4 +31,6 @@ abstract class Core_ReturnOfGoods_Status extends EShopEntity_Status {
 	];
 	
 	protected static ?array $list = null;
+	
+	abstract public function createEvent( EShopEntity_Basic|ReturnOfGoods $item, EShopEntity_Status $previouse_status ): ?ReturnOfGoods_Event;
 }

@@ -47,8 +47,8 @@ class Main extends OrderDispatch_Event_HandlerModule
 		return 'Sent';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return '';
+		return 'evetn-dispatched';
 	}
 }

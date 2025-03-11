@@ -389,3 +389,84 @@ h4.inherited {
 	position: relative;
 	top: -80px;
 }
+
+.event {
+	padding: 10px;
+}
+
+.event-message-for-customer {
+	background-color: #c29595;
+}
+
+.event-done-success {
+	background-color: #00ffc1;
+	color:#000000;
+}
+
+.event-internal-note {
+	background-color: #00ddc1;
+}
+
+.event-cancel {
+	background-color: #ff0000;
+	color:#ffffff;
+}
+
+.event-updated {
+	background-color: #808080;
+	color: #ffffff;
+}
+
+.event-ready {
+	background-color: #00ddc1;
+}
+
+.event-cancelation-during-process {
+	background-color: #ffaaaaaa;
+	color: #111111;
+}
+
+.evetn-dispatched {
+	background-color: #9faaFF;
+	color: #111111;
+}
+
+.event-dispatch-started {
+	background-color: #00ddc1;
+	color: #111111;
+}
+
+.event-new {
+	background-color: #00b84b;
+	color: #ffffff;
+}
+
+.event-paid {
+	background-color: #00ffc1;
+}
+
+.event-not-ready {
+	background-color: #f1002f;
+	color: #ffffff;
+}
+
+.event-rejected {
+	background-color: #b43f51;
+	color: #ffffff;
+}
+
+
+.event-preparation-started {
+	background-color: #00ddc1;
+	color: #111111;
+}
+
+.event-rollback {
+	background: #F8F9FA;
+	color: #000000;
+}
+
+.event-not-completed {
+	background: #c9c9c9;
+	color: #000000;
+}

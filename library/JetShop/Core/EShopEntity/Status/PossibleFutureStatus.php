@@ -12,7 +12,7 @@ use Jet\UI_button;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_VirtualStatus;
 
-abstract class Core_EShopEntity_Status_PossibleFutureState extends BaseObject {
+abstract class Core_EShopEntity_Status_PossibleFutureStatus extends BaseObject {
 	
 	abstract public function getButton() : UI_button;
 	

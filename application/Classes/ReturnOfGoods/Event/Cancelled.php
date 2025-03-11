@@ -6,8 +6,8 @@
  */
 namespace JetApplication;
 
-use JetShop\Core_EShopEntity_Status_PossibleFutureState;
+use JetShop\Core_ReturnOfGoods_Event_Cancelled;
 
-abstract class EShopEntity_Status_PossibleFutureState extends Core_EShopEntity_Status_PossibleFutureState
+class ReturnOfGoods_Event_Cancelled extends Core_ReturnOfGoods_Event_Cancelled
 {
 }

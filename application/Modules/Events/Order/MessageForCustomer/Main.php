@@ -71,8 +71,8 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		return 'Message for customer';
 	}
 	
-	public function getEventStyle(): string
+	public function getEventCSSClass(): string
 	{
-		return 'background-color: #c29595;';
+		return 'event-message-for-customer';
 	}
 }
