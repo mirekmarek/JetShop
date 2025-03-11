@@ -52,4 +52,11 @@ abstract class Core_Complaint_Status_AcceptedNewProduct extends Complaint_Status
 		return $item->createEvent( Complaint_Event_AcceptedNewGoodsWillBeSend::new() );
 	}
 	
+	
+	public function getPossibleFutureStatuses(): array
+	{
+		$res = [];
+		return $res;
+	}
+
 }

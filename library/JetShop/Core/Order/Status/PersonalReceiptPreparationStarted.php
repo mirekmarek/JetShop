@@ -60,4 +60,9 @@ abstract class Core_Order_Status_PersonalReceiptPreparationStarted extends Order
 		return parent::resolve( $item );
 	}
 	
+	public function getPossibleFutureStatuses(): array
+	{
+		return [];
+	}
+	
 }

@@ -8,13 +8,18 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
+use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Event_ReadyForDispatch;
 use JetApplication\Order_Status;
+use JetApplication\Order_Status_Cancelled;
 
 abstract class Core_Order_Status_ReadyForDispatch extends Order_Status {
 	
@@ -57,6 +62,39 @@ abstract class Core_Order_Status_ReadyForDispatch extends Order_Status {
 		}
 		
 		return parent::resolve( $item );
+	}
+	
+	public function getPossibleFutureStatuses(): array
+	{
+		$res = [];
+		
+		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
+			
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Cancel') )
+					->setClass( UI_button::CLASS_DANGER );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return Order_Status_Cancelled::get();
+			}
+			
+			
+			public function noteForCustomerEnabled() : bool
+			{
+				return true;
+			}
+			
+			public function doNotSendNotificationsSwitchEnabled() : bool
+			{
+				return true;
+			}
+			
+		};
+		
+		return $res;
 	}
 	
 }

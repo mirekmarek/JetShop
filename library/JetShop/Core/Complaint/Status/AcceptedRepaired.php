@@ -52,4 +52,11 @@ abstract class Core_Complaint_Status_AcceptedRepaired extends Complaint_Status {
 		return $item->createEvent( Complaint_Event_AcceptedRepaired::new() );
 	}
 	
+	public function getPossibleFutureStatuses(): array
+	{
+		$res = [];
+		return $res;
+	}
+	
+	
 }
