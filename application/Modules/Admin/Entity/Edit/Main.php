@@ -576,4 +576,16 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		]);
 	}
 	
+	public function renderEntityForceStatusButton(): string
+	{
+		return $this->render('force-status/button', [
+		]);
+	}
+	
+	public function renderEntityForceStatusDialog( Form $form ): string
+	{
+		return $this->render('force-status/dialog', [
+			'form' => $form
+		]);
+	}
 }

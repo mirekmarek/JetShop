@@ -185,4 +185,5 @@ return [
 	'Error during complaint confirmation e-mail sending' => '',
 	'History' => '',
 	'Complaint - changed' => '',
+	'Do not send notifications to the customer' => '',
 ];

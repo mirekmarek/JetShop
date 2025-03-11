@@ -132,4 +132,8 @@ return [
 	'Administrator' => '',
 	'History' => '',
 	'Do not send notifications to the customer' => '',
+	'Force status' => '',
+	'Set status:' => '',
+	'Internal notes:' => '',
+	'Force status:' => '',
 ];

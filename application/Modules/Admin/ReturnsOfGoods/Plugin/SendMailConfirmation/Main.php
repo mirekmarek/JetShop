@@ -11,7 +11,6 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\ReturnOfGoods_Event_InternalNote;
 use JetApplication\ReturnOfGoods_Event_ReturnOfGoodsFinished;
 
 class Plugin_SendMailConfirmation_Main extends Plugin

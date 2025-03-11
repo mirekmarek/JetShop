@@ -1,0 +1,16 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Edit;
+
+use Jet\UI;
+use Jet\UI_button;
+
+echo UI::button('')
+	->setIcon('gears')
+	->setClass( UI_button::CLASS_LINK)
+	->addCustomCssStyle("opacity: 0.2;margin-left:100px;")
+	->setOnClick("$('#force_status_dialog').modal('show');");

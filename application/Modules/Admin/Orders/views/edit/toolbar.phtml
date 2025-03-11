@@ -91,6 +91,8 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 		&nbsp;&nbsp;&nbsp;
 		
 		<a href="<?=Http_Request::currentURI(['print'=>1])?>" target="_blank" class="btn btn-primary"><?=UI::icon('print')?> <?=Tr::_('Print')?></a>
+		
+		<?=Plugin::get( Plugin_ForceStatus_Main::KEY )->renderButton()?>
 	</div>
 
 	<div style="display: flex;gap:30px;padding: 5px;">

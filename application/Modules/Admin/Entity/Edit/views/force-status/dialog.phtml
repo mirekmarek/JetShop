@@ -1,0 +1,47 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Edit;
+
+use Jet\Form_Field_Textarea;
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+$form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+$form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 12] );
+
+$dialog = UI::dialog(
+	"force_status_dialog",
+	Tr::_('Force status'),
+	UI_dialog::SIZE_EXTRA_LARGE
+);
+
+echo $dialog->start();
+echo $form->start();
+
+foreach($form->getFields() as $field):
+	if($field instanceof Form_Field_Textarea) {
+		$field->input()->addCustomCssStyle("height: 300px;");
+	}
+	echo $field;
+endforeach;
+
+echo $dialog->footer();
+echo UI::button_save( Tr::_('Force status') );
+echo $form->end();
+echo $dialog->end();
+

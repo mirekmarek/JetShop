@@ -127,4 +127,13 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	 * @return string
 	 */
 	abstract public function renderEntitySetStatusDialogs( array $future_statuses, array $forms ) : string;
+	
+	abstract public function renderEntityForceStatusButton() : string;
+	
+	/**
+	 * @param Form $form
+	 * @return string
+	 */
+	abstract public function renderEntityForceStatusDialog( Form $form ) : string;
+	
 }

@@ -361,4 +361,5 @@ return [
 	'Amount to be refunded' => '',
 	'Administrator' => '',
 	'History' => '',
+	'Do not send notifications to the customer' => '',
 ];

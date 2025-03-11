@@ -277,4 +277,6 @@ return [
 	'Position' => '',
 	'Number of units - expected' => '',
 	'Number of units - reality' => '',
+	'Force status' => '',
+	'Force status:' => '',
 ];
