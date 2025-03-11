@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 
 class Listing_Column_ValidFrom extends Listing_Column_Abstract
 {
@@ -28,4 +29,18 @@ class Listing_Column_ValidFrom extends Listing_Column_Abstract
 	{
 		$column->addCustomCssStyle('width: 200px');
 	}
+	
+	public function getExportHeader() : null|string|array
+	{
+		return Tr::_('Valid from');
+	}
+	
+	public function getExportData( mixed $item ) : float|int|bool|string|array
+	{
+		/**
+		 * @var EShopEntity_HasActivationByTimePlan_Interface $item
+		 */
+		return $item->getActiveFrom()?->toString()??'';
+	}
+	
 }
