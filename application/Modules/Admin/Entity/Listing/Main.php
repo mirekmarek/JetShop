@@ -172,6 +172,8 @@ class Main extends Admin_Managers_EShopEntity_Listing
 		$this->listing->filter( Listing_Filter_Search::KEY )->setWhereCreator( $creator );
 	}
 	
+	protected static bool $filter_is_active = false;
+	
 	public function renderListingFilter(
 		DataListing_Filter $filter,
 		string $title,
@@ -183,6 +185,10 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	{
 		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 		
+		if($is_active) {
+			static::$filter_is_active = true;
+		}
+		
 		$view->setVar('filter', $filter);
 		$view->setVar('title', $title);
 		$view->setVar('form_fields', $form_fields);
@@ -192,6 +198,13 @@ class Main extends Admin_Managers_EShopEntity_Listing
 		
 		return $view->render('filter');
 	}
+	
+	public static function filterIsActive(): bool
+	{
+		return self::$filter_is_active;
+	}
+	
+	
 	
 	public function getCustomBtnRenderer(): ?callable
 	{

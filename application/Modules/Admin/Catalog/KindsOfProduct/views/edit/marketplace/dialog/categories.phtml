@@ -7,6 +7,7 @@
 use Jet\MVC_View;
 use Jet\UI;
 use Jet\UI_button;
+use Jet\Tr;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 
 /**
@@ -27,7 +28,7 @@ $selected_category = $categories[$parent_id] ?? null;
 	<div class="toolbar">
 		<b><?=$selected_category->getCategoryId()?></b>
 		<?=$selected_category->getName()?>
-		<?=UI::button('Select')
+		<?=UI::button( Tr::_('Select'))
 			->setOnclick("CategorySelect.confirm('{$selected_category->getCategoryId()}', '{$selected_category->getName()}')")
 			->setClass(UI_button::CLASS_PRIMARY)
 		?>

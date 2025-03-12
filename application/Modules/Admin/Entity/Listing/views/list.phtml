@@ -20,29 +20,121 @@ $listing = $this->getRaw( 'listing' );
 $entity_manager = $listing->getEntityManager();
 $grid = $listing->getGrid();
 
-$filter_enabled = (bool)$listing->getFilterWhere();
+$filter_form = $listing->getFilterForm();
+
+$search_filter = $listing->getFilters()[Listing_Filter_Search::KEY]??null;
+
+
+$filter_snippet = '';
+foreach($listing->getFilters() as $filter):
+	if($filter->getKey()==Listing_Filter_Search::KEY) {
+		continue;
+	}
+	$filter_snippet .= $filter->renderForm();
+endforeach;
+
+$filter_is_active = Main::filterIsActive();
+
 ?>
+<style>
+	.listing-filter {
+		display: grid;
+		grid-template-columns: 150px 1fr;
+		margin: 10px;
+		align-items: center;
+	}
+
+	.listing-filter-title {
+		font-weight: bolder;
+	}
+
+	.listing-filter-form {
+		display: flex;
+		align-items: center;
+	}
+
+	.listing-filter-form>div {
+		padding: 5px;
+		padding-left: 10px;
+	}
+
+	.listing-active-filter {
+		background-color: #b3bbc4;
+		padding: 10px;
+		border-radius: 5px;
+	}
+</style>
+<script>
+	const Filter = {
+		filter_visible: <?=json_encode($filter_is_active)?>,
+
+		toggle: ()=>{
+			if(Filter.filter_visible) {
+				Filter.filter_visible = false;
+
+				$('#filter_caret_down').show();
+				$('#filter_caret_up').hide();
+
+				$('#filter').hide();
+
+			} else {
+				Filter.filter_visible = true;
+
+				$('#filter_caret_up').show();
+				$('#filter_caret_down').hide();
+
+				$('#filter').show();
+
+			}
+		},
+
+		reset: ( element_ids, reset_value )=> {
+			for(let c=0;c<element_ids.length;c++) {
+				$('#'+element_ids[c]).val(reset_value);
+			}
+
+			document.getElementById('<?=$filter_form->getId()?>').submit();
+		}
+	};
+</script>
+
+
 
 <?php require 'list/buttons.phtml';?>
 
-<div style="margin: 10px;display: flex;align-items: center;gap: 20px;padding: 10px;">
+<?=$filter_form->start()?>
 
-	<a href="" onclick="Filter.toggle();return false;" class="btn btn-primary">
-		<?=UI::icon('caret-down')->setId('filter_caret_down')->addCustomCssStyle('display:'.(!$filter_enabled?'':'none'))?>
-		<?=UI::icon('caret-up')->setId('filter_caret_up')->addCustomCssStyle('display:'.($filter_enabled?'':'none'))?>
-		<?=Tr::_('Filter', dictionary: Tr::COMMON_DICTIONARY)?>
-	</a>
+<div class="card shadow-sm" style="margin: 10px;padding: 0px;">
+	<div style="display: flex;align-items: center;gap: 20px;">
+		
+		<?=$search_filter?->renderForm()?>
 
-	<a href="" onclick="DisplayedColumnsSetting.toggle();return false;" class="btn btn-info">
-		<?=UI::icon('caret-down')->setId('column_schema_settings_caret_down')?>
-		<?=UI::icon('caret-up')->setId('column_schema_settings_caret_up')->addCustomCssStyle('display:none')?>
-		<?=Tr::_('Displayed columns setting', dictionary: Tr::COMMON_DICTIONARY)?>
-	</a>
-	
+		<a href="" onclick="Filter.toggle();return false;" class="btn btn-primary">
+			<?=UI::icon('caret-down')->setId('filter_caret_down')->addCustomCssStyle('display:'.(!$filter_is_active?'':'none'))?>
+			<?=UI::icon('caret-up')->setId('filter_caret_up')->addCustomCssStyle('display:'.($filter_is_active?'':'none'))?>
+			<?=Tr::_('Filter', dictionary: Tr::COMMON_DICTIONARY)?>
+		</a>
+
+		<a href="" onclick="DisplayedColumnsSetting.toggle();return false;" class="btn btn-info">
+			<?=UI::icon('caret-down')->setId('column_schema_settings_caret_down')?>
+			<?=UI::icon('caret-up')->setId('column_schema_settings_caret_up')->addCustomCssStyle('display:none')?>
+			<?=Tr::_('Displayed columns setting', dictionary: Tr::COMMON_DICTIONARY)?>
+		</a>
+		
+	</div>
 </div>
 
 
-<?php require 'list/filter.phtml';?>
+<div id="filter" style="display: <?=$filter_is_active?'block':'none'?>;margin-left: 50px;margin-right: 50px;margin-bottom: 50px;" class="card card-body shadow">
+	<div>
+		<?=$filter_snippet?>
+	</div>
+</div>
+
+
+<?=$filter_form->end()?>
+
+
 <?php require 'list/grid_schema.phtml';?>
 
 <div id="main-col">

@@ -345,4 +345,10 @@ return [
 	'Number of units - reality' => 'Počet jednotek - realita',
 	'Layout HTML:' => 'HTML rozložení:',
 	'Layout TXT:' => 'Rozložení TXT:',
+	'Unit of measure:' => '',
+	'Is virtual product' => '',
+	'Virtual product handler:' => '',
+	'Usage' => '',
+	'Variant select description:' => '',
+	'Similar product select description:' => '',
 ];

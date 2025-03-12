@@ -5,6 +5,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 use Jet\MVC_View;
+use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
@@ -26,7 +27,7 @@ $selected_category = $categories[$parent_id] ?? null;
 	<div class="toolbar">
 		<b><?=$selected_category->getCategoryId()?></b>
 		<?=implode(' / ',$selected_category->getFullName())?>
-		<?=UI::button('Select')
+		<?=UI::button( Tr::_('Select'))
 			->setOnclick("CategorySelect.confirm('{$selected_category->getCategoryId()}', '{$selected_category->getName()}')")
 			->setClass(UI_button::CLASS_PRIMARY)
 		?>

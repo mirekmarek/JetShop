@@ -15,4 +15,5 @@ return [
 	'Task:' => 'Úkol:',
 	'TODO (%CNT%)' => 'TODO (%CNT%)',
 	'Visible for all' => 'Viditelné pro všechny',
+	'Viditelné pro' => '',
 ];
