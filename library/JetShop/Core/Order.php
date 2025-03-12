@@ -1477,9 +1477,6 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	
 	public function isEditable(): bool
 	{
-		if( !static::getAdminManager()::getCurrentUserCanEdit() ) {
-			return false;
-		}
 		
 		if(
 			$this->cancelled ||

@@ -59,6 +59,6 @@ return [
 	'Internal notes:' => 'Interní poznámky:',
 	'Set status: Done' => 'Stav nastavení: Hotovo',
 	'Set status: Rollback' => 'Nastavit stav: Vrátit zpět',
-	'History' => 'Dějiny',
+	'History' => 'Historie',
 	'Internal notes' => 'Interní poznámky',
 ];

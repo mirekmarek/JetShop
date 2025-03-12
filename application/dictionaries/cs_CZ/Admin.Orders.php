@@ -394,6 +394,6 @@ return [
 	'Request number' => 'Číslo požadavku',
 	'Request status' => 'Stav žádosti',
 	'Amount to be refunded' => 'Částka k vrácení',
-	'History' => 'Dějiny',
+	'History' => 'Historie',
 	'Do not send notifications to the customer' => 'Neposílejte zákazníkovi upozornění',
 ];

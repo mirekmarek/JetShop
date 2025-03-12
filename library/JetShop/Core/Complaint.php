@@ -819,10 +819,6 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	
 	public function isEditable(): bool
 	{
-		if(!Admin_Managers::Complaint()::getCurrentUserCanEdit()) {
-			return false;
-		}
-		
 		if(
 			$this->cancelled ||
 			$this->delivered ||

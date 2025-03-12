@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Customers;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Customer;
 
 class Listing_Column_Phone extends DataListing_Column
 {
@@ -23,4 +24,20 @@ class Listing_Column_Phone extends DataListing_Column
 	{
 		return Tr::_('Phone');
 	}
+	
+	
+	public function getExportHeader(): null|string|array
+	{
+		return Tr::_('Phone');
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Customer $item
+		 */
+		
+		return $item->getPhoneNumber();
+	}
+	
 }

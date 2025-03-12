@@ -52,7 +52,7 @@ class Listing_Column_EShop extends Listing_Column_Abstract
 		/**
 		 * @var EShopEntity_WithEShopRelation $item
 		 */
-		return $item->getEshopKey();
+		return $item->getEshop()?->getName()??'';
 	}
 	
 }

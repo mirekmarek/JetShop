@@ -311,4 +311,6 @@ return [
 	'Keywords:' => '',
 	'Name of variant:' => '',
 	'SEO' => '',
+	'This is variant of <a href="%URL%">%NAME%</a>' => '',
+	'Internal name of variant:' => '',
 ];

@@ -129,7 +129,7 @@ return [
 	'Note' => 'Poznámka',
 	'Return of goods - changed' => 'Vrácení zboží - změněno',
 	'Delivery address has been changed' => 'Doručovací adresa byla změněna',
-	'History' => 'Dějiny',
+	'History' => 'Historie',
 	'CSV' => 'CSV',
 	'XLSX' => 'XLSX',
 	'Administrator' => 'Správce',

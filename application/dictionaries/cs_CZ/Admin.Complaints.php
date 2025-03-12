@@ -191,6 +191,6 @@ return [
 	'Administrator' => 'Správce',
 	'Complaint - rejected' => 'Reklamace - zamítnuta',
 	'Error during complaint confirmation e-mail sending' => 'Chyba při odesílání e-mailu s potvrzením reklamace',
-	'History' => 'Dějiny',
+	'History' => 'Historie',
 	'Do not send notifications to the customer' => 'Neposílejte zákazníkovi upozornění',
 ];

@@ -138,15 +138,6 @@ abstract class Core_DeliveryNote extends EShopEntity_AccountingDocument implemen
 	}
 	
 	
-	public function isEditable(): bool
-	{
-		if( !static::getAdminManager()::getCurrentUserCanEdit() ) {
-			return false;
-		}
-		
-		return parent::isEditable();
-	}
-	
 	
 	public function setEditable( bool $editable ): void
 	{
