@@ -8,6 +8,7 @@ namespace JetApplication;
 
 
 use Jet\AJAX;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\IO_File;
 use Jet\Locale;
@@ -49,6 +50,9 @@ class Application_Admin
 	 */
 	public static function init( MVC_Router $router ) : void
 	{
+		
+		static::handleLocaleSwitch( $router );
+		
 		Application::initErrorPages( $router );
 		Logger::setLogger( new Logger_Admin() );
 		Auth::setController( new Auth_Controller_Admin() );
@@ -59,6 +63,54 @@ class Application_Admin
 		SysConf_Jet_Form::setDefaultViewsDir( $router->getBase()->getViewsPath() . 'form/' );
 		SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
 		
+	}
+	
+	protected static function handleLocaleSwitch( MVC_Router $router ): void
+	{
+		$base = MVC::getBase('admin');
+		$avl_locales = $base->getLocales();
+		$default_locale = $base->getDefaultLocale();
+		
+		$cookie_name = 'admin_locale';
+		
+		$setCookie = function( Locale $locale ) use ($cookie_name, $base) : void {
+			$URL = 'https://'.$base->getLocalizedData( $base->getDefaultLocale() )->getDefaultURL();
+			
+			$URL = parse_url( $URL );
+			
+			setcookie(
+				name: $cookie_name,
+				value: $locale->toString(),
+				expires_or_options: time()+(86400*365*10),
+				path: $URL['path'],
+				domain: $URL['host']
+			);
+			$_COOKIE[$cookie_name] = $locale->toString();
+		};
+		
+		if(
+			!isset($_COOKIE[$cookie_name]) ||
+			!isset($avl_locales[$_COOKIE[$cookie_name]])
+			) {
+			
+			$setCookie( $default_locale );
+		}
+		
+		$GET = Http_Request::GET();
+		if( $GET->exists( 'set_locale' ) ) {
+			$selected_locale = $GET->getString('set_locale', default_value:  $default_locale->toString(), valid_values: array_keys($avl_locales));
+			$selected_locale = new Locale( $selected_locale );
+			
+			$setCookie( $selected_locale );
+			
+			Http_Headers::reload( unset_GET_params: ['set_locale'] );
+		}
+		
+		$selected_locale_str = $_COOKIE[$cookie_name];
+		$selected_locale = new Locale($selected_locale_str);
+		
+		Locale::setCurrentLocale( $selected_locale );
+		Tr::setCurrentLocale( $selected_locale );
 	}
 
 	/**

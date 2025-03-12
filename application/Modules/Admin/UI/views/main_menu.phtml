@@ -117,7 +117,8 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 					<?php foreach( MVC::getBase()->getLocales() as $locale ): ?>
 						<a class="dropdown-item"
-						   href="<?= MVC::getPage(page_id: null, locale: $locale, base_id: null)->getURL( GET_params: Http_Request::GET()->getRawData() ) ?>">
+							<?php /* href="<?= MVC::getPage(page_id: null, locale: $locale, base_id: null)->getURL( GET_params: Http_Request::GET()->getRawData() ) ?>"> */ ?>
+							href="<?=Http_Request::currentURI(['set_locale'=>$locale->toString()])?>"
 							<?= UI::flag( $locale ) ?>
 							<?= $locale->getName( $locale ) ?>
 						</a>

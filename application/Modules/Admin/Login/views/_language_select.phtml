@@ -4,20 +4,18 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
+use Jet\Http_Request;
 use Jet\UI;
 use Jet\MVC;
+use Jet\Locale;
 ?>
 <div style="position: absolute;top:15px; right: 15px;">
 	<?php foreach( MVC::getBase()->getLocales() as $locale ): ?>
-		<?php if( $locale->toString()==MVC::getLocale()->toString() ): ?>
+		<?php if( $locale->toString()==Locale::getCurrentLocale()->toString() ): ?>
 			<?=UI::flag( $locale )?>
-		<?php else:
-			$equal_page = MVC::getPage( null, $locale );
-			if( !$equal_page ) {
-				$equal_page = MVC::getPage( MVC::HOMEPAGE_ID, $locale );
-			}
-			?>
-			<a href="<?=$equal_page->getURL()?>"><?=UI::flag( $locale )?></a>
+		<?php else: ?>
+			<a href="<?=Http_Request::currentURI(['set_locale'=>$locale->toString()])?>"><?=UI::flag( $locale )?></a>
 		<?php endif; ?>
 	<?php endforeach; ?>
 </div>
