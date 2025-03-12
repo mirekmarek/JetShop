@@ -43,4 +43,5 @@ return [
 	'Complaint' => 'Stížnost',
 	'Warehouse' => 'Sklad',
 	'e-shop' => 'internetový obchod',
+	'Status:' => 'Postavení:',
 ];

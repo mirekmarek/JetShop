@@ -22,4 +22,8 @@ return [
 	'General' => 'Všeobecné',
 	'Name:' => 'Název:',
 	'Promo area definition <b>%ITEM_NAME%</b> has been updated' => 'Definice propagační oblasti <b>%ITEM_NAME%</b> byla aktualizována',
+	'Deactivate' => 'Deaktivovat',
+	'Internal name:' => 'Interní název:',
+	'Internal code:' => 'Interní kód:',
+	'Internal notes:' => 'Interní poznámky:',
 ];

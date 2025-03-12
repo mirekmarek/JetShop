@@ -51,4 +51,5 @@ return [
 	'Please enter name' => 'Zadejte jméno',
 	'Name:' => 'Název:',
 	'Landing page <b>%ITEM_NAME%</b> has been updated' => 'Vstupní stránka <b>%ITEM_NAME%</b> byla aktualizována',
+	'e-shop' => 'internetový obchod',
 ];

@@ -52,4 +52,10 @@ return [
 	'Please enter name' => 'Zadejte jméno',
 	'Usage' => 'Používání',
 	'Create new' => 'Vytvořit nový',
+	'Description' => 'Popis',
+	'Property group description <b>%NAME%</b> has been updated' => 'Popis skupiny vlastností <b>%NAME%</b> byl aktualizován',
+	'Please select file' => 'Vyberte soubor',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Delete' => 'Vymazat',
+	'It is not possible to delete this Property group' => 'Tuto skupinu vlastností není možné smazat',
 ];

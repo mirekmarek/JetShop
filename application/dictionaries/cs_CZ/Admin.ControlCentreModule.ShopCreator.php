@@ -30,4 +30,5 @@ return [
 	'Create e new e-shop' => 'Vytvořte si nový e-shop',
 	'New e-shop has been created' => 'Byl vytvořen nový e-shop',
 	'Default warehouse: ' => 'Výchozí sklad: ',
+	'Copy pages from e-shop:' => 'Zkopírujte stránky z e-shopu:',
 ];

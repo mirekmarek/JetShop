@@ -90,4 +90,9 @@ return [
 	'Out of range' => 'Mimo dosah',
 	'Usage' => 'Používání',
 	'Is active - %what%' => 'Je aktivní – %what%',
+	'Description' => 'Popis',
+	'Please select file' => 'Vyberte soubor',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Property description <b>%NAME%</b> has been updated' => 'Popis vlastnosti <b>%NAME%</b> byl aktualizován',
+	'It is not possible to delete this Property' => 'Tuto vlastnost není možné smazat',
 ];

@@ -22,4 +22,9 @@ return [
 	'Max:' => 'Max:',
 	'Inactive' => 'Neaktivní',
 	'Properties' => 'Vlastnosti',
+	'Save filter settings' => 'Uložte nastavení filtru',
+	'- all -' => '- Všechno -',
+	'Not active' => 'Neaktivní',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
 ];

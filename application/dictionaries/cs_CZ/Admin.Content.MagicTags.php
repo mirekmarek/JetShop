@@ -24,6 +24,6 @@ return [
 	'Kategorie:' => 'Kategorie:',
 	'Date and time' => 'Datum a čas',
 	'What to display:' => 'Co zobrazit:',
-	'Magic tags' => '',
-	'Co zobrazit:' => '',
+	'Magic tags' => 'Magické značky',
+	'Co zobrazit:' => 'Co zobrazit:',
 ];

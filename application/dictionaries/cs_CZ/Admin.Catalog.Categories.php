@@ -184,4 +184,9 @@ return [
 	'Add category:' => 'Přidat kategorii:',
 	'Properties' => 'Vlastnosti',
 	'Unknown item %ID%' => 'Neznámá položka %ID%',
+	'Description' => 'Popis',
+	'File is too large' => 'Soubor je příliš velký',
+	'Please select file' => 'Vyberte soubor',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Category - kind of product is used' => 'Kategorie – druh použitého produktu',
 ];

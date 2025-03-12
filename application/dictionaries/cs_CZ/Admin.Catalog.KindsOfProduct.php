@@ -106,4 +106,12 @@ return [
 	'Activate completely' => 'Aktivovat kompletně',
 	'Virtual product handler:' => 'Virtuální obslužný program produktu:',
 	'Inactive' => 'Neaktivní',
+	'Description' => 'Popis',
+	'Please select file' => 'Vyberte soubor',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Kind of product - property is used' => 'Druh produktu - vlastnost se používá',
+	'Kind of product - property group is used' => 'Použije se druh produktu - skupina vlastností',
+	'Delete' => 'Vymazat',
+	'It is not possible to delete this Kind of product' => 'Tento druh produktu není možné smazat',
+	'Do you really want to delete this Kind of product?' => 'Opravdu chcete smazat tento druh produktu?',
 ];

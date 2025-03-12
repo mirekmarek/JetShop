@@ -8,5 +8,7 @@ return [
 	'XLSX' => 'XLSX',
 	'Please enter a value' => 'Zadejte hodnotu',
 	'Inactive' => 'Neaktivní',
-	'Entity edit services' => '',
+	'Entity edit services' => 'Služby úprav entit',
+	'Unknown locale: from' => 'Neznámá lokalita: od',
+	'Error during translation: %ERROR%' => 'Chyba při překladu: %ERROR%',
 ];

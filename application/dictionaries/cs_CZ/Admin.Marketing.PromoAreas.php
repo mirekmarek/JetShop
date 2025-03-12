@@ -47,4 +47,5 @@ return [
 	'Internal notes' => 'Interní poznámky',
 	'General' => 'Všeobecné',
 	'Name:' => 'Název:',
+	'e-shop' => 'internetový obchod',
 ];

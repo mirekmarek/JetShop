@@ -50,4 +50,6 @@ return [
 	'Kind of Article' => 'Druh článku',
 	' - all -' => ' - Všechno -',
 	'Kind of article' => 'Druh článku',
+	'Content - Article <b>%ITEM_NAME%</b> has been updated' => 'Obsah – článek <b>%ITEM_NAME%</b> byl aktualizován',
+	'Description' => 'Popis',
 ];

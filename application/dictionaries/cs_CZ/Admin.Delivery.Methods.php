@@ -104,4 +104,9 @@ return [
 	'Price' => 'Cena',
 	'Deactivate' => 'Deaktivovat',
 	'Length of delivery in working days:' => 'Délka dodání v pracovní dny:',
+	'Personal takeover - external' => 'Osobní převzetí - externí',
+	'Personal takeover - internal' => 'Osobní převzetí - interní',
+	'Copy content' => 'Zkopírujte obsah',
+	'Source e-shop' => 'Zdrojový e-shop',
+	'Target e-shop' => 'Cílový e-shop',
 ];

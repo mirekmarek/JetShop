@@ -92,4 +92,6 @@ return [
 	'Date and time:' => 'Datum a čas:',
 	'Show' => 'Ukázat',
 	'Active blocations' => 'Aktivní blokády',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
 ];

@@ -39,4 +39,11 @@ return [
 	'Activate' => 'Aktivovat',
 	'Activate completely' => 'Aktivovat kompletně',
 	'Kind of product file <b>%ITEM_NAME%</b> has been updated' => 'Soubor typu <b>%ITEM_NAME%</b> produktu byl aktualizován',
+	'Show on product detail' => 'Zobrazit na detailu produktu',
+	'Description' => 'Popis',
+	'File is too large' => 'Soubor je příliš velký',
+	'Please select file' => 'Vyberte soubor',
+	'Please upload image' => 'Nahrajte prosím obrázek',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Kind of product file description <b>%NAME%</b> has been updated' => 'Byl aktualizován druh popisu souboru produktu <b>%NAME%.</b>',
 ];

@@ -43,4 +43,7 @@ return [
 	'Receipt Of Goods' => 'Příjem Zboží',
 	'Price per unit:' => 'Cena za jednotku:',
 	'Total:' => 'Celkový:',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'ID' => 'ID',
 ];

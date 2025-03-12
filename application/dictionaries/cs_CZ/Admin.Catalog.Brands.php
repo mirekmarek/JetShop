@@ -45,4 +45,12 @@ return [
 	'Select brand' => 'Vyberte značku',
 	'Brand <b>%ITEM_NAME%</b> has been updated' => 'Značka <b>%ITEM_NAME%</b> byla aktualizována',
 	'Brand <b>%ITEM_NAME%</b> has been created' => 'Značka <b>%ITEM_NAME%</b> byla vytvořena',
+	'Description' => 'Popis',
+	'File is too large' => 'Soubor je příliš velký',
+	'Please select file' => 'Vyberte soubor',
+	'Please upload image' => 'Nahrajte prosím obrázek',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Accessories groups <b>%ITEM_NAME%</b> has been updated' => 'Skupiny příslušenství <b>%ITEM_NAME%</b> byly aktualizovány',
+	'Delete' => 'Vymazat',
+	'It is not possible to delete this Brand' => 'Tuto značku není možné smazat',
 ];

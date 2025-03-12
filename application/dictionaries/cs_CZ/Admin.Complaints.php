@@ -186,4 +186,11 @@ return [
 	'Complaint dispatch' => 'Odeslání reklamace',
 	'Note' => 'Poznámka',
 	'Complaint - changed' => 'Reklamace - změněno',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'Administrator' => 'Správce',
+	'Complaint - rejected' => 'Reklamace - zamítnuta',
+	'Error during complaint confirmation e-mail sending' => 'Chyba při odesílání e-mailu s potvrzením reklamace',
+	'History' => 'Dějiny',
+	'Do not send notifications to the customer' => 'Neposílejte zákazníkovi upozornění',
 ];

@@ -48,4 +48,6 @@ return [
 	'General' => 'Všeobecné',
 	'Name:' => 'Název:',
 	'Gift  shopping cart <b>%ITEM_NAME%</b> has been updated' => 'Nákupní košík dárků <b>%ITEM_NAME%</b> byl aktualizován',
+	'e-shop' => 'internetový obchod',
+	'Gift from shopping cart <b>%ITEM_NAME%</b> has been updated' => 'Dárek z nákupního košíku <b>%ITEM_NAME%</b> byl aktualizován',
 ];

@@ -23,4 +23,11 @@ return [
 	'Invoices' => 'Faktury',
 	'Invoices in advance' => 'Proforma faktury',
 	'Delivery note' => 'Dodací list',
+	'Complaint' => 'Stížnost',
+	'Invoice' => 'Faktura',
+	'Order personal receipt' => 'Objednejte si osobní převzetí',
+	'Warehouse management - loss or destruction' => 'Skladové hospodářství - ztráta nebo zničení',
+	'Warehouse management - receipt of goods' => 'Skladové hospodářství - příjem zboží',
+	'Warehouse management - stock verification' => 'Skladové hospodářství - verifikace zásob',
+	'Warehouse management - transfer between warehouses' => 'Skladové hospodářství - přesun mezi sklady',
 ];

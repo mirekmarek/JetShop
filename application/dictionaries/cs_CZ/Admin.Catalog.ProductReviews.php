@@ -44,4 +44,6 @@ return [
 	'yes' => 'Ano',
 	'e-shop' => 'internetový obchod',
 	'no' => 'Ne',
+	'Delete' => 'Vymazat',
+	'Do you really want to delete this Product review?' => 'Opravdu chcete smazat tuto recenzi produktu?',
 ];

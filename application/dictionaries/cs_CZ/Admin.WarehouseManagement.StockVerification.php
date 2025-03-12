@@ -55,4 +55,7 @@ return [
 	'Stock verification <b>%number%</b> has been cancelled' => 'Ověření skladu <b>%number%</b> bylo zrušeno',
 	'Stock verification <b>%number%</b> has been completed' => 'Ověření skladu <b>%number%</b> bylo dokončeno',
 	'Cancel' => 'zrušení',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'ID' => 'ID',
 ];

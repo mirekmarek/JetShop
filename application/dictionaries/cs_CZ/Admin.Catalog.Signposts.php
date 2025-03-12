@@ -40,4 +40,12 @@ return [
 	'Pictogram - Product detail' => 'Piktogram - Detail produktu',
 	'Delete' => 'Vymazat',
 	'Do you really want to delete this Signpost?' => 'Opravdu chcete smazat tento rozcestník?',
+	'Pictogram image' => 'Piktogramový obrázek',
+	'Description' => 'Popis',
+	'File is too large' => 'Soubor je příliš velký',
+	'Please select file' => 'Vyberte soubor',
+	'Please upload image' => 'Nahrajte prosím obrázek',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Signpost <b>%ITEM_NAME%</b> has been created' => 'Rozcestník <b>%ITEM_NAME%</b> byl vytvořen',
+	'Signpost <b>%ITEM_NAME%</b> has been deleted' => 'Rozcestník <b>%ITEM_NAME%</b> byl smazán',
 ];

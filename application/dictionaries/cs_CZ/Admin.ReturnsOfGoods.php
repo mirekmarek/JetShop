@@ -129,4 +129,13 @@ return [
 	'Note' => 'Poznámka',
 	'Return of goods - changed' => 'Vrácení zboží - změněno',
 	'Delivery address has been changed' => 'Doručovací adresa byla změněna',
+	'History' => 'Dějiny',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
+	'Administrator' => 'Správce',
+	'Do not send notifications to the customer' => 'Neposílejte zákazníkovi upozornění',
+	'Force status' => 'Stav síly',
+	'Set status:' => 'Nastavit stav:',
+	'Internal notes:' => 'Interní poznámky:',
+	'Force status:' => 'Stav síly:',
 ];

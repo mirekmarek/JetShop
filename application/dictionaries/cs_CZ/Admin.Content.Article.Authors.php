@@ -33,4 +33,9 @@ return [
 	'Activate' => 'Aktivovat',
 	'Article author <b>%ITEM_NAME%</b> has been updated' => 'Autor článku <b>%ITEM_NAME%</b> byl aktualizován',
 	'Article author <b>%ITEM_NAME%</b> has been created' => 'Autor článku <b>%ITEM_NAME%</b> byl vytvořen',
+	'Description' => 'Popis',
+	'File is too large' => 'Soubor je příliš velký',
+	'Please select file' => 'Vyberte soubor',
+	'Please upload image' => 'Nahrajte prosím obrázek',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
 ];

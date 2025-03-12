@@ -46,4 +46,6 @@ return [
 	'Source' => 'Zdroj',
 	'Name:' => 'Název:',
 	'e-shop' => 'internetový obchod',
+	'CSV' => 'CSV',
+	'XLSX' => 'XLSX',
 ];

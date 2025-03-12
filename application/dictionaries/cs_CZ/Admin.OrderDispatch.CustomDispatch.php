@@ -36,4 +36,6 @@ return [
 	'Items:' => 'položky:',
 	'Product:' => 'Produkt:',
 	'Quantity:' => 'Množství:',
+	'e-shop:' => 'e-shop:',
+	'Number of units:' => 'Počet jednotek:',
 ];

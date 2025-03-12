@@ -40,4 +40,5 @@ return [
 	'Content - Info Box <b>%ITEM_NAME%</b> has been created' => 'Obsah – informační pole <b>%ITEM_NAME%</b> bylo vytvořeno',
 	'Content Info Boxes' => 'Informační pole obsahu',
 	'Info Boxes' => 'Informační boxy',
+	'Description' => 'Popis',
 ];

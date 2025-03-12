@@ -56,4 +56,6 @@ return [
 	'Sada' => 'Sada',
 	'Gift - product <b>%ITEM_NAME%</b> has been created' => 'Dárek – produkt <b>%ITEM_NAME%</b> byl vytvořen',
 	'e-shop' => 'internetový obchod',
+	'Delete' => 'Vymazat',
+	'Do you really want to delete this Gift for product?' => 'Opravdu chcete smazat tento dárek k produktu?',
 ];

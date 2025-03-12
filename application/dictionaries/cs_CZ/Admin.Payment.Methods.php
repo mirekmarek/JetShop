@@ -113,4 +113,9 @@ return [
 	'Super Cash' => 'Super hotovost',
 	'Pay Pal' => 'Pay Pal',
 	'Bit Coin' => 'Bitová mince',
+	'Apple Pay' => 'Apple Pay',
+	'Description' => 'Popis',
+	'File is too large' => 'Soubor je příliš velký',
+	'Please select file' => 'Vyberte soubor',
+	'Select and upload images' => 'Vyberte a nahrajte obrázky',
 ];

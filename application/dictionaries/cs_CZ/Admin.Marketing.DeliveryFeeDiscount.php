@@ -59,4 +59,6 @@ return [
 	'Name:' => 'Název:',
 	'Discount code definition <b>%ITEM_NAME%</b> has been deleted' => 'Definice slevového kódu <b>%ITEM_NAME%</b> byla smazána',
 	'e-shop' => 'internetový obchod',
+	'Delivery Fee Discount <b>%ITEM_NAME%</b> has been created' => 'Sleva z poplatku za doručení <b>%ITEM_NAME%</b> byla vytvořena',
+	'Do you really want to delete this Delivery fee discount?' => 'Opravdu chcete smazat tuto slevu z poplatku za doručení?',
 ];

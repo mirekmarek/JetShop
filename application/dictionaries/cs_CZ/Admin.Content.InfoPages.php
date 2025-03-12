@@ -71,4 +71,6 @@ return [
 	'Activate' => 'Aktivovat',
 	'Is active - %what%' => 'Je aktivní – %what%',
 	'Info Pages' => 'Informační stránky',
+	'Description' => 'Popis',
+	'Info Page description <b>%NAME%</b> has been updated' => 'Popis informační stránky <b>%NAME%</b> byl aktualizován',
 ];

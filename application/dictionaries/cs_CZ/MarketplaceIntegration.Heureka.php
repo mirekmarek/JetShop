@@ -37,4 +37,6 @@ return [
 	'Heureka API' => 'Heureka API',
 	'Please setup Heureka API first' => 'Nejprve prosím nastavte Heureka API',
 	'Heureka Marketplace Server - B2B - cz' => 'Server Heureka Marketplace - B2B - cz',
+	'Heureka Marketplace Server - CZ' => 'Server Heureka Marketplace - CZ',
+	'Heureka Marketplace Server - SK' => 'Server Heureka Marketplace - SK',
 ];

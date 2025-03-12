@@ -230,4 +230,5 @@ return [
 	'General' => 'Všeobecné',
 	'Gift' => 'Dar',
 	'e-shop' => 'internetový obchod',
+	'Marketing - Automatic offer <b>%ITEM_NAME%</b> has been updated' => 'Marketing – Automatická nabídka <b>%ITEM_NAME%</b> byla aktualizována',
 ];

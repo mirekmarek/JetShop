@@ -39,4 +39,5 @@ return [
 	'Activate' => 'Aktivovat',
 	'Activate completely' => 'Aktivovat kompletně',
 	'E-mail layouts' => 'Rozvržení e-mailu',
+	'Description' => 'Popis',
 ];

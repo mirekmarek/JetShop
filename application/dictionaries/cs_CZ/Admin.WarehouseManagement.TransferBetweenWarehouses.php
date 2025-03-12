@@ -55,4 +55,13 @@ return [
 	'Done - sent' => 'Hotovo - odesláno',
 	'Cancel' => 'zrušení',
 	'Finished - received' => 'Dokončeno - přijato',
+	'Receipt Date' => 'Datum přijetí',
+	'Supplier' => 'Dodavatel',
+	'Order number' => 'Číslo objednávky',
+	'Supplier\'s bill' => 'Účet dodavatele',
+	'Warehouse:' => 'Sklad:',
+	'Order number:' => 'Číslo objednávky:',
+	'Supplier:' => 'Dodavatel:',
+	'Please specify at least one item' => 'Zadejte prosím alespoň jednu položku',
+	'New Transfare between warehouses' => 'Nová přeprava mezi sklady',
 ];

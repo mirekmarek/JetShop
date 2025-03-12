@@ -25,4 +25,9 @@ return [
 	'Activate' => 'Aktivovat',
 	'Deactivate' => 'Deaktivovat',
 	'Add product:' => 'Přidat produkt:',
+	'Catalog - products - accessories groups <b>%ITEM_NAME%</b> has been created' => 'Katalog - produkty - skupiny příslušenství <b>%ITEM_NAME%</b> byl vytvořen',
+	'Accessories groups <b>%ITEM_NAME%</b> has been updated' => 'Skupiny příslušenství <b>%ITEM_NAME%</b> byly aktualizovány',
+	'Accessory group <b>%ITEM_NAME%</b> has been updated' => 'Skupina příslušenství <b>%ITEM_NAME%</b> byla aktualizována',
+	'Delete' => 'Vymazat',
+	'Do you really want to delete this Accessory group?' => 'Opravdu chcete smazat tuto skupinu příslušenství?',
 ];
