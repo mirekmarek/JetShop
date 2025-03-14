@@ -351,4 +351,5 @@ return [
 	'Usage' => '',
 	'Variant select description:' => '',
 	'Similar product select description:' => '',
+	'Priority:' => '',
 ];

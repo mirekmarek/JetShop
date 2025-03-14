@@ -313,4 +313,8 @@ return [
 	'SEO' => '',
 	'This is variant of <a href="%URL%">%NAME%</a>' => '',
 	'Internal name of variant:' => '',
+	'Unit of measure:' => '',
+	'Is virtual product' => '',
+	'Virtual product handler:' => '',
+	'Usage' => '',
 ];

@@ -195,4 +195,5 @@ class Main extends EShop_Managers_Analytics
 		
 		return $res;
 	}
+	
 }
