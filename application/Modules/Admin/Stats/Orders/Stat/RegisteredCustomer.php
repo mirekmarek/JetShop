@@ -8,10 +8,8 @@ namespace JetApplicationModule\Admin\Stats\Orders;
 
 
 use Jet\Tr;
-use JetApplication\Statistics_Order;
-use JetApplication\Statistics_Order_Result;
 
-class Stats_RegisteredCustomer extends Statistics_Order {
+class Stat_RegisteredCustomer extends Stat {
 	public const KEY = 'registered_customer';
 	
 	protected string $title = 'Registered / not registered customers';
@@ -21,7 +19,7 @@ class Stats_RegisteredCustomer extends Statistics_Order {
 		$this->setWhere([
 			'import_source' => ''
 		]);
-		$result = new Statistics_Order_Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
+		$result = new Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
 		$result->setTitle( Tr::_('All internal orders') );
 		$result->setData( $this->getRawData() );
 		$this->results[] = $result;
@@ -32,7 +30,7 @@ class Stats_RegisteredCustomer extends Statistics_Order {
 			'AND',
 			'customer_id >' => 0,
 		]);
-		$result = new Statistics_Order_Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
+		$result = new Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
 		$result->setTitle( Tr::_('Registered customers') );
 		$result->setData( $this->getRawData() );
 		$this->results[] = $result;
@@ -43,7 +41,7 @@ class Stats_RegisteredCustomer extends Statistics_Order {
 			'AND',
 			'customer_id' => 0,
 		]);
-		$result = new Statistics_Order_Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
+		$result = new Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
 		$result->setTitle( Tr::_('Not registered customers') );
 		$result->setData( $this->getRawData() );
 		$this->results[] = $result;

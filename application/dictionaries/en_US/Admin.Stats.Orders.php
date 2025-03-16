@@ -34,4 +34,6 @@ return [
 	'All internal orders' => '',
 	'Registered customers' => '',
 	'Not registered customers' => '',
+	'All orders' => '',
+	'Internal orders' => '',
 ];

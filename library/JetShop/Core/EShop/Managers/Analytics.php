@@ -16,6 +16,7 @@ use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
+use JetApplication\Signpost_EShopData;
 
 #[Manager_MetaInfo(
 	group: Manager_MetaInfo::GROUP_ESHOP,
@@ -41,6 +42,8 @@ abstract class Core_EShop_Managers_Analytics extends Application_Module
 	abstract public function catchConversionSourceInfo() : void;
 	
 	abstract public function viewCategory( Category_EShopData $category ) : string;
+	
+	abstract public function viewSignpost( Signpost_EShopData $signpost ) : string;
 	
 	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
 	

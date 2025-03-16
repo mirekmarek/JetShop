@@ -4,11 +4,13 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplication;
+namespace JetApplicationModule\Admin\Stats\Orders;
 
 
-use JetShop\Core_Statistics_Order;
-
-abstract class Statistics_Order extends Core_Statistics_Order {
-
+class Stat_Default extends Stat {
+	public const KEY = 'default';
+	
+	protected string $title = 'Default';
+	
+	
 }

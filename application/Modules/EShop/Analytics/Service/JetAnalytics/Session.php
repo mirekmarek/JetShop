@@ -16,6 +16,9 @@ use Jet\Http_Request;
 use Jet\MVC;
 use Jet\Session as Jet_Session;
 use Jet\Data_DateTime;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasEShopRelation_Trait;
+use JetApplication\EShops;
 
 
 #[DataModel_Definition(
@@ -26,8 +29,10 @@ use Jet\Data_DateTime;
 		'id_property_name' => 'id'
 	]
 )]
-class Session extends DataModel
+class Session extends DataModel implements EShopEntity_HasEShopRelation_Interface
 {
+	use EShopEntity_HasEShopRelation_Trait;
+	
 	protected static ?Jet_Session $jet_session = null;
 	protected static null|false|Session $current = null;
 	
@@ -88,6 +93,19 @@ class Session extends DataModel
 		max_len: 50
 	)]
 	protected string $user_agent = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 2048
+	)]
+	protected string $first_page_URL = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 2048
+	)]
+	protected string $last_page_URL = '';
 	
 
 	#[DataModel_Definition(
@@ -233,7 +251,9 @@ class Session extends DataModel
 			static::$current = $session;
 			
 			if(MVC::getPage()) {
-				$session->setDefaultEvent( Event_PageView::create() );
+				$default_event = Event_PageView::create();
+				$default_event->init();
+				$session->setDefaultEvent( $default_event );
 			}
 			
 			register_shutdown_function( function() {
@@ -247,9 +267,12 @@ class Session extends DataModel
 	
 	protected function newSessionStarted() : void
 	{
+		$this->setEshop( EShops::getCurrent() );
 		$this->IP_address = Http_Request::clientIP();
 		$this->user_agent = $_SERVER['HTTP_USER_AGENT']??'';
 		$this->start_date_time = Data_DateTime::now();
+		$this->first_page_URL = Http_Request::currentURL();
+
 
 		$this->http_referer = $_SERVER['HTTP_REFERER'] ?? '';
 		if($this->http_referer) {
@@ -273,6 +296,7 @@ class Session extends DataModel
 	protected function actualizeSeession() : void
 	{
 		$this->setLastActivityDateTime( Data_DateTime::now() );
+		$this->setLastPageURL( Http_Request::currentURL() );
 		if(Auth::getCurrentUser()) {
 			$this->setCustomerId( Auth::getCurrentUser()->getId() );
 		}
@@ -285,10 +309,14 @@ class Session extends DataModel
 		);
 		
 
-		$this->default_event?->save();
+		if($this->default_event) {
+			$this->default_event->save();
+			Session_EventMap::create( $this, $this->default_event );
+		}
 
 		foreach($this->events as $event) {
 			$event->save();
+			Session_EventMap::create( $this, $event );
 		}
 	}
 	
@@ -311,6 +339,19 @@ class Session extends DataModel
 		
 		$this->events[] = $event;
 	}
+	
+	public function getLastPageURL(): string
+	{
+		return $this->last_page_URL;
+	}
+	
+	public function setLastPageURL( string $last_page_URL ): void
+	{
+		$this->last_page_URL = $last_page_URL;
+		$this->actualized_properties['last_page_URL'] = $this->last_page_URL;
+	}
+	
+	
 	
 	public function setLastActivityDateTime( Data_DateTime $last_activity_date_time ): void
 	{

@@ -6,35 +6,33 @@
  */
 namespace JetApplicationModule\Admin\Stats\Orders;
 
-
 use Jet\Tr;
-use JetApplication\Statistics_Order;
-use JetApplication\Statistics_Order_Result;
-use JetApplication\Delivery_Method;
+use JetApplication\Payment_Method;
 
-class Stats_ByDeliveryMethod extends Statistics_Order {
-	public const KEY = 'by_delivery_method';
+class Stat_ByPaymentMethod extends Stat
+{
+	public const KEY = 'by_payment_method';
 	
-	protected string $title = 'By delivery method';
+	protected string $title = 'By payment method';
 	
 	public function prepareResults() : void
 	{
 		$this->setWhere([
 			'import_source' => ''
 		]);
-		$result = new Statistics_Order_Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
+		$result = new Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
 		$result->setTitle( Tr::_('All internal orders') );
 		$result->setData( $this->getRawData() );
 		$this->results[] = $result;
 		
 		
-		foreach( Delivery_Method::getScope() as $id=>$name ) {
+		foreach( Payment_Method::getScope() as $id=>$name ) {
 			$this->setWhere([
 				'import_source' => '',
 				'AND',
-				'delivery_method_id' => $id
+				'payment_method_id' => $id
 			]);
-			$result = new Statistics_Order_Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
+			$result = new Result( $this,  $this->start_year, $this->end_year, $this->current_month  );
 			$result->setTitle( $name );
 			$result->setData( $this->getRawData() );
 			$this->results[] = $result;
@@ -42,8 +40,8 @@ class Stats_ByDeliveryMethod extends Statistics_Order {
 		}
 		
 		uasort( $this->results, function(
-			Statistics_Order_Result $a,
-			Statistics_Order_Result $b
+			Result $a,
+			Result $b
 		) {
 			$a_val = $a->getYearData( $a->getEndYear() )->getAmount(false);
 			$b_val = $b->getYearData( $a->getEndYear() )->getAmount(false);
@@ -55,7 +53,7 @@ class Stats_ByDeliveryMethod extends Statistics_Order {
 			return ($a_val > $b_val) ? -1 : 1;
 		} );
 		
-		
+
 	}
 	
 }

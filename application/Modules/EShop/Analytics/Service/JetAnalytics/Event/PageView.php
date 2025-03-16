@@ -30,35 +30,25 @@ class Event_PageView extends Event {
 	)]
 	protected ?Locale $locale = null;
 
-	/**
-	 * @var string
-	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $page_id = '';
 
-	/**
-	 * @var string
-	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $URL = '';
 	
-	public static function create() : static
+	public function init() : void
 	{
-		$event = parent::create();
+		$this->base_id = MVC::getBase()->getId()??'';
+		$this->locale = MVC::getLocale();
+		$this->page_id = MVC::getPage()->getId()??'';
 		
-		$event->base_id = MVC::getBase()->getId()??'';
-		$event->locale = MVC::getLocale();
-		$event->page_id = MVC::getPage()->getId()??'';
-		
-		$event->URL = Http_Request::currentURL();
-		
-		return $event;
+		$this->URL = Http_Request::currentURL();
 	}
 	
 	public function getBaseId() : string

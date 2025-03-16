@@ -4,17 +4,14 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplicationModule\Admin\Stats\Orders;
 
 
 use Jet\BaseObject;
-use JetApplication\Statistics_Order;
-use JetApplication\Statistics_Order_Result;
-use JetApplication\Statistics_Order_Result_Item;
 
-class Core_Statistics_Order_Result extends BaseObject {
+class Result extends BaseObject {
 	
-	protected Statistics_Order $stat;
+	protected Stat $stat;
 	protected string $title = '';
 	protected int $current_month = 0;
 	protected int $start_year = 2024;
@@ -22,27 +19,27 @@ class Core_Statistics_Order_Result extends BaseObject {
 	protected array $day_map = [];
 	
 	/**
-	 * @var Statistics_Order_Result_Item[][][]
+	 * @var Result_Item[][][]
 	 */
 	protected ?array $data_by_day = null;
 	
 	/**
-	 * @var Statistics_Order_Result_Item[][]
+	 * @var Result_Item[][]
 	 */
 	protected ?array $data_by_months = null;
 	
 	/**
-	 * @var Statistics_Order_Result_Item[]
+	 * @var Result_Item[]
 	 */
 	protected ?array $data_by_years = null;
 	
 	
 	/**
-	 * @var Statistics_Order_Result_Item[]
+	 * @var Result_Item[]
 	 */
 	protected ?array $data_by_completed_part_of_year = null;
 	
-	public function __construct( Statistics_Order $stat, int $start_year, int $end_year, int $current_month )
+	public function __construct( Stat $stat, int $start_year, int $end_year, int $current_month )
 	{
 		$this->stat = $stat;
 		
@@ -54,7 +51,7 @@ class Core_Statistics_Order_Result extends BaseObject {
 		$this->prepareMap();
 	}
 	
-	public function getStat() : Statistics_Order
+	public function getStat() : Stat
 	{
 		return $this->stat;
 	}
@@ -108,10 +105,6 @@ class Core_Statistics_Order_Result extends BaseObject {
 	
 	public function prepareMap() : void 
 	{
-		/**
-		 * @var Statistics_Order_Result $this
-		 */
-		
 		$this->day_map = [];
 		
 		$this->data_by_day = [];
@@ -128,8 +121,8 @@ class Core_Statistics_Order_Result extends BaseObject {
 			$this->data_by_day[$y] = [];
 			$this->data_by_months[$y] = [];
 			
-			$this->data_by_years[$y] = new Statistics_Order_Result_Item( $this );
-			$this->data_by_completed_part_of_year[$y] = new Statistics_Order_Result_Item( $this );
+			$this->data_by_years[$y] = new Result_Item( $this );
+			$this->data_by_completed_part_of_year[$y] = new Result_Item( $this );
 			
 			$year_day_count = 0;
 			$period_day_count = 0;
@@ -138,7 +131,7 @@ class Core_Statistics_Order_Result extends BaseObject {
 				$this->day_map[$y][$m] = [];
 				
 				$this->data_by_day[$y][$m] = [];
-				$this->data_by_months[$y][$m] = new Statistics_Order_Result_Item( $this );
+				$this->data_by_months[$y][$m] = new Result_Item( $this );
 				
 				$month_day_count = 31;
 				if($m==2) {
@@ -158,7 +151,7 @@ class Core_Statistics_Order_Result extends BaseObject {
 				for($d=1; $d<=$month_day_count;$d++) {
 					$this->day_map[$y][$m][] = $d;
 					
-					$this->data_by_day[$y][$m][$d] = new Statistics_Order_Result_Item( $this );
+					$this->data_by_day[$y][$m][$d] = new Result_Item( $this );
 				}
 				
 				
@@ -225,14 +218,14 @@ class Core_Statistics_Order_Result extends BaseObject {
 	}
 	
 	/**
-	 * @return Statistics_Order_Result_Item[][][]
+	 * @return Result_Item[][][]
 	 */
 	public function getDataByDay() : array
 	{
 		return $this->data_by_day;
 	}
 	
-	public function getDayData( int $y, int $m, int $d ) : ?Statistics_Order_Result_Item
+	public function getDayData( int $y, int $m, int $d ) : ?Result_Item
 	{
 		$data = $this->getDataByDay();
 		if( !isset($data[$y][$m][$d]) ) {
@@ -243,41 +236,41 @@ class Core_Statistics_Order_Result extends BaseObject {
 	}
 	
 	/**
-	 * @return Statistics_Order_Result_Item[][]
+	 * @return Result_Item[][]
 	 */
 	public function getDataByMonths() : array
 	{
 		return $this->data_by_months;
 	}
 	
-	public function getMonthData( int $y, int $m ) : Statistics_Order_Result_Item
+	public function getMonthData( int $y, int $m ) : Result_Item
 	{
 		return $this->getDataByMonths()[$y][$m];
 	}
 	
 	/**
-	 * @return Statistics_Order_Result_Item[]
+	 * @return Result_Item[]
 	 */
 	public function getDataByYears() : array
 	{
 		return $this->data_by_years;
 	}
 	
-	public function getYearData( int $y ) : Statistics_Order_Result_Item
+	public function getYearData( int $y ) : Result_Item
 	{
 		return $this->getDataByYears()[$y];
 	}
 	
 	
 	/**
-	 * @return Statistics_Order_Result_Item[]
+	 * @return Result_Item[]
 	 */
 	public function getDataByCompletedPartsOfYear() : array
 	{
 		return $this->data_by_completed_part_of_year;
 	}
 	
-	public function getCompletedPartOfYear( int $y ) :  Statistics_Order_Result_Item
+	public function getCompletedPartOfYear( int $y ) :  Result_Item
 	{
 		return $this->getDataByCompletedPartsOfYear()[$y];
 	}

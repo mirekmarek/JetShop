@@ -4,22 +4,19 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
-
+namespace JetApplicationModule\Admin\Stats\Orders;
 
 use Jet\Locale;
-use JetApplication\Statistics_Order_Result;
-use JetApplication\Statistics_Order_Result_Item;
 
-abstract class Core_Statistics_Order_Result_Item {
+class Result_Item {
 	
-	protected Statistics_Order_Result $result;
+	protected Result $result;
 	protected int $orders_count = 0;
 	protected float $amount = 0.0;
 	protected int $average_divisor = 0;
-	protected ?Statistics_Order_Result_Item $ratio_item = null;
+	protected ?Result_Item $ratio_item = null;
 	
-	public function __construct( Statistics_Order_Result $result)
+	public function __construct( Result $result)
 	{
 		$this->result = $result;
 	}
@@ -34,12 +31,12 @@ abstract class Core_Statistics_Order_Result_Item {
 		$this->average_divisor = $average_divisor;
 	}
 	
-	public function getRatioItem() : ?Statistics_Order_Result_Item
+	public function getRatioItem() : ?Result_Item
 	{
 		return $this->ratio_item;
 	}
 	
-	public function setRatioItem( Statistics_Order_Result_Item $ratio_item ) : void
+	public function setRatioItem( Result_Item $ratio_item ) : void
 	{
 		$this->ratio_item = $ratio_item;
 	}

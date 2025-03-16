@@ -24,6 +24,7 @@ use JetApplication\EShop_Managers;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\EShops;
+use JetApplication\Signpost_EShopData;
 
 
 class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
@@ -171,4 +172,12 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 	{
 		return true;
 	}
+	
+	
+	public function viewSignpost( Signpost_EShopData $signpost ): string
+	{
+		// TODO: Implement viewSignpost() method.
+		return '';
+	}
+	
 }

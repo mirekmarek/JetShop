@@ -17,6 +17,7 @@ use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
+use JetApplication\Signpost_EShopData;
 
 abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
@@ -57,6 +58,8 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	abstract public function documentEnd() : string;
 	
 	abstract public function viewCategory( Category_EShopData $category ) : string;
+	
+	abstract public function viewSignpost( Signpost_EShopData $signpost ) : string;
 	
 	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
 	

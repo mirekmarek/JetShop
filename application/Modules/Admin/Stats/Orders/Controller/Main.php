@@ -10,7 +10,6 @@ namespace JetApplicationModule\Admin\Stats\Orders;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use JetApplication\EShops;
-use JetApplication\Statistics_Order;
 use JetApplication\Order_Status;
 
 use JetApplication\Order_Status_Delivered;
@@ -25,13 +24,13 @@ use JetApplication\Order_Status_Returned;
 class Controller_Main extends MVC_Controller_Default
 {
 	/**
-	 * @var Statistics_Order[]
+	 * @var Stat[]
 	 */
 	protected array $stats = [];
 	
 	protected string $default_stat_key = '';
 	
-	protected function registerStat( Statistics_Order $stat ) : void
+	protected function registerStat( Stat $stat ) : void
 	{
 		if(!$this->default_stat_key) {
 			$this->default_stat_key = $stat->getKey();
@@ -40,7 +39,7 @@ class Controller_Main extends MVC_Controller_Default
 		$this->stats[ $stat->getKey() ] = $stat;
 	}
 	
-	public function setupStat() : Statistics_Order
+	public function setupStat() : Stat
 	{
 		$GET = Http_Request::GET();
 		
@@ -120,11 +119,11 @@ class Controller_Main extends MVC_Controller_Default
 	public function default_Action() : void
 	{
 		
-		$this->registerStat( new Stats_Default() );
-		$this->registerStat( new Stats_ByPaymentMethod() );
-		$this->registerStat( new Stats_ByDeliveryMethod() );
-		$this->registerStat( new Stats_RegisteredCustomer() );
-		$this->registerStat( new Stats_ByOrderSource() );
+		$this->registerStat( new Stat_Default() );
+		$this->registerStat( new Stat_ByPaymentMethod() );
+		$this->registerStat( new Stat_ByDeliveryMethod() );
+		$this->registerStat( new Stat_RegisteredCustomer() );
+		$this->registerStat( new Stat_ByOrderSource() );
 		
 		$stat = $this->setupStat();
 		

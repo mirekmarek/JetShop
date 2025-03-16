@@ -19,7 +19,6 @@ use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Image;

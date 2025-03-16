@@ -14,6 +14,7 @@ use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
+use JetApplication\Signpost_EShopData;
 
 
 class Main extends EShop_Analytics_Service
@@ -21,19 +22,17 @@ class Main extends EShop_Analytics_Service
 	
 	protected null|false|Session $session = null;
 	
-	//TODO: category show
 	//TODO: signopost show
 	//TODO: product list show
 	//TODO: filter setup
 	//TODO: search
-	//TODO: product detail
+	//TODO: cart view
 	//TODO: cart add
 	//TODO: cart remove
 	//TODO: cart update
 	//TODO: order start
 	//TODO: order details
 	//TODO: order done
-	//TODO: custom events
 	
 	public function init() : void
 	{
@@ -72,11 +71,25 @@ class Main extends EShop_Analytics_Service
 	
 	public function viewCategory( Category_EShopData $category ): string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_CategoryView::create();
+			$event->init( $category );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	
-	public function customEvent( string $evetnt, array $event_data = [] ): string
+	public function viewSignpost( Signpost_EShopData $signpost ): string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_SignpostView::create();
+			$event->init( $signpost );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	
@@ -88,6 +101,13 @@ class Main extends EShop_Analytics_Service
 	
 	public function viewProductDetail( Product_EShopData $product ) : string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_ProductDetailView::create();
+			$event->init( $product );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	
@@ -124,6 +144,11 @@ class Main extends EShop_Analytics_Service
 	}
 	
 	public function purchase( Order $order ) : string
+	{
+		return '';
+	}
+	
+	public function customEvent( string $evetnt, array $event_data = [] ): string
 	{
 		return '';
 	}

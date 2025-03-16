@@ -16,6 +16,7 @@ use JetApplication\EShop_Analytics_Service;
 use JetApplication\EShop_Managers_Analytics;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
+use JetApplication\Signpost_EShopData;
 
 class Main extends EShop_Managers_Analytics
 {
@@ -84,7 +85,15 @@ class Main extends EShop_Managers_Analytics
 			$res .= $service->viewCategory( $category );
 		}
 		return $res;
-		
+	}
+	
+	public function viewSignpost( Signpost_EShopData $signpost ) : string
+	{
+		$res = '';
+		foreach($this->getServices() as $service) {
+			$res .= $service->viewSignpost( $signpost );
+		}
+		return $res;
 	}
 	
 	public function customEvent( string $evetnt, array $event_data=[] ) : string
