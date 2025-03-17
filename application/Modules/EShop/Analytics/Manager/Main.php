@@ -14,6 +14,7 @@ use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
 use JetApplication\EShop_Managers_Analytics;
+use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Signpost_EShopData;
@@ -107,18 +108,11 @@ class Main extends EShop_Managers_Analytics
 	
 	
 	
-	/**
-	 * @param array $list
-	 * @param Category_EShopData|null $category
-	 * @param string|null $category_name
-	 * @param int|null $category_id
-	 * @return string
-	 */
-	public function viewProductsList( array $list, ?Category_EShopData $category=null, ?string $category_name='', ?int $category_id=null ) : string
+	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewProductsList( $list, $category, $category_name, $category_id );
+			$res .= $service->viewProductsList( $list, $category_name, $category_id );
 		}
 		return $res;
 	}

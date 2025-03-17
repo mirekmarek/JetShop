@@ -387,10 +387,13 @@ abstract class Core_ProductListing
 		return $this->filtered_map;
 	}
 	
+	public function getFilteredProductsIDs(): array
+	{
+		return $this->filtered_products_ids;
+	}
 	
 	public function getVisibleProductIDs() : array
 	{
-		Product_Price::prefetch( $this->getPricelist(), $this->visible_product_ids );
 		
 		return $this->visible_product_ids;
 	}
@@ -400,7 +403,9 @@ abstract class Core_ProductListing
 	 */
 	public function getVisibleProducts() : array
 	{
-		return Product_EShopData::getActiveList( $this->getVisibleProductIDs(), $this->eshop );
+		Product_Price::prefetch( $this->getPricelist(), $this->visible_product_ids );
+		
+		return Product_EShopData::getActiveList( $this->visible_product_ids, $this->eshop );
 	}
 	
 	public function getBrandCount( int $brand_id ) : int

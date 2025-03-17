@@ -32,7 +32,7 @@ $products = $listing->getVisibleProducts();
 </div>
 <?=$this->render('list/pagination')?>
 <?=EShop_Managers::Analytics()?->viewProductsList(
-	$products,
+	$listing,
 	category_name: $this->getString('c_name'),
 	category_id: $this->getInt('c_id')
 )?>

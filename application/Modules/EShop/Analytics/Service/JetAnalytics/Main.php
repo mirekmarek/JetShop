@@ -12,6 +12,7 @@ use JetApplication\Category_EShopData;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
+use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Signpost_EShopData;
@@ -22,14 +23,13 @@ class Main extends EShop_Analytics_Service
 	
 	protected null|false|Session $session = null;
 	
-	//TODO: signopost show
-	//TODO: product list show
-	//TODO: filter setup
 	//TODO: search
+	
 	//TODO: cart view
 	//TODO: cart add
 	//TODO: cart remove
 	//TODO: cart update
+	
 	//TODO: order start
 	//TODO: order details
 	//TODO: order done
@@ -94,8 +94,15 @@ class Main extends EShop_Analytics_Service
 	}
 	
 	
-	public function viewProductsList( array $list, ?Category_EShopData $category=null, ?string $category_name='', ?int $category_id=null ) : string
+	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_ProductsListView::create();
+			$event->init( $list, $category_name, $category_name );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	

@@ -15,6 +15,7 @@ use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
+use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Signpost_EShopData;
@@ -63,7 +64,7 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
 	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
 	
-	abstract public function viewProductsList( array $list, ?Category_EShopData $category=null, ?string $category_name='', ?int $category_id=null ) : string;
+	abstract public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string;
 	
 	abstract public function viewProductDetail( Product_EShopData $product ) : string;
 	

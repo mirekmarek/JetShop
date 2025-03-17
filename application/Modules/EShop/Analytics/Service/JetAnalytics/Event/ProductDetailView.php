@@ -11,6 +11,7 @@ use Jet\DataModel_Definition;
 use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
+	name: 'ja_event_product_detail_view',
 	database_table_name: 'ja_event_product_detail_view',
 )]
 class Event_ProductDetailView extends Event

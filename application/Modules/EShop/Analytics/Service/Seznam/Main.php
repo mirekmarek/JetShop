@@ -21,6 +21,7 @@ use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
 use JetApplication\EShop_Managers;
+use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\EShops;
@@ -92,15 +93,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return '';
 	}
 	
-	
-	/**
-	 * @param Product_EShopData[] $list
-	 * @param Category_EShopData|null $category
-	 * @param string|null $category_name
-	 * @param int|null $category_id
-	 * @return string
-	 */
-	public function viewProductsList( array $list, ?Category_EShopData $category=null, ?string $category_name='', ?int $category_id=null ) : string
+	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
 	{
 		return '';
 	}

@@ -15,6 +15,7 @@ use Jet\Locale;
 use Jet\MVC;
 
 #[DataModel_Definition(
+	name: 'ja_event_page_view',
 	database_table_name: 'ja_event_page_view',
 )]
 class Event_PageView extends Event {
