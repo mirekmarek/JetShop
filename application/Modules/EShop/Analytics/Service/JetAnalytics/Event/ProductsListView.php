@@ -80,7 +80,7 @@ class Event_ProductsListView extends Event
 	
 	public function cancelDefaultEvent(): bool
 	{
-		return true;
+		return false;
 	}
 	
 	public function init( ProductListing $list, string $category_name, string $category_id ) : void

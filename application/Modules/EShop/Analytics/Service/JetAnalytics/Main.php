@@ -23,16 +23,6 @@ class Main extends EShop_Analytics_Service
 	
 	protected null|false|Session $session = null;
 	
-	//TODO: search
-	
-	//TODO: cart view
-	//TODO: cart add
-	//TODO: cart remove
-	//TODO: cart update
-	
-	//TODO: order start
-	//TODO: order details
-	//TODO: order done
 	
 	public function init() : void
 	{
@@ -121,37 +111,62 @@ class Main extends EShop_Analytics_Service
 	
 	public function addToCart( ShoppingCart_Item $new_cart_item ) : string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_AddToCart::create();
+			$event->init( $new_cart_item );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	
 	public function removeFromCart( ShoppingCart_Item $cart_item ) : string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_RemoveFromCart::create();
+			$event->init( $cart_item );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	
 	public function viewCart( ShoppingCart $cart ) : string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_CartView::create();
+			$event->init( $cart );
+			$this->session->addEvent( $event );
+		}
+		
 		return '';
 	}
 	
 	
 	public function beginCheckout( CashDesk $cash_desk ) : string
 	{
-		return $this->generateEvent('InitiateCheckout', []);
+		//TODO: order start
+		return '';
 	}
 	
 	public function addDeliveryInfo( CashDesk $cash_desk ) : string
 	{
+		//TODO: order details
 		return '';
 	}
 	
 	public function addPaymentInfo( CashDesk $cash_desk ) : string
 	{
+		//TODO: order details
 		return '';
 	}
 	
 	public function purchase( Order $order ) : string
 	{
+		//TODO: order done
 		return '';
 	}
 	
@@ -160,5 +175,6 @@ class Main extends EShop_Analytics_Service
 		return '';
 	}
 	
+	//TODO: search
 
 }
