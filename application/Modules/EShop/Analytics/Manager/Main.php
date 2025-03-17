@@ -162,23 +162,15 @@ class Main extends EShop_Managers_Analytics
 		return $res;
 	}
 	
-	public function addDeliveryInfo( CashDesk $cash_desk ) : string
+	public function checkoutInProgress( CashDesk $cash_desk ) : string
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->addDeliveryInfo( $cash_desk );
+			$res .= $service->checkoutInProgress( $cash_desk );
 		}
 		return $res;
 	}
 	
-	public function addPaymentInfo( CashDesk $cash_desk ) : string
-	{
-		$res = '';
-		foreach($this->getServices() as $service) {
-			$res .= $service->addPaymentInfo( $cash_desk );
-		}
-		return $res;
-	}
 	
 	public function purchase( Order $order ) : string
 	{

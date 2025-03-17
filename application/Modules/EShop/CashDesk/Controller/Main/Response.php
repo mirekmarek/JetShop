@@ -8,6 +8,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 
 
 use Jet\AJAX;
+use JetApplication\EShop_Managers;
 
 class Controller_Main_Response {
 
@@ -89,7 +90,9 @@ class Controller_Main_Response {
 			}
 			
 		}
-
+		
+		
+		$response['snippets']['_measuring_codes_'] = EShop_Managers::Analytics()?->checkoutInProgress( $cash_desk );
 
 		AJAX::commonResponse($response);
 

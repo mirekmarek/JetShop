@@ -266,9 +266,10 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		
 	}
 	
-	public function addDeliveryInfo( CashDesk $cash_desk ) : string
+	public function checkoutInProgress( CashDesk $cash_desk ) : string
 	{
 		
+		$res = '';
 		$order = $cash_desk->getOrder();
 		$data = [
 			'currency' => $this->currency_code,
@@ -294,11 +295,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 			
 		}
 		
-		return $this->generateEvent('add_shipping_info', $data );
-	}
-	
-	public function addPaymentInfo( CashDesk $cash_desk ) : string
-	{
+		$res .=  $this->generateEvent('add_shipping_info', $data );
 		
 		$order = $cash_desk->getOrder();
 		$data = [
@@ -324,8 +321,12 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 			}
 		}
 		
-		return $this->generateEvent('add_payment_info', $data );
+		$res .= $this->generateEvent('add_payment_info', $data );
+		
+		return $res;
+		
 	}
+
 	
 	public function purchase( Order $order ) : string
 	{

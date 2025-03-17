@@ -49,5 +49,3 @@ $special_requirements_form->field('special_requirements')->input()->addJsAction(
 	<?=UI::button(Tr::_('Place order'))->setOnclick('CashDesk.confirm.send()')->setClass('success')?>
 </div>
 
-<?=EShop_Managers::Analytics()?->addDeliveryInfo( $cash_desk )?>
-<?=EShop_Managers::Analytics()?->addPaymentInfo( $cash_desk )?>

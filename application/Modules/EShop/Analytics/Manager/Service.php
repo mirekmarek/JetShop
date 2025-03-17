@@ -82,12 +82,7 @@ abstract class Service {
 		return '';
 	}
 	
-	public function addDeliveryInfo( CashDesk $cash_desk ) : string
-	{
-		return '';
-	}
-	
-	public function addPaymentInfo( CashDesk $cash_desk ) : string
+	public function checkoutInProgress( CashDesk $cash_desk ) : string
 	{
 		return '';
 	}

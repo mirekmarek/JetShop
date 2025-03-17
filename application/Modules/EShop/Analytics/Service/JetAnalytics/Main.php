@@ -148,25 +148,34 @@ class Main extends EShop_Analytics_Service
 	
 	public function beginCheckout( CashDesk $cash_desk ) : string
 	{
-		//TODO: order start
+		$this->initSession();
+		if($this->session) {
+			$event = Event_CheckoutStarted::create();
+			$event->init( $cash_desk->getOrder() );
+			$this->session->addEvent( $event );
+		}
 		return '';
 	}
 	
-	public function addDeliveryInfo( CashDesk $cash_desk ) : string
+	public function checkoutInProgress( CashDesk $cash_desk ) : string
 	{
-		//TODO: order details
+		$this->initSession();
+		if($this->session) {
+			$event = Event_CheckoutInProgress::create();
+			$event->init( $cash_desk->getOrder() );
+			$this->session->addEvent( $event );
+		}
 		return '';
 	}
-	
-	public function addPaymentInfo( CashDesk $cash_desk ) : string
-	{
-		//TODO: order details
-		return '';
-	}
+
 	
 	public function purchase( Order $order ) : string
 	{
-		//TODO: order done
+		if($this->session) {
+			$event = Event_Purchase::create();
+			$event->init( $order );
+			$this->session->addEvent( $event );
+		}
 		return '';
 	}
 	

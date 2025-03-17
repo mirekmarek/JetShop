@@ -125,12 +125,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return $this->generateEvent('InitiateCheckout', []);
 	}
 	
-	public function addDeliveryInfo( CashDesk $cash_desk ) : string
-	{
-		return '';
-	}
-	
-	public function addPaymentInfo( CashDesk $cash_desk ) : string
+	public function checkoutInProgress( CashDesk $cash_desk ) : string
 	{
 		return '';
 	}

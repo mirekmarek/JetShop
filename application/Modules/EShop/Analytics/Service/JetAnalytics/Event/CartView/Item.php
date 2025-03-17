@@ -25,7 +25,8 @@ use JetApplication\ShoppingCart_Item;
 		'id_property_name' => 'id'
 	]
 )]
-class Event_CartView_Item extends DataModel_Related_1toN implements EShopEntity_HasEShopRelation_Interface {
+class Event_CartView_Item extends DataModel_Related_1toN implements EShopEntity_HasEShopRelation_Interface
+{
 	
 	use EShopEntity_HasEShopRelation_Trait;
 	

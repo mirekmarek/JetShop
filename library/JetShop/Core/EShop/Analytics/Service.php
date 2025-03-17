@@ -76,9 +76,7 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
 	abstract public function beginCheckout( CashDesk $cash_desk ) : string;
 	
-	abstract public function addDeliveryInfo( CashDesk $cash_desk ) : string;
-	
-	abstract public function addPaymentInfo( CashDesk $cash_desk ) : string;
+	abstract public function checkoutInProgress( CashDesk $cash_desk ) : string;
 	
 	abstract public function purchase( Order $order ) : string;
 	
