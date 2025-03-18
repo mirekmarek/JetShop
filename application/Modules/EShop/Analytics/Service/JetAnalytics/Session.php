@@ -230,7 +230,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 					return false;
 				}
 			}
-			
+
 			$jet_session = static::getJetSession();
 			$session_id = $jet_session->getValue('session_id', 0);
 			

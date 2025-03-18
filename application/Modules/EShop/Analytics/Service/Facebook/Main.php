@@ -215,6 +215,25 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return $this->generateEvent('Purchase', $data);
 	}
 	
+	public function viewSignpost( Signpost_EShopData $signpost ): string
+	{
+		// TODO: Implement viewSignpost() method.
+		return '';
+	}
+	
+	
+	public function searchWhisperer( string $q, array $result_ids ) : string
+	{
+		//TODO:
+		return '';
+	}
+	
+	public function search( string $q, array $result_ids ) : string
+	{
+		//TODO:
+		return '';
+	}
+	
 	public function getControlCentreGroup(): string
 	{
 		return Admin_ControlCentre::GROUP_ANALYTICS;
@@ -241,9 +260,4 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return true;
 	}
 	
-	public function viewSignpost( Signpost_EShopData $signpost ): string
-	{
-		// TODO: Implement viewSignpost() method.
-		return '';
-	}
 }

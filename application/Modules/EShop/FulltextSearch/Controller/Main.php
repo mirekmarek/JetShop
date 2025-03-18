@@ -30,6 +30,9 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$GET = Http_Request::GET();
 		$q = $GET->getString('q');
+		
+		$result_ids = [];
+		
 		$products = null;
 		$categories = [];
 		
@@ -47,6 +50,8 @@ class Controller_Main extends MVC_Controller_Default
 					category_name: 'search_result',
 					optional_URL_parameter: 'q='.rawurlencode($GET->getRaw('q'))
 				);
+				
+				$result_ids['products'] = $product_ids;
 			}
 			
 			$category_ids = Index::search(
@@ -64,14 +69,20 @@ class Controller_Main extends MVC_Controller_Default
 					continue;
 				}
 				
-				$categories[] = $category;
+				$categories[$c_id] = $category;
 			}
+		}
+		
+		
+		if($categories) {
+			$result_ids['categories'] = array_keys($categories);
 		}
 		
 		
 		$this->view->setVar('q', $q);
 		$this->view->setVar('products', $products);
 		$this->view->setVar('categories', $categories);
+		$this->view->setVar('result_ids', $result_ids);
 		
 		$this->output('default');
 	}
@@ -80,6 +91,8 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$GET = Http_Request::GET();
 		$q = $GET->getString('q');
+		
+		$result_ids = [];
 		
 		if(strlen($q)<=3) {
 			Application::end();
@@ -103,6 +116,8 @@ class Controller_Main extends MVC_Controller_Default
 			} );
 			
 			$products = array_splice($products, 0, 20);
+			
+			$result_ids['products'] = array_keys($products);
 		}
 		
 		$category_ids = Index::search(
@@ -111,6 +126,7 @@ class Controller_Main extends MVC_Controller_Default
 			search_string: $q
 		);
 		
+
 		foreach($category_ids as $c_id) {
 			$category = Category_EShopData::get( $c_id );
 			if(
@@ -120,11 +136,17 @@ class Controller_Main extends MVC_Controller_Default
 				continue;
 			}
 			
-			$categories[] = $category;
+			$categories[$c_id] = $category;
 		}
 		
+		if($categories) {
+			$result_ids['categories'] = array_keys($categories);
+		}
+		
+		$this->view->setVar('q', $q);
 		$this->view->setVar('products', $products);
 		$this->view->setVar('categories', $categories);
+		$this->view->setVar('result_ids', $result_ids);
 		
 		AJAX::snippetResponse(
 			$this->view->render('whisper')

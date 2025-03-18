@@ -63,5 +63,9 @@ abstract class Core_EShop_Managers_Analytics extends Application_Module
 	abstract public function checkoutInProgress( CashDesk $cash_desk ) : string;
 	
 	abstract public function purchase( Order $order ) : string;
-
+	
+	abstract public function searchWhisperer( string $q, array $result_ids ) : string;
+	
+	abstract public function search( string $q, array $result_ids ) : string;
+	
 }

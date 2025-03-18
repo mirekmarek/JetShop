@@ -135,6 +135,27 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return '';
 	}
 	
+	
+	
+	public function viewSignpost( Signpost_EShopData $signpost ): string
+	{
+		// TODO: Implement viewSignpost() method.
+		return '';
+	}
+	
+	public function searchWhisperer( string $q, array $result_ids ) : string
+	{
+		//TODO:
+		return '';
+	}
+	
+	public function search( string $q, array $result_ids ) : string
+	{
+		//TODO:
+		return '';
+	}
+	
+	
 	public function getControlCentreGroup(): string
 	{
 		return Admin_ControlCentre::GROUP_ANALYTICS;
@@ -159,13 +180,6 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 	public function getControlCentrePerShopMode(): bool
 	{
 		return true;
-	}
-	
-	
-	public function viewSignpost( Signpost_EShopData $signpost ): string
-	{
-		// TODO: Implement viewSignpost() method.
-		return '';
 	}
 	
 }

@@ -179,11 +179,37 @@ class Main extends EShop_Analytics_Service
 		return '';
 	}
 	
-	public function customEvent( string $evetnt, array $event_data = [] ): string
+	public function searchWhisperer( string $q, array $result_ids ) : string
 	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_SearchWhisperer::create();
+			$event->init( $q, $result_ids );
+			$this->session->addEvent( $event );
+		}
+
 		return '';
 	}
 	
-	//TODO: search
-
+	public function search( string $q, array $result_ids ) : string
+	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_Search::create();
+			$event->init( $q, $result_ids );
+			$this->session->addEvent( $event );
+		}
+		return '';
+	}
+	
+	public function customEvent( string $evetnt, array $event_data = [] ): string
+	{
+		$this->initSession();
+		if($this->session) {
+			$event = Event_Custom::create();
+			$event->init( $evetnt, $event_data );
+			$this->session->addEvent( $event );
+		}
+		return '';
+	}
 }

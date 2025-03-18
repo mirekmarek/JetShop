@@ -191,4 +191,22 @@ class Main extends EShop_Managers_Analytics
 		return $res;
 	}
 	
+	public function searchWhisperer( string $q, array $result_ids ) : string
+	{
+		$res = '';
+		foreach($this->getServices() as $service) {
+			$res .= $service->searchWhisperer( $q, $result_ids );
+		}
+		return $res;
+	}
+	
+	public function search( string $q, array $result_ids ) : string
+	{
+		$res = '';
+		foreach($this->getServices() as $service) {
+			$res .= $service->search( $q, $result_ids );
+		}
+		return $res;
+	}
+	
 }

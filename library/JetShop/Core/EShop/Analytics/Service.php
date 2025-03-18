@@ -82,4 +82,8 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
 	abstract public function generateEvent( string $event, array $event_data ) : string;
 	
+	abstract public function searchWhisperer( string $q, array $result_ids ) : string;
+	
+	abstract public function search( string $q, array $result_ids ) : string;
+	
 }

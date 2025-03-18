@@ -11,6 +11,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Category_EShopData;
+use JetApplication\EShop_Managers;
 use JetApplication\EShop_Managers_ProductListing;
 
 /**
@@ -73,3 +74,5 @@ $categories = $this->getRaw('categories');
 
 	<?=$products->render()?>
 <?php endif; ?>
+
+<?=EShop_Managers::Analytics()->search( $this->getRaw('q'), $this->getRaw('result_ids') )?>
