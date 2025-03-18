@@ -17,6 +17,7 @@ use Jet\Tr;
 use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
+use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\EMail_Sent;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
@@ -587,5 +588,21 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		return $this->render('force-status/dialog', [
 			'form' => $form
 		]);
+	}
+	
+	public function renderProvidetTab( Admin_EntityManager_EditTabProvider_EditTab $tab ): string
+	{
+		return Translator::setCurrentDictionaryTemporary(
+			$this->module_manifest->getName(),
+			function() use ($tab) {
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				
+				$view->setVar('provided_tab_output', $tab->handle() );
+				$view->setVar('tabs', $this->tabs);
+				$view->setVar('edit_manager',  $this);
+				
+				return $view->render('edit/providet-tab');
+			}
+		);
 	}
 }

@@ -32,7 +32,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 
 	protected ?Data_Tree $tree = null;
 	
-	protected function getTabs() : array
+	protected function getCustomTabs() : array
 	{
 		if(!$this->current_item) {
 			return [];
@@ -43,14 +43,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		 */
 		$current_item = $this->current_item;
 		
-		
-		$tabs = [];
-		
-		$tabs['main'] = Tr::_( 'Main data' );
-		if( $current_item->getSeparateTabFormShopData() ) {
-			$tabs['description'] = Tr::_( 'Description' );
-		}
-		$tabs['images'] = Tr::_( 'Images' );
 		$tabs['products'] = Tr::_( 'Products (%count%)', ['count'=>count($this->current_item->getProductIds())] );
 		
 		return $tabs;

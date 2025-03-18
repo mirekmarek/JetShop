@@ -24,9 +24,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 {
 	protected ?Payment_Method_Option $option = null;
 	
-	public function getTabs(): array
+	public function getCustomTabs(): array
 	{
-		$tabs = parent::getTabs();
+		$tabs = [];
 		
 		if(!$this->option) {
 			$tabs['options'] = Tr::_( 'Options' );

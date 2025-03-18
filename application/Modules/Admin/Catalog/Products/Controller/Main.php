@@ -120,21 +120,16 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 	}
 	
-	protected function getTabs(): array
+	protected function getCustomTabs(): array
 	{
 		$product = $this->current_item;
 		
-		$_tabs = parent::getTabs();
-		
-		$_tabs = array_merge(
-			$_tabs,
-			[
-				'files'            => Tr::_('Files'),
-				'parameters'       => Tr::_('Parameters'),
-				'categories'       => Tr::_('Categories'),
-				'accessories'      => Tr::_('Accessories'),
-			]
-		);
+		$_tabs = [
+			'files'            => Tr::_('Files'),
+			'parameters'       => Tr::_('Parameters'),
+			'categories'       => Tr::_('Categories'),
+			'accessories'      => Tr::_('Accessories'),
+		];
 		
 		
 		

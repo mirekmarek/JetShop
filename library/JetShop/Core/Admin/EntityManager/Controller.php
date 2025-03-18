@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
+use Jet\Application_Modules;
 use Jet\Form;
 use Jet\Locale;
 use Jet\UI;
@@ -21,10 +22,12 @@ use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 use Jet\UI_tabs;
 
+use JetApplication\Admin_EntityManager_EditTabProvider;
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\Admin_Managers_EShopEntity_Edit;
 use JetApplication\Admin_Managers;
+use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Basic;
@@ -52,6 +55,13 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	protected ?UI_tabs $tabs = null;
 	
 	protected ?Admin_Managers_EShopEntity_Edit $editor_manager = null;
+	
+	/**
+	 * @var Admin_EntityManager_EditTabProvider_EditTab[]|null
+	 */
+	protected ?array $provided_tabs = null;
+	
+	protected ?Admin_EntityManager_EditTabProvider_EditTab $selected_provided_tab = null;
 	
 	/**
 	 * @var EShopEntity_Basic|null
@@ -86,6 +96,27 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	protected function generateText_delete_not_possible_msg() : string
 	{
 		return Tr::_( 'It is not possible to delete this '.$this->getEntityNameReadable() );
+	}
+	
+	protected function getProvidedTabs() : array
+	{
+		if($this->provided_tabs === null){
+			$this->provided_tabs = [];
+			
+			foreach( Application_Modules::activatedModulesList() as $manifest ) {
+				$module = Application_Modules::moduleInstance( $manifest->getName() );
+				if( $module instanceof Admin_EntityManager_EditTabProvider) {
+					
+					$tabs = $module->provideEditTabs( $this->current_item );
+					
+					foreach( $tabs as $tab ) {
+						$this->provided_tabs[$tab->getTabKey()] = $tab;
+					}
+				}
+			}
+		}
+		
+		return $this->provided_tabs;
 	}
 	
 	protected function getTabs() : array
@@ -129,7 +160,27 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 			$tabs['images'] = Tr::_( 'Images' );
 		}
 		
+		$custom_tabs = $this->getCustomTabs();
+		foreach( $custom_tabs as $tab_id=>$tab ) {
+			$tabs[$tab_id] = $tab;
+		}
+		
+		foreach( $this->getProvidedTabs() as $provided_tab ) {
+			$title = '';
+			if($provided_tab->getTabIcon()) {
+				$title .= UI::icon( $provided_tab->getTabIcon() ).' ';
+			}
+			$title .= $provided_tab->getTabTitle();
+			
+			$tabs[$provided_tab->getTabKey()] = $title;
+		}
+		
 		return $tabs;
+	}
+	
+	protected function getCustomTabs() : array
+	{
+		return [];
 	}
 	
 	protected function currentItemGetter() : void
@@ -223,6 +274,18 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 				//return $this->module::getCurrentUserCanEdit();
 				return true;
 			} );
+		
+		if(
+			$this->current_item &&
+			$selected_tab &&
+			isset( $this->provided_tabs[$selected_tab] )
+		) {
+			$this->selected_provided_tab = $this->provided_tabs[$selected_tab];
+			$this->router->addAction('handle_provided_tab')
+				->setResolver(function() use ($action, $selected_tab) {
+					return true;
+				});
+		}
 		
 		if(
 			$this->current_item instanceof EShopEntity_Admin_WithEShopData_Interface &&
@@ -717,6 +780,16 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		);
 	}
 	
+	public function handle_provided_tab_Action() : void
+	{
+		$this->setBreadcrumbNavigation( $this->selected_provided_tab->getTabTitle() );
+		
+		$this->content->output(
+			$this->getEditorManager()->renderProvidetTab( $this->selected_provided_tab )
+		);
+		
+	}
+	
 	
 	
 	public function getEditorManager(): Admin_Managers_EShopEntity_Edit|Application_Module
@@ -736,6 +809,5 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		return $this->editor_manager;
 	}
-	
 	
 }

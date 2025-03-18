@@ -1,0 +1,24 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Edit;
+use Jet\MVC_View;
+use JetApplication\Admin_Managers_EShopEntity_Edit;
+
+/**
+ * @var MVC_View   $this
+ * @var Admin_Managers_EShopEntity_Edit $edit_manager
+ */
+
+$edit_manager = $this->getRaw('edit_manager');
+
+echo $edit_manager->renderToolbar();
+
+?>
+<div id="main-col">
+	<?=$this->getRaw('tabs')?>
+	<?=$this->getRaw('provided_tab_output')?>
+</div>

@@ -25,9 +25,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	protected ?Marketing_BannerGroup $selected_group = null;
 	
-	public function getTabs() : array
+	public function getCustomTabs() : array
 	{
-		$tabs = parent::getTabs();
+		$tabs = [];
 		
 		$tabs['banners'] = Tr::_('Banners');
 		
@@ -124,6 +124,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function edit_banners_Action() : void
 	{
+		$this->getEditorManager();
+		
 		$banner = $this->current_item;
 		
 		$this->setBreadcrumbNavigation( Tr::_('Banners') );

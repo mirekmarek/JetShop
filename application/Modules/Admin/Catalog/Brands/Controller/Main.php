@@ -15,9 +15,8 @@ use JetApplication\EShops;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	public function getTabs(): array
+	public function getCustomTabs(): array
 	{
-		$tabs = parent::getTabs();
 		$tabs['marketplaces'] = Tr::_( 'Marketplaces' );
 		
 		return $tabs;

@@ -10,6 +10,7 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Form;
 use Jet\UI_tabs;
+use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
@@ -135,5 +136,7 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	 * @return string
 	 */
 	abstract public function renderEntityForceStatusDialog( Form $form ) : string;
+	
+	abstract public function renderProvidetTab( Admin_EntityManager_EditTabProvider_EditTab $tab ) : string;
 	
 }

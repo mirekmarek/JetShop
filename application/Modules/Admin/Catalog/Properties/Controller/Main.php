@@ -24,9 +24,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 {
 	protected ?Property_Options_Option $option = null;
 	
-	public function getTabs(): array
+	public function getCustomTabs(): array
 	{
-		$_tabs = parent::getTabs();
+		$_tabs = [];
 		
 		if(
 			$this->current_item->getType()==Property::PROPERTY_TYPE_OPTIONS &&

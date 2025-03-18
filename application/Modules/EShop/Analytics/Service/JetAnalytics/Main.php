@@ -7,18 +7,25 @@
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 
+use JetApplication\Admin_EntityManager_EditTabProvider;
+use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\CashDesk;
+use JetApplication\Category;
 use JetApplication\Category_EShopData;
+use JetApplication\Customer;
+use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
+use JetApplication\Product;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Analytics_Service;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
+use JetApplication\Signpost;
 use JetApplication\Signpost_EShopData;
 
 
-class Main extends EShop_Analytics_Service
+class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTabProvider
 {
 	
 	protected null|false|Session $session = null;
@@ -211,5 +218,114 @@ class Main extends EShop_Analytics_Service
 			$this->session->addEvent( $event );
 		}
 		return '';
+	}
+	
+	public function provideEditTabs( EShopEntity_Basic $item ): array
+	{
+		$res = [];
+		
+		if( $item::getEntityType()==Customer::getEntityType() ) {
+			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+			
+			$user_activity_tab->setTab(
+				'ja-user-activity',
+				'User activity',
+				'chart-line'
+			);
+			
+			$user_activity_tab->setHandler( function() use ($item) : string {
+				/**
+				 * @var Customer $item
+				 */
+				return $this->handleUserActivity( $item );
+			} );
+			
+			$res[] = $user_activity_tab;
+		}
+		
+		if( $item::getEntityType()==Product::getEntityType() ) {
+			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+			
+			$user_activity_tab->setTab(
+				'ja-analytics',
+				'Analytics',
+				'chart-line'
+			);
+			
+			$user_activity_tab->setHandler( function() use ($item) : string {
+				/**
+				 * @var Product $item
+				 */
+				return $this->handleProductAnalytics( $item );
+			} );
+			
+			$res[] = $user_activity_tab;
+		}
+		
+		if( $item::getEntityType()==Category::getEntityType() ) {
+			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+			
+			$user_activity_tab->setTab(
+				'ja-analytics',
+				'Analytics',
+				'chart-line'
+			);
+			
+			$user_activity_tab->setHandler( function() use ($item) : string {
+				/**
+				 * @var Category $item
+				 */
+				return $this->handleCategoryAnalytics( $item );
+			} );
+			
+			$res[] = $user_activity_tab;
+		}
+		
+		if( $item::getEntityType()==Signpost::getEntityType() ) {
+			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+			
+			$user_activity_tab->setTab(
+				'ja-analytics',
+				'Analytics',
+				'chart-line'
+			);
+			
+			$user_activity_tab->setHandler( function() use ($item) : string {
+				/**
+				 * @var Signpost $item
+				 */
+				return $this->handleSignpostAnalytics( $item );
+			} );
+			
+			$res[] = $user_activity_tab;
+		}
+		
+
+		return $res;
+	}
+	
+	public function handleUserActivity( Customer $customer ) : string
+	{
+		//TODO:
+		return 'JA';
+	}
+	
+	
+	public function handleProductAnalytics( Product $product ) : string
+	{
+		//TODO:
+		return 'JA';
+	}
+	
+	public function handleCategoryAnalytics( Category $product ) : string
+	{
+		//TODO:
+		return 'JA';
+	}
+	
+	public function handleSignpostAnalytics( Signpost $product ) : string
+	{
+		//TODO:
+		return 'JA';
 	}
 }

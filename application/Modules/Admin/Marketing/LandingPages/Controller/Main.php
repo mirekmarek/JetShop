@@ -18,10 +18,9 @@ use JetApplication\Marketing_LandingPage;
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	
-	public function getTabs(): array
+	public function getCustomTabs(): array
 	{
-		$tabs = parent::getTabs();
-
+		$tabs = [];
 		
 		$tabs['landing_page'] = Tr::_('Landing page');
 		

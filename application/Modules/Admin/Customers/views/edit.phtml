@@ -36,6 +36,8 @@ $eshop = $customer->getEshop();
 $mailing_subscribe_events = EMailMarketing_Subscribe_Log::get( $customer->getEshop(), $customer->getEmail() );
 
 echo $edit_manager->renderToolbar();
+
+echo $this->getRaw('tabs');
 ?>
 <div id="main-col">
 		<legend><?=Tr::_('Main data')?></legend>

@@ -21,20 +21,13 @@ use Jet\Tr;
 class Controller_Main extends Admin_EntityManager_Controller
 {
 	
-	public function getTabs(): array
+	public function getCustomTabs(): array
 	{
-		$_tabs = parent::getTabs();
-		$_tabs = array_merge(
-			$_tabs,
-			[
-				'properties' => Tr::_( 'Properties' ),
-				'exports'    => Tr::_( 'Exports' ),
-				'marketplaces'    => Tr::_( 'Marketplaces' ),
-			]
-		);
-		
-		
-		return $_tabs;
+		return [
+			'properties' => Tr::_( 'Properties' ),
+			'exports'    => Tr::_( 'Exports' ),
+			'marketplaces'    => Tr::_( 'Marketplaces' ),
+		];
 	}
 	
 	
