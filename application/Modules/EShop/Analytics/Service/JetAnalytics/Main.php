@@ -14,6 +14,7 @@ use JetApplication\Category;
 use JetApplication\Category_EShopData;
 use JetApplication\Customer;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\KindOfProduct;
 use JetApplication\Order;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
@@ -224,81 +225,112 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 	{
 		$res = [];
 		
-		if( $item::getEntityType()==Customer::getEntityType() ) {
-			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+		switch($item::getEntityType()) {
 			
-			$user_activity_tab->setTab(
-				'ja-user-activity',
-				'User activity',
-				'chart-line'
-			);
 			
-			$user_activity_tab->setHandler( function() use ($item) : string {
-				/**
-				 * @var Customer $item
-				 */
-				return $this->handleUserActivity( $item );
-			} );
+			case Customer::getEntityType():
+				$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+				
+				$user_activity_tab->setTab(
+					'ja-user-activity',
+					'User activity',
+					'chart-line'
+				);
+				
+				$user_activity_tab->setHandler( function() use ($item) : string {
+					/**
+					 * @var Customer $item
+					 */
+					return $this->handleUserActivity( $item );
+				} );
+				
+				$res[] = $user_activity_tab;
+				break;
+				
+				
+				
+				
+			case Product::getEntityType():
+				$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+				
+				$user_activity_tab->setTab(
+					'ja-analytics',
+					'Analytics',
+					'chart-line'
+				);
+				
+				$user_activity_tab->setHandler( function() use ($item) : string {
+					/**
+					 * @var Product $item
+					 */
+					return $this->handleProductAnalytics( $item );
+				} );
+				
+				$res[] = $user_activity_tab;
+				break;
+				
+				
+				
+			case Category::getEntityType():
+				$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+				
+				$user_activity_tab->setTab(
+					'ja-analytics',
+					'Analytics',
+					'chart-line'
+				);
+				
+				$user_activity_tab->setHandler( function() use ($item) : string {
+					/**
+					 * @var Category $item
+					 */
+					return $this->handleCategoryAnalytics( $item );
+				} );
+				
+				$res[] = $user_activity_tab;
+				break;
+				
+				
+				
+			case Signpost::getEntityType():
+				$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+				
+				$user_activity_tab->setTab(
+					'ja-analytics',
+					'Analytics',
+					'chart-line'
+				);
+				
+				$user_activity_tab->setHandler( function() use ($item) : string {
+					/**
+					 * @var Signpost $item
+					 */
+					return $this->handleSignpostAnalytics( $item );
+				} );
+				
+				$res[] = $user_activity_tab;
+				break;
 			
-			$res[] = $user_activity_tab;
+			case KindOfProduct::getEntityType():
+				$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
+				
+				$user_activity_tab->setTab(
+					'ja-analytics',
+					'Analytics',
+					'chart-line'
+				);
+				
+				$user_activity_tab->setHandler( function() use ($item) : string {
+					/**
+					 * @var KindOfProduct $item
+					 */
+					return $this->handleKindOfProductAnalytics( $item );
+				} );
+				
+				$res[] = $user_activity_tab;
+				break;
 		}
 		
-		if( $item::getEntityType()==Product::getEntityType() ) {
-			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
-			
-			$user_activity_tab->setTab(
-				'ja-analytics',
-				'Analytics',
-				'chart-line'
-			);
-			
-			$user_activity_tab->setHandler( function() use ($item) : string {
-				/**
-				 * @var Product $item
-				 */
-				return $this->handleProductAnalytics( $item );
-			} );
-			
-			$res[] = $user_activity_tab;
-		}
-		
-		if( $item::getEntityType()==Category::getEntityType() ) {
-			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
-			
-			$user_activity_tab->setTab(
-				'ja-analytics',
-				'Analytics',
-				'chart-line'
-			);
-			
-			$user_activity_tab->setHandler( function() use ($item) : string {
-				/**
-				 * @var Category $item
-				 */
-				return $this->handleCategoryAnalytics( $item );
-			} );
-			
-			$res[] = $user_activity_tab;
-		}
-		
-		if( $item::getEntityType()==Signpost::getEntityType() ) {
-			$user_activity_tab = new Admin_EntityManager_EditTabProvider_EditTab( $item, $this );
-			
-			$user_activity_tab->setTab(
-				'ja-analytics',
-				'Analytics',
-				'chart-line'
-			);
-			
-			$user_activity_tab->setHandler( function() use ($item) : string {
-				/**
-				 * @var Signpost $item
-				 */
-				return $this->handleSignpostAnalytics( $item );
-			} );
-			
-			$res[] = $user_activity_tab;
-		}
 		
 
 		return $res;
@@ -324,6 +356,12 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 	}
 	
 	public function handleSignpostAnalytics( Signpost $product ) : string
+	{
+		//TODO:
+		return 'JA';
+	}
+	
+	public function handleKindOfProductAnalytics( KindOfProduct $kind_of_product ) : string
 	{
 		//TODO:
 		return 'JA';
