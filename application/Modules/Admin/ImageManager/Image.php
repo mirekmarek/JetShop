@@ -292,6 +292,12 @@ class Image {
 		return $getter() ? : '';
 	}
 	
+	public function getImageFileName() : string
+	{
+		return basename($this->getImage());
+	}
+	
+	
 	public function setImage( string $value ) : void
 	{
 		$setter = $this->image_property_setter;

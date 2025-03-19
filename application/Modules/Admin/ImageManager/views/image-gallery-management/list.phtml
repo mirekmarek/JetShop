@@ -38,26 +38,25 @@ foreach( $item->getImages() as $image):
 	if($editable):
 	?>
 
-	<div style="width: 180px;height: 210px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
+	<div style="width: 180px;height: 250px;float: left;margin: 5px;border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;">
 		<div class="image-thumbnail" data-image="<?=$id?>" style="background-image: url(<?=$thb_url?>);width: 160px;height: 160px;position: relative">
 			<div style="position: absolute;bottom: 5px;right: 5px;">
 				<input type="checkbox" value="<?=$id?>" data-url="<?=$url?>" class="select_image_checkbox"/>
 			</div>
 		</div>
-		<div style="width: 180px;height: 55px;padding: 5px;">
-			<table style="width: 100%">
-				<tr>
-					<td style="width: 30px;">
-						<?=UI::icon('exchange-alt')?>
-					</td>
-					<td style="width: 30px;">
-						<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
-					</td>
-					<td style="padding-right: 5px; text-align: right">
-						<a href="javascript:ImageGalleryHandler.deleteImage('<?=$id?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
-					</td>
-				</tr>
-			</table>
+		<div style="font-size: 12px;padding-left:8px;padding-right:8px;line-height: 14px; height: 2.4lh;overflow: hidden;word-wrap: break-word;text-align: center" title="<?=$image->getImageFileName()?>">
+			<?=$image->getImageFileName()?>
+		</div>
+		<div style="width: 180px;padding: 5px;display: grid;grid-template-columns: 30px 30px 1fr; gap: 2px;align-items: center">
+			<div>
+				<?=UI::icon('exchange-alt')?>
+			</div>
+			<div>
+				<a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download image'))?></a>
+			</div>
+			<div style="padding-right: 5px; text-align: right">
+				<a href="javascript:ImageGalleryHandler.deleteImage('<?=$id?>', '<?=$url?>');"><?=UI::icon('trash')->setTitle(Tr::_('Delete image'))?></a>
+			</div>
 		</div>
 	</div>
 	<?php

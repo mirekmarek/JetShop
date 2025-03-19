@@ -35,13 +35,18 @@ $image_path = $image->getImage();
 
 $image_thb_url = $image->getThumbnailUrl( 190, 190 )
 ?>
+<div align="center">
+
 <?php if($image_path):?>
-	<div class="image-thumbnail"  id="<?=$image->getHTMLElementId()?>_img" data-url="<?=$image_thb_url?>" style="width:200px;height:200px;background-image: url(<?=$image_thb_url?>);">
+	<div class="image-thumbnail"  id="<?=$image->getHTMLElementId()?>_img" data-url="<?=$image_thb_url?>" style="width:200px;height:200px;background-image: url(<?=$image_thb_url?>);" align="right">
 		<?php if( $delete_form ): ?>
 		<?=$delete_form->start()?>
 		<?=UI::button_delete(' ')->setOnclick("Images.deleteImage(this.form.id, '{$image->getKey()}')")?>
 		<?=$delete_form->end()?>
 		<?php endif; ?>
+	</div>
+	<div style="font-size: 12px;padding-left:8px;padding-right:8px;line-height: 14px; height: 2.4lh;overflow: hidden;word-wrap: break-word;" title="<?=$image->getImageFileName()?>">
+		<?=$image->getImageFileName()?>
 	</div>
 
 	<?php if(
@@ -56,4 +61,8 @@ else: ?>
 		<?=UI::icon('image')->setSize(UI_icon::SIZE_EXTRA_LARGE)?>
 		</div>
 	</div>
+	<div style="font-size: 12px;padding-left:8px;padding-right:8px;line-height: 14px; height: 2.4lh;overflow: hidden;word-wrap: break-word;" title="<?=$image->getImageFileName()?>">
+		&nbsp;
+	</div>
 <?php endif; ?>
+</div>

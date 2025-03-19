@@ -112,6 +112,11 @@ abstract class Core_ImageGallery_Image extends EShopEntity_Basic
 		return $this->image_file;
 	}
 	
+	public function getImageFileName() : string
+	{
+		return basename($this->image_file);
+	}
+	
 	public function __toString() : string
 	{
 		return $this->image_file;
