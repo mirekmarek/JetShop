@@ -364,4 +364,9 @@ return [
 	'Custom layout script:' => '',
 	'Menu item title:' => '',
 	'Breadcrumb title:' => '',
+	'Is sale' => '',
+	'Deactivate after sell out' => '',
+	'Non-sale product:' => '',
+	'Non-sale product relation:' => '',
+	'Video URL:' => '',
 ];

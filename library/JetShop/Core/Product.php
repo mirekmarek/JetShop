@@ -199,6 +199,35 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	protected int $delivery_class_id = 0;
 	
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is sale'
+	)]
+	protected bool $is_sale = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Deactivate after sell out'
+	)]
+	protected bool $deactivate_after_sell_out = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_HIDDEN
+	)]
+	protected int $non_sale_product_id = 0;
+	
 	/**
 	 * @var Product_EShopData[]
 	 */
@@ -418,6 +447,45 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		$this->supplier_code = $supplier_code;
 		foreach( EShops::getList() as $eshop) {
 			$this->eshop_data[$eshop->getKey()]->setSupplierCode( $this->supplier_id );
+		}
+	}
+	
+	public function isIsSale(): bool
+	{
+		return $this->is_sale;
+	}
+	
+	public function setIsSale( bool $is_sale ): void
+	{
+		$this->is_sale = $is_sale;
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setIsSale( $this->is_sale );
+		}
+	}
+	
+	public function isDeactivateAfterSellOut(): bool
+	{
+		return $this->deactivate_after_sell_out;
+	}
+	
+	public function setDeactivateAfterSellOut( bool $deactivate_after_sell_out ): void
+	{
+		$this->deactivate_after_sell_out = $deactivate_after_sell_out;
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setDeactivateAfterSellOut( $this->deactivate_after_sell_out );
+		}
+	}
+	
+	public function getNonSaleProductId(): int
+	{
+		return $this->non_sale_product_id;
+	}
+	
+	public function setNonSaleProductId( int $non_sale_product_id ): void
+	{
+		$this->non_sale_product_id = $non_sale_product_id;
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setNonSaleProductId( $this->non_sale_product_id );
 		}
 	}
 	

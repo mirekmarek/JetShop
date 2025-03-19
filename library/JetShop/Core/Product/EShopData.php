@@ -155,6 +155,20 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		is_description: true
 	)]
 	protected string $description = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Video URL:'
+	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
+	protected string $video_URL = '';
+	
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -225,6 +239,25 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		label: 'Allow to order when sold out'
 	)]
 	protected bool $allow_to_order_when_sold_out = true;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $is_sale = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $deactivate_after_sell_out = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true
+	)]
+	protected int $non_sale_product_id = 0;
+	
 	
 	protected KindOfProduct_EShopData|null|bool $kind = null;
 	
@@ -356,6 +389,38 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	{
 		$this->allow_to_order_when_sold_out = $allow_to_order_when_sold_out;
 	}
+	
+	public function isIsSale(): bool
+	{
+		return $this->is_sale;
+	}
+	
+	public function setIsSale( bool $is_sale ): void
+	{
+		$this->is_sale = $is_sale;
+	}
+	
+	public function isDeactivateAfterSellOut(): bool
+	{
+		return $this->deactivate_after_sell_out;
+	}
+	
+	public function setDeactivateAfterSellOut( bool $deactivate_after_sell_out ): void
+	{
+		$this->deactivate_after_sell_out = $deactivate_after_sell_out;
+	}
+	
+	public function getNonSaleProductId(): int
+	{
+		return $this->non_sale_product_id;
+	}
+	
+	public function setNonSaleProductId( int $non_sale_product_id ): void
+	{
+		$this->non_sale_product_id = $non_sale_product_id;
+	}
+	
+	
 	
 	
 	
