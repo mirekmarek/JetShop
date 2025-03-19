@@ -978,4 +978,18 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		return true;
 	}
 	
+	public static function getSaleRelationsMap() : array
+	{
+		return static::dataFetchPairs(
+			select: [
+				'id',
+				'non_sale_product_id'
+			],
+			where: [
+				'is_sale' => true,
+				'AND',
+				'non_sale_product_id >' => 0
+			]
+		);
+	}
 }

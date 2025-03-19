@@ -12,6 +12,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_Price;
 use JetApplication\Product;
+use JetApplication\Product_Price;
 use JetApplication\Product_PriceHistory;
 use JetApplication\Product_SetItem;
 
@@ -117,8 +118,42 @@ abstract class Core_Product_Price extends EShopEntity_Price
 			return;
 		}
 		
+		$_sale_relations_map = Product::getSaleRelationsMap();
+		$sale_relations_map = [];
+		foreach($_sale_relations_map as $sale_product_id=>$non_sale_product_id) {
+			if(!isset($sale_relations_map[$non_sale_product_id])) {
+				$sale_relations_map[$non_sale_product_id] = [];
+			}
+			
+			$sale_relations_map[$non_sale_product_id][] = $sale_product_id;
+		}
+		
 		switch( Product::getProductType( $this->entity_id ) ) {
 			case Product::PRODUCT_TYPE_REGULAR:
+				
+				if(isset($sale_relations_map[$this->entity_id])) {
+					foreach($sale_relations_map[$this->entity_id] as $sale_product_id) {
+						$sale_product_price = static::get( $this->getPricelist(), $sale_product_id );
+						if($sale_product_price->getPriceBeforeDiscount()!=$this->price) {
+							$sale_product_price->setPriceBeforeDiscount( $this->price );
+							$sale_product_price->savePriceBeforeDiscount();
+						}
+					}
+				}
+				
+				if(isset($_sale_relations_map[$this->entity_id])) {
+					$this->do_not_actualize_references = true;
+					$non_sale_product_id = $_sale_relations_map[$this->entity_id];
+					
+					$non_sale_product_price = static::get( $this->getPricelist(), $non_sale_product_id );
+					
+					if($this->getPriceBeforeDiscount()!=$non_sale_product_price->getPrice()) {
+						$this->setPriceBeforeDiscount( $non_sale_product_price->getPrice() );
+						$this->savePriceBeforeDiscount();
+					}
+					
+				}
+				
 				foreach( Product_SetItem::getSetIds($this->entity_id) as $set_id ) {
 					static::get( $this->getPricelist(), $set_id )->actualizeSet();
 				}
@@ -136,6 +171,20 @@ abstract class Core_Product_Price extends EShopEntity_Price
 				$this->actualizeVariantMasterPrice();
 				break;
 		}
+	}
+	
+	protected function savePriceBeforeDiscount() : void
+	{
+		Product_Price::updateData(
+			data: [
+				'price_before_discount' => $this->price_before_discount,
+				'discount_percentage' => $this->discount_percentage
+			],
+			where: [
+				'id' => $this->id
+			]
+		);
+		
 	}
 	
 	

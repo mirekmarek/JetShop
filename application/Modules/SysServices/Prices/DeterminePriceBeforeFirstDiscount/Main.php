@@ -11,6 +11,7 @@ use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Pricelists;
 use JetApplication\Pricelist;
+use JetApplication\Product;
 use JetApplication\Product_Price;
 use JetApplication\Product_PriceHistory;
 use JetApplication\SysServices_Definition;
@@ -62,7 +63,13 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			raw_mode: true
 		);
 		
+		$sale_relations_map = Product::getSaleRelationsMap();
+		
 		foreach($prices as $price) {
+			if(isset($sale_relations_map[$price['entity_id']])) {
+				continue;
+			}
+			
 			$history = Product_PriceHistory::dataFetchAll(
 				select: [
 					'price',

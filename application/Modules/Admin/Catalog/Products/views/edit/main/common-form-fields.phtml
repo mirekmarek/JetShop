@@ -75,6 +75,11 @@ if($form->fieldExists('kind_of_product_id')) {
 	</div>
 </div>
 
+<?php if(
+	$item->isPhysicalProduct() &&
+	$item->isRegular()
+): ?>
+
 <hr>
 <?=$form->field('is_sale')?>
 <?=$form->field('non_sale_product_id')?>
@@ -90,6 +95,8 @@ if($form->fieldExists('kind_of_product_id')) {
 	</div>
 </div>
 <?=$form->field('deactivate_after_sell_out')?>
+
+<?php endif; ?>
 
 <hr>
 

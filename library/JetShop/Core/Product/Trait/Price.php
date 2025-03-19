@@ -69,8 +69,10 @@ trait Core_Product_Trait_Price
 					Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 				]);
 				$vat_rate->setFieldValueCatcher(function( $value ) use ($pp) {
-					$pp->setVatRate( $value );
-					$pp->save();
+					if($pp->getVatRate()!=$value) {
+						$pp->setVatRate( $value );
+						$pp->save();
+					}
 				});
 				$vat_rate->setSelectOptions( $pl->getVatRatesScope() );
 				$this->set_price_form->addField( $vat_rate );
@@ -79,8 +81,10 @@ trait Core_Product_Trait_Price
 				$price = new Form_Field_Float($field_name_prefix.'price', 'Price:');
 				$price->setDefaultValue( $pp->getPrice() );
 				$price->setFieldValueCatcher(function( $value ) use ($pp) {
-					$pp->setPrice( $value );
-					$pp->save();
+					if($pp->getPrice()!=$value) {
+						$pp->setPrice( $value );
+						$pp->save();
+					}
 				});
 				$this->set_price_form->addField( $price );
 				

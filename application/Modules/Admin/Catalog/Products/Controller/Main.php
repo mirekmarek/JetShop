@@ -285,10 +285,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		if( ($set_price_form = $product->getSetPriceForm()) ) {
 			$this->view->setVar('set_price_form', $set_price_form);
 			if($set_price_form->catch()) {
-				foreach(Pricelists::getList() as $pricelist) {
-					Product_Price::get($pricelist, $product->getId())->save();
-				}
-				
 				Http_Headers::reload();
 			}
 		}
