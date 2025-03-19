@@ -265,4 +265,5 @@ return [
 	'New internal name:' => '',
 	'New internal code:' => '',
 	'Accessories setting has been updated' => '',
+	'Is sale' => '',
 ];

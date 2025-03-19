@@ -83,7 +83,7 @@ if($form->fieldExists('kind_of_product_id')) {
 	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Non-sale product relation:')?></label>
 	<div class="col-md-8">
 		<?=Admin_Managers::Product()->renderSelectWidget(
-				on_select: "$('{$form->field('non_sale_product_id')->getId()}').val(selected_item.id)",
+				on_select: "$('#{$form->field('non_sale_product_id')->getId()}').val(selected_item.id)",
 				selected_product_id: $item->getNonSaleProductId(),
 				name: 'non_sale_product_select'
 		)?>

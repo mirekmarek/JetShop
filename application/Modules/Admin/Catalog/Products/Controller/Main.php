@@ -222,6 +222,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addFilter( new Listing_Filter_ProductType() );
 		$this->listing_manager->addFilter( new Listing_Filter_Brand() );
 		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
+		$this->listing_manager->addFilter( new Listing_Filter_IsSale() );
 		
 		if( MarketplaceIntegration::getActiveModules() ) {
 			$this->listing_manager->addFilter( new Listing_Filter_Marketplace() );
