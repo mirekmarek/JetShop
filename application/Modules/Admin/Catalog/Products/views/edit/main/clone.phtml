@@ -1,0 +1,46 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Tr;
+
+use Jet\UI;
+use Jet\UI_dialog;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Product $item
+ * @var Form $set_price_form
+ * @var Form $clone_form
+ *
+ */
+
+$clone_form = $this->getRaw('clone_form');
+
+if(!$clone_form):
+	return;
+endif;
+
+
+$clone_dialog = UI::dialog('clone_dialog', Tr::_('Clone product'), UI_dialog::SIZE_LARGE );
+
+echo $clone_dialog->start();
+echo $clone_form->start();
+
+	foreach($clone_form->getFields() as $field):
+		echo $field;
+	endforeach;
+
+echo $clone_dialog->footer();
+echo UI::button_save( Tr::_('Clone') );
+echo $clone_form->end();
+echo $clone_dialog->end();

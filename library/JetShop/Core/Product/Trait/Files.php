@@ -94,16 +94,16 @@ trait Core_Product_Trait_Files
 			}
 		}
 		
-		$new_image = new Product_File();
-		$new_image->setProductId( $this->getId() );
-		$new_image->setKindOfFileId( $kind_of_file_id );
-		$new_image->setFile( $file );
-		$new_image->setFileIndex( count($this->files) );
-		$new_image->save();
+		$new_file = new Product_File();
+		$new_file->setProductId( $this->getId() );
+		$new_file->setKindOfFileId( $kind_of_file_id );
+		$new_file->setFile( $file );
+		$new_file->setFileIndex( count($this->files) );
+		$new_file->save();
 		
-		$this->files[$new_image->getId()] = $new_image;
+		$this->files[$new_file->getId()] = $new_file;
 		
-		return $new_image;
+		return $new_file;
 	}
 	
 	public function sortFiles( array $file_ids ) : void
@@ -124,5 +124,25 @@ trait Core_Product_Trait_Files
 		}
 		
 		$this->files = null;
+	}
+	
+	public function cloneFiles( Product $source_product ) : void
+	{
+		foreach($source_product->getFiles() as $file) {
+			$path_i = pathinfo( $file->getFile() );
+			$file_name = $path_i['filename'].'_c.'.$path_i['extension'];
+			
+			$new_file = Files::Manager()->uploadFile(
+				$this,
+				$file_name,
+				Files::Manager()->getFilePath( $source_product, $file->getFile() ),
+			);
+			
+			$this->addFile(
+				$new_file,
+				$file->getKindOfFileId()
+			);
+			
+		}
 	}
 }

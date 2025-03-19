@@ -29,7 +29,7 @@ $tabs = $this->getRaw('tabs');
 
 $set_price_form = $this->getRaw('set_price_form');
 $set_availability_form = $this->getRaw('set_availability_form');
-
+$clone_form = $this->getRaw('clone_form');
 ?>
 
 <div style="display: inline-block">
@@ -45,6 +45,13 @@ $set_availability_form = $this->getRaw('set_availability_form');
 
 
 <?php
+if($clone_form):
+	echo UI::button( Tr::_('Clone product'))
+		->setClass(UI_button::CLASS_WARNING)
+		->setOnClick("$('#clone_dialog').modal('show')");
+endif;
+
+
 if($set_price_form):
 	echo UI::button( Tr::_('Set price'))
 				->setClass(UI_button::CLASS_DANGER)

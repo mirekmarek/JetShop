@@ -9,6 +9,10 @@ namespace JetShop;
 
 
 use Jet\Form;
+use JetApplication\Product;
+use JetApplication\Product_Parameter_InfoNotAvl;
+use JetApplication\Product_Parameter_TextValue;
+use JetApplication\Product_Parameter_Value;
 use JetApplication\Property;
 
 
@@ -54,7 +58,7 @@ trait Core_Product_Trait_Parameters
 				if(!$property_ids) {
 					$properties = [];
 				} else {
-					$properties = Property::getProperties($property_ids);
+					$properties = Property::getProperties( $property_ids );
 				}
 				
 				
@@ -109,6 +113,28 @@ trait Core_Product_Trait_Parameters
 		
 		return false;
 		
+	}
+	
+	public function cloneParameters( Product $source_product ) : void
+	{
+		$values = Product_Parameter_Value::getForProduct( $source_product->getId() );
+		foreach($values as $by_property) {
+			foreach($by_property as $value) {
+				$value->clone( $this->getId() );
+			}
+		}
+		
+		$text_values = Product_Parameter_TextValue::getForProduct( $source_product->getId() );
+		foreach($text_values as $by_property) {
+			foreach($by_property as $value) {
+				$value->clone( $this->getId() );
+			}
+		}
+		
+		$info_not_avl = Product_Parameter_InfoNotAvl::getForProduct( $source_product->getId() );
+		foreach($info_not_avl as $info_not_avl_value) {
+			$info_not_avl_value->clone( $this->getId() );
+		}
 	}
 
 }

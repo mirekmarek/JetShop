@@ -87,11 +87,11 @@ abstract class Core_Product_Parameter_Value extends DataModel
 	 * @param int $product_id
 	 * @return static[][]
 	 */
-	public static function get( int $product_id ): array
+	public static function getForProduct( int $product_id ): array
 	{
 		$data = static::fetch(
 			[
-				'products_parameters' => [
+				'' => [
 					'product_id' => $product_id
 				]
 			]
@@ -276,5 +276,15 @@ abstract class Core_Product_Parameter_Value extends DataModel
 		}
 		
 		Product_Parameter_TextValue::syncVariants( $variant_master );
+	}
+	
+	public function clone( int $cloned_product_id ) : void
+	{
+		$clon = clone $this;
+		$clon->setIsNew( true );
+		$clon->id = 0;
+		$clon->product_id = $cloned_product_id;
+		
+		$clon->save();
 	}
 }

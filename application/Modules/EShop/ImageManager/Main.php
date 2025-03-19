@@ -118,4 +118,9 @@ class Main extends EShop_Managers_Image
 		return $url;
 		
 	}
+	
+	public function getPath( string $image ): string
+	{
+		return static::getRootPath().$image;
+	}
 }

@@ -73,4 +73,13 @@ trait Core_Product_Trait_Boxes
 		$this->boxes = null;
 	}
 	
+	public function cloneBoxes( Product $source_product ) : void
+	{
+		foreach( Product_Box::getBoxes( $source_product->getId() ) as $box ) {
+			$clone_box = clone $box;
+			$clone_box->setIsNew( true );
+			$clone_box->setProductId( $this->getId() );
+			$clone_box->save();
+		}
+	}
 }

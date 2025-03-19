@@ -7,8 +7,12 @@
 namespace JetShop;
 
 
+use Jet\IO_File;
+use Jet\SysConf_Path;
 use JetApplication\Admin_Managers;
 use JetApplication\EShop_Managers;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\Product;
 use JetApplication\ImageGallery_Image;
 
@@ -142,6 +146,27 @@ trait Core_EShopEntity_HasImageGallery_Trait {
 		return EShop_Managers::Image()->getUrl(
 			$image->getImageFile()
 		);
+	}
+	
+	public function cloneImages( EShopEntity_Basic|EShopEntity_HasImageGallery_Interface $source ) : void
+	{
+		$images = [];
+		foreach($source->getImages() as $source_image) {
+			
+			$image_path = EShop_Managers::Image()->getPath(
+				$source_image->getImageFile()
+			);
+			
+			$path_i = pathinfo( $source_image->getImageFile() );
+			$file_name = $path_i['filename'].'_c.'.$path_i['extension'];
+			
+			$images[$image_path] = $file_name;
+		}
+		
+		$this->uploadImages( $images );
+		
+		
+
 	}
 	
 }

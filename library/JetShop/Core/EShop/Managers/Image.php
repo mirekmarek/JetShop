@@ -21,5 +21,7 @@ abstract class Core_EShop_Managers_Image extends Application_Module
 {
 	abstract public function getUrl( string $image ) : string;
 	
+	abstract public function getPath( string $image ) : string;
+	
 	abstract public function getThumbnailUrl( string $image, int $max_w, int $max_h ) : string;
 }

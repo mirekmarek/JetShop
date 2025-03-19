@@ -7,6 +7,8 @@
 namespace JetShop;
 
 
+use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\ImageGallery_Image;
 
 interface Core_EShopEntity_HasImageGallery_Interface {
@@ -30,4 +32,5 @@ interface Core_EShopEntity_HasImageGallery_Interface {
 	public function sortImages( array $image_ids ) : void;
 	public function uploadImages( array $images ) : void;
 	
+	public function cloneImages( EShopEntity_Basic|EShopEntity_HasImageGallery_Interface $source ) : void;
 }

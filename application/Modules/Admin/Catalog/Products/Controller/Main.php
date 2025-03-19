@@ -11,6 +11,7 @@ use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 
+use Jet\UI_messages;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
@@ -237,11 +238,14 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		$this->handleSetAvailability();
 		$this->handleSetPrice();
+		$this->handleClone();
 		
 		parent::edit_main_Action();
 		
 		$this->content->output(
-			$this->view->render('edit/main/set-price')
+			$this->view->render('edit/main/set-price').
+			$this->view->render('edit/main/set-availability').
+			$this->view->render('edit/main/clone')
 		);
 		
 	}
@@ -288,6 +292,31 @@ class Controller_Main extends Admin_EntityManager_Controller
 			}
 		}
 		
+	}
+	
+	public function handleClone() : void
+	{
+		if(!Main::getCurrentUserCanCreate()) {
+			return;
+		}
+		
+		/**
+		 * @var Product $product
+		 */
+		$product = $this->current_item;
+		
+		if( ($clone_form = $product->getCloneForm()) ) {
+			$this->view->setVar('clone_form', $clone_form);
+			
+			$cloned_product = $product->handleClone();
+			if($cloned_product) {
+				UI_messages::createSuccess( Tr::_('Clone product has been created') );
+				
+				Http_Headers::movedTemporary( $this->getListing()->getEditUrl( $cloned_product ) );
+			}
+
+		}
+	
 	}
 	
 }

@@ -84,7 +84,7 @@ abstract class Core_Product_Parameter_TextValue extends EShopEntity_WithEShopRel
 	{
 		$data = static::fetch(
 			[
-				'products_text_parameters' => [
+				'' => [
 					'product_id' => $product_id
 				]
 			]
@@ -233,8 +233,17 @@ abstract class Core_Product_Parameter_TextValue extends EShopEntity_WithEShopRel
 				}
 			}
 		}
-
-		
-		
 	}
+	
+	
+	public function clone( int $cloned_product_id ) : void
+	{
+		$clon = clone $this;
+		$clon->setIsNew( true );
+		$clon->id = 0;
+		$clon->product_id = $cloned_product_id;
+		
+		$clon->save();
+	}
+	
 }

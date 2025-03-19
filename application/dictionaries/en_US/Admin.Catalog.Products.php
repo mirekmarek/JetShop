@@ -259,4 +259,10 @@ return [
 	'Target locale' => '',
 	'Product - kind of product is used' => '',
 	'Product - brand is used' => '',
+	'Clone product' => '',
+	'Clone' => '',
+	'Clone product has been created' => '',
+	'New internal name:' => '',
+	'New internal code:' => '',
+	'Accessories setting has been updated' => '',
 ];

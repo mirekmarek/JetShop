@@ -183,4 +183,10 @@ abstract class Core_EShopEntity_Basic extends DataModel
 	{
 		return true;
 	}
+	
+	public function __clone() : void
+	{
+		$this->id = 0;
+		$this->setIsNew( true );
+	}
 }

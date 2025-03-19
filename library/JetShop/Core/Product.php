@@ -854,6 +854,88 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		return true;
 	}
 	
+	protected ?Form $clone_form = null;
+	
+	public function getCloneForm() : Form
+	{
+		if(!$this->clone_form) {
+			$this->clone_form = new Form('clone_form', []);
+			$this->setupCloneForm( $this->clone_form );
+		}
+		
+		return $this->clone_form;
+	}
+	
+	protected function setupCloneForm( Form $form ) : void
+	{
+		$internal_name = new Form_Field_Input('internal_name', 'New internal name:');
+		$internal_name->setDefaultValue( $this->internal_name.' CLONE' );
+		$form->addField( $internal_name );
+		
+		$internal_code = new Form_Field_Input('internal_code', 'New internal code:');
+		$internal_code->setDefaultValue( $this->internal_code.' CLONE' );
+		$form->addField( $internal_code );
+	}
+	
+	public function handleClone() : ?static
+	{
+		if(!$this->getCloneForm()->catch()) {
+			return null;
+		}
+		
+		$cloned_product = clone $this;
+		
+		$this->setupClonedProduct( $cloned_product, $this->clone_form );
+		
+		$cloned_product->save();
+		
+		$this->cloneOtherProperties( $this, $cloned_product );
+		
+		
+		if($this->getType()==Product::PRODUCT_TYPE_VARIANT_MASTER) {
+			
+			foreach($this->getVariants() as $variant) {
+				$cloned_variant = clone $variant;
+				
+				$cloned_variant->id = 0;
+				$cloned_variant->setIsNew(true);
+				
+				$this->setupCloneVariant( $variant, $cloned_variant );
+				
+				$cloned_variant->save();
+				
+				$this->cloneOtherProperties( $variant, $cloned_variant );
+				
+				$cloned_product->addVariant( $cloned_variant );
+			}
+		}
+		
+		
+		return $cloned_product;
+	}
+	
+	protected function cloneOtherProperties( Product $source_product, Product $cloned_product ) : void
+	{
+		$cloned_product->cloneFiles( $source_product );
+		$cloned_product->cloneImages( $source_product );
+		$cloned_product->cloneParameters( $source_product );
+		$cloned_product->cloneBoxes( $source_product );
+		$cloned_product->cloneAccessories( $source_product );
+		
+	}
+	
+	protected function setupClonedProduct( Product $clone, Form $form ) : void
+	{
+		$clone->internal_name = $form->field('internal_name')->getValue();
+		$clone->internal_code = $form->field('internal_code')->getValue();
+	}
+	
+	protected function setupCloneVariant( Product $source_variant, Product $cloned_variant ) : void
+	{
+		$cloned_variant->internal_name .= 'CLONE';
+		$cloned_variant->internal_code .= 'CLONE';
+		
+	}
 	
 	/**
 	 * @param EShopEntity_Basic $entity_to_be_deleted

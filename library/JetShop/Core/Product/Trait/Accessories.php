@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use JetApplication\Accessories_Group;
+use JetApplication\Product;
 use JetApplication\Product_Accessories_Group;
 
 trait Core_Product_Trait_Accessories
@@ -38,5 +39,18 @@ trait Core_Product_Trait_Accessories
 		$groups = $this->getAccessoriesGroupIds();
 
 		return Accessories_Group::getAccessoriesIds( $groups );
+	}
+	
+	public function cloneAccessories( Product $source_product ) : void
+	{
+		$groups = Product_Accessories_Group::fetch([''=>[
+			'product_id' => $source_product->getId()
+		]]);
+		
+		foreach( $groups as $group ) {
+			$group = clone $group;
+			$group->setProductId( $this->getId() );
+			$group->save();
+		}
 	}
 }

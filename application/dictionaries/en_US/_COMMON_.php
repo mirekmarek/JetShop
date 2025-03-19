@@ -369,4 +369,7 @@ return [
 	'Non-sale product:' => '',
 	'Non-sale product relation:' => '',
 	'Video URL:' => '',
+	'Clone form' => '',
+	'Clone product' => '',
+	'Add new variant' => '',
 ];

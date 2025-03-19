@@ -222,7 +222,7 @@ abstract class Core_Product_Parameter {
 		$product_id = $this->product_id;
 		
 		if(!array_key_exists($product_id, static::$value_maps)) {
-			static::$value_maps[$product_id] = Product_Parameter_Value::get( $product_id );
+			static::$value_maps[$product_id] = Product_Parameter_Value::getForProduct( $product_id );
 		}
 		
 		return static::$value_maps[$product_id];
@@ -254,7 +254,7 @@ abstract class Core_Product_Parameter {
 		$product_id = $this->product_id;
 		
 		if(!array_key_exists($product_id, static::$info_not_avl_maps)) {
-			static::$info_not_avl_maps[$product_id] = Product_Parameter_InfoNotAvl::get( $product_id );
+			static::$info_not_avl_maps[$product_id] = Product_Parameter_InfoNotAvl::getForProduct( $product_id );
 		}
 		
 		return static::$info_not_avl_maps[$product_id];

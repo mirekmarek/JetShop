@@ -24,9 +24,10 @@ trait Core_Product_EShopData_Trait_Images
 			
 			if(
 				!$this->images &&
-				$this->isVariant()
+				$this->isVariant() &&
+				($master=$this->getVariantMasterProduct())
 			) {
-				$this->images = ImageGallery_Image::getImages( $this->getVariantMasterProduct() );
+				$this->images = ImageGallery_Image::getImages( $master );
 			}
 		}
 		

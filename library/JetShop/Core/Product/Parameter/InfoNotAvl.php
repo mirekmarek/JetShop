@@ -68,10 +68,10 @@ abstract class Core_Product_Parameter_InfoNotAvl extends DataModel
 	 * @param int $product_id
 	 * @return static[]
 	 */
-	public static function get( int $product_id ) : array
+	public static function getForProduct( int $product_id ) : array
 	{
 		$data = static::fetch(
-			['products_parameters_info_not_avl'=>[
+			[''=>[
 				'product_id' => $product_id
 			]]
 		);
@@ -84,6 +84,17 @@ abstract class Core_Product_Parameter_InfoNotAvl extends DataModel
 		}
 		
 		return $map;
+	}
+	
+	
+	public function clone( int $cloned_product_id ) : void
+	{
+		$clon = clone $this;
+		$clon->setIsNew( true );
+		$clon->id = 0;
+		$clon->product_id = $cloned_product_id;
+		
+		$clon->save();
 	}
 	
 }
