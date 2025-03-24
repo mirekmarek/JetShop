@@ -55,7 +55,7 @@ abstract class Core_Content_InfoBox_EShopData extends EShopEntity_WithEShopData_
 	protected static function getCacheFilePath( string $internal_code, EShop $eshop ) : string
 	{
 		$file_name = 'info_box_'.$eshop->getKey().'_'.$internal_code.'.html';
-		$path = SysConf_Path::getTmp().$file_name;
+		$path = SysConf_Path::getCache().$file_name;
 		
 		return $path;
 	}
