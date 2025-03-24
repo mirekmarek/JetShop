@@ -158,16 +158,16 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 100,
+		max_len: 65536,
 	)]
 	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Video URL:'
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Video URLs:'
 	)]
 	#[EShopEntity_Definition(
 		is_description: true
 	)]
-	protected string $video_URL = '';
+	protected string $video_URLs = '';
 	
 
 	#[DataModel_Definition(
@@ -578,6 +578,27 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	{
 		return $this->question_count;
 	}
+	
+	
+	public function getVideoURLs( bool $as_array=false ) : array|string
+	{
+		if(!$as_array) {
+			return $this->video_URLs;
+		}
+		
+		$_videos = explode("\n", $this->video_URLs);
+		$videos = [];
+		
+		foreach($_videos as $_video) {
+			$video = trim($_video);
+			if($video) {
+				$videos[] = $video;
+			}
+		}
+		
+		return $videos;
+	}
+	
 	
 	public function getDeliveryInfo( ?Availability $availability=null ) : DeliveryTerm_Info
 	{
