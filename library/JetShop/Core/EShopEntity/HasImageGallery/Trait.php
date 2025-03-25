@@ -7,8 +7,6 @@
 namespace JetShop;
 
 
-use Jet\IO_File;
-use Jet\SysConf_Path;
 use JetApplication\Admin_Managers;
 use JetApplication\EShop_Managers;
 use JetApplication\EShopEntity_Basic;

@@ -517,6 +517,13 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 	}
 	
+	
+	protected function getAddToolbarRenderer() : ?Closure
+	{
+		return null;
+	}
+	
+	
 	protected function getEditToolbarRenderer() : ?Closure
 	{
 		return function( EShopEntity_Basic $item, ?Form $form=null ) {
@@ -800,10 +807,18 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 				item: $this->current_item,
 				listing: $this->getListing(),
 				tabs: $this->tabs,
-				common_data_fields_renderer: $this->getEditCommonDataFieldsRenderer(),
-				toolbar_renderer: $this->getEditToolbarRenderer(),
-				eshop_data_fields_renderer: $this->getEditEshopDataFieldsRenderer(),
-				description_fields_renderer: $this->getEditDescriptionFieldsRenderer()
+				
+				add_toolbar_renderer: $this->getAddToolbarRenderer(),
+				
+				add_common_data_fields_renderer: $this->getAddCommonFieldsRenderer(),
+				add_eshop_data_fields_renderer: $this->getAddEshopDataFieldsRenderer(),
+				add_description_fields_renderer: $this->getAddDescriptionFieldsRenderer(),
+				
+				edit_toolbar_renderer: $this->getEditToolbarRenderer(),
+				
+				edit_common_data_fields_renderer: $this->getEditCommonDataFieldsRenderer(),
+				edit_eshop_data_fields_renderer: $this->getEditEshopDataFieldsRenderer(),
+				edit_description_fields_renderer: $this->getEditDescriptionFieldsRenderer(),
 			);
 		}
 		

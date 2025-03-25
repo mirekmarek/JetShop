@@ -8,7 +8,6 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 
 
 use Jet\Locale;
-use Jet\UI;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Definition;
@@ -27,9 +26,9 @@ use JetApplication\EShop;
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
 
-$common_data_fields_renderer = $this->getRaw('common_data_fields_renderer');
-$eshop_data_fields_renderer = $this->getRaw('eshop_data_fields_renderer');
-$description_fields_renderer = $this->getRaw('description_fields_renderer');
+$common_data_fields_renderer = $this->getRaw('add_common_data_fields_renderer');
+$eshop_data_fields_renderer = $this->getRaw('add_eshop_data_fields_renderer');
+$description_fields_renderer = $this->getRaw('add_description_fields_renderer');
 
 $form->setAutocomplete( false );
 $form->renderer()->setDefaultLabelWidth( [
@@ -49,11 +48,7 @@ $form->renderer()->setDefaultFieldWidth( [
 
 <?=$form->start()?>
 
-<div class="toolbar" id="main-toolbar">
-	<?=UI::button_goBack()?>
-	
-	<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
-</div>
+<?php require 'add/toolbar.phtml'; ?>
 
 
 <div id="main-col">

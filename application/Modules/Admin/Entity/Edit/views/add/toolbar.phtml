@@ -1,0 +1,39 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Edit;
+
+
+use Jet\UI;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_WithEShopData;
+
+use Jet\MVC_View;
+use Jet\Form;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var EShopEntity_WithEShopData|EShopEntity_Admin_Interface     $item
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+$toolbar_renderer = $this->getRaw('add_toolbar_renderer');
+
+?>
+
+<div class="toolbar" id="main-toolbar">
+	<?=UI::button_goBack()?>
+	
+	<?=UI::button_save()->setOnclick("$('#".$form->getId()."').submit();")?>
+
+	<?php
+	if($toolbar_renderer):
+		$toolbar_renderer( $item, $form );
+	endif;
+	?>
+</div>

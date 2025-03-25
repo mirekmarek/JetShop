@@ -371,4 +371,6 @@ return [
 	'Video URL:' => '',
 	'Clone product' => '',
 	'Add new variant' => '',
+	'Units to order' => '',
+	'Video URLs:' => '',
 ];

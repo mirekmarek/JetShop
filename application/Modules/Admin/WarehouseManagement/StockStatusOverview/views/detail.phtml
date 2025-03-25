@@ -37,7 +37,7 @@ $m_unit = Product::getProductMeasureUnit( $card->getProductId() )?->getName();
 
 $change_location_form = $this->getRaw('change_location_form');
 
-Admin_Managers::EntityEdit()->init( $card, $this->getRaw('listing'), toolbar_renderer: function() {
+Admin_Managers::EntityEdit()->init( $card, $this->getRaw('listing'), edit_toolbar_renderer: function() {
 	echo UI::button( Tr::_('Determine inventory status on a specific date') )
 		->setClass(UI_button::CLASS_INFO)
 		->setOnClick("$('#status_on_date_dialog').modal('show');");

@@ -37,10 +37,18 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 		EShopEntity_Basic|EShopEntity_Admin_Interface $item,
 		?Admin_Managers_EShopEntity_Listing           $listing = null,
 		?UI_tabs                                      $tabs = null,
-		?Closure                                      $common_data_fields_renderer = null,
-		?Closure                                      $toolbar_renderer = null,
-		?Closure                                      $eshop_data_fields_renderer = null,
-		?Closure                                      $description_fields_renderer = null
+		
+		?Closure                                      $add_toolbar_renderer = null,
+		
+		?Closure                                      $add_common_data_fields_renderer = null,
+		?Closure                                      $add_eshop_data_fields_renderer = null,
+		?Closure                                      $add_description_fields_renderer = null,
+		
+		?Closure                                      $edit_toolbar_renderer = null,
+		
+		?Closure                                      $edit_common_data_fields_renderer = null,
+		?Closure                                      $edit_eshop_data_fields_renderer = null,
+		?Closure                                      $edit_description_fields_renderer = null
 	) : void;
 	
 	abstract public function renderToolbar( ?Form $form = null, ?Closure $toolbar_renderer=null  ): string;

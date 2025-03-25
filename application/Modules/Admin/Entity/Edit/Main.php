@@ -43,10 +43,18 @@ class Main extends Admin_Managers_EShopEntity_Edit
 	protected ?Admin_Managers_EShopEntity_Listing $listing = null;
 	protected ?UI_tabs $tabs = null;
 	protected MVC_View $view;
-	protected Closure|null $common_data_fields_renderer = null;
-	protected Closure|null $toolbar_renderer = null;
-	protected Closure|null $eshop_data_fields_renderer = null;
-	protected Closure|null $description_fields_renderer = null;
+	
+	protected Closure|null $add_toolbar_renderer = null;
+	
+	protected Closure|null $add_common_data_fields_renderer = null;
+	protected Closure|null $add_eshop_data_fields_renderer = null;
+	protected Closure|null $add_description_fields_renderer = null;
+	
+	protected Closure|null $edit_toolbar_renderer = null;
+	
+	protected Closure|null $edit_common_data_fields_renderer = null;
+	protected Closure|null $edit_eshop_data_fields_renderer = null;
+	protected Closure|null $edit_description_fields_renderer = null;
 	
 	
 	public function __construct( Application_Module_Manifest $manifest )
@@ -67,10 +75,18 @@ class Main extends Admin_Managers_EShopEntity_Edit
 				$this->view->setVar( 'listing', $this->listing );
 				$this->view->setVar( 'tabs', $this->tabs );
 				
-				$this->view->setVar( 'toolbar_renderer', $this->toolbar_renderer );
-				$this->view->setVar( 'common_data_fields_renderer', $this->common_data_fields_renderer );
-				$this->view->setVar( 'eshop_data_fields_renderer', $this->eshop_data_fields_renderer );
-				$this->view->setVar( 'description_fields_renderer', $this->description_fields_renderer );
+				
+				$this->view->setVar( 'add_toolbar_renderer', $this->add_toolbar_renderer );
+				
+				$this->view->setVar( 'add_common_data_fields_renderer', $this->add_common_data_fields_renderer );
+				$this->view->setVar( 'add_eshop_data_fields_renderer', $this->add_eshop_data_fields_renderer );
+				$this->view->setVar( 'add_description_fields_renderer', $this->add_description_fields_renderer );
+				
+				$this->view->setVar( 'edit_toolbar_renderer', $this->edit_toolbar_renderer );
+				
+				$this->view->setVar( 'edit_common_data_fields_renderer', $this->edit_common_data_fields_renderer );
+				$this->view->setVar( 'edit_eshop_data_fields_renderer', $this->edit_eshop_data_fields_renderer );
+				$this->view->setVar( 'edit_description_fields_renderer', $this->edit_description_fields_renderer );
 				
 				foreach($params as $k=>$v) {
 					$this->view->setVar($k, $v);
@@ -88,20 +104,35 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		EShopEntity_Basic|EShopEntity_Admin_Interface $item, ?
 		Admin_Managers_EShopEntity_Listing            $listing = null,
 		?UI_tabs                                      $tabs = null,
-		?Closure                                      $common_data_fields_renderer = null,
-		?Closure                                      $toolbar_renderer = null,
-		?Closure                                      $eshop_data_fields_renderer = null,
-		?Closure                                      $description_fields_renderer = null
+		
+		?Closure                                      $add_toolbar_renderer = null,
+		
+		?Closure                                      $add_common_data_fields_renderer = null,
+		?Closure                                      $add_eshop_data_fields_renderer = null,
+		?Closure                                      $add_description_fields_renderer = null,
+		
+		?Closure                                      $edit_toolbar_renderer = null,
+		
+		?Closure                                      $edit_common_data_fields_renderer = null,
+		?Closure                                      $edit_eshop_data_fields_renderer = null,
+		?Closure                                      $edit_description_fields_renderer = null
 	): void
 	{
 		$this->item = $item;
 		$this->listing = $listing;
 		$this->tabs = $tabs;
 		
-		$this->common_data_fields_renderer = $common_data_fields_renderer;
-		$this->toolbar_renderer = $toolbar_renderer;
-		$this->eshop_data_fields_renderer = $eshop_data_fields_renderer;
-		$this->description_fields_renderer = $description_fields_renderer;
+		$this->add_toolbar_renderer = $add_toolbar_renderer;
+		
+		$this->add_common_data_fields_renderer = $add_common_data_fields_renderer;
+		$this->add_eshop_data_fields_renderer = $add_eshop_data_fields_renderer;
+		$this->add_description_fields_renderer = $add_description_fields_renderer;
+		
+		$this->edit_toolbar_renderer = $edit_toolbar_renderer;
+		
+		$this->edit_common_data_fields_renderer = $edit_common_data_fields_renderer;
+		$this->edit_eshop_data_fields_renderer = $edit_eshop_data_fields_renderer;
+		$this->edit_description_fields_renderer = $edit_description_fields_renderer;
 		
 	}
 	
@@ -112,7 +143,7 @@ class Main extends Admin_Managers_EShopEntity_Edit
 			'form' => $form
 		];
 		if($toolbar_renderer) {
-			$params['toolbar_renderer'] = $toolbar_renderer;
+			$params['edit_toolbar_renderer'] = $toolbar_renderer;
 		}
 		
 		return $this->render( 'edit/toolbar', $params );
