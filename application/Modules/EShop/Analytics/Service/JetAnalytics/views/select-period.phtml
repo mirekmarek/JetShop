@@ -1,0 +1,59 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\Data_Text;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+
+/**
+ * @var MVC_View $this;
+ * @var Report_TimePeriod[] $time_periods
+ * @var Report_TimePeriod $selected_time_period
+ * @var Data_DateTime $date_from
+ * @var Data_DateTime $date_to
+ * @var Main $module
+ */
+
+$time_periods = $this->getRaw( 'time_periods' );
+$selected_time_period = $this->getRaw( 'selected_time_period' );
+
+$date_from = $this->getRaw( 'date_from' );
+$date_to = $this->getRaw( 'date_to' );
+
+?>
+		<div style="display: flex;gap: 10px;align-items: center;margin: 10px;">
+			<?php foreach($time_periods as $period):
+				if($period::getKey()==$selected_time_period::getKey()):?>
+					<?=UI::badge( UI_badge::INFO, $period->getTitle() )->addCustomCssStyle('padding:10px;')?>
+				<?php else: ?>
+					<a href="<?=Http_Request::currentURI(set_GET_params: ['tp'=>$period::getKey()], unset_GET_params: ['from', 'to'])?>"><?=$period->getTitle();?></a>
+				<?php
+				endif;
+			endforeach; ?>
+		</div>
+
+		<form method="get" style="margin-left: 10px;opacity: 0.5">
+			<?php foreach(Http_Request::GET()->getRawData() as $key => $value):
+				if(in_array($key, ['from', 'to'])) {
+					continue;
+				}
+				?>
+				<input type="hidden" name="<?=$key?>" value="<?=Data_Text::htmlSpecialChars($value)?>">
+			<?php endforeach; ?>
+			<div style="display: flex;align-items: center;justify-content: left;gap: 10px;margin: 5px;">
+				<div><?=Tr::_('Custom period:')?></div>
+				<input type="date" name="from" value="<?=$date_from->format('Y-m-d')?>" class="form-control" onchange="this.form.submit();" style="width: 150px;">
+				<div> - </div>
+				<input type="date" name="to" value="<?=$date_to->format('Y-m-d')?>" class="form-control" onchange="this.form.submit();" style="width: 150px;">
+			
+			</div>
+		</form>

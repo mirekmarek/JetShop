@@ -51,6 +51,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
+		parent::setupRouter( $action, $selected_tab );
+		
 		$this->router->setDefaultAction(  'default', Main::ACTION_GET  );
 		
 		$this->router->addAction( 'add', Main::ACTION_ADD )->setResolver(function() use ($action) {
@@ -184,7 +186,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 
 
 
-	public function default_Action() : void
+	public function listing_Action() : void
 	{
 		$this->_setBreadcrumbNavigation();
 
@@ -192,7 +194,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 	}
 	
 	
-	public function edit_Action() : void
+	public function edit_main_Action() : void
 	{
 		$this->_setBreadcrumbNavigation( Tr::_( 'Edit' ) );
 		$category = $this->getCurrentItem();
@@ -223,10 +225,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 		}
 		
 		$this->view->setVar('form', $category->getEditMainForm() );
-		$this->view->setVar('toolbar', 'category/edit/main/toolbar');
+		$this->view->setVar('toolbar', 'edit/main/toolbar');
 		
 		
-		$this->output( 'category/edit/main' );
+		$this->output( 'edit/main' );
 	}
 	
 	public function edit_description_Action() : void
@@ -248,10 +250,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 		}
 		
 		$this->view->setVar('form', $category->getDescriptionEditForm() );
-		$this->view->setVar('toolbar', 'category/edit/main/toolbar');
+		$this->view->setVar('toolbar', 'edit/main/toolbar');
 		
 		
-		$this->output( 'category/edit/description' );
+		$this->output( 'edit/description' );
 	}
 	
 	
@@ -346,7 +348,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			}
 		}
 		
-		$this->output( 'category/edit/products' );
+		$this->output( 'edit/products' );
 	}
 	
 	public function edit_images_Action() : void
@@ -358,7 +360,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$category = $this->getCurrentItem();
 		$category->handleImages();
 		
-		$this->output( 'category/edit/images' );
+		$this->output( 'edit/images' );
 	}
 	
 	public function add_Action() : void
@@ -390,9 +392,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->view->setVar( 'new_category', $new_category );
 		
 		$this->view->setVar('tabs', '');
-		$this->view->setVar('toolbar', 'category/add/toolbar');
+		$this->view->setVar('toolbar', 'add/toolbar');
 		
-		$this->output( 'category/add' );
+		$this->output( 'add' );
 		
 	}
 	
@@ -414,6 +416,18 @@ class Controller_Main extends Admin_EntityManager_Controller
 		}
 		
 		Http_Headers::reload([], ['action']);
+	}
+	
+	public function handle_provided_tab_Action() : void
+	{
+		$this->setBreadcrumbNavigation( $this->selected_provided_tab->getTabTitle() );
+		
+		$this->content->output(
+			$this->view->render('lj_start')
+			.$this->selected_provided_tab->handle()
+			.$this->view->render('lj_end')
+		);
+		
 	}
 	
 }

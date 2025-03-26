@@ -5,3 +5,166 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+
+use Jet\Autoloader;
+use Jet\Data_DateTime;
+use Jet\IO_Dir;
+use Jet\MVC_View;
+use Jet\Tr;
+
+abstract class Report
+{
+	public const KEY = null;
+	protected ?string $title = null;
+	protected bool $is_default = false;
+	protected array $sub_reports;
+	
+	protected Data_DateTime $date_from ;
+	protected Data_DateTime $date_to;
+	protected Report_TimePeriod $time_period;
+	protected Main $module;
+	protected string $selected_subreport;
+	
+	protected ?MVC_View $view = null;
+	
+	
+	/**
+	 * @var Report_TimePeriod[]
+	 */
+	protected ?array $time_periods = null;
+	
+	public static function getKey() : string
+	{
+		return static::KEY;
+	}
+	
+	public function getTitle() : string
+	{
+		return Tr::_($this->title);
+	}
+	
+	public function isDefault(): bool
+	{
+		return $this->is_default;
+	}
+	
+	public function getSubReports() : array
+	{
+		$sub_reports = [];
+		foreach($this->sub_reports as $key=>$title) {
+			$sub_reports[$key] = Tr::_($title);
+		}
+		
+		return $sub_reports;
+	}
+	
+	
+	
+	public function init( Report_Controller $controller ) : void
+	{
+		$this->date_from = $controller->getDateFrom();
+		$this->date_to = $controller->getDateTo();
+		$this->time_period = $controller->getSelectedTimePeriod();
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->module = $controller->getModule();
+		$this->selected_subreport = $controller->getSelectedSubreport();
+		
+		$subreports = array_keys( $this->getSubReports() );
+		
+		$this->getView();
+		$this->view->setVar( 'module', $this->module );
+		$this->view->setVar( 'report', $this );
+		$this->view->setVar( 'date_from', $this->date_from );
+		$this->view->setVar( 'date_to', $this->date_to );
+		$this->view->setVar( 'time_period', $this->time_period );
+		$this->view->setVar( 'subreports', $subreports );
+		
+		$this->{"prepare_{$this->selected_subreport}"}();
+	}
+	
+	/**
+	 * @return static[]
+	 */
+	public static function getList() : array
+	{
+		$dir = str_replace('.php', '', Autoloader::getScriptPath( static::class )).'/';
+		
+		$list = [];
+		foreach( IO_Dir::getFilesList( $dir ) as $file_name ) {
+			$file_name = pathinfo( $file_name, PATHINFO_FILENAME );
+			
+			$class_name = static::class.'_'.$file_name;
+			
+			$report = new $class_name();
+			
+			$list[$report::getKey()] = $report;
+		}
+		
+		return $list;
+	}
+	
+	public function getViewDir() : string
+	{
+		$dir = str_replace('.php', '', Autoloader::getScriptPath( static::class )).'/views/';
+		
+		return $dir;
+	}
+	
+	public function getView() : MVC_View
+	{
+		if(!$this->view) {
+			$this->view = new MVC_View( $this->getViewDir() );
+			$this->view->setVar( 'report', $this );
+		}
+		
+		return $this->view;
+	}
+	
+	protected function initTimePeriods() : void
+	{
+		$this->time_periods = [];
+		
+		$this->addTimePeriod( new Report_TimePeriod_Last7Days() );
+		$this->addTimePeriod( new Report_TimePeriod_Last30Days() );
+		$this->addTimePeriod( new Report_TimePeriod_Last365Days() );
+		$this->addTimePeriod( new Report_TimePeriod_PreviousMonth() );
+		$this->addTimePeriod( new Report_TimePeriod_PreviousQuarter() );
+		$this->addTimePeriod( new Report_TimePeriod_PreviousYear() );
+	}
+	
+	protected function addTimePeriod( Report_TimePeriod $period ) : void
+	{
+		$this->time_periods[$period::getKey()] = $period;
+	}
+	
+	/**
+	 * @return Report_TimePeriod[]
+	 */
+	public function getTimePeriods() : array
+	{
+		if($this->time_periods===null) {
+			$this->initTimePeriods();
+		}
+		
+		return $this->time_periods;
+	}
+	
+	public function getDefaultTimePeriod() : ?Report_TimePeriod
+	{
+		foreach($this->getTimePeriods() as $period) {
+			if($period->isDefault()) {
+				return $period;
+			}
+		}
+		
+		return null;
+	}
+	
+	public function show() : string
+	{
+		return $this->view->render( $this->selected_subreport );
+	}
+	
+	
+}

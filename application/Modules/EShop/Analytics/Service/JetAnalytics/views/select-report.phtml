@@ -1,0 +1,41 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var Report[] $reports
+ * @var Report|null $selected_report
+ * @var MVC_View $this;
+ */
+
+$reports = $this->getRaw('reports');
+$selected_report = $this->getRaw('selected_report');
+
+?>
+<div>
+	<?php
+	foreach( $reports as $report ):
+		
+		if($report::getKey() == $selected_report?->getKey()):
+			
+			echo UI::button( $report->getTitle() )->setClass(UI_button::CLASS_PRIMARY)->addCustomCssStyle('width: 100%;text-align:left;');
+
+		else:
+			
+			echo UI::button( $report->getTitle() )->setClass(UI_button::CLASS_LINK)->setUrl(
+				Http_Request::currentURI(set_GET_params: ['report'=>$report::getKey()], unset_GET_params: ['sr'])
+			)->addCustomCssStyle('width: 100%;text-align:left;');
+		
+		endif;
+	endforeach;
+	?>
+</div>

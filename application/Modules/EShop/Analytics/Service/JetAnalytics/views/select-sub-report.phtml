@@ -1,0 +1,31 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI_tabs;
+
+/**
+ * @var MVC_View $this;
+ */
+
+$sub_reports = $this->getRaw('sub-reports');
+if(count($sub_reports) < 2) {
+	return;
+}
+
+$sub_reports_list = array_keys($sub_reports);
+
+$tabs = new UI_tabs(
+	$sub_reports,
+	function( string $p ) {
+		return Http_Request::currentURI(set_GET_params: ['sr'=>$p]);
+	},
+	Http_Request::GET()->getString('sr', default_value: $sub_reports_list[0], valid_values: $sub_reports_list));
+
+echo $tabs->render();

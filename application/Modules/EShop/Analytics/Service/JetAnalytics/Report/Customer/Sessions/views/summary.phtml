@@ -1,0 +1,30 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\MVC_View;
+use JetApplication\EShop;
+
+/**
+ * @var MVC_View $this;
+ * @var Report_TimePeriod $time_period
+ * @var Data_DateTime $date_from
+ * @var Data_DateTime $date_to
+ * @var Main $module
+ * @var EShop $eshop
+ * @var Report_Customer_Sessions $report
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+$eshop = $this->getRaw('eshop');
+$date_from = $this->getRaw('date_from');
+$date_to = $this->getRaw('date_to');
+$time_period = $this->getRaw('time_period');
+
+//TODO:

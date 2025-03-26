@@ -175,4 +175,6 @@ return [
 	'Category - kind of product is used' => '',
 	'New category' => '',
 	'<b>Create new category</b>' => '',
+	'Please select option' => '',
+	'Please enter name' => '',
 ];

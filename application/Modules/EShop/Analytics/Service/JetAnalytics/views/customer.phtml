@@ -1,0 +1,35 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this ;
+ * @var Report_Customer|null $selected_report
+ * @var Main $module
+ */
+
+$selected_report = $this->getRaw('selected_report');
+
+$module = $this->getRaw('module');
+?>
+<div style="display: grid;grid-template-columns: 1fr 4fr;gap: 0px;">
+	<div style="padding: 10px;">
+		<?=$module->renderSelectReport()?>
+	</div>
+	<div>
+		<div class="card card-body" style="margin: 10px;padding: 0px;">
+			<?=$module->renderSelectPeriod()?>
+		</div>
+
+		<div>
+			<?=$module->renderSelectSubReport()?>
+			<?=$selected_report->show();?>
+		</div>
+	</div>
+</div>
