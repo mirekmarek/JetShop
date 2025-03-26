@@ -211,7 +211,7 @@ abstract class Core_EShop implements Form_Definition_Interface
 	{
 	}
 	
-	public static function generateKey( string $code, Locale $locale ) : string
+	public static function generateKey( string $code, Locale|string $locale ) : string
 	{
 		return $code.'_'.$locale;
 	}

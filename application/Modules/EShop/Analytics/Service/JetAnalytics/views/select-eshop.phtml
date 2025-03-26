@@ -5,3 +5,59 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_Text;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$selected_keys = $report->getSelectedEshopKeys();
+?>
+<div style="padding: 10px;">
+	<form method="get" style="margin-left: 10px;">
+		<?php foreach(Http_Request::GET()->getRawData() as $key => $value):
+			if( $key == 'eshop' ) {
+				continue;
+			}
+			?>
+			<input type="hidden" name="<?=$key?>" value="<?=Data_Text::htmlSpecialChars($value)?>">
+		<?php endforeach; ?>
+		
+		<div style="display: flex;align-items: center;justify-content: left;gap: 30px;margin: 5px;">
+			
+			<div class="checkbox">
+				<input type="checkbox" class="checkbox" name="eshop[]" value="total" <?=in_array('total', $selected_keys)?' checked':''?> id="select-eshop-total">
+				<label for="select-eshop-total" class="form-check-label">
+					<?=Tr::_('Total')?>
+				</label>
+			</div>
+			
+			<?php foreach(EShops::getListSorted() as $eshop): ?>
+			<div class="checkbox">
+				<input type="checkbox" class="checkbox" name="eshop[]" value="<?=$eshop->getKey()?>" <?=in_array($eshop->getKey(), $selected_keys)?' checked':''?> id="select-eshop-<?=$eshop->getKey()?>">
+				<label for="select-eshop-<?=$eshop->getKey()?>" class="form-check-label">
+					<?=UI::flag( $eshop->getLocale() )?>
+					<?=$eshop->getName()?>
+				</label>
+			</div>
+			<?php endforeach; ?>
+			
+			<div>
+				<?=UI::button( Tr::_('Set') )->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_INFO)?>
+			</div>
+		
+		</div>
+	</form>
+</div>

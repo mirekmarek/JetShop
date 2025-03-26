@@ -28,6 +28,72 @@ trait Main_Trait_Admin {
 	}
 	
 	
+	protected function handle( Closure $controller_factory ) : string
+	{
+		$content = Factory_MVC::getPageContentInstance();
+		$content->setModuleName( $this->module_manifest->getName() );
+		
+		/**
+		 * @var MVC_Controller $constroller
+		 */
+		$constroller = $controller_factory( $content );
+		
+		$content->setControllerAction( $constroller->resolve() );
+		$constroller->dispatch();
+		
+		return $content->getOutput();
+	}
+	
+	public function handleCustomerActivity( Customer $customer ) : string
+	{
+		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($customer) {
+			$constroller = new Controller_Customer( $content );
+			$constroller->setCustomer( $customer );
+			
+			return $constroller;
+		} );
+	}
+	
+	
+	public function handleProductAnalytics( Product $product ) : string
+	{
+		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($product) {
+			$constroller = new Controller_Product( $content );
+			$constroller->setProduct( $product );
+			
+			return $constroller;
+		} );
+	}
+	
+	public function handleCategoryAnalytics( Category $category ) : string
+	{
+		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($category) {
+			$constroller = new Controller_Category( $content );
+			$constroller->setCategory( $category );
+			
+			return $constroller;
+		} );
+	}
+	
+	public function handleSignpostAnalytics( Signpost $signpost ) : string
+	{
+		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($signpost) {
+			$constroller = new Controller_Signpost( $content );
+			$constroller->setSignpost( $signpost );
+			
+			return $constroller;
+		} );
+	}
+	
+	public function handleKindOfProductAnalytics( KindOfProduct $kind_of_product ) : string
+	{
+		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($kind_of_product) {
+			$constroller = new Controller_KindOfProduct( $content );
+			$constroller->setKindOfProduct( $kind_of_product );
+			
+			return $constroller;
+		} );
+	}
 	
 	public function provideEditTabs( EShopEntity_Basic $item ): array
 	{
@@ -172,6 +238,15 @@ trait Main_Trait_Admin {
 		return $view->render('select-period');
 	}
 	
+	public function renderSelectEShop() : string
+	{
+		
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'report', $this->report_controller->getSelectedReport() );
+		
+		return $view->render('select-eshop');
+	}
+	
 	
 	public function renderSelectSubReport() : string
 	{
@@ -184,71 +259,12 @@ trait Main_Trait_Admin {
 	}
 	
 	
-	protected function handle( Closure $controller_factory ) : string
+	public function renderChart_Line_DaysPerEShop( array $data ) : string
 	{
-		$content = Factory_MVC::getPageContentInstance();
-		$content->setModuleName( $this->module_manifest->getName() );
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'data', $data );
 		
-		/**
-		 * @var MVC_Controller $constroller
-		 */
-		$constroller = $controller_factory( $content );
+		return $view->render('chart/line/days-per-eshop');
 		
-		$content->setControllerAction( $constroller->resolve() );
-		$constroller->dispatch();
-		
-		return $content->getOutput();
 	}
-	
-	public function handleCustomerActivity( Customer $customer ) : string
-	{
-		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($customer) {
-			$constroller = new Controller_Customer( $content );
-			$constroller->setCustomer( $customer );
-			
-			return $constroller;
-		} );
-	}
-	
-	
-	public function handleProductAnalytics( Product $product ) : string
-	{
-		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($product) {
-			$constroller = new Controller_Product( $content );
-			$constroller->setProduct( $product );
-			
-			return $constroller;
-		} );
-	}
-	
-	public function handleCategoryAnalytics( Category $category ) : string
-	{
-		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($category) {
-			$constroller = new Controller_Category( $content );
-			$constroller->setCategory( $category );
-			
-			return $constroller;
-		} );
-	}
-	
-	public function handleSignpostAnalytics( Signpost $signpost ) : string
-	{
-		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($signpost) {
-			$constroller = new Controller_Signpost( $content );
-			$constroller->setSignpost( $signpost );
-			
-			return $constroller;
-		} );
-	}
-	
-	public function handleKindOfProductAnalytics( KindOfProduct $kind_of_product ) : string
-	{
-		return $this->handle( function( MVC_Page_Content_Interface $content ) use ($kind_of_product) {
-			$constroller = new Controller_KindOfProduct( $content );
-			$constroller->setKindOfProduct( $kind_of_product );
-			
-			return $constroller;
-		} );
-	}
-	
 }

@@ -9,9 +9,12 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\Autoloader;
 use Jet\Data_DateTime;
+use Jet\Http_Request;
 use Jet\IO_Dir;
 use Jet\MVC_View;
 use Jet\Tr;
+use JetApplication\EShop;
+use JetApplication\EShops;
 
 abstract class Report
 {
@@ -25,6 +28,8 @@ abstract class Report
 	protected Report_TimePeriod $time_period;
 	protected Main $module;
 	protected string $selected_subreport;
+	protected array $selected_eshop_keys = [];
+	
 	
 	protected ?MVC_View $view = null;
 	
@@ -59,6 +64,36 @@ abstract class Report
 		return $sub_reports;
 	}
 	
+	public function getSelectedEshopKeys(): array
+	{
+		return $this->selected_eshop_keys;
+	}
+	
+	
+	
+	protected function handleSelectedEShopKeys() : void
+	{
+		$all_eshop_keys = ['total'];
+		
+		foreach(EShops::getListSorted() as $eshop) {
+			$all_eshop_keys[] = $eshop->getKey();
+		}
+		$this->selected_eshop_keys = [];
+		
+		$GET = Http_Request::GET();
+		if($GET->exists('eshop')) {
+			 $keys = $GET->getRaw('eshop');
+			 if(is_array($keys)) {
+				 $this->selected_eshop_keys = array_intersect( $all_eshop_keys, $keys );
+			 }
+			 
+		}
+		
+		if(!$this->selected_eshop_keys) {
+			$this->selected_eshop_keys = $all_eshop_keys;
+		}
+		
+	}
 	
 	
 	public function init( Report_Controller $controller ) : void
@@ -166,5 +201,46 @@ abstract class Report
 		return $this->view->render( $this->selected_subreport );
 	}
 	
+	public function prepareDayMap() : array
+	{
+		$day = strtotime($this->date_from);
+		$end = strtotime($this->date_to);
+		
+		$map = [];
+		
+		do {
+			$map[date('Y-m-d', $day)] = 0;
+			$day += 86400;
+		} while($day <= $end);
+		
+		return $map;
+	}
+	
+	public function prepareDataPerShopPerDay( array $data, array $eshop_keys ) : array
+	{
+		
+		$res = [];
+		foreach($eshop_keys as $key) {
+			$res[$key] = $this->prepareDayMap();
+		}
+		
+		foreach($data as $row) {
+			$date = explode(' ', $row['date_time'])[0];
+			$eshop_code = $row['eshop_code'];
+			$locale = $row['locale'];
+			
+			$eshop_key = EShop::generateKey( $eshop_code, $locale );
+			
+			if(isset($res['total'])) {
+				$res['total'][$date] += 1;
+			}
+			
+			if(isset($res[$eshop_key])) {
+				$res[$eshop_key][$date] += 1;
+			}
+		}
+
+		return $res;
+	}
 	
 }

@@ -46,9 +46,19 @@ $date_to = $this->getRaw( 'date_to' );
 				if(in_array($key, ['from', 'to'])) {
 					continue;
 				}
-				?>
-				<input type="hidden" name="<?=$key?>" value="<?=Data_Text::htmlSpecialChars($value)?>">
-			<?php endforeach; ?>
+				
+				if(is_array($value)):
+					foreach($value as $v):
+						?>
+						<input type="hidden" name="<?=$key?>[]" value="<?=Data_Text::htmlSpecialChars($v)?>">
+					<?php
+					endforeach;
+				else:
+					?>
+					<input type="hidden" name="<?=$key?>" value="<?=Data_Text::htmlSpecialChars($value)?>">
+					<?php
+				endif;
+			endforeach; ?>
 			<div style="display: flex;align-items: center;justify-content: left;gap: 10px;margin: 5px;">
 				<div><?=Tr::_('Custom period:')?></div>
 				<input type="date" name="from" value="<?=$date_from->format('Y-m-d')?>" class="form-control" onchange="this.form.submit();" style="width: 150px;">

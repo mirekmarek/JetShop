@@ -364,4 +364,8 @@ return [
 	'Is filter' => '',
 	'Is default filter' => '',
 	'Filter priority' => '',
+	'Clone product' => '',
+	'Is sale' => '',
+	'Non-sale product relation:' => '',
+	'Deactivate after sell out' => '',
 ];

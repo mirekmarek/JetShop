@@ -261,4 +261,9 @@ return [
 	'Target locale' => 'Cílové národní prostředí',
 	'Product - kind of product is used' => 'Produkt – druh produktu, který se používá',
 	'Product - brand is used' => 'Produkt - značka je použita',
+	'Is sale' => '',
+	'Clone product' => '',
+	'New internal name:' => '',
+	'New internal code:' => '',
+	'Clone' => '',
 ];
