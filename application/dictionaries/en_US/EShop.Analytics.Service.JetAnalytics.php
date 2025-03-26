@@ -1,0 +1,21 @@
+<?php
+return [
+	'Jet Analytics' => '',
+	'User activity' => '',
+	'Analytics' => '',
+	'Sessions - activity' => '',
+	'Last 7 days' => '',
+	'Last 30 days' => '',
+	'Last 365 days' => '',
+	'Previous month' => '',
+	'Previous quarter' => '',
+	'Previous year' => '',
+	'Custom period:' => '',
+	'Summary' => '',
+	'Session details' => '',
+	'Orders' => '',
+	'Views' => '',
+	'Graph' => '',
+	'Details Per Day' => '',
+	'Total' => '',
+];
