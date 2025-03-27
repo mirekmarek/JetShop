@@ -17,7 +17,7 @@ return [
 	'Chart' => 'Graf',
 	'Set' => 'Nastavit',
 	'Sessions' => 'Návštěvy',
-	'Numbers per Day' => '',
-	'Customer logged in / not logged in' => '',
-	'Purchased / not purchased' => '',
+	'Numbers per Day' => 'Čísla po dnech',
+	'Customer logged in / not logged in' => 'Přihlášený / nepříhlášený zákazník',
+	'Purchased / not purchased' => 'Návštěva s / bez objednávky',
 ];

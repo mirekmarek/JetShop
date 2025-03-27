@@ -28,8 +28,10 @@ echo $module->renderSelectEShop();
 		$sum_yes = array_sum( $data_purchased[$key] );
 		$sum_not = array_sum( $data_not_purchased[$key] );
 		
+		/*
 		$sum_yes = rand( 1, 1000);
 		$sum_not = rand( 1, 1000);
+		*/
 		?>
 		<div class="card card-body">
 			<h3><?=Main::keyToTitle($key)?></h3>
