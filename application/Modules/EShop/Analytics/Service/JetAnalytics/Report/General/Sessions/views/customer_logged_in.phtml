@@ -7,6 +7,7 @@
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\MVC_View;
+use Jet\Tr;
 
 /**
  * @var MVC_View $this
@@ -46,8 +47,8 @@ foreach( array_keys($data_logged_in) as $key ):
 			type: 'pie',
 			data: {
 				labels: [
-					'Logged in',
-					'Not logged in',
+					'<?=Tr::_('Logged in')?>',
+					'<?=Tr::_('Not logged in')?>'
 				],
 				datasets: [{
 					label: '',
@@ -66,6 +67,4 @@ foreach( array_keys($data_logged_in) as $key ):
 endforeach;
 ?>
 </div>
-
-//echo $module->renderChart_Line_DaysPerEShop(  );
-
+<br><br><br><br><br><br>

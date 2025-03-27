@@ -7,6 +7,7 @@
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\MVC_View;
+use Jet\Tr;
 
 /**
  * @var MVC_View $this
@@ -46,8 +47,8 @@ echo $module->renderSelectEShop();
 				type: 'pie',
 				data: {
 					labels: [
-						'Purchased',
-						'Not Purchased',
+						'<?=Tr::_('Purchased')?>',
+						'<?=Tr::_('Not purchased')?>'
 					],
 					datasets: [{
 						label: '',
@@ -66,6 +67,4 @@ echo $module->renderSelectEShop();
 	endforeach;
 	?>
 </div>
-
-//echo $module->renderChart_Line_DaysPerEShop(  );
-
+<br><br><br><br><br><br>
