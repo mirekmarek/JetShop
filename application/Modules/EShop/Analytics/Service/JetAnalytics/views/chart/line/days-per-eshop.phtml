@@ -9,8 +9,6 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\Data_DateTime;
 use Jet\Locale;
 use Jet\MVC_View;
-use Jet\Tr;
-use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
@@ -64,7 +62,7 @@ foreach($data as $key=>$_items) {
 		$items[$labels[$date]] = $v;
 	}
 	
-	$label = $key=='total' ? Tr::_('Total') : EShops::get($key)?->getName()??$key;
+	$label = strip_tags( Main::keyToTitle( $key ) );
 	
 	$data_set[] = [
 		'label' => $label,

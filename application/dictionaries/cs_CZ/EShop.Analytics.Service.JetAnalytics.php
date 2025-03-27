@@ -1,9 +1,10 @@
 <?php
 return [
+	'Jet Analytics' => 'Jet Analytika',
 	'Analytics' => 'Analytika',
 	'Summary' => 'Sumář',
 	'Graph' => 'Graf',
-	'Details Per Day' => 'Detaily po dnes',
+	'Details Per Day' => 'Detaily po dnech',
 	'Views' => 'Zobrazení',
 	'Last 7 days' => 'Posledních 7 dní',
 	'Last 30 days' => 'Posledních 30 dní',
@@ -15,4 +16,8 @@ return [
 	'Total' => 'Celkem',
 	'Chart' => 'Graf',
 	'Set' => 'Nastavit',
+	'Sessions' => 'Návštěvy',
+	'Numbers per Day' => '',
+	'Customer logged in / not logged in' => '',
+	'Purchased / not purchased' => '',
 ];

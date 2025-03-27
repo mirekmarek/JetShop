@@ -8,6 +8,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\Http_Request;
 use Jet\MVC_View;
+use Jet\Tr;
 use Jet\UI_tabs;
 
 /**
@@ -15,6 +16,11 @@ use Jet\UI_tabs;
  */
 
 $sub_reports = $this->getRaw('sub-reports');
+
+foreach($sub_reports as $key=>$title) {
+	$sub_reports[$key] = Tr::_( $title );
+}
+
 if(count($sub_reports) < 2) {
 	return;
 }

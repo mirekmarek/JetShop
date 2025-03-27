@@ -6,13 +6,30 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
-use Jet\MVC_Controller_Default;
 
-class Controller_Main extends MVC_Controller_Default {
+class Controller_Main extends Report_Controller
+{
 	
 	public function default_Action() : void
 	{
+		$this->output('general');
+	}
+
 	
+	public function getReportsList(): array
+	{
+		return Report_General::getList();
+	}
+	
+	protected function preinitReport(): void
+	{
+	}
+	
+	protected function output( string $view_script ): void
+	{
+		$output = $this->view->render( $view_script );
+		
+		$this->content->output( $output );
 	}
 	
 }

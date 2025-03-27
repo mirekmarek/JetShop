@@ -20,24 +20,19 @@ class Report_Product_Views extends Report_Product
 	public function prepare_summary() : void
 	{
 		$data = $this->getRawData();
-		//var_dump($data);
-		//TODO:
+		$this->view->setVar('data', $data);
 	}
 	
 	public function prepare_chart() : void
 	{
-		$this->handleSelectedEShopKeys();
-		
 		$data = $this->getRawData();
-		
 		$this->view->setVar('data', $data);
 	}
 	
 	public function prepare_details_per_day() : void
 	{
 		$data = $this->getRawData();
-		//TODO:
-		
+		$this->view->setVar('data', $data);
 	}
 	
 	

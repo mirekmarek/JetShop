@@ -9,10 +9,13 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\Factory_MVC;
 use Jet\MVC_Controller;
 use Jet\MVC_Page_Content_Interface;
+use Jet\Tr;
+use Jet\UI;
 use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\Category;
 use JetApplication\Customer;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\EShops;
 use JetApplication\KindOfProduct;
 use JetApplication\Product;
 use JetApplication\Signpost;
@@ -267,4 +270,38 @@ trait Main_Trait_Admin {
 		return $view->render('chart/line/days-per-eshop');
 		
 	}
+	
+	
+	public function renderTable_Line_DaysPerEShop( array $data ) : string
+	{
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'data', $data );
+		
+		return $view->render('table/days-per-eshop');
+		
+	}
+	
+	public function renderTable_Line_ViewsSummary( array $data ) : string
+	{
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'data', $data );
+		
+		return $view->render('table/views-summary');
+		
+	}
+	
+	public static function keyToTitle( string $key ) : string
+	{
+		if($key=='total') {
+			return Tr::_('Total');
+		}
+
+		$eshop = EShops::get($key);
+		if($eshop) {
+			return UI::flag($eshop->getLocale()).' '.EShops::get($key)->getName();
+		}
+		
+		return $key;
+	}
+	
 }

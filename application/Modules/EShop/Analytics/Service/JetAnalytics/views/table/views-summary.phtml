@@ -1,0 +1,45 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Locale;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var array $data
+ */
+
+$data = $this->getRaw('data');
+
+$total = [];
+$number_of_days = null;
+
+foreach($data as $key=>$days) {
+	if($number_of_days === null) {
+		$number_of_days = count($days);
+	}
+	
+	$total[$key] = 0;
+	foreach($days as $day=>$views) {
+		$total[$key] += $views;
+	}
+	
+}
+?>
+
+<div style="padding: 10px;width: 400px;">
+	<table class="table table-borderless">
+		<?php foreach ($total as $key=>$number_of_views): ?>
+			<tr>
+				<td nowrap=""><?=Main::keyToTitle($key)?></td>
+				<td><b><?=Locale::int($number_of_views)?></b></td>
+				<td width="100%"></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+</div>

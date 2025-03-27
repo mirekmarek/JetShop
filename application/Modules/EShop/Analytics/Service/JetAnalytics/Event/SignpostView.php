@@ -11,8 +11,8 @@ use Jet\DataModel_Definition;
 use JetApplication\Signpost_EShopData;
 
 #[DataModel_Definition(
-	name: 'ja_event_category_view',
-	database_table_name: 'ja_event_category_view',
+	name: 'ja_event_signpost_view',
+	database_table_name: 'ja_event_signpost_view',
 )]
 class Event_SignpostView extends Event
 {

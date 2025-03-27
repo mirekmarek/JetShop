@@ -1,0 +1,71 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$data_logged_in = $this->getRaw('data_logged_in');
+$data_not_logged_in = $this->getRaw('data_not_logged_in');
+
+echo $module->renderSelectEShop();
+?>
+<div style="display: grid;grid-template-columns: repeat(auto-fill, 350px);gap: 20px;">
+<?php
+foreach( array_keys($data_logged_in) as $key ):
+	$sum_yes = array_sum( $data_logged_in[$key] );
+	$sum_not = array_sum( $data_not_logged_in[$key] );
+	
+	/*
+	$sum_logged_in = rand( 1, 1000);
+	$sum_not_logged_in = rand( 1, 1000);
+	*/
+	?>
+	<div class="card card-body">
+		<h3><?=Main::keyToTitle($key)?></h3>
+		<div style="width: 300px;height: 300px;">
+			<canvas id="chart-canvas-total-<?=$key?>"></canvas>
+		</div>
+	</div>
+	
+	
+	<script>
+		new Chart(document.getElementById('chart-canvas-total-<?=$key?>'), {
+			type: 'pie',
+			data: {
+				labels: [
+					'Logged in',
+					'Not logged in',
+				],
+				datasets: [{
+					label: '',
+					data: [<?=$sum_yes?>, <?=$sum_not?>],
+					backgroundColor: [
+						'rgb(54, 162, 235)',
+						'rgb(255, 99, 132)',
+					],
+					hoverOffset: 4
+				}]
+			}
+		});
+	</script>
+
+	<?php
+endforeach;
+?>
+</div>
+
+//echo $module->renderChart_Line_DaysPerEShop(  );
+

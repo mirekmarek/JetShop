@@ -1,0 +1,60 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\Locale;
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var array $data
+ */
+
+$data = $this->getRaw('data');
+
+$days = null;
+?>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th></th>
+		<?php foreach ($data as $key=>$items):
+			if($days===null) {
+				$days = array_keys( $items );
+			}
+			?>
+			<th>
+				<?=Main::keyToTitle($key)?>
+			</th>
+		<?php endforeach; ?>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach($days as $day):
+		
+		$date = new Data_DateTime($day);
+		$ws = $date->format('w');
+		
+		$row_class = match ($ws) {
+			'0', '6' => 'table-info',
+			default => ''
+		};
+
+		?>
+		<tr class="<?=$row_class?>">
+			<td><?=Locale::date( $date, Locale::DATE_TIME_FORMAT_SHORT )?></td>
+			<?php foreach ($data as $key=>$items): ?>
+				<td>
+					<?=$data[$key][$day]?>
+				</td>
+			<?php endforeach; ?>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>

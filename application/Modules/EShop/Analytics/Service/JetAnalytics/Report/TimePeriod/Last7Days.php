@@ -13,7 +13,7 @@ class Report_TimePeriod_Last7Days extends Report_TimePeriod
 	
 	public function __construct()
 	{
-		$this->setupFrom('-7 days');
+		$this->setupFrom('-6 days');
 		$this->setupTo('now');
 	}
 }

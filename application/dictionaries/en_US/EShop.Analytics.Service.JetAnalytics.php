@@ -18,4 +18,6 @@ return [
 	'Graph' => '',
 	'Details Per Day' => '',
 	'Total' => '',
+	'Chart' => '',
+	'Set' => '',
 ];

@@ -13,7 +13,7 @@ class Report_TimePeriod_Last365Days extends Report_TimePeriod
 	
 	public function __construct()
 	{
-		$this->setupFrom('-365 days');
+		$this->setupFrom('-364 days');
 		$this->setupTo('now');
 	}
 }

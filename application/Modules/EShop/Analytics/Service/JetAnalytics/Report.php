@@ -56,12 +56,7 @@ abstract class Report
 	
 	public function getSubReports() : array
 	{
-		$sub_reports = [];
-		foreach($this->sub_reports as $key=>$title) {
-			$sub_reports[$key] = Tr::_($title);
-		}
-		
-		return $sub_reports;
+		return $this->sub_reports;
 	}
 	
 	public function getSelectedEshopKeys(): array
@@ -104,6 +99,8 @@ abstract class Report
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->module = $controller->getModule();
 		$this->selected_subreport = $controller->getSelectedSubreport();
+		
+		$this->handleSelectedEShopKeys();
 		
 		$subreports = array_keys( $this->getSubReports() );
 		
@@ -211,12 +208,12 @@ abstract class Report
 		do {
 			$map[date('Y-m-d', $day)] = 0;
 			$day += 86400;
-		} while($day <= $end);
+		} while($day < $end);
 		
 		return $map;
 	}
 	
-	public function prepareDataPerShopPerDay( array $data, array $eshop_keys ) : array
+	public function prepareDataPerShopPerDay( array $data, array $eshop_keys, $date_column='date_time' ) : array
 	{
 		
 		$res = [];
@@ -225,18 +222,19 @@ abstract class Report
 		}
 		
 		foreach($data as $row) {
-			$date = explode(' ', $row['date_time'])[0];
+			$date = explode(' ', $row[$date_column])[0];
+			
 			$eshop_code = $row['eshop_code'];
 			$locale = $row['locale'];
 			
 			$eshop_key = EShop::generateKey( $eshop_code, $locale );
 			
 			if(isset($res['total'])) {
-				$res['total'][$date] += 1;
+				$res['total'][$date]++;
 			}
 			
 			if(isset($res[$eshop_key])) {
-				$res[$eshop_key][$date] += 1;
+				$res[$eshop_key][$date]++;
 			}
 		}
 

@@ -12,13 +12,12 @@ use Jet\MVC_View;
  * @var MVC_View $this
  * @var Main $module
  * @var Report $report
- * @var array $data
  */
 
 $module = $this->getRaw('module');
 $report = $this->getRaw('report');
-$data = $this->getRaw('data');
 
-//echo $module->renderSelectEShop();
+echo $module->renderSelectEShop();
 
-echo $module->renderTable_Line_ViewsSummary($data);
+echo $module->renderChart_Line_DaysPerEShop( $this->getRaw('data') );
+

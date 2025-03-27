@@ -111,6 +111,7 @@ class Application_Admin
 		
 		Locale::setCurrentLocale( $selected_locale );
 		Tr::setCurrentLocale( $selected_locale );
+		$router->setLocale( $selected_locale );
 	}
 
 	/**
