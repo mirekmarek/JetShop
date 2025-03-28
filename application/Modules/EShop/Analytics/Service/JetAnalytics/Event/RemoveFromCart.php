@@ -8,6 +8,8 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
 use JetApplication\Pricelists;
 use JetApplication\ShoppingCart_Item;
 
@@ -65,7 +67,7 @@ class Event_RemoveFromCart extends Event
 	
 	public function cancelDefaultEvent(): bool
 	{
-		return false;
+		return true;
 	}
 	
 	public function init( ShoppingCart_Item $cart_item ) : void
@@ -83,4 +85,30 @@ class Event_RemoveFromCart extends Event
 		
 	}
 	
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Product removed from the cart');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'danger';
+	}
+	
+	public function getIcon() : string
+	{
+		return 'trash';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		return Admin_Managers::Product()->renderItemName( $this->product_id );
+	}
+	
+	public function showLongDetails(): string
+	{
+		return '';
+	}
 }

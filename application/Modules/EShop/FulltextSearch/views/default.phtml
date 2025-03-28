@@ -75,4 +75,4 @@ $categories = $this->getRaw('categories');
 	<?=$products->render()?>
 <?php endif; ?>
 
-<?=EShop_Managers::Analytics()->search( $this->getRaw('q'), $this->getRaw('result_ids') )?>
+<?=EShop_Managers::Analytics()->search( $this->getRaw('q'), $this->getRaw('result_ids'), $products?->getListing() )?>

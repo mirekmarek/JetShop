@@ -79,31 +79,6 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 	}
 	
 	
-	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
-	{
-		$pricelist = Pricelists::getCurrent();
-		
-		$data = [
-			'content_ids' => [],
-			'contents' => [],
-			'content_type' => 'product',
-			'value' => 0.0,
-			'currency' => $pricelist->getCurrency()->getCode()
-		];
-		
-		foreach($list->getVisibleProducts() as $product) {
-			$data['content_ids'][] = $product->getId();
-			$data['value'] += $product->getPrice( $pricelist );
-			$data['contents'][] = [
-				'id' => $product->getId(),
-				'quantity' => 1
-			];
-		}
-		
-		
-		return $this->generateEvent( 'ViewContent', $data );
-	}
-	
 	public function viewProductDetail( Product_EShopData $product ) : string
 	{
 		$pricelist = Pricelists::getCurrent();
@@ -179,9 +154,31 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return '';
 	}
 	
-	public function viewCategory( Category_EShopData $category ): string
+	public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing = null ): string
 	{
-		return '';
+		$pricelist = Pricelists::getCurrent();
+		
+		$data = [
+			'content_ids' => [],
+			'contents' => [],
+			'content_type' => 'product',
+			'value' => 0.0,
+			'currency' => $pricelist->getCurrency()->getCode()
+		];
+		
+		if($product_listing) {
+			foreach($product_listing->getVisibleProducts() as $product) {
+				$data['content_ids'][] = $product->getId();
+				$data['value'] += $product->getPrice( $pricelist );
+				$data['contents'][] = [
+					'id' => $product->getId(),
+					'quantity' => 1
+				];
+			}
+		}
+		
+		
+		return $this->generateEvent( 'ViewContent', $data );
 	}
 	
 	public function customEvent( string $evetnt, array $event_data = [] ): string
@@ -222,13 +219,13 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 	}
 	
 	
-	public function searchWhisperer( string $q, array $result_ids ) : string
+	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
 		//TODO:
 		return '';
 	}
 	
-	public function search( string $q, array $result_ids ) : string
+	public function search( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
 		//TODO:
 		return '';

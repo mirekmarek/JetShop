@@ -68,4 +68,58 @@ class Session_EventMap extends DataModel
 		$item->save();
 		return $item;
 	}
+	
+	/**
+	 * @return static[]
+	 */
+	public static function getMap( Session $session ) : array
+	{
+		return static::fetch(
+			[''=>[
+				'session_id' => $session->getId(),
+			]],
+			order_by: '-id'
+		);
+	}
+	
+	public function getId(): int
+	{
+		return $this->id;
+	}
+	
+	public function getSessionId(): int
+	{
+		return $this->session_id;
+	}
+	
+	public function getSession(): Session
+	{
+		return $this->session;
+	}
+	
+	public function getDateTime(): ?Data_DateTime
+	{
+		return $this->date_time;
+	}
+	
+	public function getEventType(): string
+	{
+		return $this->event_type;
+	}
+	
+	public function getEventId(): int
+	{
+		return $this->event_id;
+	}
+	
+	public function getEvent(): Event
+	{
+		/**
+		 * @var Event $class
+		 */
+		$class = Event::class.'_'.$this->getEventType();
+		
+		return $class::load( $this->event_id );
+	}
+	
 }

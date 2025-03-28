@@ -6,6 +6,7 @@
  */
 namespace JetApplicationModule\EShop\ProductListing;
 
+use Closure;
 use Jet\Application;
 use Jet\Http_Request;
 use JetApplication\Product_EShopData;
@@ -19,24 +20,38 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 	use EShop_ModuleUsingTemplate_Trait;
 	
 	protected ProductListing $listing;
-	protected ?string $optional_URL_parameter;
+	protected string $optional_URL_parameter = '';
 	protected int $category_id = 0;
-	protected string $category_name = '';
+	protected ?Closure $ajax_event_handler = null;
 	
-	public function init( array $product_ids, int $category_id=0, string $category_name='', ?string $optional_URL_parameter = null ) : void
+	public function init( array $product_ids ) : void
+	{
+		$this->listing = new ProductListing( $product_ids );
+	}
+	
+	public function setOptionalURLParameter( ?string $optional_URL_parameter ): void
+	{
+		$this->optional_URL_parameter = $optional_URL_parameter;
+	}
+	
+	public function setCategoryId( int $category_id ): void
+	{
+		$this->category_id = $category_id;
+		$this->listing->setCategoryId( $category_id );
+	}
+	
+	
+	public function setAjaxEventHandler( Closure $ajax_event_handler ): void
+	{
+		$this->ajax_event_handler = $ajax_event_handler;
+	}
+	
+	
+	public function handle() : void
 	{
 		header('Access-Control-Allow-Headers:X-Requested-With, Content-Type, Authorization');
 		header('Access-Control-Allow-Methods:GET, POST, PUT, DELETE, OPTIONS');
 		header('Access-Control-Allow-Origin:*');
-		
-		$this->optional_URL_parameter = $optional_URL_parameter;
-		$this->listing = new ProductListing( $product_ids );
-		$this->category_id = $category_id;
-		$this->category_name = $category_name;
-		
-		if($category_id) {
-			$this->listing->setCategoryId( $category_id );
-		}
 		
 		$GET = Http_Request::GET();
 		
@@ -113,7 +128,6 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 			$view->setVar('listing', $this->listing);
 			$view->setVar('optional_URL_parameter', $this->optional_URL_parameter);
 			$view->setVar('c_id', $this->category_id);
-			$view->setVar('c_name', $this->category_name);
 			
 			if(isset(Http_Request::headers()['Listing-Ajax-Only-Products'])) {
 				echo $view->render( 'list' );
@@ -121,11 +135,24 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 				echo $view->render( 'listing' );
 			}
 			
+			if($this->ajax_event_handler) {
+				$handler = $this->ajax_event_handler;
+				
+				$handler( $this );
+			}
+			
 			Application::end();
 		}
 		
-		
 	}
+	
+	
+	public function getListing(): ProductListing
+	{
+		return $this->listing;
+	}
+	
+	
 	
 	public function render() : string
 	{

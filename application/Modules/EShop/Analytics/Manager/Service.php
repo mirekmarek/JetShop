@@ -8,11 +8,13 @@ namespace JetApplicationModule\EShop\Analytics\Manager;
 
 
 use JetApplication\CashDesk;
+use JetApplication\Category_EShopData;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
+use JetApplication\Signpost_EShopData;
 
 abstract class Service {
 	
@@ -37,59 +39,37 @@ abstract class Service {
 	
 	
 	
-	public function header() : string
-	{
-		return '';
-	}
+	abstract public function header() : string;
 	
-	public function documentStart() : string
-	{
-		return '';
-	}
+	abstract public function documentStart() : string;
 	
-	public function documentEnd() : string
-	{
-		return '';
-	}
+	abstract public function documentEnd() : string;
 	
-	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
-	{
-		return '';
-	}
+	abstract public function catchConversionSourceInfo() : void;
 	
-	public function viewProductDetail( Product_EShopData $product ) : string
-	{
-		return '';
-	}
+	abstract public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing=null  ) : string;
 	
-	public function addToCart( ShoppingCart_Item $new_cart_item ) : string
-	{
-		return '';
-	}
+	abstract public function viewSignpost( Signpost_EShopData $signpost ) : string;
 	
-	public function removeFromCart( ShoppingCart_Item $cart_item ): string
-	{
-		return '';
-	}
+	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
 	
-	public function viewCart( ShoppingCart $cart ) : string
-	{
-		return '';
-	}
+	abstract public function viewProductDetail( Product_EShopData $product ) : string;
 	
-	public function beginCheckout( CashDesk $cash_desk ) : string
-	{
-		return '';
-	}
+	abstract public function addToCart( ShoppingCart_Item $new_cart_item ) : string;
 	
-	public function checkoutInProgress( CashDesk $cash_desk ) : string
-	{
-		return '';
-	}
+	abstract public function removeFromCart( ShoppingCart_Item $cart_item ): string;
 	
-	public function purchase( Order $order ) : string
-	{
-		return '';
-	}
+	abstract public function viewCart( ShoppingCart $cart ) : string;
+	
+	abstract public function beginCheckout( CashDesk $cash_desk ) : string;
+	
+	abstract public function checkoutInProgress( CashDesk $cash_desk ) : string;
+	
+	abstract public function purchase( Order $order ) : string;
+	
+	abstract public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing=null ) : string;
+	
+	abstract public function search( string $q, array $result_ids, ?ProductListing $product_listing=null  ) : string;
+	
 	
 }

@@ -79,8 +79,17 @@ abstract class Event extends DataModel implements EShopEntity_HasEShopRelation_I
 		return $this->session_id;
 	}
 	
+	abstract public function getTitle() : string;
 	
+	abstract public function getCssClass() : string;
+	
+	abstract public function getIcon() : string;
 	
 	abstract public function cancelDefaultEvent() : bool;
+	
+	abstract public function showShortDetails() : string;
+
+	
+	abstract public function showLongDetails() : string;
 
 }

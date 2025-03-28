@@ -13,6 +13,7 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use JetApplication\Category;
 use JetApplication\Category_EShopData;
+use JetApplication\EShop_Managers_ProductListing;
 use JetApplication\Pricelists;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
@@ -37,22 +38,6 @@ class Controller_Main extends MVC_Controller_Default
 		$categories = [];
 		
 		if(strlen($q)>3) {
-			$product_ids = Index::search(
-				eshop: EShops::getCurrent(),
-				entity_type: Product::getEntityType(),
-				search_string: $q
-			);
-			if($product_ids) {
-				$products = EShop_Managers::ProductListing();
-				$products->init(
-					product_ids: $product_ids,
-					category_id: 0,
-					category_name: 'search_result',
-					optional_URL_parameter: 'q='.rawurlencode($GET->getRaw('q'))
-				);
-				
-				$result_ids['products'] = $product_ids;
-			}
 			
 			$category_ids = Index::search(
 				eshop: EShops::getCurrent(),
@@ -71,12 +56,32 @@ class Controller_Main extends MVC_Controller_Default
 				
 				$categories[$c_id] = $category;
 			}
+			if($categories) {
+				$result_ids['categories'] = array_keys($categories);
+			}
+			
+			$product_ids = Index::search(
+				eshop: EShops::getCurrent(),
+				entity_type: Product::getEntityType(),
+				search_string: $q
+			);
+			if($product_ids) {
+				$result_ids['products'] = $product_ids;
+				
+				$products = EShop_Managers::ProductListing();
+				$products->init( $product_ids );
+				$products->setOptionalURLParameter('q='.rawurlencode($GET->getRaw('q')) );
+				$products->setAjaxEventHandler( function(EShop_Managers_ProductListing $listing) use ($q, $result_ids) {
+					EShop_Managers::Analytics()?->search( $q, $result_ids, $listing->getListing() );
+				} );
+				
+				$products->handle();
+				
+			}
+			
 		}
 		
 		
-		if($categories) {
-			$result_ids['categories'] = array_keys($categories);
-		}
 		
 		
 		$this->view->setVar('q', $q);

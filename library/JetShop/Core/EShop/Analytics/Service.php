@@ -58,13 +58,11 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
 	abstract public function documentEnd() : string;
 	
-	abstract public function viewCategory( Category_EShopData $category ) : string;
+	abstract public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing=null ) : string;
 	
 	abstract public function viewSignpost( Signpost_EShopData $signpost ) : string;
 	
 	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
-	
-	abstract public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string;
 	
 	abstract public function viewProductDetail( Product_EShopData $product ) : string;
 	
@@ -80,10 +78,8 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
 	abstract public function purchase( Order $order ) : string;
 	
-	abstract public function generateEvent( string $event, array $event_data ) : string;
+	abstract public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing=null ) : string;
 	
-	abstract public function searchWhisperer( string $q, array $result_ids ) : string;
-	
-	abstract public function search( string $q, array $result_ids ) : string;
+	abstract public function search( string $q, array $result_ids, ?ProductListing $product_listing=null ) : string;
 	
 }

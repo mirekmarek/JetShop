@@ -1,0 +1,70 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_icon;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ * @var Session $session
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$session = $this->getRaw('session');
+if(!$session):
+	?>
+	<h2><?=Tr::_('Sessions list')?></h2>
+	<?php
+	echo $this->getRaw('grid');
+	return;
+endif;
+?>
+<div class="toolbar">
+	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(unset_GET_params: ['session_id']))?>
+</div>
+
+<h2><?=Tr::_('Session detail #%ID%', ['ID'=>$session->getId()])?></h2>
+
+<div>
+	<?php foreach( $session->getEventMap() as $event_map_item):
+		$event = $event_map_item->getEvent();
+	
+		$long_details = $event->showLongDetails();
+		?>
+	<div class="card card-body bg-<?=$event->getCssClass()?>" style="margin: 10px;padding: 10px;">
+		<div style="display: grid;grid-template-columns: 40px 300px 1fr;align-items: center;gap: 10px;">
+			<div style="text-align: center"><?=UI::icon($event->getIcon())->setSize(UI_icon::SIZE_EXTRA_LARGE)?></div>
+			<div>
+				<div><?=$event->getTitle()?></div>
+				<span style="font-size: 0.6rem;opacity: 0.7"><?=Locale::dateAndTime( $event_map_item->getDateTime(), Locale::DATE_TIME_FORMAT_SHORT )?></span>
+			</div>
+			<div>
+				<?=$event->showShortDetails()?>
+			</div>
+		</div>
+		
+		<?php if($long_details): ?>
+		<div style="padding-left: 20px;">
+			<?=UI::button(Tr::_('Show details'))->setOnClick("$('#event_details_{$event->getId()}').toggle();")->setClass(UI_button::CLASS_LINK);?>
+		</div>
+		<div style="padding: 20px;display:none;" id="event_details_<?=$event->getId()?>">
+			<?=$long_details?>
+		</div>
+		<?php endif; ?>
+	</div>
+	<?php endforeach; ?>
+</div>

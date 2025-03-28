@@ -153,7 +153,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return '';
 	}
 	
-	public function viewCategory( Category_EShopData $category ): string
+	public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing = null ): string
 	{
 		return '';
 	}
@@ -374,13 +374,13 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return '';
 	}
 	
-	public function searchWhisperer( string $q, array $result_ids ) : string
+	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
 		//TODO:
 		return '';
 	}
 	
-	public function search( string $q, array $result_ids ) : string
+	public function search( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
 		//TODO:
 		return '';

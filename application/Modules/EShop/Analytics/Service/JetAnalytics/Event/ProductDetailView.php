@@ -8,6 +8,8 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
 use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
@@ -16,7 +18,6 @@ use JetApplication\Product_EShopData;
 )]
 class Event_ProductDetailView extends Event
 {
-	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true
@@ -32,5 +33,31 @@ class Event_ProductDetailView extends Event
 	{
 		$this->product_id = $product->getId();
 	}
-
+	
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Product detail view');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'info';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		return Admin_Managers::Product()->renderItemName( $this->product_id );
+	}
+	
+	public function getIcon(): string
+	{
+		return 'face-grin-wide';
+	}
+	
+	public function showLongDetails(): string
+	{
+		return '';
+	}
 }

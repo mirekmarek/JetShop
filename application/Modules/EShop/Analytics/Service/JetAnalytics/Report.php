@@ -22,6 +22,7 @@ abstract class Report
 	protected ?string $title = null;
 	protected bool $is_default = false;
 	protected array $sub_reports;
+	protected int $priority = 0;
 	
 	protected Data_DateTime $date_from ;
 	protected Data_DateTime $date_to;
@@ -44,6 +45,13 @@ abstract class Report
 		return static::KEY;
 	}
 	
+	public function getPriority(): int
+	{
+		return $this->priority;
+	}
+	
+	
+	
 	public function getTitle() : string
 	{
 		return Tr::_($this->title);
@@ -62,6 +70,36 @@ abstract class Report
 	public function getSelectedEshopKeys(): array
 	{
 		return $this->selected_eshop_keys;
+	}
+	
+	public function isIsDefault(): bool
+	{
+		return $this->is_default;
+	}
+	
+	public function getDateFrom(): Data_DateTime
+	{
+		return $this->date_from;
+	}
+	
+	public function getDateTo(): Data_DateTime
+	{
+		return $this->date_to;
+	}
+	
+	public function getTimePeriod(): Report_TimePeriod
+	{
+		return $this->time_period;
+	}
+	
+	public function getModule(): Main
+	{
+		return $this->module;
+	}
+	
+	public function getSelectedSubreport(): string
+	{
+		return $this->selected_subreport;
 	}
 	
 	
@@ -132,6 +170,11 @@ abstract class Report
 			
 			$list[$report::getKey()] = $report;
 		}
+		
+		uasort( $list, function( Report $a, Report $b ) {
+			return $a->getPriority() <=> $b->getPriority();
+			
+		} );
 		
 		return $list;
 	}

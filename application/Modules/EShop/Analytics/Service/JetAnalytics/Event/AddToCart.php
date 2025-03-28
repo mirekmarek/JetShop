@@ -8,6 +8,8 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
 use JetApplication\Pricelists;
 use JetApplication\ShoppingCart_Item;
 
@@ -65,7 +67,7 @@ class Event_AddToCart extends Event
 	
 	public function cancelDefaultEvent(): bool
 	{
-		return false;
+		return true;
 	}
 	
 	public function init( ShoppingCart_Item $new_cart_item ) : void
@@ -81,6 +83,32 @@ class Event_AddToCart extends Event
 		$this->selected_gift_id = $new_cart_item->getSelectedGiftId();
 		$this->auto_offer_id = $new_cart_item->getAutoOfferId();
 		
+		$this->session->setShoppingCartUsed( true );
 	}
 	
+	public function getTitle(): string
+	{
+		return Tr::_('Product added to cart');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'success';
+	}
+	
+	public function getIcon() : string
+	{
+		return 'cart-plus';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		return Admin_Managers::Product()->renderItemName( $this->product_id );
+	}
+	
+	public function showLongDetails(): string
+	{
+		return '';
+	}
 }

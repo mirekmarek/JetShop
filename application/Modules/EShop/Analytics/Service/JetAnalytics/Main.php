@@ -60,12 +60,12 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 		return '';
 	}
 	
-	public function viewCategory( Category_EShopData $category ): string
+	public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing = null ): string
 	{
 		$this->initSession();
 		if($this->session) {
 			$event = Event_CategoryView::create();
-			$event->init( $category );
+			$event->init( $category, $product_listing );
 			$this->session->addEvent( $event );
 		}
 		
@@ -84,18 +84,6 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 		return '';
 	}
 	
-	
-	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
-	{
-		$this->initSession();
-		if($this->session) {
-			$event = Event_ProductsListView::create();
-			$event->init( $list, $category_name, $category_name );
-			$this->session->addEvent( $event );
-		}
-		
-		return '';
-	}
 	
 	public function viewProductDetail( Product_EShopData $product ) : string
 	{
@@ -180,7 +168,7 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 		return '';
 	}
 	
-	public function searchWhisperer( string $q, array $result_ids ) : string
+	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
 		$this->initSession();
 		if($this->session) {
@@ -192,12 +180,12 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 		return '';
 	}
 	
-	public function search( string $q, array $result_ids ) : string
+	public function search( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
 		$this->initSession();
 		if($this->session) {
 			$event = Event_Search::create();
-			$event->init( $q, $result_ids );
+			$event->init( $q, $result_ids, $product_listing );
 			$this->session->addEvent( $event );
 		}
 		return '';
@@ -213,5 +201,5 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 		}
 		return '';
 	}
-	
+
 }

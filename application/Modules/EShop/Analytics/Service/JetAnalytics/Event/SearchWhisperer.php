@@ -7,6 +7,7 @@
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel_Definition;
+use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'ja_event_search_whisperer',
@@ -14,5 +15,22 @@ use Jet\DataModel_Definition;
 )]
 class Event_SearchWhisperer extends Event_Search
 {
-
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Search - whisperer');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'light';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		//TODO:
+		return '';
+	}
+	
 }

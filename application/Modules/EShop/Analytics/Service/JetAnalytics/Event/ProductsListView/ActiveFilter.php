@@ -39,10 +39,17 @@ class Event_ProductsListView_ActiveFilter extends DataModel_Related_1toN impleme
 	)]
 	protected ?Data_DateTime $date_time = null;
 	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
 		related_to: 'main.id'
+	)]
+	protected int $listing_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
 	)]
 	protected int $event_id = 0;
 	
@@ -85,12 +92,18 @@ class Event_ProductsListView_ActiveFilter extends DataModel_Related_1toN impleme
 		return $this->id;
 	}
 	
-	public static function createNew( Event $event, ProductFilter_Filter $filter ) : static
+	public function setEvent( Event $event ) : void
+	{
+		$this->setEshop( $event->getEshop() );
+		$this->event_id = $event->getId();
+		$this->session_id = $event->getSessionId();
+		$this->date_time = $event->getDateTime();
+		
+	}
+	
+	public static function createNew( ProductFilter_Filter $filter ) : static
 	{
 		$item = new static();
-		$item->setEshop( $event->getEshop() );
-		$item->session_id = $event->getSessionId();
-		$item->date_time = $event->getDateTime();
 		
 		$item->filter_key = $filter->getKey();
 		

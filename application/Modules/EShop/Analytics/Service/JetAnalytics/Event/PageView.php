@@ -13,6 +13,7 @@ use Jet\DataModel;
 use Jet\Http_Request;
 use Jet\Locale;
 use Jet\MVC;
+use Jet\Tr;
 
 #[DataModel_Definition(
 	name: 'ja_event_page_view',
@@ -76,5 +77,32 @@ class Event_PageView extends Event {
 	public function cancelDefaultEvent(): bool
 	{
 		return false;
+	}
+	
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Common page view');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'light';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		return '<a href="'.$this->URL.'" target="_blank">'.$this->URL.'</a>';
+	}
+	
+	public function getIcon(): string
+	{
+		return 'eye';
+	}
+	
+	public function showLongDetails(): string
+	{
+		return '';
 	}
 }

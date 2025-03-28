@@ -8,6 +8,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Tr;
 use JetApplication\Order;
 
 #[DataModel_Definition(
@@ -38,6 +39,8 @@ class Event_Purchase extends Event_CheckoutStarted
 	public function init( Order $order ) : void
 	{
 		parent::init( $order );
+		
+		$this->session->setPurchased( true );
 	}
 	
 	protected function initItems( Order $order ) : void
@@ -46,4 +49,28 @@ class Event_Purchase extends Event_CheckoutStarted
 			$this->items[] = Event_Purchase_Item::createNew( $this, $item );
 		}
 	}
+	
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Purchase');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'success';
+	}
+	
+	public function getItems() : string
+	{
+		return 'thumbs-up';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		//TODO:
+		return '';
+	}
+	
 }

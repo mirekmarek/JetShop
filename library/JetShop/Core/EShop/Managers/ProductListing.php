@@ -10,6 +10,8 @@ namespace JetShop;
 use Jet\Application_Module;
 use JetApplication\Manager_MetaInfo;
 use JetApplication\Product_EShopData;
+use JetApplication\ProductListing;
+use Closure;
 
 #[Manager_MetaInfo(
 	group: Manager_MetaInfo::GROUP_ESHOP,
@@ -20,9 +22,20 @@ use JetApplication\Product_EShopData;
 )]
 abstract class Core_EShop_Managers_ProductListing extends Application_Module
 {
-	abstract public function init( array $product_ids, int $category_id=0, string $category_name='', ?string $optional_URL_parameter = null ) : void;
+	abstract public function init( array $product_ids ) : void;
+	
+	abstract public function handle() : void;
 	
 	abstract public function render() : string;
 	
 	abstract public function renderItem( Product_EShopData $item ) : string;
+	
+	abstract public function getListing(): ProductListing;
+	
+	abstract public function setOptionalURLParameter( string $optional_URL_parameter ): void;
+	
+	abstract public function setCategoryId( int $category_id ): void;
+	
+	abstract public function setAjaxEventHandler( Closure $ajax_event_handler ): void;
+	
 }

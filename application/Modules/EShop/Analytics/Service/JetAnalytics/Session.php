@@ -64,14 +64,16 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		'wget',
 	];
 	
+	
+	protected array $actualized_properties = [];
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
 		is_id: true
 	)]
 	protected int $id = 0;
 	
-	
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME
 	)]
@@ -122,8 +124,6 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		type: DataModel::TYPE_BOOL
 	)]
 	protected bool $shopping_cart_used = false;
-	
-	protected array $actualized_properties = [];
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -489,5 +489,16 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		return $this->gclid;
 	}
 	
+	public function getFirstPageURL(): string
+	{
+		return $this->first_page_URL;
+	}
 	
+	/**
+	 * @return Session_EventMap[]
+	 */
+	public function getEventMap() : array
+	{
+		return Session_EventMap::getMap( $this );
+	}
 }

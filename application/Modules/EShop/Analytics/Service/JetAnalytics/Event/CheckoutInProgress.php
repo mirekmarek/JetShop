@@ -8,6 +8,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Tr;
 use JetApplication\Order;
 
 #[DataModel_Definition(
@@ -28,5 +29,27 @@ class Event_CheckoutInProgress extends Event_CheckoutStarted
 		foreach($order->getItems() as $item) {
 			$this->items[] = Event_CheckoutInProgress_Item::createNew( $this, $item );
 		}
+	}
+	
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Checkout in progress');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'info';
+	}
+	
+	public function getIcon(): string
+	{
+		return 'cash-register';
+	}
+	
+	public function showLongDetails(): string
+	{
+		// TODO:
+		return '';
 	}
 }

@@ -60,4 +60,4 @@ $subcategories = $category->getChildren();
 
 <?=$listing->render()?>
 
-<?=EShop_Managers::Analytics()?->viewCategory( $category );?>
+<?=EShop_Managers::Analytics()?->viewCategory( $category, $listing->getListing() );?>

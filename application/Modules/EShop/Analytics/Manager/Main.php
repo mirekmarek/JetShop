@@ -79,11 +79,11 @@ class Main extends EShop_Managers_Analytics
 		
 	}
 	
-	public function viewCategory( Category_EShopData $category ) : string
+	public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing=null ) : string
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewCategory( $category );
+			$res .= $service->viewCategory( $category, $product_listing );
 		}
 		return $res;
 	}
@@ -102,17 +102,6 @@ class Main extends EShop_Managers_Analytics
 		$res = '';
 		foreach($this->getServices() as $service) {
 			$res .= $service->customEvent( $evetnt, $event_data );
-		}
-		return $res;
-	}
-	
-	
-	
-	public function viewProductsList( ProductListing $list, string $category_name='', string $category_id='' ) : string
-	{
-		$res = '';
-		foreach($this->getServices() as $service) {
-			$res .= $service->viewProductsList( $list, $category_name, $category_id );
 		}
 		return $res;
 	}
@@ -191,20 +180,20 @@ class Main extends EShop_Managers_Analytics
 		return $res;
 	}
 	
-	public function searchWhisperer( string $q, array $result_ids ) : string
+	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing=null ) : string
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->searchWhisperer( $q, $result_ids );
+			$res .= $service->searchWhisperer( $q, $result_ids, $product_listing );
 		}
 		return $res;
 	}
 	
-	public function search( string $q, array $result_ids ) : string
+	public function search( string $q, array $result_ids, ?ProductListing $product_listing=null ) : string
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->search( $q, $result_ids );
+			$res .= $service->search( $q, $result_ids, $product_listing );
 		}
 		return $res;
 	}

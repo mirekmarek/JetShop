@@ -10,7 +10,8 @@ class Report_Customer_Orders extends Report_Customer
 {
 	public const KEY = 'orders';
 	protected ?string $title = 'Orders';
-	protected bool $is_default = true;
+	protected int $priority = 2;
+	protected bool $is_default = false;
 	protected array $sub_reports = [
 		'summary' => 'Summary'
 	];

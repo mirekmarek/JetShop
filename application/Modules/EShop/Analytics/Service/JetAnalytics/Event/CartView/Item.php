@@ -126,4 +126,66 @@ class Event_CartView_Item extends DataModel_Related_1toN implements EShopEntity_
 		return $item;
 	}
 	
+	public function getId(): int
+	{
+		return $this->id;
+	}
+	
+	public function getDateTime(): ?Data_DateTime
+	{
+		return $this->date_time;
+	}
+	
+	public function getEventId(): int
+	{
+		return $this->event_id;
+	}
+	
+	public function getSessionId(): int
+	{
+		return $this->session_id;
+	}
+	
+	public function getProductId(): string
+	{
+		return $this->product_id;
+	}
+	
+	public function getNumberOfUnits(): float
+	{
+		return $this->number_of_units;
+	}
+	
+	public function getPricePerUnit(): float
+	{
+		return $this->price_per_unit;
+	}
+	
+	public function getCurrencyCode(): string
+	{
+		return $this->currency_code;
+	}
+	
+	public function getPricelistCode(): string
+	{
+		return $this->pricelist_code;
+	}
+	
+	public function getMeasureUnitCode(): string
+	{
+		return $this->measure_unit_code;
+	}
+	
+	public function getSelectedGiftId(): int
+	{
+		return $this->selected_gift_id;
+	}
+	
+	public function getAutoOfferId(): int
+	{
+		return $this->auto_offer_id;
+	}
+	
+	
+	
 }

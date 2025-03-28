@@ -8,6 +8,8 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
 use JetApplication\Signpost_EShopData;
 
 #[DataModel_Definition(
@@ -33,4 +35,30 @@ class Event_SignpostView extends Event
 		$this->signpost_id = $signpost->getId();
 	}
 	
+	
+	public function getTitle(): string
+	{
+		return Tr::_('Signopost view');
+	}
+	
+	public function getCssClass(): string
+	{
+		return 'light';
+	}
+	
+	
+	public function showShortDetails(): string
+	{
+		return Admin_Managers::Signpost()->renderItemName( $this->signpost_id );
+	}
+	
+	public function getIcon(): string
+	{
+		return 'signs-post';
+	}
+	
+	public function showLongDetails(): string
+	{
+		return '';
+	}
 }

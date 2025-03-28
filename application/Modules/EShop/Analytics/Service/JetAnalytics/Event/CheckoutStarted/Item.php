@@ -204,5 +204,121 @@ class Event_CheckoutStarted_Item extends DataModel_Related_1toN implements EShop
 		return $item;
 	}
 	
+	public function getId(): int
+	{
+		return $this->id;
+	}
+	
+	public function getDateTime(): ?Data_DateTime
+	{
+		return $this->date_time;
+	}
+	
+	public function getEventId(): int
+	{
+		return $this->event_id;
+	}
+	
+	public function getSessionId(): int
+	{
+		return $this->session_id;
+	}
+	
+	public function getCurrencyCode(): string
+	{
+		return $this->currency_code;
+	}
+	
+	public function getPricelistCode(): string
+	{
+		return $this->pricelist_code;
+	}
+	
+	public function getType(): string
+	{
+		return $this->type;
+	}
+	
+	public function getSubType(): string
+	{
+		return $this->sub_type;
+	}
+	
+	public function getItemCode(): string
+	{
+		return $this->item_code;
+	}
+	
+	public function getSubCode(): string
+	{
+		return $this->sub_code;
+	}
+	
+	public function getItemId(): int
+	{
+		return $this->item_id;
+	}
+	
+	public function getNumberOfUnits(): float
+	{
+		return $this->number_of_units;
+	}
+	
+	public function getMeasureUnit(): string
+	{
+		return $this->measure_unit;
+	}
+	
+	public function getVatRate(): float
+	{
+		return $this->vat_rate;
+	}
+	
+	public function getPricePerUnit(): float
+	{
+		return $this->price_per_unit;
+	}
+	
+	public function getPricePerUnitWithVat(): float
+	{
+		return $this->price_per_unit_with_vat;
+	}
+	
+	public function getPricePerUnitWithoutVat(): float
+	{
+		return $this->price_per_unit_without_vat;
+	}
+	
+	public function getPricePerUnitVat(): float
+	{
+		return $this->price_per_unit_vat;
+	}
+	
+	public function getTotalAmount(): float
+	{
+		return $this->total_amount;
+	}
+	
+	public function getTotalAmountWithVat(): float
+	{
+		return $this->total_amount_with_vat;
+	}
+	
+	public function getTotalAmountWithoutVat(): float
+	{
+		return $this->total_amount_without_vat;
+	}
+	
+	public function getTotalAmountVat(): float
+	{
+		return $this->total_amount_vat;
+	}
+	
+	public function getSetDiscountPerUnit(): float
+	{
+		return $this->set_discount_per_unit;
+	}
+	
+	
 	
 }
