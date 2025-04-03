@@ -97,6 +97,10 @@ abstract class Core_EMail_Template extends Template
 		$email->setBodyTxt( $this->process( $body_txt ) );
 		$email->setBodyHtml( $this->process( $body_html ) );
 		
+		foreach($template->getAttachments() as $attachment) {
+			$email->addAttachments( $attachment->getPath() );
+		}
+		
 		$this->setupEMail( $eshop, $email );
 		
 		return $email;

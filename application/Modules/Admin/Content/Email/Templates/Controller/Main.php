@@ -7,7 +7,10 @@
 namespace JetApplicationModule\Admin\Content\Email\Templates;
 
 
+use Jet\AJAX;
 use Jet\Application;
+use Jet\Form;
+use Jet\Form_Field_File;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Mailing;
@@ -15,6 +18,7 @@ use Jet\MVC_Layout;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_EntityManager_Controller;
+use JetApplication\Application_Admin;
 use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateText;
 use JetApplication\EShops;
@@ -33,6 +37,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 		if(isset($tabs['description'])) {
 			$tabs['description'] = Tr::_('Content');
 		}
+		
+		$tabs['attachments'] = Tr::_('Attachments');
 		
 		return $tabs;
 	}
@@ -74,6 +80,22 @@ class Controller_Main extends Admin_EntityManager_Controller
 			->setResolver(function() use ($action, $selected_tab) {
 				return $this->current_item && $action=='download_message_file';
 			});
+		
+		$this->router->addAction('edit_attachments', $this->module::ACTION_UPDATE)
+			->setResolver(function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='attachments' && $action=='';
+			});
+		
+		$this->router->addAction('upload_attachments', $this->module::ACTION_UPDATE)
+			->setResolver(function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='attachments' && $action=='upload_attachments';
+			});
+		
+		$this->router->addAction('delete_attachment', $this->module::ACTION_UPDATE)
+			->setResolver(function() use ($action, $selected_tab) {
+				return $this->current_item && $selected_tab=='attachments' && $action=='delete_attachment';
+			});
+		
 		
 	}
 	
@@ -161,6 +183,118 @@ class Controller_Main extends Admin_EntityManager_Controller
 		echo $eml;
 		
 		Application::end();
+	}
+	
+	/**
+	 * @var Form[]|null
+	 */
+	protected ?array $upload_forms = null;
+	
+	public function initUploadForms() : void
+	{
+		if($this->upload_forms === null) {
+			$this->upload_forms = [];
+			
+			if($this->current_item->isEditable()) {
+				foreach( EShops::getListSorted() as $eshop ) {
+					$file_field = new Form_Field_File('file');
+					$file_field->setErrorMessages([
+						Form_Field_File::ERROR_CODE_DISALLOWED_FILE_TYPE => 'Unsupported file type',
+						Form_Field_File::ERROR_CODE_FILE_IS_TOO_LARGE => 'File is too large'
+					
+					]);
+					$file_field->setAllowMultipleUpload( true );
+					
+					$form = new Form('file_upload_form_'.$eshop->getKey(), [
+						$file_field
+					]);
+					$this->upload_forms[$eshop->getKey()] = $form;
+					
+					$form->setAction( Http_Request::currentURI(['action'=>'upload_attachments', 'eshop'=>$eshop->getKey()]) );
+					
+					$this->view->setVar('upload_form_'.$eshop->getKey(), $form);
+					
+				}
+			}
+			
+			
+		}
+	}
+
+	public function edit_attachments_Action() : void
+	{
+		$this->setBreadcrumbNavigation();
+		
+		$this->initUploadForms();
+		
+		$this->getEditorManager();
+		
+		$this->view->setVar('item', $this->current_item);
+		
+		$this->output('edit/attachments');
+	}
+	
+	public function delete_attachment_Action() : void
+	{
+		if($this->current_item->isEditable()) {
+			$eshop = EShops::get( Http_Request::GET()->getString('eshop') );
+			
+			/**
+			 * @var EMail_TemplateText $item
+			 */
+			$item = $this->current_item;
+			$es_data = $item->getEshopData($eshop);
+			
+			$files = explode(',', Http_Request::GET()->getString('files'));
+			foreach($files as $id ) {
+				$es_data->deleteAttachment( $id );
+			}
+			
+			$this->view->setVar('item', $this->current_item);
+			$this->view->setVar('eshop', $eshop);
+			
+			AJAX::operationResponse(true, snippets: [
+				'attachmets_'.$eshop->getKey() => $this->view->render('edit/attachments/list')
+			]);
+		}
+	}
+	
+	public function upload_attachments_Action() : void
+	{
+		
+		if($this->current_item->isEditable()) {
+			$this->initUploadForms();
+			
+			Application_Admin::handleUploadTooLarge();
+			
+			$eshop = EShops::get( Http_Request::GET()->getString('eshop') );
+			
+			$form = $this->upload_forms[$eshop->getKey()];
+			/**
+			 * @var Form_Field_File $file_field
+			 * @var EMail_TemplateText $item
+			 */
+			$file_field = $form->getField('file');
+			$item = $this->current_item;
+			
+			$es_data = $item->getEshopData($eshop);
+			
+			if($form->catch()) {
+				foreach($file_field->getValidFiles() as $file) {
+					$es_data->addAttachment(
+						$file->getFileName(),
+						$file->getTmpFilePath()
+					);
+				}
+			}
+			
+			$this->view->setVar('item', $this->current_item);
+			$this->view->setVar('eshop', $eshop);
+			
+			AJAX::operationResponse(true, snippets: [
+				'attachmets_'.$eshop->getKey() => $this->view->render('edit/attachments/list')
+			]);
+		}
 	}
 	
 }

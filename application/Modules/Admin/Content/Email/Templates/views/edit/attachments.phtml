@@ -1,0 +1,182 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Content\Email\Templates;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+use JetApplication\Admin_Managers;
+use JetApplication\EMail_TemplateText;
+use JetApplication\EShop;
+
+/**
+ * @var MVC_View   $this
+ * @var EMail_TemplateText $item
+ * @var EShop $eshop
+ */
+
+$item = $this->getRaw('item');
+$editable = $item->isEditable();
+
+$view = $this;
+
+echo Admin_Managers::EntityEdit()->renderToolbar();
+
+echo $this->getRaw('tabs');
+?>
+<div id="main-col">
+<?php
+echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+	renderer: function(EShop $eshop ) use ($editable, $item, $view) {
+		$view->setVar('eshop', $eshop);
+		
+		if($editable):
+			$upload_form = $this->getRaw('upload_form_'.$eshop->getKey());
+			
+			$file_field = $upload_form->field('file');
+			$file_field->input()->addJsAction('onchange', "AttachmentsHandler_{$eshop->getKey()}.upload()");
+			
+			?>
+			<div class="toolbar" style="display: grid;grid-template-columns: 1fr 1fr;align-items: center">
+				<?=$upload_form->start()?>
+				<div style="display: flex;align-items: center">
+					<div>
+						<div class="btn btn-light btn-upload">
+							<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload files')?></span>
+							<?=$file_field->input()?>
+						</div>
+					</div>
+				</div>
+				<?=$upload_form->end()?>
+				
+				<div style="text-align: right;padding-right: 10px;">
+					<?=UI::button_delete(Tr::_('Delete selected attachments'))->setOnclick("AttachmentsHandler_{$eshop->getKey()}.deleteAttachments();")?>
+				</div>
+			</div>
+		<?php endif; ?>
+		
+		<div style="background-color: #f0f0f0;border-radius: 5px;margin: 10px;padding: 10px;">
+			<div class="files_area" id="attachmets_<?=$eshop->getKey()?>" style="height: 500px;overflow: auto;margin: 5px;padding: 5px;">
+				<?php
+				require 'attachments/list.phtml';
+				?>
+			</div>
+		</div>
+		
+		
+		
+		<?php if($editable):
+			
+			$delete_dialog = new UI_dialog('delete_attachment_confirm_'.$eshop->getKey(), Tr::_('Do you really want to delete those attachments?'), UI_dialog::SIZE_LARGE );
+			
+			echo $delete_dialog->start();
+			?>
+			<div id="attachment_delete_confirm_area_<?=$eshop->getKey()?>" style="height: 250px;overflow: auto">
+			
+			</div>
+			<?php
+			echo $delete_dialog->footer();
+			echo UI::button_delete()->setOnclick("AttachmentsHandler_{$eshop->getKey()}.deleteConfirm();");
+			echo $delete_dialog->end();
+			
+			?>
+			
+			<script type="text/javascript">
+				let AttachmentsHandler_<?=$eshop->getKey()?> = new function() {
+
+					this.delete_files = null;
+
+					const handler = this;
+
+					this._handleResponse = function( response ) {
+
+						for(let el_id in response['snippets']) {
+							document.getElementById(el_id).innerHTML = response['snippets'][el_id];
+						}
+					};
+
+					this.deleteAttachment = function( element ) {
+						handler._delete([{
+							file: element.dataset.file,
+							url: element.dataset.url,
+							name: element.dataset.name,
+							kind: element.dataset.kind
+						}]);
+					};
+
+					this.deleteAttachments = function()
+					{
+						let files = [];
+
+						$('#attachmets_<?=$eshop->getKey()?> .select_file_checkbox').each( function(i, checkbox) {
+							if(checkbox.checked) {
+								files.push( {
+									file: checkbox.dataset.file,
+									url: checkbox.dataset.url,
+									name: checkbox.dataset.name,
+									kind: checkbox.dataset.kind
+								} );
+							}
+						});
+
+						if(files.length) {
+							handler._delete(files);
+						}
+					};
+
+					this._delete = function( files ) {
+
+						handler.delete_files = files;
+
+						let html = '<div>';
+
+						for(let i=0;i<files.length;i++) {
+							let file = files[i];
+
+							html += '<div style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;" >'+file.name+'</div>';
+						}
+
+						html += '</div>';
+
+						$('#attachment_delete_confirm_area_<?=$eshop->getKey()?>').html( html );
+
+						$('#delete_attachment_confirm_<?=$eshop->getKey()?>').modal('show');
+					};
+
+					this.deleteConfirm = function () {
+						let files = [];
+						for(let i=0; i<handler.delete_files.length;i++) {
+							files.push(encodeURIComponent(handler.delete_files[i].file));
+						}
+
+						$.ajax({
+							url: '<?=Http_Request::currentURI(['action'=>'delete_attachment', 'eshop'=>$eshop->getKey()])?>&files='+files.join(','),
+							dataType: "json",
+							success: function( response ) {
+								handler._handleResponse(response);
+							}
+						});
+						$('#delete_attachment_confirm_<?=$eshop->getKey()?>').modal('hide');
+
+					};
+
+
+					this.upload = function() {
+						JetAjaxForm.submitMultiUpload(
+							'<?=$upload_form->getId()?>',
+							'<?=$file_field->getName()?>',
+						);
+					};
+				};
+			</script>
+		<?php endif;
+	}
+);
+?>
+</div>

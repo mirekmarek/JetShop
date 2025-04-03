@@ -13,6 +13,7 @@ use Jet\DataModel_Definition;
 use Jet\Form;
 use JetApplication\Admin_Managers_Content_EMailTemplates;
 use JetApplication\EMail_Template;
+use JetApplication\EMail_TemplateText_Attachment;
 use JetApplication\EMail_TemplateText_EShopData;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
@@ -43,6 +44,15 @@ abstract class Core_EMail_TemplateText extends EShopEntity_WithEShopData impleme
 	)]
 	protected array $eshop_data = [];
 	
+	
+	/**
+	 * @var EMail_TemplateText_Attachment[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: EMail_TemplateText_Attachment::class
+	)]
+	protected array $attachments = [];
 	
 	
 	public function getEshopData( ?EShop $eshop = null ): EMail_TemplateText_EShopData

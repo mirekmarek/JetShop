@@ -63,7 +63,7 @@ trait Core_Product_Trait_Files
 			return null;
 		}
 		
-		Files::Manager()->deleteFile( $this, $deleted_file->getFile() );
+		Files::Manager()->deleteFile( $this::getEntityType(), $this->getId(), $deleted_file->getFile() );
 		
 		$deleted_file->delete();
 		
@@ -83,10 +83,12 @@ trait Core_Product_Trait_Files
 		return $deleted_file;
 	}
 	
-	public function addFile( string $file, int $kind_of_file_id ) : Product_File
+	public function addFile( int $kind_of_file_id, string $file_name, string $srouce_file_path ) : Product_File
 	{
+		$new_file = Product_File::upload( $this, $kind_of_file_id, $file_name, $srouce_file_path );
+		
 		foreach( $this->getFiles() as $e_file ) {
-			if($e_file->getFile()==$file) {
+			if( $e_file->getFile()==$new_file->getFile() ) {
 				$e_file->setKindOfFileId( $kind_of_file_id );
 				$e_file->save();
 				
@@ -94,10 +96,6 @@ trait Core_Product_Trait_Files
 			}
 		}
 		
-		$new_file = new Product_File();
-		$new_file->setProductId( $this->getId() );
-		$new_file->setKindOfFileId( $kind_of_file_id );
-		$new_file->setFile( $file );
 		$new_file->setFileIndex( count($this->files) );
 		$new_file->save();
 		
@@ -132,15 +130,10 @@ trait Core_Product_Trait_Files
 			$path_i = pathinfo( $file->getFile() );
 			$file_name = $path_i['filename'].'_c.'.$path_i['extension'];
 			
-			$new_file = Files::Manager()->uploadFile(
-				$this,
-				$file_name,
-				Files::Manager()->getFilePath( $source_product, $file->getFile() ),
-			);
-			
 			$this->addFile(
-				$new_file,
-				$file->getKindOfFileId()
+				$file->getKindOfFileId(),
+				$file_name,
+				$file->getPath()
 			);
 			
 		}

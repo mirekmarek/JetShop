@@ -55,7 +55,7 @@ foreach($files as $i=>$file):
 		unset($files[$i]);
 		continue;
 	}
-	$path = $manager->getFilePath( $product, $file->getFile() );
+	$path = $manager->getFilePath( $product::getEntityType(), $product->getId(), $file->getFile() );
 	
 	if(!IO_File::exists( $path )) {
 		unset($files[$i]);
@@ -72,8 +72,6 @@ if(!$files) {
 	<div class="list">
 		<?php foreach($files as $file):
 			$kind = $kind_of_files[$file->getKindOfFileId()]??null;
-			$URL = $manager->getFileURL( $product, $file->getFile() );
-			$path = $manager->getFilePath( $product, $file->getFile() );
 			?>
 			<div>
 				<?php if($kind->getImageMain()): ?>
@@ -82,8 +80,8 @@ if(!$files) {
 				<?=$kind->getName()?>:
 			</div>
 			<div>
-				<a href="<?=$URL?>"><?=$file->getFile()?></a><br>
-				<?=Locale::size( IO_File::getSize($path) )?>
+				<a href="<?=$file->getURL()?>"><?=$file->getFile()?></a><br>
+				<?=Locale::size( $file->getSize() )?>
 			</div>
 	
 		<?php endforeach; ?>

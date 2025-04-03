@@ -10,30 +10,27 @@ use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
-use JetApplication\EShopEntity_Common;
-use JetApplication\EShopEntity_WithEShopData;
-use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Files_Manager;
 
 
 class Main extends Files_Manager
 {
-	public function deleteFile( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file ): void
+	public function deleteFile( string $entity_type, int $entity_id,  string $file ): void
 	{
 		
-		$path = $this->getFilePath( $entity, $file );
+		$path = $this->getFilePath( $entity_type, $entity_id, $file );
 		if(IO_File::exists($path)) {
 			IO_File::delete( $path );
 		}
 	}
 	
 	
-	public function uploadFile( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file_name, string $srouce_file_paths ): string
+	public function uploadFile( string $entity_type, int $entity_id,  string $file_name, string $srouce_file_path ): string
 	{
 		
-		$path = $this->getFilePath( $entity, $file_name );
+		$path = $this->getFilePath( $entity_type, $entity_id, $file_name );
 		IO_File::copy(
-			source_path: $srouce_file_paths,
+			source_path: $srouce_file_path,
 			target_path: $path,
 			overwrite_if_exists: true
 		);
@@ -41,19 +38,19 @@ class Main extends Files_Manager
 		return $file_name;
 	}
 	
-	public function getFilePath( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file ): string
+	public function getFilePath( string $entity_type, int $entity_id,  string $file ): string
 	{
-		return $this->getDirPath($entity).$file;
+		return $this->getDirPath($entity_type, $entity_id).$file;
 	}
 	
-	public function getFileURL( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file ): string
+	public function getFileURL( string $entity_type, int $entity_id,  string $file ): string
 	{
-		return SysConf_URI::getBase().$this->getDirName($entity).rawurlencode($file);
+		return SysConf_URI::getBase().$this->getDirName($entity_type, $entity_id).rawurlencode($file);
 	}
 	
-	public function getDirPath( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity  ) : string
+	public function getDirPath( string $entity_type, int $entity_id ) : string
 	{
-		$dir_name = $this->getDirName( $entity );
+		$dir_name = $this->getDirName( $entity_type, $entity_id );
 		$dir_path = SysConf_Path::getBase().$dir_name;
 		
 		if(!IO_Dir::exists($dir_path)) {
@@ -63,11 +60,9 @@ class Main extends Files_Manager
 		return $dir_path;
 	}
 	
-	protected function getDirName( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity ) : string
+	protected function getDirName( string $entity_type, int $entity_id ) : string
 	{
-		$id = $entity->getId();
-		
-		return 'files/'.$entity::getEntityType().'/'.$this->calcNumericPath( $id ).'/';
+		return 'files/'.$entity_type.'/'.$this->calcNumericPath( $entity_id ).'/';
 	}
 	
 	protected function calcNumericPath( int $object_id ) : string

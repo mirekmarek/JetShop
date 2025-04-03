@@ -10,7 +10,6 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Files;
 use JetApplication\Product_KindOfFile;
 use JetApplication\Product;
 
@@ -27,14 +26,14 @@ $kind_of_files = Product_KindOfFile::getScope();
 foreach( $product->getFiles() as $file ):
 	$key = $file->getId();
 
-	$url = Files::Manager()->getFileURL( $product, $file->getFile() );
+	$url = $file->getURL();
 	$kind = $kind_of_files[$file->getKindOfFileId()]??'';
 	
 	if($editable):
 		?>
 		
 		<div
-			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: 30px 30px 30px 500px 150px 40px;align-items: center;"
+			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: auto auto auto 150px auto 1fr;gap:10px;align-items: center;"
 		>
 			<div class="file" data-file="<?=$key?>">
 				<input type="checkbox" value="<?=$key?>"
@@ -43,11 +42,13 @@ foreach( $product->getFiles() as $file ):
 				data-name="<?=$file->getFile()?>"
 				data-kind="<?=$kind?>"
 				class="select_file_checkbox"/></div>
-			<div><?=UI::icon('up-down')?></div>
-			<div style="width: 30px;"><a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download file'))?></a></div>
-			<div><?=$file->getFile()?></div>
-			<div><?=$kind?></div>
-			<div><a
+			<div style="padding-right: 10px;"><?=UI::icon('up-down')?></div>
+			<div style="padding-right: 10px;"><a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download file'))?></a></div>
+			
+			<div style="padding-right: 20px;opacity: 0.5"><?=$kind?></div>
+			<div style="padding-right: 20px;"><?=$file->getFile()?></div>
+			<div style="text-align: right"><a
+					class="btn btn-danger btn-xs"
 					data-file="<?=$key?>"
 					data-url="<?=$url?>"
 					data-name="<?=$file->getFile()?>"

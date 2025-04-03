@@ -9,7 +9,11 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\IO_File;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\Files;
+use JetApplication\Product;
+use JetApplication\Product_File;
 
 #[DataModel_Definition(
 	name: 'product_files',
@@ -110,5 +114,39 @@ abstract class Core_Product_File extends EShopEntity_Basic
 	public function __toString() : string
 	{
 		return $this->file;
+	}
+	
+	public function getURL() : string
+	{
+		return Files::Manager()->getFileURL( Product::getEntityType(), $this->product_id, $this->file );
+	}
+	
+	
+	public function getPath() : string
+	{
+		return Files::Manager()->getFilePath( Product::getEntityType(), $this->product_id, $this->file );
+	}
+	
+	public function getSize() : int
+	{
+		return IO_File::getSize( $this->getPath() );
+	}
+	
+	public static function upload( Product $product, int $kind_of_file_id, string $file_name, string $srouce_file_path ) : static
+	{
+		$file = Files::Manager()->uploadFile(
+			$product::getEntityType(),
+			$product->getId(),
+			$file_name,
+			$srouce_file_path
+		);
+		
+		$new_file = new Product_File();
+		$new_file->setProductId( $product->getId() );
+		$new_file->setKindOfFileId( $kind_of_file_id );
+		$new_file->setFile( $file );
+
+		return $new_file;
+		
 	}
 }

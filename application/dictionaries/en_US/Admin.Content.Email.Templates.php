@@ -110,4 +110,11 @@ return [
 	'Tax' => '',
 	'Attachments:' => '',
 	'E-mail template description <b>%NAME%</b> has been updated' => '',
+	'Attachments' => '',
+	'Unsupported file type' => '',
+	'Select and upload files' => '',
+	'Delete selected attachments' => '',
+	'Do you really want to delete those attachments?' => '',
+	'Download file' => '',
+	'Delete file' => '',
 ];

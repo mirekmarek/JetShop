@@ -30,6 +30,9 @@ $item = $this->getRaw('item');
 $templates = $this->getRaw('templates');
 
 $template = $templates[$item->getInternalCode()]??null;
+
+$editable = !$form->getIsReadonly();
+$this->setVar('editable', $editable);
 ?>
 
 <div style="display: grid;grid-template-columns: 2fr 1fr;gap: 10px;margin: 10px;">
@@ -143,5 +146,6 @@ $template = $templates[$item->getInternalCode()]??null;
 		<?php endif; ?>
 	</div>
 </div>
+
 <br><br><br><br>
 

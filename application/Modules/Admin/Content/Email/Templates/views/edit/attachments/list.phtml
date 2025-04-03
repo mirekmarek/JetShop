@@ -1,0 +1,69 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Content\Email\Templates;
+
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\EMail_TemplateText;
+use JetApplication\EShop;
+
+/**
+ * @var MVC_View   $this
+ * @var EMail_TemplateText $item
+ * @var EShop $eshop
+ */
+
+$eshop = $this->getRaw('eshop');
+$item = $this->getRaw('item');
+$editable = $item->isEditable();
+
+
+foreach( $item->getEshopData($eshop)->getAttachments() as $file ):
+	$key = $file->getId();
+	
+	$url = $file->getURL();
+	
+	if($editable):
+		?>
+		
+		<div
+			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: auto auto auto auto 1fr;gap:10px;align-items: center;"
+		>
+			<div class="file" data-file="<?=$key?>">
+				<input type="checkbox" value="<?=$key?>"
+				       data-file="<?=$key?>"
+				       data-url="<?=$url?>"
+				       data-name="<?=$file->getFile()?>"
+				       class="select_file_checkbox"/></div>
+			<div style="padding-right: 10px;"><?=UI::icon('up-down')?></div>
+			<div style="padding-right: 10px;"><a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download file'))?></a></div>
+			
+			<div style="padding-right: 20px;"><?=$file->getFile()?></div>
+			<div style="text-align: right"><a
+					class="btn btn-danger btn-xs"
+					data-file="<?=$key?>"
+					data-url="<?=$url?>"
+					data-name="<?=$file->getFile()?>"
+					onclick="AttachmentsHandler_<?=$eshop->getKey()?>.deleteAttachment(this);return false;"
+				><?=UI::icon('trash')->setTitle(Tr::_('Delete file'))?></a></div>
+		</div>
+	<?php
+	else:
+		?>
+		<div
+			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns:500px;align-items: center;"
+		>
+			<div><?=$file->getFile()?></div>
+		</div>
+	
+	<?php
+	endif;
+endforeach; ?>
+

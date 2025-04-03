@@ -8,9 +8,6 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
-use JetApplication\EShopEntity_Common;
-use JetApplication\EShopEntity_WithEShopData;
-use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\Manager_MetaInfo;
 
 #[Manager_MetaInfo(
@@ -22,11 +19,11 @@ use JetApplication\Manager_MetaInfo;
 )]
 abstract class Core_Files_Manager extends Application_Module
 {
-	abstract public function uploadFile( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file_name, string $srouce_file_paths ): string;
+	abstract public function uploadFile( string $entity_type, int $entity_id, string $file_name, string $srouce_file_path ): string;
 	
-	abstract public function getFilePath( EShopEntity_Common|EShopEntity_WithEShopData|EShopEntity_WithEShopData_EShopData $entity, string $file ) : string;
+	abstract public function getFilePath( string $entity_type, int $entity_id, string $file ) : string;
 	
-	abstract public function getFileURL( EShopEntity_Common|EShopEntity_WithEShopData|EShopEntity_WithEShopData_EShopData $entity, string $file ) : string;
+	abstract public function getFileURL( string $entity_type, int $entity_id, string $file ) : string;
 	
-	abstract public function deleteFile( EShopEntity_WithEShopData_EShopData|EShopEntity_Common|EShopEntity_WithEShopData $entity, string $file ): void;
+	abstract public function deleteFile( string $entity_type, int $entity_id, string $file ): void;
 }

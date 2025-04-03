@@ -15,6 +15,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Application_Admin;
 use JetApplication\Files;
+use JetApplication\Product_File;
 use JetApplication\Product_KindOfFile;
 use JetApplication\Product;
 
@@ -87,15 +88,7 @@ trait Controller_Main_Edit_Files
 						
 						if($form->catch()) {
 							foreach($file_field->getValidFiles() as $file) {
-								$file = Files::Manager()->uploadFile(
-									$product,
-									$file->getFileName(),
-									$file->getTmpFilePath()
-								);
-								$product->addFile(
-									$file,
-									$kind_of_file->getValue()
-								);
+								$product->addFile( $kind_of_file->getValue(), $file->getFileName(), $file->getTmpFilePath() );
 							}
 							
 							$updated = true;

@@ -13,6 +13,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use JetApplication\EMail_Layout;
+use JetApplication\EMail_TemplateText_Attachment;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EMail_TemplateText;
 
@@ -156,5 +157,42 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 		$this->body_txt = $body_txt;
 	}
 	
+	/**
+	 * @return EMail_TemplateText_Attachment[]
+	 */
+	public function getAttachments(): array
+	{
+		return EMail_TemplateText_Attachment::getList( $this );
+	}
 	
+	
+	public function addAttachment( string $file_name, string $srouce_file_path ) : EMail_TemplateText_Attachment
+	{
+		foreach( $this->getAttachments() as $attachment) {
+			if(basename($attachment->getFile()) === $file_name) {
+				$attachment->upload( $this, $file_name, $srouce_file_path );
+				
+				return $attachment;
+			}
+		}
+		
+		$attachment = new EMail_TemplateText_Attachment();
+		$attachment->upload( $this, $file_name, $srouce_file_path );
+		$attachment->save();
+		
+		return $attachment;
+	}
+	
+	public function deleteAttachment( int $id ) : ?EMail_TemplateText_Attachment
+	{
+		foreach( $this->getAttachments() as $attachment) {
+			if(basename($attachment->getId()) == $id) {
+				$attachment->delete();
+				
+				return $attachment;
+			}
+		}
+		
+		return null;
+	}
 }
