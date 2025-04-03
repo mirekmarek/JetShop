@@ -34,7 +34,7 @@ foreach( $item->getEshopData($eshop)->getAttachments() as $file ):
 		?>
 		
 		<div
-			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: auto auto auto auto 1fr;gap:10px;align-items: center;"
+			style="margin: 5px;padding:10px; border: 1px solid #c9c9c9;border-radius: 5px;background-color:#ffffff;display: grid;grid-template-columns: auto auto auto 1fr;gap:10px;align-items: center;"
 		>
 			<div class="file" data-file="<?=$key?>">
 				<input type="checkbox" value="<?=$key?>"
@@ -42,7 +42,6 @@ foreach( $item->getEshopData($eshop)->getAttachments() as $file ):
 				       data-url="<?=$url?>"
 				       data-name="<?=$file->getFile()?>"
 				       class="select_file_checkbox"/></div>
-			<div style="padding-right: 10px;"><?=UI::icon('up-down')?></div>
 			<div style="padding-right: 10px;"><a href="<?=$url?>" download target="_blank"><?=UI::icon('download')->setTitle(Tr::_('Download file'))?></a></div>
 			
 			<div style="padding-right: 20px;"><?=$file->getFile()?></div>
