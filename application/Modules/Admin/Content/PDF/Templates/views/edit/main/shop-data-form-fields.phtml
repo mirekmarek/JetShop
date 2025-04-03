@@ -111,6 +111,23 @@ $template = $templates[$item->getInternalCode()]??null;
 							
 						</div>
 
+
+						<?php if($b->getConditions()): ?>
+						<div style="padding: 20px;padding-left: 30px;padding-right: 30px;">
+							<i><?=Tr::_('Block conditions:')?></i><br><br>
+							
+							<?php foreach($b->getConditions() as $p): ?>
+								<div>
+									<b><?=$p->getInstructionTemplate()?></b>
+								</div>
+								<div>
+									<?=$p->getDescription()?>
+								</div>
+							<?php endforeach; ?>
+						</div>
+						<?php endif; ?>
+					
+
 						<hr>
 					<?php endforeach; ?>
 

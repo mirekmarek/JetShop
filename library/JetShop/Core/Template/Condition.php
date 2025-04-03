@@ -50,29 +50,37 @@ abstract class Core_Template_Condition {
 	
 	
 	
-	public function process( string &$text  ) : void
+	public function process( string &$text, mixed $block_item=null    ) : void
 	{
-		$reg_exp = '/{IF%'.$this->name.'}([^{}]*){'.$this->name.'%IF}/';
+		$start_tag = '{IF%'.$this->name.'}';
+		$end_tag = '{'.$this->name.'%IF}';
 		
-		if(!preg_match_all( $reg_exp, $text, $matches, PREG_SET_ORDER )) {
-			return;
-		}
-		
-		$evaluator = $this->getConditionEvaluator();
-		
-		$pass = $evaluator();
-		
-		if($pass) {
-			foreach($matches as $block) {
-				$orig_str = $block[0];
-				$block_str = $block[1];
-				$text = str_replace($orig_str, $block_str, $text);
+		while( str_contains($text, $start_tag) ) {
+			
+			$start = strrpos($text, $start_tag);
+			$end = strrpos($text, $end_tag, $start);
+			if($end===false) {
+				return;
 			}
-		} else {
-			foreach($matches as $block) {
-				$orig_str = $block[0];
-				
-				$text = str_replace($orig_str, '', $text);
+			
+			$end += strlen($start_tag);
+			
+			$whole_block = substr( $text,  $start, $end-$start);
+			$content = substr( $text, $start+strlen($start_tag), $end-$start-strlen($start_tag)-strlen($end_tag) );
+			
+			
+			$evaluator = $this->getConditionEvaluator();
+			
+			if($block_item) {
+				$pass = $evaluator( $block_item );
+			} else {
+				$pass = $evaluator();
+			}
+			
+			if($pass) {
+				$text = str_replace($whole_block, $content, $text);
+			} else {
+				$text = str_replace($whole_block, '', $text);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use Closure;
+use JetApplication\Template_Condition;
 use JetApplication\Template_Property;
 
 abstract class Core_Template_Block {
@@ -20,6 +21,11 @@ abstract class Core_Template_Block {
 	 * @var Core_Template_Property[]
 	 */
 	protected array $properties = [];
+	
+	/**
+	 * @var Template_Condition[]
+	 */
+	protected array $conditions = [];
 	
 	protected Closure $item_list_creator;
 	
@@ -66,6 +72,27 @@ abstract class Core_Template_Block {
 		return $property;
 	}
 	
+	public function addCondition( string $name, string $description ) : Template_Condition
+	{
+		$condition = new Template_Condition();
+		$condition->setName( $name );
+		$condition->setDescription( $description );
+		$this->conditions[$condition->getName()] = $condition;
+		
+		return $condition;
+	}
+	
+	/**
+	 * @return Template_Condition[]
+	 */
+	public function getConditions(): array
+	{
+		return $this->conditions;
+	}
+	
+	
+	
+	
 	/**
 	 * @return Template_Property[]
 	 */
@@ -94,6 +121,11 @@ abstract class Core_Template_Block {
 			
 			foreach($items as $item) {
 				$new_block_txt = $block_template;
+				
+				
+				foreach($this->getConditions() as $condition) {
+					$condition->process( $new_block_txt, $item );
+				}
 				
 				foreach( $this->getProperties() as $property ) {
 					$property->process( $new_block_txt, $item );

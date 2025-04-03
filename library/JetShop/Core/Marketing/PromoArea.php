@@ -11,10 +11,12 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
+use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
+use JetApplication\EShops;
 use JetApplication\Marketing_PromoAreaDefinition;
 use JetApplication\Admin_Managers_Marketing_PromoAreas;
 use JetApplication\EShopEntity_Definition;
@@ -85,6 +87,19 @@ abstract class Core_Marketing_PromoArea extends EShopEntity_Marketing implements
 	public function hasImages(): bool
 	{
 		return false;
+	}
+	
+	public static function render( string $internal_code, ?EShop $eshop = null ): string
+	{
+		$eshop = $eshop ?? EShops::getCurrent();
+		
+		return static::load([
+			'internal_code' => $internal_code,
+			'AND',
+			$eshop->getWhere(),
+			'AND',
+			'is_active' => true
+		])?->getHTML()??'';
 	}
 	
 }
