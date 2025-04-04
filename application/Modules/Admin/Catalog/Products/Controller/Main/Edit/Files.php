@@ -14,8 +14,6 @@ use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Application_Admin;
-use JetApplication\Files;
-use JetApplication\Product_File;
 use JetApplication\Product_KindOfFile;
 use JetApplication\Product;
 

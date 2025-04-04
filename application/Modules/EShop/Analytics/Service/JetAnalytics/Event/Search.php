@@ -46,7 +46,7 @@ class Event_Search extends Event
 		return true;
 	}
 
-	public function init( string $q, array $result_ids, ?ProductListing $product_listing ) : void
+	public function init( string $q, array $result_ids, ?ProductListing $product_listing=null ) : void
 	{
 		$this->search_query = $q;
 		$this->found_something = count($result_ids);
