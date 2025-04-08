@@ -6,6 +6,7 @@
  */
 use Jet\MVC_View;
 use Jet\Tr;
+use Jet\Locale;
 use JetApplication\EShopEntity_Price;
 use JetApplication\Admin_Managers;
 use JetApplication\Product_Price;
@@ -30,8 +31,10 @@ $pricelist = $price->getPricelist();
 		<div style="font-weight: bolder;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPrice() )?></div>
 		
 		<?php if( $price instanceof Product_Price && $price->getDiscountPercentage()>0): ?>
+		<div><?=Tr::_('Price before discount:')?></div>
+		<div style="text-decoration: line-through"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPriceBeforeDiscount() )?></div>
 		<div><?=Tr::_('Discount:')?></div>
-		<div style="font-weight: bolder;"><?=$price->getDiscountPercentage();?>%</div>
+		<div style="font-weight: bolder;"><?=Locale::float( round($price->getDiscountPercentage()) );?>%</div>
 		<?php endif; ?>
 	</div>
 

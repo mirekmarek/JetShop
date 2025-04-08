@@ -579,6 +579,11 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		return $this->question_count;
 	}
 	
+	public function setVideoURLs( string $video_URLs ): void
+	{
+		$this->video_URLs = $video_URLs;
+	}
+	
 	
 	public function getVideoURLs( bool $as_array=false ) : array|string
 	{

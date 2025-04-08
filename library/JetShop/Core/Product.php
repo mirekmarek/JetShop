@@ -474,6 +474,12 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		foreach( EShops::getList() as $eshop) {
 			$this->eshop_data[$eshop->getKey()]->setDeactivateAfterSellOut( $this->deactivate_after_sell_out );
 		}
+		
+		if($this->deactivate_after_sell_out) {
+			foreach( EShops::getList() as $eshop) {
+				$this->eshop_data[$eshop->getKey()]->setAllowToOrderWhenSoldOut( false );
+			}
+		}
 	}
 	
 	public function getNonSaleProductId(): int
@@ -722,6 +728,10 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		
 		foreach( EShops::getList() as $eshop ) {
 			$form->removeField( '/eshop_data/'.$eshop->getKey().'/variant_name' );
+			if($this->deactivate_after_sell_out) {
+				$form->field( '/eshop_data/'.$eshop->getKey().'/allow_to_order_when_sold_out' )->setDefaultValue( false );
+				$form->field( '/eshop_data/'.$eshop->getKey().'/allow_to_order_when_sold_out' )->setIsReadonly( true );
+			}
 		}
 	}
 	
@@ -883,6 +893,10 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 			return null;
 		}
 		
+		/**
+		 * @var Product $cloned_product
+		 * @var Product $this
+		 */
 		$cloned_product = clone $this;
 		
 		$this->setupClonedProduct( $cloned_product, $this->clone_form );

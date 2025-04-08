@@ -13,6 +13,7 @@ use Jet\Form;
 use Jet\Tr;
 
 use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Admin_Managers;
 use JetApplication\Availabilities;
 use JetApplication\EShops;
@@ -108,19 +109,30 @@ if($form->fieldExists('kind_of_product_id')) {
 			?>
 		
 			<div>
-				<?=Admin_Managers::PriceFormatter()->showPriceInfo( $price )?>
-				
-				<b><?=Tr::_('Price history:')?></b><br>
+				<div class="card card-body">
+					<?=Admin_Managers::PriceFormatter()->showPriceInfo( $price )?>
+					
+					<div style="padding: 10px;">
+						<?=UI::button(Tr::_('Price history'))->setClass(UI_button::CLASS_LINK)->setOnClick("$('#price_history_{$pricelist->getCode()}').toggle();")?>
+					</div>
 
-				<table class="table table-striped">
-					<?php foreach( Product_PriceHistory::get( $pricelist, $item->getId() ) as $hi): ?>
-						<tr>
-							<td style="width: 150px;"><?=Locale::dateAndTime( $hi->getDateTime() )?></td>
-							<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $hi->getPrice() )?></td>
-						</tr>
-					<?php endforeach; ?>
-				</table>
-				<br>
+					<div id="price_history_<?=$pricelist->getCode()?>" style="display: none">
+						<table class="table table-striped">
+							<?php foreach( Product_PriceHistory::get( $pricelist, $item->getId() ) as $hi): ?>
+								<tr>
+									<td nowrap=""><?=Locale::date( $hi->getDateTime() )?></td>
+									<td nowrap=""><?=Locale::time( $hi->getDateTime() )?></td>
+									<td style="width: 100%"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $hi->getPrice() )?></td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+					
+				</div>
+				
+				<br><br>
+				
+				
 			</div>
 		<?php endforeach; ?>
 	</div>

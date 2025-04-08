@@ -245,7 +245,6 @@ class Main extends Admin_Managers_Image
 			object_id: $item->getId(),
 			image_property_setter: function( $value ) use ($item) {
 				$item->addImage( $value );
-				$item->save();
 			}
 		);
 		
