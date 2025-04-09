@@ -7,20 +7,20 @@
 namespace JetApplicationModule\EShop\CashDesk;
 
 
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\EShop_Managers;
 use JetApplication\Carrier_DeliveryPoint;
 
 trait CashDesk_Delivery {
 	
 	/**
-	 * @var Delivery_Method_EShopData[]
+	 * @var Delivery_Method[]
 	 */
 	protected ?array $available_delivery_methods = null;
 	
 
 	/**
-	 * @return Delivery_Method_EShopData[]
+	 * @return Delivery_Method[]
 	 */
 	public function getAvailableDeliveryMethods() : array
 	{
@@ -28,7 +28,8 @@ trait CashDesk_Delivery {
 		if($this->available_delivery_methods===null) {
 			$cart = EShop_Managers::ShoppingCart()->getCart();
 			
-			$this->available_delivery_methods = Delivery_Method_EShopData::getAvailableByProducts(
+			$this->available_delivery_methods = Delivery_Method::getAvailableByProducts(
+				$cart->getEshop(),
 				$cart->getProducts()
 			);
 
@@ -38,7 +39,7 @@ trait CashDesk_Delivery {
 		return $this->available_delivery_methods;
 	}
 	
-	public function getDeliveryMethod( int $id ) : ?Delivery_Method_EShopData
+	public function getDeliveryMethod( int $id ) : ?Delivery_Method
 	{
 		$methods = $this->getAvailableDeliveryMethods();
 		if(!isset($methods[$id])) {
@@ -51,14 +52,14 @@ trait CashDesk_Delivery {
 	public function sortDeliveryMethods( array &$delivery_methods ) : void
 	{
 		
-		uasort( $delivery_methods, function( Delivery_Method_EShopData $a, Delivery_Method_EShopData $b ) {
+		uasort( $delivery_methods, function( Delivery_Method $a, Delivery_Method $b ) {
 			return $a->getPriority()<=>$b->getPriority();
 		} );
 		
 	}
 	
 
-	public function getDefaultDeliveryMethod() : ?Delivery_Method_EShopData
+	public function getDefaultDeliveryMethod() : ?Delivery_Method
 	{
 		$delivery_methods = $this->getAvailableDeliveryMethods();
 		
@@ -84,7 +85,7 @@ trait CashDesk_Delivery {
 		return $cheapest;
 	}
 
-	public function getSelectedDeliveryMethod() : ?Delivery_Method_EShopData
+	public function getSelectedDeliveryMethod() : ?Delivery_Method
 	{
 		$session = $this->getSession();
 
@@ -138,7 +139,7 @@ trait CashDesk_Delivery {
 		return true;
 	}
 
-	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method_EShopData $method, Carrier_DeliveryPoint $point ) : bool
+	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method $method, Carrier_DeliveryPoint $point ) : bool
 	{
 		$point = $method->getPersonalTakeoverDeliveryPoint( $point->getPointCode() );
 
@@ -167,7 +168,7 @@ trait CashDesk_Delivery {
 		return $method->getPersonalTakeoverDeliveryPoint( $place_code );
 	}
 	
-	public function getDeliveryPointByCode( string $code, ?Delivery_Method_EShopData &$method=null ) : ?Carrier_DeliveryPoint
+	public function getDeliveryPointByCode( string $code, ?Delivery_Method &$method=null ) : ?Carrier_DeliveryPoint
 	{
 		if(
 			!$code ||
@@ -178,7 +179,7 @@ trait CashDesk_Delivery {
 		
 		[$method_id, $point_code] = explode(':', $code);
 		
-		$method = Delivery_Method_EShopData::get( (int)$method_id );
+		$method = Delivery_Method::get( (int)$method_id );
 		if(!$method || !$method->isActive()) {
 			return null;
 		}

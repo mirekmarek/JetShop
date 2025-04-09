@@ -10,7 +10,6 @@ namespace JetApplicationModule\EShop\CashDesk;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\SysConf_URI;
-use JetApplication\Delivery_Method_EShopData;
 
 /**
  * @var MVC_View $this
@@ -18,7 +17,7 @@ use JetApplication\Delivery_Method_EShopData;
  */
 $cash_desk = $this->getRaw('cash_desk');
 
-$delivery_methods  = Delivery_Method_EShopData::getAllActive();
+$delivery_methods  = $cash_desk->getAvailableDeliveryMethods();
 $marker_icons = [];
 
 foreach( $delivery_methods as $method ) {

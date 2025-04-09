@@ -7,19 +7,19 @@
 namespace JetApplicationModule\EShop\CashDesk;
 
 
-use JetApplication\Payment_Method_EShopData;
-use JetApplication\Payment_Method_Option_EShopData;
+use JetApplication\Payment_Method;
+use JetApplication\Payment_Method_Option;
 
 trait CashDesk_Payment {
 	
 	/**
-	 * @var Payment_Method_EShopData[]
+	 * @var Payment_Method[]
 	 */
 	protected ?array $available_payment_methods = null;
 	
 	
 	/**
-	 * @return Payment_Method_EShopData[]
+	 * @return Payment_Method[]
 	 */
 	public function getAvailablePaymentMethods() : iterable
 	{
@@ -52,14 +52,14 @@ trait CashDesk_Payment {
 	
 	public function sortPaymentMethods( array &$payment_methods ) : void
 	{
-		uasort( $payment_methods, function( Payment_Method_EShopData $a, Payment_Method_EShopData $b ) {
+		uasort( $payment_methods, function( Payment_Method $a, Payment_Method $b ) {
 			return $a->getPriority()<=>$b->getPriority();
 		} );
 		
 	}
 	
 
-	public function getDefaultPaymentMethod() : ?Payment_Method_EShopData
+	public function getDefaultPaymentMethod() : ?Payment_Method
 	{
 
 		$methods = $this->getAvailablePaymentMethods();
@@ -70,7 +70,7 @@ trait CashDesk_Payment {
 		return null;
 	}
 
-	public function getSelectedPaymentMethod() : Payment_Method_EShopData
+	public function getSelectedPaymentMethod() : Payment_Method
 	{
 		$session = $this->getSession();
 
@@ -107,7 +107,7 @@ trait CashDesk_Payment {
 		return true;
 	}
 
-	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option_EShopData
+	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option
 	{
 		$session = $this->getSession();
 
