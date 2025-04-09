@@ -187,9 +187,13 @@ class Plugin_AddItem_Main extends Plugin {
 	
 	protected function createForm_payment() : void
 	{
+		/**
+		 * @var Order $item
+		 */
+		$item = $this->item;
+		
 		$payment_method = new Form_Field_Select('payment_method', 'Payment method: ');
-		//TODO: dle eshopu
-		$payment_method->setSelectOptions( Payment_Method::getScope() );
+		$payment_method->setSelectOptions( Payment_Method::getScopeForEShop( $item->getEshop() ) );
 		$payment_method->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]);
@@ -226,8 +230,13 @@ class Plugin_AddItem_Main extends Plugin {
 	
 	protected function createForm_delivery() : void
 	{
+		/**
+		 * @var Order $item
+		 */
+		$item = $this->item;
+		
 		$delivery_method = new Form_Field_Select('delivery_method', 'Delivery method: ');
-		$delivery_method->setSelectOptions( Delivery_Method::getScope() );
+		$delivery_method->setSelectOptions( Delivery_Method::getScopeForEShop( $item->getEshop() ) );
 		$delivery_method->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]);
