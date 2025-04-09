@@ -10,12 +10,12 @@ namespace JetShop;
 
 use JetApplication\Availability;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order;
-use JetApplication\Payment_Method_Option_EShopData;
-use JetApplication\Payment_Method_EShopData;
+use JetApplication\Payment_Method_Option;
+use JetApplication\Payment_Method;
 use JetApplication\Pricelist;
 use JetApplication\EShop;
 use JetApplication\CashDesk_Confirm_AgreeFlag;
@@ -29,35 +29,35 @@ interface Core_CashDesk {
 	public function getAvailability() : Availability;
 	
 	/**
-	 * @return Delivery_Method_EShopData[]
+	 * @return Delivery_Method[]
 	 */
 	public function getAvailableDeliveryMethods() : array;
 	
-	public function getDeliveryMethod( int $id ) : ?Delivery_Method_EShopData;
+	public function getDeliveryMethod( int $id ) : ?Delivery_Method;
 	
-	public function getDefaultDeliveryMethod() : ?Delivery_Method_EShopData;
+	public function getDefaultDeliveryMethod() : ?Delivery_Method;
 	
-	public function getSelectedDeliveryMethod() : ?Delivery_Method_EShopData;
+	public function getSelectedDeliveryMethod() : ?Delivery_Method;
 	
 	public function selectDeliveryMethod( int $id ) : bool;
 	
-	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method_EShopData $method, Carrier_DeliveryPoint $point ) : bool;
+	public function selectPersonalTakeoverDeliveryPoint( Delivery_Method $method, Carrier_DeliveryPoint $point ) : bool;
 	
 	public function getSelectedPersonalTakeoverDeliveryPoint() : ?Carrier_DeliveryPoint;
 	
 	
 	/**
-	 * @return Payment_Method_EShopData[]
+	 * @return Payment_Method[]
 	 */
 	public function getAvailablePaymentMethods() : iterable;
 	
-	public function getDefaultPaymentMethod() : ?Payment_Method_EShopData;
+	public function getDefaultPaymentMethod() : ?Payment_Method;
 	
-	public function getSelectedPaymentMethod() : Payment_Method_EShopData;
+	public function getSelectedPaymentMethod() : Payment_Method;
 	
 	public function selectPaymentMethod( int $id ) : bool;
 	
-	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option_EShopData;
+	public function getSelectedPaymentMethodOption() : ?Payment_Method_Option;
 	
 	public function selectPaymentMethodOption( string $option_code ) : bool;
 	

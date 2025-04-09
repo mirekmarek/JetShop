@@ -13,12 +13,12 @@ use Jet\Logger;
 use JetApplication\Admin_Managers;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order;
 use JetApplication\Order_ChangeHistory;
 use JetApplication\Order_Item;
-use JetApplication\Payment_Method_EShopData;
+use JetApplication\Payment_Method;
 use JetApplication\Product_EShopData;
 
 trait Core_Order_Trait_Changes {
@@ -238,7 +238,7 @@ trait Core_Order_Trait_Changes {
 		return $change;
 	}
 	
-	public function addDeliveryFee( Delivery_Method_EShopData $method, float $fee ) : Order_ChangeHistory
+	public function addDeliveryFee( Delivery_Method $method, float $fee ) : Order_ChangeHistory
 	{
 		/**
 		 * @var Order $this
@@ -274,7 +274,7 @@ trait Core_Order_Trait_Changes {
 	}
 	
 	
-	public function addPaymentFee( Payment_Method_EShopData $method, float $fee ) : Order_ChangeHistory
+	public function addPaymentFee( Payment_Method $method, float $fee ) : Order_ChangeHistory
 	{
 		/**
 		 * @var Order $this
@@ -394,7 +394,7 @@ trait Core_Order_Trait_Changes {
 	}
 	
 	
-	public function changeDeliveryMethod( Delivery_Method_EShopData $new_delivery_method, string $personal_takeover_delivery_point_code, float $price ) : Order_ChangeHistory
+	public function changeDeliveryMethod( Delivery_Method $new_delivery_method, string $personal_takeover_delivery_point_code, float $price ) : Order_ChangeHistory
 	{
 		$change = $this->startChange();
 		
@@ -472,7 +472,7 @@ trait Core_Order_Trait_Changes {
 		return $change;
 	}
 	
-	public function changePaymentMethod( Payment_Method_EShopData $new_payment_method, string $payment_method_specification, float $price ) : Order_ChangeHistory
+	public function changePaymentMethod( Payment_Method $new_payment_method, string $payment_method_specification, float $price ) : Order_ChangeHistory
 	{
 		$change = $this->startChange();
 		

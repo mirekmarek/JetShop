@@ -26,7 +26,7 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
@@ -472,9 +472,9 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		return $this->delivery_method_id;
 	}
 	
-	public function getDeliveryMethod() : Delivery_Method_EShopData
+	public function getDeliveryMethod() : Delivery_Method
 	{
-		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
+		return Delivery_Method::get( $this->getDeliveryMethodId() );
 	}
 	
 	public function setDeliveryMethodId( int $delivery_method_id ) : void

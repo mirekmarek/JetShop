@@ -9,7 +9,7 @@ namespace JetShop;
 use Jet\Data_DateTime;
 use Jet\UI_messages;
 use JetApplication\Complaint;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Item;
@@ -36,7 +36,7 @@ trait Core_OrderDispatch_Trait_Workflow
 		$_order = Order::get($complaint->getOrderId());
 		$product = Product_EShopData::get( $product_id, $complaint->getEshop() );
 		
-		$delivery_method = Delivery_Method_EShopData::get( $delivery_method, $complaint->getEshop() );
+		$delivery_method = Delivery_Method::get( $delivery_method );
 		
 		
 		$dispatch = new static();

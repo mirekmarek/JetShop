@@ -77,6 +77,9 @@ abstract class Core_Product_Price extends EShopEntity_Price
 	
 	public function afterAdd(): void
 	{
+		/**
+		 * @var Product_Price $this
+		 */
 		parent::afterAdd();
 		Product_PriceHistory::newRecord( $this );
 		
@@ -84,6 +87,9 @@ abstract class Core_Product_Price extends EShopEntity_Price
 	}
 	public function afterUpdate(): void
 	{
+		/**
+		 * @var Product_Price $this
+		 */
 		parent::afterUpdate();
 		Product_PriceHistory::newRecord( $this );
 		
@@ -229,6 +235,10 @@ abstract class Core_Product_Price extends EShopEntity_Price
 			$this->calcDiscount();
 			$this->save();
 			
+			/**
+			 * @var Product_Price $this
+			 */
+			
 			Product_PriceHistory::newRecord( $this );
 		}
 		
@@ -295,6 +305,10 @@ abstract class Core_Product_Price extends EShopEntity_Price
 			$this->do_not_actualize_references = true;
 			$this->calcDiscount();
 			$this->save();
+			
+			/**
+			 * @var Product_Price $this
+			 */
 			
 			Product_PriceHistory::newRecord( $this );
 		}

@@ -14,7 +14,7 @@ use JetApplication\Complaint;
 use JetApplication\Complaint_ChangeHistory;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 
 trait Core_Complaint_Trait_Changes {
 	
@@ -37,7 +37,7 @@ trait Core_Complaint_Trait_Changes {
 	}
 	
 	
-	public function changeDeliveryMethod( Delivery_Method_EShopData $new_delivery_method, string $personal_takeover_delivery_point_code ) : Complaint_ChangeHistory
+	public function changeDeliveryMethod( Delivery_Method $new_delivery_method, string $personal_takeover_delivery_point_code ) : Complaint_ChangeHistory
 	{
 		$change = $this->startChange();
 		

@@ -9,15 +9,16 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\DataModel;
 
-use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
-use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
+use Jet\Form_Definition;
+use Jet\Form_Field;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\EShopEntity_Common;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\EShopEntity_HasImages_Interface;
-use JetApplication\EShopEntity_WithEShopData;
-use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
+use JetApplication\EShopEntity_HasImages_Trait;
 use JetApplication\EShopEntity_Definition;
-use JetApplication\Payment_Method_Option_EShopData;
-use JetApplication\EShops;
-use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'payment_methods_options',
@@ -32,13 +33,14 @@ use JetApplication\EShop;
 		'icon3' => 'Icon 3',
 	]
 )]
-abstract class Core_Payment_Method_Option extends EShopEntity_WithEShopData implements
+abstract class Core_Payment_Method_Option extends EShopEntity_Common implements
+	EShopEntity_Admin_Interface,
 	EShopEntity_HasImages_Interface,
-	EShopEntity_Admin_WithEShopData_Interface
+	EShopEntity_HasEShopRelation_Interface
 {
-	
-	use EShopEntity_Admin_WithEShopData_Trait;
-	use EShopEntity_WithEShopData_HasImages_Trait;
+	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasImages_Trait;
+	use EShopEntity_HasEShopRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -52,14 +54,50 @@ abstract class Core_Payment_Method_Option extends EShopEntity_WithEShopData impl
 	)]
 	protected int $priority = 0;
 	
-	/**
-	 * @var Payment_Method_Option_EShopData[]
-	 */
 	#[DataModel_Definition(
-		type: DataModel::TYPE_DATA_MODEL,
-		data_model_class: Payment_Method_Option_EShopData::class
+		type: DataModel::TYPE_STRING,
+		max_len: 255
 	)]
-	protected array $eshop_data = [];
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Name:',
+	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
+	protected string $title = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Description:',
+	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
+	protected string $description = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+	)]
+	protected string $image_icon1 = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+	)]
+	protected string $image_icon2 = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+	)]
+	protected string $image_icon3 = '';
+	
 	
 	public function getMethodId(): int
 	{
@@ -69,15 +107,6 @@ abstract class Core_Payment_Method_Option extends EShopEntity_WithEShopData impl
 	public function setMethodId( int $method_id ): void
 	{
 		$this->method_id = $method_id;
-		foreach( EShops::getList() as $eshop) {
-			$this->getEshopData($eshop)->setMethodId( $method_id );
-		}
-	}
-	
-	public function getEshopData( ?EShop $eshop=null ) : Payment_Method_Option_EShopData
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->_getEshopData( $eshop );
 	}
 	
 	public function getPriority(): int
@@ -88,10 +117,6 @@ abstract class Core_Payment_Method_Option extends EShopEntity_WithEShopData impl
 	public function setPriority( int $priority ): void
 	{
 		$this->priority = $priority;
-		foreach( EShops::getList() as $eshop) {
-			$this->getEshopData($eshop)->setPriority( $priority );
-		}
-		
 	}
 	
 	
@@ -113,6 +138,77 @@ abstract class Core_Payment_Method_Option extends EShopEntity_WithEShopData impl
 	public function getEditUrl( array $get_params=[] ) : string
 	{
 		return '';
+	}
+	
+	
+	public function getTitle() : string
+	{
+		return $this->title;
+	}
+	
+	public function setTitle( string $title ) : void
+	{
+		$this->title = $title;
+	}
+	
+	public function getDescription() : string
+	{
+		return $this->description;
+	}
+	
+	public function setDescription( string $description ) : void
+	{
+		$this->description = $description;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getImageIcon1(): string
+	{
+		return $this->image_icon1;
+	}
+	
+	public function setImageIcon1( string $image_icon1 ): void
+	{
+		$this->image_icon1 = $image_icon1;
+	}
+	
+	public function getIcon1ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon1', $max_w, $max_h );
+	}
+	
+	
+	public function getImageIcon2(): string
+	{
+		return $this->image_icon2;
+	}
+	
+	public function setImageIcon2( string $image_icon2 ): void
+	{
+		$this->image_icon2 = $image_icon2;
+	}
+	
+	public function getIcon2ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon2', $max_w, $max_h );
+	}
+	
+	
+	public function getImageIcon3(): string
+	{
+		return $this->image_icon3;
+	}
+	
+	public function setImageIcon3( string $image_icon3 ): void
+	{
+		$this->image_icon3 = $image_icon3;
+	}
+	
+	public function getIcon3ThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return $this->getImageThumbnailUrl( 'icon3', $max_w, $max_h );
 	}
 	
 }

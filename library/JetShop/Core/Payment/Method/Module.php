@@ -11,11 +11,10 @@ use Jet\Application_Module;
 
 use JetApplication\Order;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_EShopData;
 
 abstract class Core_Payment_Method_Module extends Application_Module
 {
-	public function init( Payment_Method_EShopData $payment_method ) : void
+	public function init( Payment_Method $payment_method ) : void
 	{
 	}
 	
@@ -27,13 +26,13 @@ abstract class Core_Payment_Method_Module extends Application_Module
 	
 	
 	
-	public function getOrderConfirmationEmailInfoText( Order $order, Payment_Method_EShopData $payment_method ) : string
+	public function getOrderConfirmationEmailInfoText( Order $order, Payment_Method $payment_method ) : string
 	{
 		return $payment_method->getConfirmationEmailInfoText();
 	}
 	
 	abstract public function getPaymentMethodSpecificationList() : array;
 	
-	abstract public function getPaymentMethodOptionsList( Payment_Method|Payment_Method_EShopData $payment_method ) : array;
+	abstract public function getPaymentMethodOptionsList( Payment_Method $payment_method ) : array;
 
 }

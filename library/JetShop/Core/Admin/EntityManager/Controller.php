@@ -31,6 +31,7 @@ use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasImageGallery_Interface;
 use JetApplication\EShopEntity_HasImages_Interface;
@@ -623,7 +624,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	}
 	
 	
-	public function edit_main_handleActivation( ?EShopEntity_WithEShopData $item=null ) : void
+	public function edit_main_handleActivation( null|EShopEntity_HasActivation_Interface $item=null ) : void
 	{
 		$item = $item?:$this->current_item;
 		$entity_type = $item->getEntityType();
@@ -643,24 +644,27 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		}
 		
 		
-		if($GET->exists('activate_entity_completely')) {
-			$item->activateCompletely();
-			Http_Headers::reload(unset_GET_params: ['activate_entity_completely']);
-		}
-		
-		
-		if($GET->exists('activate_entity_eshop_data')) {
-			$eshop = EShops::get( $GET->getString('activate_entity_eshop_data') );
-			$item->activateEShopData( $eshop );
+		if( $item instanceof EShopEntity_WithEShopData  ) {
+			if($GET->exists('activate_entity_completely')) {
+				$item->activateCompletely();
+				Http_Headers::reload(unset_GET_params: ['activate_entity_completely']);
+			}
 			
-			Http_Headers::reload(unset_GET_params: ['activate_entity_eshop_data']);
-		}
-		
-		if($GET->exists('deactivate_entity_eshop_data')) {
-			$eshop = EShops::get( $GET->getString('deactivate_entity_eshop_data') );
-			$item->deactivateEShopData( $eshop );
 			
-			Http_Headers::reload(unset_GET_params: ['deactivate_entity_eshop_data']);
+			if($GET->exists('activate_entity_eshop_data')) {
+				$eshop = EShops::get( $GET->getString('activate_entity_eshop_data') );
+				$item->activateEShopData( $eshop );
+				
+				Http_Headers::reload(unset_GET_params: ['activate_entity_eshop_data']);
+			}
+			
+			if($GET->exists('deactivate_entity_eshop_data')) {
+				$eshop = EShops::get( $GET->getString('deactivate_entity_eshop_data') );
+				$item->deactivateEShopData( $eshop );
+				
+				Http_Headers::reload(unset_GET_params: ['deactivate_entity_eshop_data']);
+			}
+			
 		}
 		
 	}

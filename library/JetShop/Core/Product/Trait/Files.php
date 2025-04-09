@@ -85,6 +85,9 @@ trait Core_Product_Trait_Files
 	
 	public function addFile( int $kind_of_file_id, string $file_name, string $srouce_file_path ) : Product_File
 	{
+		/**
+		 * @var Product $this
+		 */
 		$new_file = Product_File::upload( $this, $kind_of_file_id, $file_name, $srouce_file_path );
 		
 		foreach( $this->getFiles() as $e_file ) {

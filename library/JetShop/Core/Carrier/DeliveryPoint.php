@@ -20,7 +20,7 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\Locale;
 use JetApplication\Carrier;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShops;
 use JetApplication\EShop;
@@ -432,7 +432,7 @@ class Core_Carrier_DeliveryPoint extends EShopEntity_Basic implements Form_Defin
 		
 		$map_data = [];
 		
-		$all_methods = Delivery_Method_EShopData::fetchInstances( $eshop->getWhere() );
+		$all_methods = Delivery_Method::fetchInstances( $eshop->getWhere() );
 		
 		foreach( $all_methods as $method ) {
 			if(
@@ -635,7 +635,7 @@ class Core_Carrier_DeliveryPoint extends EShopEntity_Basic implements Form_Defin
 	
 	/**
 	 * @param string $q
-	 * @param Delivery_Method_EShopData[] $only_methods
+	 * @param Delivery_Method[] $only_methods
 	 * @return static[]
 	 */
 	public static function search( string $q, array $only_methods ) : array

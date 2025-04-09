@@ -178,6 +178,10 @@ trait Core_Product_Trait_Variants
 			$this->syncVariant( $v );
 		}
 		
+		/**
+		 * @var Product $this
+		 */
+		
 		Product_Parameter_Value::syncVariants(
 			$this
 		);

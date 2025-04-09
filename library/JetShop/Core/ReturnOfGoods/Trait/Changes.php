@@ -14,7 +14,7 @@ use JetApplication\ReturnOfGoods;
 use JetApplication\ReturnOfGoods_ChangeHistory;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 
 trait Core_ReturnOfGoods_Trait_Changes {
 	
@@ -37,7 +37,7 @@ trait Core_ReturnOfGoods_Trait_Changes {
 	}
 	
 	
-	public function changeDeliveryMethod( Delivery_Method_EShopData $new_delivery_method, string $personal_takeover_delivery_point_code ) : ReturnOfGoods_ChangeHistory
+	public function changeDeliveryMethod( Delivery_Method $new_delivery_method, string $personal_takeover_delivery_point_code ) : ReturnOfGoods_ChangeHistory
 	{
 		$change = $this->startChange();
 		

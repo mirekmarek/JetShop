@@ -25,7 +25,7 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
@@ -459,7 +459,7 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		$_order = Order::get($complaint->getOrderId());
 		$product = Product_EShopData::get( $product_id, $complaint->getEshop() );
 		
-		$delivery_method = Delivery_Method_EShopData::get( $delivery_method, $complaint->getEshop() );
+		$delivery_method = Delivery_Method::get( $delivery_method );
 		
 		
 		$dispatch = new static();

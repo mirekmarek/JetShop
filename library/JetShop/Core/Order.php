@@ -21,7 +21,7 @@ use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
@@ -37,7 +37,7 @@ use JetApplication\Order_ProductOverviewItem;
 use JetApplication\Order_Trait_Events;
 use JetApplication\Order_Trait_Status;
 use JetApplication\Order_Trait_Changes;
-use JetApplication\Payment_Method_EShopData;
+use JetApplication\Payment_Method;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Pricelists;
@@ -834,7 +834,7 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		return $this->delivery_method_id;
 	}
 	
-	public function setDeliveryMethod( Delivery_Method_EShopData $delivery_method, string $delivery_point_code ) : void
+	public function setDeliveryMethod( Delivery_Method $delivery_method, string $delivery_point_code ) : void
 	{
 		/**
 		 * @var Order $order
@@ -853,9 +853,9 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		
 	}
 
-	public function getDeliveryMethod() : ?Delivery_Method_EShopData
+	public function getDeliveryMethod() : ?Delivery_Method
 	{
-		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
+		return Delivery_Method::get( $this->getDeliveryMethodId() );
 	}
 
 	public function setDeliveryMethodId( int $delivery_method_id ) : void
@@ -875,7 +875,7 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	
 	
 	
-	public function setPaymentMethod( Payment_Method_EShopData $payment_method, string $payment_option_code='' ) : void
+	public function setPaymentMethod( Payment_Method $payment_method, string $payment_option_code='' ) : void
 	{
 		/**
 		 * @var Order $order
@@ -914,9 +914,9 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		$this->payment_method_id = $payment_method_id;
 	}
 
-	public function getPaymentMethod() : ?Payment_Method_EShopData
+	public function getPaymentMethod() : ?Payment_Method
 	{
-		return Payment_Method_EShopData::get( $this->getPaymentMethodId(), $this->getEshop() );
+		return Payment_Method::get( $this->getPaymentMethodId() );
 	}
 
 	public function getPaymentMethodSpecification() : string

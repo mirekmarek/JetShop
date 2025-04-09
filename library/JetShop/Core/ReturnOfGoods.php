@@ -33,7 +33,7 @@ use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\ReturnOfGoods_Event;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\ReturnOfGoods;
 use JetApplication\Order;
@@ -470,9 +470,9 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		return $this->delivery_method_id;
 	}
 	
-	public function getDeliveryMethod() : Delivery_Method_EShopData
+	public function getDeliveryMethod() : Delivery_Method
 	{
-		return Delivery_Method_EShopData::get( $this->getDeliveryMethodId(), $this->getEshop() );
+		return Delivery_Method::get( $this->getDeliveryMethodId() );
 	}
 	
 	public function setDeliveryMethodId( int $delivery_method_id ) : void

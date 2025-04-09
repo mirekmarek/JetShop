@@ -89,6 +89,10 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		max_len: 100,
 		is_key: true,
 	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'ERP code:'
+	)]
 	protected string $erp_id = '';
 	
 	#[DataModel_Definition(

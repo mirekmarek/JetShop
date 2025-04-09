@@ -14,12 +14,12 @@ use Jet\DataModel_IDController_AutoIncrement;
 
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\Discounts_Discount;
 use JetApplication\EShopEntity_Price;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
-use JetApplication\Payment_Method_EShopData;
+use JetApplication\Payment_Method;
 use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\EShopEntity_AccountingDocument_Item_SetItem;
@@ -464,7 +464,7 @@ abstract class Core_EShopEntity_AccountingDocument_Item extends DataModel_Relate
 		}
 	}
 	
-	public function setupDeliveryMethod( Pricelist $pricelist, Delivery_Method_EShopData $delivery_method ) : void
+	public function setupDeliveryMethod( Pricelist $pricelist, Delivery_Method $delivery_method ) : void
 	{
 		$this->setType( EShopEntity_AccountingDocument_Item::ITEM_TYPE_DELIVERY );
 		$this->setItemId( $delivery_method->getId() );
@@ -478,7 +478,7 @@ abstract class Core_EShopEntity_AccountingDocument_Item extends DataModel_Relate
 		
 	}
 	
-	public function setupPaymentMethod( Pricelist $pricelist, Payment_Method_EShopData $payment_method ) : void
+	public function setupPaymentMethod( Pricelist $pricelist, Payment_Method $payment_method ) : void
 	{
 		$this->setType( EShopEntity_AccountingDocument_Item::ITEM_TYPE_PAYMENT );
 		$this->setItemId( $payment_method->getId() );
