@@ -57,13 +57,17 @@ $method = $this->getRaw('delivery_method');
 
 
 
-<?php if($point->getOpeningHours()): ?>
+<?php if($point->getOpeningHoursSpecified()): ?>
 <br/>
 <div>
 	<b><?=Tr::_('Opening hours:')?></b>
 	<br/>
 	<table class="table">
-		<?php foreach( $point->getOpeningHours() as $oh): ?>
+		<?php foreach( $point->getOpeningHours() as $oh):
+			if(!$oh->specified()) {
+				continue;
+			}
+			?>
 		<tr>
 			<td nowrap=""><?=$oh->getDay()?></td>
 			<td nowrap=""><?=$oh->getOpen1()?></td>

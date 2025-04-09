@@ -174,6 +174,17 @@ abstract class Core_Carrier_DeliveryPoint_OpeningHours extends DataModel_Related
 	{
 		return $this->close3;
 	}
+	
+	public function specified() : bool
+	{
+		return
+			trim($this->open1) ||
+			trim($this->close1) ||
+			trim($this->open2) ||
+			trim($this->close2) ||
+			trim($this->open3) ||
+			trim($this->close3);
+	}
 
 	public function getHash() : string
 	{

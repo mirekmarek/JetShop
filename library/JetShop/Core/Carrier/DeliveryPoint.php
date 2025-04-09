@@ -632,6 +632,21 @@ class Core_Carrier_DeliveryPoint extends EShopEntity_Basic implements Form_Defin
 		return $this->opening_hours;
 	}
 	
+	public function getOpeningHoursSpecified() : bool
+	{
+		if(!$this->opening_hours) {
+			return false;
+		}
+		
+		foreach($this->opening_hours as $oh) {
+			if($oh->specified()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	
 	/**
 	 * @param string $q
