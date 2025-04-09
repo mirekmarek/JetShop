@@ -52,9 +52,10 @@ $form->renderer()->setDefaultFieldWidth( [
 
 
 <div id="main-col">
-		<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
-		
 		<?php
+		echo $this->render('entity-form-common-fields');
+		
+		
 		if($common_data_fields_renderer) {
 			$common_data_fields_renderer( $item, $form );
 		}

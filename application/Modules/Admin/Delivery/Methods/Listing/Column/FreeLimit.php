@@ -13,10 +13,11 @@ use Jet\UI_dataGrid_column;
 
 class Listing_Column_FreeLimit extends DataListing_Column
 {
+	public const KEY = 'free_delivery_limit';
 	
 	public function getKey(): string
 	{
-		return 'delivery_free_limit';
+		return static::KEY;
 	}
 	
 	public function getTitle(): string

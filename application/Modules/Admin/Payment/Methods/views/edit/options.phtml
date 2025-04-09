@@ -14,7 +14,6 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Admin_Managers;
-use JetApplication\EShops;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Option;
 
@@ -63,16 +62,6 @@ echo $this->controller->getEditorManager()->renderToolbar();
 								?><span class="badge badge-success"> <?=Tr::_('Active', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?> </span> <?php
 							else:
 								?><span class="badge badge-danger"><?=Tr::_('Inactive', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></span> <?php
-							endif;
-							
-							if( count(EShops::getListSorted())>1 ):
-								foreach( EShops::getListSorted() as $eshop):
-									if($option->getEshopData($eshop)->isActiveForShop()):
-										?><span class="badge badge-success"><?=$eshop->getName()?></span> <?php
-									else:
-										?><span class="badge badge-danger"><?=$eshop->getName()?></span> <?php
-									endif;
-								endforeach;
 							endif;
 							?>
 						</td>

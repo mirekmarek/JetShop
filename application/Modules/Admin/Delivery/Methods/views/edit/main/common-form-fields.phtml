@@ -10,8 +10,6 @@ use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Method_Price;
-use JetApplication\EShops;
-use JetApplication\Pricelists;
 use JetApplication\Admin_Managers;
 
 
@@ -23,9 +21,14 @@ use JetApplication\Admin_Managers;
 
 $item = $this->getRaw('item');
 $form = $this->getRaw('form');
+
+
 $form->field( 'carrier_code' )->input()->addJsAction('onchange', 'reloadCarrierServices(this.options[this.selectedIndex].value);');
+$form->field( 'delivery_classes' )->input()->addCustomCssStyle('height: 300px');
+$form->field( 'payment_methods' )->input()->addCustomCssStyle('height: 300px');
+
 ?>
-<!--suppress JSCheckFunctionSignatures -->
+<!--suppress JSCheckFunctionSignatures, JSUnresolvedReference -->
 <script>
 	async function reloadCarrierServices( carrier ) {
 		const set = ( field_id, options ) => {
@@ -44,26 +47,36 @@ $form->field( 'carrier_code' )->input()->addJsAction('onchange', 'reloadCarrierS
 		const services = await _services.json();
 		const _dp_types = await fetch('<?=Http_Request::currentURI(['action' =>'get_carrier_dp_types'])?>&carrier='+encodeURIComponent(carrier));
 		const dp_types = await _dp_types.json();
-		
-		
-		<?php foreach(EShops::getList() as $eshop): ?>
-		set( '<?=$form->field('/eshop_data/'.$eshop->getKey().'/carrier_service_code')->getId()?>', services );
-		set( '<?=$form->field('/eshop_data/'.$eshop->getKey().'/allowed_delivery_point_types')->getId()?>', dp_types );
-		<?php endforeach; ?>
 
+		set( '<?=$form->field('carrier_service_code')->getId()?>', services );
+		set( '<?=$form->field('allowed_delivery_point_types')->getId()?>', dp_types );
 	}
+	
 </script>
 
+<?=$form->field( 'erp_id')?>
 <?=$form->field( 'kind' )?>
 <?=$form->field( 'delivery_classes' )?>
 <?=$form->field( 'carrier_code' )?>
+<?=$form->field( 'carrier_service_code')?>
+<?=$form->field( 'allowed_delivery_point_types')?>
 <?=$form->field( 'payment_methods' )?>
+<?=$form->field( 'discount_is_not_allowed')?>
+<?=$form->field( 'free_delivery_limit')?>
+<?=$form->field( 'priority')?>
+<?=$form->field( 'length_of_delivery_in_working_days')?>
+<?=$form->field( 'title')?>
+<?=$form->field( 'description')?>
+<?=$form->field( 'description_short')?>
+<?=$form->field( 'confirmation_email_info_text')?>
+
+
 
 <div class="form-group row">
 	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Price:')?></label>
 	<div class="col-md-8">
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, 300px); gap: 20px;">
-		<?php foreach( Pricelists::getList() as $pricelist):
+		<?php foreach( $item->getEshop()->getPricelists() as $pricelist):
 			$price = Delivery_Method_Price::get( $pricelist, $item->getId() );
 			
 			echo Admin_Managers::PriceFormatter()->showPriceInfo( $price );

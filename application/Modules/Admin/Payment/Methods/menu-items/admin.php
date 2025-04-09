@@ -5,6 +5,7 @@ return [
 			'index' => 60,
 			'separator_before' => true,
 			'page_id' => 'payment-method',
+			'separator_after' => true,
 		],
 	],
 ];

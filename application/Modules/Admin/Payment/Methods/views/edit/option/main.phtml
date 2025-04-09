@@ -11,7 +11,6 @@ use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
-use JetApplication\EShop;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Option;
 
@@ -42,15 +41,9 @@ echo $form->start();
 			
 			<?=Admin_Managers::EntityEdit()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
 			<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields($form)?>
-			<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
-				form: $form,
-				renderer: function( EShop $eshop, string $eshop_key ) use ($option, $form) : void {
-					?>
-					<fieldset>
-						<?=$form->field('/eshop_data/'.$eshop_key.'/title')?>
-						<?=$form->field('/eshop_data/'.$eshop_key.'/description')?>
-					</fieldset>
-				<?php }); ?>
+		
+			<?=$form->field('title');?>
+			<?=$form->field('description');?>
 		
 	</div>
 	

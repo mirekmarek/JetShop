@@ -17,7 +17,6 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Delivery_Method;
-use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Order;
 
 class Plugin_ChangeDeliveryMethod_Main extends Plugin
@@ -35,10 +34,14 @@ class Plugin_ChangeDeliveryMethod_Main extends Plugin
 	
 	protected function init() : void
 	{
+		/**
+		 * @var Order $item
+		 */
+		$item = $this->item;
 		
 		$delivery_method = new Form_Field_Select('delivery_method', 'Payment method:' );
 		$delivery_method->setDefaultValue( $this->item->getDeliveryMethodId() );
-		$delivery_method->setSelectOptions( Delivery_Method::getScope() );
+		$delivery_method->setSelectOptions( Delivery_Method::getScopeForEShop( $item->getEshop() ) );
 		$delivery_method->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 		]);
@@ -56,7 +59,7 @@ class Plugin_ChangeDeliveryMethod_Main extends Plugin
 			$item = $this->item;
 			
 			$delivery_method_id = $delivery_method->getValue();
-			$dm = Delivery_Method_EShopData::get( $delivery_method_id, $item->getEshop() );
+			$dm = Delivery_Method::get( $delivery_method_id );
 			$place_code = $pto_point->getValue();
 			
 			if($dm->isPersonalTakeover()) {
@@ -104,9 +107,8 @@ class Plugin_ChangeDeliveryMethod_Main extends Plugin
 		if( $this->form->catchInput() ) {
 			
 			if($this->form->validate()) {
-				$delivery_method = Delivery_Method_EShopData::get(
+				$delivery_method = Delivery_Method::get(
 					$this->form->field('delivery_method')->getValue(),
-					$item->getEshop()
 				);
 				
 				if($delivery_method) {

@@ -10,7 +10,6 @@ use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_dialog;
-use JetApplication\Pricelists;
 use JetApplication\Payment_Method;
 
 /**
@@ -21,6 +20,7 @@ use JetApplication\Payment_Method;
  */
 
 $set_price_form = $this->getRaw('set_price_form');
+$item = $this->getRaw('item');
 
 if($set_price_form):
 	
@@ -29,10 +29,10 @@ if($set_price_form):
 	echo $set_price_dialog->start();
 	echo $set_price_form->start();
 	
-	foreach(Pricelists::getList() as $pricelist):
+	foreach($item->getEshop()->getPricelists() as $pricelist):
 		?>
 		<fieldset>
-			<?php if(count(Pricelists::getList())>1): ?>
+			<?php if(count($item->getEshop()->getPricelists())>1): ?>
 				<legend><?=$pricelist->getName()?> - <?=$pricelist->getCurrency()->getCode()?></legend>
 			<?php endif; ?>
 			<?php

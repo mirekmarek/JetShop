@@ -19,12 +19,10 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_tabsJS;
 use JetApplication\Delivery_Method;
-use JetApplication\Delivery_Method_EShopData;
 use JetApplication\Discounts_Discount;
 use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_EShopData;
 use JetApplication\Product_EShopData;
 
 
@@ -190,6 +188,7 @@ class Plugin_AddItem_Main extends Plugin {
 	protected function createForm_payment() : void
 	{
 		$payment_method = new Form_Field_Select('payment_method', 'Payment method: ');
+		//TODO: dle eshopu
 		$payment_method->setSelectOptions( Payment_Method::getScope() );
 		$payment_method->setErrorMessages([
 			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
@@ -217,7 +216,7 @@ class Plugin_AddItem_Main extends Plugin {
 		$method_id = (int)$form->field('payment_method')->getValue();
 		$fee = $form->field('fee')->getValue();
 		
-		$method = Payment_Method_EShopData::get( $method_id, $item->getEshop() );
+		$method = Payment_Method::get( $method_id );
 		if(!$method) {
 			return false;
 		}
@@ -255,7 +254,7 @@ class Plugin_AddItem_Main extends Plugin {
 		$delivery_method_id = (int)$form->field('delivery_method')->getValue();
 		$fee = $form->field('fee')->getValue();
 		
-		$method = Delivery_Method_EShopData::get( $delivery_method_id, $item->getEshop() );
+		$method = Delivery_Method::get( $delivery_method_id );
 		
 		return $item->addDeliveryFee( $method, $fee )->hasChange();
 	}

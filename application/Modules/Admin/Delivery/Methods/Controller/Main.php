@@ -44,13 +44,16 @@ class Controller_Main extends Admin_EntityManager_Controller
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_FreeLimit() );
+		$this->listing_manager->addColumn( new Listing_Column_Price() );
+		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
 			'active_state',
 			'internal_name',
 			'internal_code',
 			'internal_notes',
-			'delivery_free_limit'
+			Listing_Column_FreeLimit::KEY,
+			Listing_Column_Price::KEY
 		]);
 	}
 	

@@ -15,7 +15,6 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Order;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_EShopData;
 
 class Plugin_ChangePaymentMethod_Main extends Plugin
 {
@@ -30,8 +29,13 @@ class Plugin_ChangePaymentMethod_Main extends Plugin
 	
 	protected function init() : void
 	{
+		/**
+		 * @var Order $item
+		 */
+		$item = $this->item;
+		
 		$payment_methods = [];
-		foreach(Payment_Method::getList() as $pm) {
+		foreach(Payment_Method::getListForEShop( $item->getEshop() ) as $pm) {
 			
 			if($pm->getOptions()) {
 				foreach($pm->getOptions() as $option) {
@@ -85,7 +89,7 @@ class Plugin_ChangePaymentMethod_Main extends Plugin
 				[$selected_pm,$specification] = explode(':', $selected_pm);
 			}
 			
-			$payment_method = Payment_Method_EShopData::get( (int)$selected_pm, $item->getEshop() );
+			$payment_method = Payment_Method::get( (int)$selected_pm );
 			
 			if($payment_method) {
 				$change = $item->changePaymentMethod(

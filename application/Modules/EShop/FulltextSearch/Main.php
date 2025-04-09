@@ -19,11 +19,17 @@ class Main extends EShop_Managers_FulltextSearch implements EShop_ModuleUsingTem
 	
 	public function deleteIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
+		if($GLOBALS['do_not_index_fulltext']??false) {
+			return;
+		}
 		Index::deleteIndex( $object );
 	}
 	
 	public function updateIndex( FulltextSearch_IndexDataProvider $object ) : void
 	{
+		if($GLOBALS['do_not_index_fulltext']??false) {
+			return;
+		}
 		Index::updateIndex( $object );
 	}
 	

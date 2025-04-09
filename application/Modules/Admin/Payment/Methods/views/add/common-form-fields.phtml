@@ -19,6 +19,7 @@ $form->field( 'delivery_methods' )->input()->addCustomCssStyle('height: 300px');
 
 $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadPaymentMethodSpecification(this.options[this.selectedIndex].value);');
 ?>
+<!--suppress JSUnresolvedReference, JSCheckFunctionSignatures -->
 <script>
 	async function reloadPaymentMethodSpecification( module_name ) {
 		const response = await fetch('<?=Http_Request::currentURI(['action' =>'get_payment_method_specification'])?>&module='+encodeURIComponent(module_name));
@@ -39,8 +40,8 @@ $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadP
 	}
 </script>
 
-<?=$form->field( 'kind' )?>
-<?=$form->field( 'backend_module_name' )?>
-<?=$form->field( 'backend_module_payment_method_specification' )?>
-<?=$form->field( 'delivery_methods' )?>
-
+<?=$form->field('erp_id')?>
+<?=$form->field('kind' )?>
+<?=$form->field('backend_module_name' )?>
+<?=$form->field('backend_module_payment_method_specification' )?>
+<?=$form->field('title')?>

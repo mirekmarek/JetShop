@@ -12,6 +12,7 @@ use Jet\Application_Modules;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
+use Jet\DataModel_Query;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
@@ -50,7 +51,14 @@ use JetApplication\Timer_Action_SetPrice;
 
 #[DataModel_Definition(
 	name: 'payment_method',
-	database_table_name: 'payment_methods'
+	database_table_name: 'payment_methods',
+	relation: [
+		'related_to_class_name' => Payment_Method_Price::class,
+		'join_by_properties' => [
+			'id' => 'entity_id'
+		],
+		'join_type' => DataModel_Query::JOIN_TYPE_LEFT_OUTER_JOIN
+	]
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Payment method',
