@@ -13,6 +13,7 @@ use Jet\Http_Request;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Carrier;
 use JetApplication\Delivery_Method;
+use JetApplicationModule\Admin\ManageAccess\Administrators\Roles\Listing_Column_Description;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
@@ -45,6 +46,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		$this->listing_manager->addColumn( new Listing_Column_FreeLimit() );
 		$this->listing_manager->addColumn( new Listing_Column_Price() );
+		$this->listing_manager->addColumn( new Listing_Column_Kind() );
+		$this->listing_manager->addColumn( new Listing_Column_Title() );
+		$this->listing_manager->addColumn( new Listing_Column_Carrier() );
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
@@ -52,6 +56,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			'internal_name',
 			'internal_code',
 			'internal_notes',
+			Listing_Column_Kind::KEY,
 			Listing_Column_FreeLimit::KEY,
 			Listing_Column_Price::KEY
 		]);
