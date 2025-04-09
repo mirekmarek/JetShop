@@ -265,6 +265,15 @@ class Index extends DataModel {
 			$res[] = $i;
 		}
 		
+		uasort($res, function( Index $a, Index $b) {
+			return strcmp( $a->object_title, $b->object_title );
+		});
+		
+		uasort($res, function( Index $a, Index $b) {
+			return $b->object_is_active <=> $a->object_is_active;
+		});
+		
+		
 		return $res;
 	}
 	

@@ -29,7 +29,7 @@ if($result):
 		data-type="<?=$item->getObjectType()?>"
 		class="search-whisperer-item<?=$i==1?' search-whisperer-item-selected':''?>"
 		<?php if(!$item->getObjectIsActive()):?>
-		style="text-decoration: line-through"
+		style="text-decoration: line-through;opacity: 0.7"
 		<?php endif; ?>
 		><?=$item->getObjectTitle()?></span><?php
 	endforeach;
