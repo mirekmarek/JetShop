@@ -269,12 +269,11 @@ class Server
 		$allowed_payment_methods_ids = null;
 		$allowed_payment_methods = [];
 		
-		$this->available_delivery_methods = Delivery_Method::getAvailableByProducts(
-			EShops::getCurrent(),
-			$cart->getProducts()
+		$available_delivery_methods = Delivery_Method::getAllActive(
+			EShops::getCurrent()
 		);
 		
-		foreach( $delivery_methods as $delivery_method ) {
+		foreach( $available_delivery_methods as $delivery_method ) {
 			
 			$delivery_map_item = $this->config->getDeliveryMapItem( $delivery_method->getId() );
 			if( !$delivery_map_item ) {
