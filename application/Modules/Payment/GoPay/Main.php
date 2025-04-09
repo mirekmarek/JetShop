@@ -17,7 +17,6 @@ use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\EShops;
 use JetApplication\Order;
 use JetApplication\Payment_Method;
-use JetApplication\Payment_Method_EShopData;
 use JetApplication\Payment_Method_Module;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
@@ -30,7 +29,7 @@ class Main extends Payment_Method_Module implements
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	public function getPaymentMethodOptionsList( Payment_Method|Payment_Method_EShopData $payment_method ) : array
+	public function getPaymentMethodOptionsList( Payment_Method $payment_method ) : array
 	{
 		if( $payment_method->getBackendModulePaymentMethodSpecification()!=GoPay_PaymentMethod::BANK_ACCOUNT ) {
 			return [];

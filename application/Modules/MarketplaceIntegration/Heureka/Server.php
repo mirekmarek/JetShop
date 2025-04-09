@@ -15,7 +15,7 @@ use Jet\Http_Request;
 use Jet\Locale;
 use Jet\Logger;
 use JetApplication\Availability;
-use JetApplication\Delivery_Method_EShopData;
+use JetApplication\Delivery_Method;
 use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\Order_Status_Cancelled;
@@ -24,7 +24,7 @@ use JetApplication\Order_Status_Dispatched;
 use JetApplication\Order_Status_DispatchStarted;
 use JetApplication\Order_Status_ReadyForDispatch;
 use JetApplication\Order_Status_Returned;
-use JetApplication\Payment_Method_EShopData;
+use JetApplication\Payment_Method;
 use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\EShops;
@@ -269,7 +269,10 @@ class Server
 		$allowed_payment_methods_ids = null;
 		$allowed_payment_methods = [];
 		
-		$delivery_methods = Delivery_Method_EShopData::getAvailableByProducts( $products );
+		$this->available_delivery_methods = Delivery_Method::getAvailableByProducts(
+			EShops::getCurrent(),
+			$cart->getProducts()
+		);
 		
 		foreach( $delivery_methods as $delivery_method ) {
 			
@@ -310,7 +313,7 @@ class Server
 		}
 		
 		
-		foreach( Payment_Method_EShopData::getAllActive($this->eshop) as $payment_method ) {
+		foreach( Payment_Method::getAllActive($this->eshop) as $payment_method ) {
 			if(
 				!in_array($payment_method->getId(), $allowed_payment_methods_ids??[]) ||
 				!($map_item = $this->config->getPaymentMapItem($payment_method->getId()))
@@ -440,10 +443,10 @@ class Server
 		
 		
 		
-		$delivery_method = Delivery_Method_EShopData::get( $data['deliveryId'] );
+		$delivery_method = Delivery_Method::get( $data['deliveryId'] );
 		$order->setDeliveryMethod( $delivery_method, $data['originalId'] );
 		
-		$payment_method = Payment_Method_EShopData::get( $data['paymentId'] );
+		$payment_method = Payment_Method::get( $data['paymentId'] );
 		$order->setPaymentMethod( $payment_method );
 		
 		
