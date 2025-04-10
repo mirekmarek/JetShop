@@ -27,12 +27,12 @@ class Listing_Column_Price extends DataListing_Column
 	
 	public function getOrderByAsc(): array|string
 	{
-		return '+deliver_methods_price.price';
+		return '+delivery_methods_price.price';
 	}
 	
 	public function getOrderByDesc(): array|string
 	{
-		return '-deliver_methods_price.price';
+		return '-delivery_methods_price.price';
 	}
 	
 	public function getTitle(): string

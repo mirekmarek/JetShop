@@ -61,4 +61,6 @@ return [
 	'Set status: Rollback' => '',
 	'History' => '',
 	'Internal notes' => '',
+	'Complaint' => '',
+	'Return of goods' => '',
 ];

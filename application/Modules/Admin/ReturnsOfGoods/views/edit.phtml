@@ -20,6 +20,8 @@ use JetApplication\ReturnOfGoods;
 
 $return = $this->getRaw( 'return' );
 
+$money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $return->getProvidesContext() );
+
 ?>
 <?php require 'edit/toolbar.phtml';?>
 
@@ -56,7 +58,15 @@ $return = $this->getRaw( 'return' );
 			<p><a href="<?=$return->getURL()?>" target="_blank"><?=$return->getURL()?></a></p>
 		</div>
 	</fieldset>
-
+	
+	<?php if( $money_refunds ): ?>
+		<div id="o_money_refund" class="o_anchor"></div>
+		<fieldset class="o_section">
+			<legend><?=UI::icon('money-bill-transfer')?> <?=Tr::_('Money refundation requests')?></legend>
+			<?=$money_refunds?>
+		</fieldset>
+	<?php endif; ?>
+	
 
 	<div id="o_history" class="o_anchor"></div>
 	<fieldset class="o_section">

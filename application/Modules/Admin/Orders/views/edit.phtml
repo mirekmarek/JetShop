@@ -28,7 +28,7 @@ $dispatch = Admin_Managers::OrderDispatch()->showDispatches( $order->getProvides
 	Admin_Managers::OrderPersonalReceipt()->showDispatches( $order->getProvidesContext() );
 
 
-$money_refunds=Admin_Managers::MoneyRefund()?->showOrderMoneyRefunds( $order );
+$money_refunds = Admin_Managers::MoneyRefund()?->showOrderMoneyRefunds( $order );
 
 
 require 'edit/js.phtml';

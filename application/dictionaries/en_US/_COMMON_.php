@@ -389,4 +389,11 @@ return [
 	'Delete selected attachments' => '',
 	'Do you really want to delete those attachments?' => '',
 	'Price history' => '',
+	'Unknown order' => '',
+	'Currency used by the supplier:' => '',
+	'Supplier\'s bill type:' => '',
+	'Supplier\'s bill number:' => '',
+	'Order number:' => '',
+	'Price per unit' => '',
+	'Total price' => '',
 ];

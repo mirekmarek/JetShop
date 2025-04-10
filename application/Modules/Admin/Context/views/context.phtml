@@ -12,6 +12,7 @@ use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Context;
 use JetApplication\Order;
+use JetApplication\ReturnOfGoods;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
@@ -37,13 +38,28 @@ switch( $context->getContextType() ) {
 		echo Tr::_('Complaint');
 		echo '&nbsp;';
 		echo Admin_Managers::Complaint()->renderItemName( $context->getContextId() );
+		/*
 		echo '<br>';
 		echo Tr::_('Order');
 		echo '&nbsp;';
 		echo Admin_Managers::Order()->renderItemName( Complaint::get($context->getContextId())->getOrderId() );
-		
+		*/
 		
 		break;
+	case ReturnOfGoods::getProvidesContextType():
+		echo Tr::_('Return of goods');
+		echo '&nbsp;';
+		echo Admin_Managers::ReturnOfGoods()->renderItemName( $context->getContextId() );
+		
+		/*
+		echo '<br>';
+		echo Tr::_('Order');
+		echo '&nbsp;';
+		echo Admin_Managers::Order()->renderItemName( ReturnOfGoods::get($context->getContextId())->getOrderId() );
+		*/
+	
+		break;
+		
 	case OrderDispatch::getProvidesContextType():
 		
 		echo Tr::_('Order dispatch');

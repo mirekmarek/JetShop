@@ -21,6 +21,9 @@ use JetApplication\Complaint;
 
 $complaint = $this->getRaw( 'complaint' );
 
+
+$money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $complaint->getProvidesContext() );;
+$dispatch = Admin_Managers::OrderDispatch()->showDispatches( $complaint->getProvidesContext() );
 ?>
 <?php require 'edit/toolbar.phtml';?>
 
@@ -79,13 +82,22 @@ $complaint = $this->getRaw( 'complaint' );
 		</div>
 	</fieldset>
 
-
+	<?php if($dispatch): ?>
 	<div id="o_dispatch" class="o_anchor"></div>
 	<fieldset class="o_section">
 		<legend><?=UI::icon('boxes-packing')?> <?=Tr::_('Complaint dispatch')?></legend>
-		<?=Admin_Managers::OrderDispatch()->showDispatches( $complaint->getProvidesContext() )?>
+		<?=$dispatch?>
 	</fieldset>
-
+	<?php endif; ?>
+	
+	
+	<?php if( $money_refunds ): ?>
+		<div id="o_money_refund" class="o_anchor"></div>
+		<fieldset class="o_section">
+			<legend><?=UI::icon('money-bill-transfer')?> <?=Tr::_('Money refundation requests')?></legend>
+			<?=$money_refunds?>
+		</fieldset>
+	<?php endif; ?>
 	
 	
 	<div id="o_history" class="o_anchor"></div>

@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 use Jet\Factory_MVC;
 use JetApplication\Admin_Managers_MoneyRefund;
+use JetApplication\Context;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\MoneyRefund;
@@ -46,4 +47,17 @@ class Main extends Admin_Managers_MoneyRefund
 		return $view->render('order-money-refunds');
 	}
 	
+	public function showMoneyRefunds( Context $context ): string
+	{
+		$money_refunds= MoneyRefund::getByContext( $context );
+		if(!$money_refunds) {
+			return '';
+		}
+		
+		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		$view->setVar('money_refunds', $money_refunds);
+		
+		return $view->render('order-money-refunds');
+
+	}
 }
