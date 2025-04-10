@@ -9,4 +9,5 @@ return [
 	'Three weeks' => 'Tři týdny',
 	'More than three weeks' => 'Více než tři týdny',
 	'In stock' => 'Na skladě',
+	'Not available' => '',
 ];

@@ -22,7 +22,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			module: $this,
 			name: Tr::_('Catalog - Actualize AutoAppend - Category'),
 			description: Tr::_('Provides the function of automatically associating products to categories within the product catalogue.'),
-			service_code: 'actualize_fulltext',
+			service_code: 'actualize_category_auto_append',
 			service: function() {
 				Category::actualizeAllAutoAppendCategories();
 			}
