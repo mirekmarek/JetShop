@@ -19,7 +19,6 @@ use Jet\Http_Request;
 use JetApplication\Admin_Managers_ReturnOfGoods;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_ReceiptOfGoods;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\EShopEntity_HasEvents_Interface;
