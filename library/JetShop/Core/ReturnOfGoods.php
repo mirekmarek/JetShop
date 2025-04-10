@@ -16,6 +16,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
+use JetApplication\Admin_Managers_ReturnOfGoods;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ReceiptOfGoods;
@@ -57,7 +58,7 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Return of goods',
-	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
+	admin_manager_interface: Admin_Managers_ReturnOfGoods::class
 )]
 abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,

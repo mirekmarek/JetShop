@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Context;
 use JetApplication\Manager_MetaInfo;
 use JetApplication\Order;
 
@@ -21,4 +22,6 @@ use JetApplication\Order;
 abstract class Core_Admin_Managers_MoneyRefund extends Admin_EntityManager_Module
 {
 	abstract public function showOrderMoneyRefunds( Order $order ) : string;
+	
+	abstract public function showMoneyRefunds( Context $context ) : string;
 }

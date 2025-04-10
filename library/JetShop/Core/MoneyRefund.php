@@ -9,6 +9,7 @@ namespace JetShop;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use JetApplication\Context;
 use JetApplication\Context_HasContext_Interface;
 use JetApplication\Context_HasContext_Trait;
 use JetApplication\Currencies;
@@ -430,7 +431,18 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 		return static::fetch( [''=>$where], order_by: ['-id'] );
 		
 	}
-
+	
+	/**
+	 * @return static[]
+	 */
+	public static function getByContext( Context $context ) : array
+	{
+		
+		$where = $context->getWhere();
+		
+		return static::fetch( [''=>$where], order_by: ['-id'] );
+		
+	}
 	
 	
 	public function newNote( MoneyRefund_Note $note ) : void
