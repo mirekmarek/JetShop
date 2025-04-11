@@ -45,22 +45,22 @@ abstract class Core_EShopEntity_WithEShopData extends EShopEntity_Basic implemen
 	
 	public function __construct()
 	{
-		$this->checkShopData();
+		$this->checkEShopData();
 	}
 	
 	public function setId( int $id ) : void
 	{
-		$this->checkShopData();
+		$this->checkEShopData();
 		$this->id = $id;
 	}
 	
 	
 	public function afterLoad() : void
 	{
-		$this->checkShopData();
+		$this->checkEShopData();
 	}
 	
-	public function checkShopData() : void
+	public function checkEShopData() : void
 	{
 		/**
 		 * @var DataModel_Definition_Property_DataModel $def
@@ -265,7 +265,7 @@ abstract class Core_EShopEntity_WithEShopData extends EShopEntity_Basic implemen
 	protected function _getEshopData( ?EShop $eshop=null ) : EShopEntity_WithEShopData_EShopData
 	{
 		if(!isset( $this->eshop_data[$eshop->getKey()])) {
-			$this->checkShopData();
+			$this->checkEShopData();
 		}
 		
 		return $this->eshop_data[$eshop->getKey()];

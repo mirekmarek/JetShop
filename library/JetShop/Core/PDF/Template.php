@@ -38,7 +38,7 @@ abstract class Core_PDF_Template extends Template {
 			
 			if(!$template_master) {
 				$template_master = new PDF_TemplateText();
-				$template_master->checkShopData();
+				$template_master->checkEShopData();
 				$template_master->setInternalCode( $this->getInternalCode() );
 				$template_master->setInternalName( $this->getInternalName() );
 				$template_master->setInternalNotes( $this->getInternalNotes() );
@@ -47,7 +47,7 @@ abstract class Core_PDF_Template extends Template {
 				
 				$template_master->activateCompletely();
 			} else {
-				$template_master->checkShopData();
+				$template_master->checkEShopData();
 				$template_master->setInternalCode( $this->getInternalCode() );
 				$template_master->save();
 				$template_master->activateCompletely();

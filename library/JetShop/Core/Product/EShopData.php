@@ -394,7 +394,7 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		$this->allow_to_order_when_sold_out = $allow_to_order_when_sold_out;
 	}
 	
-	public function isIsSale(): bool
+	public function getIsSale(): bool
 	{
 		return $this->is_sale;
 	}

@@ -459,7 +459,7 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		}
 	}
 	
-	public function isIsSale(): bool
+	public function getIsSale(): bool
 	{
 		return $this->is_sale;
 	}
