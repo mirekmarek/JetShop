@@ -21,20 +21,17 @@ class Controller_Main extends Admin_EntityManager_Controller
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Supplier() );
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_OrderCreatedDate() );
 		$this->listing_manager->addColumn( new Listing_Column_Notes() );
 		$this->listing_manager->addColumn( new Listing_Column_Items() );
 		$this->listing_manager->addColumn( new Listing_Column_NumberBySupplier() );
 		
 		$this->listing_manager->addFilter( new Listing_Filter_OrderCreatedDate() );
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
 		
 		$this->listing_manager->setDefaultColumnsSchema( [
-			'status',
 			Listing_Column_Supplier::KEY,
-			Listing_Column_Status::KEY,
+			'status',
 			Listing_Column_OrderCreatedDate::KEY,
 			Listing_Column_Notes::KEY,
 			Listing_Column_Items::KEY,
@@ -99,18 +96,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		);
 	}
 
-	/*
-	public function edit_main_handleActivation() : void
-	{
-		$order = $this->current_item;
-		
-		if( $order->getSetSupplierOrderNumberForm()->catch() ) {
-			$order->save();
-			Http_Headers::reload();
-		}
-		
-	}
-	*/
 	
 	public function send_Action() : void
 	{

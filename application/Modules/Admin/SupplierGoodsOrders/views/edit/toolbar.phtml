@@ -8,10 +8,9 @@ namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
 
 use Jet\Http_Request;
-use Jet\Tr;
-
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Supplier_GoodsOrder;
@@ -24,18 +23,20 @@ use JetApplication\Supplier_GoodsOrder;
 
 $item = $this->getRaw('item');
 
-switch($item->getStatus()) {
-	case Supplier_GoodsOrder::STATUS_PENDING:
-	case Supplier_GoodsOrder::STATUS_PROBLEM_DURING_SENDING:
-		echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		echo UI::button(Tr::_('Send to the supplier'))->setUrl(Http_Request::currentURL(['action'=>'send']))->setClass(UI_button::CLASS_SUCCESS);
-		echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		echo UI::button(Tr::_('Cancel'))->setUrl(Http_Request::currentURL(['action'=>'cancel']))->setClass(UI_button::CLASS_DANGER);
-		break;
-	
-	case Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER:
-		echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		echo UI::button(Tr::_('Cancel'))->setUrl(Http_Request::currentURL(['action'=>'cancel']))->setClass(UI_button::CLASS_DANGER);
-		break;
-		
+
+if( $item->getStatus()->sendAllowed() ) {
+	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	echo UI::button(Tr::_('Send to the supplier'))->setUrl(Http_Request::currentURL(['action'=>'send']))->setClass(UI_button::CLASS_SUCCESS);
 }
+
+if( $item->getStatus()->cancelAllowed() ) {
+	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	echo UI::button( Tr::_( 'Cancel' ) )->setUrl( Http_Request::currentURL( ['action' => 'cancel'] ) )->setClass( UI_button::CLASS_DANGER );
+}
+
+
+echo Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton();
+
+echo '&nbsp;&nbsp;&nbsp';
+
+echo Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton();

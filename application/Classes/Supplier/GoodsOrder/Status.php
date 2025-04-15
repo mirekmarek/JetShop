@@ -4,13 +4,9 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+namespace JetApplication;
 
+use JetShop\Core_Supplier_GoodsOrder_Status;
 
-use Jet\MVC_View;
-
-/**
- * @var MVC_View $this
- */
-
-require __DIR__.'../../../status.phtml';
+abstract class Supplier_GoodsOrder_Status extends Core_Supplier_GoodsOrder_Status {
+}

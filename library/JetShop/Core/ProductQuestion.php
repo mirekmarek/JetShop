@@ -30,7 +30,9 @@ use JetApplication\Product_EShopData;
 	entity_name_readable: 'Product question',
 	admin_manager_interface: Admin_Managers_ProductQuestions::class
 )]
-abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implements EShopEntity_Admin_Interface, EShopEntity_HasGet_Interface
+abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implements
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasGet_Interface
 {
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;

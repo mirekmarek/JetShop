@@ -29,11 +29,19 @@ use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Supplier_GoodsOrder_Item;
+use JetApplication\Supplier_GoodsOrder_Status;
+use JetApplication\Supplier_GoodsOrder_Status_Cancelled;
+use JetApplication\Supplier_GoodsOrder_Status_Pending;
+use JetApplication\Supplier_GoodsOrder_Status_GoodsReceived;
+use JetApplication\Supplier_GoodsOrder_Status_ProblemDuringSending;
+use JetApplication\Supplier_GoodsOrder_Status_SentToSupplier;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\WarehouseManagement_Warehouse;
 
@@ -49,26 +57,13 @@ use JetApplication\WarehouseManagement_Warehouse;
 abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_Admin_Interface,
-	EShopEntity_HasGet_Interface
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasStatus_Interface
 {
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
-	
-	public const STATUS_PENDING = 'pending';
-	public const STATUS_PROBLEM_DURING_SENDING = 'problem_during_sending';
-	
-	public const STATUS_SENT_TO_SUPPLIER = 'sent_to_supplier';
-	public const STATUS_GOODS_RECEIVED = 'goods_received';
-	public const STATUS_CANCELLED = 'cancelled';
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $status = self::STATUS_PENDING;
+	use EShopEntity_HasStatus_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -245,6 +240,13 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	)]
 	protected array $items = [];
 	
+	protected static array $flags = [];
+	
+	public static function getStatusList(): array
+	{
+		return Supplier_GoodsOrder_Status::getList();
+	}
+	
 	
 	public static function getNumberSeriesEntityIsPerShop() : bool
 	{
@@ -256,26 +258,6 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		return 'Orders of goods from suppliers';
 	}
 	
-	public static function getStatusScope() : array
-	{
-		return [
-			Supplier_GoodsOrder::STATUS_PENDING                => Tr::_( 'Pending' ),
-			Supplier_GoodsOrder::STATUS_PROBLEM_DURING_SENDING => Tr::_( 'Problem during sending' ),
-			Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER       => Tr::_( 'Sent to the supplier' ),
-			Supplier_GoodsOrder::STATUS_GOODS_RECEIVED         => Tr::_( 'Received' ),
-			Supplier_GoodsOrder::STATUS_CANCELLED              => Tr::_( 'Cancelled' )
-		];
-	}
-	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-	
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
 	
 	public function getDestinationWarehouseId(): int
 	{
@@ -293,6 +275,7 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	{
 		parent::afterAdd();
 		$this->generateNumber();
+		$this->setStatus( Supplier_GoodsOrder_Status_Pending::get() );
 	}
 	
 	
@@ -589,13 +572,7 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	
 	public function send() : bool
 	{
-		if(!in_array($this->status, [
-			static::STATUS_PENDING,
-			static::STATUS_PROBLEM_DURING_SENDING
-		])) {
-			return false;
-		}
-		
+		//TODO:
 		foreach($this->items as $i=>$item) {
 			if(!$item->getUnitsOrdered()) {
 				$item->delete();
@@ -609,14 +586,15 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		$error_message = '';
 		
 		if( !$this->getSupplier()->getBackendModule()->sendOrder( $this, $error_message ) ) {
-			$this->status = static::STATUS_PROBLEM_DURING_SENDING;
+			$this->setStatus( Supplier_GoodsOrder_Status_ProblemDuringSending::get() );
+
 			$this->problem_during_sending_error = $error_message;
 			$this->save();
 			
 			return false;
 		}
 		
-		$this->status = static::STATUS_SENT_TO_SUPPLIER;
+		$this->setStatus( Supplier_GoodsOrder_Status_SentToSupplier::get() );
 		$this->problem_during_sending_error = '';
 		$this->save();
 		
@@ -634,17 +612,8 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	
 	public function cancel() : bool
 	{
-		if(!in_array($this->status, [
-			static::STATUS_PENDING,
-			static::STATUS_PROBLEM_DURING_SENDING,
-			static::STATUS_SENT_TO_SUPPLIER
-		])) {
-			return false;
-		}
+		$this->setStatus( Supplier_GoodsOrder_Status_Cancelled::get() );
 		
-
-		
-		$this->status = static::STATUS_CANCELLED;
 		$this->problem_during_sending_error = '';
 		$this->save();
 		
@@ -673,7 +642,9 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		}
 		
 		$this->setGoodsReceivedDate( $rcp->getReceiptDate() );
-		$this->setStatus( Supplier_GoodsOrder::STATUS_GOODS_RECEIVED );
+		
+		$this->setStatus( Supplier_GoodsOrder_Status_GoodsReceived::get() );
+		
 		$this->save();
 		
 	}
@@ -685,7 +656,7 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	public static function getSentForWarehouse( int $warehouse_id ) : array
 	{
 		$orders = Supplier_GoodsOrder::fetch([''=>[
-			'status' => Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER,
+			'status' => Supplier_GoodsOrder_Status_SentToSupplier::CODE,
 			'AND',
 			'destination_warehouse_id' => $warehouse_id
 		]]);
@@ -719,10 +690,7 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	{
 		$this->setupForm( $form );
 		
-		if(!in_array($this->status, [
-			static::STATUS_PENDING,
-			static::STATUS_PROBLEM_DURING_SENDING
-		])) {
+		if(!$this->getStatus()->orderCanBeUpdated()) {
 			$form->setIsReadonly();
 		}
 	}

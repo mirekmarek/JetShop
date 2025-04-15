@@ -67,4 +67,5 @@ return [
 	'Cancel' => 'zrušení',
 	'Set supplier\'s order number' => 'Nastavte číslo objednávky dodavatele',
 	'Order number: ' => 'Číslo objednávky: ',
+	'Status:' => '',
 ];

@@ -66,4 +66,7 @@ return [
 	'Order number: ' => '',
 	'Units ordered' => '',
 	'Units received' => '',
+	'Status:' => '',
+	'Goods order <b>%ITEM_NAME%</b> has been created' => '',
+	'Goods order <b>%ITEM_NAME%</b> has been updated' => '',
 ];

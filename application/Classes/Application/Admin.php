@@ -82,11 +82,13 @@ class Application_Admin
 				name: $cookie_name,
 				value: $locale->toString(),
 				expires_or_options: time()+(86400*365*10),
-				path: $URL['path'],
+				path: '/', //$URL['path'],
 				domain: $URL['host']
 			);
 			$_COOKIE[$cookie_name] = $locale->toString();
 		};
+		
+		
 		
 		if(
 			!isset($_COOKIE[$cookie_name]) ||

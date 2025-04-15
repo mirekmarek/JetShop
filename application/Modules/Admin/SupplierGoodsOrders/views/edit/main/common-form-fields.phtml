@@ -65,7 +65,7 @@ $item = $this->getRaw('item');
 	<div style="display: grid;grid-template-columns: 250px 1fr;margin: 10px;gap: 10px;align-items: center">
 		<div></div>
 		<div>
-			<?=$this->render('status')?>
+			<?=$item->getStatus()?->showAdmin()?>
 			<?php if($item->getProblemDuringSendingError()):
 				echo '<br><br>';
 				echo UI_messages::createDanger( $item->getProblemDuringSendingError() );
@@ -75,7 +75,7 @@ $item = $this->getRaw('item');
 		<div><?=Tr::_('Supplier\'s order number:')?></div>
 		<div>
 			<b><?=$item->getNumberBySupplier()?></b>
-			<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER):
+			<?php if($item->getStatus()->sentToTheCupplier()):
 				echo UI::button(Tr::_('Set'))->setOnClick("$('#set_number_by_supplier_dialog').modal('show');")->setClass(UI_button::CLASS_SECONDARY);
 			endif; ?>
 		</div>
@@ -93,7 +93,7 @@ $item = $this->getRaw('item');
 			<th nowrap=""><?=Tr::_('EAN')?></th>
 			<th nowrap=""><?=Tr::_('Internal code')?></th>
 			<th nowrap=""><?=Tr::_('Supplier code')?></th>
-			<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_GOODS_RECEIVED): ?>
+			<?php if($item->getStatus()->goodsReceived()): ?>
 				<th nowrap=""><?=Tr::_('Units ordered')?></th>
 				<th nowrap=""><?=Tr::_('Units received')?></th>
 			<?php else: ?>
@@ -112,7 +112,7 @@ $item = $this->getRaw('item');
 				<td nowrap=""><?=$i->getProductInternalCode()?></td>
 				<td nowrap=""><?=$i->getProductSupplierCode()?></td>
 				
-				<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_GOODS_RECEIVED): ?>
+				<?php if($item->getStatus()->goodsReceived()): ?>
 					<td><?=Locale::float($i->getUnitsOrdered())?> <?=$i->getMeasureUnit()?->getName()?></td>
 					<td><?=Locale::float($i->getUnitsReceived())?> <?=$i->getMeasureUnit()?->getName()?></td>
 				<?php else: ?>
@@ -147,7 +147,7 @@ $item = $this->getRaw('item');
 	<?=$form->field('expected_delivery_date')?>
 </div>
 
-<?php if($item->getStatus()==Supplier_GoodsOrder::STATUS_SENT_TO_SUPPLIER):
+<?php if( $item->getStatus()->sentToTheCupplier() ):
 	$dialog = UI::dialog('set_number_by_supplier_dialog', Tr::_('Set supplier\'s order number'));
 	$form = $item->getSetSupplierOrderNumberForm();
 	
@@ -159,4 +159,3 @@ $item = $this->getRaw('item');
 	echo $form->end();
 	echo $dialog->end();
 endif;
-?>

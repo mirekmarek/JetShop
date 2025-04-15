@@ -441,6 +441,10 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 			}
 		}
 		
+		$order = Supplier_GoodsOrder::get( $this->order_id );
+		$order?->received( $this );
+
+		
 		/**
 		 * @var WarehouseManagement_ReceiptOfGoods $this
 		 */
