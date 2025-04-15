@@ -10,6 +10,7 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Form;
 use Jet\UI_tabs;
+use JetApplication\Admin_EntityManager_EditorPlugin;
 use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Admin_Interface;
@@ -33,6 +34,8 @@ use JetApplication\Manager_MetaInfo;
 )]
 abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 {
+	protected array $plugins = [];
+	
 	abstract public function init(
 		EShopEntity_Basic|EShopEntity_Admin_Interface $item,
 		?Admin_Managers_EShopEntity_Listing           $listing = null,
@@ -64,6 +67,25 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	abstract public function renderAdd( Form $form ): string;
 	
 	abstract public function renderDeleteConfirm( string $message ): string;
+	
+	/**
+	 * @return Admin_EntityManager_EditorPlugin[]
+	 */
+	public function getPlugins(): array
+	{
+		return $this->plugins;
+	}
+	
+	/**
+	 * @param Admin_EntityManager_EditorPlugin[] $plugins
+	 * @return void
+	 */
+	public function setPlugins( array $plugins ): void
+	{
+		$this->plugins = $plugins;
+	}
+	
+	
 	
 	/**
 	 * @param string $message

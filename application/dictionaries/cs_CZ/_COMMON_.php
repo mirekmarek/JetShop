@@ -391,4 +391,13 @@ return [
 	'Order number:' => '',
 	'Price per unit' => '',
 	'Total price' => '',
+	'Warehouse:' => '',
+	'Product:' => '',
+	'Price per unit:' => '',
+	'Total:' => '',
+	'Number of units:' => '',
+	'Send to the supplier' => '',
+	'Units to order' => '',
+	'Set supplier\'s order number' => '',
+	'Order number: ' => '',
 ];

@@ -124,4 +124,16 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		Http_Headers::reload(unset_GET_params: ['action']);
 	}
+	
+	protected function edit_main_initPlugins() : void
+	{
+		if(Main::getCurrentUserCanEdit()) {
+			Plugin::initPlugins( $this->view, $this->current_item );
+			
+			$this->getEditorManager()->setPlugins( Plugin::getPlugins() );
+			
+			Plugin::handlePlugins();
+		}
+	}
+	
 }

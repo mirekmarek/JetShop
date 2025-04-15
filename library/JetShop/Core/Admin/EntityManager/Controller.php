@@ -617,12 +617,19 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		$this->view->setVar( 'form', $form );
 		$this->view->setVar( 'item', $item );
 		
+		$this->edit_main_initPlugins();
+		
 		$this->content->output(
 			$this->getEditorManager()->renderEditMain( $form )
 		);
 		
 	}
 	
+	
+	protected function edit_main_initPlugins() : void
+	{
+	
+	}
 	
 	public function edit_main_handleActivation( null|EShopEntity_HasActivation_Interface $item=null ) : void
 	{

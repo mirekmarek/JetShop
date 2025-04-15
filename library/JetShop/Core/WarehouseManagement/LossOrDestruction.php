@@ -23,6 +23,8 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
@@ -33,7 +35,10 @@ use JetApplication\WarehouseManagement;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\WarehouseManagement_LossOrDestruction;
-use Jet\Tr;
+use JetApplication\WarehouseManagement_LossOrDestruction_Status;
+use JetApplication\WarehouseManagement_LossOrDestruction_Status_Cancelled;
+use JetApplication\WarehouseManagement_LossOrDestruction_Status_Done;
+use JetApplication\WarehouseManagement_LossOrDestruction_Status_Pending;
 use JetApplication\WarehouseManagement_Warehouse;
 
 #[DataModel_Definition(
@@ -44,20 +49,18 @@ use JetApplication\WarehouseManagement_Warehouse;
 	entity_name_readable: 'Warehouse management - Loss or destruction',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_LossOrDestruction::class
 )]
-class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic implements
+abstract class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface,
-	EShopEntity_HasGet_Interface
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasStatus_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;
-	
-	public const STATUS_PENDING = 'pending';
-	public const STATUS_DONE = 'done';
-	public const STATUS_CANCELLED = 'cancelled';
+	use EShopEntity_HasStatus_Trait;
 	
 	
 	#[DataModel_Definition(
@@ -68,13 +71,7 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	
 	protected ?WarehouseManagement_Warehouse $warehouse = null;
 	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $status = self::STATUS_PENDING;
-	
+	public static array $flags = [];
 	
 	
 	#[DataModel_Definition(
@@ -169,6 +166,11 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	protected float $total = 0.0;
 	
 	
+	public static function getStatusList(): array
+	{
+		return WarehouseManagement_LossOrDestruction_Status::getList();
+	}
+	
 	public static function getNumberSeriesEntityIsPerShop() : bool
 	{
 		return false;
@@ -179,26 +181,7 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 		return 'Warehouse management - loss or destruction';
 	}
 	
-	
-	public static function getStatusScope(): array
-	{
-		return [
-			static::STATUS_PENDING   => Tr::_( 'Pending' ),
-			static::STATUS_DONE      => Tr::_( 'Done' ),
-			static::STATUS_CANCELLED => Tr::_( 'Cancelled' )
-		];
-	}
-	
-	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-	
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
+
 	
 	public function getProductId(): int
 	{
@@ -357,6 +340,7 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	{
 		parent::afterAdd();
 		$this->generateNumber();
+		$this->setStatus( WarehouseManagement_LossOrDestruction_Status_Pending::get() );
 	}
 	
 	public function afterUpdate(): void
@@ -375,19 +359,14 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	
 	public function done() : bool
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
-		
 		
 		/**
 		 * @var WarehouseManagement_LossOrDestruction $this
 		 */
 		WarehouseManagement::manageLossOrDestruction( $this );
 		
-		$this->status = static::STATUS_DONE;
-		$this->save();
+		$this->setStatus( WarehouseManagement_LossOrDestruction_Status_Done::get() );
+		
 		
 		Logger::success(
 			event: 'whm_loss_or_destruction_done',
@@ -402,12 +381,7 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	
 	public function cancel() : bool
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
-		$this->status = static::STATUS_CANCELLED;
-		$this->save();
+		$this->setStatus( WarehouseManagement_LossOrDestruction_Status_Cancelled::get() );
 		
 		Logger::success(
 			event: 'whm_loss_or_destruction_cancelled',
@@ -462,7 +436,7 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	{
 		$this->setupForm( $form );
 		
-		if($this->getStatus()!=static::STATUS_PENDING) {
+		if(!$this->getStatus()->editable()) {
 			$form->setIsReadonly();
 		}
 	}
@@ -471,5 +445,4 @@ class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic imple
 	{
 		return $this->catchForm( $this->getEditForm() );
 	}
-	
 }

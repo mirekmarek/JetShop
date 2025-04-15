@@ -71,6 +71,8 @@ class Main extends Admin_Managers_EShopEntity_Edit
 				
 				$this->view->setVar('module', $this);
 				
+				$this->view->setVar( 'plugins', $this->plugins );
+				
 				$this->view->setVar( 'item', $this->item );
 				$this->view->setVar( 'listing', $this->listing );
 				$this->view->setVar( 'tabs', $this->tabs );

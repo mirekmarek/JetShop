@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 use Jet\Form_Field_WYSIWYG;
 use Jet\Locale;
 use Jet\UI_tabs;
+use JetApplication\Admin_EntityManager_EditorPlugin;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Basic;
@@ -27,6 +28,7 @@ use Jet\Form_Renderer;
  * @var EShopEntity_Basic $item
  * @var Main $module
  * @var UI_tabs $tabs
+ * @var Admin_EntityManager_EditorPlugin[]|null $plugins
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
@@ -60,6 +62,7 @@ foreach($form->getFields() as $field) {
 	}
 }
 
+$plugins = $this->getRaw('plugins');
 ?>
 
 <?php require 'toolbar.phtml'; ?>
@@ -129,5 +132,11 @@ foreach($form->getFields() as $field) {
 		echo $form->end();
 		?>
 </div>
+<?php
+echo Admin_Managers::Timer()?->renderIntegration();
 
-<?=Admin_Managers::Timer()?->renderIntegration()?>
+if($plugins):
+	foreach( $plugins as $handler):
+		echo $handler->renderDialog();
+	endforeach;
+endif;

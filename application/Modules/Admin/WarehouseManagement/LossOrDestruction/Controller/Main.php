@@ -22,7 +22,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	public function setupListing(): void
 	{
 		$this->listing_manager->addColumn( new Listing_Column_Warehouse() );
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_Date() );
 		$this->listing_manager->addColumn( new Listing_Column_Product() );
 		$this->listing_manager->addColumn( new Listing_Column_PricePerUnit() );
@@ -34,7 +33,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Warehouse() );
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_Date() );
 		
 		
@@ -42,7 +40,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			Listing_Column_Warehouse::KEY,
 			'number',
 			Listing_Column_Date::KEY,
-			Listing_Column_Status::KEY,
+			'status',
 			Listing_Column_Product::KEY,
 			//Listing_Column_PricePerUnit::KEY,
 			Listing_Column_NumberOfUnits::KEY,
