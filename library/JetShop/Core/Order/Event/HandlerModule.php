@@ -23,11 +23,10 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 	protected Order $order;
 
 
-	public function init( EShopEntity_Event $event ) : void
+	public function init( EShopEntity_Event|Order_Event $event ) : void
 	{
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;
-		$order = $event->getTransfare();
+		$order = $event->getOrder();
 		$this->eshop = $order->getEshop();
 		$this->order = $order;
 	}

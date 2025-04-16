@@ -32,7 +32,7 @@ trait Core_Order_Trait_Events {
 	public function createEvent( EShopEntity_Event|Order_Event $event ) : Order_Event
 	{
 		$event->init( $this->getEshop() );
-		$event->setTransfare( $this );
+		$event->setOrder( $this );
 		
 		return $event;
 	}

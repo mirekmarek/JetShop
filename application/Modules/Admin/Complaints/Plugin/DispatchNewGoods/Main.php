@@ -35,7 +35,7 @@ class Plugin_DispatchNewGoods_Main extends Plugin {
 		$product = new Form_Field_Hidden('product_id', '');
 		$product->setDefaultValue( $this->item->getProductId() );
 		
-		$order = Order::get( $this->item->getTransfareId() );
+		$order = Order::get( $this->item->getOrderId() );
 		
 		$delivery_method = new Form_Field_Select('delivery_method', 'Delivery method:');
 		$delivery_method->setDefaultValue( $order->getDeliveryMethodId() );

@@ -33,10 +33,10 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Event extends 
 	protected ?WarehouseManagement_TransferBetweenWarehouses $_transfare = null;
 	
 	
-	public function setTransfare( WarehouseManagement_TransferBetweenWarehouses $order ) : static
+	public function setTransfare( WarehouseManagement_TransferBetweenWarehouses $transfer ) : static
 	{
-		$this->transfare_id = $order->getId();
-		$this->_transfare = $order;
+		$this->transfare_id = $transfer->getId();
+		$this->_transfare = $transfer;
 		
 		return $this;
 	}
