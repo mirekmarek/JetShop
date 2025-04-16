@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -16,24 +15,33 @@ use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\UI_messages;
-use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\EShopEntity_Admin_Trait;
+use Jet\Tr;
 use JetApplication\Admin_Managers_WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
+use JetApplication\EShop;
+use JetApplication\EShops;
+use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
-use JetApplication\EShop;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Event;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Item;
-use JetApplication\WarehouseManagement;
-use JetApplication\EShopEntity_HasNumberSeries_Trait;
-use Jet\Tr;
-use Jet\Logger;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Cancelled;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Pending;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Received;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Sent;
 use JetApplication\WarehouseManagement_Warehouse;
 
 #[DataModel_Definition(
@@ -44,21 +52,23 @@ use JetApplication\WarehouseManagement_Warehouse;
 	entity_name_readable: 'Warehouse management - Transfer between warehouses',
 	admin_manager_interface: Admin_Managers_WarehouseManagement_TransferBetweenWarehouses::class
 )]
-class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Basic implements
+abstract class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_HasGet_Interface,
 	Context_ProvidesContext_Interface,
-	EShopEntity_Admin_Interface
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasStatus_Trait;
+
 	
-	public const STATUS_PENDING = 'pending';
-	public const STATUS_SENT = 'sent';
-	public const STATUS_RECEIVED = 'received';
-	public const STATUS_CANCELLED = 'cancelled';
+	protected static array $flags = [
+	];
 	
 	
 	#[DataModel_Definition(
@@ -80,11 +90,16 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
+		max_len: 65536
 	)]
-	protected string $status = self::STATUS_PENDING;
-	
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Notes:',
+		is_required: false,
+		error_messages: [
+		]
+	)]
+	protected string $notes = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME
@@ -96,20 +111,6 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 		type: DataModel::TYPE_DATE_TIME
 	)]
 	protected ?Data_DateTime $receipt_date_time = null;
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 65536
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_TEXTAREA,
-		label: 'Notes:',
-		is_required: false,
-		error_messages: [
-		]
-	)]
-	protected string $notes = '';
 	
 	
 	/**
@@ -132,17 +133,6 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	{
 		return 'Warehouse management - transfer between warehouses';
 	}
-	
-	public static function getStatusScope(): array
-	{
-		return [
-			static::STATUS_PENDING   => Tr::_( 'Pending' ),
-			static::STATUS_SENT      => Tr::_( 'Sent' ),
-			static::STATUS_RECEIVED  => Tr::_( 'Received' ),
-			static::STATUS_CANCELLED => Tr::_( 'Cancelled' )
-		];
-	}
-	
 	
 	public function getSourceWarehouseId(): int
 	{
@@ -193,37 +183,6 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	}
 	
 	
-	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-	
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
-	
-	public function getSentDateTime(): ?Data_DateTime
-	{
-		return $this->sent_date_time;
-	}
-	
-	public function setSentDateTime(  Data_DateTime|string|null  $sent_date_time ): void
-	{
-		$this->sent_date_time = Data_DateTime::catchDateTime( $sent_date_time );
-	}
-	
-	public function getReceiptDateTime(): ?Data_DateTime
-	{
-		return $this->receipt_date_time;
-	}
-	
-	public function setReceiptDateTime( Data_DateTime|string|null $receipt_date_time ): void
-	{
-		$this->receipt_date_time = Data_DateTime::catchDateTime( $receipt_date_time );
-	}
-	
 	public function getNotes(): string
 	{
 		return $this->notes;
@@ -254,6 +213,26 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 		}
 	}
 	
+	public function getSentDateTime(): ?Data_DateTime
+	{
+		return $this->sent_date_time;
+	}
+	
+	public function setSentDateTime( ?Data_DateTime $sent_date_time ): void
+	{
+		$this->sent_date_time = $sent_date_time;
+	}
+	
+	public function getReceiptDateTime(): ?Data_DateTime
+	{
+		return $this->receipt_date_time;
+	}
+	
+	public function setReceiptDateTime( ?Data_DateTime $receipt_date_time ): void
+	{
+		$this->receipt_date_time = $receipt_date_time;
+	}
+	
 	
 	
 	/**
@@ -273,6 +252,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	{
 		parent::afterAdd();
 		$this->generateNumber();
+		$this->setStatus( WarehouseManagement_TransferBetweenWarehouses_Status_Pending::get() );
 	}
 	
 	public function afterUpdate(): void
@@ -283,60 +263,26 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	
 	public function sent() : bool
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
-		
 		foreach($this->items as $i=>$item) {
 			if(!$item->getNumberOfUnits()) {
 				$item->delete();
 				unset( $this->items[$i] );
 			}
 		}
-		
-		/**
-		 * @var WarehouseManagement_TransferBetweenWarehouses $this
-		 */
-		WarehouseManagement::manageTransferBetweenWarehousesSent( $this );
-		
-		$this->status = static::STATUS_SENT;
 		$this->sent_date_time = Data_DateTime::now();
 		$this->save();
 		
-		Logger::success(
-			event: 'whm_transfer_sent',
-			event_message: 'WHM - Transfer Of Goods '.$this->getNumber().' hus been completed',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
+		$this->setStatus( WarehouseManagement_TransferBetweenWarehouses_Status_Sent::get() );
 		
 		return true;
 	}
 	
 	public function received() : bool
 	{
-		if( $this->status != static::STATUS_SENT ) {
-			return false;
-		}
-		
-		/**
-		 * @var WarehouseManagement_TransferBetweenWarehouses $this
-		 */
-		WarehouseManagement::manageTransferBetweenWarehousesReceived( $this );
-		
-		$this->status = static::STATUS_RECEIVED;
 		$this->receipt_date_time = Data_DateTime::now();
 		$this->save();
 		
-		Logger::success(
-			event: 'whm_transfer_received',
-			event_message: 'WHM - Transfer Of Goods '.$this->getNumber().' hus been received',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
+		$this->setStatus( WarehouseManagement_TransferBetweenWarehouses_Status_Received::get() );
 		
 		return true;
 		
@@ -344,25 +290,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	
 	public function cancel() : bool
 	{
-		if( $this->status == static::STATUS_RECEIVED ) {
-			return false;
-		}
-		
-		/**
-		 * @var WarehouseManagement_TransferBetweenWarehouses $this
-		 */
-		WarehouseManagement::manageTransferBetweenWarehousesCanceled( $this );
-		
-		$this->status = static::STATUS_CANCELLED;
-		$this->save();
-		
-		Logger::success(
-			event: 'whm_rog_cancelled',
-			event_message: 'WHM - Transfer Of Goods '.$this->getNumber().' hus been cancelled',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
+		$this->setStatus( WarehouseManagement_TransferBetweenWarehouses_Status_Cancelled::get() );
 		
 		return true;
 	}
@@ -374,7 +302,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	public static function getSentFromWarehouse( int $warehouse_id ) : array
 	{
 		$orders = WarehouseManagement_TransferBetweenWarehouses::fetch([''=>[
-			'status' => WarehouseManagement_TransferBetweenWarehouses::STATUS_SENT,
+			'status' => WarehouseManagement_TransferBetweenWarehouses_Status_Pending::CODE,
 			'AND',
 			'target_warehouse_id' => $warehouse_id
 		]]);
@@ -389,7 +317,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 	public static function getSentToWarehouse( int $warehouse_id ) : array
 	{
 		$orders = WarehouseManagement_TransferBetweenWarehouses::fetch([''=>[
-			'status' => WarehouseManagement_TransferBetweenWarehouses::STATUS_SENT,
+			'status' => WarehouseManagement_TransferBetweenWarehouses_Status_Sent::CODE,
 			'AND',
 			'source_warehouse_id' => $warehouse_id
 		]]);
@@ -462,7 +390,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 		$this->setupForm( $form );
 		
 		foreach($this->items as $p_id=>$item) {
-			if( $this->getStatus()==static::STATUS_SENT ) {
+			if( $this->getStatus()->sent() ) {
 				$form->field('/item_'.$p_id.'/qty')->setIsReadonly(true);
 			}
 			
@@ -491,10 +419,7 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 		}
 		
 		
-		if(
-			$this->getStatus()==static::STATUS_RECEIVED ||
-			$this->getStatus()==static::STATUS_CANCELLED
-		) {
+		if( !$this->getStatus()->editable() ) {
 			$form->setIsReadonly();
 		}
 	}
@@ -504,4 +429,21 @@ class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Bas
 		return $this->catchForm( $this->getEditForm() );
 	}
 	
+	public static function getStatusList(): array
+	{
+		return WarehouseManagement_TransferBetweenWarehouses_Status::getList();
+	}
+	
+	public function createEvent( EShopEntity_Event|WarehouseManagement_TransferBetweenWarehouses_Event $event ): EShopEntity_Event
+	{
+		$event->init( EShops::getDefault() );
+		$event->setTransfare( $this );
+
+		return $event;
+	}
+	
+	public function getHistory(): array
+	{
+		return WarehouseManagement_TransferBetweenWarehouses_Event::getEventsList( $this->getId() );
+	}
 }

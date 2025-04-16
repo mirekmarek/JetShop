@@ -14,18 +14,21 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 /**
  * @var MVC_View $this
  * @var Form     $form
- * @var WarehouseManagement_ReceiptOfGoods  $item
+ * @var WarehouseManagement_TransferBetweenWarehouses  $item
  */
 
 $item = $this->getRaw('item');
 
-if($item->getStatus()==WarehouseManagement_TransferBetweenWarehouses::STATUS_PENDING) {
+if($item->getIsNew()) {
+	return;
+}
+
+if($item->getStatus()->pending() ) {
 	
 	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	echo UI::button(Tr::_('Done - sent'))->setUrl(Http_Request::currentURL(['action'=>'sent']))->setClass(UI_button::CLASS_SUCCESS);
@@ -35,7 +38,7 @@ if($item->getStatus()==WarehouseManagement_TransferBetweenWarehouses::STATUS_PEN
 
 }
 
-if($item->getStatus()==WarehouseManagement_TransferBetweenWarehouses::STATUS_SENT) {
+if($item->getStatus()->sent()) {
 	
 	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	echo UI::button(Tr::_('Finished - received'))->setUrl(Http_Request::currentURL(['action'=>'received']))->setClass(UI_button::CLASS_SUCCESS);

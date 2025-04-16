@@ -64,4 +64,6 @@ return [
 	'Supplier:' => 'Dodavatel:',
 	'Please specify at least one item' => 'Zadejte prosím alespoň jednu položku',
 	'New Transfare between warehouses' => 'Nová přeprava mezi sklady',
+	'Status:' => '',
+	'Warehouse management - Transfer between warehouses <b>%ITEM_NAME%</b> has been updated' => '',
 ];

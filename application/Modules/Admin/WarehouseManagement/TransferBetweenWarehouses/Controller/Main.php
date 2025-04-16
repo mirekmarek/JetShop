@@ -42,7 +42,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		$this->listing_manager->addColumn( new Listing_Column_SourceWh() );
 		$this->listing_manager->addColumn( new Listing_Column_TargetWh() );
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_SentDate() );
 		$this->listing_manager->addColumn( new Listing_Column_ReceiptDate() );
 		$this->listing_manager->addColumn( new Listing_Column_Notes() );
@@ -50,7 +49,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		
 		
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_SourceWh() );
 		$this->listing_manager->addFilter( new Listing_Filter_TargetWh() );
 		$this->listing_manager->addFilter( new Listing_Filter_SentDate() );
@@ -61,7 +59,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			'number',
 			Listing_Column_SourceWh::KEY,
 			Listing_Column_TargetWh::KEY,
-			Listing_Column_Status::KEY,
+			'status',
 			Listing_Column_SentDate::KEY,
 			Listing_Column_ReceiptDate::KEY,
 			Listing_Column_Notes::KEY,

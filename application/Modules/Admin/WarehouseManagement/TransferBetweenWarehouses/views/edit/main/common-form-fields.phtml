@@ -64,7 +64,7 @@ $form->renderer()->setDefaultFieldWidth([
 
 		<div></div>
 		<div>
-			<?=$this->render('status');?>
+			<?=$transfer->getStatus()->showAdmin();?>
 		</div>
 		
 		<div><?=Tr::_('Sent date:')?></div>
@@ -175,4 +175,6 @@ $form->renderer()->setDefaultFieldWidth([
 	
 	<br><br><br>
 	<?=$form->start()?>
+	
+	<?=Admin_Managers::EntityEdit()->renderEventHistory( $transfer, true )?>
 </div>

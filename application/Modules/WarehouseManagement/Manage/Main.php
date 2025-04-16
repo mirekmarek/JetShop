@@ -481,7 +481,7 @@ class Main extends WarehouseManagement_Manager
 	
 	public function manageTransferBetweenWarehousesCanceled( WarehouseManagement_TransferBetweenWarehouses $transfer ) : void
 	{
-		if($transfer->getStatus()!=WarehouseManagement_TransferBetweenWarehouses::STATUS_SENT) {
+		if( !$transfer->getStatus()->sent() ) {
 			return;
 		}
 		

@@ -27,7 +27,7 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 	{
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->event = $event;
-		$order = $event->getOrder();
+		$order = $event->getTransfare();
 		$this->eshop = $order->getEshop();
 		$this->order = $order;
 	}
