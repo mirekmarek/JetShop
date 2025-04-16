@@ -714,7 +714,7 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	public function createEvent( EShopEntity_Event|Supplier_GoodsOrder_Event $event ): EShopEntity_Event
 	{
 		$event->init( EShops::getCurrent() );
-		$event->setTransfare( $this );
+		$event->setOrder( $this );
 		
 		return $event;
 	}
