@@ -6,6 +6,7 @@
  */
 namespace JetApplicationModule\Events\WHMTransferBetweenWarehouses\Sent;
 
+use Jet\Data_DateTime;
 use JetApplication\WarehouseManagement;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Event_HandlerModule;
 
@@ -19,6 +20,10 @@ class Main extends WarehouseManagement_TransferBetweenWarehouses_Event_HandlerMo
 
 	public function handleInternals(): bool
 	{
+		$this->transfer->cleanupItems();
+		$this->transfer->setSentDateTime( Data_DateTime::now() );
+		$this->transfer->save();
+		
 		WarehouseManagement::manageTransferBetweenWarehousesSent( $this->transfer );
 		
 		return true;

@@ -47,3 +47,9 @@ if($item->getStatus()->sent()) {
 	echo UI::button(Tr::_('Cancel'))->setUrl(Http_Request::currentURL(['action'=>'cancel']))->setClass(UI_button::CLASS_DANGER);
 	
 }
+
+echo Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton();
+
+echo '&nbsp;&nbsp;&nbsp';
+
+echo Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton();

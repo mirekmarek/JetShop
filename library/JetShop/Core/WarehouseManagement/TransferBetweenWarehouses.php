@@ -260,8 +260,7 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopE
 		parent::afterUpdate();
 	}
 	
-	
-	public function sent() : bool
+	public function cleanupItems() : void
 	{
 		foreach($this->items as $i=>$item) {
 			if(!$item->getNumberOfUnits()) {
@@ -269,9 +268,11 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopE
 				unset( $this->items[$i] );
 			}
 		}
-		$this->sent_date_time = Data_DateTime::now();
-		$this->save();
 		
+	}
+	
+	public function sent() : bool
+	{
 		$this->setStatus( WarehouseManagement_TransferBetweenWarehouses_Status_Sent::get() );
 		
 		return true;
@@ -279,9 +280,6 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopE
 	
 	public function received() : bool
 	{
-		$this->receipt_date_time = Data_DateTime::now();
-		$this->save();
-		
 		$this->setStatus( WarehouseManagement_TransferBetweenWarehouses_Status_Received::get() );
 		
 		return true;
