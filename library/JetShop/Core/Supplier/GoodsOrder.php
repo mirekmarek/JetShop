@@ -16,8 +16,8 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
+use Jet\Http_Request;
 use Jet\Locale;
-use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\EShopEntity_Admin_Interface;
@@ -25,16 +25,20 @@ use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShops;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
+use JetApplication\Supplier_GoodsOrder_Event;
 use JetApplication\Supplier_GoodsOrder_Item;
 use JetApplication\Supplier_GoodsOrder_Status;
 use JetApplication\Supplier_GoodsOrder_Status_Cancelled;
@@ -58,7 +62,8 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_Admin_Interface,
 	EShopEntity_HasGet_Interface,
-	EShopEntity_HasStatus_Interface
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface
 {
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;
@@ -97,12 +102,6 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	)]
 	protected string $bill_number = '';
 	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 65536,
-	)]
-	protected string $problem_during_sending_error = '';
 	
 	
 	#[DataModel_Definition(
@@ -339,16 +338,6 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		$this->bill_number = $bill_number;
 	}
 	
-	public function getProblemDuringSendingError(): string
-	{
-		return $this->problem_during_sending_error;
-	}
-	
-	public function setProblemDuringSendingError( string $problem_during_sending_error ): void
-	{
-		$this->problem_during_sending_error = $problem_during_sending_error;
-	}
-	
 	public function getGoodsReceivedDate(): ?Data_DateTime
 	{
 		return $this->goods_received_date;
@@ -572,7 +561,6 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	
 	public function send() : bool
 	{
-		//TODO:
 		foreach($this->items as $i=>$item) {
 			if(!$item->getUnitsOrdered()) {
 				$item->delete();
@@ -586,25 +574,16 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		$error_message = '';
 		
 		if( !$this->getSupplier()->getBackendModule()->sendOrder( $this, $error_message ) ) {
-			$this->setStatus( Supplier_GoodsOrder_Status_ProblemDuringSending::get() );
-
-			$this->problem_during_sending_error = $error_message;
-			$this->save();
+			$this->setStatus(
+				Supplier_GoodsOrder_Status_ProblemDuringSending::get(),
+				event_setup: function( Supplier_GoodsOrder_Event $event ) use ($error_message) {
+					$event->setInternalNote( $error_message );
+				} );
 			
 			return false;
 		}
 		
 		$this->setStatus( Supplier_GoodsOrder_Status_SentToSupplier::get() );
-		$this->problem_during_sending_error = '';
-		$this->save();
-		
-		Logger::success(
-			event: 'supplier_order_send',
-			event_message: 'Supplier order '.$this->getNumber().' hus been sent',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
 		
 		return true;
 		
@@ -613,17 +592,6 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	public function cancel() : bool
 	{
 		$this->setStatus( Supplier_GoodsOrder_Status_Cancelled::get() );
-		
-		$this->problem_during_sending_error = '';
-		$this->save();
-		
-		Logger::success(
-			event: 'supplier_order_cancelled',
-			event_message: 'Supplier order '.$this->getNumber().' hus been cancelled',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
 		
 		return true;
 		
@@ -738,8 +706,21 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		} );
 		
 		$form = new Form('set_supplier_order_number', [$number]);
+		$form->setAction( Http_Request::currentURI(set_GET_params: ['action'=>'set_supplier_order_number']) );
 		
 		return $form;
 	}
 	
+	public function createEvent( EShopEntity_Event|Supplier_GoodsOrder_Event $event ): EShopEntity_Event
+	{
+		$event->init( EShops::getCurrent() );
+		$event->setOrder( $this );
+		
+		return $event;
+	}
+	
+	public function getHistory(): array
+	{
+		return Supplier_GoodsOrder_Event::getEventsList( $this->getId() );
+	}
 }

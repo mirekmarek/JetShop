@@ -8,6 +8,8 @@ namespace JetApplication;
 
 use JetShop\Core_Supplier_GoodsOrder_Status_ProblemDuringSending;
 
-class Supplier_GoodsOrder_Status_ProblemDuringSending extends Core_Supplier_GoodsOrder_Status_ProblemDuringSending {
+class Supplier_GoodsOrder_Status_ProblemDuringSending extends Core_Supplier_GoodsOrder_Status_ProblemDuringSending
+{
+	
 
 }

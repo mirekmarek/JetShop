@@ -68,4 +68,6 @@ return [
 	'Set supplier\'s order number' => 'Nastavte číslo objednávky dodavatele',
 	'Order number: ' => 'Číslo objednávky: ',
 	'Status:' => '',
+	'Goods order <b>%ITEM_NAME%</b> has been created' => '',
+	'Goods order <b>%ITEM_NAME%</b> has been updated' => '',
 ];

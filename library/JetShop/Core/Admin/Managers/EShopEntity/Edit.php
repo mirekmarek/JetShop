@@ -140,9 +140,9 @@ abstract class Core_Admin_Managers_EShopEntity_Edit extends Application_Module
 	
 	abstract public function renderShowStatus( EShopEntity_Status $status ) : string;
 	
-	abstract public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item ) : string;
+	abstract public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item, bool $shop_full=false ) : string;
 	
-	abstract public function renderSentEmails( EShopEntity_Basic $item ) : string;
+	abstract public function renderSentEmails( EShopEntity_Basic $item, bool $shop_full=false ) : string;
 	
 	abstract public function handleShowSentEmail( EShopEntity_Basic $item ) : ?string;
 	

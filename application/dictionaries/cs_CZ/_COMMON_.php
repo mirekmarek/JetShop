@@ -400,4 +400,12 @@ return [
 	'Units to order' => '',
 	'Set supplier\'s order number' => '',
 	'Order number: ' => '',
+	'History' => '',
+	'Přijato – odesláno k opravě' => '',
+	'Přijato - opraveno' => '',
+	'Přijato – Nové produkty' => '',
+	'Sent e-mails' => '',
+	'Set status: Se zpracovává' => '',
+	'Set status: Zrušeno' => '',
+	'Neposílejte zákazníkovi upozornění' => '',
 ];

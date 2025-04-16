@@ -53,6 +53,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		parent::setupRouter( $action, $selected_tab );
 		
+		//var_dump($action);die();
 		$this->router->addAction('cancel')->setResolver(function() use ($action) {
 			return $this->current_item && $action=='cancel';
 		});
@@ -60,6 +61,40 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->router->addAction('send')->setResolver(function() use ($action) {
 			return $this->current_item && $action=='send';
 		});
+		
+		$this->router->addAction('set_supplier_order_number')->setResolver(function() use ($action) {
+			return $this->current_item && $action=='set_supplier_order_number';
+		});
+		
+	}
+	
+	public function edit_main_Action() : void
+	{
+		parent::edit_main_Action();
+		
+		$this->content->output(
+			$this->content->getOutput().
+			$this->view->render('edit/main/dialogs')
+		);
+		
+	}
+	
+	public function set_supplier_order_number_Action() : void
+	{
+		/**
+		 * @var Supplier_GoodsOrder $order
+		 */
+		$order = $this->current_item;
+		
+		if( $order->getSetSupplierOrderNumberForm()->catch() ) {
+			$order->save();
+			
+			UI_messages::success(
+				$this->generateText_edit_main_msg()
+			);
+			
+			Http_Headers::reload( unset_GET_params: ['action'] );
+		}
 	}
 
 	

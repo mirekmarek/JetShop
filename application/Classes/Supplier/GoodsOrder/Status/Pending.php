@@ -8,6 +8,7 @@ namespace JetApplication;
 
 use JetShop\Core_Supplier_GoodsOrder_Status_Pending;
 
-class Supplier_GoodsOrder_Status_Pending extends Core_Supplier_GoodsOrder_Status_Pending {
+class Supplier_GoodsOrder_Status_Pending extends Core_Supplier_GoodsOrder_Status_Pending
+{
 
 }

@@ -8,6 +8,7 @@ namespace JetApplication;
 
 use JetShop\Core_Supplier_GoodsOrder_Status_GoodsReceived;
 
-class Supplier_GoodsOrder_Status_GoodsReceived extends Core_Supplier_GoodsOrder_Status_GoodsReceived {
+class Supplier_GoodsOrder_Status_GoodsReceived extends Core_Supplier_GoodsOrder_Status_GoodsReceived
+{
 
 }

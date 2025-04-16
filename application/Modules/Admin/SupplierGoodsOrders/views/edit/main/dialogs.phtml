@@ -1,0 +1,36 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\SupplierGoodsOrders;
+
+use Jet\Tr;
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\UI;
+use JetApplication\Supplier_GoodsOrder;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Supplier_GoodsOrder     $item
+ */
+
+$form = $this->getRaw('form');
+$item = $this->getRaw('item');
+
+if( $item->getStatus()->sentToTheCupplier() ):
+	$dialog = UI::dialog('set_number_by_supplier_dialog', Tr::_('Set supplier\'s order number'));
+	$form = $item->getSetSupplierOrderNumberForm();
+	
+	echo $dialog->start();
+		echo $form->start();
+		echo $form->field('number');
+	echo $dialog->footer();
+		echo UI::button_save();
+		echo $form->end();
+	echo $dialog->end();
+endif;

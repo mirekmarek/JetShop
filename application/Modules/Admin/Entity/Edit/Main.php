@@ -554,16 +554,18 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		]);
 	}
 	
-	public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item ) : string
+	public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item, bool $shop_full=false ) : string
 	{
 		return $this->render('event-history', [
+			'shop_full' => $shop_full,
 			'history' => $item->getHistory()
 		]);
 	}
 	
-	public function renderSentEmails( EShopEntity_Basic $item ) : string
+	public function renderSentEmails( EShopEntity_Basic $item, bool $shop_full=false ) : string
 	{
 		return $this->render('sent-emails', [
+			'shop_full' => $shop_full,
 			'item' => $item
 		]);
 	}

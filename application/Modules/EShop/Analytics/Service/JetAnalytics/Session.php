@@ -92,7 +92,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 50
+		max_len: 255
 	)]
 	protected string $user_agent = '';
 	

@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 use Jet\Locale;
 use Jet\Tr;
 use Jet\MVC_View;
+use Jet\UI;
 use Jet\UI_messages;
 use JetApplication\EShopEntity_Event;
 
@@ -18,7 +19,14 @@ use JetApplication\EShopEntity_Event;
  */
 
 $history = $this->getRaw( 'history' );
+
+$show_full = $this->getBool('shop_full');
 ?>
+<?php if($show_full): ?>
+<fieldset class="o_section">
+	<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('History')?></legend>
+	<div id="event-history">
+<?php endif; ?>
 
 <table class="table table-striped">
 	<thead>
@@ -77,3 +85,8 @@ $history = $this->getRaw( 'history' );
 	<?php endforeach; ?>
 	</tbody>
 </table>
+
+<?php if($show_full): ?>
+	</div>
+</fieldset>
+<?php endif; ?>

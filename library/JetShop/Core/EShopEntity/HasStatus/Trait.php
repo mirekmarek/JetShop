@@ -103,7 +103,6 @@ trait Core_EShopEntity_HasStatus_Trait {
 		);
 		
 		
-		/** @noinspection PhpInstanceofIsAlwaysTrueInspection */
 		if(
 			$this instanceof EShopEntity_HasEvents_Interface &&
 			$handle_event &&

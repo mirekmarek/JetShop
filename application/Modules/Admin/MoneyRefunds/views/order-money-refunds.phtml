@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 
 use Jet\Tr;
+use Jet\UI;
 use JetApplication\Admin_Managers;
 use Jet\MVC_View;
 use JetApplication\MoneyRefund;
@@ -18,22 +19,25 @@ use JetApplication\MoneyRefund;
  */
 $money_refunds = $this->getRaw('money_refunds');
 ?>
+<fieldset class="o_section">
+	<legend><?=UI::icon('money-bill-transfer')?> <?=Tr::_('Money refundation requests')?></legend>
 
-<table class="table table-striped">
-	<thead>
-	<tr>
-		<th nowrap=""><?=Tr::_('Request number')?></th>
-		<th nowrap=""><?=Tr::_('Request status')?></th>
-		<th nowrap=""><?=Tr::_('Amount to be refunded')?></th>
-		<th style="width: 100%"></th>
-	</tr>
-	</thead>
-	<?php foreach( $money_refunds as $money_refund ): ?>
+	<table class="table table-striped">
+		<thead>
 		<tr>
-			<td nowrap=""><?=Admin_Managers::MoneyRefund()->renderItemName( $money_refund->getId() )?></td>
-			<td nowrap=""><?=$money_refund->getStatus()->showAdmin()?></td>
-			<td nowrap=""><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></td>
-			<td></td>
+			<th nowrap=""><?=Tr::_('Request number')?></th>
+			<th nowrap=""><?=Tr::_('Request status')?></th>
+			<th nowrap=""><?=Tr::_('Amount to be refunded')?></th>
+			<th style="width: 100%"></th>
 		</tr>
-	<?php endforeach; ?>
-</table>
+		</thead>
+		<?php foreach( $money_refunds as $money_refund ): ?>
+			<tr>
+				<td nowrap=""><?=Admin_Managers::MoneyRefund()->renderItemName( $money_refund->getId() )?></td>
+				<td nowrap=""><?=$money_refund->getStatus()->showAdmin()?></td>
+				<td nowrap=""><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></td>
+				<td></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+</fieldset>

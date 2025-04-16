@@ -22,7 +22,14 @@ use JetApplication\EShopEntity_Basic;
 
 $item = $this->getRaw( 'item' );
 
+$show_full = $this->getBool('shop_full');
 ?>
+<?php if($show_full): ?>
+<fieldset class="o_section">
+	<legend><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></legend>
+	<div id="sent-emails">
+<?php endif; ?>
+
 <table class="table table-striped">
 	<thead>
 	<tr>
@@ -45,3 +52,8 @@ $item = $this->getRaw( 'item' );
 		</tr>
 	<?php endforeach; ?>
 </table>
+
+<?php if($show_full): ?>
+	</div>
+</fieldset>
+<?php endif; ?>

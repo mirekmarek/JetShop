@@ -14,7 +14,6 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\UI;
 use Jet\UI_button;
-use Jet\UI_messages;
 use JetApplication\Admin_Managers;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Supplier_GoodsOrder_Item;
@@ -66,10 +65,6 @@ $item = $this->getRaw('item');
 		<div></div>
 		<div>
 			<?=$item->getStatus()?->showAdmin()?>
-			<?php if($item->getProblemDuringSendingError()):
-				echo '<br><br>';
-				echo UI_messages::createDanger( $item->getProblemDuringSendingError() );
-			endif; ?>
 		</div>
 		
 		<div><?=Tr::_('Supplier\'s order number:')?></div>
@@ -147,15 +142,5 @@ $item = $this->getRaw('item');
 	<?=$form->field('expected_delivery_date')?>
 </div>
 
-<?php if( $item->getStatus()->sentToTheCupplier() ):
-	$dialog = UI::dialog('set_number_by_supplier_dialog', Tr::_('Set supplier\'s order number'));
-	$form = $item->getSetSupplierOrderNumberForm();
-	
-	echo $dialog->start();
-		echo $form->start();
-		echo $form->field('number');
-	echo $dialog->footer();
-		echo UI::button_save();
-	echo $form->end();
-	echo $dialog->end();
-endif;
+<br><br><br><br>
+<?=Admin_Managers::EntityEdit()->renderEventHistory( $item, true )?>

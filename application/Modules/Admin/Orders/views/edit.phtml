@@ -66,31 +66,15 @@ require 'edit/toolbar.phtml';
 
 	<?php if( $money_refunds ): ?>
 	<div id="o_money_refund" class="o_anchor"></div>
-	<fieldset class="o_section">
-		<legend><?=UI::icon('money-bill-transfer')?> <?=Tr::_('Money refundation requests')?></legend>
-		<?=$money_refunds?>
-	</fieldset>
+	<?=$money_refunds?>
 	<?php endif; ?>
 	
 	
 	<div id="o_history" class="o_anchor"></div>
-	<fieldset class="o_section">
-		<legend><?=UI::icon('clock-rotate-left')?> <?=Tr::_('History')?></legend>
-		<div id="event-history">
-			<?=Admin_Managers::EntityEdit()->renderEventHistory( $order )?>
-		</div>
-	</fieldset>
+	<?=Admin_Managers::EntityEdit()->renderEventHistory( $order, true )?>
 
 	<div id="o_sent_emails" class="o_anchor"></div>
-	<fieldset class="o_section">
-		<legend><?=UI::icon('envelope-circle-check')?> <?=Tr::_('Sent e-mails')?></legend>
-		
-		<div id="sent-emails">
-			<?=Admin_Managers::EntityEdit()->renderSentEmails( $order )?>
-		</div>
-	</fieldset>
-
-	
+	<?=Admin_Managers::EntityEdit()->renderSentEmails( $order, true )?>
 
 	<br><br><br><br>
 </div>
