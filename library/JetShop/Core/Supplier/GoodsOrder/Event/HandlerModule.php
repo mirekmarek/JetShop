@@ -21,7 +21,7 @@ abstract class Core_Supplier_GoodsOrder_Event_HandlerModule extends Event_Handle
 	public function init( EShopEntity_Event|Supplier_GoodsOrder_Event $event ) : void
 	{
 		$this->event = $event;
-		$order = $event->getTransfare();
+		$order = $event->getOrder();
 		$this->order = $order;
 	}
 	
