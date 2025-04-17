@@ -158,7 +158,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return '';
 	}
 	
-	public function customEvent( string $evetnt, array $event_data = [] ): string
+	public function customEvent( string $event, array $event_data = [] ): string
 	{
 		return '';
 	}

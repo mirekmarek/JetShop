@@ -6,12 +6,7 @@
  */
 namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
-
-use Jet\Http_Request;
 use Jet\MVC_View;
-use Jet\Tr;
-use Jet\UI;
-use Jet\UI_button;
 use JetApplication\ProductReview;
 
 /**
@@ -21,17 +16,10 @@ use JetApplication\ProductReview;
 
 $item = $this->getRaw('item');
 
-if(
-	!$item->isEditable()
-) {
+if( $item->getIsNew() ) {
 	return;
 }
-?>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<?=UI::button( Tr::_('Approve') )
-	->setUrl( Http_Request::currentURI(set_GET_params: ['action'=>'approve']) )
-	->setClass(UI_button::CLASS_SUCCESS);?>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<?=UI::button( Tr::_('Reject') )
-	->setUrl( Http_Request::currentURI(set_GET_params: ['action'=>'reject']) )
-	->setClass(UI_button::CLASS_DANGER)?>
+
+
+echo Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton();
+echo Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton();

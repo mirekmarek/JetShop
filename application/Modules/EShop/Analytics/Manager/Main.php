@@ -97,11 +97,11 @@ class Main extends EShop_Managers_Analytics
 		return $res;
 	}
 	
-	public function customEvent( string $evetnt, array $event_data=[] ) : string
+	public function customEvent( string $event, array $event_data=[] ) : string
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->customEvent( $evetnt, $event_data );
+			$res .= $service->customEvent( $event, $event_data );
 		}
 		return $res;
 	}

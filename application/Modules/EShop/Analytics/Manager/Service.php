@@ -51,7 +51,7 @@ abstract class Service {
 	
 	abstract public function viewSignpost( Signpost_EShopData $signpost ) : string;
 	
-	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
+	abstract public function customEvent( string $event, array $event_data=[] ) : string;
 	
 	abstract public function viewProductDetail( Product_EShopData $product ) : string;
 	

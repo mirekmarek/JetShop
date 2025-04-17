@@ -59,6 +59,6 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 	
 	public function getEventCSSClass(): string
 	{
-		return 'evetn-dispatched';
+		return 'event-dispatched';
 	}
 }

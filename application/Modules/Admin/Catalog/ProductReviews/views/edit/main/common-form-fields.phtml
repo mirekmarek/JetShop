@@ -10,9 +10,6 @@ namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form;
-use Jet\Tr;
-use Jet\UI;
-use Jet\UI_badge;
 use JetApplication\Admin_Managers;
 use JetApplication\ProductReview;
 
@@ -44,14 +41,7 @@ $form->field('our_comments')->input()->addCustomCssStyle('height:400px');
 				<?=Admin_Managers::Product()->renderItemName( $item->getProductId() ) ?>
 			</div>
 			
-			
-			<?php if($item->isAssessed()):
-				if($item->isApproved()):
-					echo UI::badge( UI_badge::SUCCESS, Tr::_('Approved') );
-				else:
-					echo UI::badge( UI_badge::DANGER, Tr::_('Rejected') );
-				endif;
-			endif; ?>
+			<?=$item->getStatus()->showAdmin()?>
 		</div>
 		<br>
 	</div>
@@ -66,4 +56,5 @@ $form->field('our_comments')->input()->addCustomCssStyle('height:400px');
 
 <?=$form->field('our_comments')?>
 
-
+<br><br><br>
+<?=Admin_Managers::EntityEdit()->renderEventHistory($item, true)?>

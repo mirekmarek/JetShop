@@ -41,6 +41,6 @@ class Main extends WarehouseManagement_TransferBetweenWarehouses_Event_HandlerMo
 	
 	public function getEventCSSClass(): string
 	{
-		return 'evetn-dispatched';
+		return 'event-dispatched';
 	}
 }

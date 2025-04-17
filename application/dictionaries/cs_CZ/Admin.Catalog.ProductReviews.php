@@ -46,4 +46,5 @@ return [
 	'no' => 'Ne',
 	'Delete' => 'Vymazat',
 	'Do you really want to delete this Product review?' => 'Opravdu chcete smazat tuto recenzi produktu?',
+	'Status:' => '',
 ];

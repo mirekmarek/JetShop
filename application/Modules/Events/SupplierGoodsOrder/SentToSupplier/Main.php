@@ -44,6 +44,6 @@ class Main extends Supplier_GoodsOrder_Event_HandlerModule
 	
 	public function getEventCSSClass(): string
 	{
-		return 'evetn-dispatched';
+		return 'event-dispatched';
 	}
 }

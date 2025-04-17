@@ -15,12 +15,22 @@ use Jet\Form_Field;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ProductReviews;
+use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
+use JetApplication\ProductReview_Event;
+use JetApplication\ProductReview_Status;
+use JetApplication\ProductReview_Status_Approved;
+use JetApplication\ProductReview_Status_New;
+use JetApplication\ProductReview_Status_Rejected;
 
 #[DataModel_Definition(
 	name: 'product_reviews',
@@ -30,10 +40,21 @@ use JetApplication\Product_EShopData;
 	entity_name_readable: 'Product review',
 	admin_manager_interface: Admin_Managers_ProductReviews::class
 )]
-abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implements EShopEntity_Admin_Interface, EShopEntity_HasGet_Interface
+abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implements
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface
 {
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasStatus_Trait;
+	
+	protected static array $flags = [
+		'assessed',
+		'approved',
+	];
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -159,6 +180,11 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 	)]
 	protected string $source_id = '';
 	
+	public function afterAdd() : void
+	{
+		parent::afterAdd();
+		$this->setStatus( ProductReview_Status_New::get() );
+	}
 	
 	public function getProductId(): int
 	{
@@ -247,12 +273,14 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 	public function setAssessed( bool $assessed ): void
 	{
 		$this->assessed = $assessed;
-		if( $this->assessed ) {
-			$this->assessed_date_time = Data_DateTime::now();
-		} else {
-			$this->assessed_date_time = null;
-		}
 	}
+	
+	public function setAssessedDateTime( null|Data_DateTime|string $assessed_date_time ): void
+	{
+		$this->assessed_date_time = Data_DateTime::catchDateTime( $assessed_date_time );
+	}
+	
+	
 	
 	public function getAssessedDateTime(): ?Data_DateTime
 	{
@@ -267,14 +295,14 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 	public function setApproved( bool $approved ): void
 	{
 		$this->approved = $approved;
-		if( $this->approved ) {
-			$this->approved_date_time = Data_DateTime::now();
-		} else {
-			$this->approved_date_time = null;
-		}
-		
-		$this->actualizeProduct();
 	}
+	
+	public function setApprovedDateTime( null|Data_DateTime|string $approved_date_time ): void
+	{
+		$this->approved_date_time = Data_DateTime::catchDateTime( $approved_date_time );
+	}
+	
+	
 	
 	public function getApprovedDateTime(): ?Data_DateTime
 	{
@@ -422,23 +450,35 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 	
 	public function approve() : void
 	{
-		$this->assessed = true;
-		$this->assessed_date_time = Data_DateTime::now();
-		$this->approved = true;
-		$this->approved_date_time = Data_DateTime::now();
-		$this->save();
-		$this->actualizeProduct();
+		$this->setStatus( ProductReview_Status_Approved::get() );
 	}
 	
 	
 	public function reject() : void
 	{
-		$this->assessed = true;
-		$this->assessed_date_time = Data_DateTime::now();
-		$this->approved = false;
-		$this->approved_date_time = null;
-		$this->save();
-		$this->actualizeProduct();
+		$this->setStatus( ProductReview_Status_Rejected::get() );
+	}
+	
+	public static function getStatusList(): array
+	{
+		return ProductReview_Status::getList();
+	}
+	
+	public function createEvent( EShopEntity_Event $event ): EShopEntity_Event
+	{
+		$event->init( $this->getEshop() );
+		$event->setProductReview( $this );
+		
+		return $event;
+	}
+	
+	public function getHistory(): array
+	{
+		return ProductReview_Event::getEventsList( $this->getId() );
+	}
+	
+	public function setFlags( array $flags ): void
+	{
 	}
 	
 }

@@ -191,12 +191,12 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 		return '';
 	}
 	
-	public function customEvent( string $evetnt, array $event_data = [] ): string
+	public function customEvent( string $event, array $event_data = [] ): string
 	{
 		$this->initSession();
 		if($this->session) {
 			$event = Event_Custom::create();
-			$event->init( $evetnt, $event_data );
+			$event->init( $event, $event_data );
 			$this->session->addEvent( $event );
 		}
 		return '';

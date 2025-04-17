@@ -46,6 +46,6 @@ class Main extends OrderPersonalReceipt_Event_HandlerModule
 	
 	public function getEventCSSClass(): string
 	{
-		return 'evetn-dispatched';
+		return 'event-dispatched';
 	}
 }

@@ -62,7 +62,7 @@ abstract class Core_EShop_Analytics_Service extends Application_Module {
 	
 	abstract public function viewSignpost( Signpost_EShopData $signpost ) : string;
 	
-	abstract public function customEvent( string $evetnt, array $event_data=[] ) : string;
+	abstract public function customEvent( string $event, array $event_data=[] ) : string;
 	
 	abstract public function viewProductDetail( Product_EShopData $product ) : string;
 	

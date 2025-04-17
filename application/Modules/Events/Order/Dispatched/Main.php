@@ -49,6 +49,6 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	
 	public function getEventCSSClass(): string
 	{
-		return 'evetn-dispatched';
+		return 'event-dispatched';
 	}
 }

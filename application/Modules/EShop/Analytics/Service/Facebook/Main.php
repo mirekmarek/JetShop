@@ -181,7 +181,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		return $this->generateEvent( 'ViewContent', $data );
 	}
 	
-	public function customEvent( string $evetnt, array $event_data = [] ): string
+	public function customEvent( string $event, array $event_data = [] ): string
 	{
 		return '';
 	}

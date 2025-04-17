@@ -33,9 +33,9 @@ class Event_Custom extends Event
 		return false;
 	}
 	
-	public function init( string $evetnt, array $event_data ) : void
+	public function init( string $event, array $event_data ) : void
 	{
-		$this->event = $evetnt;
+		$this->event = $event;
 		$this->event_data = $event_data;
 	}
 	
