@@ -7,7 +7,6 @@
 namespace JetShop;
 
 
-use Jet\Tr;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -16,24 +15,33 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
-use Jet\Logger;
+use JetApplication\Admin_Managers_WarehouseManagement_StockVerification;
+use JetApplication\Context_ProvidesContext_Interface;
+use JetApplication\Context_ProvidesContext_Trait;
+use JetApplication\Product;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagement_StockVerification;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
-use JetApplication\Product;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
+use JetApplication\EShops;
 use JetApplication\EShop;
-use JetApplication\WarehouseManagement;
 use JetApplication\WarehouseManagement_StockCard;
+use JetApplication\WarehouseManagement_StockVerification_Event;
 use JetApplication\WarehouseManagement_StockVerification_Item;
 use JetApplication\WarehouseManagement_StockVerification;
-use JetApplication\Context_ProvidesContext_Interface;
-use JetApplication\Context_ProvidesContext_Trait;
+use JetApplication\WarehouseManagement_StockVerification_Status;
+use JetApplication\WarehouseManagement_StockVerification_Status_Cancelled;
+use JetApplication\WarehouseManagement_StockVerification_Status_Done;
+use JetApplication\WarehouseManagement_StockVerification_Status_Pending;
 use JetApplication\WarehouseManagement_Warehouse;
 
 #[DataModel_Definition(
@@ -48,17 +56,18 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 	EShopEntity_HasNumberSeries_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface,
-	EShopEntity_HasGet_Interface
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasEvents_Interface,
+	EShopEntity_HasStatus_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_HasEvents_Trait;
 	
-	public const STATUS_PENDING = 'pending';
-	public const STATUS_DONE = 'done';
-	public const STATUS_CANCELLED = 'cancelled';
-	
+	public static array $flags = [];
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -67,13 +76,6 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 	protected int $warehouse_id = 0;
 	
 	protected WarehouseManagement_Warehouse|null $warehouse = null;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $status = self::STATUS_PENDING;
 	
 	
 	#[DataModel_Definition(
@@ -149,29 +151,6 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 		return 'Warehouse management - stock verification';
 	}
 	
-	public static function getStatusScope(): array
-	{
-		return [
-			WarehouseManagement_StockVerification::STATUS_PENDING   => Tr::_( 'Pending' ),
-			WarehouseManagement_StockVerification::STATUS_DONE      => Tr::_( 'Done' ),
-			WarehouseManagement_StockVerification::STATUS_CANCELLED => Tr::_( 'Cancelled' )
-		];
-	}
-	
-	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-	
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
-	
-	
-	
-	
 	public function getWarehouseId(): int
 	{
 		return $this->warehouse_id;
@@ -242,6 +221,7 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 	{
 		parent::afterAdd();
 		$this->generateNumber();
+		$this->setStatus( WarehouseManagement_StockVerification_Status_Pending::get() );
 	}
 	
 	public function afterUpdate(): void
@@ -409,48 +389,13 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 	
 	public function done() : bool
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
-		
-		
-		/**
-		 * @var WarehouseManagement_StockVerification $this
-		 */
-		WarehouseManagement::manageStockVerification( $this );
-		
-		$this->status = static::STATUS_DONE;
-		$this->save();
-		
-		Logger::success(
-			event: 'whm_verification_done',
-			event_message: 'WHM - Stock Verification '.$this->getNumber().' hus been completed',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
+		$this->setStatus( WarehouseManagement_StockVerification_Status_Done::get() );
 		return true;
 	}
 	
 	public function cancel() : bool
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
-		$this->status = static::STATUS_CANCELLED;
-		$this->save();
-		
-		Logger::success(
-			event: 'whm_verification_cancelled',
-			event_message: 'WHM - Stock Verification '.$this->getNumber().' hus been cancelled',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
+		$this->setStatus( WarehouseManagement_StockVerification_Status_Cancelled::get() );
 		return true;
 	}
 	
@@ -526,7 +471,7 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 		$this->setupForm( $form );
 		
 		
-		if($this->getStatus()!=static::STATUS_PENDING) {
+		if( !$this->getStatus()->editable() ) {
 			$form->setIsReadonly();
 		}
 	}
@@ -534,6 +479,23 @@ abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Ba
 	public function catchEditForm() : bool
 	{
 		return $this->catchForm( $this->getEditForm() );
+	}
+	
+	public static function getStatusList(): array
+	{
+		return WarehouseManagement_StockVerification_Status::getList();
+	}
+	
+	public function createEvent( EShopEntity_Event|WarehouseManagement_StockVerification_Event $event ): EShopEntity_Event
+	{
+		$event->init( EShops::getDefault() );
+		$event->setVerification( $this );
+		return $event;
+	}
+	
+	public function getHistory(): array
+	{
+		return WarehouseManagement_StockVerification_Event::getEventsList( $this->getId() );
 	}
 	
 }

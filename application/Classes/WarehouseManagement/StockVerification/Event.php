@@ -7,12 +7,11 @@
 namespace JetApplication;
 
 
-
 use Jet\DataModel_Definition;
-use JetShop\Core_WarehouseManagement_StockVerification;
+use JetShop\Core_WarehouseManagement_StockVerification_Event;
 
 #[DataModel_Definition]
-#[EShopEntity_Definition]
-class WarehouseManagement_StockVerification extends Core_WarehouseManagement_StockVerification {
+abstract class WarehouseManagement_StockVerification_Event extends Core_WarehouseManagement_StockVerification_Event
+{
 
 }

@@ -1,0 +1,23 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Events\WHMStockVerification\Done;
+
+
+use Jet\MVC_View;
+use JetApplication\WarehouseManagement_StockVerification_Event;
+
+/**
+ * @var MVC_View $this
+ * @var WarehouseManagement_StockVerification_Event $event
+ * @var Main $handler
+ */
+
+$event = $this->getRaw('event');
+$handler = $this->getRaw('handler');
+
+
+//echo nl2br( $event->getNoteForCustomer() );

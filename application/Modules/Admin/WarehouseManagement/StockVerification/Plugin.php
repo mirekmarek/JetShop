@@ -6,11 +6,8 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 
+use JetApplication\Admin_EntityManager_EditorPlugin;
 
-use Jet\MVC_View;
 
-/**
- * @var MVC_View $this
- */
-
-require __DIR__.'../../../status.phtml';
+abstract class Plugin  extends Admin_EntityManager_EditorPlugin {
+}
