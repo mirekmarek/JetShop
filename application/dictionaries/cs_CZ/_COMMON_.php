@@ -425,4 +425,5 @@ return [
 	'Set status: Přijato' => '',
 	'Set status: Odesláno dodavateli' => '',
 	'Send to the supplier again' => '',
+	'Set status: Hotovo' => '',
 ];

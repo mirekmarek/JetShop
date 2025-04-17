@@ -10,7 +10,6 @@ namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
-use Jet\UI_messages;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -23,7 +22,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function setupListing(): void
 	{
-		$this->listing_manager->addColumn( new Listing_Column_Status() );
 		$this->listing_manager->addColumn( new Listing_Column_ReceiptDate() );
 		$this->listing_manager->addColumn( new Listing_Column_Supplier() );
 		$this->listing_manager->addColumn( new Listing_Column_Notes() );
@@ -34,14 +32,13 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
-		$this->listing_manager->addFilter( new Listing_Filter_Status() );
 		$this->listing_manager->addFilter( new Listing_Filter_ReceiptDate() );
 		
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'number',
 			Listing_Column_Supplier::KEY,
-			Listing_Column_Status::KEY,
+			'status',
 			Listing_Column_ReceiptDate::KEY,
 			Listing_Column_Notes::KEY,
 			Listing_Column_Items::KEY,
@@ -66,14 +63,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	public function setupRouter( string $action, string $selected_tab ): void
 	{
 		parent::setupRouter( $action, $selected_tab );
-		
-		$this->router->addAction('cancel')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='cancel';
-		});
-		
-		$this->router->addAction('done')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='done';
-		});
 	}
 	
 	
@@ -151,32 +140,15 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->output('add');
 	}
 	
-	public function done_Action() : void
+	protected function edit_main_initPlugins() : void
 	{
-		/**
-		 * @var WarehouseManagement_ReceiptOfGoods $order
-		 */
-		$order = $this->current_item;
-		
-		if($order->done()) {
-			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been completed', ['number'=>$order->getNumber()]) );
+		if(Main::getCurrentUserCanEdit()) {
+			Plugin::initPlugins( $this->view, $this->current_item );
+			
+			$this->getEditorManager()->setPlugins( Plugin::getPlugins() );
+			
+			Plugin::handlePlugins();
 		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
-	}
-	
-	public function cancel_Action() : void
-	{
-		/**
-		 * @var WarehouseManagement_ReceiptOfGoods $order
-		 */
-		$order = $this->current_item;
-		
-		if($order->cancel()) {
-			UI_messages::success( Tr::_('Receipt of goods <b>%number%</b> has been cancelled', ['number'=>$order->getNumber()]) );
-		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
 	}
 	
 }

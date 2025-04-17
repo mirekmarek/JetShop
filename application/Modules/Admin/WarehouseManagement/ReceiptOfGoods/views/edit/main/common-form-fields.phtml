@@ -58,7 +58,7 @@ $form->renderer()->setDefaultFieldWidth([
 		<div class="row">
 			<div class="col-md-2" style="padding: 15px"></div>
 			<div class="col-md-2" style="padding: 15px;">
-				<?=$this->render('status')?>
+				<?=$rcp->getStatus()->showAdmin()?>
 			</div>
 		</div>
 	</div>
@@ -167,9 +167,12 @@ $form->renderer()->setDefaultFieldWidth([
 		?>
 		<?=$form->field('notes')?>
 	</div>
-	
+
 	<br><br><br>
-	<?=$form->start()?>
+	
+	<?=Admin_Managers::EntityEdit()->renderEventHistory( $rcp, true )?>
+	
+	
 </div>
 	
 <script>

@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Jet\Tr;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -15,7 +16,6 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
-use Jet\Logger;
 use Jet\UI_messages;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
@@ -24,20 +24,28 @@ use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShopEntity_Event;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
+use JetApplication\EShops;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
-use JetApplication\WarehouseManagement;
+use JetApplication\WarehouseManagement_ReceiptOfGoods_Event;
 use JetApplication\WarehouseManagement_ReceiptOfGoods_Item;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
-use Jet\Tr;
+use JetApplication\WarehouseManagement_ReceiptOfGoods_Status;
+use JetApplication\WarehouseManagement_ReceiptOfGoods_Status_Done;
+use JetApplication\WarehouseManagement_ReceiptOfGoods_Status_Pending;
 use JetApplication\WarehouseManagement_Warehouse;
 
 #[DataModel_Definition(
@@ -49,19 +57,21 @@ use JetApplication\WarehouseManagement_Warehouse;
 	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
 )]
 abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic implements
+	Context_ProvidesContext_Interface,
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_HasGet_Interface,
-	Context_ProvidesContext_Interface,
-	EShopEntity_Admin_Interface
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface
 {
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasStatus_Trait;
 	
 	public const STATUS_PENDING = 'pending';
-	public const STATUS_DONE = 'done';
-	public const STATUS_CANCELLED = 'cancelled';
 	
 	
 	#[DataModel_Definition(
@@ -72,20 +82,12 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 	
 	protected WarehouseManagement_Warehouse|null $warehouse = null;
 	
-	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
 	)]
 	protected int $supplier_id = 0;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $status = self::STATUS_PENDING;
-	
+
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -174,6 +176,7 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 	)]
 	protected array $items = [];
 	
+	public static array $flags = [];
 	
 	public static function getNumberSeriesEntityIsPerShop() : bool
 	{
@@ -184,29 +187,7 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 	{
 		return 'Warehouse management - receipt of goods';
 	}
-	
-	
-	public static function getStatusScope(): array
-	{
-		return [
-			WarehouseManagement_ReceiptOfGoods::STATUS_PENDING   => Tr::_( 'Pending' ),
-			WarehouseManagement_ReceiptOfGoods::STATUS_DONE      => Tr::_( 'Done' ),
-			WarehouseManagement_ReceiptOfGoods::STATUS_CANCELLED => Tr::_( 'Cancelled' )
-		];
-	}
-	
-	
-	public function getStatus(): string
-	{
-		return $this->status;
-	}
-	
-	public function setStatus( string $status ): void
-	{
-		$this->status = $status;
-	}
-	
-	
+
 	
 	
 	public function getWarehouseId(): int
@@ -346,6 +327,7 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 	{
 		parent::afterAdd();
 		$this->generateNumber();
+		$this->setStatus( WarehouseManagement_ReceiptOfGoods_Status_Pending::get() );
 	}
 	
 	public function afterUpdate(): void
@@ -428,12 +410,8 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 		
 	}
 	
-	public function done() : bool
+	public function cleanupItems() : void
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
 		foreach($this->items as $i=>$item) {
 			if(!$item->getUnitsReceived()) {
 				$item->delete();
@@ -441,48 +419,15 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 			}
 		}
 		
-		$order = Supplier_GoodsOrder::get( $this->order_id );
-		$order?->received( $this );
-
-		
-		/**
-		 * @var WarehouseManagement_ReceiptOfGoods $this
-		 */
-		WarehouseManagement::manageReceiptOfGoods( $this );
-
-		$this->status = static::STATUS_DONE;
-		$this->save();
-		
-		Logger::success(
-			event: 'whm_rog_done',
-			event_message: 'WHM - Receipt Of Goods '.$this->getNumber().' hus been completed',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
-		
-		return true;
 	}
 	
-	public function cancel() : bool
+	public function done() : bool
 	{
-		if( $this->status != static::STATUS_PENDING ) {
-			return false;
-		}
-		
-		$this->status = static::STATUS_CANCELLED;
-		$this->save();
-		
-		Logger::success(
-			event: 'whm_rog_cancelled',
-			event_message: 'WHM - Receipt Of Goods '.$this->getNumber().' hus been cancelled',
-			context_object_id: $this->getId(),
-			context_object_name: $this->getNumber(),
-			context_object_data: $this
-		);
+		$this->setStatus( WarehouseManagement_ReceiptOfGoods_Status_Done::get() );
 		
 		return true;
 	}
+
 	
 	
 	public function getAdminTitle() : string
@@ -612,7 +557,7 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 		} );
 		$form->addField($order_number);
 		
-		if($this->getStatus()!=static::STATUS_PENDING) {
+		if( !$this->getStatus()->editable() ) {
 			$form->setIsReadonly();
 		}
 	}
@@ -620,6 +565,25 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic
 	public function catchEditForm() : bool
 	{
 		return $this->catchForm( $this->getEditForm() );
+	}
+	
+	
+	public static function getStatusList(): array
+	{
+		return WarehouseManagement_ReceiptOfGoods_Status::getList();
+	}
+	
+	public function createEvent( EShopEntity_Event $event ): EShopEntity_Event
+	{
+		$event->init( EShops::getDefault() );
+		$event->setRcp( $this );
+		
+		return $event;
+	}
+	
+	public function getHistory(): array
+	{
+		return WarehouseManagement_ReceiptOfGoods_Event::getEventsList( $this->getId() );
 	}
 	
 }

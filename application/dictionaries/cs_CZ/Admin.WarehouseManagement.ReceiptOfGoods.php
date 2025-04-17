@@ -73,4 +73,5 @@ return [
 	'Warehouse currency:' => 'Měna skladu:',
 	'Cancel' => 'zrušení',
 	'Warehouse management - Receipt of goods <b>%ITEM_NAME%</b> has been updated' => '',
+	'Status:' => '',
 ];

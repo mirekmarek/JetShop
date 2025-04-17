@@ -23,7 +23,5 @@ if($item->getIsNew()) {
 	return;
 }
 
-
 echo Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton();
-echo '&nbsp;&nbsp;&nbsp';
 echo Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton();
