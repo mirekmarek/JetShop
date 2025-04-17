@@ -48,4 +48,9 @@ return [
 	'e-shop' => 'internetový obchod',
 	'CSV' => 'CSV',
 	'XLSX' => 'XLSX',
+	'Status:' => '',
+	'Product question <b>%ITEM_NAME%</b> has been updated' => '',
+	'Product question - answer' => '',
+	'Product - URL' => '',
+	'Product - name' => '',
 ];

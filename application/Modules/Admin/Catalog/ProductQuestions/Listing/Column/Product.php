@@ -29,7 +29,6 @@ class Listing_Column_Product extends DataListing_Column
 	
 	public function initializer( UI_dataGrid_column $column ): void
 	{
-		$column->addCustomCssStyle('width:300px');
 	}
 	
 	public function getDisallowSort(): bool

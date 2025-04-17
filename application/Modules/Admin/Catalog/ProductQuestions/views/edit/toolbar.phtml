@@ -6,12 +6,7 @@
  */
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
-
-use Jet\Http_Request;
 use Jet\MVC_View;
-use Jet\Tr;
-use Jet\UI;
-use Jet\UI_button;
 use JetApplication\ProductQuestion;
 
 /**
@@ -21,22 +16,10 @@ use JetApplication\ProductQuestion;
 
 $item = $this->getRaw('item');
 
-if(
-	!$item->isEditable()
-) {
+if( $item->getIsNew() ) {
 	return;
 }
-?>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<?=UI::button( Tr::_('Answered - display') )
-	->setUrl( Http_Request::currentURI(set_GET_params: ['action'=>'answer_display']) )
-	->setClass(UI_button::CLASS_SUCCESS);?>
 
-<?=UI::button( Tr::_('Answered - do not display') )
-	->setUrl( Http_Request::currentURI(set_GET_params: ['action'=>'answer_do_not_display']) )
-	->setClass(UI_button::CLASS_INFO);?>
 
-&nbsp;&nbsp;&nbsp;&nbsp;
-<?=UI::button( Tr::_('Not answered') )
-	->setUrl( Http_Request::currentURI(set_GET_params: ['action'=>'not_answered']) )
-	->setClass(UI_button::CLASS_DANGER)?>
+echo Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton();
+echo Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton();

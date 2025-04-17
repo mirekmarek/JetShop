@@ -15,12 +15,21 @@ use Jet\Form_Field;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ProductQuestions;
+use JetApplication\EShopEntity_HasEvents_Interface;
+use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
+use JetApplication\ProductQuestion;
+use JetApplication\ProductQuestion_Event;
+use JetApplication\ProductQuestion_Status;
+use JetApplication\EShopEntity_Event;
+use JetApplication\ProductQuestion_Status_New;
 
 #[DataModel_Definition(
 	name: 'product_questions',
@@ -32,10 +41,20 @@ use JetApplication\Product_EShopData;
 )]
 abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implements
 	EShopEntity_Admin_Interface,
-	EShopEntity_HasGet_Interface
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasStatus_Interface,
+	EShopEntity_HasEvents_Interface
 {
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasStatus_Trait;
+	
+	protected static array $flags = [
+		'answered',
+		'display',
+	];
+
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -126,6 +145,12 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 	protected string $source_id = '';
 	
 	
+	public function afterAdd() : void
+	{
+		parent::afterAdd();
+		$this->setStatus( ProductQuestion_Status_New::get() );
+	}
+	
 	public function getProductId(): int
 	{
 		return $this->product_id;
@@ -184,11 +209,6 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 	public function setAnswered( bool $answered ): void
 	{
 		$this->answered = $answered;
-		if( $this->answered ) {
-			$this->assessed_date_time = Data_DateTime::now();
-		} else {
-			$this->assessed_date_time = null;
-		}
 	}
 	
 	public function getAssessedDateTime(): ?Data_DateTime
@@ -204,13 +224,6 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 	public function setDisplay( bool $display ): void
 	{
 		$this->display = $display;
-		if( $this->display ) {
-			$this->answered_date_time = Data_DateTime::now();
-		} else {
-			$this->answered_date_time = null;
-		}
-		
-		$this->actualizeProduct();
 	}
 	
 	public function getAnsweredDateTime(): ?Data_DateTime
@@ -258,6 +271,18 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 	{
 		$this->source_id = $source_id;
 	}
+	
+	public function setAssessedDateTime( null|Data_DateTime|string $assessed_date_time ): void
+	{
+		$this->assessed_date_time = Data_DateTime::catchDateTime( $assessed_date_time );
+	}
+	
+	public function setAnsweredDateTime( null|Data_DateTime|string $answered_date_time ): void
+	{
+		$this->answered_date_time = Data_DateTime::catchDateTime( $answered_date_time );
+	}
+	
+	
 	
 	
 	public function actualizeProduct(): void
@@ -325,36 +350,31 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 		return $title;
 	}
 	
-	public function answerAndDisplay() : void
+	
+	
+	public static function getStatusList(): array
 	{
-		$this->answered = true;
-		$this->assessed_date_time = Data_DateTime::now();
-		$this->display = true;
-		$this->answered_date_time = Data_DateTime::now();
-		$this->save();
-		$this->actualizeProduct();
+		return ProductQuestion_Status::getList();
 	}
 	
-	
-	public function answerAndDoNotDisplay() : void
+	public function createEvent( EShopEntity_Event|ProductQuestion_Event $event ): EShopEntity_Event
 	{
-		$this->answered = true;
-		$this->assessed_date_time = Data_DateTime::now();
-		$this->display = false;
-		$this->answered_date_time = null;
-		$this->save();
-		$this->actualizeProduct();
+		/**
+		 * @var ProductQuestion $this
+		 */
+		$event->init( $this->getEshop() );
+		$event->setProductQuestion( $this );
+		
+		return $event;
 	}
 	
-	public function isNotAnswered() : void
+	public function getHistory(): array
 	{
-		$this->answered = false;
-		$this->assessed_date_time = null;
-		$this->display = false;
-		$this->answered_date_time = null;
-		$this->save();
-		$this->actualizeProduct();
+		return ProductQuestion_Event::getEventsList( $this->getId() );
 	}
 	
+	public function setFlags( array $flags ): void
+	{
+	}
 	
 }

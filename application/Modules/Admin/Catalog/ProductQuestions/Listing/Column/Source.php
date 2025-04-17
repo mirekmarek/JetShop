@@ -28,7 +28,6 @@ class Listing_Column_Source extends DataListing_Column
 	
 	public function initializer( UI_dataGrid_column $column ): void
 	{
-		$column->addCustomCssStyle('width:120px');
 	}
 	
 	public function getExportHeader() : null|string|array

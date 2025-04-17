@@ -7,11 +7,9 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 
-use Jet\Locale;use Jet\MVC_View;
+use Jet\Locale;
+use Jet\MVC_View;
 use Jet\Form;
-use Jet\Tr;
-use Jet\UI;
-use Jet\UI_badge;
 use JetApplication\Admin_Managers;
 use JetApplication\ProductQuestion;
 
@@ -40,16 +38,7 @@ $form->field('answer')->input()->addCustomCssStyle('height:400px');
 				<?=Admin_Managers::Product()->renderItemName( $item->getProductId() ) ?>
 			</div>
 			
-			
-			<?php if($item->isAnswered()):
-				if($item->isDisplay()):
-					echo UI::badge( UI_badge::SUCCESS, Tr::_('Answered - visible') );
-				else:
-					echo UI::badge( UI_badge::INFO, Tr::_('Answered - not visible') );
-				endif;
-			else:
-				echo UI::badge( UI_badge::DANGER, Tr::_('Not answered') );
-			endif; ?>
+			<?=$item->getStatus()->showAdmin()?>
 		</div>
 		<br>
 	</div>
@@ -60,3 +49,6 @@ $form->field('answer')->input()->addCustomCssStyle('height:400px');
 
 <?=$form->field('question')?>
 <?=$form->field('answer')?>
+
+<br><br><br>
+<?=Admin_Managers::EntityEdit()->renderEventHistory( $item, true )?>
