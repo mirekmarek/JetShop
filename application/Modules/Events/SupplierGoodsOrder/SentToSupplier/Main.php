@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\Events\SupplierGoodsOrder\SentToSupplier;
 
-use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Supplier_GoodsOrder_Event;
 use JetApplication\Supplier_GoodsOrder_Event_HandlerModule;
 use JetApplication\Supplier_GoodsOrder_Status_ProblemDuringSending;
@@ -14,19 +13,11 @@ use JetApplication\Supplier_GoodsOrder_Status_ProblemDuringSending;
 class Main extends Supplier_GoodsOrder_Event_HandlerModule
 {
 	
-	public function handleExternals(): bool
-	{
-		return true;
-	}
-
 	public function handleInternals(): bool
 	{
 		$this->order->cleanupItems();
 		
 		
-		/**
-		 * @var Supplier_GoodsOrder $this
-		 */
 		$error_message = '';
 		
 		if( !$this->order->sendToTheSupplier( $error_message ) ) {
@@ -43,11 +34,6 @@ class Main extends Supplier_GoodsOrder_Event_HandlerModule
 		}
 		
 		
-		return true;
-	}
-	
-	public function sendNotifications(): bool
-	{
 		return true;
 	}
 	

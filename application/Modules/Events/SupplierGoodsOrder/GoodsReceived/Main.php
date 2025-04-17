@@ -11,11 +11,6 @@ use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 class Main extends Supplier_GoodsOrder_Event_HandlerModule
 {
-	
-	public function handleExternals(): bool
-	{
-		return true;
-	}
 
 	public function handleInternals(): bool
 	{
@@ -38,11 +33,6 @@ class Main extends Supplier_GoodsOrder_Event_HandlerModule
 		$this->order->setGoodsReceivedDate( $rcp->getReceiptDate() );
 		$this->order->save();
 		
-		return true;
-	}
-	
-	public function sendNotifications(): bool
-	{
 		return true;
 	}
 	

@@ -10,18 +10,7 @@ use JetApplication\Supplier_GoodsOrder_Event_HandlerModule;
 
 class Main extends Supplier_GoodsOrder_Event_HandlerModule
 {
-	
-	public function handleExternals(): bool
-	{
-		return true;
-	}
-
 	public function handleInternals(): bool
-	{
-		return true;
-	}
-	
-	public function sendNotifications(): bool
 	{
 		return true;
 	}

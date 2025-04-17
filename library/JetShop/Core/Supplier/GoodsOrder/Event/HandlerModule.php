@@ -35,4 +35,14 @@ abstract class Core_Supplier_GoodsOrder_Event_HandlerModule extends Event_Handle
 		return $this->order;
 	}
 	
+	public function handleExternals(): bool
+	{
+		return true;
+	}
+	
+	public function sendNotifications(): bool
+	{
+		return true;
+	}
+
 }
