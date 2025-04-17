@@ -35,7 +35,11 @@ trait Core_Admin_EntityManager_EditorPlugin_SetStatus
 	
 	protected function init() : void
 	{
-		$this->future_statuses = $this->item->getStatus()->getPossibleFutureStatuses();
+		/**
+		 * @var EShopEntity_HasStatus_Interface $item
+		 */
+		$item = $this->item;
+		$this->future_statuses = $item->getStatus()->getPossibleFutureStatuses();
 		
 		foreach( $this->future_statuses as $future_state) {
 			$code = $future_state->getStatus()::getCode();
