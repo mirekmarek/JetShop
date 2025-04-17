@@ -10,7 +10,6 @@ namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehous
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
-use Jet\UI_messages;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
@@ -18,25 +17,6 @@ use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
-	
-	public function setupRouter( string $action, string $selected_tab ): void
-	{
-		parent::setupRouter( $action, $selected_tab );
-		
-		$this->router->addAction('cancel')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='cancel';
-		});
-		
-		$this->router->addAction('sent')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='sent';
-		});
-		
-		$this->router->addAction('received')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='received';
-		});
-		
-	}
-
 	
 	public function setupListing(): void
 	{
@@ -128,49 +108,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->output('add');
 	}
 	
-	public function sent_Action() : void
-	{
-		/**
-		 * @var WarehouseManagement_TransferBetweenWarehouses $transfer
-		 */
-		$transfer = $this->current_item;
-		
-		if($transfer->sent()) {
-			UI_messages::success( Tr::_('Transfer of goods <b>%number%</b> has been sent', ['number'=>$transfer->getNumber()]) );
-		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
-	}
-	
-	
-	public function received_Action() : void
-	{
-		/**
-		 * @var WarehouseManagement_TransferBetweenWarehouses $transfer
-		 */
-		$transfer = $this->current_item;
-		
-		if($transfer->received()) {
-			UI_messages::success( Tr::_('Transfer of goods <b>%number%</b> has been received', ['number'=>$transfer->getNumber()]) );
-		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
-	}
-
-	
-	public function cancel_Action() : void
-	{
-		/**
-		 * @var WarehouseManagement_TransferBetweenWarehouses $transfer
-		 */
-		$transfer = $this->current_item;
-		
-		if($transfer->cancel()) {
-			UI_messages::success( Tr::_('Transfer of goods <b>%number%</b> has been cancelled', ['number'=>$transfer->getNumber()]) );
-		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
-	}
 	
 	protected function edit_main_initPlugins() : void
 	{

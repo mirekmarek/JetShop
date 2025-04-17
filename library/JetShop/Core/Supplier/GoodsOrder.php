@@ -8,6 +8,8 @@ namespace JetShop;
 
 
 
+use Error;
+use Exception;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -44,7 +46,6 @@ use JetApplication\Supplier_GoodsOrder_Status;
 use JetApplication\Supplier_GoodsOrder_Status_Cancelled;
 use JetApplication\Supplier_GoodsOrder_Status_Pending;
 use JetApplication\Supplier_GoodsOrder_Status_GoodsReceived;
-use JetApplication\Supplier_GoodsOrder_Status_ProblemDuringSending;
 use JetApplication\Supplier_GoodsOrder_Status_SentToSupplier;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -318,6 +319,18 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		return Supplier::get( $this->supplier_id );
 	}
 	
+	public function sendToTheSupplier( string &$error_message ): bool
+	{
+		try {
+			$sent = $this->getSupplier()->getBackendModule()->sendOrder( $this, $error_message );
+		} catch( Error|Exception $e ) {
+			$error_message = $e->getMessage();
+			$sent = false;
+		}
+		
+		return $sent;
+	}
+	
 	public function getNumberBySupplier(): string
 	{
 		return $this->number_by_supplier;
@@ -559,7 +572,8 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 		return $new;
 	}
 	
-	public function send() : bool
+	
+	public function cleanupItems() : void
 	{
 		foreach($this->items as $i=>$item) {
 			if(!$item->getUnitsOrdered()) {
@@ -567,24 +581,12 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 				unset($this->items[$i]);
 			}
 		}
-		
-		/**
-		 * @var Supplier_GoodsOrder $this
-		 */
-		$error_message = '';
-		
-		if( !$this->getSupplier()->getBackendModule()->sendOrder( $this, $error_message ) ) {
-			$this->setStatus(
-				Supplier_GoodsOrder_Status_ProblemDuringSending::get(),
-				event_setup: function( Supplier_GoodsOrder_Event $event ) use ($error_message) {
-					$event->setInternalNote( $error_message );
-				} );
-			
-			return false;
-		}
-		
+	}
+	
+	
+	public function send() : bool
+	{
 		$this->setStatus( Supplier_GoodsOrder_Status_SentToSupplier::get() );
-		
 		return true;
 		
 	}
@@ -592,29 +594,15 @@ abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	public function cancel() : bool
 	{
 		$this->setStatus( Supplier_GoodsOrder_Status_Cancelled::get() );
-		
 		return true;
 		
 	}
 	
 	public function received( WarehouseManagement_ReceiptOfGoods $rcp ) : void
 	{
-		foreach($rcp->getItems() as $rcp_item) {
-			$order_item = $this->items[$rcp_item->getProductId()] ?? null;
-			if(!$order_item) {
-				continue;
-			}
-			
-			$order_item->setUnitsReceived( $order_item->getUnitsReceived() + $rcp_item->getUnitsReceived() );
-			$order_item->save();
-		}
-		
-		$this->setGoodsReceivedDate( $rcp->getReceiptDate() );
-		
-		$this->setStatus( Supplier_GoodsOrder_Status_GoodsReceived::get() );
-		
-		$this->save();
-		
+		$status = Supplier_GoodsOrder_Status_GoodsReceived::get();
+		$status->setReceiptOfGoods( $rcp );
+		$this->setStatus( $status );
 	}
 	
 	/**

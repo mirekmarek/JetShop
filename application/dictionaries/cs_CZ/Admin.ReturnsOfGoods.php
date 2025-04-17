@@ -134,8 +134,8 @@ return [
 	'XLSX' => 'XLSX',
 	'Administrator' => 'Správce',
 	'Do not send notifications to the customer' => 'Neposílejte zákazníkovi upozornění',
-	'Force status' => 'Stav síly',
+	'Force status' => 'Vnutit stav',
 	'Set status:' => 'Nastavit stav:',
 	'Internal notes:' => 'Interní poznámky:',
-	'Force status:' => 'Stav síly:',
+	'Force status:' => 'Vnutit stav:',
 ];

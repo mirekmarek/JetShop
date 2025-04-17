@@ -53,15 +53,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	{
 		parent::setupRouter( $action, $selected_tab );
 		
-		//var_dump($action);die();
-		$this->router->addAction('cancel')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='cancel';
-		});
-		
-		$this->router->addAction('send')->setResolver(function() use ($action) {
-			return $this->current_item && $action=='send';
-		});
-		
 		$this->router->addAction('set_supplier_order_number')->setResolver(function() use ($action) {
 			return $this->current_item && $action=='set_supplier_order_number';
 		});
@@ -131,34 +122,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		);
 	}
 
-	
-	public function send_Action() : void
-	{
-		/**
-		 * @var Supplier_GoodsOrder $order
-		 */
-		$order = $this->current_item;
-		
-		if($order->send()) {
-			UI_messages::success( Tr::_('Order <b>%number%</b> has been sent to the supplier', ['number'=>$order->getNumber()]) );
-		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
-	}
-	
-	public function cancel_Action() : void
-	{
-		/**
-		 * @var Supplier_GoodsOrder $order
-		 */
-		$order = $this->current_item;
-		
-		if($order->cancel()) {
-			UI_messages::success( Tr::_('Order <b>%number%</b> has been cancelled', ['number'=>$order->getNumber()]) );
-		}
-		
-		Http_Headers::reload(unset_GET_params: ['action']);
-	}
 	
 	protected function edit_main_initPlugins() : void
 	{

@@ -20,7 +20,7 @@ abstract class Core_Supplier_GoodsOrder_Status extends EShopEntity_Status {
 	
 	protected bool $goods_received = false;
 	
-	protected bool $sent_to_the_cupplier = false;
+	protected bool $sent_to_the_supplier = false;
 	
 	protected bool $send_allowed = false;
 	
@@ -44,7 +44,7 @@ abstract class Core_Supplier_GoodsOrder_Status extends EShopEntity_Status {
 	
 	public function sentToTheCupplier(): bool
 	{
-		return $this->sent_to_the_cupplier;
+		return $this->sent_to_the_supplier;
 	}
 	
 	public function sendAllowed(): bool
@@ -56,7 +56,6 @@ abstract class Core_Supplier_GoodsOrder_Status extends EShopEntity_Status {
 	{
 		return $this->cancel_allowed;
 	}
-	
 	
 	
 	
