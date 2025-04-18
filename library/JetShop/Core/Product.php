@@ -126,6 +126,26 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		is_key: true
 	)]
 	protected int $kind_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Creation in progress'
+	)]
+	protected bool $creation_in_progress = true;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is archived'
+	)]
+	protected bool $archived = false;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -270,9 +290,50 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	}
 	
 	
+	public function getCreationInProgress(): bool
+	{
+		return $this->creation_in_progress;
+	}
+	
+	public function setCreationInProgress( bool $creation_in_progress ): void
+	{
+		$this->creation_in_progress = $creation_in_progress;
+		
+		
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setCreationInProgress( $this->creation_in_progress );
+		}
+		
+	}
+	
+	public function getArchived(): bool
+	{
+		return $this->archived;
+	}
+	
+	public function setArchived( bool $archived ): void
+	{
+		$this->archived = $archived;
+		
+		foreach( EShops::getList() as $eshop) {
+			$this->eshop_data[$eshop->getKey()]->setArchived( $this->archived );
+		}
+		
+		Product::updateData(
+			data: [ 'archived' => $this->archived ],
+			where: [ 'id'=>$this->id ]
+		);
+		Product_EShopData::updateData(
+			data: [ 'archived' => $this->archived ],
+			where: [ 'entity_id'=>$this->id ]
+		);
+	}
+	
+	
 	public function activate(): void
 	{
 		parent::activate();
+		$this->setArchived( false );
 		$id = $this->isVariant() ? $this->getVariantMasterProductId() : $this->getId();
 		Product::actualizeReferences( product_id: $id );
 	}

@@ -77,6 +77,20 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	)]
 	protected int $kind_id = 0;
 	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $creation_in_progress = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $archived = false;
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100,
@@ -444,6 +458,28 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		
 		return $this->kind?:null;
 	}
+	
+	public function getCreationInProgress(): bool
+	{
+		return $this->creation_in_progress;
+	}
+	
+	public function setCreationInProgress( bool $creation_in_progress ): void
+	{
+		$this->creation_in_progress = $creation_in_progress;
+	}
+	
+	public function getArchived(): bool
+	{
+		return $this->archived;
+	}
+	
+	public function setArchived( bool $archived ): void
+	{
+		$this->archived = $archived;
+	}
+	
+	
 	
 	public function getMeasureUnit() : ?MeasureUnit
 	{

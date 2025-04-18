@@ -459,4 +459,6 @@ return [
 	'Body - TXT:' => '',
 	'HTML' => '',
 	'TXT' => '',
+	'Creation in progress' => '',
+	'Is archived' => '',
 ];

@@ -266,4 +266,6 @@ return [
 	'New internal name:' => '',
 	'New internal code:' => '',
 	'Clone' => '',
+	'Creation In Progress' => '',
+	'Archived' => '',
 ];

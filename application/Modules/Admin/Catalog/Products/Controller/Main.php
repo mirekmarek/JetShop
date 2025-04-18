@@ -215,12 +215,14 @@ class Controller_Main extends Admin_EntityManager_Controller
 			
 		} );
 		
+		$this->listing_manager->addFilter( new Listing_Filter_CreationInProgress() );
 		$this->listing_manager->addFilter( new Listing_Filter_Categories() );
 		$this->listing_manager->addFilter( new Listing_Filter_ProductKind() );
 		$this->listing_manager->addFilter( new Listing_Filter_ProductType() );
 		$this->listing_manager->addFilter( new Listing_Filter_Brand() );
 		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
 		$this->listing_manager->addFilter( new Listing_Filter_IsSale() );
+		$this->listing_manager->addFilter( new Listing_Filter_Archived() );
 		
 		if( MarketplaceIntegration::getActiveModules() ) {
 			$this->listing_manager->addFilter( new Listing_Filter_Marketplace() );
