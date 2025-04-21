@@ -233,6 +233,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 			return $this->view->render('create_buttons');
 		} );
 		
+		$this->listing_manager->setSelectItemsEnabled( true );
+		
+		
 	}
 	
 	public function edit_main_Action(): void

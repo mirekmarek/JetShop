@@ -67,6 +67,11 @@ abstract class Core_Admin_Managers_EShopEntity_Listing extends Application_Modul
 	
 	abstract public function setSearchWhereCreator( Closure $creator ) : void;
 	
+	abstract public function getSelectItemsEnabled(): bool;
+	
+	abstract public function setSelectItemsEnabled( bool $select_items_enabled ): void;
+	
+	
 	abstract public function renderListingFilter(
 		DataListing_Filter $filter,
 		string $title,

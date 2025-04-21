@@ -45,8 +45,6 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	 */
 	protected $custom_btn_renderer = null;
 	
-	protected bool $select_items_enabled = false;
-	
 	
 	public function setUp(
 		Admin_EntityManager_Module $entity_manager
@@ -56,8 +54,6 @@ class Main extends Admin_Managers_EShopEntity_Listing
 		$this->entity = $entity_manager::getEntityInstance();
 		
 		$this->listing = new Listing( $this );
-		$this->listing->setSelectItemsEnabled( $this->select_items_enabled );
-		
 	}
 	
 	public function getEntity(): EShopEntity_Admin_Interface
@@ -222,12 +218,12 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	
 	public function getSelectItemsEnabled(): bool
 	{
-		return $this->select_items_enabled;
+		$this->listing->getSelectItemsEnabled();
 	}
 	
 	public function setSelectItemsEnabled( bool $select_items_enabled ): void
 	{
-		$this->select_items_enabled = $select_items_enabled;
+		$this->listing->setSelectItemsEnabled( $select_items_enabled );
 	}
 	
 	
