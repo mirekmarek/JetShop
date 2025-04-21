@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_NumberOfUnits extends DataListing_Column
+class Listing_Column_NumberOfUnits extends Admin_Listing_Column
 {
 	public const KEY = 'number_of_units';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_PricePerUnit extends DataListing_Column
+class Listing_Column_PricePerUnit extends Admin_Listing_Column
 {
 	public const KEY = 'price_per_unit';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
