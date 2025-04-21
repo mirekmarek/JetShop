@@ -6,21 +6,15 @@
  */
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Product;
 use JetApplication\ProductQuestion;
 
-class Listing_Column_Product extends DataListing_Column
+class Listing_Column_Product extends Admin_Listing_Column
 {
 	public const KEY = 'product_id';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

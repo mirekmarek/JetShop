@@ -6,21 +6,14 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Signposts;
 
-
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Signpost;
 
-class Listing_Column_Priority extends DataListing_Column
+class Listing_Column_Priority extends Admin_Listing_Column
 {
 	public const KEY = 'priority';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

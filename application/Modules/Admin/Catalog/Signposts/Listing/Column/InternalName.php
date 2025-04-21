@@ -6,20 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Signposts;
 
-
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Signpost;
 
-class Listing_Column_InternalName extends DataListing_Column
+class Listing_Column_InternalName extends Admin_Listing_Column
 {
 	public const KEY = 'internal_name';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

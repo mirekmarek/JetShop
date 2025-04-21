@@ -6,20 +6,14 @@
  */
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\ProductQuestion;
 
-class Listing_Column_Source extends DataListing_Column
+class Listing_Column_Source extends Admin_Listing_Column
 {
 	public const KEY = 'source';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

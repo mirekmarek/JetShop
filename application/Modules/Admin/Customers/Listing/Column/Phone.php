@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Customers;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Customer;
 
-class Listing_Column_Phone extends DataListing_Column
+class Listing_Column_Phone extends Admin_Listing_Column
 {
 	public const KEY = 'phone_number';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
 		return Tr::_('Phone');
 	}
-	
 	
 	public function getExportHeader(): null|string|array
 	{

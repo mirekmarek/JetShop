@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\Customers;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Registration extends DataListing_Column
+class Listing_Column_Registration extends Admin_Listing_Column
 {
 	public const KEY = 'registration_date_time';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
