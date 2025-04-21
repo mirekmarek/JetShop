@@ -6,25 +6,20 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Category_Product;
 
-class Listing_Filter_Categories extends DataListing_Filter
+class Listing_Filter_Categories extends Admin_Listing_Filter
 {
 	public const KEY = 'categories';
 	
 	protected array $categories = [];
 	
 	protected ?string $mode = null;
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
+
 	
 	public function catchParams(): void
 	{

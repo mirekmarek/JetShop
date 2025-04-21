@@ -7,25 +7,19 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 
 
-class Listing_Filter_CreationInProgress extends DataListing_Filter
+class Listing_Filter_CreationInProgress extends Admin_Listing_Filter
 {
 	public const KEY = 'creation_in_progress';
 	
 	protected string $creation_in_progress = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
-	
+
 	public function catchParams(): void
 	{
 		$this->creation_in_progress = Http_Request::GET()->getString('creation_in_progress', '', ['', '1', '0']);

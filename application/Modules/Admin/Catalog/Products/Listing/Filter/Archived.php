@@ -7,24 +7,18 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 
 
-class Listing_Filter_Archived extends DataListing_Filter
+class Listing_Filter_Archived extends Admin_Listing_Filter
 {
 	public const KEY = 'archived';
 	
 	protected string $archived = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

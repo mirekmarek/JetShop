@@ -7,19 +7,14 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use JetApplication\Product;
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
+use JetApplication\Product;
 
-class Listing_Column_ProductKind extends DataListing_Column
+class Listing_Column_ProductKind extends Admin_Listing_Column
 {
 	public const KEY = 'kind_of_product';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
-	
+
 	public function getOrderByDesc(): array|string
 	{
 		return '-kind_id';

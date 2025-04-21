@@ -6,26 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Product;
 
-
-class Listing_Filter_ProductType extends DataListing_Filter
+class Listing_Filter_ProductType extends Admin_Listing_Filter
 {
 	public const KEY = 'product_type';
 	
 	protected string $product_type = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

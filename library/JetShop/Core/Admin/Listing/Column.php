@@ -12,6 +12,12 @@ use Jet\Factory_MVC;
 
 abstract class Core_Admin_Listing_Column extends DataListing_Column
 {
+	public const KEY = null;
+	
+	public function getKey(): string
+	{
+		return static::KEY;
+	}
 	
 	public function render( mixed $item ): string
 	{

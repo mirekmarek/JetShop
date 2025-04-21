@@ -8,19 +8,14 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 
 
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShops;
 use JetApplication\Product;
 
-class Listing_Column_Name extends DataListing_Column
+class Listing_Column_Name extends Admin_Listing_Column
 {
 	public const KEY = 'name';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getOrderByAsc(): array|string
 	{
