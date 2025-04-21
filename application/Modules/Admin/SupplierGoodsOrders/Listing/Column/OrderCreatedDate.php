@@ -6,26 +6,18 @@
  */
 namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_OrderCreatedDate extends DataListing_Column
+class Listing_Column_OrderCreatedDate extends Admin_Listing_Column
 {
 	public const KEY = 'order_created_date';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
 		return Tr::_('Order Created Date');
 	}
-	
-	
 	
 	public function initializer( UI_dataGrid_column $column ): void
 	{

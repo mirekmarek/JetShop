@@ -7,23 +7,14 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 
-use Jet\DataListing_Column;
 use Jet\Locale;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
-class Listing_Column_ReceiptDate extends DataListing_Column
+class Listing_Column_ReceiptDate extends Admin_Listing_Column
 {
 	public const KEY = 'receipt_date';
-	
-	public function __construct()
-	{
-	}
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

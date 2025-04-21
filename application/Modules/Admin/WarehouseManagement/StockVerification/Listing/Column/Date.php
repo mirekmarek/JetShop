@@ -6,24 +6,14 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 
-
-use Jet\DataListing_Column;
 use Jet\Locale;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\WarehouseManagement_StockVerification;
 
-class Listing_Column_Date extends DataListing_Column
+class Listing_Column_Date extends Admin_Listing_Column
 {
 	public const KEY = 'date';
-	
-	public function __construct()
-	{
-	}
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

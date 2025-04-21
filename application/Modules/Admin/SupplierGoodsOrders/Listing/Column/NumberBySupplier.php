@@ -7,25 +7,18 @@
 namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
 
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_NumberBySupplier extends DataListing_Column
+class Listing_Column_NumberBySupplier extends Admin_Listing_Column
 {
 	public const KEY = 'number_by_supplier';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
 		return Tr::_('Supplier\'s order number');
 	}
-	
-	
 	
 	public function initializer( UI_dataGrid_column $column ): void
 	{

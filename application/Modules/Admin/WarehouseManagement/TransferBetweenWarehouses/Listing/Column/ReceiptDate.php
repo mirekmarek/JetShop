@@ -6,22 +6,12 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_ReceiptDate extends DataListing_Column
+class Listing_Column_ReceiptDate extends Admin_Listing_Column
 {
 	public const KEY = 'receipt_date';
-	
-	public function __construct()
-	{
-	}
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

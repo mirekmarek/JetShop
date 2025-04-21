@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Supplier extends DataListing_Column
+class Listing_Column_Supplier extends Admin_Listing_Column
 {
 	public const KEY = 'supplier';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

@@ -6,24 +6,14 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Supplier;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
-class Listing_Column_Supplier extends DataListing_Column
+class Listing_Column_Supplier extends Admin_Listing_Column
 {
 	public const KEY = 'supplier';
-	
-	public function __construct()
-	{
-	}
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
