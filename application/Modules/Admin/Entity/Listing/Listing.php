@@ -36,6 +36,8 @@ class Listing extends DataListing {
 	protected MVC_View $column_view;
 	protected MVC_View $filter_view;
 	
+	protected bool $select_items_enabled = false;
+	
 	
 	public function __construct( Main $main )
 	{
@@ -322,5 +324,17 @@ class Listing extends DataListing {
 	{
 		return Http_Request::currentURI( ['id' => $item->getId()] );
 	}
+	
+	public function getSelectItemsEnabled(): bool
+	{
+		return $this->select_items_enabled;
+	}
+	
+	public function setSelectItemsEnabled( bool $select_items_enabled ): void
+	{
+		$this->select_items_enabled = $select_items_enabled;
+	}
+	
+	
 	
 }

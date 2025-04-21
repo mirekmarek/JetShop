@@ -36,34 +36,6 @@ endforeach;
 $filter_is_active = Main::filterIsActive();
 
 ?>
-<style>
-	.listing-filter {
-		display: grid;
-		grid-template-columns: 150px 1fr;
-		margin: 10px;
-		align-items: center;
-	}
-
-	.listing-filter-title {
-		font-weight: bolder;
-	}
-
-	.listing-filter-form {
-		display: flex;
-		align-items: center;
-	}
-
-	.listing-filter-form>div {
-		padding: 5px;
-		padding-left: 10px;
-	}
-
-	.listing-active-filter {
-		background-color: #b3bbc4;
-		padding: 10px;
-		border-radius: 5px;
-	}
-</style>
 <script>
 	const Filter = {
 		filter_visible: <?=json_encode($filter_is_active)?>,
@@ -94,6 +66,35 @@ $filter_is_active = Main::filterIsActive();
 			}
 
 			document.getElementById('<?=$filter_form->getId()?>').submit();
+		}
+	};
+	
+	const List = {
+		selectAll: () => {
+			const chb = document.getElementsByClassName('listing-select-checkbox');
+			
+			for (let i = 0; i < chb.length; i++) {
+				chb[i].checked = true;
+			}
+		},
+		unselectAll: () => {
+			const chb = document.getElementsByClassName('listing-select-checkbox');
+
+			for (let i = 0; i < chb.length; i++) {
+				chb[i].checked = false;
+			}
+		},
+		
+		getSelectedIds: () => {
+			const chb = document.getElementsByClassName('listing-select-checkbox');
+
+			let ids = [];
+			
+			for (let i = 0; i < chb.length; i++) {
+				ids.push( chb[i]['dataset']['id'] );
+			}
+			
+			return ids;
 		}
 	};
 </script>

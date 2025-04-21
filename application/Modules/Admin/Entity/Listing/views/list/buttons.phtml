@@ -29,6 +29,20 @@ $add_uri_creator = $listing_manager->getCreateUriCreator();
 
 $add_uri = $add_uri_creator();
 
+
+if($listing->getSelectItemsEnabled()) {
+	$select_all = UI::button( Tr::_( 'Select all' ) );
+	$select_all->setClass( UI_Button::CLASS_INFO );
+	$select_all->setOnClick( "List.selectAll()" );
+	
+	$unselect_all = UI::button( Tr::_( 'Unselect all' ) );
+	$unselect_all->setClass( UI_Button::CLASS_SECONDARY );
+	$unselect_all->setOnClick( "List.unselectAll()" );
+	
+	$grid->footer()->setPrepend('<tr><td colspan="'.count($listing->getColumns()).'"><div class="toolbar">'.$select_all.$unselect_all.'</div></td></tr>');
+}
+
+
 if(
 	!$entity_manager::getCurrentUserCanCreate() &&
 	!count($listing->getExportTypes()) &&

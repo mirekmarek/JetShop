@@ -3,6 +3,35 @@ html, body {
 	background-color: #ffffff;
 }
 
+
+.listing-filter {
+	display: grid;
+	grid-template-columns: 150px 1fr;
+	margin: 10px;
+	align-items: center;
+}
+
+.listing-filter-title {
+	font-weight: bolder;
+}
+
+.listing-filter-form {
+	display: flex;
+	align-items: center;
+}
+
+.listing-filter-form>div {
+	padding: 5px;
+	padding-left: 10px;
+}
+
+.listing-active-filter {
+	background-color: #b3bbc4;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+
 .form-error {
 	color: #ff0000;
 	margin-bottom: -20px;
@@ -470,3 +499,4 @@ h4.inherited {
 	background: #c9c9c9;
 	color: #000000;
 }
+

@@ -24,6 +24,14 @@ use JetApplication\EShopEntity_WithEShopData;
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 
+if( $listing->getSelectItemsEnabled() ):
+	?>
+	<input type="checkbox" data-id="<?=$item->getId()?>" class="checkbox listing-select-checkbox">
+	<br><br>
+	<?php
+endif;
+
+
 if( $listing->getEntityManager()::getCurrentUserCanDelete() ):
 	
 	$delete_uri_creator = Admin_Managers::EntityListing()->getDeleteUriCreator();
