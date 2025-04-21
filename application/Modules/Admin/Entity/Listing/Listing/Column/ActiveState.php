@@ -9,10 +9,11 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShops;
 
-class Listing_Column_ActiveState extends Listing_Column_Abstract
+class Listing_Column_ActiveState extends Admin_Listing_Column
 {
 	public const KEY = 'active_state';
 	

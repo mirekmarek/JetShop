@@ -11,18 +11,15 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\EShops;
 
 
-class Listing_Filter_EShop extends Listing_Filter_Abstract
+class Listing_Filter_EShop extends Admin_Listing_Filter
 {
 	public const KEY = 'eshop';
 	
 	protected ?string $eshop_key = null;
-	
-	public function __construct()
-	{
-	}
 	
 	public function getKey(): string
 	{

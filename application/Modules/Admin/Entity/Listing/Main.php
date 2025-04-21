@@ -13,6 +13,7 @@ use Jet\DataListing_Filter;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Admin_Listing_Handler;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
@@ -142,6 +143,11 @@ class Main extends Admin_Managers_EShopEntity_Listing
 		$this->listing->setDefaultColumnsSchema( $schema );
 	}
 	
+	public function addHandler( Admin_Listing_Handler $handler ) : void
+	{
+		$this->listing->addHandler( $handler );
+	}
+	
 	public function getCreateBtnRenderer(): ?callable
 	{
 		return $this->create_btn_renderer;
@@ -218,7 +224,7 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	
 	public function getSelectItemsEnabled(): bool
 	{
-		$this->listing->getSelectItemsEnabled();
+		return $this->listing->getSelectItemsEnabled();
 	}
 	
 	public function setSelectItemsEnabled( bool $select_items_enabled ): void

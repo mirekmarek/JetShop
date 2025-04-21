@@ -8,9 +8,10 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShopEntity_WithEShopData;
 
-class Listing_Column_InternalNotes extends Listing_Column_Abstract
+class Listing_Column_InternalNotes extends Admin_Listing_Column
 {
 	public const KEY = 'internal_notes';
 	

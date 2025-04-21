@@ -11,9 +11,10 @@ use Jet\Form_Field_Select;
 use Jet\Form_Field_Select_Option;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\EShopEntity_Status;
 
-class Listing_Filter_Status extends Listing_Filter_Abstract
+class Listing_Filter_Status extends Admin_Listing_Filter
 {
 	public const KEY = 'status';
 	

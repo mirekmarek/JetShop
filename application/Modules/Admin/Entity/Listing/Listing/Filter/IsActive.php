@@ -11,11 +11,12 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShops;
 
 
-class Listing_Filter_IsActive extends Listing_Filter_Abstract
+class Listing_Filter_IsActive extends Admin_Listing_Filter
 {
 	public const KEY = 'is_active';
 	
@@ -24,9 +25,10 @@ class Listing_Filter_IsActive extends Listing_Filter_Abstract
 	protected array $is_active_per_eshop = [];
 	
 	protected ?bool $multi_eshop_mode = null;
-	
-	public function __construct()
+
+	public function __costruct(): void
 	{
+		die('???');
 	}
 	
 	public function getKey(): string

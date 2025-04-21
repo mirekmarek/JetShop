@@ -8,9 +8,10 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 
-class Listing_Column_Number extends Listing_Column_Abstract
+class Listing_Column_Number extends Admin_Listing_Column
 {
 	public const KEY = 'number';
 	

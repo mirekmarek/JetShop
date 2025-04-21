@@ -9,8 +9,9 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Images extends Listing_Column_Abstract
+class Listing_Column_Images extends Admin_Listing_Column
 {
 	public const KEY = 'images';
 	

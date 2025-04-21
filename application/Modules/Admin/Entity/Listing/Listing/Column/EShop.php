@@ -9,9 +9,10 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShopEntity_WithEShopRelation;
 
-class Listing_Column_EShop extends Listing_Column_Abstract
+class Listing_Column_EShop extends Admin_Listing_Column
 {
 	public const KEY = 'eshop';
 	

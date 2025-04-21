@@ -12,14 +12,16 @@ use Jet\UI;
 use Jet\Tr;
 use Jet\MVC_View;
 use Jet\UI_button;
+use JetApplication\Admin_Listing_Schema;
 
 /**
  * @var MVC_View     $this
  * @var Listing      $listing
  */
 $listing = $this->getRaw('listing');
+$schema_manager = $listing->getSchemaManager();
 
-$selected_schema = Listing_Schema::getSelectedSchemaDefinition();
+$selected_schema = $schema_manager->getSelectedSchemaDefinition();
 
 $col_titles = [];
 foreach($listing->getColumns() as $col) {
@@ -32,7 +34,7 @@ $save_as_new_dialog = UI::dialog('save_new_col_schema_dialog', 'Save as new sche
 
 $update_dialog = UI::dialog('update_schema_dialog', 'Update schema');
 
-$add_form = Listing_Schema::getAddSchemaForm();
+$add_form = $schema_manager->getAddSchemaForm();
 $update_form = $selected_schema->getUpdateSchemaForm();
 
 ?>
@@ -47,7 +49,7 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 				<?=Tr::_('Predefined schemas', dictionary: Tr::COMMON_DICTIONARY)?>
 			</button>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<?php foreach( Listing_Schema::getList() as $schema ): ?>
+				<?php foreach( $schema_manager->getList() as $schema ): ?>
 					<div class="dropdown-item" style="padding-bottom: 10px;">
 						<a href="<?=$schema->getURL()?>"><?=$schema->getName()?></a>
 					</div>
@@ -120,9 +122,9 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 	const DisplayedColumnsSetting = {
 		settings_visible: false,
 
-		visible_cols: <?=json_encode(Listing_Schema::getCurrentColSchema())?>,
+		visible_cols: <?=json_encode($schema_manager->getCurrentColSchema())?>,
 		all_columns: <?=json_encode($col_titles)?>,
-		URL: <?=json_encode(Http_Request::currentURI([Listing_Schema::SCHEMA_GET_PARAM=>'SCHEMA']))?>,
+		URL: <?=json_encode(Http_Request::currentURI([Admin_Listing_Schema::SCHEMA_GET_PARAM=>'SCHEMA']))?>,
 
 		toggle: ()=>{
 			if(DisplayedColumnsSetting.settings_visible) {
@@ -212,17 +214,17 @@ $update_form = $selected_schema->getUpdateSchemaForm();
 		},
 
 		set: ()=> {
-			const schema = DisplayedColumnsSetting.visible_cols.join(<?=json_encode(rawurlencode(Listing_Schema::COLS_SEPARATOR))?>);
+			const schema = DisplayedColumnsSetting.visible_cols.join(<?=json_encode(rawurlencode(Admin_Listing_Schema::COLS_SEPARATOR))?>);
 			location = DisplayedColumnsSetting.URL.replace('SCHEMA', schema);
 		},
 
 		saveNewSchema: ()=> {
-			$('#<?=$add_form->field('cols')->getId()?>').val( DisplayedColumnsSetting.visible_cols.join('<?=Listing_Schema::COLS_SEPARATOR?>') );
+			$('#<?=$add_form->field('cols')->getId()?>').val( DisplayedColumnsSetting.visible_cols.join('<?=Admin_Listing_Schema::COLS_SEPARATOR?>') );
 			$('#<?=$save_as_new_dialog->getId()?>').modal('show');
 		},
 
 		updateCurrentSchema: ()=> {
-			$('#<?=$update_form->field('cols')->getId()?>').val( DisplayedColumnsSetting.visible_cols.join('<?=Listing_Schema::COLS_SEPARATOR?>') );
+			$('#<?=$update_form->field('cols')->getId()?>').val( DisplayedColumnsSetting.visible_cols.join('<?=Admin_Listing_Schema::COLS_SEPARATOR?>') );
 			$('#<?=$update_dialog->getId()?>').modal('show');
 		}
 	};

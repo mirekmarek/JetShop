@@ -6,17 +6,9 @@
  */
 namespace JetApplicationModule\Admin\Entity\Listing;
 
-
-use Jet\DataListing_Column;
-use Jet\DataModel_Fetch_Instances;
-use Jet\DataListing;
-use Jet\Factory_MVC;
-use Jet\Http_Request;
-use Jet\MVC_View;
-use JetApplication\Admin_EntityManager_Module;
-use JetApplication\EShopEntity_Admin_Interface;
+use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Admin_Listing;
 use JetApplication\Admin_Managers;
-use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
@@ -28,30 +20,11 @@ use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 
 
-class Listing extends DataListing {
+class Listing extends Admin_Listing {
 	
-	
-	protected EShopEntity_Basic|EShopEntity_Admin_Interface $entity;
-	protected Admin_EntityManager_Module $entity_manager;
-	protected MVC_View $column_view;
-	protected MVC_View $filter_view;
-	
-	protected bool $select_items_enabled = false;
-	
-	
-	public function __construct( Main $main )
+	public function __construct( Admin_Managers_EShopEntity_Listing $listing_manager )
 	{
-		
-		$this->entity = $main->getEntity();
-		$this->entity_manager = $main->getEntityManager();
-		
-		$column_view = Factory_MVC::getViewInstance( $this->entity_manager->getViewsDir().'list/column/' );
-		$column_view->setVar('listing', $this);
-		$filter_view = Factory_MVC::getViewInstance( $this->entity_manager->getViewsDir().'list/filter/' );
-		$column_view->setVar('listing', $this);
-		
-		$this->column_view = $column_view;
-		$this->filter_view = $filter_view;
+		parent::__construct( $listing_manager );
 		
 		$default_schema = [];
 		$default_order_by = '-id';
@@ -163,178 +136,4 @@ class Listing extends DataListing {
 		
 		return $search;
 	}
-	
-	
-	
-	
-	
-	
-	public function getEntity(): EShopEntity_Admin_Interface|EShopEntity_Basic
-	{
-		return $this->entity;
-	}
-	
-	protected function handleSchemaManagement() : void
-	{
-		Listing_Schema::setListing( $this );
-		
-		Listing_Schema::handle();
-	}
-	
-	protected function handeExports() : void
-	{
-		$types = array_keys( $this->getExportTypes() );
-		$export = Http_Request::GET()->getString(
-			key: 'export',
-			valid_values: $types
-		);
-		
-		
-		if( $export ) {
-			set_time_limit(-1);
-			$this->export( $export )->export();
-		}
-	}
-	
-	protected bool $handled = false;
-	
-	public function handle(): void
-	{
-		if(!$this->handled) {
-			$this->handleSchemaManagement();
-			parent::handle();
-			$this->handeExports();
-
-			$this->handled = true;
-		}
-	}
-	
-	/**
-	 * @return DataListing_Column[]
-	 */
-	public function getVisibleColumns() : array
-	{
-		$schema = Listing_Schema::getCurrentColSchema();
-		
-		foreach($this->columns as $col) {
-			if($col->isMandatory()) {
-				continue;
-			}
-			
-			if(
-				($index=array_search( $col->getKey(), $schema ))!==false
-			) {
-				$index++;
-				
-				$col->setIndex( $index );
-				$col->setIsVisible( true );
-
-			} else {
-				$col->setIsVisible(false);
-			}
-		}
-		
-		return parent::getVisibleColumns();
-	}
-	
-	
-	public function getEntityManager(): Admin_EntityManager_Module
-	{
-		return $this->entity_manager;
-	}
-	
-	
-	
-	/**
-	 * @return EShopEntity_Basic[]|DataModel_Fetch_Instances
-	 * @noinspection PhpDocSignatureInspection
-	 */
-	protected function getItemList(): DataModel_Fetch_Instances
-	{
-		return $this->entity::getList();
-	}
-	
-	protected function getIdList(): array
-	{
-		if( $this->all_ids === null ) {
-			$this->all_ids = $this->entity::dataFetchCol(
-				select:['id'],
-				where: $this->getFilterWhere(),
-				order_by: $this->getQueryOrderBy()
-			);
-		}
-		
-		return $this->all_ids;
-	}
-	
-	public function getFilterView(): MVC_View
-	{
-		return $this->filter_view;
-	}
-	
-	public function getColumnView(): MVC_View
-	{
-		return $this->column_view;
-	}
-	
-	public function itemGetter( int|string $id ): ?EShopEntity_Basic
-	{
-		return $this->entity::get( $id );
-	}
-	
-	public function setDefaultColumnsSchema( array $schema ) : void
-	{
-		Listing_Schema::setDefaultColSchema( $schema );
-	}
-	
-	public function getPrevEditUrl( int $current_id ): string
-	{
-		$this->handle();
-		$all_ids = $this->getIdList();
-		
-		$index = array_search( $current_id, $all_ids );
-		
-		if( $index ) {
-			$index--;
-			if( isset( $all_ids[$index] ) ) {
-				return Http_Request::currentURI( ['id' => $all_ids[$index]] );
-			}
-		}
-		
-		return '';
-	}
-	
-	public function getNextEditUrl( int $current_id ): string
-	{
-		$this->handle();
-		$all_ids = $this->getIdList();
-		
-		$index = array_search( $current_id, $all_ids );
-		if( $index !== false ) {
-			$index++;
-			if( isset( $all_ids[$index] ) ) {
-				return Http_Request::currentURI( ['id' => $all_ids[$index]] );
-			}
-		}
-		
-		return '';
-	}
-	
-	public function getEditUrl( EShopEntity_Basic $item ): string
-	{
-		return Http_Request::currentURI( ['id' => $item->getId()] );
-	}
-	
-	public function getSelectItemsEnabled(): bool
-	{
-		return $this->select_items_enabled;
-	}
-	
-	public function setSelectItemsEnabled( bool $select_items_enabled ): void
-	{
-		$this->select_items_enabled = $select_items_enabled;
-	}
-	
-	
-	
 }

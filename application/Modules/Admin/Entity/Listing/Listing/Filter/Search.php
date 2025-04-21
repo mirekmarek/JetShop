@@ -12,8 +12,10 @@ use Closure;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_Search extends Listing_Filter_Abstract {
+class Listing_Filter_Search extends Admin_Listing_Filter
+{
 	
 	public const KEY = 'search';
 	

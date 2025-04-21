@@ -8,8 +8,9 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Edit extends Listing_Column_Abstract
+class Listing_Column_Edit extends Admin_Listing_Column
 {
 	public const KEY = '_edit_';
 	

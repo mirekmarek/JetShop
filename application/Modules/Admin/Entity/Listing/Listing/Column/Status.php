@@ -8,9 +8,10 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShopEntity_HasStatus_Interface;
 
-class Listing_Column_Status extends Listing_Column_Abstract
+class Listing_Column_Status extends Admin_Listing_Column
 {
 	public const KEY = 'status';
 	
