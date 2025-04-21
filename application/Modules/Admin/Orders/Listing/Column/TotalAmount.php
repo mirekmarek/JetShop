@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_TotalAmount extends DataListing_Column
+class Listing_Column_TotalAmount extends Admin_Listing_Column
 {
 	public const KEY = 'total_amount';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

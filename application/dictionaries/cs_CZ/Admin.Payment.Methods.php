@@ -118,4 +118,7 @@ return [
 	'File is too large' => 'Soubor je příliš velký',
 	'Please select file' => 'Vyberte soubor',
 	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'Kind of payment method' => '',
+	'Title' => '',
+	'Backend module' => '',
 ];

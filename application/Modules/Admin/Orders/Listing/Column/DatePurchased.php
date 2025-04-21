@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_DatePurchased extends DataListing_Column
+class Listing_Column_DatePurchased extends Admin_Listing_Column
 {
 	public const KEY = 'date_purchased';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

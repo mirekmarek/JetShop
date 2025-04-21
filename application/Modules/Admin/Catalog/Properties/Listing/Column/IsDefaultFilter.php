@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_IsDefaultFilter extends DataListing_Column
+class Listing_Column_IsDefaultFilter extends Admin_Listing_Column
 {
 	public const KEY = 'is_default_filter';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
@@ -29,6 +23,5 @@ class Listing_Column_IsDefaultFilter extends DataListing_Column
 	{
 		$column->addCustomCssStyle( 'width:130px;' );
 	}
-	
 	
 }

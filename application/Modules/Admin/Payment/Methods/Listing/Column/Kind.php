@@ -6,20 +6,14 @@
  */
 namespace JetApplicationModule\Admin\Payment\Methods;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Payment_Method;
 
-class Listing_Column_Kind extends DataListing_Column
+class Listing_Column_Kind extends Admin_Listing_Column
 {
 	public const KEY = 'kind';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

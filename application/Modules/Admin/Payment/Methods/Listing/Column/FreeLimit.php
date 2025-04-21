@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Payment\Methods;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_FreeLimit extends DataListing_Column
+class Listing_Column_FreeLimit extends Admin_Listing_Column
 {
 	public const KEY = 'free_payment_limit';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
