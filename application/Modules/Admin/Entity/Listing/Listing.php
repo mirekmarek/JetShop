@@ -20,7 +20,8 @@ use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShops;
 
 
-class Listing extends Admin_Listing {
+class Listing extends Admin_Listing
+{
 	
 	public function __construct( Admin_Managers_EShopEntity_Listing $listing_manager )
 	{

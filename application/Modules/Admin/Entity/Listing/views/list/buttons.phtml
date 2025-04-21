@@ -72,6 +72,10 @@ if(
 		echo $custom_btn_renderer();
 	endif;
 	
+	foreach($listing->getHandlers() as $handler):
+		echo $handler->renderButton();
+	endforeach;
+	
 	
 	if(count($listing->getExportTypes())): ?>
 	&nbsp;&nbsp;

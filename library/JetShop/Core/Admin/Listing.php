@@ -101,6 +101,16 @@ abstract class Core_Admin_Listing extends DataListing
 		return $this->handlers[$key];
 	}
 	
+	/**
+	 * @return Admin_Listing_Handler[]
+	 */
+	public function getHandlers(): array
+	{
+		return $this->handlers;
+	}
+	
+	
+	
 	
 	public function getPrevEditUrl( int $current_id ): string
 	{
@@ -194,7 +204,9 @@ abstract class Core_Admin_Listing extends DataListing
 	public function handleHandlers() : void
 	{
 		foreach( $this->handlers as $handler ) {
-			$handler->handle();
+			if($handler->canBeHandled()) {
+				$handler->handle();
+			}
 		}
 	}
 	

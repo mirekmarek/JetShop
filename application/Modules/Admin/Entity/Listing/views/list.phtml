@@ -142,3 +142,6 @@ $filter_is_active = Main::filterIsActive();
 	<?=$grid->render();?>
 </div>
 
+<?php foreach($listing->getHandlers() as $handler):
+	echo $handler->renderDialog();
+endforeach;
