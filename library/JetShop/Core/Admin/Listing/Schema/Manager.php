@@ -6,14 +6,13 @@
  */
 namespace JetShop;
 
-
-use Jet\DataListing_Column;
 use Jet\Form;
 use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Input;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use JetApplication\Admin_Listing;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Admin_Listing_Schema;
 
 
@@ -123,7 +122,7 @@ abstract class Core_Admin_Listing_Schema_Manager
 		return $list[$id]??$this->getDefault();
 	}
 	
-	public function getUrlWithCol( DataListing_Column $col ) : string
+	public function getUrlWithCol( Admin_Listing_Column $col ) : string
 	{
 		$curr_schema = $this->getCurrentColSchema();
 		$key = $col->getKey();
@@ -138,7 +137,7 @@ abstract class Core_Admin_Listing_Schema_Manager
 		
 	}
 	
-	public function getUrlWithoutCol( DataListing_Column $col ) : string
+	public function getUrlWithoutCol( Admin_Listing_Column $col ) : string
 	{
 		$curr_schema = $this->getCurrentColSchema();
 		$key = $col->getKey();

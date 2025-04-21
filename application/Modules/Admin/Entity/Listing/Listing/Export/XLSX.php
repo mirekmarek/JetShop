@@ -7,11 +7,11 @@
 namespace JetApplicationModule\Admin\Entity\Listing;
 
 
-use Jet\DataListing_Export;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Export;
 use JetApplication\DataExport_XLSX;
 
-class Listing_Export_XLSX extends DataListing_Export
+class Listing_Export_XLSX extends Admin_Listing_Export
 {
 	public function getTitle() : string
 	{

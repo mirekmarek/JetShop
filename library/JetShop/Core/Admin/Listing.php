@@ -21,7 +21,8 @@ use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
 
 
-abstract class Core_Admin_Listing extends DataListing {
+abstract class Core_Admin_Listing extends DataListing
+{
 	
 	
 	protected EShopEntity_Basic|EShopEntity_Admin_Interface $entity;

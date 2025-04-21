@@ -9,10 +9,10 @@ namespace JetShop;
 
 use Closure;
 use Jet\Application_Module;
-use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Admin_Listing_Export;
 use JetApplication\Admin_Listing_Handler;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
@@ -60,7 +60,7 @@ abstract class Core_Admin_Managers_EShopEntity_Listing extends Application_Modul
 	
 	abstract public function addFilter( DataListing_Filter $filter ) : void;
 	
-	abstract public function addExport( DataListing_Export $export ) : void;
+	abstract public function addExport( Admin_Listing_Export $export ) : void;
 	
 	abstract public function addHandler( Admin_Listing_Handler $handler ) : void;
 	
