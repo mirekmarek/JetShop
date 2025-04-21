@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\Marketing\Banners;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_InternalNotes extends DataListing_Column
+class Listing_Column_InternalNotes extends Admin_Listing_Column
 {
 	public const KEY = 'internal_notes';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

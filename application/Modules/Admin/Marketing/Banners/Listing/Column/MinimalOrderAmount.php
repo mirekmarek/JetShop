@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\Marketing\Banners;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_MinimalOrderAmount extends DataListing_Column
+class Listing_Column_MinimalOrderAmount extends Admin_Listing_Column
 {
 	public const KEY = 'minimal_order_amount';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

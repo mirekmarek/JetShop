@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Marketing\Banners;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_ValidFrom extends DataListing_Column
+class Listing_Column_ValidFrom extends Admin_Listing_Column
 {
 	public const KEY = 'valid_from';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

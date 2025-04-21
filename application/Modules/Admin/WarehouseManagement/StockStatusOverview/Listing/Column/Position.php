@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Position extends DataListing_Column
+class Listing_Column_Position extends Admin_Listing_Column
 {
 	public const KEY = 'position';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

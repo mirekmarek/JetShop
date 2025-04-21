@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Gift extends DataListing_Column
+class Listing_Column_Gift extends Admin_Listing_Column
 {
 	public const KEY = 'gift_product_id';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

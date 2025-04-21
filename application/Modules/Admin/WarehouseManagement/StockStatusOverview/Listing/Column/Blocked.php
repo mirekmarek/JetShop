@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Blocked extends DataListing_Column
+class Listing_Column_Blocked extends Admin_Listing_Column
 {
 	public const KEY = 'blocked';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
