@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_DiscountType extends DataListing_Column
+class Listing_Column_DiscountType extends Admin_Listing_Column
 {
 	public const KEY = 'discount_type';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

@@ -6,24 +6,14 @@
  */
 namespace JetApplicationModule\Admin\Delivery\Methods;
 
-
+use JetApplication\Admin_Listing_Column;
 use JetApplication\Delivery_Method;
-use Jet\DataListing_Column;
 use Jet\Tr;
 use JetApplication\Pricelists;
 
-class Listing_Column_Price extends DataListing_Column
+class Listing_Column_Price extends Admin_Listing_Column
 {
 	public const KEY = 'price';
-	
-	public function __construct()
-	{
-	}
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getOrderByAsc(): array|string
 	{

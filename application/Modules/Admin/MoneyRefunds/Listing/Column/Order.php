@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\MoneyRefunds;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Order extends DataListing_Column
+class Listing_Column_Order extends Admin_Listing_Column
 {
 	public const KEY = 'order_number';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

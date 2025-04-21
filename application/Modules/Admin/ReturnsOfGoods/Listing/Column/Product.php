@@ -6,18 +6,12 @@
  */
 namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Product extends DataListing_Column
+class Listing_Column_Product extends Admin_Listing_Column
 {
 	public const KEY = 'product_id';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
