@@ -6,8 +6,10 @@
  */
 namespace JetApplication;
 
+use Jet\DataModel_Definition;
 use JetShop\Core_Admin_Listing_Schema;
 
+#[DataModel_Definition]
 class Admin_Listing_Schema extends Core_Admin_Listing_Schema {
 
 }
