@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Content\Email\Templates;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_Layout extends DataListing_Column
+class Listing_Column_Layout extends Admin_Listing_Column
 {
 	public const KEY = 'layout';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{

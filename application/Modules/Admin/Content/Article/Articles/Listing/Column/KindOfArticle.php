@@ -6,19 +6,13 @@
  */
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
-
-use Jet\DataListing_Column;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
+use JetApplication\Admin_Listing_Column;
 
-class Listing_Column_KindOfArticle extends DataListing_Column
+class Listing_Column_KindOfArticle extends Admin_Listing_Column
 {
 	public const KEY = 'kind_of_article';
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function getTitle(): string
 	{
