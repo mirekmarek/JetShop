@@ -7,14 +7,14 @@
 namespace JetShop;
 
 
+use Jet\Autoloader;
 use Jet\DataListing_ElementBase;
+use Jet\Factory_MVC;
 use Jet\MVC_View;
 
 
 abstract class Core_Admin_Listing_Handler extends DataListing_ElementBase
 {
-	protected string $base_dir;
-	
 	protected bool $has_dialog = false;
 	
 	public const KEY = null;
@@ -24,30 +24,36 @@ abstract class Core_Admin_Listing_Handler extends DataListing_ElementBase
 		return static::KEY;
 	}
 	
-	public function __construct()
-	{
-	}
-	
-	
-	abstract public function canBeHandled() : bool;
-	
 	public function hasDialog() : bool
 	{
 		return $this->has_dialog;
 	}
 	
-	abstract protected function init();
+	
+	protected function getView() : MVC_View
+	{
+		$view_dir = dirname( Autoloader::getScriptPath( static::class ), 3 ).'/views/list/handler/'.static::getKey().'/';
+		
+		$view = Factory_MVC::getViewInstance( $view_dir );
+		$view->setVar('filter', $this );
+		$view->setVar('listing', $this->listing);
+		
+		return $view;
+	}
+	
 	
 	public function renderDialog() : string
 	{
 		if(
-			!$this->canBeHandled() ||
-			!$this->hasDialog()
+			!$this->hasDialog() ||
+			!$this->canBeHandled()
 		) {
 			return '';
 		}
 		
-		return $this->view->render('dialog');
+		$view = $this->getView();
+		
+		return $view->render('dialog');
 	}
 	
 	public function renderButton() : string
@@ -58,9 +64,14 @@ abstract class Core_Admin_Listing_Handler extends DataListing_ElementBase
 			return '';
 		}
 		
-		return $this->view->render('button');
+		$view = $this->getView();
+		
+		
+		return $view->render('button');
 	}
 	
+	abstract public function canBeHandled() : bool;
+
 	abstract public function handle() : void;
 	
 }

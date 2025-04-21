@@ -104,26 +104,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 			return $this->view->render('list/toolbar');
 		} );
 		
+		$this->listing_manager->addHandler( new Listing_Handler_DispatchAllReady() );
+		
 	}
 	
-	public function listing_Action() : void
-	{
-		$this->setBreadcrumbNavigation();
-		
-		
-		ListingHandler::initHandlers( $this->view, $this->getListing() );
-		
-		ListingHandler::handleHandlers();
-		
-		$output = $this->getListing()->renderListing();
-		
-		foreach(ListingHandler::getHandlers() as $handler) {
-			$output .= $handler->renderDialog();
-		}
-		
-		$this->content->output( $output );
-	}
-
 
 	public function add_Action() : void
 	{

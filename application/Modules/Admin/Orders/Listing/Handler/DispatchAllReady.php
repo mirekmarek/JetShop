@@ -10,18 +10,15 @@ namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Handler;
 use JetApplication\Order;
 
-class ListingHandler_DispatchAllReady_Main extends ListingHandler {
+class Listing_Handler_DispatchAllReady extends Admin_Listing_Handler
+{
 	public const KEY = 'dispatch_all_ready';
 	
 	protected bool $has_dialog = true;
 	
-	
-	protected function init() : void
-	{
-
-	}
 	
 	public function handle() : void
 	{
@@ -41,5 +38,10 @@ class ListingHandler_DispatchAllReady_Main extends ListingHandler {
 			
 			Http_Headers::reload(unset_GET_params: ['action']);
 		}
+	}
+	
+	public function canBeHandled(): bool
+	{
+		return Main::getCurrentUserCanEdit();
 	}
 }
