@@ -7,12 +7,13 @@
 namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Closure;
-use Jet\DataListing_Column;
-use Jet\DataListing_Export;
 use Jet\DataListing_Filter;
 use Jet\Factory_MVC;
 use Jet\Http_Request;
 use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Admin_Listing_Column;
+use JetApplication\Admin_Listing_Export;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Admin_Listing_Handler;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_Admin_Interface;
@@ -123,17 +124,17 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	}
 	
 	
-	public function addColumn( DataListing_Column $column ): void
+	public function addColumn( Admin_Listing_Column $column ): void
 	{
 		$this->listing->addColumn( $column );
 	}
 	
-	public function addFilter( DataListing_Filter $filter ): void
+	public function addFilter( Admin_Listing_Filter $filter ): void
 	{
 		$this->listing->addFilter( $filter );
 	}
 	
-	public function addExport( DataListing_Export $export ): void
+	public function addExport( Admin_Listing_Export $export ): void
 	{
 		$this->listing->addExport( $export );
 	}

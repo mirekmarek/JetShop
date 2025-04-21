@@ -6,23 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Marketing\GiftProduct;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
 
-class Listing_Filter_Gift extends DataListing_Filter {
+class Listing_Filter_Gift extends Admin_Listing_Filter
+{
 	
 	public const KEY = 'gift';
 	
 	protected int $gift = 0;
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 
 	public function getGift(): int
 	{

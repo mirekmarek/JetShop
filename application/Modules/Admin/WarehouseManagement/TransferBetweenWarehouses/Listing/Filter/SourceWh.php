@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\WarehouseManagement_Warehouse;
 
-class Listing_Filter_SourceWh extends DataListing_Filter
+class Listing_Filter_SourceWh extends Admin_Listing_Filter
 {
 	public const KEY = 'source_wh';
 	
 	protected string $source_wh = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

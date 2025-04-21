@@ -12,25 +12,21 @@ use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Marketing_PromoAreaDefinition;
 
 
-class Listing_Filter_Area extends DataListing_Filter {
+class Listing_Filter_Area extends Admin_Listing_Filter
+{
 	
 	public const KEY = 'area';
 	
 	protected int $area = 0;
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 
 	public function getArea(): int
 	{
 		return $this->area;
 	}
-	
 	
 	
 	public function catchParams(): void

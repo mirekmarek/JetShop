@@ -7,23 +7,17 @@
 namespace JetApplicationModule\Admin\Orders;
 
 
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_AllItemsAvailable extends DataListing_Filter
+class Listing_Filter_AllItemsAvailable extends Admin_Listing_Filter
 {
 	public const KEY = 'all_items_available';
 	
 	protected string $all_items_available = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

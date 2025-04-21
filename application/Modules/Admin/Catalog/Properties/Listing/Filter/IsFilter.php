@@ -7,24 +7,18 @@
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
 
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 
 
-class Listing_Filter_IsFilter extends DataListing_Filter
+class Listing_Filter_IsFilter extends Admin_Listing_Filter
 {
 	public const KEY = 'is_filter';
 	
 	protected string $is_filter = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	protected function getScope() : array
 	{

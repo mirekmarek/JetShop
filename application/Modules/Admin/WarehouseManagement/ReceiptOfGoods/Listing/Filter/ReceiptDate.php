@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
-
 use Jet\Data_DateTime;
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Date;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_ReceiptDate extends DataListing_Filter
+class Listing_Filter_ReceiptDate extends Admin_Listing_Filter
 {
 	public const KEY = 'receipt_date';
 	
 	protected ?Data_DateTime $from = null;
 	protected ?Data_DateTime $till = null;
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 
 	public function getFrom(): ?Data_DateTime

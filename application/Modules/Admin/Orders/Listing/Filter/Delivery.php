@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Delivery_Method;
 
-class Listing_Filter_Delivery extends DataListing_Filter
+class Listing_Filter_Delivery extends Admin_Listing_Filter
 {
 	public const KEY = 'delivery';
 	
 	protected string $delivery = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

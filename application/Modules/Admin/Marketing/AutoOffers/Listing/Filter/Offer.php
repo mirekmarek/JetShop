@@ -6,23 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Marketing\AutoOffers;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
 
-class Listing_Filter_Offer extends DataListing_Filter {
+class Listing_Filter_Offer extends Admin_Listing_Filter
+{
 	
 	public const KEY = 'offer';
 	
 	protected int $offer = 0;
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 
 	public function getOffer(): int
 	{

@@ -6,27 +6,19 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
 use Jet\Data_DateTime;
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Date;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_DatePurchased extends DataListing_Filter
+class Listing_Filter_DatePurchased extends Admin_Listing_Filter
 {
 	public const KEY = 'date_purchased';
 	
 	protected ?Data_DateTime $from = null;
 	protected ?Data_DateTime $till = null;
 	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
-	
-
 	public function getFrom(): ?Data_DateTime
 	{
 		return $this->from;

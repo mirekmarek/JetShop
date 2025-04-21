@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Payment_Method;
 
-class Listing_Filter_Payment extends DataListing_Filter
+class Listing_Filter_Payment extends Admin_Listing_Filter
 {
 	public const KEY = 'payment';
 	
 	protected string $payment = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

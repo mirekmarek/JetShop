@@ -6,26 +6,19 @@
  */
 namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Carrier;
 
 
-class Listing_Filter_Carrier extends DataListing_Filter
+class Listing_Filter_Carrier extends Admin_Listing_Filter
 {
 	public const KEY = 'carrier';
 	
 	protected string $carrier = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

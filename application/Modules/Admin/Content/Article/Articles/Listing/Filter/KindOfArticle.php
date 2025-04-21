@@ -6,27 +6,19 @@
  */
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
-
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Content_Article_KindOfArticle;
 
 
-class Listing_Filter_KindOfArticle extends DataListing_Filter
+class Listing_Filter_KindOfArticle extends Admin_Listing_Filter
 {
 	public const KEY = 'kind_of_article';
 	
 	protected string $kind_of_article = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

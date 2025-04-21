@@ -6,27 +6,19 @@
  */
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
-
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Content_Article_Author;
 
 
-class Listing_Filter_Author extends DataListing_Filter
+class Listing_Filter_Author extends Admin_Listing_Filter
 {
 	public const KEY = 'author';
 	
 	protected string $author = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

@@ -6,25 +6,20 @@
  */
 namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Delivery_Method;
 
 
-class Listing_Filter_DeliveryMethod extends DataListing_Filter {
+class Listing_Filter_DeliveryMethod extends Admin_Listing_Filter
+{
 	
 	public const KEY = 'delivery_method';
 	
 	protected int $delivery_method = 0;
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 
 	public function getDeliveryMethod(): int
 	{

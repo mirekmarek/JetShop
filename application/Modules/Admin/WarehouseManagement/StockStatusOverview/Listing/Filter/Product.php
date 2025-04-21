@@ -6,23 +6,16 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_Product extends DataListing_Filter
+class Listing_Filter_Product extends Admin_Listing_Filter
 {
 	public const KEY = 'product';
 	
 	protected int $product_id = 0;
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

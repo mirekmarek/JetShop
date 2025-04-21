@@ -6,26 +6,19 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Property;
 
 
-class Listing_Filter_Type extends DataListing_Filter
+class Listing_Filter_Type extends Admin_Listing_Filter
 {
 	public const KEY = 'type';
 	
 	protected string $type = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

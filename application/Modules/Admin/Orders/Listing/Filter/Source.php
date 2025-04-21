@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\MarketplaceIntegration;
 
-class Listing_Filter_Source extends DataListing_Filter
+class Listing_Filter_Source extends Admin_Listing_Filter
 {
 	public const KEY = 'source';
 	
 	protected string $source = '';
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 	public function catchParams(): void
 	{

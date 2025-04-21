@@ -6,25 +6,18 @@
  */
 namespace JetApplicationModule\Admin\InvoicesInAdvance;
 
-
 use Jet\Data_DateTime;
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Date;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_Date extends DataListing_Filter
+class Listing_Filter_Date extends Admin_Listing_Filter
 {
 	public const KEY = 'date';
 	
 	protected ?Data_DateTime $from = null;
 	protected ?Data_DateTime $till = null;
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 
 	public function getFrom(): ?Data_DateTime

@@ -6,23 +6,16 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-
-use Jet\DataListing_Filter;
 use Jet\Form;
 use Jet\Form_Field_Input;
 use Jet\Http_Request;
+use JetApplication\Admin_Listing_Filter;
 
-class Listing_Filter_Customer extends DataListing_Filter
+class Listing_Filter_Customer extends Admin_Listing_Filter
 {
 	public const KEY = 'customer';
 	
 	protected int $customer_id = 0;
-	
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 
 	public function getCustomerId(): int
