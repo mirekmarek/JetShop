@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Order;
 
 class Listing_Column_TotalAmount extends Admin_Listing_Column
 {
@@ -16,5 +17,18 @@ class Listing_Column_TotalAmount extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Amount');
+	}
+	
+	public function getExportHeader(): null|string|array
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float|int|bool|string|array
+	{
+		/**
+		 * @var Order $item
+		 */
+		return $item->getTotalAmount_WithVAT();
 	}
 }
