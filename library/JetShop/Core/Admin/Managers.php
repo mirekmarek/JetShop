@@ -149,42 +149,42 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Order::class );
 	}
 	
-	public static function Invoice() : Admin_Managers_Invoice|Application_Module
+	public static function Invoice() : Admin_Managers_Invoice|Application_Module|null
 	{
 		return static::get( Admin_Managers_Invoice::class );
 	}
 	
-	public static function InvoiceInAdvance() : Admin_Managers_Invoice|Application_Module
+	public static function InvoiceInAdvance() : Admin_Managers_Invoice|Application_Module|null
 	{
 		return static::get( Admin_Managers_InvoiceInAdvance::class );
 	}
 	
-	public static function DeliveryNote() : Admin_Managers_DeliveryNote|Application_Module
+	public static function DeliveryNote() : Admin_Managers_DeliveryNote|Application_Module|null
 	{
 		return static::get( Admin_Managers_DeliveryNote::class );
 	}
 	
-	public static function OrderDispatch() : Admin_Managers_OrderDispatch|Application_Module
+	public static function OrderDispatch() : Admin_Managers_OrderDispatch|Application_Module|null
 	{
 		return static::get( Admin_Managers_OrderDispatch::class );
 	}
 	
-	public static function OrderPersonalReceipt() : Admin_Managers_OrderPersonalReceipt|Application_Module
+	public static function OrderPersonalReceipt() : Admin_Managers_OrderPersonalReceipt|Application_Module|null
 	{
 		return static::get( Admin_Managers_OrderPersonalReceipt::class );
 	}
 	
-	public static function ReceiptOfGoods() : Admin_Managers_ReceiptOfGoods|Application_Module
+	public static function ReceiptOfGoods() : Admin_Managers_ReceiptOfGoods|Application_Module|null
 	{
 		return static::get( Admin_Managers_ReceiptOfGoods::class );
 	}
 	
-	public static function TransferBetweenWarehouses() : Admin_Managers_WarehouseManagement_TransferBetweenWarehouses|Application_Module
+	public static function TransferBetweenWarehouses() : Admin_Managers_WarehouseManagement_TransferBetweenWarehouses|Application_Module|null
 	{
 		return static::get( Admin_Managers_WarehouseManagement_TransferBetweenWarehouses::class );
 	}
 	
-	public static function Complaint() : Admin_Managers_Complaint|Application_Module
+	public static function Complaint() : Admin_Managers_Complaint|Application_Module|null
 	{
 		return static::get( Admin_Managers_Complaint::class );
 	}
@@ -195,7 +195,7 @@ class Core_Admin_Managers extends Managers {
 	}
 	
 	
-	public static function ReturnOfGoods() : Admin_Managers_ReturnOfGoods|Application_Module
+	public static function ReturnOfGoods() : Admin_Managers_ReturnOfGoods|Application_Module|null
 	{
 		return static::get( Admin_Managers_ReturnOfGoods::class );
 	}

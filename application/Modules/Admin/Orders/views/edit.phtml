@@ -20,15 +20,15 @@ use JetApplication\Order;
 
 $order = $this->getRaw( 'order' );
 
-$invoices = Admin_Managers::Invoice()->showOrderInvoices( $order ).
-	Admin_Managers::InvoiceInAdvance()->showOrderInvoices( $order ).
-	Admin_Managers::DeliveryNote()->showOrderInvoices( $order );
+$invoices = Admin_Managers::Invoice()?->showOrderInvoices( $order )??''.
+			Admin_Managers::InvoiceInAdvance()?->showOrderInvoices( $order )??''.
+			Admin_Managers::DeliveryNote()?->showOrderInvoices( $order )??'';
 
-$dispatch = Admin_Managers::OrderDispatch()->showDispatches( $order->getProvidesContext() ).
-	Admin_Managers::OrderPersonalReceipt()->showDispatches( $order->getProvidesContext() );
+$dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $order->getProvidesContext() )??''.
+			Admin_Managers::OrderPersonalReceipt()?->showDispatches( $order->getProvidesContext() )??'';
 
 
-$money_refunds = Admin_Managers::MoneyRefund()?->showOrderMoneyRefunds( $order );
+$money_refunds = Admin_Managers::MoneyRefund()?->showOrderMoneyRefunds( $order )??'';
 
 
 require 'edit/js.phtml';

@@ -13,7 +13,7 @@ use JetApplication\Order;
 
 #[Manager_MetaInfo(
 	group: Manager_MetaInfo::GROUP_ADMIN,
-	is_mandatory: true,
+	is_mandatory: false,
 	name: 'Delivery note',
 	description: '',
 	module_name_prefix: 'Admin.'

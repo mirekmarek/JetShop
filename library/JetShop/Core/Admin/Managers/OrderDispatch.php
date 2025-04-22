@@ -14,7 +14,7 @@ use JetApplication\OrderDispatch;
 
 #[Manager_MetaInfo(
 	group: Manager_MetaInfo::GROUP_ADMIN,
-	is_mandatory: true,
+	is_mandatory: false,
 	name: 'Order dispatch',
 	description: '',
 	module_name_prefix: 'Admin.'
