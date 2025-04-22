@@ -6,59 +6,28 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\WarehouseManagement_Warehouse;
 
 
-class Listing_Filter_Warehouse extends Admin_Listing_Filter
+class Listing_Filter_Warehouse extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'warehouse';
+	protected string $label = 'Warehouse';
 	
-	protected string $warehouse = '';
-	
-	public function catchParams(): void
+	protected function getOptions(): array
 	{
-		$this->warehouse = Http_Request::GET()->getString('warehouse', '', array_keys( WarehouseManagement_Warehouse::getScope() ));
-		if($this->warehouse) {
-			$this->listing->setParam('warehouse', $this->warehouse);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + WarehouseManagement_Warehouse::getScope();
-		
-		$warehouse = new Form_Field_Select('warehouse', 'Warehouse:' );
-		$warehouse->setDefaultValue( $this->warehouse );
-		$warehouse->setSelectOptions( $options );
-		$warehouse->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($warehouse);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->warehouse = $form->field('warehouse')->getValue();
-		if($this->warehouse) {
-			$this->listing->setParam('warehouse', $this->warehouse);
-		} else {
-			$this->listing->unsetParam('warehouse');
-		}
+		return WarehouseManagement_Warehouse::getScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->warehouse) {
+		if(!$this->value) {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'warehouse_id'   => $this->warehouse,
+			'warehouse_id'   => $this->value,
 		]);
 	}
 	

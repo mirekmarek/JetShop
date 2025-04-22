@@ -6,51 +6,19 @@
  */
 namespace JetApplicationModule\Admin\Marketing\AutoOffers;
 
-use Jet\Form;
-use Jet\Form_Field_Hidden;
-use Jet\Http_Request;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_Product;
 
 
-class Listing_Filter_Offer extends Admin_Listing_Filter
+class Listing_Filter_Offer extends Admin_Listing_Filter_Product
 {
-	
 	public const KEY = 'offer';
-	
-	protected int $offer = 0;
-
-	public function getOffer(): int
-	{
-		return $this->offer;
-	}
-	
-	
-	
-	public function catchParams(): void
-	{
-		$this->offer = Http_Request::GET()->getInt( 'offer' );
-		$this->listing->setParam( 'offer', $this->offer );
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->offer = $form->field( 'offer' )->getValue();
-		$this->listing->setParam( 'offer', $this->offer );
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$field = new Form_Field_Hidden( 'offer', 'Offer:' );
-		$field->setDefaultValue( $this->offer );
-		
-		$form->addField( $field );
-	}
+	protected string $label = 'Offer product';
 	
 	public function generateWhere(): void
 	{
-		if( $this->offer ) {
+		if( $this->product_id ) {
 			$this->listing->addFilterWhere( [
-				'offer_product_id' => $this->offer,
+				'offer_product_id' => $this->product_id,
 			] );
 		}
 	}

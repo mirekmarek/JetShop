@@ -6,62 +6,31 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 
-
-class Listing_Filter_Status extends Admin_Listing_Filter
+class Listing_Filter_Status extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'status';
+	protected string $label = 'Status';
 	
-	protected string $status = '';
-	
-	public function catchParams(): void
+	protected function getOptions() : array
 	{
-		$this->status = Http_Request::GET()->getString('status', '', ['', 'cancelled', 'active']);
-		if($this->status) {
-			$this->listing->setParam('status', $this->status);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [
-			''=>Tr::_(' - all -'),
+		return [
 			'cancelled' => Tr::_('Cancelled'),
 			'active' => Tr::_('Active'),
 		];
-		
-		$status = new Form_Field_Select('status', 'Status:' );
-		$status->setDefaultValue( $this->status );
-		$status->setSelectOptions( $options );
-		$status->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($status);
 	}
 	
-	public function catchForm( Form $form ): void
-	{
-		$this->status = $form->field('status')->getValue();
-		if($this->status) {
-			$this->listing->setParam('status', $this->status);
-		} else {
-			$this->listing->unsetParam('status');
-		}
-	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->status) {
+		if(!$this->value) {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'cancelled'   => $this->status==='cancelled',
+			'cancelled'   => $this->value==='cancelled',
 		]);
 	}
 	

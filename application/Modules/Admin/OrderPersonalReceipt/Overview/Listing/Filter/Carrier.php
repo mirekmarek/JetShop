@@ -6,59 +6,28 @@
  */
 namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\Carrier;
 
 
-class Listing_Filter_Carrier extends Admin_Listing_Filter
+class Listing_Filter_Carrier extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'carrier';
+	protected string $label = 'Carrier';
 	
-	protected string $carrier = '';
-	
-	public function catchParams(): void
+	protected function getOptions() : array
 	{
-		$this->carrier = Http_Request::GET()->getString('carrier', '', array_keys( Carrier::getScope() ));
-		if($this->carrier) {
-			$this->listing->setParam('carrier', $this->carrier);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + Carrier::getScope();
-		
-		$carrier = new Form_Field_Select('carrier', 'Carrier:' );
-		$carrier->setDefaultValue( $this->carrier );
-		$carrier->setSelectOptions( $options );
-		$carrier->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($carrier);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->carrier = $form->field('carrier')->getValue();
-		if($this->carrier) {
-			$this->listing->setParam('carrier', $this->carrier);
-		} else {
-			$this->listing->unsetParam('carrier');
-		}
+		return Carrier::getScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->carrier) {
+		if(!$this->value) {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'carrier_code'   => $this->carrier,
+			'carrier_code'   => $this->value,
 		]);
 	}
 	

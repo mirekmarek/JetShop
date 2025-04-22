@@ -6,42 +6,13 @@
  */
 namespace JetApplicationModule\Admin\DeliveryNotes;
 
-use Jet\Form;
-use Jet\Form_Field_Hidden;
-use Jet\Http_Request;
-use JetApplication\Admin_Listing_Filter;
-use JetApplication\InvoiceInAdvance_Item;
+use JetApplication\Admin_Listing_Filter_Product;
+use JetApplication\DeliveryNote_Item;
 
-class Listing_Filter_Product extends Admin_Listing_Filter
+class Listing_Filter_Product extends Admin_Listing_Filter_Product
 {
 	public const KEY = 'product';
-	
-	protected int $product_id = 0;
-	
-	public function catchParams(): void
-	{
-		$this->product_id = Http_Request::GET()->getInt('product');
-		if($this->product_id) {
-			$this->listing->setParam('product', $this->product_id);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$product = new Form_Field_Hidden('product_id', 'Product:' );
-		$product->setDefaultValue( $this->product_id );
-		$form->addField($product);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->product_id = (int)$form->field('product_id')->getValue();
-		if($this->product_id) {
-			$this->listing->setParam('product', $this->product_id);
-		} else {
-			$this->listing->unsetParam('product');
-		}
-	}
+	protected string $label = 'Product';
 	
 	public function generateWhere(): void
 	{
@@ -50,10 +21,10 @@ class Listing_Filter_Product extends Admin_Listing_Filter
 		}
 		
 		$this->listing->addFilterWhere([
-			'order_item.type' => [InvoiceInAdvance_Item::ITEM_TYPE_PRODUCT, InvoiceInAdvance_Item::ITEM_TYPE_VIRTUAL_PRODUCT],
+			'delivery_note_item.type' => [DeliveryNote_Item::ITEM_TYPE_PRODUCT, DeliveryNote_Item::ITEM_TYPE_VIRTUAL_PRODUCT],
 			'AND',
-			'order_item.item_id'   => $this->product_id,
+			'delivery_note_item.item_id'   => $this->product_id,
 		]);
 	}
-	
+
 }
