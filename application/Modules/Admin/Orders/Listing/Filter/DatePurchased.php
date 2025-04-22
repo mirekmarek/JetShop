@@ -102,4 +102,8 @@ class Listing_Filter_DatePurchased extends Admin_Listing_Filter
 		
 	}
 	
+	public function isActive(): bool
+	{
+		return $this->from || $this->till;
+	}
 }

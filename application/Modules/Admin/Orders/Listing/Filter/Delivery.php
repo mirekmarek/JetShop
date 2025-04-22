@@ -6,58 +6,28 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\Delivery_Method;
 
-class Listing_Filter_Delivery extends Admin_Listing_Filter
+class Listing_Filter_Delivery extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'delivery';
 	
-	protected string $delivery = '';
+	protected string $label = 'Delivery method';
 	
-	public function catchParams(): void
+	protected function getOptions(): array
 	{
-		$this->delivery = Http_Request::GET()->getString('delivery', '', array_keys(Delivery_Method::getScope()));
-		if($this->delivery) {
-			$this->listing->setParam('delivery', $this->delivery);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + Delivery_Method::getScope();
-		
-		$delivery = new Form_Field_Select('delivery', 'Delivery method:' );
-		$delivery->setDefaultValue( $this->delivery );
-		$delivery->setSelectOptions( $options );
-		$delivery->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($delivery);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->delivery = $form->field('delivery')->getValue();
-		if($this->delivery) {
-			$this->listing->setParam('delivery', $this->delivery);
-		} else {
-			$this->listing->unsetParam('delivery');
-		}
+		return Delivery_Method::getScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->delivery) {
+		if(!$this->value) {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'delivery_method_id'   => $this->delivery,
+			'delivery_method_id'   => $this->value,
 		]);
 	}
 	

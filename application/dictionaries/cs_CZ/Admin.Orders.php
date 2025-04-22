@@ -429,4 +429,5 @@ return [
 	'Order item is not gift' => '',
 	'Is free of charge' => '',
 	'Is not free of charge' => '',
+	'Order source' => '',
 ];

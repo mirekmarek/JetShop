@@ -61,4 +61,8 @@ class Listing_Filter_Customer extends Admin_Listing_Filter
 		]);
 	}
 	
+	public function isActive(): bool
+	{
+		return $this->customer_id > 0;
+	}
 }
