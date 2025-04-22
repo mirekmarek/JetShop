@@ -53,4 +53,8 @@ class Listing_Filter_Product extends Admin_Listing_Filter
 		]);
 	}
 	
+	public function isActive(): bool
+	{
+		return $this->product_id>0;
+	}
 }

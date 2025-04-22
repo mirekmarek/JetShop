@@ -25,16 +25,6 @@ class Listing_Filter_IsActive extends Admin_Listing_Filter
 	protected array $is_active_per_eshop = [];
 	
 	protected ?bool $multi_eshop_mode = null;
-
-	public function __costruct(): void
-	{
-		die('???');
-	}
-	
-	public function getKey(): string
-	{
-		return static::KEY;
-	}
 	
 
 	public function isMultiEShopMode(): bool
@@ -183,4 +173,20 @@ class Listing_Filter_IsActive extends Admin_Listing_Filter
 		}
 	}
 	
+	public function isActive(): bool
+	{
+		if($this->is_active_general!='') {
+			return true;
+		}
+		
+		if($this->isMultiEShopMode()) {
+			foreach( EShops::getList() as $code=>$eshop) {
+				if( $this->is_active_per_eshop[$code]!='') {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 }

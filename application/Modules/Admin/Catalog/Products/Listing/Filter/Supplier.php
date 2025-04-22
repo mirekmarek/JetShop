@@ -6,59 +6,28 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\Supplier;
 
-
-class Listing_Filter_Supplier extends Admin_Listing_Filter
+class Listing_Filter_Supplier extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'supplier';
+	protected string $label = 'Supplier';
 	
-	protected string $supplier = '';
-	
-	public function catchParams(): void
+
+	protected function getOptions(): array
 	{
-		$this->supplier = Http_Request::GET()->getString('supplier', '', array_keys(Supplier::getScope()));
-		if($this->supplier) {
-			$this->listing->setParam('supplier', $this->supplier);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + Supplier::getScope();
-		
-		$supplier = new Form_Field_Select('supplier', 'Supplier:' );
-		$supplier->setDefaultValue( $this->supplier );
-		$supplier->setSelectOptions( $options );
-		$supplier->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($supplier);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->supplier = $form->field('supplier')->getValue();
-		if($this->supplier) {
-			$this->listing->setParam('supplier', $this->supplier);
-		} else {
-			$this->listing->unsetParam('supplier');
-		}
+		return Supplier::getScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->supplier) {
+		if($this->value=='') {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'supplier_id'   => $this->supplier,
+			'supplier_id'   => $this->value,
 		]);
 	}
 	

@@ -6,71 +6,36 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\KindOfProduct;
 
 
-class Listing_Filter_ProductKind extends Admin_Listing_Filter
+class Listing_Filter_ProductKind extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'product_kind';
+	protected string $label = 'Kind of product';
 	
-	protected string $product_kind = '';
 	
 	protected function getOptions() : array
 	{
 		$_options = KindOfProduct::getScope();
 		
 		$options =
-			[''=>Tr::_(' - all -')] +
 			['-1' => Tr::_('- Not set -')] +
 			$_options;
 		
 		return $options;
 	}
 	
-	public function catchParams(): void
-	{
-		$this->product_kind = Http_Request::GET()->getString('product_kind', '', array_keys($this->getOptions()));
-		if($this->product_kind) {
-			$this->listing->setParam('product_kind', $this->product_kind);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = $this->getOptions();
-		
-		$product_kind = new Form_Field_Select('product_kind', 'Kind of product:' );
-		$product_kind->setDefaultValue( $this->product_kind );
-		$product_kind->setSelectOptions( $options );
-		$product_kind->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Please select kind of product'
-		]);
-		$form->addField($product_kind);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->product_kind = $form->field('product_kind')->getValue();
-
-		if($this->product_kind) {
-			$this->listing->setParam('product_kind', $this->product_kind);
-		} else {
-			$this->listing->unsetParam('product_kind');
-		}
-	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->product_kind) {
+		if($this->value=='') {
 			return;
 		}
 		
-		$id = $this->product_kind;
+		$id = $this->value;
 		
 		if($id=='-1') {
 			$id = 0;

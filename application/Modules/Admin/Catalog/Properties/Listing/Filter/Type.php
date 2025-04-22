@@ -6,59 +6,28 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Properties;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\Property;
 
-
-class Listing_Filter_Type extends Admin_Listing_Filter
+class Listing_Filter_Type extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'type';
 	
-	protected string $type = '';
+	protected string $label = 'Type';
 	
-	public function catchParams(): void
+	protected function getOptions(): array
 	{
-		$this->type = Http_Request::GET()->getString('type', '', array_keys( Property::getTypesScope()));
-		if($this->type) {
-			$this->listing->setParam('type', $this->type);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + Property::getTypesScope();
-		
-		$type = new Form_Field_Select('type', 'Type:' );
-		$type->setDefaultValue( $this->type );
-		$type->setSelectOptions( $options );
-		$type->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($type);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->type = $form->field('type')->getValue();
-		if($this->type) {
-			$this->listing->setParam('type', $this->type);
-		} else {
-			$this->listing->unsetParam('type');
-		}
+		return Property::getTypesScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->type) {
+		if($this->value=='') {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'type'   => $this->type,
+			'type'   => $this->value,
 		]);
 	}
 	

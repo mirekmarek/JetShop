@@ -268,4 +268,5 @@ return [
 	'Clone' => '',
 	'Creation In Progress' => '',
 	'Archived' => '',
+	'Creation in progress' => '',
 ];

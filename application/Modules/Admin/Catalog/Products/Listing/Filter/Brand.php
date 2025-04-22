@@ -6,60 +6,28 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\Brand;
 
 
-class Listing_Filter_Brand extends Admin_Listing_Filter
+class Listing_Filter_Brand extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'brand';
+	protected string $label = 'Brand';
 	
-	protected string $brand = '';
-
-	public function catchParams(): void
+	protected function getOptions() : array
 	{
-		$this->brand = Http_Request::GET()->getString('brand', '', array_keys(Brand::getScope()));
-		if($this->brand) {
-			$this->listing->setParam('brand', $this->brand);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + Brand::getScope();
-		
-		$brand = new Form_Field_Select('brand', 'Brand:' );
-		$brand->setDefaultValue( $this->brand );
-		$brand->setSelectOptions( $options );
-		$brand->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($brand);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->brand = $form->field('brand')->getValue();
-		if($this->brand) {
-			$this->listing->setParam('brand', $this->brand);
-		} else {
-			$this->listing->unsetParam('brand');
-		}
+		return Brand::getScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->brand) {
+		if(!$this->value) {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'brand_id'   => $this->brand,
+			'brand_id'   => $this->value,
 		]);
 	}
-	
 }

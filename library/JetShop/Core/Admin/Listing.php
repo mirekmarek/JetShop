@@ -266,5 +266,15 @@ abstract class Core_Admin_Listing extends DataListing
 		return $this->schema_manager;
 	}
 	
+	public function filterIsActive() : bool
+	{
+		foreach($this->filters as $filter) {
+			if( $filter->isActive() ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 }

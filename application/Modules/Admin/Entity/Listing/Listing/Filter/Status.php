@@ -92,4 +92,8 @@ class Listing_Filter_Status extends Admin_Listing_Filter
 		$this->listing->addFilterWhere( $this->status_list[ $this->status ]::getStatusQueryWhere() );
 	}
 	
+	public function isActive(): bool
+	{
+		return $this->status!='';
+	}
 }

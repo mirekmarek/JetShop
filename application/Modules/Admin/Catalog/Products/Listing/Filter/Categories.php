@@ -102,4 +102,8 @@ class Listing_Filter_Categories extends Admin_Listing_Filter
 		);
 	}
 	
+	public function isActive(): bool
+	{
+		return count($this->categories) > 0;
+	}
 }

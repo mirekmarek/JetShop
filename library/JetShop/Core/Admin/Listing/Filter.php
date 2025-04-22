@@ -37,4 +37,6 @@ abstract class Core_Admin_Listing_Filter extends DataListing_Filter
 		return $this->getView()->render( $this->getKey() );
 	}
 	
+	abstract public function isActive(): bool;
+
 }

@@ -92,4 +92,8 @@ class Listing_Filter_EShop extends Admin_Listing_Filter
 		}
 	}
 	
+	public function isActive(): bool
+	{
+		return (bool)$this->eshop_key;
+	}
 }

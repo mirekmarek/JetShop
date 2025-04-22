@@ -6,61 +6,22 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter_YesNo;
 
 
-class Listing_Filter_Archived extends Admin_Listing_Filter
+class Listing_Filter_Archived extends Admin_Listing_Filter_StdFilter_YesNo
 {
 	public const KEY = 'archived';
-	
-	protected string $archived = '';
-	
-	public function catchParams(): void
-	{
-		$this->archived = Http_Request::GET()->getString('archived', '', ['', '1', '0']);
-		if($this->archived) {
-			$this->listing->setParam('archived', $this->archived);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [
-			''  => Tr::_('- all -', dictionary: Tr::COMMON_DICTIONARY),
-			'1' => Tr::_('yes', dictionary: Tr::COMMON_DICTIONARY),
-			'0' => Tr::_('no', dictionary: Tr::COMMON_DICTIONARY),
-		];
-		
-		$archived = new Form_Field_Select('archived', 'Archived' );
-		$archived->setDefaultValue( $this->archived );
-		$archived->setSelectOptions( $options );
-		
-		$form->addField($archived);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->archived = $form->field('archived')->getValue();
-		if($this->archived) {
-			$this->listing->setParam('archived', $this->archived);
-		} else {
-			$this->listing->unsetParam('archived');
-		}
-	}
+	protected string $label = 'Archived';
 	
 	public function generateWhere(): void
 	{
-		if($this->archived=='') {
+		if($this->value=='') {
 			return;
 		}
 		
 		$this->listing->addFilterWhere([
-			'archived'   => (bool)$this->archived,
+			'archived'   => $this->value==static::YES,
 		]);
 	}
 	

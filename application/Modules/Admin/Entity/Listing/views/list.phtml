@@ -22,18 +22,17 @@ $grid = $listing->getGrid();
 
 $filter_form = $listing->getFilterForm();
 
-$search_filter = $listing->getFilters()[Listing_Filter_Search::KEY]??null;
+$filter_is_active = false;
 
-
-$filter_snippet = '';
-foreach($listing->getFilters() as $filter):
-	if($filter->getKey()==Listing_Filter_Search::KEY) {
+foreach($listing->getFilters() as $filter){
+	if($filter->getKey()==Listing_Filter_Search::KEY){
 		continue;
 	}
-	$filter_snippet .= $filter->renderForm();
-endforeach;
-
-$filter_is_active = Main::filterIsActive();
+	
+	if($filter->isActive()){
+		$filter_is_active = true;
+	}
+}
 
 ?>
 <script>
@@ -108,7 +107,7 @@ $filter_is_active = Main::filterIsActive();
 <div class="card shadow-sm" style="margin: 10px;padding: 0px;">
 	<div style="display: flex;align-items: center;gap: 20px;">
 		
-		<?=$search_filter?->renderForm()?>
+		<?=$listing->filter(Listing_Filter_Search::KEY)?->renderForm()?>
 
 		<a href="" onclick="Filter.toggle();return false;" class="btn btn-primary">
 			<?=UI::icon('caret-down')->setId('filter_caret_down')->addCustomCssStyle('display:'.(!$filter_is_active?'':'none'))?>
@@ -128,7 +127,14 @@ $filter_is_active = Main::filterIsActive();
 
 <div id="filter" style="display: <?=$filter_is_active?'block':'none'?>;margin-left: 50px;margin-right: 50px;margin-bottom: 50px;" class="card card-body shadow">
 	<div>
-		<?=$filter_snippet?>
+		<?php
+		foreach($listing->getFilters() as $filter):
+			if($filter->getKey()==Listing_Filter_Search::KEY) {
+				continue;
+			}
+			echo  $filter->renderForm();
+		endforeach;
+		?>
 	</div>
 </div>
 

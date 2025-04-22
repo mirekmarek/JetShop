@@ -6,60 +6,28 @@
  */
 namespace JetApplicationModule\Admin\Catalog\Products;
 
-use Jet\Form;
-use Jet\Form_Field_Select;
-use Jet\Http_Request;
-use Jet\Tr;
-use JetApplication\Admin_Listing_Filter;
+use JetApplication\Admin_Listing_Filter_StdFilter;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\EShops;
 
 
-class Listing_Filter_Marketplace extends Admin_Listing_Filter
+class Listing_Filter_Marketplace extends Admin_Listing_Filter_StdFilter
 {
 	public const KEY = 'marketplace';
+	protected string $label = 'Marketplace';
 	
-	protected string $marketplace = '';
-	
-	public function catchParams(): void
+	protected function getOptions() : array
 	{
-		$this->marketplace = Http_Request::GET()->getString('marketplace', '', array_keys(MarketplaceIntegration::getScope()));
-
-		if($this->marketplace) {
-			$this->listing->setParam('marketplace', $this->marketplace);
-		}
-	}
-	
-	public function generateFormFields( Form $form ): void
-	{
-		$options = [''=>Tr::_(' - all -')] + MarketplaceIntegration::getScope();
-		
-		$marketplace = new Form_Field_Select('marketplace', 'Supplier:' );
-		$marketplace->setDefaultValue( $this->marketplace );
-		$marketplace->setSelectOptions( $options );
-		$marketplace->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-		]);
-		$form->addField($marketplace);
-	}
-	
-	public function catchForm( Form $form ): void
-	{
-		$this->marketplace = $form->field('marketplace')->getValue();
-		if($this->marketplace) {
-			$this->listing->setParam('marketplace', $this->marketplace);
-		} else {
-			$this->listing->unsetParam('marketplace');
-		}
+		return MarketplaceIntegration::getScope();
 	}
 	
 	public function generateWhere(): void
 	{
-		if(!$this->marketplace) {
+		if($this->value=='') {
 			return;
 		}
 		
-		[$mp_code, $eshop_key] = explode(':', $this->marketplace);
+		[$mp_code, $eshop_key] = explode(':', $this->value);
 		
 		$mp = MarketplaceIntegration::getActiveModule( $mp_code );
 		$eshop = EShops::get( $eshop_key );

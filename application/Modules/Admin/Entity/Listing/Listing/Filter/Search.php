@@ -82,4 +82,9 @@ class Listing_Filter_Search extends Admin_Listing_Filter
 			$this->listing->addFilterWhere( $where );
 		}
 	}
+	
+	public function isActive(): bool
+	{
+		return $this->search!='';
+	}
 }
