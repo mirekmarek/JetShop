@@ -209,7 +209,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 			});
 		$this->addProperty( 'delivery_method_info', Tr::_( 'Delivery method informations' ) )
 			->setPropertyValueCreator( function() : string {
-				return $this->order->getDeliveryMethod()->getConfirmationEmailInfoText();
+				return $this->order->getDeliveryMethod()->generateConfirmationEmailInfoText( $this->order );
 			});
 		
 		$this->addProperty( 'payment_method_title', Tr::_( 'Payment method title' ) )
@@ -218,7 +218,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 			});
 		$this->addProperty( 'payment_method_info', Tr::_( 'Payment method informations' ) )
 			->setPropertyValueCreator( function() : string {
-				return $this->order->getPaymentMethod()->getConfirmationEmailInfoText();
+				return $this->order->getPaymentMethod()->generateConfirmationEmailInfoText( $this->order );
 			});
 		
 		$this->addCondition( 'customers_special_requirements', Tr::_( 'Customer has special requirements' ) )

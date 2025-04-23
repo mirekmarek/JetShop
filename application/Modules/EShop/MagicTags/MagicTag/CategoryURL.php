@@ -46,8 +46,8 @@ class MagicTag_CategoryURL extends MagicTag
 	
 	public function process( string $output ): string
 	{
-		$output = str_replace('http://%CATEGORY_URL:', '%PRODUCT_URL:', $output);
-		$output = str_replace('https://%CATEGORY_URL:', '%PRODUCT_URL:', $output);
+		$output = str_replace('http://%CATEGORY_URL:', '%CATEGORY_URL:', $output);
+		$output = str_replace('https://%CATEGORY_URL:', '%CATEGORY_URL:', $output);
 		
 		if(preg_match_all('/%CATEGORY_URL:([0-9]+)%/', $output, $matches, PREG_SET_ORDER)) {
 			foreach( $matches as $m ) {

@@ -1,0 +1,27 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\ProformaInvoices;
+
+
+use Jet\MVC_View;
+use JetApplication\ProformaInvoice;
+
+/**
+ * @var MVC_View $this
+ * @var ProformaInvoice $invoice
+ */
+
+$invoice = $this->getRaw( 'invoice' );
+
+require 'edit/js.phtml';
+require 'edit/toolbar.phtml';
+?>
+<div id="main-col">
+	<?php
+	require 'edit/main.phtml';
+	require 'edit/items.phtml';?>
+</div>

@@ -143,9 +143,10 @@ class GoPay {
 				]
 			],
 			'amount' => $order->getAmount()*100,
-			'currency' => 'CZK',
+			'currency' => $order->getCurrency(),
 			'order_number' => $order->getOderNumber(),
 			'order_description' => $order->getDescription(),
+			'lang' => $order->getLanguage(),
 			'callback' => [
 				'return_url' => $return_url,
 				'notification_url' => $notification_url

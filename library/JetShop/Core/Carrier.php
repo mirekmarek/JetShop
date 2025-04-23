@@ -15,6 +15,7 @@ use JetApplication\Delivery_Method;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Service;
 use JetApplication\Managers;
+use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\Carrier_AdditionalConsignmentParameter;
 
@@ -227,4 +228,17 @@ abstract class Core_Carrier extends Application_Module
 	 * @return Carrier_AdditionalConsignmentParameter[]
 	 */
 	abstract public function getAdditionalConsignmentParameters() : array;
+	
+	
+	public function generateConfirmationEmailInfoText( Order $order, Delivery_Method $delivery_method ) : string
+	{
+		return $delivery_method->getConfirmationEmailInfoText();
+	}
+	
+	
+	public function generateOrderFinalPageInfoText( Order $order, Delivery_Method $delivery_method ) : string
+	{
+		return $delivery_method->getOrderFinalPageInfoText();
+	}
+	
 }

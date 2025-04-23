@@ -472,4 +472,13 @@ return [
 	'Probíhá zrušení' => '',
 	'Probíhá' => '',
 	'Připravený' => '',
+	'Preview' => '',
+	'Template - HTML:' => '',
+	'Footer:' => '',
+	'Header' => '',
+	'Footer' => '',
+	'Template - HTML' => '',
+	'Conditions' => '',
+	'Blocks' => '',
+	'Block properties:' => '',
 ];

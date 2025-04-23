@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Kind_CardOffline;
 
@@ -16,8 +14,8 @@ abstract class Core_Payment_Kind_CardOnline extends Payment_Kind {
 	
 	public function __construct()
 	{
-		$this->setTitle( Tr::_('Card - online', dictionary: Tr::COMMON_DICTIONARY) );
-		$this->setTitleInvoice( Tr::_('Card', dictionary: Tr::COMMON_DICTIONARY) );
+		$this->setTitle( 'Card - online' );
+		$this->setTitleInvoice( 'Card' );
 		
 		$this->setModuleIsRequired( true );
 		$this->setIsOnlinePayment( true );

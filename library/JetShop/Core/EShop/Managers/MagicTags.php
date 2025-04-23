@@ -27,4 +27,6 @@ abstract class Core_EShop_Managers_MagicTags extends Application_Module
 	
 	abstract public function init() : void;
 	
+	abstract public function processText( string $text ) : string;
+	
 }

@@ -37,7 +37,7 @@ if(
 	<div class="dropdown-menu" aria-labelledby="invoicing-menu" style="text-align: left">
 
 		<?=UI::button( Tr::_('Create a new invoice') )->setIcon('file-invoice-dollar')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_invoice']))?>
-		<?=UI::button( Tr::_('Create a new invoice in advance') )->setIcon('file-invoice')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_invoice_in_advance']))?>
+		<?=UI::button( Tr::_('Create a new proforma invoice') )->setIcon('file-invoice')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_proforma_invoice']))?>
 		<?=UI::button( Tr::_('Create a new delivery note') )->setIcon('file-invoice')->addCustomCssClass('dropdown-item')->setUrl(Http_Request::currentURI(set_GET_params: ['invoicing_action'=>'create_delivery_note']))?>
 
 	</div>

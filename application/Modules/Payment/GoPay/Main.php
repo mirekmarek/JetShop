@@ -49,6 +49,8 @@ class Main extends Payment_Method_Module implements
 		$o = new GoPay_Order();
 		$o->setOderNumber( $order->getNumber() );
 		$o->setAmount( $order->getTotalAmount_WithVAT() );
+		$o->setCurrency( $order->getCurrencyCode() );
+		$o->setLanguage( strtoupper( $order->getEshop()->getLocale()->getLanguage() ) );
 		$o->setDescription( '' );
 		$o->setFirstName( $order->getBillingFirstName() );
 		$o->setLastName( $order->getBillingSurname() );

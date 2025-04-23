@@ -214,7 +214,7 @@ abstract class PDFTemplate extends PDF_Template {
 		
 		$this->addProperty('custoner_email', Tr::_('Custoner - email'))
 			->setPropertyValueCreator(function() : string {
-				return $this->invoice->getCustomerCompanyVatId();
+				return $this->invoice->getCustomerEmail();
 			});
 		
 		
@@ -235,7 +235,7 @@ abstract class PDFTemplate extends PDF_Template {
 		
 		$this->addProperty( 'payment_method', Tr::_( 'Payment method' ) )
 			->setPropertyValueCreator( function() : string {
-				return $this->invoice->getPaymentKind()?->getTitleInvoice()??'';
+				return $this->invoice->getPaymentKind()?->getTitleInvoice( $this->invoice->getEshop()->getLocale() )??'';
 			} );
 		
 		

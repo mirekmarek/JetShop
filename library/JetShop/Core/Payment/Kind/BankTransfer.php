@@ -7,7 +7,6 @@
 namespace JetShop;
 
 
-use Jet\Tr;
 use JetApplication\Payment_Kind;
 
 abstract class Core_Payment_Kind_BankTransfer extends Payment_Kind {
@@ -15,7 +14,7 @@ abstract class Core_Payment_Kind_BankTransfer extends Payment_Kind {
 	
 	public function __construct()
 	{
-		$this->setTitle( Tr::_('Bank transfer', dictionary: Tr::COMMON_DICTIONARY) );
+		$this->setTitle( 'Bank transfer' );
 		$this->setModuleIsRequired( true );
 	}
 	

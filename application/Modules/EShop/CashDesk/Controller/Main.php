@@ -127,7 +127,11 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$payment_method = $this->order->getPaymentMethod();
 		$module = $payment_method->getBackendModule();
-		if(!$module) {
+		
+		if(
+			!$payment_method->getKind()->isOnlinePayment() ||
+			!$module
+		) {
 			Http_Headers::movedTemporary( EShop_Pages::CashDeskConfirmation()->getURL([$this->order->getKey()]) );
 		}
 		
@@ -165,7 +169,6 @@ class Controller_Main extends MVC_Controller_Default
 			$this->view->setVar( 'try_again_url', Http_Request::currentURI(set_GET_params: ['a'=>'try_again']) );
 			$this->output('payment-result/not-paid');
 		}
-		
 	}
 
 	public function error_Action() : void

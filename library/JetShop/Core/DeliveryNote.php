@@ -21,6 +21,7 @@ use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\DeliveryNote_Item;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\Managers_General;
 use JetApplication\Order;
 
 #[DataModel_Definition(
@@ -161,6 +162,11 @@ abstract class Core_DeliveryNote extends EShopEntity_AccountingDocument implemen
 	public function catchEditForm(): bool
 	{
 		return false;
+	}
+	
+	public function generatePDF() : string
+	{
+		return Managers_General::Invoices()->generateDeliveryNotePDF( $this );
 	}
 	
 }

@@ -13,7 +13,7 @@ use JetApplication\Manager_MetaInfo;
 
 #[Manager_MetaInfo(
 	group: Manager_MetaInfo::GROUP_ADMIN,
-	is_mandatory: true,
+	is_mandatory: false,
 	name: 'Order Personal Receipt',
 	description: '',
 	module_name_prefix: 'Admin.'

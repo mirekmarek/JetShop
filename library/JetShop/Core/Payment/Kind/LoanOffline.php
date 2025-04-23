@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Kind_BankTransfer;
 
@@ -16,8 +14,8 @@ abstract class Core_Payment_Kind_LoanOffline extends Payment_Kind {
 	
 	public function __construct()
 	{
-		$this->setTitle( Tr::_('Loan - offline', dictionary: Tr::COMMON_DICTIONARY) );
-		$this->setTitleInvoice( Tr::_('Loan', dictionary: Tr::COMMON_DICTIONARY) );
+		$this->setTitle( 'Loan - offline' );
+		$this->setTitleInvoice( 'Loan' );
 		
 		$this->setAllowedForInvoices( false );
 		$this->setAlternativeKindForInvoices( new Payment_Kind_BankTransfer() );

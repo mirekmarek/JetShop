@@ -9,6 +9,7 @@ namespace JetShop;
 
 use Jet\Application_Module;
 
+use JetApplication\EMail;
 use JetApplication\Order;
 use JetApplication\Payment_Method;
 
@@ -26,9 +27,20 @@ abstract class Core_Payment_Method_Module extends Application_Module
 	
 	
 	
-	public function getOrderConfirmationEmailInfoText( Order $order, Payment_Method $payment_method ) : string
+	public function generateConfirmationEmailInfoText( Order $order, Payment_Method $payment_method ) : string
 	{
 		return $payment_method->getConfirmationEmailInfoText();
+	}
+	
+	
+	public function generateOrderFinalPageInfoText( Order $order, Payment_Method $payment_method ) : string
+	{
+		return $payment_method->getOrderFinalPageInfoText();
+	}
+	
+	public function updateOrderConfirmationEmail( Order $order, EMail $email ) : void
+	{
+	
 	}
 	
 	abstract public function getPaymentMethodSpecificationList() : array;

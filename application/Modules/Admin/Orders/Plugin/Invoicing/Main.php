@@ -60,10 +60,10 @@ class Plugin_Invoicing_Main extends Plugin
 				$invoice->save();
 				UI_messages::success( Tr::_( 'Invoice %NUMBER% has been create', ['NUMBER' => $invoice->getNumber()] ) );
 				break;
-			case 'create_invoice_in_advance':
-				$invoice = Invoices::createInvoiceInAdvanceForOrder( $order );
+			case 'create_proforma_invoice':
+				$invoice = Invoices::createProformaInvoiceForOrder( $order );
 				$invoice->save();
-				UI_messages::success( Tr::_( 'Invoice in advance %NUMBER% has been create', ['NUMBER' => $invoice->getNumber()] ) );
+				UI_messages::success( Tr::_( 'Proforma Invoice %NUMBER% has been create', ['NUMBER' => $invoice->getNumber()] ) );
 				break;
 			case 'create_delivery_note':
 				$invoice = Invoices::createDeliveryNoteForOrder( $order );

@@ -49,7 +49,13 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	
 	public function sendNotifications(): bool
 	{
-		return $this->sendEMail( (new EMailTemplate()) );
+		$template = new EMailTemplate();
+		$template->setEvent($this->event);
+		$email = $template->createEmail( $this->getEvent()->getEshop() );
+		
+		$this->order->getPaymentMethod()->updateOrderConfirmationEmail( $this->order, $email );
+		
+		return $email->send();
 	}
 	
 	public function getEMailTemplates(): array

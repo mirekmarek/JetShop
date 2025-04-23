@@ -11,7 +11,7 @@ use Jet\Application_Module;
 use JetApplication\DeliveryNote;
 use JetApplication\Invoice;
 use JetApplication\Invoice_Manager;
-use JetApplication\InvoiceInAdvance;
+use JetApplication\ProformaInvoice;
 use JetApplication\Managers_General;
 use JetApplication\Order;
 
@@ -28,9 +28,9 @@ abstract class Core_Invoices {
 		return static::getManager()->createInvoiceForOrder( $order );
 	}
 	
-	public static function createInvoiceInAdvanceForOrder( Order $order ) : InvoiceInAdvance
+	public static function createProformaInvoiceForOrder( Order $order ) : ProformaInvoice
 	{
-		return static::getManager()->createInvoiceInAdvanceForOrder( $order );
+		return static::getManager()->createProformaInvoiceForOrder( $order );
 	}
 	
 	public static function createDeliveryNoteForOrder( Order $order ) : DeliveryNote
@@ -43,9 +43,9 @@ abstract class Core_Invoices {
 		return static::getManager()->generateInvoicePDF( $invoice );
 	}
 	
-	public static function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice ) : string
+	public static function generateProformaInvoicePDF( ProformaInvoice $invoice ) : string
 	{
-		return static::getManager()->generateInvoiceInAdvancePDF( $invoice );
+		return static::getManager()->generateProformaInvoicePDF( $invoice );
 	}
 	
 	public static function generateDeliveryNotePDF( DeliveryNote $invoice ) : string
@@ -61,9 +61,9 @@ abstract class Core_Invoices {
 		static::getManager()->sendInvoice( $invoice );
 	}
 	
-	public static function sendInvoiceInAdvance( InvoiceInAdvance $invoice ) : void
+	public static function sendProformaInvoice( ProformaInvoice $invoice ) : void
 	{
-		static::getManager()->sendInvoiceInAdvance( $invoice );
+		static::getManager()->sendProformaInvoice( $invoice );
 	}
 	
 	public static function sendDeliveryNote( DeliveryNote $invoice ) : void

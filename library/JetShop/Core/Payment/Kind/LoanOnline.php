@@ -7,7 +7,6 @@
 namespace JetShop;
 
 
-use Jet\Tr;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Kind_BankTransfer;
 
@@ -16,8 +15,8 @@ abstract class Core_Payment_Kind_LoanOnline extends Payment_Kind {
 	
 	public function __construct()
 	{
-		$this->setTitle( Tr::_('Loan - Online', dictionary: Tr::COMMON_DICTIONARY) );
-		$this->setTitleInvoice( Tr::_('Loan', dictionary: Tr::COMMON_DICTIONARY) );
+		$this->setTitle( 'Loan - Online' );
+		$this->setTitleInvoice( 'Loan' );
 		
 		$this->setModuleIsRequired( true );
 		$this->setIsOnlinePayment( true );

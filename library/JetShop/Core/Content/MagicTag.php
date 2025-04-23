@@ -30,6 +30,9 @@ abstract class Core_Content_MagicTag extends MVC_Layout_OutputPostprocessor
 	{
 		if($layout) {
 			parent::__construct( $layout );
+		}
+		
+		if($view) {
 			$this->view = $view;
 		}
 	}

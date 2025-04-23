@@ -6,8 +6,8 @@
  */
 namespace JetApplicationModule\EShop\CashDesk;
 
-
 use Jet\MVC_View;
+use Jet\Tr;
 use JetApplication\Order;
 
 /**
@@ -19,6 +19,15 @@ use JetApplication\Order;
 $order = $this->getRaw('order');
 ?>
 
-<h1>Order <?=$order->getNumber()?></h1>
+<div style="padding: 2%;">
+	<h1><?=Tr::_('We are sorry, but there was an error with the payment system.');?></h1>
 
-<h2>Payment system error</h2>
+	<div style="padding-top: 10px;padding-bottom:10px;font-size: 1.2rem;"><?=Tr::_('Order number: <b>%ORDER_NO%</b>', ['ORDER_NO'=>$order->getNumber()]);?></div>
+
+	<p>
+		<a href="<?=$this->getRaw('try_again_url')?>" class="btn btn-success btn-lg"><?=Tr::_('Try again');?></a>
+	</p>
+
+</div>
+
+

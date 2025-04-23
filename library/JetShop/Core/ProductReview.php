@@ -26,6 +26,7 @@ use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
+use JetApplication\ProductReview;
 use JetApplication\ProductReview_Event;
 use JetApplication\ProductReview_Status;
 use JetApplication\ProductReview_Status_Approved;
@@ -466,6 +467,9 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 	
 	public function createEvent( EShopEntity_Event $event ): EShopEntity_Event
 	{
+		/**
+		 * @var ProductReview $this
+		 */
 		$event->init( $this->getEshop() );
 		$event->setProductReview( $this );
 		

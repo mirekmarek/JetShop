@@ -20,6 +20,8 @@ class GoPay_Order
 	protected string $postal_code;
 	protected string $country_code;
 	protected float $amount = 0.0;
+	protected string $currency;
+	protected string $language;
 	
 	/**
 	 * @var GoPay_Order_Item[]
@@ -137,6 +139,28 @@ class GoPay_Order
 	{
 		return $this->amount;
 	}
+	
+	public function getCurrency(): string
+	{
+		return $this->currency;
+	}
+	
+	public function setCurrency( string $currency ): void
+	{
+		$this->currency = $currency;
+	}
+	
+	public function getLanguage(): string
+	{
+		return $this->language;
+	}
+	
+	public function setLanguage( string $language ): void
+	{
+		$this->language = $language;
+	}
+	
+	
 	
 	public function addItem( GoPay_Order_Item $item ) : void
 	{

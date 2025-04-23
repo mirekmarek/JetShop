@@ -13,7 +13,7 @@ use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\Invoice;
 use JetApplication\Invoice_Manager;
-use JetApplication\InvoiceInAdvance;
+use JetApplication\ProformaInvoice;
 use JetApplication\Order;
 use JetApplication\PDF_TemplateProvider;
 use TCPDF;
@@ -32,9 +32,9 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 		return $invoice;
 	}
 	
-	public function createInvoiceInAdvanceForOrder( Order $order ) : InvoiceInAdvance
+	public function createProformaInvoiceForOrder( Order $order ) : ProformaInvoice
 	{
-		$invoice = InvoiceInAdvance::createByOrder( $order );
+		$invoice = ProformaInvoice::createByOrder( $order );
 		//TODO: setup payment, atc.
 		
 		$invoice->save();
@@ -60,9 +60,9 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 		return $template->generatePDF( $invoice->getEshop() );
 	}
 	
-	public function generateInvoiceInAdvancePDF( InvoiceInAdvance $invoice ) : string
+	public function generateProformaInvoicePDF( ProformaInvoice $invoice ) : string
 	{
-		$template = new PDFTemplate_InvoiceInAdvance();
+		$template = new PDFTemplate_ProformaInvoice();
 		$template->setInvoice( $invoice );
 		
 		return $template->generatePDF( $invoice->getEshop() );
@@ -86,9 +86,9 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 		$email_template->createEmail( $invoice->getEshop() )->send();
 	}
 	
-	public function sendInvoiceInAdvance( InvoiceInAdvance $invoice ) : void
+	public function sendProformaInvoice( ProformaInvoice $invoice ) : void
 	{
-		$email_template = new EMailTemplate_InvoiceInAdvance();
+		$email_template = new EMailTemplate_ProformaInvoice();
 		$email_template->setInvoice( $invoice );
 		
 		$email_template->createEmail( $invoice->getEshop() )->send();
@@ -110,12 +110,12 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	{
 		$invoice = new EMailTemplate_Invoice();
 		$correction_invoice = new EMailTemplate_CorrectionInvoice();
-		$invoice_in_advance = new EMailTemplate_InvoiceInAdvance();
+		$proforma_invoice = new EMailTemplate_ProformaInvoice();
 		$delivery_note = new EMailTemplate_DeliveryNote();
 		
 		return [
 			$invoice,
-			$invoice_in_advance,
+			$proforma_invoice,
 			$correction_invoice,
 			$delivery_note
 		];
@@ -128,12 +128,12 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	{
 		$invoice = new PDFTemplate_Invoice();
 		$correction_invoice = new PDFTemplate_CorrectionInvoice();
-		$invoice_in_advance = new PDFTemplate_InvoiceInAdvance();
+		$proforma_invoice = new PDFTemplate_ProformaInvoice();
 		$delivery_note = new PDFTemplate_DeliveryNote();
 		
 		return [
 			$invoice,
-			$invoice_in_advance,
+			$proforma_invoice,
 			$correction_invoice,
 			$delivery_note
 		];

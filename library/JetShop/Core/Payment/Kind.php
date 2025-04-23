@@ -11,6 +11,8 @@ namespace JetShop;
 use Jet\Autoloader;
 use Jet\IO_Dir;
 
+use Jet\Locale;
+use Jet\Tr;
 use JetApplication\Payment_Kind;
 
 
@@ -40,9 +42,11 @@ abstract class Core_Payment_Kind {
 		return static::CODE;
 	}
 
-	public function getTitle(): string
+	public function getTitle( ?Locale $locale=null ): string
 	{
-		return $this->title;
+		$locale = $locale??Locale::getCurrentLocale();
+		
+		return Tr::_( $this->title, dictionary: Tr::COMMON_DICTIONARY, locale: $locale );
 	}
 
 	protected function setTitle( string $title ): void
@@ -50,13 +54,15 @@ abstract class Core_Payment_Kind {
 		$this->title = $title;
 	}
 	
-	public function getTitleInvoice(): string
+	public function getTitleInvoice( ?Locale $locale=null ): string
 	{
 		if(!$this->title_invoice) {
-			return $this->getTitle();
+			return $this->getTitle( $locale );
 		}
 		
-		return $this->title_invoice;
+		$locale = $locale??Locale::getCurrentLocale();
+		
+		return Tr::_( $this->title_invoice, dictionary: Tr::COMMON_DICTIONARY, locale: $locale );
 	}
 	
 	public function setTitleInvoice( string $title_invoice ): void

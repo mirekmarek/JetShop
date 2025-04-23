@@ -242,6 +242,17 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 	protected string $confirmation_email_info_text = '';
 	
 	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 999999,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Order final page info text:'
+	)]
+	protected string $order_final_page_info_text = '';
+	
+	
+	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
 	#[Form_Definition(
@@ -772,6 +783,17 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		$this->confirmation_email_info_text = $confirmation_email_info_text;
 	}
 	
+	public function getOrderFinalPageInfoText(): string
+	{
+		return $this->order_final_page_info_text;
+	}
+	
+	public function setOrderFinalPageInfoText( string $order_final_page_info_text ): void
+	{
+		$this->order_final_page_info_text = $order_final_page_info_text;
+	}
+	
+	
 	public function setPriority( int $value ) : void
 	{
 		$this->priority = $value;
@@ -936,9 +958,27 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		return Payment_Method::getActiveList( $this->getEshop(), $ids, order_by: 'priority' );
 	}
 	
-	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	public function generateConfirmationEmailInfoText( Order $order ) : string
 	{
-		return $this->getConfirmationEmailInfoText();
+		$module = $this->getCarrier();
+		
+		if($module) {
+			return $module->generateConfirmationEmailInfoText( $order, $this );
+		} else {
+			return $this->getConfirmationEmailInfoText();
+		}
+	}
+	
+	public function generateFinalPageInfoText( Order $order ) : string
+	{
+		$module = $this->getCarrier();
+		
+		if($module) {
+			return $module->generateOrderFinalPageInfoText( $order, $this );
+		} else {
+			return $this->getOrderFinalPageInfoText();
+		}
+		
 	}
 	
 	

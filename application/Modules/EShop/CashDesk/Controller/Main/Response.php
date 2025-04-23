@@ -74,7 +74,8 @@ class Controller_Main_Response {
 
 		$response['selected_delivery'] = $cash_desk->getSelectedDeliveryMethod()->getId();
 		$response['selected_payment'] = $cash_desk->getSelectedPaymentMethod()->getId();
-
+		
+		$magic_tags_module = EShop_Managers::MagicTags();
 
 		foreach( $this->snippets as $id=>$view_script ) {
 			if(!$view_script) {
@@ -87,6 +88,10 @@ class Controller_Main_Response {
 
 			} else {
 				$response['snippets'][$id] = $this->controller->getView()->render( $view_script );
+			}
+			
+			if($magic_tags_module) {
+				$response['snippets'][$id]  = $magic_tags_module->processText( $response['snippets'][$id] );
 			}
 			
 		}

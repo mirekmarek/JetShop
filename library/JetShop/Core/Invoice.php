@@ -27,6 +27,7 @@ use JetApplication\Invoice_VATOverviewItem;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\Invoice_Item;
+use JetApplication\Managers_General;
 use JetApplication\Order;
 use JetApplication\Payment_Kind;
 
@@ -566,4 +567,10 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 	{
 		return false;
 	}
+	
+	public function generatePDF() : string
+	{
+		return Managers_General::Invoices()->generateInvoicePDF( $this );
+	}
+	
 }

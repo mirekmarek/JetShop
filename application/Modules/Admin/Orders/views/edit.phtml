@@ -21,7 +21,7 @@ use JetApplication\Order;
 $order = $this->getRaw( 'order' );
 
 $invoices = Admin_Managers::Invoice()?->showOrderInvoices( $order )??''.
-			Admin_Managers::InvoiceInAdvance()?->showOrderInvoices( $order )??''.
+			Admin_Managers::ProformaInvoice()?->showOrderInvoices( $order )??''.
 			Admin_Managers::DeliveryNote()?->showOrderInvoices( $order )??'';
 
 $dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $order->getProvidesContext() )??''.

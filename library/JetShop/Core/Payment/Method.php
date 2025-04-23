@@ -22,6 +22,7 @@ use Jet\Form_Field_Select;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_PaymentMethods;
+use JetApplication\EMail;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
@@ -221,6 +222,18 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 	)]
 	protected string $confirmation_email_info_text = '';
 	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 999999,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Order final page info text:'
+	)]
+	protected string $order_final_page_info_text = '';
+
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 	)]
@@ -358,16 +371,13 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 	
 	public function actualizeOptions() : void
 	{
-		$backend = $this->getBackendModule();
-		if(!$backend) {
-			return;
-		}
-		
 		/**
 		 * @var Payment_Method $this
 		 */
 		
-		$module_options = $backend->getPaymentMethodOptionsList( $this );
+		$backend = $this->getBackendModule();
+		
+		$module_options = $backend?->getPaymentMethodOptionsList( $this )??[];
 		
 		$current_options = $this->getOptions();
 		
@@ -782,6 +792,17 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 		return $this->confirmation_email_info_text;
 	}
 	
+	public function getOrderFinalPageInfoText(): string
+	{
+		return $this->order_final_page_info_text;
+	}
+	
+	public function setOrderFinalPageInfoText( string $order_final_page_info_text ): void
+	{
+		$this->order_final_page_info_text = $order_final_page_info_text;
+	}
+	
+	
 	public function setIcon1( string $image ) : void
 	{
 		$this->image_icon1 = $image;
@@ -847,15 +868,31 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 		return $options;
 	}
 	
-	public function getOrderConfirmationEmailInfoText( Order $order ) : string
+	public function generateConfirmationEmailInfoText( Order $order ) : string
 	{
 		$module = $this->getBackendModule();
 		
 		if($module) {
-			return $module->getOrderConfirmationEmailInfoText( $order, $this );
+			return $module->generateConfirmationEmailInfoText( $order, $this );
 		} else {
 			return $this->getConfirmationEmailInfoText();
 		}
+	}
+	
+	public function generateFinalPageInfoText( Order $order ) : string
+	{
+		$module = $this->getBackendModule();
+		
+		if($module) {
+			return $module->generateOrderFinalPageInfoText( $order, $this );
+		} else {
+			return $this->getOrderFinalPageInfoText();
+		}
+	}
+	
+	public function updateOrderConfirmationEmail( Order $order, EMail $email ) : void
+	{
+		$this->getBackendModule()?->updateOrderConfirmationEmail( $order, $email );
 	}
 	
 	/**

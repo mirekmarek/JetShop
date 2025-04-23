@@ -19,7 +19,7 @@ use JetApplication\Managers;
 use JetApplication\Manager_MetaInfo;
 use JetApplication\Admin_Managers_Context;
 use JetApplication\Admin_Managers_Invoice;
-use JetApplication\Admin_Managers_InvoiceInAdvance;
+use JetApplication\Admin_Managers_ProformaInvoice;
 use JetApplication\Admin_Managers_DeliveryNote;
 use JetApplication\Admin_Managers_SupplierGoodsOrders;
 use JetApplication\Admin_Managers_Category;
@@ -154,9 +154,9 @@ class Core_Admin_Managers extends Managers {
 		return static::get( Admin_Managers_Invoice::class );
 	}
 	
-	public static function InvoiceInAdvance() : Admin_Managers_Invoice|Application_Module|null
+	public static function ProformaInvoice() : Admin_Managers_Invoice|Application_Module|null
 	{
-		return static::get( Admin_Managers_InvoiceInAdvance::class );
+		return static::get( Admin_Managers_ProformaInvoice::class );
 	}
 	
 	public static function DeliveryNote() : Admin_Managers_DeliveryNote|Application_Module|null
