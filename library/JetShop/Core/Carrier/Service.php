@@ -187,14 +187,14 @@ abstract class Core_Carrier_Service extends DataModel
 		$this->name = $name;
 	}
 	
-	public function getCompatibleKindOfDelivery(): string
+	public function getCompatibleKindOfDelivery(): ?Delivery_Kind
 	{
-		return $this->compatible_kind_of_delivery;
+		return Delivery_Kind::get( $this->compatible_kind_of_delivery );
 	}
 	
-	public function setCompatibleKindOfDelivery( string $compatible_kind_of_delivery ): void
+	public function setCompatibleKindOfDelivery( string $compatible_kind_of_delivery_code ): void
 	{
-		$this->compatible_kind_of_delivery = $compatible_kind_of_delivery;
+		$this->compatible_kind_of_delivery = $compatible_kind_of_delivery_code;
 	}
 
 

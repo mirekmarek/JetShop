@@ -103,18 +103,6 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 	)]
 	protected string $kind = '';
 	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 50,
-		is_key: true
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'ERP code:'
-	)]
-	protected string $erp_id = '';
-	
 
 	/**
 	 * @var Delivery_Method_Class[]
@@ -312,16 +300,6 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 	
 	
 	
-	public function getErpId(): string
-	{
-		return $this->erp_id;
-	}
-	
-	public function setErpId( string $erp_id ): void
-	{
-		$this->erp_id = $erp_id;
-	}
-	
 	
 	public function getPriceEntity( Pricelist $pricelist ) : Delivery_Method_Price
 	{
@@ -401,24 +379,22 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 	
 	public function isPersonalTakeover() : bool
 	{
-		return
-			$this->kind == Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL ||
-			$this->kind == Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL;
+		return $this->getKind()->isPersonalTakeover();
 	}
 	
 	public function isInternalPersonalTakeover() : bool
 	{
-		return $this->kind == Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL;
+		return $this->getKind()->isPersonalTakeoverInternal();
 	}
 	
 	public function isExternalPersonalTakeover() : bool
 	{
-		return $this->kind == Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL;
+		return $this->getKind()->isPersonalTakeoverExternal();
 	}
 
 	public function isEDelivery() : bool
 	{
-		return $this->kind == Delivery_Kind::E_DELIVERY;
+		return $this->getKind()->isEDelivery();
 	}
 	
 
@@ -1049,7 +1025,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 			foreach( $methods as $method ) {
 				if(
 					$has_only_personal_takeover &&
-					$method->getKindCode()!=Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL
+					!$method->getKind()->isPersonalTakeoverInternal()
 				) {
 					//There is something what is available only as "personal take over item" in the order. So only personal takeover methods are allowed
 					continue;
@@ -1057,7 +1033,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 				
 				if(
 					$has_only_e_delivery &&
-					$method->getKindCode()!=Delivery_Kind::E_DELIVERY
+					!$method->getKind()->isEDelivery()
 				) {
 					//There is something virtual and nothing else. So only e-delivery is allowed
 					continue;
@@ -1065,7 +1041,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 				
 				if(
 					!$has_only_e_delivery &&
-					$method->getKindCode()==Delivery_Kind::E_DELIVERY
+					$method->getKind()->isEDelivery()
 				) {
 					//There is something physical. So e-delivery is not allowed
 					continue;

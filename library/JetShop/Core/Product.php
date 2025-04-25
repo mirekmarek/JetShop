@@ -157,21 +157,6 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		label: 'EAN:'
 	)]
 	protected string $ean = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'ERP code:'
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'ERP code:'
-	)]
-	protected string $erp_id = '';
 
 	
 	#[DataModel_Definition(
@@ -465,20 +450,6 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 			$this->eshop_data[$eshop->getKey()]->setEan( $this->ean );
 		}
 		
-	}
-
-	public function getErpId() : string
-	{
-		return $this->erp_id;
-	}
-
-	public function setErpId( string $erp_id ) : void
-	{
-		$this->erp_id = $erp_id;
-		
-		foreach( EShops::getList() as $eshop) {
-			$this->eshop_data[$eshop->getKey()]->setErpId( $this->erp_id );
-		}
 	}
 
 	public function getBrandId() : int

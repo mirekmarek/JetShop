@@ -29,7 +29,7 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'API URL: ',
-		is_required: true,
+		is_required: false,
 	)]
 	protected string $API_URL = '';
 	
@@ -39,7 +39,7 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Client ID: ',
-		is_required: true,
+		is_required: false,
 	)]
 	protected string $API_key = '';
 	

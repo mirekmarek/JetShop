@@ -23,7 +23,6 @@ use JetApplication\Carrier;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Complaint;
 use JetApplication\Currencies;
-use JetApplication\Delivery_Kind;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Item;
@@ -328,7 +327,7 @@ class Controller_Main extends MVC_Controller_Default
 			$carrier = Carrier::get( $carrier_code );
 			$service = $carrier->getService( $service_code );
 			
-			if($service->getCompatibleKindOfDelivery()!=Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL) {
+			if( !$service->getCompatibleKindOfDelivery()?->isPersonalTakeoverExternal() ) {
 				return true;
 			}
 			

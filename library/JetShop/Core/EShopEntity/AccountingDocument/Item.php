@@ -381,6 +381,19 @@ abstract class Core_EShopEntity_AccountingDocument_Item extends DataModel_Relate
 		return $this->set_discount_per_unit;
 	}
 	
+	public function getSetDiscountPerUnit_Wo_VAT(): float
+	{
+		$set_discount = $this->getSetDiscountPerUnit();
+		
+		if($this->getVatRate()>0) {
+			$vat_mtp = 1+($this->getVatRate()/100);
+			
+			$set_discount = $set_discount/$vat_mtp;
+		}
+		
+		return $set_discount;
+	}
+	
 	public function setSetDiscountPerUnit( float $set_discount_per_unit ): void
 	{
 		$this->set_discount_per_unit = $set_discount_per_unit;

@@ -105,18 +105,6 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 50,
-		is_key: true
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'ERP code:'
-	)]
-	protected string $erp_id = '';
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
 		is_key: true,
 		max_len: 255,
 	)]

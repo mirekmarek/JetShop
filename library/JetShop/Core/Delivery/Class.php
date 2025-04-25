@@ -113,7 +113,7 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 	public function isPersonalTakeOverOnly() : bool
 	{
 		foreach( $this->getKinds() as $code=>$kind ) {
-			if($code!=Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL) {
+			if( !$kind->isPersonalTakeoverInternal() ) {
 				return false;
 			}
 		}
@@ -124,7 +124,7 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 	public function isEDelivery() : bool
 	{
 		foreach( $this->getKinds() as $code=>$kind ) {
-			if($code!=Delivery_Kind::E_DELIVERY) {
+			if( $kind->isEDelivery() ) {
 				return false;
 			}
 		}

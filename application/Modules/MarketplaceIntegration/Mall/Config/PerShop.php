@@ -24,41 +24,41 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
+		is_required: false,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'API URL: ',
-		is_required: true,
+		is_required: false,
 	)]
 	protected string $API_URL = '';
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
+		is_required: false,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Client ID: ',
-		is_required: true,
+		is_required: false,
 	)]
 	protected string $client_id = '';
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
+		is_required: false,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Country code: ',
-		is_required: true,
+		is_required: false,
 	)]
 	protected string $country_code = '';
 	
 	
 	#[Config_Definition(
 		type: Config::TYPE_BOOL,
-		is_required: true,
+		is_required: false,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_CHECKBOX,

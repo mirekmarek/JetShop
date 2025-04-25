@@ -11,7 +11,6 @@ namespace JetShop;
 use Jet\MVC;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
-use JetApplication\Delivery_Kind;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
 use JetApplication\Template_Property_Param;
@@ -149,7 +148,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 			->setConditionEvaluator( function() : bool {
 				$delivery_method = $this->order->getDeliveryMethod();
 				
-				if($delivery_method->getKind()->getCode()==Delivery_Kind::E_DELIVERY) {
+				if( $delivery_method->getKind()->isEDelivery() ) {
 					return false;
 				}
 				

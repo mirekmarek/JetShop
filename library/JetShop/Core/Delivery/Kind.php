@@ -8,39 +8,64 @@ namespace JetShop;
 
 
 
+use Jet\Autoloader;
+use Jet\IO_Dir;
 use Jet\Tr;
 
 use JetApplication\Delivery_Kind;
 
 abstract class Core_Delivery_Kind {
 
-	public const E_DELIVERY = 'e-delivery';
-	public const PERSONAL_TAKEOVER_EXTERNAL = 'personal-takeover-external';
-	public const PERSONAL_TAKEOVER_INTERNAL = 'personal-takeover-internal';
-	public const DELIVERY = 'delivery';
-
-	protected string $code = '';
-
-	protected string $title = '';
-
+	protected string $title;
+	protected int $priority;
+	
 	protected bool $module_is_required = false;
-
-	/**
-	 * @return bool
-	 */
+	
+	protected bool $is_edelivery = true;
+	protected bool $is_personal_takeover = false;
+	protected bool $is_personal_takeover_internal = false;
+	
+	
+	public static function getCode() : string
+	{
+		return static::CODE;
+	}
+	
 	public function moduleIsRequired(): bool
 	{
 		return $this->module_is_required;
 	}
-
-	/**
-	 * @param bool $module_is_required
-	 */
-	public function setModuleIsRequired( bool $module_is_required ): void
+	
+	public function isPersonalTakeover(): bool
 	{
-		$this->module_is_required = $module_is_required;
+		return $this->is_personal_takeover;
+	}
+	
+	public function isPersonalTakeoverInternal(): bool
+	{
+		return $this->is_personal_takeover_internal;
+	}
+	
+	public function isPersonalTakeoverExternal(): bool
+	{
+		return
+			$this->is_personal_takeover &&
+			!$this->is_personal_takeover_internal;
+	}
+	
+	
+	
+	public function isEDelivery(): bool
+	{
+		return $this->is_edelivery;
+	}
+	
+	public function getPriority(): int
+	{
+		return $this->priority;
 	}
 
+	
 
 
 	/**
@@ -50,44 +75,16 @@ abstract class Core_Delivery_Kind {
 
 	public static function get( string $code ) : ?Delivery_Kind
 	{
-		$list = Delivery_Kind::getList();
-		if(!isset($list[$code])) {
-			return null;
-		}
-
-		return $list[$code];
+		return Delivery_Kind::getList()[$code]??null;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getCode(): string
-	{
-		return $this->code;
-	}
-
-	/**
-	 * @param string $code
-	 */
-	public function setCode( string $code ): void
-	{
-		$this->code = $code;
-	}
 
 	/**
 	 * @return string
 	 */
 	public function getTitle(): string
 	{
-		return $this->title;
-	}
-
-	/**
-	 * @param string $title
-	 */
-	public function setTitle( string $title ): void
-	{
-		$this->title = $title;
+		return Tr::_( $this->title, dictionary: Tr::COMMON_DICTIONARY );
 	}
 
 	/**
@@ -97,32 +94,16 @@ abstract class Core_Delivery_Kind {
 	{
 		if(static::$list===null) {
 			static::$list = [];
-
-
-			$personal_takeover_external = new Delivery_Kind();
-			$personal_takeover_external->setCode( Delivery_Kind::PERSONAL_TAKEOVER_EXTERNAL );
-			$personal_takeover_external->setTitle( Tr::_('Personal takeover - external') );
-			$personal_takeover_external->setModuleIsRequired( true );
-			static::add( $personal_takeover_external );
 			
+			$path = substr( Autoloader::getScriptPath( Delivery_Kind::class ), 0, -4).'/';
 			
-			$personal_takeover_internal = new Delivery_Kind();
-			$personal_takeover_internal->setCode( Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL );
-			$personal_takeover_internal->setTitle( Tr::_('Personal takeover - internal') );
-			$personal_takeover_internal->setModuleIsRequired( true );
-			static::add( $personal_takeover_internal );
+			$files = IO_Dir::getFilesList( $path, '*.php' );
 			
-			
-			$delivery = new Delivery_Kind();
-			$delivery->setCode( Delivery_Kind::DELIVERY );
-			$delivery->setTitle( Tr::_('Delivery') );
-			static::add( $delivery );
-			
-			
-			$e_delivery = new Delivery_Kind();
-			$e_delivery->setCode( Delivery_Kind::E_DELIVERY );
-			$e_delivery->setTitle( Tr::_('e-Delivery') );
-			static::add( $e_delivery );
+			foreach($files as $file) {
+				$class_name = Delivery_Kind::class.'_'.basename( $file, '.php' );
+				
+				static::add( new $class_name() );
+			}
 		}
 
 		return static::$list;
@@ -130,7 +111,11 @@ abstract class Core_Delivery_Kind {
 	
 	public static function add( Delivery_Kind $kind ) : void
 	{
-		static::$list[$kind->getCode()] = $kind;
+		static::$list[$kind::getCode()] = $kind;
+		
+		uasort( static::$list, function( Delivery_Kind $a, Delivery_Kind $b ) {
+			return $a->getPriority() <=> $b->getPriority();
+		} );
 	}
 
 	public static function getScope() : array
@@ -141,7 +126,7 @@ abstract class Core_Delivery_Kind {
 		$res = [];
 
 		foreach($list as $item) {
-			$res[$item->getCode()] = $item->getTitle();
+			$res[$item::getCode()] = $item->getTitle();
 		}
 
 		return $res;

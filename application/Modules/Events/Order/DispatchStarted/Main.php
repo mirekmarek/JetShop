@@ -7,7 +7,6 @@
 namespace JetApplicationModule\Events\Order\DispatchStarted;
 
 
-use JetApplication\Delivery_Kind;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\OrderDispatch;
 use JetApplication\Order_Event_HandlerModule;
@@ -40,7 +39,7 @@ class Main extends Order_Event_HandlerModule
 		if( $physical_products ) {
 			$delivert_method = $this->order->getDeliveryMethod();
 			
-			if( $delivert_method->getKindCode()==Delivery_Kind::PERSONAL_TAKEOVER_INTERNAL ) {
+			if( $delivert_method->getKind()->isPersonalTakeoverInternal() ) {
 				
 				$dispatch = OrderPersonalReceipt::newByOrder( $this->order );
 				$this->event->setContext( $dispatch );
