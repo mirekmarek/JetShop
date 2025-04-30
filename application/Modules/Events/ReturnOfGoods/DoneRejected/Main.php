@@ -22,7 +22,7 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		
 		$email = $email_template->createEmail( $this->return_of_goods->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 	}
 	
 	

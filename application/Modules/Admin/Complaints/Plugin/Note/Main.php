@@ -44,7 +44,7 @@ class Plugin_Note_Main extends Plugin
 		$template = $event_handler->getEMailTemplates()[0];
 		$template->setComplaint( $item );
 		
-		return $template->createEmail( $item->getEshop() )->getSubject();
+		return $template->createEmail( $item->getEshop() )?->getSubject()??'';
 	}
 	
 	protected function afterMessageAdded( EShopEntity_Note|Complaint_Note $new_note ) : void

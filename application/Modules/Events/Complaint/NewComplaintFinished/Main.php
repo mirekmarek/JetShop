@@ -44,7 +44,7 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		
 		$email = $email_template->createEmail( $complaint->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 	}
 	
 	public function getEventNameReadable(): string

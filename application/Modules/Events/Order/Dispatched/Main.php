@@ -10,6 +10,7 @@ namespace JetApplicationModule\Events\Order\Dispatched;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order_Event_HandlerModule;
+use JetApplication\OrderDispatch;
 
 
 class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
@@ -31,7 +32,20 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	
 	public function sendNotifications(): bool
 	{
-		return $this->sendEMail( new EMailTemplate() );
+		
+		$dispatch = $this->event->getContext();
+		
+		$template = new EMailTemplate();
+		
+		if($dispatch instanceof OrderDispatch ) {
+			$template->setCarrierName( $dispatch->getCarrier()?->getName()??$dispatch->getCarrierCode() );
+			$template->setTrackingUrl( $dispatch->getTrackingURL() );
+			$template->setConsignmentNumber( $dispatch->getTrackingNumber() );
+		}
+		
+		$email = $template->createEmail( $this->getEvent()->getEshop() );
+		
+		return $email?->send()??true;
 	}
 	
 	

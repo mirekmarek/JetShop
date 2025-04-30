@@ -83,7 +83,7 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 		$email_template = new EMailTemplate_Invoice();
 		$email_template->setInvoice( $invoice );
 		
-		$email_template->createEmail( $invoice->getEshop() )->send();
+		$email_template->createEmail( $invoice->getEshop() )?->send();
 	}
 	
 	public function sendProformaInvoice( ProformaInvoice $invoice ) : void
@@ -91,7 +91,7 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 		$email_template = new EMailTemplate_ProformaInvoice();
 		$email_template->setInvoice( $invoice );
 		
-		$email_template->createEmail( $invoice->getEshop() )->send();
+		$email_template->createEmail( $invoice->getEshop() )?->send();
 	}
 	
 	public function sendDeliveryNote( DeliveryNote $invoice ) : void
@@ -99,7 +99,7 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 		$email_template = new EMailTemplate_DeliveryNote();
 		$email_template->setInvoice( $invoice );
 		
-		$email_template->createEmail( $invoice->getEshop() )->send();
+		$email_template->createEmail( $invoice->getEshop() )?->send();
 	}
 	
 	

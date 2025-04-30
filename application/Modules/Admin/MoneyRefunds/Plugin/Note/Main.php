@@ -42,7 +42,7 @@ class Plugin_Note_Main extends Plugin
 		$template = $event_handler->getEMailTemplates()[0];
 		$template->setMoneyRefund( $item );
 		
-		return $template->createEmail( $item->getEshop() )->getSubject();
+		return $template->createEmail( $item->getEshop() )?->getSubject()??'';
 		
 	}
 	

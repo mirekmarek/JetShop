@@ -44,14 +44,16 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 			
 			$email = $template->createEmail( $this->order->getEshop() );
 			
-			$email->setSubject( $note->getSubject() );
-			
-			foreach($note->getFiles() as $file) {
-				$email->addAttachments( $file->getPath() );
+			if($email) {
+				$email->setSubject( $note->getSubject() );
+				
+				foreach($note->getFiles() as $file) {
+					$email->addAttachments( $file->getPath() );
+				}
+				
+				$email->setTo( $note->getCustomerEmailAddress() );
+				$email->send();
 			}
-			
-			$email->setTo( $note->getCustomerEmailAddress() );
-			$email->send();
 			
 		}
 		

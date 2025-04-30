@@ -47,6 +47,6 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 		$template->setEvent($this->event);
 		$email = $template->createEmail( $this->getEvent()->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 	}
 }

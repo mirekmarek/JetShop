@@ -44,7 +44,7 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		
 		$email = $email_template->createEmail( $rog->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 		
 	}
 	

@@ -31,7 +31,7 @@ class Main extends ReturnOfGoods_Event_HandlerModule implements EMail_TemplatePr
 		$template->setReturnOfGoods( $return_of_goods );
 		$email = $template->createEmail( $return_of_goods->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 	}
 	
 	

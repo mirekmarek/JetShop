@@ -38,14 +38,16 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 			
 			$email = $template->createEmail( $this->complaint->getEshop() );
 			
-			$email->setSubject( $note->getSubject() );
-			
-			foreach($note->getFiles() as $file) {
-				$email->addAttachments( $file->getPath() );
+			if($email) {
+				$email->setSubject( $note->getSubject() );
+				
+				foreach($note->getFiles() as $file) {
+					$email->addAttachments( $file->getPath() );
+				}
+				
+				$email->setTo( $note->getCustomerEmailAddress() );
+				$email->send();
 			}
-			
-			$email->setTo( $note->getCustomerEmailAddress() );
-			$email->send();
 			
 		}
 		

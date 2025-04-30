@@ -24,7 +24,7 @@ abstract class Core_EMail_Template extends Template
 	
 	
 
-	public function createEmail( EShop $eshop ) : EMail
+	public function createEmail( EShop $eshop, bool $template_must_be_active = true ) : ?EMail
 	{
 		
 		/**
@@ -47,13 +47,10 @@ abstract class Core_EMail_Template extends Template
 				$template_master->setInternalNotes( $this->getInternalNotes() );
 				
 				$template_master->save();
-				
-				$template_master->activateCompletely();
 			} else {
 				$template_master->checkEShopData();
 				$template_master->setInternalCode( $this->getInternalCode() );
 				$template_master->save();
-				$template_master->activateCompletely();
 			}
 			
 			$template = EMail_TemplateText_EShopData::getByInternalCode(
@@ -61,6 +58,13 @@ abstract class Core_EMail_Template extends Template
 				$eshop
 			);
 			
+		}
+		
+		if(
+			$template_must_be_active &&
+			!$template->isActive()
+		) {
+			return null;
 		}
 		
 		$placeholder = '%body%';
@@ -112,7 +116,7 @@ abstract class Core_EMail_Template extends Template
 	public function createTestEmail( EShop $eshop ) : EMail
 	{
 		$this->initTest( $eshop );
-		$email = $this->createEmail( $eshop );
+		$email = $this->createEmail( $eshop, false );
 		$email->setSaveHistoryAfterSend( false );
 		
 		return $email;

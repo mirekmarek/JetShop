@@ -31,7 +31,7 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 		$template->setComplaint( $complaint );
 		$email = $template->createEmail( $complaint->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 	}
 	
 	

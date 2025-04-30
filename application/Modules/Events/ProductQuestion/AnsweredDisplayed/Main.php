@@ -38,9 +38,11 @@ class Main extends ProductQuestion_Event_HandlerModule implements EMail_Template
 			$email_template = new EMailTemplate();
 			$email_template->setQuestion( $this->question );
 			$email = $email_template->createEmail( $this->question->getEshop() );
-			$email->setSaveHistoryAfterSend( true );
-			
-			$email->send();
+			if($email) {
+				$email->setSaveHistoryAfterSend( true );
+				
+				$email->send();
+			}
 		}
 		
 		return true;

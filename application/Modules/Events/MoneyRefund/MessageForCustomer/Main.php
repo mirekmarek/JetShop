@@ -38,14 +38,16 @@ class Main extends MoneyRefund_Event_HandlerModule implements EMail_TemplateProv
 			
 			$email = $template->createEmail( $this->money_refund->getEshop() );
 			
-			$email->setSubject( $note->getSubject() );
-			
-			foreach($note->getFiles() as $file) {
-				$email->addAttachments( $file->getPath() );
+			if($email) {
+				$email->setSubject( $note->getSubject() );
+				
+				foreach($note->getFiles() as $file) {
+					$email->addAttachments( $file->getPath() );
+				}
+				
+				$email->setTo( $note->getCustomerEmailAddress() );
+				$email->send();
 			}
-			
-			$email->setTo( $note->getCustomerEmailAddress() );
-			$email->send();
 			
 		}
 		

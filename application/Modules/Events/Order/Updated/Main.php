@@ -42,7 +42,7 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		$template->setOrder( $order );
 		$email = $template->createEmail( $order->getEshop() );
 		
-		return $email->send();
+		return $email?->send()??true;
 	}
 	
 	

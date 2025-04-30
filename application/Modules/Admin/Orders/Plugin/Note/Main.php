@@ -44,7 +44,7 @@ class Plugin_Note_Main extends Plugin
 		$template = $event_handler->getEMailTemplates()[0];
 		$template->setOrder( $item );
 		
-		return $template->createEmail( $item->getEshop() )->getSubject();
+		return $template->createEmail( $item->getEshop() )?->getSubject()??'';
 	}
 	
 	protected function afterMessageAdded( EShopEntity_Note|Order_Note $new_note ) : void

@@ -64,6 +64,7 @@ class Main extends EShop_Managers_CustomerPasswordReset implements EMail_Templat
 	{
 		$token->used();
 		$user->setPassword( $new_password );
+		$user->save();
 		
 		Logger::info(
 			event: 'user_password_reset_done',

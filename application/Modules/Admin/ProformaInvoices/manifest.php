@@ -2,7 +2,7 @@
 return [
 	'vendor' => '',
 	'version' => '',
-	'label' => 'Admin.InvoicesInAdvance',
+	'label' => 'Admin.ProformaInvoices',
 	'description' => '',
 	'is_mandatory' => false,
 	'ACL_actions' => [

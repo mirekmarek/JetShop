@@ -94,4 +94,5 @@ return [
 	'VAT Overview' => 'Přehled DPH',
 	'Maximal image width' => 'Maximální šířka obrázku',
 	'Maximal image height' => 'Maximální výška obrazu',
+	'Proforma Invoice' => '',
 ];
