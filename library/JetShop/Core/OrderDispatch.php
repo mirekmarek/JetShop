@@ -1135,4 +1135,13 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	{
 		return OrderDispatch_Event::getEventsList( $this->getId() );
 	}
+	
+	public static function findOrderIdsByTrackingNumber( string $tracking_number ) : array
+	{
+		return static::dataFetchCol(
+			select: ['order_id'],
+			where: ['tracking_number' => $tracking_number],
+			raw_mode: true
+		);
+	}
 }

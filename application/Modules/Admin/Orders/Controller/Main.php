@@ -13,6 +13,7 @@ use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
 use JetApplication\Admin_Managers;
 use JetApplication\Order;
+use JetApplication\OrderDispatch;
 
 
 class Controller_Main extends Admin_EntityManager_Controller
@@ -86,7 +87,13 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$q['import_remote_id'] = $search;
 			$q[] = 'OR';
 			$q['number'] = $search;
-
+			
+			$by_tracking_number = OrderDispatch::findOrderIdsByTrackingNumber( $search );
+			if($by_tracking_number) {
+				$q[] = 'OR';
+				$q['id'] = $by_tracking_number;
+			}
+			
 			return $q;
 		} );
 		
