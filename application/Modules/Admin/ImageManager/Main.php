@@ -294,4 +294,11 @@ class Main extends Admin_Managers_Image
 		);
 	}
 	
+	/**
+	 * @return Image[]
+	 */
+	public function getDefinedImages() : array
+	{
+		return $this->defined_images;
+	}
 }

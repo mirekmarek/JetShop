@@ -20,9 +20,12 @@ use JetApplication\EShop;
 $image_manager = $this->getRaw('manager');
 $UI_manager = Admin_Managers::UI();
 
+
+
+
 if($image_manager->getEshopSyncMode()):
-	foreach( EShops::getList() as $eshop):
-		echo $image_manager->renderImageWidgets( $eshop );
+	foreach( $image_manager->getDefinedImages() as $image):
+		echo $image_manager->renderImageWidgets( $image->getEshop() );
 		break;
 	endforeach;
 else:
