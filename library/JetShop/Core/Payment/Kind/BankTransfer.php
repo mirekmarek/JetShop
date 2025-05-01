@@ -16,6 +16,7 @@ abstract class Core_Payment_Kind_BankTransfer extends Payment_Kind {
 	{
 		$this->setTitle( 'Bank transfer' );
 		$this->setModuleIsRequired( true );
+		$this->setIsBankTransfer( true );
 	}
 	
 }

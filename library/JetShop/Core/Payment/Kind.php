@@ -30,6 +30,9 @@ abstract class Core_Payment_Kind {
 	
 	protected bool $allowed_for_invoices = true;
 	
+	protected bool $is_bank_transfer = false;
+	protected bool $is_loadn = false;
+	
 	protected string $alternative_kind_for_invoices = '';
 
 	/**
@@ -91,6 +94,28 @@ abstract class Core_Payment_Kind {
 	{
 		$this->is_online_payment = $is_online_payment;
 	}
+	
+	public function isBankTransfer(): bool
+	{
+		return $this->is_bank_transfer;
+	}
+	
+	public function setIsBankTransfer( bool $is_bank_transfer ): void
+	{
+		$this->is_bank_transfer = $is_bank_transfer;
+	}
+	
+	public function isLoadn(): bool
+	{
+		return $this->is_loadn;
+	}
+	
+	public function setIsLoadn( bool $is_loadn ): void
+	{
+		$this->is_loadn = $is_loadn;
+	}
+	
+	
 	
 	public function isCOD(): bool
 	{

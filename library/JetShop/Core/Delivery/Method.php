@@ -1023,6 +1023,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 			$methods = Delivery_Method::getActiveList( $eshop, $class->getDeliveryMethodIds(), order_by: 'priority' );
 			
 			foreach( $methods as $method ) {
+
 				if(
 					$has_only_personal_takeover &&
 					!$method->getKind()->isPersonalTakeoverInternal()
@@ -1030,7 +1031,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 					//There is something what is available only as "personal take over item" in the order. So only personal takeover methods are allowed
 					continue;
 				}
-				
+
 				if(
 					$has_only_e_delivery &&
 					!$method->getKind()->isEDelivery()
@@ -1038,7 +1039,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 					//There is something virtual and nothing else. So only e-delivery is allowed
 					continue;
 				}
-				
+
 				if(
 					!$has_only_e_delivery &&
 					$method->getKind()->isEDelivery()
@@ -1051,7 +1052,6 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 				
 			}
 		}
-		
 		
 		return $available_delivery_methods;
 	}

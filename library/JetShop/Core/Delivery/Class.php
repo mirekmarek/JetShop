@@ -125,11 +125,11 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 	{
 		foreach( $this->getKinds() as $code=>$kind ) {
 			if( $kind->isEDelivery() ) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 	
 	public function setDeliveryMethods( array $ids ) : void

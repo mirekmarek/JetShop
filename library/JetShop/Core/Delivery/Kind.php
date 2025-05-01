@@ -21,7 +21,7 @@ abstract class Core_Delivery_Kind {
 	
 	protected bool $module_is_required = false;
 	
-	protected bool $is_edelivery = true;
+	protected bool $is_edelivery = false;
 	protected bool $is_personal_takeover = false;
 	protected bool $is_personal_takeover_internal = false;
 	

@@ -13,4 +13,5 @@ abstract class Core_Delivery_Kind_eDelivery extends Delivery_Kind
 	public const CODE = 'e-delivery';
 	protected string $title = 'e-Delivery';
 	protected int $priority = 90;
+	protected bool $is_edelivery = true;
 }

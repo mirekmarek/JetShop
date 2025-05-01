@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 use Jet\MVC_View;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Basic;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShops;
 
@@ -28,5 +29,11 @@ $item->defineImages();
 
 ?>
 <div style="display: flex;align-items: center;gap:10px;">
-<?=$image_manager->renderImageWidgets( EShops::getCurrent() );?>
+<?php
+if($item instanceof EShopEntity_HasEShopRelation_Interface):
+	echo $image_manager->renderImageWidgets( $item->getEshop() );
+else:
+	echo $image_manager->renderImageWidgets( EShops::getCurrent() );
+endif;
+?>
 </div>

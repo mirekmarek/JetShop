@@ -18,6 +18,7 @@ abstract class Core_Payment_Kind_LoanOffline extends Payment_Kind {
 		$this->setTitleInvoice( 'Loan' );
 		
 		$this->setAllowedForInvoices( false );
+		$this->setIsLoadn( true );
 		$this->setAlternativeKindForInvoices( new Payment_Kind_BankTransfer() );
 	}
 }
