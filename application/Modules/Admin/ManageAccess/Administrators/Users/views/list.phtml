@@ -52,8 +52,6 @@ $grid->footer()->setPrepend( $this->render('list/bulk_operations') );
 </div>
 <?= $filter_form->end() ?>
 
-<div class="row">
-	<div class="col-md-12">
-		<?= $grid->render(); ?>
-	</div>
+<div id="main-col">
+	<?= $grid->render(); ?>
 </div>

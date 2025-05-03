@@ -32,6 +32,7 @@ class Listing extends DataListing
 		$this->addColumn( new Listing_Column_UserName() );
 		$this->addColumn( new Listing_Column_FirstName() );
 		$this->addColumn( new Listing_Column_Surname() );
+		$this->addColumn( new Listing_Column_Roles() );
 		$this->addColumn( new Listing_Column_IsBlocked() );
 		
 		

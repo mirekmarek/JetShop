@@ -27,20 +27,21 @@ $grid->getColumn( '_edit_' )->addCustomCssStyle( 'width:180px;' );
 ?>
 
 <?= $filter_form->start() ?>
-<div class="row toolbar">
-	<div class="col-xs-5 col-md-2">
+<div class="toolbar" style="display: grid;grid-template-columns: 2fr 3fr 9fr;">
+	<div>
 		<?php if( ($add_uri = $router->action( 'add' )->URI()) ): ?>
 			<?= UI::button_create( Tr::_( 'Create a new Role' ) )->setUrl( $add_uri ) ?>
 		<?php endif; ?>
 	</div>
-	<div class="col-xs-7 col-md-3">
+	<div>
 		<?=$listing->filter(Listing_Filter_Search::KEY)->renderForm()?>
+	</div>
+	<div>
+	
 	</div>
 </div>
 <?= $filter_form->end() ?>
 
-<div class="row">
-	<div class="col-md-12">
+<div id="main-col">
 		<?= $grid->render(); ?>
-	</div>
 </div>
