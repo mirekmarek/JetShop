@@ -52,15 +52,15 @@ $next_url = $listing->getNextEditUrl( $complaint->getId() );
 			<?php endif; ?>
 		</div>
 		
-		<?=Plugin::get(Plugin_Note_Main::KEY)->renderButton()?>
+		<?=Plugin::get(Plugin_Note_Main::KEY)?->renderButton()?>
 		
-		<?=Plugin::get( Plugin_SendMailConfirmation_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_SendMailConfirmation_Main::KEY )?->renderButton()?>
 		<?php /*<?=Plugin::get( Plugin_DispatchNewGoods_Main::KEY )->renderButton()?> */ ?>
-		<?=Plugin::get( Plugin_SetStatus_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton()?>
 		
 		<?=Plugin::get(Plugin_MoneyRefund_Main::KEY)?->renderButton()?>
 		
-		<?=Plugin::get( Plugin_ForceStatus_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton()?>
 	
 	</div>
 </div>

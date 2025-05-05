@@ -48,13 +48,18 @@ abstract class Core_Admin_EntityManager_EditorPlugin {
 	{
 		if(
 			$this->handleOnlyIfItemIsEditable() &&
-			!$this->item->isEditable()
+			(
+				!$this->item->isEditable() ||
+				!$this->currentUserCanEdit()
+			)
 		) {
 			return false;
 		}
 		
 		return true;
 	}
+	
+	abstract protected function currentUserCanEdit() : bool;
 	
 	abstract public function hasDialog() : bool;
 	

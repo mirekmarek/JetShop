@@ -95,8 +95,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->view->setVar( 'complaint', $complaint );
 		$this->view->setVar('listing', $this->getListing());
 		
+		Plugin::initPlugins( $this->view, $complaint );
+		$this->getEditorManager()->setPlugins( Plugin::getPlugins() );
+		
 		if(Main::getCurrentUserCanEdit()) {
-			Plugin::initPlugins( $this->view, $complaint );
 			Plugin::handlePlugins();
 		}
 		

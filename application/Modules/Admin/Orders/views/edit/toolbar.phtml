@@ -53,10 +53,10 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 			<?php endif; ?>
 		</div>
 		
-		<?=Plugin::get(Plugin_Note_Main::KEY)->renderButton()?>
+		<?=Plugin::get(Plugin_Note_Main::KEY)?->renderButton()?>
 		
 		
-		<?php if($is_editable): ?>
+		<?php if($is_editable && Main::getCurrentUserCanEdit()): ?>
 			<div class="dropdown">
 				<button class="btn btn-secondary dropdown-toggle" type="button" id="change-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<?=Tr::_('Change')?>
@@ -65,10 +65,10 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 					<div style="width:300px;display: grid;grid-template-columns: 1fr;gap: 10px;padding: 10px;">
 						<?=Plugin::get(Plugin_ChangePaymentMethod_Main::KEY)?->renderButton()?>
 						<?=Plugin::get(Plugin_ChangeDeliveryMethod_Main::KEY)?->renderButton()?>
-						<?=Plugin::get(Plugin_AddItem_Main::KEY)->renderButton()?>
+						<?=Plugin::get(Plugin_AddItem_Main::KEY)?->renderButton()?>
 						<?=Plugin::get(Plugin_UpdateItemQty_Main::KEY)?->renderDeleteButton()?>
-						<?=Plugin::get(Plugin_Split_Main::KEY)->renderButton()?>
-						<?=Plugin::get(Plugin_Join_Main::KEY)->renderButton()?>
+						<?=Plugin::get(Plugin_Split_Main::KEY)?->renderButton()?>
+						<?=Plugin::get(Plugin_Join_Main::KEY)?->renderButton()?>
 					</div>
 				</div>
 			</div>
@@ -83,7 +83,7 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 				</div>
 			</div>
 			
-			<?=Plugin::get(Plugin_Invoicing_Main::KEY)->renderButton()?>
+			<?=Plugin::get(Plugin_Invoicing_Main::KEY)?->renderButton()?>
 		<?php endif; ?>
 		
 		<?=Plugin::get(Plugin_MoneyRefund_Main::KEY)?->renderButton()?>
@@ -92,7 +92,7 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 		
 		<a href="<?=Http_Request::currentURI(['print'=>1])?>" target="_blank" class="btn btn-primary"><?=UI::icon('print')?> <?=Tr::_('Print')?></a>
 		
-		<?=Plugin::get( Plugin_ForceStatus_Main::KEY )->renderButton()?>
+		<?=Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton()?>
 	</div>
 
 	<div style="display: flex;gap:30px;padding: 5px;">

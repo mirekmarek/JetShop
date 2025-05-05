@@ -125,10 +125,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	protected function edit_main_initPlugins() : void
 	{
+		Plugin::initPlugins( $this->view, $this->current_item );
+		$this->getEditorManager()->setPlugins( Plugin::getPlugins() );
+		
 		if(Main::getCurrentUserCanEdit()) {
-			Plugin::initPlugins( $this->view, $this->current_item );
-			
-			$this->getEditorManager()->setPlugins( Plugin::getPlugins() );
 			
 			Plugin::handlePlugins();
 		}

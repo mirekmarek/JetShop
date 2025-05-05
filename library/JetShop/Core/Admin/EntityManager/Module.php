@@ -66,19 +66,27 @@ abstract class Core_Admin_EntityManager_Module extends Application_Module {
 		return Admin_Managers::EntityEdit()->renderItemName( $id, $item );
 	}
 	
+	protected static function getModuleName() : string
+	{
+		$module_name = substr( get_called_class(), 21, -5 );
+		$module_name = str_replace('\\', '.', $module_name);
+		
+		return $module_name;
+	}
+	
 	public static function getCurrentUserCanEdit() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_UPDATE );
+		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.static::ACTION_UPDATE );
 	}
 	
 	public static function getCurrentUserCanCreate() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_ADD );
+		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.static::ACTION_ADD );
 	}
 	
 	public static function getCurrentUserCanDelete() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_DELETE );
+		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.static::ACTION_DELETE );
 	}
 	
 	public function renderActiveState( EShopEntity_HasActivation_Interface $item ) : string

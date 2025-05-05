@@ -139,8 +139,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->view->setVar( 'order', $order );
 		$this->view->setVar('listing', $this->getListing());
 		
+		Plugin::initPlugins( $this->view, $order );
+		$this->getEditorManager()->setPlugins( Plugin::getPlugins() );
+		
 		if(Main::getCurrentUserCanEdit()) {
-			Plugin::initPlugins( $this->view, $order );
 			Plugin::handlePlugins();
 		}
 		

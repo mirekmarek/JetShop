@@ -13,7 +13,6 @@ return [
 	'Set' => '',
 	'Connection is working' => '',
 	'Everything is up to date' => '',
-	'Connection error: %ERROR%' => '',
 	'Add files' => '',
 	'Show file' => '',
 	'Select all' => '',
@@ -22,6 +21,5 @@ return [
 	'Show diff' => '',
 	'Delete files' => '',
 	'Perform synchronization' => '',
-	'Old Version' => '',
-	'New Version' => '',
+	'Connection error: %ERROR%' => '',
 ];
