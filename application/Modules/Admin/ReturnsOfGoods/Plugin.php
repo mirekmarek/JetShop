@@ -9,5 +9,9 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 use JetApplication\Admin_EntityManager_EditorPlugin;
 
 abstract class Plugin extends Admin_EntityManager_EditorPlugin{
+	protected function currentUserCanEdit(): bool
+	{
+		return Main::getCurrentUserCanEdit();
+	}
 
 }

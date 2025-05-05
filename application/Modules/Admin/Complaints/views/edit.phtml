@@ -108,6 +108,8 @@ $dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $complaint->getPro
 
 <?php
 foreach( Plugin::getPlugins() as $handler):
-	echo $handler->renderDialog();
+	if($handler->hasDialog()) {
+		echo $handler->renderDialog();
+	}
 endforeach;
 ?>

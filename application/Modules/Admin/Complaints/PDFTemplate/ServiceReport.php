@@ -41,7 +41,7 @@ class PDFTemplate_ServiceReport extends PDF_Template
 		
 		$this->addProperty('complaint_type', Tr::_('Complaint type'))
 			->setPropertyValueCreator( function() {
-				return $this->complaint->getComplaintType()->getTitle( $this->complaint->getEshop()->getLocale() );
+				return $this->complaint->getComplaintType()?->getTitle( $this->complaint->getEshop()->getLocale() )??'';
 			});
 		
 		$this->addProperty('order_number', Tr::_('Order number'))
