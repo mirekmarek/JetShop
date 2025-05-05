@@ -44,6 +44,11 @@ echo EShop_Managers::CustomerSection()?->showMenu('complaints');
 				<div><a href="<?=$product->getURL()?>"><?=$product->getName()?></a></div>
 			</div>
 
+			<div style="justify-content:left;display: grid;grid-template-columns: auto auto;gap: 10px;align-items: center;margin: 10px;">
+				<?=$enter_problem_form->field('delivery_of_claimed_goods_code')?>
+				<?=$enter_problem_form->field('complaint_type_code')?>
+				<?=$enter_problem_form->field('preferred_solution_code')?>
+			</div>
 
 			<div>
 				<?=$enter_problem_form->field('problem_description')?>

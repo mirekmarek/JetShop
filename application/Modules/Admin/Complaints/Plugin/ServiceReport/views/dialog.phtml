@@ -1,0 +1,33 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\UI;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Complaint $compaint
+ */
+
+$compaint = $this->getRaw('item');
+$form = $this->getRaw('form');
+
+$form->field('service_report')->input()->addCustomCssStyle('width: 500px;height:300px;');
+
+echo $form->start();
+
+echo '<div style="margin-bottom: 10px">';
+echo $form->field('service_report')->input();
+echo '</div>';
+
+echo UI::button_save();
+
+echo $form->end();

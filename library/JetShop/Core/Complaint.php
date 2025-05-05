@@ -17,6 +17,9 @@ use Jet\Form_Field;
 use Jet\Form_Field_FileImage;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
+use JetApplication\Complaint_ComplaintType;
+use JetApplication\Complaint_DeliveryOfClaimedGoods;
+use JetApplication\Complaint_PreferredSolution;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_Complaint;
@@ -211,6 +214,54 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		is_key: true
 	)]
 	protected string $delivery_personal_takeover_delivery_point_code = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Delivery of the claimed goods:',
+		select_options_creator: [Complaint_DeliveryOfClaimedGoods::class, 'getScope']
+	)]
+	protected string $delivery_of_claimed_goods_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Complaint type:',
+		select_options_creator: [Complaint_ComplaintType::class, 'getScope']
+	)]
+	protected string $complaint_type_code = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50,
+		is_key: true
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Preferred solution:',
+		select_options_creator: [Complaint_PreferredSolution::class, 'getScope']
+	)]
+	protected string $preferred_solution_code = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_WYSIWYG,
+		label: 'Service report:',
+	)]
+	protected string $service_report = '';
 	
 	protected ?Form $upload_images_form = null;
 	
@@ -472,7 +523,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		return $this->delivery_method_id;
 	}
 	
-	public function getDeliveryMethod() : Delivery_Method
+	public function getDeliveryMethod() : ?Delivery_Method
 	{
 		return Delivery_Method::get( $this->getDeliveryMethodId() );
 	}
@@ -484,7 +535,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	
 	public function getDeliveryPersonalTakeoverDeliveryPointCode() : string
 	{
-		return $this->delivery_personal_takeover_delivery_point_code;
+		return $this->delivery_personal_takeover_delivery_point_code??'';
 	}
 	
 	public function setDeliveryPersonalTakeoverDeliveryPointCode( string $delivery_personal_takeover_delivery_point_code ) : void
@@ -492,7 +543,60 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		$this->delivery_personal_takeover_delivery_point_code = $delivery_personal_takeover_delivery_point_code;
 	}
 	
+	public function getDeliveryOfClaimedGoodsCode(): string
+	{
+		return $this->delivery_of_claimed_goods_code??'';
+	}
 	
+	public function getDeliveryOfClaimedGoods() : ?Complaint_DeliveryOfClaimedGoods
+	{
+		return Complaint_DeliveryOfClaimedGoods::get( $this->getDeliveryOfClaimedGoodsCode() );
+	}
+	
+	public function setDeliveryOfClaimedGoodsCode( string $delivery_of_claimed_goods_code ): void
+	{
+		$this->delivery_of_claimed_goods_code = $delivery_of_claimed_goods_code;
+	}
+	
+	public function getComplaintTypeCode(): string
+	{
+		return $this->complaint_type_code??'';
+	}
+	
+	public function getComplaintType() : ?Complaint_ComplaintType
+	{
+		return Complaint_ComplaintType::get( $this->getComplaintTypeCode() );
+	}
+	
+	public function setComplaintTypeCode( string $complaint_type_code ): void
+	{
+		$this->complaint_type_code = $complaint_type_code;
+	}
+	
+	public function getPreferredSolutionCode(): string
+	{
+		return $this->preferred_solution_code;
+	}
+	
+	public function setPreferredSolutionCode( string $preferred_solution_code ): void
+	{
+		$this->preferred_solution_code = $preferred_solution_code;
+	}
+	
+	public function getPreferredSolution() : ?Complaint_PreferredSolution
+	{
+		return Complaint_PreferredSolution::get( $this->getPreferredSolutionCode() );
+	}
+	
+	public function getServiceReport(): string
+	{
+		return $this->service_report;
+	}
+	
+	public function setServiceReport( string $service_report ): void
+	{
+		$this->service_report = $service_report;
+	}
 	
 
 	
@@ -682,6 +786,9 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	{
 		if(!$this->problem_description_edit_form) {
 			$this->problem_description_edit_form = $this->createForm('edit_form', [
+				'delivery_of_claimed_goods_code',
+				'complaint_type_code',
+				'preferred_solution_code',
 				'problem_description'
 			]);
 		}
@@ -786,7 +893,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	
 	public function getMinimalProblemDescriptionLength() : int
 	{
-		return 150;
+		return 100;
 	}
 	
 	public function canBeFinished() : bool

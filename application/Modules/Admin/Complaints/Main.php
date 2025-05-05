@@ -12,9 +12,10 @@ use JetApplication\Admin_Managers_Complaint;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\Complaint;
+use JetApplication\PDF_TemplateProvider;
 
 
-class Main extends Admin_Managers_Complaint
+class Main extends Admin_Managers_Complaint implements PDF_TemplateProvider
 {
 	public const ADMIN_MAIN_PAGE = 'complaints';
 	
@@ -45,5 +46,11 @@ class Main extends Admin_Managers_Complaint
 		
 		echo $view->render('order-complaints');
 	}
-
+	
+	public function getPDFTemplates(): array
+	{
+		return [
+			new PDFTemplate_ServiceReport()
+		];
+	}
 }

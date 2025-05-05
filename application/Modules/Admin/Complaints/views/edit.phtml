@@ -23,7 +23,7 @@ $complaint = $this->getRaw( 'complaint' );
 
 
 $money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $complaint->getProvidesContext() );
-$dispatch = Admin_Managers::OrderDispatch()->showDispatches( $complaint->getProvidesContext() );
+$dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $complaint->getProvidesContext() );
 ?>
 <?php require 'edit/toolbar.phtml';?>
 

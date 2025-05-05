@@ -55,6 +55,18 @@ $complaint = $this->getRaw( 'complaint' );
 						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Admin_Managers::Order()->renderItemName($complaint->getOrderId())?></td>
 					</tr>
+					<tr>
+						<td><b><?=Tr::_('Type:')?></b></td>
+						<td><?=$complaint->getComplaintType()?->showAdmin()?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Delivery of the complained goods:')?></b></td>
+						<td><?=$complaint->getDeliveryOfClaimedGoods()?->showAdmin()?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Preffered solution:')?></b></td>
+						<td><?=$complaint->getPreferredSolution()?->showAdmin()?></td>
+					</tr>
 				</table>
 			</div>
 		</div>
@@ -92,6 +104,14 @@ $complaint = $this->getRaw( 'complaint' );
 				<?=Plugin::get( Plugin_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
+
+		<div style="margin: 10px;" class="card">
+			<div class="card-header"><b><?=Tr::_('Service report')?></b></div>
+			<div class="card-body">
+				<?=Plugin::get( Plugin_ServiceReport_Main::KEY )?->renderDialog()?>
+			</div>
+		</div>
+		
 		
 		<div style="margin: 10px;">
 		</div>
