@@ -106,7 +106,11 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 						</optgroup>
 					<?php endforeach; ?>
 					<optgroup label="<?=Tr::_('Other')?>">
-						<?php foreach(Application_Admin::getBase()->getHomepage(Locale::getCurrentLocale())->getChildren() as $page):
+						<?php
+						
+						$showPriv( Application_Admin::getBase()->getHomepage(Locale::getCurrentLocale()) );
+						
+						foreach(Application_Admin::getBase()->getHomepage(Locale::getCurrentLocale())->getChildren() as $page):
 							if(in_array($page->getId(), $pages)) {
 								continue;
 							}

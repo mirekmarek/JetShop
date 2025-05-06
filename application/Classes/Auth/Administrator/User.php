@@ -19,7 +19,6 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Password;
 use Jet\Data_DateTime;
 use Jet\Locale;
-use Jet\Mailing_Email_Template;
 
 /**
  *
@@ -737,35 +736,7 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 			'username' => $username,
 		] ) );
 	}
-
-
-	/**
-	 *
-	 */
-	public function resetPassword(): void
-	{
-
-		$password = static::generatePassword();
-
-		$this->setPassword( $password );
-		$this->setPasswordIsValid( false );
-		$this->save();
-
-
-		$EMail_TemplateText = new Mailing_Email_Template(
-			template_id: 'administrator/user_password_reset',
-			locale: $this->getLocale()
-		);
-
-		$EMail_TemplateText->setVar( 'user', $this );
-		$EMail_TemplateText->setVar( 'password', $password );
-
-		$email = $EMail_TemplateText->getEmail();
-		$email->setTo( $this->getEmail() );
-		$email->send();
-
-	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -1022,25 +993,4 @@ class Auth_Administrator_User extends DataModel implements Auth_User_Interface
 
 		return $locales;
 	}
-
-
-	/**
-	 * @param string $password
-	 */
-	public function sendWelcomeEmail( string $password ): void
-	{
-		$EMail_TemplateText = new Mailing_Email_Template(
-			template_id: 'administrator/user_welcome',
-			locale: $this->getLocale()
-		);
-
-		$EMail_TemplateText->setVar( 'user', $this );
-		$EMail_TemplateText->setVar( 'password', $password );
-
-		$email = $EMail_TemplateText->getEmail();
-		$email->setTo( $this->getEmail() );
-		$email->send();
-
-	}
-
 }

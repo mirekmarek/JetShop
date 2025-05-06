@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Login;
 
 
+use Jet\Http_Request;
 use Jet\Logger;
 use Jet\Session;
 use Jet\Tr;
@@ -54,12 +55,20 @@ class Controller_Main extends MVC_Controller_Default
 		$this->output( 'login' );
 	}
 	
+	protected function handleLogout(): void
+	{
+		if(Http_Request::GET()->exists('logout')) {
+			Auth::logout();
+			Http_Headers::reload(unset_GET_params: ['logout']);
+		}
+	}
 	
 	/**
 	 *
 	 */
 	public function is_not_activated_Action(): void
 	{
+		$this->handleLogout();
 		$this->output( 'is-not-activated' );
 	}
 	
@@ -68,6 +77,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function is_blocked_Action(): void
 	{
+		$this->handleLogout();
 		$this->output( 'is-blocked' );
 	}
 	
@@ -76,6 +86,7 @@ class Controller_Main extends MVC_Controller_Default
 	 */
 	public function must_change_password_Action(): void
 	{
+		$this->handleLogout();
 		/**
 		 * @var Main $module
 		 */

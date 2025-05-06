@@ -143,7 +143,7 @@ class Controller_Main extends MVC_Controller_Default
 			);
 
 
-			$user->sendWelcomeEmail( $password );
+			$this->module->sendWelcomeEmail( $user, $password );
 
 			UI_messages::success(
 				Tr::_( 'User <b>%USERNAME%</b> has been created', ['USERNAME' => $user->getUsername()] )
@@ -166,7 +166,8 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$user = $this->user;
 
-		$user->resetPassword();
+		$this->module->resetPassword( $user );
+		
 		UI_messages::success( Tr::_( 'Password has been re-generated', ['USERNAME' => $user->getUsername()] ) );
 		Http_Headers::reload( [], ['action'] );
 

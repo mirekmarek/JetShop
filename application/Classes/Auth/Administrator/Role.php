@@ -512,8 +512,13 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 		$field->setDefaultValue( $selected_privileges );
 		$field->setSelectOptions( $privileges );
 		
-		$field->setFieldValueCatcher( function( $values) {
+		$field->setFieldValueCatcher( function( $values) use ($available_privileges_list) {
 			$privs = [];
+			
+			foreach($available_privileges_list as $priv=>$priv_data) {
+				$privs[$priv] = [];
+			}
+			
 			foreach($values as $v) {
 				[$priv, $value] = explode('|', $v);
 				
