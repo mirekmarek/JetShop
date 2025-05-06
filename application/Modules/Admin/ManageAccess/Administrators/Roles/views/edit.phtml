@@ -6,8 +6,13 @@
  */
 namespace JetApplicationModule\Admin\ManageAccess\Administrators\Roles;
 
-
-use Jet\UI;
+use Jet\Data_Text;
+use Jet\Form_Field_Select;
+use Jet\Locale;
+use Jet\MVC;
+use Jet\MVC_Page_Interface;
+use Jet\Navigation_MenuSet;use Jet\UI;
+use JetApplication\Application_Admin;
 use JetApplication\Auth_Administrator_User;
 use JetApplication\Auth_Administrator_Role;
 use Jet\Form;
@@ -46,13 +51,75 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 
 	<fieldset>
 		<legend><?= Tr::_( 'Privileges' ); ?></legend>
-		<?php foreach( $available_privileges_list as $privilege ):
-			$fl = $form->field( '/privileges/' . $privilege . '/values' );
-
-			$fl->input()->addCustomCssStyle( 'height:300px' );
-			?>
-			<?= $fl ?>
-		<?php endforeach; ?>
+		<?php
+			/**
+			 * @var Form_Field_Select $fl
+			 */
+			$fl = $form->field( 'privileges' );
+			$fl->input()->addCustomCssStyle( 'height:600px' );
+			
+			//echo $fl->row()->start();
+			//echo $fl->label();
+			//echo $fl->container()->start();
+				
+			$fl->input()->setBaseCssClass( 'form-control' );
+			if( $fl->getLastErrorCode() ) {
+				$fl->input()->addCustomCssClass( 'is-invalid' );
+			}
+					
+			$pages = [];
+			
+				$showPriv = function( MVC_Page_Interface $page ) use ( $fl ) {
+					$privilege = Auth_Administrator_Role::PRIVILEGE_VISIT_PAGE.'|'.$page->getId();
+					$selected = $fl->optionIsSelected($privilege) ? ' selected="selected"' : '';
+					?>
+					<option value="<?=$privilege?>"  <?=$selected?> style="margin-left: 30px;"><?=$page->getTitle()?></option>
+					<?php
+					foreach($page->getContent() as $content):
+						$module = $content->getModuleInstance();
+						if(!$module) {
+							continue;
+						}
+						
+						foreach($module->getModuleManifest()->getACLActions() as $action=>$action_name):
+							$privilege = Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION.'|'.$module->getModuleManifest()->getName().':'.$action;
+							$selected = $fl->optionIsSelected($privilege) ? ' selected="selected"' : '';
+							?>
+							<option value="<?=Data_Text::htmlSpecialChars($privilege)?>" <?=$selected?> style="margin-left: 60px;opacity: 0.8;font-size: 0.8rem"><?=$action_name?></option>
+						<?php
+						endforeach;
+					endforeach;
+					
+				};
+				?>
+				<select <?=$fl->input()->renderTagAttributes()?>>
+					<?php foreach( Navigation_MenuSet::get('admin')->getMenus() as $menu ):
+						?>
+						<optgroup label="<?=$menu->getLabel()?>" style="margin-bottom: 20px;">
+							<?php foreach($menu->getItems( false ) as $item):
+								$page = MVC::getPage( $item->getPageId(), base_id: Application_Admin::getBase()->getId() );
+								
+								$pages[] = $page->getId();
+								
+								$showPriv( $page );
+							endforeach; ?>
+						</optgroup>
+					<?php endforeach; ?>
+					<optgroup label="<?=Tr::_('Other')?>">
+						<?php foreach(Application_Admin::getBase()->getHomepage(Locale::getCurrentLocale())->getChildren() as $page):
+							if(in_array($page->getId(), $pages)) {
+								continue;
+							}
+							
+							$showPriv( $page );
+						endforeach; ?>
+					</optgroup>
+				</select>
+				<?php
+				echo $fl->getLastErrorMessage();
+				//echo $fl->container()->end();
+				//echo $fl->row()->end();
+		 ?>
 	</fieldset>
 
 
@@ -62,7 +129,10 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 			<table class="table table-striped">
 				<thead>
 				<tr>
+					<th><?= Tr::_( 'ID' ); ?></th>
 					<th><?= Tr::_( 'Username' ); ?></th>
+					<th><?= Tr::_( 'Name' ); ?></th>
+					<th></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -72,9 +142,16 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 					 */
 					?>
 					<tr>
-						<td>
-							<?= $user->getUsername(); ?>
+						<td nowrap="">
+							<a href="<?=MVC::getPage('administrators-users')->getURL(GET_params: ['id'=>$user->getId()])?>"><?= $user->getId(); ?></a>
 						</td>
+						<td nowrap="">
+							<a href="<?=MVC::getPage('administrators-users')->getURL(GET_params: ['id'=>$user->getId()])?>"><?= $user->getUsername(); ?></a>
+						</td>
+						<td nowrap="">
+							<a href="<?=MVC::getPage('administrators-users')->getURL(GET_params: ['id'=>$user->getId()])?>"><?= $user->getName(); ?></a>
+						</td>
+						<td style="width: 100%"></td>
 					</tr>
 				<?php endforeach; ?>
 				</tbody>

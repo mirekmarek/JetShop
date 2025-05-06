@@ -11,7 +11,6 @@ use Jet\BaseObject;
 use Jet\IO_Dir;
 use Jet\Locale;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
 use JetApplication\Complaint_DeliveryOfClaimedGoods;
 
 abstract class Core_Complaint_DeliveryOfClaimedGoods extends BaseObject {

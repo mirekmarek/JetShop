@@ -491,24 +491,46 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 
 		$available_privileges_list = static::getAvailablePrivilegesList();
 
+		$privileges = [];
+		$selected_privileges = [];
 		foreach($available_privileges_list as $priv=>$priv_data) {
-
-			$values = isset($this->privileges[$priv]) ? $this->privileges[$priv]->getValues() : [];
-
-			$field = new Form_Field_MultiSelect( '/privileges/'.$priv.'/values', $priv_data->getLabel() );
-			$field->setDefaultValue($values);
-			$field->setSelectOptions( $priv_data->getOptions() );
-
-			$field->setErrorMessages([
-				Form_Field::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-			]);
-
-			$field->setFieldValueCatcher(function( $values) use ($priv) {
-				$this->setPrivilege($priv, $values);
-			});
-
-			$form->addField($field);
+			
+			foreach($priv_data->getOptions() as $option=>$label) {
+				$p = $priv.'|'.$option;
+				$privileges[$p] = (string)$label;
+				
+				if(
+					isset($this->privileges[$priv]) &&
+					in_array( $option, $this->privileges[$priv]->getValues() )
+				) {
+					$selected_privileges[] = $p;
+				}
+			}
 		}
+		
+		$field = new Form_Field_MultiSelect( 'privileges', '' );
+		$field->setDefaultValue( $selected_privileges );
+		$field->setSelectOptions( $privileges );
+		
+		$field->setFieldValueCatcher( function( $values) {
+			$privs = [];
+			foreach($values as $v) {
+				[$priv, $value] = explode('|', $v);
+				
+				if(!isset($privs[$priv])) {
+					$privs[$priv] = [];
+				}
+				
+				$privs[$priv][] = $value;
+			}
+			
+			foreach($privs as $priv=>$values) {
+				$this->setPrivilege($priv, $values);
+			}
+		});
+		
+		$form->addField($field);
+		
 
 		return $form;
 	}
