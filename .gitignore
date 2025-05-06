@@ -19,3 +19,11 @@ _test.php
 cleanup.sh
 /cli_services/
 /check_licence.php
+/files/
+/application/bases/admin/base_data.php
+/application/bases/services/base_data.php
+/application/bases/services/pages/
+/application/bases/exports/base_data.php
+/application/bases/exports/pages/
+/application/bases/eshop/base_data.php
+/application/bases/eshop/pages/
