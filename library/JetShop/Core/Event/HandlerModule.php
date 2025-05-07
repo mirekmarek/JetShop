@@ -99,11 +99,10 @@ abstract class Core_Event_HandlerModule extends Application_Module
 	
 	public function getEventNameReadableTranslated() : string
 	{
-		return Tr::setCurrentDictionaryTemporary(
+		return Tr::_(
+			$this->getEventNameReadable(),
 			dictionary: $this->module_manifest->getName(),
-			action: function() {
-				return $this->getEventNameReadable();
-			}
+			//locale: $this->getEvent()->getLocale()
 		);
 	}
 	

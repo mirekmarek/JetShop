@@ -1069,9 +1069,10 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		foreach( $this->items as $order_item ) {
 			if ( $order_item->isPhysicalProduct() ) {
 				$product = Product_EShopData::get( $order_item->getItemId(), $this->getEshop() );
-				
-				$this->total_volume_of_products += ($product->getBoxesVolume()*$order_item->getNumberOfUnits());
-				$this->total_weight_of_products += ($product->getBoxesWeight()*$order_item->getNumberOfUnits());
+				if($product) {
+					$this->total_volume_of_products += ($product->getBoxesVolume()*$order_item->getNumberOfUnits());
+					$this->total_weight_of_products += ($product->getBoxesWeight()*$order_item->getNumberOfUnits());
+				}
 			}
 			
 			

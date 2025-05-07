@@ -38,5 +38,10 @@ abstract class Core_Admin_Listing_Filter extends DataListing_Filter
 	}
 	
 	abstract public function isActive(): bool;
+	
+	public function tryDirectOpen() : bool
+	{
+		return false;
+	}
 
 }

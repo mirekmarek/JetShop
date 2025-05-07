@@ -17,7 +17,7 @@ use JetApplication\EShopEntity_Status;
 
 abstract class Core_Complaint_Status_Rejected extends Complaint_Status {
 	
-	public const CODE = 'clarification_required';
+	public const CODE = 'rejected';
 	
 	protected static array $flags_map = [
 		'cancelled' => false,

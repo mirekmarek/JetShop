@@ -14,6 +14,7 @@ use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use JetApplication\EMail_Layout;
 use JetApplication\EMail_TemplateText_Attachment;
+use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\EMail_TemplateText;
 
@@ -41,6 +42,9 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 		]
 		
 	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
 	protected int $layout_id = 0;
 	
 	#[DataModel_Definition(
@@ -51,6 +55,9 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Sender - e-mail:'
 	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
 	protected string $sender_email = '';
 	
 	#[DataModel_Definition(
@@ -60,6 +67,9 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Sender - name:'
+	)]
+	#[EShopEntity_Definition(
+		is_description: true
 	)]
 	protected string $sender_name = '';
 	
@@ -72,6 +82,9 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 		type: Form_Field::TYPE_INPUT,
 		label: 'Subject:'
 	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
 	protected string $subject = '';
 	
 	#[DataModel_Definition(
@@ -82,6 +95,9 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 		type: Form_Field::TYPE_WYSIWYG,
 		label: 'Body - HTML:'
 	)]
+	#[EShopEntity_Definition(
+		is_description: true
+	)]
 	protected string $body_html = '';
 	
 	#[DataModel_Definition(
@@ -91,6 +107,9 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 	#[Form_Definition(
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Body - TXT:'
+	)]
+	#[EShopEntity_Definition(
+		is_description: true
 	)]
 	protected string $body_txt = '';
 	
