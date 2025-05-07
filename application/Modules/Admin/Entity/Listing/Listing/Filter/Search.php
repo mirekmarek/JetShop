@@ -87,4 +87,16 @@ class Listing_Filter_Search extends Admin_Listing_Filter
 	{
 		return $this->search!='';
 	}
+	
+	public function tryDirectOpen() : bool
+	{
+		if(
+			$this->search &&
+			is_numeric( $this->search )
+		) {
+			return true;
+		}
+		
+		return false;
+	}
 }

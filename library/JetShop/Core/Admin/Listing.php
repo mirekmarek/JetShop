@@ -9,10 +9,12 @@ namespace JetShop;
 use Jet\DataListing;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Factory_MVC;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Admin_Listing_Filter;
 use JetApplication\Admin_Listing_Handler;
 use JetApplication\Admin_Listing_Schema;
 use JetApplication\Admin_Listing_Schema_Manager;
@@ -275,6 +277,36 @@ abstract class Core_Admin_Listing extends DataListing
 		}
 		
 		return false;
+	}
+	
+	protected function catchFilterForm(): void
+	{
+		$form = $this->getFilterForm();
+		
+		if(
+			$form->catchInput() &&
+			$form->validate()
+		) {
+			foreach( $this->filters as $filter ) {
+				$filter->catchForm( $form );
+			}
+			
+			$this->setPageNo( 1 );
+			
+			foreach($this->filters as $filter) {
+				/**
+				 * @var Admin_Listing_Filter $filter
+				 */
+				if($filter->tryDirectOpen()) {
+					$ids = $this->getIdList();
+					if(count($ids)==1) {
+						Http_Headers::movedTemporary( $this->getURI().'&id='.$ids[0] );
+					}
+				}
+			}
+			
+			Http_Headers::movedTemporary( $this->getURI() );
+		}
 	}
 	
 }
