@@ -282,9 +282,15 @@ abstract class DataModel_Definition_Property extends BaseObject
 
 		$r = new ReflectionObject( $i );
 		$p = $r->getProperty( $this->getName() );
-		$p->setAccessible(true);
-
-		return $p->getValue($i);
+		
+		if(PHP_VERSION_ID >= 80400) {
+			return $p->getRawValue( $i );
+		} else {
+			if(PHP_VERSION_ID<80100) {
+				$p->setAccessible(true);
+			}
+			return $p->getValue( $i );
+		}
 	}
 
 	/**
@@ -314,13 +320,14 @@ abstract class DataModel_Definition_Property extends BaseObject
 
 		return $this->backend_options[$backend_type];
 	}
-
+	
 	/**
-	 * @param mixed &$property
-	 * @param mixed $data
-	 *
+	 * @param object $obj
+	 * @param string $property_name
+	 * @param array $data
+	 * @return void
 	 */
-	public function loadPropertyValue( mixed &$property, array $data ): void
+	public function loadPropertyValue( object $obj, string $property_name, array $data ): void
 	{
 		if( !array_key_exists( $this->getName(), $data ) ) {
 			return;
@@ -330,7 +337,19 @@ abstract class DataModel_Definition_Property extends BaseObject
 		
 		$this->checkValueType( $value );
 		
-		$property = $value;
+		$r = new ReflectionObject( $obj );
+		$p = $r->getProperty( $property_name );
+
+		if(PHP_VERSION_ID >= 80400) {
+			$p->setRawValue( $obj, $value );
+		} else {
+			if(PHP_VERSION_ID<80100) {
+				$p->setAccessible(true);
+				$p->setValue( $obj, $value );
+			} else {
+				$p->setValue( $obj, $value );
+			}
+		}
 	}
 
 	/**
@@ -348,7 +367,7 @@ abstract class DataModel_Definition_Property extends BaseObject
 	 *
 	 * @return mixed
 	 */
-	public function getJsonSerializeValue( mixed &$property ): mixed
+	public function getJsonSerializeValue( mixed $property ): mixed
 	{
 		return $property;
 	}

@@ -56,6 +56,13 @@ class Application_EShop
 			SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
 		}
 		
+		if($router->tryDirectFiles([
+			'robots.txt',
+			'security.txt'
+		])) {
+			return;
+		}
+		
 
 		Marketing_ConversionSourceDetector::performDetection();
 		EShop_Managers::Analytics()?->catchConversionSourceInfo();

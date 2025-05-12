@@ -481,4 +481,5 @@ return [
 	'Conditions' => '',
 	'Blocks' => '',
 	'Block properties:' => '',
+	'Video URLs:' => '',
 ];
