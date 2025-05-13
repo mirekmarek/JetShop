@@ -15,6 +15,7 @@ use JetApplication\Admin_Listing_Column;
 use JetApplication\Admin_Listing_Export;
 use JetApplication\Admin_Listing_Filter;
 use JetApplication\Admin_Listing_Handler;
+use JetApplication\Admin_Listing_Operation;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
@@ -149,6 +150,14 @@ class Main extends Admin_Managers_EShopEntity_Listing
 		$this->listing->addHandler( $handler );
 	}
 	
+	
+	public function addOperation( Admin_Listing_Operation $operation ): void
+	{
+		$this->listing->setSelectItemsEnabled( true );
+		$this->listing->addOperation( $operation );
+	}
+	
+	
 	public function getCreateBtnRenderer(): ?callable
 	{
 		return $this->create_btn_renderer;
@@ -220,7 +229,5 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	{
 		$this->listing->setSelectItemsEnabled( $select_items_enabled );
 	}
-	
-	
 	
 }

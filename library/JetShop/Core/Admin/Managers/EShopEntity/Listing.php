@@ -15,6 +15,7 @@ use JetApplication\Admin_Listing_Column;
 use JetApplication\Admin_Listing_Export;
 use JetApplication\Admin_Listing_Filter;
 use JetApplication\Admin_Listing_Handler;
+use JetApplication\Admin_Listing_Operation;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Manager_MetaInfo;
@@ -64,6 +65,8 @@ abstract class Core_Admin_Managers_EShopEntity_Listing extends Application_Modul
 	abstract public function addExport( Admin_Listing_Export $export ) : void;
 	
 	abstract public function addHandler( Admin_Listing_Handler $handler ) : void;
+	
+	abstract public function addOperation( Admin_Listing_Operation $operation ) : void;
 	
 	abstract public function setDefaultColumnsSchema( array $schema ) : void;
 	

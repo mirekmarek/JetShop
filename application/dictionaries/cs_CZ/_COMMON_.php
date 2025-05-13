@@ -482,4 +482,8 @@ return [
 	'Blocks' => '',
 	'Block properties:' => '',
 	'Video URLs:' => '',
+	'Perform operation' => '',
+	'All filtered items' => '',
+	'Manually selected items' => '',
+	'What to affect:' => '',
 ];

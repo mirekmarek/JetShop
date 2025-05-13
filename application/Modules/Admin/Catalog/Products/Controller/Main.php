@@ -228,14 +228,12 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$this->listing_manager->addFilter( new Listing_Filter_Marketplace() );
 		}
 		
+		$this->listing_manager->addOperation( new Listing_Operation_Activate() );
+		$this->listing_manager->addOperation( new Listing_Operation_Deactivate() );
 		
 		$this->listing_manager->setCreateBtnRenderer( function() : string {
 			return $this->view->render('create_buttons');
 		} );
-		
-		$this->listing_manager->setSelectItemsEnabled( true );
-		
-		
 	}
 	
 	public function edit_main_Action(): void

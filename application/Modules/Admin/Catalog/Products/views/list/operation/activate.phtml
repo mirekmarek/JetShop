@@ -1,0 +1,44 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Catalog\Products;
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Operation_Activate $operation
+ */
+$operation = $this->getRaw('operation');
+
+$form = $operation->getForm();
+
+echo $form->start();
+
+echo $form->field('selected_ids');
+echo $form->field('affect');
+
+echo $form->field('master');
+
+if(EShops::isMultiEShopMode()):
+	foreach( EShops::getList() as $eshop ):
+		echo $form->field( $eshop->getKey() );
+	endforeach;
+endif;
+
+?>
+<div class="row">
+	<div class="col-md-4"></div>
+	<div class="col-md-4">
+		<?=UI::button(Tr::_('Activate'))->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY);?>
+	</div>
+</div>
+<?php
+echo $form->end();

@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use Jet\UI_dialog;
 
 /**
  * @var MVC_View $this
@@ -34,7 +35,34 @@ foreach($listing->getFilters() as $filter){
 	}
 }
 
+$grid->footer()->setPrepend(
+	$this->render('list/buttons/footer')
+);
+
 ?>
+<style>
+	.list_operation_menu_item {
+		cursor: pointer;
+		border: 1px solid #c9c9c9;
+		padding: 10px;
+		margin: 10px;
+		border-radius: 3px;
+	}
+
+	.list_operation_menu_item.selected {
+		background-color: #eaeaea;
+		font-weight: bolder;
+	}
+	
+	.list_operation_form_area {
+		display: none;
+	}
+	
+	.list_operation_form_area.selected {
+		display: block;
+	}
+</style>
+
 <script>
 	const Filter = {
 		filter_visible: <?=json_encode($filter_is_active)?>,
@@ -90,10 +118,46 @@ foreach($listing->getFilters() as $filter){
 			let ids = [];
 			
 			for (let i = 0; i < chb.length; i++) {
-				ids.push( chb[i]['dataset']['id'] );
+				if(chb[i].checked) {
+					ids.push( chb[i]['dataset']['id'] );
+				}
 			}
 			
 			return ids;
+		}
+	};
+	
+	const ListOperation = {
+		showDialog: () => {
+			$('#perform_operation_dialog').modal('show');
+
+			ListOperation.actualizeSelectedIds();
+		},
+		select: ( key ) => {
+			const selected_items = document.getElementById('list_operation_menu').querySelector('.selected');
+			if(selected_items) {
+				selected_items.classList.remove('selected');
+			}
+
+			const selected_forms = document.getElementById('list_operation_forms').querySelector('.selected');
+			if(selected_forms) {
+				selected_forms.classList.remove('selected');
+			}
+			
+			
+			document.getElementById('list_operation_menu_item_'+key).classList.add('selected');
+			document.getElementById('list_operation_form_area_'+key).classList.add('selected');
+			
+			ListOperation.actualizeSelectedIds();
+		},
+		
+		actualizeSelectedIds: ()=> {
+			const selected_ids = document.getElementById('list_operation_forms').querySelectorAll('.selected_ids');
+
+			const ids = List.getSelectedIds().join(',');
+			
+			selected_ids.forEach( input => input.value = ids );
+
 		}
 	};
 </script>
@@ -151,3 +215,5 @@ foreach($listing->getFilters() as $filter){
 <?php foreach($listing->getHandlers() as $handler):
 	echo $handler->renderDialog();
 endforeach;
+
+echo $this->render('list/operations/dialog');

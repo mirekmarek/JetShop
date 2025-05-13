@@ -1,0 +1,67 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\Tr;
+use Jet\UI;
+use Jet\MVC_View;
+use Jet\UI_button;
+use JetApplication\Admin_Managers;
+
+/**
+ * @var MVC_View $this
+ * @var Listing  $listing
+ */
+
+$listing = $this->getRaw( 'listing' );
+$entity_manager = $listing->getEntityManager();
+$grid = $listing->getGrid();
+
+$listing_manager = Admin_Managers::EntityListing();
+
+$add_uri_creator = $listing_manager->getCreateUriCreator();
+
+$add_uri = $add_uri_creator();
+
+$buttons = [];
+
+if($listing->getSelectItemsEnabled()):
+	$select_all = UI::button( Tr::_( 'Select all' ) );
+	$select_all->setClass( UI_Button::CLASS_INFO );
+	$select_all->setOnClick( "List.selectAll()" );
+	
+	$unselect_all = UI::button( Tr::_( 'Unselect all' ) );
+	$unselect_all->setClass( UI_Button::CLASS_SECONDARY );
+	$unselect_all->setOnClick( "List.unselectAll()" );
+	
+	$buttons[] = $select_all;
+	$buttons[] = $unselect_all;
+endif;
+
+if(count($listing->getOperations())):
+	$perform_operation = UI::button( Tr::_( 'Perform operation' ) );
+	$perform_operation->setClass( UI_Button::CLASS_PRIMARY );
+	$perform_operation->setOnClick( "ListOperation.showDialog();" );
+
+	$buttons[] = $perform_operation;
+endif;
+
+
+if(!$buttons):
+	return;
+endif;
+?>
+
+<tr>
+	<td colspan="<?=count($listing->getColumns())?>">
+		<div class="toolbar">
+			<?php foreach($buttons as $button):
+				echo $button;
+			endforeach; ?>
+		</div>
+	</td>
+</tr>

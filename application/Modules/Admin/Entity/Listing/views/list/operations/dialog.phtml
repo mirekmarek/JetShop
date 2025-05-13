@@ -1,0 +1,59 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_dialog;
+
+/**
+ * @var MVC_View $this
+ * @var Listing  $listing
+ */
+
+$listing = $this->getRaw( 'listing' );
+$entity_manager = $listing->getEntityManager();
+
+
+$operation_dialog = UI::dialog(
+	id: 'perform_operation_dialog',
+	title: Tr::_('Perform operation', dictionary: Tr::COMMON_DICTIONARY),
+	size: UI_dialog::SIZE_EXTRA_LARGE
+);
+?>
+
+<?=$operation_dialog->start();?>
+
+	<div style="display: grid;grid-template-columns: 1fr 3fr;gap: 10px;">
+		<div id="list_operation_menu">
+			<?php foreach($listing->getOperations() as $operation):
+				if(!$operation->canBeHandled()) continue;
+				?>
+			<div
+				id="list_operation_menu_item_<?=$operation->getKey()?>"
+				class="list_operation_menu_item"
+				onclick="ListOperation.select('<?=$operation->getKey()?>');"
+			><?=$operation->getTitle()?></div>
+			<?php endforeach; ?>
+		</div>
+		<div id="list_operation_forms">
+			<?php foreach($listing->getOperations() as $operation):
+				if(!$operation->canBeHandled()) continue;
+				?>
+				<div
+					class="list_operation_form_area"
+					id="list_operation_form_area_<?=$operation->getKey()?>"
+				>
+					<?=$operation->renderForm()?>
+				</div>
+			<?php endforeach; ?>
+			
+		</div>
+	</div>
+<?=$operation_dialog->end()?>

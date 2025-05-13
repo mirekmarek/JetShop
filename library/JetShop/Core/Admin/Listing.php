@@ -7,6 +7,7 @@
 namespace JetShop;
 
 use Jet\DataListing;
+use Jet\DataListing_Operation;
 use Jet\DataModel_Fetch_Instances;
 use Jet\Factory_MVC;
 use Jet\Http_Headers;
@@ -16,6 +17,7 @@ use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Listing_Column;
 use JetApplication\Admin_Listing_Filter;
 use JetApplication\Admin_Listing_Handler;
+use JetApplication\Admin_Listing_Operation;
 use JetApplication\Admin_Listing_Schema;
 use JetApplication\Admin_Listing_Schema_Manager;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
@@ -212,12 +214,38 @@ abstract class Core_Admin_Listing extends DataListing
 		}
 	}
 	
+	public function handleOperations() : void
+	{
+		foreach( $this->operations as $operation ) {
+			if($operation->canBeHandled()) {
+				$operation->perform();
+			}
+		}
+	}
+	
+	
+	public function addOperation( DataListing_Operation|Admin_Listing_Operation $operation ) : void
+	{
+		$operation->setListing( $this );
+		$this->operations[ $operation->getKey() ] = $operation;
+	}
+	
+	/**
+	 * @return Admin_Listing_Operation[]
+	 */
+	public function getOperations() : array
+	{
+		return $this->operations;
+	}
+	
+	
 	public function handle(): void
 	{
 		if(!$this->handled) {
 			$this->schema_manager->handle();
 			parent::handle();
 			$this->handleExports();
+			$this->handleOperations();
 			$this->handleHandlers();
 			
 			$this->handled = true;

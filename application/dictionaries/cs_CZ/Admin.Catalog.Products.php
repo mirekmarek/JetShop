@@ -269,4 +269,10 @@ return [
 	'Creation In Progress' => '',
 	'Archived' => '',
 	'Creation in progress' => '',
+	'Parform operation' => '',
+	'All filtered' => '',
+	'Selected' => '',
+	'What to affect:' => '',
+	'All filtered items' => '',
+	'Manually selected items' => '',
 ];
