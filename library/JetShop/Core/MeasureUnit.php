@@ -124,6 +124,33 @@ abstract class Core_MeasureUnit implements Form_Definition_Interface
 		return $this->decimal_places;
 	}
 	
+	public function setCode( string $code ): void
+	{
+		$this->code = $code;
+	}
+	
+	public function setName( array $name ): void
+	{
+		$this->name = $name;
+	}
+	
+	public function setIsDecimalNumber( bool $is_decimal_number ): void
+	{
+		$this->is_decimal_number = $is_decimal_number;
+	}
+	
+	public function setNumberStep( float $number_step ): void
+	{
+		$this->number_step = $number_step;
+	}
+	
+	public function setDecimalPlaces( int $decimal_places ): void
+	{
+		$this->decimal_places = $decimal_places;
+	}
+	
+	
+	
 	public function round( float|int $number_of_units ) : float|int
 	{
 		if($this->is_decimal_number) {

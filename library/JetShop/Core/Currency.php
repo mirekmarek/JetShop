@@ -32,6 +32,9 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Currency symbol - before: ',
+		default_value_getter_name: 'getSymbolLeft_WithVAT',
+		setter_name: 'setSymbolLeft_WithVAT',
+		
 	)]
 	protected string $symbol_left_with_VAT = '';
 	
@@ -39,6 +42,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Currency symbol - before: ',
+		default_value_getter_name: 'getSymbolLeft_WithoutVAT',
+		setter_name: 'setSymbolLeft_WithoutVAT',
 	)]
 	protected string $symbol_left_without_VAT = '';
 	
@@ -46,6 +51,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Currency symbol - before: ',
+		default_value_getter_name: 'getSymbolLeft_VAT',
+		setter_name: 'setSymbolLeft_VAT',
 	)]
 	protected string $symbol_left_VAT = '';
 
@@ -53,6 +60,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Currency symbol - after: ',
+		default_value_getter_name: 'getSymbolRight_WithVAT',
+		setter_name: 'getSymbolRight_WithVAT',
 	)]
 	protected string $symbol_right_with_VAT = '';
 	
@@ -60,6 +69,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Currency symbol - after: ',
+		default_value_getter_name: 'getSymbolRight_WithoutVAT',
+		setter_name: 'getSymbolRight_WithoutVAT',
 	)]
 	protected string $symbol_right_without_VAT = '';
 	
@@ -67,6 +78,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Currency symbol - after: ',
+		default_value_getter_name: 'getSymbolRight_VAT',
+		setter_name: 'getSymbolRight_VAT',
 	)]
 	protected string $symbol_right_VAT = '';
 	
@@ -89,6 +102,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INT,
 		is_required: true,
 		label: 'Decimal places:',
+		default_value_getter_name: 'getDecimalPlaces_WithVAT',
+		setter_name: 'setDecimalPlaces_WithVAT',
 	)]
 	protected int $decimal_places_with_VAT = 0;
 	
@@ -96,6 +111,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INT,
 		is_required: true,
 		label: 'Decimal places: ',
+		default_value_getter_name: 'getDecimalPlaces_WithoutVAT',
+		setter_name: 'setDecimalPlaces_WithoutVAT',
 	)]
 	protected int $decimal_places_without_VAT = 0;
 	
@@ -103,6 +120,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INT,
 		is_required: true,
 		label: 'Decimal places: ',
+		default_value_getter_name: 'getDecimalPlaces_VAT',
+		setter_name: 'setDecimalPlaces_VAT',
 	)]
 	protected int $decimal_places_VAT = 0;
 	
@@ -110,6 +129,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INT,
 		is_required: true,
 		label: 'Round precision: ',
+		default_value_getter_name: 'getRoundPrecision_WithoutVAT',
+		setter_name: 'setRoundPrecision_WithoutVAT',
 	)]
 	protected int $round_precision_without_VAT = 0;
 	
@@ -117,6 +138,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INT,
 		is_required: true,
 		label: 'Round precision: ',
+		default_value_getter_name: 'getRoundPrecision_VAT',
+		setter_name: 'setRoundPrecision_VAT',
 	)]
 	protected int $round_precision_VAT = 0;
 	
@@ -124,6 +147,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INT,
 		is_required: true,
 		label: 'Round precision: ',
+		default_value_getter_name: 'getRoundPrecision_WithVAT',
+		setter_name: 'setRoundPrecision_WithVAT',
 	)]
 	protected int $round_precision_with_VAT = 0;
 	
@@ -373,6 +398,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 	{
 		return $this->exchange_rates[$to_currency->getCode()]?? 0;
 	}
+	
+	
 	
 	public function setExchangeRate( Currency $to_currency, float $exchange_rate ): void
 	{

@@ -453,6 +453,18 @@ abstract class Core_Supplier extends EShopEntity_Common implements
 		return Managers::findManagers(Supplier_Backend_Module::class, 'SupplierBackend.');
 	}
 	
+	public function setBackendModuleName( string $backend_module_name ): void
+	{
+		$this->backend_module_name = $backend_module_name;
+	}
+	
+	public function getBackendModuleName(): string
+	{
+		return $this->backend_module_name;
+	}
+	
+	
+	
 	public static function getBackendModulesScope() : array
 	{
 		$scope = [];

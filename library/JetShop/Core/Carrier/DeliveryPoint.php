@@ -100,8 +100,8 @@ class Core_Carrier_DeliveryPoint extends EShopEntity_Basic implements Form_Defin
 	#[Form_Definition(
 		type: Form_Field::TYPE_CHECKBOX,
 		label: 'Is active',
-		error_messages: [
-		]
+		default_value_getter_name: 'isActive',
+		setter_name: 'setIsActive',
 	)]
 	protected bool $is_active = true;
 

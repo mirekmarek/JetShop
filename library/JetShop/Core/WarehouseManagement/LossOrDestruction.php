@@ -188,6 +188,13 @@ abstract class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Ba
 		return $this->product_id;
 	}
 	
+	public function setProductId( int $product_id ): void
+	{
+		$this->setProduct( $product_id );
+	}
+	
+	
+	
 	public function setProduct( int $product_id ) : void
 	{
 		$product = Product::get( $product_id );
