@@ -181,6 +181,11 @@ class Auth_Administrator_Role extends DataModel implements Auth_Role_Interface
 	{
 		return $this->id;
 	}
+	
+	public function setId( string $id ): void
+	{
+		$this->id = $id;
+	}
 
 
 	/**

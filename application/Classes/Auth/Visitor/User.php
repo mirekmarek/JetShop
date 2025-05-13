@@ -574,42 +574,32 @@ class Auth_Visitor_User extends DataModel implements Auth_User_Interface
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isBlocked(): bool
 	{
 		return $this->user_is_blocked;
 	}
 
-	/**
-	 * @return null|Data_DateTime
-	 */
 	public function isBlockedTill(): null|Data_DateTime
 	{
 		return $this->user_is_blocked_till;
 	}
-
-	/**
-	 * @param string|Data_DateTime|null $till
-	 */
+	
+	public function setUserIsBlocked( bool $user_is_blocked ): void
+	{
+		$this->user_is_blocked = $user_is_blocked;
+	}
+	
+	public function setUserIsBlockedTill( string|Data_DateTime|null $till = null ): void
+	{
+		$this->user_is_blocked_till = Data_DateTime::catchDateTime( $till );
+	}
+	
 	public function block( string|Data_DateTime|null $till = null ): void
 	{
-		$this->user_is_blocked = true;
-		if( !$till ) {
-			$this->user_is_blocked_till = null;
-		} else {
-			if( $till instanceof Data_DateTime ) {
-				$this->user_is_blocked_till = $till;
-			} else {
-				$this->user_is_blocked_till = new Data_DateTime( $till );
-			}
-		}
+		$this->setUserIsBlocked( true );
+		$this->setUserIsBlockedTill( $till );
 	}
 
-	/**
-	 *
-	 */
 	public function unBlock(): void
 	{
 		$this->user_is_blocked = false;
@@ -623,6 +613,13 @@ class Auth_Visitor_User extends DataModel implements Auth_User_Interface
 	{
 		return $this->user_is_activated;
 	}
+
+	public function setUserIsActivated( bool $user_is_activated ): void
+	{
+		$this->user_is_activated = $user_is_activated;
+	}
+	
+	
 
 	/**
 	 * @param string|null $user_activation_key (optional)
