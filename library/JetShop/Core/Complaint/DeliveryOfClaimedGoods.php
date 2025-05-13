@@ -28,7 +28,7 @@ abstract class Core_Complaint_DeliveryOfClaimedGoods extends BaseObject {
 		return static::CODE;
 	}
 	
-	public function getTitle( Locale $locale=null ): string
+	public function getTitle( ?Locale $locale=null ): string
 	{
 		$locale = $locale??Locale::getCurrentLocale();
 		return Tr::_( $this->title, dictionary: Tr::COMMON_DICTIONARY, locale: $locale );

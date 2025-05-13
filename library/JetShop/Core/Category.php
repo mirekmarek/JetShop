@@ -607,7 +607,7 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 		return $this->product_ids;
 	}
 	
-	public static function actualizeProductAssoc( int $category_id=null, int $product_id=null ) : void
+	public static function actualizeProductAssoc( ?int $category_id=null, ?int $product_id=null ) : void
 	{
 		if($product_id) {
 			$category_ids = Category_Product::dataFetchCol(

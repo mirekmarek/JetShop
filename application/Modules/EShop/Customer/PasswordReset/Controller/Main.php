@@ -126,7 +126,7 @@ class Controller_Main extends MVC_Controller_Default
 		$this->output('invalid-token');
 	}
 	
-	public function validate_code_and_reset_Action( string $URL = null ) : void
+	public function validate_code_and_reset_Action( ?string $URL = null ) : void
 	{
 		if(!$URL) {
 			$URL = Http_Request::currentURL();

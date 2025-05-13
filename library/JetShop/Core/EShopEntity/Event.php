@@ -424,7 +424,7 @@ abstract class Core_EShopEntity_Event extends EShopEntity_Basic implements EShop
 		}
 	}
 	
-	public static function initByData( array $this_data, array $related_data = [], DataModel_PropertyFilter $load_filter = null) : static
+	public static function initByData( array $this_data, array $related_data = [], ?DataModel_PropertyFilter $load_filter = null) : static
 	{
 		$ref = new ReflectionClass(static::class);
 		if(!$ref->isAbstract()) {

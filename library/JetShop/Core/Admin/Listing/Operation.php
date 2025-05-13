@@ -10,7 +10,6 @@ use Jet\Autoloader;
 use Jet\DataListing_Operation;
 use Jet\Factory_MVC;
 use Jet\Form;
-use Jet\Form_Field_Hidden;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_RadioButton;
 use Jet\MVC_View;
