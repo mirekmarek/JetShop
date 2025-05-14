@@ -14,6 +14,7 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_RadioButton;
 use Jet\MVC_View;
 use Jet\Tr;
+use JetApplication\Admin_Listing;
 
 abstract class Core_Admin_Listing_Operation extends DataListing_Operation
 {
@@ -24,6 +25,8 @@ abstract class Core_Admin_Listing_Operation extends DataListing_Operation
 	protected string $title;
 	protected ?MVC_View $view = null;
 	protected ?Form $form = null;
+	
+	protected int $item_count_limit = 100;
 	
 	public function getKey(): string
 	{
@@ -52,12 +55,23 @@ abstract class Core_Admin_Listing_Operation extends DataListing_Operation
 		$form = new Form( 'list_operation_form_'.$this->getKey(), [] );
 		
 		$affect = new Form_Field_RadioButton('affect',  Tr::_( 'What to affect:', dictionary: Tr::COMMON_DICTIONARY));
-		$affect->setSelectOptions(
-			[
-				static::AFFECT_ALL_FILTERED => Tr::_( 'All filtered items', dictionary: Tr::COMMON_DICTIONARY ),
-				static::AFFECT_SELECTED     => Tr::_( 'Manually selected items', dictionary: Tr::COMMON_DICTIONARY ),
-			]
-		);
+		
+		/**
+		 * @var Admin_Listing $listing
+		 */
+		$listing = $this->listing;
+		
+		if(
+			$listing->filterIsActive() &&
+			$listing->getGrid()->getPaginator()->getDataItemsCount()<=$this->item_count_limit
+		) {
+			$options[static::AFFECT_ALL_FILTERED] = Tr::_( 'All filtered items', dictionary: Tr::COMMON_DICTIONARY );
+		}
+		
+		$options[static::AFFECT_SELECTED] = Tr::_( 'Manually selected items', dictionary: Tr::COMMON_DICTIONARY );
+
+		
+		$affect->setSelectOptions( $options );
 		$affect->setDefaultValue( static::AFFECT_SELECTED );
 		$affect->setDoNotTranslateLabel( true );
 		
