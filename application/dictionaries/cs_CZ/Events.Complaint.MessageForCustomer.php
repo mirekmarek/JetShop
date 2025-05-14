@@ -6,7 +6,7 @@ return [
 	'Complaint - message' => 'Reklamace - zpráva',
 	'Complaint number' => 'Číslo reklamace',
 	'Date and time of complaint' => 'Datum a čas reklamace',
-	'Complaint URL' => 'Adresa URL stížnosti',
+	'Complaint URL' => 'Adresa URL reklamace',
 	'Message text' => 'Text zprávy',
-	'Message for customer' => '',
+	'Message for customer' => 'Zpráva pro zákazníka',
 ];

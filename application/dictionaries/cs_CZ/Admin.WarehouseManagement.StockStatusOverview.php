@@ -15,7 +15,7 @@ return [
 	'Cancellation in progress' => 'Probíhá zrušení',
 	'Canceled' => 'Zrušeno',
 	' - all -' => ' - Všechno -',
-	'Shop' => 'Prodejna',
+	'Shop' => 'e-shop',
 	'Date and time of creation' => 'Datum a čas vytvoření',
 	'Day of dispatch' => 'Den odeslání',
 	'Number' => 'Číslo',

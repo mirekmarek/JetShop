@@ -10,5 +10,5 @@ return [
 	'Download image' => 'Stáhnout obrázek',
 	'Delete image' => 'Smazat obrázek',
 	'Please select file' => 'Vyberte soubor',
-	'Images' => 'snímky',
+	'Images' => 'Obrázky',
 ];

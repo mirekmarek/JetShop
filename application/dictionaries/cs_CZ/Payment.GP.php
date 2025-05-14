@@ -11,6 +11,6 @@ return [
 	'Key ppassword: ' => 'Klíčové heslo: ',
 	'Merchant number: ' => 'Číslo obchodníka: ',
 	'Configuration has been saved' => 'Konfigurace byla uložena',
-	'GP Web Pay - check payments' => 'GP Web Pay – šekové platby',
+	'GP Web Pay - check payments' => 'GP Web Pay - šekové platby',
 	'Verify that all payments have been processed.' => 'Ověřte, že byly zpracovány všechny platby.',
 ];

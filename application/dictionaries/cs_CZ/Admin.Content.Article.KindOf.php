@@ -26,4 +26,9 @@ return [
 	'Kind of article <b>%ITEM_NAME%</b> has been created' => 'Byl vytvořen druh článku <b>%ITEM_NAME%.</b>',
 	'Activate' => 'Aktivovat',
 	'Deactivate' => 'Deaktivovat',
+	'View kind of article' => 'Zobrazit typ článku',
+	'Add new kind of article' => 'Přidat nový druh článku',
+	'Update kind of article' => 'Aktualizovat typ článku',
+	'Delete kind of article' => 'Smazat typ článku',
+	'Admin.Content.Article.KindOf' => 'Admin.Content.Article.KindOf',
 ];

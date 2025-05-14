@@ -75,7 +75,7 @@ return [
 	'Background color:' => 'Barva pozadí:',
 	'Text:' => 'Text:',
 	'Layout:' => 'Rozložení:',
-	'Images' => 'snímky',
+	'Images' => 'Obrázky',
 	'File is too large' => 'Soubor je příliš velký',
 	'Please upload image' => 'Nahrajte prosím obrázek',
 	'Select and upload images' => 'Vyberte a nahrajte obrázky',

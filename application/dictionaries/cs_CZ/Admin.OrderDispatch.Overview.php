@@ -3,7 +3,7 @@ return [
 	'Order dispatch overview' => 'Přehled expedice objednávky',
 	'- all -' => '- Všechno -',
 	' - all -' => ' - Všechno -',
-	'Shop' => 'Prodejna',
+	'Shop' => 'e-shop',
 	'Number' => 'Číslo',
 	'Order' => 'Objednávka',
 	'Product' => 'Produkt',
@@ -43,5 +43,5 @@ return [
 	'Complaint' => 'Stížnost',
 	'Warehouse' => 'Sklad',
 	'e-shop' => 'internetový obchod',
-	'Status:' => 'Postavení:',
+	'Status:' => 'Status:',
 ];

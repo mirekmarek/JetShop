@@ -38,4 +38,9 @@ return [
 	'Please select file' => 'Vyberte soubor',
 	'Please upload image' => 'Nahrajte prosím obrázek',
 	'Select and upload images' => 'Vyberte a nahrajte obrázky',
+	'View authors' => 'Zobrazit autory',
+	'Add new author' => 'Přidat nového autora',
+	'Update author' => 'Aktualizovat autora',
+	'Delete author' => 'Smazat autora',
+	'Admin.Content.Article.Authors' => 'Administrativní.Obsah.Autoři.Článku',
 ];

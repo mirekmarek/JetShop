@@ -26,6 +26,5 @@ return [
 	'Stamp and Signature' => 'Razítko a podpis',
 	'Bank - name:' => 'Název banky:',
 	'Bank - account number:' => 'Banka - číslo účtu:',
-	'Invoice in advance PDF template:' => 'PDF šablona faktury předem:',
 	'Delivery note PDF template:' => 'PDF šablona dodacího listu:',
 ];

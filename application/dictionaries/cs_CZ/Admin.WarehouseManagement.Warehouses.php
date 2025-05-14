@@ -42,4 +42,5 @@ return [
 	'Delete' => 'Vymazat',
 	'Do you really want to delete this Warehouse?' => 'Opravdu chcete smazat tento sklad?',
 	'Warehouse <b>%ITEM_NAME%</b> has been deleted' => 'Sklad <b>%ITEM_NAME%</b> byl smazán',
+	'Warehouse management - Warehouse <b>%ITEM_NAME%</b> has been updated' => 'Správa skladu – Sklad <b>%ITEM_NAME%</b> byl aktualizován',
 ];

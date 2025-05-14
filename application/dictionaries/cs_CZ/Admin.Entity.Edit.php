@@ -1,5 +1,6 @@
 <?php
 return [
+	'Entity edit services' => 'Služby úprav entit',
 	'Unknown item %ID%' => 'Neznámá položka %ID%',
 	'- all -' => '- Všechno -',
 	'Not active' => 'Neaktivní',
@@ -8,7 +9,6 @@ return [
 	'XLSX' => 'XLSX',
 	'Please enter a value' => 'Zadejte hodnotu',
 	'Inactive' => 'Neaktivní',
-	'Entity edit services' => 'Služby úprav entit',
 	'Unknown locale: from' => 'Neznámá lokalita: od',
 	'Error during translation: %ERROR%' => 'Chyba při překladu: %ERROR%',
 ];

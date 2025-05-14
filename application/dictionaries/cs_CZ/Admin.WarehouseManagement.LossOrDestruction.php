@@ -46,6 +46,4 @@ return [
 	'CSV' => 'CSV',
 	'XLSX' => 'XLSX',
 	'ID' => 'ID',
-	'Status:' => '',
-	'Warehouse management - Loss or destruction <b>%ITEM_NAME%</b> has been updated' => '',
 ];

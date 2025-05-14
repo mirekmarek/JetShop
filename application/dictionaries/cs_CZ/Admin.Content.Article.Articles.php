@@ -1,6 +1,6 @@
 <?php
 return [
-	'Articles' => 'články',
+	'Articles' => 'Články',
 	'- all -' => '- Všechno -',
 	'Not active' => 'Neaktivní',
 	'Active' => 'Aktivní',
@@ -52,4 +52,9 @@ return [
 	'Kind of article' => 'Druh článku',
 	'Content - Article <b>%ITEM_NAME%</b> has been updated' => 'Obsah – článek <b>%ITEM_NAME%</b> byl aktualizován',
 	'Description' => 'Popis',
+	'View articles' => 'Zobrazit články',
+	'Add new article' => 'Přidat nový článek',
+	'Update article' => 'Aktualizovat článek',
+	'Delete article' => 'Smazat článek',
+	'Admin.Content.Article.Articles' => 'Administrativní.Obsah.Článek.Články',
 ];

@@ -44,7 +44,7 @@ return [
 	'Units to order' => 'Jednotky na objednávku',
 	'Done' => 'Hotovo',
 	'Date:' => 'Datum:',
-	'Order:' => 'Objednat:',
+	'Order:' => 'Objednávka:',
 	'Positioning' => 'Polohování',
 	'Sector' => 'Sektor',
 	'Rack' => 'Regál',

@@ -31,7 +31,7 @@ return [
 	'Delete product_review' => 'Smazat product_review',
 	'Admin.Catalog.ProductReviews' => 'Admin.Catalog.ProductReviews',
 	'ID' => 'ID',
-	'Shop' => 'Prodejna',
+	'Shop' => 'e-shop',
 	'Product' => 'Produkt',
 	'Created' => 'Vytvořeno',
 	'Author - name' => 'Autor - jméno',
@@ -46,5 +46,8 @@ return [
 	'no' => 'Ne',
 	'Delete' => 'Vymazat',
 	'Do you really want to delete this Product review?' => 'Opravdu chcete smazat tuto recenzi produktu?',
-	'Status:' => '',
+	'Get product review data' => 'Získejte data o recenzích produktů',
+	'Add new product review' => 'Přidat novou recenzi produktu',
+	'Update product review' => 'Aktualizovat recenzi produktu',
+	'Delete product review' => 'Smazat recenzi produktu',
 ];

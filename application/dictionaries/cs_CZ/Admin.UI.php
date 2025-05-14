@@ -28,6 +28,7 @@ return [
 	'Orders and Customers' => 'Objednávky a zákazníci',
 	'Your signature' => 'Váš podpis',
 	'Goods operations' => 'Operace se zbožím',
+	'TODO' => 'Úkoly',
 	'Edit homepage menu' => 'Upravit nabídku domovské stránky',
 	'Edit' => 'Upravit',
 ];

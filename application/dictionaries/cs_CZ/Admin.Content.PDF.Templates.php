@@ -29,4 +29,13 @@ return [
 	'Footer:' => 'Zápatí:',
 	'Header' => 'Záhlaví',
 	'Footer' => 'Zápatí',
+	'Get PDF template data' => 'Získání dat šablony PDF',
+	'Add new PDF template' => 'Přidat novou šablonu PDF',
+	'Update PDF template' => 'Aktualizovat šablonu PDF',
+	'Delete PDF template' => 'Smazat šablonu PDF',
+	'Admin.Content.PDF.Templates' => 'Šablony.Admin.Content.PDF',
+	'E-mail template <b>%ITEM_NAME%</b> has been updated' => 'Šablona e-mailu <b>%ITEM_NAME%</b> byla aktualizována',
+	'Delete' => 'Vymazat',
+	'Do you really want to delete this E-mail template?' => 'Opravdu chcete smazat tuto šablonu e-mailu?',
+	'E-mail template <b>%ITEM_NAME%</b> has been deleted' => 'Šablona e-mailu <b>%ITEM_NAME%</b> byla smazána',
 ];

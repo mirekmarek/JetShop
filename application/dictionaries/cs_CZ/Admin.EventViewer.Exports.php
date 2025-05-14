@@ -32,4 +32,6 @@ return [
 	'Context object:' => 'Kontextový objekt:',
 	'Export to CSV file' => 'Exportovat do CSV souboru',
 	'Event viewer - Exports' => 'Prohlížeč událostí – Exporty',
+	'Please enter a value' => 'Zadejte hodnotu',
+	'Invalid value' => 'neplatná hodnota',
 ];

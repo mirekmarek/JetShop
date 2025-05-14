@@ -55,4 +55,8 @@ return [
 	'Name:' => 'Název:',
 	'Activate' => 'Aktivovat',
 	'Deactivate' => 'Deaktivovat',
+	'Get delivery class' => 'Získat třídu doručení',
+	'Add new delivery class' => 'Přidat novou třídu doručení',
+	'Update delivery class' => 'Aktualizovat třídu doručení',
+	'Delete delivery class' => 'Smazat třídu doručení',
 ];

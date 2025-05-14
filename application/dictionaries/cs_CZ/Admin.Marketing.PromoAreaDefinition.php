@@ -26,4 +26,13 @@ return [
 	'Internal name:' => 'Interní název:',
 	'Internal code:' => 'Interní kód:',
 	'Internal notes:' => 'Interní poznámky:',
+	'View promo area definitions' => 'Zobrazit definice propagačních oblastí',
+	'Add new promo area definition' => 'Přidat novou definici propagační oblasti',
+	'Update promo area definition' => 'Aktualizovat definici propagační oblasti',
+	'Delete promo area definition' => 'Smazat definici propagační oblasti',
+	'Admin.Content.PromoAreaDefinition' => 'Admin.Content.PromoAreaDefinition',
+	'Promotion area definition <b>%ITEM_NAME%</b> has been created' => 'Definice propagační oblasti <b>%ITEM_NAME%</b> byla vytvořena',
+	'Delete' => 'Vymazat',
+	'Do you really want to delete this Promotion area definition?' => 'Opravdu chcete smazat tuto definici oblasti propagace?',
+	'Promotion area definition <b>%ITEM_NAME%</b> has been deleted' => 'Definice propagační oblasti <b>%ITEM_NAME%</b> byla smazána.',
 ];

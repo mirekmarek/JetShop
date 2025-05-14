@@ -1,4 +1,4 @@
 <?php
 return [
-	'New unfinished complaint' => '',
+	'New unfinished complaint' => 'Nová nedokončená reklamace',
 ];

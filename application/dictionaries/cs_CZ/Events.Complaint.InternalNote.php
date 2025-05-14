@@ -1,4 +1,4 @@
 <?php
 return [
-	'Internal note' => '',
+	'Internal note' => 'Interní poznámka',
 ];

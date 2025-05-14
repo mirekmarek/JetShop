@@ -42,6 +42,8 @@ return [
 	'Sorry, but the maximum quantity is %units% %mu%' => 'Omlouváme se, ale maximální množství je %units% %mu%',
 	'Shopping cart' => 'Nákupní košík',
 	'I agree with <a href="%PAGE_URL:terms-and-conditions%">terms and conditions</a>' => 'Souhlasím s <a href="%PAGE_URL:terms-and-conditions%">podmínkami</a>',
+	'Váš košík:' => 'Váš košík:',
+	'Přejít do košíku' => 'Přejít do košíku',
 	'Personal takeover - external' => 'Osobní převzetí - externí',
 	'Personal takeover - internal' => 'Osobní převzetí - interní',
 ];

@@ -30,4 +30,9 @@ return [
 	'Accessory group <b>%ITEM_NAME%</b> has been updated' => 'Skupina příslušenství <b>%ITEM_NAME%</b> byla aktualizována',
 	'Delete' => 'Vymazat',
 	'Do you really want to delete this Accessory group?' => 'Opravdu chcete smazat tuto skupinu příslušenství?',
+	'Get accessories_group data' => 'Získání dat skupiny příslušenství',
+	'Add new accessories_group' => 'Přidat novou skupinu příslušenství',
+	'Update accessories_group' => 'Aktualizovat skupinu_příslušenství',
+	'Delete accessories_group' => 'Smazat skupinu_příslušenství',
+	'Admin.Catalog.AccessoriesGroups' => 'Admin.Catalog.AccessoriesGroups',
 ];

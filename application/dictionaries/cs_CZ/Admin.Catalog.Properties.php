@@ -1,6 +1,6 @@
 <?php
 return [
-	'Properties administration' => 'Správa nemovitostí',
+	'Properties administration' => 'Správa vlastností',
 	'Properties' => 'Vlastnosti',
 	'Create a new Properties' => 'Vytvořte nové vlastnosti',
 	'Create a new Property' => 'Vytvořte novou vlastnost',
@@ -50,7 +50,7 @@ return [
 	'Options' => 'Možnosti',
 	'Main image' => 'Hlavní obrázek',
 	'Pictogram image' => 'Piktogramový obrázek',
-	'... select property ...' => '... vybrat nemovitost ...',
+	'... select property ...' => '... vybrat vlastnost ...',
 	'This code is already used' => 'Tento kód se již používá',
 	'- all -' => '- Všechno -',
 	'Not active' => 'Neaktivní',
@@ -78,7 +78,7 @@ return [
 	'Please enter name' => 'Zadejte jméno',
 	'yes' => 'Ano',
 	'no' => 'Ne',
-	'Get property data' => 'Získejte data o nemovitosti',
+	'Get property data' => 'Získejte data o vlastnosti',
 	'Add new property' => 'Přidat novou vlastnost',
 	'Update property' => 'Aktualizovat vlastnost',
 	'Delete property' => 'Smazat vlastnost',

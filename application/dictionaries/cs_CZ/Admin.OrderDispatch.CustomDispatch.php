@@ -10,7 +10,7 @@ return [
 	'Unknown context' => 'Neznámý kontext',
 	'Unknown delivery point' => 'Neznámé místo dodání',
 	'Out of range' => 'Mimo dosah',
-	'Shop:' => 'Prodejna:',
+	'Shop:' => 'e-shop:',
 	'Context:' => 'Kontext:',
 	'Context number:' => 'Číslo kontextu:',
 	'Order number:' => 'Číslo objednávky:',

@@ -25,10 +25,10 @@ return [
 	'Free limit:' => 'Volný limit:',
 	'Setup timer' => 'Nastavení časovače',
 	'No timer is scheduled' => 'Není naplánován žádný časovač',
+	'Activate - master switch' => 'Aktivovat - hlavní vypínač',
+	'Deactivate - master switch' => 'Deaktivace - hlavní vypínač',
 	'Activate - %ESHOP%' => 'Aktivovat – %ESHOP%',
 	'Deactivate - %ESHOP%' => 'Deaktivovat – %ESHOP%',
 	'Set price %PRICELIST%' => 'Nastavit cenu %PRICELIST%',
 	'Set free limit - %ESHOP%' => 'Nastavit bezplatný limit – %ESHOP%',
-	'Activate - master switch' => 'Aktivovat - hlavní vypínač',
-	'Deactivate - master switch' => 'Deaktivovat - hlavní spínač',
 ];

@@ -52,4 +52,7 @@ return [
 	'Admin / User management / Administrators' => 'Správce / Správa uživatelů / Správci',
 	'Please enter a value' => 'Zadejte hodnotu',
 	'Invalid value' => 'neplatná hodnota',
+	'User roles' => 'Uživatelské role',
+	'Name' => 'název',
+	'Password' => 'Heslo',
 ];

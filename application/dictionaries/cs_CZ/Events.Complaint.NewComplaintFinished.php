@@ -3,6 +3,6 @@ return [
 	'Complaint - confirmation' => 'Reklamace - potvrzení',
 	'Complaint number' => 'Číslo reklamace',
 	'Date and time of complaint' => 'Datum a čas reklamace',
-	'Complaint URL' => 'Adresa URL stížnosti',
-	'New complaint finished' => '',
+	'Complaint URL' => 'Adresa URL reklamace',
+	'New complaint finished' => 'Nová reklamace dokončena',
 ];

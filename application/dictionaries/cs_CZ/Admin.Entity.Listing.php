@@ -14,7 +14,7 @@ return [
 	'Save as new schema' => 'Uložit jako nové schéma',
 	'Inactive' => 'Neaktivní',
 	'Active' => 'Aktivní',
-	'Shop' => 'Prodejna',
+	'Shop' => 'e-shop',
 	'Unlimited' => 'Neomezený',
 	'e-shop' => 'internetový obchod',
 ];

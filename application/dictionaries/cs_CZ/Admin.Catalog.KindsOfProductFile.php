@@ -46,4 +46,8 @@ return [
 	'Please upload image' => 'Nahrajte prosím obrázek',
 	'Select and upload images' => 'Vyberte a nahrajte obrázky',
 	'Kind of product file description <b>%NAME%</b> has been updated' => 'Byl aktualizován druh popisu souboru produktu <b>%NAME%.</b>',
+	'Get kind of product file data' => 'Získat data souboru produktu',
+	'Add new kind of product file' => 'Přidat nový druh souboru produktu',
+	'Update kind of product file' => 'Aktualizovat typ souboru produktu',
+	'Delete kind of product file' => 'Smazat soubor typu produktu',
 ];

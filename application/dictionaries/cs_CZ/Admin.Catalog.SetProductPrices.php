@@ -35,5 +35,5 @@ return [
 	'Export price list' => 'Exportovat ceník',
 	'Import price list' => 'Importovat ceník',
 	'Unable to read price list' => 'Ceník nelze načíst',
-	'Shop:' => 'Prodejna:',
+	'Shop:' => 'e-shop:',
 ];

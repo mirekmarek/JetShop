@@ -17,4 +17,8 @@ return [
 	'Confirm new password' => 'Potvrďte nové heslo',
 	'Your password has been changed' => 'Vaše heslo bylo změněno',
 	'Invalid value' => 'neplatná hodnota',
+	'Please enter <strong>new</strong> password' => 'Zadejte prosím <strong>nové</strong> heslo',
+	'<b>Your password expired.</b><br/>Please change your password.' => '<b>Platnost vašeho hesla vypršela.</b><br/> Změňte si prosím heslo.',
+	'New password: ' => 'Nové heslo: ',
+	'Logout' => 'Odhlásit se',
 ];

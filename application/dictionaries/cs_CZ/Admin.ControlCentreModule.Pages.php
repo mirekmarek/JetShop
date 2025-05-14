@@ -15,7 +15,7 @@ return [
 	'Breadcrumb navigation title:' => 'Název drobečkové navigace:',
 	'Icon:' => 'Ikona:',
 	'Layout script:' => 'Skript rozvržení:',
-	'Order:' => 'Objednat:',
+	'Order:' => 'Objednávka:',
 	'Configuration has been saved' => 'Konfigurace byla uložena',
 	'Module name:' => 'Název modulu:',
 	'Controller name:' => 'Název ovladače:',
@@ -27,4 +27,5 @@ return [
 	'Please enter URL part' => 'Zadejte část adresy URL',
 	'URL conflicts with page <b>%page%</b>' => 'Adresa URL je v konfliktu se stránkou <b>%page%</b>',
 	'URL:' => 'URL:',
+	'Is not active' => 'Není aktivní',
 ];

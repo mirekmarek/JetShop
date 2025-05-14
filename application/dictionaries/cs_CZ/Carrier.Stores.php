@@ -1,5 +1,7 @@
 <?php
 return [
+	'Stores - Internal Delivery Points' => 'Prodejny – Interní výdejní místa',
+	'New store / internal delivery point' => 'Nová prodejna / interní výdejní místo',
 	'Custom Delivery Points' => 'Vlastní dodací místa',
 	'New delivery point' => 'Nové výdejní místo',
 	'Please enter a value' => 'Zadejte hodnotu',
@@ -16,11 +18,9 @@ return [
 	'Latitude:' => 'Zeměpisná šířka:',
 	'Longitude:' => 'Zeměpisná délka:',
 	'Opening hours' => 'Otevírací doba',
-	'Stores - Internal Delivery Points' => 'Prodejny – Interní výdejní místa',
 	'New store - internal delivery point' => 'Nová prodejna - interní výdejní místo',
 	'Please enter code' => 'Zadejte kód',
 	'This code is already used' => 'Tento kód se již používá',
-	'New store / internal delivery point' => 'Nová prodejna / interní výdejní místo',
 	'Dedicated warehouse:' => 'Vyhrazený sklad:',
 	'Dedicated warehouse: %WH%' => 'Vyhrazený sklad: %WH%',
 ];

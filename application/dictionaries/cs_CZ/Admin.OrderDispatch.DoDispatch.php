@@ -16,7 +16,7 @@ return [
 	'Box' => 'Box',
 	'Order dispatch:' => 'Odeslání objednávky:',
 	'Context / Bill:' => 'Kontext / účet:',
-	'Order:' => 'Objednat:',
+	'Order:' => 'Objednávka:',
 	'Recipient' => 'Příjemce',
 	'COD:' => 'Dobírka:',
 	'Change COD' => 'Změňte dobírku',

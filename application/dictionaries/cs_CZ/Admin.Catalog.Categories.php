@@ -103,7 +103,7 @@ return [
 	'Decimal places:' => 'desetinná místa:',
 	'Create a new property' => 'Vytvořte novou vlastnost',
 	'Add new property' => 'Přidat novou vlastnost',
-	'New property' => 'Nová nemovitost',
+	'New property' => 'Nová vlastnost',
 	'Sort groups' => 'Seřadit skupiny',
 	'Please select stencil' => 'Vyberte šablonu',
 	'Stencil:' => 'Šablona:',

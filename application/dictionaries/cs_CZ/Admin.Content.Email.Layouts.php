@@ -39,5 +39,7 @@ return [
 	'Activate' => 'Aktivovat',
 	'Activate completely' => 'Aktivovat kompletně',
 	'E-mail layouts' => 'Rozvržení e-mailu',
+	'E-mail layout <b>%ITEM_NAME%</b> has been created' => 'Rozvržení e-mailu <b>%ITEM_NAME%</b> bylo vytvořeno',
 	'Description' => 'Popis',
+	'E-mail layout description <b>%NAME%</b> has been updated' => 'Rozvržení e-mailu <b>%NAME%</b> byl aktualizován.',
 ];

@@ -61,7 +61,7 @@ return [
 	'Supplier\¨s bill' => 'Účet dodavatele',
 	'Supplier\'s bill' => 'Účet dodavatele',
 	'Order number' => 'Číslo objednávky',
-	'Order:' => 'Objednat:',
+	'Order:' => 'Objednávka:',
 	'Order number:' => 'Číslo objednávky:',
 	'Unknown order' => 'Neznámá objednávka',
 	'Sector' => 'Sektor',
@@ -72,6 +72,4 @@ return [
 	'Currency used by the supplier:' => 'Měna používaná dodavatelem:',
 	'Warehouse currency:' => 'Měna skladu:',
 	'Cancel' => 'zrušení',
-	'Warehouse management - Receipt of goods <b>%ITEM_NAME%</b> has been updated' => '',
-	'Status:' => '',
 ];

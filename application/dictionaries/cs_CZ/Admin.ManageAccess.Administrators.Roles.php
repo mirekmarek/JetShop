@@ -28,4 +28,12 @@ return [
 	'Sorry, but ID %ID% is used.' => 'Lituji, ale ID %ID% je již použito',
 	'Admin / Role management / Administrators' => 'Správce / Správa rolí / Správci',
 	'Please enter a value' => 'Zadejte hodnotu',
+	'Catalog' => 'Katalog',
+	'Orders and Customers' => 'Objednávky a zákazníci',
+	'Goods operations' => 'Operace se zbožím',
+	'Content' => 'Obsah',
+	'Marketing' => 'Marketing',
+	'Logs and statistics' => 'Záznamy a statistiky',
+	'System' => 'Systém',
+	'Other' => 'jiný',
 ];
