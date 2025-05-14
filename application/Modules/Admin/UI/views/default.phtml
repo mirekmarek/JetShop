@@ -202,7 +202,7 @@ $edit_menu_dialog = UI::dialog('edit_menu_dialog', Tr::_('Edit homepage menu'), 
 						$_tabs[$eshop->getKey()] = UI::flag($eshop->getLocale()).' '.$eshop->getName();
 					}
 					
-					$tabs = new UI_tabsJS( EShops::getCurrentKey(), $_tabs );
+					$tabs = new UI_tabsJS( 'sigmature_form_tabs', $_tabs, EShops::getCurrentKey() );
 					
 					echo $signatures_form->start();
 					
@@ -218,9 +218,13 @@ $edit_menu_dialog = UI::dialog('edit_menu_dialog', Tr::_('Edit homepage menu'), 
 					
 					echo $tabs->end();
 					
+					echo '<div style="padding-top: 5px;">';
 					echo UI::button_save();
+					echo '</div>';
 					
 					echo $signatures_form->end();
+					
+					
 					
 					
 					?>

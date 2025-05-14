@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\UI;
 
 
+use Jet\SysConf_URI;
 use JetApplication\EShops;
 
 use Jet\Http_Request;
@@ -65,6 +66,7 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 	
 	<div class="collapse navbar-collapse" id="mainNavBar">
 		<ul class="nav navbar-nav">
+			<?php /*
 			<li class="nav-item dropdown bg-secondary">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<?=$current_eshop->getName()?> <span class="caret"></span>
@@ -75,6 +77,7 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 					<?php endforeach; ?>
 				</div>
 			</li>
+			*/ ?>
 			
 			<?php foreach( Navigation_MenuSet::get( 'admin' )->getMenus() as $menu ):
 				if(!$menu->getItems()) {
