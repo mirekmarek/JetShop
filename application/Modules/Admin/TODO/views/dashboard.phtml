@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\TODO;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity;
 use Jet\Tr;
+use JetApplication\EShopEntity_Definition;
 
 
 $items = Item::getDashboard();
@@ -16,36 +17,75 @@ if(!$items->getCount()) {
 	return;
 }
 
+$map = [];
+
+foreach( $items as $item ):
+	$entity_definition = EShopEntity::getEntityDefinitionByType( $item->getContextEntityType() );
+	if(!$entity_definition) {
+		continue;
+	}
+	
+	$manager = Admin_Managers::get( $entity_definition->getAdminManagerInterface() );
+	if(!$manager) {
+		continue;
+	}
+	
+	if(!isset($map[$item->getContextEntityType()])) {
+		$map[$item->getContextEntityType()] = [
+			'definition' => $entity_definition,
+			'count' => 0
+		];
+	}
+	
+	$map[$item->getContextEntityType()]['count']++;
+
+endforeach;
 ?>
 <div class="card">
 	<div class="card-header"><?= Tr::_('TODO (%CNT%)', ['CNT'=>$items->getCount()])?></div>
-	<div class="card-body" style="max-height: 400px;overflow: auto">
+	<div class="card-body" style="max-height: 700px;overflow: auto">
 		<?php
-		foreach( $items as $item ):
-			$entity_definition = EShopEntity::getEntityDefinitionByType( $item->getContextEntityType() );
-			if(!$entity_definition) {
-				continue;
-			}
-			
-			$manager = Admin_Managers::get( $entity_definition->getAdminManagerInterface() );
-			if(!$manager) {
-				continue;
-			}
+		foreach($map as $entity_type=>$dat):
+			/**
+			 * @var EShopEntity_Definition $entity_definition
+			 */
+			$entity_definition = $dat['definition'];
+			$cnt = $dat['count'];
 			?>
-			<div class="card card-body" style="margin-bottom: 10px;padding: 5px;">
-				<div style="display: grid;grid-template-columns: 1fr 8fr;">
-					<div><?=$item->getPriorityTag()?></div>
-					<div style="opacity: 0.8">
-						<?=$entity_definition->getEntityNameReadable()?>
-						<?=$manager->renderItemName( $item->getContextEntityId() )?>
-					</div>
-				</div>
-				
-				<div style="font-size: 0.8rem;padding: 4px;">
-					<?=nl2br( $item->getTask() )?>
+			<div class="card card-body" style="margin-bottom: 10px;">
+				<a href="#" onclick="$('#todo_db_items_<?=$entity_type?>').slideToggle();"><?=$entity_definition->getEntityNameReadable()?> (<?=$cnt?>)</a>
+				<div id="todo_db_items_<?=$entity_type?>" style="display: none;margin-top: 10px;">
+					<?php
+					foreach( $items as $item ):
+						if($item->getContextEntityType()!=$entity_type) {
+							continue;
+						}
+						
+						$manager = Admin_Managers::get( $entity_definition->getAdminManagerInterface() );
+						if(!$manager) {
+							continue;
+						}
+						?>
+						<div class="card card-body" style="margin-bottom: 10px;padding: 5px;">
+							<div style="display: grid;grid-template-columns: 1fr 8fr;">
+								<div><?=$item->getPriorityTag()?></div>
+								<div style="opacity: 0.8">
+									<?=$manager->renderItemName( $item->getContextEntityId() )?>
+								</div>
+							</div>
+
+							<div style="font-size: 0.8rem;padding: 4px;">
+								<?=nl2br( $item->getTask() )?>
+							</div>
+						</div>
+					<?php
+					endforeach;
+					
+					?>
 				</div>
 			</div>
-			<?php
+		
+		<?php
 		endforeach;
 		?>
 	</div>

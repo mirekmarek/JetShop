@@ -11,6 +11,8 @@ use Jet\Attributes;
 use Jet\BaseObject;
 
 use Attribute;
+use Jet\Tr;
+use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_Definition_Property;
@@ -86,7 +88,7 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 	
 	public function getEntityNameReadable(): ?string
 	{
-		return $this->entity_name_readable;
+		return Tr::_( $this->entity_name_readable, dictionary: Admin_Managers::get( $this->getAdminManagerInterface() )->getModuleManifest()->getName() );
 	}
 	
 	public function getEntityType(): ?string
