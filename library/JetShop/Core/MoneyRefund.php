@@ -194,7 +194,7 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	
 	public static function getNumberSeriesEntityTitle(): string
 	{
-		return static::getEntityDefinition()->getEntityNameReadable();
+		return static::getEntityDefinition()->getEntityNameReadable( true );
 	}
 	
 	public static function getNumberSeriesEntityIsPerShop(): bool

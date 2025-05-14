@@ -69,9 +69,9 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	 */
 	protected mixed $current_item = null;
 	
-	public function getEntityNameReadable() : string
+	public function getEntityNameReadable( bool $translage=false ) : string
 	{
-		return $this->module::getEntityNameReadable();
+		return $this->module::getEntityNameReadable( $translage );
 	}
 	
 	protected function generateText_add_msg() : string

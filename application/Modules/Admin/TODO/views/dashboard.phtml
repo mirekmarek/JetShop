@@ -53,7 +53,7 @@ endforeach;
 			$cnt = $dat['count'];
 			?>
 			<div class="card card-body" style="margin-bottom: 10px;">
-				<a href="#" onclick="$('#todo_db_items_<?=$entity_type?>').slideToggle();"><?=$entity_definition->getEntityNameReadable()?> (<?=$cnt?>)</a>
+				<a href="#" onclick="$('#todo_db_items_<?=$entity_type?>').slideToggle();"><?=$entity_definition->getEntityNameReadable( true )?> (<?=$cnt?>)</a>
 				<div id="todo_db_items_<?=$entity_type?>" style="display: none;margin-top: 10px;">
 					<?php
 					foreach( $items as $item ):
