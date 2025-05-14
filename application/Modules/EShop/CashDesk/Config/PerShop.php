@@ -121,4 +121,34 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 		return $this->map_default_zoom;
 	}
 	
+	public function setPhoneValidationRegExp( string $phone_validation_reg_exp ): void
+	{
+		$this->phone_validation_reg_exp = $phone_validation_reg_exp;
+	}
+	
+	public function setPhonePrefix( string $phone_prefix ): void
+	{
+		$this->phone_prefix = $phone_prefix;
+	}
+	
+	public function setMapAPIKey( string $map_API_key ): void
+	{
+		$this->map_API_key = $map_API_key;
+	}
+	
+	public function setMapCenterLat( float $map_center_lat ): void
+	{
+		$this->map_center_lat = $map_center_lat;
+	}
+	
+	public function setMapCenterLon( float $map_center_lon ): void
+	{
+		$this->map_center_lon = $map_center_lon;
+	}
+	
+	public function setMapDefaultZoom( int $map_default_zoom ): void
+	{
+		$this->map_default_zoom = $map_default_zoom;
+	}
+	
 }

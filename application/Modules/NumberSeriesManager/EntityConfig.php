@@ -114,6 +114,21 @@ class EntityConfig extends Config implements Form_Definition_Interface {
 	{
 		return $this->counter_class;
 	}
+	
+	public function setPadLength( int $pad_length ): void
+	{
+		$this->pad_length = $pad_length;
+	}
+	
+	public function setPrefix( string $prefix ): void
+	{
+		$this->prefix = $prefix;
+	}
+	
+	public function setCounterClass( string $counter_class ): void
+	{
+		$this->counter_class = $counter_class;
+	}
 
 	
 	
