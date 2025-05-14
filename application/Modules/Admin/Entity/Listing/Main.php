@@ -153,7 +153,6 @@ class Main extends Admin_Managers_EShopEntity_Listing
 	
 	public function addOperation( Admin_Listing_Operation $operation ): void
 	{
-		$this->listing->setSelectItemsEnabled( true );
 		$this->listing->addOperation( $operation );
 	}
 	

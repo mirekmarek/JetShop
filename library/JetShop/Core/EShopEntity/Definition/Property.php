@@ -13,6 +13,7 @@ abstract class Core_EShopEntity_Definition_Property extends BaseObject
 {
 	protected ?bool $is_description = null;
 	protected ?string $setter = null;
+	protected ?bool $editable_by_listing_action = null;
 	
 	public static function read( array $attributes ) : static
 	{
@@ -33,6 +34,11 @@ abstract class Core_EShopEntity_Definition_Property extends BaseObject
 	public function getSetter(): ?string
 	{
 		return $this->setter;
+	}
+	
+	public function isEditableByListingAction(): ?bool
+	{
+		return $this->editable_by_listing_action;
 	}
 	
 	

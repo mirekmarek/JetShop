@@ -67,7 +67,23 @@ class Listing extends Admin_Listing
 			$default_schema[] = Listing_Column_ActiveState::KEY;
 			
 			$this->addFilter( new Listing_Filter_IsActive() );
+			
+			if(
+				$this->entity_manager::getCurrentUserCanEdit() &&
+				!($this->entity instanceof EShopEntity_HasActivationByTimePlan_Interface)
+			) {
+				$this->addOperation( new Listing_Operation_Activate() );
+				$this->addOperation( new Listing_Operation_Deactivate() );
+			}
 		}
+		
+		if(
+			$this->entity_manager::getCurrentUserCanEdit() &&
+			$this->entity::hasCommonPropertiesEditableByListingActions()
+		) {
+			$this->addOperation( new Listing_Operation_SetCommonProperties() );
+		}
+		
 		
 		if( $this->entity instanceof EShopEntity_HasActivationByTimePlan_Interface ) {
 			$this->addColumn( new Listing_Column_ValidFrom() );

@@ -226,6 +226,7 @@ abstract class Core_Admin_Listing extends DataListing
 	
 	public function addOperation( DataListing_Operation|Admin_Listing_Operation $operation ) : void
 	{
+		$this->setSelectItemsEnabled( true );
 		$operation->setListing( $this );
 		$this->operations[ $operation->getKey() ] = $operation;
 	}

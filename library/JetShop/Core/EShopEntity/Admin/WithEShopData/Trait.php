@@ -266,5 +266,4 @@ trait Core_EShopEntity_Admin_WithEShopData_Trait {
 		return $this->_edit_form;
 	}
 	
-	
 }

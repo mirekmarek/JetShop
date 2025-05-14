@@ -1,0 +1,73 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Entity\Listing;
+
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var Listing_Operation_SetCommonProperties $operation
+ */
+$operation = $this->getRaw('operation');
+
+$form = $operation->getForm();
+$form->renderer()->setDefaultLabelWidth([Form_Renderer::LJ_SIZE_MEDIUM=>3]);
+$form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>9]);
+?>
+<script>
+	function Listing_Operation_SetCommonProperties_toggle( checked, field_id ) {
+		let input = document.getElementById( field_id );
+		
+		if(checked) {
+			input.style.opacity= 1;
+			input.disabled = false;
+		} else {
+			input.style.opacity= 0.2;
+			input.disabled = true;
+		}
+		
+	}
+</script>
+<?php
+
+echo $form->start();
+
+echo $form->field('selected_ids');
+echo $form->field('affect');
+?>
+	<div class="row">
+		<div class="col-md-12"><hr></div>
+	</div>
+<?php
+foreach($operation->getProperties() as $property):
+	$field_id = $form->field( $property )->getId();
+	$form->field( $property )->input()->addCustomCssStyle('opacity:0.2');
+	$form->field( $property )->input()->setCustomTagAttribute('disabled', 'disabled');
+	
+	$form->field( '/set/'.$property )->input()->addJsAction("onchange", "Listing_Operation_SetCommonProperties_toggle(this.checked, '{$field_id}');");
+	
+	echo $form->field( '/set/'.$property );
+	echo $form->field( $property );
+	?>
+	<div class="row">
+		<div class="col-md-12"><hr></div>
+	</div>
+<?php
+endforeach;
+?>
+	<div class="row">
+		<div class="col-md-3"></div>
+		<div class="col-md-9">
+			<?=UI::button(Tr::_('Set properties', dictionary: Tr::COMMON_DICTIONARY))->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY);?>
+		</div>
+	</div>
+	<?php
+echo $form->end();

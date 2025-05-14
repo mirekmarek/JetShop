@@ -37,7 +37,17 @@ class Listing_Column_Edit extends Admin_Listing_Column
 	
 	public function initializer( UI_dataGrid_column $column ) : void
 	{
-		$column->addCustomCssStyle( 'width:30px;' );
+		/**
+		 * @var Listing $listing
+		 */
+		$listing = $this->listing;
+		if($listing->getSelectItemsEnabled()) {
+			$column->addCustomCssStyle( 'width:100px;' );
+			
+		} else {
+			$column->addCustomCssStyle( 'width:30px;' );
+		}
+		
 	}
 	
 }

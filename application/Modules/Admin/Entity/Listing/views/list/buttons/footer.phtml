@@ -30,11 +30,11 @@ $add_uri = $add_uri_creator();
 $buttons = [];
 
 if($listing->getSelectItemsEnabled()):
-	$select_all = UI::button( Tr::_( 'Select all' ) );
+	$select_all = UI::button( Tr::_( 'Select all', dictionary: Tr::COMMON_DICTIONARY ) );
 	$select_all->setClass( UI_Button::CLASS_INFO );
 	$select_all->setOnClick( "List.selectAll()" );
 	
-	$unselect_all = UI::button( Tr::_( 'Unselect all' ) );
+	$unselect_all = UI::button( Tr::_( 'Unselect all', dictionary: Tr::COMMON_DICTIONARY  ) );
 	$unselect_all->setClass( UI_Button::CLASS_SECONDARY );
 	$unselect_all->setOnClick( "List.unselectAll()" );
 	
@@ -43,7 +43,7 @@ if($listing->getSelectItemsEnabled()):
 endif;
 
 if(count($listing->getOperations())):
-	$perform_operation = UI::button( Tr::_( 'Perform operation' ) );
+	$perform_operation = UI::button( Tr::_( 'Perform operation', dictionary: Tr::COMMON_DICTIONARY  ) );
 	$perform_operation->setClass( UI_Button::CLASS_PRIMARY );
 	$perform_operation->setOnClick( "ListOperation.showDialog();" );
 

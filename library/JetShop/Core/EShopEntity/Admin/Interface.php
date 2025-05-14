@@ -33,4 +33,8 @@ interface Core_EShopEntity_Admin_Interface {
 	
 	public function renderActiveState() : string;
 	
+	public static function hasCommonPropertiesEditableByListingActions() : bool;
+	public function createListingActionCommonPropertiesEditForm() : Form;
+	public function catchListingActionCommonPropertiesEditForm() : bool;
+	
 }

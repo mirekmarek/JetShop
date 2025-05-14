@@ -275,4 +275,8 @@ return [
 	'What to affect:' => '',
 	'All filtered items' => '',
 	'Manually selected items' => '',
+	'Set common properties' => '',
+	'Set value' => '',
+	'Is archived' => '',
+	'Deactivate after sell out' => '',
 ];

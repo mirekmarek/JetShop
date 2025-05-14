@@ -8,4 +8,5 @@ return [
 	'Date and time of complaint' => 'Datum a čas reklamace',
 	'Complaint URL' => 'Adresa URL stížnosti',
 	'Message text' => 'Text zprávy',
+	'Message for customer' => '',
 ];

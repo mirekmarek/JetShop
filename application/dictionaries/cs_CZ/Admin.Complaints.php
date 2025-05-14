@@ -203,4 +203,9 @@ return [
 	'Internal Summary:' => '',
 	'Amount to be refunded:' => '',
 	'Place money refundation request' => '',
+	'Generate service report' => '',
+	'Type:' => '',
+	'Delivery of the complained goods:' => '',
+	'Preffered solution:' => '',
+	'Service report' => '',
 ];

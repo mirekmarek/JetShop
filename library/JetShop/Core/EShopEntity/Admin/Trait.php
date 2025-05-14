@@ -8,7 +8,9 @@ namespace JetShop;
 
 
 use Jet\Form;
+use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_Input;
+use Jet\Tr;
 use JetApplication\Admin_EntityManager_Module;
 use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
@@ -176,5 +178,71 @@ trait Core_EShopEntity_Admin_Trait {
 		return $this->getAdminManager()->renderActiveState( $this );
 	}
 	
+	
+	public static function hasCommonPropertiesEditableByListingActions() : bool
+	{
+		$def = EShopEntity_Definition::get( static::class );
+		foreach($def->getProperties() as $property) {
+			if($property->isEditableByListingAction()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public function createListingActionCommonPropertiesEditForm() : Form
+	{
+		$properties = [];
+		$def = EShopEntity_Definition::get( $this );
+		foreach($def->getProperties() as $property_name => $property) {
+			if($property->isEditableByListingAction()) {
+				$properties[] = $property_name;
+			}
+		}
+		
+		$form = $this->createForm('listing_action_common_properties_edit_form', $properties);
+		foreach($form->getFields() as $field) {
+			$field->setIsRequired( false );
+		}
+		
+		foreach( $properties as $property_name ) {
+			$set_chb = new Form_Field_Checkbox('/set/'.$property_name, Tr::_('Set value', dictionary: Tr::COMMON_DICTIONARY));
+			$form->addField( $set_chb );
+		}
+		
+		return $form;
+	}
+	
+	public function catchListingActionCommonPropertiesEditForm() : bool
+	{
+		$form = $this->createListingActionCommonPropertiesEditForm();
+		if(
+			!$form->catchInput() ||
+			!$form->validate()
+		) {
+			return false;
+		}
+		
+		$properties = [];
+		$def = EShopEntity_Definition::get( static::class );
+		foreach($def->getProperties() as $property_name => $property) {
+			if($property->isEditableByListingAction()) {
+				$properties[] = $property_name;
+			}
+		}
+		
+		foreach( $properties as $property_name ) {
+			if(!$form->field('/set/'.$property_name)->getValue()) {
+				continue;
+			}
+			
+			$form->field($property_name)->catchFieldValue();
+		}
+		
+		
+		
+		return true;
+	}
 	
 }

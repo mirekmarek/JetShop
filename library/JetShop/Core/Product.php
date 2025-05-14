@@ -127,6 +127,9 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	)]
 	protected int $kind_id = 0;
 	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true
@@ -137,6 +140,9 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	)]
 	protected bool $creation_in_progress = true;
 	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true
@@ -159,6 +165,9 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	protected string $ean = '';
 
 	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -172,7 +181,10 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 		]
 	)]
 	protected int $brand_id = 0;
-
+	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -198,6 +210,9 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	)]
 	protected string $supplier_code = '';
 	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -213,6 +228,9 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	protected int $delivery_class_id = 0;
 	
 	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true
@@ -223,6 +241,9 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	)]
 	protected bool $is_sale = false;
 	
+	#[EShopEntity_Definition(
+		editable_by_listing_action: true
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
 		is_key: true

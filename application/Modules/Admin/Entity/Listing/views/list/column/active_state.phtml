@@ -23,17 +23,19 @@ $col = $this->getRaw('column');
 $item = $this->getRaw('item');
 
 if($item->isActive()):
-	?><span class="badge badge-success"> <?=Tr::_('Active', dictionary: Tr::COMMON_DICTIONARY)?> </span> <?php
+	?><span class="badge badge-success" style="padding: 5px;"> <?=Tr::_('Active', dictionary: Tr::COMMON_DICTIONARY)?> </span> <?php
 else:
-	?><span class="badge badge-danger"><?=Tr::_('Inactive', dictionary: Tr::COMMON_DICTIONARY)?></span> <?php
+	?><span class="badge badge-danger" style="padding: 5px;"><?=Tr::_('Inactive', dictionary: Tr::COMMON_DICTIONARY)?></span> <?php
 endif;
+
+?><br><?php
 
 if($col->isMultiEShopMode()):
 	foreach( EShops::getListSorted() as $eshop):
 		if($item->getEshopData($eshop)->isActiveForShop()):
-			?><span class="badge badge-success"><?=$eshop->getName()?></span> <?php
+			?><span class="badge badge-success" style="font-size: 0.6rem;padding: 4px;"><?=$eshop->getName()?></span> <?php
 		else:
-			?><span class="badge badge-danger"><?=$eshop->getName()?></span> <?php
+			?><span class="badge badge-danger" style="font-size: 0.6rem;padding: 4px;"><?=$eshop->getName()?></span> <?php
 		endif;
 	endforeach;
 endif;

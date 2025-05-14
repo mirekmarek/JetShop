@@ -4,8 +4,9 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Admin\Catalog\Products;
+namespace JetApplicationModule\Admin\Entity\Listing;
 
+use Jet\Form_Renderer;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
@@ -14,11 +15,14 @@ use JetApplication\EShops;
 
 /**
  * @var MVC_View $this
- * @var Listing_Operation_Deactivate $operation
+ * @var Listing_Operation_Activate $operation
  */
 $operation = $this->getRaw('operation');
 
 $form = $operation->getForm();
+$form->renderer()->setDefaultLabelWidth([Form_Renderer::LJ_SIZE_MEDIUM=>2]);
+$form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>10]);
+
 
 echo $form->start();
 
@@ -29,16 +33,16 @@ echo $form->field('master');
 
 if(EShops::isMultiEShopMode()):
 	foreach( EShops::getList() as $eshop ):
-		echo $form->field( $eshop->getKey() );
+		echo $form->fieldExists( $eshop->getKey()) ? $form->field( $eshop->getKey() ) : '';
 	endforeach;
 endif;
 
 ?>
-	<div class="row">
-		<div class="col-md-4"></div>
-		<div class="col-md-4">
-			<?=UI::button(Tr::_('Deactivate'))->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY);?>
-		</div>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-10">
+		<?=UI::button(Tr::_('Activate', dictionary: Tr::COMMON_DICTIONARY))->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY);?>
 	</div>
+</div>
 <?php
 echo $form->end();

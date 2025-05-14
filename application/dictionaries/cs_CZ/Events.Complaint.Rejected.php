@@ -5,4 +5,5 @@ return [
 	'Date and time of complaint' => 'Datum a čas reklamace',
 	'Complaint URL' => 'Adresa URL stížnosti',
 	'Complaint - rejected' => 'Reklamace - zamítnuta',
+	'Rejected' => '',
 ];
