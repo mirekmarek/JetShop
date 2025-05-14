@@ -86,7 +86,7 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 		return $this->admin_manager_interface;
 	}
 	
-	public function getEntityNameReadable(): ?string
+	public function getEntityNameReadable( bool $translate=false ): ?string
 	{
 		if($translate) {
 			return Tr::_( $this->entity_name_readable, dictionary: Admin_Managers::get( $this->getAdminManagerInterface() )->getModuleManifest()->getName() );
