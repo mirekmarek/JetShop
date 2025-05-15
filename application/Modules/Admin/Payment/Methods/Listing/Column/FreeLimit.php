@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Payment_Method;
 
 class Listing_Column_FreeLimit extends Admin_Listing_Column
 {
@@ -23,5 +24,19 @@ class Listing_Column_FreeLimit extends Admin_Listing_Column
 	{
 		$column->addCustomCssStyle('width:250px');
 	}
-
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float
+	{
+		/**
+		 * @var Payment_Method $item
+		 */
+		return $item->getFreePaymentLimit();
+	}
+	
 }

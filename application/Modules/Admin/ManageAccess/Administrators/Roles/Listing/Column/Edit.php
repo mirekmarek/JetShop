@@ -28,4 +28,13 @@ class Listing_Column_Edit extends DataListing_Column
 		return true;
 	}
 	
+	public function getExportHeader(): null
+	{
+		return null;
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		return '';
+	}
 }

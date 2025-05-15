@@ -9,6 +9,8 @@ namespace JetApplicationModule\Admin\Marketing\DeliveryFeeDiscount;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Delivery_Method;
+use JetApplication\Marketing_DeliveryFeeDiscount;
 
 class Listing_Column_DeliveryMethod extends Admin_Listing_Column
 {
@@ -27,5 +29,18 @@ class Listing_Column_DeliveryMethod extends Admin_Listing_Column
 	public function initializer( UI_dataGrid_column $column ): void
 	{
 		$column->addCustomCssStyle('width:200px;');
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Marketing_DeliveryFeeDiscount $item
+		 */
+		return Delivery_Method::getScope()[$item->getDeliveryMethodId()]??'';
 	}
 }
