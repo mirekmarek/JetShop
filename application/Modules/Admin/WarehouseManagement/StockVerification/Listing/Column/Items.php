@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_StockVerification;
 
 class Listing_Column_Items extends Admin_Listing_Column
 {
@@ -29,5 +30,27 @@ class Listing_Column_Items extends Admin_Listing_Column
 	{
 		//$column->addCustomCssStyle('width: 200px');
 	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var WarehouseManagement_StockVerification $item
+		 */
+		$res = '';
+		
+		foreach($item->getItems() as $i) {
+			$res .= $i->getProductName();
+			$res .= ",\n";
+		}
+		
+		return $res;
+	}
+	
 	
 }

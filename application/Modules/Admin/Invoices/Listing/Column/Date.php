@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\Invoices;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Invoice;
 
 class Listing_Column_Date extends Admin_Listing_Column
 {
@@ -16,5 +17,18 @@ class Listing_Column_Date extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Date');
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): object
+	{
+		/**
+		 * @var Invoice $item
+		 */
+		return $item->getInvoiceDate();
 	}
 }

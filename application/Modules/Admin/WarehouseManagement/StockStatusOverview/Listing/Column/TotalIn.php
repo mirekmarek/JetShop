@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_StockCard;
 
 class Listing_Column_TotalIn extends Admin_Listing_Column
 {
@@ -17,5 +18,20 @@ class Listing_Column_TotalIn extends Admin_Listing_Column
 	{
 		return Tr::_('Total in');
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float
+	{
+		/**
+		 * @var WarehouseManagement_StockCard $item
+		 */
+		return $item->getTotalIn();
+	}
+	
 	
 }

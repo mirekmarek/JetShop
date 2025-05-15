@@ -8,6 +8,8 @@ namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Product;
+use JetApplication\WarehouseManagement_StockCard;
 
 class Listing_Column_Product extends Admin_Listing_Column
 {
@@ -23,5 +25,19 @@ class Listing_Column_Product extends Admin_Listing_Column
 		return Tr::_('Product');
 	}
 	
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var WarehouseManagement_StockCard $item
+		 */
+		return Product::get($item->getProductId())?->getAdminTitle()??'';
+	}
 	
 }

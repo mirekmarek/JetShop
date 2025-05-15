@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\DeliveryNotes;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\DeliveryNote;
 
 class Listing_Column_Total extends Admin_Listing_Column
 {
@@ -16,5 +17,18 @@ class Listing_Column_Total extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Total');
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float
+	{
+		/**
+		 * @var DeliveryNote $item
+		 */
+		return $item->getTotal();
 	}
 }

@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehous
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 class Listing_Column_Items extends Admin_Listing_Column
 {
@@ -30,4 +31,27 @@ class Listing_Column_Items extends Admin_Listing_Column
 		//$column->addCustomCssStyle('width: 200px');
 	}
 	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var WarehouseManagement_TransferBetweenWarehouses $item
+		 */
+		$res = '';
+		
+		foreach($item->getItems() as $i) {
+			$res .= $i->getNumberOfUnits();
+			$res .= $i->getMeasureUnit()?->getName()??'x';
+			$res .= '  ';
+			$res .= $i->getProductName();
+			$res .= ",\n";
+		}
+		
+		return $res;
+
+	}
 }

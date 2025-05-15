@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\ProformaInvoices;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\ProformaInvoice;
 
 class Listing_Column_Items extends Admin_Listing_Column
 {
@@ -22,4 +23,29 @@ class Listing_Column_Items extends Admin_Listing_Column
 	{
 		return true;
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var ProformaInvoice $item
+		 */
+		$res = '';
+		
+		foreach($item->getItems() as $item) {
+			$res .= $item->getNumberOfUnits();
+			$res .= $item->getMeasureUnit()?->getName()??'x';
+			$res .= '  ';
+			$res .= $item->getTitle();
+			$res .= ",\n";
+		}
+		
+		return $res;
+	}
+	
 }
