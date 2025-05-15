@@ -8,6 +8,8 @@ namespace JetApplicationModule\Admin\OrderDispatch\Overview;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\OrderDispatch;
+use JetApplication\WarehouseManagement_Warehouse;
 
 class Listing_Column_Warehouse extends Admin_Listing_Column
 {
@@ -17,4 +19,20 @@ class Listing_Column_Warehouse extends Admin_Listing_Column
 	{
 		return Tr::_('Warehouse');
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var OrderDispatch $item
+		 */
+		
+		return WarehouseManagement_Warehouse::getScope()[$item->getWarehouseId()]??'';
+	}
+	
 }

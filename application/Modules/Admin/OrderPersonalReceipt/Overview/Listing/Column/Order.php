@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\OrderPersonalReceipt\Overview;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\OrderPersonalReceipt;
 
 class Listing_Column_Order extends Admin_Listing_Column
 {
@@ -17,4 +18,21 @@ class Listing_Column_Order extends Admin_Listing_Column
 	{
 		return Tr::_('Order');
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var OrderPersonalReceipt $item
+		 */
+		
+		return $item->getOrder()?->getNumber()??'';
+	}
+	
+	
 }

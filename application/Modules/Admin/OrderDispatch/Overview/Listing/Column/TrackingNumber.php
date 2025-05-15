@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\OrderDispatch\Overview;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\OrderDispatch;
 
 class Listing_Column_TrackingNumber extends Admin_Listing_Column
 {
@@ -18,5 +19,19 @@ class Listing_Column_TrackingNumber extends Admin_Listing_Column
 		return Tr::_('Tracking number');
 	}
 	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var OrderDispatch $item
+		 */
+		
+		return $item->getTrackingNumber();
+	}
 	
 }

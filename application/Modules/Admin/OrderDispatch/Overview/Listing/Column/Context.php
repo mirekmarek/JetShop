@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\OrderDispatch\Overview;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\OrderDispatch;
 
 class Listing_Column_Context extends Admin_Listing_Column
 {
@@ -22,4 +23,28 @@ class Listing_Column_Context extends Admin_Listing_Column
 	{
 		return true;
 	}
+	
+	
+	public function getExportHeader(): array
+	{
+		return [
+			'context_type' => Tr::_('Context type'),
+			'context_number' => Tr::_('Context number'),
+		];
+	}
+	
+	public function getExportData( mixed $item ): array
+	{
+		/**
+		 * @var OrderDispatch $item
+		 */
+		$context = $item->getContext();
+		
+		return [
+			'context_type' => $item->getContextType(),
+			'context_number' => $item->getContextNumber()
+		];
+		
+	}
+	
 }
