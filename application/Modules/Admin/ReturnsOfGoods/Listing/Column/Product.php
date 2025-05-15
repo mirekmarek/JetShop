@@ -8,6 +8,8 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Product;
+use JetApplication\ReturnOfGoods;
 
 class Listing_Column_Product extends Admin_Listing_Column
 {
@@ -17,4 +19,18 @@ class Listing_Column_Product extends Admin_Listing_Column
 	{
 		return Tr::_('Product');
 	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var ReturnOfGoods $item
+		 */
+		return Product::get( $item->getProductId() )?->getAdminTitle()??'';
+	}
+	
 }

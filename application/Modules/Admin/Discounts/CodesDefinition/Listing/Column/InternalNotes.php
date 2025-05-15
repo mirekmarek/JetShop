@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Discounts_Code;
 
 class Listing_Column_InternalNotes extends Admin_Listing_Column
 {
@@ -17,4 +18,19 @@ class Listing_Column_InternalNotes extends Admin_Listing_Column
 	{
 		return Tr::_( 'Internal notes' );
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Discounts_Code $item
+		 */
+		return $item->getInternalNotes();
+	}
+	
 }

@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\ManageAccess\Administrators\Users;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Auth_Administrator_User;
 
 class Listing_Column_Surname extends DataListing_Column
 {
@@ -22,6 +23,20 @@ class Listing_Column_Surname extends DataListing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Surname');
+	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Auth_Administrator_User $item
+		 */
+		return $item->getSurname();
 	}
 	
 }

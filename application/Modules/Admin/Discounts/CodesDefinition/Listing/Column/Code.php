@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Discounts_Code;
 
 class Listing_Column_Code extends Admin_Listing_Column
 {
@@ -22,5 +23,18 @@ class Listing_Column_Code extends Admin_Listing_Column
 	public function initializer( UI_dataGrid_column $column ): void
 	{
 		$column->setBaseCssClass("width: 250px;");
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Discounts_Code $item
+		 */
+		return $item->getCode();
 	}
 }

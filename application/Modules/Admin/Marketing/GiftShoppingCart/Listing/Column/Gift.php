@@ -9,6 +9,8 @@ namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Marketing_Gift_ShoppingCart;
+use JetApplication\Product;
 
 class Listing_Column_Gift extends Admin_Listing_Column
 {
@@ -27,5 +29,19 @@ class Listing_Column_Gift extends Admin_Listing_Column
 	public function initializer( UI_dataGrid_column $column ): void
 	{
 		$column->addCustomCssStyle('width:200px;');
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Marketing_Gift_ShoppingCart $item
+		 */
+		
+		return Product::get( $item->getGiftProductId() )?->getAdminTitle()??'';
 	}
 }

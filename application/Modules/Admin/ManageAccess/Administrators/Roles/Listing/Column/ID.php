@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\ManageAccess\Administrators\Roles;
 
 use Jet\DataListing_Column;
 use Jet\Tr;
+use JetApplication\Auth_Administrator_Role;
 
 class Listing_Column_ID extends DataListing_Column
 {
@@ -24,4 +25,16 @@ class Listing_Column_ID extends DataListing_Column
 		return Tr::_('ID');
 	}
 	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Auth_Administrator_Role $item
+		 */
+		return $item->getId();
+	}
 }

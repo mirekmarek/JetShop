@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\MoneyRefund;
 
 class Listing_Column_Amount extends Admin_Listing_Column
 {
@@ -18,4 +19,16 @@ class Listing_Column_Amount extends Admin_Listing_Column
 		return Tr::_('Amount to be refunded');
 	}
 	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float
+	{
+		/**
+		 * @var MoneyRefund $item
+		 */
+		return $item->getAmountToBeRefunded();
+	}
 }

@@ -44,4 +44,24 @@ class Listing_Column_Roles extends DataListing_Column
 		return $res;
 	}
 	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Auth_Administrator_User $item
+		 */
+		$res = '';
+		foreach($item->getRoles() as $role) {
+			$res .= $role->getName()."\n";
+		}
+		
+		return $res;
+	}
+	
+	
 }
