@@ -19,9 +19,9 @@ class Listing_Column_Phone extends Admin_Listing_Column
 		return Tr::_('Phone');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return Tr::_('Phone');
+		return $this->getTitle();
 	}
 	
 	public function getExportData( mixed $item ): string

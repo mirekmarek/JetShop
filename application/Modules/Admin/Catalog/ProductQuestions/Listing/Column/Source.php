@@ -24,12 +24,12 @@ class Listing_Column_Source extends Admin_Listing_Column
 	{
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Source');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : string
 	{
 		/**
 		 * @var ProductQuestion $item

@@ -19,12 +19,12 @@ class Listing_Column_TotalAmount extends Admin_Listing_Column
 		return Tr::_('Amount');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
 		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): float
 	{
 		/**
 		 * @var Order $item

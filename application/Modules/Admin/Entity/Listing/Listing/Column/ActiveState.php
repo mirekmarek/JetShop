@@ -86,14 +86,14 @@ class Listing_Column_ActiveState extends Admin_Listing_Column
 		 */
 		
 		$data = [
-			'general' => $item->isActive() ? 1 : 0
+			'general' => $item->isActive()
 		];
 		
 		
 		if($this->isMultiEShopMode()) {
 			$eshops = EShops::getListSorted();
 			foreach($eshops as $eshop) {
-				$data[$eshop->getKey()] = $item->getEshopData($eshop)->isActiveForShop() ? 1 : 0;
+				$data[$eshop->getKey()] = $item->getEshopData($eshop)->isActiveForShop();
 			}
 		}
 		

@@ -33,4 +33,14 @@ class Listing_Column_Images extends Admin_Listing_Column
 	{
 		return true;
 	}
+	
+	public function getExportHeader(): null
+	{
+		return null;
+	}
+	
+	public function getExportData( mixed $item ): array
+	{
+		return [];
+	}
 }

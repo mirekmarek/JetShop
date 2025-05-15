@@ -26,7 +26,7 @@ class Listing_Column_ID extends DataListing_Column
 	
 	public function getExportHeader(): string
 	{
-		return $this->getKey();
+		return $this->getTitle();
 	}
 	
 	/**

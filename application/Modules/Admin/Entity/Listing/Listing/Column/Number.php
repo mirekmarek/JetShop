@@ -25,12 +25,12 @@ class Listing_Column_Number extends Admin_Listing_Column
 		return Tr::_('Number');
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Number');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : string
 	{
 		/**
 		 * @var EShopEntity_HasNumberSeries_Interface $item

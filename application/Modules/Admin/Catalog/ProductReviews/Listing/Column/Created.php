@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
-use Jet\Locale;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
@@ -26,16 +25,16 @@ class Listing_Column_Created extends Admin_Listing_Column
 		$column->addCustomCssStyle('width:80px');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
 		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): object|string
 	{
 		/**
 		 * @var ProductQuestion $item
 		 */
-		return Locale::dateAndTime( $item->getCreated() );
+		return $item->getCreated()??'';
 	}
 }

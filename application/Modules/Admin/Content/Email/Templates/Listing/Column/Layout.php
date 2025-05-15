@@ -9,6 +9,9 @@ namespace JetApplicationModule\Admin\Content\Email\Templates;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\EMail_Layout;
+use JetApplication\EMail_TemplateText;
+use JetApplication\EShops;
 
 class Listing_Column_Layout extends Admin_Listing_Column
 {
@@ -27,5 +30,30 @@ class Listing_Column_Layout extends Admin_Listing_Column
 	public function getDisallowSort(): bool
 	{
 		return true;
+	}
+	
+	public function getExportHeader(): array
+	{
+		$titles = [];
+		foreach(EShops::getListSorted() as $eshop) {
+			$titles['layout_'.$eshop->getKey()] = Tr::_('Layout script').' - '.$eshop->getName();
+		}
+		
+		return $titles;
+
+	}
+	
+	public function getExportData( mixed $item ): array
+	{
+		/**
+		 * @var EMail_TemplateText $item
+		 */
+		$res = [];
+		
+		foreach(EShops::getListSorted() as $eshop) {
+			$res['layout_'.$eshop->getKey()] = EMail_Layout::getScope()[$item->getEshopData($eshop)->getLayoutId()]??'';
+		}
+		
+		return $res;
 	}
 }

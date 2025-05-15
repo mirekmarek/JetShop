@@ -442,4 +442,9 @@ return [
 	'Personal takeover - internal' => 'Osobní převzetí - interní',
 	'e-Delivery' => 'e-Doručování',
 	'Create a new proforma invoice' => 'Vytvořte novou zálohovou fakturu',
+	'Customer ID' => '',
+	'Company name' => '',
+	'First name' => '',
+	'Last name' => '',
+	'Surname' => '',
 ];

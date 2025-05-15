@@ -20,9 +20,9 @@ class Listing_Column_Supplier extends Admin_Listing_Column
 		return Tr::_('Supplier');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return 'Supplier';
+		return $this->getTitle();
 	}
 	
 	public function getDisallowSort(): bool
@@ -30,7 +30,7 @@ class Listing_Column_Supplier extends Admin_Listing_Column
 		return true;
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): string
 	{
 		/**
 		 * @var WarehouseManagement_ReceiptOfGoods $item

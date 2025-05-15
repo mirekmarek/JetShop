@@ -26,13 +26,9 @@ class Listing_Column_ContextObjectName extends DataListing_Column
 	
 	public function getExportHeader(): string
 	{
-		return $this->getKey();
+		return $this->getTitle();
 	}
 	
-	/**
-	 * @var Event $item
-	 * @return string
-	 */
 	public function getExportData( mixed $item ): string
 	{
 		return $item->getContextObjectName();

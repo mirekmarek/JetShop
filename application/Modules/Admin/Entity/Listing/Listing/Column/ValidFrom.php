@@ -31,17 +31,17 @@ class Listing_Column_ValidFrom extends Admin_Listing_Column
 		$column->addCustomCssStyle('width: 200px');
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Valid from');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : object|string
 	{
 		/**
 		 * @var EShopEntity_HasActivationByTimePlan_Interface $item
 		 */
-		return $item->getActiveFrom()?->toString()??'';
+		return $item->getActiveFrom()??'';
 	}
 	
 }

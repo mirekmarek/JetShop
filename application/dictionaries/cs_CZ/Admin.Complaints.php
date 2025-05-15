@@ -222,4 +222,9 @@ return [
 	'Post-warranty claims / spare parts' => 'Pozáruční reklamace / náhradní díly',
 	'Other' => 'jiný',
 	'Delivery of new goods' => 'Dodání nového zboží',
+	'Customer ID' => '',
+	'Company name' => '',
+	'First name' => '',
+	'Last name' => '',
+	'Surname' => '',
 ];

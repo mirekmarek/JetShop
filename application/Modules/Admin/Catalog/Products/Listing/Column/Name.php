@@ -32,7 +32,7 @@ class Listing_Column_Name extends Admin_Listing_Column
 		return Tr::_('Name');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): array
 	{
 		$headers = [];
 		
@@ -43,7 +43,7 @@ class Listing_Column_Name extends Admin_Listing_Column
 		return $headers;
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): array
 	{
 		/**
 		 * @var Product $item

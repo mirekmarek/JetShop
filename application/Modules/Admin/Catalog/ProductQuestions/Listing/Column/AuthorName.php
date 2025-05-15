@@ -24,12 +24,12 @@ class Listing_Column_AuthorName extends Admin_Listing_Column
 	{
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Author - name');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : string
 	{
 		/**
 		 * @var ProductQuestion $item

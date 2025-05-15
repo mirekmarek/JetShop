@@ -35,7 +35,7 @@ class Listing_Column_EShop extends Admin_Listing_Column
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('e-shop', dictionary: Tr::COMMON_DICTIONARY);
+		return $this->getTitle();
 	}
 	
 	public function getOrderByAsc(): array|string

@@ -33,7 +33,7 @@ class Listing_Column_InternalNotes extends Admin_Listing_Column
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('Internal notes', dictionary: Tr::COMMON_DICTIONARY);
+		return $this->getTitle();
 	}
 	
 	public function getExportData( mixed $item ): string

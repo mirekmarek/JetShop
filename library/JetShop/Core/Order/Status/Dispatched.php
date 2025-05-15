@@ -57,7 +57,7 @@ abstract class Core_Order_Status_Dispatched extends Order_Status {
 	
 	public static function resolve( EShopEntity_HasStatus_Interface|Order $item ) : bool
 	{
-		if($item->getDeliveryMethod()->isPersonalTakeover()) {
+		if($item->getDeliveryMethod()?->isPersonalTakeover()) {
 			return false;
 		}
 		

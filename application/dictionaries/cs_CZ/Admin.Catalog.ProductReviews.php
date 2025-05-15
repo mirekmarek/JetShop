@@ -50,4 +50,6 @@ return [
 	'Add new product review' => 'Přidat novou recenzi produktu',
 	'Update product review' => 'Aktualizovat recenzi produktu',
 	'Delete product review' => 'Smazat recenzi produktu',
+	'Status:' => '',
+	'Number' => '',
 ];

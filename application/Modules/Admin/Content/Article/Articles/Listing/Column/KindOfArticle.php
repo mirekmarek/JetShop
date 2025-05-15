@@ -9,6 +9,8 @@ namespace JetApplicationModule\Admin\Content\Article\Articles;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Content_Article;
+use JetApplication\Content_Article_KindOfArticle;
 
 class Listing_Column_KindOfArticle extends Admin_Listing_Column
 {
@@ -26,5 +28,19 @@ class Listing_Column_KindOfArticle extends Admin_Listing_Column
 	public function getDisallowSort(): bool
 	{
 		return true;
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var Content_Article $item
+		 */
+		
+		return Content_Article_KindOfArticle::getScope()[$item->getKindId()]??'';
 	}
 }

@@ -25,17 +25,17 @@ class Listing_Column_Status extends Admin_Listing_Column
 		return Tr::_('Status');
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Number');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : string
 	{
 		/**
 		 * @var EShopEntity_HasStatus_Interface $item
 		 */
-		return $item->getStatus()->getTitle();
+		return $item->getStatus()?->getTitle()??'';
 	}
 	
 }

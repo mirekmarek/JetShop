@@ -6,8 +6,6 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
-
-use Jet\Locale;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
@@ -21,16 +19,16 @@ class Listing_Column_ReceiptDate extends Admin_Listing_Column
 		return Tr::_('Receipt Date');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return 'Posting Date';
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): object
 	{
 		/**
 		 * @var WarehouseManagement_ReceiptOfGoods $item
 		 */
-		return Locale::date( $item->getReceiptDate() );
+		return $item->getReceiptDate();
 	}
 }

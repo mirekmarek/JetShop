@@ -7,6 +7,8 @@
 namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
 use JetApplication\Admin_EntityManager_Controller;
+use JetApplication\Admin_Managers;
+use JetApplication\Product;
 
 
 class Controller_Main extends Admin_EntityManager_Controller
@@ -19,6 +21,23 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_AuthorEmail() );
 		$this->listing_manager->addColumn( new Listing_Column_Created() );
 		$this->listing_manager->addColumn( new Listing_Column_Source() );
+		
+		$this->listing_manager->setSearchWhereCreator(  function( string $search ) : array {
+			
+			$q['author_name *'] = '%'.$search.'%';
+			
+			$q[] = 'OR';
+			$q['author_email *'] = '%'.$search.'%';
+			
+			$products = Admin_Managers::FulltextSearch()->search( Product::getEntityType(), $search );
+			if($products) {
+				$q[] = 'OR';
+				$q['product_id'] = $products;
+			}
+			
+			return $q;
+			
+		} );
 		
 		
 		$this->listing_manager->setDefaultColumnsSchema([

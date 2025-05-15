@@ -50,4 +50,13 @@ class Listing_Column_Edit extends Admin_Listing_Column
 		
 	}
 	
+	public function getExportHeader(): null
+	{
+		return null;
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		return '';
+	}
 }

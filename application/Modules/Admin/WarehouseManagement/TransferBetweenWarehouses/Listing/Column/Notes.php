@@ -19,9 +19,9 @@ class Listing_Column_Notes extends Admin_Listing_Column
 		return Tr::_('Notes');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return 'Notes';
+		return $this->getTitle();
 	}
 	
 	public function getDisallowSort() : bool
@@ -29,7 +29,7 @@ class Listing_Column_Notes extends Admin_Listing_Column
 		return true;
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): string
 	{
 		/**
 		 * @var WarehouseManagement_TransferBetweenWarehouses $item

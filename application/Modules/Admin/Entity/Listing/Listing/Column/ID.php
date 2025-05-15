@@ -33,7 +33,7 @@ class Listing_Column_ID extends Admin_Listing_Column
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('ID', dictionary: Tr::COMMON_DICTIONARY);
+		return $this->getTitle();
 	}
 	
 	public function getExportData( mixed $item ): string

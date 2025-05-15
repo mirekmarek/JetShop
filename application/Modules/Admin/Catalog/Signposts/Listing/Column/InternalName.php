@@ -19,12 +19,12 @@ class Listing_Column_InternalName extends Admin_Listing_Column
 		return Tr::_('Internal name');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return 'internal_name';
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): string
 	{
 		/**
 		 * @var Signpost $item

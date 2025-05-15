@@ -9,6 +9,8 @@ namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Product;
+use JetApplication\ProductReview;
 
 class Listing_Column_Product extends Admin_Listing_Column
 {
@@ -27,5 +29,18 @@ class Listing_Column_Product extends Admin_Listing_Column
 	public function getDisallowSort(): bool
 	{
 		return true;
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var ProductReview $item
+		 */
+		return Product::get( $item->getProductId() )?->getAdminTitle()??'';
 	}
 }

@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\Customers;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Customer;
 
 class Listing_Column_Registration extends Admin_Listing_Column
 {
@@ -16,5 +17,18 @@ class Listing_Column_Registration extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Registration');
+	}
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): object|string
+	{
+		/**
+		 * @var Customer $item
+		 */
+		return $item->getRegistrationDateTime()??'';
 	}
 }

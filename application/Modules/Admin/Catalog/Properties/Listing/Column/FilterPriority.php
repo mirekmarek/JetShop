@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Property;
 
 class Listing_Column_FilterPriority extends Admin_Listing_Column
 {
@@ -25,4 +26,16 @@ class Listing_Column_FilterPriority extends Admin_Listing_Column
 	}
 	
 	
+	public function getExportHeader(): string
+	{
+		return Tr::_('Filter priority');
+	}
+	
+	public function getExportData( mixed $item ): int
+	{
+		/**
+		 * @var Property $item
+		 */
+		return $item->getFilterPriority();
+	}
 }

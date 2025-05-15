@@ -117,4 +117,7 @@ return [
 	'Personal takeover - internal' => 'Osobní převzetí - interní',
 	'Delivery' => 'Dodání',
 	'e-Delivery' => 'e-Doručování',
+	'Sender - e-mail' => '',
+	'Sender - name' => '',
+	'Layout script' => '',
 ];

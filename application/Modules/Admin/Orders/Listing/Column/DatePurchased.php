@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-use Jet\Locale;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
 use JetApplication\Order;
@@ -20,16 +19,16 @@ class Listing_Column_DatePurchased extends Admin_Listing_Column
 		return Tr::_('Date purchased');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
 		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): object
 	{
 		/**
 		 * @var Order $item
 		 */
-		return Locale::dateAndTime( $item->getDatePurchased() );
+		return $item->getDatePurchased();
 	}
 }

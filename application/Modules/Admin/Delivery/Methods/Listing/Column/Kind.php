@@ -25,12 +25,12 @@ class Listing_Column_Kind extends Admin_Listing_Column
 		$column->addCustomCssStyle('width:350px');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return Tr::_('Kind of delivery method');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): string
 	{
 		/**
 		 * @var Delivery_Method $item

@@ -31,17 +31,17 @@ class Listing_Column_ValidTill extends Admin_Listing_Column
 		$column->addCustomCssStyle('width: 200px');
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Valid till');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : object|string
 	{
 		/**
 		 * @var EShopEntity_HasActivationByTimePlan_Interface $item
 		 */
-		return $item->getActiveTill()?->toString()??'';
+		return $item->getActiveTill()??'';
 	}
 	
 }

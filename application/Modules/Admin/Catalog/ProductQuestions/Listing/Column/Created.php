@@ -25,17 +25,17 @@ class Listing_Column_Created extends Admin_Listing_Column
 	}
 	
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Created');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : object
 	{
 		/**
 		 * @var ProductQuestion $item
 		 */
-		return $item->getCreated()->toString();
+		return $item->getCreated();
 	}
 	
 }

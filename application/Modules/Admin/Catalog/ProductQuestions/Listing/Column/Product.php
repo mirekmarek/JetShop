@@ -30,12 +30,12 @@ class Listing_Column_Product extends Admin_Listing_Column
 		return true;
 	}
 	
-	public function getExportHeader() : null|string|array
+	public function getExportHeader() : string
 	{
-		return Tr::_('Created');
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ) : float|int|bool|string|array
+	public function getExportData( mixed $item ) : string
 	{
 		/**
 		 * @var ProductQuestion $item

@@ -19,9 +19,9 @@ class Listing_Column_Name extends Admin_Listing_Column
 		return Tr::_('Name');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return Tr::_('Name');
+		return $this->getTitle();
 	}
 	
 	public function getExportData( mixed $item ): string

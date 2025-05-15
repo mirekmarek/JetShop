@@ -8,7 +8,10 @@ namespace JetShop;
 
 
 use Jet\Application;
+use Jet\Data_DateTime;
 use Jet\Http_Headers;
+use Jet\Locale;
+use Jet\Tr;
 use XLSXWriter\XLSXWriter;
 
 abstract class Core_DataExport_XLSX {
@@ -127,6 +130,26 @@ abstract class Core_DataExport_XLSX {
 		
 		foreach( $data as $item ) {
 			$i++;
+			
+			foreach( $item as $v_i=>$v ) {
+				if($v instanceof Data_DateTime) {
+					if($v->isOnlyDate()) {
+						$item[$v_i] = Locale::date( $v );
+					} else {
+						$item[$v_i] = Locale::dateAndTime( $v );
+					}
+				}
+				
+				if( is_bool($v) ) {
+					$item[$v_i] = Tr::_( $v?'Yes':'No', dictionary: Tr::COMMON_DICTIONARY );
+				}
+				
+				if(is_string($v)) {
+					$v = str_replace("\r\n", "\n", $v);
+					$v = str_replace("\n", "\r\n", $v);
+					$item[$v_i] = $v;
+				}
+			}
 			
 			$xls->writeSheetRow( $sheet_name, $item, ($i == $count) ? $last_row_style : $row_style );
 		}

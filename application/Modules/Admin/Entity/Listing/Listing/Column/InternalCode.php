@@ -35,7 +35,7 @@ class Listing_Column_InternalCode extends Admin_Listing_Column
 	
 	public function getExportHeader(): string
 	{
-		return Tr::_('Internal code', dictionary: Tr::COMMON_DICTIONARY);
+		return $this->getTitle();
 	}
 	
 	public function getExportData( mixed $item ): string

@@ -20,12 +20,12 @@ class Listing_Column_Priority extends Admin_Listing_Column
 		return Tr::_('Priority');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return 'priority';
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): int
 	{
 		/**
 		 * @var Signpost $item

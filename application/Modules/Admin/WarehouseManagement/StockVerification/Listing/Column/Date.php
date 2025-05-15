@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 
-use Jet\Locale;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
 use JetApplication\WarehouseManagement_StockVerification;
@@ -20,16 +19,16 @@ class Listing_Column_Date extends Admin_Listing_Column
 		return Tr::_('Date');
 	}
 	
-	public function getExportHeader(): null|string|array
+	public function getExportHeader(): string
 	{
-		return 'Date';
+		return $this->getTitle();
 	}
 	
-	public function getExportData( mixed $item ): float|int|bool|string|array
+	public function getExportData( mixed $item ): object
 	{
 		/**
 		 * @var WarehouseManagement_StockVerification $item
 		 */
-		return Locale::date( $item->getDate() );
+		return $item->getDate();
 	}
 }
