@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 class Listing_Column_SuppliersBill extends Admin_Listing_Column
 {
@@ -16,6 +17,20 @@ class Listing_Column_SuppliersBill extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Supplier\'s bill');
+	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var WarehouseManagement_ReceiptOfGoods $item
+		 */
+		return $item->getSuppliersBillNumber();
 	}
 	
 }

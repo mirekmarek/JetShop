@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 
 class Listing_Column_NumberOfUnits extends Admin_Listing_Column
 {
@@ -16,6 +17,20 @@ class Listing_Column_NumberOfUnits extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Number of units');
+	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float
+	{
+		/**
+		 * @var WarehouseManagement_LossOrDestruction $item
+		 */
+		return $item->getNumberOfUnits();
 	}
 	
 }

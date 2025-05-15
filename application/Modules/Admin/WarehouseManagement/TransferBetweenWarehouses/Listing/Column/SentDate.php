@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehous
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 class Listing_Column_SentDate extends Admin_Listing_Column
 {
@@ -18,5 +19,20 @@ class Listing_Column_SentDate extends Admin_Listing_Column
 	{
 		return Tr::_('Sent');
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): object|string
+	{
+		/**
+		 * @var WarehouseManagement_TransferBetweenWarehouses $item
+		 */
+		return $item->getSentDateTime()??'';
+	}
+	
 
 }

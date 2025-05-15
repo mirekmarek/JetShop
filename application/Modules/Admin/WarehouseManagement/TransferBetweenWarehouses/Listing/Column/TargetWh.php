@@ -9,6 +9,8 @@ namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehous
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
+use JetApplication\WarehouseManagement_Warehouse;
 
 class Listing_Column_TargetWh extends Admin_Listing_Column
 {
@@ -23,5 +25,20 @@ class Listing_Column_TargetWh extends Admin_Listing_Column
 	{
 		//$column->addCustomCssStyle('width: 200px');
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): object|string
+	{
+		/**
+		 * @var WarehouseManagement_TransferBetweenWarehouses $item
+		 */
+		return WarehouseManagement_Warehouse::getScope()[$item->getTargetWarehouseId()]??'';
+	}
+	
 	
 }

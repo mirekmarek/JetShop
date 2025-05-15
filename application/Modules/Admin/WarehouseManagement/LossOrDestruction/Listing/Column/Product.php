@@ -8,6 +8,8 @@ namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Product;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 
 class Listing_Column_Product extends Admin_Listing_Column
 {
@@ -16,6 +18,20 @@ class Listing_Column_Product extends Admin_Listing_Column
 	public function getTitle(): string
 	{
 		return Tr::_('Product');
+	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): string
+	{
+		/**
+		 * @var WarehouseManagement_LossOrDestruction $item
+		 */
+		return Product::get($item->getProductId())?->getAdminTitle()??'';
 	}
 	
 }

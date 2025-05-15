@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\WarehouseManagement_LossOrDestruction;
 
 class Listing_Column_Total extends Admin_Listing_Column
 {
@@ -17,5 +18,20 @@ class Listing_Column_Total extends Admin_Listing_Column
 	{
 		return Tr::_('Total');
 	}
+	
+	
+	public function getExportHeader(): string
+	{
+		return $this->getTitle();
+	}
+	
+	public function getExportData( mixed $item ): float
+	{
+		/**
+		 * @var WarehouseManagement_LossOrDestruction $item
+		 */
+		return $item->getTotal();
+	}
+	
 	
 }
