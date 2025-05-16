@@ -12,7 +12,10 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Logger;
+use JetApplication\CompanyInfo;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_ProformaInvoice;
@@ -56,12 +59,25 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 	)]
 	protected ?Data_DateTime $cancelled_date = null;
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text before items:'
+	)]
+	protected string $text_before_items = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 65536
 	)]
-	protected string $invoice_perex = '';
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text after items:'
+	)]
+	protected string $text_aftere_items = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -77,9 +93,6 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 		data_model_class: ProformaInvoice_Item::class
 	)]
 	protected array $items = [];
-	
-	protected ?bool $has_correction = null;
-	protected ?array $corrections = null;
 	
 	
 	public static function getNumberSeriesEntityIsPerShop() : bool
@@ -151,6 +164,11 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 	public static function createByOrder( Order $order ) : static
 	{
 		$invoice = parent::createByOrder( $order );
+		
+		$company_info = CompanyInfo::get( $invoice->getEshop() );
+		$invoice->setTextBeforeItems( $company_info->getTextBeforeProformaInvoiceItems() );
+		$invoice->setTextAftereItems( $company_info->getTextAftereProformaInvoiceItems() );
+		
 		
 		$invoice->setInvoiceDate( Data_DateTime::now() );
 		$invoice->setDueDate( Data_DateTime::now() );
@@ -225,4 +243,26 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 	{
 		return false;
 	}
+	
+	public function getTextBeforeItems(): string
+	{
+		return $this->text_before_items;
+	}
+	
+	public function setTextBeforeItems( string $text_before_items ): void
+	{
+		$this->text_before_items = $text_before_items;
+	}
+	
+	public function getTextAftereItems(): string
+	{
+		return $this->text_aftere_items;
+	}
+	
+	public function setTextAftereItems( string $text_aftere_items ): void
+	{
+		$this->text_aftere_items = $text_aftere_items;
+	}
+	
+	
 }

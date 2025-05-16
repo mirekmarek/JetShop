@@ -192,6 +192,45 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 	)]
 	protected string $bank_account_number = '';
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text before invoice items:'
+	)]
+	protected string $text_before_invoice_items = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text after invoice items:'
+	)]
+	protected string $text_aftere_invoice_items = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text before proforma invoice items:'
+	)]
+	protected string $text_before_proforma_invoice_items = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text after proforma invoice items:'
+	)]
+	protected string $text_aftere_proforma_invoice_items = '';
 	
 	
 	protected ?Form $edit_form = null;
@@ -410,6 +449,46 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 	public function setBankAccountNumber( string $bank_account_number ): void
 	{
 		$this->bank_account_number = $bank_account_number;
+	}
+	
+	public function getTextBeforeInvoiceItems(): string
+	{
+		return $this->text_before_invoice_items;
+	}
+	
+	public function setTextBeforeInvoiceItems( string $text_before_invoice_items ): void
+	{
+		$this->text_before_invoice_items = $text_before_invoice_items;
+	}
+	
+	public function getTextAftereInvoiceItems(): string
+	{
+		return $this->text_aftere_invoice_items;
+	}
+	
+	public function setTextAftereInvoiceItems( string $text_aftere_invoice_items ): void
+	{
+		$this->text_aftere_invoice_items = $text_aftere_invoice_items;
+	}
+	
+	public function getTextBeforeProformaInvoiceItems(): string
+	{
+		return $this->text_before_proforma_invoice_items;
+	}
+	
+	public function setTextBeforeProformaInvoiceItems( string $text_before_proforma_invoice_items ): void
+	{
+		$this->text_before_proforma_invoice_items = $text_before_proforma_invoice_items;
+	}
+	
+	public function getTextAftereProformaInvoiceItems(): string
+	{
+		return $this->text_aftere_proforma_invoice_items;
+	}
+	
+	public function setTextAftereProformaInvoiceItems( string $text_aftere_proforma_invoice_items ): void
+	{
+		$this->text_aftere_proforma_invoice_items = $text_aftere_proforma_invoice_items;
 	}
 	
 	

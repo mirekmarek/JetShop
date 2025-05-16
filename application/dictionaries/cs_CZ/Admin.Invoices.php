@@ -138,4 +138,9 @@ return [
 	'Total amount - With VAT' => 'Celková částka - S DPH',
 	'Total amount - VAT' => 'Celková částka - DPH',
 	'VAT Overview' => 'Přehled DPH',
+	'Maximal image width' => '',
+	'Maximal image height' => '',
+	'QR' => '',
+	'Text before ttems' => '',
+	'Text after ttems' => '',
 ];

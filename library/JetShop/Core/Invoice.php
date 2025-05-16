@@ -12,10 +12,13 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Field;
 use Jet\Form_Field_Date;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
+use JetApplication\CompanyInfo;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_Invoice;
@@ -101,7 +104,28 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 		type: DataModel::TYPE_STRING,
 		max_len: 65536
 	)]
-	protected string $invoice_perex = '';
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text before items:'
+	)]
+	protected string $text_before_items = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEXTAREA,
+		label: 'Text after items:'
+	)]
+	protected string $text_aftere_items = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $payment_qr_code_image_filename = '';
 	
 	/**
 	 * @var Invoice_Item[]
@@ -318,6 +342,11 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 	public static function createByOrder( Order $order ) : static
 	{
 		$invoice = parent::createByOrder( $order );
+		
+		$company_info = CompanyInfo::get( $invoice->getEshop() );
+		$invoice->setTextBeforeItems( $company_info->getTextBeforeInvoiceItems() );
+		$invoice->setTextAftereItems( $company_info->getTextAftereInvoiceItems() );
+		
 		
 		$invoice->setInvoiceDate( Data_DateTime::now() );
 		$invoice->setDateOfTaxableSupply( Data_DateTime::now() );
@@ -572,5 +601,39 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 	{
 		return Managers_General::Invoices()->generateInvoicePDF( $this );
 	}
+	
+	
+	public function getPaymentQrCodeImageFilename(): string
+	{
+		return $this->payment_qr_code_image_filename;
+	}
+	
+	public function setPaymentQrCodeImageFilename( string $payment_qr_code_image_filename ): void
+	{
+		$this->payment_qr_code_image_filename = $payment_qr_code_image_filename;
+	}
+	
+	
+	public function getTextBeforeItems(): string
+	{
+		return $this->text_before_items;
+	}
+	
+	public function setTextBeforeItems( string $text_before_items ): void
+	{
+		$this->text_before_items = $text_before_items;
+	}
+	
+	public function getTextAftereItems(): string
+	{
+		return $this->text_aftere_items;
+	}
+	
+	public function setTextAftereItems( string $text_aftere_items ): void
+	{
+		$this->text_aftere_items = $text_aftere_items;
+	}
+	
+	
 	
 }

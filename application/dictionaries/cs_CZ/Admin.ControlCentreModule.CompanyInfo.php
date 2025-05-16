@@ -27,4 +27,8 @@ return [
 	'Bank - name:' => 'Název banky:',
 	'Bank - account number:' => 'Banka - číslo účtu:',
 	'Delivery note PDF template:' => 'PDF šablona dodacího listu:',
+	'Text before invoice items:' => '',
+	'Text after invoice items:' => '',
+	'Text before proforma invoice items:' => '',
+	'Text after proforma invoice items:' => '',
 ];

@@ -38,4 +38,6 @@ return [
 	'Delete' => 'Vymazat',
 	'Do you really want to delete this E-mail template?' => 'Opravdu chcete smazat tuto šablonu e-mailu?',
 	'E-mail template <b>%ITEM_NAME%</b> has been deleted' => 'Šablona e-mailu <b>%ITEM_NAME%</b> byla smazána',
+	'Activate' => '',
+	'Deactivate' => '',
 ];

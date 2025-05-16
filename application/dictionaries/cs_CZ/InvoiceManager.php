@@ -95,4 +95,6 @@ return [
 	'Maximal image height' => 'Maximální výška obrazu',
 	'QR' => 'QR',
 	'Proforma Invoice' => 'Proforma faktura',
+	'Text before ttems' => '',
+	'Text after ttems' => '',
 ];

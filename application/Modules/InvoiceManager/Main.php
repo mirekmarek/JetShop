@@ -25,7 +25,6 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	public function createInvoiceForOrder( Order $order ) : Invoice
 	{
 		$invoice = Invoice::createByOrder( $order );
-		//TODO: setup payment, atc.
 		
 		$invoice->save();
 		
@@ -35,7 +34,6 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	public function createProformaInvoiceForOrder( Order $order ) : ProformaInvoice
 	{
 		$invoice = ProformaInvoice::createByOrder( $order );
-		//TODO: setup payment, atc.
 		
 		$invoice->save();
 		
@@ -45,7 +43,6 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	public function createDeliveryNoteForOrder( Order $order ) : DeliveryNote
 	{
 		$invoice = DeliveryNote::createByOrder( $order );
-		//TODO: setup payment, atc.
 		
 		$invoice->save();
 		
