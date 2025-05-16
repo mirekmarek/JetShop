@@ -7,11 +7,12 @@
 
 use Jet\Http_Request;
 use Jet\UI;
-use Jet\MVC;
 use Jet\Locale;
+use JetApplication\Application_Admin;
+
 ?>
 <div style="position: absolute;top:15px; right: 15px;">
-	<?php foreach( MVC::getBase()->getLocales() as $locale ): ?>
+	<?php foreach( Application_Admin::getAvlLovales() as $locale ): ?>
 		<?php if( $locale->toString()==Locale::getCurrentLocale()->toString() ): ?>
 			<?=UI::flag( $locale )?>
 		<?php else: ?>

@@ -65,13 +65,29 @@ class Application_Admin
 		
 	}
 	
+	public static function getAvlLovales() : array
+	{
+		$base = static::getBase();
+		$_avl = $base->getLocalizedData( $base->getDefaultLocale() )->getParameter('avl_locales', default_value: $base->getDefaultLocale()->toString() );
+		$_avl = explode(',', $_avl);
+		
+		$avl = [];
+		
+		foreach( $_avl as $locale_str ) {
+			$locale = new Locale( $locale_str );
+			$avl[$locale_str] = $locale;
+		}
+		
+		return $avl;
+	}
+	
 	protected static function handleLocaleSwitch( MVC_Router $router ): void
 	{
-		$base = MVC::getBase('admin');
-		$avl_locales = $base->getLocales();
-		$default_locale = $base->getDefaultLocale();
+		$base = static::getBase();
+		$avl_locales = static::getAvlLovales();
+		$default_locale = array_values(static::getAvlLovales())[0];
 		
-		$cookie_name = 'admin_locale';
+		$cookie_name = 'adm_locale';
 		
 		$setCookie = function( Locale $locale ) use ($cookie_name, $base) : void {
 			$URL = 'https://'.$base->getLocalizedData( $base->getDefaultLocale() )->getDefaultURL();
@@ -113,7 +129,7 @@ class Application_Admin
 		
 		Locale::setCurrentLocale( $selected_locale );
 		Tr::setCurrentLocale( $selected_locale );
-		$router->setLocale( $selected_locale );
+		//$router->setLocale( $selected_locale );
 	}
 
 	/**

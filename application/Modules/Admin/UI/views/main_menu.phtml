@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\UI;
 
 
+use JetApplication\Application_Admin;
 use JetApplication\EShops;
 
 use Jet\Http_Request;
@@ -117,9 +118,8 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 					<span><?= UI::flag( Locale::getCurrentLocale() ) ?></span>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-					<?php foreach( MVC::getBase()->getLocales() as $locale ): ?>
+					<?php foreach( Application_Admin::getAvlLovales() as $locale ): ?>
 						<a class="dropdown-item"
-							<?php /* href="<?= MVC::getPage(page_id: null, locale: $locale, base_id: null)->getURL( GET_params: Http_Request::GET()->getRawData() ) ?>"> */ ?>
 							href="<?=Http_Request::currentURI(['set_locale'=>$locale->toString()])?>"
 							<?= UI::flag( $locale ) ?>
 							<?= $locale->getName( $locale ) ?>

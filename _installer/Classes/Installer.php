@@ -605,19 +605,22 @@ class Installer
 		
 		$default_added = false;
 		foreach( Installer::getAvailableAdminLocales() as $locale ) {
-			if( !$default_added ) {
-				$admin_ld = $admin->addLocale( $locale );
-				$admin_ld->setTitle( Tr::_( 'Administration', [], null, $locale ) );
-				$admin_ld->setURLs( [$URL . 'admin/'] );
-				
-				$default_added = true;
-				continue;
-			}
-			
 			$admin_ld = $admin->addLocale( $locale );
 			$admin_ld->setTitle( Tr::_( 'Administration', [], null, $locale ) );
-			$admin_ld->setURLs( [$URL . 'admin/' . $locale->getLanguage() . '/'] );
+			$admin_ld->setURLs( [$URL . 'admin/'] );
+			
+			$avl_locales = [];
+			foreach( Installer::getAvailableAdminLocales() as $avl_locale ) {
+				$avl_locales[] = $avl_locale->toString();
+			}
+			
+			$avl_locales = implode( ',', $avl_locales );
+			
+			$admin_ld->setParameter('avl_locales', $avl_locales );
+			
+			break;
 		}
+		
 		$admin->setIsActive( true );
 		$admin->setInitializer( [
 			Application_Admin::class,
