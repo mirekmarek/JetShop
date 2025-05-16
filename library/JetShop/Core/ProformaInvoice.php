@@ -77,7 +77,7 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 		type: Form_Field::TYPE_TEXTAREA,
 		label: 'Text after items:'
 	)]
-	protected string $text_aftere_items = '';
+	protected string $text_after_items = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -167,7 +167,7 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 		
 		$company_info = CompanyInfo::get( $invoice->getEshop() );
 		$invoice->setTextBeforeItems( $company_info->getTextBeforeProformaInvoiceItems() );
-		$invoice->setTextAftereItems( $company_info->getTextAftereProformaInvoiceItems() );
+		$invoice->setTextAfterItems( $company_info->getTextAftereProformaInvoiceItems() );
 		
 		
 		$invoice->setInvoiceDate( Data_DateTime::now() );
@@ -254,15 +254,25 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 		$this->text_before_items = $text_before_items;
 	}
 	
-	public function getTextAftereItems(): string
+	public function getTextAfterItems(): string
 	{
-		return $this->text_aftere_items;
+		return $this->text_after_items;
 	}
 	
-	public function setTextAftereItems( string $text_aftere_items ): void
+	public function setTextAfterItems( string $text_after_items ): void
 	{
-		$this->text_aftere_items = $text_aftere_items;
+		$this->text_after_items = $text_after_items;
 	}
 	
+	protected ?Form $texts_edit_form = null;
+	
+	public function getTextsEditForm(): Form
+	{
+		if(!$this->texts_edit_form) {
+			$this->texts_edit_form = $this->createForm('texts_edit_form', ['text_before_items', 'text_after_items']);
+		}
+		
+		return $this->texts_edit_form;
+	}
 	
 }

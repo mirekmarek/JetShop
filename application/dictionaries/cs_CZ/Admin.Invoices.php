@@ -143,4 +143,7 @@ return [
 	'QR' => '',
 	'Text before ttems' => '',
 	'Text after ttems' => '',
+	'Text before items:' => '',
+	'Text after items:' => '',
+	'Invoice has been updated' => '',
 ];

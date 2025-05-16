@@ -19,4 +19,5 @@ return [
 	'Customer password reset - email with code' => 'Obnovení hesla zákazníka - e-mail s kódem',
 	'Authorization code that will be sent to the user.' => 'Autorizační kód, který bude zaslán uživateli.',
 	'Customer password reset - password reset confirmation' => 'Reset hesla zákazníka – potvrzení resetování hesla',
+	'Invalid value' => '',
 ];

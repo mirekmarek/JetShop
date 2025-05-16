@@ -45,13 +45,14 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'id',
+			'eshop',
 			'active_state',
 			'internal_name',
 			'internal_code',
 			'internal_notes',
-			Listing_Column_Kind::KEY,
-			Listing_Column_FreeLimit::KEY,
-			Listing_Column_Price::KEY
+			'title',
+			'kind',
+			'backend_module',
 		]);
 	}
 	

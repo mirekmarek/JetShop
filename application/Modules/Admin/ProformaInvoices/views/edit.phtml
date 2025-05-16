@@ -7,7 +7,9 @@
 namespace JetApplicationModule\Admin\ProformaInvoices;
 
 
+use Jet\Form_Renderer;
 use Jet\MVC_View;
+use Jet\UI;
 use JetApplication\ProformaInvoice;
 
 /**
@@ -17,11 +19,35 @@ use JetApplication\ProformaInvoice;
 
 $invoice = $this->getRaw( 'invoice' );
 
+$texts_edit_form = $invoice->getTextsEditForm();
+$texts_edit_form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 2] );
+$texts_edit_form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 8]);
+
+
 require 'edit/js.phtml';
 require 'edit/toolbar.phtml';
 ?>
 <div id="main-col">
 	<?php
 	require 'edit/main.phtml';
+	?>
+
+	<div class="card card-body" style="margin: 10px;">
+		<?=$texts_edit_form->start()?>
+		<?=$texts_edit_form->field('text_before_items')?>
+		<?=$texts_edit_form->field('text_after_items')?>
+		
+		<?php if(!$texts_edit_form->getIsReadonly()): ?>
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-10">
+					<?=UI::button_save()?>
+				</div>
+			</div>
+		<?php endif; ?>
+		<?=$texts_edit_form->end()?>
+	</div>
+	
+	<?php
 	require 'edit/items.phtml';?>
 </div>

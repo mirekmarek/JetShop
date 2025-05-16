@@ -109,4 +109,9 @@ return [
 	'Get invoice' => 'Získat fakturu',
 	'Update invoice' => 'Aktualizovat fakturu',
 	'Admin.ProformaInvoices' => 'Admin.ProformaFaktury',
+	'Text before items:' => '',
+	'Text after items:' => '',
+	'Text before ttems' => '',
+	'Text after ttems' => '',
+	'Proforma Invoice has been send cancelled' => '',
 ];

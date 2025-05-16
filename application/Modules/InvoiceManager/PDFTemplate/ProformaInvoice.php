@@ -57,7 +57,7 @@ class PDFTemplate_ProformaInvoice extends PDFTemplate {
 				 * @var ProformaInvoice $invoice
 				 */
 				$invoice = $this->invoice;
-				return $invoice->getTextAftereItems();
+				return $invoice->getTextAfterItems();
 			});
 	}
 	

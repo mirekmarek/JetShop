@@ -141,6 +141,16 @@ class Controller_Main extends Admin_EntityManager_Controller
 			Http_Headers::reload(unset_GET_params: ['handle']);
 		}
 		
+		if(Main::getCurrentUserCanEdit()) {
+			if($invoice->getTextsEditForm()->catch()) {
+				UI_messages::success( Tr::_('Invoice has been updated') );
+				$invoice->save();
+				Http_Headers::reload();
+			}
+		} else {
+			$invoice->getTextsEditForm()->setIsReadonly();
+		}
+		
 		$this->view->setVar( 'invoice', $invoice );
 		$this->view->setVar( 'listing', $this->getListing());
 		

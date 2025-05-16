@@ -58,7 +58,7 @@ class PDFTemplate_Invoice extends PDFTemplate {
 				 * @var Invoice $invoice
 				 */
 				$invoice = $this->invoice;
-				return $invoice->getTextAftereItems();
+				return $invoice->getTextAfterItems();
 			});
 		
 	}
