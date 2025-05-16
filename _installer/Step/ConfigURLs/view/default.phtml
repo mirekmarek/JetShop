@@ -33,8 +33,6 @@ $bases = $this->getRaw( 'bases' );
 					<span class="input-group-text" style="display: inline-block;width: 280px;text-align: left">
 						<?php if($base->getId()=='eshop'):?>
 							<?=UI::flag( $locale )?> <?= $locale->getName() ?>
-						<?php else: ?>
-							<?= $locale->getLanguageName() ?>
 						<?php endif; ?>
 					</span>
 					<span class="input-group-text"> https://</span>
