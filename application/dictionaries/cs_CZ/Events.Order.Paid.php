@@ -56,4 +56,5 @@ return [
 	'Payment informations' => 'Platební informace',
 	'Delivery informations' => 'Informace o doručení',
 	'Prices are with VAT included' => 'Ceny jsou včetně DPH',
+	'Order paid' => '',
 ];

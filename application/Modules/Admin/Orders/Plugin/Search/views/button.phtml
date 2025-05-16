@@ -1,0 +1,41 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\Data_Text;
+use Jet\Form;
+
+use Jet\Http_Request;use Jet\MVC;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+$order = $this->getRaw('item');
+
+
+?>
+<form method="GET" action="<?=MVC::getPage()->getURLPath()?>">
+	<?php foreach(Http_Request::GET()->getRawData() as $key => $value):
+		if(in_array($key, ['search', 'p','id','action'])) {
+			continue;
+		}
+		?>
+	<input type="hidden" name="<?=Data_Text::htmlSpecialChars($key)?>" value="<?=Data_Text::htmlSpecialChars($value)?>">
+	<?php endforeach; ?>
+	
+	<div style="margin-left:20px;margin-right20px;justify-content:left;padding:5px;padding-left:10px;display: grid;grid-template-columns: auto auto;gap: 10px;align-items: center" class="card card-body">
+		<?=UI::icon('search')?>
+		<input type="search" name="search" value="" class="form-control" style="width: 200px;" placeholder="<?=Tr::_('Search')?>">
+	</div>
+	
+</form>

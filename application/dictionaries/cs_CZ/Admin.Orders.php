@@ -447,4 +447,5 @@ return [
 	'First name' => '',
 	'Last name' => '',
 	'Surname' => '',
+	'e-shop URL' => '',
 ];
