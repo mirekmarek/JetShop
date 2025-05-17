@@ -2,6 +2,7 @@
 
 namespace JetApplication\Installer;
 
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\UI;
 use Jet\Tr;
@@ -45,6 +46,11 @@ use Jet\Tr;
 	</table>
 
 	<br/>
-	<?php if( $this->getBool( 'is_OK' ) ):
-	echo Installer::buttonNext();
-endif; ?>
+	<?php if( $this->getBool( 'is_OK' ) ): ?>
+		<script>
+			setTimeout(()=> {
+				location = '<?=Http_Request::currentURI(['go'=>1])?>';
+			}, 1000);
+		</script>
+		<?=Installer::buttonNext()?>
+	<?php endif; ?>
