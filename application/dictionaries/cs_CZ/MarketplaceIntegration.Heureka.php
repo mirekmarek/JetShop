@@ -36,4 +36,6 @@ return [
 	'E-shop REST server API URLs' => 'URL API REST serveru e-shopu',
 	'Heureka API' => 'Heureka API',
 	'Please setup Heureka API first' => 'Nejprve prosím nastavte Heureka API',
+	'Heureka Marketplace Server - CZ' => '',
+	'Heureka Marketplace Server - SK' => '',
 ];

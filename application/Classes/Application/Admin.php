@@ -65,6 +65,9 @@ class Application_Admin
 		
 	}
 	
+	/**
+	 * @return Locale[]
+	 */
 	public static function getAvlLovales() : array
 	{
 		$base = static::getBase();

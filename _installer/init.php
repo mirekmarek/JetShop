@@ -33,6 +33,7 @@ Installer::setBasePath( SysConf_Path::getBase().'_installer/' );
 Installer::setSteps(
 	[
 		'Welcome',
+		'ConsentToLicence',
 		'SystemCheck',
 		'DirsCheck',
 		'SelectDbType',
@@ -53,17 +54,17 @@ Installer::setSteps(
 
 Installer::setAvailableInstallerLocales(
 	[
-		'en_US', 'cs_CZ',
+		'en_EU', 'cs_CZ',
 	]
 );
 
 Installer::setAvailableAdminLocales(
 	[
-		'en_US', 'cs_CZ',
+		'en_EU', 'cs_CZ',
 	]
 );
 
-Installer::setServicesLocale( new Locale( 'en_US' ) );
+Installer::setServicesLocale( new Locale( 'en_EU' ) );
 
 Installer::setDefaultCurrencyCode( 'EUR' );
 Installer::setDefaultCurrencyCodes([

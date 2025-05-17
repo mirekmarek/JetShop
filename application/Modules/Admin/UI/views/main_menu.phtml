@@ -122,7 +122,12 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 						<a class="dropdown-item"
 							href="<?=Http_Request::currentURI(['set_locale'=>$locale->toString()])?>"
 							<?= UI::flag( $locale ) ?>
-							<?= $locale->getName( $locale ) ?>
+							<?php
+								if($locale->getLanguage()=='en')
+									echo $locale->getLanguageName( $locale );
+								else
+									echo $locale->getName( $locale );
+							?>
 						</a>
 					<?php endforeach; ?>
 				</div>

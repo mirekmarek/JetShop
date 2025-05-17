@@ -1,0 +1,39 @@
+<?php
+namespace JetApplication\Installer;
+
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ */
+
+$language = $this->getString('language');
+?>
+<script>
+	function toggleAgree() {
+		const chb = document.getElementById('agree_chb');
+		const btn = document.getElementById('agree_btn');
+		if(chb.checked) {
+			btn.style.display = 'block';
+			btn.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+		} else {
+			btn.style.display = 'none';
+		}
+	}
+</script>
+<div>
+	<?php require 'l/'.lcfirst($language).'.html'; ?>
+	
+	<div>
+		<input type="checkbox" id="agree_chb" onchange="toggleAgree()">
+		<label for="agree_chb">
+			<?=Tr::_('I agree to the license agreement')?>
+		</label>
+	</div>
+	
+	<div id="agree_btn" style="display: none;">
+		<?=Installer::buttonNext();?>
+		<br><br><br><br><br>
+	</div>
+</div>
