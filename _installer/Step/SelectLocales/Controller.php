@@ -9,7 +9,8 @@
 namespace JetApplication\Installer;
 
 use Jet\Form;
-use Jet\Form_Field_Checkbox;
+use Jet\Form_Field_Hidden;
+use Jet\Form_Field_Input;
 use Jet\Locale;
 use JetApplication\DataList;
 
@@ -23,7 +24,7 @@ class Installer_Step_SelectLocales_Controller extends Installer_Step_Controller
 	/**
 	 * @var string
 	 */
-	protected string $label = 'Select Locales';
+	protected string $label = 'Select e-shop locales';
 
 	/**
 	 * @return bool
@@ -43,38 +44,34 @@ class Installer_Step_SelectLocales_Controller extends Installer_Step_Controller
 
 		$selected_locales = Installer::getSelectedEshopLocales();
 
-		
-		foreach( DataList::locales() as $locale_code=>$locale_name ) {
 
-			$field = new Form_Field_Checkbox( 'locale_' . $locale_code, $locale_name );
-			$field->setDefaultValue( isset( $selected_locales[$locale_code] ) );
-
-			$locale_fields[] = $field;
-		}
-
-		$select_locale_form = new Form( 'select_locale_form', $locale_fields );
-
-		$select_locale_form->setDoNotTranslateTexts( true );
-
-
-		if( $select_locale_form->catchInput() && $select_locale_form->validate() ) {
+		$selected_locales_field = new Form_Field_Hidden('selected_locales');
+		$selected_locales_field->setDefaultValue( implode(',', array_keys( $selected_locales )) );
+		$selected_locales_field->setFieldValueCatcher( function( string $val ) {
+			$val = explode( ',', $val );
 			$selected_locales = [];
 			
 			foreach( DataList::locales() as $locale_code=>$locale_name ) {
-				$field = $select_locale_form->field( 'locale_' . $locale_code );
-				if( $field->getValue() ) {
+				if(in_array($locale_code, $val)) {
 					$selected_locales[] = new Locale( $locale_code );
 				}
 			}
-
-			Installer::setSelectedEshopLocales( $selected_locales );
-			Installer::initBases();
 			
-			Installer::goToNext();
+			Installer::setSelectedEshopLocales( $selected_locales );
+		} );
+
+		$select_locale_form = new Form( 'select_locale_form', [$selected_locales_field] );
+
+
+		if( $select_locale_form->catch() ) {
+			if(count(Installer::getSelectedEshopLocales())) {
+				Installer::initBases();
+				Installer::goToNext();
+			}
 		}
-
-
+		
 		$this->view->setVar( 'form', $select_locale_form );
+		$this->view->setVar('selected_locales', array_keys($selected_locales));
 
 		$this->render( 'default' );
 	}

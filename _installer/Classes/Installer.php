@@ -167,7 +167,7 @@ class Installer
 	public static function getSelectedEshopLocales(): array
 	{
 		if( !self::$selected_eshop_locales ) {
-			self::$selected_eshop_locales = static::getSession()->getValue( 'selected_locales', [static::getCurrentLocale()->toString()] );
+			self::$selected_eshop_locales = static::getSession()->getValue( 'selected_eshop_locales', [] );
 		}
 
 		return self::$selected_eshop_locales;
@@ -186,7 +186,7 @@ class Installer
 			self::$selected_eshop_locales[$locale->toString()] = $locale;
 		}
 
-		static::getSession()->setValue( 'selected_locales', self::$selected_eshop_locales );
+		static::getSession()->setValue( 'selected_eshop_locales', self::$selected_eshop_locales );
 	}
 
 	/**

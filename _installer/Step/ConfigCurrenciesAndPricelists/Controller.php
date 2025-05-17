@@ -34,7 +34,7 @@ class Installer_Step_ConfigCurrenciesAndPricelists_Controller extends Installer_
 	{
 		$count_of_vat_rates = 5;
 		
-		$filds = [];
+		$fields = [];
 		
 		$currencies = Installer::getCurrencies();
 		$default_currency = Installer::getDefaultCurrencyCode();
@@ -43,13 +43,14 @@ class Installer_Step_ConfigCurrenciesAndPricelists_Controller extends Installer_
 			$locale_str = $locale->toString();
 			
 			$f = new Form_Field_Select( 'currency_'.$locale_str, UI::flag($locale).' '.$locale->getName() );
+			$f->setDoNotTranslateLabel( true );
 			$f->setDefaultValue( $currencies[$locale_str]??$default_currency );
 			$f->setSelectOptions( Currencies::getScope() );
 			$f->setFieldValueCatcher( function( string $currency_code ) use ($locale) {
 				Installer::setCurrency( $locale, $currency_code );
 			} );
 			
-			$filds[] = $f;
+			$fields[] = $f;
 			
 			
 			
@@ -65,7 +66,7 @@ class Installer_Step_ConfigCurrenciesAndPricelists_Controller extends Installer_
 			foreach($vat_rates as $i=>$rate) {
 				$f = new Form_Field_Float('/vat_rate/'.$locale_str.'/'.$i, '');
 				$f->setDefaultValue( $rate!==''?$rate:null );
-				$filds[] = $f;
+				$fields[] = $f;
 			}
 			
 		}
@@ -74,7 +75,7 @@ class Installer_Step_ConfigCurrenciesAndPricelists_Controller extends Installer_
 		
 		
 		
-		$form = new Form('setup_currency_form', $filds);
+		$form = new Form('setup_currency_form', $fields);
 		
 		
 		
