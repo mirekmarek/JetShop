@@ -4,10 +4,11 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetShop;
+namespace JetApplication;
 
-use JetApplication\EShopEntity_Note_File;
 
-abstract class Core_ReturnOfGoods_Note_File extends EShopEntity_Note_File
+use JetShop\Core_ExpectedPayment_Status;
+
+abstract class ExpectedPayment_Status extends Core_ExpectedPayment_Status
 {
 }

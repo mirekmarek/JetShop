@@ -7,14 +7,12 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
-use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Admin_Managers_Product;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
 use JetApplication\Admin_Managers;
-use JetApplication\Auth_Administrator_Role;
 use JetApplication\Exports_Module_Controller_ProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 
@@ -56,12 +54,12 @@ class Main extends Admin_Managers_Product
 	
 	public static function getCurrentUserCanSetPrice() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_SET_PRICE );
+		return static::getCurrentUserCanDoAction( static::ACTION_SET_PRICE );
 	}
 	
 	public static function getCurrentUserCanSetAvailability() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_SET_AVAILABILITY );
+		return static::getCurrentUserCanDoAction( static::ACTION_SET_AVAILABILITY );
 	}
 	
 	public function renderMarketPlaceSettings_main(

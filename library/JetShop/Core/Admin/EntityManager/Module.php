@@ -74,19 +74,24 @@ abstract class Core_Admin_EntityManager_Module extends Application_Module {
 		return $module_name;
 	}
 	
+	protected static function getCurrentUserCanDoAction( string $action ) : bool
+	{
+		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.$action );
+	}
+	
 	public static function getCurrentUserCanEdit() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.static::ACTION_UPDATE );
+		return static::getCurrentUserCanDoAction( static::ACTION_UPDATE );
 	}
 	
 	public static function getCurrentUserCanCreate() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.static::ACTION_ADD );
+		return static::getCurrentUserCanDoAction( static::ACTION_ADD );
 	}
 	
 	public static function getCurrentUserCanDelete() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.static::ACTION_DELETE );
+		return static::getCurrentUserCanDoAction( static::ACTION_DELETE );
 	}
 	
 	public function renderActiveState( EShopEntity_HasActivation_Interface $item ) : string

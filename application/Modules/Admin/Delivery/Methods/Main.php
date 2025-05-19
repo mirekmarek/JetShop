@@ -7,9 +7,7 @@
 namespace JetApplicationModule\Admin\Delivery\Methods;
 
 
-use Jet\Auth;
 use JetApplication\Admin_Managers_DeliveryMethods;
-use JetApplication\Auth_Administrator_Role;
 use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_Basic;
 
@@ -28,7 +26,7 @@ class Main extends Admin_Managers_DeliveryMethods
 	
 	public static function getCurrentUserCanSetPrice() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_SET_PRICE );
+		return static::getCurrentUserCanDoAction( static::ACTION_SET_PRICE );
 	}
 	
 }

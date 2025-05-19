@@ -10,7 +10,6 @@ namespace JetApplication\Installer;
 
 use Jet\Form;
 use Jet\Form_Field_Hidden;
-use Jet\Form_Field_Input;
 use Jet\Locale;
 use JetApplication\DataList;
 

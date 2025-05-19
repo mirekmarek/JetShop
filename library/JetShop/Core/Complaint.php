@@ -34,6 +34,8 @@ use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasOrderContext_Interface;
+use JetApplication\EShopEntity_HasOrderContext_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
@@ -69,6 +71,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_HasStatus_Interface,
 	EShopEntity_HasEvents_Interface,
+	EShopEntity_HasOrderContext_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
@@ -78,27 +81,12 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_HasStatus_Trait;
 	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasOrderContext_Trait;
 	
 	use Complaint_Trait_Status;
 	use Complaint_Trait_Events;
 	use Complaint_Trait_Changes;
 	use EShopEntity_Admin_Trait;
-	
-	
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true,
-	)]
-	protected int $order_id = 0;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $order_number = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -287,8 +275,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		
 		$complaint->setEshop( $order->getEshop() );
 		
-		$complaint->setOrderId( $order->getId() );
-		$complaint->setOrderNumber( $order->getNumber() );
+		$complaint->setOrder( $order );
 		
 		$complaint->setCustomerId( $order->getCustomerId() );
 		$complaint->setDeliveryAddress( $order->getDeliveryAddress() );
@@ -314,27 +301,6 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 			'c' => $this->getKey(),
 			'k' => $this->getSecondKey()
 		] );
-	}
-	
-	public function getOrderId(): int
-	{
-		return $this->order_id;
-	}
-	
-	public function setOrderId( int $order_id ): void
-	{
-		$this->order_id = $order_id;
-	}
-	
-
-	public function getOrderNumber(): string
-	{
-		return $this->order_number;
-	}
-
-	public function setOrderNumber( string $order_number ): void
-	{
-		$this->order_number = $order_number;
 	}
 	
 

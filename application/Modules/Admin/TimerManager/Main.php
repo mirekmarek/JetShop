@@ -30,7 +30,7 @@ class Main extends Admin_Managers_Timer
 	
 	public function renderIntegration() : string
 	{
-		if(!$this->getCurrentUserCanView()) {
+		if(!$this->getCurrentUserCanSet()) {
 			return '';
 		}
 		
@@ -76,20 +76,33 @@ class Main extends Admin_Managers_Timer
 		);
 	}
 	
+	protected static function getModuleName() : string
+	{
+		$module_name = substr( get_called_class(), 21, -5 );
+		$module_name = str_replace('\\', '.', $module_name);
+		
+		return $module_name;
+	}
+	
+	protected static function getCurrentUserCanDoAction( string $action ) : bool
+	{
+		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::getModuleName().':'.$action );
+	}
+	
 	
 	public static function getCurrentUserCanView() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_VIEW_TIMERS );
+		return static::getCurrentUserCanDoAction( static::ACTION_VIEW_TIMERS );
 	}
 	
 	public static function getCurrentUserCanSet() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_SET_TIMER );
+		return static::getCurrentUserCanDoAction( static::ACTION_SET_TIMER );
 	}
 	
 	public static function getCurrentUserCanCancel() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_CANCEL_TIMER );
+		return static::getCurrentUserCanDoAction( static::ACTION_CANCEL_TIMER );
 	}
 	
 	

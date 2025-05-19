@@ -28,6 +28,8 @@ use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
+use JetApplication\EShopEntity_HasOrderContext_Interface;
+use JetApplication\EShopEntity_HasOrderContext_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\ReturnOfGoods_Event;
@@ -64,6 +66,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	EShopEntity_HasStatus_Interface,
 	EShopEntity_HasEvents_Interface,
 	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_HasOrderContext_Interface,
 	EShopEntity_Admin_Interface,
 	Context_ProvidesContext_Interface
 {
@@ -71,6 +74,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	use EShopEntity_HasStatus_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
 	use EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasOrderContext_Trait;
 	
 	use Context_ProvidesContext_Trait;
 	
@@ -79,20 +83,6 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	use ReturnOfGoods_Trait_Changes;
 	
 	use EShopEntity_Admin_Trait;
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true,
-	)]
-	protected int $order_id = 0;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $order_number = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -231,9 +221,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		$return = new static();
 		
 		$return->setEshop( $order->getEshop() );
-		
-		$return->setOrderId( $order->getId() );
-		$return->setOrderNumber( $order->getNumber() );
+		$return->setOrder( $order );
 		
 		$return->setCustomerId( $order->getCustomerId() );
 		$return->setDeliveryAddress( $order->getDeliveryAddress() );
@@ -259,27 +247,6 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 			'c' => $this->getKey(),
 			'k' => $this->getSecondKey()
 		] );
-	}
-	
-	public function getOrderId(): int
-	{
-		return $this->order_id;
-	}
-	
-	public function setOrderId( int $order_id ): void
-	{
-		$this->order_id = $order_id;
-	}
-	
-	
-	public function getOrderNumber(): string
-	{
-		return $this->order_number;
-	}
-	
-	public function setOrderNumber( string $order_number ): void
-	{
-		$this->order_number = $order_number;
 	}
 	
 	

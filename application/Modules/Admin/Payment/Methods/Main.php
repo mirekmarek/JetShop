@@ -7,9 +7,7 @@
 namespace JetApplicationModule\Admin\Payment\Methods;
 
 
-use Jet\Auth;
 use JetApplication\Admin_Managers_PaymentMethods;
-use JetApplication\Auth_Administrator_Role;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Payment_Method;
 
@@ -27,7 +25,7 @@ class Main extends Admin_Managers_PaymentMethods
 	
 	public static function getCurrentUserCanSetPrice() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_SET_PRICE );
+		return static::getCurrentUserCanDoAction( static::ACTION_SET_PRICE );
 	}
 	
 

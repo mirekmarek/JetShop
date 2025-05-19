@@ -8,6 +8,6 @@ namespace JetShop;
 
 use JetApplication\EShopEntity_Note_File;
 
-abstract class Core_ReturnOfGoods_Note_File extends EShopEntity_Note_File
+abstract class Core_ExpectedPayment_Note_File extends EShopEntity_Note_File
 {
 }

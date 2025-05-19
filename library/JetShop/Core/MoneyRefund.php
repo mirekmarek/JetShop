@@ -25,8 +25,11 @@ use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\EShopEntity_HasOrderContext_Interface;
+use JetApplication\EShopEntity_HasOrderContext_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
+use JetApplication\EShopEntity_HasNumberSeries_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\MoneyRefund_Event;
 use JetApplication\MoneyRefund_Event_InternalNote;
@@ -53,6 +56,7 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasEvents_Interface,
 	EShopEntity_Admin_Interface,
 	EShopEntity_HasNumberSeries_Interface,
+	EShopEntity_HasOrderContext_Interface,
 	Context_HasContext_Interface
 {
 	protected static array $flags = [];
@@ -62,21 +66,9 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	use EShopEntity_HasStatus_Trait;
 	use EShopEntity_HasEvents_Trait;
 	use EShopEntity_Admin_Trait;
-	use Core_EShopEntity_HasNumberSeries_Trait;
+	use EShopEntity_HasOrderContext_Trait;
+	use EShopEntity_HasNumberSeries_Trait;
 	use Context_HasContext_Trait;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true,
-	)]
-	protected int $order_id = 0;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		is_key: true,
-		max_len: 50,
-	)]
-	protected string $order_number = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME
@@ -233,15 +225,6 @@ abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 		$this->date_started = Data_DateTime::now();
 	}
 	
-	public function getOrderId(): int
-	{
-		return $this->order_id;
-	}
-	
-	public function getOrderNumber(): string
-	{
-		return $this->order_number;
-	}
 	
 	
 	

@@ -7,10 +7,8 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
 
-use Jet\Auth;
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Auth_Administrator_Role;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
 use JetApplication\Admin_Managers_WarehouseManagement_Overview;
@@ -27,17 +25,17 @@ class Main extends Admin_Managers_WarehouseManagement_Overview
 	
 	public static function getCurrentUserCanChangeLocation() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_CHANGE_LOCATION );
+		return static::getCurrentUserCanDoAction( static::ACTION_CHANGE_LOCATION );
 	}
 	
 	public static function getCurrentUserCanCancelOrReactivate() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_CANCEL_OR_REACTIVATE );
+		return static::getCurrentUserCanDoAction( static::ACTION_CANCEL_OR_REACTIVATE );
 	}
 	
 	public static function getCurrentUserCanRecalculate() : bool
 	{
-		return Auth::getCurrentUserHasPrivilege( Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION, static::ACTION_RECALCULATE );
+		return static::getCurrentUserCanDoAction( static::ACTION_RECALCULATE );
 	}
 	
 	public static function getCurrentUserCanCreate(): bool
