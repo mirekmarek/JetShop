@@ -142,7 +142,7 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 		}
 		
 		if($this->has_discount!==null) {
-			$basic_filter_result = Product_Price::filterHasDiscount( $this->getPricelist(), $this->has_discount, $basic_filter_result );
+			$basic_filter_result = Product_Price::filterHasDiscount( $this->getPricelist(), $basic_filter_result, $this->has_discount );
 		}
 		
 		$this->filter_result = $basic_filter_result;

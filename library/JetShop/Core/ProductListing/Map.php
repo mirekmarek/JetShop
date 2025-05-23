@@ -46,20 +46,28 @@ abstract class Core_ProductListing_Map
 			return;
 		}
 		
+		$prices = Product_Price::prefetch( $this->pricelist, $product_ids );
+		
+		$min = null;
+		$max = null;
+		
+		foreach($prices as $price) {
+			if($min === null || $price->getPrice() < $min) {
+				$min = $price->getPrice();
+			}
+			
+			if($max === null || $price->getPrice() > $max) {
+				$max = $price->getPrice();
+			}
+		}
+		
+		$this->min_price = $min;
+		$this->max_price = $max;
+		
 		
 		$where = Product_EShopData::getActiveQueryWhere( $this->eshop );
 		$where[] = 'AND';
 		$where['entity_id'] = $product_ids;
-		
-		$prices = Product_Price::getPriceMap( $this->pricelist, $product_ids );
-		
-		if(!$prices) {
-			$this->min_price = 0.0;
-			$this->max_price = 0.0;
-		} else {
-			$this->min_price = min($prices);
-			$this->max_price = max($prices);
-		}
 		
 		
 		$data = Product_EShopData::dataFetchAll(

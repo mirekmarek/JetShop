@@ -50,9 +50,9 @@ abstract class Core_ProductFilter_Filter_Price extends ProductFilter_Filter
 	{
 		$product_prices = Product_Price::filterMinMax(
 			$this->getPricelist(),
+			$this->previous_filter_result,
 			$this->min_price,
 			$this->max_price,
-			$this->previous_filter_result
 		);
 		
 		$this->filter_result = [];

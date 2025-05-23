@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 
+use Jet\BaseObject;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Definition_Interface;
@@ -17,7 +18,7 @@ use Jet\Form_Field_Float;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 
-abstract class Core_Currency implements Form_Definition_Interface
+abstract class Core_Currency extends BaseObject implements Form_Definition_Interface
 {
 	use Form_Definition_Trait;
 	
@@ -88,6 +89,8 @@ abstract class Core_Currency implements Form_Definition_Interface
 		type: Form_Field::TYPE_INPUT,
 		is_required: false,
 		label: 'Decimal separator: ',
+		default_value_getter_name: 'getDecimalSeparator',
+		setter_name: 'setDecimalSeparator',
 	)]
 	protected string $decimal_separator = '';
 	

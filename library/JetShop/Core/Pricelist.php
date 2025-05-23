@@ -67,9 +67,6 @@ abstract class Core_Pricelist extends BaseObject implements Form_Definition_Inte
 	)]
 	protected float $default_vat_rate = 0.0;
 	
-	protected array $custom_discount_prc = [];
-	protected array $custom_discount_mtp = [];
-	
 	protected ?Form $edit_form = null;
 	protected ?Form $add_form = null;
 	
@@ -285,21 +282,5 @@ abstract class Core_Pricelist extends BaseObject implements Form_Definition_Inte
 		
 		return $this->add_form;
 	}
-	
-	public function setCustomDiscountPrc( string $price_entity_class, float $custom_discount_prc ): void
-	{
-		$this->custom_discount_prc[$price_entity_class] = $custom_discount_prc;
-		$this->custom_discount_mtp[$price_entity_class] = (100 - $custom_discount_prc)/100;
-	}
-	
-	public function getCustomDiscountPrc( string $price_entity_class ): float
-	{
-		return $this->custom_discount_prc[$price_entity_class]??0.0;
-	}
-	
-	public function getCustomDiscountMtp( string $price_entity_class ): float
-	{
-		return $this->custom_discount_mtp[$price_entity_class]??0.0;
-	}
-	
+
 }

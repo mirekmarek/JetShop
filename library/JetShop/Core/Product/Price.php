@@ -11,6 +11,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_Price;
+use JetApplication\Pricelist;
 use JetApplication\Product;
 use JetApplication\Product_Price;
 use JetApplication\Product_PriceHistory;
@@ -315,6 +316,39 @@ abstract class Core_Product_Price extends EShopEntity_Price
 		
 		
 		return (bool)$updated;
+	}
+	
+	public static function filterHasDiscount(
+		Pricelist $pricelist,
+		array    $entity_ids,
+		bool      $has_discount
+	) : array
+	{
+		
+		$prices = static::prefetch( $pricelist, $entity_ids );
+		
+		$filter_result = [];
+		foreach($prices as $price) {
+			
+			if(
+				$has_discount &&
+				!$price->getDiscountPercentage()
+			) {
+				continue;
+			}
+			
+			if(
+				!$has_discount &&
+				$price->getDiscountPercentage()
+			) {
+				continue;
+			}
+			
+			
+			$filter_result[] = $price->getEntityId();
+		}
+		
+		return $filter_result;
 	}
 	
 	

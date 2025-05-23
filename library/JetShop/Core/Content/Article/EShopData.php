@@ -254,7 +254,7 @@ abstract class Core_Content_Article_EShopData extends EShopEntity_WithEShopData_
 	
 	public function getURLPathPart() : string
 	{
-		return $this->URL_path_part;
+		return $this->generateURLPathPart();
 	}
 	
 	public function setURLPathPart( string $URL_path_part ) : void
