@@ -10,13 +10,13 @@ use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
 use JetApplication\Order;
 
-class Listing_Column_TotalAmount extends Admin_Listing_Column
+class Listing_Column_TotalAmountWithVAT extends Admin_Listing_Column
 {
-	public const KEY = 'total_amount';
+	public const KEY = 'total_amount_with_VAT';
 	
 	public function getTitle(): string
 	{
-		return Tr::_('Amount');
+		return Tr::_('Total amount');
 	}
 	
 	public function getExportHeader(): string
