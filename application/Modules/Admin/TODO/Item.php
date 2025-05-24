@@ -16,6 +16,8 @@ use Jet\Form;
 use Jet\Form_Field;
 use Jet\Data_DateTime;
 use Jet\Form_Definition;
+use Jet\Form_Field_Hidden;
+use Jet\Form_Field_Input;
 use Jet\Form_Field_RadioButton;
 use Jet\Form_Field_Select_Option;
 use Jet\Http_Request;
@@ -140,9 +142,24 @@ class Item extends DataModel
 	public static function getPrioritiesScope() : array
 	{
 		$low = new Form_Field_Select_Option( Tr::_('Low') );
+		$low->setSelectOptionCssClass('bg-secondary text-white');
+		
 		$normal = new Form_Field_Select_Option( Tr::_('Normal') );
+		$normal->setSelectOptionCssClass('bg-info text-white');
+		
 		$high = new Form_Field_Select_Option( Tr::_('High') );
+		$high->setSelectOptionCssClass('bg-primary text-white');
+		
 		$top = new Form_Field_Select_Option( Tr::_('TOP') );
+		$top->setSelectOptionCssClass('bg-danger text-white');
+		
+		/*
+			10 => UI::badge( UI_badge::LIGHT, Tr::_('Low') ),
+			50 => UI::badge( UI_badge::INFO, Tr::_('Normal') ),
+			75 => UI::badge( UI_badge::PRIMARY, Tr::_('High') ),
+			100 => UI::badge( UI_badge::DANGER, Tr::_('TOP') ),
+		
+		 */
 		
 		$scope = [
 			10   => $low,
@@ -201,6 +218,35 @@ class Item extends DataModel
 	}
 	
 	/**
+	 * @param string $context_entity_type
+	 * @param int $context_entity_id
+	 * @return DataModel_Fetch_Instances|static[]
+	 * @noinspection PhpDocSignatureInspection
+	 */
+	public static function getDelegatedItems( string $context_entity_type, int $context_entity_id ): iterable
+	{
+		$list = static::fetchInstances([
+			'context_entity_type' => $context_entity_type,
+			'AND',
+			'context_entity_id' => $context_entity_id,
+			'AND',
+			'is_done' => false,
+			'AND',
+			'created_by_user_id' => Auth::getCurrentUser()->getId(),
+			'AND',
+			[
+				'visible_for !=' => 'ALL',
+				'AND',
+				'visible_for !*' => '%|'.Auth::getCurrentUser()->getId().'|%'
+			]
+		]);
+		
+		$list->getQuery()->setOrderBy(['-priority', '-created_date_time']);
+		
+		return $list;
+	}
+	
+	/**
 	 * @return DataModel_Fetch_Instances|static[]
 	 * @noinspection PhpDocSignatureInspection
 	 */
@@ -225,8 +271,11 @@ class Item extends DataModel
 	public function getEditForm() : Form
 	{
 		if(!$this->_form_edit) {
-			$this->_form_edit = $this->createForm('toto_item_edit_form_'.$this->id);
-			$this->_form_edit->setAction(Http_Request::currentURI(set_GET_params: ['edit' => $this->id]));
+			$this->_form_edit = $this->createForm('todo_item_edit_form_'.$this->id);
+			$this->_form_edit->setAction(Http_Request::currentURI(
+				set_GET_params: ['edit' => $this->id],
+				unset_GET_params: ['done']
+			));
 			$this->updateForm( $this->_form_edit );
 		}
 		
@@ -240,23 +289,32 @@ class Item extends DataModel
 
 	protected function updateForm( Form $form ) : void
 	{
+		$dedikated_to = new Form_Field_Hidden('dedikated_to', '');
+		
 		$visible_form = new Form_Field_RadioButton('visible_for');
-		$visible_form->setLabel( Tr::_('Visible for') );
+		$visible_form->setLabel( Tr::_('Task for:') );
 		$visible_form->setSelectOptions([
 			'all' => Tr::_('All'),
 			'private' => Tr::_('My private'),
+			'delegated' => Tr::_('Delegated'),
 		]);
 		
 		switch($this->visible_for) {
 			case '|'.Auth::getCurrentUser()->getId().'|':
-				$visible_form->setDefaultValue('private');
+				$visible_form->setDefaultValue( 'private' );
+				$dedikated_to->setDefaultValue( '' );
 				break;
 			case 'ALL':
-				$visible_form->setDefaultValue('all');
+				$visible_form->setDefaultValue( 'all' );
+				$dedikated_to->setDefaultValue( '' );
+				break;
+			default:
+				$visible_form->setDefaultValue('delegated');
+				$dedikated_to->setDefaultValue( $this->visible_for );
 				break;
 		}
 		
-		$visible_form->setFieldValueCatcher( function() use ($visible_form) {
+		$visible_form->setFieldValueCatcher( function() use ($visible_form, $dedikated_to) {
 			$value = $visible_form->getValue();
 			
 			switch( $value ) {
@@ -266,10 +324,31 @@ class Item extends DataModel
 				case 'private':
 					$this->visible_for = '|'.Auth::getCurrentUser()->getId().'|';
 					break;
+				case 'delegated':
+					$visible_form = trim( $dedikated_to->getValue(), '|' );
+					$visible_form = explode('|', $visible_form);
+					foreach($visible_form as $i=>$user_id) {
+						$user = Auth_Administrator_User::get( $user_id );
+						if(
+							!$user ||
+							$user->isBlocked()
+						) {
+							unset($visible_form[$i]);
+						}
+					}
+					
+					if(!$visible_form) {
+						$visible_form = [ Auth::getCurrentUser()->getId() ];
+					}
+					
+					$this->visible_for = '|'.implode( '|', $visible_form ).'|';
+					
+					break;
 			}
 		} );
 		
 		$form->addField( $visible_form );
+		$form->addField( $dedikated_to );
 	}
 	
 	public function getAddForm() : Form
@@ -278,6 +357,8 @@ class Item extends DataModel
 			$this->_form_add = $this->createForm('todo_item_add_form');
 			
 			$this->updateForm( $this->_form_add );
+			
+			$this->_form_add->setAction( Http_Request::currentURI(set_GET_params: ['add'=>1]) );
 		}
 		
 		return $this->_form_add;
@@ -344,6 +425,24 @@ class Item extends DataModel
 	public function getVisibleFor() : string
 	{
 		return $this->visible_for;
+	}
+	
+	/**
+	 * @return Auth_Administrator_User[]
+	 */
+	public function getVisibleForUsers() : array
+	{
+		$users = [];
+		
+		if(($this->visible_for[0]??'')=='|') {
+			$ids = trim($this->visible_for, '|');
+			$ids = explode('|', $ids);
+			foreach($ids as $id) {
+				$users[] = Auth_Administrator_User::get( $id );
+			}
+		}
+		
+		return $users;
 	}
 
 	public function setTask( string $value ) : void

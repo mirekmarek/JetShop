@@ -8,30 +8,96 @@ namespace JetApplicationModule\Admin\TODO;
 
 use Jet\Form;
 use Jet\Form_Renderer;
+use Jet\Http_Request;
 use Jet\MVC_View;
+use Jet\Tr;
 use Jet\UI;
 
 /**
  * @var MVC_View $this
  * @var Form $form
+ * @var Item $new_item
  */
 
 
 $form = $this->getRaw('add_form');
+$new_item = $this->getRaw('new_item');
 
-$form->renderer()->setDefaultFieldWidth([
-	Form_Renderer::LJ_SIZE_MEDIUM => 12
-]);
 $form->renderer()->setDefaultLabelWidth([
-	Form_Renderer::LJ_SIZE_MEDIUM => 12
+	Form_Renderer::LJ_SIZE_SMALL => 3
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_SMALL => 9
 ]);
 
-$form->renderer()->addJsAction('onsubmit', 'TODO.add();return false;');
+$form->renderer()->addJsAction('onsubmit', 'TODO.add.save();return false;');
+$form->field('visible_for')->input()->addJsAction('onchange', 'TODO.add.toggleDelegation(this.value);');
+
+$w_name = 'todo_add_select_person';
+$w_URL = Http_Request::currentURL();
+
+$this->setVar( 'users', $new_item->getVisibleForUsers() );
+
 ?>
 <?=$form->start()?>
+<?=$form->field('dedikated_to')?>
 <?=$form->field('priority')?>
 <?=$form->field('visible_for')?>
+
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-9">
+		<div id="todo_add_delegate_area" class="card card-body" style="display: none;margin-bottom: 20px;">
+
+			<div class="select_item_whisperer_area">
+				<input id="<?=$w_name?>_input" style="width: 100%;" class="form-control" placeholder="<?=Tr::_('Search for person')?>">
+				<div class="search-whisperer-area">
+					<div id="<?=$w_name?>_whisperer">
+					</div>
+				</div>
+			</div>
+
+			<div id="todo_add_delegate_users">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
 <?=$form->field('task')?>
 
-<?=UI::button_save()?>
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-9"><?=UI::button_save(); ?></div>
+</div>
+
+
 <?=$form->end()?>
+
+
+<script type="text/javascript">
+	$(document).ready( function() {
+		Whisperers['<?=$w_name?>'] = new Whisperer(
+			'<?=$w_name?>_input',
+			'<?=$w_name?>_whisperer',
+			'<?=$w_URL?>&whisper_user='
+		);
+
+		Whisperers['<?=$w_name?>'].init();
+		Whisperers['<?=$w_name?>'].onItemSelect = function ( item_node ) {
+			let selected_item = {
+				id:    item_node.data('id'),
+				title: item_node.data('title'),
+			};
+			
+			Whisperers['<?=$w_name?>'].hide();
+
+			document.getElementById('todo_add_select_person_input').value = '';
+			
+
+			TODO.add.dedikatedTo.add( selected_item );
+		};
+
+	} );
+</script>

@@ -10,7 +10,7 @@ return [
 	'breadcrumb_title' => '',
 	'order' => 0,
 	'is_secret' => false,
-	'layout_script_name' => '',
+	'layout_script_name' => 'dialog',
 	'http_headers' => [
 	],
 	'parameters' => [

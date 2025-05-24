@@ -1,0 +1,82 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\Auth;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var Item[] $items
+ */
+
+$entity_type = $this->getRaw('entity_type');
+$entity_id = $this->getRaw('entity_id');
+
+
+$items = Item::getDelegatedItems( $entity_type, $entity_id );
+
+?>
+
+<?php foreach($items as $item):
+	
+	$this->setVar( 'item', $item );
+	
+	?>
+	<div class="card card-body" style="margin-top: 10px;margin-bottom: 10px;opacity: 0.4">
+		<div id="todo_item_detail_<?=$item->getId()?>">
+			<div style="display: grid;grid-template-columns: 30px 1fr 0.8fr 1fr;margin: 5px;align-items: center;gap: 10px;">
+				<div>
+					<?=UI::button( ' ' )
+						->setOnClick("TODO.edit.show({$item->getId()});")
+						->setIcon('edit')
+						->setClass(UI_button::CLASS_LIGHT)
+						->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+				</div>
+				<?=$item->getPriorityTag()?>
+				<div style="opacity: 0.4;font-size: 0.8rem"><?=Locale::dateAndTime( $item->getCreatedDateTime() )?></div>
+				<div style="font-weight: bolder"><?=Tr::_('Delegated task')?></div>
+			</div>
+			
+			<?=nl2br( $item->getTask() )?>
+			
+			<div style="opacity: 0.5;padding: 10px;font-size: 0.9rem">
+				<?php
+				if($item->getVisibleFor()=='ALL'):
+					echo Tr::_('Visible for all');
+				elseif($item->getVisibleFor()=='|'.Auth::getCurrentUser()->getId().'|'):
+					echo Tr::_('My private');
+				else:
+					foreach( $item->getVisibleForUsers() as $user ):
+						echo $user->getFirstName().' '.$user->getSurname().' ('.$user->getUsername().')';
+						echo '<br>';
+					endforeach;
+				endif;
+				?>
+			</div>
+		</div>
+		
+		<div id="todo_item_edit_<?=$item->getId()?>" style="display: none;">
+			<div>
+				<?=UI::button( ' ' )
+					->setOnClick("TODO.edit.close({$item->getId()});")
+					->setIcon('xmark')
+					->setClass(UI_button::CLASS_LIGHT)
+					->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+			</div>
+			
+			<?=$this->render('todo/edit_form') ?>
+		</div>
+	
+	</div>
+<?php endforeach; ?>
+
+

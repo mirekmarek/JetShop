@@ -1,0 +1,38 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Auth_Administrator_User;
+
+/**
+ * @var MVC_View   $this
+ * @var Auth_Administrator_User[] $result
+ */
+
+$result = $this->getRaw('users');
+
+if($result):
+	$i=0;
+	foreach( $result as $item ):
+		$i++;
+		?><span
+		data-id="<?=$item->getId()?>"
+		data-title="<?=$item->getFirstName()?> <?=$item->getSurname()?>"
+		class="search-whisperer-item<?=$i==1?' search-whisperer-item-selected':''?>"
+		><?=$item->getFirstName()?> <?=$item->getSurname()?> (<?=$item->getUsername()?>)</span><?php
+	endforeach;
+else:
+	?>
+	<span class="search-whisperer-message">
+		<?=Tr::_('... sorry, not found ...')?>
+	</span>
+<?php
+endif;
+

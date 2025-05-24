@@ -16,31 +16,202 @@ use Jet\UI;
 ?>
 <script>
 	const TODO = {
-		add: () => {
-			JetAjaxForm.submit('todo_item_add_form', {
-				onSuccess: () => {
-					$('#todo_add_form').hide();
-
-					parent.postMessage("todo_reload_button","*");
+		add: {
+			toggleDelegation: ( visible_for ) => {
+				if(visible_for=='delegated') {
+					$('#todo_add_delegate_area').show();
+				} else {
+					$('#todo_add_delegate_area').hide();
 				}
-			});
+			},
+
+			dedikatedTo: {
+				
+				add: ( selected_item ) => {
+					const add_id = selected_item.id+'';
+					
+					const input = document.getElementById('todo_item_add_form__dedikated_to');
+
+					let current = input.value;
+					
+					if(current.length) {
+						current = current.substring( 1, current.length-1 );
+						current = current.split('|');
+					} else {
+						current = [];
+					}
+
+					if(!current.includes(add_id)) {
+						current.push(add_id);
+					}
+
+					current = '|'+current.join('|')+'|';
+					
+					input.value = current;
+
+					TODO.add.dedikatedTo.actualize();
+				},
+
+				remove: ( id ) => {
+					const input = document.getElementById('todo_item_add_form__dedikated_to');
+
+					let current = input.value;
+
+					if(current.length) {
+						current = current.substring( 1, current.length-1 );
+						current = current.split('|');
+					} else {
+						current = [];
+					}
+
+
+					current = current.filter( (c_id) => {
+						return c_id!=id;
+					} );
+
+					current = '|'+current.join('|')+'|';
+
+					input.value = current;
+
+					TODO.add.dedikatedTo.actualize();
+				},
+
+				actualize: () => {
+					const input = document.getElementById('todo_item_add_form__dedikated_to');
+
+					$('#todo_add_delegate_users').load( '<?=Http_Request::currentURI()?>&todo_add_delegate_actualize='+input.value );
+				}
+			},
+
+			
+			save: () => {
+				JetAjaxForm.submit('todo_item_add_form', {
+					onSuccess: () => {
+						$('#todo_add_form').hide();
+
+						parent.postMessage("todo_reload_button","*");
+					}
+				});
+			}
 		},
+		
+		edit: {
+			show: (id) => {
+				$('#todo_item_detail_'+id).toggle();
+				$('#todo_item_edit_'+id).toggle();
+				
+				document.getElementById('todo_item_edit_'+id).scrollIntoView({ behavior: "smooth" });
+			},
+			close: (id) => {
+				$('#todo_item_detail_'+id).toggle();
+				$('#todo_item_edit_'+id).toggle();
+			},
+			save: (id) => {
+				JetAjaxForm.submit('todo_item_edit_form_'+id, {
+					onSuccess: () => {
+						TODO.edit.initWS( id );
+					}
+				});
+			},
+
+			toggleDelegation: ( todo_item_id, visible_for  ) => {
+				if(visible_for=='delegated') {
+					$('#todo_edit_'+todo_item_id+'_delegate_area').show();
+				} else {
+					$('#todo_edit_'+todo_item_id+'_delegate_area').hide();
+				}
+				
+			},
+			
+			dedikatedTo: {
+
+				add: ( todo_item_id, selected_item ) => {
+					
+					const add_id = selected_item.id+'';
+					
+					const input = document.getElementById('todo_item_edit_form_'+todo_item_id+'__dedikated_to');
+
+					let current = input.value;
+
+					if(current.length) {
+						current = current.substring( 1, current.length-1 );
+						current = current.split('|');
+					} else {
+						current = [];
+					}
+					
+					if(!current.includes(add_id)) {
+						current.push(add_id);
+					}
+
+					current = '|'+current.join('|')+'|';
+
+					input.value = current;
+
+					TODO.edit.dedikatedTo.actualize( todo_item_id );
+				},
+
+				remove: ( todo_item_id, id ) => {
+					const input = document.getElementById('todo_item_edit_form_'+todo_item_id+'__dedikated_to');
+
+					let current = input.value;
+
+					if(current.length) {
+						current = current.substring( 1, current.length-1 );
+						current = current.split('|');
+					} else {
+						current = [];
+					}
+
+
+					current = current.filter( (c_id) => {
+						return c_id!=id;
+					} );
+
+					current = '|'+current.join('|')+'|';
+
+					input.value = current;
+
+					TODO.edit.dedikatedTo.actualize( todo_item_id );
+				},
+
+				actualize: ( todo_item_id ) => {
+					const input = document.getElementById('todo_item_edit_form_'+todo_item_id+'__dedikated_to');
+
+					$('#todo_edit_'+todo_item_id+'_delegate_users').load( '<?=Http_Request::currentURI()?>&todo_edit_delegate_actualize='+input.value+'&item_id='+todo_item_id );
+				}
+			},
+			
+			initWS: ( todo_item_id ) => {
+				const w_name = 'todo_edit_'+todo_item_id+'_select_person';
+				
+				Whisperers[w_name] = new Whisperer(
+					w_name+'_input',
+					w_name+'_whisperer',
+					'<?=Http_Request::currentURL()?>&whisper_user='
+				);
+
+				Whisperers[w_name].init();
+				Whisperers[w_name].onItemSelect = function ( item_node ) {
+					let selected_item = {
+						id:    item_node.data('id'),
+						title: item_node.data('title'),
+					};
+
+					Whisperers[w_name].hide();
+
+					document.getElementById(w_name+'_input').value = '';
+
+
+					TODO.edit.dedikatedTo.add( todo_item_id, selected_item );
+				};
+			}
+		},
+
 		done: ( id ) => {
-			$('#todo_items').load( '<?=Http_Request::currentURI()?>&done='+id, () => {
+			$('#todo_items').load( '<?=Http_Request::currentURI(unset_GET_params: ['edit'])?>&done='+id, () => {
 				parent.postMessage("todo_reload_button","*");
 			} );
-		},
-		edit: ( id ) => {
-			$('#todo_item_detail_'+id).toggle();
-			$('#todo_item_edit_'+id).toggle();
-		},
-
-		editSave: (id) => {
-			JetAjaxForm.submit('toto_item_edit_form_'+id, {
-				onSuccess: () => {
-				}
-			});
-			
 		}
 	};
 </script>
@@ -55,4 +226,8 @@ use Jet\UI;
 
 <div id="todo_items">
 	<?php  require 'todo/items.phtml'; ?>
+</div>
+
+<div id="todo_delegated_items">
+	<?php  require 'todo/delegated_items.phtml'; ?>
 </div>

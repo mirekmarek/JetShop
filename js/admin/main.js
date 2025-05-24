@@ -14,7 +14,7 @@ const UI = {
 		const main_col_initial_padding_top = main_col.style['paddingTop'];
 
 		window.onscroll = function () {
-			if (window['pageYOffset'] > main_toolbar_initial_offset) {
+			if (window.pageYOffset > main_toolbar_initial_offset) {
 				main_toolbar.classList.add("main-toolbar-sticky");
 				main_col.style.paddingTop = main_toolbar_height + 'px';
 			} else {

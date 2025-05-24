@@ -1,0 +1,81 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\Form_Renderer;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Item $item
+ */
+
+
+$item = $this->getRaw('item');
+
+$edit_form = $item->getEditForm();
+$edit_form->renderer()->addJsAction('onsubmit', "TODO.edit.save({$item->getId()});return false;");
+
+$edit_form->renderer()->setDefaultLabelWidth([
+	Form_Renderer::LJ_SIZE_SMALL => 3
+]);
+$edit_form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_SMALL => 9
+]);
+
+
+$edit_form->field('visible_for')->input()->addJsAction('onchange', 'TODO.edit.toggleDelegation('.$item->getId().', this.value);');
+
+$dedication_visible = $edit_form->field('visible_for')->getDefaultValue()=='delegated';
+
+echo $edit_form->start();
+echo $edit_form->field('dedikated_to');
+
+echo $edit_form->field('priority');
+echo $edit_form->field('visible_for');
+
+$w_name = 'todo_edit_'.$item->getId().'_select_person';
+$w_URL = Http_Request::currentURL();
+
+$this->setVar('users', $item->getVisibleForUsers());
+?>
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-9">
+		<div id="todo_edit_<?=$item->getId()?>_delegate_area" class="card card-body" style="display: <?=$dedication_visible?'block':'none'?>;margin-bottom: 20px;">
+			
+			<div class="select_item_whisperer_area">
+				<input id="<?=$w_name?>_input" style="width: 100%;" class="form-control" placeholder="<?=Tr::_('Search for person')?>">
+				<div class="search-whisperer-area">
+					<div id="<?=$w_name?>_whisperer">
+					</div>
+				</div>
+			</div>
+			
+			<div id="todo_edit_<?=$item->getId()?>_delegate_users">
+				<?=$this->render('todo/edit_form/delegated_users')?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?=$edit_form->field('task')?>
+
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-9"><?=UI::button_save(); ?></div>
+</div>
+
+<?=$edit_form->end()?>
+
+<script type="text/javascript">
+	TODO.edit.initWS( <?=$item->getId()?> );
+</script>
+

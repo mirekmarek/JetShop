@@ -1,0 +1,32 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\TODO;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Auth_Administrator_User;
+
+/**
+ * @var MVC_View $this
+ * @var Auth_Administrator_User[] $users
+ */
+$users = $this->getRaw('users');
+
+
+foreach($users as $user):
+	?>
+
+		<?=UI::button(' '.$user->getFirstName().' '.$user->getSurname().' ('.$user->getUsername().')' )
+			->setIcon( 'times-circle' )
+			->setClass( UI_button::CLASS_SECONDARY )
+			->setSize( UI_button::SIZE_SMALL )
+			->addCustomCssStyle("margin:10px")
+			->setOnclick("TODO.add.dedikatedTo.remove({$user->getId()})")?>
+
+	<?php
+endforeach;
