@@ -18,4 +18,7 @@ return [
 	'Edit' => 'Upravit',
 	'TODO (%CNT%)' => 'Úkoly (%CNT%)',
 	'Viditelné pro' => 'Viditelné pro',
+	'Task for:' => '',
+	'Delegated' => '',
+	'Search for person' => '',
 ];

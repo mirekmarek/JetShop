@@ -60,32 +60,30 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 		 */
 		$et = $class::getEntityType();
 		
-		$page = 0;
-		$limit = 1000;
+		$ids = $class::dataFetchCol(['id'], where: ['is_active'=>true], raw_mode: true);
+		$count = count($ids);
 		$i = 0;
-		do {
+		
+		foreach( $ids as $id ) {
 			$i++;
-			$offset = $page * $limit;
-			$items = $class::fetchInstances();
-			$items->getQuery()->setLimit( $limit, $offset );
+			echo "Active $et: [{$i}/{$count}] {$id}\n";
 			
-			$end = true;
-			foreach( $items as $c ) {
-				
-				$index = ($page*$limit)+$i;
-				
-				$i++;
-				echo "$et: [{$index}] {$c->getId()}\n";
-				$c->updateFulltextSearchIndex();
-				$end = false;
-			}
+			$item = $class::get($id);
+			$item->updateFulltextSearchIndex();
+		}
+		
+		
+		$ids = $class::dataFetchCol(['id'], where: ['is_active'=>true], raw_mode: true);
+		$count = count($ids);
+		$i = 0;
+		
+		foreach( $ids as $id ) {
+			$i++;
+			echo "Non-active $et: [{$i}/{$count}] {$id}\n";
 			
-			if($end) {
-				break;
-			}
-			$page++;
-			
-		} while(true);
+			$item = $class::get($id);
+			$item->updateFulltextSearchIndex();
+		}
 		
 	}
 }
