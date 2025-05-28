@@ -73,7 +73,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 		}
 		
 		
-		$ids = $class::dataFetchCol(['id'], where: ['is_active'=>true], raw_mode: true);
+		$ids = $class::dataFetchCol(['id'], where: ['is_active'=>false], raw_mode: true);
 		$count = count($ids);
 		$i = 0;
 		
