@@ -17,7 +17,6 @@ use Jet\Form_Field;
 use Jet\Data_DateTime;
 use Jet\Form_Definition;
 use Jet\Form_Field_Hidden;
-use Jet\Form_Field_Input;
 use Jet\Form_Field_RadioButton;
 use Jet\Form_Field_Select_Option;
 use Jet\Http_Request;
@@ -125,6 +124,29 @@ class Item extends DataModel
 	protected ?Form $_form_edit = null;
 	protected ?Form $_form_add = null;
 	
+	protected static array $has_todo_prefetch = [];
+	
+	public static function entotyHasTodo( string $context_entity_type, int $context_entity_id ) : bool
+	{
+		if(!array_key_exists($context_entity_type, static::$has_todo_prefetch)) {
+			static::$has_todo_prefetch[$context_entity_type] = static::dataFetchCol(
+				select: ['context_entity_id'],
+				where: [
+				'context_entity_type' => $context_entity_type,
+				'AND',
+				'is_done'             => false,
+				'AND',
+				[
+					'visible_for'   => 'ALL',
+					'OR',
+					'visible_for *' => '%|' . Auth::getCurrentUser()->getId() . '|%'
+				]
+			] );
+			
+		}
+
+		return in_array( $context_entity_id, static::$has_todo_prefetch[$context_entity_type] );
+	}
 	
 	public static function prepareNew( string $context_entity_type, int $context_entity_id ) : static
 	{

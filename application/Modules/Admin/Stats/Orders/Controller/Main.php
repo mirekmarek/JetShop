@@ -12,14 +12,6 @@ use Jet\MVC_Controller_Default;
 use JetApplication\EShops;
 use JetApplication\Order_Status;
 
-use JetApplication\Order_Status_Delivered;
-use JetApplication\Order_Status_Dispatched;
-use JetApplication\Order_Status_DispatchStarted;
-use JetApplication\Order_Status_ReadyForDispatch;
-use JetApplication\Order_Status_WaitingForGoodsToBeStocked;
-use JetApplication\Order_Status_WaitingForPayment;
-use JetApplication\Order_Status_Returned;
-
 
 class Controller_Main extends MVC_Controller_Default
 {
@@ -95,15 +87,14 @@ class Controller_Main extends MVC_Controller_Default
 			}
 		}
 		if(!$statuses) {
-			$statuses = [
-				Order_Status_Delivered::CODE,
-				Order_Status_Dispatched::CODE,
-				Order_Status_ReadyForDispatch::CODE,
-				Order_Status_DispatchStarted::CODE,
-				Order_Status_WaitingForGoodsToBeStocked::CODE,
-				Order_Status_WaitingForPayment::CODE,
-				Order_Status_Returned::CODE,
-			];
+			foreach( Order_Status::getList() as $status ) {
+				if(
+					!($status::getFlagsMap()['cancelled']??null) &&
+					!($status::getFlagsMap()['returned']??null)
+				) {
+					$statuses[] = $status::CODE;
+				}
+			}
 		}
 		
 		

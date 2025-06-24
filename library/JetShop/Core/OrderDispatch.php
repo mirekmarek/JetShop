@@ -87,6 +87,7 @@ abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implemen
 	)]
 	protected bool $is_custom = false;
 	
+	protected static array $flags = [];
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,

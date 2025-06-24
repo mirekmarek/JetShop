@@ -16,6 +16,7 @@ use Jet\Form_Field;
 
 use Jet\Form_Field_Input;
 use Jet\MVC;
+use Jet\MVC_Cache;
 use JetApplication\Admin_Managers_Content_InfoPages;
 use JetApplication\Content_InfoPage_EShopData;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
@@ -74,6 +75,8 @@ abstract class Core_Content_InfoPage extends EShopEntity_WithEShopData implement
 		}
 		
 		parent::afterAdd();
+		
+		MVC_Cache::reset();
 	}
 	
 	public function afterUpdate(): void
@@ -83,6 +86,14 @@ abstract class Core_Content_InfoPage extends EShopEntity_WithEShopData implement
 		}
 		
 		parent::afterUpdate();
+		
+		MVC_Cache::reset();
+	}
+	
+	public function afterDelete(): void
+	{
+		parent::afterDelete();
+		MVC_Cache::reset();
 	}
 	
 	

@@ -35,6 +35,26 @@ class Main extends Admin_Managers_Todo
 		);
 	}
 	
+	public function renderHasTodoTag(  string $entity_type, int $entity_id  ) : string
+	{
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($entity_type, $entity_id) {
+				if(!Item::entotyHasTodo( $entity_type, $entity_id )) {
+					return '';
+				}
+
+				$view = $this->getView();
+				$view->setVar('entity_type', $entity_type);
+				$view->setVar('entity_id', $entity_id);
+				
+				return $view->render('entity-has-todo-tag');
+			}
+		);
+		
+	}
+	
+	
 	public function renderDashboard() : string
 	{
 		return Tr::setCurrentDictionaryTemporary(

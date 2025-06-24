@@ -7,14 +7,18 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
+use Jet\Http_Request;
 use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Admin_Managers;
 use JetApplication\Category;
 use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
- * @var Product $item
+ * @var Product $product
  */
 
 $product = $this->getRaw('product');
@@ -22,8 +26,20 @@ $product = $this->getRaw('product');
 require '_toolbar.phtml';
 ?>
 
+<?=$this->getRaw('tabs')?>
+
+<div id="main-toolbar" class="toolbar">
+	
+	<?php if(Main::getCurrentUserCanEdit()): ?>
+	<div style="font-weight: bolder;padding-left: 20px;">
+		<?=Tr::_('Add category')?>
+	</div>
+	<div style="width: 300px">
+		<?=Admin_Managers::Category()->renderSelectWidget("location.href='".Http_Request::currentURI()."&add_category='+selected_item.id;")?>
+	</div>
+	<?php endif; ?>
+</div>
 <div id="main-col">
-		<?=$this->getRaw('tabs')?>
 
 		<table class="table table-striped">
 			<tbody>
@@ -36,6 +52,14 @@ require '_toolbar.phtml';
 				<tr>
 					<td>
 						<div style="display: flex;gap: 5px;align-items: center">
+							<?php if(Main::getCurrentUserCanEdit()): ?>
+							<div style="padding-right: 20px">
+								<?=UI::button_delete(' ')
+									->setUrl( Http_Request::currentURI(set_GET_params: ['remove_category'=>$category_id]) )
+									->addJsAction('onclick', "return confirm('".Tr::_('Do you really want to delete this category?')."');")
+									->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+							</div>
+							<?php endif; ?>
 							<div><?=Admin_Managers::EntityEdit()->renderPreviewButton( $category )?></div>
 							<div><?=Admin_Managers::Category()->renderActiveState( $category )?></div>
 							<div><?=Admin_Managers::Category()->renderItemName( $category )?></div>

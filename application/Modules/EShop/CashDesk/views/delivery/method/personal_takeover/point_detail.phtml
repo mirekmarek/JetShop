@@ -87,5 +87,5 @@ $method = $this->getRaw('delivery_method');
 <div class="continue-button-area">
 	<div class="price"><?=$this->render('delivery/price')?></div>
 	<br>
-	<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPont('{$method->getId()}:{$point->getPointCode()}')")?>
+	<?=UI::button(Tr::_('Select this place'))->setClass('success')->setOnclick("CashDesk.delivery.personalTakeover.selectPoint('{$method->getId()}:{$point->getPointCode()}')")?>
 </div>

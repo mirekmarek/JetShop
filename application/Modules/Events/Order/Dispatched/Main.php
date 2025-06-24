@@ -36,6 +36,7 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		$dispatch = $this->event->getContext();
 		
 		$template = new EMailTemplate();
+		$template->setOrder( $this->event->getOrder() );
 		
 		if($dispatch instanceof OrderDispatch ) {
 			$template->setCarrierName( $dispatch->getCarrier()?->getName()??$dispatch->getCarrierCode() );

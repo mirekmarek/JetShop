@@ -657,15 +657,14 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	
 	public function getInternalFulltextTexts(): array
 	{
-		return [$this->internal_name, $this->internal_code, $this->ean, $this->internal_name_of_variant];
+		return [$this->internal_name, $this->getInternalCode(), $this->getEan(), $this->internal_name_of_variant];
 	}
 	
 	public function getShopFulltextTexts( EShop $eshop ) : array
 	{
 		$eshop_data = $this->getEshopData( $eshop );
 		if(
-			!$eshop_data->isActiveForShop() ||
-			$eshop_data->isVariant()
+			!$eshop_data->isActiveForShop()
 		) {
 			return [];
 		}

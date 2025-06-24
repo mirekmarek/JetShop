@@ -22,5 +22,7 @@ abstract class Core_Admin_Managers_Todo extends Application_Module
 {
 	abstract public function renderTool(  string $entity_type, int $entity_id  ) : string;
 	
+	abstract public function renderHasTodoTag(  string $entity_type, int $entity_id  ) : string;
+	
 	abstract public function renderDashboard() : string;
 }

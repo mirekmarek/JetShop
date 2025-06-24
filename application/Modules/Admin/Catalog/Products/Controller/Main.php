@@ -12,6 +12,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 
 use Jet\UI_messages;
+use JetApplication\Admin_Listing_Column;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Admin_Managers;
@@ -20,6 +21,8 @@ use JetApplication\Delivery_Class;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\Exports;
 use JetApplication\MarketplaceIntegration;
+use JetApplication\Pricelist;
+use JetApplication\Pricelists;
 use JetApplication\Product;
 use JetApplication\Product_Availability;
 
@@ -223,6 +226,65 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addFilter( new Listing_Filter_Supplier() );
 		$this->listing_manager->addFilter( new Listing_Filter_IsSale() );
 		$this->listing_manager->addFilter( new Listing_Filter_Archived() );
+		
+		foreach(Pricelists::getList() as $pricelist) {
+			$col = new class extends Admin_Listing_Column {
+				protected Pricelist $pricelist;
+				
+				public function setPricelist( Pricelist $pricelist ): void
+				{
+					$this->pricelist = $pricelist;
+				}
+				
+				
+				public function getKey() : string
+				{
+					return 'pricelist_' . $this->pricelist->getCode();
+				}
+				
+				public function getOrderByAsc(): array|string
+				{
+					return '+products_price.price';
+				}
+				
+				public function getOrderByDesc(): array|string
+				{
+					return '-products_price.price';
+				}
+				
+				public function getTitle(): string
+				{
+					return Tr::_('Price %PRICELIST%', ['PRICELIST'=>$this->pricelist->getName()]);
+				}
+				
+				public function getExportHeader(): string
+				{
+					return $this->getTitle();
+				}
+				
+				public function getExportData( mixed $item ): float
+				{
+					/**
+					 * @var Product $item
+					 */
+					return $item->getPrice( $this->pricelist );
+				}
+				
+				public function render( mixed $item ) : string
+				{
+					/**
+					 * @var Product $item
+					 */
+					return Admin_Managers::PriceFormatter()->showPriceInfo( $item->getPriceEntity($this->pricelist) );
+				}
+				
+				
+			};
+			
+			$col->setPricelist($pricelist);
+			
+			$this->listing_manager->addColumn( $col );
+		}
 		
 		if( MarketplaceIntegration::getActiveModules() ) {
 			$this->listing_manager->addFilter( new Listing_Filter_Marketplace() );

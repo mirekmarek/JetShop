@@ -26,63 +26,90 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 	
 	public function getSysServicesDefinitions(): array
 	{
-		$actualize_index = new SysServices_Definition(
-			module: $this,
-			name: Tr::_('Actualize fulltext search indexes'),
-			description: Tr::_('Ad hoc service for complete updating of full-text indexes'),
-			service_code: 'actualize_fulltext',
-			service: function() {
-				$this->updateIndexes();
-			}
-		);
-		
-		$actualize_index->setIsPeriodicallyTriggeredService( false );
-		
-		return [
-			$actualize_index
+		$entities = [
+			Category::class,
+			Brand::class,
+			KindOfProduct::class,
+			Property::class,
+			PropertyGroup::class,
+			Product::class,
 		];
+		
+		$services = [];
+		
+		foreach( $entities as $class ) {
+			/**
+			 * @var EShopEntity_WithEShopData $class
+			 */
+			$et = $class::getEntityType();
+			
+			$actualize_index = new SysServices_Definition(
+				module: $this,
+				name: Tr::_('Actualize fulltext search indexes - '.$et.' - all'),
+				description: Tr::_('Ad hoc service for updating of full-text indexes'),
+				service_code: 'actualize_fulltext:'.$et.':all',
+				service: function() use ($class) {
+					$this->updateIndex( class: $class, active: true, non_active: true );
+				}
+			);
+			$actualize_index->setIsPeriodicallyTriggeredService( false );
+			
+			$services[] = $actualize_index;
+			
+			
+			$actualize_index = new SysServices_Definition(
+				module: $this,
+				name: Tr::_('Actualize fulltext search indexes - '.$et.' - only active items'),
+				description: Tr::_('Ad hoc service for updating of full-text indexes'),
+				service_code: 'actualize_fulltext:'.$et.':active-only',
+				service: function() use ($class) {
+					$this->updateIndex( class: $class, active: true, non_active: false );
+				}
+			);
+			$actualize_index->setIsPeriodicallyTriggeredService( false );
+			
+			$services[] = $actualize_index;
+			
+		}
+		
+		return $services;
 	}
 	
-	protected function updateIndexes() : void
-	{
-		$this->updateIndex( Category::class );
-		$this->updateIndex( Brand::class );
-		$this->updateIndex( KindOfProduct::class );
-		$this->updateIndex( Property::class );
-		$this->updateIndex( PropertyGroup::class );
-		$this->updateIndex( Product::class );
-	}
-	
-	public function updateIndex( string $class ) : void
+	public function updateIndex( string $class, bool $active, bool $non_active ) : void
 	{
 		/**
 		 * @var EShopEntity_WithEShopData $class
 		 */
 		$et = $class::getEntityType();
 		
-		$ids = $class::dataFetchCol(['id'], where: ['is_active'=>true], raw_mode: true);
-		$count = count($ids);
-		$i = 0;
 		
-		foreach( $ids as $id ) {
-			$i++;
-			echo "Active $et: [{$i}/{$count}] {$id}\n";
+		if($active) {
+			$ids = $class::dataFetchCol(['id'], where: ['is_active'=>true], raw_mode: true);
+			$count = count($ids);
+			$i = 0;
 			
-			$item = $class::get($id);
-			$item->updateFulltextSearchIndex();
+			foreach( $ids as $id ) {
+				$i++;
+				echo "Active $et: [{$i}/{$count}] {$id}\n";
+				
+				$item = $class::get($id);
+				$item->updateFulltextSearchIndex();
+			}
 		}
 		
 		
-		$ids = $class::dataFetchCol(['id'], where: ['is_active'=>false], raw_mode: true);
-		$count = count($ids);
-		$i = 0;
-		
-		foreach( $ids as $id ) {
-			$i++;
-			echo "Non-active $et: [{$i}/{$count}] {$id}\n";
+		if($non_active) {
+			$ids = $class::dataFetchCol(['id'], where: ['is_active'=>false], raw_mode: true);
+			$count = count($ids);
+			$i = 0;
 			
-			$item = $class::get($id);
-			$item->updateFulltextSearchIndex();
+			foreach( $ids as $id ) {
+				$i++;
+				echo "Non-active $et: [{$i}/{$count}] {$id}\n";
+				
+				$item = $class::get($id);
+				$item->updateFulltextSearchIndex();
+			}
 		}
 		
 	}
