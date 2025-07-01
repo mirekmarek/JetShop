@@ -9,7 +9,10 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 
 use Jet\Http_Request;
 use Jet\MVC_View;
+use Jet\Tr;
 use Jet\UI;
+use JetApplication\Admin_Managers;
+use JetApplication\Category;
 
 /**
  * @var MVC_View $this
@@ -28,7 +31,7 @@ $toolbar = $this->getRaw('toolbar');
 
 			<div>
 				<?php if( $this->getBool('allow_to_sort') ): ?>
-				<?=UI::button('Sort categories')
+				<?=UI::button(Tr::_('Sort categories'))
 					->setOnclick('sortCategories.openDialog()')
 					->setIcon('sort');
 				?>
@@ -36,14 +39,14 @@ $toolbar = $this->getRaw('toolbar');
 			</div>
 			<div style="text-align: right">
 				<?php if( Main::getCurrentUserCanCreate() ): ?>
-				<?=UI::button_create('Create')
+				<?=UI::button_create( Tr::_('Create') )
 					->setUrl( Http_Request::currentURI(['action' => 'create']));
 				?>
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
 	</div>
-	<div>
+	<div style="display: flex;align-items: center;gap: 10px;">
 		<?php if(Main::getCurrentUserCanEdit()):
 			if($toolbar):
 				echo $this->render($toolbar);
@@ -56,6 +59,12 @@ $toolbar = $this->getRaw('toolbar');
 	</div>
 </div>
 
+<?php if($category): ?>
+<div style="position: fixed;right: 2px;top: 100px;z-index: 999;">
+	<?=Admin_Managers::TODO()?->renderTool( Category::getEntityType(), $category->getId() );?>
+</div>
+<?php endif; ?>
+
 
 <div id="main-col" style="display: grid;grid-template-columns: 1.1fr 5fr;gap: 10px;padding: 0px;">
 	<div class="tree">
@@ -65,3 +74,4 @@ $toolbar = $this->getRaw('toolbar');
 	</div>
 	<div>
 		<?=$this->getRaw('tabs')?>
+		<div style="width: 95%">

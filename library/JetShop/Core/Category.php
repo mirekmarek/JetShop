@@ -167,7 +167,7 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 			$this->save();
 			
 			static::actualizeTreeData();
-			$new_root_id = static::dataFetchCol(['root_id'], ['id'=>$this]);
+			$new_root_id = static::dataFetchOne(['root_id'], ['id'=>$this->id]);
 			
 			static::actualizeProductAssoc( category_id: $old_root_id );
 			if($new_root_id!=$old_root_id) {
@@ -1059,6 +1059,36 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 	public function getBranchChildrenIds() : array
 	{
 		return $this->branch_children ? explode(',', $this->children) : [];
+	}
+	
+	public function move( int $target_category_id ) : void
+	{
+		if(
+			$target_category_id==$this->id ||
+			in_array($target_category_id, $this->getBranchChildrenIds()) ||
+			!static::get( $target_category_id )
+		) {
+			return;
+		}
+		
+		$this->setParentId( $target_category_id );
+	}
+	
+	public function moveSubcategories( int $target_category_id ) : void
+	{
+		if(
+			$target_category_id==$this->id ||
+			in_array($target_category_id, $this->getBranchChildrenIds()) ||
+			!static::get( $target_category_id )
+		) {
+			return;
+		}
+		
+		$ids = $this->getChildrenIds();
+		foreach($ids as $ch_id) {
+			$ch = static::get( $ch_id );
+			$ch->setParentId( $target_category_id );
+		}
 	}
 	
 }

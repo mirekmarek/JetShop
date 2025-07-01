@@ -202,7 +202,18 @@ class Controller_Main extends Admin_EntityManager_Controller
 		if($category->isEditable()) {
 			$this->edit_main_handleActivation();
 			
-			if(Http_Request::GET()->getString('action')=='change_kind_of_product') {
+			$GET = Http_Request::GET();
+			
+			if(($target_id=$GET->getInt('move_category'))) {
+				$category->move( $target_id );
+				Http_Headers::reload(unset_GET_params: ['move_category']);
+			}
+			if(($target_id=$GET->getInt('move_subcategories'))) {
+				$category->moveSubcategories( $target_id );
+				Http_Headers::reload(unset_GET_params: ['move_subcategories']);
+			}
+			
+			if($GET->getString('action')=='change_kind_of_product') {
 				$category->setKindOfProductId( Http_Request::POST()->getInt('kind_of_product_id') );
 				
 				UI_messages::success(

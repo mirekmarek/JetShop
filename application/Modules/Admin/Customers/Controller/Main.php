@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Customers;
 
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
+use JetApplication\Customer_Address;
 
 
 class Controller_Main extends Admin_EntityManager_Controller
@@ -22,13 +23,69 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addColumn( new Listing_Column_Registration() );
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
+			
+			$search_separated = explode( ' ', $search );
 			$search = '%'.$search.'%';
 			
-			return [
+			$q = [];
+			
+			$q = [
+				'company_name *' => $search,
+				'OR',
+				'company_id' => $search,
+				'OR',
+				'company_vat_id' => $search,
+			];
+			
+			if(count( $search_separated )==2) {
+				$q[] = 'OR';
+				$q[] = [
+					'first_name *' => '%'.$search_separated[0].'%',
+					'AND',
+					'surname *' => '%'.$search_separated[1].'%'
+				];
+				$q[] = 'OR';
+				$q[] = [
+					'first_name *' => '%'.$search_separated[1].'%',
+					'AND',
+					'surname *' => '%'.$search_separated[0].'%'
+				];
+			}
+			
+			
+			$by_address = Customer_Address::dataFetchCol(
+				select: ['customer_id'],
+				where: $q
+			);
+			
+			$q = [
 				'id *'            => $search,
 				'OR',
 				'email *' => $search,
 			];
+			
+			if($by_address) {
+				$q[] = 'OR';
+				$q['id'] = $by_address;
+			}
+			
+			if(count( $search_separated )==2) {
+				$q[] = 'OR';
+				$q[] = [
+					'first_name *' => '%'.$search_separated[0].'%',
+					'AND',
+					'surname *' => '%'.$search_separated[1].'%'
+				];
+				$q[] = 'OR';
+				$q[] = [
+					'first_name *' => '%'.$search_separated[1].'%',
+					'AND',
+					'surname *' => '%'.$search_separated[0].'%'
+				];
+			}
+			
+			
+			return $q;
 			
 		} );
 		
