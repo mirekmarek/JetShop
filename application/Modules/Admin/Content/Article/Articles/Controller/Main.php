@@ -6,12 +6,11 @@
  */
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
-
-use Jet\Http_Headers;
+use Jet\AJAX;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\Content_Article;
+use JetApplication\EShops;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
@@ -45,53 +44,24 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 	}
 	
-	
-	public function setupRouter( string $action, string $selected_tab ): void
+	public function edit_description_Action() : void
 	{
-		parent::setupRouter( $action, $selected_tab );
-		
-		$this->router->addAction('edit_categories', $this->module::ACTION_UPDATE)
-			->setResolver(function() use ($action, $selected_tab) {
-				return $this->current_item && $selected_tab=='categories' && $action=='';
-			})
-			->setURICreator(function( int $id ) {
-				return Http_Request::currentURI( ['id'=>$id, 'page'=>'categories'], ['action'] );
-			});
-		
-	}
-	
-	public function edit_categories_Action() : void
-	{
-		$this->setBreadcrumbNavigation( Tr::_( 'Categories' ) );
-		
-		$this->view->setVar( 'item', $this->current_item);
-		$this->view->setVar( 'editable', $this->current_item->isEditable() );
-		
-		if( $this->current_item->isEditable() ) {
-			/**
-			 * @var Content_Article $article
-			 */
-			$article = $this->current_item;
-			$GET = Http_Request::GET();
-			if(($add=$GET->getInt('add_category'))) {
-				$article->addCategory( $add );
-				Http_Headers::reload(unset_GET_params: ['add_category']);
-			}
+		$GET = Http_Request::GET();
+		if($GET->exists('show_categories')) {
+			$show_categories = $GET->getString('show_categories');
+			$show_categories = $show_categories ? explode(',', $show_categories) : [];
+			$eshop = EShops::get( $GET->getString('eshop') );
 			
-			if(($remove=$GET->getInt('remove_category'))) {
-				$article->removeCategory( $remove );
-				Http_Headers::reload(unset_GET_params: ['remove_category']);
-			}
+			$item = $this->current_item;
 			
-			if(($sort_categories=$GET->getString('sort_categories'))) {
-				$article->sortCategories( explode(',', $sort_categories) );
-				Http_Headers::reload(unset_GET_params: ['sort_categories']);
-			}
+			$this->view->setVar('item', $item);
+			$this->view->setVar('category_ids', $show_categories);
+			$this->view->setVar('eshop', $eshop);
 			
-			
+			AJAX::snippetResponse( $this->view->render('edit/main/categories') );
 			
 		}
 		
-		$this->output('edit/categories');
+		parent::edit_description_Action();
 	}
 }
