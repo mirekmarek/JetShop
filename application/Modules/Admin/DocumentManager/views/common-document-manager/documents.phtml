@@ -1,0 +1,52 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\DocumentManager;
+
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_icon;
+
+/**
+ * @var MVC_View $this
+ * @var CommonDocumentManager_Document[] $documents
+ */
+
+$documents = $this->getRaw('documents');
+?>
+<table class="table table-striped">
+	<?php foreach( $documents as $doc): ?>
+	<tr>
+		<td style="width: 20px;">
+			<?= UI::button_delete(' ')->setOnClick("CommonDocumentManager.delete('{$doc->getName()}')")->setSize(UI_button::SIZE_EXTRA_SMALL);?>
+		</td>
+		<td style="width: 40px;">
+			<a href="<?=$doc->getURL()?>" target="_blank">
+				<?=UI::icon(
+					Main::getMimeTypeIcons()[$doc->getFileMimeType()]??'file'
+				)->setSize(UI_icon::SIZE_EXTRA_LARGE)?>
+			</a>
+			
+		</td>
+		<td>
+			<a href="" onclick="CommonDocumentManager.copyURL('doc_<?=$doc->getId()?>');return false;"><?=$doc->getName()?></a><br>
+			
+			<input
+					type="text"
+					readonly
+					onclick="CommonDocumentManager.copyURL('doc_<?=$doc->getId()?>');return false;"
+					value="<?=$doc->getURL()?>" id="doc_<?=$doc->getId()?>" style="font-size:10px;opacity: 0.5;width: 100%"
+			/><br/>
+			
+			<span style="font-size: 0.8rem"><?=Locale::size($doc->getFileSize())?></span><br>
+			
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>

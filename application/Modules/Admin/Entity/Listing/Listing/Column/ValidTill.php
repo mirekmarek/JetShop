@@ -44,4 +44,14 @@ class Listing_Column_ValidTill extends Admin_Listing_Column
 		return $item->getActiveTill()??'';
 	}
 	
+	public function getOrderByAsc(): array|string
+	{
+		return '+active_till';
+	}
+	
+	public function getOrderByDesc(): array|string
+	{
+		return '-active_till';
+	}
+	
 }

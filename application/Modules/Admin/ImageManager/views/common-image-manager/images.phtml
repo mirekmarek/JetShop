@@ -22,7 +22,7 @@ $images = $this->getRaw('images');
 	<?php foreach($images as $img): ?>
 	<tr>
 		<td style="width: 20px;">
-			<?= UI::button_delete(' ')->setOnClick("CommonImageManager.delete('{$img->getName()}')");?>
+			<?= UI::button_delete(' ')->setOnClick("CommonImageManager.delete('{$img->getName()}')")->setSize(UI_button::SIZE_EXTRA_SMALL);?>
 		</td>
 		<td style="width: 110px;">
 			<a href="<?=$img->getURL()?>" target="_blank"><img src="<?=$img->getURL()?>" style="max-width: 100px;height: auto;"></a>

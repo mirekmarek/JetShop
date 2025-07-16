@@ -44,4 +44,15 @@ class Listing_Column_ValidFrom extends Admin_Listing_Column
 		return $item->getActiveFrom()??'';
 	}
 	
+	public function getOrderByAsc(): array|string
+	{
+		return '+active_from';
+	}
+	
+	public function getOrderByDesc(): array|string
+	{
+		return '-active_from';
+	}
+	
+	
 }

@@ -46,17 +46,17 @@ class Main extends Admin_Managers_ProductFilter
 			$this->form = new Form('product_filter_form', []);
 			
 			$this->filter = $filter;
+
 			
 			if($GET->exists('filter_kind_of_product_selected')) {
 				$this->filter->getBasicFilter()->setKindOfProductId( $GET->getInt('filter_kind_of_product_selected') );
 			}
 			
-			if($POST->getInt('/basic/kins_of_product')) {
-				$this->filter->getBasicFilter()->setKindOfProductId( $POST->getInt('/basic/kins_of_product') );
+			if($POST->getInt('/basic/kind_of_product_id')) {
+				$this->filter->getBasicFilter()->setKindOfProductId( $POST->getInt('/basic/kind_of_product_id') );
 			}
 			
 			
-			$this->getFilterForm_Basic_KindOfProduct();
 			$this->getFilterForm_Basic();
 			$this->getFilterForm_Properties();
 			$this->getFilterForm_Brands();
@@ -90,94 +90,20 @@ class Main extends Admin_Managers_ProductFilter
 		});
 	}
 	
-
-	
-	
-	protected function getFilterForm_Basic_KindOfProduct() : void
-	{
-		$filter = $this->filter->getBasicFilter();
-		
-		$in_stock = new Form_Field_Select('/basic/kins_of_product', 'Kind of product:');
-		$in_stock->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => ' '
-		]);
-		$in_stock->setSelectOptions(
-			['' => Tr::_('- all -')]+
-			KindOfProduct::getScope()
-		);
-		
-		$in_stock->setDefaultValue( $filter->getKindOfProductId() );
-		$in_stock->setFieldValueCatcher( function( $value ) use ($filter) {
-			$value = (int)$value;
-			$value = $value?:null;
-			$filter->setKindOfProductId( $value );
-		} );
-		
-		$this->form->addField( $in_stock );
-		
-		
-		
-		
-	}
-	
 	
 	protected function getFilterForm_Basic() : void
 	{
 		$filter = $this->filter->getBasicFilter();
 		
-		$inputToFilter = function( $value ) {
-			return match ($value) {
-				'' => null,
-				'0' => false,
-				'1' => true
-			};
-		};
-		
-		$filterToInput = function( $val ) {
-			if($val===null) {
-				$val = '';
-			} else {
-				$val = $val?'1':'0';
+		foreach($filter->getSubFilters() as $sub_filter) {
+			$field = $sub_filter->getEditField();
+			if(!$field) {
+				continue;
 			}
 			
-			return $val;
-		};
-		
-		$in_stock = new Form_Field_Select('/basic/is_in_stock', 'Is in stock:');
-		$in_stock->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => ' '
-		]);
-		$in_stock->setSelectOptions([
-			'' => Tr::_('- all -'),
-			'1' => Tr::_('In stock'),
-			'0' => Tr::_('Not in stock'),
-		]);
-		
-		$in_stock->setDefaultValue( $filterToInput($filter->getInStock()) );
-		$in_stock->setFieldValueCatcher( function( $value ) use ($filter, $inputToFilter) {
-			$filter->setInStock($inputToFilter($value));
-		} );
-		
-		$this->form->addField( $in_stock );
-		
-		
-		
-		$has_discount = new Form_Field_Select('/basic/has_discount', 'Has discount:');
-		$has_discount->setErrorMessages([
-			Form_Field_Select::ERROR_CODE_INVALID_VALUE => ' '
-		]);
-		$has_discount->setSelectOptions([
-			'' => Tr::_('- all -'),
-			'1' => Tr::_('Has discount'),
-			'0' => Tr::_('Without discount'),
-		]);
-		
-		$has_discount->setDefaultValue( $filterToInput($filter->getHasDiscount()) );
-		$has_discount->setFieldValueCatcher( function( $value ) use ($filter, $inputToFilter) {
-			$filter->setHasDiscount($inputToFilter($value));
-		} );
-		
-		$this->form->addField( $has_discount );
+			$field->setName('/basic/'.$field->getName());
+			$this->form->addField( $field );
+		}
 		
 	}
 	

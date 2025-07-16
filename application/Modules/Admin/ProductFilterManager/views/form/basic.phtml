@@ -21,7 +21,7 @@ use JetApplication\Property;
 
 $form = $this->getRaw('form');
 
-$form->getField('/basic/kins_of_product')->input()->addJsAction('onchange', "$('#filter_form_properties').load('".Http_Request::currentURI()."&filter_kind_of_product_selected='+this.value);");
+$form->getField('/basic/kind_of_product_id')->input()->addJsAction('onchange', "$('#filter_form_properties').load('".Http_Request::currentURI()."&filter_kind_of_product_selected='+this.value);");
 
 foreach($form->getFields() as $field):
 	if(!str_starts_with($field->getName(), '/basic/')) {

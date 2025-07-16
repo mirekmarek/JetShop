@@ -53,7 +53,7 @@ $edit_form->renderer()->setDefaultFieldWidth([
 			echo $message;
 		endforeach;
 		
-		echo UI::button('Show the page')->setUrl($selected_page->getURL())->setCustomTagAttribute('target', '_blank')->setIcon('eye');
+		echo UI::button( Tr::_('Show the page') )->setUrl($selected_page->getURL())->setCustomTagAttribute('target', '_blank')->setIcon('eye');
 		
 		?>
 		<?=$edit_form->start()?>

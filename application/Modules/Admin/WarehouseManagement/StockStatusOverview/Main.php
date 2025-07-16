@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 
-
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;

@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 
 use Jet\MVC_View;
+use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 
@@ -22,3 +23,4 @@ $item = $this->getRaw('item');
 ?>
 <a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getId();?></a>
 <?php
+echo Admin_Managers::TODO()?->renderHasTodoTag( $item::getEntityType(), $item->getId() );

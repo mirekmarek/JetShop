@@ -1,0 +1,93 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+$document_field = $form->getField('document');
+$document_field->input()->addJsAction('onchange', "CommonDocumentManager.upload()");
+?>
+<style>
+	#common_document_manager {
+		position: fixed;
+		top: 60px;
+		right: 0px;
+		height: calc(100% - 70px);
+		width: 600px;
+		background-color: #333940;
+		z-index: 999999;
+		padding: 5px;
+	}
+	
+	#common_document_manager_documents {
+		height: calc(100% - 70px);
+		width: 100%;
+		overflow: auto;
+		padding: 10px;
+		background-color: #ffffff;
+	}
+</style>
+<script>
+	const CommonDocumentManager = {
+		open: () => {
+			$('#common_document_manager').fadeIn();
+		},
+		
+		close: () => {
+			$('#common_document_manager').fadeOut();
+		},
+
+		upload: () => {
+			JetAjaxForm.submitMultiUpload(
+				'<?=$form->getId()?>',
+				'<?=$document_field->getName()?>',
+			);
+		},
+		
+		delete: ( file ) => {
+			$('#common_document_manager_documents').load('<?=Http_Request::currentURI()?>&delete_document='+encodeURIComponent(file));
+		},
+
+		copyURL: function (id) {
+			const element = document.getElementById(id);
+
+			element.select();
+			element.setSelectionRange(0, 99999);
+
+			document['execCommand']("copy");
+		}
+		
+		
+	};
+</script>
+
+<?= UI::button( Tr::_('Documents') )->setIcon('file-pdf')->setOnClick("CommonDocumentManager.open()")->setClass( UI_button::CLASS_SECONDARY)?>
+
+<div id="common_document_manager" style="display: none;">
+	<div style="display: flex;align-items: center">
+		<div>
+			<?= UI::button('')->setIcon('xmark')->setOnClick("CommonDocumentManager.close()")?>
+		</div>
+		
+		<div id="common_document_manager_form">
+			<?php require 'common-document-manager/form.phtml'?>
+		</div>
+	</div>
+	
+	<div id="common_document_manager_documents">
+		<?php require 'common-document-manager/documents.phtml'?>
+	</div>
+</div>

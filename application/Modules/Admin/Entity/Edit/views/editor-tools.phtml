@@ -25,5 +25,6 @@ if(!$item->getId() || !$item->isEditable()) {
 ?>
 <div style="position: fixed;top: 60px;right: 2px;z-index: 998;">
 	<?=Admin_Managers::Image()?->commonImageManager( $item::getEntityType(), $item->getId() );?>
+	<?=Admin_Managers::Document()?->commonDocumentManager( $item::getEntityType(), $item->getId() );?>
 	<?=Admin_Managers::MagicTags()?->renderTool();?>
 </div>

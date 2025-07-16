@@ -104,6 +104,8 @@ class Handler
 						$pages[$p->getId()] = $p->getName();
 					}
 					
+					asort($pages);
+					
 					$page_id = new Form_Field_Select( 'page_id:'.$tag->getId().'_'.$c->getName(), $c->getDescription() );
 					$page_id->setSelectOptions( $pages );
 					

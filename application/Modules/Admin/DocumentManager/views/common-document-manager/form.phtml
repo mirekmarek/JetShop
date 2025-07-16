@@ -1,0 +1,26 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+$document_field = $form->getField('document');
+$document_field->input()->addJsAction('onchange', "CommonDocumentManager.upload()");
+?>
+<?=$form->start()?>
+<div class="btn btn-light btn-upload">
+	<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload documents')?></span>
+	<?=$document_field->input()?>
+</div>
+<?=$form->end()?>
