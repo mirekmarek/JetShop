@@ -8,7 +8,6 @@ namespace JetApplicationModule\EShop\Catalog;
 
 
 use Jet\MVC_View;
-use Jet\Tr;
 use JetApplication\ProductListing;
 use JetApplication\EShops;
 
@@ -22,25 +21,3 @@ $eshop = EShops::getCurrent();
 $listing = $this->getRaw('listing');
 
 $filter = $listing->getFilter()->getBasicFilter();
-
-
-$has_discount_selected = $filter->getHasDiscount();
-$in_stock_selected = $filter->getInStock();
-?>
-<div>
-	<label><input
-			type="checkbox"
-			id="lf-bf-in_stock"
-			onchange="listing.submitFilter()"
-			<?=(($in_stock_selected)?'checked':'')?>
-		> <?=Tr::_('In stock')?></label>
-</div>
-
-<div>
-	<label><input
-			type="checkbox"
-			id="lf-bf-has_discount"
-			<?=(($has_discount_selected)?'checked':'')?>
-			onchange="listing.submitFilter()"
-		> <?=Tr::_('Has discount')?></label>
-</div>

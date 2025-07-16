@@ -253,25 +253,32 @@ $listing = $this->getRaw('listing');
 		}
 		
 	};
-	
+
 	listing.filter.basic = {
 		toURL: function () {
-			if(document.getElementById('lf-bf-in_stock').checked) {
-				listing.URL.push('in-stock');
-			}
-			if(document.getElementById('lf-bf-has_discount').checked) {
-				listing.URL.push('has-discount');
-			}
+			document.querySelectorAll('.lf-bf').forEach( (item) => {
+				if(item.checked) {
+					listing.URL.push( item.dataset['filterParam'] );
+				}
+			} );
+
 		},
-		
+
 		cancel: function ( flag ) {
-			document.getElementById('lf-bf-'+flag).checked = false;
+			document.querySelectorAll('.lf-bf').forEach( (item) => {
+				console.debug(item.dataset['filterParam'], flag);
+
+				if(item.dataset['filterParam']==flag) {
+					item.checked = false;
+				}
+			} );
 			listing.submitFilter();
 		},
-		
+
 		cancelAll: function () {
-			document.getElementById('lf-bf-in_stock').checked = false;
-			document.getElementById('lf-bf-has_discount').checked = false;
+			document.querySelectorAll('.lf-bf').forEach( (item) => {
+				item.checked = false;
+			} );
 		}
 	};
 	

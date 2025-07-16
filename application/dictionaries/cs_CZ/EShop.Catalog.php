@@ -69,4 +69,6 @@ return [
 	'596 633 216' => '596 633 216',
 	'Vybíráme z nabídky' => 'Vybíráme z nabídky',
 	'Všechny značky' => 'Všechny značky',
+	'FILTER_in_stock' => '',
+	'FILTER_has_discount' => '',
 ];

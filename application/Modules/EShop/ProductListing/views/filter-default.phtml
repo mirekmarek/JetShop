@@ -20,14 +20,38 @@ use JetApplication\ProductListing;
 $listing = $this->getRaw('listing');
 ?>
 
-<?=UI::button(Tr::_('Price'))->setIcon('')->setOnClick("listing.UI.goToFilter('f_price')");?>
+<div style="display: flex;flex-wrap: wrap;gap: 10px;align-items: center">
+	<?=UI::button(Tr::_('Price'))->setIcon('')->setOnClick("listing.UI.goToFilter('f_price')");?>
+	
+	<?php foreach($listing->getProperties() as $property):
+		if($property->getIsDefaultFilter()):
+			echo UI::button( $property->getLabel() )->setIcon('')->setOnClick("listing.UI.goToFilter('f_property_{$property->getId()}')");
+		endif;
+	endforeach; ?>
 
-<?php foreach($listing->getProperties() as $property):
-	if($property->getIsDefaultFilter()):
-		echo UI::button( $property->getLabel() )->setIcon('')->setOnClick("listing.UI.goToFilter('f_property_{$property->getId()}')");
-	endif;
-endforeach; ?>
 
-<?=UI::button(Tr::_('Brand'))->setIcon('')->setOnClick("listing.UI.goToFilter('f_brands')");?>
+	<div style="display: flex;gap: 10px;align-items: center">
+		<?php foreach($listing->getFilter()->getBasicFilter()->getCustomerUISubFilters() as $sub_filter):
+			if(!$sub_filter->itMakeSenseForCustomer()) {
+				continue;
+			}
+			?>
+			<div>
+				<label><input
+							type="checkbox"
+							class="lf-bf"
+							data-filter-param="<?=$sub_filter->getURLParam()?>"
+							onchange="listing.submitFilter()"
+						<?=(($sub_filter->getFilterValue())?'checked':'')?>
+					> <?=Tr::_( 'FILTER_'.$sub_filter::getKey() )?></label>
+			</div>
+		<?php endforeach; ?>
 
-<?=UI::button(Tr::_('All filters'))->setIcon('sliders')->setOnClick("listing.UI.showFilter()");?>
+	</div>
+	
+	
+	<?=UI::button(Tr::_('Brand'))->setIcon('')->setOnClick("listing.UI.goToFilter('f_brands')");?>
+	
+	<?=UI::button(Tr::_('All filters'))->setIcon('sliders')->setOnClick("listing.UI.showFilter()");?>
+	
+</div>
