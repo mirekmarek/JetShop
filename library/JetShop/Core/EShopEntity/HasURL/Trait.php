@@ -41,29 +41,36 @@ trait Core_EShopEntity_HasURL_Trait {
 		$name = Data_Text::removeAccents( $name );
 		
 		$name = strtolower($name);
-		$name = preg_replace('/([^0-9a-zA-Z ])+/', '', $name);
+		$name = preg_replace('/([^0-9a-zA-Z \-])+/', '', $name);
 		$name = preg_replace( '/([[:blank:]])+/', '-', $name);
 		
-		
-		$min_len = 0;
-		
-		$parts = explode('-', $name);
-		$valid_parts = array();
-		foreach( $parts as $value ) {
-			
-			if (strlen($value) > $min_len) {
-				$valid_parts[] = $value;
-			}
-		}
-		
-		$name = count($valid_parts) > 1 ? implode('-', $valid_parts) : $name;
+		$id = method_exists( $this, 'getEntityId' ) ? $this->getEntityId() : $this->getID();
 		
 		return Data_Text::replaceData( $template, [
 			'NAME' => $name,
-			'ID' => $this->getEntityId()
+			'ID' => $id
 		] );
 		
+	}
+	
+	public static function getIdByURLPathPart( ?string $URL_path ) : ?int
+	{
+		$template = EShopEntity_Definition::get(static::class)->getURLTemplate();
+		$reg_exp =  Data_Text::replaceData( $template, [
+			'NAME' => '',
+			'ID' => '([0-9]+)'
+		] );
+		$reg_exp = str_replace('.', '\.', $reg_exp);
+		$reg_exp = '/'.$reg_exp.'$/';
 		
+		
+		if(!preg_match($reg_exp, $URL_path, $res)) {
+			return null;
+		}
+		
+		$id = (int)$res[1];
+
+		return $id;
 	}
 	
 	

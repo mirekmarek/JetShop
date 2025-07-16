@@ -95,14 +95,16 @@ abstract class Core_ProductListing
 		$default = new ProductListing_Sorter_Default($this);
 		$this->sorters[$default->getKey()] = $default;
 		
-		$by_name = new ProductListing_Sorter_ByName($this);
-		$this->sorters[$by_name->getKey()] = $by_name;
-		
 		$lowest_price = new ProductListing_Sorter_LowestPrice($this);
 		$this->sorters[$lowest_price->getKey()] = $lowest_price;
 		
 		$highest_price = new ProductListing_Sorter_HighestPrice($this);
 		$this->sorters[$highest_price->getKey()] = $highest_price;
+		
+		
+		$by_name = new ProductListing_Sorter_ByName($this);
+		$this->sorters[$by_name->getKey()] = $by_name;
+		
 		
 		$default->setIsSelected( true );
 		
@@ -341,7 +343,7 @@ abstract class Core_ProductListing
 			$this->filter_is_active = true;
 		} else {
 			$this->filtered_products_ids = $this->filter->getInitialProductIds();
-			$this->filtered_products_ids = array_unique( $this->filtered_products_ids );
+			
 			$this->filtered_map = clone $this->initial_map;
 			$this->filter_is_active = false;
 		}

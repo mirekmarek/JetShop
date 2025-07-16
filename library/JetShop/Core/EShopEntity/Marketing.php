@@ -90,7 +90,7 @@ abstract class Core_EShopEntity_Marketing extends EShopEntity_Basic implements
 		
 		$where = static::getActiveQueryWhere( $eshop );
 		$where[] = 'AND';
-		$where['entity_id'] = $ids;
+		$where['id'] = $ids;
 		
 		$_res =  static::fetch(
 			where_per_model: [ ''=>$where],

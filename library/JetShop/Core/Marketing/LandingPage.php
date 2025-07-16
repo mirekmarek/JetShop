@@ -14,11 +14,15 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Http_Request;
 use JetApplication\Admin_Managers_Marketing_LandingPages;
+use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
+use JetApplication\EShopEntity_HasURL_Interface;
+use JetApplication\EShopEntity_HasURL_Trait;
 use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\EShops;
 
 
 #[DataModel_Definition(
@@ -27,11 +31,13 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Landing page',
-	admin_manager_interface: Admin_Managers_Marketing_LandingPages::class
+	admin_manager_interface: Admin_Managers_Marketing_LandingPages::class,
+	URL_template: '%NAME%-lp-%ID%'
 )]
-abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
+abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implements EShopEntity_Admin_Interface, EShopEntity_HasURL_Interface
 {
 	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasURL_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -140,14 +146,9 @@ abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implemen
 		return $URL;
 	}
 	
-	public function getURL() : string
-	{
-		return $this->getEshop()->getURL( [$this->getURLPathPart()] );
-	}
-	
 	public function getPreviewURL() : string
 	{
-		return $this->getEshop()->getURL( [$this->getURLPathPart()], GET_params: ['pvk' =>$this->generatePreviewKey()] );
+		return $this->getURL( ['pvk' =>$this->generatePreviewKey()] );
 	}
 	
 	public function generatePreviewKey() : string
@@ -157,19 +158,11 @@ abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implemen
 		);
 	}
 	
-	public static function getByURLPathPart( ?string $URL_path ) : ?static
+	public function getURLNameDataSource(): string
 	{
-		
-		if(!preg_match('/-lp-([0-9]+)$/', $URL_path, $res)) {
-			return null;
-		}
-		
-		$id = (int)$res[1];
-		
-		$lp = static::load( $id );
-		
-		return $lp;
+		return $this->landing_page_url;
 	}
+	
 	
 	public function checkPreviewKey() : bool
 	{
@@ -218,4 +211,26 @@ abstract class Core_Marketing_LandingPage extends EShopEntity_Marketing implemen
 		return $this->getLandingPageEditForm()->catch();
 	}
 	
+	public static function getByURLPathPart( ?string $URL_path, ?EShop $eshop=null ) : ?static
+	{
+		$id = static::getIdByURLPathPart( $URL_path );
+		if(!$id) {
+			return null;
+		}
+		
+		$eshop = $eshop ? : EShops::getCurrent();
+		
+		$lp = static::get( $id );
+		
+		if(!$lp) {
+			return null;
+		}
+		
+		if($lp->getEshop()->getKey()!=$eshop->getKey()) {
+			return null;
+		}
+		
+		return $lp;
+	}
+
 }

@@ -18,6 +18,9 @@ abstract class Core_ProductFilter_Filter
 	
 	protected bool $is_active = false;
 	
+	
+	protected array $initial_product_ids = [];
+	
 	protected ?array $previous_filter_result;
 	
 	abstract public function getKey() : string;
@@ -51,10 +54,23 @@ abstract class Core_ProductFilter_Filter
 		return $this->is_active;
 	}
 	
+	public function getInitialProductIds(): array
+	{
+		return $this->initial_product_ids;
+	}
+	
+	public function setInitialProductIds( array $initial_product_ids ): void
+	{
+		$this->initial_product_ids = $initial_product_ids;
+	}
+	
+	
+	
 	public function setPreviousFilterResult( ?array $previous_filter_result ): void
 	{
 		$this->previous_filter_result = $previous_filter_result;
 	}
+	
 	
 	public function getPreviousFilterResult(): ?array
 	{

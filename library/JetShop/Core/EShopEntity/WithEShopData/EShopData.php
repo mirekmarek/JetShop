@@ -142,6 +142,7 @@ abstract class Core_EShopEntity_WithEShopData_EShopData extends DataModel_Relate
 		$where[] = 'AND';
 		$where['entity_id'] = $ids;
 		
+		
 		$_res =  static::fetch(
 			where_per_model: [ ''=>$where],
 			order_by: $order_by,

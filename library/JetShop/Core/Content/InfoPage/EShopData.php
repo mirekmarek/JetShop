@@ -129,6 +129,12 @@ abstract class Core_Content_InfoPage_EShopData extends EShopEntity_WithEShopData
 	)]
 	protected string $breadcrumb_title = '';
 	
+	public static function getIdByURLPathPart( ?string $URL_path ): ?int
+	{
+		return null;
+	}
+	
+	
 	public function getPageId(): string
 	{
 		if(!$this->page_id) {

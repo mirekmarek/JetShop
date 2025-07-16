@@ -15,5 +15,7 @@ interface Core_EShopEntity_HasURL_Interface {
 	
 	public function generateURLPathPart() : string;
 	public function getURLNameDataSource() : string;
+	
+	public static function getIdByURLPathPart( ?string $URL_path ) : ?int;
 
 }

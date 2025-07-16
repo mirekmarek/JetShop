@@ -21,6 +21,16 @@ use JetApplication\Manager_MetaInfo;
 )]
 abstract class Core_EMailMarketing_Subscribe_Manager extends Application_Module
 {
+	public function isSubscribed( EShop $eshop, string $email_address ) : bool
+	{
+		$exists_reg = EMailMarketing_Subscribe::get( $eshop, $email_address );
+		if($exists_reg) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public function subscribe( EShop $eshop, string $email_address, string $source, string $comment='' ) : void
 	{
 		$exists_reg = EMailMarketing_Subscribe::get( $eshop, $email_address );

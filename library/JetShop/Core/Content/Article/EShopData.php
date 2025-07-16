@@ -278,12 +278,10 @@ abstract class Core_Content_Article_EShopData extends EShopEntity_WithEShopData_
 	
 	public static function getByURLPathPart( ?string $URL_path, ?EShop $eshop=null ) : ?static
 	{
-		
-		if(!preg_match('/-a-([0-9]+)$/', $URL_path, $res)) {
+		$id = static::getIdByURLPathPart( $URL_path );
+		if(!$id) {
 			return null;
 		}
-		
-		$id = (int)$res[1];
 		
 		$article = static::get( $id, $eshop );
 		

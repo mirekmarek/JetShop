@@ -6,19 +6,20 @@
  */
 namespace JetShop;
 
-
-use JetApplication\Product_Availability;
-use JetApplication\Product_Price;
-use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter_Filter;
+use JetApplication\ProductFilter_Filter_Basic_SubFilter;
+use JetApplication\ProductFilter_Filter_Basic_SubFilter_HasDiscount;
+use JetApplication\ProductFilter_Filter_Basic_SubFilter_InStock;
+use JetApplication\ProductFilter_Filter_Basic_SubFilter_IsActive;
+use JetApplication\ProductFilter_Filter_Basic_SubFilter_KindOfProduct;
 use JetApplication\ProductFilter_Storage;
 
 abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 {
-	protected ?int $kind_of_product_id = null;
-	protected ?bool $in_stock = null;
-	protected ?bool $has_discount = null;
-	protected ?bool $item_is_active = null;
+	/**
+	 * @var ProductFilter_Filter_Basic_SubFilter[]
+	 */
+	protected array $sub_filters = [];
 	
 	public function getKey(): string
 	{
@@ -28,182 +29,164 @@ abstract class Core_ProductFilter_Filter_Basic extends ProductFilter_Filter
 	
 	public function __construct()
 	{
+		$this->addSubFilter( new ProductFilter_Filter_Basic_SubFilter_IsActive() );
+		$this->addSubFilter( new ProductFilter_Filter_Basic_SubFilter_KindOfProduct() );
+		$this->addSubFilter( new ProductFilter_Filter_Basic_SubFilter_InStock() );
+		$this->addSubFilter( new ProductFilter_Filter_Basic_SubFilter_HasDiscount() );
 	}
 	
 	
-	protected function actualizeIsActive() : void
+	public function addSubFilter( ProductFilter_Filter_Basic_SubFilter $sub_filter ) : void
 	{
-		$this->is_active = (
-			$this->kind_of_product_id !== null ||
-			$this->in_stock !== null ||
-			$this->has_discount !== null ||
-			$this->item_is_active !== null
-		);
-
+		$sub_filter->setFilter( $this );
+		$this->sub_filters[$sub_filter::getKey()] = $sub_filter;
 	}
+	
+	public function removeSubFilter( string $key ) : void
+	{
+		if( isset( $this->sub_filters[$key] ) ) {
+			unset( $this->sub_filters[$key] );
+		}
+	}
+	
+	public function getSubFilter( string $key ): ?ProductFilter_Filter_Basic_SubFilter
+	{
+		return $this->sub_filters[$key] ?? null;
+	}
+	
+	/**
+	 * @return ProductFilter_Filter_Basic_SubFilter[]
+	 */
+	public function getSubFilters(): array
+	{
+		return $this->sub_filters;
+	}
+	
+	/**
+	 * @return ProductFilter_Filter_Basic_SubFilter[]
+	 */
+	public function getCustomerUISubFilters(): array
+	{
+		$res = [];
+		
+		foreach($this->getSubFilters() as $key=>$sub_filter) {
+			if($sub_filter->isForCustomerUI()) {
+				$res[$key] = $sub_filter;
+			}
+		}
+		
+		return $res;
+	}
+	
+	
+	public function getSubFilter_InStock(): null|ProductFilter_Filter_Basic_SubFilter|ProductFilter_Filter_Basic_SubFilter_HasDiscount
+	{
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_InStock::getKey() );
+	}
+	
+	public function getSubFilter_HasDiscount(): null|ProductFilter_Filter_Basic_SubFilter|ProductFilter_Filter_Basic_SubFilter_HasDiscount
+	{
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_HasDiscount::getKey() );
+	}
+	
+	public function getSubFilter_KindOfProductId(): null|ProductFilter_Filter_Basic_SubFilter|ProductFilter_Filter_Basic_SubFilter_KindOfProduct
+	{
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_KindOfProduct::getKey() );
+	}
+	
+	public function getSubFilter_ItemIsActive(): null|ProductFilter_Filter_Basic_SubFilter|ProductFilter_Filter_Basic_SubFilter_IsActive
+	{
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_IsActive::getKey() );
+	}
+	
+	
+	
+	public function getIsActive() : bool
+	{
+		foreach($this->sub_filters as $sub_filter) {
+			if( $sub_filter->getIsActive() ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public function filter(): void
+	{
+		$result = $this->previous_filter_result;
+		
+		foreach( $this->sub_filters as $filter ) {
+			$filter->setPreviousFilterResult( $result );
+			
+			if(!$filter->getIsActive()) {
+				continue;
+			}
+			
+			if( $result===null || $result ) {
+				$filter->filter();
+				$result = $filter->getFilterResult();
+			}
+		}
+		
+		$this->filter_result = $result;
+		
+	}
+	
+	
+	public function load( ProductFilter_Storage $storage ): void
+	{
+		foreach( $this->sub_filters as $sub_filter ) {
+			$sub_filter->load( $storage );
+		}
+	}
+	
+	public function save( ProductFilter_Storage $storage ): void
+	{
+		foreach( $this->sub_filters as $sub_filter ) {
+			$sub_filter->save( $storage );
+		}
+	}
+	
+	
 	
 	public function getInStock(): ?bool
 	{
-		return $this->in_stock;
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_InStock::getKey() )?->getFilterValue();
 	}
 	
 	public function setInStock( ?bool $in_stock ): void
 	{
-		$this->in_stock = $in_stock;
-		$this->actualizeIsActive();
+		$this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_InStock::getKey() )?->setFiltervalue( $in_stock );
 	}
 	
 	public function getHasDiscount(): ?bool
 	{
-		return $this->has_discount;
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_HasDiscount::getKey() )?->getFilterValue();
 	}
 	
 	public function setHasDiscount( ?bool $has_discount ): void
 	{
-		$this->has_discount = $has_discount;
-		$this->actualizeIsActive();
+		$this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_HasDiscount::getKey() )?->setFiltervalue( $has_discount );
 	}
 	
 	public function getKindOfProductId(): ?int
 	{
-		return $this->kind_of_product_id;
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_KindOfProduct::getKey() )?->getFilterValue();
 	}
 	
 	public function setKindOfProductId( ?int $kind_of_product_id ): void
 	{
-		$this->kind_of_product_id = $kind_of_product_id;
-		$this->actualizeIsActive();
+		$this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_KindOfProduct::getKey() )?->setFiltervalue( $kind_of_product_id );
 	}
-
+	
 	public function getItemIsActive(): ?bool
 	{
-		return $this->item_is_active;
+		return $this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_IsActive::getKey() )?->getFilterValue();
 	}
 	
 	public function setItemIsActive( ?bool $item_is_active ): void
 	{
-		$this->item_is_active = $item_is_active;
-		$this->actualizeIsActive();
-	}
-	
-	
-	public function prepareWhere(): array
-	{
-		$where = $this->product_filter->getEshop()->getWhere();
-		
-		if($this->previous_filter_result!==null) {
-			$where[] = 'AND';
-			$where['entity_id'] = $this->previous_filter_result;
-		}
-		
-		if($this->kind_of_product_id!==null) {
-			$where[] = 'AND';
-			$where['kind_id'] = $this->kind_of_product_id;
-		}
-		
-		if($this->item_is_active!==null) {
-			$where[] = 'AND';
-			if($this->item_is_active) {
-				$where[] = [
-					'entity_is_active' => true,
-					'AND',
-					'is_active_for_eshop' => true
-				];
-			} else {
-				$where[] = [
-					'entity_is_active' => false,
-					'OR',
-					'is_active_for_eshop' => false
-				];
-			}
-		}
-		
-		return $where;
-	}
-	
-	
-	public function filter(): void
-	{
-		$where = $this->prepareWhere();
-		$basic_filter_result = Product_EShopData::dataFetchCol(
-			select: ['entity_id'],
-			where: $where,
-			raw_mode: true
-		);
-		
-		if(!$basic_filter_result) {
-			$this->filter_result = [];
-			return;
-		}
-		
-		
-		if($this->in_stock!==null) {
-			$basic_filter_result = Product_Availability::filterIsInStock( $this->getAvailability(), $this->in_stock, $basic_filter_result );
-		}
-		
-		if($this->has_discount!==null) {
-			$basic_filter_result = Product_Price::filterHasDiscount( $this->getPricelist(), $basic_filter_result, $this->has_discount );
-		}
-		
-		$this->filter_result = $basic_filter_result;
-		
-		
-	}
-	
-	public function load( ProductFilter_Storage $storage ) : void
-	{
-		if(($kind_of_product_id = $storage->getValue($this, 'kind_of_product_id'))!==null) {
-			$this->setKindOfProductId( $kind_of_product_id );
-		} else {
-			$this->setKindOfProductId( null );
-		}
-		
-		if(($in_stock = $storage->getValue($this, 'in_stock'))!==null) {
-			$this->setInStock( (bool)$in_stock );
-		} else {
-			$this->setInStock( null );
-		}
-		
-		if(($has_discount = $storage->getValue($this, 'has_discount'))!==null) {
-			$this->setHasDiscount( (bool)$has_discount );
-		} else {
-			$this->setHasDiscount( null );
-		}
-		
-		if(($item_is_active = $storage->getValue($this, 'item_is_active'))!==null) {
-			$this->setItemIsActive( (bool)$item_is_active );
-		} else {
-			$this->setItemIsActive( null );
-		}
-		
-	}
-	
-	public function save( ProductFilter_Storage $storage ) : void
-	{
-		if($this->kind_of_product_id===null) {
-			$storage->unsetValue( $this, 'kind_of_product_id' );
-		} else {
-			$storage->setValue( $this, 'kind_of_product_id', value: $this->kind_of_product_id );
-		}
-		
-		if($this->in_stock===null) {
-			$storage->unsetValue( $this, 'in_stock' );
-		} else {
-			$storage->setValue( $this, 'in_stock', value: $this->in_stock?1:0 );
-		}
-		
-		if($this->has_discount===null) {
-			$storage->unsetValue( $this, 'has_discount' );
-		} else {
-			$storage->setValue( $this, 'has_discount', value: $this->has_discount?1:0 );
-		}
-		
-		if($this->item_is_active===null) {
-			$storage->unsetValue( $this, 'item_is_active' );
-		} else {
-			$storage->setValue( $this, 'item_is_active', value: $this->item_is_active?1:0 );
-		}
-		
+		$this->getSubFilter( ProductFilter_Filter_Basic_SubFilter_IsActive::getKey() )?->setFiltervalue( $item_is_active );
 	}
 	
 }

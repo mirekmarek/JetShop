@@ -116,7 +116,16 @@ abstract class Core_ProductFilter {
 
 	public function setInitialProductIds( ?array $initial_product_ids ): void
 	{
+		if(is_array( $initial_product_ids ) ) {
+			$initial_product_ids = array_unique( $initial_product_ids );
+		}
 		$this->initial_product_ids = $initial_product_ids;
+		
+		if(is_array( $initial_product_ids ) ) {
+			foreach($this->filters as $filter) {
+				$filter->setInitialProductIds( $initial_product_ids );
+			}
+		}
 	}
 	
 	

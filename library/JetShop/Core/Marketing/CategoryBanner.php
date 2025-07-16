@@ -8,12 +8,9 @@ namespace JetShop;
 
 
 use Jet\DataModel_Definition;
-use Jet\DataModel;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
-
-use Jet\Form_Field_Color;
 use Jet\Form_Field_File;
 use Jet\Form_Field_File_UploadedFile;
 use Jet\Form_Field_FileImage;
@@ -21,78 +18,34 @@ use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
+use JetApplication\Category;
+use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_Banners;
 use JetApplication\EShopEntity_Marketing;
+use Jet\DataModel;
+use JetApplication\Admin_Managers_Marketing_CategoryBanners;
+use JetApplication\Marketing_CategoryBanner_CategoryAssoc;
 use JetApplication\EShopEntity_Definition;
-use JetApplication\Marketing_Banner;
-use JetApplication\Marketing_BannerGroup;
-use JetApplication\EShops;
-use JetApplication\EShop;
 
 
 #[DataModel_Definition(
-	name: 'banners',
-	database_table_name: 'banners',
+	name: 'category_banner',
+	database_table_name: 'category_banners',
 )]
 #[EShopEntity_Definition(
-	entity_name_readable: 'Banner',
-	admin_manager_interface: Admin_Managers_Marketing_Banners::class
+	entity_name_readable: 'Category Banner',
+	admin_manager_interface: Admin_Managers_Marketing_CategoryBanners::class
 )]
-abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
+abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing implements
+	EShopEntity_Admin_Interface
 {
 	use EShopEntity_Admin_Trait;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_SELECT,
-		label: 'Group:',
-		select_options_creator: [
-			Marketing_BannerGroup::class,
-			'getScope'
-		]
-	)]
-	protected int $group_id = 0;
-	
-	protected ?Marketing_BannerGroup $group = null;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true
-	)]
-	protected int $position = 0;
-	
+
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
-		label: 'Text:'
-	)]
-	protected string $text = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_COLOR,
-		label: 'Text color:',
-		error_messages: [
-			Form_Field_Color::ERROR_CODE_INVALID_FORMAT => 'Invalid value'
-		]
-	)]
-	protected string $text_color = '';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 255
+		max_len : 255
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
@@ -100,16 +53,15 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 	)]
 	protected string $URL = '';
 	
-	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255
+		max_len : 255
 	)]
 	protected string $image_main = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255
+		max_len : 255
 	)]
 	protected string $image_mobile = '';
 	
@@ -125,76 +77,12 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 	)]
 	protected string $video_mobile = '';
 	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL
-	)]
 	#[Form_Definition(
-		type: Form_Field::TYPE_CHECKBOX,
-		label: 'SEO: No follow'
+		type: Form_Field::TYPE_HIDDEN
 	)]
-	protected bool $nofollow = false;
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_BOOL
-	)]
-	#[Form_Definition(
-		type: Form_Field::TYPE_CHECKBOX,
-		label: 'Open in new window'
-	)]
-	protected bool $open_in_new_window = false;
+	protected string $_category_ids = '';
 	
 	
-	
-	public function getGroupId(): int
-	{
-		return $this->group_id;
-	}
-	
-	public function setGroupId( int $group_id ): void
-	{
-		$this->group_id = $group_id;
-	}
-	
-	public function getGroup(): Marketing_BannerGroup
-	{
-		if( !$this->group ) {
-			$this->group = Marketing_BannerGroup::load( $this->group_id );
-		}
-		
-		return $this->group;
-	}
-	
-	public function getPosition(): int
-	{
-		return $this->position;
-	}
-	
-	public function setPosition( int $position ): void
-	{
-		$this->position = $position;
-	}
-	
-	
-	public function getText(): string
-	{
-		return $this->text;
-	}
-	
-	public function setText( string $text ): void
-	{
-		$this->text = $text;
-	}
-	
-	public function getTextColor(): string
-	{
-		return $this->text_color;
-	}
-	
-	public function setTextColor( string $text_color ): void
-	{
-		$this->text_color = $text_color;
-	}
 	
 	public function getURL(): string
 	{
@@ -208,7 +96,7 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 	
 	protected function getDir(): string
 	{
-		$dir = SysConf_Path::getImages() . 'banners/' . $this->id . '/';
+		$dir = SysConf_Path::getImages() . 'category_banners/' . $this->id . '/';
 		if( !IO_Dir::exists( $dir ) ) {
 			IO_Dir::create( $dir );
 		}
@@ -217,9 +105,34 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 	
 	protected function getURI(): string
 	{
-		return SysConf_URI::getImages() . 'banners/' . $this->id . '/';
+		return SysConf_URI::getImages() . 'category_banners/' . $this->id . '/';
 	}
 	
+	protected function _setFile(string $src_file_path, string $file_name, &$property) : void
+	{
+		$dir = $this->getDir();
+		if( $property ) {
+			$old_path = $dir . $property;
+			if( IO_File::exists( $old_path ) ) {
+				IO_File::delete( $old_path );
+			}
+		}
+		
+		IO_File::copy( $src_file_path, $dir . $file_name );
+		
+		$property = $file_name;
+		$this->save();
+	}
+	
+	public function setMainImage( string $src_file_path, string $file_name ) : void
+	{
+		$this->_setFile($src_file_path, $file_name, $this->image_main );
+	}
+	
+	public function setMobileImage( string $src_file_path, string $file_name ) : void
+	{
+		$this->_setFile($src_file_path, $file_name, $this->image_mobile );
+	}
 	
 	protected function setFile( Form_Field_File_UploadedFile $file, &$property ): void
 	{
@@ -348,120 +261,6 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 		return $this->getURI() . rawurlencode( $this->video_mobile );
 	}
 	
-	public function getNofollow(): bool
-	{
-		return $this->nofollow;
-	}
-	
-	public function setNofollow( bool $nofollow ): void
-	{
-		$this->nofollow = $nofollow;
-	}
-	
-	public function getOpenInNewWindow(): bool
-	{
-		return $this->open_in_new_window;
-	}
-	
-	public function setOpenInNewWindow( bool $open_in_new_window ): void
-	{
-		$this->open_in_new_window = $open_in_new_window;
-	}
-	
-	
-	/**
-	 * @param EShop $eshop
-	 * @param Marketing_BannerGroup $group
-	 * @return static[]
-	 */
-	public static function getByGroup( EShop $eshop, Marketing_BannerGroup $group ): array
-	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['group_id'] = $group->getId();
-		
-		return static::fetch( ['banners' => $where], order_by: 'position', item_key_generator: function( Marketing_Banner $banner ) {
-			return $banner->getId();
-		} );
-	}
-
-	
-	/**
-	 * @param Marketing_BannerGroup $group
-	 * @param EShop|null $eshop
-	 *
-	 * @return static[]
-	 */
-	public static function getActiveByGroup( Marketing_BannerGroup $group, ?EShop $eshop=null ): array
-	{
-		$eshop = $eshop?:EShops::getCurrent();
-		
-		$where = static::getActiveQueryWhere( $eshop );
-		$where[] = 'AND';
-		$where['group_id'] = $group->getId();
-		
-		$banners = static::fetch(
-			['' => $where],
-			order_by: 'position',
-			item_key_generator: function( Marketing_Banner $banner ) {
-				return $banner->getId();
-			} );
-		
-		$result = [];
-		foreach($banners as $banner) {
-			if($banner->isActive()) {
-				$result[] = $banner;
-			}
-		}
-		
-		return $result;
-	}
-	
-	public static function getActive( string $internal_code, ?EShop $eshop=null ): ?static
-	{
-		$eshop = $eshop?:EShops::getCurrent();
-		
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['internal_code'] = $internal_code;
-		$where[] = 'AND';
-		$where['is_active'] = true;
-		
-		$banners = static::fetch(
-			['banners' => $where],
-			order_by: 'position',
-			item_key_generator: function( Marketing_Banner $banner ) {
-				return $banner->getId();
-			} );
-		
-		$result = [];
-		foreach($banners as $banner) {
-			if($banner->isActive()) {
-				return $banner;
-			}
-		}
-		
-		return null;
-	}
-	
-	
-	protected function setupAddForm( Form $form ): void
-	{
-		$this->setupForm( $form );
-	}
-	
-	protected function setupEditForm( Form $form ): void
-	{
-		$this->setupForm( $form );
-	}
-	
-	protected function setupForm( Form $form ) : void
-	{
-		$form->removeField('relevance_mode');
-	}
-	
-	
-	
 	
 	protected array $upload_forms = [];
 	
@@ -580,41 +379,62 @@ abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements ES
 		return $this->catchUploadForm( $this->getUploadForm_MobileVideo() );
 	}
 	
-	protected function _setFile(string $src_file_path, string $file_name, &$property) : void
+	
+	public function getCategoryIds() : array
 	{
-		$dir = $this->getDir();
-		if( $property ) {
-			$old_path = $dir . $property;
-			if( IO_File::exists( $old_path ) ) {
-				IO_File::delete( $old_path );
-			}
+		return Marketing_CategoryBanner_CategoryAssoc::getCategoryIds( $this->getId() );
+	}
+	
+	public function setCategoryIds( array $category_ids ): void
+	{
+		Marketing_CategoryBanner_CategoryAssoc::setAssoc( $this->getId(), $category_ids );
+	}
+	
+	/**
+	 * @return Category[]
+	 */
+	public function getCategories() : array
+	{
+		$ids = $this->getCategoryIds();
+		if(!$ids) {
+			return [];
 		}
 		
-		IO_File::copy( $src_file_path, $dir . $file_name );
 		
-		$property = $file_name;
-		$this->save();
+		return Category::fetch( [''=>[
+			'id' => $ids
+		]] );
 	}
 	
-	public function setMainImage( string $src_file_path, string $file_name ) : void
+	public static function getIdListByCategory( int|array $category_id ) : array
 	{
-		$this->_setFile($src_file_path, $file_name, $this->image_main );
+		return Marketing_CategoryBanner_CategoryAssoc::getBannerIds( $category_id );
 	}
 	
-	public function setMobileImage( string $src_file_path, string $file_name ) : void
+	
+	/**
+	 * @param int|array $category_id
+	 * @param EShop|null $eshop
+	 * @return static[]
+	 */
+	public static function getListByCategory( int|array $category_id, ?EShop $eshop=null ) : array
 	{
-		$this->_setFile($src_file_path, $file_name, $this->image_mobile );
+		$banner_ids = static::getIdListByCategory( $category_id );
+		if(!$banner_ids) {
+			return [];
+		}
+		
+		return static::getActiveList( $banner_ids, $eshop );
 	}
 	
-	public function setMainVideo( string $src_file_path, string $file_name ) : void
+	public function setupEditForm( Form $form ): void
 	{
-		$this->_setFile($src_file_path, $file_name, $this->video_main );
+		$field = $form->getField('_category_ids');
+		$field->setDefaultValue( implode(',', $this->getCategoryIds() ) );
+		$field->setFieldValueCatcher( function( $value ) {
+			$this->setCategoryIds( $value?explode(',', $value):[] );
+		});
+		
 	}
-	
-	public function setMobileVideo( string $src_file_path, string $file_name ) : void
-	{
-		$this->_setFile($src_file_path, $file_name, $this->video_mobile );
-	}
-	
 	
 }

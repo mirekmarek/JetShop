@@ -9,6 +9,7 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use JetApplication\Admin_Managers_Content_MagicTags;
+use JetApplication\Admin_Managers_Document;
 use JetApplication\Admin_Managers_MoneyRefund;
 use JetApplication\Admin_Managers_Note;
 use JetApplication\Admin_Managers_OrderPersonalReceipt;
@@ -238,5 +239,10 @@ class Core_Admin_Managers extends Managers {
 	public static function Signpost() : Admin_Managers_Signpost|Application_Module|null
 	{
 		return static::get( Admin_Managers_Signpost::class );
+	}
+	
+	public static function Document() : Admin_Managers_Document|Application_Module|null
+	{
+		return static::get( Admin_Managers_Document::class );
 	}
 }
