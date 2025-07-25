@@ -1,0 +1,42 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Marketing\CategoryBanners;
+
+
+use JetApplication\Admin_Managers;
+
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Marketing_CategoryBanner;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ * @var Marketing_CategoryBanner   $item
+ */
+$form = $this->getRaw( 'form' );
+$item = $this->getRaw( 'item' );
+
+echo Admin_Managers::EntityEdit()->renderToolbar();
+?>
+<?=$this->getRaw('tabs')?>
+
+<div id="main-col">
+		<div id="image-main" style="margin: 20px;">
+			<?php require 'banners/image-main.phtml'; ?>
+		</div>
+		<div id="image-mobile" style="margin: 20px;">
+			<?php require 'banners/image-mobile.phtml'; ?>
+		</div>
+		<div id="video-main" style="margin: 20px;">
+			<?php require 'banners/video-main.phtml'; ?>
+		</div>
+		<div id="video-mobile" style="margin: 20px;">
+			<?php require 'banners/video-mobile.phtml'; ?>
+		</div>
+</div>
+

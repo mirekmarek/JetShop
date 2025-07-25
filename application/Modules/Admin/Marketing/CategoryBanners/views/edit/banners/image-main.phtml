@@ -1,0 +1,55 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Marketing\CategoryBanners;
+
+
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use JetApplication\Marketing_CategoryBanner;
+
+/**
+ * @var MVC_View $this
+ * @var Marketing_CategoryBanner   $item
+ */
+$item = $this->getRaw( 'item' );
+
+$upload_form = $item->getUploadForm_MainImage();
+
+$image_field = $upload_form->field('image');
+
+$image_field->input()
+	->addJsAction('onchange', "JetAjaxForm.submit(this.form.id)");
+
+?>
+<div class="card card-body">
+	<h5><?=Tr::_('Main image')?></h5>
+	
+	<?php if($item->isEditable()): ?>
+		<?=$upload_form->start()?>
+		<div class="btn btn-light btn-upload">
+			<?=UI::icon('upload')?>&nbsp;<span><?=Tr::_('Select and upload image')?></span>
+			<?=$image_field->input()?>
+		</div>
+		<?=$upload_form->end()?>
+	<?php endif; ?>
+	
+	<?php if($item->getImageMain()): ?>
+	
+	<img src="<?=$item->getImageMainURI()?>" style="max-width: 500px;height: auto;"/>
+	
+	<?php if($item->isEditable()):
+			$delete_url = Http_Request::currentURI(['delete_media'=>'image_main']);
+			?>
+		<div style="margin:10px;">
+			<?=UI::button_delete(' ')->setOnClick("$('#image-main').load('{$delete_url}');")?>
+		</div>
+	<?php endif; ?>
+	<?php endif; ?>
+</div>

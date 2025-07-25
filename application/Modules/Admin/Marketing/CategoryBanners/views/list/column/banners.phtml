@@ -1,0 +1,40 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Marketing\CategoryBanners;
+
+
+use Jet\MVC_View;
+use JetApplication\Marketing_CategoryBanner;
+
+/**
+ * @var MVC_View $this
+ * @var Marketing_CategoryBanner   $item
+ */
+$item = $this->getRaw( 'item' );
+?>
+<div style="display: flex; flex: auto;flex-wrap: wrap;gap: 10px;">
+	<?php if($item->getImageMain()): ?>
+		<img src="<?=$item->getImageMainURI()?>" style="max-width: 200px;height: auto;"/>
+	<?php endif; ?>
+	
+	<?php if($item->getImageMobile()): ?>
+		<img src="<?=$item->getImageMobileURI()?>" style="max-width: 200px;height: auto;"/>
+	<?php endif; ?>
+	
+	<?php if($item->getVideoMain()): ?>
+		<video style="max-width: 200px;height: auto;" controls>
+			<source src="<?=$item->getVideoMainURI()?>">
+		</video>
+	<?php endif; ?>
+	
+	<?php if($item->getVideoMobile()): ?>
+		<video style="max-width: 200px;height: auto;" controls>
+			<source src="<?=$item->getVideoMobileURI()?>">
+		</video>
+	<?php endif; ?>
+	
+</div>
