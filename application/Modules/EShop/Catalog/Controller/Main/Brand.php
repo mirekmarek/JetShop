@@ -10,7 +10,11 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\ErrorPages;
 use Jet\MVC;
+use Jet\MVC_Layout;
 use JetApplication\Brand_EShopData;
+use JetApplication\EShop_Managers;
+use JetApplication\EShop_Managers_ProductListing;
+use JetApplication\Product;
 
 
 trait Controller_Main_Brand
@@ -29,6 +33,7 @@ trait Controller_Main_Brand
 		
 		
 		if(static::$brand) {
+			
 			
 			if(!static::$brand->checkURL( $URL_path )) {
 				return false;
@@ -59,6 +64,7 @@ trait Controller_Main_Brand
 		Navigation_Breadcrumb::addURL(
 			static::$brand->getName()
 		);
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$brand->getName() );
 		
 		$this->view->setVar('brand', static::$brand);
 		$this->output('brand/not_active');
@@ -69,7 +75,22 @@ trait Controller_Main_Brand
 		Navigation_Breadcrumb::addURL(
 			static::$brand->getName()
 		);
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$brand->getName() );
 		
+		$liting = EShop_Managers::ProductListing();
+		/**
+		 * @var EShop_Managers_ProductListing $liting
+		 */
+		$liting->init(
+			Product::dataFetchCol(
+				select: ['id'],
+				where: ['brand_id' => static::$brand->getId()],
+				raw_mode: true
+			)
+		);
+		$liting->handle();
+		
+		$this->view->setVar('listing', $liting);
 		$this->view->setVar('brand', static::$brand);
 		
 		$this->output('brand/brand');

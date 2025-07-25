@@ -20,7 +20,7 @@ $item = $this->getRaw('item');
 $URLs = [];
 
 if($item instanceof EShopEntity_WithEShopData){
-	foreach( EShops::getListSorted() as $eshop ) {
+	foreach( EShops::getNonVirtualList() as $eshop ) {
 		$sd = $item->getEshopData($eshop);
 		if($sd instanceof EShopEntity_HasURL_Interface) {
 			$URLs[$eshop->getKey()] = $sd->getURL(['cache_prevent_'=>time()]);

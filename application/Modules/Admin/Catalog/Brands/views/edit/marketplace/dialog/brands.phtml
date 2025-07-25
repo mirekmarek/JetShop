@@ -15,12 +15,46 @@ $controller = $this->getController();
 
 $brands = $controller->getMarketplaceBrands();
 ?>
+<script>
+	const BrandMPSearch = {
+		search: ( q ) => {
+			if (!q) {
+				BrandMPSearch.reset();
+				return;
+			}
+			q = q.toLowerCase();
+			
+			document.querySelectorAll('.mp-brand-item').forEach( ( item ) => {
 
-<table class="table table-striped">
-	<?php foreach( $brands as $br): ?>
-	<tr>
-		<td nowrap=""><a href="#" onclick="BrandSelect.select('<?=$br->getBrandId()?>','<?=$br->getName()?>');return false"><?=$br->getName()?></a></td>
-		<td nowrap="" style="width: 100%;"><a href="#" onclick="BrandSelect.select('<?=$br->getBrandId()?>','<?=$br->getBrandId()?>');return false"><?=$br->getBrandId()?></a></td>
-	</tr>
-	<?php endforeach; ?>
-</table>
+				const name = item.dataset['name'].toLowerCase();
+				
+				if(name.includes(q)) {
+					item.style.display = '';
+				} else {
+					item.style.display = 'none';
+				}
+			} );
+		},
+		
+		reset: () => {
+			document.querySelectorAll('.mp-brand-item').forEach( ( item ) => {
+				item.style.display = '';
+			} );
+		}
+	};
+</script>
+
+<div class="toolbar">
+	<input type="search" onchange="BrandMPSearch.search(this.value)" onkeypress="BrandMPSearch.search(this.value)" onclick="setTimeout(()=>{BrandMPSearch.search(this.value);}, 10)" class="form-control" placeholder="<?= Tr::_('Search ...')?>">
+</div>
+<div style="overflow: auto;height: 430px;">
+	<table class="table table-striped">
+		<?php foreach( $brands as $br): ?>
+			<tr class="mp-brand-item" data-name="<?=$br->getName()?>">
+				<td nowrap=""><a href="#" onclick="BrandSelect.select('<?=$br->getBrandId()?>','<?=$br->getName()?>');return false"><?=$br->getName()?></a></td>
+				<td nowrap="" style="width: 100%;"><a href="#" onclick="BrandSelect.select('<?=$br->getBrandId()?>','<?=$br->getBrandId()?>');return false"><?=$br->getBrandId()?></a></td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+	
+</div>

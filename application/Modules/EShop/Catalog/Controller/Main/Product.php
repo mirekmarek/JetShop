@@ -10,6 +10,7 @@ namespace JetApplicationModule\EShop\Catalog;
 use Jet\ErrorPages;
 use Jet\Http_Request;
 use Jet\MVC;
+use Jet\MVC_Layout;
 use JetApplication\Product_EShopData;
 
 
@@ -64,6 +65,7 @@ trait Controller_Main_Product
 		Navigation_Breadcrumb::addURL(
 			static::$product->getFullName()
 		);
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$product->getFullName() );
 	}
 
 

@@ -7,6 +7,7 @@
 namespace JetApplicationModule\EShop\Catalog;
 
 
+use Jet\MVC_Layout;
 use JetApplication\Category_EShopData;
 
 use Jet\ErrorPages;
@@ -69,6 +70,7 @@ trait Controller_Main_Category
 	public function category_listing_Action() : void
 	{
 		Navigation_Breadcrumb::setByCategory( static::$category );
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$category->getName() );
 
 		$category = static::$category;
 		
@@ -95,6 +97,7 @@ trait Controller_Main_Category
 	public function category_no_products_Action(): void
 	{
 		Navigation_Breadcrumb::setByCategory( static::$category );
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$category->getName() );
 
 		$this->view->setVar('category', static::$category);
 

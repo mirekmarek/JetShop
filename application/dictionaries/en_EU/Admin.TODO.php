@@ -15,4 +15,8 @@ return [
 	'Task:' => '',
 	'TODO (%CNT%)' => '',
 	'Visible for all' => '',
+	'You have a task' => '',
+	'Task for:' => '',
+	'Delegated' => '',
+	'Search for person' => '',
 ];

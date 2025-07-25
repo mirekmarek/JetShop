@@ -13,7 +13,7 @@ use Jet\UI_button;
 use Jet\UI_dialog;
 use JetApplication\Admin_Managers;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
-
+use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 
 /**
  * @var MVC_View   $this
@@ -25,6 +25,12 @@ $controller = $this->getController();
 $kind_of_product = $controller->getKindOfProduct();
 $category_form = $controller->getCategoryForm();
 $category = $controller->getSelectedMarketplaceCategory();
+
+$params = $category?->getParameters()??[];
+
+uasort($params, function (MarketplaceIntegration_MarketplaceCategory_Parameter $a, MarketplaceIntegration_MarketplaceCategory_Parameter $b) {
+	return strcmp($a->getName(), $b->getName());
+});
 
 $category_form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 2] );
 $category_form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
@@ -90,22 +96,83 @@ $dialog = UI::dialog('select_category', Tr::_('Select category'), UI_dialog::SIZ
 		<table class="table table-striped">
 			<thead>
 			<tr>
+				<th style="width: 350px;"><?=Tr::_('Requirement Level')?></th>
 				<th style="width: 250px;"><?=Tr::_('ID')?></th>
 				<th style="width: 100px;"><?=Tr::_('Type')?></th>
 				<th style="width: 350px;"><?=Tr::_('Name')?></th>
+				<th style="width: 350px;"><?=Tr::_('Description')?></th>
 				<th style="width: 100px;"><?=Tr::_('Units')?></th>
 				<th></th>
 			</tr>
 			</thead>
-			<?php foreach($category->getParameters() as $param): ?>
+			<?php foreach($params as $param):
+				if($param->getRequirementLevel()!=$param::REQUIRE_LEVEL_REQUIRED) {
+					continue;
+				}
+				?>
 			<tr>
+				<td><?=Tr::_($param->getRequirementLevel())?></td>
 				<td><?=$param->getMarketplaceParameterId()?></td>
 				<td><?=$param->getType()?></td>
 				<td><?=$param->getName()?></td>
+				<td><?=$param->getDescription()?></td>
 				<td><?=$param->getUnits()?></td>
 				<td></td>
 			</tr>
 			<?php endforeach; ?>
+			
+			<?php foreach($params as $param):
+				if($param->getRequirementLevel()!=$param::REQUIRE_LEVEL_RECOMMENDED) {
+					continue;
+				}
+				?>
+				<tr>
+					<td><?=Tr::_($param->getRequirementLevel())?></td>
+					<td><?=$param->getMarketplaceParameterId()?></td>
+					<td><?=$param->getType()?></td>
+					<td><?=$param->getName()?></td>
+					<td><?=$param->getDescription()?></td>
+					<td><?=$param->getUnits()?></td>
+					<td></td>
+				</tr>
+			<?php endforeach; ?>
+			
+			<?php foreach($params as $param):
+				if($param->getRequirementLevel()!=$param::REQUIRE_LEVEL_OPTIONAL) {
+					continue;
+				}
+				?>
+				<tr>
+					<td><?=Tr::_($param->getRequirementLevel())?></td>
+					<td><?=$param->getMarketplaceParameterId()?></td>
+					<td><?=$param->getType()?></td>
+					<td><?=$param->getName()?></td>
+					<td><?=$param->getDescription()?></td>
+					<td><?=$param->getUnits()?></td>
+					<td></td>
+				</tr>
+			<?php endforeach; ?>
+			
+			<?php foreach($params as $param):
+				if(in_array($param->getRequirementLevel(), [
+					$param::REQUIRE_LEVEL_REQUIRED,
+					$param::REQUIRE_LEVEL_RECOMMENDED,
+					$param::REQUIRE_LEVEL_OPTIONAL
+				])) {
+					continue;
+				}
+				?>
+				<tr>
+					<td><?=Tr::_($param->getRequirementLevel())?></td>
+					<td><?=$param->getMarketplaceParameterId()?></td>
+					<td><?=$param->getType()?></td>
+					<td><?=$param->getName()?></td>
+					<td><?=$param->getDescription()?></td>
+					<td><?=$param->getUnits()?></td>
+					<td></td>
+				</tr>
+			<?php endforeach; ?>
+			
 		</table>
 		<?php endif; ?>
 	</div>

@@ -26,6 +26,10 @@ class Controller_Main extends MVC_Controller_Default
 
 		$main_router = MVC::getRouter();
 		$path = $main_router->getUrlPath();
+		
+		if($this->getContent()->getControllerAction()=='brands') {
+			return $this->getContent()->getControllerAction();
+		}
 
 		if(!$path) {
 			return 'homepage';
@@ -41,6 +45,14 @@ class Controller_Main extends MVC_Controller_Default
 			$object_type = $path_base[$i-2];
 			$object_id = (int)$path_base[$i-1];
 			
+			
+			$object_id = $path_base[$i-1];
+			$object_id = str_replace('.html', '', $object_id);
+			if(str_contains($object_id, '_')) {
+				$object_id = explode('_', $object_id);
+				$object_id = $object_id[count($object_id)-1];
+			}
+			$object_id = (int)$object_id;
 			
 			if($object_id>0) {
 				
@@ -78,6 +90,11 @@ class Controller_Main extends MVC_Controller_Default
 		$this->view->setVar('category', static::$category);
 		
 		$this->output('b2b_menu');
+	}
+	
+	public function brands_Action() : void
+	{
+		$this->output('brands');
 	}
 	
 }

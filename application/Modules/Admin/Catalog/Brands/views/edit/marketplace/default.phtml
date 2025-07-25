@@ -26,6 +26,7 @@ $brand = $controller->getBrand();
 $brand_form = $controller->getBrandForm();
 $selected_mp_brand = $controller->getSelectedMarketplaceBrand();
 
+
 $brand_form->renderer()->setDefaultLabelWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 2] );
 $brand_form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 
@@ -78,7 +79,7 @@ $dialog = UI::dialog('select_brand', Tr::_('Select brad'), UI_dialog::SIZE_EXTRA
 <?=$brand_form->end()?>
 
 <?=$dialog->start()?>
-	<div style="height: 400px;overflow: auto;" id="select_brand_categories">
+	<div style="height: 500px;overflow: auto;" id="select_brand_categories">
 		<?= Admin_Managers::Brand()->renderMarketPlaceIntegrationBrands( $controller, '' );?>
 	</div>
 <?=$dialog->end()?>

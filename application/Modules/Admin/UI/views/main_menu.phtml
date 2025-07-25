@@ -22,7 +22,6 @@ use Jet\Locale;
 use Jet\MVC;
 
 
-$eshops = EShops::getListSorted();
 $current_eshop = EShops::getCurrent();
 
 $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, callable $item_renderer ) {
@@ -66,18 +65,6 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 	
 	<div class="collapse navbar-collapse" id="mainNavBar">
 		<ul class="nav navbar-nav">
-			<?php /*
-			<li class="nav-item dropdown bg-secondary">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<?=$current_eshop->getName()?> <span class="caret"></span>
-				</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<?php foreach( $eshops as $eshop ): ?>
-						<a class="dropdown-item" href="<?=Http_Request::currentURI([Main::CURR_ESHOP_GET_PARAM =>$eshop->getKey()])?>"><?=$eshop->getName()?></a>
-					<?php endforeach; ?>
-				</div>
-			</li>
-			*/ ?>
 			
 			<?php foreach( Navigation_MenuSet::get( 'admin' )->getMenus() as $menu ):
 				if(!$menu->getItems()) {
@@ -119,14 +106,13 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 					<?php foreach( Application_Admin::getAvlLovales() as $locale ): ?>
-						<a class="dropdown-item"
-							href="<?=Http_Request::currentURI(['set_locale'=>$locale->toString()])?>"
+						<a class="dropdown-item" href="<?=Http_Request::currentURI(['set_locale'=>$locale->toString()])?>">
 							<?= UI::flag( $locale ) ?>
 							<?php
-								if($locale->getLanguage()=='en')
-									echo $locale->getLanguageName( $locale );
-								else
-									echo $locale->getName( $locale );
+							if($locale->getLanguage()=='en')
+								echo $locale->getLanguageName( $locale );
+							else
+								echo $locale->getName( $locale );
 							?>
 						</a>
 					<?php endforeach; ?>

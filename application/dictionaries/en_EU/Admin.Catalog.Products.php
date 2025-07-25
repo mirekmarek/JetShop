@@ -266,4 +266,13 @@ return [
 	'New internal code:' => '',
 	'Accessories setting has been updated' => '',
 	'Is sale' => '',
+	'Creation in progress' => '',
+	'Archived' => '',
+	'Price %PRICELIST%' => '',
+	'Set common properties' => '',
+	'Set value' => '',
+	'Is archived' => '',
+	'Deactivate after sell out' => '',
+	'Add category' => '',
+	'Do you really want to delete this category?' => '',
 ];

@@ -10,6 +10,7 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\ErrorPages;
 use Jet\MVC;
+use Jet\MVC_Layout;
 use JetApplication\Signpost_EShopData;
 
 
@@ -59,6 +60,7 @@ trait Controller_Main_Signpost
 		Navigation_Breadcrumb::addURL(
 			static::$signpost->getName()
 		);
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$signpost->getName() );
 		
 		$this->view->setVar('signpost', static::$signpost);
 		$this->output('signpost/not_active');
@@ -66,9 +68,11 @@ trait Controller_Main_Signpost
 	
 	public function signpost_Action(): void
 	{
+		
 		Navigation_Breadcrumb::addURL(
 			static::$signpost->getName()
 		);
+		MVC_Layout::getCurrentLayout()->setVar('title', static::$signpost->getName() );
 		
 		$this->view->setVar('signpost', static::$signpost);
 		

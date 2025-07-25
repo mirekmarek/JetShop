@@ -30,11 +30,11 @@ $selected_eshop_key = $selected_eshop?->getKey();
 	<div style="display: flex;align-items: center;margin: 10px;">
 		<div style="padding: 5px;width: 150px;"><b><?=Tr::_('Shop:')?></b></div>
 		
-		<?php foreach( EShops::getListSorted() as $eshop):
+		<?php foreach( EShops::getNonVirtualList() as $eshop):
 			if($eshop->getKey()==$selected_eshop_key): ?>
 				<div style="padding: 5px"><b class="btn btn-success"><?=$eshop->getName()?></b></div>
 			<?php else:  ?>
-				<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['eshop'=>$eshop->getKey()], unset_GET_params: ['do_it', 'price_list'])?>" class="btn btn-light"><?=$eshop->getName()?></a></div>
+				<div style="padding: 5px"><a href="<?=Http_Request::currentURI(set_GET_params: ['eshop'=>$eshop->getKey()] )?>" class="btn btn-light"><?=$eshop->getName()?></a></div>
 			<?php endif;
 		endforeach; ?>
 	</div>

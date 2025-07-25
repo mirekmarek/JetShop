@@ -28,7 +28,7 @@ $eshop = $controller->getEshop();
 $editable = $controller->getEditable();
 $category = $controller->getCategory();
 $params_form = $controller->getParametersForm();
-
+$params = $category?->getParameters();
 ?>
 <?=$controller->getTabs()?>
 <br>
@@ -43,14 +43,56 @@ $params_form = $controller->getParametersForm();
 		<?php endif; ?>
 	</div>
 	
-	
+	<?php if($params_form): ?>
 	<?=$params_form->start();?>
 	
 	<div style="display: grid;grid-template-columns: 2fr 8fr;gap: 20px;">
-		<?php foreach($params_form->getFields() as $field): ?>
+		
+		<?php foreach($params_form->getFields() as $field):
+			$param = $params[$field->getName()];
+			if($param->getRequirementLevel()!=$param::REQUIRE_LEVEL_REQUIRED) {
+				continue;
+			}
+			?>
 			<div><?=$field->getLabel()?></div>
 			<div><?=$field->input()?><?=$field->error()?></div>
 		<?php endforeach; ?>
+		
+		<?php foreach($params_form->getFields() as $field):
+			$param = $params[$field->getName()];
+			if($param->getRequirementLevel()!=$param::REQUIRE_LEVEL_RECOMMENDED) {
+				continue;
+			}
+			?>
+			<div><?=$field->getLabel()?></div>
+			<div><?=$field->input()?><?=$field->error()?></div>
+		<?php endforeach; ?>
+		
+		<?php foreach($params_form->getFields() as $field):
+			$param = $params[$field->getName()];
+			if($param->getRequirementLevel()!=$param::REQUIRE_LEVEL_OPTIONAL) {
+				continue;
+			}
+			?>
+			<div><?=$field->getLabel()?></div>
+			<div><?=$field->input()?><?=$field->error()?></div>
+		<?php endforeach; ?>
+		
+		<?php foreach($params_form->getFields() as $field):
+			$param = $params[$field->getName()];
+			if(in_array($param->getRequirementLevel(), [
+				$param::REQUIRE_LEVEL_REQUIRED,
+				$param::REQUIRE_LEVEL_RECOMMENDED,
+				$param::REQUIRE_LEVEL_OPTIONAL
+			])) {
+				continue;
+			}
+			?>
+			<div><?=$field->getLabel()?></div>
+			<div><?=$field->input()?><?=$field->error()?></div>
+		<?php endforeach; ?>
+		
+		
 		
 		<?php if($editable): ?>
 			<div style="position: fixed;right: 10px;bottom: 10px;">
@@ -61,4 +103,5 @@ $params_form = $controller->getParametersForm();
 	
 	<?php
 	echo $params_form->end();
+	endif;
 endif; ?>

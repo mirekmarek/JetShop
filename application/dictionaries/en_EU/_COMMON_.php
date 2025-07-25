@@ -400,4 +400,13 @@ return [
 	'Send to the supplier' => '',
 	'Set supplier\'s order number' => '',
 	'Order number: ' => '',
+	'What to affect:' => '',
+	'Manually selected items' => '',
+	'Set value' => '',
+	'Select all' => '',
+	'Unselect all' => '',
+	'Perform operation' => '',
+	'Set properties' => '',
+	'Creation in progress' => '',
+	'Is archived' => '',
 ];

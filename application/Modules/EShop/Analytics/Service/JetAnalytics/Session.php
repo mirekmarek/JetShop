@@ -127,7 +127,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255
+		max_len: 1024
 	)]
 	protected string $http_referer = '';
 

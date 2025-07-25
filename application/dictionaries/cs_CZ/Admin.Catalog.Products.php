@@ -276,4 +276,6 @@ return [
 	'Is archived' => 'Je archivován',
 	'Deactivate after sell out' => 'Deaktivovat po vyprodání',
 	'Nastavit hodnotu' => '',
+	'Add category' => '',
+	'Do you really want to delete this category?' => '',
 ];

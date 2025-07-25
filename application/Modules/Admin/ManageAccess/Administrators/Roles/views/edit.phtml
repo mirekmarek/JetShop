@@ -6,6 +6,7 @@
  */
 namespace JetApplicationModule\Admin\ManageAccess\Administrators\Roles;
 
+use Jet\Application_Modules;
 use Jet\Data_Text;
 use Jet\Form_Field_Select;
 use Jet\Locale;
@@ -68,8 +69,17 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 			}
 					
 			$pages = [];
+			$other_module_actions = [];
 			
-				$showPriv = function( MVC_Page_Interface $page ) use ( $fl ) {
+			foreach(Application_Modules::activatedModulesList() as $module) {
+				$other_module_actions[$module->getName()] = [];
+				
+				foreach($module->getACLActions() as $action=>$action_name) {
+					$other_module_actions[$module->getName()][$action] = $action_name;
+				}
+			}
+			
+			$showPriv = function( MVC_Page_Interface $page ) use ( $fl, &$other_module_actions ) {
 					$privilege = Auth_Administrator_Role::PRIVILEGE_VISIT_PAGE.'|'.$page->getId();
 					$selected = $fl->optionIsSelected($privilege) ? ' selected="selected"' : '';
 					?>
@@ -83,6 +93,8 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 						
 						foreach($module->getModuleManifest()->getACLActions() as $action=>$action_name):
 							$privilege = Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION.'|'.$module->getModuleManifest()->getName().':'.$action;
+							unset( $other_module_actions[$module->getModuleManifest()->getName()][$action] );
+							
 							$selected = $fl->optionIsSelected($privilege) ? ' selected="selected"' : '';
 							?>
 							<option value="<?=Data_Text::htmlSpecialChars($privilege)?>" <?=$selected?> style="margin-left: 60px;opacity: 0.8;font-size: 0.8rem"><?=$action_name?></option>
@@ -105,7 +117,7 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 							endforeach; ?>
 						</optgroup>
 					<?php endforeach; ?>
-					<optgroup label="<?=Tr::_('Other')?>">
+					<optgroup label="<?=Tr::_('Other sections')?>">
 						<?php
 						
 						$showPriv( Application_Admin::getBase()->getHomepage(Locale::getCurrentLocale()) );
@@ -118,6 +130,24 @@ $form->renderer()->setDefaultFieldWidth( [Form_Renderer::LJ_SIZE_MEDIUM => 4] );
 							$showPriv( $page );
 						endforeach; ?>
 					</optgroup>
+					<?php foreach( $other_module_actions as $module_name=> $actions):
+						if(!count($actions)) continue;
+						
+						?>
+						<optgroup label="<?=$module_name?>">
+						<?php
+						foreach($actions as $action=>$action_name):
+							$privilege = Auth_Administrator_Role::PRIVILEGE_MODULE_ACTION.'|'.$module_name.':'.$action;
+						
+							$selected = $fl->optionIsSelected($privilege) ? ' selected="selected"' : '';
+							?>
+							<option value="<?=Data_Text::htmlSpecialChars($privilege)?>" <?=$selected?> style="margin-left: 60px;opacity: 0.8;font-size: 0.8rem"><?=$action_name?></option>
+						<?php
+						endforeach;
+						?>
+						</optgroup>
+					<?php endforeach; ?>
+					
 				</select>
 				<?php
 				echo $fl->getLastErrorMessage();
