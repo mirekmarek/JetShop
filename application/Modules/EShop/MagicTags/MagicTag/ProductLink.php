@@ -30,7 +30,7 @@ class MagicTag_ProductLink extends MagicTag
 	 */
 	public function getContexts() : array
 	{
-		$page_id = new Content_MagicTag_Context(
+		$product_id = new Content_MagicTag_Context(
 			name: 'product_id',
 			type: Content_MagicTag_Context::TYPE_PRODUCT,
 			description: Tr::_('Product:')
@@ -38,7 +38,7 @@ class MagicTag_ProductLink extends MagicTag
 		
 		
 		return [
-			$page_id
+			$product_id
 		];
 	}
 	

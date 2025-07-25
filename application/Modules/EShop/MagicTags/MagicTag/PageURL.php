@@ -46,19 +46,37 @@ class MagicTag_PageURL extends MagicTag
 		$output = str_replace('http://%PAGE_URL:', '%URL:', $output);
 		$output = str_replace('https://%PAGE_URL:', '%URL:', $output);
 		
-		if(!preg_match_all('/%PAGE_URL:([a-z\-0-9A-Z]+)%/', $output, $matches, PREG_SET_ORDER)) {
-			return $output;
+		if(preg_match_all('/%PAGE_URL:([a-z\-0-9A-Z]+)%/', $output, $matches, PREG_SET_ORDER)) {
+			foreach( $matches as $m ) {
+				$orig_str = $m[0];
+				$page_id = $m[1];
+				
+				$page = MVC::getPage( $page_id );
+				$URL = $page?->getURL()??'';
+				
+				$output = str_replace($orig_str, $URL, $output);
+			}
 		}
 		
-		foreach( $matches as $m ) {
-			$orig_str = $m[0];
-			$page_id = $m[1];
-			
-			$page = MVC::getPage( $page_id );
-			$URL = $page?->getURL()??'';
-			
-			$output = str_replace($orig_str, $URL, $output);
+		if(preg_match_all('/%PAGE_URL:([a-z\-0-9A-Z\_]+)\/([a-z\-0-9A-Z]+)%/', $output, $matches, PREG_SET_ORDER)) {
+			foreach( $matches as $m ) {
+				$orig_str = $m[0];
+				$eshop_key = $m[1];
+				$page_id = $m[2];
+				
+				$eshop = EShops::get( $eshop_key );
+				
+				$URL = '';
+				
+				if($eshop) {
+					$page = MVC::getPage( $page_id, locale: $eshop->getLocale(), base_id: $eshop->getBaseId() );
+					$URL = $page?->getURL()??'';
+				}
+				
+				$output = str_replace($orig_str, $URL, $output);
+			}
 		}
+		
 		
 		return $output;
 	}

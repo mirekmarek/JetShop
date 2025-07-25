@@ -10,6 +10,7 @@ namespace JetApplicationModule\SysServices\MarketingTimePlan\Banner;
 use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Marketing_Banner;
+use JetApplication\Marketing_CategoryBanner;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
 
@@ -25,6 +26,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			service_code: 'handle_time_plan',
 			service: function() {
 				Marketing_Banner::handleTimePlan();
+				Marketing_CategoryBanner::handleTimePlan();
 			}
 		);
 		

@@ -19,6 +19,20 @@ class Main extends EShop_Managers_ProductReviews implements EShop_ModuleUsingTem
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
+	public function renderRankForListing( Product_EShopData $product ) : string
+	{
+		return Translator::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($product) {
+				$view = $this->getView();
+				
+				$view->setVar('product', $product);
+				
+				return $view->render('product-rank-listing');
+			});
+		
+	}
+	
 	public function renderRank( Product_EShopData $product ): string
 	{
 		return Translator::setCurrentDictionaryTemporary(

@@ -23,9 +23,9 @@ $listing = $this->getRaw('listing');
 	<?php foreach($listing->getSorters() as $sorter): ?>
 
 		<?php if($sorter->getIsSelected()):?>
-			<div id="product_listing_selected_sorter" data-key="<?=$sorter->getKey()?>"><?=$sorter->getLabel()?></div>
+			<div id="product_listing_selected_sorter" data-key="<?=$sorter->getKey()?>"><?=Tr::_($sorter->getLabel())?></div>
 		<?php else: ?>
-			<button type="button" class="product_listing_sort_btn" onclick="listing.sort('<?=$sorter->getKey()?>');"><?=$sorter->getLabel()?></button>
+			<button type="button" class="product_listing_sort_btn" onclick="listing.sort('<?=$sorter->getKey()?>');"><?=Tr::_($sorter->getLabel())?></button>
 		<?php endif; ?>
 
 	<?php endforeach; ?>

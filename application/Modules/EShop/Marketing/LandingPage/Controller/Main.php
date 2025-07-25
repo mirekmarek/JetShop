@@ -11,7 +11,7 @@ use Jet\MVC;
 use Jet\MVC_Controller_Default;
 use Jet\MVC_Layout;
 use JetApplication\Marketing_LandingPage;
-use JetApplication\EShops;
+use Jet\Navigation_Breadcrumb;
 
 
 class Controller_Main extends MVC_Controller_Default
@@ -32,10 +32,6 @@ class Controller_Main extends MVC_Controller_Default
 			return false;
 		}
 		
-		if($lp->getEshop()->getKey()!==EShops::getCurrent()->getKey()) {
-			return false;
-		}
-		
 		if(
 			!$lp->isActive() &&
 			!$lp->checkPreviewKey()
@@ -43,8 +39,7 @@ class Controller_Main extends MVC_Controller_Default
 			return false;
 		}
 		
-		if($lp->getURLPathPart()!=$path) {
-			$main_router->setIsRedirect( $lp->getURL() );
+		if( !$lp->checkURL( $path ) ) {
 			return false;
 		}
 		
@@ -63,7 +58,10 @@ class Controller_Main extends MVC_Controller_Default
 		$layout = MVC_Layout::getCurrentLayout();
 		$layout->setScriptName('landing-page');
 		
+		Navigation_Breadcrumb::addURL( $this->lp->getLandingPageTitle() );
+		
 		$layout->setVar('title', $this->lp->getLandingPageTitle() );
+		$layout->setVar('description', $this->lp->getLandingPageDescription() );
 		
 		$this->view->setVar('lp', $this->lp);
 		$this->output('default');

@@ -22,7 +22,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			module: $this,
 			name: Tr::_('Timers'),
 			description: Tr::_('Triggers various timers (e.g. for scheduled price changes, scheduled activations and deactivations, etc.)'),
-			service_code: 'actualize_fulltext',
+			service_code: 'perform',
 			service: function() {
 				$this->runTimers();
 			}
