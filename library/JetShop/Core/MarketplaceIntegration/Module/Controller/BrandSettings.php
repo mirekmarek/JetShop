@@ -10,6 +10,7 @@ namespace JetShop;
 use Jet\AJAX;
 use Jet\Form;
 use Jet\Form_Field_Input;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
@@ -114,8 +115,20 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 			return 'dialog_eshop_brand';
 		}
 		
+		if($GET->exists('actualize_list_of_brands')) {
+			return 'actualize_list_of_brands';
+		}
+		
+		
 		
 		return 'default';
+	}
+	
+	public function actualize_list_of_brands_Action() : void
+	{
+		$this->marketplace->actualizeBrands( $this->eshop );
+		Http_Headers::reload(unset_GET_params: ['actualize_list_of_brands']);
+		
 	}
 	
 	public function dialog_eshop_brand_Action() : void
@@ -162,6 +175,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 		if($this->brand_form->catch()) {
 			$this->brand_id_join->save();
 			UI_messages::success(Tr::_('Saved ...'));
+			Http_Headers::reload();
 		}
 		
 		

@@ -92,8 +92,8 @@ abstract class Core_Product_Box extends EShopEntity_Basic
 		
 		$boxes = [];
 		
-		foreach($_boxes as $img) {
-			$boxes[$img->getId()] = $img;
+		foreach($_boxes as $box) {
+			$boxes[$box->getId()] = $box;
 		}
 		
 		return $boxes;

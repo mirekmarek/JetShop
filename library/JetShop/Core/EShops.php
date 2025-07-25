@@ -76,6 +76,22 @@ class Core_EShops {
 					static::$_list[$key] = $eshop;
 				}
 			}
+			
+			uasort( static::$_list, function( EShop $a, EShop $b ) {
+				return ($a->getIsVirtual()?1:0)<=>($b->getLocale()?1:0);
+			});
+			
+			
+			uasort( static::$_list, function( EShop $a, EShop $b ) {
+				return strcmp( $a->getLocale(), $b->getLocale() );
+			});
+			
+			uasort( static::$_list, function( EShop $a, EShop $b ) {
+				return strcmp( $a->getCode(), $b->getCode() );
+			});
+			
+			
+			
 		}
 
 		return static::$_list;
@@ -94,8 +110,25 @@ class Core_EShops {
 	/**
 	 * @return EShop[]
 	 */
+	public static function getNonVirtualList() : array
+	{
+		$list = [];
+		
+		foreach(static::getList() as $k=>$eshop) {
+			if(!$eshop->getIsVirtual()) {
+				$list[$k] = $eshop;
+			}
+		}
+		
+		return $list;
+	}
+	
+	/**
+	 * @return EShop[]
+	 */
 	public static function getListSorted() : array
 	{
+		/*
 		$current = EShops::getCurrent();
 		$_list = static::getList();
 		
@@ -115,6 +148,8 @@ class Core_EShops {
 		$list += $other;
 		
 		return $list;
+		*/
+		return static::getList();
 	}
 	
 	/**
@@ -146,6 +181,8 @@ class Core_EShops {
 
 		return $res;
 	}
+	
+	
 
 	public static function determineByBase( string $base_id, Locale $locale ) : EShop|null
 	{

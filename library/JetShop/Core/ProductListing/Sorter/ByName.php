@@ -6,25 +6,14 @@
  */
 namespace JetShop;
 
-
-
-use Jet\Tr;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductListing_Sorter;
 
 abstract class Core_ProductListing_Sorter_ByName extends ProductListing_Sorter
 {
 	
-	
-	public function getKey(): string
-	{
-		return 'by_name';
-	}
-	
-	public function getLabel(): string
-	{
-		return Tr::_('By name');
-	}
+	protected static string $key = 'by_name';
+	protected string $label = 'By name';
 	
 	public function sort( array $product_ids ): array
 	{

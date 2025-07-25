@@ -22,6 +22,11 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	public const PARAM_TYPE_OPTIONS = 'options';
 	public const PARAM_TYPE_NUMBER = 'number';
 	public const PARAM_TYPE_STRING = 'string';
+
+	public const REQUIRE_LEVEL_OPTIONAL = 'optional';
+	public const REQUIRE_LEVEL_REQUIRED = 'required';
+	public const REQUIRE_LEVEL_RECOMMENDED = 'recommended';
+	public const REQUIRE_LEVEL_DISABLED = 'disabled';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -51,6 +56,11 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	protected string $type = '';
 	
 	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+	)]
+	protected bool $multiple_values = true;
+	
+	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100
 	)]
@@ -61,6 +71,20 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 		max_len: 100
 	)]
 	protected string $units = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 65536
+	)]
+	protected string $description = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $requirement_level = '';
+
 	
 	
 	#[DataModel_Definition(
@@ -174,4 +198,39 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	{
 		$this->options = $options;
 	}
+	
+	public function getMultipleValues(): bool
+	{
+		return $this->multiple_values;
+	}
+	
+	public function setMultipleValues( bool $multiple_values ): void
+	{
+		$this->multiple_values = $multiple_values;
+	}
+	
+	
+	
+	public function getDescription(): string
+	{
+		return $this->description;
+	}
+	
+	public function setDescription( string $description ): void
+	{
+		$this->description = $description;
+	}
+	
+	public function getRequirementLevel(): string
+	{
+		return $this->requirement_level;
+	}
+	
+	public function setRequirementLevel( string $requirement_level ): void
+	{
+		$this->requirement_level = $requirement_level;
+	}
+	
+	
+	
 }

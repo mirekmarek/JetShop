@@ -11,6 +11,7 @@ use Jet\Application_Module;
 use Closure;
 use Jet\Data_DateTime;
 use Jet\Logger;
+use JetApplication\EShops;
 use JetApplication\Exports;
 use JetApplication\Exports_Definition;
 use JetApplication\Exports_Module;
@@ -27,6 +28,7 @@ abstract class Core_Exports_Definition {
 	
 	protected string $export_code = '';
 	protected ?Closure $export = null;
+	protected ?array $allowed_eshops = null;
 	
 	
 	public function __construct( Exports_Module $module, string $name, string $description, string $export_code, Closure $export )
@@ -40,6 +42,28 @@ abstract class Core_Exports_Definition {
 		$this->export_code = $export_code;
 		$this->export = $export;
 	}
+	
+	/**
+	 * @return EShop[]
+	 */
+	public function getAllowedEshops(): array
+	{
+		if(!$this->allowed_eshops) {
+			$this->allowed_eshops = EShops::getList();
+		}
+		return $this->allowed_eshops;
+	}
+	
+	/**
+	 * @param EShop[] $allowed_eshops
+	 * @return void
+	 */
+	public function setAllowedEshops( array $allowed_eshops ): void
+	{
+		$this->allowed_eshops = $allowed_eshops;
+	}
+	
+	
 	
 	
 	public function getModule(): Application_Module

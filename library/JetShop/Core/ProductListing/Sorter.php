@@ -12,21 +12,36 @@ use JetApplication\ProductListing;
 
 abstract class Core_ProductListing_Sorter
 {
+	protected static string $key;
 	protected ProductListing $listing;
+	protected string $label = '';
 	
 	protected bool $is_selected = false;
 	
-	public function __construct( ProductListing $listing )
+	public function __construct()
+	{
+	}
+	
+	public function setListing( ProductListing $listing ): void
 	{
 		$this->listing = $listing;
 	}
 	
 	
-	abstract public function getKey() : string;
+	public static function getKey() : string
+	{
+		return static::$key;
+	}
 	
-	abstract public function getLabel() : string;
+	public function getLabel(): string
+	{
+		return $this->label;
+	}
 	
-	abstract public function sort( array $product_ids ) : array;
+	public function setLabel( string $label ): void
+	{
+		$this->label = $label;
+	}
 	
 	public function getIsSelected(): bool
 	{
@@ -38,5 +53,6 @@ abstract class Core_ProductListing_Sorter
 		$this->is_selected = $is_selected;
 	}
 	
+	abstract public function sort( array $product_ids ) : array;
 	
 }

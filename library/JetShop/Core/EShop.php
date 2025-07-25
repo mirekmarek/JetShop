@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Jet\BaseObject;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Definition_Interface;
@@ -33,7 +34,7 @@ use Error;
 use JetApplication\WarehouseManagement_Warehouse;
 
 
-abstract class Core_EShop implements Form_Definition_Interface
+abstract class Core_EShop extends BaseObject implements Form_Definition_Interface
 {
 	use Form_Definition_Trait;
 	
@@ -54,6 +55,12 @@ abstract class Core_EShop implements Form_Definition_Interface
 		label: 'Internal name: ',
 	)]
 	protected string $name = '';
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Is virtual e-shop',
+	)]
+	protected bool $is_virtual = false;
 	
 	#[Form_Definition(
 		type: Form_Field::TYPE_CHECKBOX,
@@ -281,6 +288,18 @@ abstract class Core_EShop implements Form_Definition_Interface
 	{
 		$this->name = $name;
 	}
+	
+	public function getIsVirtual(): bool
+	{
+		return $this->is_virtual;
+	}
+	
+	public function setIsVirtual( bool $is_virtual ): void
+	{
+		$this->is_virtual = $is_virtual;
+	}
+	
+	
 
 	public function getIsDefault(): bool
 	{

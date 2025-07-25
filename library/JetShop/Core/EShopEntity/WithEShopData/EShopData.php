@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Closure;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Definition_Model_Related_1toN;
@@ -327,6 +328,48 @@ abstract class Core_EShopEntity_WithEShopData_EShopData extends DataModel_Relate
 		}
 		
 		return parent::createForm( $form_name, $only_fields, $exclude_fields );
+	}
+	
+	public static function cloneAllEShopData( EShop $source_eshop, EShop $target_eshop, ?Closure $verboser=null ) : void
+	{
+		$ids = static::dataFetchCol( select: ['entity_id'], where: $source_eshop->getWhere() );
+		$count = count($ids);
+		$c = 0;
+		foreach( $ids as $id ) {
+			$c++;
+			if($verboser) {
+				$verboser( $c, $count, $id );
+			}
+			
+			static::cloneEShopData( $id, $source_eshop, $target_eshop );
+		}
+	}
+	
+	public static function cloneEShopData( int $entity_id, EShop $source_eshop, EShop $target_eshop ) : ?static
+	{
+		$item = static::load([
+			'entity_id' => $entity_id,
+			'AND',
+			$source_eshop->getWhere()
+		]);
+		if(!$item) {
+			return null;
+		}
+		
+		$item->setEshop( $target_eshop );
+		
+		$exists = static::dataFetchOne( select: ['entity_id'], where: [
+			$target_eshop->getWhere(),
+			'AND',
+			'entity_id' => $entity_id
+		] );
+		if(!$exists) {
+			$item->setIsNew( true );
+		}
+		
+		$item->save();
+		
+		return $item;
 	}
 	
 }

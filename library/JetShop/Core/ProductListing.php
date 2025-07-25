@@ -92,23 +92,37 @@ abstract class Core_ProductListing
 	
 	public function initSorters() : void
 	{
-		$default = new ProductListing_Sorter_Default($this);
-		$this->sorters[$default->getKey()] = $default;
-		
-		$lowest_price = new ProductListing_Sorter_LowestPrice($this);
-		$this->sorters[$lowest_price->getKey()] = $lowest_price;
-		
-		$highest_price = new ProductListing_Sorter_HighestPrice($this);
-		$this->sorters[$highest_price->getKey()] = $highest_price;
-		
-		
-		$by_name = new ProductListing_Sorter_ByName($this);
-		$this->sorters[$by_name->getKey()] = $by_name;
-		
-		
-		$default->setIsSelected( true );
-		
+		$this->addSorter( new ProductListing_Sorter_Default() );
+		$this->addSorter( new ProductListing_Sorter_LowestPrice() );
+		$this->addSorter( new ProductListing_Sorter_HighestPrice() );
+		$this->addSorter( new ProductListing_Sorter_ByName() );
 	}
+	
+	public function addSorter( ProductListing_Sorter $sorter )  : void
+	{
+		$sorter->setListing( $this );
+		if(!$this->sorters) {
+			$sorter->setIsSelected( true );
+		}
+		$this->sorters[$sorter::getKey()] = $sorter;
+	}
+	
+	public function removeSorter( string $key ) : void
+	{
+		if(!isset($this->sorters[$key])) {
+			return;
+		}
+		$was_selected = $this->sorters[$key]->getIsSelected();
+		
+		unset($this->sorters[$key]);
+		
+		if(!$was_selected) {
+			foreach($this->sorters as $sorter) {
+				$this->selectSorter( $sorter::getKey() );
+			}
+		}
+	}
+	
 	
 	/**
 	 * @return ProductListing_Sorter[]

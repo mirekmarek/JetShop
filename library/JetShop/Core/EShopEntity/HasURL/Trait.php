@@ -41,8 +41,11 @@ trait Core_EShopEntity_HasURL_Trait {
 		$name = Data_Text::removeAccents( $name );
 		
 		$name = strtolower($name);
-		$name = preg_replace('/([^0-9a-zA-Z \-])+/', '', $name);
+		$name = preg_replace('/([^0-9a-zA-Z \-\_])+/', '', $name);
 		$name = preg_replace( '/([[:blank:]])+/', '-', $name);
+		$name = str_replace('_', '-', $name);
+		$name = str_replace('--', '-', $name);
+		$name = str_replace('--', '-', $name);
 		
 		$id = method_exists( $this, 'getEntityId' ) ? $this->getEntityId() : $this->getID();
 		

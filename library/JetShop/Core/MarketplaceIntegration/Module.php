@@ -398,6 +398,10 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 				return null;
 			}
 			
+			uasort($parameters, function( MarketplaceIntegration_MarketplaceCategory_Parameter $a, MarketplaceIntegration_MarketplaceCategory_Parameter $b) {
+				return strcasecmp($a->getName(), $b->getName());
+			});
+			
 			$values = MarketplaceIntegration_MarketplaceCategory_Parameter_Value::getForProduct(
 				$eshop,
 				$this->getCode(),
@@ -408,7 +412,18 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 			$fields = [];
 			foreach($parameters as $param_id=>$param) {
 				
-				$label = $param->getName().($param->getUnits()?' ('.$param->getUnits().')': '').'<br><span style="font-size: 10px;color: #666666">'.$param_id.'</span>';
+				$label = '';
+				
+				if($param->getRequirementLevel()) {
+					$label .= '<span style="font-size: 0.6rem">['.Tr::_( $param->getRequirementLevel() ).']</span> ';
+				}
+				
+				$label .= $param->getName().($param->getUnits()?' ('.$param->getUnits().')': '');
+				$label .= ' <span style="font-size: 0.6rem;color: #666666">('.$param_id.')</span>';
+				
+				$label .= '<br><span style="font-size: 10px;color: #484848;font-style: italic">' .$param->getDescription().'</span>';
+				
+				
 				$value = $values[$param_id]??null;
 				if(!$value) {
 					$value = new MarketplaceIntegration_MarketplaceCategory_Parameter_Value();
@@ -448,19 +463,29 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 						
 						break;
 					case MarketplaceIntegration_MarketplaceCategory_Parameter::PARAM_TYPE_OPTIONS:
-						$field = new Form_Field_MultiSelect( $param_id );
+						if($param->getMultipleValues()) {
+							$field = new Form_Field_MultiSelect( $param_id );
+							$field->input()->addCustomCssStyle("height:400px;");
+							$field->setDefaultValue( $value->getValue()?explode('|', $value->getValue()):[] );
+							$field->setFieldValueCatcher( function() use ($value, $field) {
+								$value->setValue( implode('|', $field->getValue()) );
+								$value->save();
+							} );
+						} else {
+							$field = new Form_Field_Select( $param_id );
+							$field->setDefaultValue( $value->getValue() );
+							$field->setFieldValueCatcher( function() use ($value, $field) {
+								$value->setValue( $field->getValue() );
+								$value->save();
+							} );
+						}
+						
 						$field->setErrorMessages([
 							Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
 						]);
 						$field->setLabel( $label);
 						$field->setDoNotTranslateLabel( true );
 						$field->setSelectOptions( $param->getOptions() );
-						$field->setDefaultValue( $value->getValue()?explode('|', $value->getValue()):[] );
-						$field->setFieldValueCatcher( function() use ($value, $field) {
-							$value->setValue( implode('|', $field->getValue()) );
-							$value->save();
-						} );
-						$field->input()->addCustomCssStyle("height:400px;");
 						
 						
 						
