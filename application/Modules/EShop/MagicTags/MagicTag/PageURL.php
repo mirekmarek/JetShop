@@ -10,6 +10,7 @@ namespace JetApplicationModule\EShop\MagicTags;
 use Jet\MVC;
 use Jet\Tr;
 use JetApplication\Content_MagicTag_Context;
+use JetApplication\EShops;
 
 class MagicTag_PageURL extends MagicTag
 {

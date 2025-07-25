@@ -28,8 +28,8 @@ $listing = $this->getRaw('listing');
 			echo UI::button( $property->getLabel() )->setIcon('')->setOnClick("listing.UI.goToFilter('f_property_{$property->getId()}')");
 		endif;
 	endforeach; ?>
-
-
+	
+	
 	<div style="display: flex;gap: 10px;align-items: center">
 		<?php foreach($listing->getFilter()->getBasicFilter()->getCustomerUISubFilters() as $sub_filter):
 			if(!$sub_filter->itMakeSenseForCustomer()) {
@@ -38,20 +38,20 @@ $listing = $this->getRaw('listing');
 			?>
 			<div>
 				<label><input
-							type="checkbox"
-							class="lf-bf"
-							data-filter-param="<?=$sub_filter->getURLParam()?>"
-							onchange="listing.submitFilter()"
+						type="checkbox"
+						class="lf-bf"
+						data-filter-param="<?=$sub_filter->getURLParam()?>"
+						onchange="listing.submitFilter()"
 						<?=(($sub_filter->getFilterValue())?'checked':'')?>
 					> <?=Tr::_( 'FILTER_'.$sub_filter::getKey() )?></label>
 			</div>
 		<?php endforeach; ?>
-
+	
 	</div>
 	
 	
 	<?=UI::button(Tr::_('Brand'))->setIcon('')->setOnClick("listing.UI.goToFilter('f_brands')");?>
 	
 	<?=UI::button(Tr::_('All filters'))->setIcon('sliders')->setOnClick("listing.UI.showFilter()");?>
-	
+
 </div>

@@ -43,7 +43,6 @@ class Controller_Main extends MVC_Controller_Default
 			$i = count($path_base);
 			
 			$object_type = $path_base[$i-2];
-			$object_id = (int)$path_base[$i-1];
 			
 			
 			$object_id = $path_base[$i-1];

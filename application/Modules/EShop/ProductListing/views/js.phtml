@@ -106,14 +106,14 @@ $listing = $this->getRaw('listing');
 
 			const min = from.min;
 			const max = from.max;
-			
+
 			const correction = 0;
 
 			const unit = ( (width-thb_width) / (max-min) );
-			
+
 			const position_from = Math.round( (from.value-min) *unit );
 			const position_to = Math.round( (to.value-min)*unit );
-			
+
 			const left_start = 0;
 			const left_end = position_from-correction;
 
@@ -133,10 +133,10 @@ $listing = $this->getRaw('listing');
 
 
 <script>
-	
+
 	const listing = {
 		optional_URL_parameter: <?=json_encode($this->getString('optional_URL_parameter'))?>,
-		
+
 		URL: [],
 		filter: {},
 
@@ -152,7 +152,7 @@ $listing = $this->getRaw('listing');
 				listing.URL.push( listing.optional_URL_parameter );
 			}
 		},
-		
+
 		cancelFilter: function () {
 			listing.filter.basic.cancelAll();
 			listing.filter.options.cancelAll();
@@ -162,12 +162,12 @@ $listing = $this->getRaw('listing');
 			listing.filter.price.cancelAll();
 			listing.UI.cancelFilter();
 		},
-		
+
 		sorterToURL: function ( sorter ) {
 			if(!sorter) {
 				sorter = document.getElementById('product_listing_selected_sorter').dataset.key;
 			}
-			
+
 			listing.URL.push('sort='+sorter);
 		},
 
@@ -175,13 +175,13 @@ $listing = $this->getRaw('listing');
 			listing.URL = [];
 			listing.filterToURL();
 			listing.sorterToURL();
-			
+
 			listing._apply( function ( response ) {
 				document.getElementById('product_listing_area').innerHTML = response;
 				listing.UI.renewState();
 			} );
 		},
-		
+
 		page: function (no) {
 			listing.URL = [];
 			listing.filterToURL();
@@ -191,13 +191,13 @@ $listing = $this->getRaw('listing');
 			listing._apply( function ( response ) {
 				document.getElementById('product_listing_area').innerHTML = response;
 				listing.UI.renewState();
-				
+
 				effects.scrollTo('product_listing_list');
-				
+
 			} );
-			
+
 		},
-		
+
 		sort: function ( sorter ) {
 			listing.URL = [];
 			listing.filterToURL();
@@ -206,16 +206,16 @@ $listing = $this->getRaw('listing');
 			listing._apply( function ( response ) {
 				document.getElementById('product_listing_area').innerHTML = response;
 				listing.UI.renewState();
-				
+
 				effects.scrollTo( 'product_listing_list' );
 			} );
-			
+
 		},
-		
+
 		_apply: function( onLoad ) {
-			
+
 			let URL = '?'+listing.URL.join('&');
-			
+
 			let xhr = new XMLHttpRequest();
 
 			xhr.open('GET', URL);
@@ -230,7 +230,7 @@ $listing = $this->getRaw('listing');
 				}
 			}
 		},
-		
+
 		saveHistory: function (URL) {
 			window.history.pushState(
 				{
@@ -242,16 +242,16 @@ $listing = $this->getRaw('listing');
 					document.getElementById('product_listing_area').innerHTML = e.listing_area;
 				}
 			};
-			
-			
+
+
 		},
-		
+
 		init: function()
 		{
 			listing.saveHistory( location.href );
 			listing.UI.initSliders();
 		}
-		
+
 	};
 
 	listing.filter.basic = {
@@ -281,7 +281,7 @@ $listing = $this->getRaw('listing');
 			} );
 		}
 	};
-	
+
 	listing.filter.options = {
 		toURL: function () {
 			let options = {};
@@ -307,7 +307,7 @@ $listing = $this->getRaw('listing');
 			}
 
 		},
-		
+
 		cancel: function (id) {
 			let _options = document.getElementsByClassName('lf-option');
 			Array.from(_options).forEach(
@@ -317,7 +317,7 @@ $listing = $this->getRaw('listing');
 					}
 				}
 			);
-			
+
 			listing.submitFilter();
 		},
 
@@ -329,10 +329,10 @@ $listing = $this->getRaw('listing');
 				}
 			);
 		}
-		
-		
+
+
 	};
-	
+
 	listing.filter.bool = {
 		toURL: function () {
 			let bools = [];
@@ -350,7 +350,7 @@ $listing = $this->getRaw('listing');
 				listing.URL.push( 'by='+bools.join(',') );
 			}
 		},
-		
+
 		cancel: function (id) {
 
 			let _bools = document.getElementsByClassName('lf-bool');
@@ -361,10 +361,10 @@ $listing = $this->getRaw('listing');
 					}
 				}
 			);
-			
+
 			listing.submitFilter();
 		},
-		
+
 		cancelAll: function () {
 			let _bools = document.getElementsByClassName('lf-bool');
 			Array.from(_bools).forEach(
@@ -374,9 +374,9 @@ $listing = $this->getRaw('listing');
 			);
 
 		}
-		
+
 	};
-	
+
 	listing.filter.numbers = {
 		toURL: function () {
 			let numbers = {};
@@ -432,7 +432,7 @@ $listing = $this->getRaw('listing');
 			}
 
 		},
-		
+
 		cancel: function ( id ) {
 
 			let numbers_min = document.getElementsByClassName('lf-number-min');
@@ -475,7 +475,7 @@ $listing = $this->getRaw('listing');
 			);
 		}
 	};
-	
+
 	listing.filter.brands = {
 		toURL: function () {
 			let _brands = document.getElementsByClassName('lf-brand');
@@ -491,7 +491,7 @@ $listing = $this->getRaw('listing');
 				listing.URL.push('b='+brands.join(','));
 			}
 		},
-		
+
 		cancel: function ( id ) {
 			let _brands = document.getElementsByClassName('lf-brand');
 			Array.from(_brands).forEach(
@@ -504,7 +504,7 @@ $listing = $this->getRaw('listing');
 
 			listing.submitFilter();
 		},
-		
+
 		cancelAll: function () {
 			let _brands = document.getElementsByClassName('lf-brand');
 			Array.from(_brands).forEach(
@@ -513,7 +513,7 @@ $listing = $this->getRaw('listing');
 				}
 			);
 		}
-		
+
 	};
 	listing.filter.price = {
 		toURL: function () {
@@ -542,7 +542,7 @@ $listing = $this->getRaw('listing');
 				}
 			}
 		},
-		
+
 		cancel: function() {
 			let _price_min = document.getElementById('lf-price-min');
 			if(_price_min) {
@@ -555,19 +555,19 @@ $listing = $this->getRaw('listing');
 			}
 			listing.submitFilter();
 		},
-		
+
 		cancelAll: function () {
 			listing.filter.price.cancel();
 		},
 	};
-	
+
 	listing.UI = {
 		opened: false,
 		main_container_scroll: 0,
 		filter_container_scroll: {},
 		filter_item_states: {},
 		sliders: [],
-		
+
 		initSliders: function () {
 			listing.UI.sliders = [];
 			let sliders = document.getElementsByClassName('dual-slider');
@@ -579,7 +579,7 @@ $listing = $this->getRaw('listing');
 				}
 			);
 		},
-		
+
 		actualizeSliders: function () {
 			for( let c=0;c<listing.UI.sliders.length;c++ ) {
 				listing.UI.sliders[c].actualize();
@@ -589,13 +589,13 @@ $listing = $this->getRaw('listing');
 		cancelFilter: function () {
 			listing.UI.filter_item_states = {};
 			listing.UI.opened = false;
-			
+
 			effects.fadeOut( 'product_listing_filter_area', 500 );
 		},
-		
+
 		showFilter: function () {
 			listing.UI.opened = true;
-			
+
 			effects.fadeIn('product_listing_filter_area', 500, () => {
 				listing.UI.actualizeSliders();
 			});
@@ -606,10 +606,10 @@ $listing = $this->getRaw('listing');
 
 			effects.fadeOut( 'product_listing_filter_area', 500 );
 		},
-		
+
 		goToFilter: function ( filter ) {
 			listing.UI.showFilter();
-			
+
 			for(let f in listing.UI.filter_item_states) {
 				if(
 					f!=filter &&
@@ -622,25 +622,25 @@ $listing = $this->getRaw('listing');
 			listing.UI.openFilterItem(filter, function () {
 				effects.scrollTo( filter+'_title' );
 			});
-			
+
 		},
-		
+
 		toggleFilterItem: function ( element ) {
 			let filter = element.dataset['target'];
 			if(listing.UI.filter_item_states[filter]===undefined) {
 				listing.UI.filter_item_states[filter] = false;
 			}
-			
+
 			if(listing.UI.filter_item_states[filter]) {
 				listing.UI.closeFilterItem(filter);
 			} else {
 				listing.UI.openFilterItem(filter);
 			}
 		},
-		
+
 		openFilterItem: function( filter, onOpen ) {
 			listing.UI.filter_item_states[filter] = true;
-			
+
 			effects.slideDown(filter, 'fast', () => {
 				listing.UI.actualizeSliders();
 
@@ -650,17 +650,17 @@ $listing = $this->getRaw('listing');
 			});
 
 		},
-		
+
 		closeFilterItem: function( filter, onClose ) {
 			listing.UI.filter_item_states[filter] = false;
-			
+
 			effects.slideUp(filter, 'fast', () => {
 				if(onClose) {
 					onClose();
 				}
 			});
 		},
-		
+
 		resetState: function () {
 			listing.UI.filter_item_states = {};
 		},
@@ -669,7 +669,7 @@ $listing = $this->getRaw('listing');
 			if(listing.UI.opened) {
 				visibility.show('product_listing_filter_area');
 			}
-			
+
 			for(let filter in listing.UI.filter_item_states) {
 				if(listing.UI.filter_item_states[filter]) {
 					visibility.show(filter);
@@ -679,7 +679,7 @@ $listing = $this->getRaw('listing');
 			for(let filter in listing.UI.filter_container_scroll) {
 				document.getElementById(filter).scrollTop = listing.UI.filter_container_scroll[filter];
 			}
-			
+
 
 			let container = document.getElementById( 'product_listing_filter' );
 			container.scrollTop = listing.UI.main_container_scroll;
@@ -695,7 +695,7 @@ $listing = $this->getRaw('listing');
 			listing.UI.filter_container_scroll[container.id] = container.scrollTop;
 		}
 	};
-	
-	
+
+
 	listing.init();
 </script>

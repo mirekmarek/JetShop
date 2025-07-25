@@ -62,11 +62,14 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 				return Http_Request::currentURI(set_GET_params: ['p'=>$page_no]);
 			} );
 		
-		if($GET->exists('in-stock')) {
-			$this->listing->getFilter()->getBasicFilter()->setInStock(true);
-		}
-		if($GET->exists('has-discount')) {
-			$this->listing->getFilter()->getBasicFilter()->setHasDiscount(true);
+		
+		foreach($this->listing->getFilter()->getBasicFilter()->getSubFilters() as $sub_filter) {
+			if(
+				$sub_filter->getURLParam() &&
+				$GET->exists( $sub_filter->getURLParam() )
+			) {
+				$sub_filter->setFiltervalue( true );
+			}
 		}
 		
 		$this->listing->setupPriceFilter(
@@ -123,13 +126,19 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 		
 		$this->listing->handle();
 		
-		if(isset(Http_Request::headers()['Listing-Ajax'])) {
+		if(
+			isset(Http_Request::headers()['Listing-Ajax']) ||
+			isset(Http_Request::headers()['listing-ajax'])
+		) {
 			$view = $this->getView();
 			$view->setVar('listing', $this->listing);
 			$view->setVar('optional_URL_parameter', $this->optional_URL_parameter);
 			$view->setVar('c_id', $this->category_id);
 			
-			if(isset(Http_Request::headers()['Listing-Ajax-Only-Products'])) {
+			if(
+				isset(Http_Request::headers()['Listing-Ajax-Only-Products']) ||
+				isset(Http_Request::headers()['listing-ajax-only-products'])
+			) {
 				echo $view->render( 'list' );
 			} else {
 				echo $view->render( 'listing' );
@@ -160,6 +169,7 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 		$view->setVar('listing', $this->listing);
 		$view->setVar('c_id', $this->category_id);
 		$view->setVar('optional_URL_parameter', $this->optional_URL_parameter);
+		$view->setVar('listing_banners', $this->listing_banners );
 		
 		return $view->render( 'default' );
 	}
