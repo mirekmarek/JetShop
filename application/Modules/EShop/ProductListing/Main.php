@@ -169,7 +169,6 @@ class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTem
 		$view->setVar('listing', $this->listing);
 		$view->setVar('c_id', $this->category_id);
 		$view->setVar('optional_URL_parameter', $this->optional_URL_parameter);
-		$view->setVar('listing_banners', $this->listing_banners );
 		
 		return $view->render( 'default' );
 	}

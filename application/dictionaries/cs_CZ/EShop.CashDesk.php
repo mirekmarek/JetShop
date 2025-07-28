@@ -176,4 +176,6 @@ return [
 	'Your order has been accepted. Thank you!' => '',
 	'Order number: <b>%ORDER_NO%</b>' => '',
 	'On Your contact e-mail address was sent an email confirming your order.<br /><br />Have a nice day.' => '',
+	'We are sorry, but your order has not been paid.' => '',
+	'Try again' => '',
 ];
