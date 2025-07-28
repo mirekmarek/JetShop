@@ -39,9 +39,9 @@ $category = $controller->getCategory();
 	
 	<div class="toolbar">
 	<span><?=$selling?
-			UI::badge(UI_badge::SUCCESS, 'Offered up in the marketplace')
+			UI::badge(UI_badge::SUCCESS, Tr::_('Offered up in the marketplace'))
 			:
-			UI::badge(UI_badge::DANGER, 'Not offered in the marketplace')
+			UI::badge(UI_badge::DANGER, Tr::_('Not offered in the marketplace'))
 		?></span>
 		&nbsp;&nbsp;&nbsp;
 		<?php if($editable):
