@@ -12,6 +12,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
+use JetApplication\EShop_Pages;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Admin_Managers_Order;
@@ -1517,4 +1518,12 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		return false;
 	}
 	
+	
+	public function getPaymentPageURL( array $GET_params=[] ): string
+	{
+		return EShop_Pages::CashDeskPayment( $this->getEshop() )->getURL(
+			path_fragments: [$this->getKey()],
+			GET_params: $GET_params
+		);
+	}
 }

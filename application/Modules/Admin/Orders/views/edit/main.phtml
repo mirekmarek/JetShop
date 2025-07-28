@@ -10,6 +10,8 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\Form;
 use Jet\Locale;
 use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Admin_Managers;
 use JetApplication\Admin_Managers_EShopEntity_Listing;
 
@@ -112,6 +114,30 @@ $order = $this->getRaw( 'order' );
 						<td><b><?=Tr::_('Paid:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Tr::_($order->getPaid() ? 'yes' : 'no')?></td>
 					</tr>
+						
+						<?php if(
+							!$order->getPaid() &&
+							!$order->getDispatched()
+						): ?>
+							<tr>
+								<td><b><?=Tr::_('Payment page URL:')?></b></td>
+								<td nowrap="" style="padding: 3px">
+									<script>
+										function copyPaymentURL() {
+											const i = document.getElementById('payment_URL_link');
+											i.select();
+											i.setSelectionRange(0, 99999);
+											navigator.clipboard.writeText(i.value);
+										}
+									</script>
+									<div style="justify-content:left;display: grid;grid-template-columns: auto auto auto;align-items: center;gap: 10px;">
+										<?=UI::button(' ')->setOnClick("copyPaymentURL();")->setClass(UI_button::CLASS_LINK)->setCustomTagAttribute('title', Tr::_('Copy URL'))->setIcon('copy')?>
+										<input id="payment_URL_link" type="text" value="<?=$order->getPaymentPageURL()?>" class="form-control" readonly>
+										<a href="<?=$order->getPaymentPageURL()?>" target="_blank"><?=UI::icon('link')?></a>
+									</div>
+								</td>
+							</tr>
+						<?php endif ?>
 					<?php endif; ?>
 					
 					<tr>

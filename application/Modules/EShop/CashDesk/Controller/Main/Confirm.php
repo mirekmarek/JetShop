@@ -8,7 +8,6 @@ namespace JetApplicationModule\EShop\CashDesk;
 
 
 use Jet\Http_Request;
-use JetApplication\EShop_Pages;
 
 trait Controller_Main_Confirm {
 
@@ -79,7 +78,7 @@ trait Controller_Main_Confirm {
 		if(!($order=$this->cash_desk->saveOrder())) {
 			$response->error();
 		} else {
-			$response->redirect( EShop_Pages::CashDeskPayment()->getURL([$order->getKey()]) );
+			$response->redirect( $order->getPaymentPageURL() );
 		}
 		
 		$response->response();

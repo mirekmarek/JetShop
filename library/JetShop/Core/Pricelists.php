@@ -87,6 +87,10 @@ abstract class Core_Pricelists {
 	{
 		if(static::$_list===null) {
 			static::loadCfg();
+			
+			uasort( static::$_list, function( Pricelist $a, Pricelist $b ) {
+				return strcmp( $a->getName(), $b->getName() );
+			} );
 		}
 		
 		return static::$_list;

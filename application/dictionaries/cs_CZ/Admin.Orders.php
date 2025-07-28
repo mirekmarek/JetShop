@@ -448,4 +448,5 @@ return [
 	'Last name' => '',
 	'Surname' => '',
 	'e-shop URL' => '',
+	'Payment page URL:' => '',
 ];
