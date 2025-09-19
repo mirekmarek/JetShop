@@ -12,19 +12,20 @@ use JetApplication\DeliveryNote;
 use JetApplication\EMail_Template;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\Invoice;
-use JetApplication\Invoice_Manager;
+use JetApplication\Application_Service_General_Invoices;
 use JetApplication\ProformaInvoice;
 use JetApplication\Order;
 use JetApplication\PDF_TemplateProvider;
 use TCPDF;
 
 
-class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_TemplateProvider
+class Main extends Application_Service_General_Invoices implements EMail_TemplateProvider, PDF_TemplateProvider
 {
 	
 	public function createInvoiceForOrder( Order $order ) : Invoice
 	{
 		$invoice = Invoice::createByOrder( $order );
+		//TODO: setup payment, atc.
 		
 		$invoice->save();
 		
@@ -34,6 +35,7 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	public function createProformaInvoiceForOrder( Order $order ) : ProformaInvoice
 	{
 		$invoice = ProformaInvoice::createByOrder( $order );
+		//TODO: setup payment, atc.
 		
 		$invoice->save();
 		
@@ -43,6 +45,7 @@ class Main extends Invoice_Manager implements EMail_TemplateProvider, PDF_Templa
 	public function createDeliveryNoteForOrder( Order $order ) : DeliveryNote
 	{
 		$invoice = DeliveryNote::createByOrder( $order );
+		//TODO: setup payment, atc.
 		
 		$invoice->save();
 		

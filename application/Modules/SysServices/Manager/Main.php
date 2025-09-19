@@ -31,11 +31,11 @@ use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\SysServices;
 use JetApplication\SysServices_Definition;
-use JetApplication\SysServices_Manager;
+use JetApplication\Application_Service_General_SysServices;
 use JetApplication\EShopConfig_ModuleConfig_General;
 
 
-class Main extends SysServices_Manager implements
+class Main extends Application_Service_General_SysServices implements
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface
 {
@@ -100,7 +100,7 @@ class Main extends SysServices_Manager implements
 				return false;
 			}
 			
-			public function getCurrentUser(): Auth_User_Interface|bool
+			public function getCurrentUser(): Auth_User_Interface|false
 			{
 				return false;
 			}

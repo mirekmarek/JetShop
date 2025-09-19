@@ -11,6 +11,7 @@ use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Brand;
 use JetApplication\Category;
+use JetApplication\Content_Article;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\KindOfProduct;
 use JetApplication\Product;
@@ -27,6 +28,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 	public function getSysServicesDefinitions(): array
 	{
 		$entities = [
+			Content_Article::class,
 			Category::class,
 			Brand::class,
 			KindOfProduct::class,

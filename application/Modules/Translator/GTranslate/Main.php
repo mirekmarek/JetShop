@@ -15,12 +15,12 @@ use JetApplication\EShop;
 use JetApplication\EShopConfig_ModuleConfig_General;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
-use JetApplication\Translator_Manager;
+use JetApplication\Application_Service_General_Translator;
 
 /**
  *
  */
-class Main extends Translator_Manager implements
+class Main extends Application_Service_General_Translator implements
 	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface,
 	Admin_ControlCentre_Module_Interface
 {

@@ -8,7 +8,7 @@ namespace JetApplicationModule\InvoiceManager;
 
 use Jet\Locale;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\CompanyInfo;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_AccountingDocument;
@@ -38,17 +38,17 @@ abstract class PDFTemplate extends PDF_Template {
 	
 	public function formatWithCurrency_WithoutVAT( float $value ) : string
 	{
-		return Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $this->invoice->getCurrency(), $value );
+		return Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithoutVAT( $this->invoice->getCurrency(), $value );
 	}
 	
 	public function formatWithCurrency_WithVAT( float $value ) : string
 	{
-		return Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $this->invoice->getCurrency(), $value );
+		return Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $this->invoice->getCurrency(), $value );
 	}
 	
 	public function formatWithCurrency_VAT( float $value ) : string
 	{
-		return Admin_Managers::PriceFormatter()->formatWithCurrency_VAT( $this->invoice->getCurrency(), $value );
+		return Application_Service_Admin::PriceFormatter()->formatWithCurrency_VAT( $this->invoice->getCurrency(), $value );
 	}
 	
 	protected function initCommonFields(): void

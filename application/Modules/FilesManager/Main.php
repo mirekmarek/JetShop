@@ -6,14 +6,15 @@
  */
 namespace JetApplicationModule\FilesManager;
 
+use Jet\Http_Request;
 use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
-use JetApplication\Files_Manager;
+use JetApplication\Application_Service_General_Files;
 
 
-class Main extends Files_Manager
+class Main extends Application_Service_General_Files
 {
 	public function deleteFile( string $entity_type, int $entity_id,  string $file ): void
 	{
@@ -45,7 +46,10 @@ class Main extends Files_Manager
 	
 	public function getFileURL( string $entity_type, int $entity_id,  string $file ): string
 	{
-		return SysConf_URI::getBase().$this->getDirName($entity_type, $entity_id).rawurlencode($file);
+		if(!$file) {
+			return '';
+		}
+		return Http_Request::baseURL().SysConf_URI::getBase().$this->getDirName($entity_type, $entity_id).rawurlencode($file);
 	}
 	
 	public function getDirPath( string $entity_type, int $entity_id ) : string

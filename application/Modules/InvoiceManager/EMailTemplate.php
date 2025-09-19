@@ -12,7 +12,7 @@ use JetApplication\EMail;
 use JetApplication\EMail_Template;
 use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\Order;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop;
 
 abstract class EMailTemplate extends EMail_Template {
@@ -57,9 +57,9 @@ abstract class EMailTemplate extends EMail_Template {
 		$total_property = $this->addProperty( 'total', Tr::_( 'Total:' ) );
 		$total_property->setPropertyValueCreator( function() : string {
 			if($this->invoice->hasVAT()) {
-				return EShop_Managers::PriceFormatter()->formatWithCurrency_WithVAT($this->invoice->getTotal(), $this->invoice->getCurrency());
+				return Application_Service_EShop::PriceFormatter()->formatWithCurrency_WithVAT($this->invoice->getTotal(), $this->invoice->getCurrency());
 			} else {
-				return EShop_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT($this->invoice->getTotal(), $this->invoice->getCurrency());
+				return Application_Service_EShop::PriceFormatter()->formatWithCurrency_WithoutVAT($this->invoice->getTotal(), $this->invoice->getCurrency());
 			}
 		} );
 		

@@ -10,15 +10,16 @@ namespace JetApplicationModule\NumberSeriesManager;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
-use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\Application_Service_General_NumberSeries;
 use JetApplication\NumberSeries_Counter_Day;
 use JetApplication\NumberSeries_Counter_Month;
 use JetApplication\NumberSeries_Counter_Total;
 use JetApplication\NumberSeries_Counter_Year;
-use JetApplication\NumberSeries_Manager;
+use JetApplication\EShopEntity_HasNumberSeries_Interface;
+use JetApplication\Order;
 
 
-class Main extends NumberSeries_Manager implements Admin_ControlCentre_Module_Interface
+class Main extends Application_Service_General_NumberSeries implements Admin_ControlCentre_Module_Interface
 {
 	use Admin_ControlCentre_Module_Trait;
 	
