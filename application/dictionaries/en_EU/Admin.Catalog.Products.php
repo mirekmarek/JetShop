@@ -275,4 +275,7 @@ return [
 	'Deactivate after sell out' => '',
 	'Add category' => '',
 	'Do you really want to delete this category?' => '',
+	'Similar products' => '',
+	'Non-sale product relation:' => '',
+	'Price history' => '',
 ];

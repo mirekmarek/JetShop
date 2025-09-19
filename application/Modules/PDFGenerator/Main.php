@@ -8,12 +8,12 @@
 namespace JetApplicationModule\PDFGenerator;
 
 use JetApplication\PDF;
-use JetApplication\PDF_Generator;
+use JetApplication\Application_Service_General_PDFGenerator;
 use Jet\Locale;
 use TCPDF;
 
 
-class Main extends PDF_Generator
+class Main extends Application_Service_General_PDFGenerator
 {
 	
 	/** @noinspection PhpMethodParametersCountMismatchInspection */
