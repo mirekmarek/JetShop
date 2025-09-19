@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -21,7 +21,7 @@ use JetApplication\Admin_Managers;
 $this_order = $this->getRaw('this_order');
 $join_order = $this->getRaw('join_order');
 
-$order_manager = Admin_Managers::Order();
+$order_manager = Application_Service_Admin::Order();
 
 $join_order_name = $order_manager->renderItemName($join_order->getId());
 ?>

@@ -16,12 +16,12 @@ use JetApplication\Admin_Listing_Export;
 use JetApplication\Admin_Listing_Filter;
 use JetApplication\Admin_Listing_Handler;
 use JetApplication\Admin_Listing_Operation;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_EShopEntity_Listing
+class Main extends Application_Service_Admin_EShopEntity_Listing
 {
 	protected EShopEntity_Admin_Interface $entity;
 	protected Admin_EntityManager_Module $entity_manager;

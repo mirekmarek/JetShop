@@ -12,7 +12,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\Form;
 use JetApplication\Category;
 use JetApplication\EShop;
@@ -38,7 +38,7 @@ $editable = !$form->getIsReadonly();
 <?=$this->render('lj_start')?>
 	<br>
 
-<?=Admin_Managers::EntityEdit()->renderEntityActivation( $category, !$form->getIsReadonly() )?>
+<?=Application_Service_Admin::EntityEdit()->renderEntityActivation( $category, !$form->getIsReadonly() )?>
 
 
 <div class="row" style="align-items: center">
@@ -53,7 +53,7 @@ $editable = !$form->getIsReadonly();
 
 				<div style="display: grid;grid-template-columns: 400px 150px;align-items: center">
 					<div>
-						<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
+						<?=Application_Service_Admin::KindOfProduct()->renderSelectWidget(
 							"$('#kind_of_product_id').val(selected_item.id);",
 							$category->getKindOfProductId()
 						)?>
@@ -64,7 +64,7 @@ $editable = !$form->getIsReadonly();
 			</form>
 		<?php else:
 			if(($kind_id=$category->getKindOfProductId())):
-				?><?=Admin_Managers::KindOfProduct()->renderItemName($kind_id)?><?php
+				?><?=Application_Service_Admin::KindOfProduct()->renderItemName($kind_id)?><?php
 			else:
 				?><b><?=Tr::_('- kind of product is not set -')?></b><?php
 			endif;
@@ -79,12 +79,12 @@ $editable = !$form->getIsReadonly();
 <?=$form->start();?>
 
 
-	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
+	<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields( $form );?>
 
 	<?php
 	if(!$category->getSeparateTabFormShopData()):
 	if($category->getDescriptionMode()):
-		echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
+		echo Application_Service_Admin::EntityEdit()->renderDescriptionBlocks(
 			form: $form,
 			renderer: function( Locale $locale ) use ($category, $form) : void {
 				$locale = $locale->toString();
@@ -103,7 +103,7 @@ $editable = !$form->getIsReadonly();
 					</fieldset>
 			<?php });
 	else:
-		echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+		echo Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( EShop $eshop, string $eshop_key ) use ($category, $form) : void {
 				?>

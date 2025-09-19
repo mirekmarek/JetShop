@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
+use Jet\Http_Request;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form;
@@ -14,7 +15,8 @@ use Jet\Tr;
 
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use Jet\UI_messages;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Availabilities;
 use JetApplication\EShops;
 use JetApplication\Pricelists;
@@ -40,7 +42,7 @@ if($form->fieldExists('kind_of_product_id')) {
 		<div style="display:none;">
 			<?=$this->renderByView()?>
 		</div>
-		<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
+		<?=Application_Service_Admin::KindOfProduct()->renderSelectWidget(
 			on_select: "document.getElementById('{$kind_id_field->getId()}').value=selected_item.id",
 			selected_kind_of_product_id: $kind_id_field->getValue()?:0
 		);?>
@@ -91,7 +93,7 @@ if($form->fieldExists('kind_of_product_id')) {
 <div class="form-group row">
 	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Non-sale product relation:')?></label>
 	<div class="col-md-8">
-		<?=Admin_Managers::Product()->renderSelectWidget(
+		<?=Application_Service_Admin::Product()->renderSelectWidget(
 				on_select: "$('#{$form->field('non_sale_product_id')->getId()}').val(selected_item.id)",
 				selected_product_id: $item->getNonSaleProductId(),
 				name: 'non_sale_product_select'
@@ -113,7 +115,7 @@ if($form->fieldExists('kind_of_product_id')) {
 		
 			<div>
 				<div class="card card-body">
-					<?=Admin_Managers::PriceFormatter()->showPriceInfo( $price )?>
+					<?=Application_Service_Admin::PriceFormatter()->showPriceInfo( $price )?>
 					
 					<div style="padding: 10px;">
 						<?=UI::button(Tr::_('Price history'))->setClass(UI_button::CLASS_LINK)->setOnClick("$('#price_history_{$pricelist->getCode()}').toggle();")?>
@@ -125,7 +127,7 @@ if($form->fieldExists('kind_of_product_id')) {
 								<tr>
 									<td nowrap=""><?=Locale::date( $hi->getDateTime() )?></td>
 									<td nowrap=""><?=Locale::time( $hi->getDateTime() )?></td>
-									<td style="width: 100%"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $hi->getPrice() )?></td>
+									<td style="width: 100%"><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $pricelist, $hi->getPrice() )?></td>
 								</tr>
 							<?php endforeach; ?>
 						</table>
@@ -174,13 +176,13 @@ if($form->fieldExists('kind_of_product_id')) {
 
 <?php if(
 	$item->isPhysicalProduct() &&
-	Admin_Managers::WarehouseManagementOverview()
+	Application_Service_Admin::WarehouseManagementOverview()
 ): ?>
 <hr>
 <div class="form-group row">
 	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Stock status:')?></label>
 	<div class="col-md-8">
-		<?=Admin_Managers::WarehouseManagementOverview()?->renderProductStockStatusInfo( $item )?>
+		<?=Application_Service_Admin::WarehouseManagementOverview()?->renderProductStockStatusInfo( $item )?>
 	</div>
 </div>
 <?php endif;

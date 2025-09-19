@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Catalog\KindsOfProductFile;
 
 
-use JetApplication\Admin_Managers_KindOfProductFile;
+use JetApplication\Application_Service_Admin_KindOfProductFile;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product_KindOfFile;
 
 
-class Main extends Admin_Managers_KindOfProductFile
+class Main extends Application_Service_Admin_KindOfProductFile
 {
 	public const ADMIN_MAIN_PAGE = 'kind-of-product-file';
 	

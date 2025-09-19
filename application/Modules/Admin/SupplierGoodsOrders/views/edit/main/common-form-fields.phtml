@@ -14,7 +14,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Supplier_GoodsOrder_Item;
 
@@ -102,7 +102,7 @@ $item = $this->getRaw('item');
 		$showItem = function( Supplier_GoodsOrder_Item $i ) use ($form, $item) {
 			?>
 			<tr style="<?php if(!$i->getUnitsOrdered()):?>opacity: 0.5<?php endif; ?>">
-				<td nowrap=""><?=Admin_Managers::Product()->renderItemName($i->getProductId())?></td>
+				<td nowrap=""><?=Application_Service_Admin::Product()->renderItemName($i->getProductId())?></td>
 				<td nowrap=""><?=$i->getProductEan()?></td>
 				<td nowrap=""><?=$i->getProductInternalCode()?></td>
 				<td nowrap=""><?=$i->getProductSupplierCode()?></td>
@@ -143,4 +143,4 @@ $item = $this->getRaw('item');
 </div>
 
 <br><br><br><br>
-<?=Admin_Managers::EntityEdit()->renderEventHistory( $item, true )?>
+<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $item, true )?>

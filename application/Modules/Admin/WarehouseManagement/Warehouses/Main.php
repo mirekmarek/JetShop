@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
 
-use JetApplication\Admin_Managers_WarehouseManagement_Warehouses;
+use JetApplication\Application_Service_Admin_WarehouseManagement_Warehouses;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_Warehouse;
 
 
-class Main extends Admin_Managers_WarehouseManagement_Warehouses
+class Main extends Application_Service_Admin_WarehouseManagement_Warehouses
 {
 	public const ADMIN_MAIN_PAGE = 'warehouses';
 	

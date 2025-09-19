@@ -46,7 +46,7 @@ foreach( $future_statuses as $state ):
 		endforeach;
 	
 	echo $dialog->footer();
-	echo UI::button_save( Tr::_('Set') );
+	echo UI::button_save( Tr::_('Set', dictionary: Tr::COMMON_DICTIONARY) );
 	echo $form->end();
 	echo $dialog->end();
 endforeach;

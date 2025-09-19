@@ -13,7 +13,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Content_MagicTag;
 
 /**
@@ -99,7 +99,7 @@ $generated = '';
 						<div class="row" style="align-items: center">
 							<div class="col-md-12"><?=$field->getLabel()?></div>
 							<div class="col-md-12" style="padding: 15px">
-								<?=Admin_Managers::Product()->renderSelectWidget(
+								<?=Application_Service_Admin::Product()->renderSelectWidget(
 									on_select: "document.getElementById('{$field->getId()}').value=selected_item.id",
 									name: $mt->getId()."_select_product"
 								)?>
@@ -114,7 +114,7 @@ $generated = '';
 						<div class="row" style="align-items: center">
 							<div class="col-md-12"><?=$field->getLabel()?></div>
 							<div class="col-md-12" style="padding: 15px">
-								<?=Admin_Managers::Category()->renderSelectWidget(
+								<?=Application_Service_Admin::Category()->renderSelectWidget(
 									on_select: "document.getElementById('{$field->getId()}').value=selected_item.id",
 									name: $mt->getId()."_select_category"
 								)?>

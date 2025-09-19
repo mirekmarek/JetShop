@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\ImageManager;
 
 
 use Jet\Data_Image;
+use Jet\Http_Request;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
@@ -16,6 +17,7 @@ class CommonImageManager_Image {
 	protected string $id;
 	protected string $name;
 	protected string $URL;
+	protected string $URI;
 	protected string $path;
 	protected Data_Image $image;
 	
@@ -24,7 +26,8 @@ class CommonImageManager_Image {
 		$this->id = md5($name);
 		$this->path = SysConf_Path::getImages().$entity.'/'.$entity_id.'/'.$name;
 		$this->name = $name;
-		$this->URL = SysConf_URI::getImages().$entity.'/'.$entity_id.'/'.rawurlencode($name);
+		$this->URI = SysConf_URI::getImages().$entity.'/'.$entity_id.'/'.rawurlencode($name);
+		$this->URL = Http_Request::baseURL().$this->URI;
 		$this->image = new Data_Image($this->path);
 	}
 	
@@ -43,6 +46,10 @@ class CommonImageManager_Image {
 		return $this->name;
 	}
 	
+	public function getURI(): string
+	{
+		return $this->URI;
+	}
 	
 	public function getURL(): string
 	{

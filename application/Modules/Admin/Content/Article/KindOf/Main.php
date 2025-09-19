@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\Article\KindOf;
 
 
-use JetApplication\Admin_Managers_Content_ArticleKindOfArticle;
+use JetApplication\Application_Service_Admin_Content_ArticleKindOfArticle;
 use JetApplication\Content_Article_KindOfArticle;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_Content_ArticleKindOfArticle
+class Main extends Application_Service_Admin_Content_ArticleKindOfArticle
 {
 	public const ADMIN_MAIN_PAGE = 'kind-of-article';
 	

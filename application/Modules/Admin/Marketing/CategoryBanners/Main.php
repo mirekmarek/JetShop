@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\CategoryBanners;
 
 
-use JetApplication\Admin_Managers_Marketing_CategoryBanners;
+use JetApplication\Application_Service_Admin_Marketing_CategoryBanners;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_CategoryBanner;
 
 
-class Main extends Admin_Managers_Marketing_CategoryBanners
+class Main extends Application_Service_Admin_Marketing_CategoryBanners
 {
 	public const ADMIN_MAIN_PAGE = 'category-banners';
 	

@@ -8,7 +8,7 @@
 /** @noinspection BadExpressionStatementJS */
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -27,7 +27,7 @@ $name = $this->getRaw('name');
 		</div>
 		
 		<div style="display: none" id="<?=$name?>_whisperer_area">
-			<?=Admin_Managers::FulltextSearch()->renderWhisperer(
+			<?=Application_Service_Admin::FulltextSearch()->renderWhisperer(
 				name: $name,
 				entity_type: $this->getString('entity_type'),
 				on_select: "{$name}.onSelect( selected_item );",

@@ -11,7 +11,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\KindOfProduct_Property;
 use JetApplication\Property;
 
@@ -39,13 +39,13 @@ if(!$property) {
 			<?php endif; ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->renderItemName( $property ) ?>
+			<?=Application_Service_Admin::Property()->renderItemName( $property ) ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->renderActiveState( $property ) ?>
+			<?=Application_Service_Admin::Property()->renderActiveState( $property ) ?>
 		</div>
 		<div>
-			<?=Admin_Managers::Property()->showType( $p->getPropertyType() ) ?>
+			<?=Application_Service_Admin::Property()->showType( $p->getPropertyType() ) ?>
 		</div>
 		
 		<div>

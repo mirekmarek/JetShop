@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\MoneyRefund;
 
 /**
@@ -33,7 +33,7 @@ $money_refunds = $this->getRaw( 'money_refunds' );
 	<tr>
 		<td><a href="<?=$money_refund->getEditUrl()?>"><?=$money_refund->getNumber()?></a></td>
 		<td>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?>
+			<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?>
 		</td>
 		<td>
 			<?=Locale::dateAndTime( $money_refund->getDateStarted() );?>

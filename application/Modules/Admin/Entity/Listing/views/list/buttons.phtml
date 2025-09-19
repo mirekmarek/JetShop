@@ -12,7 +12,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\MVC_View;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -23,7 +23,7 @@ $listing = $this->getRaw( 'listing' );
 $entity_manager = $listing->getEntityManager();
 $grid = $listing->getGrid();
 
-$listing_manager = Admin_Managers::EntityListing();
+$listing_manager = Application_Service_Admin::EntityListing();
 
 $add_uri_creator = $listing_manager->getCreateUriCreator();
 

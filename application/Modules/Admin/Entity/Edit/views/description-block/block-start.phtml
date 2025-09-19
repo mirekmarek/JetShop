@@ -11,7 +11,7 @@ use JetApplication\EShops;
 use Jet\Locale;
 use Jet\Tr;
 use Jet\Form;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 
 /**
  * @var MVC_View $this
@@ -38,7 +38,7 @@ if(
 		->setOnClick("UI_DescriptionBlock.copyContentStart('{$locale}', this.form, false );")
 		->setIcon('copy');
 	
-	if( Managers_General::Translator()):
+	if( Application_Service_General::Translator()):
 		echo UI::button( Tr::_('Copy and translate', dictionary: Tr::COMMON_DICTIONARY) )
 			->setOnClick("UI_DescriptionBlock.copyContentStart('{$locale}', this.form, true );")
 			->setIcon('earth-europe');

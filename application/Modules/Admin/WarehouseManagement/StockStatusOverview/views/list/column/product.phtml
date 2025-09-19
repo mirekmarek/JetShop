@@ -10,18 +10,18 @@ namespace JetApplicationModule\Admin\WarehouseManagement\StockStatusOverview;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\WarehouseManagement_StockCard;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 /**
  * @var MVC_View $this
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  * @var WarehouseManagement_StockCard $item
  */
 
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 ?>
-	<?=Admin_Managers::Product()->renderItemName( $item->getProductId() ) ?><br>
+	<?=Application_Service_Admin::Product()->renderItemName( $item->getProductId() ) ?><br>
 	<a href="<?=$listing->getEditUrl( $item );?>"><?=Tr::_('Show stock card');?></a>
 <?php

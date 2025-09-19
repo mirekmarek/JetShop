@@ -10,11 +10,11 @@ namespace JetApplicationModule\Admin\Catalog\PropertyGroups;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\PropertyGroup;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_PropertyGroup;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_PropertyGroup;
 
 
-class Main extends Admin_Managers_PropertyGroup
+class Main extends Application_Service_Admin_PropertyGroup
 {
 	public const ADMIN_MAIN_PAGE = 'property-group';
 	
@@ -26,7 +26,7 @@ class Main extends Admin_Managers_PropertyGroup
 		
 		$selected = $selected_property_group_id ? PropertyGroup::get($selected_property_group_id) : null;
 
-		return Admin_Managers::UI()->renderSelectEntityWidget(
+		return Application_Service_Admin::UI()->renderSelectEntityWidget(
 			name: $name,
 			caption: Tr::_('... select property group ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,

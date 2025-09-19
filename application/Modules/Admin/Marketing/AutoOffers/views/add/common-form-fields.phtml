@@ -6,7 +6,7 @@
  */
 use Jet\MVC_View;
 use Jet\Form;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\Tr;
 
 /**
@@ -20,7 +20,7 @@ $form = $this->getRaw('form');
 	<div class="row form-group">
 		<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?= Tr::_('Offer:')?></label>
 		<div class="col-md-8" style="padding-bottom: 10px">
-			<?=Admin_Managers::Product()->renderSelectWidget(
+			<?=Application_Service_Admin::Product()->renderSelectWidget(
 				"$('#{$form->field('offer_product_id')->getId()}').val(selected_item.id)",
 				selected_product_id: 0
 			);?>

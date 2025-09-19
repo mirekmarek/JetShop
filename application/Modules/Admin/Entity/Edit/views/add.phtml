@@ -9,7 +9,6 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 
 use Jet\Locale;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_Managers;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_WithEShopData;
 
@@ -22,9 +21,12 @@ use JetApplication\EShop;
  * @var MVC_View $this
  * @var Form     $form
  * @var EShopEntity_WithEShopData|EShopEntity_Admin_Interface     $item
+ * @var Main $module
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
+
+$module = $this->getRaw( 'module' );
 
 $common_data_fields_renderer = $this->getRaw('add_common_data_fields_renderer');
 $eshop_data_fields_renderer = $this->getRaw('add_eshop_data_fields_renderer');
@@ -64,7 +66,7 @@ $form->renderer()->setDefaultFieldWidth( [
 		if($item instanceof EShopEntity_WithEShopData) {
 			if(EShopEntity_Definition::get($item)->getDescriptionMode()) {
 				if($description_fields_renderer) {
-					echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
+					echo $module->renderDescriptionBlocks(
 						form: $form,
 						renderer: function( Locale $locale, string $locale_str ) use ($item, $form, $description_fields_renderer ) : void {
 							$description_fields_renderer( $locale, $locale_str, $item, $form );
@@ -73,7 +75,7 @@ $form->renderer()->setDefaultFieldWidth( [
 				}
 			} else {
 				if($eshop_data_fields_renderer) {
-					echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+					echo $module->renderShopDataBlocks(
 						form: $form,
 						renderer: function( EShop $eshop, string $eshop_key ) use ($form, $item, $eshop_data_fields_renderer) : void {
 							$eshop_data_fields_renderer( $eshop, $eshop_key, $item, $form );

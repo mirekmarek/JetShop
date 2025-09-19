@@ -9,13 +9,13 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Brand;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Brand;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 use JetApplication\Brand;
 
-class Main extends Admin_Managers_Brand
+class Main extends Application_Service_Admin_Brand
 {
 	public const ADMIN_MAIN_PAGE = 'brands';
 	
@@ -32,7 +32,7 @@ class Main extends Admin_Managers_Brand
 		
 		$selected = $selected_brand_id ? Brand::get($selected_brand_id) : null;
 		
-		return Admin_Managers::UI()->renderSelectEntityWidget(
+		return Application_Service_Admin::UI()->renderSelectEntityWidget(
 			name: $name,
 			caption: Tr::_('... select brand ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,

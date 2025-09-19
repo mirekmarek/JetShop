@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Delivery\Methods;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Delivery_Method;
 
 /**
@@ -25,7 +25,7 @@ if(count($eshop->getPricelists())>1):
 <?php foreach($eshop->getPricelists() as $pricelist): ?>
 	<div><?=$pricelist->getName()?></div>
 	
-	<div style="font-weight: bolder;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency(
+	<div style="font-weight: bolder;"><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 		$pricelist,
 		$item->getPrice( $pricelist )
 	);?></div>
@@ -35,7 +35,7 @@ if(count($eshop->getPricelists())>1):
 	
 	$pricelist = $item->getEshop()->getDefaultPricelist();
 	?>
-	<div style="font-weight: bolder;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency(
+	<div style="font-weight: bolder;"><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 			$pricelist,
 			$item->getPrice( $pricelist )
 		);?></div>

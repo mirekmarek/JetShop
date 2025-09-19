@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Discounts_Code;
 
 /**
@@ -18,4 +18,4 @@ use JetApplication\Discounts_Code;
 
 $item = $this->getRaw('item');
 
-echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getEshop()->getDefaultPricelist(), $item->getMinimalOrderAmount() );
+echo Application_Service_Admin::PriceFormatter()->formatWithCurrency( $item->getEshop()->getDefaultPricelist(), $item->getMinimalOrderAmount() );

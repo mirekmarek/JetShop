@@ -8,7 +8,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\Locale;
 use JetApplication\EShopEntity_Price;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product_Price;
 
 /**
@@ -28,11 +28,11 @@ $pricelist = $price->getPricelist();
 		<div>
 			<?=Tr::_( $pricelist->getPricesAreWithoutVat() ? 'Price (without VAT):' : 'Price (with VAT):'  )?>
 		</div>
-		<div style="font-weight: bolder;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPrice() )?></div>
+		<div style="font-weight: bolder;"><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPrice() )?></div>
 		
 		<?php if( $price instanceof Product_Price && $price->getDiscountPercentage()>0): ?>
 		<div><?=Tr::_('Price before discount:')?></div>
-		<div style="text-decoration: line-through"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPriceBeforeDiscount() )?></div>
+		<div style="text-decoration: line-through"><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $pricelist, $price->getPriceBeforeDiscount() )?></div>
 		<div><?=Tr::_('Discount:')?></div>
 		<div style="font-weight: bolder;"><?=Locale::float( round($price->getDiscountPercentage()) );?>%</div>
 		<?php endif; ?>

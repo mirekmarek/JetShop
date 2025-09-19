@@ -16,12 +16,12 @@ use Jet\MVC_View;
 use Jet\Session;
 use Jet\Translator;
 
-use JetApplication\Admin_Managers_UI;
+use JetApplication\Application_Service_Admin_UI;
 use JetApplication\EShops;
 
 
 
-class Main extends Admin_Managers_UI
+class Main extends Application_Service_Admin_UI
 {
 
 	protected MVC_View $view;

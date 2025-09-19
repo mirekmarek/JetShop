@@ -16,7 +16,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_dialog;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Availabilities;
 use JetApplication\Pricelists;
 use JetApplication\EShops;
@@ -78,7 +78,7 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 		return;
 	}
 	
-	$property_manager = Admin_Managers::Property();
+	$property_manager = Application_Service_Admin::Property();
 	
 	foreach( $kind->getPropertyIds() as $property_id ):
 		echo $property_manager->renderProductPropertyEditFormField($form, $property_id, $main_prefix);
@@ -103,13 +103,13 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 					<div style="padding-right: 20px;">
 						<div style="display: flex;align-items: center;gap: 5px;">
 							<div>
-								<?php echo Admin_Managers::EntityEdit()->renderPreviewButton( $variant ); ?>
+								<?php echo Application_Service_Admin::EntityEdit()->renderPreviewButton( $variant ); ?>
 							</div>
 							<div>
 								<?=Tr::_('ID:')?><a href="<?=$variant->getEditUrl()?>" target="_blank"><?=$variant->getId()?></a>
 							</div>
 							<div style="padding-left: 50px;">
-								<?=Admin_Managers::EntityEdit()->renderEntityActivation(
+								<?=Application_Service_Admin::EntityEdit()->renderEntityActivation(
 									entity: $variant,
 									editable: !$variants_update_form->getIsReadonly(),
 									deactivate_url_creator: function() use ($variant) : string {
@@ -189,7 +189,7 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 				<div style="display: grid; grid-template-columns: repeat(auto-fit, 300px); gap: 20px;">
 					<?php foreach(Pricelists::getList() as $pricelist):
 						$price = $variant->getPriceEntity( $pricelist );
-						echo Admin_Managers::PriceFormatter()->showPriceInfo( $price );
+						echo Application_Service_Admin::PriceFormatter()->showPriceInfo( $price );
 					endforeach; ?>
 				</div>
 				
@@ -218,7 +218,7 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 	<?=$add_form->field('internal_name_of_variant')?>
 	<?=$add_form->field('internal_code')?>
 	
-	<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
+	<?=Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 		form: $add_form,
 		renderer: function( EShop $eshop, string $eshop_key ) use ($add_form) : void {
 			?>

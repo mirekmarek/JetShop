@@ -13,15 +13,15 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Edit;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Edit;
 use JetApplication\Product;
 use Jet\Form;
 
 /**
  * @var MVC_View   $this
  * @var EShopEntity_Admin_Interface $item
- * @var Admin_Managers_EShopEntity_Edit $edit_manager
+ * @var Application_Service_Admin_EShopEntity_Edit $edit_manager
  * @var Form $form
  */
 
@@ -29,7 +29,7 @@ $item = $this->getRaw('item');
 $edit_manager = $this->getRaw('edit_manager');
 $editable = $item->isEditable();
 
-$p_manager = Admin_Managers::Product();
+$p_manager = Application_Service_Admin::Product();
 
 echo $edit_manager->renderToolbar();
 
@@ -49,7 +49,7 @@ echo $edit_manager->renderToolbar();
 					<?=Tr::_('Add product:', dictionary: Tr::COMMON_DICTIONARY)?>
 				</div>
 				<div>
-					<?=Admin_Managers::Product()->renderSelectWidget(
+					<?=Application_Service_Admin::Product()->renderSelectWidget(
 						on_select: "location='".Http_Request::currentURI()."&add_product='+selected_item.id",
 						only_type_filter:[
 							Product::PRODUCT_TYPE_REGULAR,

@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\InfoPages;
 
 
-use JetApplication\Admin_Managers_Content_InfoPages;
+use JetApplication\Application_Service_Admin_Content_InfoPages;
 use JetApplication\Content_InfoPage;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_Content_InfoPages
+class Main extends Application_Service_Admin_Content_InfoPages
 {
 	public const ADMIN_MAIN_PAGE = 'content-info-page';
 	

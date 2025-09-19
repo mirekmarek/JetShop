@@ -8,16 +8,18 @@ namespace JetApplicationModule\Admin\ImageManager;
 
 
 use Jet\Data_Image;
+use Jet\Data_Image_Exception;
 use Jet\Data_Text;
 use Jet\Exception;
 use Jet\Form;
 use Jet\Form_Field_FileImage;
+use Jet\Http_Request;
 use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\Logger;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShop;
 
 class Image {
@@ -80,7 +82,7 @@ class Image {
 	public static function getRootUrl() : string
 	{
 		if(!static::$root_url) {
-			static::$root_url = SysConf_URI::getImages();
+			static::$root_url = Http_Request::baseURL().SysConf_URI::getImages();
 		}
 		
 		return static::$root_url;
@@ -242,11 +244,11 @@ class Image {
 
 		$target_path = $this->getDirPath().$file_name.image_type_to_extension( $image->getImgType() );
 		
-		IO_File::copy( $tmp_path, static::getRootPath().$target_path );
-		
-		if( ($current_image = $this->getImage()) ) {
-			$this->delete();
+		if(IO_File::exists($target_path)) {
+			IO_File::delete($target_path);
 		}
+		
+		IO_File::copy( $tmp_path, static::getRootPath().$target_path );
 		
 		$this->setImage( $target_path );
 		
@@ -341,8 +343,12 @@ class Image {
 				IO_Dir::create( $target_dir );
 			}
 			
-			$image = new Data_Image( $thb_source_path );
-			$image->createThumbnail( $thb_target_path, $max_w, $max_h );
+			try {
+				$image = new Data_Image( $thb_source_path );
+				$image->createThumbnail( $thb_target_path, $max_w, $max_h );
+			} catch(Data_Image_Exception $e) {
+				return '';
+			}
 		}
 		
 		
@@ -365,7 +371,7 @@ class Image {
 				$image_field
 			]);
 			
-			$form->setCustomTranslatorDictionary( Admin_Managers::Image()->getModuleManifest()->getName() );
+			$form->setCustomTranslatorDictionary( Application_Service_Admin::Image()->getModuleManifest()->getName() );
 			
 			$this->upload_form = $form;
 		}

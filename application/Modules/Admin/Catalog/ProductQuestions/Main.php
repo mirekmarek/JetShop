@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 
-use JetApplication\Admin_Managers_ProductQuestions;
+use JetApplication\Application_Service_Admin_ProductQuestions;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\ProductQuestion;
 
 
-class Main extends Admin_Managers_ProductQuestions
+class Main extends Application_Service_Admin_ProductQuestions
 {
 	public const ADMIN_MAIN_PAGE = 'product-questions';
 	

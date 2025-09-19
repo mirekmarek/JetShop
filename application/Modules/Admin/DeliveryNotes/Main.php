@@ -9,13 +9,13 @@ namespace JetApplicationModule\Admin\DeliveryNotes;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers_DeliveryNote;
+use JetApplication\Application_Service_Admin_DeliveryNote;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\DeliveryNote;
 
 
-class Main extends Admin_Managers_DeliveryNote
+class Main extends Application_Service_Admin_DeliveryNote
 {
 	public const ADMIN_MAIN_PAGE = 'delivery-notes';
 	

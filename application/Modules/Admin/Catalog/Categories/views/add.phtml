@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShop;
 use JetApplication\Category;
 
@@ -31,9 +31,9 @@ $form->renderer()->setDefaultFieldWidth([Form_Renderer::LJ_SIZE_MEDIUM=>8]);
 <br/>
 <?=$form->start();?>
 
-	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
+	<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields( $form );?>
 
-	<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
+	<?=Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 		form: $form,
 		renderer: function( EShop $eshop, string $eshop_key ) use ($new_category, $form) : void {
 			?>

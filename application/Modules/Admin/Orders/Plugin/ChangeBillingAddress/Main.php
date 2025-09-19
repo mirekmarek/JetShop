@@ -12,13 +12,13 @@ use Jet\Form;
 use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Customer_Address;
+use JetApplication\EShopEntity_Address;
 use JetApplication\Order;
 
 class Plugin_ChangeBillingAddress_Main extends Plugin {
 	public const KEY = 'change_bolling_address';
 	
-	protected Customer_Address $address;
+	protected EShopEntity_Address $address;
 	protected Form $form;
 	
 	

@@ -45,6 +45,8 @@ trait Controller_Main_Edit_Marketplace
 						if(!$selected_mp->isAllowedForShop($selected_mp_eshop)) {
 							$selected_mp = null;
 							$selected_mp_eshop = null;
+						} else {
+							$selected_mp->init( $selected_mp_eshop );
 						}
 					} else {
 						$selected_mp = null;

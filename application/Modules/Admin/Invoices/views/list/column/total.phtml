@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Invoices;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Invoice;
 
 /**
@@ -18,4 +18,4 @@ use JetApplication\Invoice;
 
 $item = $this->getRaw('item');
 
-echo Admin_Managers::PriceFormatter()->formatWithCurrencyByHasVAT( $item->hasVAT(), $item->getCurrency(), $item->getTotal() );
+echo Application_Service_Admin::PriceFormatter()->formatWithCurrencyByHasVAT( $item->hasVAT(), $item->getCurrency(), $item->getTotal() );

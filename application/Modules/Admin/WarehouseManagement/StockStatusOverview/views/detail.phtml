@@ -17,7 +17,7 @@ use Jet\UI;
 use Jet\UI_badge;
 use Jet\UI_button;
 use Jet\UI_dialog;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockMovement_Type;
@@ -37,13 +37,13 @@ $m_unit = Product::getProductMeasureUnit( $card->getProductId() )?->getName();
 
 $change_location_form = $this->getRaw('change_location_form');
 
-Admin_Managers::EntityEdit()->init( $card, $this->getRaw('listing'), edit_toolbar_renderer: function() {
+Application_Service_Admin::EntityEdit()->init( $card, $this->getRaw('listing'), edit_toolbar_renderer: function() {
 	echo UI::button( Tr::_('Determine inventory status on a specific date') )
 		->setClass(UI_button::CLASS_INFO)
 		->setOnClick("$('#status_on_date_dialog').modal('show');");
 } );
 
-echo Admin_Managers::EntityEdit()->renderToolbar();
+echo Application_Service_Admin::EntityEdit()->renderToolbar();
 
 $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine inventory status on a specific date'), UI_dialog::SIZE_EXTRA_LARGE);
 
@@ -69,7 +69,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 			<div><?=$warehouse->getInternalName()?></div>
 			
 			<div><?=Tr::_('Product:')?></div>
-			<div><?=Admin_Managers::Product()->renderItemName( $card->getProductId() )?></div>
+			<div><?=Application_Service_Admin::Product()->renderItemName( $card->getProductId() )?></div>
 
 			<div></div>
 			<div style="gap: 10px;display: flex;align-items: center">
@@ -94,7 +94,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 		<?php if($card->getCurrency()): ?>
 		<div><?=Tr::_('Current price per unit:')?></div>
 		<div>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $card->getCurrency(), $card->getPricePerUnit() )?>
+			<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithoutVAT( $card->getCurrency(), $card->getPricePerUnit() )?>
 		</div>
 		<?php endif; ?>
 	</div>
@@ -129,7 +129,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 				
 				foreach( $orders as $o ):
 					?>
-					<?=UI::badge( UI_badge::INFO, Admin_Managers::SupplierGoodsOrders()->renderItemName($o->getId()) )?>
+					<?=UI::badge( UI_badge::INFO, Application_Service_Admin::SupplierGoodsOrders()->renderItemName($o->getId()) )?>
 					<?php
 				endforeach;
 			endif;
@@ -148,7 +148,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 				$transfers = $card->getRelevantTransfersFromAnotherWarehouse();
 				foreach( $transfers as $tr ):
 					?>
-					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->renderItemName( $tr->getId() ))?></div>
+					<div><?=UI::badge( UI_badge::INFO, Application_Service_Admin::TransferBetweenWarehouses()->renderItemName( $tr->getId() ))?></div>
 					<?php
 				endforeach;
 			endif;
@@ -166,7 +166,7 @@ $status_on_date_dialog = UI::dialog('status_on_date_dialog', Tr::_('Determine in
 				$transfers = $card->getRelevantTransfersToAnotherWarehouse();
 				foreach( $transfers as $tr ):
 					?>
-					<div><?=UI::badge( UI_badge::INFO, Admin_Managers::TransferBetweenWarehouses()->renderItemName( $tr->getId() ))?></div>
+					<div><?=UI::badge( UI_badge::INFO, Application_Service_Admin::TransferBetweenWarehouses()->renderItemName( $tr->getId() ))?></div>
 				<?php
 				endforeach;
 			endif;

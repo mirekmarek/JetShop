@@ -11,7 +11,7 @@ use Jet\Tr;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use Jet\Form;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 
 /**
  * @var MVC_View $this
@@ -40,7 +40,7 @@ if(
 		->setOnClick("UI_EShopBlock.copyContentStart('{$eshop_key}', this.form, false );")
 		->setIcon('copy');
 	
-	if( Managers_General::Translator()):
+	if( Application_Service_General::Translator()):
 		echo UI::button( Tr::_('Copy and translate', dictionary: Tr::COMMON_DICTIONARY) )
 			->setOnClick("UI_EShopBlock.copyContentStart('{$eshop_key}', this.form, true );")
 			->setIcon('earth-europe');

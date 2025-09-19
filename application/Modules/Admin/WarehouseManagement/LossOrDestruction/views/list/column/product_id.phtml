@@ -8,17 +8,17 @@ namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 
 /**
  * @var MVC_View $this
  * @var WarehouseManagement_LossOrDestruction $item
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  */
 
 $item = $this->getRaw('item');
 $listing = $this->getRaw('listing');
 
-echo Admin_Managers::Product()->renderItemName( $item->getProductId() );
+echo Application_Service_Admin::Product()->renderItemName( $item->getProductId() );

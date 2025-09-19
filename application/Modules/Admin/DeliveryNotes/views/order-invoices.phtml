@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\DeliveryNotes;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\DeliveryNote;
 
 /**
@@ -23,7 +23,7 @@ if(!count($invoices)) {
 	return;
 }
 
-$price_formatter = Admin_Managers::PriceFormatter();
+$price_formatter = Application_Service_Admin::PriceFormatter();
 ?>
 <table class="table table-striped">
 	<thead>

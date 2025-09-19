@@ -12,14 +12,14 @@ use Jet\Factory_MVC;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\Translator;
-use JetApplication\Admin_Managers_Image;
+use JetApplication\Application_Service_Admin_Image;
 
-use JetApplication\EShopEntity_HasImageGallery_Interface;
+use JetApplication\ImageGallery;
 use JetApplication\ImageGallery_Image;
 use JetApplication\EShop;
 
 
-class Main extends Admin_Managers_Image
+class Main extends Application_Service_Admin_Image
 {
 	
 	/**
@@ -229,22 +229,22 @@ class Main extends Admin_Managers_Image
 	protected ImageGalleryManager $image_gallery_manager;
 	
 	
-	public function handleImageGalleryManagement( EShopEntity_HasImageGallery_Interface $item ): void
+	public function handleImageGalleryManagement( ImageGallery $gallery ): void
 	{
-		$this->image_gallery_manager = new ImageGalleryManager( $item, $this->initView(), $this->editable );
+		$this->image_gallery_manager = new ImageGalleryManager( $gallery, $this->initView(), $this->editable );
 		if($this->editable) {
 			$this->image_gallery_manager->handle();
 		}
 		
 	}
 	
-	public function uploadImageGallery( EShopEntity_HasImageGallery_Interface $item, array $images ) : void
+	public function uploadImageGallery( ImageGallery $gallery, array $images ) : void
 	{
 		$def = new Image(
-			entity: $item->getEntityType(),
-			object_id: $item->getId(),
-			image_property_setter: function( $value ) use ($item) {
-				$item->addImage( $value );
+			entity: $gallery->getEntityType(),
+			object_id: $gallery->getEntityId(),
+			image_property_setter: function( $value ) use ($gallery) {
+				$gallery->addImage( $value );
 			}
 		);
 		

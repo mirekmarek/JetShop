@@ -66,25 +66,18 @@ class Controller_Main extends MVC_Controller_Default
 				case 'save_translation':
 					$hash = base64_decode($POST->getString('hash'));
 					$translation = $POST->getRaw('translation');
-					foreach($dictionary->getPhrases() as $phrase) {
-						if($phrase->getHash()==$hash) {
-							$phrase->setTranslation( $translation );
-							$phrase->setIsTranslated( (bool)$translation );
-							
-							Translator::saveDictionary( $dictionary );
-						}
-					}
+					
+					$dictionary->addPhrase( $hash, $translation );
+					Translator::saveDictionary( $dictionary );
+					
 					AJAX::operationResponse(true);
 					break;
 				case 'remove_phrase':
 					$hash = base64_decode($POST->getString('hash'));
-					$translation = $POST->getRaw('translation');
-					foreach($dictionary->getPhrases() as $phrase) {
-						if($phrase->getHash()==$hash) {
-							$dictionary->removePhrase( $phrase );
-							Translator::saveDictionary( $dictionary );
-						}
-					}
+					
+					$dictionary->removePhrase( $hash );
+					Translator::saveDictionary( $dictionary );
+					
 					AJAX::operationResponse(true);
 					break;
 			}

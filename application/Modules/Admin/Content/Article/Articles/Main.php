@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
 
-use JetApplication\Admin_Managers_Content_Articles;
+use JetApplication\Application_Service_Admin_Content_Articles;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Content_Article;
 
 
-class Main extends Admin_Managers_Content_Articles
+class Main extends Application_Service_Admin_Content_Articles
 {
 	public const ADMIN_MAIN_PAGE = 'articles';
 	

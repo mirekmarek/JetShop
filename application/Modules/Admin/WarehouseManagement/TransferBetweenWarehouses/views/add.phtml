@@ -16,7 +16,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\WarehouseManagement_Warehouse;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -107,7 +107,7 @@ echo $controller->getEditorManager()->renderToolbar( $transfer?$transfer->getAdd
 			$qty = $form->field('/item_'.$p_id.'/qty');
 			?>
 		<tr>
-			<td><?=Admin_Managers::Product()->renderItemName($item->getProductId())?></td>
+			<td><?=Application_Service_Admin::Product()->renderItemName($item->getProductId())?></td>
 			<td><?=$item->getProductEan()?></td>
 			<td><?=$item->getProductInternalCode()?></td>
 			<td><?=$item->getProductSupplierCode()?></td>

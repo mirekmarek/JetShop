@@ -8,13 +8,13 @@ namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
 
 
 use Jet\Factory_MVC;
-use JetApplication\Admin_Managers_OrderDispatch;
+use JetApplication\Application_Service_Admin_OrderDispatch;
 use JetApplication\Context;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\OrderDispatch;
 
 
-class Main extends Admin_Managers_OrderDispatch
+class Main extends Application_Service_Admin_OrderDispatch
 {
 	public const ADMIN_MAIN_PAGE = 'do-dispatch';
 	

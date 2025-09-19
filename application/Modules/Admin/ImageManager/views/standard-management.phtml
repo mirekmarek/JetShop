@@ -8,16 +8,16 @@ namespace JetApplicationModule\Admin\ImageManager;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Image;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Image;
 use JetApplication\EShop;
 
 /**
  * @var MVC_View   $this
- * @var Admin_Managers_Image|Main $image_manager
+ * @var Application_Service_Admin_Image|Main $image_manager
  */
 $image_manager = $this->getRaw('manager');
-$UI_manager = Admin_Managers::UI();
+$UI_manager = Application_Service_Admin::UI();
 
 
 
@@ -29,7 +29,7 @@ if($image_manager->getEshopSyncMode()):
 	endforeach;
 else:
 	echo '<br>';
-	echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+	echo Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 		inline_mode: true,
 		renderer: function( EShop $eshop, string $eshop_key ) use ($image_manager) : void {
 			echo $image_manager->renderImageWidgets( $eshop );

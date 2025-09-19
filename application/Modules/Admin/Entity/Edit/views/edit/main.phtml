@@ -11,7 +11,7 @@ use Jet\Form_Field_WYSIWYG;
 use Jet\Locale;
 use Jet\UI_tabs;
 use JetApplication\Admin_EntityManager_EditorPlugin;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasActivation_Interface;
@@ -68,7 +68,7 @@ $plugins = $this->getRaw('plugins');
 <?php require 'toolbar.phtml'; ?>
 
 <?php if( $has_wysiwyg_editor ) {
-	echo Admin_Managers::EntityEdit()->renderEditorTools( $item );
+	echo Application_Service_Admin::EntityEdit()->renderEditorTools( $item );
 } ?>
 
 <div id="main-col">
@@ -89,7 +89,7 @@ $plugins = $this->getRaw('plugins');
 		}
 		
 		if( $item instanceof EShopEntity_HasTimer_Interface ) {
-			echo Admin_Managers::Timer()?->renderEntityEdit( $item, !$form->getIsReadonly() );
+			echo Application_Service_Admin::Timer()?->renderEntityEdit( $item, !$form->getIsReadonly() );
 		}
 		
 		echo $form->start();
@@ -133,7 +133,7 @@ $plugins = $this->getRaw('plugins');
 		?>
 </div>
 <?php
-echo Admin_Managers::Timer()?->renderIntegration();
+echo Application_Service_Admin::Timer()?->renderIntegration();
 
 if($plugins):
 	foreach( $plugins as $handler):

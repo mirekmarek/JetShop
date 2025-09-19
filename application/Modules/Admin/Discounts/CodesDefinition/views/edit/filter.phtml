@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\Form;
 use JetApplication\Discounts_Code;
 
@@ -24,7 +24,7 @@ $item = $this->getRaw('item');
 $form = $this->getRaw('filter_form');
 $editable = $item->isEditable();
 
-$p_manager = Admin_Managers::Product();
+$p_manager = Application_Service_Admin::Product();
 
 echo $this->controller->getEditorManager()->renderToolbar();
 
@@ -42,7 +42,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 		</div>
 		
 		<div>
-			<?=Admin_Managers::ProductFilter()->renderFilterForm(); ?>
+			<?=Application_Service_Admin::ProductFilter()->renderFilterForm(); ?>
 		</div>
 		<?=$form->end();?>
 		

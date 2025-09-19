@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\OrderPersonalReceipt;
 
 
@@ -66,7 +66,7 @@ require 'detail/js.phtml';
 		<?php if($dispatch->getAmountToPay()):?>
 		<div class="text-danger" style="font-size: 1.5rem"><?=Tr::_('Amount to pay:')?></div>
 		<div class="text-danger" style="font-size: 1.5rem">
-			<b><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCurrency(), $dispatch->getAmountToPay() )?></b>
+			<b><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCurrency(), $dispatch->getAmountToPay() )?></b>
 		</div>
 		<?php endif; ?>
 		

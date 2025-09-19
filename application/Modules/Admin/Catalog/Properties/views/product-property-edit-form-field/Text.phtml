@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 use Jet\Form;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShops;
 use JetApplication\Property;
 
@@ -33,7 +33,7 @@ $default = $form->field($prefix.EShops::getDefault()->getKey());
 
 $default->setLabel(
 	'<a href="'.$property->getEditUrl().'" tabindex="99999">'.$property->getInternalName().'</a><br>'
-	.Admin_Managers::Property()->renderActiveState( $property )
+	.Application_Service_Admin::Property()->renderActiveState( $property )
 );
 
 if( EShops::isMultiEShopMode() ) {

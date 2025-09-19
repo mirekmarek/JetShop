@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product;
 
 /**
@@ -25,7 +25,7 @@ $form = $category->getEditForm();
 $editable = !$form->getIsReadonly();
 $auto_append = $category->getAutoAppendProducts();
 
-$p_manager = Admin_Managers::Product();
+$p_manager = Application_Service_Admin::Product();
 
 
 echo $this->render('lj_start');
@@ -41,7 +41,7 @@ echo $this->render('lj_start');
 					<?=Tr::_('Add product:')?>
 				</div>
 				<div>
-					<?=Admin_Managers::Product()->renderSelectWidget(
+					<?=Application_Service_Admin::Product()->renderSelectWidget(
 					on_select: "location='".Http_Request::currentURI()."&add_product='+selected_item.id",
 					only_type_filter:[
 							Product::PRODUCT_TYPE_REGULAR,
@@ -85,7 +85,7 @@ echo $this->render('lj_start');
 			</div>
 		</div>
 
-		<?=Admin_Managers::ProductFilter()->renderFilterForm(); ?>
+		<?=Application_Service_Admin::ProductFilter()->renderFilterForm(); ?>
 	</div>
 	<?php endif; ?>
 

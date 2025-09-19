@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 use Jet\Http_Request;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers_EShopEntity_Edit;
+use JetApplication\Application_Service_Admin_EShopEntity_Edit;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\EShops;
@@ -21,7 +21,7 @@ use JetApplication\KindOfProduct;
  * @var MarketplaceIntegration_Module $selected_mp
  * @var EShop $selected_mp_eshop
  * @var KindOfProduct $kind_of_product
- * @var Admin_Managers_EShopEntity_Edit $editor_manager
+ * @var Application_Service_Admin_EShopEntity_Edit $editor_manager
  */
 
 $modules = MarketplaceIntegration::getActiveModules();
@@ -68,7 +68,7 @@ echo $editor_manager->renderToolbar();
 		<div>
 			<?php if($selected_mp): ?>
 				<legend><?=$selected_mp->getTitle()?> - <?=$selected_mp_eshop->getName()?></legend>
-				<?php $selected_mp->handleKindOfProductSettings( $kind_of_product, $selected_mp_eshop ) ?>
+				<?php $selected_mp->handleKindOfProductSettings( $kind_of_product ) ?>
 			<?php endif; ?>
 		</div>
 	</div>

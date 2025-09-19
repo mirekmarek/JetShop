@@ -11,7 +11,7 @@ use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_ControlCentre_Module_Controller;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Admin;
 use JetApplication\CompanyInfo;
 
@@ -31,7 +31,7 @@ class Controller_ControlCentre extends Admin_ControlCentre_Module_Controller
 		
 		Application_Admin::handleUploadTooLarge();
 		
-		$image_manager = Admin_Managers::Image();
+		$image_manager = Application_Service_Admin::Image();
 		$image_manager->setEditable( true );
 		
 		$image_manager->defineImage(

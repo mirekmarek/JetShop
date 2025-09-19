@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -20,7 +20,7 @@ use JetApplication\Admin_Managers;
 <div id="main-col">
 	<?php
 	echo $this->getRaw('tabs');
-	echo Admin_Managers::Image()->renderStandardManagement();
+	echo Application_Service_Admin::Image()->renderStandardManagement();
 	?>
 </div>
 

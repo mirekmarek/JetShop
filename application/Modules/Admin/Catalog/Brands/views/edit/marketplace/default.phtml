@@ -11,7 +11,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_dialog;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 
 
@@ -80,7 +80,7 @@ $dialog = UI::dialog('select_brand', Tr::_('Select brad'), UI_dialog::SIZE_EXTRA
 
 <?=$dialog->start()?>
 	<div style="height: 500px;overflow: auto;" id="select_brand_categories">
-		<?= Admin_Managers::Brand()->renderMarketPlaceIntegrationBrands( $controller, '' );?>
+		<?= Application_Service_Admin::Brand()->renderMarketPlaceIntegrationBrands( $controller, '' );?>
 	</div>
 <?=$dialog->end()?>
 

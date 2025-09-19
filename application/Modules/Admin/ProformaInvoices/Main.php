@@ -9,13 +9,13 @@ namespace JetApplicationModule\Admin\ProformaInvoices;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers_ProformaInvoice;
+use JetApplication\Application_Service_Admin_ProformaInvoice;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\ProformaInvoice;
 use JetApplication\Order;
 
 
-class Main extends Admin_Managers_ProformaInvoice
+class Main extends Application_Service_Admin_ProformaInvoice
 {
 	public const ADMIN_MAIN_PAGE = 'invoices-in-advance';
 	

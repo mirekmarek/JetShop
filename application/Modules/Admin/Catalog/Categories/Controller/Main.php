@@ -11,7 +11,7 @@ use Jet\Application;
 use Jet\Data_Tree;
 use Jet\MVC_Controller_Router;
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Admin;
 use JetApplication\Category;
 
@@ -283,7 +283,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		};
 		
 		if($category->isEditable()) {
-			Admin_Managers::ProductFilter()->init( $category->getAutoAppendProductsFilter() );
+			Application_Service_Admin::ProductFilter()->init( $category->getAutoAppendProductsFilter() );
 			
 			
 			$GET = Http_Request::GET();
@@ -335,7 +335,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			}
 			
 			if($category->getAutoAppendProducts()) {
-				if( Admin_Managers::ProductFilter()->handleFilterForm() ) {
+				if( Application_Service_Admin::ProductFilter()->handleFilterForm() ) {
 					if($category->actualizeAutoAppend()) {
 						$category->actualizeCategoryBranchProductAssoc();
 						
@@ -344,9 +344,9 @@ class Controller_Main extends Admin_EntityManager_Controller
 					Http_Headers::reload();
 				}
 			} else {
-				if( Admin_Managers::ProductFilter()->handleFilterForm() ) {
+				if( Application_Service_Admin::ProductFilter()->handleFilterForm() ) {
 					
-					$products = Admin_Managers::ProductFilter()->getFilter()->filter();
+					$products = Application_Service_Admin::ProductFilter()->getFilter()->filter();
 					foreach($products as $product_id) {
 						$category->addProduct( $product_id );
 					}

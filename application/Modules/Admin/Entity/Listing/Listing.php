@@ -6,9 +6,9 @@
  */
 namespace JetApplicationModule\Admin\Entity\Listing;
 
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\Admin_Listing;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_HasActivation_Interface;
 use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
@@ -23,7 +23,7 @@ use JetApplication\EShops;
 class Listing extends Admin_Listing
 {
 	
-	public function __construct( Admin_Managers_EShopEntity_Listing $listing_manager )
+	public function __construct( Application_Service_Admin_EShopEntity_Listing $listing_manager )
 	{
 		parent::__construct( $listing_manager );
 		
@@ -134,7 +134,7 @@ class Listing extends Admin_Listing
 			
 			$search->setWhereCreator( function( string $search ) use ($entity) : array {
 				
-				$ids = Admin_Managers::FulltextSearch()->search(
+				$ids = Application_Service_Admin::FulltextSearch()->search(
 					$entity::getEntityType(),
 					$search
 				);

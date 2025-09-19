@@ -10,11 +10,11 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
-use JetApplication\Admin_Managers_WarehouseManagement_Overview;
+use JetApplication\Application_Service_Admin_WarehouseManagement_Overview;
 use JetApplication\WarehouseManagement_StockCard;
 
 
-class Main extends Admin_Managers_WarehouseManagement_Overview
+class Main extends Application_Service_Admin_WarehouseManagement_Overview
 {
 	public const ADMIN_MAIN_PAGE = 'stock-status-overview';
 	

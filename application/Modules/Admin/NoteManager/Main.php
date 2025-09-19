@@ -20,14 +20,14 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers_Note;
+use JetApplication\Application_Service_Admin_Note;
 use JetApplication\AdministratorSignatures;
 use JetApplication\EShopEntity_Note;
 use JetApplication\EShopEntity_Note_MessageGenerator;
 use Closure;
 
 
-class Main extends Admin_Managers_Note
+class Main extends Application_Service_Admin_Note
 {
 	protected EShopEntity_Note $new_note;
 	protected string $generated_subject;

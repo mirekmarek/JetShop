@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\ProductStickers;
 
 
-use JetApplication\Admin_Managers_Marketing_ProductStickers;
+use JetApplication\Application_Service_Admin_Marketing_ProductStickers;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_ProductSticker;
 
 
-class Main extends Admin_Managers_Marketing_ProductStickers
+class Main extends Application_Service_Admin_Marketing_ProductStickers
 {
 	public const ADMIN_MAIN_PAGE = 'auto_offers';
 	

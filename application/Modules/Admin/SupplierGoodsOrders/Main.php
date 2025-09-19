@@ -8,11 +8,11 @@ namespace JetApplicationModule\Admin\SupplierGoodsOrders;
 
 
 use JetApplication\EShopEntity_Basic;
-use JetApplication\Admin_Managers_SupplierGoodsOrders;
+use JetApplication\Application_Service_Admin_SupplierGoodsOrders;
 use JetApplication\Supplier_GoodsOrder;
 
 
-class Main extends Admin_Managers_SupplierGoodsOrders
+class Main extends Application_Service_Admin_SupplierGoodsOrders
 {
 	public const ADMIN_MAIN_PAGE = 'supplier-goods-orders';
 	

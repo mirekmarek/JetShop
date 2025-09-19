@@ -7,8 +7,8 @@
 namespace JetApplicationModule\Admin\Entity\Edit;
 
 
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasURL_Interface;
 use JetApplication\EShopEntity_WithEShopData;
@@ -21,7 +21,7 @@ use Jet\UI;
  * @var MVC_View $this
  * @var Form     $form
  * @var EShopEntity_Basic $item
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  */
 $form = $this->getRaw( 'form' );
 $item = $this->getRaw( 'item' );
@@ -68,6 +68,6 @@ $next_url = $listing?->getNextEditUrl( $item->getId() );
 </div>
 
 <div style="position: fixed;right: 2px;top: 100px;z-index: 999;">
-	<?=Admin_Managers::TODO()?->renderTool( $item::getEntityType(), $item->getId() );?>
+	<?=Application_Service_Admin::TODO()?->renderTool( $item::getEntityType(), $item->getId() );?>
 </div>
 

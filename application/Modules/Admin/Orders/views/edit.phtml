@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Order;
 
 /**
@@ -20,15 +20,15 @@ use JetApplication\Order;
 
 $order = $this->getRaw( 'order' );
 
-$invoices = (Admin_Managers::Invoice()?->showOrderInvoices( $order )??'').
-			(Admin_Managers::ProformaInvoice()?->showOrderInvoices( $order )??'').
-			(Admin_Managers::DeliveryNote()?->showOrderInvoices( $order )??'');
+$invoices = (Application_Service_Admin::Invoice()?->showOrderInvoices( $order )??'').
+			(Application_Service_Admin::ProformaInvoice()?->showOrderInvoices( $order )??'').
+			(Application_Service_Admin::DeliveryNote()?->showOrderInvoices( $order )??'');
 
-$dispatch = (Admin_Managers::OrderDispatch()?->showDispatches( $order->getProvidesContext() )??'').
-			(Admin_Managers::OrderPersonalReceipt()?->showDispatches( $order->getProvidesContext() )??'');
+$dispatch = (Application_Service_Admin::OrderDispatch()?->showDispatches( $order->getProvidesContext() )??'').
+			(Application_Service_Admin::OrderPersonalReceipt()?->showDispatches( $order->getProvidesContext() )??'');
 
 
-$money_refunds = Admin_Managers::MoneyRefund()?->showOrderMoneyRefunds( $order )??'';
+$money_refunds = Application_Service_Admin::MoneyRefund()?->showOrderMoneyRefunds( $order )??'';
 
 
 require 'edit/js.phtml';
@@ -71,10 +71,10 @@ require 'edit/toolbar.phtml';
 	
 	
 	<div id="o_history" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderEventHistory( $order, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $order, true )?>
 
 	<div id="o_sent_emails" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderSentEmails( $order, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderSentEmails( $order, true )?>
 
 	<br><br><br><br>
 </div>

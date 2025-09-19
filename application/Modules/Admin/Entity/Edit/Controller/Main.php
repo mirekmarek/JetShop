@@ -13,7 +13,7 @@ use Jet\Locale;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use JetApplication\EShops;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use Error;
 use Exception;
 
@@ -52,7 +52,7 @@ class Controller_Main extends MVC_Controller_Default
 	
 	public function translate_Action() : void
 	{
-		$translator = Managers_General::Translator();
+		$translator = Application_Service_General::Translator();
 		if(!$translator) {
 			AJAX::operationResponse(false, data: ['error_message' => Tr::_('Translator is not available')]);
 		}

@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Marketing\AutoOffers;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Marketing_AutoOffer;
 
 
@@ -18,4 +18,4 @@ use JetApplication\Marketing_AutoOffer;
  */
 
 $item = $this->getRaw('item');
-echo Admin_Managers::Product()->renderItemName( $item->getOfferProductId() );
+echo Application_Service_Admin::Product()->renderItemName( $item->getOfferProductId() );

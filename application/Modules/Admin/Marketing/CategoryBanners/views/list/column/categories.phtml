@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\Marketing\CategoryBanners;
 
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 use Jet\MVC_View;
 use JetApplication\Marketing_CategoryBanner;
@@ -19,5 +19,5 @@ use JetApplication\Marketing_CategoryBanner;
 $item = $this->getRaw( 'item' );
 
 foreach($item->getCategoryIds() as $category) {
-	echo Admin_Managers::Category()->renderItemName( $category ).'<br>';
+	echo Application_Service_Admin::Category()->renderItemName( $category ).'<br>';
 }

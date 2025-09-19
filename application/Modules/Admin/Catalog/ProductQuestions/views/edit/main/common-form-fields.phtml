@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\ProductQuestion;
 
 /**
@@ -35,7 +35,7 @@ $form->field('answer')->input()->addCustomCssStyle('height:400px');
 		<div class="card card-body">
 			<?=$item->getEshop()->getName()?> / <?=Locale::dateAndTime($item->getCreated())?>
 			<div style="padding: 10px;">
-				<?=Admin_Managers::Product()->renderItemName( $item->getProductId() ) ?>
+				<?=Application_Service_Admin::Product()->renderItemName( $item->getProductId() ) ?>
 			</div>
 			
 			<?=$item->getStatus()->showAdmin()?>
@@ -51,4 +51,4 @@ $form->field('answer')->input()->addCustomCssStyle('height:400px');
 <?=$form->field('answer')?>
 
 <br><br><br>
-<?=Admin_Managers::EntityEdit()->renderEventHistory( $item, true )?>
+<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $item, true )?>

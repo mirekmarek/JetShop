@@ -10,13 +10,13 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Property;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Property;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Property;
 
 
-class Main extends Admin_Managers_Property
+class Main extends Application_Service_Admin_Property
 {
 	public const ADMIN_MAIN_PAGE = 'properties';
 	
@@ -29,7 +29,7 @@ class Main extends Admin_Managers_Property
 		
 		$selected = $selected_property_id ? Property::get($selected_property_id) : null;
 		
-		return Admin_Managers::UI()->renderSelectEntityWidget(
+		return Application_Service_Admin::UI()->renderSelectEntityWidget(
 			name: $name,
 			caption: Tr::_('... select property ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,

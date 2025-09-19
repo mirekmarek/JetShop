@@ -13,7 +13,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\Form;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -56,7 +56,7 @@ $form_id = $form->getId();
 	<?=Tr::_('Move this category to:')?>
 </div>
 <div style="width: 300px;">
-	<?=Admin_Managers::Category()->renderSelectWidget("MoveCategory.target=selected_item.id;")?>
+	<?=Application_Service_Admin::Category()->renderSelectWidget("MoveCategory.target=selected_item.id;")?>
 </div>
 <?=UI::button( Tr::_('Move this category') )->setOnClick("MoveCategory.moveThis();")->setClass(UI_button::CLASS_SECONDARY)?>
 <?=UI::button( Tr::_('Move subcategories of this category') )->setOnClick("MoveCategory.moveSubcategories();")->setClass(UI_button::CLASS_SECONDARY)?>

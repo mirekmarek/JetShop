@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\MoneyRefund;
 
 
@@ -85,7 +85,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		 */
 		$item = $this->current_item;
 		
-		if(($sent_email=Admin_Managers::EntityEdit()->handleShowSentEmail( $item ))) {
+		if(($sent_email=Application_Service_Admin::EntityEdit()->handleShowSentEmail( $item ))) {
 			$this->content->output( $sent_email );
 			return;
 		}

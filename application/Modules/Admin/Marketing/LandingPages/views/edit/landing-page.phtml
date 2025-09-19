@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Marketing\LandingPages;
 use Jet\Form_Renderer;
 use Jet\MVC_View;
 use Jet\Form;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Marketing_LandingPage;
 
 /**
@@ -33,7 +33,7 @@ echo $this->controller->getEditorManager()->renderToolbar(
 	}
 );
 
-echo Admin_Managers::EntityEdit()->renderEditorTools( $item );
+echo Application_Service_Admin::EntityEdit()->renderEditorTools( $item );
 ?>
 <div id="main-col">
 	<?=$this->getRaw('tabs')?>

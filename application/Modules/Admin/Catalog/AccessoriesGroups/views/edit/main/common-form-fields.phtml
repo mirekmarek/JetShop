@@ -8,7 +8,7 @@ use Jet\Form;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -47,7 +47,7 @@ $form = $this->getRaw('form');
 </script>
 <div class="toolbar" style="display: grid;grid-template-columns: auto 1fr; gap: 5px;padding: 10px;">
 	<div><b><?= Tr::_('Add product:')?></b></div>
-	<?= Admin_Managers::Product()->renderSelectWidget("Products.add(selected_item.id)")?>
+	<?= Application_Service_Admin::Product()->renderSelectWidget("Products.add(selected_item.id)")?>
 </div>
 
 <div id="product">

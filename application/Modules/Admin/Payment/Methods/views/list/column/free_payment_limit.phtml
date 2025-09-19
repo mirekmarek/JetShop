@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Payment_Method;
 
 /**
@@ -19,7 +19,7 @@ use JetApplication\Payment_Method;
 $item = $this->getRaw('item');
 $eshop = $item->getEshop();
 
-echo Admin_Managers::PriceFormatter()->formatWithCurrency(
+echo Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 	$eshop->getDefaultPricelist(),
 	$item->getFreePaymentLimit()
 );

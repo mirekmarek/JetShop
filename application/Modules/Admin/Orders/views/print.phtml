@@ -11,7 +11,7 @@ use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\CustomerBlacklist;
 use JetApplication\Order_Item;
 use JetApplication\EShops;
@@ -24,9 +24,9 @@ use JetApplication\Order;
 
 $order = $this->getRaw( 'order' );
 
-$price_formatter = Admin_Managers::PriceFormatter();
+$price_formatter = Application_Service_Admin::PriceFormatter();
 
-$product_manager = Admin_Managers::Product();
+$product_manager = Application_Service_Admin::Product();
 
 
 $icons = [
@@ -82,7 +82,7 @@ $icons = [
 				</tr>
 			</table>
 			
-			<?php Admin_Managers::Complaint()->showOrderComplaints( $order ); ?>
+			<?php Application_Service_Admin::Complaint()->showOrderComplaints( $order ); ?>
 		</div>
 	</div>
 	
@@ -94,7 +94,7 @@ $icons = [
 				<tr>
 					<td></td>
 					<td>
-						<?=Admin_Managers::Customer()->renderItemName( $order->getCustomerId() )?>
+						<?=Application_Service_Admin::Customer()->renderItemName( $order->getCustomerId() )?>
 						<br>
 					</td>
 				</tr>
@@ -131,7 +131,7 @@ $icons = [
 	<div class="card">
 		<div class="card-header"><b><?=Tr::_('Billing address')?></b></div>
 		<div class="card-body">
-			<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getBillingAddress() )?>
+			<?=Application_Service_Admin::Customer()->formatAddress( $order->getEshop(), $order->getBillingAddress() )?>
 		</div>
 	</div>
 	
@@ -139,7 +139,7 @@ $icons = [
 	<div class="card">
 		<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
 		<div class="card-body">
-			<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getDeliveryAddress() )?>
+			<?=Application_Service_Admin::Customer()->formatAddress( $order->getEshop(), $order->getDeliveryAddress() )?>
 		</div>
 	</div>
 	

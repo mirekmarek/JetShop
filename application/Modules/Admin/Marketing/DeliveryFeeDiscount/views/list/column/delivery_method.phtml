@@ -18,4 +18,4 @@ use JetApplication\Marketing_DeliveryFeeDiscount;
  */
 
 $item = $this->getRaw('item');
-echo Delivery_Method::getScope()[$item->getDeliveryMethodId()];
+echo Delivery_Method::getScope()[$item->getDeliveryMethodId()]??$item->getDeliveryMethodId();

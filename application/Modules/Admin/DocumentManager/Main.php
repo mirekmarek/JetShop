@@ -12,10 +12,10 @@ use Jet\SysConf_Path;
 use Jet\SysConf_URI;
 use Jet\Tr;
 use Jet\Translator;
-use JetApplication\Admin_Managers_Document;
+use JetApplication\Application_Service_Admin_Document;
 
 
-class Main extends Admin_Managers_Document
+class Main extends Application_Service_Admin_Document
 {
 	protected static array $allowed_mime_types = [
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

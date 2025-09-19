@@ -11,7 +11,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_dialog;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 
@@ -179,7 +179,7 @@ $dialog = UI::dialog('select_category', Tr::_('Select category'), UI_dialog::SIZ
 
 <?=$dialog->start()?>
 	<div style="height: 400px;overflow: auto;" id="select_category_categories">
-		<?= Admin_Managers::KindOfProduct()->renderMarketPlaceIntegrationCategories( $controller, '' );?>
+		<?= Application_Service_Admin::KindOfProduct()->renderMarketPlaceIntegrationCategories( $controller, '' );?>
 	</div>
 <?=$dialog->end()?>
 

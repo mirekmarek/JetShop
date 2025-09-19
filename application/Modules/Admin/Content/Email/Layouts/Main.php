@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\Email\Layouts;
 
 
-use JetApplication\Admin_Managers_Content_EMailLayouts;
+use JetApplication\Application_Service_Admin_Content_EMailLayouts;
 use JetApplication\EMail_Layout;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_Content_EMailLayouts
+class Main extends Application_Service_Admin_Content_EMailLayouts
 {
 	public const ADMIN_MAIN_PAGE = 'content-email-layouts';
 

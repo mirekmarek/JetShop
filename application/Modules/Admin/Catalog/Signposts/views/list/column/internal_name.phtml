@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Catalog\Signposts;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Signpost;
 
 /**
@@ -19,6 +19,6 @@ $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 ?>
 <div style="display: flex;align-items: center">
-	<?=Admin_Managers::EntityEdit()->renderPreviewButton( $item );?>
+	<?=Application_Service_Admin::EntityEdit()->renderPreviewButton( $item );?>
 	<a href="<?=$listing->getEditUrl( $item );?>" style="padding: 10px;"><?=$item->getInternalName()?></a>
 </div>

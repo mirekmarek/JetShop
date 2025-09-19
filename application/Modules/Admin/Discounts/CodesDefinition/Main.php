@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 
 
-use JetApplication\Admin_Managers_DiscountCodesDefinition;
+use JetApplication\Application_Service_Admin_DiscountCodesDefinition;
 use JetApplication\Discounts_Code;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_DiscountCodesDefinition
+class Main extends Application_Service_Admin_DiscountCodesDefinition
 {
 	public const ADMIN_MAIN_PAGE = 'discounts-codes-definition';
 	

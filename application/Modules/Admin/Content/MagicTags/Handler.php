@@ -18,15 +18,15 @@ use Jet\MVC;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Content_MagicTag_Context;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_MagicTags;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_EShop_MagicTags;
 use JetApplication\EShops;
 use JetApplication\Content_MagicTag;
 
 class Handler
 {
 	protected MVC_View $view;
-	protected ?EShop_Managers_MagicTags $manager = null;
+	protected ?Application_Service_EShop_MagicTags $manager = null;
 	
 	/**
 	 * @var Content_MagicTag[]
@@ -42,7 +42,7 @@ class Handler
 	{
 		$this->view = $view;
 		
-		$this->manager = EShop_Managers::MagicTags();
+		$this->manager = Application_Service_EShop::MagicTags();
 		if($this->manager) {
 			$this->list = $this->manager->getList();
 		}

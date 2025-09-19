@@ -12,7 +12,7 @@ use Jet\UI_button;
 
 use Jet\MVC_View;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_WithEShopData;
 
 /**
@@ -34,7 +34,7 @@ endif;
 
 if( $listing->getEntityManager()::getCurrentUserCanDelete() ):
 	
-	$delete_uri_creator = Admin_Managers::EntityListing()->getDeleteUriCreator();
+	$delete_uri_creator = Application_Service_Admin::EntityListing()->getDeleteUriCreator();
 
 	$delete_uri = $delete_uri_creator( $item->getId() );
 	echo UI::button_delete(' ')

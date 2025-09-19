@@ -9,8 +9,8 @@ namespace JetApplicationModule\Admin\ProformaInvoices;
 
 use Jet\Locale;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
 use Jet\MVC_View;
@@ -20,15 +20,15 @@ use JetApplication\ProformaInvoice;
 /**
  * @var MVC_View $this
  * @var ProformaInvoice $invoice
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  */
 
 $invoice = $this->getRaw( 'invoice' );
 $listing = $this->getRaw('listing');
 
 
-$price_formatter = Admin_Managers::PriceFormatter();
-$product_manager = Admin_Managers::Product();
+$price_formatter = Application_Service_Admin::PriceFormatter();
+$product_manager = Application_Service_Admin::Product();
 $icons = ProformaInvoice_Item::getItemIcons();
 
 $has_VAT = $invoice->hasVAT();

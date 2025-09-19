@@ -12,18 +12,17 @@ use Jet\Factory_MVC;
 use Jet\Form;
 use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_Hidden;
-use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers_ProductFilter;
+use JetApplication\Application_Service_Admin_ProductFilter;
 use JetApplication\Category;
 use JetApplication\KindOfProduct;
 use JetApplication\ProductFilter;
 use JetApplication\Property;
 
 
-class Main extends Admin_Managers_ProductFilter
+class Main extends Application_Service_Admin_ProductFilter
 {
 	protected ?Category $category = null;
 	protected ?Form $form = null;

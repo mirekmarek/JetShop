@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Catalog\ProductReviews;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\ProductReview;
 
 /**
@@ -19,4 +19,4 @@ use JetApplication\ProductReview;
 
 $item = $this->getRaw('item');
 
-echo Admin_Managers::Product()->renderItemName( $item->getProductId() );
+echo Application_Service_Admin::Product()->renderItemName( $item->getProductId() );

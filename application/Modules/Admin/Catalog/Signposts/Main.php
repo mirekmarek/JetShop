@@ -9,10 +9,10 @@ namespace JetApplicationModule\Admin\Catalog\Signposts;
 
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Signpost;
-use JetApplication\Admin_Managers_Signpost;
+use JetApplication\Application_Service_Admin_Signpost;
 
 
-class Main extends Admin_Managers_Signpost
+class Main extends Application_Service_Admin_Signpost
 {
 	public const ADMIN_MAIN_PAGE = 'signposts';
 	

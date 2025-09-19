@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\Warehouses;
 
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\WarehouseManagement_Warehouse as Warehouse;
 
 use Jet\MVC_View;
@@ -30,11 +30,11 @@ $router = $this->getController()->getControllerRouter();
 ?>
 <?=$form->start()?>
 
-<?=Admin_Managers::EntityEdit()->renderEntityToolbar($form)?>
+<?=Application_Service_Admin::EntityEdit()->renderEntityToolbar($form)?>
 
 <div id="main-col">
 		
-		<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields($form)?>
+		<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields($form)?>
 		<?=$form->field( 'eshops' )?>
 		<?=$form->field( 'address_street_no' )?>
 		<?=$form->field( 'address_country' )?>

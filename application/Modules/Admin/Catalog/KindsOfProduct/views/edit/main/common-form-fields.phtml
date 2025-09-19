@@ -8,7 +8,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use JetApplication\KindOfProduct;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -38,7 +38,7 @@ $category_ids = $item->getUsageCategoryIds();
 				<table class="table table-striped">
 					<?php foreach($category_ids as $id): ?>
 						<tr>
-							<td><?= Admin_Managers::Category()->renderItemName( $id )?></td>
+							<td><?= Application_Service_Admin::Category()->renderItemName( $id )?></td>
 						</tr>
 					<?php endforeach; ?>
 				</table>

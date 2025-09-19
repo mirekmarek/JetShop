@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Payment\Methods;
 use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Option;
 
@@ -32,15 +32,15 @@ $form->renderer()->setDefaultLabelWidth([
 echo $form->start();
 
 ?>
-<?=Admin_Managers::UI()->renderEntityToolbar($form)?>
+<?=Application_Service_Admin::UI()->renderEntityToolbar($form)?>
 
 	
 	<div id="main-col">
 			<?=$this->getRaw('tabs')?>
 			<br>
 			
-			<?=Admin_Managers::EntityEdit()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
-			<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields($form)?>
+			<?=Application_Service_Admin::EntityEdit()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
+			<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields($form)?>
 		
 			<?=$form->field('title');?>
 			<?=$form->field('description');?>

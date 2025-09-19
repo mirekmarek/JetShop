@@ -31,8 +31,9 @@ class Listing_Filter_Marketplace extends Admin_Listing_Filter_StdFilter
 		
 		$mp = MarketplaceIntegration::getActiveModule( $mp_code );
 		$eshop = EShops::get( $eshop_key );
+		$mp->init( $eshop );
 		
-		$ids = $mp->getSellingProductIds( $eshop );
+		$ids = $mp->getSellingProductIds();
 		if(!$ids) {
 			$ids = [0];
 		}

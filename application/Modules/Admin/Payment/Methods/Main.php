@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Payment\Methods;
 
 
-use JetApplication\Admin_Managers_PaymentMethods;
+use JetApplication\Application_Service_Admin_PaymentMethods;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Payment_Method;
 
 
-class Main extends Admin_Managers_PaymentMethods
+class Main extends Application_Service_Admin_PaymentMethods
 {
 	public const ADMIN_MAIN_PAGE = 'payment-method';
 

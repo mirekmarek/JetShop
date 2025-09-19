@@ -7,7 +7,7 @@
 use Jet\MVC_View;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Accessories_Group;
 
 /**
@@ -16,7 +16,7 @@ use JetApplication\Accessories_Group;
  */
 $group = $this->getRaw('item');
 
-$p_manager = Admin_Managers::Product();
+$p_manager = Application_Service_Admin::Product();
 
 
 foreach($group->getProducts() as $p): ?>

@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Marketing\LandingPages;
 
 
+use Jet\Http_Request;
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
 use Jet\UI_messages;

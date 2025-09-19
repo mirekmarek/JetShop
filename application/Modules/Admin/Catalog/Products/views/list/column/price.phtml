@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Pricelists;
 use JetApplication\Product;
 
@@ -24,6 +24,6 @@ $item = $this->getRaw('item');
 <?php foreach(Pricelists::getList() as $pricelist): ?>
 	<div><?=$pricelist->getName()?></div>
 	
-	<div style="font-weight: bolder;"><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $item->getPrice( $pricelist ) )?></div>
+	<div style="font-weight: bolder;"><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $pricelist, $item->getPrice( $pricelist ) )?></div>
 <?php endforeach; ?>
 </div>

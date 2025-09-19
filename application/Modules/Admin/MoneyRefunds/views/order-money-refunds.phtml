@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\MVC_View;
 use JetApplication\MoneyRefund;
 
@@ -33,9 +33,9 @@ $money_refunds = $this->getRaw('money_refunds');
 		</thead>
 		<?php foreach( $money_refunds as $money_refund ): ?>
 			<tr>
-				<td nowrap=""><?=Admin_Managers::MoneyRefund()->renderItemName( $money_refund->getId() )?></td>
+				<td nowrap=""><?=Application_Service_Admin::MoneyRefund()->renderItemName( $money_refund->getId() )?></td>
 				<td nowrap=""><?=$money_refund->getStatus()->showAdmin()?></td>
-				<td nowrap=""><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></td>
+				<td nowrap=""><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></td>
 				<td></td>
 			</tr>
 		<?php endforeach; ?>

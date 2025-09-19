@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\Form;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Category;
 use JetApplication\Signpost;
 
@@ -25,7 +25,7 @@ use JetApplication\Signpost;
 $signpost = $this->getRaw('signpost');
 $editable = $this->getBool('editable');
 
-$c_manager = Admin_Managers::Category();
+$c_manager = Application_Service_Admin::Category();
 
 echo $this->controller->getEditorManager()->renderToolbar();
 
@@ -44,7 +44,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 						<?=Tr::_('Add category:')?>
 					</div>
 					<div>
-						<?=Admin_Managers::Category()->renderSelectWidget(
+						<?=Application_Service_Admin::Category()->renderSelectWidget(
 							on_select: "location='".Http_Request::currentURI()."&add_category='+selected_item.id"
 						)?>
 					</div>

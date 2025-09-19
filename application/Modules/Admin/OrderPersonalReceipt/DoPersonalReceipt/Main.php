@@ -8,13 +8,13 @@ namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
 
 
 use Jet\Factory_MVC;
-use JetApplication\Admin_Managers_OrderPersonalReceipt;
+use JetApplication\Application_Service_Admin_OrderPersonalReceipt;
 use JetApplication\Context;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\OrderPersonalReceipt;
 
 
-class Main extends Admin_Managers_OrderPersonalReceipt
+class Main extends Application_Service_Admin_OrderPersonalReceipt
 {
 	public const ADMIN_MAIN_PAGE = 'do-personal-receipt';
 	

@@ -39,7 +39,7 @@ class Plugin_ChangeDeliveryMethod_Main extends Plugin
 		 */
 		$item = $this->item;
 		
-		$delivery_method = new Form_Field_Select('delivery_method', 'Payment method:' );
+		$delivery_method = new Form_Field_Select('delivery_method', 'Delivery method:' );
 		$delivery_method->setDefaultValue( $this->item->getDeliveryMethodId() );
 		$delivery_method->setSelectOptions( Delivery_Method::getScopeForEShop( $item->getEshop() ) );
 		$delivery_method->setErrorMessages([

@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Module;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_WithEShopData;
@@ -40,7 +40,7 @@ $reasons = $this->getRaw('reasons');
 				<?php foreach($reasons as $reason):
 					if(
 						!($manager_ifc = $reason->getEntityDefinitio()->getAdminManagerInterface()) ||
-						!($manager = Admin_Managers::get( $manager_ifc ))
+						!($manager = Application_Service_Admin::list()->get( $manager_ifc ))
 					) {
 						continue;
 					}

@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\TransferBetweenWarehouses;
 
 
-use JetApplication\Admin_Managers_WarehouseManagement_TransferBetweenWarehouses;
+use JetApplication\Application_Service_Admin_WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 
-class Main extends Admin_Managers_WarehouseManagement_TransferBetweenWarehouses
+class Main extends Application_Service_Admin_WarehouseManagement_TransferBetweenWarehouses
 {
 	public const ADMIN_MAIN_PAGE = 'transfer-between-warehouses';
 	

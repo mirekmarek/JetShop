@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\ReceiptOfGoods;
 
 
-use JetApplication\Admin_Managers_ReceiptOfGoods;
+use JetApplication\Application_Service_Admin_ReceiptOfGoods;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 
-class Main extends Admin_Managers_ReceiptOfGoods
+class Main extends Application_Service_Admin_ReceiptOfGoods
 {
 	public const ADMIN_MAIN_PAGE = 'receipt-of-goods';
 	

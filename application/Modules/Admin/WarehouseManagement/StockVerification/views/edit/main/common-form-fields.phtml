@@ -11,7 +11,7 @@ use Jet\Form_Renderer;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Supplier;
 use JetApplication\KindOfProduct;
 use JetApplication\WarehouseManagement_StockVerification;
@@ -105,7 +105,7 @@ $form->renderer()->setDefaultFieldWidth([
 				$p_id = $item->getProductId();
 				?>
 				<tr>
-					<td><?=Admin_Managers::Product()->renderItemName($item->getProductId())?></td>
+					<td><?=Application_Service_Admin::Product()->renderItemName($item->getProductId())?></td>
 					<td><?=$item->getProductEan()?></td>
 					<td><?=$item->getProductInternalCode()?></td>
 					<td><?=$item->getProductSupplierCode()?></td>
@@ -143,6 +143,6 @@ $form->renderer()->setDefaultFieldWidth([
 	</div>
 	
 	<br><br><br>
-	<?=Admin_Managers::EntityEdit()->renderEventHistory( $verification, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $verification, true )?>
 </div>
 	

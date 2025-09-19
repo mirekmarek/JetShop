@@ -12,7 +12,7 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;use Jet\UI;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -63,10 +63,10 @@ $price_list = $this->getRaw('price_list');
 	</thead>
 	<?php foreach($price_list->getItems() as $item): ?>
 	<tr>
-		<td><a href="<?=Admin_Managers::Product()::getEditUrl($item->getId())?>"><?=$item->getId()?></a></td>
+		<td><a href="<?=Application_Service_Admin::Product()::getEditUrl($item->getId())?>"><?=$item->getId()?></a></td>
 		<td><?=$item->getEan()?></td>
 		<td><?=$item->getInternalCode()?></td>
-		<td><a href="<?=Admin_Managers::Product()::getEditUrl($item->getId())?>"><?=$item->getName()?></a></td>
+		<td><a href="<?=Application_Service_Admin::Product()::getEditUrl($item->getId())?>"><?=$item->getName()?></a></td>
 		<td><?=$item->getPrice()?></td>
 		
 		<?php if($item->getNewPrice()===null): ?>

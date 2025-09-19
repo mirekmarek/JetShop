@@ -11,7 +11,7 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product;
 
 /**
@@ -34,7 +34,7 @@ require '_toolbar.phtml';
 <?php if($editable): ?>
 	<div class="toolbar">
 		<div><b><?=Tr::_('Add similar product:')?></b></div>
-		<div style="width: 400px"><?=Admin_Managers::Product()->renderSelectWidget(on_select: "SimilarProducts.add(selected_item.id)");?></div>
+		<div style="width: 400px"><?=Application_Service_Admin::Product()->renderSelectWidget(on_select: "SimilarProducts.add(selected_item.id)");?></div>
 	</div>
 <?php endif; ?>
 
@@ -53,7 +53,7 @@ require '_toolbar.phtml';
 				<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['delete'=>$s->getSimilarProductId()]) )?>
 				<?php endif;?>
 			</div>
-			<div><?=Admin_Managers::Product()->renderItemName( $s->getSimilarProductId() )?></div>
+			<div><?=Application_Service_Admin::Product()->renderItemName( $s->getSimilarProductId() )?></div>
 		</div>
 		<?php endforeach; ?>
 	</div>

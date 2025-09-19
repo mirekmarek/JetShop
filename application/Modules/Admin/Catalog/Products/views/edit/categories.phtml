@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Category;
 use JetApplication\Product;
 
@@ -35,7 +35,7 @@ require '_toolbar.phtml';
 		<?=Tr::_('Add category')?>
 	</div>
 	<div style="width: 300px">
-		<?=Admin_Managers::Category()->renderSelectWidget("location.href='".Http_Request::currentURI()."&add_category='+selected_item.id;")?>
+		<?=Application_Service_Admin::Category()->renderSelectWidget("location.href='".Http_Request::currentURI()."&add_category='+selected_item.id;")?>
 	</div>
 	<?php endif; ?>
 </div>
@@ -60,9 +60,9 @@ require '_toolbar.phtml';
 									->setSize(UI_button::SIZE_EXTRA_SMALL)?>
 							</div>
 							<?php endif; ?>
-							<div><?=Admin_Managers::EntityEdit()->renderPreviewButton( $category )?></div>
-							<div><?=Admin_Managers::Category()->renderActiveState( $category )?></div>
-							<div><?=Admin_Managers::Category()->renderItemName( $category )?></div>
+							<div><?=Application_Service_Admin::EntityEdit()->renderPreviewButton( $category )?></div>
+							<div><?=Application_Service_Admin::Category()->renderActiveState( $category )?></div>
+							<div><?=Application_Service_Admin::Category()->renderItemName( $category )?></div>
 						</div>
 					</td>
 				</tr>

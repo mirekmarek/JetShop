@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product;
 
 
@@ -28,7 +28,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$q[] = 'OR';
 			$q['author_email *'] = '%'.$search.'%';
 			
-			$products = Admin_Managers::FulltextSearch()->search( Product::getEntityType(), $search );
+			$products = Application_Service_Admin::FulltextSearch()->search( Product::getEntityType(), $search );
 			if($products) {
 				$q[] = 'OR';
 				$q['product_id'] = $products;

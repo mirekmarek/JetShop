@@ -6,7 +6,7 @@
  */
 
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Category;
 
 ?>
@@ -16,7 +16,7 @@ use JetApplication\Category;
 			<?=UI::icon('search');?>
 		</div>
 		<div>
-			<?=Admin_Managers::FulltextSearch()->renderWhisperer(
+			<?=Application_Service_Admin::FulltextSearch()->renderWhisperer(
 				name: 'search_category',
 				entity_type: Category::getEntityType(),
 				on_select: "searchResult(selected_item.object_id)"

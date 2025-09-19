@@ -8,13 +8,13 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 
 use Jet\Factory_MVC;
-use JetApplication\Admin_Managers_ReturnOfGoods;
+use JetApplication\Application_Service_Admin_ReturnOfGoods;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\ReturnOfGoods;
 
 
-class Main extends Admin_Managers_ReturnOfGoods
+class Main extends Application_Service_Admin_ReturnOfGoods
 {
 	public const ADMIN_MAIN_PAGE = 'returns-of-goods';
 	

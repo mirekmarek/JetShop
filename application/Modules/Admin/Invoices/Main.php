@@ -9,13 +9,13 @@ namespace JetApplicationModule\Admin\Invoices;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers_Invoice;
+use JetApplication\Application_Service_Admin_Invoice;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\Invoice;
 
 
-class Main extends Admin_Managers_Invoice
+class Main extends Application_Service_Admin_Invoice
 {
 	public const ADMIN_MAIN_PAGE = 'invoices';
 	

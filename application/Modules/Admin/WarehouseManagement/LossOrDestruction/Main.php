@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\LossOrDestruction;
 
 
-use JetApplication\Admin_Managers_WarehouseManagement_LossOrDestruction;
+use JetApplication\Application_Service_Admin_WarehouseManagement_LossOrDestruction;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_LossOrDestruction;
 
 
-class Main extends Admin_Managers_WarehouseManagement_LossOrDestruction
+class Main extends Application_Service_Admin_WarehouseManagement_LossOrDestruction
 {
 	public const ADMIN_MAIN_PAGE = 'loss-or-destruction';
 	

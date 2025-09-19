@@ -8,7 +8,7 @@
 namespace JetApplicationModule\Admin\Entity\Edit;
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Basic;
 
 /**
@@ -24,7 +24,7 @@ if(!$item->getId() || !$item->isEditable()) {
 }
 ?>
 <div style="position: fixed;top: 60px;right: 2px;z-index: 998;">
-	<?=Admin_Managers::Image()?->commonImageManager( $item::getEntityType(), $item->getId() );?>
-	<?=Admin_Managers::Document()?->commonDocumentManager( $item::getEntityType(), $item->getId() );?>
-	<?=Admin_Managers::MagicTags()?->renderTool();?>
+	<?=Application_Service_Admin::Image()?->commonImageManager( $item::getEntityType(), $item->getId() );?>
+	<?=Application_Service_Admin::Document()?->commonDocumentManager( $item::getEntityType(), $item->getId() );?>
+	<?=Application_Service_Admin::MagicTags()?->renderTool();?>
 </div>

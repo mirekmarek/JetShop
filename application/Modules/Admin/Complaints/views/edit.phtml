@@ -11,7 +11,7 @@ use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Complaint;
 
 /**
@@ -22,8 +22,8 @@ use JetApplication\Complaint;
 $complaint = $this->getRaw( 'complaint' );
 
 
-$money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $complaint->getProvidesContext() );
-$dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $complaint->getProvidesContext() );
+$money_refunds = Application_Service_Admin::MoneyRefund()?->showMoneyRefunds( $complaint->getProvidesContext() );
+$dispatch = Application_Service_Admin::OrderDispatch()?->showDispatches( $complaint->getProvidesContext() );
 ?>
 <?php require 'edit/toolbar.phtml';?>
 
@@ -40,7 +40,7 @@ $dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $complaint->getPro
 		<div class="card card-body" style="margin: 10px;">
 			<h5><?=Tr::_('Product')?></h5>
 		
-			<p><?=Admin_Managers::Product()->renderItemName( $complaint->getProductId() )?></p>
+			<p><?=Application_Service_Admin::Product()->renderItemName( $complaint->getProductId() )?></p>
 		</div>
 	</fieldset>
 
@@ -98,10 +98,10 @@ $dispatch = Admin_Managers::OrderDispatch()?->showDispatches( $complaint->getPro
 	
 	
 	<div id="o_history" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderEventHistory( $complaint, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $complaint, true )?>
 	
 	<div id="o_sent_emails" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderSentEmails( $complaint, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderSentEmails( $complaint, true )?>
 
 	<br><br><br><br>
 </div>

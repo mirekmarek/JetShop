@@ -11,7 +11,7 @@ use Jet\UI;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Form_Renderer;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Discounts_Code;
 
 /**
@@ -57,7 +57,7 @@ $form->field( 'use_filter' )->input()->addJsAction('onchange', "$('#filter_area'
 	
 	
 	<div id="filter_area" style="display: <?=$discounts_code->getUseFilter()?'block':'none'?>">
-		<?=Admin_Managers::ProductFilter()->renderFilterForm();?>
+		<?=Application_Service_Admin::ProductFilter()->renderFilterForm();?>
 	</div>
 	<?php endif; ?>
 </div>

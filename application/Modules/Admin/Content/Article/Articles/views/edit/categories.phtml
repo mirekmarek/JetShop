@@ -11,7 +11,7 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Category;
 use JetApplication\Content_Article;
 
@@ -30,7 +30,7 @@ echo $this->controller->getEditorManager()->renderToolbar(
 	}
 );
 
-$c_manager = Admin_Managers::Category();
+$c_manager = Application_Service_Admin::Category();
 
 echo $this->getRaw('tabs');
 ?>
@@ -41,7 +41,7 @@ echo $this->getRaw('tabs');
 			<?=Tr::_('Add category:')?>
 		</div>
 		<div style="width: 400px;">
-			<?=Admin_Managers::Category()->renderSelectWidget(
+			<?=Application_Service_Admin::Category()->renderSelectWidget(
 				on_select: "location='".Http_Request::currentURI()."&add_category='+selected_item.id",
 			)?>
 		</div>

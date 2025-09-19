@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\OrderPersonalReceipt\DoPersonalReceipt;
 
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\OrderPersonalReceipt;
 use Jet\MVC_View;
 
@@ -18,4 +18,4 @@ use Jet\MVC_View;
 
 $dispatch = $this->getRaw('dispatch');
 
-echo Admin_Managers::Context()->showContext( $dispatch->getContext() );
+echo Application_Service_Admin::Context()->showContext( $dispatch->getContext() );

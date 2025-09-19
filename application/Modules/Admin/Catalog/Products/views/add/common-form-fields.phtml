@@ -12,7 +12,7 @@ use Jet\Form;
 
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShops;
 use JetApplication\Product;
 
@@ -32,7 +32,7 @@ $kind_id_field->input()->setCustomRenderer(function() use ($kind_id_field) {
 	<div style="display:none;">
 		<?=$this->renderByView()?>
 	</div>
-	<?=Admin_Managers::KindOfProduct()->renderSelectWidget(
+	<?=Application_Service_Admin::KindOfProduct()->renderSelectWidget(
 		on_select: "document.getElementById('{$kind_id_field->getId()}').value=selected_item.id",
 		selected_kind_of_product_id: $kind_id_field->getValue()?:0
 	);?>

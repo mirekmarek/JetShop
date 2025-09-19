@@ -7,10 +7,10 @@
 namespace JetApplicationModule\Admin\Catalog\AccessoriesGroups;
 
 use JetApplication\Accessories_Group;
-use JetApplication\Admin_Managers_AccessoriesGroups;
+use JetApplication\Application_Service_Admin_AccessoriesGroups;
 use JetApplication\EShopEntity_Basic;
 
-class Main extends Admin_Managers_AccessoriesGroups
+class Main extends Application_Service_Admin_AccessoriesGroups
 {
 	public const ADMIN_MAIN_PAGE = 'accesories-groups';
 	

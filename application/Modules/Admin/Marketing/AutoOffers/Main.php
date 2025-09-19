@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\AutoOffers;
 
 
-use JetApplication\Admin_Managers_Marketing_AutoOffers;
+use JetApplication\Application_Service_Admin_Marketing_AutoOffers;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_AutoOffer;
 
 
-class Main extends Admin_Managers_Marketing_AutoOffers
+class Main extends Application_Service_Admin_Marketing_AutoOffers
 {
 	public const ADMIN_MAIN_PAGE = 'auto_offers';
 	

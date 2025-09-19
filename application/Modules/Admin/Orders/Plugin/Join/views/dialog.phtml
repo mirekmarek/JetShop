@@ -13,7 +13,7 @@ use Jet\Tr;
 use Jet\UI_dialog;
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Order_Item;
 use JetApplication\Order;
 
@@ -28,8 +28,8 @@ if(!$order->isEditable()) {
 	return;
 }
 
-$price_formatter = Admin_Managers::PriceFormatter();
-$product_manager = Admin_Managers::Product();
+$price_formatter = Application_Service_Admin::PriceFormatter();
+$product_manager = Application_Service_Admin::Product();
 $icons = Order_Item::getItemIcons();
 
 

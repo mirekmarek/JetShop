@@ -9,26 +9,29 @@ namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Locale;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use Jet\UI_badge;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
 use Jet\MVC_View;
 use JetApplication\Order_Item;
 use JetApplication\Order;
+use JetApplication\Product;
+use JetApplication\Product_Availability;
 
 /**
  * @var MVC_View $this
  * @var Order     $order
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  */
 
 $order = $this->getRaw( 'order' );
 $listing = $this->getRaw('listing');
 
 
-$price_formatter = Admin_Managers::PriceFormatter();
-$product_manager = Admin_Managers::Product();
+$price_formatter = Application_Service_Admin::PriceFormatter();
+$product_manager = Application_Service_Admin::Product();
 $icons = Order_Item::getItemIcons();
 
 
@@ -41,6 +44,7 @@ $icons = Order_Item::getItemIcons();
 			<th style="width: 20px;"></th>
 			<th style="width: 60px;"></th>
 			<th><?=Tr::_('Item')?></th>
+			<th><?=Tr::_('Code')?></th>
 			
 			<th><?=Tr::_('Available')?></th>
 			<th><?=Tr::_('Not available')?></th>
@@ -67,8 +71,10 @@ $icons = Order_Item::getItemIcons();
 					<?php endif; ?>
 				</td>
 				<td>
-					<?php if( $item->isPhysicalProduct() ): ?>
-						<?=$item->getNumberOfUnitsAvailable()?>&nbsp;<?=$item->getMeasureUnit()?->getName()?>
+					<?php if( $item->isPhysicalProduct() || $item->isVirtualProduct() ):
+						$p = Product::get($item->getItemId());
+						?>
+						<a href="<?=$product_manager::getEditUrl( $item->getItemId() )?>"><?=$p?->getInternalCode()?></a>
 					<?php endif; ?>
 				</td>
 				<td>
@@ -104,7 +110,12 @@ $icons = Order_Item::getItemIcons();
 							<a href="<?=$product_manager::getEditUrl( $set_item->getItemId() )?>"><?=$set_item->getTitle() ?></a>
 						</td>
 						<td>
-							<?=$set_item->getNumberOfUnitsAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?>
+							<?php if( $item->isPhysicalProduct() || $item->isVirtualProduct() ):
+								$p = Product::get($set_item->getItemId());
+								?>
+								<a href="<?=$product_manager::getEditUrl( $set_item->getItemId() )?>"><?=$p?->getInternalCode()?></a>
+							<?php endif; ?>
+
 						</td>
 						<td>
 							<?php if($set_item->getNumberOfUnitsNotAvailable()>0):?>
@@ -118,15 +129,18 @@ $icons = Order_Item::getItemIcons();
 						</td>
 
 						<td><?=$set_item->getVatRate()?>%</td>
-						<td><?=$price_formatter->formatWithCurrency( $order->getPricelist(), $set_item->getPricePerUnit() )?></td>
-						<td><?=$price_formatter->formatWithCurrency( $order->getPricelist(), $set_item->getTotalAmount()*$item->getNumberOfUnits() )?></td>
+
+						<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $order->getPricelist()->getCurrency(), $set_item->getPricePerUnit_WithoutVat() )?></td>
+						<td><?=$price_formatter->formatWithCurrency_WithVAT( $order->getPricelist()->getCurrency(), $set_item->getPricePerUnit_WithVat() )?></td>
+						<td><?=$price_formatter->formatWithCurrency_WithoutVAT( $order->getPricelist()->getCurrency(), $set_item->getTotalAmount_WithoutVat() )?></td>
+						<td><?=$price_formatter->formatWithCurrency_WithVAT( $order->getPricelist()->getCurrency(), $set_item->getTotalAmount_WithVat() )?></td>
 					</tr>
 				<?php
 				endforeach; ?>
 				<tr style="opacity: 0.5">
 					<td></td>
 					<td></td>
-					<td colspan="4"><i><?=Tr::_('Set discount:')?></i></td>
+					<td colspan="6"><i><?=Tr::_('Set discount:')?></i></td>
 					<td><i><?=$price_formatter->formatWithCurrency($order->getPricelist(), $item->getSetDiscountPerUnit())?></i></td>
 					<td><i><?=$price_formatter->formatWithCurrency($order->getPricelist(), $item->getSetDiscountPerUnit()*$item->getNumberOfUnits())?></i></td>
 				</tr>

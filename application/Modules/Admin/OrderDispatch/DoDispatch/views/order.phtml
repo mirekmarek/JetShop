@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\OrderDispatch\DoDispatch;
 
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\OrderDispatch;
 use Jet\MVC_View;
 
@@ -22,4 +22,4 @@ if(!$dispatch->getOrderId()) {
 	return;
 }
 
-echo Admin_Managers::Order()->renderItemName( $dispatch->getOrderId() );
+echo Application_Service_Admin::Order()->renderItemName( $dispatch->getOrderId() );

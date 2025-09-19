@@ -12,7 +12,7 @@ use Jet\Form_Renderer;
 use Jet\Locale;
 use Jet\Tr;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShop;
 
 /**
@@ -34,13 +34,13 @@ $editable = !$form->getIsReadonly();
 <?=$this->render('lj_start')?>
 <br>
 
-<?=Admin_Managers::EntityEdit()->renderEditorTools( $category );?>
+<?=Application_Service_Admin::EntityEdit()->renderEditorTools( $category );?>
 
 <?=$form->start();?>
 
 
 <?php if($category->getDescriptionMode()):
-		echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
+		echo Application_Service_Admin::EntityEdit()->renderDescriptionBlocks(
 			form: $form,
 			renderer: function( Locale $locale ) use ($category, $form) : void {
 				
@@ -63,7 +63,7 @@ $editable = !$form->getIsReadonly();
 					</fieldset>
 			<?php });
 	else:
-		echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+		echo Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( EShop $eshop, string $eshop_key ) use ($category, $form) : void {
 				?>

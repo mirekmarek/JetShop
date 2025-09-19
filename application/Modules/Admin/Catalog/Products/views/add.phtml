@@ -13,7 +13,7 @@ use Jet\Form_Renderer;
 use Jet\Tr;
 use Jet\UI;
 use Jet\Http_Request;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShop;
 use JetApplication\Product;
 
@@ -50,7 +50,7 @@ $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 8 ] 
 		<?=$form->field('brand_id')?>
 		<?=$form->field('supplier_id')?>
 		
-		<?=Admin_Managers::EntityEdit()->renderShopDataBlocks(
+		<?=Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 			form: $form,
 			renderer: function( EShop $eshop, string $eshop_key ) use ($product, $form) : void {
 				?>

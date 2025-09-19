@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Discounts\CodesDefinition;
 use Jet\Locale;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Column;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Discounts_Code;
 use JetApplication\Discounts_Discount;
 
@@ -40,7 +40,7 @@ class Listing_Column_DiscountType extends Admin_Listing_Column
 				break;
 			case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
 			case Discounts_Discount::DISCOUNT_TYPE_DELIVERY_AMOUNT:
-				echo Admin_Managers::PriceFormatter()->formatWithCurrency( $item->getEshop()->getDefaultPricelist(), $item->getDiscount() );
+				echo Application_Service_Admin::PriceFormatter()->formatWithCurrency( $item->getEshop()->getDefaultPricelist(), $item->getDiscount() );
 				break;
 		}
 

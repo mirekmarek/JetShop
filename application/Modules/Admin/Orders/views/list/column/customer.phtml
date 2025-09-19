@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\CustomerBlacklist;
 use JetApplication\Order;
 
@@ -20,11 +20,23 @@ use JetApplication\Order;
  */
 
 $item = $this->getRaw('item');
+
+$address = $item->getBillingAddress();
+if($item->getImportSource()) {
+	$address = $item->getDeliveryAddress();
+}
+
 ?>
-<?php if($item->getBillingCompanyName()): ?>
-<?=$item->getBillingCompanyName()?><br>
+
+<?php if($address->getCompanyName()): ?>
+<?=$address->getCompanyName()?><br>
 <?php endif; ?>
-<?=$item->getBillingFirstName()?> <?=$item->getBillingSurname()?> (<?=Admin_Managers::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
+<?=$address->getFirstName()?> <?=$address->getSurname()?>
+<?php if(!$item->getImportSource()): ?>
+(<?=Application_Service_Admin::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
+<?php endif; ?>
+
+
 <a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
 <?=$item->getPhone()?><br>
 

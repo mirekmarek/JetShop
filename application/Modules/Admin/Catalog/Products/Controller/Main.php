@@ -13,9 +13,10 @@ use Jet\Tr;
 
 use Jet\UI_messages;
 use JetApplication\Admin_Listing_Column;
+use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Availabilities;
 use JetApplication\Delivery_Class;
 use JetApplication\EShopEntity_WithEShopData;
@@ -186,7 +187,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		$this->listing_manager->setSearchWhereCreator(  function( string $search ) : array {
 			
-			$ft_ids = Admin_Managers::FulltextSearch()->search(
+			$ft_ids = Application_Service_Admin::FulltextSearch()->search(
 				Product::getEntityType(),
 				$search
 			);
@@ -275,7 +276,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 					/**
 					 * @var Product $item
 					 */
-					return Admin_Managers::PriceFormatter()->showPriceInfo( $item->getPriceEntity($this->pricelist) );
+					return Application_Service_Admin::PriceFormatter()->showPriceInfo( $item->getPriceEntity($this->pricelist) );
 				}
 				
 				

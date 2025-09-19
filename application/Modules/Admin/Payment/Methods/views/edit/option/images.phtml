@@ -11,14 +11,14 @@ use Jet\Form;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
  * @var Form $form
  */
 
-$image_manager = Admin_Managers::Image();
+$image_manager = Application_Service_Admin::Image();
 ?>
 <div class="toolbar" id="main-toolbar">
 	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(set_GET_params: ['page'=>'options'], unset_GET_params: ['option']))?>

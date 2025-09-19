@@ -10,12 +10,12 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Customer;
-use JetApplication\Admin_Managers_Order;
+use JetApplication\Application_Service_Admin_Order;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 
 
-class Main extends Admin_Managers_Order
+class Main extends Application_Service_Admin_Order
 {
 	public const ADMIN_MAIN_PAGE = 'orders';
 	

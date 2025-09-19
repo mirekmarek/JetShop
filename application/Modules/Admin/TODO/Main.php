@@ -9,10 +9,10 @@ namespace JetApplicationModule\Admin\TODO;
 use Jet\Factory_MVC;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers_Todo;
+use JetApplication\Application_Service_Admin_Todo;
 
 
-class Main extends Admin_Managers_Todo
+class Main extends Application_Service_Admin_Todo
 {
 	
 	protected function getView() : MVC_View

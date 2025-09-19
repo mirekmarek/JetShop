@@ -13,7 +13,7 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -148,7 +148,7 @@ echo $controller->getEditorManager()->renderToolbar( $rcp?$rcp->getAddForm():nul
 			$p_id = $item->getProductId();
 			?>
 		<tr style="<?php if(!$item->getUnitsReceived() && $order):?>opacity: 0.5<?php endif;?>">
-			<td><?=Admin_Managers::Product()->renderItemName($item->getProductId())?></td>
+			<td><?=Application_Service_Admin::Product()->renderItemName($item->getProductId())?></td>
 			<td><?=$item->getProductEan()?></td>
 			<td><?=$item->getProductInternalCode()?></td>
 			<td><?=$item->getProductSupplierCode()?></td>

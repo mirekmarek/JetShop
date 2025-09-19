@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\Article\Authors;
 
 
-use JetApplication\Admin_Managers_Content_ArticleAuthors;
+use JetApplication\Application_Service_Admin_Content_ArticleAuthors;
 use JetApplication\Content_Article_Author;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_Content_ArticleAuthors
+class Main extends Application_Service_Admin_Content_ArticleAuthors
 {
 	public const ADMIN_MAIN_PAGE = 'article-authors';
 	

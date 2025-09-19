@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\WarehouseManagement\StockVerification;
 
 
-use JetApplication\Admin_Managers_WarehouseManagement_StockVerification;
+use JetApplication\Application_Service_Admin_WarehouseManagement_StockVerification;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\WarehouseManagement_StockVerification;
 
 
-class Main extends Admin_Managers_WarehouseManagement_StockVerification
+class Main extends Application_Service_Admin_WarehouseManagement_StockVerification
 {
 	public const ADMIN_MAIN_PAGE = 'stock-verification';
 	

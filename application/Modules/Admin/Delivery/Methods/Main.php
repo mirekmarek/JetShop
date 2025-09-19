@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Delivery\Methods;
 
 
-use JetApplication\Admin_Managers_DeliveryMethods;
+use JetApplication\Application_Service_Admin_DeliveryMethods;
 use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_DeliveryMethods
+class Main extends Application_Service_Admin_DeliveryMethods
 {
 	public const ADMIN_MAIN_PAGE = 'delivery-method';
 

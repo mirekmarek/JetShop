@@ -12,8 +12,8 @@ use Jet\Locale;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\MVC_View;
 use JetApplication\MarketplaceIntegration;
@@ -24,7 +24,7 @@ use JetApplication\Order;
 /**
  * @var MVC_View $this
  * @var Order     $order
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  * @var Form $add_bl_form
  */
 
@@ -61,14 +61,14 @@ $order = $this->getRaw( 'order' );
 					<?php if($order->getSplitSourceOrderId()): ?>
 					<tr>
 						<td style="font-weight: bolder;font-size: 1.1rem"><?=Tr::_('Comes from a split order:')?></td>
-						<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->renderItemName($order->getSplitSourceOrderId())?></td>
+						<td style="font-weight: bolder;font-size: 1.1rem"><?=Application_Service_Admin::Order()->renderItemName($order->getSplitSourceOrderId())?></td>
 					</tr>
 					<?php endif; ?>
 					
 					<?php if($order->getJoinedWithOrderId()): ?>
 						<tr>
 							<td style="font-weight: bolder;font-size: 1.1rem"><?=Tr::_('Joined with order:')?></td>
-							<td style="font-weight: bolder;font-size: 1.1rem"><?=Admin_Managers::Order()->renderItemName($order->getJoinedWithOrderId())?></td>
+							<td style="font-weight: bolder;font-size: 1.1rem"><?=Application_Service_Admin::Order()->renderItemName($order->getJoinedWithOrderId())?></td>
 						</tr>
 					<?php endif; ?>
 					
@@ -83,10 +83,12 @@ $order = $this->getRaw( 'order' );
 						<td nowrap=""><b><?=Tr::_('Purchase date and time:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($order->getDatePurchased()) ?></td>
 					</tr>
+					<?php /*
 					<tr>
 						<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= $order->getIpAddress() ?></td>
 					</tr>
+					*/ ?>
 					<tr>
 						<td><b><?=Tr::_('Delivery method:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=$order->getDeliveryMethod()?->getTitle()?></td>
@@ -95,6 +97,7 @@ $order = $this->getRaw( 'order' );
 						<td><b><?=Tr::_('Payment method:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=$order->getPaymentMethod()?->getTitle()?></td>
 					</tr>
+					<?php /*
 					<tr>
 						<td><b><?=Tr::_('Indicative total weight:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Locale::float($order->getTotalWeightOfProducts())?></td>
@@ -103,6 +106,7 @@ $order = $this->getRaw( 'order' );
 						<td><b><?=Tr::_('Indicative total volume:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Locale::float($order->getTotalVolumeOfProducts())?></td>
 					</tr>
+					*/ ?>
 					
 					<tr>
 						<td><b><?=Tr::_('Payment required:')?></b></td>
@@ -117,7 +121,8 @@ $order = $this->getRaw( 'order' );
 						
 						<?php if(
 							!$order->getPaid() &&
-							!$order->getDispatched()
+							!$order->getDispatched() &&
+							!$order->getDelivered()
 						): ?>
 							<tr>
 								<td><b><?=Tr::_('Payment page URL:')?></b></td>
@@ -154,7 +159,7 @@ $order = $this->getRaw( 'order' );
 					
 				</table>
 
-				<?php Admin_Managers::Complaint()->showOrderComplaints( $order ); ?>
+				<?php Application_Service_Admin::Complaint()->showOrderComplaints( $order ); ?>
 				
 			</div>
 		</div>
@@ -167,7 +172,7 @@ $order = $this->getRaw( 'order' );
 					<tr>
 						<td></td>
 						<td>
-							<?=Admin_Managers::Customer()->renderItemName( $order->getCustomerId() )?>
+							<?=Application_Service_Admin::Customer()->renderItemName( $order->getCustomerId() )?>
 							<br>
 						</td>
 					</tr>
@@ -190,7 +195,7 @@ $order = $this->getRaw( 'order' );
 		<div style="margin: 10px;" class="card">
 			<div class="card-header"><b><?=Tr::_('Billing address')?></b></div>
 			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getBillingAddress() )?>
+				<?=Application_Service_Admin::Customer()->formatAddress( $order->getEshop(), $order->getBillingAddress() )?>
 				
 				<?=Plugin::get( Plugin_ChangeBillingAddress_Main::KEY )?->renderButton()?>
 			</div>
@@ -200,7 +205,7 @@ $order = $this->getRaw( 'order' );
 		<div style="margin: 10px;" class="card">
 			<div class="card-header"><b><?=Tr::_('Delivery address')?></b></div>
 			<div class="card-body">
-				<?=Admin_Managers::Customer()->formatAddress( $order->getEshop(), $order->getDeliveryAddress() )?>
+				<?=Application_Service_Admin::Customer()->formatAddress( $order->getEshop(), $order->getDeliveryAddress() )?>
 				
 				<?=Plugin::get( Plugin_ChangeDeliveryAddress_Main::KEY )?->renderButton()?>
 			</div>

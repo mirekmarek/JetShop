@@ -12,7 +12,7 @@ use Jet\Tr;
 
 use Jet\MVC_View;
 use Jet\Form;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Supplier;
 use JetApplication\Supplier_GoodsOrder;
 
@@ -85,7 +85,7 @@ $item = $this->getRaw('item');
 		</thead>
 	<?php foreach($item->getItems() as $i): ?>
 	<tr>
-		<td nowrap=""><?=Admin_Managers::Product()->renderItemName($i->getProductId())?></td>
+		<td nowrap=""><?=Application_Service_Admin::Product()->renderItemName($i->getProductId())?></td>
 		<td nowrap=""><?=$i->getProductEan()?></td>
 		<td nowrap=""><?=$i->getProductInternalCode()?></td>
 		<td nowrap=""><?=$i->getProductSupplierCode()?></td>

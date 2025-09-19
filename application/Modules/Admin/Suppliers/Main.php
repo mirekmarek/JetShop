@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Suppliers;
 
 
-use JetApplication\Admin_Managers_Supplier;
+use JetApplication\Application_Service_Admin_Supplier;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Supplier;
 
 
-class Main extends Admin_Managers_Supplier
+class Main extends Application_Service_Admin_Supplier
 {
 	public const ADMIN_MAIN_PAGE = 'suppliers';
 	

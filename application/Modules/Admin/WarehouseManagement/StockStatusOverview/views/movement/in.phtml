@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_badge;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\WarehouseManagement_StockMovement;
 
 /**
@@ -27,7 +27,7 @@ $mv = $this->getRaw('movement');
 		<?=Locale::dateAndTime($mv->getDateTime())?>
 	</td>
 	<td>
-		<?=Admin_Managers::Context()->showContext($mv->getContext())?>
+		<?=Application_Service_Admin::Context()->showContext($mv->getContext())?>
 	</td>
 	<td>
 		<?php
@@ -48,19 +48,19 @@ $mv = $this->getRaw('movement');
 	</td>
 	<td>
 		<?php if($mv->getCurrency()): ?>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getCurrency(), $mv->getPricePerUnit() )?>
+			<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getCurrency(), $mv->getPricePerUnit() )?>
 			<?php if($mv->getEntryCurrencyIsDifferent()): ?>
 				<br>
-				<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit() )?>
+				<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit() )?>
 			<?php endif; ?>
 		<?php endif; ?>
 	</td>
 	<td>
 		<?php if($mv->getCurrency()): ?>
-			<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getCurrency(), $mv->getPricePerUnit()*$mv->getNumberOfUnits() )?>
+			<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getCurrency(), $mv->getPricePerUnit()*$mv->getNumberOfUnits() )?>
 			<?php if($mv->getEntryCurrencyIsDifferent()): ?>
 				<br>
-				<?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit()*$mv->getNumberOfUnits() )?>
+				<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithoutVAT( $mv->getEntryCurrency(), $mv->getEntryPricePerUnit()*$mv->getNumberOfUnits() )?>
 			<?php endif; ?>
 		<?php endif; ?>
 	</td>

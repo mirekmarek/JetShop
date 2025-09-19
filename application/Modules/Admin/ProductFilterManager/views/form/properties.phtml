@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\ProductFilterManager;
 
 use Jet\Form;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Property;
 
 /**
@@ -21,7 +21,7 @@ use JetApplication\Property;
 $form = $this->getRaw('form');
 $properties = $this->getRaw('properties');
 
-$property_manager = Admin_Managers::Property();
+$property_manager = Application_Service_Admin::Property();
 
 ?>
 

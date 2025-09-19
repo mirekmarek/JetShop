@@ -17,7 +17,7 @@ use Jet\Logger;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\Navigation_Breadcrumb;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement_StockCard;
@@ -48,7 +48,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
 			$q = [];
-			$res = Admin_Managers::FulltextSearch()->search(
+			$res = Application_Service_Admin::FulltextSearch()->search(
 				Product::getEntityType(),
 				$search
 			);

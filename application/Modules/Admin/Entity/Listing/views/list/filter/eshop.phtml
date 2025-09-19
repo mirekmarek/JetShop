@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -22,7 +22,7 @@ $filter_form = $listing->getFilterForm();
 $field = $filter_form->field( 'eshop' );
 $field->input()->addJsAction( 'onchange', 'this.form.submit()' );
 
-echo Admin_Managers::EntityListing()->renderListingFilter(
+echo Application_Service_Admin::EntityListing()->renderListingFilter(
 	filter:      $filter,
 	title:       Tr::_('e-shop', dictionary: Tr::COMMON_DICTIONARY),
 	form_fields: [$field],

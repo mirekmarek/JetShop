@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Complaints;
 
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Complaint;
 
 
@@ -83,7 +83,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		 */
 		$complaint = $this->current_item;
 		
-		if(($sent_email=Admin_Managers::EntityEdit()->handleShowSentEmail( $complaint ))) {
+		if(($sent_email=Application_Service_Admin::EntityEdit()->handleShowSentEmail( $complaint ))) {
 			$this->content->output( $sent_email );
 			return;
 		}

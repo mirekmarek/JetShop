@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\Email\Templates;
 
 
-use JetApplication\Admin_Managers_Content_EMailTemplates;
+use JetApplication\Application_Service_Admin_Content_EMailTemplates;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EMail_TemplateText;
 
 
-class Main extends Admin_Managers_Content_EMailTemplates
+class Main extends Application_Service_Admin_Content_EMailTemplates
 {
 	public const ADMIN_MAIN_PAGE = 'content-email-templates';
 	

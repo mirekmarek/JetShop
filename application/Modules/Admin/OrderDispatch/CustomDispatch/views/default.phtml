@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\OrderDispatch;
 use Jet\Form;
 use Jet\Http_Request;
@@ -109,7 +109,7 @@ $form->field('context_number')->input()->addJsAction('onchange', "CustomOD.conte
 		<div class="col-md-8">
 			<div style="display: grid;align-items: center;gap: 10px;padding: 10px;grid-template-columns: 100px 1fr 100px 100px 100px">
 				<div style="text-align: right"><?=Tr::_('Product:')?></div>
-				<div><?=Admin_Managers::Product()->renderSelectWidget("CustomOD.add_item_product_id=selected_item.id;")?></div>
+				<div><?=Application_Service_Admin::Product()->renderSelectWidget("CustomOD.add_item_product_id=selected_item.id;")?></div>
 				<div style="text-align: right"><?=Tr::_('Number of units:')?></div>
 				<div><input type="number" step="1" value="1" class="form-control" id="add_item_qty"></div>
 				<div><?=UI::button_create(' ')->setOnClick("CustomOD.addItem()")->setClass(UI_button::CLASS_PRIMARY)?></div>

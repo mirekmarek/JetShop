@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\CustomerBlacklist;
 use JetApplication\MoneyRefund;
 
@@ -24,7 +24,7 @@ $item = $this->getRaw('item');
 <?php if($item->getCompanyName()): ?>
 <?=$item->getCompanyName()?><br>
 <?php endif; ?>
-<?=$item->getFirstName()?> <?=$item->getSurname()?> (<?=Admin_Managers::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
+<?=$item->getFirstName()?> <?=$item->getSurname()?> (<?=Application_Service_Admin::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
 <a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
 <?=$item->getPhone()?><br>
 

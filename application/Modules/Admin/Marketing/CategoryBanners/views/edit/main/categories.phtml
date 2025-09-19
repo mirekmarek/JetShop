@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Marketing\CategoryBanners;
 
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShop;
 
 use Jet\MVC_View;
@@ -34,7 +34,7 @@ $category_ids = $this->getRaw('category_ids');
 		</td>
 		<?php endif; ?>
 		
-		<td><?=Admin_Managers::Category()->renderItemName( $c_id )?></td>
+		<td><?=Application_Service_Admin::Category()->renderItemName( $c_id )?></td>
 	</tr>
 	<?php endforeach; ?>
 </table>

@@ -11,7 +11,7 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Category;
 
 /**
@@ -61,7 +61,7 @@ $toolbar = $this->getRaw('toolbar');
 
 <?php if($category): ?>
 <div style="position: fixed;right: 2px;top: 100px;z-index: 999;">
-	<?=Admin_Managers::TODO()?->renderTool( Category::getEntityType(), $category->getId() );?>
+	<?=Application_Service_Admin::TODO()?->renderTool( Category::getEntityType(), $category->getId() );?>
 </div>
 <?php endif; ?>
 

@@ -11,7 +11,7 @@ namespace JetApplicationModule\Admin\Invoices;
 use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_button;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
 use Jet\MVC_View;
@@ -20,7 +20,7 @@ use JetApplication\Invoice;
 /**
  * @var MVC_View $this
  * @var Invoice     $invoice
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  */
 
 $invoice = $this->getRaw( 'invoice' );

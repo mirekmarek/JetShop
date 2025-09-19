@@ -13,7 +13,7 @@ use Jet\Http_Request;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\KindOfProduct;
 use JetApplication\Supplier;
 use JetApplication\WarehouseManagement_StockVerification;
@@ -195,7 +195,7 @@ echo $controller->getEditorManager()->renderToolbar( $verification?$verification
 			$form->field('/item_'.$p_id.'/qty_reality')->setIsReadonly(true);
 			?>
 		<tr>
-			<td><?=Admin_Managers::Product()->renderItemName($item->getProductId())?></td>
+			<td><?=Application_Service_Admin::Product()->renderItemName($item->getProductId())?></td>
 			<td><?=$item->getProductEan()?></td>
 			<td><?=$item->getProductInternalCode()?></td>
 			<td><?=$item->getProductSupplierCode()?></td>

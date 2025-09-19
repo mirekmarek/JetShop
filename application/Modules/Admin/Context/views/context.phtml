@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Context;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Context;
 use JetApplication\Order;
 use JetApplication\ReturnOfGoods;
@@ -30,14 +30,14 @@ switch( $context->getContextType() ) {
 		
 		echo Tr::_('Order');
 		echo '&nbsp;';
-		echo Admin_Managers::Order()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::Order()->renderItemName( $context->getContextId() );
 		
 		break;
 	case Complaint::getProvidesContextType():
 		
 		echo Tr::_('Complaint');
 		echo '&nbsp;';
-		echo Admin_Managers::Complaint()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::Complaint()->renderItemName( $context->getContextId() );
 		/*
 		echo '<br>';
 		echo Tr::_('Order');
@@ -49,7 +49,7 @@ switch( $context->getContextType() ) {
 	case ReturnOfGoods::getProvidesContextType():
 		echo Tr::_('Return of goods');
 		echo '&nbsp;';
-		echo Admin_Managers::ReturnOfGoods()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::ReturnOfGoods()->renderItemName( $context->getContextId() );
 		
 		/*
 		echo '<br>';
@@ -64,13 +64,13 @@ switch( $context->getContextType() ) {
 		
 		echo Tr::_('Order dispatch');
 		echo '&nbsp;';
-		echo Admin_Managers::OrderDispatch()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::OrderDispatch()->renderItemName( $context->getContextId() );
 		echo '<br>';
 		
 		$order_dispatch = OrderDispatch::get( $context->getContextId() );
 		$dispatch_context = $order_dispatch?->getContext();
 		if($dispatch_context) {
-			echo Admin_Managers::Context()->showContext( $dispatch_context );
+			echo Application_Service_Admin::Context()->showContext( $dispatch_context );
 		}
 		
 		break;
@@ -78,19 +78,19 @@ switch( $context->getContextType() ) {
 	case WarehouseManagement_ReceiptOfGoods::getProvidesContextType():
 		echo Tr::_('Receipt of Goods');
 		echo '&nbsp;';
-		echo Admin_Managers::ReceiptOfGoods()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::ReceiptOfGoods()->renderItemName( $context->getContextId() );
 		
 		break;
 	case WarehouseManagement_TransferBetweenWarehouses::getProvidesContextType():
 		echo Tr::_('Transfer between warehouses');
 		echo '&nbsp;';
-		echo Admin_Managers::TransferBetweenWarehouses()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::TransferBetweenWarehouses()->renderItemName( $context->getContextId() );
 		break;
 	case WarehouseManagement_LossOrDestruction::getProvidesContextType():
 		echo Tr::_('Loss or destruction');
 		echo '&nbsp;';
 		
-		echo Admin_Managers::LossOrDestruction()->renderItemName( $context->getContextId() );
+		echo Application_Service_Admin::LossOrDestruction()->renderItemName( $context->getContextId() );
 		
 		break;
 	default:

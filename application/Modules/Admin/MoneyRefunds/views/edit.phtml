@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\MoneyRefund;
 
 /**
@@ -32,7 +32,7 @@ $money_refund = $this->getRaw( 'money_refund' );
 	<div class="card card-body" style="margin: 10px;">
 		<div style="display: grid;grid-template-columns: auto 1fr;gap: 20px;font-size: 1.2rem">
 			<div style="font-weight: bolder"><?=Tr::_('Amount to be refunded:')?></div>
-			<div><b><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></b></div>
+			<div><b><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $money_refund->getCurrency(), $money_refund->getAmountToBeRefunded() )?></b></div>
 			<div style="font-weight: bolder"><?=Tr::_('Internal summary:')?></div>
 			<div><?=nl2br($money_refund->getInternalSummary())?></div>
 		</div>
@@ -40,10 +40,10 @@ $money_refund = $this->getRaw( 'money_refund' );
 	<br><br><br><br>
 	
 	<div id="o_history" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderEventHistory( $money_refund, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $money_refund, true )?>
 	
 	<div id="o_sent_emails" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderSentEmails( $money_refund, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderSentEmails( $money_refund, true )?>
 
 	<br><br><br><br>
 </div>

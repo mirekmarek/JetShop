@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product;
 
 /**
@@ -18,5 +18,5 @@ use JetApplication\Product;
 
 $item = $this->getRaw('item');
 
-echo Admin_Managers::KindOfProduct()->renderItemName( $item->getKindId() );
+echo Application_Service_Admin::KindOfProduct()->renderItemName( $item->getKindId() );
 

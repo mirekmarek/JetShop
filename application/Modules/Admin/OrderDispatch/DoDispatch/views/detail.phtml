@@ -11,7 +11,7 @@ use Jet\Data_Text;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\OrderDispatch;
 
 
@@ -103,7 +103,7 @@ require 'detail/js.phtml';
 		<?php if($dispatch->getCod()):?>
 		<div><?=Tr::_('COD:')?></div>
 		<div>
-			<b><?=Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCodCurrency(), $dispatch->getCod() )?></b>
+			<b><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCodCurrency(), $dispatch->getCod() )?></b>
 		</div>
 		<?php endif; ?>
 		

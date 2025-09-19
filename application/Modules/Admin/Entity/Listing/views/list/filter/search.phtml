@@ -11,7 +11,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View $this
@@ -26,7 +26,7 @@ $field = $filter_form->field( 'search' );
 
 $field->input()->addCustomCssStyle('width:500px');
 
-echo Admin_Managers::EntityListing()->renderListingFilter(
+echo Application_Service_Admin::EntityListing()->renderListingFilter(
 	filter:      $filter,
 	title:       Tr::_('Search', dictionary: Tr::COMMON_DICTIONARY),
 	form_fields: [$field],

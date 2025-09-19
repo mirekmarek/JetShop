@@ -8,7 +8,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\MVC_View;
 use JetApplication\ReturnOfGoods;
 
@@ -23,7 +23,7 @@ $returns = $this->getRaw('returns');
 <table>
 	<?php foreach( $returns as $return ): ?>
 		<tr>
-			<td><?=Admin_Managers::ReturnOfGoods()->renderItemName( $return->getId() )?></td>
+			<td><?=Application_Service_Admin::ReturnOfGoods()->renderItemName( $return->getId() )?></td>
 			<td><?=$return->getStatus()->showAdmin()?></td>
 		</tr>
 	<?php endforeach; ?>

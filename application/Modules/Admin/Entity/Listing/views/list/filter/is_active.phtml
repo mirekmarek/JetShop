@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Entity\Listing;
 use Jet\Form_Field;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShops;
 
 
@@ -56,7 +56,7 @@ if($filter->isMultiEShopMode()) {
 }
 
 
-echo Admin_Managers::EntityListing()->renderListingFilter(
+echo Application_Service_Admin::EntityListing()->renderListingFilter(
 	filter:      $filter,
 	title:       Tr::_('Is active', dictionary: Tr::COMMON_DICTIONARY),
 	form_fields: $fields,

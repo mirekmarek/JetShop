@@ -9,10 +9,10 @@ namespace JetApplicationModule\Admin\Content\MagicTags;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers_Content_MagicTags;
+use JetApplication\Application_Service_Admin_Content_MagicTags;
 
 
-class Main extends Admin_Managers_Content_MagicTags
+class Main extends Application_Service_Admin_Content_MagicTags
 {
 	
 	public function renderTool(): string

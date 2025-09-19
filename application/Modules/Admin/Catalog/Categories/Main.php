@@ -8,13 +8,13 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 
 
 use Jet\Tr;
-use JetApplication\Admin_Managers_Category;
+use JetApplication\Application_Service_Admin_Category;
 use JetApplication\Category;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_Category
+class Main extends Application_Service_Admin_Category
 {
 	public const ADMIN_MAIN_PAGE = 'categories';
 	
@@ -26,7 +26,7 @@ class Main extends Admin_Managers_Category
 		
 		$selected = $selected_category_id ? Category::get($selected_category_id) : null;
 		
-		return Admin_Managers::UI()->renderSelectEntityWidget(
+		return Application_Service_Admin::UI()->renderSelectEntityWidget(
 			name: $name,
 			caption: Tr::_('... select category ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,

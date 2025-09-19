@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Marketing\Banners;
 
 use Jet\Http_Request;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -53,7 +53,7 @@ require 'select.phtml';
 
 
 <div id="main-col">
-	<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields( $form );?>
+	<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields( $form );?>
 	
 	<?=$form->field('active_from')?>
 	<?=$form->field('active_till')?>

@@ -8,17 +8,17 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\MoneyRefund;
 
 /**
  * @var MVC_View $this
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  * @var MoneyRefund $item
  */
 
 $listing = $this->getRaw('listing');
 $item = $this->getRaw('item');
 
-echo Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $item->getCurrency(), $item->getAmountToBeRefunded() );
+echo Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $item->getCurrency(), $item->getAmountToBeRefunded() );

@@ -11,7 +11,7 @@ use Jet\Form;
 use Jet\Form_Renderer;
 use Jet\MVC_View;
 use Jet\Locale;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Property_Options_Option;
 use JetApplication\EShop;
 use JetApplication\Property;
@@ -32,19 +32,19 @@ $form->renderer()->setDefaultLabelWidth([
 
 echo $form->start();
 
-echo Admin_Managers::UI()->renderEntityToolbar($form);
+echo Application_Service_Admin::UI()->renderEntityToolbar($form);
 ?>
 	<div id="main-col">
 			<?=$this->getRaw('tabs')?>
 			<br>
 			
-			<?=Admin_Managers::EntityEdit()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
+			<?=Application_Service_Admin::EntityEdit()->renderEntityActivation( $option, !$form->getIsReadonly() )?>
 			
-			<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields($form)?>
+			<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields($form)?>
 			<?php
 			
 			if($option->getDescriptionMode()) {
-				echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
+				echo Application_Service_Admin::EntityEdit()->renderDescriptionBlocks(
 					form: $form,
 					renderer: function( Locale $locale, string $locale_str ) use ($option, $form) : void {
 						?>
@@ -55,7 +55,7 @@ echo Admin_Managers::UI()->renderEntityToolbar($form);
 							</fieldset>
 					<?php });
 			} else {
-				echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+				echo Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 					form: $form,
 					renderer: function( EShop $eshop, string $eshop_key ) use ($option, $form) : void {
 						?>

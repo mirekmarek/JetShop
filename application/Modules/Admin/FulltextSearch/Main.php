@@ -10,11 +10,11 @@ use Jet\Factory_MVC;
 use Jet\MVC;
 use Jet\Translator;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\Admin_Managers_FulltextSearch;
+use JetApplication\Application_Service_Admin_FulltextSearch;
 use JetApplication\Application_Admin;
 
 
-class Main extends Admin_Managers_FulltextSearch
+class Main extends Application_Service_Admin_FulltextSearch
 {
 	public const WHISPERER_PAGE_ID = 'search-whisperer';
 	protected static bool $whisperer_main_included = false;

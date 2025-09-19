@@ -5,6 +5,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 
+use Jet\Form_Renderer;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
@@ -23,20 +24,16 @@ $controller = $this->getController();
 
 $product = $controller->getProduct();
 $marketplace = $controller->getMarketplace();
-$eshop = $controller->getEshop();
 $editable = $controller->getEditable();
 $selling = $controller->getSelling();
 $category = $controller->getCategory();
+$product_join = $controller->getProductJoin();
 
 ?>
 
 <?=$controller->getTabs()?>
-<br>
+
 <?php if($category): ?>
-	<div>
-		<b><?=$category->getCategoryId()?></b> <?=$category->getName()?>
-	</div>
-	
 	<div class="toolbar">
 	<span><?=$selling?
 			UI::badge(UI_badge::SUCCESS, Tr::_('Offered up in the marketplace'))
@@ -53,6 +50,41 @@ $category = $controller->getCategory();
 			?>
 		<?php endif; ?>
 	</div>
-	
+
+	<div class="card card-body">
+		<div class="row">
+			<div class="col-md-2" style="padding-top: 10px;"><?=Tr::_('Connected marketplace category:')?></div>
+			<div class="col-md-5" style="padding: 10px;"><b><?=$category->getCategoryId()?></b> <?=$category->getName()?></div>
+		</div>
+		
+		
+		<?php if($product_join && $editable):
+			$form = $product_join->getEditForm();
+			
+			$form->renderer()->setDefaultFieldWidth([
+				Form_Renderer::LJ_SIZE_MEDIUM => 5
+			]);
+			$form->renderer()->setDefaultLabelWidth([
+				Form_Renderer::LJ_SIZE_MEDIUM => 2
+			]);
+			
+			echo $form->start();
+			foreach($form->getFields() as $field):
+				echo $field;
+			endforeach;
+			?>
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-5">
+					<?=UI::button_save()?>
+				</div>
+			</div>
+		
+			<?php
+			echo $form->end();
+			?>
+		<?php endif; ?>
+	</div>
+
 	
 <?php endif; ?>

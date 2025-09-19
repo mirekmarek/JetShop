@@ -13,7 +13,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Pricelists;
 use JetApplication\Product;
 
@@ -56,7 +56,7 @@ require '_toolbar.phtml';
 <div class="toolbar" style="display: grid;grid-template-columns: 200px 1fr;align-items: center">
 	<?php if( $editable ): ?>
 			<div style="text-align: right;font-weight: bolder;"><?=Tr::_('Add product: ')?></div>
-			<div style="width: 400px;"><?=Admin_Managers::Product()->renderSelectWidget(
+			<div style="width: 400px;"><?=Application_Service_Admin::Product()->renderSelectWidget(
 				on_select: "$('#set_add_item_form__product_id').val(selected_item.id);$('#set_add_item_form').submit();",
 				only_type_filter: [Product::PRODUCT_TYPE_REGULAR]
 			)?></div>
@@ -145,7 +145,7 @@ require '_toolbar.phtml';
 				<div class="row" style="padding-bottom: 10px;">
 					<div class="col-md-2" style="font-weight: bolder"><?=Tr::_('Calculated price:')?></div>
 					<div class="col-md-2" style="font-weight: bolder">
-						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $product->getCalculatedSetPrice( $pricelist ) )?>
+						<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $pricelist, $product->getCalculatedSetPrice( $pricelist ) )?>
 					</div>
 				</div>
 			
@@ -162,7 +162,7 @@ require '_toolbar.phtml';
 				<div class="row" style="padding-top: 10px;">
 					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem"><?=Tr::_('Price:')?></div>
 					<div class="col-md-2" style="font-weight: bolder;font-size: 1.2rem">
-						<?=Admin_Managers::PriceFormatter()->formatWithCurrency( $pricelist, $product->getPrice( $pricelist ) )?>
+						<?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $pricelist, $product->getPrice( $pricelist ) )?>
 					</div>
 				</div>
 				</fieldset>

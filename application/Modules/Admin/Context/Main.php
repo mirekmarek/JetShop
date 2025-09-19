@@ -9,11 +9,11 @@ namespace JetApplicationModule\Admin\Context;
 
 use Jet\Application_Module;
 use Jet\Factory_MVC;
-use JetApplication\Admin_Managers_Context;
+use JetApplication\Application_Service_Admin_Context;
 use JetApplication\Context;
 
 
-class Main extends Application_Module implements Admin_Managers_Context
+class Main extends Application_Module implements Application_Service_Admin_Context
 {
 	
 	public function showContext( Context $context ): string

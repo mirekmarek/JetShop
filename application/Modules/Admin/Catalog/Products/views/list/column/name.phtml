@@ -10,15 +10,15 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\EShops;
 use JetApplication\Product;
 
 /**
  * @var MVC_View $this
  * @var Product $item
- * @var Admin_Managers_EShopEntity_Listing $listing
+ * @var Application_Service_Admin_EShopEntity_Listing $listing
  */
 
 $item = $this->getRaw('item');
@@ -31,7 +31,7 @@ $img = $item->getEshopData(EShops::getCurrent())->getImageThumbnailUrl(0, 120, 1
 ?>
 
 <div style="display: flex;align-items: center">
-	<?=Admin_Managers::EntityEdit()->renderPreviewButton( $item );?>
+	<?=Application_Service_Admin::EntityEdit()->renderPreviewButton( $item );?>
 	
 	<div style="padding: 5px;display: grid;grid-template-columns: 140px 1fr">
 		<div style="padding: 5px;">
@@ -73,7 +73,7 @@ $img = $item->getEshopData(EShops::getCurrent())->getImageThumbnailUrl(0, 120, 1
 				<td><?=$variant->renderActiveState() ?></td>
 				<td>
 					<div style="display: flex;align-items: center">
-						<?=Admin_Managers::EntityEdit()->renderPreviewButton( $variant );?>
+						<?=Application_Service_Admin::EntityEdit()->renderPreviewButton( $variant );?>
 						&nbsp;&nbsp;
 						<a href="<?=$variant->getEditUrl()?>"><?=$variant->getAdminTitle()?></a>
 					</div>
@@ -108,7 +108,7 @@ $img = $item->getEshopData(EShops::getCurrent())->getImageThumbnailUrl(0, 120, 1
 		<tr>
 			<td><?=$set_item_product->renderActiveState()?></td>
 			<td>
-				<?=Admin_Managers::EntityEdit()->renderPreviewButton( $set_item_product );?>
+				<?=Application_Service_Admin::EntityEdit()->renderPreviewButton( $set_item_product );?>
 				&nbsp;&nbsp;
 				<a href="<?=$set_item_product->getEditUrl()?>"><?=$set_item_product->getAdminTitle()?></a>
 			</td>

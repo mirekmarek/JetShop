@@ -10,7 +10,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use JetApplication\Payment_Method_Price;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Payment_Method;
 
 /**
@@ -52,6 +52,8 @@ $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadP
 <?=$form->field('delivery_methods' )?>
 <?=$form->field('discount_is_not_allowed')?>
 <?=$form->field('free_payment_limit')?>
+<?=$form->field( 'minimal_order_amount')?>
+<?=$form->field( 'maximal_order_amount')?>
 <?=$form->field('priority')?>
 <div class="form-group row">
 	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?=Tr::_('Price:')?></label>
@@ -60,7 +62,7 @@ $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadP
 			<?php foreach( $item->getEshop()->getPricelists() as $pricelist):
 				$price = Payment_Method_Price::get( $pricelist, $item->getId() );
 				
-				echo Admin_Managers::PriceFormatter()->showPriceInfo( $price );
+				echo Application_Service_Admin::PriceFormatter()->showPriceInfo( $price );
 			endforeach; ?>
 
 		</div>
@@ -68,9 +70,11 @@ $form->field( 'backend_module_name' )->input()->addJsAction('onchange', 'reloadP
 </div>
 <br><br>
 
-<?=$form->field('title')?>
-<?=$form->field('description')?>
-<?=$form->field('description_short')?>
-<?=$form->field('confirmation_email_info_text')?>
-<?=$form->field( 'order_final_page_info_text')?>
+<?=$form->field( 'title' )?>
+<?=$form->field( 'description' )?>
+<?=$form->field( 'description_short' )?>
+<?=$form->field( 'confirmation_email_info_text' )?>
+<?=$form->field( 'order_final_page_info_text' )?>
+<?=$form->field( 'onlinepayment_continue_text_info' )?>
+<?=$form->field( 'onlinepayment_continue_text_btn' )?>
 

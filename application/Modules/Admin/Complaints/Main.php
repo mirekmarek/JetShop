@@ -8,14 +8,14 @@ namespace JetApplicationModule\Admin\Complaints;
 
 
 use Jet\Factory_MVC;
-use JetApplication\Admin_Managers_Complaint;
+use JetApplication\Application_Service_Admin_Complaint;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\Complaint;
 use JetApplication\PDF_TemplateProvider;
 
 
-class Main extends Admin_Managers_Complaint implements PDF_TemplateProvider
+class Main extends Application_Service_Admin_Complaint implements PDF_TemplateProvider
 {
 	public const ADMIN_MAIN_PAGE = 'complaints';
 	

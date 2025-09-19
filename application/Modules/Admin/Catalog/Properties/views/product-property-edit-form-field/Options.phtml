@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Form;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Property;
 
 /**
@@ -33,7 +33,7 @@ $value->input()->addCustomCssStyle('height:300px');
 
 $value->setLabel(
 	'<a href="'.$property->getEditUrl().'" tabindex="99999">'.$property->getInternalName().'</a><br>'
-	.Admin_Managers::Property()->renderActiveState( $property )
+	.Application_Service_Admin::Property()->renderActiveState( $property )
 );
 
 echo $value;

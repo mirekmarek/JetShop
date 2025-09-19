@@ -12,7 +12,7 @@ use Jet\Form_Renderer;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -92,7 +92,7 @@ $this->setVar('category_ids', $form->field('/categories/selected_categories')->g
 		<?php if($this->getBool('editable')): ?>
 		<div style="display: flex;align-items: center;">
 			<div style="padding: 5px;"><?=Tr::_('Add category:')?></div>
-			<div style="width: 400px"><?=Admin_Managers::Category()->renderSelectWidget(on_select: "FilterEditCategories.add(selected_item);")?></div>
+			<div style="width: 400px"><?=Application_Service_Admin::Category()->renderSelectWidget(on_select: "FilterEditCategories.add(selected_item);")?></div>
 		</div>
 		<?php endif; ?>
 		

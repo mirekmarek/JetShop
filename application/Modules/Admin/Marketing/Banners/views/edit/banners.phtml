@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\Marketing\Banners;
 
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 use Jet\MVC_View;
 use Jet\Form;
@@ -24,7 +24,7 @@ $item = $this->getRaw( 'item' );
 $group = $item->getGroup();
 
 
-echo Admin_Managers::EntityEdit()->renderToolbar();
+echo Application_Service_Admin::EntityEdit()->renderToolbar();
 ?>
 <?=$this->getRaw('tabs')?>
 

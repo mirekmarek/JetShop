@@ -11,7 +11,7 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 use Jet\MVC_View;
 use Jet\Form_Renderer;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product;
 
 /**
@@ -28,7 +28,7 @@ $this->setVar('form', $form);
 $form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
 $form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 6 ] );
 
-$property_manager = Admin_Managers::Property();
+$property_manager = Application_Service_Admin::Property();
 
 require '_toolbar.phtml';
 
@@ -43,7 +43,7 @@ $show = function( Product $product, string $main_prefix = '' ) use ($form, $prop
 		<br>
 		<div class="form-group row">
 			<div class="col-md-1"><?=Tr::_('Kind of product:')?></div>
-			<div class="col-md-8"><?=Admin_Managers::KindOfProduct()->renderItemName($kind->getId())?></div>
+			<div class="col-md-8"><?=Application_Service_Admin::KindOfProduct()->renderItemName($kind->getId())?></div>
 		</div>
 		<br>
 		<?php

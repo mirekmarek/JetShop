@@ -89,13 +89,14 @@ echo $this->getRaw('tabs');
 		</table>
 
 
-		<legend><?=Tr::_('Addresses')?></legend>
+
+	<legend><?=Tr::_('Addresses')?></legend>
 		<fieldset>
 		<?php foreach($customer->getAddresses() as $address): ?>
 			<div class="card" style="width: 400px;height: 190px;float: left;margin: 10px;">
 				<div class="card-body">
 					<p class="card-text">
-						<?=Admin_Managers::Customer()->formatAddress( $customer->getEshop(), $address )?>
+						<?=Application_Service_Admin::Customer()->formatAddress( $customer->getEshop(), $address )?>
 					</p>
 				</div>
 			</div>
@@ -103,13 +104,14 @@ echo $this->getRaw('tabs');
 
 		</fieldset>
 		<br/>
-
+	
+	<?php /*
 		<legend><?=Tr::_('Orders')?></legend>
 		<fieldset>
 			<?=Admin_Managers::Order()->showOrdersOfCustomer( $customer )?>
 		</fieldset>
 		
 		<?=EMailMarketing::SubscriptionManager()->showStatus( $customer->getEshop(), $customer->getEmail() )?>
-	
+	*/ ?>
 </div>
 

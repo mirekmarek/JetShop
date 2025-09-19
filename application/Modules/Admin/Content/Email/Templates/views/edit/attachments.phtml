@@ -11,7 +11,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_dialog;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EMail_TemplateText;
 use JetApplication\EShop;
 
@@ -26,13 +26,13 @@ $editable = $item->isEditable();
 
 $view = $this;
 
-echo Admin_Managers::EntityEdit()->renderToolbar();
+echo Application_Service_Admin::EntityEdit()->renderToolbar();
 
 echo $this->getRaw('tabs');
 ?>
 <div id="main-col">
 <?php
-echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+echo Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 	renderer: function(EShop $eshop ) use ($editable, $item, $view) {
 		$view->setVar('eshop', $eshop);
 		

@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\ReturnOfGoods;
 
 /**
@@ -19,7 +19,7 @@ use JetApplication\ReturnOfGoods;
 
 $return = $this->getRaw( 'return' );
 
-$money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $return->getProvidesContext() );
+$money_refunds = Application_Service_Admin::MoneyRefund()?->showMoneyRefunds( $return->getProvidesContext() );
 
 ?>
 <?php require 'edit/toolbar.phtml';?>
@@ -35,7 +35,7 @@ $money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $return->getP
 		<div class="card card-body" style="margin: 10px;">
 			<h5><?=Tr::_('Product')?></h5>
 
-			<p><?=Admin_Managers::Product()->renderItemName( $return->getProductId() )?></p>
+			<p><?=Application_Service_Admin::Product()->renderItemName( $return->getProductId() )?></p>
 		</div>
 	</fieldset>
 
@@ -65,11 +65,11 @@ $money_refunds = Admin_Managers::MoneyRefund()?->showMoneyRefunds( $return->getP
 	
 
 	<div id="o_history" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderEventHistory( $return, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $return, true )?>
 
 
 	<div id="o_sent_emails" class="o_anchor"></div>
-	<?=Admin_Managers::EntityEdit()->renderSentEmails( $return, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderSentEmails( $return, true )?>
 
 	<br><br><br><br>
 </div>

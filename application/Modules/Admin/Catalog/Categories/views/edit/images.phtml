@@ -8,12 +8,12 @@ namespace JetApplicationModule\Admin\Catalog\Categories;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
  */
 
 echo $this->render('lj_start');
-	echo Admin_Managers::Image()->renderStandardManagement();
+	echo Application_Service_Admin::Image()->renderStandardManagement();
 echo $this->render('lj_end');

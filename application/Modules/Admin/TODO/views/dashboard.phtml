@@ -6,7 +6,7 @@
  */
 namespace JetApplicationModule\Admin\TODO;
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity;
 use Jet\Tr;
 use JetApplication\EShopEntity_Definition;
@@ -25,7 +25,7 @@ foreach( $items as $item ):
 		continue;
 	}
 	
-	$manager = Admin_Managers::get( $entity_definition->getAdminManagerInterface() );
+	$manager = Application_Service_Admin::list()->get( $entity_definition->getAdminManagerInterface() );
 	if(!$manager) {
 		continue;
 	}
@@ -61,7 +61,7 @@ endforeach;
 							continue;
 						}
 						
-						$manager = Admin_Managers::get( $entity_definition->getAdminManagerInterface() );
+						$manager = Application_Service_Admin::list()->get( $entity_definition->getAdminManagerInterface() );
 						if(!$manager) {
 							continue;
 						}

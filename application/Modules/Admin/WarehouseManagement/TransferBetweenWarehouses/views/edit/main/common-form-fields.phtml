@@ -11,7 +11,7 @@ use Jet\Form_Renderer;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Item;
 use JetApplication\WarehouseManagement_Warehouse;
@@ -109,7 +109,7 @@ $form->renderer()->setDefaultFieldWidth([
 				$p_id = $item->getProductId();
 				?>
 				<tr style="<?php if(!$item->getNumberOfUnits()):?>opacity: 0.5<?php endif;?>">
-					<td><?=Admin_Managers::Product()->renderItemName($item->getProductId())?></td>
+					<td><?=Application_Service_Admin::Product()->renderItemName($item->getProductId())?></td>
 
 					<td><?=$item->getProductEan()?></td>
 					<td><?=$item->getProductInternalCode()?></td>
@@ -175,5 +175,5 @@ $form->renderer()->setDefaultFieldWidth([
 	
 	<br><br><br>
 	
-	<?=Admin_Managers::EntityEdit()->renderEventHistory( $transfer, true )?>
+	<?=Application_Service_Admin::EntityEdit()->renderEventHistory( $transfer, true )?>
 </div>

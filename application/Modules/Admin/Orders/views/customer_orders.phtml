@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Orders;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Order;
 
 /**
@@ -33,7 +33,7 @@ $orders = $this->getRaw( 'orders' );
 	<?php foreach($orders as $order): ?>
 	<tr>
 		<td><a href="<?=$order->getEditUrl()?>"><?=$order->getNumber()?></a></td>
-		<td><?=Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $order->getTotalAmount_WithVAT() )?></td>
+		<td><?=Application_Service_Admin::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $order->getTotalAmount_WithVAT() )?></td>
 		<td>
 			<ul>
 				<?php foreach($order->getItems() as $item): ?>

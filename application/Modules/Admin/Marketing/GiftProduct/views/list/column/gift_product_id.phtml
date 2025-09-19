@@ -7,8 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\GiftProduct;
 
 
+use Jet\Locale;
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Marketing_Gift_Product;
 
 
@@ -18,4 +22,25 @@ use JetApplication\Marketing_Gift_Product;
  */
 
 $item = $this->getRaw('item');
-echo Admin_Managers::Product()->renderItemName( $item->getGiftProductId() );
+
+$gift_product = $item->getGiftProduct();
+if(!$gift_product) {
+	return;
+}
+
+$available = $gift_product->getNumberOfAvailable( $item->getEshop()->getDefaultAvailability() );
+
+echo Application_Service_Admin::Product()->renderItemName( $gift_product->getId() );
+echo '<br>';
+
+
+if($gift_product->isActive()):
+	echo UI::badge(UI_badge::SUCCESS, Tr::_('Active'));
+else:
+	echo UI::badge(UI_badge::DANGER, Tr::_('Not active'));
+endif;
+echo '<br>';
+
+echo Tr::_('Available: %avl%', ['avl'=>Locale::float($available)]);
+echo '<br>';
+

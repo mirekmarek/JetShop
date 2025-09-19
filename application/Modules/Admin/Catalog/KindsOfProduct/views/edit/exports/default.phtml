@@ -11,7 +11,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use Jet\UI_dialog;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
 
 
@@ -112,7 +112,7 @@ $dialog = UI::dialog('select_category', Tr::_('Select category'), UI_dialog::SIZ
 
 <?=$dialog->start()?>
 	<div style="height: 400px;overflow: auto;" id="select_category_categories">
-		<?= Admin_Managers::KindOfProduct()->renderExportsCategories( $controller, '' );?>
+		<?= Application_Service_Admin::KindOfProduct()->renderExportsCategories( $controller, '' );?>
 	</div>
 <?=$dialog->end()?>
 

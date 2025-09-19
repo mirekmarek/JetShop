@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Complaints;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Complaint;
 
 /**
@@ -33,7 +33,7 @@ $complaints = $this->getRaw( 'complaints' );
 	<tr>
 		<td><a href="<?=$complaint->getEditUrl()?>"><?=$complaint->getNumber()?></a></td>
 		<td>
-			<?=Admin_Managers::Product()->renderItemName( $complaint->getProductId() )?>
+			<?=Application_Service_Admin::Product()->renderItemName( $complaint->getProductId() )?>
 		</td>
 		<td>
 			<?=Locale::dateAndTime( $complaint->getDateStarted() );?>

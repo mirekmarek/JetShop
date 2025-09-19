@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Delivery\Classes;
 
 
-use JetApplication\Admin_Managers_DeliveryClasses;
+use JetApplication\Application_Service_Admin_DeliveryClasses;
 use JetApplication\Delivery_Class;
 use JetApplication\EShopEntity_Basic;
 
 
-class Main extends Admin_Managers_DeliveryClasses
+class Main extends Application_Service_Admin_DeliveryClasses
 {
 	public const ADMIN_MAIN_PAGE = 'delivery-class';
 

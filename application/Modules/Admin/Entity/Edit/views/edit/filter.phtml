@@ -9,15 +9,15 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 
 use Jet\MVC_View;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use Jet\Form;
-use JetApplication\Admin_Managers_EShopEntity_Edit;
+use JetApplication\Application_Service_Admin_EShopEntity_Edit;
 use JetApplication\Product;
 
 /**
  * @var MVC_View   $this
  * @var EShopEntity_Admin_Interface $item
- * @var Admin_Managers_EShopEntity_Edit $edit_manager
+ * @var Application_Service_Admin_EShopEntity_Edit $edit_manager
  * @var Form $form
  */
 
@@ -26,7 +26,7 @@ $edit_manager = $this->getRaw('edit_manager');
 $form = $this->getRaw('filter_form');
 $editable = $item->isEditable();
 
-$p_manager = Admin_Managers::Product();
+$p_manager = Application_Service_Admin::Product();
 
 echo $edit_manager->renderToolbar( $form );
 
@@ -38,7 +38,7 @@ echo $edit_manager->renderToolbar( $form );
 	<br>
 	<?=$form->start();?>
 	<div class="card card-body">
-		<?=Admin_Managers::ProductFilter()->renderFilterForm(); ?>
+		<?=Application_Service_Admin::ProductFilter()->renderFilterForm(); ?>
 	</div>
 	<?=$form->end();?>
 	

@@ -15,7 +15,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Property_Options_Option;
 use JetApplication\EShop;
 use JetApplication\Property;
@@ -80,12 +80,12 @@ echo $this->controller->getEditorManager()->renderToolbar();
 		<?php
 		echo $add_form->start();
 		?>
-		<?=Admin_Managers::EntityEdit()->renderEntityFormCommonFields($add_form)?>
+		<?=Application_Service_Admin::EntityEdit()->renderEntityFormCommonFields($add_form)?>
 		
 		<?php
 		
 		if($new_option->getDescriptionMode()) {
-			echo Admin_Managers::EntityEdit()->renderDescriptionBlocks(
+			echo Application_Service_Admin::EntityEdit()->renderDescriptionBlocks(
 				form: $add_form,
 				renderer: function( Locale $locale, string $locale_str ) use ($new_option, $add_form) : void {
 					?>
@@ -96,7 +96,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 						</fieldset>
 				<?php });
 		} else {
-			echo Admin_Managers::EntityEdit()->renderShopDataBlocks(
+			echo Application_Service_Admin::EntityEdit()->renderShopDataBlocks(
 				form: $add_form,
 				renderer: function( EShop $eshop, string $eshop_key ) use ($new_option, $add_form) : void {
 					?>

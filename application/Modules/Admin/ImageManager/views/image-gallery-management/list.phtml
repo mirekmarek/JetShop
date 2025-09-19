@@ -10,7 +10,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_HasImageGallery_Interface;
 
@@ -22,7 +22,7 @@ use JetApplication\EShopEntity_HasImageGallery_Interface;
  * @var EShopEntity_HasImageGallery_Interface $item
  */
 
-$image_manager = Admin_Managers::Image();
+$image_manager = Application_Service_Admin::Image();
 
 $editable = $this->getBool('editable');
 

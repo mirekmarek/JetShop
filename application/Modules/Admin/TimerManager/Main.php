@@ -11,13 +11,13 @@ use Jet\Factory_MVC;
 use Jet\MVC;
 use Jet\MVC_View;
 use Jet\Translator;
-use JetApplication\Admin_Managers_Timer;
+use JetApplication\Application_Service_Admin_Timer;
 use JetApplication\Application_Admin;
 use JetApplication\Auth_Administrator_Role;
 use JetApplication\EShopEntity_HasTimer_Interface;
 
 
-class Main extends Admin_Managers_Timer
+class Main extends Application_Service_Admin_Timer
 {
 	public const ACTION_VIEW_TIMERS = 'view_timers';
 	public const ACTION_SET_TIMER = 'set_timer';

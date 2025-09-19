@@ -65,7 +65,7 @@ require '_toolbar.phtml';
 		<div>
 			<?php if($selected_mp): ?>
 				<legend><?=$selected_mp->getTitle()?> - <?=$selected_mp_eshop->getName()?></legend>
-				<?php $selected_mp->handleProductSettings( $product, $selected_mp_eshop )?>
+				<?php $selected_mp->handleProductSettings( $product )?>
 			<?php endif; ?>
 			
 		</div>

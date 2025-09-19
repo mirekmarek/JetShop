@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Complaints;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\CustomerBlacklist;
 use JetApplication\Complaint;
 
@@ -24,7 +24,7 @@ $item = $this->getRaw('item');
 <?php if($item->getDeliveryCompanyName()): ?>
 <?=$item->getDeliveryCompanyName()?><br>
 <?php endif; ?>
-<?=$item->getDeliveryFirstName()?> <?=$item->getDeliverySurname()?> (<?=Admin_Managers::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
+<?=$item->getDeliveryFirstName()?> <?=$item->getDeliverySurname()?> (<?=Application_Service_Admin::Customer()->renderItemName( $item->getCustomerId() )?>)<br>
 <a href="mailto:<?=$item->getEmail()?>"><?=$item->getEmail()?></a><br>
 <?=$item->getPhone()?><br>
 

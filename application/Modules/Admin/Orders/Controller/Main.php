@@ -11,7 +11,7 @@ use Jet\Http_Request;
 use Jet\MVC_Layout;
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 
@@ -127,7 +127,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		 */
 		$order = $this->current_item;
 		
-		if(($sent_email=Admin_Managers::EntityEdit()->handleShowSentEmail( $order ))) {
+		if(($sent_email=Application_Service_Admin::EntityEdit()->handleShowSentEmail( $order ))) {
 			$this->content->output( $sent_email );
 			return;
 		}

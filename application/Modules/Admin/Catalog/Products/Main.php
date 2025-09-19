@@ -9,15 +9,15 @@ namespace JetApplicationModule\Admin\Catalog\Products;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers_Product;
+use JetApplication\Application_Service_Admin_Product;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Product;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Exports_Module_Controller_ProductSettings;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 
 
-class Main extends Admin_Managers_Product
+class Main extends Application_Service_Admin_Product
 {
 	public const ADMIN_MAIN_PAGE = 'products';
 
@@ -34,7 +34,7 @@ class Main extends Admin_Managers_Product
 		
 		$selected = $selected_product_id ? Product::get($selected_product_id) : null;
 		
-		return Admin_Managers::UI()->renderSelectEntityWidget(
+		return Application_Service_Admin::UI()->renderSelectEntityWidget(
 			name: $name,
 			caption: Tr::_('... select product ...', dictionary: $this->module_manifest->getName()),
 			on_select: $on_select,

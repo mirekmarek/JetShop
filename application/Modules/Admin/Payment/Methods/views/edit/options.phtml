@@ -13,7 +13,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Option;
 
@@ -59,9 +59,9 @@ echo $this->controller->getEditorManager()->renderToolbar();
 						<td>
 							<?php
 							if($option->isActive()):
-								?><span class="badge badge-success"> <?=Tr::_('Active', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?> </span> <?php
+								?><span class="badge badge-success"> <?=Tr::_('Active', dictionary: Application_Service_Admin::EntityListing()->getModuleManifest()->getName())?> </span> <?php
 							else:
-								?><span class="badge badge-danger"><?=Tr::_('Inactive', dictionary: Admin_Managers::EntityListing()->getModuleManifest()->getName())?></span> <?php
+								?><span class="badge badge-danger"><?=Tr::_('Inactive', dictionary: Application_Service_Admin::EntityListing()->getModuleManifest()->getName())?></span> <?php
 							endif;
 							?>
 						</td>

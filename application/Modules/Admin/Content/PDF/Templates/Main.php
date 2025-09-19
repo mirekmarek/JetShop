@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Content\PDF\Templates;
 
 
-use JetApplication\Admin_Managers_Content_PDFTemplates;
+use JetApplication\Application_Service_Admin_Content_PDFTemplates;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\PDF_TemplateText;
 
 
-class Main extends Admin_Managers_Content_PDFTemplates
+class Main extends Application_Service_Admin_Content_PDFTemplates
 {
 	public const ADMIN_MAIN_PAGE = 'content-pdf-templates';
 	

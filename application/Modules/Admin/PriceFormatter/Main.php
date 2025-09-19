@@ -8,13 +8,13 @@ namespace JetApplicationModule\Admin\PriceFormatter;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers_PriceFormatter;
+use JetApplication\Application_Service_Admin_PriceFormatter;
 use JetApplication\Currency;
 use JetApplication\EShopEntity_Price;
 use JetApplication\Pricelist;
 
 
-class Main extends Admin_Managers_PriceFormatter
+class Main extends Application_Service_Admin_PriceFormatter
 {
 	
 	public function format( Pricelist $pricelist, float $price ): string

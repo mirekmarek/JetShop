@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\GiftShoppingCart;
 
 
-use JetApplication\Admin_Managers_Marketing_GiftsShoppingCart;
+use JetApplication\Application_Service_Admin_Marketing_GiftsShoppingCart;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_Gift_ShoppingCart;
 
 
-class Main extends Admin_Managers_Marketing_GiftsShoppingCart
+class Main extends Application_Service_Admin_Marketing_GiftsShoppingCart
 {
 	public const ADMIN_MAIN_PAGE = 'gifts-shopping-cart';
 	

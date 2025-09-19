@@ -10,7 +10,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Method_Price;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 
 /**
@@ -71,7 +71,7 @@ $form->field( 'payment_methods' )->input()->addCustomCssStyle('height: 300px');
 			<?php foreach( $item->getEshop()->getPricelists() as $pricelist):
 				$price = Delivery_Method_Price::get( $pricelist, $item->getId() );
 				
-				echo Admin_Managers::PriceFormatter()->showPriceInfo( $price );
+				echo Application_Service_Admin::PriceFormatter()->showPriceInfo( $price );
 			endforeach; ?>
 		</div>
 	</div>

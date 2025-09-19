@@ -12,14 +12,14 @@ use Jet\Form;
 use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Customer_Address;
+use JetApplication\EShopEntity_Address;
 use JetApplication\ReturnOfGoods;
 
 class Plugin_ChangeDeliveryAddress_Main extends Plugin
 {
 	public const KEY = 'change_delivery_address';
 	
-	protected Customer_Address $address;
+	protected EShopEntity_Address $address;
 	protected Form $form;
 	
 	public function hasDialog(): bool

@@ -8,14 +8,14 @@ namespace JetApplicationModule\Admin\MoneyRefunds;
 
 
 use Jet\Factory_MVC;
-use JetApplication\Admin_Managers_MoneyRefund;
+use JetApplication\Application_Service_Admin_MoneyRefund;
 use JetApplication\Context;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
 use JetApplication\MoneyRefund;
 
 
-class Main extends Admin_Managers_MoneyRefund
+class Main extends Application_Service_Admin_MoneyRefund
 {
 	public const ADMIN_MAIN_PAGE = 'money-refunds';
 	

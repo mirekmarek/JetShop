@@ -10,7 +10,7 @@ namespace JetApplicationModule\Admin\Entity\Edit;
 use Closure;
 use Jet\Locale;
 use Jet\UI_tabs;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShop;
@@ -52,7 +52,7 @@ $form->renderer()->setDefaultFieldWidth( [
 ] );
 
 if($item->getId() && $item->isEditable()) {
-	echo Admin_Managers::EntityEdit()->renderEditorTools( $item );
+	echo Application_Service_Admin::EntityEdit()->renderEditorTools( $item );
 }
 
 ?>

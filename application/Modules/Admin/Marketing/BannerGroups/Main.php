@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\BannerGroups;
 
 
-use JetApplication\Admin_Managers_Marketing_BannerGroups;
+use JetApplication\Application_Service_Admin_Marketing_BannerGroups;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_BannerGroup;
 
 
-class Main extends Admin_Managers_Marketing_BannerGroups
+class Main extends Application_Service_Admin_Marketing_BannerGroups
 {
 	public const ADMIN_MAIN_PAGE = 'banner-groups';
 

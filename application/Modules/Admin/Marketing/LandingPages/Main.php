@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\LandingPages;
 
 
-use JetApplication\Admin_Managers_Marketing_LandingPages;
+use JetApplication\Application_Service_Admin_Marketing_LandingPages;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_LandingPage;
 
 
-class Main extends Admin_Managers_Marketing_LandingPages
+class Main extends Application_Service_Admin_Marketing_LandingPages
 {
 	public const ADMIN_MAIN_PAGE = 'landing-pages';
 	

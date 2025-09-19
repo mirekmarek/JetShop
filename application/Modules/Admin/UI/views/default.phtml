@@ -17,7 +17,7 @@ use Jet\UI_dialog;
 use Jet\UI_icon;
 use Jet\MVC_View;
 use Jet\UI_tabsJS;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Admin_UserSettings;
 use JetApplication\EShops;
 
@@ -187,8 +187,8 @@ $edit_menu_dialog = UI::dialog('edit_menu_dialog', Tr::_('Edit homepage menu'), 
 	</div>
 
 	<div style="padding-right: 10px;padding-left: 10px;">
-		<?php if(Admin_Managers::TODO()):
-			echo Admin_Managers::TODO()->renderDashboard();
+		<?php if(Application_Service_Admin::TODO()):
+			echo Application_Service_Admin::TODO()->renderDashboard();
 		endif; ?>
 
 

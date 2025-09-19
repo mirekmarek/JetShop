@@ -7,12 +7,12 @@
 namespace JetApplicationModule\Admin\Marketing\PromoAreas;
 
 
-use JetApplication\Admin_Managers_Marketing_PromoAreas;
+use JetApplication\Application_Service_Admin_Marketing_PromoAreas;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Marketing_PromoArea;
 
 
-class Main extends Admin_Managers_Marketing_PromoAreas
+class Main extends Application_Service_Admin_Marketing_PromoAreas
 {
 	public const ADMIN_MAIN_PAGE = 'promo-areas';
 	

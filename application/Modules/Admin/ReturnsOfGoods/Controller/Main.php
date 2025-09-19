@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 use JetApplication\Admin_EntityManager_Controller;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\ReturnOfGoods;
 
 
@@ -85,7 +85,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		 */
 		$return = $this->current_item;
 		
-		if(($sent_email=Admin_Managers::EntityEdit()->handleShowSentEmail( $return ))) {
+		if(($sent_email=Application_Service_Admin::EntityEdit()->handleShowSentEmail( $return ))) {
 			$this->content->output( $sent_email );
 			return;
 		}

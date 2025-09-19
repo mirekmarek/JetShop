@@ -9,7 +9,7 @@ namespace JetApplicationModule\Admin\ProductFilterManager;
 
 use Jet\MVC_View;
 use Jet\UI;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -26,7 +26,7 @@ $brand_ids = explode(',', $brand_ids);
 	<?php foreach($brand_ids as $id): ?>
 	<tr>
 		<td style="width: 20px;"><?=UI::button_delete(' ')->setOnClick("FilterEditBrands.remove({$id})")?></td>
-		<td><?=Admin_Managers::Brand()->renderItemName( $id )?></td>
+		<td><?=Application_Service_Admin::Brand()->renderItemName( $id )?></td>
 	</tr>
 	<?php endforeach; ?>
 </table>

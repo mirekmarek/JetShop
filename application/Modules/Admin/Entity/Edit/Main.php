@@ -18,11 +18,12 @@ use Jet\Translator;
 use Jet\UI;
 use Jet\UI_tabs;
 use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
+use JetApplication\Admin_EntityManager_Module;
 use JetApplication\EMail_Sent;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
-use JetApplication\Admin_Managers_EShopEntity_Edit;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin_EShopEntity_Edit;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_CanNotBeDeletedReason;
 use JetApplication\EShopEntity_HasActivation_Interface;
@@ -37,10 +38,11 @@ use JetApplication\EShops;
 use Closure;
 
 
-class Main extends Admin_Managers_EShopEntity_Edit
+class Main extends Application_Service_Admin_EShopEntity_Edit
 {
 	protected null|EShopEntity_Basic|EShopEntity_Admin_WithEShopData_Interface $item = null;
-	protected ?Admin_Managers_EShopEntity_Listing $listing = null;
+	protected ?Admin_EntityManager_Module $entity_manager = null;
+	protected ?Application_Service_Admin_EShopEntity_Listing $listing = null;
 	protected ?UI_tabs $tabs = null;
 	protected MVC_View $view;
 	
@@ -65,11 +67,11 @@ class Main extends Admin_Managers_EShopEntity_Edit
 	protected function render( $script, array $params ) : string
 	{
 		return Tr::setCurrentDictionaryTemporary(
-			dictionary: Tr::COMMON_DICTIONARY,
+			dictionary: $this->entity_manager?->getModuleManifest()->getName()?:Tr::COMMON_DICTIONARY,
 			action: function() use ($script, $params) {
 				$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 				
-				$this->view->setVar('module', $this);
+				$this->view->setVar( 'module', $this);
 				
 				$this->view->setVar( 'plugins', $this->plugins );
 				
@@ -104,7 +106,7 @@ class Main extends Admin_Managers_EShopEntity_Edit
 	
 	public function init(
 		EShopEntity_Basic|EShopEntity_Admin_Interface $item, ?
-		Admin_Managers_EShopEntity_Listing            $listing = null,
+		Application_Service_Admin_EShopEntity_Listing            $listing = null,
 		?UI_tabs                                      $tabs = null,
 		
 		?Closure                                      $add_toolbar_renderer = null,
@@ -120,6 +122,8 @@ class Main extends Admin_Managers_EShopEntity_Edit
 		?Closure                                      $edit_description_fields_renderer = null
 	): void
 	{
+		$this->entity_manager = $item->getAdminManager();
+		
 		$this->item = $item;
 		$this->listing = $listing;
 		$this->tabs = $tabs;
