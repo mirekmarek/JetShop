@@ -1,0 +1,29 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Marketing\PaymentFeeDiscount;
+
+
+use Jet\MVC_View;
+use Jet\Form;
+use Jet\Form_Renderer;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ */
+$form = $this->getRaw( 'form' );
+
+$form->setAutocomplete( false );
+$form->renderer()->setDefaultLabelWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 2 ] );
+$form->renderer()->setDefaultFieldWidth( [ Form_Renderer::LJ_SIZE_MEDIUM => 4 ] );
+
+
+echo $form->field( 'relevance_mode' );
+echo $form->field( 'payment_method_id' );
+echo $form->field( 'discount_percentage' );
+echo $form->field( 'amount_limit' );
+echo $form->field( 'promo_html' );

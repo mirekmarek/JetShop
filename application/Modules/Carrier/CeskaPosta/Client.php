@@ -92,7 +92,6 @@ class Client {
 			$list[] = $point;
 		}
 		
-		
 		return $list;
 		
 	}

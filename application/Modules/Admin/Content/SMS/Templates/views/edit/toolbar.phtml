@@ -1,0 +1,102 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Content\SMS\Templates;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\Tr;
+
+use JetApplication\SMS_TemplateText;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var SMS_TemplateText $item
+ */
+
+$item = $this->getRaw('item');
+
+if(!$item->isEditable()) {
+	return;
+}
+?>
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<script>
+	function sendTestSMS( eshop_key ) {
+		let phone = document.getElementById('test-phone-number').value;
+		if(!phone) {
+			return;
+		}
+		
+		location.href = '<?=Http_Request::currentURI(['action'=>'send_test_sms'])?>&eshop='+eshop_key+'&phone='+encodeURIComponent( phone );
+	}
+</script>
+
+<?php if(EShops::isMultiEShopMode()): ?>
+	<div class="dropdown">
+		<button class="btn btn-info dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('eye');?> <?=Tr::_('Preview SMS')?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<?php foreach( EShops::getListSorted() as $eshop ):
+				$URL = Http_Request::currentURI(['action'=>'sms_preview','eshop'=>$eshop->getKey()]);
+				?>
+				<a class="dropdown-item" href="<?=$URL?>" target="_blank">
+					<?=UI::icon('arrow-up-right-from-square')->addCustomCssStyle('opacity:0.5');?>
+					<?=$eshop->getName()?>
+				</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+	<div style="display: inline-block;margin-left: 20px;">
+		<input
+			type="text"
+			id="test-phone-number"
+			class="form-control"
+			style="width: 250px"
+			placeholder="<?=Tr::_('send test SMS to ...')?>"
+		>
+	</div>
+
+	<div class="dropdown">
+		<button class="btn btn-info dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<?=UI::icon('at');?> <?=Tr::_('Send test SMS')?>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<?php foreach( EShops::getListSorted() as $eshop ): ?>
+				<a class="dropdown-item" href="#" onclick="sendTestSMS('<?=$eshop->getKey()?>');">
+					<?=$eshop->getName()?>
+				</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+
+<?php
+else:
+	$eshop = EShops::getDefault();
+	$URL = Http_Request::currentURI(['action'=>'sms-preview','eshop'=>$eshop->getKey()]);
+	?>
+	<a href="<?=$URL?>" target="_blank" class="btn btn-info"><?=UI::icon('eye');?> <?=Tr::_('Preview SMS')?></a>
+
+	<div style="display: inline-block;margin-left: 20px;">
+		<input
+			type="text"
+			id="test-phone-number"
+			class="form-control"
+			style="width: 250px"
+			placeholder="<?=Tr::_('send test SMS to ...')?>"
+		>
+	</div>
+
+	<a href="#" class="btn btn-info" onclick="sendTestSMS('<?=$eshop->getKey()?>');"><?=UI::icon('at');?> <?=Tr::_('Send test SMS')?></a>
+	<?php
+endif;
+

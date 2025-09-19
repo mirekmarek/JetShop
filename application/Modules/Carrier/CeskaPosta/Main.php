@@ -18,9 +18,14 @@ use JetApplication\OrderDispatch;
 use JetApplication\EShopConfig_ModuleConfig_General;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
+use JetApplication\SysServices_Definition;
+use JetApplication\SysServices_Provider_Interface;
 
 
-class Main extends Carrier implements EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface, Admin_ControlCentre_Module_Interface
+class Main extends Carrier implements
+	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface,
+	Admin_ControlCentre_Module_Interface,
+	SysServices_Provider_Interface
 {
 	use EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 	use Admin_ControlCentre_Module_Trait;
@@ -145,6 +150,23 @@ class Main extends Carrier implements EShopConfig_ModuleConfig_ModuleHasConfig_G
 	public function getAdditionalConsignmentParameters() : array
 	{
 		return [];
+	}
+	
+	public function getSysServicesDefinitions(): array
+	{
+		$actualize_points_service = new SysServices_Definition(
+			module:        $this,
+			name:          Tr::_( 'Česká pošta - Actualize delivery points' ),
+			description:   Tr::_( 'Updates the list of points where the consignment can be delivered / where the customer can pick up the consignment.' ),
+			service_code: 'actualize_delivery_points',
+			service:       function() {
+				$this->actualizeDeliveryPoints( true );
+			}
+		);
+		
+		return [
+			$actualize_points_service
+		];
 	}
 	
 }

@@ -10,7 +10,7 @@ use Jet\Data_DateTime;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
-use JetApplication\Calendar_Manager;
+use JetApplication\Application_Service_General_Calendar;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\EShopConfig_ModuleConfig_PerShop;
@@ -18,7 +18,7 @@ use JetApplication\EShops;
 use JetApplication\EShop;
 
 
-class Main extends Calendar_Manager implements
+class Main extends Application_Service_General_Calendar implements
 										EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
 										Admin_ControlCentre_Module_Interface
 {

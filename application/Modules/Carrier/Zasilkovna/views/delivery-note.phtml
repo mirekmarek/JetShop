@@ -8,7 +8,7 @@ namespace JetApplicationModule\Carrier\Zasilkovna;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\OrderDispatch;
 
 /**
@@ -127,7 +127,7 @@ ob_end_clean();
 		<td align="center" style='white-space: nowrap'><?=$dispatch->getDispatchDate()->format('d. m.')?></td>
 		<td align="center" style='white-space: nowrap'><?=$dispatch->getRecipientFirstName()?> <?=$dispatch->getRecipientSurname()?> <?=$dispatch->getRecipientCompany()?></td>
 		<td align="right" style='white-space: nowrap'>
-			<strong><?=$dispatch->getCod() ?  Admin_Managers::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCodCurrency(), $dispatch->getCod() ) : '----'?></strong>
+			<strong><?=$dispatch->getCod() ?  Application_Service_Admin::PriceFormatter()->formatWithCurrency_WithVAT( $dispatch->getCodCurrency(), $dispatch->getCod() ) : '----'?></strong>
 		</td>
 		<td align="center">
 			<?php if(($point=$dispatch->getDeliveryPoint())): ?>

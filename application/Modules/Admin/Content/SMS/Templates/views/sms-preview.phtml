@@ -1,0 +1,39 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\SMS;
+
+/**
+ * @var MVC_View $this
+ * @var SMS $sms
+ */
+$sms = $this->getRaw('test_sms');
+
+?>
+<style>
+	.container {
+		display: grid;
+		grid-template-columns: 200px 800px;
+		gap: 10px;
+	}
+	
+	.title {
+		padding: 11px;
+	}
+	
+	.value {
+		border: 1px dotted #a4a4a4;
+		padding: 10px;
+	}
+</style>
+<br><br>
+<div class="container">
+	<div class="title"><?= Tr::_('Text:')?></div>
+	<div class="value"><pre><?=$sms->getText()?></pre></div>
+</div>
+<br><br><br><br>

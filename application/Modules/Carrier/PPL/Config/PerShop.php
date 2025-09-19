@@ -24,25 +24,62 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
-		label: 'URL - JSON - pobočky: ',
-		is_required: true,
+		label: 'API URL: ',
 	)]
-	protected string $URL_JSON_branches = '';
+	protected string $API_URL = '';
 	
+	
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Client ID: ',
+	)]
+	protected string $client_id = '';
+	
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Client secret: ',
+	)]
+	protected string $client_secret = '';
+	
+	public function getAPIURL(): string
+	{
+		return $this->API_URL;
+	}
+	
+	public function setAPIURL( string $API_URL ): void
+	{
+		$this->API_URL = $API_URL;
+	}
+	
+	public function getClientId(): string
+	{
+		return $this->client_id;
+	}
+	
+	public function setClientId( string $client_id ): void
+	{
+		$this->client_id = $client_id;
+	}
+	
+	public function getClientSecret(): string
+	{
+		return $this->client_secret;
+	}
+	
+	public function setClientSecret( string $client_secret ): void
+	{
+		$this->client_secret = $client_secret;
+	}
 
-	public function getURLJSONBranches(): string
-	{
-		return $this->URL_JSON_branches;
-	}
-	
-	public function setURLJSONBranches( string $URL_JSON_branches ): void
-	{
-		$this->URL_JSON_branches = $URL_JSON_branches;
-	}
 	
 	
 	

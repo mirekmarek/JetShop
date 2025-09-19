@@ -1,0 +1,30 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_badge;
+use JetApplication\Admin_Listing;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Admin_Listing $listing
+ * @var Order $item
+ */
+
+$listing = $this->getRaw('listing');
+$item = $this->getRaw('item');
+?>
+	<a href="<?=$listing->getEditUrl( $item );?>"><?=$item->getNumber();?></a>
+	<?php if($item->getImportSource()): ?>
+		<br>
+		<?=UI::badge( UI_badge::INFO, $item->getImportSource())?><br>
+		<?=$item->getImportRemoteId()?>
+	<?php endif; ?>
+<?php
