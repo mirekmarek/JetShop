@@ -307,7 +307,9 @@ return [
 		'title' => 'Product reviews',
 		
 		'content' => [
-			'manager_interface' => Application_Service_EShop_ProductReviews::class,
+			[
+				'manager_interface' => Application_Service_EShop_ProductReviews::class,
+			]
 		]
 	
 	]
