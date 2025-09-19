@@ -8,57 +8,64 @@ namespace JetApplicationModule\Discounts\Manager;
 
 
 use JetApplication\CashDesk;
-use JetApplication\Discounts_Module;
-use JetApplication\Discounts_Manager;
-use JetApplication\Managers;
+use JetApplication\Application_Service_EShop_DiscountModule;
+use JetApplication\Application_Service_General_DiscountsManager;
+use JetApplication\EShop;
+use JetApplication\Application_Service_EShop;
+use JetApplication\EShops;
 
-
-class Main extends Discounts_Manager
+class Main extends Application_Service_General_DiscountsManager
 {
-	protected static string $module_name_prefix = 'Discounts.';
-	
-	
 	
 	/**
-	 * @return Discounts_Module[]
+	 * @return Application_Service_EShop_DiscountModule[]
 	 */
-	public function getActiveModules() : array
+	public function getActiveModules( EShop $eshop ) : array
 	{
-		$_modules =  Managers::findManagers( Discounts_Module::class, static::$module_name_prefix );
-		$modules = [];
-		
-		foreach($_modules as $name => $module) {
-			$name = str_replace( static::$module_name_prefix, '', $name );
-			$modules[$name] = $module;
-		}
-		return $modules;
+		return Application_Service_EShop::DiscountModules( $eshop );
 	}
 	
-	public function getActiveModule( string $module ) : ?Discounts_Module
+	public function getActiveModuleByCode( string $code, ?EShop $eshop=null ) : ?Application_Service_EShop_DiscountModule
 	{
-		$modules = static::getActiveModules();
-
-		if(!isset($modules[$module])) {
+		$eshop = $eshop?:EShops::getCurrent();
+		
+		return static::getActiveModules( $eshop )[$code]?? null;
+	}
+	
+	public function getActiveModuleByInterface( string $interface_class_name, ?EShop $eshop = null ): ?Application_Service_EShop_DiscountModule
+	{
+		$eshop = $eshop?:EShops::getCurrent();
+		
+		$module = Application_Service_Eshop::list($eshop)->get( $interface_class_name );
+		if(!$module) {
 			return null;
 		}
 		
-		return $modules[$module];
+		foreach($this->getActiveModules($eshop) as $m) {
+			if($m->getModuleManifest()->getName()==$module->getModuleManifest()->getName()) {
+				return $m;
+			}
+		}
+		
+		return null;
 	}
+	
 	
 	/**
 	 * @param CashDesk $cash_desk
 	 */
 	public function generateDiscounts( CashDesk $cash_desk ): void
 	{
-		foreach($this->getActiveModules() as $dm) {
+		foreach($this->getActiveModules( $cash_desk->getEshop() ) as $dm) {
 			$dm->generateDiscounts( $cash_desk );
 		}
 	}
 	
 	public function checkDiscounts( CashDesk $cash_desk ): void
 	{
-		foreach($this->getActiveModules() as $dm) {
+		foreach($this->getActiveModules( $cash_desk->getEshop() ) as $dm) {
 			$dm->checkDiscounts( $cash_desk );
 		}
 	}
+	
 }

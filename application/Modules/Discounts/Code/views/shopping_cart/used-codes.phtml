@@ -9,18 +9,19 @@ namespace JetApplicationModule\Discounts\Code;
 
 use Jet\MVC_View;
 use Jet\UI;
+use JetApplication\CashDesk;
 use JetApplication\Discounts_Code;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View   $this
  * @var Discounts_Code|null $used_code
  * @var Main $module
+ * @var CashDesk $cash_desk
  */
 
 $module = $this->getRaw('module');
-
-$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
+$cash_desk = $this->getRaw('cash_desk');
 
 
 foreach($cash_desk->getDiscounts() as $discount):
@@ -33,7 +34,7 @@ foreach($cash_desk->getDiscounts() as $discount):
 		?>
 		<?=$discount->getDescription()?>:
 
-		<strong><?=EShop_Managers::PriceFormatter()->formatWithCurrency($discount->getAmount())?></strong>
+		<strong><?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($discount->getAmount())?></strong>
 	<?php else: ?>
 		<?=$discount->getDescription()?>
 	<?php endif; ?>

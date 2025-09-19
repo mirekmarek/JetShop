@@ -6,74 +6,101 @@
  */
 namespace JetApplicationModule\Discounts\FreePayment;
 
-
 use JetApplication\CashDesk;
-use JetApplication\Discounts_Module;
+use JetApplication\Marketing_PaymentFeeDiscount;
+use JetApplication\Application_Service_EShop_DiscountModule_PaymentFee;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\EShop_Managers;
+use JetApplication\Pricelists;
 
-
-class Main extends Discounts_Module
+class Main extends Application_Service_EShop_DiscountModule_PaymentFee
 {
+	protected ?array $marketing_discounts = null;
 	
-	public function ShoppingCart_handle(): string
+	/**
+	 * @return Marketing_PaymentFeeDiscount[]
+	 */
+	public function getMarketingDiscounts(): array
 	{
-		return '';
+		if($this->marketing_discounts === null) {
+			$_marketing_discounts = Marketing_PaymentFeeDiscount::getAllActive();
+			
+			$this->marketing_discounts = [];
+			foreach($_marketing_discounts as $discount) {
+				if(
+					$discount->isActive() &&
+					$discount->isRelevant( $this->cash_desk->getCart()->getProductIds() )
+				) {
+					$this->marketing_discounts[$discount->getPaymentMethodId()] = $discount;
+				}
+			}
+			
+		}
+		
+		return $this->marketing_discounts;
 	}
 	
-	public function CashDesk_RegisteredCustomer_handle(): string
+	public function handleShoppingCart( CashDesk $cash_desk ): string
 	{
 		return '';
 	}
 	
 	protected function getOrderAmount() : float
 	{
-		return EShop_Managers::ShoppingCart()->getCart()->getAmount();
+		return $this->cash_desk->getCart()->getAmount();
 	}
 	
 	public function generateDiscounts( CashDesk $cash_desk ): void
 	{
+		$this->setCashDesk( $cash_desk );
 		$amount = $this->getOrderAmount();
+		if(!$amount) {
+			return;
+		}
+		
+		$_marketing_discounts = $this->getMarketingDiscounts();
 		
 		foreach($cash_desk->getAvailablePaymentMethods() as $method) {
-			if(
-				$method->getDiscountIsNotAllowed() ||
-				$method->getFreePaymentLimit()==0 ||
-				$method->getFreePaymentLimit()>$amount
-			) {
+			if($method->getDiscountIsNotAllowed()) {
 				continue;
 			}
 			
-			$method->setPrice( $cash_desk->getPricelist(), 0 );
+			if(isset($marketing_discounts[$method->getId()])) {
+				$discount = $marketing_discounts[$method->getId()];
+				
+				$mtp = (100-$discount->getDiscountPercentage())/100;
+				
+				if(
+					$discount->getAmountLimit()>0 &&
+					$discount->getAmountLimit()>$amount
+				) {
+					$mtp = 1;
+				}
+				
+				if($mtp<1) {
+					$pricelist = Pricelists::getCurrent();
+					
+					$price = $pricelist->round( $method->getDefaultPrice( $pricelist ) * $mtp );
+					
+					if($price<$method->getPrice($pricelist)) {
+						$method->setPrice( $cash_desk->getPricelist(), $price );
+						
+						continue;
+					}
+				}
+			}
+			
+			
+			if(
+				$method->getFreePaymentLimit()>0 &&
+				$amount>$method->getFreePaymentLimit()
+			) {
+				$method->setPrice( $cash_desk->getPricelist(), 0 );
+			}
+			
 		}
 	}
 	
-	public function remains() : float|bool
-	{
-		$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
-		
-		$limit = false;
-		foreach($cash_desk->getAvailablePaymentMethods() as $method) {
-			if(
-				$method->getDiscountIsNotAllowed() ||
-				$method->getFreePaymentLimit()==0
-			) {
-				continue;
-			}
-			
-			if($limit===false || $limit>$method->getFreePaymentLimit()) {
-				$limit = $method->getFreePaymentLimit();
-			}
-		}
-		
-		if($limit===false) {
-			return false;
-		}
-		
-		return $limit - $this->getOrderAmount();
-	}
-
 	
 	public function checkDiscounts( CashDesk $cash_desk ): void
 	{

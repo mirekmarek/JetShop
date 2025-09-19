@@ -1,6 +1,6 @@
 <?php
 return [
 	'vendor' => '',
-	'label' => 'Order.Discounts.Code',
+	'label' => 'Discounts.Code',
 	'description' => '',
 ];

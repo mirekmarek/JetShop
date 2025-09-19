@@ -5,7 +5,7 @@
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
 use Jet\MVC_View;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use Jet\Tr;
 
 /**
@@ -17,7 +17,7 @@ if($remains===false) {
 	return;
 }
 
-$formatter = EShop_Managers::PriceFormatter();
+$formatter = Application_Service_EShop::PriceFormatter();
 if($remains>0):
 	?>
 

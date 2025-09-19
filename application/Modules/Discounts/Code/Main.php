@@ -16,15 +16,15 @@ use Jet\Tr;
 
 use JetApplication\CashDesk;
 use JetApplication\Discounts_Code;
-use JetApplication\Discounts_Code_Module;
+use JetApplication\Application_Service_EShop_DiscountModule_Code;
 use JetApplication\Discounts_Discount;
-use JetApplication\Discounts_Module;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 
-class Main extends Discounts_Module implements Discounts_Code_Module
+
+class Main extends Application_Service_EShop_DiscountModule_Code
 {
 	public const DISCOUNT_MODULE = 'Code';
 
@@ -58,7 +58,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 			$code = Discounts_Code::get($id);
 			if(
 				!$code ||
-				!$code->isValid()
+				!$code->isValid( $this->cash_desk )
 			) {
 				continue;
 			}
@@ -104,7 +104,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 		$this->setUsedCodesRaw( $ids );
 		
 		$this->used_form = null;
-		EShop_Managers::CashDesk()->getCashDesk()->getDiscounts(true);
+		$this->cash_desk->getDiscounts( true );
 		
 	}
 
@@ -120,8 +120,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 		
 		$ids = array_keys($used_codes);
 		$this->setUsedCodesRaw( $ids );
-		EShop_Managers::CashDesk()->getCashDesk()->getDiscounts(true);
-		
+		$this->cash_desk->getDiscounts( true );
 	}
 
 
@@ -130,7 +129,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 		if(!$this->used_form) {
 			$code_input = new Form_Field_Input('code', '');
 			$code_input->setIsRequired( true );
-			$code_input->setPlaceholder(Tr::_('Discount code'));
+			$code_input->setPlaceholder( 'Discount code' );
 
 			$code_input->setErrorMessages([
 				Form_Field::ERROR_CODE_EMPTY => 'Please enter your discount code'
@@ -158,7 +157,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 					return false;
 				}
 
-				if( !$code->isValid($error_code, $error_data) ) {
+				if( !$code->isValid($this->cash_desk, $error_code, $error_data) ) {
 					$code_input->setError($error_code, $error_data);
 					return false;
 				}
@@ -173,30 +172,39 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 		return $this->used_form;
 	}
 
-	public function ShoppingCart_handle() : string
+	public function handleShoppingCart( CashDesk $cash_desk ) : string
 	{
-		$content = new class extends MVC_Page_Content {
-			public function output( string $output ): void
-			{
-				$this->output = $output;
+		$this->setCashDesk( $cash_desk );
+		
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($cash_desk) {
+				$content = new class extends MVC_Page_Content {
+					public function output( string $output ): void
+					{
+						$this->output = $output;
+					}
+				};
+				
+				$content->setModuleName( $this->getModuleManifest()->getName() );
+				
+				
+				$controller = new Controller_CashDesk( $content );
+				$controller->setCashDesk( $cash_desk );
+				
+				$content->setControllerAction( $controller->resolve() );
+				$controller->dispatch();
+				
+				return $content->getOutput();
 			}
-		};
-
-		$content->setModuleName( $this->getModuleManifest()->getName() );
-
-
-		$controller = new Controller_ShoppingCart( $content );
-
-		$content->setControllerAction( $controller->resolve() );
-		$controller->dispatch();
-
-		return $content->getOutput();
+		);
 
 	}
 
 
 	public function generateDiscounts( CashDesk $cash_desk ) : void
 	{
+		$this->setCashDesk( $cash_desk );
 		$used_codes = $this->getUsedCodes();
 
 		if(!$used_codes) {
@@ -228,7 +236,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 					
 					$discount->setAmount(
 						$cash_desk->getPricelist()->round(
-							$used_code->getRelevantProductAmount()
+							$used_code->getRelevantProductAmount( $this->cash_desk )
 								*
 									$used_code->getDiscountPercentageMtp()
 						)
@@ -241,7 +249,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 				case Discounts_Discount::DISCOUNT_TYPE_PRODUCTS_AMOUNT:
 					
 					$discount->setDescription( Tr::_('Discount %D% for products price', [
-						'D'=>EShop_Managers::PriceFormatter()->formatWithCurrency(
+						'D'=>Application_Service_EShop::PriceFormatter()->formatWithCurrency(
 							$used_code->getDiscount(),
 							$cash_desk->getPricelist()
 						)
@@ -288,7 +296,7 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 					$discount->setAmount( 0 );
 					
 					$discount->setDescription( Tr::_('Discount %D% for delivery price', [
-						'D'=>EShop_Managers::PriceFormatter()->formatWithCurrency(
+						'D'=>Application_Service_EShop::PriceFormatter()->formatWithCurrency(
 							$used_code->getDiscount(),
 							$cash_desk->getPricelist()
 						)
@@ -380,12 +388,6 @@ class Main extends Discounts_Module implements Discounts_Code_Module
 		}
 	}
 
-
-	public function CashDesk_RegisteredCustomer_handle(): string
-	{
-		return '';
-	}
-	
 	public function isPossibleToAddCode() : bool
 	{
 		foreach($this->getUsedCodes() as $coupon) {

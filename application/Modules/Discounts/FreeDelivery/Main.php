@@ -10,22 +10,50 @@ namespace JetApplicationModule\Discounts\FreeDelivery;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\CashDesk;
-use JetApplication\Discounts_Module;
 use JetApplication\Marketing_DeliveryFeeDiscount;
+use JetApplication\Application_Service_EShop_DiscountModule_DeliveryFee;
 use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\Pricelists;
-use JetApplication\EShop_Managers;
 
-
-class Main extends Discounts_Module
+class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 {
+	protected ?array $marketing_discounts = null;
 	
-	public function ShoppingCart_handle(): string
+	/**
+	 * @return Marketing_DeliveryFeeDiscount[]
+	 */
+	public function getMarketingDiscounts(): array
 	{
+		if($this->marketing_discounts === null) {
+			$_marketing_discounts = Marketing_DeliveryFeeDiscount::getAllActive();
+			
+			$this->marketing_discounts = [];
+			foreach($_marketing_discounts as $discount) {
+				if(
+					$discount->isActive() &&
+					$discount->isRelevant( $this->cash_desk->getCart()->getProductIds() )
+				) {
+					$this->marketing_discounts[$discount->getDeliveryMethodId()] = $discount;
+				}
+			}
+			
+		}
+		
+		return $this->marketing_discounts;
+	}
+	
+	
+	public function handleShoppingCart( CashDesk $cash_desk ): string
+	{
+		$this->setCashDesk( $cash_desk );
+		
 		$view = Factory_MVC::getViewInstance($this->getViewsDir());
 		
+		$view->setVar('limit', $this->limit());
 		$view->setVar('remains', $this->remains());
+		$view->setVar('cash_desk', $cash_desk);
+		
 		
 		return Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),
@@ -35,40 +63,25 @@ class Main extends Discounts_Module
 		);
 	}
 	
-	public function CashDesk_RegisteredCustomer_handle(): string
-	{
-		return '';
-	}
-	
 	protected function getOrderAmount() : float
 	{
-		return EShop_Managers::ShoppingCart()->getCart()->getAmount();
+		return $this->cash_desk->getCart()->getAmount();
 	}
 	
 	public function generateDiscounts( CashDesk $cash_desk ): void
 	{
+		$this->setCashDesk($cash_desk);
+		
 		$amount = $this->getOrderAmount();
-		
-		$_marketing_discounts = Marketing_DeliveryFeeDiscount::getAllActive();
-		
-		$marketing_discounts = [];
-		foreach($_marketing_discounts as $discount) {
-			if(
-				$discount->isActive() &&
-				$discount->getDiscountPercentage()>0 &&
-				$discount->isRelevant( EShop_Managers::ShoppingCart()->getCart()->getProductIds() )
-			) {
-				$marketing_discounts[$discount->getDeliveryMethodId()] = $discount;
-			}
+		if(!$amount) {
+			return;
 		}
 		
+		$marketing_discounts = $this->getMarketingDiscounts();
+		
+		
 		foreach($cash_desk->getAvailableDeliveryMethods() as $method) {
-			if(
-				!$method->getDiscountIsNotAllowed() &&
-				$method->getFreeDeliveryLimit()>0 &&
-				$amount>$method->getFreeDeliveryLimit()
-			) {
-				$method->setPrice( $cash_desk->getPricelist(), 0 );
+			if($method->getDiscountIsNotAllowed()) {
 				continue;
 			}
 			
@@ -94,15 +107,21 @@ class Main extends Discounts_Module
 					}
 				}
 			}
+			
+			if(
+				$method->getFreeDeliveryLimit()>0 &&
+				$amount>$method->getFreeDeliveryLimit()
+			) {
+				$method->setPrice( $cash_desk->getPricelist(), 0 );
+			}
+			
 		}
 	}
 	
-	public function remains() : float|bool
+	public function limit() : float|false
 	{
-		$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
-		
 		$limit = false;
-		foreach($cash_desk->getAvailableDeliveryMethods() as $method) {
+		foreach($this->cash_desk->getAvailableDeliveryMethods() as $method) {
 			if(
 				$method->getDiscountIsNotAllowed() ||
 				$method->getFreeDeliveryLimit()==0
@@ -114,6 +133,13 @@ class Main extends Discounts_Module
 				$limit = $method->getFreeDeliveryLimit();
 			}
 		}
+
+		return $limit;
+	}
+	
+	public function remains() : float|false
+	{
+		$limit = $this->limit();
 		
 		if($limit===false) {
 			return false;
