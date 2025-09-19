@@ -9,32 +9,33 @@ namespace JetApplicationModule\EShop\Analytics\Manager;
 use Jet\Session;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
-use JetApplication\Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Analytics_Service;
-use JetApplication\EShop_Managers_Analytics;
+use JetApplication\Application_Service_EShop_AnalyticsService;
+use JetApplication\Application_Service_EShop_AnalyticsManager;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Signpost_EShopData;
 
-class Main extends EShop_Managers_Analytics
+class Main extends Application_Service_EShop_AnalyticsManager
 {
 	
 	/**
-	 * @var EShop_Analytics_Service[]
+	 * @var array<string,Application_Service_EShop_AnalyticsService>
 	 */
 	protected ?array $services = null;
 	
 	
 	/**
-	 * @return EShop_Analytics_Service[]
+	 * @return array<string,Application_Service_EShop_AnalyticsService>
 	 */
 	public function getServices() : array
 	{
 		if($this->services===null) {
-			$this->services = Managers::findManagers( EShop_Analytics_Service::class, 'EShop.Analytics.Service.' );
+
+			$this->services = Application_Service_EShop::list()->getList( Application_Service_EShop_AnalyticsService::class );
 			
 			foreach($this->services as $service) {
 				$service->init();
@@ -198,4 +199,12 @@ class Main extends EShop_Managers_Analytics
 		return $res;
 	}
 	
+	public function viewHomePage(): string
+	{
+		$res = '';
+		foreach($this->getServices() as $service) {
+			$res .= $service->viewHomePage();
+		}
+		return $res;
+	}
 }

@@ -10,7 +10,7 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\ProductFilter_Filter_Basic;
 use JetApplication\ProductFilter_Filter_Brands;
@@ -231,7 +231,7 @@ class Event_ProductsListView extends DataModel
 		$res = '';
 		
 		foreach(explode('|', $this->visible_product_ids) as $product_id) {
-			$res .= Admin_Managers::Product()->renderItemName( $product_id ).'<br>';
+			$res .= Application_Service_Admin::Product()->renderItemName( $product_id ).'<br>';
 		}
 		
 		return $res;

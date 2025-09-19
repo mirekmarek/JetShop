@@ -12,7 +12,7 @@ use Jet\DataModel_Definition;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_badge;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\ProductListing;
 
 #[DataModel_Definition(
@@ -112,7 +112,7 @@ class Event_Search extends Event
 			$res .= '<h4>'.Tr::_('Categories').'</h4>';
 			
 			foreach($this->result_ids['categories'] as $id) {
-				$res .= Admin_Managers::Category()->renderItemName( $id );
+				$res .= Application_Service_Admin::Category()->renderItemName( $id );
 			}
 			
 			$res .= '<hr>';

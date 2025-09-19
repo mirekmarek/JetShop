@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Signpost_EShopData;
 
 #[DataModel_Definition(
@@ -49,7 +49,7 @@ class Event_SignpostView extends Event
 	
 	public function showShortDetails(): string
 	{
-		return Admin_Managers::Signpost()->renderItemName( $this->signpost_id );
+		return Application_Service_Admin::Signpost()->renderItemName( $this->signpost_id );
 	}
 	
 	public function getIcon(): string

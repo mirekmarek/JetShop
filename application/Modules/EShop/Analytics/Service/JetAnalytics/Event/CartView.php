@@ -10,7 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Locale;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Currencies;
 use JetApplication\MeasureUnits;
 use JetApplication\Pricelists;
@@ -93,7 +93,7 @@ class Event_CartView extends Event
 		$res = '';
 		
 		$pricelist = Pricelists::get( $this->pricelist_code );
-		$price_formatter = Admin_Managers::PriceFormatter();
+		$price_formatter = Application_Service_Admin::PriceFormatter();
 		
 		$amount =  $price_formatter->formatWithCurrency( $pricelist, $this->amount );
 		$units = 0;
@@ -111,7 +111,7 @@ class Event_CartView extends Event
 	{
 		$res = '';
 		
-		$price_formatter = Admin_Managers::PriceFormatter();
+		$price_formatter = Application_Service_Admin::PriceFormatter();
 		
 		$res = '<table class="table table-striped">';
 		$res .= '<thead><tr>';
@@ -133,7 +133,7 @@ class Event_CartView extends Event
 			} else {
 				$res .= '<td>'.$unit->round($item->getNumberOfUnits()).' '.$unit->getNAme(Locale::getCurrentLocale()).'</td>';
 			}
-			$res .= '<td>'.Admin_Managers::Product()->renderItemName( $item->getProductId() ).'</td>';
+			$res .= '<td>'.Application_Service_Admin::Product()->renderItemName( $item->getProductId() ).'</td>';
 			
 			$res .= '<td>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit() ).'</td>';
 			$res .= '<td>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit()*$item->getNumberOfUnits() ).'</td>';

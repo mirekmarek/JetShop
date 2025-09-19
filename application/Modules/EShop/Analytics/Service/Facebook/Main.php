@@ -20,8 +20,8 @@ use JetApplication\Order_Item;
 use JetApplication\Pricelists;
 use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Analytics_Service;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop_AnalyticsService;
+use JetApplication\Application_Service_EShop;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
@@ -29,7 +29,7 @@ use JetApplication\EShops;
 use JetApplication\Signpost_EShopData;
 
 
-class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
+class Main extends Application_Service_EShop_AnalyticsService implements EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface, Admin_ControlCentre_Module_Interface
 {
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
@@ -47,7 +47,7 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 		$this->currency_code = $this->pricelist->getCurrencyCode();
 		
 		if(
-			!EShop_Managers::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::STATS) ||
+			!Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::STATS) ||
 			!$this->id
 		) {
 			$this->enabled = false;
@@ -150,6 +150,12 @@ class Main extends EShop_Analytics_Service implements EShopConfig_ModuleConfig_M
 	}
 	
 	public function documentEnd(): string
+	{
+		return '';
+	}
+	
+	
+	public function viewHomePage() : string
 	{
 		return '';
 	}

@@ -4,9 +4,9 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Analytics\Service\Seznam;
+namespace JetApplicationModule\EShop\Analytics\Service\Criteo;
 
-
+use JetApplication\Customer;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
@@ -41,7 +41,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	{
 		$this->enabled = true;
 		$eshop = EShops::getCurrent();
-		$this->id = $this->getEshopConfig($eshop)->getSeznamId();
+		$this->id = $this->getEshopConfig($eshop)->getAccountId();
 		$this->pricelist = Pricelists::getCurrent();
 		$this->currency_code = $this->pricelist->getCurrencyCode();
 		
@@ -55,16 +55,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function header(): string
 	{
-		if(
-			!$this->id ||
-			!$this->enabled
-		) {
-			return '';
-		}
-		
-		$this->view->setVar('id', $this->id);
-		
-		return $this->view->render('header');
+		return '';
 	}
 	
 	public function generateEvent( string $event, array $event_data=[] ) : string
@@ -83,9 +74,28 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 		return '';
 	}
 	
+	protected function getEmail() : string
+	{
+		$email = Customer::getCurrentCustomer()?->getEmail()??'';
+		$email = $email? hash('sha256', $email) : '';
+		
+		return $email;
+	}
+	
 	public function viewHomePage() : string
 	{
-		return '';
+		if(
+			!$this->id ||
+			!$this->enabled
+		) {
+			return '';
+		}
+		
+		
+		$this->view->setVar('id', $this->id);
+		$this->view->setVar('email', $this->getEmail());
+		
+		return $this->view->render('home-page');
 	}
 	
 	public function viewCategory( Category_EShopData $category, ?ProductListing $product_listing = null ): string
@@ -105,7 +115,20 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewProductDetail( Product_EShopData $product ) : string
 	{
-		return '';
+		if(
+			!$this->id ||
+			!$this->enabled
+		) {
+			return '';
+		}
+		
+		
+		$this->view->setVar('product', $product);
+		$this->view->setVar('id', $this->id);
+		$this->view->setVar('email', $this->getEmail());
+		
+		return $this->view->render('product-detail');
+
 	}
 	
 	
@@ -121,7 +144,18 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewCart( ShoppingCart $cart ) : string
 	{
-		return '';
+		if(
+			!$this->id ||
+			!$this->enabled
+		) {
+			return '';
+		}
+
+		$this->view->setVar('id', $this->id);
+		$this->view->setVar('cart', $cart);
+		$this->view->setVar('email', $this->getEmail());
+		
+		return $this->view->render('view-cart');
 	}
 	
 	
@@ -144,19 +178,16 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewSignpost( Signpost_EShopData $signpost ): string
 	{
-		// TODO: Implement viewSignpost() method.
 		return '';
 	}
 	
 	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
-		//TODO:
 		return '';
 	}
 	
 	public function search( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
-		//TODO:
 		return '';
 	}
 	
@@ -169,7 +200,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function getControlCentreTitle(): string
 	{
-		return 'Seznam Zboží';
+		return 'Criteo';
 	}
 	
 	public function getControlCentreIcon(): string

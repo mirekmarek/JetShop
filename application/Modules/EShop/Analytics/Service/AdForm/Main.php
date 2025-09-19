@@ -4,9 +4,9 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\EShop\Analytics\Service\Seznam;
+namespace JetApplicationModule\EShop\Analytics\Service\AdForm;
 
-
+use JetApplication\Customer;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
@@ -41,30 +41,22 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	{
 		$this->enabled = true;
 		$eshop = EShops::getCurrent();
-		$this->id = $this->getEshopConfig($eshop)->getSeznamId();
+		$this->id = $this->getEshopConfig($eshop)->getAccountId();
 		$this->pricelist = Pricelists::getCurrent();
 		$this->currency_code = $this->pricelist->getCurrencyCode();
 		
 		if(
-			!Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::STATS) ||
+			!Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::MARKETING) ||
 			!$this->id
 		) {
 			$this->enabled = false;
 		}
+
 	}
 	
 	public function header(): string
 	{
-		if(
-			!$this->id ||
-			!$this->enabled
-		) {
-			return '';
-		}
-		
-		$this->view->setVar('id', $this->id);
-		
-		return $this->view->render('header');
+		return '';
 	}
 	
 	public function generateEvent( string $event, array $event_data=[] ) : string
@@ -81,6 +73,14 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	public function documentEnd(): string
 	{
 		return '';
+	}
+	
+	protected function getEmail() : string
+	{
+		$email = Customer::getCurrentCustomer()?->getEmail()??'';
+		$email = $email? hash('sha256', $email) : '';
+		
+		return $email;
 	}
 	
 	public function viewHomePage() : string
@@ -121,7 +121,23 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewCart( ShoppingCart $cart ) : string
 	{
-		return '';
+		if(
+			!$this->id ||
+			!$this->enabled
+		) {
+			return '';
+		}
+		/**
+		 * @var Config_PerShop $config
+		 */
+		$config = $this->getEshopConfig($cart->getEshop());
+		
+
+		$this->view->setVar('id', $this->id);
+		$this->view->setVar('cart', $cart);
+		$this->view->setVar('page_name_prefix', $config->getPageNamePrefix());
+		
+		return $this->view->render('view-cart');
 	}
 	
 	
@@ -137,6 +153,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function purchase( Order $order ) : string
 	{
+		//TODO:
 		return '';
 	}
 	
@@ -144,19 +161,16 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewSignpost( Signpost_EShopData $signpost ): string
 	{
-		// TODO: Implement viewSignpost() method.
 		return '';
 	}
 	
 	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
-		//TODO:
 		return '';
 	}
 	
 	public function search( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
-		//TODO:
 		return '';
 	}
 	
@@ -169,7 +183,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function getControlCentreTitle(): string
 	{
-		return 'Seznam Zboží';
+		return 'AdForm';
 	}
 	
 	public function getControlCentreIcon(): string

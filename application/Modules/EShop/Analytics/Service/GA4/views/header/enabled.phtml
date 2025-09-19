@@ -6,7 +6,7 @@
  */
 
 use JetApplication\EShop_CookieSettings_Group;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use Jet\MVC_View;
 
 /**
@@ -22,10 +22,10 @@ $g_id = $this->getRaw('id');
 	function gtag(){dataLayer.push(arguments);}
 
 	gtag('consent', 'default', {
-		'ad_storage': '<?=EShop_Managers::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::MARKETING)?'granted':'denied'?>',
-		'ad_user_data': '<?=EShop_Managers::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::MARKETING)?'granted':'denied'?>',
-		'ad_personalization': '<?=EShop_Managers::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::MARKETING)?'granted':'denied'?>',
-		'analytics_storage': '<?=EShop_Managers::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::STATS )?'granted':'denied'?>'
+		'ad_storage': '<?=Application_Service_EShop::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::MARKETING)?'granted':'denied'?>',
+		'ad_user_data': '<?=Application_Service_EShop::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::MARKETING)?'granted':'denied'?>',
+		'ad_personalization': '<?=Application_Service_EShop::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::MARKETING)?'granted':'denied'?>',
+		'analytics_storage': '<?=Application_Service_EShop::CookieSettings()->groupEnabled( EShop_CookieSettings_Group::STATS )?'granted':'denied'?>'
 	});
 
 

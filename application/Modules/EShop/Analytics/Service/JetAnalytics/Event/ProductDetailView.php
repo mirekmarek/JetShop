@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
@@ -48,7 +48,7 @@ class Event_ProductDetailView extends Event
 	
 	public function showShortDetails(): string
 	{
-		return Admin_Managers::Product()->renderItemName( $this->product_id );
+		return Application_Service_Admin::Product()->renderItemName( $this->product_id );
 	}
 	
 	public function getIcon(): string

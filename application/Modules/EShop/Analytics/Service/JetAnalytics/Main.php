@@ -11,14 +11,14 @@ use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Analytics_Service;
+use JetApplication\Application_Service_EShop_AnalyticsService;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Signpost_EShopData;
 
 
-class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTabProvider
+class Main extends Application_Service_EShop_AnalyticsService implements Admin_EntityManager_EditTabProvider
 {
 	use Main_Trait_Admin;
 	
@@ -57,6 +57,11 @@ class Main extends EShop_Analytics_Service implements Admin_EntityManager_EditTa
 	public function documentEnd(): string
 	{
 		$this->initSession();
+		return '';
+	}
+	
+	public function viewHomePage() : string
+	{
 		return '';
 	}
 	

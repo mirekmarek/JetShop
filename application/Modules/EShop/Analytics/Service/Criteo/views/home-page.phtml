@@ -1,0 +1,23 @@
+<?php
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$id = $this->getRaw('id');
+if(!$id) {
+	return;
+}
+?>
+<!-- Criteo -->
+<script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async ></script>
+<script type="text/javascript">
+	window.criteo_q = window.criteo_q || [];
+	window.criteo_q.push(
+		{ event: "setAccount", account: <?=$id?> },
+		{ event: "setEmail", email: "<?= $this->getString('email') ?>" },
+		{ event: "setSiteType", type: (/iPad/.test(navigator.userAgent) ? "t" : (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? "m" : "d")) },
+		{ event: "viewHome" }
+	);
+</script>

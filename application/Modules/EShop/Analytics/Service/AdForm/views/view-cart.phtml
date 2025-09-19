@@ -1,0 +1,43 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\ShoppingCart;
+
+
+/**
+ * @var MVC_View $this
+ * @var ShoppingCart $cart
+ */
+
+$id = $this->getString('id');
+$cart = $this->getRaw('cart');
+$page_name_prefix = $this->getString('page_name_prefix');
+
+$adform_tracking_products = [];
+
+foreach($cart->getProductIds() as $id) {
+	$adform_tracking_products[] = [
+		'productid' => $id,
+		'step' => 2
+	];
+}
+
+$page_name = $page_name_prefix.'|Cart';
+?>
+
+<!-- Adform Tracking Code BEGIN -->
+<script type="text/javascript">
+	window._adftrack = {
+		pm: <?=$id?>,
+		pagename: encodeURIComponent('<?=$page_name?>'),
+		divider: encodeURIComponent('|'),
+		order: {
+			itms: <?=json_encode($adform_tracking_products);?>
+		}
+	};
+	(function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://track.adform.net/serving/scripts/trackpoint/async/'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+</script>
+<noscript>
+	<p><img src="https://track.adform.net/Serving/TrackPoint/?pm=<?=$id?>&ADFPageName=<?=rawurlencode($page_name)?>&ADFdivider=|" width="1" height="1" alt="" /></p>
+</noscript>
+<!-- Adform Tracking Code END -->
+

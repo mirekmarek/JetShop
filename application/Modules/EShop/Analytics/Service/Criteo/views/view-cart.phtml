@@ -1,0 +1,30 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\ShoppingCart;
+
+
+/**
+ * @var MVC_View $this
+ * @var ShoppingCart $cart
+ */
+
+$id = $this->getString('id');
+$cart = $this->getRaw('cart');
+
+?>
+<!-- Criteo -->
+<script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async ></script>
+<script type="text/javascript">
+	window.criteo_q = window.criteo_q || [];
+	window.criteo_q.push(
+		{ event: "setAccount", account: 38664 },
+		{ event: "setEmail", email: "<?= $this->getString('email') ?>" },
+		{ event: "setSiteType", type: (/iPad/.test(navigator.userAgent) ? "t" : (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? "m" : "d")) },
+		{ event: "viewBasket", item: [
+				<?php foreach ($cart->getItems() as $item): ?>
+				<?php $product = $item->getProduct(); ?>
+				{ id: "<?= $item->getProductId() ?>", price: <?= $product->getPrice($cart->getPricelist()) ?>, quantity: <?= $item->getNumberOfUnits() ?> },
+				<?php endforeach; ?>
+			]}
+	);
+</script>

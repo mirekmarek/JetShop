@@ -10,10 +10,10 @@ namespace JetApplicationModule\EMailMarketing\MailingSubscriptionManager;
 
 use Jet\Factory_MVC;
 use Jet\Tr;
-use JetApplication\EMailMarketing_Subscribe_Manager;
+use JetApplication\Application_Service_General_EMailMarketingSubscribeManager;
 use JetApplication\EShop;
 
-class Main extends EMailMarketing_Subscribe_Manager
+class Main extends Application_Service_General_EMailMarketingSubscribeManager
 {
 	
 	public function showStatus( EShop $eshop, string $email ) : string

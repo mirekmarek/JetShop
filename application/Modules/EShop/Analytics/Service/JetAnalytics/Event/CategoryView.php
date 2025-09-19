@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Category_EShopData;
 use JetApplication\ProductListing;
 
@@ -64,7 +64,7 @@ class Event_CategoryView extends Event
 	
 	public function showShortDetails(): string
 	{
-		return Admin_Managers::Category()->renderItemName( $this->category_id );
+		return Application_Service_Admin::Category()->renderItemName( $this->category_id );
 	}
 	
 	public function getIcon() : string

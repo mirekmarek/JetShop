@@ -10,7 +10,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Locale;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Currencies;
 use JetApplication\MeasureUnits;
 use JetApplication\Order;
@@ -166,7 +166,7 @@ class Event_CheckoutStarted extends Event
 		$res = '';
 		
 		
-		$price_formatter = Admin_Managers::PriceFormatter();
+		$price_formatter = Application_Service_Admin::PriceFormatter();
 		
 		$res = '<table>';
 		
@@ -182,7 +182,7 @@ class Event_CheckoutStarted extends Event
 			} else {
 				$res .= '<td>'.$unit->round($item->getNumberOfUnits()).' '.$unit->getNAme(Locale::getCurrentLocale()).'</td>';
 			}
-			$res .= '<td>'.Admin_Managers::Product()->renderItemName( $item->getItemId() ).'</td>';
+			$res .= '<td>'.Application_Service_Admin::Product()->renderItemName( $item->getItemId() ).'</td>';
 			
 			$res .= '<td>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit() ).'</td>';
 			$res .= '<td>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit()*$item->getNumberOfUnits() ).'</td>';
