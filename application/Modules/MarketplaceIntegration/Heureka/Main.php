@@ -9,11 +9,14 @@
 namespace JetApplicationModule\MarketplaceIntegration\Heureka;
 
 
+use Jet\Logger;
 use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
+use JetApplication\Application_Service_EShop_NewOrderPostprocessor;
 use JetApplication\MarketplaceIntegration_Module;
+use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Event_Cancel;
 use JetApplication\Order_Event_Delivered;
@@ -32,7 +35,8 @@ use JetApplication\SysServices_Provider_Interface;
 class Main extends MarketplaceIntegration_Module implements
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
-	SysServices_Provider_Interface
+	SysServices_Provider_Interface,
+	Application_Service_EShop_NewOrderPostprocessor
 {
 	use Admin_ControlCentre_Module_Trait;
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
@@ -96,15 +100,15 @@ class Main extends MarketplaceIntegration_Module implements
 		return true;
 	}
 	
-	public function actualizeBrands( EShop $eshop ): void
+	public function actualizeBrands(): void
 	{
 	}
 	
-	public function actualizeCategories( EShop $eshop ): void
+	public function actualizeCategories(): void
 	{
 	}
 	
-	public function actualizeCategory( EShop $eshop, string $category_id ): void
+	public function actualizeCategory( string $category_id ): void
 	{
 	}
 	
@@ -223,5 +227,52 @@ class Main extends MarketplaceIntegration_Module implements
 		}
 		return true;
 	}
-
+	
+	public function processNewOrder( Order $order ) : void
+	{
+		if($order->isSurveyDisagreement()) {
+			return;
+		}
+		
+		/**
+		 * @var Config_PerShop $config
+		 */
+		$config = $this->getEshopConfig( $order->getEshop() );
+		
+		if(
+			!$config->getOverenoAPIURL() ||
+			!$config->getOverenoAPIKey()
+		) {
+			return;
+		}
+		
+		if(
+			!in_array(
+				$order->getImportSource(),
+				['', static::IMPORT_SOURCE]
+			)
+		) {
+			return;
+		}
+		
+		$overeno = new HeurekaOvereno( $config );
+		try {
+			$overeno->setOrderId( $order->getNumber() );
+			$overeno->setEmail( $order->getEmail() );
+			
+			foreach($order->getItems() as $item) {
+				if(
+					$item->isPhysicalProduct() ||
+					$item->isVirtualProduct()
+				) {
+					$overeno->addProduct( $item->getItemId(), $item->getTitle() );
+				}
+			}
+			
+			$overeno->send();
+		} catch( HeurekaOvereno_Exception $e ) {
+			Logger::danger('HeurekaOvereno-send:failed', $e->getMessage());
+		}
+		
+	}
 }

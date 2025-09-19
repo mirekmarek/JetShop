@@ -52,13 +52,23 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		$template = new EMailTemplate();
 		$template->setEvent($this->event);
 		$email = $template->createEmail( $this->getEvent()->getEshop() );
-		if(!$email) {
-			return true;
+		if($email) {
+			$this->order->getPaymentMethod()->updateOrderConfirmationEmail( $this->order, $email );
+			$email->send();
+			
+			if($this->order->getEshopCode()=='b2b') {
+				$email->setSaveHistoryAfterSend( false );
+				$email->setTo([
+					'silvie.rakova@mastersport.cz',
+				]);
+				$email->send();
+			}
+			
 		}
 		
 		$this->order->getPaymentMethod()->updateOrderConfirmationEmail( $this->order, $email );
 		
-		return $email->send();
+		return true;
 	}
 	
 	public function getEMailTemplates(): array

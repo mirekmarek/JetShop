@@ -221,7 +221,7 @@ class Server
 			$available = false;
 		} else {
 			if($requested_count>$product->getNumberOfAvailable( $this->availability )) {
-				$delivery = $product->getDeliveryInfo( $this->availability )->getLengthOfDelivery();
+				$delivery = $product->getDeliveryInfo( $requested_count, $this->availability )->getLengthOfDelivery();
 				
 				if(!$product->getAllowToOrderWhenSoldOut()) {
 					$available = false;

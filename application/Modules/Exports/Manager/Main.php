@@ -99,7 +99,7 @@ class Main extends Exports_Manager implements
 				return false;
 			}
 			
-			public function getCurrentUser(): Auth_User_Interface|bool
+			public function getCurrentUser(): Auth_User_Interface|false
 			{
 				return false;
 			}

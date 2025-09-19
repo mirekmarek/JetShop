@@ -9,7 +9,7 @@ namespace JetApplicationModule\Events\SupplierGoodsOrder\GoodsReceived;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Supplier_GoodsOrder_Event;
 
 /**
@@ -27,6 +27,6 @@ if(!$rcp) {
 }
 
 echo Tr::_('Receipt of goods: ');
-echo Admin_Managers::ReceiptOfGoods()->renderItemName( $rcp );
+echo Application_Service_Admin::ReceiptOfGoods()->renderItemName( $rcp );
 
 //echo nl2br( $event->getNoteForCustomer() );

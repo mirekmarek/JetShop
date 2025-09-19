@@ -7,18 +7,18 @@
 namespace JetApplicationModule\Events\Order\DispatchStarted;
 
 
+use JetApplication\EMail_TemplateProvider;
 use JetApplication\MarketplaceIntegration;
-use JetApplication\OrderDispatch;
 use JetApplication\Order_Event_HandlerModule;
+use JetApplication\OrderDispatch;
 use JetApplication\OrderPersonalReceipt;
 
 
-class Main extends Order_Event_HandlerModule
+class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 {
 	public function sendNotifications(): bool
 	{
-		//TODO:
-		return true;
+		return $this->sendEMail( new EMailTemplate() );
 	}
 	
 	public function handleExternals(): bool
@@ -85,4 +85,12 @@ class Main extends Order_Event_HandlerModule
 	{
 		return 'event-dispatch-started';
 	}
+	
+	public function getEMailTemplates(): array
+	{
+		$template = new EMailTemplate();
+		
+		return [$template];
+	}
+	
 }

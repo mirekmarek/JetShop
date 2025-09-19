@@ -43,6 +43,29 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	)]
 	protected string $API_key = '';
 	
+	
+	
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Ověřeno - API URL: ',
+		is_required: false,
+	)]
+	protected string $overeno_API_URL = '';
+	
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Ověřeno - API key: ',
+		is_required: false,
+	)]
+	protected string $overeno_API_key = '';
+	
+	
 	/**
 	 * @var Config_DeliveryMapItem[]
 	 */
@@ -147,5 +170,27 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	{
 		return $this->payment_map[$method_id]??null;
 	}
+	
+	public function getOverenoAPIURL(): string
+	{
+		return $this->overeno_API_URL;
+	}
+	
+	public function setOverenoAPIURL( string $overeno_API_URL ): void
+	{
+		$this->overeno_API_URL = $overeno_API_URL;
+	}
+	
+	public function getOverenoAPIKey(): string
+	{
+		return $this->overeno_API_key;
+	}
+	
+	public function setOverenoAPIKey( string $overeno_API_key ): void
+	{
+		$this->overeno_API_key = $overeno_API_key;
+	}
+	
+	
 	
 }

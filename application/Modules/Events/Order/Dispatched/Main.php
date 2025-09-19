@@ -10,6 +10,7 @@ namespace JetApplicationModule\Events\Order\Dispatched;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order_Event_HandlerModule;
+use JetApplication\Order_Status_Dispatched;
 use JetApplication\OrderDispatch;
 
 
@@ -27,6 +28,11 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	
 	public function handleInternals(): bool
 	{
+		$this->order->setStatus(
+			Order_Status_Dispatched::get(),
+			handle_event: false
+		);
+		
 		return true;
 	}
 	
@@ -39,14 +45,16 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		$template->setOrder( $this->event->getOrder() );
 		
 		if($dispatch instanceof OrderDispatch ) {
-			$template->setCarrierName( $dispatch->getCarrier()?->getName()??$dispatch->getCarrierCode() );
-			$template->setTrackingUrl( $dispatch->getTrackingURL() );
+			$template->setCarrierName( $dispatch->getCarrierCode() );
+			$template->setTrackingUrl( $dispatch->getOurNote() );
 			$template->setConsignmentNumber( $dispatch->getTrackingNumber() );
 		}
 		
 		$email = $template->createEmail( $this->getEvent()->getEshop() );
 		
-		return $email?->send()??true;
+		$email?->send();
+		
+		return true;
 	}
 	
 	

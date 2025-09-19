@@ -9,7 +9,7 @@ namespace JetApplicationModule\Events\Order\Updated;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Delivery_Method;
 use JetApplication\Order_Event;
 use JetApplication\Payment_Method;
@@ -82,14 +82,14 @@ $properties = [
 
 $formatters = [
 	'payment_amount' => function( $value ) use ($order) {
-		return Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $value );
+		return Application_Service_Admin::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $value );
 	},
 	'payment_method' => function( $value ) {
 		return Payment_Method::getScope()[$value]??$value;
 	},
 	
 	'delivery_amount' => function( $value ) use ($order) {
-		return Admin_Managers::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $value );
+		return Application_Service_Admin::PriceFormatter()->formatWithCurrency( $order->getPricelist(), $value );
 	},
 	'delivery_method' => function( $value ) {
 		return Delivery_Method::getScope()[$value]??$value;
@@ -100,7 +100,7 @@ $formatters = [
 			return;
 		}
 		
-		echo Tr::_('New order ').Admin_Managers::Order()->renderItemName( $value );
+		echo Tr::_('New order ').Application_Service_Admin::Order()->renderItemName( $value );
 	},
 	
 	'order_joined' => function ( $value ) {
@@ -108,7 +108,7 @@ $formatters = [
 			return;
 		}
 		
-		echo Tr::_('Old order ').Admin_Managers::Order()->renderItemName( $value );
+		echo Tr::_('Old order ').Application_Service_Admin::Order()->renderItemName( $value );
 	},
 
 ];

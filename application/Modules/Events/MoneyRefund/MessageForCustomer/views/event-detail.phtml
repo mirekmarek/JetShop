@@ -8,7 +8,7 @@ namespace JetApplicationModule\Events\MoneyRefund\MessageForCustomer;
 
 
 use Jet\MVC_View;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Note;
 
@@ -27,4 +27,4 @@ if(!$note) {
 	return;
 }
 
-echo Admin_Managers::Note()?->showNote( $note );
+echo Application_Service_Admin::Note()?->showNote( $note );
