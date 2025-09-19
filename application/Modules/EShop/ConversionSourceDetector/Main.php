@@ -7,11 +7,11 @@
 namespace JetApplicationModule\EShop\ConversionSourceDetector;
 
 use Jet\IO_Dir;
-use JetApplication\Marketing_ConversionSourceDetector_Manager;
+use JetApplication\Application_Service_General_ConversionSourceDetector;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
 
 
-class Main extends Marketing_ConversionSourceDetector_Manager
+class Main extends Application_Service_General_ConversionSourceDetector
 {
 	/**
 	 * @var Marketing_ConversionSourceDetector_Source[]|null

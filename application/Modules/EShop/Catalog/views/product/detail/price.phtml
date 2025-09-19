@@ -11,7 +11,7 @@ use Jet\Locale;
 use Jet\MVC_View;
 use JetApplication\Pricelists;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -29,16 +29,16 @@ if($units) {
 
 <div class="price">
 	<?php if($product->getDiscountPercentage($pricelist)):?>
-		<div class="before-discount"><?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?></div>
+		<div class="before-discount"><?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?></div>
 	<?php endif; ?>
 	
 	<div class="price">
-		<?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?> <?=$units?>
+		<?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?> <?=$units?>
 	</div>
 	
 	<?php if($product->getDiscountPercentage($pricelist)):?>
 		<div class="discount-prc">-<?=Locale::int(floor($product->getDiscountPercentage($pricelist)))?>%</div>
 	<?php endif; ?>
 </div>
-<?=EShop_Managers::PromoAreas()?->renderArea('product-info', [$product->getId()])?>
+<?=Application_Service_EShop::PromoAreas()?->renderArea('product-info', [$product->getId()])?>
 

@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\MVC_View;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -19,4 +19,4 @@ use JetApplication\EShop_Managers;
 $product = $this->getRaw('product');
 
 
-echo EShop_Managers::ProductReviews()?->renderRank( $product );
+echo Application_Service_EShop::ProductReviews()?->renderRank( $product );

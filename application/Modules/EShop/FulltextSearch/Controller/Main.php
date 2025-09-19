@@ -13,11 +13,13 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use JetApplication\Category;
 use JetApplication\Category_EShopData;
-use JetApplication\EShop_Managers_ProductListing;
+use JetApplication\Application_Service_EShop_ProductListing;
+use JetApplication\Content_Article;
+use JetApplication\Content_Article_EShopData;
 use JetApplication\Pricelists;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 
 
@@ -35,6 +37,7 @@ class Controller_Main extends MVC_Controller_Default
 		$result_ids = [];
 		
 		$products = null;
+		$articles = [];
 		$categories = [];
 		
 		if(strlen($q)>3) {
@@ -60,6 +63,23 @@ class Controller_Main extends MVC_Controller_Default
 				$result_ids['categories'] = array_keys($categories);
 			}
 			
+			
+			$article_ids = Index::search(
+				eshop: EShops::getCurrent(),
+				entity_type: Content_Article::getEntityType(),
+				search_string: $q,
+			);
+			$article_ids = array_unique($article_ids);
+			
+			if($article_ids) {
+				$result_ids['articles'] = $article_ids;
+				foreach( Content_Article_EShopData::getActiveList($article_ids) as $article ) {
+					$articles[$article->getId()] = $article;
+				}
+			}
+			
+			
+			
 			$product_ids = Index::search(
 				eshop: EShops::getCurrent(),
 				entity_type: Product::getEntityType(),
@@ -68,11 +88,11 @@ class Controller_Main extends MVC_Controller_Default
 			if($product_ids) {
 				$result_ids['products'] = $product_ids;
 				
-				$products = EShop_Managers::ProductListing();
+				$products = Application_Service_EShop::ProductListing();
 				$products->init( $product_ids );
 				$products->setOptionalURLParameter('q='.rawurlencode($GET->getRaw('q')) );
-				$products->setAjaxEventHandler( function(EShop_Managers_ProductListing $listing) use ($q, $result_ids) {
-					EShop_Managers::Analytics()?->search( $q, $result_ids, $listing->getListing() );
+				$products->setAjaxEventHandler( function(Application_Service_EShop_ProductListing $listing) use ($q, $result_ids) {
+					Application_Service_EShop::AnalyticsManager()?->search( $q, $result_ids, $listing->getListing() );
 				} );
 				
 				$products->handle();
@@ -86,6 +106,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$this->view->setVar('q', $q);
 		$this->view->setVar('products', $products);
+		$this->view->setVar('articles', $articles);
 		$this->view->setVar('categories', $categories);
 		$this->view->setVar('result_ids', $result_ids);
 		
@@ -105,6 +126,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$products = [];
 		$categories = [];
+		$articles = [];
 		
 		
 		$product_ids = Index::search(
@@ -124,6 +146,26 @@ class Controller_Main extends MVC_Controller_Default
 			
 			$result_ids['products'] = array_keys($products);
 		}
+		
+		
+		
+		$article_ids = Index::search(
+			eshop: EShops::getCurrent(),
+			entity_type: Content_Article::getEntityType(),
+			search_string: $q,
+		);
+		$article_ids = array_unique($article_ids);
+		shuffle($article_ids);
+		$article_ids = array_slice($article_ids, 0, 5);
+		
+		if($article_ids) {
+			$result_ids['articles'] = $article_ids;
+			foreach( Content_Article_EShopData::getActiveList($article_ids) as $article ) {
+				$articles[$article->getId()] = $article;
+			}
+		}
+		
+		
 		
 		$category_ids = Index::search(
 			eshop: EShops::getCurrent(),
@@ -150,6 +192,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$this->view->setVar('q', $q);
 		$this->view->setVar('products', $products);
+		$this->view->setVar('articles', $articles);
 		$this->view->setVar('categories', $categories);
 		$this->view->setVar('result_ids', $result_ids);
 		

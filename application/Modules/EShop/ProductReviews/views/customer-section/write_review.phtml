@@ -10,25 +10,28 @@ namespace JetApplicationModule\EShop\ProductReviews;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\Application_Service_EShop;
 
 
 /**
  * @var MVC_View   $this
- * @var CustomerReviewManager $manager
+ * @var ReviewManager_LoggedInCustomer $manager
  */
 
 $manager = $this->getRaw('manager');
 
-$p =  $manager->getWriteReviewProduct();
+$p =  $manager->getProduct();
 if(!$p) {
 	return;
 }
 
-$form = $manager->getWriteReviewForm();
+$form = $manager->getReviewForm();
 
 $form->field('summary')->input()->addCustomCssStyle('height:400px');
 $form->field('positive')->input()->addCustomCssStyle('height:200px');
 $form->field('negative')->input()->addCustomCssStyle('height:200px');
+
+echo Application_Service_EShop::CustomerSection()?->showMenu('reviews');
 ?>
 
 <div id="product-write-review-page">

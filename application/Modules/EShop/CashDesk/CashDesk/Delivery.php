@@ -6,9 +6,7 @@
  */
 namespace JetApplicationModule\EShop\CashDesk;
 
-
 use JetApplication\Delivery_Method;
-use JetApplication\EShop_Managers;
 use JetApplication\Carrier_DeliveryPoint;
 
 trait CashDesk_Delivery {
@@ -26,12 +24,28 @@ trait CashDesk_Delivery {
 	{
 
 		if($this->available_delivery_methods===null) {
-			$cart = EShop_Managers::ShoppingCart()->getCart();
+			$cart = $this->cart;
+			$amount = $cart->getAmount();
 			
 			$this->available_delivery_methods = Delivery_Method::getAvailableByProducts(
 				$cart->getEshop(),
 				$cart->getProducts()
 			);
+			
+			foreach($this->available_delivery_methods as $i=>$method) {
+				if(
+					(
+						$method->getMinimalOrderAmount() &&
+						$amount<$method->getMinimalOrderAmount()
+					) ||
+					(
+						$method->getMaximalOrderAmount() &&
+						$amount>$method->getMinimalOrderAmount()
+					)
+				) {
+					unset($this->available_delivery_methods[$i]);
+				}
+			}
 
 			$this->sortDeliveryMethods( $this->available_delivery_methods );
 		}

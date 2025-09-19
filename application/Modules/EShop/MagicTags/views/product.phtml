@@ -11,7 +11,7 @@ use Jet\MVC_View;
 use JetApplication\Marketing_ProductSticker;
 use JetApplication\Pricelists;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View   $this
@@ -54,15 +54,15 @@ $URL = $product->getURL();
 	<div class="product_listing_item_price">
 		<div class="product_listing_item_price_standard">
 			<?php if ($product->getPriceBeforeDiscount( $pricelist )): ?>
-				<?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?>
+				<?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?>
 			<?php endif; ?>
 		</div>
-		<div class="product_listing_item_price_final"><?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?></div>
+		<div class="product_listing_item_price_final"><?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?></div>
 	</div>
 	
 	<div class="product_listing_item_reviews">
 		<?php
-		echo EShop_Managers::ProductReviews()?->renderRank( $product );
+		echo Application_Service_EShop::ProductReviews()?->renderRank( $product );
 		?>
 	</div>
 

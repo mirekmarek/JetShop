@@ -7,13 +7,13 @@
 namespace JetApplicationModule\EShop\FulltextSearch;
 
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\EShop_Managers_FulltextSearch;
+use JetApplication\Application_Service_EShop_FulltextSearch;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop;
 
 
-class Main extends EShop_Managers_FulltextSearch implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_FulltextSearch implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

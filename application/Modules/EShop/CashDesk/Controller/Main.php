@@ -7,6 +7,7 @@
 namespace JetApplicationModule\EShop\CashDesk;
 
 
+use Jet\AJAX;
 use Jet\Exception;
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -15,9 +16,9 @@ use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
 use Jet\MVC_View;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop_Pages;
 use JetApplication\Order;
-use JetApplication\EShop_Managers;
 use JetApplication\EShops;
 
 
@@ -107,7 +108,7 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function default_Action() : void
 	{
-		$cart = EShop_Managers::ShoppingCart()->getCart();
+		$cart = $this->cash_desk->getCart();
 		if(!$cart->getNumberOfUnits()) {
 			Http_Headers::movedTemporary(
 				EShop_Pages::ShoppingCart()->getURL()
@@ -129,20 +130,37 @@ class Controller_Main extends MVC_Controller_Default
 		$module = $payment_method->getBackendModule();
 		
 		if(
-			!$payment_method->getKind()->isOnlinePayment() ||
-			!$module
+			!$module ||
+			(
+				!$payment_method->getKind()->isOnlinePayment() &&
+				!$payment_method->getKind()->isBankTransfer()
+			)
 		) {
 			Http_Headers::movedTemporary( EShop_Pages::CashDeskConfirmation()->getURL([$this->order->getKey()]) );
 		}
 		
+		$this->view->setVar('order', $this->order );
+		
+		$action = Http_Request::GET()->getString( 'a' );
+		if($action=='check_order_paid') {
+			if(!$this->order->getPaid()) {
+				Application_Service_EShop::QRPayment()?->checkOrderIsPaid( $this->order );
+			}
+			
+			AJAX::operationResponse(true, data: [
+				'order' => $this->order->getId(),
+				'paid' => $this->order->getPaid()
+			]);
+			
+		}
+		
+		
 		if(!$this->order->getPaid()) {
 			
-			$action = Http_Request::GET()->getString( 'a' );
 			
-			$this->view->setVar('order', $this->order );
 			
 			$return_url = EShop_Pages::CashDeskPayment()->getURL([$this->order->getKey()],['a'=>'handle_return']);
-			
+
 			switch( $action ) {
 				case 'handle_return':
 					if(!$module->handlePaymentReturn( $this->order )) {
@@ -152,12 +170,29 @@ class Controller_Main extends MVC_Controller_Default
 					}
 					break;
 				case 'try_again':
-				default:
+				case 'pay':
 					if(!$module->handlePayment($this->order, $return_url)) {
 						$this->output('payment-result/error');
 						
 						return;
 					}
+					break;
+				case 'paid_by_qr':
+					$this->order->changePaymentMethodToBankTransfare();
+					
+					$this->output('payment-result/paid-by-qr');
+					return;
+					break;
+				default:
+					if($payment_method->getKind()->isLoan()) {
+						if(!$module->handlePayment($this->order, $return_url)) {
+							$this->output('payment-result/error');
+							
+							return;
+						}
+					}
+					$this->output('confirmation');
+					return;
 					break;
 			}
 		}
@@ -173,7 +208,7 @@ class Controller_Main extends MVC_Controller_Default
 
 	public function error_Action() : void
 	{
-		if(!EShop_Managers::ShoppingCart()->getCart()->getNumberOfUnits()) {
+		if(!$this->cash_desk->getCart()->getNumberOfUnits()) {
 			Http_Headers::movedTemporary( EShop_Pages::ShoppingCart()->getURL() );
 		}
 
@@ -186,7 +221,11 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$this->view->setVar('order', $this->order);
 
-		$this->output('confirmation');
+		if($this->order->getPaid()) {
+			$this->output('payment-result/paid');
+		} else {
+			$this->output('confirmation');
+		}
 	}
 
 

@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\EShop\CashDesk;
 
-
 use JetApplication\Payment_Method;
 use JetApplication\Payment_Method_Option;
 
@@ -36,8 +35,24 @@ trait CashDesk_Payment {
 					}
 				}
 			}
+			
+			$amount = $this->cart->getAmount();
+			foreach($this->available_payment_methods as $i=>$method) {
+				if(
+					(
+						$method->getMinimalOrderAmount() &&
+						$amount<$method->getMinimalOrderAmount()
+					) ||
+					(
+						$method->getMaximalOrderAmount() &&
+						$amount>$method->getMinimalOrderAmount()
+					)
+				) {
+					unset($this->available_payment_methods[$i]);
+				}
+			}
 
-
+			
 			foreach($this->available_payment_methods as $code=>$method) {
 				$method->getBackendModule()?->init( $method );
 			}

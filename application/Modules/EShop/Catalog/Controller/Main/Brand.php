@@ -12,8 +12,8 @@ use Jet\ErrorPages;
 use Jet\MVC;
 use Jet\MVC_Layout;
 use JetApplication\Brand_EShopData;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_ProductListing;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_EShop_ProductListing;
 use JetApplication\Product;
 
 
@@ -77,9 +77,9 @@ trait Controller_Main_Brand
 		);
 		MVC_Layout::getCurrentLayout()->setVar('title', static::$brand->getName() );
 		
-		$liting = EShop_Managers::ProductListing();
+		$liting = Application_Service_EShop::ProductListing();
 		/**
-		 * @var EShop_Managers_ProductListing $liting
+		 * @var Application_Service_EShop_ProductListing $liting
 		 */
 		$liting->init(
 			Product::dataFetchCol(

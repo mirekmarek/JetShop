@@ -14,7 +14,7 @@ use JetApplication\Discounts;
 use JetApplication\Marketing_ConversionSourceDetector;
 use JetApplication\Order;
 use JetApplication\Customer;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Order_Item;
 
 trait CashDesk_Order {
@@ -64,10 +64,9 @@ trait CashDesk_Order {
 		foreach($this->getAgreeFlags() as $flag) {
 			$flag->setOrderState( $order );
 		}
-
-		$cart = EShop_Managers::ShoppingCart()->getCart();
 		
-		foreach($cart->getItems() as $cart_item)
+		
+		foreach($this->cart->getItems() as $cart_item)
 		{
 			$order_item = new Order_Item();
 			$order_item->setupProduct( $order->getPricelist(), $cart_item->getProduct(), $cart_item->getNumberOfUnits() );
@@ -91,7 +90,7 @@ trait CashDesk_Order {
 		
 		
 
-		foreach($cart->getAllSelectedGifts() as $gift) {
+		foreach($this->cart->getAllSelectedGifts() as $gift) {
 			
 			$gift_order_item = new Order_Item();
 			$gift_order_item->setupGift( $order->getPricelist(), $gift->getProduct(), $gift->getNumberOfUnits() );
@@ -127,13 +126,13 @@ trait CashDesk_Order {
 			$flag->onOrderSave( $order );
 		}
 		
-		foreach(Discounts::Manager()->getActiveModules() as $dm) {
+		foreach(Discounts::Manager()->getActiveModules( $this->getEshop() ) as $dm) {
 			$dm->Order_newOrderCreated( $order );
 		}
 		
 		$order->newOrder();
 		
-		EShop_Managers::ShoppingCart()->resetCart();
+		Application_Service_EShop::ShoppingCart()->resetCart();
 		$this->reset();
 		
 		return $order;

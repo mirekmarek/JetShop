@@ -8,7 +8,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 
 
 use Jet\AJAX;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 class Controller_Main_Response {
 
@@ -75,7 +75,7 @@ class Controller_Main_Response {
 		$response['selected_delivery'] = $cash_desk->getSelectedDeliveryMethod()->getId();
 		$response['selected_payment'] = $cash_desk->getSelectedPaymentMethod()->getId();
 		
-		$magic_tags_module = EShop_Managers::MagicTags();
+		$magic_tags_module = Application_Service_EShop::MagicTags();
 
 		foreach( $this->snippets as $id=>$view_script ) {
 			if(!$view_script) {
@@ -96,7 +96,7 @@ class Controller_Main_Response {
 			
 		}
 		
-		$response['snippets']['_measuring_codes_'] = EShop_Managers::Analytics()?->checkoutInProgress( $cash_desk );
+		$response['snippets']['_measuring_codes_'] = Application_Service_EShop::AnalyticsManager()?->checkoutInProgress( $cash_desk );
 		
 		AJAX::commonResponse($response);
 

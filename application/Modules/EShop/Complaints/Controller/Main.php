@@ -46,7 +46,7 @@ class Controller_Main extends MVC_Controller_Default
 			);
 
 			
-			if( $complaint->isEditable() ) {
+			if( $complaint->isEditableByCustomer() ) {
 				
 				if( !$complaint->isCompleted()) {
 					if(

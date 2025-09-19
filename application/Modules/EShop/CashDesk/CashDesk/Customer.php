@@ -14,6 +14,7 @@ use Jet\Form_Field;
 use Jet\Form_Field_Email;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Password;
+use Jet\Form_Field_Tel;
 use Jet\Http_Request;
 use Jet\Session;
 
@@ -271,7 +272,7 @@ trait CashDesk_Customer
 			
 			
 			$eshop = $this->getEshop();
-			$phone = new Form_Field_Input('phone', 'Phone number:');
+			$phone = new Form_Field_Tel('phone', 'Phone number:');
 			$phone->setDefaultValue( $this->getPhone() );
 			$phone->setIsRequired( true );
 			$phone->setErrorMessages([
@@ -286,10 +287,13 @@ trait CashDesk_Customer
 				return static::phoneValidator( $field, $this->config );
 			} );
 			
+			$phone->input()->setDataAttribute('prefix', $this->getConfig()->getPhonePrefix() );
+			$phone->setHelpText('ENTRY_TELEPHONE_NUMBER_INFO');
 			
 			$this->phone_form = new Form('cash_desk_set_phone_form', [$phone]);
 			
 			$this->phone_form->setAction('?action=customer_set_phone');
+			
 			
 			$this->phone_form->renderer()->addJsAction('onsubmit', "CashDesk.customer.phone.set();return false;");
 		}

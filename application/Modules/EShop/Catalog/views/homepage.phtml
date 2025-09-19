@@ -10,7 +10,7 @@ namespace JetApplicationModule\EShop\Catalog;
 use Jet\MVC_View;
 use JetApplication\Category_EShopData;
 use JetApplication\Content_InfoBox_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 use JetApplication\Signpost_EShopData;
 
@@ -46,7 +46,7 @@ if(!$categories) {
 	return;
 }
 
-echo EShop_Managers::Banners()?->renderPosition('hp');
+echo Application_Service_EShop::Banners()?->renderPosition('hp');
 ?>
 <?=Content_InfoBox_EShopData::show('homepage')?>
 

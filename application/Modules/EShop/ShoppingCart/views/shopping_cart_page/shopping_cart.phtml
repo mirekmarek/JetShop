@@ -10,15 +10,20 @@ namespace JetApplicationModule\EShop\ShoppingCart;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
+use JetApplication\CashDesk;
+use JetApplication\Discounts_Code;
 use JetApplication\EShop_Pages;
-use JetApplication\Discounts;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Marketing_DeliveryFeeDiscount;
 
 /**
  * @var MVC_View $this
+ * @var CashDesk $cash_desk
  */
 
-$cart = EShop_Managers::ShoppingCart()->getCart();
+$cash_desk = $this->getRaw('cash_desk');
+
+$cart = $cash_desk->getCart();
 
 if($cart->getNumberOfUnits()<1):
 	echo $this->render('shopping_cart_page/empty');
@@ -26,9 +31,9 @@ if($cart->getNumberOfUnits()<1):
 endif;
 
 
-$dm_code = Discounts::Manager()->getActiveModule('Code');
+$dm_code = Discounts_Code::getModule( $cash_desk->getEshop() );
 
-$dm_free_delivery = Discounts::Manager()->getActiveModule('FreeDelivery');
+$dm_free_delivery = Marketing_DeliveryFeeDiscount::getModule( $cash_desk->getEshop() );
 
 $available_gifts = $cart->getAvailableCartGifts();
 $selected_gift_ids = $cart->getSelectedCartGiftIds();
@@ -74,15 +79,15 @@ $selected_product_gifts = $cart->getSelectedProductGifts();
 <?php endif; ?>
 
 
-<?=EShop_Managers::AutoOffers()?->handleShoppingCart()?>
+<?=Application_Service_EShop::AutoOffers()?->handleShoppingCart( $cash_desk )?>
 
 
 <div class="shopping-cart-discount-modules">
 	<div>
-		<?=$dm_free_delivery?->ShoppingCart_handle()?>
+		<?=$dm_free_delivery?->handleShoppingCart( $cash_desk )?>
 	</div>
 	<div>
-		<?=$dm_code?->ShoppingCart_handle()?>
+		<?=$dm_code?->handleShoppingCart( $cash_desk )?>
 	</div>
 </div>
 
@@ -92,4 +97,4 @@ $selected_product_gifts = $cart->getSelectedProductGifts();
 </div>
 
 
-<?=EShop_Managers::Analytics()?->viewCart( $cart )?>
+<?=Application_Service_EShop::AnalyticsManager()?->viewCart( $cart )?>

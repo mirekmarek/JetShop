@@ -10,7 +10,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -79,7 +79,7 @@ $step = $cash_desk->getCurrentStep();
 							<?php endif; ?>
 						</div>
 						<div class="title"><?=$method->getTitle()?></div>
-						<div class="price"><?=EShop_Managers::PriceFormatter()->formatWithCurrency( $method->getPrice($pricelist), $pricelist )?></div>
+						<div class="price"><?=Application_Service_EShop::PriceFormatter()->formatWithCurrency( $method->getPrice($pricelist), $pricelist )?></div>
 					</div>
 				<?php endforeach; ?>
 			</div>

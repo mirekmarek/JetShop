@@ -13,7 +13,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_messages;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 
 /**
@@ -30,7 +30,7 @@ $form->renderer()->setDefaultLabelWidth([
 	Form_Renderer::LJ_SIZE_MEDIUM => 2
 ]);
 
-$register_URL = EShop_Managers::OAuth()->getOAuthModules()[Main::OAUTH_SERVICE_ID]->getHandlerUrl();
+$register_URL = Application_Service_EShop::OAuthManager()->getOAuthModules()[Main::OAUTH_SERVICE_ID]?->getHandlerUrl();
 
 
 

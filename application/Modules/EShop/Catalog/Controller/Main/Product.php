@@ -8,6 +8,7 @@ namespace JetApplicationModule\EShop\Catalog;
 
 
 use Jet\ErrorPages;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC;
 use Jet\MVC_Layout;
@@ -72,10 +73,17 @@ trait Controller_Main_Product
 
 	public function product_detail_Action(): void
 	{
+		if(static::$product->isVariantMaster()) {
+			foreach(static::$product->getVariants() as $variant) {
+				Http_Headers::movedTemporary( $variant->getURL() );
+			}
+		}
+		
 		$this->view->setVar( 'product', static::$product );
 		$this->_initBreadcrumbNavigation();
 
-		$this->output('product/detail');
+		
+		$this->outputWithCache('product:'.static::$product->getId(), 'product/detail', 30);
 	}
 	
 }

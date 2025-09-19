@@ -11,14 +11,14 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_tabs;
 use JetApplication\Customer;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_CustomerSection;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_EShop_CustomerSection;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
 
-class Main extends EShop_Managers_CustomerSection implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_CustomerSection implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
@@ -30,7 +30,7 @@ class Main extends EShop_Managers_CustomerSection implements EShop_ModuleUsingTe
 		$tabs['addresses'] = UI::icon('address-book').' '.Tr::_('Addresses');
 		$tabs['orders'] = UI::icon('box').' '.Tr::_('Orders');
 		
-		if( ($reviews_manager = EShop_Managers::ProductReviews()) ) {
+		if( ($reviews_manager = Application_Service_EShop::ProductReviews()) ) {
 			$tabs['reviews'] = UI::icon('reviews').' '.Tr::_('Product reviews');
 		}
 		
@@ -65,6 +65,11 @@ class Main extends EShop_Managers_CustomerSection implements EShop_ModuleUsingTe
 					return EShop_Pages::ReturnOfGoods()->getURL();
 				}
 				
+				if($tab=='reviews') {
+					return EShop_Pages::ProductReviews()->getURL();
+				}
+				
+				
 				return EShop_Pages::CustomerSection()->getURL([$tab]);
 			},
 			selected_tab_id: $selected_tab
@@ -78,6 +83,11 @@ class Main extends EShop_Managers_CustomerSection implements EShop_ModuleUsingTe
 			return '';
 		}
 		
-		return static::initTabs(  $selected_section )->toString();
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ( $selected_section ) {
+				return static::initTabs(  $selected_section )->toString();
+			}
+		);
 	}
 }

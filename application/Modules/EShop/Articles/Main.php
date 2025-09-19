@@ -8,12 +8,12 @@ namespace JetApplicationModule\EShop\Articles;
 
 use JetApplication\Content_Article_EShopData;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers_Articles;
+use JetApplication\Application_Service_EShop_Articles;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
 
-class Main extends EShop_Managers_Articles implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_Articles implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

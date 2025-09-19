@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\ReturnsOfGoods;
 
 use Jet\MVC_View;
 use Jet\Tr;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\ReturnOfGoods;
 
 /**
@@ -19,7 +19,7 @@ use JetApplication\ReturnOfGoods;
 
 $return = $this->getRaw('return');
 
-echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+echo Application_Service_EShop::CustomerSection()?->showMenu('return-of-goods');
 ?>
 <div class="customer-section-container">
 <h1><?=Tr::_('Return of goods request entry completed')?></h1>

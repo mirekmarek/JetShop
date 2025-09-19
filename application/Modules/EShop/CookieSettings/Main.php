@@ -7,15 +7,16 @@
 namespace JetApplicationModule\EShop\CookieSettings;
 
 
+use Jet\AJAX;
 use Jet\Http_Request;
 use Jet\Tr;
-use JetApplication\EShop_CookieSettings_Manager;
+use JetApplication\Application_Service_EShop_CookieSettings;
 use JetApplication\EShop_CookieSettings_Group;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
 
-class Main extends EShop_CookieSettings_Manager implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_CookieSettings implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
@@ -27,30 +28,32 @@ class Main extends EShop_CookieSettings_Manager implements EShop_ModuleUsingTemp
 	protected function initGroups() :array {
 		$groups = [];
 		
-		$marketing = new EShop_CookieSettings_Group();
-		$marketing->setCode( EShop_CookieSettings_Group::MARKETING );
-		$marketing->setTitle( Tr::_('Marketing') );
-		/** @noinspection SpellCheckingInspection */
-		$marketing->setDescription( 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. In laoreet, magna id viverra tincidunt, sem odio bibendum justo, vel imperdiet sapien wisi sed libero.' );
-		$marketing->setChecked( true );
-		$groups[$marketing->getCode()] = $marketing;
+		$dictionary = $this->module_manifest->getName();
 		
-		
-		$mesurement = new EShop_CookieSettings_Group();
-		$mesurement->setCode( EShop_CookieSettings_Group::MESUREMENT );
-		$mesurement->setTitle( Tr::_('Mesurement') );
-		/** @noinspection SpellCheckingInspection */
-		$mesurement->setDescription( 'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' );
-		$mesurement->setChecked( true );
-		$groups[$mesurement->getCode()] = $mesurement;
 		
 		$stats = new EShop_CookieSettings_Group();
 		$stats->setCode( EShop_CookieSettings_Group::STATS );
-		$stats->setTitle( Tr::_('Stats') );
-		/** @noinspection SpellCheckingInspection */
-		$stats->setDescription( 'Sed ac dolor sit amet purus malesuada congue. Fusce tellus. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Nulla turpis magna, cursus sit amet, suscipit a, interdum id, felis.' );
+		$stats->setTitle( Tr::_('Stats', dictionary: $dictionary) );
+		$stats->setDescription( '' );
 		$stats->setChecked( true );
 		$groups[$stats->getCode()] = $stats;
+		
+		$marketing = new EShop_CookieSettings_Group();
+		$marketing->setCode( EShop_CookieSettings_Group::MARKETING );
+		$marketing->setTitle( Tr::_('Marketing', dictionary: $dictionary) );
+		$marketing->setDescription( '' );
+		$marketing->setChecked( true );
+		$groups[$marketing->getCode()] = $marketing;
+		
+
+		/*
+		$mesurement = new EShop_CookieSettings_Group();
+		$mesurement->setCode( EShop_CookieSettings_Group::MESUREMENT );
+		$mesurement->setTitle( Tr::_('Mesurement', dictionary: $dictionary) );
+		$mesurement->setDescription( '' );
+		$mesurement->setChecked( true );
+		$groups[$mesurement->getCode()] = $mesurement;
+		*/
 		
 		return $groups;
 	}
@@ -153,24 +156,28 @@ class Main extends EShop_CookieSettings_Manager implements EShop_ModuleUsingTemp
 			return '';
 		}
 		
-		$GET = Http_Request::GET();
-		if(($action=$GET->getString('cookie_settings'))) {
-			switch($action) {
-				case 'accept_all':
-					$this->allowAll();
-					break;
-				case 'reject_all':
-					$this->denyAll();
-					break;
-				case 'custom':
-					$groups = explode(',', $GET->getString('groups'));
-					$this->enableCustom( $groups );
-					break;
+		return Tr::setCurrentDictionaryTemporary( $this->module_manifest->getName(), function() {
+			$GET = Http_Request::GET();
+			if(($action=$GET->getString('cookie_settings'))) {
+				switch($action) {
+					case 'accept_all':
+						$this->allowAll();
+						break;
+					case 'reject_all':
+						$this->denyAll();
+						break;
+					case 'custom':
+						$groups = explode(',', $GET->getString('groups'));
+						$this->enableCustom( $groups );
+						break;
+				}
+				
+				AJAX::snippetResponse('');
 			}
-		}
+			
+			return $this->getView()->render('dialog');
+		} );
 		
-		
-		return $this->getView()->render('dialog');
 	}
 	
 }

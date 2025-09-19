@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\ReturnOfGoods;
@@ -54,7 +54,7 @@ $showProduct = function( Product_EShopData $product ) use ($order) {
 	<?php
 };
 
-echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+echo Application_Service_EShop::CustomerSection()?->showMenu('return-of-goods');
 ?>
 <div class="customer-section-container">
 	<?php foreach($order->getPhysicalProductOverview() as $item):

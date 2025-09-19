@@ -14,7 +14,7 @@ use Jet\UI_button;
 use JetApplication\Marketing_ProductSticker;
 use JetApplication\Pricelists;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -69,11 +69,11 @@ if($units) {
 	<div class="product_listing_item_price">
 		<div class="product_listing_item_price_standard">
 			<?php if ($product->getPriceBeforeDiscount( $pricelist )): ?>
-			<?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?>
+			<?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPriceBeforeDiscount( $pricelist ) ) ?>
 			<?php endif; ?>
 		</div>
 		<div class="product_listing_item_price_final">
-			<?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?> <?=$units?>
+			<?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPrice( $pricelist ) ) ?> <?=$units?>
 		</div>
 	</div>
 
@@ -82,17 +82,17 @@ if($units) {
 		<?php if ($product->isVariantMaster()): ?>
 			<?=UI::button(Tr::_('Select variant'))->setUrl($URL)->setClass(UI_button::CLASS_SECONDARY)->setSize(UI_button::SIZE_NORMAL)?>
 		<?php else: ?>
-			<?=EShop_Managers::ShoppingCart()->renderBuyButton_listing( $product )?>
+			<?=Application_Service_EShop::ShoppingCart()->renderBuyButton_listing( $product )?>
 		<?php endif; ?>
 	</div>
 	
 	<div class="product_listing_item_compare_buttons">
-		<?=EShop_Managers::Wishlist()?->renderProductButton( $product ) ?>
-		<?=EShop_Managers::Compare()?->renderProductButton( $product ) ?>
+		<?=Application_Service_EShop::Wishlist()?->renderProductButton( $product ) ?>
+		<?=Application_Service_EShop::Compare()?->renderProductButton( $product ) ?>
 	</div>
 	
 	<div class="product_listing_item_reviews">
-		<?=EShop_Managers::ProductReviews()?->renderRank( $product );?>
+		<?=Application_Service_EShop::ProductReviews()?->renderRank( $product );?>
 	</div>
 
 </div>

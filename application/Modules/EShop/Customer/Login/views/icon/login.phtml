@@ -7,10 +7,10 @@
 namespace JetApplicationModule\EShop\Customer\Login;
 
 use Jet\UI;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use Jet\UI_button;
 
-$oauth = EShop_Managers::OAuth();
+$oauth = Application_Service_EShop::OAuthManager();
 
 $dialog = UI::dialog('customer_login_dialog', '');
 

@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 
 
 use Jet\MVC_View;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -20,7 +20,7 @@ $cash_desk = $this->getRaw('cash_desk');
 $step = $cash_desk->getCurrentStep();
 ?>
 
-<?=EShop_Managers::Analytics()?->beginCheckout( $cash_desk )?>
+<?=Application_Service_EShop::AnalyticsManager()?->beginCheckout( $cash_desk )?>
 
 
 <div id="cash_desk_main_layout">

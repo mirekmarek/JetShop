@@ -35,6 +35,8 @@ trait CashDesk_Confirm {
 			$this->initMainAgreeFlags_terns();
 			$this->initMainAgreeFlags_survey_disagree();
 			$this->initMainAgreeFlags_mailing_subscribe();
+			
+			$this->getOrder()->getPaymentMethod()->getBackendModule()?->generateCachDeskAgreeFlags( $this );
 		}
 	}
 
@@ -52,7 +54,7 @@ trait CashDesk_Confirm {
 	{
 		$survey_disagree = new CashDesk_Confirm_AgreeFlag('survey_disagree', Tr::_('I disagree with the survey'));
 		$survey_disagree->setOrderStateSetter( function( Order $order, bool $state ) {
-			$order->setSurveyDisagreement( !$state );
+			$order->setSurveyDisagreement( $state );
 		} );
 		$this->addAgreeFlag($survey_disagree);
 	}
@@ -183,7 +185,7 @@ trait CashDesk_Confirm {
 		if(!$this->comment_form) {
 			$comment = new Form_Field_Textarea('special_requirements', '');
 			$comment->setDefaultValue( $this->getSpecialRequirements() );
-			$comment->setPlaceholder(Tr::_('Do you have any special requests?'));
+			$comment->setPlaceholder( 'Do you have any special requests?' );
 			$comment->setFieldValueCatcher(function($value) {
 				$this->setSpecialRequirements($value);
 			});

@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Complaints;
 
 use Jet\MVC_View;
 use Jet\Tr;use JetApplication\Complaint;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View  $this
@@ -18,7 +18,7 @@ use JetApplication\EShop_Managers;
 
 $complaint = $this->getRaw('complaint');
 
-echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+echo Application_Service_EShop::CustomerSection()?->showMenu('complaints');
 ?>
 <div class="customer-section-container">
 <h1><?=Tr::_('Complaint entry completed')?></h1>

@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 
 use Jet\MVC_View;
 use JetApplication\Order_Item;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -25,11 +25,11 @@ $order = $cash_desk->getOrder();
 	<div class="title"><?=$item->getTitle()?></div>
 	<div class="price">
 		<?php if( !($item->getType()==Order_Item::ITEM_TYPE_DISCOUNT && $item->getTotalAmount()==0) ): ?>
-			<?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?>
+			<?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?>
 		<?php endif; ?>
 	</div>
 </div>
 <?php endforeach; ?>
 
-<div class="total"><?=EShop_Managers::PriceFormatter()->formatWithCurrency($order->getTotalAmount_WithVAT())?></div>
+<div class="total"><?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($order->getTotalAmount_WithVAT())?></div>
 

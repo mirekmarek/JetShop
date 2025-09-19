@@ -10,7 +10,7 @@ namespace JetApplicationModule\EShop\ReturnsOfGoods;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\ReturnOfGoods;
 use JetApplication\Product_EShopData;
 
@@ -25,7 +25,7 @@ $return = $this->getRaw('return');
 $edit_form = $this->getRaw('form');
 $product = $return->getProduct();
 
-echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+echo Application_Service_EShop::CustomerSection()?->showMenu('return-of-goods');
 ?>
 <div class="customer-section-container">
 <div class="card">

@@ -9,13 +9,13 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\MVC_View;
 use JetApplication\Category_EShopData;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_ProductListing;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_EShop_ProductListing;
 
 /**
  * @var MVC_View   $this
  * @var Category_EShopData $category
- * @var EShop_Managers_ProductListing $listing
+ * @var Application_Service_EShop_ProductListing $listing
  */
 
 $category = $this->getRaw('category');
@@ -60,4 +60,4 @@ $subcategories = $category->getChildren();
 
 <?=$listing->render()?>
 
-<?=EShop_Managers::Analytics()?->viewCategory( $category, $listing->getListing() );?>
+<?=Application_Service_EShop::AnalyticsManager()?->viewCategory( $category, $listing->getListing() );?>

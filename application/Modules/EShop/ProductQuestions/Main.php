@@ -14,22 +14,39 @@ use Jet\Form_Field_Textarea;
 use Jet\Translator;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductQuestion;
-use JetApplication\EShop_Managers_ProductQuestions;
+use JetApplication\Application_Service_EShop_ProductQuestions;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShops;
 use JetApplication\Customer;
 
 
-class Main extends EShop_Managers_ProductQuestions implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_ProductQuestions implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
 	protected ProductQuestion $new_question;
 	protected ?Form $new_question_form=null;
 	
+	use EShop_ModuleUsingTemplate_Trait;
+	
+	protected function getRelevantProduct(Product_EShopData $product ) : Product_EShopData
+	{
+		if($product->isVariant()) {
+			return $product->getVariantMasterProduct() ? : $product;
+		}
+		return $product;
+	}
+	
+	public function getQuestionCount( Product_EShopData $product ): int
+	{
+		return $this->getRelevantProduct( $product )->getQuestionCount();
+	}
+	
+	
 	public function renderQuestions( Product_EShopData $product ): string
 	{
+		$product = $this->getRelevantProduct( $product );
 		
 		return Translator::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),
@@ -38,6 +55,7 @@ class Main extends EShop_Managers_ProductQuestions implements EShop_ModuleUsingT
 				
 				$form = $this->getNewQuestionForm( $product );
 				
+				$view->setVar( 'product', $product);
 				$view->setVar('form', $form );
 				
 				if( $form->catchInput() ) {
@@ -125,4 +143,5 @@ class Main extends EShop_Managers_ProductQuestions implements EShop_ModuleUsingT
 		
 		return $this->new_question_form;
 	}
+	
 }

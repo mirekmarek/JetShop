@@ -14,14 +14,14 @@ use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
-use JetApplication\EShop_OAuth_BackendModule;
+use JetApplication\Application_Service_EShop_OAuthBackendModule;
 use JetApplication\EShop_OAuth_UserHandler;
 use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 
 
-class Main extends EShop_OAuth_BackendModule implements
+class Main extends Application_Service_EShop_OAuthBackendModule implements
 	EShop_ModuleUsingTemplate_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface,
 	Admin_ControlCentre_Module_Interface
@@ -30,7 +30,7 @@ class Main extends EShop_OAuth_BackendModule implements
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	public const OAUTH_SERVICE_ID = 'google';
+	public const OAUTH_SERVICE_ID = 'Google';
 	
 	protected function getConfig( ?EShop $eshop=null ) : Config_PerShop|EShopConfig_ModuleConfig_PerShop
 	{

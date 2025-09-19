@@ -6,21 +6,33 @@
  */
 namespace JetApplicationModule\EShop\ProductReviews;
 
-use Jet\Http_Headers;
-use Jet\Http_Request;
 use Jet\Translator;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers_ProductReviews;
+use JetApplication\Application_Service_EShop_ProductReviews;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
 
-class Main extends EShop_Managers_ProductReviews implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_ProductReviews implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
+	protected function getRelevantProduct(Product_EShopData $product ) : Product_EShopData
+	{
+		if($product->isVariant()) {
+			return $product->getVariantMasterProduct() ? : $product;
+		}
+		return $product;
+	}
+	
+	public function getReviewCount( Product_EShopData $product ): int
+	{
+		return $this->getRelevantProduct($product)->getReviewCount();
+	}
+	
 	public function renderRankForListing( Product_EShopData $product ) : string
 	{
+		$product = $this->getRelevantProduct( $product );
 		return Translator::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),
 			action: function() use ($product) {
@@ -35,6 +47,7 @@ class Main extends EShop_Managers_ProductReviews implements EShop_ModuleUsingTem
 	
 	public function renderRank( Product_EShopData $product ): string
 	{
+		$product = $this->getRelevantProduct( $product );
 		return Translator::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),
 			action: function() use ($product) {
@@ -48,6 +61,8 @@ class Main extends EShop_Managers_ProductReviews implements EShop_ModuleUsingTem
 	
 	public function renderReviews( Product_EShopData $product ): string
 	{
+		$product = $this->getRelevantProduct( $product );
+		
 		return Translator::setCurrentDictionaryTemporary(
 			dictionary: $this->module_manifest->getName(),
 			action: function() use ($product) {
@@ -60,46 +75,4 @@ class Main extends EShop_Managers_ProductReviews implements EShop_ModuleUsingTem
 			});
 	}
 	
-	protected CustomerReviewManager $cs_manager;
-	
-	public function handleCustomerSectionReviews(): void
-	{
-		Translator::setCurrentDictionaryTemporary(
-			dictionary: $this->module_manifest->getName(),
-			action: function() {
-				$this->cs_manager = new CustomerReviewManager();
-				
-				if( ($write_review_p_id=Http_Request::GET()->getInt('write_review')) ) {
-					if(!in_array($write_review_p_id, $this->cs_manager->getPossibleProductIds())) {
-						Http_Headers::reload(unset_GET_params: ['write_review']);
-					}
-					
-					$this->cs_manager->setWriteReviewProductId( $write_review_p_id );
-					
-					if($this->cs_manager->catchWriteReviewForm()) {
-						Http_Headers::reload(unset_GET_params: ['write_review']);
-					}
-				}
-			});
-		
-		
-	}
-	
-	public function renderCustomerSectionReviews(): string
-	{
-		return Translator::setCurrentDictionaryTemporary(
-			dictionary: $this->module_manifest->getName(),
-			action: function() {
-				$view = $this->getView();
-				$view->setVar('manager', $this->cs_manager);
-				
-				if($this->cs_manager->getWriteReviewProductId()) {
-					return $view->render('customer-section/write_review');
-				} else {
-					return $view->render('customer-section');
-				}
-			});
-		
-		
-	}
 }

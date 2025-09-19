@@ -9,12 +9,12 @@ namespace JetApplicationModule\EShop\Compare;
 use Jet\MVC_Page_Interface;
 use Jet\Session;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers_Compare;
+use JetApplication\Application_Service_EShop_Compare;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
-class Main extends EShop_Managers_Compare implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_Compare implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
@@ -59,6 +59,33 @@ class Main extends EShop_Managers_Compare implements EShop_ModuleUsingTemplate_I
 		}
 		
 		$session->setValue('products', $_products);
+	}
+	
+	public function unselectKindOfProduct( int $kind_of_product_id ) : void
+	{
+		$kinds = [];
+		$product_ids = $this->getProductIds();
+		if(!$product_ids) {
+			return;
+		}
+		
+		$products = Product_EShopData::getActiveList( $product_ids );
+		if(!$products) {
+			return;
+		}
+		
+		$remove = [];
+		
+		foreach($products as $product) {
+			if($product->getKindId()==$kind_of_product_id) {
+				$remove[] = $product->getId();
+			}
+		}
+		
+		foreach($remove as $p_id) {
+			$this->unselectProduct( $p_id );
+		}
+		
 	}
 	
 	public function getProductIds() : array

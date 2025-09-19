@@ -249,7 +249,7 @@ CashDesk.delivery.personalTakeover = {
 		dialog.open('select_personal_takeover_selected_point_dialog');
 	},
 
-	selectPoint: function( id ) {
+	selectPont: function( id ) {
 		setTimeout(function () {
 			CashDesk._request.doGet('?action=personal_takeover_select_point&id=' + id );
 		}, 10);

@@ -13,14 +13,15 @@ use Jet\Form_Field_Email;
 use Jet\Form_Field_Password;
 use Jet\Form;
 use Jet\MVC;
+use Jet\Tr;
 use JetApplication\Customer;
-use JetApplication\EShop_Managers_CustomerLogin;
+use JetApplication\Application_Service_EShop_CustomerLogin;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
 
-class Main extends EShop_Managers_CustomerLogin implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_CustomerLogin implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
@@ -117,7 +118,12 @@ class Main extends EShop_Managers_CustomerLogin implements EShop_ModuleUsingTemp
 			return '';
 		}
 		
-		return $this->getView()->render('icon');
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() {
+				return $this->getView()->render('icon');
+			}
+		);
 	}
 	
 	public function getMustChangePasswordForm() : Form

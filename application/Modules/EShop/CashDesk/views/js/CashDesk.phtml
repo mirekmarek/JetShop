@@ -74,11 +74,12 @@ $cash_desk = $this->getRaw('cash_desk');
 						let element = document.getElementById(id);
 						if (element) {
 							element.innerHTML = response['snippets'][id];
-							
+
 							let scripts = element.getElementsByTagName('script');
 							for (let i = 0; i < scripts.length; i++) {
 								eval( scripts[i].innerHTML );
 							}
+
 						}
 					}
 				}
@@ -114,6 +115,13 @@ $cash_desk = $this->getRaw('cash_desk');
 		},
 		
 		scrollTo: function(element_id) {
+			let current = document.querySelectorAll('.step-title');
+			
+			if(current.item(0)) {
+				current.item(0).scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+				return;
+			}
+			
 			effects.scrollTo( element_id );
 		},
 		

@@ -8,7 +8,7 @@ namespace JetApplicationModule\EShop\CookieSettings;
 
 
 use Jet\Data_DateTime;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 class CookieData {
 	protected ?Data_DateTime $date_set = null;
@@ -17,7 +17,7 @@ class CookieData {
 	
 	public function __construct( string $data='' )
 	{
-		foreach( EShop_Managers::CookieSettings()->getGroups() as $group) {
+		foreach( Application_Service_EShop::CookieSettings()->getGroups() as $group) {
 			$this->groups[ $group->getCode() ] = null;
 		}
 		

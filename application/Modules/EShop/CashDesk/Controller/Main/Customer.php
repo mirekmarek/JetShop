@@ -13,6 +13,7 @@ use Jet\Http_Request;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Customer;
+use JetApplication\EShopEntity_Price;
 
 trait Controller_Main_Customer {
 

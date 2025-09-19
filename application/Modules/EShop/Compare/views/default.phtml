@@ -11,7 +11,7 @@ use Jet\Factory_MVC;
 use Jet\MVC_View;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View   $this
@@ -24,7 +24,7 @@ $products = $this->getRaw('products');
 $groups = [];
 $properties = [];
 
-$property_view = Factory_MVC::getViewInstance( EShop_Managers::Catalog()->getViewsDir() );
+$property_view = Factory_MVC::getViewInstance( Application_Service_EShop::Catalog()->getViewsDir() );
 
 
 $showProperty = function( $property_id, $product ) use (&$properties, $property_view) {

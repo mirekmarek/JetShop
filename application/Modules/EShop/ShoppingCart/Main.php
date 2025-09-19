@@ -6,16 +6,18 @@
  */
 namespace JetApplicationModule\EShop\ShoppingCart;
 
+use Jet\Tr;
 use JetApplication\Availabilities;
 use JetApplication\Pricelists;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers_ShoppingCart;
+use JetApplication\Application_Service_EShop_ShoppingCart;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\ShoppingCart;
 use JetApplication\EShops;
+use JetApplication\Application_EShop;
 
-class Main extends EShop_Managers_ShoppingCart implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_ShoppingCart implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
@@ -67,33 +69,58 @@ class Main extends EShop_Managers_ShoppingCart implements EShop_ModuleUsingTempl
 	
 	public function renderIntegration() : string
 	{
-		$view = $this->getView();
-		return
-			$view->render('popup_dialog').
-			$view->render('js');
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() {
+				$view = $this->getView();
+				return
+					$view->render('popup_dialog').
+					$view->render('js');
+				
+			}
+		);
+		
 	}
 	
 	public function renderIcon() : string
 	{
-		$view = $this->getView();
-		return $view->render('icon');
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() {
+				$view = $this->getView();
+				$view->setVar('cart', $this->getCart());
+				return $view->render('icon');
+			}
+		);
+		
 	}
 	
 	
 	public function renderBuyButton_listing( Product_EShopData $product ) : string
 	{
-		$view = $this->getView();
-		$view->setVar('product', $product);
-		$view->setVar('cart', $this->getCart());
-		return $view->render('buy-button/listing');
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($product) {
+				$view = $this->getView();
+				$view->setVar('product', $product);
+				$view->setVar('cart', $this->getCart());
+				return $view->render('buy-button/listing');
+			}
+		);
+		
 	}
 	
 	public function renderBuyButton_detail( Product_EShopData $product ) : string
 	{
-		$view = $this->getView();
-		$view->setVar('product', $product);
-		$view->setVar('cart', $this->getCart());
-		return $view->render('buy-button/detail');
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($product) {
+				$view = $this->getView();
+				$view->setVar('product', $product);
+				$view->setVar('cart', $this->getCart());
+				return $view->render('buy-button/detail');
+			}
+		);
 	}
 	
 	

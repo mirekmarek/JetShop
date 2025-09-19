@@ -11,7 +11,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use JetApplication\Complaint;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Product_EShopData;
 
 /**
@@ -30,7 +30,7 @@ $edit_form->field('delivery_of_claimed_goods_code')->input()->addJsAction('onblu
 $edit_form->field('complaint_type_code')->input()->addJsAction('onblur', "JetAjaxForm.submit(this.form.id)");
 $edit_form->field('preferred_solution_code')->input()->addJsAction('onblur', "JetAjaxForm.submit(this.form.id)");
 
-echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+echo Application_Service_EShop::CustomerSection()?->showMenu('complaints');
 ?>
 <div class="customer-section-container">
 <div class="card">

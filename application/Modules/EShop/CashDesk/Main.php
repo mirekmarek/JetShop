@@ -9,10 +9,10 @@ namespace JetApplicationModule\EShop\CashDesk;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
-use JetApplication\Availabilities;
+use JetApplication\Application_Service_EShop;
+use JetApplication\EShop;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
-use JetApplication\Pricelists;
-use JetApplication\EShop_Managers_CashDesk;
+use JetApplication\Application_Service_EShop_CashDesk;
 use JetApplication\CashDesk as Application_CashDesk;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
@@ -20,7 +20,7 @@ use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShops;
 
 
-class Main extends EShop_Managers_CashDesk implements
+class Main extends Application_Service_EShop_CashDesk implements
 	EShop_ModuleUsingTemplate_Interface,
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface
@@ -42,14 +42,14 @@ class Main extends EShop_Managers_CashDesk implements
 			$config = $this->getEshopConfig( EShops::getCurrent() );
 			$this->cash_desk = new CashDesk(
 				$config,
-				EShops::getCurrent(),
-				Pricelists::getCurrent(),
-				Availabilities::getCurrent()
+				Application_Service_EShop::ShoppingCart()->getCart()
 			);
+			
+			$this->cash_desk->checkCurrentCustomer();
+			$this->cash_desk->getDiscounts();
+			
 		}
 		
-		$this->cash_desk->checkCurrentCustomer();
-		$this->cash_desk->getDiscounts();
 		
 		return $this->cash_desk;
 	}
@@ -78,6 +78,11 @@ class Main extends EShop_Managers_CashDesk implements
 	public function getControlCentrePriority(): int
 	{
 		return 10;
+	}
+	
+	public function getPhoneNumberPrefix( EShop $eshop ) : string
+	{
+		return $this->getEShopConfig( $eshop )->getPhonePrefix();
 	}
 	
 }

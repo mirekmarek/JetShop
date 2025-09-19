@@ -14,29 +14,29 @@ use Jet\Http_Request;
 use Jet\MVC;
 use Jet\Session;
 use JetApplication\Customer;
-use JetApplication\Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
-use JetApplication\EShop_OAuth_BackendModule;
-use JetApplication\EShop_Managers_OAuth;
+use JetApplication\Application_Service_EShop_OAuthBackendModule;
+use JetApplication\Application_Service_EShop_OAuth;
 use JetApplication\EShop_Pages;
 use JetApplication\EShop_OAuth_UserHandler;
 use JetApplication\EShops;
 
-class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_OAuth implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
 	protected ?array $oauth_modules = null;
 	
 	/**
-	 * @return EShop_OAuth_BackendModule[]
+	 * @return Application_Service_EShop_OAuthBackendModule[]
 	 */
 	public function getOAuthModules(): array
 	{
 		if($this->oauth_modules===null) {
 			$this->oauth_modules = [];
-			$modules = Managers::findManagers(EShop_OAuth_BackendModule::class, 'EShop.OAuth.Backend.');
+			$modules = Application_Service_EShop::OAuthModules();
 			
 			foreach( $modules as $oauth_module ) {
 				$service_id = $oauth_module->getOAuthServiceID();
@@ -52,7 +52,7 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 	}
 	
 	
-	public function handle( EShop_OAuth_BackendModule $module ): void
+	public function handle( Application_Service_EShop_OAuthBackendModule $module ): void
 	{
 		$this->handleRequest( $module );
 		$this->handleOAuthServiceReturn( $module );
@@ -63,7 +63,7 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 		return new Session( 'OAuthSession' );
 	}
 	
-	protected function handleRequest( EShop_OAuth_BackendModule $module ): void
+	protected function handleRequest( Application_Service_EShop_OAuthBackendModule $module ): void
 	{
 		$POST = Http_Request::POST();
 		
@@ -83,7 +83,7 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 		
 	}
 	
-	protected function handleOAuthServiceReturn( EShop_OAuth_BackendModule $module ): void
+	protected function handleOAuthServiceReturn( Application_Service_EShop_OAuthBackendModule $module ): void
 	{
 		$session = $this->getSession();
 		
@@ -92,6 +92,7 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 		) {
 			
 			$path_fragments = $session->getValue( 'path_fragments', '' );
+			
 			if( !$path_fragments ) {
 				$path_fragments = [];
 			} else {
@@ -112,6 +113,8 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 				Http_Headers::movedTemporary(
 					MVC::getPage( $redirect_page_id )->getURL( path_fragments: $path_fragments )
 				);
+			} else {
+				Http_Headers::movedTemporary('/');
 			}
 			
 			
@@ -148,7 +151,7 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 	}
 	
 	
-	public function renderLoginButton( EShop_OAuth_BackendModule $module ) : string
+	public function renderLoginButton( Application_Service_EShop_OAuthBackendModule $module ) : string
 	{
 		$view = $this->getView();
 		
@@ -156,5 +159,13 @@ class Main extends EShop_Managers_OAuth implements EShop_ModuleUsingTemplate_Int
 		
 		return $view->render('button');
 	}
-
+	
+	public function renderLoginButtons() : string
+	{
+		$view = $this->getView();
+		
+		$view->setVar('oauth', $this);
+		
+		return $view->render('buttons');
+	}
 }

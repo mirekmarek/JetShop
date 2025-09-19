@@ -14,8 +14,8 @@ use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
 use JetApplication\Marketing_AutoOffer;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_ShoppingCart;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_EShop_ShoppingCart;
 use JetApplication\ShoppingCart;
 
 
@@ -24,13 +24,15 @@ class Controller_Main extends MVC_Controller_Default
 	protected ?MVC_Controller_Router $router = null;
 	
 	protected ShoppingCart $cart;
-	protected EShop_Managers_ShoppingCart $manager;
+	protected Application_Service_EShop_ShoppingCart $manager;
 
 	public function getControllerRouter(): MVC_Controller_Router_Interface|MVC_Controller_Router|null
 	{
 		if(!$this->router) {
-			$this->manager = EShop_Managers::ShoppingCart();
+			$this->manager = Application_Service_EShop::ShoppingCart();
 			$this->cart = $this->manager->getCart();
+			$this->view->setVar('cart', $this->cart);
+			$this->view->setVar('cash_desk', Application_Service_EShop::CashDesk()->getCashDesk() );
 			
 			$this->router = new MVC_Controller_Router( $this );
 
@@ -61,6 +63,10 @@ class Controller_Main extends MVC_Controller_Default
 			
 			$this->router->addAction('unselect_gift')->setResolver( function() use ($GET) {
 				return $GET->exists('unselect_gift');
+			} );
+			
+			$this->router->addAction('select_product_gift')->setResolver( function() use ($GET) {
+				return $GET->exists('select_product_gift');
 			} );
 			
 		}
@@ -114,6 +120,7 @@ class Controller_Main extends MVC_Controller_Default
 
 		$product_id = $GET->getInt('buy');
 		$product_gty = $GET->getFloat('gty');
+		$gift_id = $GET->getInt('gift');
 		
 		
 		$product = Product_EShopData::get( $product_id );
@@ -122,10 +129,11 @@ class Controller_Main extends MVC_Controller_Default
 		}
 
 		$error_message = '';
-		if(($new_item = $this->cart->addItem( $product, $product_gty, error_message: $error_message ))) {
+		if(($new_item = $this->cart->addItem( $product, number_of_units: $product_gty, selected_gift_id: $gift_id, error_message: $error_message ))) {
 			$this->manager->saveCart();
 			
 			$this->view->setVar('new_item', $new_item);
+			$this->view->setVar('cart', $this->cart);
 
 			AJAX::commonResponse([
 				'ok' => true,
@@ -152,7 +160,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$snippet = $this->view->render('shopping_cart_page/shopping_cart');
 		if($removed) {
-			$snippet .= EShop_Managers::Analytics()?->removeFromCart( $removed );
+			$snippet .= Application_Service_EShop::AnalyticsManager()?->removeFromCart( $removed );
 		}
 
 		AJAX::commonResponse([
@@ -211,6 +219,18 @@ class Controller_Main extends MVC_Controller_Default
 			]
 		]);
 	}
-	
+
+	public function select_product_gift_Action() : void
+	{
+		$GET = Http_Request::GET();
+		
+		$this->cart->selectProductGift( $GET->getInt('product_id'), $GET->getInt('select_product_gift') );
+		$this->manager->saveCart();
+		
+		AJAX::commonResponse([
+			'ok' => true
+		]);
+		
+	}
 
 }

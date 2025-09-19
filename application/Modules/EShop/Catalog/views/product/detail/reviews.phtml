@@ -10,7 +10,7 @@ namespace JetApplicationModule\EShop\Catalog;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -19,7 +19,7 @@ use JetApplication\EShop_Managers;
 
 $product = $this->getRaw('product');
 
-$reviews_manager = EShop_Managers::ProductReviews();
+$reviews_manager = Application_Service_EShop::ProductReviews();
 
 if(!$reviews_manager || !$product->getReviewCount()) {
 	return;

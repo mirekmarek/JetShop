@@ -96,11 +96,11 @@ class Controller_Main extends MVC_Controller_Default
 		if($form->catch()) {
 			$email = $form->field('email')->getValue();
 			$password = $form->field('password')->getValue();
-
+			
 			if(Auth::login($email, $password)) {
 				$success = true;
 			} else {
-				$form->setCommonMessage( UI_messages::createDanger(Tr::_('Incorrect e-mail or password')) );
+				$form->setCommonMessage( Tr::_('Incorrect e-mail or password') );
 			}
 		}
 

@@ -15,7 +15,6 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\UI_tabs;
 use JetApplication\EMailMarketing;
-use JetApplication\EShop_Managers;
 use JetApplication\EShops;
 use JetApplication\Customer;
 use JetApplication\Order;
@@ -29,7 +28,7 @@ class Controller_Main extends MVC_Controller_Default
 	protected function initTabs() : void
 	{
 		if(!$this->tabs) {
-			$this->tabs = Main::initTabs( $this->selected_tab );
+			$this->tabs = Main::initTabs(  $this->selected_tab );
 			
 			$this->view->setVar('tabs', $this->tabs);
 		}
@@ -42,7 +41,6 @@ class Controller_Main extends MVC_Controller_Default
 		
 		return match ( $this->selected_tab ) {
 			'orders' => 'orders',
-			'reviews' => 'reviews',
 			'addresses' => 'addresses',
 			'newsletter-subscription' => 'newsletter_subscription',
 
@@ -234,12 +232,4 @@ class Controller_Main extends MVC_Controller_Default
 		$this->output('newsletter_subscription');
 	}
 	
-	public function reviews_Action() : void
-	{
-		$reviews_manager = EShop_Managers::ProductReviews();
-		$reviews_manager->handleCustomerSectionReviews();
-		
-		$this->output('reviews');
-	}
-
 }

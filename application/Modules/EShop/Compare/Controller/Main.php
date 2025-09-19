@@ -8,6 +8,7 @@ namespace JetApplicationModule\EShop\Compare;
 
 
 use Jet\AJAX;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use JetApplication\Product_EShopData;
@@ -60,6 +61,18 @@ class Controller_Main extends MVC_Controller_Default
 				);
 			}
 		}
+		
+		if( ($id=$GET->getInt('remove_product')) ) {
+			$module->unselectProduct( $id );
+			Http_Headers::reload(unset_GET_params: ['remove_product']);
+		}
+		
+		if( ($id=$GET->getInt('remove_kind_of_product')) ) {
+			$module->unselectKindOfProduct( $id );
+			Http_Headers::reload(unset_GET_params: ['remove_kind_of_product']);
+		}
+		
+		
 		
 		$kinds = [];
 		$product_ids = $module->getProductIds();

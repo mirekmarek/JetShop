@@ -9,20 +9,22 @@ namespace JetApplicationModule\EShop\ShoppingCart;
 
 use Jet\MVC_View;
 use Jet\Tr;
+use JetApplication\CashDesk;
 use JetApplication\Pricelists;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
+ * @var CashDesk $cash_desk
  */
 
-$cart = EShop_Managers::ShoppingCart()->getCart();
+$cash_desk = $this->getRaw('cash_desk');
 
 ?>
-<?php foreach($cart->getItems() as $item):
+<?php foreach($cash_desk->getCart()->getItems() as $item):
 	$product = $item->getProduct();
 	$mu = $product->getMeasureUnit();
-	$delivery_info = $product->getDeliveryInfo( $cart->getAvailability() );
+	$delivery_info = $product->getDeliveryInfo( $item->getNumberOfUnits(), $cash_desk->getAvailability() );
 	?>
 <div class="item">
 
@@ -59,16 +61,16 @@ $cart = EShop_Managers::ShoppingCart()->getCart();
 		
 	</div>
 	<div class="price-per-unit">
-		<?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?> <?=$mu?->getName()?' / '.$mu->getName():''?>
+		<?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?> <?=$mu?->getName()?' / '.$mu->getName():''?>
 	</div>
 	<div class="item-amount">
-		<b><?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
+		<b><?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($item->getAmount())?></b>
 	</div>
 </div>
 <?php endforeach; ?>
 
 <div class="total">
-	<?=EShop_Managers::PriceFormatter()->formatWithCurrency($cart->getAmount())?>
+	<?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($cash_desk->getOrder()->getTotalAmount_WithVAT())?>
 </div>
 	
 

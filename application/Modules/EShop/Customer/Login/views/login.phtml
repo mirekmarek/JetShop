@@ -10,7 +10,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\Form;
 use Jet\MVC_View;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -21,7 +21,7 @@ $form = $this->getRaw( 'login_form' );
 $form->field( 'email' )->setPlaceholder( 'email' );
 $form->field( 'password' )->setPlaceholder( 'password' );
 
-$oauth = EShop_Managers::OAuth();
+$oauth = Application_Service_EShop::OAuthManager();
 ?>
 <div class="card login-dialog">
 	<h5 class="card-header">

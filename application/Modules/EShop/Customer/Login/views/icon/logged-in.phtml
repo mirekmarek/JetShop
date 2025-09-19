@@ -11,7 +11,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Customer;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop_Pages;
 
 $customer = Customer::getCurrentCustomer();
@@ -20,7 +20,7 @@ $form = Main::getLogoutForm();
 
 $dialog = UI::dialog('customer_detail_dialog', '');
 
-$manager_name = EShop_Managers::CustomerLogin()->getModuleManifest()->getName();
+$manager_name = Application_Service_EShop::CustomerLogin()->getModuleManifest()->getName();
 
 echo UI::button( '' )
 	->setIcon('user')

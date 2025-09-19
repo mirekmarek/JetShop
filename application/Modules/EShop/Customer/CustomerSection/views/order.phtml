@@ -13,7 +13,7 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use JetApplication\Order;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View   $this
@@ -78,14 +78,14 @@ $delivery_address = $order->getBillingAddress();
 				<div class="item">
 					<div class="number-of-units"><?=$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName();?></div>
 					<div class="title"><?=$item->getTitle()?></div>
-					<div class="total"><?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?></div>
+					<div class="total"><?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($item->getTotalAmount())?></div>
 				</div>
 			<?php endforeach; ?>
 		</div>
 
 
 		<div class="total">
-			<?=EShop_Managers::PriceFormatter()->formatWithCurrency( $order->getTotalAmount_WithVAT() )?>
+			<?=Application_Service_EShop::PriceFormatter()->formatWithCurrency( $order->getTotalAmount_WithVAT() )?>
 		</div>
 		
 	</div>

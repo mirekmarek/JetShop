@@ -11,11 +11,11 @@ use Jet\Application;
 use Jet\Http_Request;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductListing;
-use JetApplication\EShop_Managers_ProductListing;
+use JetApplication\Application_Service_EShop_ProductListing;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-class Main extends EShop_Managers_ProductListing implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_ProductListing implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

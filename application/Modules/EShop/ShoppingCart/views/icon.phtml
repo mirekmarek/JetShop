@@ -6,14 +6,21 @@
  */
 namespace JetApplicationModule\EShop\ShoppingCart;
 
+use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Pricelists;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop_Pages;
+use JetApplication\ShoppingCart;
 
-$cart = EShop_Managers::ShoppingCart()->getCart();
+/**
+ * @var MVC_View $this
+ * @var ShoppingCart $cart
+ */
+
+$cart = $this->getRaw('cart');
 
 $shopping_cart_status_dialog = UI::dialog('shopping-cart-status-dialog', UI::icon('shopping-cart').' '.Tr::_('Shopping cart'));
 
@@ -36,10 +43,10 @@ echo UI::button( '&nbsp;'.$cart->getNumberOfUnits() )->setIcon('shopping-cart')-
 					<a href="<?=$product->getURL()?>"><?=$product->getFullName()?></a>
 				</div>
 				<div class="price-per-unit">
-					<?=$item->getNumberOfUnits()?> <?=$mu?->getName()?> x <?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?>
+					<?=$item->getNumberOfUnits()?> <?=$mu?->getName()?> x <?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($item->getProduct()->getPrice( Pricelists::getCurrent() ))?>
 				</div>
 				<div class="total">
-					<?=EShop_Managers::PriceFormatter()->formatWithCurrency($item->getAmount())?>
+					<?=Application_Service_EShop::PriceFormatter()->formatWithCurrency($item->getAmount())?>
 				</div>
 			</div>
 			

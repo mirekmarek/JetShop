@@ -12,7 +12,7 @@ use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
 use JetApplication\Complaint;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Product_EShopData;
 
 /**
@@ -26,7 +26,7 @@ $complaint = $this->getRaw('complaint');
 $edit_form = $this->getRaw('form');
 $product = $complaint->getProduct();
 
-echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+echo Application_Service_EShop::CustomerSection()?->showMenu('complaints');
 ?>
 <div class="customer-section-container">
 <div class="card">

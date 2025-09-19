@@ -7,12 +7,12 @@
 namespace JetApplicationModule\EShop\ReturnsOfGoods;
 
 
-use Jet\Application_Module;
+use JetApplication\Application_Service_EShop_ReturnOfGoods;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
 
-class Main extends Application_Module implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_ReturnOfGoods implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 }

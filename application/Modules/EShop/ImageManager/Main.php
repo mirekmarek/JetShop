@@ -7,13 +7,15 @@
 namespace JetApplicationModule\EShop\ImageManager;
 
 use Jet\Data_Image;
+use Jet\Data_Image_Exception;
+use Jet\Http_Request;
 use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
-use JetApplication\EShop_Managers_Image;
+use JetApplication\Application_Service_EShop_Image;
 
-class Main extends EShop_Managers_Image
+class Main extends Application_Service_EShop_Image
 {
 	protected string $thb_dir = '_thb';
 	
@@ -50,7 +52,7 @@ class Main extends EShop_Managers_Image
 	public function getRootUrl() : string
 	{
 		if(!$this->root_url) {
-			$this->root_url = SysConf_URI::getImages();
+			$this->root_url = Http_Request::baseURL().SysConf_URI::getImages();
 		}
 		
 		return $this->root_url;
@@ -110,8 +112,13 @@ class Main extends EShop_Managers_Image
 				IO_Dir::create( $target_dir );
 			}
 			
-			$image = new Data_Image( $thb_source_path );
-			$image->createThumbnail( $thb_target_path, $max_w, $max_h );
+			try {
+				$image = new Data_Image( $thb_source_path );
+				$image->createThumbnail( $thb_target_path, $max_w, $max_h );
+			} catch(Data_Image_Exception $e) {
+				return '';
+			}
+			
 		}
 		
 		

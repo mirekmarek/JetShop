@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\CashDesk;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Order;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -36,4 +36,4 @@ $delivery_info = $order->getDeliveryMethod()->generateFinalPageInfoText( $order 
 
 	</div>
 
-<?=EShop_Managers::Analytics()?->purchase( $order )?>
+<?=Application_Service_EShop::AnalyticsManager()?->purchase( $order )?>

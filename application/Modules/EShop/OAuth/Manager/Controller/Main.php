@@ -9,12 +9,12 @@ namespace JetApplicationModule\EShop\OAuth\Manager;
 
 use Jet\MVC;
 use Jet\MVC_Controller_Default;
-use JetApplication\EShop_OAuth_BackendModule;
+use JetApplication\Application_Service_EShop_OAuthBackendModule;
 
 
 class Controller_Main extends MVC_Controller_Default
 {
-	protected EShop_OAuth_BackendModule $current_module;
+	protected Application_Service_EShop_OAuthBackendModule $current_module;
 	
 	public function resolve(): bool|string
 	{

@@ -10,7 +10,7 @@ namespace JetApplicationModule\EShop\ReturnsOfGoods;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\ReturnOfGoods;
 use JetApplication\Product_EShopData;
 
@@ -27,7 +27,7 @@ $product = $return->getProduct();
 $edit_form->field('problem_description')->input()->addCustomCssStyle('width:100%;height:300px');
 $edit_form->field('problem_description')->input()->addJsAction('onblur', "JetAjaxForm.submit(this.form.id)");
 
-echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+echo Application_Service_EShop::CustomerSection()?->showMenu('return-of-goods');
 ?>
 <div class="customer-section-container">
 <div class="card">

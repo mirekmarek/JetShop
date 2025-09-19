@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\MVC_View;
 use JetApplication\Category_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View   $this
@@ -53,4 +53,4 @@ $subcategories = $category->getChildren();
 	</div>
 <?php endif; ?>
 
-<?=EShop_Managers::Analytics()?->viewCategory( $category );?>
+<?=Application_Service_EShop::AnalyticsManager()?->viewCategory( $category );?>

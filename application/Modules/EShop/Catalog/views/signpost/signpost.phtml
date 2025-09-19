@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\MVC_View;
 use JetApplication\Category_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 
 /**
@@ -68,4 +68,4 @@ if(!$categories) {
 	<?php endforeach; ?>
 </div>
 
-<?=EShop_Managers::Analytics()?->viewSignpost($sp)?>
+<?=Application_Service_EShop::AnalyticsManager()?->viewSignpost($sp)?>

@@ -11,20 +11,25 @@ use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
-use Jet\UI_button;use JetApplication\Product_EShopData;
+use Jet\UI_button;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Product_EShopData;
 
 
 /**
  * @var MVC_View   $this
- * @var CustomerReviewManager $manager
+ * @var ReviewManager_LoggedInCustomer $manager
  */
 
 $manager = $this->getRaw('manager');
 
 $pwp = $manager->getPossibleProducts();
-$reviews = $manager->getCustomersReviews();
-?>
+$reviews = $manager->getAlreadyWrittenReviews();
 
+echo Application_Service_EShop::CustomerSection()?->showMenu('reviews');
+
+?>
+<div class="customer-section-container">
 <?php if($pwp): ?>
 	<h4><?=Tr::_('Write review')?></h4>
 	
@@ -76,3 +81,4 @@ $reviews = $manager->getCustomersReviews();
 	<?php endforeach; ?>
 
 <?php endif; ?>
+</div>

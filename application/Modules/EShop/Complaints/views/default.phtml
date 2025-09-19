@@ -15,7 +15,7 @@ use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Complaint;
 use JetApplication\Customer;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View   $this
@@ -29,7 +29,7 @@ if( ($customer=Customer::getCurrentCustomer()) ) {
 	$complaints = Complaint::getByCustomer( $customer );
 }
 
-echo EShop_Managers::CustomerSection()?->showMenu('complaints');
+echo Application_Service_EShop::CustomerSection()?->showMenu('complaints');
 ?>
 <div class="customer-section-container">
 <?=$order_number_form->start()?>

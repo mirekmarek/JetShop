@@ -12,7 +12,7 @@ use Jet\Form;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Product_EShopData;
 
 /**
@@ -26,7 +26,7 @@ $product = $this->getRaw('product');
 $enter_problem_form->field('problem_description')->input()->addCustomCssStyle('width:100%;height:300px');
 $enter_problem_form->field('problem_description')->input()->addJsAction('onblur', "JetAjaxForm.submit(this.form.id)");
 
-echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+echo Application_Service_EShop::CustomerSection()?->showMenu('return-of-goods');
 ?>
 <div class="customer-section-container">
 <?=$enter_problem_form->start()?>

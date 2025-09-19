@@ -10,11 +10,11 @@ use Jet\IO_Dir;
 use Jet\MVC_Layout;
 use Jet\Translator;
 use JetApplication\Content_MagicTag;
-use JetApplication\EShop_Managers_MagicTags;
+use JetApplication\Application_Service_EShop_MagicTags;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-class Main extends EShop_Managers_MagicTags implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_MagicTags implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	

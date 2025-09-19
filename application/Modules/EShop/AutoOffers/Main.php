@@ -6,27 +6,31 @@
  */
 namespace JetApplicationModule\EShop\AutoOffers;
 
+use JetApplication\CashDesk;
 use JetApplication\Marketing_AutoOffer;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_AutoOffers;
+use JetApplication\Application_Service_EShop_AutoOffers;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
-use JetApplication\EShops;
 
 
-class Main extends EShop_Managers_AutoOffers implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_AutoOffers implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
-	public function handleShoppingCart(): string
+	public function handleShoppingCart( CashDesk $cash_desk ): string
 	{
 		$view = $this->getView();
 		
-		$_auto_offers = Marketing_AutoOffer::getAllActive( EShops::getCurrent(), order_by: ['priority'] );
+		$cart = $cash_desk->getCart();
+		
+		$view->setVar('cash_desk', $cash_desk);
+		$view->setVar('cart', $cart);
+		
+		$_auto_offers = Marketing_AutoOffer::getAllActive( $cash_desk->getEshop(), order_by: ['priority'] );
 		
 		$auto_offers = [];
 		foreach($_auto_offers as $offer) {
-			if( $offer->isRelevant( EShop_Managers::ShoppingCart()->getCart()->getProductIds() ) ) {
+			if( $offer->isRelevant( $cart->getProductIds() ) ) {
 				$auto_offers[$offer->getId()] = $offer;
 			}
 		}

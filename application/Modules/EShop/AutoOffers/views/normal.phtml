@@ -10,16 +10,18 @@ namespace JetApplicationModule\EShop\AutoOffers;
 use Jet\MVC_View;
 use JetApplication\Marketing_AutoOffer;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
+use JetApplication\ShoppingCart;
 
 /**
  * @var MVC_View   $this
  * @var Marketing_AutoOffer $offer
+ * @var ShoppingCart $cart
  */
 
 $offer = $this->getRaw('offer');
 $product = Product_EShopData::get( $offer->getOfferProductId() );
-$cash_desk = EShop_Managers::CashDesk()->getCashDesk();
+$cart = $this->getRaw('cart')
 ?>
 <div class="auto-offer">
 	<div class="auto-offer-checkbox">
@@ -34,6 +36,6 @@ $cash_desk = EShop_Managers::CashDesk()->getCashDesk();
 		</div>
 	</div>
 	<div class="auto-offer-price">
-		<?= EShop_Managers::PriceFormatter()->formatWithCurrency( $product->getPrice( $cash_desk->getPricelist() ) ) ?>
+		<?= Application_Service_EShop::PriceFormatter()->formatWithCurrency( $product->getPrice( $cart->getPricelist() ) ) ?>
 	</div>
 </div>

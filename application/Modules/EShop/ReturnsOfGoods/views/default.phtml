@@ -14,7 +14,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Customer;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\ReturnOfGoods;
 
 /**
@@ -29,7 +29,7 @@ if( ($customer=Customer::getCurrentCustomer()) ) {
 	$returns_of_goods = ReturnOfGoods::getByCustomer( $customer );
 }
 
-echo EShop_Managers::CustomerSection()?->showMenu('return-of-goods');
+echo Application_Service_EShop::CustomerSection()?->showMenu('return-of-goods');
 ?>
 <div class="customer-section-container">
 <?=$order_number_form->start()?>

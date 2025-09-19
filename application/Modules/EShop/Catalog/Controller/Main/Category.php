@@ -12,8 +12,8 @@ use JetApplication\Category_EShopData;
 
 use Jet\ErrorPages;
 use Jet\MVC;
-use JetApplication\EShop_Managers;
-use JetApplication\EShop_Managers_ProductListing;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_EShop_ProductListing;
 
 
 trait Controller_Main_Category
@@ -74,16 +74,16 @@ trait Controller_Main_Category
 
 		$category = static::$category;
 		
-		$listing = EShop_Managers::ProductListing();
+		$listing = Application_Service_EShop::ProductListing();
 		
 		/**
-		 * @var EShop_Managers_ProductListing $listing
+		 * @var Application_Service_EShop_ProductListing $listing
 		 */
 		
 		$listing->init( $category->getProductIds() );
 		$listing->setCategoryId( $category->getId() );
-		$listing->setAjaxEventHandler( function( EShop_Managers_ProductListing $listing ) use ($category) {
-			EShop_Managers::Analytics()?->viewCategory( $category, $listing->getListing() );
+		$listing->setAjaxEventHandler( function( Application_Service_EShop_ProductListing $listing ) use ($category) {
+			Application_Service_EShop::AnalyticsManager()?->viewCategory( $category, $listing->getListing() );
 		} );
 		
 		$listing->handle();

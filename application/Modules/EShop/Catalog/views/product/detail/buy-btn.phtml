@@ -9,7 +9,7 @@ namespace JetApplicationModule\EShop\Catalog;
 
 use Jet\MVC_View;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_View $this
@@ -19,6 +19,6 @@ use JetApplication\EShop_Managers;
 $product = $this->getRaw('product');
 ?>
 <div class="buy-btn">
-	<?=EShop_Managers::ShoppingCart()->renderBuyButton_detail( $product );?>
+	<?=Application_Service_EShop::ShoppingCart()->renderBuyButton_detail( $product );?>
 </div>
 

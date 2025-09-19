@@ -81,7 +81,7 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		MVC_Layout::getCurrentLayout()->setScriptName('homepage');
 		
-		$this->output('homepage');
+		$this->outputWithCache( '', 'homepage', 30);
 	}
 
 	public function b2b_menu_Action() : void

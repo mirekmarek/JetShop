@@ -13,6 +13,7 @@ use JetApplication\Availability;
 use JetApplication\Pricelist;
 use JetApplication\EShop;
 use JetApplication\CashDesk as Application_CashDesk;
+use JetApplication\ShoppingCart;
 
 class CashDesk implements Application_CashDesk
 {
@@ -34,6 +35,7 @@ class CashDesk implements Application_CashDesk
 	use CashDesk_Order;
 	
 	
+	protected ShoppingCart $cart;
 	protected Config_PerShop $config;
 	protected EShop $eshop;
 	protected Pricelist $pricelist;
@@ -48,14 +50,13 @@ class CashDesk implements Application_CashDesk
 
 	public function __construct(
 		Config_PerShop              $config,
-		EShop                       $eshop,
-		Pricelist                   $pricelist,
-		Availability $availability
+		ShoppingCart                $cart
 	) {
 		$this->config = $config;
-		$this->eshop = $eshop;
-		$this->pricelist = $pricelist;
-		$this->availability = $availability;
+		$this->cart = $cart;
+		$this->eshop = $cart->getEshop();
+		$this->pricelist = $cart->getPricelist();
+		$this->availability = $cart->getAvailability();
 	}
 	
 	public function getConfig() : Config_PerShop
@@ -96,4 +97,11 @@ class CashDesk implements Application_CashDesk
 	{
 		$this->getSession()->reset();
 	}
+	
+	public function getCart(): ShoppingCart
+	{
+		return $this->cart;
+	}
+	
+	
 }

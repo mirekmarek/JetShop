@@ -9,13 +9,13 @@ namespace JetApplicationModule\EShop\Wishlist;
 use Jet\MVC_Page_Interface;
 use Jet\Session;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers_Wishlist;
+use JetApplication\Application_Service_EShop_Wishlist;
 use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\EShop_Pages;
 
 
-class Main extends EShop_Managers_Wishlist implements EShop_ModuleUsingTemplate_Interface
+class Main extends Application_Service_EShop_Wishlist implements EShop_ModuleUsingTemplate_Interface
 {
 	use EShop_ModuleUsingTemplate_Trait;
 	
