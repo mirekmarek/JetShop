@@ -11,15 +11,15 @@ use JetApplication\Availabilities;
 use JetApplication\Calendar;
 use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;
-use JetApplication\DeliveryTerm_Manager;
+use JetApplication\Application_Service_General_DeliveryTerm;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\Availability;
 
 
-class Main extends DeliveryTerm_Manager
+class Main extends Application_Service_General_DeliveryTerm
 {
-	public function getInfo( Product_EShopData $product, ?Availability $availability=null ) : DeliveryTerm_Info
+	public function getInfo( Product_EShopData $product, float $units_required=1, ?Availability $availability=null ) : DeliveryTerm_Info
 	{
 		if(!$availability) {
 			$availability = Availabilities::getCurrent();
@@ -28,11 +28,14 @@ class Main extends DeliveryTerm_Manager
 		$info = new DeliveryTerm_Info();
 		$info->setAvailability( $availability );
 		$info->setEshop( $product->getEshop() );
+		$info->setNumberofUnitsRequired( $units_required );
 		
 		if($product->isVirtual()) {
 			$info->setIsVirtualProduct( true );
 			$info->setLengthOfDelivery( 0 );
-			$info->setDeliveryInfoText('');
+			$info->setDeliveryInfoText( '' );
+			$info->setDeliveryInfoTextWhenAvailable( '' );
+			$info->setDeliveryInfoTextWhenNotAvailable( '' );
 			$info->setNumberOfUnitsAvailable( 9999999 );
 			$info->setSituation( DeliveryTerm::SITUATION_IN_STOCK );
 			
@@ -53,22 +56,24 @@ class Main extends DeliveryTerm_Manager
 		
 		
 		
+		$info->setDeliveryInfoTextWhenAvailable( 'In stock' );
 
 		
 		if(!$product->getAllowToOrderWhenSoldOut()) {
-			$info->setDeliveryInfoText( 'Not available' );
+			$info->setDeliveryInfoTextWhenNotAvailable( 'Not available' );
 		} else {
 			
 			$available_from = $product->getAvailableFrom( $availability );
 			if($available_from) {
-				$info->setDeliveryInfoText( 'Available from %date%' );
+				$info->setDeliveryInfoTextWhenNotAvailable( 'Available from %date%' );
 				$info->setAvailableFromDate( $available_from );
 			} else {
+				
 				$days_map = [
 					1 => 'One working day',
 					2 => 'Two working days',
 					3 => 'Three working days',
-					4 => 'For working days',
+					4 => 'Four working days',
 					'default' => 'One week'
 				];
 				
@@ -76,44 +81,56 @@ class Main extends DeliveryTerm_Manager
 					1 => 'One week',
 					2 => 'Two weeks',
 					3 => 'Three weeks',
-					'default' => 'More than three weeks'
+					4 => 'Four weeks',
+					'default' => 'More than four weeks'
 				];
 				
 				if($info->getLengthOfDelivery()<=5) {
-					$info->setDeliveryInfoText( $days_map[$info->getLengthOfDelivery()]??$days_map['default'] );
+					$info->setDeliveryInfoTextWhenNotAvailable( $days_map[$info->getLengthOfDelivery()]??$days_map['default'] );
 				} else {
 					$weeks = ceil($info->getLengthOfDelivery() / 5);
 					
-					$info->setDeliveryInfoText( $weeks_map[$weeks]??$days_map['default'] );
+					$info->setDeliveryInfoTextWhenNotAvailable( $weeks_map[$weeks]??$weeks_map['default'] );
 				}
+
 			}
 		}
 		
 		
 		
+		$info->setSituationWhenAvailable( DeliveryTerm::SITUATION_IN_STOCK );
 		
 		
 		if(!$product->getAllowToOrderWhenSoldOut()) {
-			$info->setSituation( DeliveryTerm::SITUATION_NOT_AVAILABLE );
+			$info->setSituationWhenNotAvailable( DeliveryTerm::SITUATION_NOT_AVAILABLE );
 		} else {
 			$available_from = $product->getAvailableFrom( $availability );
 			if($available_from) {
-				$info->setSituation( DeliveryTerm::SITUATION_GOOD );
+				$info->setSituationWhenNotAvailable( DeliveryTerm::SITUATION_GOOD );
 			} else {
 				
-				$info->setSituation( DeliveryTerm::SITUATION_TERRIBLE );
+				$info->setSituationWhenNotAvailable( DeliveryTerm::SITUATION_TERRIBLE );
 				
 				if($info->getLengthOfDelivery()<=15) {
-					$info->setSituation( DeliveryTerm::SITUATION_BAD );
+					$info->setSituationWhenNotAvailable( DeliveryTerm::SITUATION_BAD );
 				}
 				if($info->getLengthOfDelivery()<=10) {
-					$info->setSituation( DeliveryTerm::SITUATION_SO_SO );
+					$info->setSituationWhenNotAvailable( DeliveryTerm::SITUATION_SO_SO );
 				}
 				
 				if($info->getLengthOfDelivery()<=5) {
-					$info->setSituation( DeliveryTerm::SITUATION_GOOD );
+					$info->setSituationWhenNotAvailable( DeliveryTerm::SITUATION_GOOD );
 				}
 			}
+		}
+		
+		
+		if($info->getNumberOfUnitsAvailable()>=$info->getNumberofUnitsRequired()) {
+			$info->setSituation( $info->getSituationWhenAvailable() );
+			$info->setDeliveryInfoText( $info->getDeliveryInfoTextWhenAvailable() );
+		} else {
+			$info->setSituation( $info->getSituationWhenNotAvailable() );
+			$info->setDeliveryInfoText( $info->getDeliveryInfoTextWhenNotAvailable() );
 		}
 		
 		
@@ -144,7 +161,7 @@ class Main extends DeliveryTerm_Manager
 					}
 					
 					if($set_item->getNumberOfUnitsNotAvailable()>0) {
-						$delivery_info = $this->getInfo( $product, $order->getAvailability() );
+						$delivery_info = $this->getInfo( $product, $item->getNumberOfUnits(), $order->getAvailability() );
 						$set_item->setNotAvailableUnitsDeliveryTemInfo( $delivery_info );
 						$set_item->setNotAvailableUnitsPromisedDeliveryDate( $delivery_info->getEstimatedArrivalDateByDeliveryMethod( $lod ) );
 					}
@@ -166,7 +183,7 @@ class Main extends DeliveryTerm_Manager
 			}
 			
 			if($item->getNumberOfUnitsNotAvailable()>0) {
-				$delivery_info = $this->getInfo( $product, $order->getAvailability() );
+				$delivery_info = $this->getInfo( $product, $item->getNumberOfUnits(), $order->getAvailability() );
 				$item->setNotAvailableUnitsDeliveryTemInfo( $delivery_info );
 				$item->setNotAvailableUnitsPromisedDeliveryDate( $delivery_info->getEstimatedArrivalDateByDeliveryMethod( $lod ) );
 			}
