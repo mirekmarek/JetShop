@@ -24,6 +24,8 @@ use JetApplication\EShopEntity_HasProductsRelation_Trait;
 use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use JetApplication\Product_Relation;
+use JetApplication\Product_RelevantRelation;
 
 #[DataModel_Definition]
 abstract class Core_EShopEntity_Marketing extends EShopEntity_Basic implements
@@ -163,5 +165,11 @@ abstract class Core_EShopEntity_Marketing extends EShopEntity_Basic implements
 		return $where;
 	}
 	
+	public function afterDelete(): void
+	{
+		parent::afterDelete();
+		Product_RelevantRelation::removeAll( $this );
+		Product_Relation::removeAll( $this );
+	}
 	
 }

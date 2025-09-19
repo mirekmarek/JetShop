@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,14 +17,8 @@ abstract class Core_WarehouseManagement_StockVerification_Status_Done extends Wa
 {
 	
 	public const CODE = 'done';
-	
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Done', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 50;
-	}
+	protected string $title = 'Done';
+	protected int $priority = 50;
 	
 	public function getShowAdminCSSClass() : string
 	{

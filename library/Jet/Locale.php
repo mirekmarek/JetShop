@@ -40,7 +40,7 @@ class Locale extends BaseObject
 	public const DATE_TIME_FORMAT_LONG = PHP_IntlDateFormatter::LONG;
 
 	/**
-	 * Completely specified style (Tuesday, April 12, 1952 AD, 3:30:42pm PST)
+	 * Completely specified style
 	 * @link http://php.net/manual/en/intl.intldateformatter-constants.php
 	 */
 	public const DATE_TIME_FORMAT_FULL = PHP_IntlDateFormatter::FULL;
@@ -317,7 +317,7 @@ class Locale extends BaseObject
 	protected int $_calendar = 0;
 
 	/**
-	 * @var array
+	 * @var array<string,PHP_NumberFormatter>
 	 */
 	protected array $_currency_formatter = [];
 
@@ -325,7 +325,7 @@ class Locale extends BaseObject
 	 *
 	 * @param null|Locale $in_locale (optional, default: current locale)
 	 *
-	 * @return static[]
+	 * @return string[]
 	 */
 	public static function getAllLocalesList( null|Locale $in_locale = null ) : array
 	{
@@ -654,13 +654,10 @@ class Locale extends BaseObject
 		$exp = (int)(log( $bytes, 1024 ));
 
 		if( !isset( $units[$exp] ) ) {
-			return $bytes;
+			return (string)$bytes;
 		}
 
 		$dv = pow( 1024, $exp );
-		if( !$dv ) {
-			$dv = 1;
-		}
 
 		$bytes = $bytes / $dv;
 

@@ -6,9 +6,7 @@
  */
 namespace JetShop;
 
-
 use Jet\Data_DateTime;
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -20,14 +18,9 @@ use JetApplication\OrderDispatch_Status;
 abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 	
 	public const CODE = 'sent';
-	
+	protected string $title = 'Sent';
+	protected int $priority = 5;
 	protected static bool $is_sent = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Sent', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 5;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

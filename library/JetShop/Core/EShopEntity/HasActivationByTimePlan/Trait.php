@@ -158,14 +158,8 @@ trait Core_EShopEntity_HasActivationByTimePlan_Trait {
 		
 		$now = Data_DateTime::now();
 		foreach($data as $d) {
-			if(
-				!$d['active_from'] &&
-				!$d['active_till']
-			) {
-				continue;
-			}
-			
 			$is_active = true;
+			
 			if(
 				$d['active_from'] &&
 				$d['active_from']>$now

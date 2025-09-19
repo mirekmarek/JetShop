@@ -9,6 +9,7 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Application_Modules;
+use Jet\Application_Service_List;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
@@ -20,8 +21,8 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_PaymentMethods;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_PaymentMethods;
 use JetApplication\EMail;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
@@ -37,7 +38,6 @@ use JetApplication\EShopEntity_HasPrice_Trait;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasTimer_Interface;
 use JetApplication\EShops;
-use JetApplication\Managers;
 use JetApplication\Order;
 use JetApplication\Payment_Kind;
 use JetApplication\Payment_Method_Module;
@@ -63,7 +63,7 @@ use JetApplication\Timer_Action_SetPrice;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Payment method',
-	admin_manager_interface: Admin_Managers_PaymentMethods::class,
+	admin_manager_interface: Application_Service_Admin_PaymentMethods::class,
 	separate_tab_form_shop_data: false,
 	images: [
 		'icon1' => 'Icon 1',
@@ -249,6 +249,26 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 		label: 'Free payment limit:'
 	)]
 	protected float $free_payment_limit = 0.0;
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Minimal order amount:'
+	)]
+	protected float $minimal_order_amount = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Maximal order amount:'
+	)]
+	protected float $maximal_order_amount = 0.0;
+	
 	
 	/**
 	 * @var Payment_Method_Option[]
@@ -453,7 +473,7 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 	 */
 	public static function getPaymentModules() : array
 	{
-		return Managers::findManagers(Payment_Method_Module::class, 'Payment.');
+		return Application_Service_List::findPossibleModules(Payment_Method_Module::class, 'Payment.');
 	}
 	
 	public static function getModulesScope() : array
@@ -666,7 +686,7 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 			
 			public function formatActionContextValue( mixed $action_context ) : string
 			{
-				return Admin_Managers::PriceFormatter()->formatWithCurrency(
+				return Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 					$this->eshop->getDefaultPricelist(), (float)$action_context
 				);
 			}
@@ -769,6 +789,28 @@ abstract class Core_Payment_Method extends EShopEntity_Common implements
 	{
 		$this->free_payment_limit = $free_payment_limit;
 	}
+	
+	public function getMinimalOrderAmount(): float
+	{
+		return $this->minimal_order_amount;
+	}
+	
+	public function setMinimalOrderAmount( float $minimal_order_amount ): void
+	{
+		$this->minimal_order_amount = $minimal_order_amount;
+	}
+	
+	public function getMaximalOrderAmount(): float
+	{
+		return $this->maximal_order_amount;
+	}
+	
+	public function setMaximalOrderAmount( float $maximal_order_amount ): void
+	{
+		$this->maximal_order_amount = $maximal_order_amount;
+	}
+	
+	
 	
 	public function setConfirmationEmailInfoText( string $value ) : void
 	{

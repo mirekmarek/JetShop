@@ -31,7 +31,7 @@ abstract class Core_Payment_Kind {
 	protected bool $allowed_for_invoices = true;
 	
 	protected bool $is_bank_transfer = false;
-	protected bool $is_loadn = false;
+	protected bool $is_loan = false;
 	
 	protected string $alternative_kind_for_invoices = '';
 
@@ -105,14 +105,14 @@ abstract class Core_Payment_Kind {
 		$this->is_bank_transfer = $is_bank_transfer;
 	}
 	
-	public function isLoadn(): bool
+	public function isLoan(): bool
 	{
-		return $this->is_loadn;
+		return $this->is_loan;
 	}
 	
-	public function setIsLoadn( bool $is_loadn ): void
+	public function setIsLoan( bool $is_loan ): void
 	{
-		$this->is_loadn = $is_loadn;
+		$this->is_loan = $is_loan;
 	}
 	
 	

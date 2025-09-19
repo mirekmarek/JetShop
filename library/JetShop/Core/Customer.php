@@ -18,9 +18,11 @@ use Jet\Form_Field_Input;
 use Jet\Data_DateTime;
 use Jet\DataModel_Query;
 
+use JetApplication\Application_Service_General;
+use JetApplication\Customer_PersonalData;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Customer;
+use JetApplication\Application_Service_Admin_Customer;
 use JetApplication\Customer_Address;
 use JetApplication\Customer;
 use JetApplication\EMailMarketing;
@@ -46,7 +48,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Customer',
-	admin_manager_interface: Admin_Managers_Customer::class
+	admin_manager_interface: Application_Service_Admin_Customer::class
 )]
 abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 	Auth_User_Interface,
@@ -173,7 +175,7 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 	 */ 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 20,
+		max_len: 100,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_TEL,
@@ -212,6 +214,12 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 		max_len: 100,
 	)]
 	protected string $oauth_key = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME,
+	)]
+	protected ?Data_DateTime $last_login_date_time = null;
+	
 
 	/**
 	 * @var Customer_Address[]
@@ -282,6 +290,8 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 	{
 		$user = static::load(
 			[
+				EShops::getCurrent()->getWhere(),
+				'AND',
 				'email' => $username,
 			]
 		);
@@ -824,6 +834,39 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 	public function catchEditForm(): bool
 	{
 		return false;
+	}
+	
+	
+	public function deletePersonalData() : void
+	{
+		Application_Service_General::EMailMarketingSubscribe()?->delete( $this->getEshop(), $this->getEmail(), '', '' );
+		
+		Customer_PersonalData::delete( $this->id );
+		
+		$this->delete();
+	}
+	
+	public function getLastLoginDateTime(): ?Data_DateTime
+	{
+		return $this->last_login_date_time;
+	}
+	
+	public function setLastLoginDateTime( ?Data_DateTime $last_login_date_time ): void
+	{
+		$this->last_login_date_time = $last_login_date_time;
+	}
+	
+	public function onLogin() : void
+	{
+		$this->last_login_date_time = Data_DateTime::now();
+		static::updateData(
+			data: [
+				'last_login_date_time' => $this->last_login_date_time,
+			],
+			where: [
+				'id' => $this->id,
+			]
+		);
 	}
 	
 }

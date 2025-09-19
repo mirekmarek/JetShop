@@ -24,7 +24,7 @@ abstract class DataModel_Definition_Model_Related extends DataModel_Definition_M
 
 	/**
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	protected array $main_model_relation_id_properties = [];
 
@@ -41,7 +41,7 @@ abstract class DataModel_Definition_Model_Related extends DataModel_Definition_M
 
 	/**
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	protected array $parent_model_relation_id_properties = [];
 
@@ -324,7 +324,7 @@ abstract class DataModel_Definition_Model_Related extends DataModel_Definition_M
 	/**
 	 * @param string $property_name
 	 * @param string $related_to
-	 * @param array $property_definition_data
+	 * @param array<string,mixed> $property_definition_data
 	 *
 	 * @return DataModel_Definition_Property
 	 * @throws DataModel_Exception
@@ -367,7 +367,7 @@ abstract class DataModel_Definition_Model_Related extends DataModel_Definition_M
 			);
 		}
 
-		$getRelatedPropertiesDefinitionData = function( string $class_name ) use ($property_name): array {
+		$getRelatedPropertiesDefinitionData = function( string $class_name ) : array {
 			$reflection = new ReflectionClass( $class_name );
 
 			$properties_definition_data = Attributes::getClassPropertyDefinition( $reflection, DataModel_Definition::class );

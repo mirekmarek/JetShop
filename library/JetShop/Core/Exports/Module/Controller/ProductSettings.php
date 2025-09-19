@@ -16,7 +16,7 @@ use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_Module;
 use JetApplication\Product;
@@ -33,7 +33,7 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	protected Exports_Module $export;
 	
-	protected ?Exports_ExportCategory $category;
+	protected ?Exports_ExportCategory $category = null;
 	
 	protected bool $editable;
 	
@@ -152,6 +152,6 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 		}
 		
 		/** @noinspection PhpParamsInspection */
-		echo Admin_Managers::Product()->renderExportSettings_parameters( $this );
+		echo Application_Service_Admin::Product()->renderExportSettings_parameters( $this );
 	}
 }

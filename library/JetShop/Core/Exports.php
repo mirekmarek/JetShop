@@ -7,13 +7,13 @@
 namespace JetShop;
 
 
+use Jet\Application_Service_List;
 use Jet\SysConf_Path;
 
 use JetApplication\Exports_Definition;
-use JetApplication\Exports_Manager;
+use JetApplication\Application_Service_General_ExportsManager;
 use JetApplication\Exports_Module;
-use JetApplication\Managers;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 
 abstract class Core_Exports
 {
@@ -23,9 +23,9 @@ abstract class Core_Exports
 	protected static ?string $root_path = null;
 	
 	
-	public static function getManager() : ?Exports_Manager
+	public static function getManager() : ?Application_Service_General_ExportsManager
 	{
-		return Managers_General::Exports();
+		return Application_Service_General::Exports();
 	}
 	
 
@@ -68,7 +68,7 @@ abstract class Core_Exports
 	{
 		$modules = [];
 
-		foreach( Managers::findManagers(Exports_Module::class, static::getModuleNamePrefix()) as $module) {
+		foreach( Application_Service_List::findPossibleModules(Exports_Module::class, static::getModuleNamePrefix()) as $module) {
 			/**
 			 * @var Exports_Module $module
 			 */

@@ -13,6 +13,7 @@ use Jet\DataModel_Definition;
 use Jet\DataModel_Fetch_Instances;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Logger;
+use Jet\MVC_Cache;
 use JetApplication\EShopEntity;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_CanNotBeDeletedReason;
@@ -115,6 +116,7 @@ abstract class Core_EShopEntity_Basic extends DataModel
 			$this->updateFulltextSearchIndex();
 		}
 		
+		MVC_Cache::resetOutputCache();
 	}
 	
 	public function afterDelete(): void
@@ -130,6 +132,7 @@ abstract class Core_EShopEntity_Basic extends DataModel
 			$this->removeFulltextSearchIndex();
 		}
 		
+		MVC_Cache::resetOutputCache();
 	}
 	
 	public function afterAdd(): void
@@ -145,6 +148,7 @@ abstract class Core_EShopEntity_Basic extends DataModel
 			$this->updateFulltextSearchIndex();
 		}
 		
+		MVC_Cache::resetOutputCache();
 	}
 	
 	/**

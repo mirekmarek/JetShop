@@ -8,6 +8,7 @@
 
 namespace Jet;
 
+/** @phpstan-consistent-constructor */
 class DataModel_ImportExport_MetaInfo extends BaseObject implements BaseObject_Interface_Serializable_JSON
 {
 	public const META_INFO_FILE_NAME = 'jet_datamodel_data_export_meta_info.json';
@@ -15,9 +16,17 @@ class DataModel_ImportExport_MetaInfo extends BaseObject implements BaseObject_I
 
 	protected string $data_model_class_name;
 	protected string $source_backend_type;
+	/**
+	 * @var list<mixed>|null
+	 */
 	protected ?array $source_where;
 	protected int $record_count;
 	protected Data_DateTime $export_date_time;
+	
+	public function __construct()
+	{
+	
+	}
 	
 	public static function fromJSON( string $json ): static
 	{
@@ -38,6 +47,9 @@ class DataModel_ImportExport_MetaInfo extends BaseObject implements BaseObject_I
 		return json_encode( $this );
 	}
 	
+	/**
+	 * @return array<string,mixed>
+	 */
 	public function jsonSerialize(): array
 	{
 		$data = get_object_vars( $this );
@@ -58,7 +70,7 @@ class DataModel_ImportExport_MetaInfo extends BaseObject implements BaseObject_I
 	}
 	
 	
-	public function getDataModelClassName(): string
+	public function getDataModelClassName(): string|DataModel
 	{
 		return $this->data_model_class_name;
 	}
@@ -78,11 +90,18 @@ class DataModel_ImportExport_MetaInfo extends BaseObject implements BaseObject_I
 		$this->source_backend_type = $source_backend_type;
 	}
 	
-	public function getSourceWhere(): array
+	/**
+	 * @return list<mixed>|null
+	 */
+	public function getSourceWhere(): ?array
 	{
 		return $this->source_where;
 	}
 	
+	/**
+	 * @param null|list<mixed> $source_where
+	 * @return void
+	 */
 	public function setSourceWhere( ?array $source_where ): void
 	{
 		$this->source_where = $source_where;

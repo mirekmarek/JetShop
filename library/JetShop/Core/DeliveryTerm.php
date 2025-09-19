@@ -10,8 +10,8 @@ namespace JetShop;
 use Jet\Application_Module;
 use JetApplication\Availability;
 use JetApplication\DeliveryTerm_Info;
-use JetApplication\DeliveryTerm_Manager;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General_DeliveryTerm;
+use JetApplication\Application_Service_General;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 
@@ -25,14 +25,14 @@ abstract class Core_DeliveryTerm {
 
 	
 	
-	public static function getManager() : DeliveryTerm_Manager|Application_Module
+	public static function getManager() : Application_Service_General_DeliveryTerm|Application_Module
 	{
-		return Managers_General::DeliveryTerm();
+		return Application_Service_General::DeliveryTerm();
 	}
 	
-	public static function getInfo( Product_EShopData $product, ?Availability $availability=null ) : DeliveryTerm_Info
+	public static function getInfo( Product_EShopData $product, float $units_required=1, ?Availability $availability=null ) : DeliveryTerm_Info
 	{
-		return static::getManager()->getInfo( $product, $availability );
+		return static::getManager()->getInfo( $product, $units_required, $availability );
 	}
 	
 	public static function setupOrder( Order $order ) : void

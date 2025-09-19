@@ -25,6 +25,8 @@ use JetApplication\ReturnOfGoods_Status_Rejected;
 abstract class Core_ReturnOfGoods_Status_BeingProcessed extends ReturnOfGoods_Status {
 	
 	public const CODE = 'being_processed';
+	protected string $title = 'Being processed';
+	protected int $priority = 30;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -39,12 +41,6 @@ abstract class Core_ReturnOfGoods_Status_BeingProcessed extends ReturnOfGoods_St
 		
 		'money_refund' => false,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Being processed', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 30;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

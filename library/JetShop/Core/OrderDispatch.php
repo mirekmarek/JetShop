@@ -15,7 +15,7 @@ use Jet\DataModel_Fetch_Instances;
 use Jet\Tr;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_OrderDispatch;
+use JetApplication\Application_Service_Admin_OrderDispatch;
 use JetApplication\Carrier;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Document;
@@ -60,7 +60,7 @@ use JetApplication\OrderDispatch_Trait_Workflow;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Order dispatch',
-	admin_manager_interface: Admin_Managers_OrderDispatch::class
+	admin_manager_interface: Application_Service_Admin_OrderDispatch::class
 )]
 abstract class Core_OrderDispatch extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,

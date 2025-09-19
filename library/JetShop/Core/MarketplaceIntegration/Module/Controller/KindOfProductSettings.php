@@ -15,13 +15,12 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\KindOfProduct;
 use JetApplication\MarketplaceIntegration_Join_KindOfProduct;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\MarketplaceIntegration_Module_Controller_KindOfProductSettings;
-use JetApplication\EShop;
 
 /**
  *
@@ -35,8 +34,6 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 	
 	protected KindOfProduct $kind_of_product;
 	
-	protected EShop $eshop;
-	
 	protected MarketplaceIntegration_Module $marketplace;
 	
 	protected MarketplaceIntegration_Join_KindOfProduct $category_id_join;
@@ -47,19 +44,16 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 	
 	public function init(
 		KindOfProduct                 $kind_of_product,
-		EShop                         $eshop,
 		MarketplaceIntegration_Module $marketplace
 	): void
 	{
 		$this->kind_of_product = $kind_of_product;
-		$this->eshop = $eshop;
 		$this->marketplace = $marketplace;
-		$this->marketplace_categories = $this->marketplace->getCategories( $this->eshop );
+		$this->marketplace_categories = $this->marketplace->getCategories();
 		$this->selected_marketplace_category = null;
 		
 		$this->category_id_join = MarketplaceIntegration_Join_KindOfProduct::get(
-			$this->marketplace->getCode(),
-			$this->eshop,
+			$this->marketplace->getMarketplace(),
 			$this->kind_of_product->getId()
 		);
 		
@@ -77,11 +71,6 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 	public function getKindOfProduct(): KindOfProduct
 	{
 		return $this->kind_of_product;
-	}
-	
-	public function getEshop(): EShop
-	{
-		return $this->eshop;
 	}
 	
 	public function getMarketplace(): MarketplaceIntegration_Module
@@ -133,7 +122,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 		 * @var MarketplaceIntegration_Module_Controller_KindOfProductSettings $this
 		 */
 		AJAX::snippetResponse(
-			Admin_Managers::KindOfProduct()->renderMarketPlaceIntegrationCategories(
+			Application_Service_Admin::KindOfProduct()->renderMarketPlaceIntegrationCategories(
 				$this,
 				Http_Request::GET()->getString('category')
 			)
@@ -142,13 +131,13 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 	
 	public function actualize_list_of_categories_Action() : void
 	{
-		$this->marketplace->actualizeCategories( $this->eshop );
+		$this->marketplace->actualizeCategories();
 		Http_Headers::reload(unset_GET_params: ['actualize_list_of_categories']);
 	}
 	
 	public function actualize_list_of_parameters_Action() : void
 	{
-		$this->marketplace->actualizeCategory( $this->eshop, $this->category_id_join );
+		$this->marketplace->actualizeCategory( $this->category_id_join );
 		Http_Headers::reload(unset_GET_params: ['actualize_list_of_parameters']);
 	}
 	
@@ -193,7 +182,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_KindOfProductSettin
 		/**
 		 * @var MarketplaceIntegration_Module_Controller_KindOfProductSettings $this
 		 */
-		echo Admin_Managers::KindOfProduct()->renderMarketPlaceIntegrationForm( $this );
+		echo Application_Service_Admin::KindOfProduct()->renderMarketPlaceIntegrationForm( $this );
 	}
 	
 	

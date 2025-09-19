@@ -99,7 +99,10 @@ abstract class Core_EMail extends Mailing_Email {
 	}
 	
 	
-	
+	public function hasBeenSent(): bool
+	{
+		return EMail_Sent::hasBeenSent( $this );
+	}
 	
 	public function send(): bool
 	{

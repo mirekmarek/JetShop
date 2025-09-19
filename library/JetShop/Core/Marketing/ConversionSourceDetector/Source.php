@@ -27,7 +27,7 @@ abstract class Core_Marketing_ConversionSourceDetector_Source
 	
 	abstract public function performDetection() : void;
 	
-	public function isDetected() : bool
+	public function isDetected() : ?bool
 	{
 		return $this->detected;
 	}

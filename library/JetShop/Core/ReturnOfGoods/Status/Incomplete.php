@@ -23,6 +23,8 @@ use JetApplication\ReturnOfGoods_Status_Cancelled;
 abstract class Core_ReturnOfGoods_Status_Incomplete extends ReturnOfGoods_Status {
 	
 	public const CODE = 'incomplete';
+	protected string $title = 'Incomplete';
+	protected int $priority = 10;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -37,12 +39,6 @@ abstract class Core_ReturnOfGoods_Status_Incomplete extends ReturnOfGoods_Status
 		
 		'money_refund' => false,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Incomplete', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

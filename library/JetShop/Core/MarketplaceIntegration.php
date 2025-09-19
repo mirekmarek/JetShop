@@ -8,18 +8,54 @@ namespace JetShop;
 
 
 
+use Jet\Application_Service_List;
+use Jet\BaseObject;
+use JetApplication\EShop;
 use JetApplication\MarketplaceIntegration_Module;
-use JetApplication\Managers;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\EShops;
 
-abstract class Core_MarketplaceIntegration
+abstract class Core_MarketplaceIntegration extends BaseObject
 {
+	protected string $marketplace_code;
+	protected ?EShop $eshop;
 	
 	protected static string $module_name_prefix = 'MarketplaceIntegration.';
 	
 	protected static ?string $root_path = null;
+	
+	public function __construct( string $marketplace_code, ?EShop $eshop )
+	{
+		$this->marketplace_code = $marketplace_code;
+		$this->eshop = $eshop;
+	}
+	
+	public function getMarketplaceCode(): string
+	{
+		return $this->marketplace_code;
+	}
+	
+	public function getEshop(): ?EShop
+	{
+		return $this->eshop;
+	}
+	
+	public function getWhere() : array
+	{
+		$where = [
+			'marketplace_code' => $this->getMarketplaceCode(),
+		];
+		
+		if($this->eshop) {
+			$where[] = 'AND';
+			$where[] = $this->getEshop()->getWhere();
+		}
+		
+		return $where;
+	}
+	
+	
 	
 	public static function getModuleNamePrefix(): string
 	{
@@ -40,7 +76,7 @@ abstract class Core_MarketplaceIntegration
 	{
 		$modules = [];
 
-		foreach( Managers::findManagers( MarketplaceIntegration_Module::class, static::getModuleNamePrefix() ) as $module) {
+		foreach( Application_Service_List::findPossibleModules( MarketplaceIntegration_Module::class, static::getModuleNamePrefix() ) as $module) {
 			/**
 			 * @var MarketplaceIntegration_Module $module
 			 */
@@ -113,4 +149,6 @@ abstract class Core_MarketplaceIntegration
 		
 		return $res;
 	}
+	
+	
 }

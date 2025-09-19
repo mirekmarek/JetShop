@@ -8,6 +8,7 @@ namespace JetShop;
 
 use Jet\Data_DateTime;
 use Jet\Data_Image;
+use Jet\Data_Image_Exception;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
@@ -94,8 +95,13 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 			return $thb_path;
 		}
 		
-		$image = new Data_Image( $path );
-		$image->createThumbnail( $thb_path, 150, 150 );
+		try {
+			$image = new Data_Image( $path );
+			$image->createThumbnail( $thb_path, 150, 150 );
+		} catch(Data_Image_Exception $e) {
+			return '';
+		}
+		
 		
 		return $thb_path;
 	}

@@ -49,8 +49,6 @@ abstract class Core_Exports_Generator_XML extends Exports_Generator
 			header('Content-Type: text/xml;charset='.$this->output_charset);
 		}
 		$this->_line('<?xml version="1.0" encoding="'.$this->output_charset.'"?>');
-
-
 	}
 
 	public function resetIdent( int $ident=0 ) : void

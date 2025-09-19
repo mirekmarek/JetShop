@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,12 +16,8 @@ use JetApplication\OrderPersonalReceipt_Status;
 abstract class Core_OrderPersonalReceipt_Status_Cancel extends OrderPersonalReceipt_Status {
 	
 	public const CODE = 'cancel';
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancellation in progress', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 5;
-	}
+	protected string $title = 'Cancellation in progress';
+	protected int $priority = 5;
 	
 	public function getShowAdminCSSClass() : string
 	{

@@ -7,7 +7,7 @@
 namespace JetShop;
 
 
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShops;
@@ -52,7 +52,7 @@ trait Core_EShopEntity_WithEShopData_HasImages_Trait {
 		
 		$this->defineImages();
 		
-		$manager = Admin_Managers::Image();
+		$manager = Application_Service_Admin::Image();
 		$manager->setEditable( $this->isEditable() );
 		$manager->handleSelectImageWidgets();
 	}

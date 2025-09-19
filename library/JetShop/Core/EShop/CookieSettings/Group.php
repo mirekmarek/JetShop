@@ -7,7 +7,7 @@
 namespace JetShop;
 
 
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 abstract class Core_EShop_CookieSettings_Group
 {
@@ -69,17 +69,17 @@ abstract class Core_EShop_CookieSettings_Group
 	
 	public function getEnabled() : bool
 	{
-		return EShop_Managers::CookieSettings()->groupEnabled($this->code);
+		return Application_Service_EShop::CookieSettings()->groupEnabled($this->code);
 	}
 	
 	public function enable() : void
 	{
-		EShop_Managers::CookieSettings()->enableGroup( $this->code );
+		Application_Service_EShop::CookieSettings()->enableGroup( $this->code );
 	}
 	
 	public function disable() : void
 	{
-		EShop_Managers::CookieSettings()->disableGroup($this->code);
+		Application_Service_EShop::CookieSettings()->disableGroup($this->code);
 	}
 	
 }

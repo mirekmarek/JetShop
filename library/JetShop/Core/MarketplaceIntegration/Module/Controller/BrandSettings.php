@@ -15,13 +15,12 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Brand;
 use JetApplication\MarketplaceIntegration_Join_Brand;
 use JetApplication\MarketplaceIntegration_MarketplaceBrand;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
-use JetApplication\EShop;
 
 /**
  *
@@ -35,8 +34,6 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 	
 	protected Brand $brand;
 	
-	protected EShop $eshop;
-	
 	protected MarketplaceIntegration_Module $marketplace;
 	
 	protected MarketplaceIntegration_Join_Brand $brand_id_join;
@@ -47,19 +44,16 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 	
 	public function init(
 		Brand                         $brand,
-		EShop                         $eshop,
 		MarketplaceIntegration_Module $marketplace
 	): void
 	{
 		$this->brand = $brand;
-		$this->eshop = $eshop;
 		$this->marketplace = $marketplace;
-		$this->marketplace_brands = $this->marketplace->getBrands( $this->eshop );
+		$this->marketplace_brands = $this->marketplace->getBrands();
 		$this->selected_marketplace_brand = null;
 		
 		$this->brand_id_join = MarketplaceIntegration_Join_Brand::get(
-			$this->marketplace->getCode(),
-			$this->eshop,
+			$this->marketplace->getMarketplace(),
 			$this->brand->getId()
 		);
 		
@@ -77,11 +71,6 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 	public function getBrand(): Brand
 	{
 		return $this->brand;
-	}
-	
-	public function getEshop(): EShop
-	{
-		return $this->eshop;
 	}
 	
 	public function getMarketplace(): MarketplaceIntegration_Module
@@ -126,7 +115,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 	
 	public function actualize_list_of_brands_Action() : void
 	{
-		$this->marketplace->actualizeBrands( $this->eshop );
+		$this->marketplace->actualizeBrands();
 		Http_Headers::reload(unset_GET_params: ['actualize_list_of_brands']);
 		
 	}
@@ -137,7 +126,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 		 * @var MarketplaceIntegration_Module_Controller_BrandSettings $this
 		 */
 		AJAX::snippetResponse(
-			Admin_Managers::Brand()->renderMarketPlaceIntegrationBrands(
+			Application_Service_Admin::Brand()->renderMarketPlaceIntegrationBrands(
 				$this,
 				Http_Request::GET()->getString('brand')
 			)
@@ -185,7 +174,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_BrandSettings exten
 		/**
 		 * @var MarketplaceIntegration_Module_Controller_BrandSettings $this
 		 */
-		echo Admin_Managers::Brand()->renderMarketPlaceIntegrationForm( $this );
+		echo Application_Service_Admin::Brand()->renderMarketPlaceIntegrationForm( $this );
 	}
 	
 	

@@ -10,21 +10,18 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_WithEShopRelation;
+use JetApplication\MarketplaceIntegration_Entity_Interface;
+use JetApplication\MarketplaceIntegration_Entity_Trait;
+use JetApplication\MarketplaceIntegration_Marketplace;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter_Value;
-use JetApplication\EShop;
 
 #[DataModel_Definition(
 	name: 'marketplace_category_param_value',
 	database_table_name: 'marketplace_categories_params_values',
 )]
-class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends EShopEntity_WithEShopRelation
+class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends EShopEntity_WithEShopRelation implements MarketplaceIntegration_Entity_Interface
 {
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	protected string $marketplace_code = '';
+	use MarketplaceIntegration_Entity_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -53,11 +50,9 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends ES
 	protected string $value = '';
 	
 	
-	public static function get( EShop $eshop, string $marketplace_code, string $category_id, string $parameter_code, int $product_id ) : ?static
+	public static function get( MarketplaceIntegration_Marketplace $marketplace, string $category_id, string $parameter_code, int $product_id ) : ?static
 	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['marketplace_code'] = $marketplace_code;
+		$where = $marketplace->getWhere();
 		$where[] = 'AND';
 		$where['marketplace_category_id'] = $category_id;
 		$where[] = 'AND';
@@ -69,18 +64,15 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends ES
 	}
 	
 	/**
-	 * @param EShop $eshop
-	 * @param string $marketplace_code
+	 * @param MarketplaceIntegration_Marketplace $marketplace
 	 * @param string $category_id
 	 * @param int $product_id
 	 *
 	 * @return static[]
 	 */
-	public static function getForProduct( EShop $eshop, string $marketplace_code, string $category_id, int $product_id ) : array
+	public static function getForProduct( MarketplaceIntegration_Marketplace $marketplace, string $category_id, int $product_id ) : array
 	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['marketplace_code'] = $marketplace_code;
+		$where = $marketplace->getWhere();
 		$where[] = 'AND';
 		$where['marketplace_category_id'] = $category_id;
 		$where[] = 'AND';
@@ -93,16 +85,6 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter_Value extends ES
 			});
 	}
 
-	
-	public function getMarketplaceCode(): string
-	{
-		return $this->marketplace_code;
-	}
-	
-	public function setMarketplaceCode( string $marketplace_code ): void
-	{
-		$this->marketplace_code = $marketplace_code;
-	}
 	
 	public function getMarketplaceCategoryId(): string
 	{

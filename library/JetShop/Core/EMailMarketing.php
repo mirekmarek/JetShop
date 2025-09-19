@@ -7,16 +7,16 @@
 namespace JetShop;
 
 
-use JetApplication\EMailMarketing_Subscribe_Manager;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General_EMailMarketingSubscribeManager;
+use JetApplication\Application_Service_General;
 
 class Core_EMailMarketing {
 	
-	protected static ?EMailMarketing_Subscribe_Manager $subscribe_manager = null;
+	protected static ?Application_Service_General_EMailMarketingSubscribeManager $subscribe_manager = null;
 	
-	public static function SubscriptionManager() : EMailMarketing_Subscribe_Manager
+	public static function SubscriptionManager() : Application_Service_General_EMailMarketingSubscribeManager
 	{
-		return Managers_General::EMailMarketingSubscribe();
+		return Application_Service_General::EMailMarketingSubscribe();
 	}
 	
 	

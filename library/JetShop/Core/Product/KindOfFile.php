@@ -12,7 +12,7 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Admin_Managers_KindOfProductFile;
+use JetApplication\Application_Service_Admin_KindOfProductFile;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
 use JetApplication\EShopEntity_HasImages_Interface;
@@ -28,7 +28,7 @@ use JetApplication\EShop;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Kind of product file',
-	admin_manager_interface: Admin_Managers_KindOfProductFile::class,
+	admin_manager_interface: Application_Service_Admin_KindOfProductFile::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 	images: [

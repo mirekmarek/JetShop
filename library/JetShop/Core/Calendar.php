@@ -9,15 +9,15 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Data_DateTime;
-use JetApplication\Calendar_Manager;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General_Calendar;
+use JetApplication\Application_Service_General;
 use JetApplication\EShop;
 
 abstract class Core_Calendar {
 	
-	public static function getManager() : Calendar_Manager|Application_Module
+	public static function getManager() : Application_Service_General_Calendar|Application_Module
 	{
-		return Managers_General::Calendar();
+		return Application_Service_General::Calendar();
 	}
 	
 	

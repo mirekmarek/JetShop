@@ -38,10 +38,10 @@ abstract class Core_Exports_Join_Product extends EShopEntity_WithEShopRelation
 	protected int $product_id = 0;
 	
 	
-	public static function get( string $marketplace_code, EShop $eshop, int $product_id  ) : static|null
+	public static function get( string $export_code, EShop $eshop, int $product_id  ) : static|null
 	{
 		return static::load( [
-			'export_code' => $marketplace_code,
+			'export_code' => $export_code,
 			'AND',
 			$eshop->getWhere(),
 			'AND',

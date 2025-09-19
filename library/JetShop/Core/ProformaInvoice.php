@@ -18,7 +18,7 @@ use Jet\Logger;
 use JetApplication\CompanyInfo;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_ProformaInvoice;
+use JetApplication\Application_Service_Admin_ProformaInvoice;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\ProformaInvoice;
@@ -26,7 +26,7 @@ use JetApplication\ProformaInvoice_Item;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\Invoices;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\Order;
 
 #[DataModel_Definition(
@@ -35,7 +35,7 @@ use JetApplication\Order;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Proforma invoice',
-	admin_manager_interface: Admin_Managers_ProformaInvoice::class
+	admin_manager_interface: Application_Service_Admin_ProformaInvoice::class
 )]
 abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument implements
 	EShopEntity_HasNumberSeries_Interface,
@@ -226,7 +226,7 @@ abstract class Core_ProformaInvoice extends EShopEntity_AccountingDocument imple
 	
 	public function generatePDF() : string
 	{
-		return Managers_General::Invoices()->generateProformaInvoicePDF( $this );
+		return Application_Service_General::Invoices()->generateProformaInvoicePDF( $this );
 	}
 	
 	public function getPaymentQrCodeImageFilename(): string

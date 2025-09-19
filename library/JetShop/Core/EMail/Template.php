@@ -7,13 +7,13 @@
 namespace JetShop;
 
 
+use Jet\Application_Service_List;
 use Jet\Translator;
 use JetApplication\EMail;
 use JetApplication\EMail_Layout_EShopData;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\EMail_TemplateText;
 use JetApplication\EMail_TemplateText_EShopData;
-use JetApplication\Managers;
 use JetApplication\EShop;
 use JetApplication\Template;
 
@@ -132,7 +132,7 @@ abstract class Core_EMail_Template extends Template
 		if(static::$all_templates===null) {
 			static::$all_templates = [];
 			
-			foreach( Managers::findManagers(EMail_TemplateProvider::class) as $module) {
+			foreach( Application_Service_List::findPossibleModules(EMail_TemplateProvider::class) as $module) {
 				
 					Translator::setCurrentDictionaryTemporary(
 						dictionary: $module->getModuleManifest()->getName(),

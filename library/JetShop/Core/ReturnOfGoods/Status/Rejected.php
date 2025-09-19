@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\ReturnOfGoods;
@@ -18,6 +16,8 @@ use JetApplication\ReturnOfGoods_Status;
 abstract class Core_ReturnOfGoods_Status_Rejected extends ReturnOfGoods_Status {
 	
 	public const CODE = 'rejected';
+	protected string $title = 'Rejected';
+	protected int $priority = 50;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -32,13 +32,6 @@ abstract class Core_ReturnOfGoods_Status_Rejected extends ReturnOfGoods_Status {
 		
 		'money_refund' => false,
 	];
-
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Rejected', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 50;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

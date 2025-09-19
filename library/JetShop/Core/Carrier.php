@@ -9,12 +9,12 @@ namespace JetShop;
 
 use Jet\Application_Module;
 
+use Jet\Application_Service_List;
 use JetApplication\Carrier;
 use JetApplication\Carrier_Document;
 use JetApplication\Delivery_Method;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Service;
-use JetApplication\Managers;
 use JetApplication\Order;
 use JetApplication\OrderDispatch;
 use JetApplication\Carrier_AdditionalConsignmentParameter;
@@ -169,7 +169,7 @@ abstract class Core_Carrier extends Application_Module
 	{
 		$modules = [];
 		
-		foreach( Managers::findManagers(Carrier::class, 'Carrier.') as $module) {
+		foreach( Application_Service_List::findPossibleModules(Carrier::class, 'Carrier.') as $module) {
 			/**
 			 * @var Carrier $module
 			 */

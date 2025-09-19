@@ -14,6 +14,7 @@ use JetApplication\ReturnOfGoods_Event_InternalNote;
 use JetApplication\ReturnOfGoods_Event_MessageForCustomer;
 use JetApplication\ReturnOfGoods_Event_NewUnfinishedReturnOfGoods;
 use JetApplication\ReturnOfGoods_Event_Updated;
+use JetApplication\ReturnOfGoods_Event_ReturnOfGoodsFinished;
 use JetApplication\ReturnOfGoods_Note;
 
 trait Core_ReturnOfGoods_Trait_Events
@@ -38,7 +39,7 @@ trait Core_ReturnOfGoods_Trait_Events
 		$this->completed = true;
 		$this->save();
 		
-		$this->createEvent( Core_ReturnOfGoods_Event_ReturnOfGoodsFinished::new() )->handleImmediately();
+		$this->createEvent( ReturnOfGoods_Event_ReturnOfGoodsFinished::new() )->handleImmediately();
 	}
 	
 	

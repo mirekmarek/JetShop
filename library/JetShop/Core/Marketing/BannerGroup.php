@@ -14,7 +14,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_BannerGroups;
+use JetApplication\Application_Service_Admin_Marketing_BannerGroups;
 use JetApplication\EShopEntity_Common;
 use JetApplication\EShopEntity_Definition;
 
@@ -25,7 +25,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Banner group',
-	admin_manager_interface: Admin_Managers_Marketing_BannerGroups::class
+	admin_manager_interface: Application_Service_Admin_Marketing_BannerGroups::class
 )]
 abstract class Core_Marketing_BannerGroup extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {

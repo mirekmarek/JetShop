@@ -18,7 +18,7 @@ trait Core_EShopEntity_HasInternalParams_Trait {
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 100,
+		max_len: 150,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,

@@ -24,7 +24,7 @@ use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
-use JetApplication\Admin_Managers_Marketing_CategoryBanners;
+use JetApplication\Application_Service_Admin_Marketing_CategoryBanners;
 use JetApplication\Marketing_CategoryBanner_CategoryAssoc;
 use JetApplication\EShopEntity_Definition;
 
@@ -35,7 +35,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Category Banner',
-	admin_manager_interface: Admin_Managers_Marketing_CategoryBanners::class
+	admin_manager_interface: Application_Service_Admin_Marketing_CategoryBanners::class
 )]
 abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing implements
 	EShopEntity_Admin_Interface

@@ -57,12 +57,12 @@ abstract class Core_WarehouseManagement_StockMovement_Type
 
 	public function getTitle(): string
 	{
-		return $this->title;
+		return Tr::_( $this->title );
 	}
 	
 	protected function setTitle( string $title ): void
 	{
-		$this->title = Tr::_($title, dictionary: Tr::COMMON_DICTIONARY );
+		$this->title = $title;
 	}
 
 	public function getBlockedAdd(): bool

@@ -13,7 +13,7 @@ use Jet\Form_Field;
 use JetApplication\DataList;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop;
 
 use Jet\Form;
@@ -394,7 +394,7 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 		if(!$this->logo) {
 			return '';
 		}
-		return EShop_Managers::Image()->getThumbnailUrl( $this->logo, $max_w, $max_h );
+		return Application_Service_EShop::Image()->getThumbnailUrl( $this->logo, $max_w, $max_h );
 	}
 	
 	public function getLogoUrl() : string
@@ -402,7 +402,7 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 		if(!$this->logo) {
 			return '';
 		}
-		return EShop_Managers::Image()->getUrl( $this->logo );
+		return Application_Service_EShop::Image()->getUrl( $this->logo );
 	}
 	
 	public function getStampAndSignature(): string
@@ -420,7 +420,7 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 		if(!$this->stamp_and_signature) {
 			return '';
 		}
-		return EShop_Managers::Image()->getThumbnailUrl( $this->stamp_and_signature, $max_w, $max_h );
+		return Application_Service_EShop::Image()->getThumbnailUrl( $this->stamp_and_signature, $max_w, $max_h );
 	}
 	
 	public function getStampAndSignatureUrl() : string
@@ -428,7 +428,7 @@ abstract class Core_CompanyInfo extends EShopEntity_WithEShopRelation {
 		if(!$this->stamp_and_signature) {
 			return '';
 		}
-		return EShop_Managers::Image()->getUrl( $this->stamp_and_signature );
+		return Application_Service_EShop::Image()->getUrl( $this->stamp_and_signature );
 	}
 	
 	public function getBankName(): string

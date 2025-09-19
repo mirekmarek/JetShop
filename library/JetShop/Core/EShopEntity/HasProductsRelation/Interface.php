@@ -20,5 +20,8 @@ interface Core_EShopEntity_HasProductsRelation_Interface {
 	public function removeProduct( int $product_id ) : bool;
 	public function removeAllProducts() : bool;
 	public function isRelevant( array $product_ids ) : bool;
-
+	
+	public function getRelevantProductIds( bool $process=false ) : array;
+	public function actualizeRelevantRelations() : void;
+	public static function actualizeAllRelevantRelations() : void;
 }

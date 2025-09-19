@@ -10,7 +10,7 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
-use JetApplication\Admin_Managers_Content_ArticleAuthors;
+use JetApplication\Application_Service_Admin_Content_ArticleAuthors;
 use JetApplication\Content_Article_Author_EShopData;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
@@ -27,7 +27,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Article author',
-	admin_manager_interface: Admin_Managers_Content_ArticleAuthors::class,
+	admin_manager_interface: Application_Service_Admin_Content_ArticleAuthors::class,
 	images: [
 		'avatar_1' => 'Avatar 1',
 		'avatar_2' => 'Avatar 2',

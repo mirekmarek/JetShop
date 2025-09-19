@@ -10,7 +10,7 @@ namespace JetShop;
 use Jet\Form;
 use Jet\Form_Field_Float;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasPrice_Interface;
 use JetApplication\Pricelist;
@@ -50,7 +50,7 @@ abstract class Core_Timer_Action_SetPrice extends Timer_Action {
 	
 	public function formatActionContextValue( mixed $action_context ) : string
 	{
-		return Admin_Managers::PriceFormatter()->formatWithCurrency(
+		return Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 			$this->pricelist, (float)$action_context
 		);
 	}

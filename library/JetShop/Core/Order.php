@@ -13,26 +13,29 @@ use Jet\DataModel_Definition;
 
 use Jet\Form;
 use JetApplication\EShop_Pages;
+use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Order;
+use JetApplication\Application_Service_Admin_Order;
 use JetApplication\Availabilities;
 use JetApplication\Availability;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasPersonalData_Interface;
+use JetApplication\EShopEntity_HasPersonalData_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\EShopEntity_Definition;
-use JetApplication\Marketing_ConversionSourceDetector_Source;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
+use JetApplication\EShopEntity_HasEvents_Trait;
+use JetApplication\EShopEntity_Definition;
+use JetApplication\Marketing_ConversionSourceDetector_Source;
 use JetApplication\Order_Item;
 use JetApplication\Order_ProductOverviewItem;
 use JetApplication\Order_Trait_Events;
@@ -61,21 +64,23 @@ use JetApplication\Context_ProvidesContext_Trait;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Order',
-	admin_manager_interface: Admin_Managers_Order::class
+	admin_manager_interface: Application_Service_Admin_Order::class
 )]
 abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasNumberSeries_Interface,
 	EShopEntity_HasStatus_Interface,
 	EShopEntity_HasEvents_Interface,
+	EShopEntity_HasPersonalData_Interface,
 	Context_ProvidesContext_Interface,
 	EShopEntity_Admin_Interface
 {
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasStatus_Trait;
-	use Core_EShopEntity_HasEvents_Trait;
+	use EShopEntity_HasPersonalData_Trait;
 	
+	use EShopEntity_HasEvents_Trait;
 	
 	use Context_ProvidesContext_Trait;
 	use EShopEntity_HasNumberSeries_Trait;
@@ -83,6 +88,12 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	use Order_Trait_Events;
 	use Order_Trait_Changes;
 	use Order_Trait_Status;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true,
+	)]
+	protected bool $archived = false;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -1218,7 +1229,7 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	}
 	
 	
-	public function setBillingAddress( Customer_Address $address ) : void
+	public function setBillingAddress( EShopEntity_Address $address ) : void
 	{
 		$this->setBillingCompanyName( $address->getCompanyName() );
 		$this->setBillingCompanyId( $address->getCompanyId() );
@@ -1231,9 +1242,9 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		$this->setBillingAddressCountry( $address->getAddressCountry() );
 	}
 	
-	public function getBillingAddress() : Customer_Address
+	public function getBillingAddress() : EShopEntity_Address
 	{
-		$address = new Customer_Address();
+		$address = new EShopEntity_Address();
 		
 		$address->setCompanyName( $this->getBillingCompanyName( ) );
 		$address->setCompanyId( $this->getBillingCompanyId( ) );
@@ -1250,7 +1261,7 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	
 	
 	
-	public function setDeliveryAddress( Customer_Address $address ) : void
+	public function setDeliveryAddress( EShopEntity_Address $address ) : void
 	{
 		$this->setDeliveryCompanyName( $address->getCompanyName() );
 		$this->setDeliveryFirstName( $address->getFirstName() );
@@ -1262,9 +1273,9 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	}
 	
 	
-	public function getDeliveryAddress() : Customer_Address
+	public function getDeliveryAddress() : EShopEntity_Address
 	{
-		$address = new Customer_Address();
+		$address = new EShopEntity_Address();
 		
 		$address->setCompanyName( $this->getDeliveryCompanyName( ) );
 		$address->setFirstName( $this->getDeliveryFirstName( ) );
@@ -1526,4 +1537,25 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 			GET_params: $GET_params
 		);
 	}
+	
+	public function deletePersonalData(): void
+	{
+		$this->email = '';
+		$this->phone = '';
+		
+		$this->billing_company_name = '';
+		$this->billing_company_id = '';
+		$this->billing_company_vat_id = '';
+		$this->billing_first_name = '';
+		$this->billing_surname = '';
+		$this->billing_address_street_no = '';
+		
+		$this->delivery_company_name = '';
+		$this->delivery_first_name = '';
+		$this->delivery_surname = '';
+		$this->delivery_address_street_no = '';
+		
+		$this->save();
+	}
+	
 }

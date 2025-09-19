@@ -24,15 +24,11 @@ abstract class Core_Supplier_GoodsOrder_Status_ProblemDuringSending extends Supp
 {
 	
 	public const CODE = 'problem_during_sending';
-	
+	protected string $title = 'Problem during sending';
+	protected int $priority = 65;
 	protected bool $order_can_be_updated = true;
 	protected bool $send_allowed = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Problem during sending', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 65;
-	}
+
 	
 	public function getShowAdminCSSClass() : string
 	{

@@ -24,6 +24,9 @@ use JetApplication\EShopEntity_VirtualStatus;
 abstract class Core_Complaint_Status_New extends Complaint_Status {
 	
 	public const CODE = 'new';
+	protected string $title = 'New';
+	protected int $priority = 20;
+	
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -43,11 +46,6 @@ abstract class Core_Complaint_Status_New extends Complaint_Status {
 		
 	];
 	
-	public function __construct()
-	{
-		$this->title = Tr::_('New', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 20;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

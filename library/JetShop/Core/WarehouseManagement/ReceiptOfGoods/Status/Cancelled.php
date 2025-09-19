@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,15 +17,10 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods_Status_Cancelled extends 
 {
 	
 	public const CODE = 'cancelled';
+	protected string $title = 'Cancelled';
+	protected int $priority = 80;
 	
 	protected bool $cancel_allowed = false;
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancelled', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 80;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

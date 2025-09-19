@@ -11,24 +11,18 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\EShop;
+use JetApplication\MarketplaceIntegration_Entity_Interface;
+use JetApplication\MarketplaceIntegration_Entity_Trait;
+use JetApplication\MarketplaceIntegration_Marketplace;
 
 
 #[DataModel_Definition(
 	name: 'marketplace_join_product_common_data',
 	database_table_name: 'marketplace_join_product_common_data',
 )]
-abstract class Core_MarketplaceIntegration_Join_ProductCommonData extends EShopEntity_WithEShopRelation
+abstract class Core_MarketplaceIntegration_Join_ProductCommonData extends EShopEntity_WithEShopRelation implements MarketplaceIntegration_Entity_Interface
 {
-	
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
-		is_id: true,
-		is_key: true,
-	)]
-	protected string $marketplace_code = '';
-	
+	use MarketplaceIntegration_Entity_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -51,34 +45,16 @@ abstract class Core_MarketplaceIntegration_Join_ProductCommonData extends EShopE
 	protected mixed $common_data = null;
 	
 	
-	public static function get( string $marketplace_code, EShop $eshop, int $product_id, string $common_data_key  ) : static|null
+	public static function get( MarketplaceIntegration_Marketplace $marketplace, int $product_id, string $common_data_key  ) : static|null
 	{
 		return static::load( [
-			'marketplace_code' => $marketplace_code,
-			'AND',
-			$eshop->getWhere(),
+			$marketplace->getWhere(),
 			'AND',
 			'product_id' => $product_id,
 			'AND',
 			'common_data_key' => $common_data_key
 		] );
 		
-	}
-
-	
-	public function setMarketplaceCode( string $value ) : void
-	{
-		$this->marketplace_code = $value;
-		
-		if( $this->getIsSaved() ) {
-			$this->setIsNew();
-		}
-		
-	}
-	
-	public function getMarketplaceCode() : string
-	{
-		return $this->marketplace_code;
 	}
 	
 	public function setProductId( int $value ) : void

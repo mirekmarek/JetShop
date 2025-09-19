@@ -10,11 +10,11 @@ namespace JetShop;
 use Jet\Auth;
 use Jet\Data_DateTime;
 use Jet\Logger;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Customer;
-use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method;
 use JetApplication\Discounts_Discount;
+use JetApplication\EShopEntity_Address;
 use JetApplication\Order;
 use JetApplication\Order_ChangeHistory;
 use JetApplication\Order_Item;
@@ -46,7 +46,7 @@ trait Core_Order_Trait_Changes {
 		$change->addChange(
 			property: 'idem_deleted',
 			old_value:
-			$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
+			$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Application_Service_Admin::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
 			new_value: ''
 		);
 		$change->save();
@@ -127,7 +127,7 @@ trait Core_Order_Trait_Changes {
 				$change->addChange(
 					property: 'idem_deleted',
 					old_value:
-					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
+					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Application_Service_Admin::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
 					new_value: ''
 				);
 				
@@ -423,7 +423,7 @@ trait Core_Order_Trait_Changes {
 				if($place) {
 					$billing_address = $this->getBillingAddress();
 					
-					$delivery_address = new Customer_Address();
+					$delivery_address = new EShopEntity_Address();
 					$delivery_address->setFirstName( $billing_address->getFirstName() );
 					$delivery_address->setSurname( $billing_address->getSurname() );
 					$delivery_address->setCompanyName( $place->getName() );
@@ -535,7 +535,7 @@ trait Core_Order_Trait_Changes {
 		return $change;
 	}
 	
-	public function updateBillingAddress( Customer_Address $address ) : Order_ChangeHistory
+	public function updateBillingAddress( EShopEntity_Address $address ) : Order_ChangeHistory
 	{
 		$map = [
 			'billing_company_name'      => 'CompanyName',
@@ -575,7 +575,7 @@ trait Core_Order_Trait_Changes {
 		return $change;
 	}
 	
-	public function updateDeliveryAddress( Customer_Address $address ) : Order_ChangeHistory
+	public function updateDeliveryAddress( EShopEntity_Address $address ) : Order_ChangeHistory
 	{
 		$map = [
 			'delivery_company_name'      => 'CompanyName',
@@ -664,7 +664,7 @@ trait Core_Order_Trait_Changes {
 				$change->addChange(
 					property: 'idem_deleted',
 					old_value:
-					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Admin_Managers::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
+					$item->getTitle().' ('.$item->getNumberOfUnits().' '.$item->getMeasureUnit()?->getName().' '.Application_Service_Admin::PriceFormatter()->formatWithCurrency($this->getPricelist(), $item->getPricePerUnit()).')',
 					new_value: ''
 				);
 				

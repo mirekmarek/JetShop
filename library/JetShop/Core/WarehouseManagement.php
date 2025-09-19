@@ -7,23 +7,23 @@
 namespace JetShop;
 
 
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\OrderDispatch;
 use JetApplication\Order;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\Product;
 use JetApplication\WarehouseManagement;
 use JetApplication\WarehouseManagement_LossOrDestruction;
-use JetApplication\WarehouseManagement_Manager;
+use JetApplication\Application_Service_General_WarehouseManagement;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 use JetApplication\WarehouseManagement_StockVerification;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses;
 
 abstract class Core_WarehouseManagement {
 
-	public static function getManager() : ?WarehouseManagement_Manager
+	public static function getManager() : ?Application_Service_General_WarehouseManagement
 	{
-		return Managers_General::WarehouseManagement();
+		return Application_Service_General::WarehouseManagement();
 	}
 	
 	public static function manageNewOrder( Order $order ) : void {

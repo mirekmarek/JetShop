@@ -44,13 +44,13 @@ trait DataModel_Trait_Save
 	}
 
 	/**
-	 * @param array $data
-	 * @param array $where
+	 * @param array<string,mixed> $data
+	 * @param array<mixed> $where
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function updateData( array $data, array $where ): void
 	{
 		/**
-		 * @var DataModel $this
 		 * @var DataModel_Backend $backend
 		 */
 
@@ -75,7 +75,6 @@ trait DataModel_Trait_Save
 	{
 
 		/**
-		 * @var DataModel $this
 		 * @var DataModel_Definition_Model $definition
 		 */
 		$definition = static::getDataModelDefinition();
@@ -113,7 +112,6 @@ trait DataModel_Trait_Save
 	protected function _update(): void
 	{
 		/**
-		 * @var DataModel $this
 		 * @var DataModel_Definition_Model $definition
 		 */
 		$definition = static::getDataModelDefinition();
@@ -155,7 +153,6 @@ trait DataModel_Trait_Save
 	{
 
 		/**
-		 * @var DataModel $this
 		 * @var DataModel_Definition_Model $definition
 		 *
 		 */

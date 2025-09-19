@@ -28,6 +28,8 @@ use JetApplication\Complaint_Status_Rejected;
 abstract class Core_Complaint_Status_BeingProcessed extends Complaint_Status {
 	
 	public const CODE = 'being_processed';
+	protected string $title = 'Being processed';
+	protected int $priority = 30;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -46,12 +48,6 @@ abstract class Core_Complaint_Status_BeingProcessed extends Complaint_Status {
 		'send_new_products' => false,
 		
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Being processed', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 30;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

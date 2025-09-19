@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_Rejected;
@@ -18,6 +16,8 @@ use JetApplication\EShopEntity_Status;
 abstract class Core_Complaint_Status_Rejected extends Complaint_Status {
 	
 	public const CODE = 'rejected';
+	protected string $title = 'Rejected';
+	protected int $priority = 50;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -34,12 +34,6 @@ abstract class Core_Complaint_Status_Rejected extends Complaint_Status {
 		'repaired' => false,
 		'send_new_products' => false,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Rejected', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 50;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

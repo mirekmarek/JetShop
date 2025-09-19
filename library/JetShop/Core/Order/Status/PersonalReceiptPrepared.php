@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
@@ -19,6 +17,8 @@ use JetApplication\Order_Status;
 abstract class Core_Order_Status_PersonalReceiptPrepared extends Order_Status {
 	
 	public const CODE = 'personal_receipt_prepared';
+	protected string $title = 'Personal receipt prepared';
+	protected int $priority = 50;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -33,12 +33,6 @@ abstract class Core_Order_Status_PersonalReceiptPrepared extends Order_Status {
 		'dispatch_started' => true,
 		'dispatched' => true,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Personal receipt prepared', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 50;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

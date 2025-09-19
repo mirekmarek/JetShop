@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,15 +16,10 @@ use JetApplication\OrderDispatch_Status;
 abstract class Core_OrderDispatch_Status_OnTheWay extends OrderDispatch_Status {
 	
 	public const CODE = 'on_the_way';
-	
+	protected string $title = 'On the way';
+	protected int $priority = 6;
 	protected static bool $is_sent = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('On the way', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 6;
-	}
-	
+
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-done';

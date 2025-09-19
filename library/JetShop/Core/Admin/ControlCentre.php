@@ -8,9 +8,9 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
+use Jet\Application_Service_List;
 use Jet\Data_Text;
 use JetApplication\Admin_ControlCentre_Module_Interface;
-use JetApplication\Managers;
 
 abstract class Core_Admin_ControlCentre
 {
@@ -32,7 +32,7 @@ abstract class Core_Admin_ControlCentre
 		if( static::$module_list===null ) {
 			static::$module_list = [];
 			
-			foreach( Managers::findManagers(Admin_ControlCentre_Module_Interface::class) as $module_name=> $module ) {
+			foreach( Application_Service_List::findPossibleModules(Admin_ControlCentre_Module_Interface::class) as $module_name=> $module ) {
 				static::$module_list[ $module_name ] = $module;
 			}
 

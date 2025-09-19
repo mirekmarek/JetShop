@@ -22,6 +22,8 @@ use JetApplication\Order_Status_Cancelled;
 abstract class Core_Order_Status_WaitingForGoodsToBeStocked extends Order_Status {
 	
 	public const CODE = 'waiting_for_goods_to_be_stocked';
+	protected string $title = 'Waiting for goods to be stocked';
+	protected int $priority = 20;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -38,8 +40,6 @@ abstract class Core_Order_Status_WaitingForGoodsToBeStocked extends Order_Status
 	
 	public function __construct()
 	{
-		$this->title = Tr::_('Waiting for goods to be stocked', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 20;
 	}
 	
 	

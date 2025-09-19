@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,14 +16,9 @@ use JetApplication\OrderPersonalReceipt_Status;
 abstract class Core_OrderPersonalReceipt_Status_Pending extends OrderPersonalReceipt_Status {
 	
 	public const CODE = 'pending';
-	
+	protected string $title = 'Awaiting processing';
+	protected int $priority = 1;
 	protected static bool $is_editable = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Awaiting processing', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 1;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

@@ -24,16 +24,11 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Status_Sent ex
 {
 	
 	public const CODE = 'sent';
+	protected string $title = 'Sent';
+	protected int $priority = 40;
 	
 	protected bool $cancel_allowed = false;
 	protected bool $sent = true;
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Sent', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 40;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -19,14 +17,9 @@ use JetApplication\OrderPersonalReceipt_Status;
 abstract class Core_OrderPersonalReceipt_Status_HandedOver extends OrderPersonalReceipt_Status {
 	
 	public const CODE = 'handed_over';
-	
+	protected string $title = 'Handed over';
+	protected int $priority = 4;
 	protected static bool $is_rollback_possible = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Handed over', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 4;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

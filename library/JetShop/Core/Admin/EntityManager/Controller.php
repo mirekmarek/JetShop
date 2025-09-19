@@ -24,9 +24,9 @@ use Jet\UI_tabs;
 
 use JetApplication\Admin_EntityManager_EditTabProvider;
 use JetApplication\Admin_EntityManager_Module;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
-use JetApplication\Admin_Managers_EShopEntity_Edit;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin_EShopEntity_Edit;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Admin_EntityManager_EditTabProvider_EditTab;
 use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
@@ -51,11 +51,11 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected ?MVC_Controller_Router $router = null;
 	
-	protected ?Admin_Managers_EShopEntity_Listing $listing_manager = null;
+	protected ?Application_Service_Admin_EShopEntity_Listing $listing_manager = null;
 	
 	protected ?UI_tabs $tabs = null;
 	
-	protected ?Admin_Managers_EShopEntity_Edit $editor_manager = null;
+	protected ?Application_Service_Admin_EShopEntity_Edit $editor_manager = null;
 	
 	/**
 	 * @var Admin_EntityManager_EditTabProvider_EditTab[]|null
@@ -122,61 +122,67 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	protected function getTabs() : array
 	{
-		$item = $this->current_item;
-		
-		$tabs = [];
-		$tabs['main'] = Tr::_( 'Main data' );
-		
-		if(
-			$item instanceof EShopEntity_Admin_WithEShopData_Interface &&
-			$item->getSeparateTabFormShopData()
-		) {
-			$tabs['description'] = Tr::_('Description');
-		}
-		
-		if($item instanceof EShopEntity_HasProductsRelation_Interface) {
-			switch( $this->current_item->getRelevanceMode() ) {
-				case $item::RELEVANCE_MODE_ALL:
-					break;
-				case $item::RELEVANCE_MODE_BY_FILTER:
-					$tabs['filter'] = Tr::_('Filter' );
-					break;
-				case $item::RELEVANCE_MODE_ALL_BUT_FILTER:
-					$tabs['filter'] = Tr::_('Filter - exclude products' );
-					break;
-				case $item::RELEVANCE_MODE_ONLY_PRODUCTS:
-					$tabs['products'] = Tr::_('Products' );
-					break;
-				case $item::RELEVANCE_MODE_ALL_BUT_PRODUCTS:
-					$tabs['products'] = Tr::_('Exclude products' );
-					break;
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module->getModuleManifest()->getName(),
+			action: function() {
+				$item = $this->current_item;
+				
+				$tabs = [];
+				$tabs['main'] = Tr::_( 'Main data' );
+				
+				if(
+					$item instanceof EShopEntity_Admin_WithEShopData_Interface &&
+					$item->getSeparateTabFormShopData()
+				) {
+					$tabs['description'] = Tr::_('Description');
+				}
+				
+				if($item instanceof EShopEntity_HasProductsRelation_Interface) {
+					switch( $this->current_item->getRelevanceMode() ) {
+						case $item::RELEVANCE_MODE_ALL:
+							break;
+						case $item::RELEVANCE_MODE_BY_FILTER:
+							$tabs['filter'] = Tr::_('Filter' );
+							break;
+						case $item::RELEVANCE_MODE_ALL_BUT_FILTER:
+							$tabs['filter'] = Tr::_('Filter - exclude products' );
+							break;
+						case $item::RELEVANCE_MODE_ONLY_PRODUCTS:
+							$tabs['products'] = Tr::_('Products' );
+							break;
+						case $item::RELEVANCE_MODE_ALL_BUT_PRODUCTS:
+							$tabs['products'] = Tr::_('Exclude products' );
+							break;
+					}
+					
+				}
+				
+				if(
+					$item instanceof EShopEntity_HasImages_Interface ||
+					$item instanceof EShopEntity_HasImageGallery_Interface
+				) {
+					$tabs['images'] = Tr::_( 'Images' );
+				}
+				
+				$custom_tabs = $this->getCustomTabs();
+				foreach( $custom_tabs as $tab_id=>$tab ) {
+					$tabs[$tab_id] = $tab;
+				}
+				
+				foreach( $this->getProvidedTabs() as $provided_tab ) {
+					$title = '';
+					if($provided_tab->getTabIcon()) {
+						$title .= UI::icon( $provided_tab->getTabIcon() ).' ';
+					}
+					$title .= $provided_tab->getTabTitle();
+					
+					$tabs[$provided_tab->getTabKey()] = $title;
+				}
+				
+				return $tabs;
+				
 			}
-			
-		}
-		
-		if(
-			$item instanceof EShopEntity_HasImages_Interface ||
-			$item instanceof EShopEntity_HasImageGallery_Interface
-		) {
-			$tabs['images'] = Tr::_( 'Images' );
-		}
-		
-		$custom_tabs = $this->getCustomTabs();
-		foreach( $custom_tabs as $tab_id=>$tab ) {
-			$tabs[$tab_id] = $tab;
-		}
-		
-		foreach( $this->getProvidedTabs() as $provided_tab ) {
-			$title = '';
-			if($provided_tab->getTabIcon()) {
-				$title .= UI::icon( $provided_tab->getTabIcon() ).' ';
-			}
-			$title .= $provided_tab->getTabTitle();
-			
-			$tabs[$provided_tab->getTabKey()] = $title;
-		}
-		
-		return $tabs;
+		);
 	}
 	
 	protected function getCustomTabs() : array
@@ -344,10 +350,10 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	}
 	
 	
-	public function getListing() : Admin_Managers_EShopEntity_Listing
+	public function getListing() : Application_Service_Admin_EShopEntity_Listing
 	{
 		if(!$this->listing_manager) {
-			$this->listing_manager = Admin_Managers::EntityListing();
+			$this->listing_manager = Application_Service_Admin::EntityListing();
 			$this->listing_manager->setUp(
 				$this->module
 			);
@@ -688,11 +694,11 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		if($item instanceof EShopEntity_HasImageGallery_Interface) {
 			$this->view->setVar('item', $this->current_item);
 			
-			$manager = Admin_Managers::Image();
+			$manager = Application_Service_Admin::Image();
 			
 			$manager->setEditable( $this->module::getCurrentUserCanEdit() );
 			
-			$manager->handleImageGalleryManagement( $item );
+			$manager->handleImageGalleryManagement( $item->getImageGallery() );
 			
 			$this->content->output(
 				$this->getEditorManager()->renderEditImageGallery()
@@ -769,7 +775,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		
 		
 		
-		$form = Admin_Managers::ProductFilter()->init(
+		$form = Application_Service_Admin::ProductFilter()->init(
 			$this->current_item->getProductsFilter()
 		);
 		
@@ -782,7 +788,7 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		 * @var EShopEntity_HasProductsRelation_Interface $item
 		 */
 		if($item->isEditable()) {
-			if(Admin_Managers::ProductFilter()->handleFilterForm()) {
+			if(Application_Service_Admin::ProductFilter()->handleFilterForm()) {
 				
 				UI_messages::success(
 					$this->generateText_edit_main_msg()
@@ -810,10 +816,10 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 	
 	
 	
-	public function getEditorManager(): Admin_Managers_EShopEntity_Edit|Application_Module
+	public function getEditorManager(): Application_Service_Admin_EShopEntity_Edit|Application_Module
 	{
 		if(!$this->editor_manager) {
-			$this->editor_manager = Admin_Managers::EntityEdit();
+			$this->editor_manager = Application_Service_Admin::EntityEdit();
 			$this->editor_manager->init(
 				item: $this->current_item,
 				listing: $this->getListing(),

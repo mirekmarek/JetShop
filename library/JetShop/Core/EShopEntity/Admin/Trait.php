@@ -12,7 +12,7 @@ use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_Input;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Module;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasInternalParams_Interface;
 use JetApplication\EShops;
@@ -35,7 +35,7 @@ trait Core_EShopEntity_Admin_Trait {
 		}
 		
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return Admin_Managers::get( $ifc );
+		return Application_Service_Admin::list()->get( $ifc );
 	}
 	
 	

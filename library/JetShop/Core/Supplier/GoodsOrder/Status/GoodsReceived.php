@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -19,18 +18,12 @@ abstract class Core_Supplier_GoodsOrder_Status_GoodsReceived extends Supplier_Go
 {
 	
 	public const CODE = 'goods_received';
-	
+	protected string $title = 'Goods received';
+	protected int $priority = 70;
 	protected bool $cancel_allowed = false;
-	
 	protected bool $goods_received = true;
 	
 	protected ?WarehouseManagement_ReceiptOfGoods $rcp = null;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Goods received', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 70;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

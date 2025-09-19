@@ -7,17 +7,21 @@
 namespace JetShop;
 
 
+use Jet\Application_Module;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Select;
+use JetApplication\Discounts;
+use JetApplication\EShop;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_DeliveryFeeDiscounts;
+use JetApplication\Application_Service_Admin_Marketing_DeliveryFeeDiscounts;
 use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\Application_Service_EShop_DiscountModule_DeliveryFee;
 
 
 #[DataModel_Definition(
@@ -26,7 +30,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Delivery fee discount',
-	admin_manager_interface: Admin_Managers_Marketing_DeliveryFeeDiscounts::class
+	admin_manager_interface: Application_Service_Admin_Marketing_DeliveryFeeDiscounts::class
 )]
 abstract class Core_Marketing_DeliveryFeeDiscount extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
@@ -124,5 +128,9 @@ abstract class Core_Marketing_DeliveryFeeDiscount extends EShopEntity_Marketing 
 		return false;
 	}
 	
+	public static function getModule( EShop $eshop=null ) :null|Application_Module|Application_Service_EShop_DiscountModule_DeliveryFee
+	{
+		return Discounts::Manager()->getActiveModuleByInterface( Application_Service_EShop_DiscountModule_DeliveryFee::class, $eshop );
+	}
 	
 }

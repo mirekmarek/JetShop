@@ -84,7 +84,7 @@ abstract class Core_Delivery_Kind {
 	 */
 	public function getTitle(): string
 	{
-		return Tr::_( $this->title, dictionary: Tr::COMMON_DICTIONARY );
+		return Tr::_( $this->title );
 	}
 
 	/**

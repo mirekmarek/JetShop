@@ -122,7 +122,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	protected string $help_text = '';
 	
 	/**
-	 * @var array
+	 * @var array<string,mixed>
 	 */
 	protected array $help_data = [];
 
@@ -328,7 +328,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	}
 	
 	/**
-	 * @return mixed
+	 * @return array<string,mixed>
 	 */
 	public function getHelpData(): array
 	{
@@ -336,7 +336,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 	}
 	
 	/**
-	 * @param mixed $help_data
+	 * @param array<string,mixed> $help_data
 	 */
 	public function setHelpData( array $help_data ): void
 	{
@@ -373,11 +373,11 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 
 	/**
 	 *
-	 * @param string $required
+	 * @param bool $required
 	 */
-	public function setIsRequired( string $required ): void
+	public function setIsRequired( bool $required ): void
 	{
-		$this->is_required = (bool)$required;
+		$this->is_required = $required;
 	}
 	
 	/**
@@ -465,7 +465,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 
 
 	/**
-	 * @return array
+	 * @return array<string,mixed>
 	 */
 	public function jsonSerialize(): array
 	{
@@ -490,7 +490,7 @@ abstract class Form_Field extends BaseObject implements JsonSerializable
 
 	/**
 	 * @param string $phrase
-	 * @param array $data
+	 * @param array<string,mixed> $data
 	 *
 	 * @return string
 	 * @see Translator

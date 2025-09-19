@@ -8,9 +8,9 @@ namespace JetShop;
 
 
 use Jet\MVC_Page_Content;
-use JetApplication\Admin_Managers;
-use JetApplication\EShop_Managers;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_EShop;
+use JetApplication\Application_Service_General;
 
 abstract class Core_MVC_Page_Content extends MVC_Page_Content {
 	
@@ -46,10 +46,11 @@ abstract class Core_MVC_Page_Content extends MVC_Page_Content {
 		}
 		
 		/**
-		 * @var EShop_Managers|Managers_General|Admin_Managers $m
+		 * @var Application_Service_EShop|Application_Service_General|Application_Service_Admin $m
 		 */
 		$m = $this->manager_group;
-		$manager = $m::get( $this->manager_interface );
+		
+		$manager = $m::list()->get( $this->manager_interface );
 		if( !$manager ) {
 			return '';
 		}

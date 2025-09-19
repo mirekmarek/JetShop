@@ -19,7 +19,7 @@ trait MVC_Page_Trait_Initialization
 	protected static array $pages = [];
 
 	/**
-	 * @var array
+	 * @var array<string,array<string,array<string,string|string[]>>>
 	 */
 	protected static array $maps = [];
 
@@ -27,7 +27,7 @@ trait MVC_Page_Trait_Initialization
 	 * @param MVC_Base_Interface $base
 	 * @param Locale $locale
 	 *
-	 * @return array
+	 * @return array<string,string>
 	 */
 	public static function _getRelativePathMap( MVC_Base_Interface $base, Locale $locale ): array
 	{
@@ -44,7 +44,7 @@ trait MVC_Page_Trait_Initialization
 	 * @param MVC_Base_Interface $base
 	 * @param Locale $locale
 	 *
-	 * @return array
+	 * @return array<string,array<string,string>>
 	 */
 	public static function loadMaps( MVC_Base_Interface $base, Locale $locale ): array
 	{
@@ -187,7 +187,7 @@ trait MVC_Page_Trait_Initialization
 	 * @param string $source_dir_path
 	 * @param string $parent_page_id
 	 * @param string $parent_path
-	 * @param array $parents
+	 * @param array<string> $parents
 	 *
 	 * @throws MVC_Page_Exception
 	 */
@@ -236,7 +236,7 @@ trait MVC_Page_Trait_Initialization
 	/**
 	 * @param string $data_file_path
 	 *
-	 * @param array|null $parent_page_data
+	 * @param array<string,mixed>|null $parent_page_data
 	 *
 	 * @param string $dir_name
 	 *
@@ -262,7 +262,7 @@ trait MVC_Page_Trait_Initialization
 	/**
 	 * @param MVC_Base_Interface $base
 	 * @param Locale $locale
-	 * @param array $data
+	 * @param array<string,mixed> $data
 	 *
 	 * @return static
 	 */
@@ -280,24 +280,18 @@ trait MVC_Page_Trait_Initialization
 		unset( $data['id'] );
 
 		$page->setData( $data );
-
+		
+		/** @phpstan-ignore return.type */
 		return $page;
 	}
 
 	/**
-	 * @param array $data
+	 * @param array<string,mixed> $data
 	 */
 	protected function setData( array $data ): void
 	{
-		/**
-		 * @var MVC_Page $this
-		 */
-
 		if( isset( $data['meta_tags'] ) ) {
 
-			/**
-			 * @var MVC_Page_MetaTag_Interface $class_name
-			 */
 			$class_name = Factory_MVC::getPageMetaTagClassName();
 
 			foreach( $data['meta_tags'] as $m_dat ) {
@@ -308,9 +302,6 @@ trait MVC_Page_Trait_Initialization
 		}
 
 		if( isset( $data['contents'] ) ) {
-			/**
-			 * @var MVC_Page_Content_Interface $class_name
-			 */
 			$class_name = Factory_MVC::getPageContentClassName();
 
 			foreach( $data['contents'] as $c_dat ) {
@@ -321,9 +312,6 @@ trait MVC_Page_Trait_Initialization
 		}
 
 		if( !isset( $data['relative_path'] ) ) {
-			/**
-			 * @var MVC_Page $parent
-			 */
 			$parent = $this->getParent();
 			$parent_path = $parent ? $parent->getRelativePath() : '';
 

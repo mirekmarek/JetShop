@@ -16,7 +16,7 @@ use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\EShopEntity_Common;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Product;
-use JetApplication\Admin_Managers_AccessoriesGroups;
+use JetApplication\Application_Service_Admin_AccessoriesGroups;
 
 #[DataModel_Definition(
 	name: 'accessories_group',
@@ -24,7 +24,7 @@ use JetApplication\Admin_Managers_AccessoriesGroups;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Accessory group',
-	admin_manager_interface: Admin_Managers_AccessoriesGroups::class
+	admin_manager_interface: Application_Service_Admin_AccessoriesGroups::class
 )]
 abstract class Core_Accessories_Group extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {

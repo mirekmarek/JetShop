@@ -16,7 +16,7 @@ use Jet\Form_Field_Select;
 use Jet\Tr;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_AutoOffers;
+use JetApplication\Application_Service_Admin_Marketing_AutoOffers;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasImages_Trait;
 use JetApplication\EShopEntity_Marketing;
@@ -29,7 +29,7 @@ use JetApplication\Marketing_AutoOffer;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Automatic offer',
-	admin_manager_interface: Admin_Managers_Marketing_AutoOffers::class,
+	admin_manager_interface: Application_Service_Admin_Marketing_AutoOffers::class,
 	images: [
 		'main' => 'Main image',
 		'pictogram' => 'Pictogram image',

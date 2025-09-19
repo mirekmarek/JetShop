@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\Order;
@@ -18,6 +16,8 @@ use JetApplication\Order_Status;
 abstract class Core_Order_Status_Cancelled extends Order_Status {
 	
 	public const CODE = 'cancelled';
+	protected string $title = 'Cancelled';
+	protected int $priority = 80;
 	
 	protected static array $flags_map = [
 		'cancelled' => true,
@@ -35,12 +35,6 @@ abstract class Core_Order_Status_Cancelled extends Order_Status {
 	
 	
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancelled', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 80;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

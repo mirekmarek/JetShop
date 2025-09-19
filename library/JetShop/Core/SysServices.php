@@ -7,19 +7,19 @@
 namespace JetShop;
 
 
+use Jet\Application_Service_List;
 use Jet\Tr;
-use JetApplication\Managers;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\SysServices_Definition;
-use JetApplication\SysServices_Manager;
+use JetApplication\Application_Service_General_SysServices;
 use JetApplication\SysServices_Provider_Interface;
 
 abstract class Core_SysServices {
 	
 	
-	public static function getManager() : ?SysServices_Manager
+	public static function getManager() : ?Application_Service_General_SysServices
 	{
-		return Managers_General::SysServices();
+		return Application_Service_General::SysServices();
 	}
 	
 	/**
@@ -28,7 +28,7 @@ abstract class Core_SysServices {
 	public static function getServiceList() : array
 	{
 		$list = [];
-		foreach( Managers::findManagers(SysServices_Provider_Interface::class) as $module) {
+		foreach( Application_Service_List::findPossibleModules(SysServices_Provider_Interface::class) as $module) {
 			Tr::setCurrentDictionaryTemporary(
 				dictionary: $module->getModuleManifest()->getName(),
 				action: function() use (&$list, $module) {

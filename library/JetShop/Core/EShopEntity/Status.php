@@ -11,7 +11,7 @@ use Jet\Autoloader;
 use Jet\BaseObject;
 use Jet\IO_Dir;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasStatus_Interface;
@@ -39,7 +39,7 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	
 	public function getTitle(): string
 	{
-		return Tr::_( $this->title, dictionary: Tr::COMMON_DICTIONARY );
+		return Tr::_( $this->title );
 	}
 	
 	public function getPriority(): int
@@ -84,7 +84,7 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 		/**
 		 * @var EShopEntity_Status $this
 		 */
-		return Admin_Managers::EntityEdit()->renderShowStatus( $this );
+		return Application_Service_Admin::EntityEdit()->renderShowStatus( $this );
 	}
 	
 	abstract public function getShowAdminCSSClass() : string;

@@ -17,7 +17,7 @@ use Jet\Form_Field;
 use Jet\Form_Field_Input;
 use Jet\MVC;
 use Jet\MVC_Cache;
-use JetApplication\Admin_Managers_Content_InfoPages;
+use JetApplication\Application_Service_Admin_Content_InfoPages;
 use JetApplication\Content_InfoPage_EShopData;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
@@ -33,7 +33,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Info page',
-	admin_manager_interface: Admin_Managers_Content_InfoPages::class,
+	admin_manager_interface: Application_Service_Admin_Content_InfoPages::class,
 	separate_tab_form_shop_data: true
 )]
 abstract class Core_Content_InfoPage extends EShopEntity_WithEShopData implements EShopEntity_Admin_WithEShopData_Interface

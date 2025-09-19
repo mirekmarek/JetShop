@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\ProductQuestion;
@@ -18,16 +16,13 @@ use JetApplication\ProductQuestion_Status;
 abstract class Core_ProductQuestion_Status_Rejected extends ProductQuestion_Status {
 	
 	public const CODE = 'rejected';
+	protected string $title = 'Rejected';
+	protected int $priority = 30;
 	
 	protected static array $flags_map = [
+		'answered' => false,
+		'display' => false,
 	];
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Rejected', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 30;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

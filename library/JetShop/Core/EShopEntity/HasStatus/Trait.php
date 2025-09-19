@@ -134,7 +134,7 @@ trait Core_EShopEntity_HasStatus_Trait {
 		{
 			public function getTitle() : string
 			{
-				return Tr::_( 'Unknown status', dictionary: Tr::COMMON_DICTIONARY );
+				return Tr::_( 'Unknown status' );
 			}
 			
 			public function getShowAdminCSSClass(): string

@@ -8,11 +8,11 @@ namespace JetShop;
 
 
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShopEntity_Definition;
 
 trait Core_EShopEntity_HasImages_Trait {
@@ -29,7 +29,7 @@ trait Core_EShopEntity_HasImages_Trait {
 	
 	public function getImageThumbnailUrl( string $image_class, int $max_w, int $max_h ): string
 	{
-		return EShop_Managers::Image()->getThumbnailUrl(
+		return Application_Service_EShop::Image()->getThumbnailUrl(
 			$this->getImage( $image_class ),
 			$max_w,
 			$max_h
@@ -38,7 +38,7 @@ trait Core_EShopEntity_HasImages_Trait {
 	
 	public function getImageUrl( string $image_class ): string
 	{
-		return EShop_Managers::Image()->getUrl(
+		return Application_Service_EShop::Image()->getUrl(
 			$this->getImage( $image_class )
 		);
 	}
@@ -66,7 +66,7 @@ trait Core_EShopEntity_HasImages_Trait {
 		
 		$this->defineImages();
 		
-		$manager = Admin_Managers::Image();
+		$manager = Application_Service_Admin::Image();
 		$manager->setEditable( $this->isEditable() );
 		$manager->handleSelectImageWidgets();
 	}
@@ -81,7 +81,7 @@ trait Core_EShopEntity_HasImages_Trait {
 			$eshop = null;
 		}
 		
-		$manager = Admin_Managers::Image();
+		$manager = Application_Service_Admin::Image();
 		
 		$manager->defineImage(
 			entity: static::getEntityType(),
@@ -112,7 +112,7 @@ trait Core_EShopEntity_HasImages_Trait {
 			$eshop = null;
 		}
 		
-		$manager = Admin_Managers::Image();
+		$manager = Application_Service_Admin::Image();
 		
 		$manager->uploadImage(
 			tmp_file_path: $tmp_file_path,

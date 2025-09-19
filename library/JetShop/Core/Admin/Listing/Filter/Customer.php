@@ -13,7 +13,7 @@ use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Admin_Listing_Filter;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 abstract class Core_Admin_Listing_Filter_Customer extends Admin_Listing_Filter
 {
@@ -61,7 +61,7 @@ abstract class Core_Admin_Listing_Filter_Customer extends Admin_Listing_Filter
 	
 	public function renderForm() : string
 	{
-		return Admin_Managers::EntityListing()->renderListingFilter(
+		return Application_Service_Admin::EntityListing()->renderListingFilter(
 			filter:      $this,
 			title:       Tr::_($this->label),
 			form_fields: [$this->form_field],

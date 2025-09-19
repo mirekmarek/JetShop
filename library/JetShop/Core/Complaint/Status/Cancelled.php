@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_Cancelled;
@@ -18,6 +16,8 @@ use JetApplication\EShopEntity_Status;
 abstract class Core_Complaint_Status_Cancelled extends Complaint_Status {
 	
 	public const CODE = 'cancelled';
+	protected string $title = 'Cancelled';
+	protected int $priority = 60;
 	
 	protected static array $flags_map = [
 		'cancelled' => true,
@@ -34,16 +34,8 @@ abstract class Core_Complaint_Status_Cancelled extends Complaint_Status {
 		'sent_for_repair' => null,
 		'repaired' => null,
 		'send_new_products' => null,
-		
-		
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancelled', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 60;
-	}
-	
+
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-cancelled';

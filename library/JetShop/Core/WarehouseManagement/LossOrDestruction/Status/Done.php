@@ -6,21 +6,15 @@
  */
 namespace JetShop;
 
-use Jet\Tr;
 use JetApplication\WarehouseManagement_LossOrDestruction_Status;
 
 abstract class Core_WarehouseManagement_LossOrDestruction_Status_Done extends WarehouseManagement_LossOrDestruction_Status {
 	
 	public const CODE = 'done';
+	protected string $title = 'Done';
+	protected int $priority = 50;
 	
 	protected bool $cancel_allowed = false;
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Done', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 50;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

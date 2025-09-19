@@ -24,12 +24,8 @@ use JetApplication\MoneyRefund_Status_InProcessing;
 abstract class Core_MoneyRefund_Status_New extends MoneyRefund_Status {
 	
 	public const CODE = 'new';
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('New', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
+	protected string $title = 'New';
+	protected int $priority = 10;
 	
 	public function getShowAdminCSSClass() : string
 	{

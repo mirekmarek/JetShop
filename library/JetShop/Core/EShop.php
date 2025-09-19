@@ -19,6 +19,7 @@ use Jet\Locale;
 use Jet\MVC;
 use Jet\MVC_Base_Interface;
 use Jet\MVC_Page_Interface;
+use Jet\SysConf_Path;
 use Jet\SysConf_URI;
 use JetApplication\Application_Admin;
 use JetApplication\Application_Exports;
@@ -668,5 +669,15 @@ abstract class Core_EShop extends BaseObject implements Form_Definition_Interfac
 		
 		return $this->getTemplate()->getImagesUrl();
 	}
+	
+	public function getImagesPath() : string
+	{
+		if(!$this->getUseTemplate()) {
+			return SysConf_Path::getImages().'eshop/';
+		}
+		
+		return $this->getTemplate()->getImagesPath();
+	}
+	
 	
 }

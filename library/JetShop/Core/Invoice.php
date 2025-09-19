@@ -21,7 +21,7 @@ use Jet\Form_Field_Textarea;
 use JetApplication\CompanyInfo;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Invoice;
+use JetApplication\Application_Service_Admin_Invoice;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\EShopEntity_Price;
@@ -30,7 +30,7 @@ use JetApplication\Invoice_VATOverviewItem;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\Invoice_Item;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\Order;
 use JetApplication\Payment_Kind;
 
@@ -40,7 +40,7 @@ use JetApplication\Payment_Kind;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Invoice',
-	admin_manager_interface: Admin_Managers_Invoice::class
+	admin_manager_interface: Application_Service_Admin_Invoice::class
 )]
 abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 	EShopEntity_HasNumberSeries_Interface,
@@ -599,7 +599,7 @@ abstract class Core_Invoice extends EShopEntity_AccountingDocument implements
 	
 	public function generatePDF() : string
 	{
-		return Managers_General::Invoices()->generateInvoicePDF( $this );
+		return Application_Service_General::Invoices()->generateInvoicePDF( $this );
 	}
 	
 	

@@ -14,7 +14,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_ProductStickers;
+use JetApplication\Application_Service_Admin_Marketing_ProductStickers;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasImages_Trait;
 use JetApplication\EShopEntity_Marketing;
@@ -27,7 +27,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Product sticker',
-	admin_manager_interface: Admin_Managers_Marketing_ProductStickers::class,
+	admin_manager_interface: Application_Service_Admin_Marketing_ProductStickers::class,
 	images: [
 		'pictogram_product_detail' => 'Pictogram - Product detail',
 		'pictogram_product_listing' => 'Pictogram - Product listing',

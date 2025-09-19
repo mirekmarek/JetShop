@@ -24,6 +24,8 @@ use JetApplication\ReturnOfGoods_Status_Cancelled;
 abstract class Core_ReturnOfGoods_Status_ClarificationRequired extends ReturnOfGoods_Status {
 	
 	public const CODE = 'clarification_required';
+	protected string $title = 'Clarification required';
+	protected int $priority = 40;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -38,12 +40,6 @@ abstract class Core_ReturnOfGoods_Status_ClarificationRequired extends ReturnOfG
 		
 		'money_refund' => false,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Clarification required', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 40;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,14 +16,11 @@ use JetApplication\OrderDispatch_Status;
 abstract class Core_OrderDispatch_Status_Cancel extends OrderDispatch_Status {
 	
 	public const CODE = 'cancel';
+	protected string $title = 'Cancellation in progress';
+	protected int $priority = 11;
 	
 	protected static bool $is_rollback_possible = true;
 	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancellation in progress', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 11;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

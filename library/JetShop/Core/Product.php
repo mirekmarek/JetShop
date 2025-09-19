@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Jet\Application_Service_List;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
@@ -18,8 +19,8 @@ use Jet\DataModel_Query;
 use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Product;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Product;
 use JetApplication\Availabilities;
 use JetApplication\Category;
 use JetApplication\Delivery_Class;
@@ -35,7 +36,6 @@ use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\KindOfProduct;
 
-use JetApplication\Managers;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
 use JetApplication\Pricelists;
@@ -55,7 +55,7 @@ use JetApplication\Product_Trait_Stickers;
 use JetApplication\Product_Trait_Similar;
 use JetApplication\Product_Trait_Boxes;
 use JetApplication\Product_VirtualProductHandler;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Brand;
@@ -77,7 +77,7 @@ use JetApplication\Supplier;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Product',
-	admin_manager_interface: Admin_Managers_Product::class,
+	admin_manager_interface: Application_Service_Admin_Product::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 )]
@@ -364,7 +364,7 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	
 	public function isVirtual() : bool
 	{
-		return (bool)$this->getKind()?->getIsVirtualProduct();
+		return (in_array($this->kind_id, KindOfProduct::getVirtualKidOfProductIds()));
 	}
 	
 	public function isSet() : bool
@@ -679,14 +679,14 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	
 	public function updateFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->updateIndex( $this );
-		EShop_Managers::FulltextSearch()->updateIndex( $this );
+		Application_Service_Admin::FulltextSearch()->updateIndex( $this );
+		Application_Service_EShop::FulltextSearch()->updateIndex( $this );
 	}
 	
 	public function removeFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->deleteIndex( $this );
-		EShop_Managers::FulltextSearch()->deleteIndex( $this );
+		Application_Service_Admin::FulltextSearch()->deleteIndex( $this );
+		Application_Service_EShop::FulltextSearch()->deleteIndex( $this );
 	}
 	
 	public static function updateReviews( int $product_id, int $count, int $rank ) : void
@@ -748,7 +748,7 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	 */
 	public static function getVirtualProductHandlers() : array
 	{
-		return Managers::findManagers(Product_VirtualProductHandler::class, 'VirtualProductHandler.');
+		return Application_Service_List::findPossibleModules(Product_VirtualProductHandler::class, 'VirtualProductHandler.');
 	}
 	
 	public static function getVirtualProductHandlersScope() : array
@@ -992,7 +992,7 @@ abstract class Core_Product extends EShopEntity_WithEShopData implements
 	protected function cloneOtherProperties( Product $source_product, Product $cloned_product ) : void
 	{
 		$cloned_product->cloneFiles( $source_product );
-		$cloned_product->cloneImages( $source_product );
+		$cloned_product->getImageGallery()->cloneImages( $cloned_product->getImageGallery() );
 		$cloned_product->cloneParameters( $source_product );
 		$cloned_product->cloneBoxes( $source_product );
 		$cloned_product->cloneAccessories( $source_product );

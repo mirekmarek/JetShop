@@ -11,7 +11,7 @@ use Jet\DataModel_Definition;
 
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_PromoAreaDefinitions;
+use JetApplication\Application_Service_Admin_Marketing_PromoAreaDefinitions;
 use JetApplication\EShopEntity_Common;
 use JetApplication\EShopEntity_Definition;
 
@@ -22,7 +22,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Promotion area definition',
-	admin_manager_interface: Admin_Managers_Marketing_PromoAreaDefinitions::class
+	admin_manager_interface: Application_Service_Admin_Marketing_PromoAreaDefinitions::class
 )]
 abstract class Core_Marketing_PromoAreaDefinition extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {

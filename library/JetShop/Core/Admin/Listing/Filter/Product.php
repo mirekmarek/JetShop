@@ -11,7 +11,7 @@ use Jet\Form_Field_Hidden;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Filter;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 abstract class Core_Admin_Listing_Filter_Product extends Admin_Listing_Filter
 {
@@ -58,7 +58,7 @@ abstract class Core_Admin_Listing_Filter_Product extends Admin_Listing_Filter
 	
 	public function renderForm() : string
 	{
-		return Admin_Managers::EntityListing()->renderListingFilter(
+		return Application_Service_Admin::EntityListing()->renderListingFilter(
 			filter:      $this,
 			title:       Tr::_($this->label),
 			form_fields: [$this->form_field],
@@ -73,7 +73,7 @@ abstract class Core_Admin_Listing_Filter_Product extends Admin_Listing_Filter
 					}
 				</script>
 				<div style="width: 400px;">
-					<?=Admin_Managers::Product()->renderSelectWidget(
+					<?=Application_Service_Admin::Product()->renderSelectWidget(
 						"filterProduct_{$this::getKey()}(selected_item.id)",
 						$this->form_field->getValue()
 					)?>

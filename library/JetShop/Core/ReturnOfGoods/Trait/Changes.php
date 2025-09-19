@@ -10,10 +10,10 @@ namespace JetShop;
 
 use Jet\Auth;
 use Jet\Data_DateTime;
+use JetApplication\EShopEntity_Address;
 use JetApplication\ReturnOfGoods;
 use JetApplication\ReturnOfGoods_ChangeHistory;
 use JetApplication\Customer;
-use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method;
 
 trait Core_ReturnOfGoods_Trait_Changes {
@@ -64,7 +64,7 @@ trait Core_ReturnOfGoods_Trait_Changes {
 				if($place) {
 					$billing_address = $this->getDeliveryAddress();
 					
-					$delivery_address = new Customer_Address();
+					$delivery_address = new EShopEntity_Address();
 					$delivery_address->setFirstName( $billing_address->getFirstName() );
 					$delivery_address->setSurname( $billing_address->getSurname() );
 					$delivery_address->setCompanyName( $place->getName() );
@@ -95,7 +95,7 @@ trait Core_ReturnOfGoods_Trait_Changes {
 		return $change;
 	}
 	
-	public function updateDeliveryAddress( Customer_Address $address ) : ReturnOfGoods_ChangeHistory
+	public function updateDeliveryAddress( EShopEntity_Address $address ) : ReturnOfGoods_ChangeHistory
 	{
 		$map = [
 			'delivery_company_name'      => 'CompanyName',

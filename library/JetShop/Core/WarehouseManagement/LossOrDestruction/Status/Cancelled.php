@@ -6,22 +6,16 @@
  */
 namespace JetShop;
 
-use Jet\Tr;
 use JetApplication\WarehouseManagement_LossOrDestruction_Status;
 
 abstract class Core_WarehouseManagement_LossOrDestruction_Status_Cancelled extends WarehouseManagement_LossOrDestruction_Status
 {
 	
 	public const CODE = 'cancelled';
+	protected string $title = 'Cancelled';
+	protected int $priority = 80;
 	
 	protected bool $cancel_allowed = false;
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancelled', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 80;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

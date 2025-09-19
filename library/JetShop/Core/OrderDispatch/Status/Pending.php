@@ -7,7 +7,6 @@
 namespace JetShop;
 
 
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,16 +17,12 @@ use JetApplication\OrderDispatch_Status;
 abstract class Core_OrderDispatch_Status_Pending extends OrderDispatch_Status {
 	
 	public const CODE = 'pending';
+	protected string $title = 'Awaiting processing';
+	protected int $priority = 1;
 	
 	protected static bool $is_editable = true;
 	protected static bool $is_in_progress = true;
 	protected static bool $can_be_cancelled = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Awaiting processing', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 1;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

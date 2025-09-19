@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,14 +17,8 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Status_Receive
 {
 	
 	public const CODE = 'received';
-	
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Received', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 50;
-	}
+	protected string $title = 'Received';
+	protected int $priority = 50;
 	
 	public function getShowAdminCSSClass() : string
 	{

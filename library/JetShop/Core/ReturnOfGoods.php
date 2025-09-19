@@ -16,7 +16,8 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
-use JetApplication\Admin_Managers_ReturnOfGoods;
+use JetApplication\Application_Service_Admin_ReturnOfGoods;
+use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\Context_ProvidesContext_Interface;
@@ -34,7 +35,6 @@ use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\ReturnOfGoods_Event;
 use JetApplication\Customer;
-use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\ReturnOfGoods;
@@ -59,7 +59,7 @@ use JetApplication\ReturnOfGoods_Trait_Events;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Return of goods',
-	admin_manager_interface: Admin_Managers_ReturnOfGoods::class
+	admin_manager_interface: Application_Service_Admin_ReturnOfGoods::class
 )]
 abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,
@@ -547,7 +547,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	
 	
 	
-	public function setDeliveryAddress( Customer_Address $address ) : void
+	public function setDeliveryAddress( EShopEntity_Address $address ) : void
 	{
 		$this->setDeliveryCompanyName( $address->getCompanyName() );
 		$this->setDeliveryFirstName( $address->getFirstName() );
@@ -559,9 +559,9 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	}
 	
 	
-	public function getDeliveryAddress() : Customer_Address
+	public function getDeliveryAddress() : EShopEntity_Address
 	{
-		$address = new Customer_Address();
+		$address = new EShopEntity_Address();
 		
 		$address->setCompanyName( $this->getDeliveryCompanyName( ) );
 		$address->setFirstName( $this->getDeliveryFirstName( ) );

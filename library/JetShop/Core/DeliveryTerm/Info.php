@@ -26,6 +26,8 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	
 	protected bool $is_virtual_product = false;
 	
+	protected float $number_of_units_required = 0.0;
+	
 	protected float $number_of_units_available = 0.0;
 	
 	protected int $length_of_delivery = 0;
@@ -34,7 +36,16 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	
 	protected string $situation = '';
 	
+	protected string $situation_when_not_available = '';
+	
+	protected string $situation_when_available = '';
+	
 	protected string $delivery_info_text = '';
+	
+	protected string $delivery_info_text_when_not_available = '';
+	
+	protected string $delivery_info_text_when_available = '';
+	
 	
 	protected ?Data_DateTime $available_from_date = null;
 	
@@ -60,6 +71,16 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	public function setEshop( EShop $eshop ): void
 	{
 		$this->eshop = $eshop;
+	}
+	
+	public function getNumberofUnitsRequired(): float
+	{
+		return $this->number_of_units_required;
+	}
+	
+	public function setNumberofUnitsRequired( float $number_of_units_required ): void
+	{
+		$this->number_of_units_required = $number_of_units_required;
 	}
 	
 	
@@ -106,6 +127,28 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 		$this->situation = $situation;
 	}
 	
+	public function getSituationWhenNotAvailable(): string
+	{
+		return $this->situation_when_not_available;
+	}
+	
+	public function setSituationWhenNotAvailable( string $situation_when_not_available ): void
+	{
+		$this->situation_when_not_available = $situation_when_not_available;
+	}
+	
+	public function getSituationWhenAvailable(): string
+	{
+		return $this->situation_when_available;
+	}
+	
+	public function setSituationWhenAvailable( string $situation_when_available ): void
+	{
+		$this->situation_when_available = $situation_when_available;
+	}
+	
+	
+	
 	public function getDeliveryInfoText(): string
 	{
 		return $this->delivery_info_text;
@@ -115,6 +158,45 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	{
 		$this->delivery_info_text = $delivery_info_text;
 	}
+	
+	public function getDeliveryInfoTextWhenNotAvailable(): string
+	{
+		return $this->delivery_info_text_when_not_available;
+	}
+	
+	public function getDeliveryInfoTextWhenNotAvailableTranslated(): string
+	{
+		$text =  $this->delivery_info_text_when_not_available;
+		$locale = $this->eshop->getLocale();
+		
+		return Tr::_(
+			text: $text,
+			data: [
+				'date' => $locale->formatDate( $this->available_from_date )
+			],
+			dictionary: DeliveryTerm::getManager()->getModuleManifest()->getName(),
+			locale: $locale
+		);
+
+	}
+	
+	
+	public function setDeliveryInfoTextWhenNotAvailable( string $delivery_info_text_when_not_available ): void
+	{
+		$this->delivery_info_text_when_not_available = $delivery_info_text_when_not_available;
+	}
+	
+	public function getDeliveryInfoTextWhenAvailable(): string
+	{
+		return $this->delivery_info_text_when_available;
+	}
+	
+	public function setDeliveryInfoTextWhenAvailable( string $delivery_info_text_when_available ): void
+	{
+		$this->delivery_info_text_when_available = $delivery_info_text_when_available;
+	}
+	
+	
 	
 	
 	public function getDeliveryInfoTextTranslated(): string
@@ -154,13 +236,15 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	}
 	
 	
-	public function getEstimatedArrivalDateByDeliveryMethod( int $length_of_delivery ): ?Data_DateTime
+	public function getEstimatedArrivalDateByDeliveryMethod( int $length_of_delivery, bool $force_not_available=false ): ?Data_DateTime
 	{
 		if( $this->is_virtual_product ) {
 			return null;
 		}
 		
-		$length_of_delivery += $this->length_of_delivery;
+		if($this->number_of_units_available<0 || $force_not_available) {
+			$length_of_delivery += $this->length_of_delivery;
+		}
 		
 		$available_from = $this->available_from_date;
 		if(!$available_from) {
@@ -172,15 +256,6 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 			number_of_working_days: $length_of_delivery,
 			start_date: $available_from
 		);
-	}
-	
-	public function allowToOrder( float $units_to_order=1 ) : bool
-	{
-		if($units_to_order<=$this->number_of_units_available) {
-			return true;
-		}
-		
-		return $this->allow_to_order_more;
 	}
 	
 	public static function fromJSON( string $json ) : static
@@ -196,6 +271,8 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 			$item->allow_to_order_more = $data['allow_to_order_more'];
 			$item->situation = $data['situation'];
 			$item->delivery_info_text = $data['delivery_info_text'];
+			$item->delivery_info_text_when_available = $data['delivery_info_text_when_available'];
+			$item->delivery_info_text_when_not_available = $data['delivery_info_text_when_not_available'];
 			$item->available_from_date = Data_DateTime::catchDate( $data['available_from_date'] );
 			$item->availability = Availabilities::get( $data['availability'] );
 			$item->eshop = EShops::get( $data['eshop']??EShops::getDefault()->getKey() );
@@ -219,5 +296,18 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 		$data['availability'] = $this->availability->getCode();
 		
 		return $data;
+	}
+	
+	public function isAvailable() : bool
+	{
+		return
+			$this->number_of_units_available>=$this->number_of_units_required ||
+			$this->is_virtual_product;
+	}
+	
+	
+	public function allowToOrder() : bool
+	{
+		return ($this->isAvailable() || $this->getAllowToOrderMore());
 	}
 }

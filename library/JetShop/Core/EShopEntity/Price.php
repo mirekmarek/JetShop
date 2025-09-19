@@ -17,6 +17,7 @@ use JetApplication\Pricelist;
 #[DataModel_Definition]
 abstract class Core_EShopEntity_Price extends EShopEntity_Basic
 {
+	protected static bool $force_zero_vat_mode = false;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -53,6 +54,18 @@ abstract class Core_EShopEntity_Price extends EShopEntity_Basic
 	 * @var static[][][]
 	 */
 	protected static array $loaded = [];
+	
+	public static function isForceZeroVatMode(): bool
+	{
+		return static::$force_zero_vat_mode;
+	}
+	
+	public static function setForceZeroVatMode( bool $force_zero_vat_mode ): void
+	{
+		static::$force_zero_vat_mode = $force_zero_vat_mode;
+	}
+	
+	
 	
 	public static function get( Pricelist $pricelist, int $entity_id ) : static
 	{
@@ -221,6 +234,10 @@ abstract class Core_EShopEntity_Price extends EShopEntity_Basic
 	
 	public function getVatRate(): float
 	{
+		if(static::$force_zero_vat_mode) {
+			return 0.0;
+		}
+		
 		return $this->vat_rate;
 	}
 	
@@ -243,6 +260,10 @@ abstract class Core_EShopEntity_Price extends EShopEntity_Basic
 	
 	public function getPrice(): float
 	{
+		if(static::$force_zero_vat_mode) {
+			return $this->getPrice_WithoutVAT();
+		}
+		
 		return $this->price;
 	}
 	
@@ -279,6 +300,9 @@ abstract class Core_EShopEntity_Price extends EShopEntity_Basic
 	
 	public function getPrice_WithVAT() : float
 	{
+		if(static::$force_zero_vat_mode) {
+			return $this->getPrice_WithoutVAT();
+		}
 		$pricelist = $this->getPricelist();
 		if(
 			!$pricelist->getPricesAreWithoutVat() ||
@@ -294,6 +318,10 @@ abstract class Core_EShopEntity_Price extends EShopEntity_Basic
 	
 	public function getPrice_VAT() : float
 	{
+		if(static::$force_zero_vat_mode) {
+			return 0.0;
+		}
+		
 		$pricelist = $this->getPricelist();
 		if( $this->vat_rate==0 ) {
 			return 0;

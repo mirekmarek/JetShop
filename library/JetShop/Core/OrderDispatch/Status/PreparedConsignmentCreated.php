@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -18,18 +16,14 @@ use JetApplication\OrderDispatch_Status;
 abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends OrderDispatch_Status {
 	
 	public const CODE = 'prepared_consignment_created';
+	protected string $title = 'Ready to send';
+	protected int $priority = 4;
 	
 	protected static bool $is_in_progress = true;
 	protected static bool $is_prepared = true;
 	protected static bool $is_consignment_created = true;
 	protected static bool $is_rollback_possible = true;
 	protected static bool $can_be_cancelled = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Ready to send', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 4;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

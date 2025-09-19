@@ -9,7 +9,7 @@
 namespace JetShop;
 
 use JetApplication\EShop;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\PDF_TemplateText_EShopData;
 
 abstract class Core_PDF {
@@ -88,6 +88,6 @@ abstract class Core_PDF {
 	
 	public function generatePDF() : string
 	{
-		return Managers_General::PDFGenerator()->generate( $this );
+		return Application_Service_General::PDFGenerator()->generate( $this );
 	}
 }

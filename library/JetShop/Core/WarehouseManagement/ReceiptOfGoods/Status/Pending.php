@@ -24,17 +24,14 @@ abstract class Core_WarehouseManagement_ReceiptOfGoods_Status_Pending extends Wa
 {
 	
 	public const CODE = 'pending';
+	protected string $title = 'Pending';
+	protected int $priority = 10;
 	
 	protected bool $cancel_allowed = false;
 	
 	protected bool $editable = true;
 	protected bool $pending = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Pending', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
+
 	
 	public function getShowAdminCSSClass() : string
 	{

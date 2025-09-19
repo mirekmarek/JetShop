@@ -20,7 +20,7 @@ use JetApplication\Admin_Listing_Handler;
 use JetApplication\Admin_Listing_Operation;
 use JetApplication\Admin_Listing_Schema;
 use JetApplication\Admin_Listing_Schema_Manager;
-use JetApplication\Admin_Managers_EShopEntity_Listing;
+use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Basic;
 
@@ -46,8 +46,10 @@ abstract class Core_Admin_Listing extends DataListing
 	protected bool $select_items_enabled = false;
 	protected bool $handled = false;
 	
+	protected ?array $nearest_ids = null;
 	
-	public function __construct( Admin_Managers_EShopEntity_Listing $listing_manager )
+	
+	public function __construct( Application_Service_Admin_EShopEntity_Listing $listing_manager )
 	{
 		$this->entity = $listing_manager->getEntity();
 		$this->entity_manager = $listing_manager->getEntityManager();
@@ -61,6 +63,29 @@ abstract class Core_Admin_Listing extends DataListing
 		$this->filter_view = $filter_view;
 		
 		$this->schema_manager = new Admin_Listing_Schema_Manager( $this );
+	}
+	
+	
+	public function getNearestIds() : array
+	{
+		if($this->nearest_ids === null) {
+			$page_no = $this->getPageNo()-1;
+			if($page_no<0) {
+				$page_no = 0;
+			}
+			$limit = $this->getItemsPerPage()*3;
+			
+			$this->nearest_ids = $this->entity::dataFetchCol(
+				select:['id'],
+				where: $this->getFilterWhere(),
+				order_by: $this->getQueryOrderBy(),
+				limit: $limit,
+				offset: $page_no*$this->getItemsPerPage(),
+			);
+			
+		}
+		
+		return $this->nearest_ids;
 	}
 	
 	
@@ -114,12 +139,10 @@ abstract class Core_Admin_Listing extends DataListing
 	}
 	
 	
-	
-	
 	public function getPrevEditUrl( int $current_id ): string
 	{
 		$this->handle();
-		$all_ids = $this->getIdList();
+		$all_ids = $this->getNearestIds();
 		
 		$index = array_search( $current_id, $all_ids );
 		
@@ -136,7 +159,7 @@ abstract class Core_Admin_Listing extends DataListing
 	public function getNextEditUrl( int $current_id ): string
 	{
 		$this->handle();
-		$all_ids = $this->getIdList();
+		$all_ids = $this->getNearestIds();
 		
 		$index = array_search( $current_id, $all_ids );
 		if( $index !== false ) {
@@ -327,7 +350,7 @@ abstract class Core_Admin_Listing extends DataListing
 				 * @var Admin_Listing_Filter $filter
 				 */
 				if($filter->tryDirectOpen()) {
-					$ids = $this->getIdList();
+					$ids = $this->getNearestIds();
 					if(count($ids)==1) {
 						Http_Headers::movedTemporary( $this->getURI().'&id='.$ids[0] );
 					}

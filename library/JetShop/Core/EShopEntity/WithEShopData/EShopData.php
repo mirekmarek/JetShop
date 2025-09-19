@@ -15,6 +15,7 @@ use Jet\DataModel_IDController_Passive;
 use Jet\DataModel_Related_1toN;
 use Jet\Form;
 use Jet\Locale;
+use Jet\MVC_Cache;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\EShopEntity_WithEShopData;
@@ -302,6 +303,8 @@ abstract class Core_EShopEntity_WithEShopData_EShopData extends DataModel_Relate
 			],
 			where: $where
 		);
+		
+		MVC_Cache::resetOutputCache();
 	}
 	
 	public function _deactivate() : void
@@ -317,6 +320,8 @@ abstract class Core_EShopEntity_WithEShopData_EShopData extends DataModel_Relate
 			],
 			where: $where
 		);
+		
+		MVC_Cache::resetOutputCache();
 	}
 	
 	

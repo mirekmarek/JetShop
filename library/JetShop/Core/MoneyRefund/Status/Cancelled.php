@@ -22,14 +22,9 @@ use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 
 abstract class Core_MoneyRefund_Status_Cancelled extends MoneyRefund_Status
 {
-	
 	public const CODE = 'cancelled';
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Cancelled', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 60;
-	}
+	protected string $title = 'Cancelled';
+	protected int $priority = 60;
 	
 	public function getShowAdminCSSClass() : string
 	{

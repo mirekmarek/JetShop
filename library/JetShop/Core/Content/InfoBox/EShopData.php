@@ -86,14 +86,29 @@ abstract class Core_Content_InfoBox_EShopData extends EShopEntity_WithEShopData_
 		}
 	}
 	
-	public function afterDelete() : void
+	public function cacheDelete() : void
 	{
-		parent::afterDelete();
-		
 		$tmp_path = static::getCacheFilePath( $this->internal_code, $this->getEshop() );
 		if(IO_File::exists($tmp_path)) {
 			IO_File::delete( $tmp_path );
 		}
 	}
 	
+	public function afterDelete() : void
+	{
+		parent::afterDelete();
+		$this->cacheDelete();
+	}
+	
+	public function _deactivate() : void
+	{
+		parent::_deactivate();
+		$this->cacheDelete();
+	}
+	
+	public function _activate() : void
+	{
+		parent::_activate();
+		$this->cacheDelete();
+	}
 }

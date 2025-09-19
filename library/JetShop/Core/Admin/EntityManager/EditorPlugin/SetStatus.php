@@ -11,7 +11,7 @@ use Jet\Form;
 use Jet\Form_Field_Checkbox;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
@@ -139,7 +139,7 @@ trait Core_Admin_EntityManager_EditorPlugin_SetStatus
 			return '';
 		}
 		
-		return Admin_Managers::EntityEdit()->renderEntitySetStatusButtons( $this->future_statuses );
+		return Application_Service_Admin::EntityEdit()->renderEntitySetStatusButtons( $this->future_statuses );
 	}
 	
 	public function renderDialog() : string
@@ -148,7 +148,7 @@ trait Core_Admin_EntityManager_EditorPlugin_SetStatus
 			return '';
 		}
 		
-		return Admin_Managers::EntityEdit()->renderEntitySetStatusDialogs( $this->future_statuses, $this->forms );
+		return Application_Service_Admin::EntityEdit()->renderEntitySetStatusDialogs( $this->future_statuses, $this->forms );
 	}
 	
 }

@@ -15,7 +15,7 @@ use Jet\Form;
 use Jet\Logger;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagement_Overview;
+use JetApplication\Application_Service_Admin_WarehouseManagement_Overview;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\EShopEntity_Basic;
@@ -38,7 +38,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Warehouse management - stock card',
-	admin_manager_interface: Admin_Managers_WarehouseManagement_Overview::class
+	admin_manager_interface: Application_Service_Admin_WarehouseManagement_Overview::class
 )]
 abstract class Core_WarehouseManagement_StockCard extends EShopEntity_Basic implements
 	EShopEntity_Admin_Interface,

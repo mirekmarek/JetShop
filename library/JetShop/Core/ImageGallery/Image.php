@@ -9,8 +9,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShopEntity_Basic;
-use JetApplication\EShopEntity_HasImageGallery_Interface;
 
 #[DataModel_Definition(
 	name: 'image_gallery',
@@ -47,17 +47,17 @@ abstract class Core_ImageGallery_Image extends EShopEntity_Basic
 	
 	
 	/**
-	 * @param EShopEntity_HasImageGallery_Interface $item
+	 * @param string $entity_type
+	 * @param int $entity_id
 	 * @return static[]
 	 */
-	public static function getImages( EShopEntity_HasImageGallery_Interface $item ): array
+	public static function getImages( string $entity_type, int $entity_id ): array
 	{
-		
 		$_images = static::fetch(
 			where_per_model: [''=>[
-				'entity_type' => $item->getEntityTypeForImageGallery(),
+				'entity_type' => $entity_type,
 				'AND',
-				'entity_id' => $item->getEntityIdForImageGallery()
+				'entity_id' => $entity_id
 			]],
 			order_by: ['image_index']
 		);
@@ -134,4 +134,27 @@ abstract class Core_ImageGallery_Image extends EShopEntity_Basic
 	{
 	}
 	
+	public function getThumbnailUrl( int $max_w, int $max_h ): string
+	{
+		return Application_Service_EShop::Image()->getThumbnailUrl(
+			$this->getImageFile(),
+			$max_w,
+			$max_h
+		);
+	}
+	
+	public function getURL(): string
+	{
+		return Application_Service_EShop::Image()->getUrl(
+			$this->getImageFile()
+		);
+	}
+	
+	public function getPath(): string
+	{
+		return Application_Service_EShop::Image()->getPath(
+			$this->getImageFile()
+		);
+		
+	}
 }

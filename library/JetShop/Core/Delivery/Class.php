@@ -19,7 +19,7 @@ use JetApplication\Delivery_Method;
 use JetApplication\Delivery_Kind;
 use JetApplication\EShopEntity_Common;
 use JetApplication\EShopEntity_Definition;
-use JetApplication\Admin_Managers_DeliveryClasses;
+use JetApplication\Application_Service_Admin_DeliveryClasses;
 
 /**
  *
@@ -30,7 +30,7 @@ use JetApplication\Admin_Managers_DeliveryClasses;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Delivery class',
-	admin_manager_interface: Admin_Managers_DeliveryClasses::class
+	admin_manager_interface: Application_Service_Admin_DeliveryClasses::class
 )]
 abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEntity_Admin_Interface
 {
@@ -65,6 +65,26 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 	)]
 	protected array $delivery_methods = [];
 	
+	public static function getScope() : array
+	{
+		if(isset(static::$scope[static::class])) {
+			return static::$scope[static::class];
+		}
+		
+		static::$scope[static::class] = static::dataFetchPairs(
+			select: [
+				'id',
+				'internal_name'
+			], order_by: ['id']);
+		
+		foreach(static::$scope[static::class] as $id=>$title) {
+			static::$scope[static::class][$id] = '['.$id.'] '.$title;
+		}
+		
+		return static::$scope[static::class];
+	}
+	
+	
 	public static function getDefault() : ?static
 	{
 		return static::load(['is_default'=>true]);
@@ -84,7 +104,10 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 			]);
 		}
 	}
-
+	
+	protected static ?array $method_to_kind_map = null;
+	
+	protected ?array $kinds = null;
 	
 	
 	/**
@@ -92,17 +115,26 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 	 */
 	public function getKinds() : iterable
 	{
-		$kinds = [];
-		foreach(array_keys($this->delivery_methods) as $method_id) {
-			$method = Delivery_Method::load( $method_id );
-			if($method) {
-				$kind = $method->getKind();
+		if($this->kinds === null) {
+			if(static::$method_to_kind_map === null) {
+				static::$method_to_kind_map = Delivery_Method::dataFetchPairs(
+					select: ['id', 'kind'],
+					raw_mode: true
+				);
+			}
+			
+			$this->kinds = [];
+			foreach(array_keys($this->delivery_methods) as $method_id) {
+				$kind_code = static::$method_to_kind_map[$method_id] ?? null;
+				if(!$kind_code) {
+					continue;
+				}
 				
-				$kinds[$kind->getCode()] = $kind;
+				$this->kinds[$kind_code] = Delivery_Kind::get($kind_code);
 			}
 		}
 
-		return $kinds;
+		return $this->kinds;
 	}
 
 	public function hasKind( string $kind ) : bool

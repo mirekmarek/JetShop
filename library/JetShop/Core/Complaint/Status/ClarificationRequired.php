@@ -24,6 +24,8 @@ use JetApplication\EShopEntity_VirtualStatus;
 abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Status {
 	
 	public const CODE = 'clarification_required';
+	protected string $title = 'Clarification required';
+	protected int $priority = 40;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -41,12 +43,6 @@ abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Sta
 		'send_new_products' => false,
 		
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Clarification required', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 40;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

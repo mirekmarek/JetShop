@@ -19,8 +19,10 @@ use JetApplication\Payment_Method;
 use JetApplication\Pricelist;
 use JetApplication\EShop;
 use JetApplication\CashDesk_Confirm_AgreeFlag;
+use JetApplication\ShoppingCart;
 
 interface Core_CashDesk {
+	public function getCart() : ShoppingCart;
 	
 	public function getEshop() : EShop;
 	

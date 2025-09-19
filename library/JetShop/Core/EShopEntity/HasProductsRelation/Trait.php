@@ -14,8 +14,10 @@ use Jet\Form_Field;
 use Jet\Form_Field_Select;
 use Jet\Tr;
 use JetApplication\EShopEntity_Marketing;
+use JetApplication\Product;
 use JetApplication\Product_Relation;
 use JetApplication\ProductFilter;
+use JetApplication\Product_RelevantRelation;
 
 trait Core_EShopEntity_HasProductsRelation_Trait {
 	
@@ -69,6 +71,15 @@ trait Core_EShopEntity_HasProductsRelation_Trait {
 	}
 	
 	
+	protected function getProductFilterInitialProductIds() : array
+	{
+		return Product::dataFetchCol(
+			select: ['id'],
+			where: [
+				'archived' => false
+			]
+		);
+	}
 	
 	
 	public function getProductsFilter() : ProductFilter
@@ -77,6 +88,7 @@ trait Core_EShopEntity_HasProductsRelation_Trait {
 			$this->product_filter = new ProductFilter( $this->getEshop() );
 			$this->product_filter->setContextEntity( static::getEntityType() );
 			$this->product_filter->setContextEntityId( $this->id );
+			$this->product_filter->setInitialProductIds( $this->getProductFilterInitialProductIds() );
 			$this->product_filter->load();
 			
 		}
@@ -97,7 +109,8 @@ trait Core_EShopEntity_HasProductsRelation_Trait {
 					break;
 				case static::RELEVANCE_MODE_BY_FILTER:
 				case static::RELEVANCE_MODE_ALL_BUT_FILTER:
-					$this->product_ids = $this->getProductsFilter()->filter();
+					$filter = $this->getProductsFilter();
+					$this->product_ids = $filter->filter();
 					break;
 				
 			}
@@ -105,6 +118,59 @@ trait Core_EShopEntity_HasProductsRelation_Trait {
 		
 		return $this->product_ids;
 	}
+	
+	protected ?array $relevant_product_ids = null;
+	
+	public function getRelevantProductIds( bool $process=false ) : array
+	{
+		if($this->relevant_product_ids===null) {
+			if($process) {
+				$getAllProducts = function() {
+					return Product::dataFetchCol(
+						select: ['id'],
+						where: [
+							'archived' => false,
+						],
+						raw_mode: true
+					);
+				};
+				
+				$this->relevant_product_ids = [];
+
+				switch( $this->getRelevanceMode() ) {
+					case static::RELEVANCE_MODE_ALL:
+						$this->relevant_product_ids = $getAllProducts();
+						break;
+					case static::RELEVANCE_MODE_ONLY_PRODUCTS:
+						$this->relevant_product_ids = Product_Relation::get( $this );
+						break;
+					case static::RELEVANCE_MODE_ALL_BUT_PRODUCTS:
+						$this->relevant_product_ids = Product_Relation::get( $this );
+						if($this->relevant_product_ids) {
+							$this->relevant_product_ids = array_diff( $getAllProducts(), $this->relevant_product_ids );
+						}
+						
+						break;
+					case static::RELEVANCE_MODE_BY_FILTER:
+						$this->relevant_product_ids = $this->getProductsFilter()->filter();
+						break;
+					case static::RELEVANCE_MODE_ALL_BUT_FILTER:
+						$this->relevant_product_ids = $this->getProductsFilter()->filter();
+						if($this->relevant_product_ids) {
+							$this->relevant_product_ids = array_diff( $getAllProducts(), $this->relevant_product_ids );
+						}
+						
+						break;
+				}
+			} else {
+				$this->relevant_product_ids = Product_RelevantRelation::get( $this );
+			}
+			
+		}
+		
+		return $this->relevant_product_ids;
+	}
+	
 	
 	
 	public function addProduct( int $product_id ) : bool
@@ -141,21 +207,57 @@ trait Core_EShopEntity_HasProductsRelation_Trait {
 	
 	public function isRelevant( array $product_ids ) : bool
 	{
-		if($this->relevance_mode==static::RELEVANCE_MODE_ALL) {
+		if($this->getRelevanceMode()===static::RELEVANCE_MODE_ALL) {
 			return true;
 		}
 		
+		return (bool)array_intersect($this->getRelevantProductIds(), $product_ids);
+	}
+	
+	
+	public function actualizeRelevantRelations() : void
+	{
+		$new_product_ids = $this->getRelevantProductIds( true );
 		
-		$match = (bool)array_intersect($this->getProductIds(), $product_ids);
+		$current_product_ids = Product_RelevantRelation::get( $this );
 		
-		if(
-			$this->relevance_mode==static::RELEVANCE_MODE_ALL_BUT_FILTER ||
-			$this->relevance_mode==static::RELEVANCE_MODE_ALL_BUT_PRODUCTS
-		) {
-			$match = !$match;
+		echo $this->getId()."\n";
+		
+		
+		foreach( $new_product_ids as $i=>$product_id) {
+			if(!in_array($product_id, $current_product_ids)) {
+				echo "\t ADD {$product_id}\n";
+				
+				Product_RelevantRelation::add(
+					$this,
+					$product_id,
+				);
+			}
 		}
 		
-		return $match;
+		
+		foreach($current_product_ids as $product_id) {
+			if(!in_array($product_id, $new_product_ids)) {
+				echo "\t DEL {$product_id}\n";
+				
+				Product_RelevantRelation::remove(
+					$this,$product_id
+				);
+				
+			}
+		}
+	}
+	
+	public static function actualizeAllRelevantRelations() : void
+	{
+		$list = static::fetchInstances(
+			[
+				'is_active' => true,
+			]
+		);
+		foreach($list as $gift) {
+			$gift->actualizeRelevantRelations();
+		}
 	}
 	
 }

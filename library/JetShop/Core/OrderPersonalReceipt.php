@@ -16,7 +16,7 @@ use Jet\Form_Field_Textarea;
 use Jet\Tr;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_OrderPersonalReceipt;
+use JetApplication\Application_Service_Admin_OrderPersonalReceipt;
 use JetApplication\Complaint;
 use JetApplication\Context;
 use JetApplication\Context_HasContext_Interface;
@@ -57,7 +57,7 @@ use JetApplication\OrderPersonalReceipt_Event;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Order personal receipt dispatch',
-	admin_manager_interface: Admin_Managers_OrderPersonalReceipt::class
+	admin_manager_interface: Application_Service_Admin_OrderPersonalReceipt::class
 )]
 abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,

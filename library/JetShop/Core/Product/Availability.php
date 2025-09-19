@@ -69,7 +69,7 @@ abstract class Core_Product_Availability extends EShopEntity_Basic
 		return static::dataFetchPairs(
 			select: [
 				'product_id',
-				'in_stock_qty'
+				'number_of_available'
 			],
 			where: $where
 		);

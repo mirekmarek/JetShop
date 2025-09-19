@@ -16,12 +16,12 @@ use Jet\UI;
 use Jet\UI_messages;
 use Jet\UI_tabs;
 use JetApplication\EShopEntity_Admin_Interface;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
+use JetApplication\MarketplaceIntegration_Join_Product;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory;
 use JetApplication\MarketplaceIntegration_Module_Controller_ProductSettings;
 use JetApplication\Product;
 use JetApplication\MarketplaceIntegration_Module;
-use JetApplication\EShop;
 
 /**
  *
@@ -30,11 +30,11 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 {
 	protected Product|EShopEntity_Admin_Interface $product;
 	
-	protected EShop $eshop;
-	
 	protected MarketplaceIntegration_Module $marketplace;
 	
-	protected ?MarketplaceIntegration_MarketplaceCategory $category;
+	protected ?MarketplaceIntegration_MarketplaceCategory $category=null;
+	
+	protected ?MarketplaceIntegration_Join_Product $product_join=null;
 	
 	protected bool $editable;
 	
@@ -48,11 +48,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 	{
 		return $this->product;
 	}
-	
-	public function getEshop(): EShop
-	{
-		return $this->eshop;
-	}
+
 
 	public function getMarketplace(): MarketplaceIntegration_Module
 	{
@@ -79,6 +75,13 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 		return $this->selling;
 	}
 	
+	public function getProductJoin(): ?MarketplaceIntegration_Join_Product
+	{
+		return $this->product_join;
+	}
+	
+	
+	
 	public function getParametersForm(): ?Form
 	{
 		return $this->parameters_form;
@@ -93,16 +96,15 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 	
 	public function init(
 		Product|EShopEntity_Admin_Interface $product,
-		EShop                               $eshop,
 		MarketplaceIntegration_Module       $marketplace
 	): void
 	{
 		$this->product = $product;
-		$this->eshop = $eshop;
 		$this->marketplace = $marketplace;
 		$this->editable = $product->isEditable();
-		$this->category = $this->marketplace->getCategory( $eshop, $product );
-		$this->selling = $this->marketplace->getProductIsSelling( $this->eshop, $this->product->getId() );
+		$this->product_join = $this->marketplace->getProductJoin( $product->getId() );
+		$this->selling = (bool)$this->product_join;
+		$this->category = $this->marketplace->getCategoryForProduct( $product );
 		
 		$tabs = $this->initTabs();
 		
@@ -134,31 +136,38 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 		) {
 
 			if(Http_Request::GET()->exists('stop_selling')) {
-				$this->marketplace->stopSelling( $this->eshop, $this->product->getId() );
+				$this->marketplace->stopSelling( $this->product->getId() );
 				Http_Headers::reload(unset_GET_params: ['stop_selling']);
 			}
 			
 			if(Http_Request::GET()->exists('start_selling')) {
-				$this->marketplace->startSelling( $this->eshop, $this->product->getId() );
+				$this->marketplace->startSelling( $this->product->getId() );
 				Http_Headers::reload(unset_GET_params: ['start_selling']);
+			}
+			
+			if( $this->product_join?->getEditForm()->catch() ) {
+				
+				$this->product_join->save();
+				
+				Http_Headers::reload();
 			}
 		}
 		
 		/**
 		 * @var MarketplaceIntegration_Module_Controller_ProductSettings $this
 		 */
-		echo Admin_Managers::Product()->renderMarketPlaceSettings_main( $this );
+		echo Application_Service_Admin::Product()->renderMarketPlaceSettings_main( $this );
 	}
 	
 	
 	public function parameters_Action() : void
 	{
-		$this->parameters_form = $this->marketplace->getParamsEditForm( $this->eshop, $this->product );
+		$this->parameters_form = $this->marketplace->getParamsEditForm( $this->product );
 		
 		
 		if($this->editable) {
 			if( $this->parameters_form ) {
-				if($this->marketplace->catchParamsEditForm( $this->eshop, $this->product )) {
+				if($this->marketplace->catchParamsEditForm( $this->product )) {
 					UI_messages::success(
 						Tr::_( 'Product <b>%NAME%</b> has been updated', [ 'NAME' => $this->product->getAdminTitle() ] )
 					);
@@ -169,7 +178,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 			
 			if( $this->category ) {
 				if(Http_Request::GET()->exists('actualize_list_of_parameters')) {
-					$this->marketplace->actualizeCategory( $this->eshop, $this->category->getCategoryId() );
+					$this->marketplace->actualizeCategory( $this->category->getCategoryId() );
 					Http_Headers::reload(unset_GET_params: ['actualize_list_of_parameters']);
 				}
 				
@@ -182,7 +191,7 @@ abstract class Core_MarketplaceIntegration_Module_Controller_ProductSettings ext
 		/**
 		 * @var MarketplaceIntegration_Module_Controller_ProductSettings $this
 		 */
-		echo Admin_Managers::Product()->renderMarketPlaceSettings_parameters( $this );
+		echo Application_Service_Admin::Product()->renderMarketPlaceSettings_parameters( $this );
 	}
 	
 }

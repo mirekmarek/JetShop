@@ -11,7 +11,7 @@ use Jet\Form_Field_Select;
 use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Filter;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 
 abstract class Core_Admin_Listing_Filter_StdFilter extends Admin_Listing_Filter
 {
@@ -65,7 +65,7 @@ abstract class Core_Admin_Listing_Filter_StdFilter extends Admin_Listing_Filter
 	{
 		$this->form_field->input()->addJsAction( 'onchange', 'this.form.submit()' );
 		
-		return Admin_Managers::EntityListing()->renderListingFilter(
+		return Application_Service_Admin::EntityListing()->renderListingFilter(
 			filter:      $this,
 			title:       $this->form_field->getLabel(),
 			form_fields: [$this->form_field],

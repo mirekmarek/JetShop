@@ -17,7 +17,7 @@ use JetApplication\EMail_TemplateText_EShopData;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\Files;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 
 
 #[DataModel_Definition(
@@ -83,7 +83,7 @@ abstract class Core_EMail_TemplateText_Attachment extends DataModel_Related_1toN
 	
 	public function afterDelete(): void
 	{
-		Managers_General::Files()->deleteFile( $this->getFileEntityType(), $this->entity_id, $this->file );
+		Application_Service_General::Files()->deleteFile( $this->getFileEntityType(), $this->entity_id, $this->file );
 	}
 	
 	public function getURL() : string

@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
@@ -19,13 +17,8 @@ use JetApplication\OrderDispatch_Status;
 abstract class Core_OrderDispatch_Status_Returning extends OrderDispatch_Status {
 	
 	public const CODE = 'returning';
-	
-	public function __construct()
-	{
-		//TODO:
-		$this->title = Tr::_('Returning', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 8;
-	}
+	protected string $title = 'Returning';
+	protected int $priority = 8;
 	
 	public function getShowAdminCSSClass() : string
 	{

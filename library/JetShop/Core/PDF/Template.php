@@ -8,12 +8,12 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
+use Jet\Application_Service_List;
 use Jet\Translator;
 use JetApplication\PDF;
 use JetApplication\PDF_TemplateProvider;
 use JetApplication\PDF_TemplateText;
 use JetApplication\PDF_TemplateText_EShopData;
-use JetApplication\Managers;
 use JetApplication\EShop;
 use JetApplication\Template;
 
@@ -92,7 +92,7 @@ abstract class Core_PDF_Template extends Template {
 		if(static::$all_templates===null) {
 			static::$all_templates = [];
 			
-			foreach( Managers::findManagers(PDF_TemplateProvider::class) as $module) {
+			foreach( Application_Service_List::findPossibleModules(PDF_TemplateProvider::class) as $module) {
 				/**
 				 * @var PDF_TemplateProvider|Application_Module $module
 				 */

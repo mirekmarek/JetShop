@@ -8,9 +8,10 @@ namespace JetShop;
 
 
 
+use Jet\Http_Request;
 use Jet\MVC;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
 use JetApplication\Template_Property_Param;
@@ -18,7 +19,7 @@ use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Item;
 use JetApplication\Product_EShopData;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop;
 
 abstract class Core_Order_EMailTemplate extends EMail_Template {
@@ -49,14 +50,16 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 	
 	public function initTest( EShop $eshop ): void
 	{
-		$ids = Order::dataFetchCol(
-			select: ['id'],
-			where: $eshop->getWhere(),
-			order_by: '-id',
-			limit: 1000
-		);
-		$id_key = array_rand( $ids, 1 );
-		$id = $ids[$id_key];
+		if(!($id=Http_Request::GET()->getInt('order_id'))) {
+			$ids = Order::dataFetchCol(
+				select: ['id'],
+				where: $eshop->getWhere(),
+				order_by: '-id',
+				limit: 1000
+			);
+			$id_key = array_rand( $ids, 1 );
+			$id = $ids[$id_key];
+		}
 		
 		$this->order = Order::get($id);
 	}
@@ -92,7 +95,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		
 		$this->addProperty( 'total', Tr::_( 'Order total' ) )
 			->setPropertyValueCreator( function() : string {
-				return EShop_Managers::PriceFormatter()->formatWithCurrency($this->order->getTotalAmount_WithVAT(), $this->order->getPricelist());
+				return Application_Service_EShop::PriceFormatter()->formatWithCurrency($this->order->getTotalAmount_WithVAT(), $this->order->getPricelist());
 			} );
 		
 		
@@ -213,11 +216,11 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		
 		$this->addProperty( 'payment_method_title', Tr::_( 'Payment method title' ) )
 			->setPropertyValueCreator( function() : string {
-				return $this->order->getPaymentMethod()->getTitle();
+				return $this->order->getPaymentMethod()?->getTitle()??'';
 			});
 		$this->addProperty( 'payment_method_info', Tr::_( 'Payment method informations' ) )
 			->setPropertyValueCreator( function() : string {
-				return $this->order->getPaymentMethod()->generateConfirmationEmailInfoText( $this->order );
+				return $this->order->getPaymentMethod()?->generateConfirmationEmailInfoText( $this->order )??'';
 			});
 		
 		$this->addCondition( 'customers_special_requirements', Tr::_( 'Customer has special requirements' ) )
@@ -286,7 +289,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		
 		$items_block->addProperty('unit_price', Tr::_('Order item unit price'))
 			->setPropertyValueCreator( function( Order_Item $item ) : string {
-				return Admin_Managers::PriceFormatter()->formatWithCurrency(
+				return Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 					$this->order->getPricelist(),
 					$item->getPricePerUnit()
 				);
@@ -294,7 +297,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 		
 		$items_block->addProperty('price', Tr::_('Order item price'))
 			->setPropertyValueCreator( function( Order_Item $item ) : string {
-				return Admin_Managers::PriceFormatter()->formatWithCurrency(
+				return Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 					$this->order->getPricelist(),
 					$item->getPricePerUnit()*$item->getNumberOfUnits()
 				);

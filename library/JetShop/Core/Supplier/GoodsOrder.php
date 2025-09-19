@@ -24,7 +24,7 @@ use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_SupplierGoodsOrders;
+use JetApplication\Application_Service_Admin_SupplierGoodsOrders;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_Event;
@@ -57,7 +57,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Goods order',
-	admin_manager_interface: Admin_Managers_SupplierGoodsOrders::class
+	admin_manager_interface: Application_Service_Admin_SupplierGoodsOrders::class
 )]
 abstract class Core_Supplier_GoodsOrder extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,

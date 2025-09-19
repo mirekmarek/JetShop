@@ -24,6 +24,8 @@ use JetApplication\Order_Status_Cancelled;
 abstract class Core_Order_Status_Delivered extends Order_Status {
 	
 	public const CODE = 'delivered';
+	protected string $title = 'Delivered';
+	protected int $priority = 60;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -39,12 +41,6 @@ abstract class Core_Order_Status_Delivered extends Order_Status {
 		'dispatch_started' => null,
 		'dispatched' => null,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Delivered', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 60;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

@@ -9,8 +9,8 @@ namespace JetShop;
 
 use Jet\DataModel;
 use Jet\DataModel_Definition;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Brand;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Brand;
 use JetApplication\Brand_EShopData;
 use JetApplication\EShopEntity_Admin_WithEShopData_Interface;
 use JetApplication\EShopEntity_Admin_WithEShopData_Trait;
@@ -18,7 +18,7 @@ use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_WithEShopData;
 use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
 use JetApplication\FulltextSearch_IndexDataProvider;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_Definition;
 
@@ -28,7 +28,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Brand',
-	admin_manager_interface: Admin_Managers_Brand::class,
+	admin_manager_interface: Application_Service_Admin_Brand::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 	images: [
@@ -90,14 +90,14 @@ abstract class Core_Brand extends EShopEntity_WithEShopData implements
 	
 	public function updateFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->updateIndex( $this );
-		EShop_Managers::FulltextSearch()->updateIndex( $this );
+		Application_Service_Admin::FulltextSearch()->updateIndex( $this );
+		Application_Service_EShop::FulltextSearch()->updateIndex( $this );
 	}
 	
 	public function removeFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->deleteIndex( $this );
-		EShop_Managers::FulltextSearch()->deleteIndex( $this );
+		Application_Service_Admin::FulltextSearch()->deleteIndex( $this );
+		Application_Service_EShop::FulltextSearch()->deleteIndex( $this );
 	}
 	
 }

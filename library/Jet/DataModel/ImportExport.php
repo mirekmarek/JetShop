@@ -11,8 +11,17 @@ use Error;
 
 class DataModel_ImportExport extends BaseObject
 {
+	/**
+	 * @param string|DataModel $data_model_class_name
+	 * @param string $target_dir_path
+	 * @param list<mixed>|null $where
+	 * @param DataModel_ImportExport_ExportPreprocessor|null $preprocessor
+	 * @return string
+	 * @throws IO_Dir_Exception
+	 * @throws IO_File_Exception
+	 */
 	public static function export(
-		string $data_model_class_name,
+		string|DataModel $data_model_class_name,
 		string $target_dir_path,
 		?array $where = null,
 		?DataModel_ImportExport_ExportPreprocessor $preprocessor=null
@@ -31,9 +40,6 @@ class DataModel_ImportExport extends BaseObject
 		$dir = $target_dir_path.'/'.$target_file_name.'/';
 		IO_Dir::create( $dir );
 		
-		/**
-		 * @var DataModel $data_model_class_name
-		 */
 		$data_model_class_name::getBackendInstance()->getType();
 		
 		$ids = $data_model_class_name::fetchIDs( $where );
@@ -73,24 +79,18 @@ class DataModel_ImportExport extends BaseObject
 		
 		if(!IO_File::exists( $meta_info_file_path )) {
 			throw new DataModel_ImportExport_Exception("Meta info file '$meta_info_file_path' does not exist");
-			return;
 		}
 		
 		if(!IO_File::isReadable( $meta_info_file_path )) {
 			throw new DataModel_ImportExport_Exception("Meta info file '$meta_info_file_path' is not readable");
-			return;
 		}
 		
 		try {
 			$meta_info = DataModel_ImportExport_MetaInfo::read( $meta_info_file_path );
 		} catch( Error|\Exception $error ) {
 			throw new DataModel_ImportExport_Exception("Error during meta info file '$meta_info_file_path' reading: '{$error->getMessage()}'");
-			return;
 		}
 		
-		/**
-		 * @var DataModel $data_model_class_name
-		 */
 		$data_model_class_name = $meta_info->getDataModelClassName();
 		$definition = DataModel_Definition::get( $data_model_class_name );
 		

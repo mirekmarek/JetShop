@@ -66,7 +66,7 @@ abstract class Core_ExpectedPayment extends EShopEntity_WithEShopRelation implem
 	public function createEvent( EShopEntity_Event $event ): EShopEntity_Event
 	{
 		// TODO: Implement createEvent() method.
-		return null;
+		return $event;
 	}
 	
 	public function getHistory(): array

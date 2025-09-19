@@ -22,6 +22,8 @@ use JetApplication\Order_Status_Cancelled;
 abstract class Core_Order_Status_WaitingForPayment extends Order_Status {
 	
 	public const CODE = 'waiting_for_payment';
+	protected string $title = 'Waiting for payment';
+	protected int $priority = 10;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -37,13 +39,7 @@ abstract class Core_Order_Status_WaitingForPayment extends Order_Status {
 		'all_items_available' => null,
 		
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Waiting for payment', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
-	
+
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-warning';

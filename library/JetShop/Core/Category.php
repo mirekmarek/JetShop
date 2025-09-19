@@ -11,8 +11,8 @@ use Jet\Data_Tree;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Category;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Category;
 use JetApplication\Category;
 use JetApplication\Category_Product;
 use JetApplication\Category_EShopData;
@@ -29,7 +29,7 @@ use JetApplication\KindOfProduct;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductFilter;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 
@@ -44,7 +44,7 @@ use JetApplication\EShop;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Category',
-	admin_manager_interface: Admin_Managers_Category::class,
+	admin_manager_interface: Application_Service_Admin_Category::class,
 	description_mode: true,
 	separate_tab_form_shop_data: true,
 	images: [
@@ -1007,14 +1007,14 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 	
 	public function updateFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->updateIndex( $this );
-		EShop_Managers::FulltextSearch()->updateIndex( $this );
+		Application_Service_Admin::FulltextSearch()->updateIndex( $this );
+		Application_Service_EShop::FulltextSearch()->updateIndex( $this );
 	}
 	
 	public function removeFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->deleteIndex( $this );
-		EShop_Managers::FulltextSearch()->deleteIndex( $this );
+		Application_Service_Admin::FulltextSearch()->deleteIndex( $this );
+		Application_Service_EShop::FulltextSearch()->deleteIndex( $this );
 	}
 	
 	

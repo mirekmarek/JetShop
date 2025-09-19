@@ -10,26 +10,31 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use Jet\Form;
+use Jet\Form_Definition;
+use Jet\Form_Definition_Interface;
+use Jet\Form_Definition_Trait;
+use Jet\Form_Field;
+use Jet\Form_Field_Select;
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\EShop;
+use JetApplication\KindOfProduct;
+use JetApplication\MarketplaceIntegration_Entity_Interface;
+use JetApplication\MarketplaceIntegration_Entity_Trait;
+use JetApplication\MarketplaceIntegration_Join_KindOfProduct;
+use JetApplication\MarketplaceIntegration_Marketplace;
+use JetApplication\MarketplaceIntegration_MarketplaceCategory;
 
 
 #[DataModel_Definition(
 	name: 'marketplace_join_product',
 	database_table_name: 'marketplace_join_product',
 )]
-abstract class Core_MarketplaceIntegration_Join_Product extends EShopEntity_WithEShopRelation
+abstract class Core_MarketplaceIntegration_Join_Product extends EShopEntity_WithEShopRelation implements
+	MarketplaceIntegration_Entity_Interface, Form_Definition_Interface
 {
+	use MarketplaceIntegration_Entity_Trait;
+	use Form_Definition_Trait;
 	
-
-	#[DataModel_Definition(
-		type: DataModel::TYPE_ID,
-		is_id: true,
-		is_key: true,
-	)]
-	protected string $marketplace_code = '';
-	
-
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_id: true,
@@ -37,28 +42,77 @@ abstract class Core_MarketplaceIntegration_Join_Product extends EShopEntity_With
 	)]
 	protected int $product_id = 0;
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Alternative kind of product:',
+		select_options_creator: [
+			KindOfProduct::class,
+			'getOptionsScope'
+		],
+	)]
+	protected int $alternative_kind_of_product_id = 0;
 	
-	public static function get( string $marketplace_code, EShop $eshop, int $product_id  ) : static|null
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 150
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Alternative name:',
+	)]
+	protected string $aletrnative_name = '';
+	
+	protected ?Form $edit_form = null;
+	
+	public function getEditForm(): Form
+	{
+		if( !$this->edit_form ) {
+			$this->edit_form = $this->createForm('mp_product_join_edit_form');
+			
+			$kinds_of_product = [
+				0 => ''
+			];
+			
+			foreach( MarketplaceIntegration_Join_KindOfProduct::getList() as $kinds_of_product_join ) {
+				$mp_category = MarketplaceIntegration_MarketplaceCategory::get( $this->getMarketplace(), $kinds_of_product_join->getMarketplaceCategoryId() );
+				if(!$mp_category) {
+					continue;
+				}
+				
+				$kinds_of_product[ $kinds_of_product_join->getKindOfProductId() ] =
+					KindOfProduct::getScope()[$kinds_of_product_join->getKindOfProductId()]
+					.' - '.$mp_category->getName().' ('. $mp_category->getCategoryId() .')';
+			}
+			
+			/**
+			 * @var Form_Field_Select $f
+			 */
+			$f = $this->edit_form->getField('alternative_kind_of_product_id');
+			$f->setSelectOptions( $kinds_of_product );
+		}
+		
+		return $this->edit_form;
+	}
+	
+	
+	public static function get( MarketplaceIntegration_Marketplace $marketplace, int $product_id  ) : static|null
 	{
 		return static::load( [
-			'marketplace_code' => $marketplace_code,
-			'AND',
-			$eshop->getWhere(),
+			$marketplace->getWhere(),
 			'AND',
 			'product_id' => $product_id
 		] );
 
 	}
 	
-	public static function getProductIds( string $marketplace_code, EShop $eshop) : array
+	public static function getProductIds( MarketplaceIntegration_Marketplace $marketplace ) : array
 	{
 		return static::dataFetchCol(
 			select: ['product_id'],
-			where: [
-				$eshop->getWhere(),
-				'AND',
-				'marketplace_code' => $marketplace_code,
-			],
+			where: $marketplace->getWhere(),
 			raw_mode: true);
 	}
 	
@@ -74,21 +128,7 @@ abstract class Core_MarketplaceIntegration_Join_Product extends EShopEntity_With
 		]] );
 		
 	}
-	
-	public function setMarketplaceCode( string $value ) : void
-	{
-		$this->marketplace_code = $value;
-		
-		if( $this->getIsSaved() ) {
-			$this->setIsNew();
-		}
-		
-	}
-	
-	public function getMarketplaceCode() : string
-	{
-		return $this->marketplace_code;
-	}
+
 	
 	public function setProductId( int $value ) : void
 	{
@@ -99,4 +139,25 @@ abstract class Core_MarketplaceIntegration_Join_Product extends EShopEntity_With
 	{
 		return $this->product_id;
 	}
+	
+	public function getAlternativeKindOfProductId(): int
+	{
+		return $this->alternative_kind_of_product_id;
+	}
+	
+	public function setAlternativeKindOfProductId( int $alternative_kind_of_product_id ): void
+	{
+		$this->alternative_kind_of_product_id = $alternative_kind_of_product_id;
+	}
+	
+	public function getAletrnativeName(): string
+	{
+		return $this->aletrnative_name;
+	}
+	
+	public function setAletrnativeName( string $aletrnative_name ): void
+	{
+		$this->aletrnative_name = $aletrnative_name;
+	}
+	
 }

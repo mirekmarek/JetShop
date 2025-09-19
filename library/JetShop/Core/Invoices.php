@@ -10,17 +10,17 @@ namespace JetShop;
 use Jet\Application_Module;
 use JetApplication\DeliveryNote;
 use JetApplication\Invoice;
-use JetApplication\Invoice_Manager;
+use JetApplication\Application_Service_General_Invoices;
 use JetApplication\ProformaInvoice;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\Order;
 
 abstract class Core_Invoices {
 	
 	
-	public static function getManager() : Invoice_Manager|Application_Module
+	public static function getManager() : Application_Service_General_Invoices|Application_Module
 	{
-		return Managers_General::Invoices();
+		return Application_Service_General::Invoices();
 	}
 	
 	public static function createInvoiceForOrder( Order $order ) : Invoice

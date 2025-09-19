@@ -7,14 +7,14 @@
 namespace JetShop;
 
 
-use JetApplication\Discounts_Manager;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General_DiscountsManager;
+use JetApplication\Application_Service_General;
 
 class Core_Discounts
 {
-	public static function Manager() : Discounts_Manager
+	public static function Manager() : Application_Service_General_DiscountsManager
 	{
-		return Managers_General::Discounts();
+		return Application_Service_General::DiscountsManager();
 	}
 	
 }

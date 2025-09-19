@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
@@ -25,12 +24,8 @@ use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 abstract class Core_MoneyRefund_Status_InProcessing extends MoneyRefund_Status {
 	
 	public const CODE = 'in_processing';
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('In Processing', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 20;
-	}
+	protected string $title = 'In Processing';
+	protected int $priority = 20;
 	
 	public function getShowAdminCSSClass() : string
 	{

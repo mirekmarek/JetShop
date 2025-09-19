@@ -75,7 +75,7 @@ class Form extends BaseObject
 	protected array $fields = [];
 
 	/**
-	 * @var array 
+	 * @var Form_ValidationError[]
 	 */
 	protected array $validation_errors = [];
 
@@ -166,7 +166,7 @@ class Form extends BaseObject
 	 *
 	 * @param bool $as_multidimensional_array (optional, default: false)
 	 *
-	 * @return Form_Field[]
+	 * @return Form_Field[]|array<string,Form_Field>
 	 */
 	public function getFields( bool $as_multidimensional_array = false ): array
 	{
@@ -180,6 +180,7 @@ class Form extends BaseObject
 				$fields->set( $field->getName(), $field );
 			}
 			
+			/** @phpstan-ignore return.type */
 			return $fields->getRawData();
 			
 		}
@@ -214,7 +215,7 @@ class Form extends BaseObject
 	
 	/**
 	 * @param string $field_name
-	 * @return array
+	 * @return array<string,string>
 	 */
 	public function getSubFormPrefixes( string $field_name ) : array
 	{
@@ -514,7 +515,7 @@ class Form extends BaseObject
 	 * catch values from input ($_POST is default)
 	 * and return true if the form has been sent ...
 	 *
-	 * @param Data_Array|array|null $input_data
+	 * @param Data_Array|array<string,mixed>|null $input_data
 	 * @param bool $force_catch
 	 *
 	 * @return bool
@@ -530,11 +531,7 @@ class Form extends BaseObject
 				:
 				Http_Request::POST()->getRawData();
 		}
-
-		if( $input_data === false ) {
-			$input_data = [];
-		}
-
+		
 		if( !$input_data instanceof Data_Array ) {
 			$input_data = new Data_Array( $input_data );
 		}
@@ -630,9 +627,9 @@ class Form extends BaseObject
 
 	/**
 	 *
-	 * @return array|bool
+	 * @return array<string|mixed>|false
 	 */
-	public function getValues(): array|bool
+	public function getValues(): array|false
 	{
 		if( !$this->is_valid ) {
 			return false;
@@ -690,7 +687,7 @@ class Form extends BaseObject
 	/**
 	 *
 	 * @param string $phrase
-	 * @param array $data
+	 * @param array<string,mixed> $data
 	 *
 	 * @return string
 	 * @see Translator

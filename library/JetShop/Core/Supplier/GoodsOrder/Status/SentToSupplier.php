@@ -23,13 +23,9 @@ use JetApplication\Supplier_GoodsOrder_Status_SentToSupplier;
 abstract class Core_Supplier_GoodsOrder_Status_SentToSupplier extends Supplier_GoodsOrder_Status {
 	
 	public const CODE = 'sent_to_supplier';
+	protected string $title = 'Sent to the supplier';
+	protected int $priority = 60;
 	protected bool $sent_to_the_supplier = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Sent to the supplier', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 60;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

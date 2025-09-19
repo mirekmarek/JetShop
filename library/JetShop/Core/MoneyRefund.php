@@ -40,7 +40,7 @@ use JetApplication\MoneyRefund_Status;
 use JetApplication\MoneyRefund_Status_New;
 use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 use JetApplication\Order;
-use JetApplication\Admin_Managers_MoneyRefund;
+use JetApplication\Application_Service_Admin_MoneyRefund;
 
 #[DataModel_Definition(
 	name: 'money_refund',
@@ -48,7 +48,7 @@ use JetApplication\Admin_Managers_MoneyRefund;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Money refundation',
-	admin_manager_interface: Admin_Managers_MoneyRefund::class
+	admin_manager_interface: Application_Service_Admin_MoneyRefund::class
 )]
 abstract class Core_MoneyRefund extends EShopEntity_WithEShopRelation implements
 	EShopEntity_HasGet_Interface,

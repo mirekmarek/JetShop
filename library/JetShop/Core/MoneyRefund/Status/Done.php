@@ -23,12 +23,8 @@ use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 abstract class Core_MoneyRefund_Status_Done extends MoneyRefund_Status {
 	
 	public const CODE = 'done';
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Done', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 30;
-	}
+	protected string $title = 'Done';
+	protected int $priority = 30;
 	
 	public function getShowAdminCSSClass() : string
 	{

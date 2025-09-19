@@ -12,14 +12,12 @@ use Throwable;
 
 require_once 'Error/BacktraceItem.php';
 
-/**
- *
- */
+/** @phpstan-consistent-constructor */
 class Debug_ErrorHandler_Error
 {
 	/**
 	 *
-	 * @var array
+	 * @var array<int,string>
 	 */
 	protected static array $PHP_errors_txt = [
 		E_ERROR             => 'PHP Error',
@@ -41,7 +39,7 @@ class Debug_ErrorHandler_Error
 	];
 	/**
 	 *
-	 * @var array
+	 * @var array<int>
 	 */
 	protected static array $PHP_fatal_errors = [
 		E_ERROR,
@@ -105,7 +103,7 @@ class Debug_ErrorHandler_Error
 	protected array $backtrace = [];
 
 	/**
-	 * @var array
+	 * @var array<string,mixed>
 	 */
 	protected array $context = [];
 
@@ -120,16 +118,16 @@ class Debug_ErrorHandler_Error
 	protected bool $is_silenced = false;
 
 	/**
-	 * @var callable
+	 * @var ?callable
 	 */
-	protected static $formatter;
+	protected static $formatter = null;
 
 	/**
 	 * @param callable $formatter
 	 */
 	public static function setFormatter( callable $formatter ): void
 	{
-		self::$formatter = $formatter;
+		static::$formatter = $formatter;
 	}
 
 
@@ -236,7 +234,7 @@ class Debug_ErrorHandler_Error
 
 	/**
 	 *
-	 * @param array $debug_backtrace
+	 * @param array<int,array<string,mixed>> $debug_backtrace
 	 *
 	 *
 	 */

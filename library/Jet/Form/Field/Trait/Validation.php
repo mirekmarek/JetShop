@@ -15,7 +15,7 @@ trait Form_Field_Trait_Validation
 {
 
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
 	protected array $error_messages = [];
 
@@ -65,13 +65,13 @@ trait Form_Field_Trait_Validation
 	}
 
 	/**
-	 * @return array
+	 * @return array<string>
 	 */
 	abstract public function getRequiredErrorCodes(): array;
 
 	/**
 	 *
-	 * @return array
+	 * @return array<string,string>
 	 */
 	public function getErrorMessages(): array
 	{
@@ -80,7 +80,7 @@ trait Form_Field_Trait_Validation
 
 	/**
 	 *
-	 * @param array $error_messages
+	 * @param array<string,string> $error_messages
 	 *
 	 */
 	public function setErrorMessages( array $error_messages ): void
@@ -93,11 +93,11 @@ trait Form_Field_Trait_Validation
 
 	/**
 	 * @param string $code
-	 * @param array $data
+	 * @param array<string,mixed> $data
 	 *
-	 * @return string|bool
+	 * @return string|false
 	 */
-	public function getErrorMessage( string $code, array $data=[] ): string|bool
+	public function getErrorMessage( string $code, array $data=[] ): string|false
 	{
 		$message = $this->error_messages[$code] ?? false;
 
@@ -107,12 +107,11 @@ trait Form_Field_Trait_Validation
 
 	/**
 	 * @param string $code
-	 * @param array $data
+	 * @param array<string,string> $data
 	 */
 	public function setError( string $code, array $data = [] ): void
 	{
 		/**
-		 * @var Form_Field $this
 		 * @var Form $form
 		 */
 		$form = $this->_form;
@@ -161,8 +160,8 @@ trait Form_Field_Trait_Validation
 	{
 		$this->is_valid = true;
 		$this->errors = [];
-		$this->last_error_code = false;
-		$this->last_error_message = false;
+		$this->last_error_code = '';
+		$this->last_error_message = '';
 	}
 
 	/**

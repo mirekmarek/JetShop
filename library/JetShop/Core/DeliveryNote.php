@@ -15,13 +15,13 @@ use Jet\Form;
 use Jet\Logger;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_DeliveryNote;
+use JetApplication\Application_Service_Admin_DeliveryNote;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\EShopEntity_AccountingDocument;
 use JetApplication\DeliveryNote_Item;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General;
 use JetApplication\Order;
 
 #[DataModel_Definition(
@@ -30,7 +30,7 @@ use JetApplication\Order;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Delivery note',
-	admin_manager_interface: Admin_Managers_DeliveryNote::class
+	admin_manager_interface: Application_Service_Admin_DeliveryNote::class
 )]
 abstract class Core_DeliveryNote extends EShopEntity_AccountingDocument implements
 	EShopEntity_HasNumberSeries_Interface,
@@ -166,7 +166,7 @@ abstract class Core_DeliveryNote extends EShopEntity_AccountingDocument implemen
 	
 	public function generatePDF() : string
 	{
-		return Managers_General::Invoices()->generateDeliveryNotePDF( $this );
+		return Application_Service_General::Invoices()->generateDeliveryNotePDF( $this );
 	}
 	
 }

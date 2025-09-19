@@ -25,17 +25,17 @@ abstract class DataModel_Related_1to1 extends DataModel_Related
 
 	/**
 	 *
-	 * @param array $where
-	 * @param ?DataModel_PropertyFilter $load_filter
+	 * @param array<mixed> $where
+	 * @param DataModel_PropertyFilter|null $load_filter
 	 *
-	 * @return array
+	 * @return array<mixed>
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function fetchRelatedData( array $where,
 	                                         ?DataModel_PropertyFilter $load_filter = null ): array
 	{
 		/**
 		 * @var DataModel_Definition_Model_Related_1to1 $definition
-		 * @var DataModel $this
 		 */
 		$definition = static::getDataModelDefinition();
 
@@ -58,8 +58,8 @@ abstract class DataModel_Related_1to1 extends DataModel_Related
 
 	/**
 	 *
-	 * @param array $this_data
-	 * @param array  &$related_data
+	 * @param list<array<string,mixed>>|array<string,mixed> $this_data
+	 * @param array<string,array<string,mixed>> &$related_data
 	 * @param DataModel_PropertyFilter|null $load_filter
 	 *
 	 * @return static

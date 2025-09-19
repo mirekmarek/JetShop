@@ -11,7 +11,7 @@ use Jet\Form_Field_Select;
 use Jet\Form_Field_Select_Option;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
@@ -105,12 +105,12 @@ trait Core_Admin_EntityManager_EditorPlugin_ForceStatus
 	
 	public function renderButton() : string
 	{
-		return Admin_Managers::EntityEdit()->renderEntityForceStatusButton();
+		return Application_Service_Admin::EntityEdit()->renderEntityForceStatusButton();
 	}
 	
 	public function renderDialog() : string
 	{
-		return Admin_Managers::EntityEdit()->renderEntityForceStatusDialog( $this->form );
+		return Application_Service_Admin::EntityEdit()->renderEntityForceStatusDialog( $this->form );
 	}
 	
 }

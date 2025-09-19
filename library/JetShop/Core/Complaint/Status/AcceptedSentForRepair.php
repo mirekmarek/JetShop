@@ -28,6 +28,8 @@ use JetApplication\EShopEntity_VirtualStatus;
 abstract class Core_Complaint_Status_AcceptedSentForRepair extends Complaint_Status {
 	
 	public const CODE = 'accepted_sent_for_repair';
+	protected string $title = 'Accepted - Sent for repair';
+	protected int $priority = 80;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -45,12 +47,6 @@ abstract class Core_Complaint_Status_AcceptedSentForRepair extends Complaint_Sta
 		'repaired' => false,
 		'send_new_products' => false,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Accepted - Sent for repair', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 80;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

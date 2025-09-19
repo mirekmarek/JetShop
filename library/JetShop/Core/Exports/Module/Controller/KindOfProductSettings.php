@@ -15,7 +15,7 @@ use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\UI_messages;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\KindOfProduct;
 use JetApplication\Exports_Join_KindOfProduct;
 use JetApplication\Exports_ExportCategory;
@@ -130,7 +130,7 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 	{
 		/** @noinspection PhpParamsInspection */
 		AJAX::snippetResponse(
-			Admin_Managers::KindOfProduct()->renderExportsCategories(
+			Application_Service_Admin::KindOfProduct()->renderExportsCategories(
 				$this,
 				Http_Request::GET()->getString('category')
 			)
@@ -188,7 +188,7 @@ abstract class Core_Exports_Module_Controller_KindOfProductSettings extends MVC_
 		
 		
 		/** @noinspection PhpParamsInspection */
-		echo Admin_Managers::KindOfProduct()->renderExportsForm( $this );
+		echo Application_Service_Admin::KindOfProduct()->renderExportsForm( $this );
 	}
 	
 	

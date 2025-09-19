@@ -12,7 +12,9 @@ use Jet\DataModel_Definition;
 
 use Jet\Form_Definition;
 use Jet\Form_Field;
-use JetApplication\Admin_Managers_Content_Articles;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Content_Articles;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Content_Article_Author;
 use JetApplication\Content_Article_Category;
 use JetApplication\Content_Article_KindOfArticle;
@@ -25,6 +27,7 @@ use JetApplication\EShopEntity_WithEShopData_HasImages_Trait;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\EShopEntity_Definition;
+use JetApplication\FulltextSearch_IndexDataProvider;
 
 
 #[DataModel_Definition(
@@ -33,7 +36,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Article',
-	admin_manager_interface: Admin_Managers_Content_Articles::class,
+	admin_manager_interface: Application_Service_Admin_Content_Articles::class,
 	images: [
 		'header_1' => 'Header 1',
 		'header_2' => 'Header 2',
@@ -42,10 +45,12 @@ use JetApplication\EShopEntity_Definition;
 )]
 abstract class Core_Content_Article extends EShopEntity_WithEShopData implements
 	EShopEntity_HasImages_Interface,
-	EShopEntity_Admin_WithEShopData_Interface
+	EShopEntity_Admin_WithEShopData_Interface,
+	FulltextSearch_IndexDataProvider
 {
 	use EShopEntity_WithEShopData_HasImages_Trait;
 	use EShopEntity_Admin_WithEShopData_Trait;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -273,6 +278,47 @@ abstract class Core_Content_Article extends EShopEntity_WithEShopData implements
 	{
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $this->_getEshopData( $eshop );
+	}
+	
+	
+	
+	public function getFulltextObjectType(): string
+	{
+		return '';
+	}
+	
+	public function getFulltextObjectIsActive(): bool
+	{
+		return $this->isActive();
+	}
+	
+	public function getInternalFulltextObjectTitle(): string
+	{
+		return $this->getAdminTitle();
+	}
+	
+	public function getInternalFulltextTexts(): array
+	{
+		return [$this->getInternalName(), $this->getInternalCode()];
+	}
+	
+	public function getShopFulltextTexts( EShop $eshop ): array
+	{
+		$sd = $this->getEshopData( $eshop );
+		
+		return [$sd->getTitle()];
+	}
+	
+	public function updateFulltextSearchIndex() : void
+	{
+		Application_Service_Admin::FulltextSearch()->updateIndex( $this );
+		Application_Service_EShop::FulltextSearch()->updateIndex( $this );
+	}
+	
+	public function removeFulltextSearchIndex() : void
+	{
+		Application_Service_Admin::FulltextSearch()->deleteIndex( $this );
+		Application_Service_EShop::FulltextSearch()->deleteIndex( $this );
 	}
 	
 }

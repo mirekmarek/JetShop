@@ -9,6 +9,7 @@ namespace JetShop;
 
 use Jet\Application_Module;
 
+use JetApplication\CashDesk;
 use JetApplication\EMail;
 use JetApplication\Order;
 use JetApplication\Payment_Method;
@@ -41,6 +42,16 @@ abstract class Core_Payment_Method_Module extends Application_Module
 	public function updateOrderConfirmationEmail( Order $order, EMail $email ) : void
 	{
 	
+	}
+	
+	public function generateCachDeskAgreeFlags( CashDesk $cash_desk ) : void
+	{
+	
+	}
+	
+	public function renderCachDeskConfirmationHandler( CashDesk $cash_desk ) : string
+	{
+		return '';
 	}
 	
 	abstract public function getPaymentMethodSpecificationList() : array;

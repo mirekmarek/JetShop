@@ -16,7 +16,7 @@ use Jet\Session;
 use Jet\Data_DateTime;
 
 use JetApplication\Customer;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 
 /**
@@ -67,7 +67,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		return true;
 	}
 	
-	public function getCurrentUser() : Customer|bool
+	public function getCurrentUser() : Customer|false
 	{
 		if( $this->current_user!==null ) {
 			return $this->current_user;
@@ -107,7 +107,7 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 	public function handleLogin() : void
 	{
 		
-		$module = EShop_Managers::CustomerLogin();
+		$module = Application_Service_EShop::CustomerLogin();
 		
 		$user = $this->getCurrentUser();
 
@@ -186,6 +186,8 @@ abstract class Core_Customer_AuthController extends BaseObject implements Auth_C
 		$session->setValue( 'user_id', $user->getId() );
 		
 		$this->current_user = $user;
+		
+		$user->onLogin();
 		
 		return true;
 	}

@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
@@ -19,6 +17,8 @@ use JetApplication\Order_Status;
 abstract class Core_Order_Status_HandedOver extends Order_Status {
 	
 	public const CODE = 'handed_over';
+	protected string $title = 'Handed over';
+	protected int $priority = 60;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -34,12 +34,6 @@ abstract class Core_Order_Status_HandedOver extends Order_Status {
 		'dispatch_started' => null,
 		'dispatched' => null,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Handed over', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 60;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

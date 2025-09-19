@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_AcceptedNewGoodsWillBeSend;
@@ -18,6 +16,8 @@ use JetApplication\EShopEntity_Status;
 abstract class Core_Complaint_Status_AcceptedNewProduct extends Complaint_Status {
 	
 	public const CODE = 'accepted_new_product';
+	protected string $title = 'Accepted - New products';
+	protected int $priority = 100;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -35,13 +35,7 @@ abstract class Core_Complaint_Status_AcceptedNewProduct extends Complaint_Status
 		'repaired' => false,
 		'send_new_products' => true,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Accepted - New products', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 100;
-	}
-	
+
 	public function getShowAdminCSSClass() : string
 	{
 		return 'status-done';

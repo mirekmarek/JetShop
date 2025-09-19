@@ -6,14 +6,14 @@
  */
 namespace JetShop;
 
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Note;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Note;
 use JetApplication\EShopEntity_Note;
 use JetApplication\EShopEntity_Note_MessageGenerator;
 
 trait Core_Admin_EntityManager_EditorPlugin_Note {
 	
-	protected ?Admin_Managers_Note $manager = null;
+	protected ?Application_Service_Admin_Note $manager = null;
 	
 	public function hasDialog(): bool
 	{
@@ -27,7 +27,7 @@ trait Core_Admin_EntityManager_EditorPlugin_Note {
 	
 	protected function init() : void
 	{
-		$this->manager = Admin_Managers::Note();
+		$this->manager = Application_Service_Admin::Note();
 		if($this->manager) {
 			
 			$new_note = $this->newNoteCreator();
@@ -40,8 +40,8 @@ trait Core_Admin_EntityManager_EditorPlugin_Note {
 				after_add: function( EShopEntity_Note $new_note, &$snippets ) : void {
 					$this->afterMessageAdded( $new_note );
 					
-					$snippets['event-history'] = Admin_Managers::EntityEdit()->renderEventHistory( $this->item );
-					$snippets['sent-emails'] = Admin_Managers::EntityEdit()->renderSentEmails( $this->item );
+					$snippets['event-history'] = Application_Service_Admin::EntityEdit()->renderEventHistory( $this->item );
+					$snippets['sent-emails'] = Application_Service_Admin::EntityEdit()->renderSentEmails( $this->item );
 				}
 			);
 			

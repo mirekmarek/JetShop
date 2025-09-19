@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use Jet\Tr;
+use JetApplication\DeliveryTerm_Info;
 use JetApplication\Marketing_Gift_Product;
 use JetApplication\MeasureUnit;
 use JetApplication\Pricelists;
@@ -83,6 +84,11 @@ abstract class Core_ShoppingCart_Item
 		
 		return $this->product;
 	}
+	
+	public function getDeliveryInfo() : DeliveryTerm_Info
+	{
+		return $this->getProduct()->getDeliveryInfo( $this->getNumberOfUnits(), $this->getCart()->getAvailability() );
+	}
 
 	public function getNumberOfUnits() : float
 	{
@@ -109,10 +115,8 @@ abstract class Core_ShoppingCart_Item
 		}
 		
 		if($this->selected_gift_id) {
-			$gifts = Marketing_Gift_Product::getAvailable( $this->getCart() );
 			if(
-				!isset($gifts[$this->selected_gift_id]) ||
-				!$gifts[$this->selected_gift_id]->productIsRelevant( $this->getCart(), $this->getProduct() )
+				!isset($this->getProduct()->getGifts()[$this->selected_gift_id])
 			) {
 				$this->selected_gift_id = 0;
 			}
@@ -138,6 +142,18 @@ abstract class Core_ShoppingCart_Item
 		return true;
 	}
 	
+	public function setSelectedGiftId( int $selected_gift_id ) : void
+	{
+		$gifts = $this->getProduct()->getGifts();
+		
+		if(!isset($gifts[$selected_gift_id])) {
+			return;
+		}
+		
+		
+		$this->selected_gift_id = $selected_gift_id;
+	}
+	
 	public function getSelectedGiftId(): int
 	{
 		return $this->selected_gift_id;
@@ -149,7 +165,13 @@ abstract class Core_ShoppingCart_Item
 			return null;
 		}
 		
-		return Marketing_Gift_Product::getAvailable( $this->getCart() )[$this->selected_gift_id];
+		$gifts = $this->getProduct()->getGifts();
+		
+		if(!isset($gifts[$this->selected_gift_id])) {
+			return null;
+		}
+		
+		return $gifts[$this->selected_gift_id];
 	}
 
 	public function getAmount() : float|int
@@ -171,17 +193,10 @@ abstract class Core_ShoppingCart_Item
 	{
 		
 		$p = $this->getProduct();
-		$delivery_info = $p->getDeliveryInfo( $this->getCart()->getAvailability() );
+		$delivery_info = $p->getDeliveryInfo( $number_of_units, $this->getCart()->getAvailability() );
 		
 		
-		
-		if(
-			$delivery_info->getIsVirtualProduct() ||
-			$number_of_units<=$delivery_info->getNumberOfUnitsAvailable() ||
-			$delivery_info->getAllowToOrderMore()
-		) {
-			//var_dump( $number_of_units, $delivery_info->getNumberOfUnitsAvailable() );
-			//die('???');
+		if( $delivery_info->allowToOrder() ) {
 			return true;
 		}
 		

@@ -8,29 +8,26 @@ namespace JetShop;
 
 
 use JetApplication\EShopEntity_HasImageGallery_Trait;
-use JetApplication\ImageGallery_Image;
+use JetApplication\ImageGallery;
 
 trait Core_Product_EShopData_Trait_Images
 {
 	use EShopEntity_HasImageGallery_Trait;
 	
-	/**
-	 * @return ImageGallery_Image[]
-	 */
-	public function getImages(): array
+	public function getImageGallery(): ImageGallery
 	{
-		if( $this->images === null ) {
-			$this->images = ImageGallery_Image::getImages( $this );
+		if(!$this->image_gallery) {
+			$this->image_gallery = new ImageGallery( $this->getEntityTypeForImageGallery(), $this->getEntityIdForImageGallery() );
 			
 			if(
-				!$this->images &&
 				$this->isVariant() &&
-				($master=$this->getVariantMasterProduct())
+				!$this->image_gallery->getImages()
 			) {
-				$this->images = ImageGallery_Image::getImages( $master );
+				$this->image_gallery = new ImageGallery( $this->getEntityTypeForImageGallery(), $this->getVariantMasterProductId() );
 			}
 		}
 		
-		return $this->images;
+		return $this->image_gallery;
 	}
+	
 }

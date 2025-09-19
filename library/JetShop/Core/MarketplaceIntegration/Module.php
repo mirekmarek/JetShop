@@ -17,8 +17,10 @@ use Jet\MVC_Page_Content;
 
 use Jet\Tr;
 use JetApplication\Brand;
+use JetApplication\MarketplaceIntegration_Join_Brand;
 use JetApplication\MarketplaceIntegration_Join_Cache;
 use JetApplication\MarketplaceIntegration_Join_ProductCommonData;
+use JetApplication\MarketplaceIntegration_Marketplace;
 use JetApplication\MarketplaceIntegration_MarketplaceBrand;
 use JetApplication\MarketplaceIntegration_Module;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
@@ -36,6 +38,7 @@ use JetApplication\Order_Event;
 use JetApplication\Product;
 use JetApplication\EShop;
 use JetApplication\KindOfProduct;
+use JetApplication\Product_EShopData;
 
 abstract class Core_MarketplaceIntegration_Module extends Application_Module
 {
@@ -44,6 +47,9 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	 * @var Form[]
 	 */
 	protected array $param_edit_form = [];
+	
+	protected EShop $eshop;
+	protected ?MarketplaceIntegration_Marketplace $marketplace = null;
 
 	public function getCode() : string
 	{
@@ -52,6 +58,18 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		$prefix = MarketplaceIntegration::getModuleNamePrefix();
 
 		return substr($code, strlen($prefix));
+	}
+
+	
+	public function init( EShop $eshop ): void
+	{
+		$this->eshop = $eshop;
+		$this->marketplace = new MarketplaceIntegration_Marketplace( $this->getCode(), $eshop );
+	}
+	
+	public function getMarketplace() : MarketplaceIntegration_Marketplace
+	{
+		return $this->marketplace;
 	}
 
 	abstract public function getTitle() : string;
@@ -73,7 +91,7 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		return true;
 	}
 	
-	public function handleKindOfProductSettings( KindOfProduct $kind_of_product, EShop $eshop ): void
+	public function handleKindOfProductSettings( KindOfProduct $kind_of_product ): void
 	{
 		/**
 		 * @var MarketplaceIntegration_Module $this
@@ -95,11 +113,10 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		
 		Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->getModuleManifest()->getName(),
-			action: function () use ($controller, $content, $kind_of_product, $eshop, $mp) {
+			action: function () use ($controller, $content, $kind_of_product, $mp) {
 				$controller = new $controller( $content );
 				$controller->init(
 					$kind_of_product,
-					$eshop,
 					$mp
 				);
 				$content->setControllerAction( $controller->resolve() );
@@ -109,7 +126,7 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		
 	}
 	
-	public function handleProductSettings( Product $product, EShop $eshop ): void
+	public function handleProductSettings( Product $product ): void
 	{
 		$content = new class extends MVC_Page_Content {
 			public function output( string $output ): void
@@ -133,11 +150,10 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		
 		Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->getModuleManifest()->getName(),
-			action: function () use ($controller, $content, $product, $eshop, $mp) {
+			action: function () use ($controller, $content, $product, $mp) {
 				$controller = new $controller( $content );
 				$controller->init(
 					$product,
-					$eshop,
 					$mp
 				);
 				$content->setControllerAction( $controller->resolve() );
@@ -146,7 +162,7 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		);
 	}
 	
-	public function handleBrandSettings( Brand $brand, EShop $eshop ): void
+	public function handleBrandSettings( Brand $brand ): void
 	{
 		$content = new MVC_Page_Content();
 		
@@ -165,11 +181,10 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		
 		Tr::setCurrentDictionaryTemporary(
 			dictionary: $this->getModuleManifest()->getName(),
-			action: function () use ($controller, $content, $brand, $eshop, $mp) {
+			action: function () use ($controller, $content, $brand, $mp) {
 				$controller = new $controller( $content );
 				$controller->init(
 					$brand,
-					$eshop,
 					$mp
 				);
 				$content->setControllerAction( $controller->resolve() );
@@ -182,6 +197,8 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	
 	public function handleOrderDetail( Order $order ): void
 	{
+		$this->init( $order->getEshop() );
+
 		$content = new MVC_Page_Content();
 		
 		$content->setModuleName( $this->getModuleManifest()->getName() );
@@ -213,11 +230,11 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	}
 	
 	
-	abstract public function actualizeBrands( EShop $eshop ) : void;
+	abstract public function actualizeBrands() : void;
 	
-	abstract public function actualizeCategories( EShop $eshop ) : void;
+	abstract public function actualizeCategories() : void;
 	
-	abstract public function actualizeCategory( EShop $eshop, string $category_id ) : void;
+	abstract public function actualizeCategory( string $category_id ) : void;
 	
 	public function getImportSource() : string
 	{
@@ -232,19 +249,18 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	abstract public function handleOrderEvent( Order_Event $order_event ) : bool;
 	
 	
-	public function getCache( EShop $eshop, string $cache_key ) : mixed
+	public function getCache( string $cache_key ) : mixed
 	{
-		$cd = MarketplaceIntegration_Join_Cache::get( $this->getCode(), $eshop, $cache_key );
+		$cd = MarketplaceIntegration_Join_Cache::get( $this->getMarketplace(), $cache_key );
 		return $cd?->getCacheData();
 	}
 	
-	public function setCache( EShop $eshop, string $cache_key, mixed $cache_data ) : void
+	public function setCache( string $cache_key, mixed $cache_data ) : void
 	{
-		$cd = MarketplaceIntegration_Join_Cache::get( $this->getCode(), $eshop, $cache_key );
+		$cd = MarketplaceIntegration_Join_Cache::get( $this->getMarketplace(), $cache_key );
 		if(!$cd) {
 			$cd = new MarketplaceIntegration_Join_Cache();
-			$cd->setEshop( $eshop );
-			$cd->setMarketplaceCode( $this->getCode() );
+			$cd->setMarketplace( $this->getMarketplace() );
 			$cd->setCacheKey( $cache_key );
 		}
 		
@@ -253,23 +269,21 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	}
 	
 	
-	
-	
-	public function getProductIsSelling( EShop $eshop, int $product_id ) : bool
+	public function getProductJoin( int $product_id ) : ?MarketplaceIntegration_Join_Product
 	{
-		return (bool)MarketplaceIntegration_Join_Product::get( $this->getCode(), $eshop, $product_id );
+		return MarketplaceIntegration_Join_Product::get( $this->getMarketplace(), $product_id );
 	}
 	
-	public function getProductCommonData( EShop $eshop, int $product_id, string $common_data_key ) : mixed
+	public function getProductCommonData( int $product_id, string $common_data_key ) : mixed
 	{
-		$cd = MarketplaceIntegration_Join_ProductCommonData::get( $this->getCode(), $eshop, $product_id, $common_data_key );
+		$cd = MarketplaceIntegration_Join_ProductCommonData::get( $this->getMarketplace(),$product_id, $common_data_key );
 		
 		return $cd?->getCommonData();
 	}
 	
-	public function getProductCommonData_int( EShop $eshop, int $product_id, string $common_data_key ) : ?int
+	public function getProductCommonData_int( int $product_id, string $common_data_key ) : ?int
 	{
-		$co = $this->getProductCommonData( $eshop, $product_id, $common_data_key );
+		$co = $this->getProductCommonData( $product_id, $common_data_key );
 
 		if(is_array($co)) {
 			return (int)$co[0];
@@ -278,9 +292,9 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		return null;
 	}
 	
-	public function getProductCommonData_float( EShop $eshop, int $product_id, string $common_data_key ) : ?float
+	public function getProductCommonData_float( int $product_id, string $common_data_key ) : ?float
 	{
-		$co = $this->getProductCommonData( $eshop, $product_id, $common_data_key );
+		$co = $this->getProductCommonData( $product_id, $common_data_key );
 		
 		if(is_array($co)) {
 			return (float)$co[0];
@@ -289,9 +303,9 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		return null;
 	}
 	
-	public function getProductCommonData_string( EShop $eshop, int $product_id, string $common_data_key ) : ?string
+	public function getProductCommonData_string( int $product_id, string $common_data_key ) : ?string
 	{
-		$co = $this->getProductCommonData( $eshop, $product_id, $common_data_key );
+		$co = $this->getProductCommonData( $product_id, $common_data_key );
 		
 		if(is_array($co)) {
 			return (string)$co[0];
@@ -301,13 +315,12 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	}
 	
 	
-	public function setProductCommonData( EShop $eshop, int $product_id, string $common_data_key, mixed $common_data ) : void
+	public function setProductCommonData( int $product_id, string $common_data_key, mixed $common_data ) : void
 	{
-		$cd = MarketplaceIntegration_Join_ProductCommonData::get( $this->getCode(), $eshop, $product_id, $common_data_key );
+		$cd = MarketplaceIntegration_Join_ProductCommonData::get( $this->getMarketplace(), $product_id, $common_data_key );
 		if(!$cd) {
 			$cd = new MarketplaceIntegration_Join_ProductCommonData();
-			$cd->setEshop( $eshop );
-			$cd->setMarketplaceCode( $this->getCode() );
+			$cd->setMarketplace( $this->getMarketplace() );
 			$cd->setProductId( $product_id );
 			$cd->setCommonDataKey( $common_data_key );
 		}
@@ -316,82 +329,108 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		$cd->save();
 	}
 	
-	public function stopSelling( EShop $eshop, int $product_id ) : void
+	public function stopSelling( int $product_id ) : void
 	{
-		$join = MarketplaceIntegration_Join_Product::get( $this->getCode(), $eshop, $product_id );
+		$join = MarketplaceIntegration_Join_Product::get( $this->getMarketplace(), $product_id );
 		$join?->delete();
 	}
 	
-	public function startSelling( EShop $eshop, int $product_id ) : void
+	public function startSelling( int $product_id ) : void
 	{
-		$join = MarketplaceIntegration_Join_Product::get( $this->getCode(), $eshop, $product_id );
+		$join = MarketplaceIntegration_Join_Product::get( $this->getMarketplace(), $product_id );
 		if($join) {
 			return;
 		}
 		
 		$join = new MarketplaceIntegration_Join_Product();
-		$join->setEshop( $eshop );
-		$join->setMarketplaceCode( $this->getCode() );
+		$join->setMarketplace( $this->getMarketplace() );
 		$join->setProductId( $product_id );
 		$join->save();
 	}
 	
-	public function getSellingProductIds( EShop $eshop ) : array
+	public function getSellingProductIds() : array
 	{
-		return MarketplaceIntegration_Join_Product::getProductIds(
-			$this->getCode(),
-			$eshop
-		);
+		return MarketplaceIntegration_Join_Product::getProductIds( $this->getMarketplace() );
 	}
 	
-	public function getBrands( EShop $eshop ) : array
+	public function getBrands() : array
 	{
-		return MarketplaceIntegration_MarketplaceBrand::getBrands( $eshop, $this->getCode() );
+		return MarketplaceIntegration_MarketplaceBrand::getBrands( $this->getMarketplace() );
+	}
+	
+	public function getBrandForProduct( Product|Product_EShopData $product ) : ?MarketplaceIntegration_MarketplaceBrand
+	{
+		$mp_brand = MarketplaceIntegration_Join_Brand::get( $this->getMarketplace(), $product->getBrandId() );
+		if(!$mp_brand) {
+			return null;
+		}
+
+		return MarketplaceIntegration_MarketplaceBrand::get( $this->getMarketplace(), $mp_brand->getMarketplaceBrandId() );
+	}
+	
+	public function getKindOfProductJoinForProduct( Product|Product_EShopData $product ) : ?MarketplaceIntegration_Join_KindOfProduct
+	{
+		
+		$kind_id = $product->getKindId();
+		
+		$p_id = ($product instanceof  Product) ? $product->getId() : $product->getEntityId();
+		
+		$pj = $this->getProductJoin( $p_id );
+		if($pj?->getAlternativeKindOfProductId()) {
+			$kind_id = $pj->getAlternativeKindOfProductId();
+		}
+		
+		return MarketplaceIntegration_Join_KindOfProduct::get( $this->getMarketplace(), $kind_id );
 	}
 
-	public function getCategories( EShop $eshop ) : array
+	public function getCategories() : array
 	{
-		return MarketplaceIntegration_MarketplaceCategory::getCategories( $eshop, $this->getCode() );
+		return MarketplaceIntegration_MarketplaceCategory::getCategories( $this->getMarketplace() );
 	}
 	
-	public function getCategory( EShop $eshop, Product $product ) : ?MarketplaceIntegration_MarketplaceCategory
+	public function getCategoryForProduct( Product|Product_EShopData $product ) : ?MarketplaceIntegration_MarketplaceCategory
 	{
-		$category_id = MarketplaceIntegration_Join_KindOfProduct::get(
-			$this->getCode(),
-			$eshop,
-			$product->getKindId()
-		);
+		$c_j = $this->getKindOfProductJoinForProduct( $product );
 		
-		if(!$category_id) {
+		if(!$c_j) {
 			return null;
 		}
 		
 		return MarketplaceIntegration_MarketplaceCategory::get(
-			$eshop,
-			$this->getCode(),
-			$category_id
+			$this->getMarketplace(),
+			$c_j->getMarketplaceCategoryId()
 		);
 	}
 	
-	public function getParamsEditForm( EShop $eshop, Product $product ) : ?Form
+	public function getParametersForProduct( Product|Product_EShopData $product ) : array
 	{
-		$key = $eshop->getKey().':'.$product->getId();
+		$mp_c_join = $this->getKindOfProductJoinForProduct( $product );
+
+		if(!$mp_c_join) {
+			return [];
+		}
+		
+		return MarketplaceIntegration_MarketplaceCategory_Parameter::getForCategory(
+			$this->getMarketplace(),
+			$mp_c_join->getMarketplaceCategoryId()
+		);
+		
+	}
+	
+	public function getParamsEditForm( Product $product ) : ?Form
+	{
+		$key = $this->getMarketplace()->getKey().':'.$product->getId();
 		
 		if(!isset($this->param_edit_form[$key])) {
-			$category_id = MarketplaceIntegration_Join_KindOfProduct::get(
-				$this->getCode(),
-				$eshop,
-				$product->getKindId()
-			);
+			$mc_category_join = $this->getKindOfProductJoinForProduct( $product );
 			
-			if(!$category_id) {
+			if(!$mc_category_join) {
 				return null;
 			}
 			
 			$parameters = MarketplaceIntegration_MarketplaceCategory_Parameter::getForCategory(
-				$eshop,
-				$this->getCode(),
-				$category_id
+				$this->getMarketplace(),
+				$mc_category_join->getMarketplaceCategoryId()
 			);
 			
 			if(!$parameters) {
@@ -403,9 +442,8 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 			});
 			
 			$values = MarketplaceIntegration_MarketplaceCategory_Parameter_Value::getForProduct(
-				$eshop,
-				$this->getCode(),
-				$category_id,
+				$this->getMarketplace(),
+				$mc_category_join->getMarketplaceCategoryId(),
 				$product->getId()
 			);
 			
@@ -427,9 +465,8 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 				$value = $values[$param_id]??null;
 				if(!$value) {
 					$value = new MarketplaceIntegration_MarketplaceCategory_Parameter_Value();
-					$value->setEshop( $eshop );
-					$value->setMarketplaceCode( $this->getCode() );
-					$value->setMarketplaceCategoryId( $category_id );
+					$value->setMarketplace( $this->getMarketplace() );
+					$value->setMarketplaceCategoryId( $mc_category_join );
 					$value->setMarketplaceParameterId( $param_id );
 					$value->setProductId( $product->getId() );
 					$value->save();
@@ -502,8 +539,8 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		return $this->param_edit_form[$key];
 	}
 	
-	public function catchParamsEditForm( EShop $eshop, Product $product ) : bool
+	public function catchParamsEditForm( Product $product ) : bool
 	{
-		return $this->getParamsEditForm( $eshop, $product )->catch();
+		return $this->getParamsEditForm( $product )->catch();
 	}
 }

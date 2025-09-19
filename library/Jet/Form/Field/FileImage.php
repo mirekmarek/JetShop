@@ -23,7 +23,7 @@ class Form_Field_FileImage extends Form_Field implements Form_Field_Part_File_In
 	
 	
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
 	protected array $error_messages = [
 		Form_Field::ERROR_CODE_EMPTY                => 'Please select file',
@@ -54,18 +54,12 @@ class Form_Field_FileImage extends Form_Field implements Form_Field_Part_File_In
 	protected int|null $maximal_height = null;
 	
 	/**
-	 * @return array
+	 * @return array<string>
 	 */
 	public function getAllowedMimeTypes(): array
 	{
 		if(!$this->allowed_mime_types) {
-			return [
-				'image/pjpeg',
-				'image/jpeg',
-				'image/jpg',
-				'image/gif',
-				'image/png',
-			];
+			$this->allowed_mime_types = Data_Image::getSupportedMimeTypes();
 		}
 		
 		return $this->allowed_mime_types;

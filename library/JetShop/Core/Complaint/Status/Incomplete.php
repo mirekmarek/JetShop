@@ -22,6 +22,8 @@ use JetApplication\EShopEntity_VirtualStatus;
 abstract class Core_Complaint_Status_Incomplete extends Complaint_Status {
 	
 	public const CODE = 'incomplete';
+	protected string $title = 'Incomplete';
+	protected int $priority = 10;
 	
 	protected static array $flags_map = [
 		'completed' => false,
@@ -37,12 +39,6 @@ abstract class Core_Complaint_Status_Incomplete extends Complaint_Status {
 		'send_new_products' => null,
 		
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Incomplete', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

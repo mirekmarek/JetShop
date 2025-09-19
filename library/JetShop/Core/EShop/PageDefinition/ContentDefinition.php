@@ -12,12 +12,12 @@ use Jet\Factory_MVC;
 use Jet\MVC_Layout;
 use Jet\MVC_Page_Content_Interface;
 use JetApplication\EShop;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\MVC_Page_Content;
 
 abstract class Core_EShop_PageDefinition_ContentDefinition extends BaseObject {
 	protected string $module_name = '';
-	protected string $manager_group = EShop_Managers::class;
+	protected string $manager_group = Application_Service_EShop::class;
 	protected string $manager_interface = '';
 	
 
@@ -121,11 +121,10 @@ abstract class Core_EShop_PageDefinition_ContentDefinition extends BaseObject {
 	}
 	
 	
-	public function getContentModuleName( EShop $shop ) : string
+	public function getContentModuleName( EShop $eshop ) : string
 	{
 		if($this->manager_interface) {
-			EShop_Managers::setEshop( $shop );
-			return EShop_Managers::getManagerMetaInfo( $this->manager_interface )?->getName()??'';
+			return Application_Service_EShop::list($eshop)->getServiceMetaInfo( $this->manager_interface )?->getName()??'';
 		}
 		
 		return $this->module_name;

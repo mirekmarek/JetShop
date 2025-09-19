@@ -21,6 +21,7 @@ use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;
 use JetApplication\EShopEntity_HasPrice_Interface;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
+use JetApplication\KindOfProduct;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\MeasureUnit;
 use JetApplication\Product;
@@ -126,7 +127,7 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 100,
+		max_len: 150,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
@@ -344,7 +345,7 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	
 	public function isVirtual() : bool
 	{
-		return (bool)$this->getKind()?->getIsVirtualProduct();
+		return (in_array($this->kind_id, KindOfProduct::getVirtualKidOfProductIds()));
 	}
 	
 	
@@ -624,9 +625,9 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 	}
 	
 	
-	public function getDeliveryInfo( ?Availability $availability=null ) : DeliveryTerm_Info
+	public function getDeliveryInfo( float $units_required=1, ?Availability $availability=null ) : DeliveryTerm_Info
 	{
-		return DeliveryTerm::getInfo( $this, $availability );
+		return DeliveryTerm::getInfo( $this, $units_required, $availability );
 	}
 	
 	public static function getActiveProductsIds( EShop $eshop, array $product_ids ): array

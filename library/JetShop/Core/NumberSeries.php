@@ -7,13 +7,13 @@
 namespace JetShop;
 
 
-use JetApplication\Managers_General;
-use JetApplication\NumberSeries_Manager;
+use JetApplication\Application_Service_General;
+use JetApplication\Application_Service_General_NumberSeries;
 
 class Core_NumberSeries {
 	
-	public static function getManager() : NumberSeries_Manager
+	public static function getManager() : Application_Service_General_NumberSeries
 	{
-		return Managers_General::NumberSeries();
+		return Application_Service_General::NumberSeries();
 	}
 }

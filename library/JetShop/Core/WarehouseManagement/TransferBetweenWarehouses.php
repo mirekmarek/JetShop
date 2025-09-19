@@ -16,7 +16,7 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
 use Jet\UI_messages;
 use Jet\Tr;
-use JetApplication\Admin_Managers_WarehouseManagement_TransferBetweenWarehouses;
+use JetApplication\Application_Service_Admin_WarehouseManagement_TransferBetweenWarehouses;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\EShop;
@@ -50,7 +50,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Warehouse management - Transfer between warehouses',
-	admin_manager_interface: Admin_Managers_WarehouseManagement_TransferBetweenWarehouses::class
+	admin_manager_interface: Application_Service_Admin_WarehouseManagement_TransferBetweenWarehouses::class
 )]
 abstract class Core_WarehouseManagement_TransferBetweenWarehouses extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,

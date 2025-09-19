@@ -19,7 +19,7 @@ use Jet\Form_Field_Input;
 use Jet\UI_messages;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_ReceiptOfGoods;
+use JetApplication\Application_Service_Admin_ReceiptOfGoods;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\EShopEntity_Basic;
@@ -54,7 +54,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Warehouse management - Receipt of goods',
-	admin_manager_interface: Admin_Managers_ReceiptOfGoods::class
+	admin_manager_interface: Application_Service_Admin_ReceiptOfGoods::class
 )]
 abstract class Core_WarehouseManagement_ReceiptOfGoods extends EShopEntity_Basic implements
 	Context_ProvidesContext_Interface,

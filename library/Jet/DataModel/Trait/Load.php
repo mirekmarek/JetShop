@@ -38,16 +38,14 @@ trait DataModel_Trait_Load
 
 
 	/**
-	 * @param array $where
+	 * @param array<mixed> $where
 	 *
 	 * @return DataModel_Query
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function createQuery( array $where = [] ): DataModel_Query
 	{
 
-		/**
-		 * @var DataModel $this
-		 */
 		$query = new DataModel_Query( static::getDataModelDefinition() );
 		$query->setWhere( $where );
 
@@ -56,24 +54,20 @@ trait DataModel_Trait_Load
 
 
 	/**
-	 * @param array $this_data
-	 * @param array $related_data
+	 * @param array<string,mixed> $this_data
+	 * @param array<string,array<string,mixed>> $related_data
 	 * @param DataModel_PropertyFilter|null $load_filter
 	 *
 	 * @return static
 	 */
 	public static function initByData( array $this_data, array $related_data = [], ?DataModel_PropertyFilter $load_filter = null ): static
 	{
-		/**
-		 * @var DataModel $_this
-		 */
 		$_this = new static();
 		if( $load_filter ) {
 			$_this->setLoadFilter( $load_filter );
 		}
 
 		/**
-		 * @var DataModel $this
 		 * @var DataModel_Definition_Model $this_definition
 		 */
 		$this_definition = static::getDataModelDefinition();
@@ -157,10 +151,6 @@ trait DataModel_Trait_Load
 				}
 			}
 
-			/**
-			 * @var DataModel_Related $class_name
-			 */
-
 			$_this->{$property_name} = $class_name::initRelatedByData(
 				$this_related_data,
 				$related_data,
@@ -176,10 +166,11 @@ trait DataModel_Trait_Load
 
 
 	/**
-	 * @param array|string|int|DataModel_IDController $id_or_where
-	 * @param array|DataModel_PropertyFilter|null $load_filter
+	 * @param array<mixed>|string|int|DataModel_IDController $id_or_where
+	 * @param array<string,string>|DataModel_PropertyFilter|null $load_filter
 	 *
 	 * @return static|null
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function load( array|string|int|DataModel_IDController $id_or_where,
 	                             array|DataModel_PropertyFilter|null $load_filter = null ): static|null
@@ -197,10 +188,11 @@ trait DataModel_Trait_Load
 	}
 	
 	/**
-	 * @param array|string|int|DataModel_IDController $id_or_where
-	 * @param array|DataModel_PropertyFilter|null $load_filter
+	 * @param array<mixed>|string|int|DataModel_IDController $id_or_where
+	 * @param array<string,string>|DataModel_PropertyFilter|null $load_filter
 	 *
 	 * @return ?DataModel_LoadedData
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function loadData( array|string|int|DataModel_IDController $id_or_where,
 	                             array|DataModel_PropertyFilter|null $load_filter = null ): ?DataModel_LoadedData
@@ -313,10 +305,10 @@ trait DataModel_Trait_Load
 	
 
 	/**
-	 * @param array $where_per_model
-	 * @param array|string|null $order_by
+	 * @param array<string,mixed> $where_per_model
+	 * @param array<string>|string|null $order_by
 	 * @param callable|null $item_key_generator
-	 * @param array|DataModel_PropertyFilter|null $load_filter
+	 * @param array<string,string>|DataModel_PropertyFilter|null $load_filter
 	 *
 	 * @return static[]
 	 */
@@ -468,15 +460,16 @@ trait DataModel_Trait_Load
 	
 	/**
 	 * @param string $fetch_method
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	protected static function dataFetch(
 		string            $fetch_method,
@@ -522,16 +515,17 @@ trait DataModel_Trait_Load
 	}
 	
 	/**
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 *
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function dataFetchAll( array $select,
 	                                     array $where = [],
@@ -557,16 +551,17 @@ trait DataModel_Trait_Load
 	}
 	
 	/**
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 *
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function dataFetchAssoc( array $select,
 	                                       array $where = [],
@@ -593,15 +588,16 @@ trait DataModel_Trait_Load
 	
 	
 	/**
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function dataFetchCol( array $select,
 	                                       array $where = [],
@@ -628,15 +624,16 @@ trait DataModel_Trait_Load
 	
 	
 	/**
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function dataFetchPairs( array $select,
 	                                     array $where = [],
@@ -662,15 +659,16 @@ trait DataModel_Trait_Load
 	}
 	
 	/**
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function dataFetchRow( array $select,
 	                                       array $where = [],
@@ -696,15 +694,16 @@ trait DataModel_Trait_Load
 	}
 	
 	/**
-	 * @param array $select
-	 * @param array $where
-	 * @param array|string|null $group_by
-	 * @param array|null $having
-	 * @param string|array|null $order_by
+	 * @param array<string|int,string|DataModel_Definition_Property|DataModel_Query_Select_Item_Expression> $select
+	 * @param array<mixed> $where
+	 * @param array<string>|string|null $group_by
+	 * @param array<mixed>|null $having
+	 * @param string|array<string>|null $order_by
 	 * @param int|null $limit
 	 * @param int|null $offset
 	 * @param bool $raw_mode
 	 * @return mixed
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function dataFetchOne( array $select,
 	                                     array $where = [],
@@ -730,11 +729,12 @@ trait DataModel_Trait_Load
 	}
 	/**
 	 *
-	 * @param array $where
-	 * @param array $load_filter (optional)
+	 * @param array<mixed> $where
+	 * @param array<string> $load_filter
 	 *
 	 * @return DataModel_Fetch_Instances|static[]
 	 * @noinspection PhpDocSignatureInspection
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function fetchInstances( array $where = [], array $load_filter = [] ): DataModel_Fetch_Instances
 	{
@@ -743,15 +743,17 @@ trait DataModel_Trait_Load
 		if( $load_filter ) {
 			$fetch->setLoadFilter( $load_filter );
 		}
-
+		
+		/** @phpstan-ignore return.type */
 		return $fetch;
 	}
 
 	/**
 	 *
-	 * @param array $where
+	 * @param array<mixed> $where
 	 *
 	 * @return DataModel_Fetch_IDs
+	 * @noinspection PhpPluralMixedCanBeReplacedWithArrayInspection
 	 */
 	public static function fetchIDs( array $where = [] ): DataModel_Fetch_IDs
 	{

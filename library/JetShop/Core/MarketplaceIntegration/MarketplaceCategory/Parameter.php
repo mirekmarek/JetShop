@@ -10,15 +10,19 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_WithEShopRelation;
-use JetApplication\EShop;
+use JetApplication\MarketplaceIntegration_Entity_Interface;
+use JetApplication\MarketplaceIntegration_Entity_Trait;
+use JetApplication\MarketplaceIntegration_Marketplace;
 use JetApplication\MarketplaceIntegration_MarketplaceCategory_Parameter;
 
 #[DataModel_Definition(
 	name: 'marketplace_category_param',
 	database_table_name: 'marketplace_categories_params',
 )]
-class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEntity_WithEShopRelation
+class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEntity_WithEShopRelation implements MarketplaceIntegration_Entity_Interface
 {
+	use MarketplaceIntegration_Entity_Trait;
+	
 	public const PARAM_TYPE_OPTIONS = 'options';
 	public const PARAM_TYPE_NUMBER = 'number';
 	public const PARAM_TYPE_STRING = 'string';
@@ -27,13 +31,6 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	public const REQUIRE_LEVEL_REQUIRED = 'required';
 	public const REQUIRE_LEVEL_RECOMMENDED = 'recommended';
 	public const REQUIRE_LEVEL_DISABLED = 'disabled';
-	
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	protected string $marketplace_code = '';
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -92,11 +89,9 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	)]
 	protected array $options = [];
 	
-	public static function get( EShop $eshop, string $marketplace_code, string $category_id, string $parameter_code ) : ?static
+	public static function get( MarketplaceIntegration_Marketplace $marketplace, string $category_id, string $parameter_code ) : ?static
 	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['marketplace_code'] = $marketplace_code;
+		$where = $marketplace->getWhere();
 		$where[] = 'AND';
 		$where['marketplace_category_id'] = $category_id;
 		$where[] = 'AND';
@@ -106,17 +101,14 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	}
 	
 	/**
-	 * @param EShop $eshop
-	 * @param string $marketplace_code
+	 * @param MarketplaceIntegration_Marketplace $marketplace
 	 * @param string $category_id
 	 *
 	 * @return static[]
 	 */
-	public static function getForCategory( EShop $eshop, string $marketplace_code, string $category_id ) : array
+	public static function getForCategory( MarketplaceIntegration_Marketplace $marketplace, string $category_id ) : array
 	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['marketplace_code'] = $marketplace_code;
+		$where = $marketplace->getWhere();
 		$where[] = 'AND';
 		$where['marketplace_category_id'] = $category_id;
 		
@@ -148,16 +140,7 @@ class Core_MarketplaceIntegration_MarketplaceCategory_Parameter extends EShopEnt
 	{
 		$this->units = $units;
 	}
-	
-	public function getMarketplaceCode(): string
-	{
-		return $this->marketplace_code;
-	}
-	
-	public function setMarketplaceCode( string $marketplace_code ): void
-	{
-		$this->marketplace_code = $marketplace_code;
-	}
+
 	
 	public function getMarketplaceCategoryId(): string
 	{

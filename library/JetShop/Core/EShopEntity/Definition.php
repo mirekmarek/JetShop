@@ -12,7 +12,7 @@ use Jet\BaseObject;
 
 use Attribute;
 use Jet\Tr;
-use JetApplication\Admin_Managers;
+use JetApplication\Application_Service_Admin;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_Definition_Property;
@@ -89,7 +89,7 @@ abstract class Core_EShopEntity_Definition extends BaseObject
 	public function getEntityNameReadable( bool $translate=false ): ?string
 	{
 		if($translate) {
-			return Tr::_( $this->entity_name_readable, dictionary: Admin_Managers::get( $this->getAdminManagerInterface() )->getModuleManifest()->getName() );
+			return Tr::_( $this->entity_name_readable, dictionary: Application_Service_Admin::list()->get( $this->getAdminManagerInterface() )->getModuleManifest()->getName() );
 		} else {
 			return $this->entity_name_readable;
 		}

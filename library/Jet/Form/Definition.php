@@ -19,9 +19,9 @@ class Form_Definition extends BaseObject
 {
 	/**
 	 *
-	 * @var string|bool
+	 * @var string|false
 	 */
-	protected string|bool $type = '';
+	protected string|false $type = '';
 	
 	protected bool $is_sub_form = false;
 	protected bool $is_sub_forms = false;
@@ -55,7 +55,7 @@ class Form_Definition extends BaseObject
 	
 	
 	/**
-	 * @var array
+	 * @var array<string,mixed>
 	 */
 	protected array $other_options = [];
 	
@@ -73,6 +73,12 @@ class Form_Definition extends BaseObject
 	{
 	}
 	
+	/**
+	 * @param object $context_object
+	 * @param string $property_name
+	 * @param array<string,mixed> $definition_data
+	 * @return void
+	 */
 	protected function init( object $context_object, string $property_name, array $definition_data ) : void
 	{
 		$this->context_object = $context_object;
@@ -124,18 +130,18 @@ class Form_Definition extends BaseObject
 	
 	
 	/**
-	 * @return string|bool
+	 * @return string|false
 	 */
-	public function getType(): string|bool
+	public function getType(): string|false
 	{
 		return $this->type;
 	}
 	
 	
 	/**
-	 * @param string|bool $type
+	 * @param string|false $type
 	 */
-	public function setType( string|bool $type ): void
+	public function setType( string|false $type ): void
 	{
 		$this->type = $type;
 	}
@@ -181,7 +187,7 @@ class Form_Definition extends BaseObject
 	}
 	
 	/**
-	 * @param null|callable|array $creator
+	 * @param null|callable|array<int,string> $creator
 	 */
 	public function setCreator( null|callable|array $creator ): void
 	{
@@ -257,6 +263,7 @@ class Form_Definition extends BaseObject
 		$property = $ref->getProperty($this->getPropertyName());
 		
 		if(PHP_VERSION_ID >= 80400) {
+			/** @phpstan-ignore-next-line */
 			return $property->getRawValue( $this->context_object );
 		} else {
 			if(PHP_VERSION_ID<80100) {

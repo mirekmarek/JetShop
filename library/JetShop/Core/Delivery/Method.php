@@ -18,8 +18,8 @@ use Jet\Form_Field_Float;
 use Jet\Form_Field_Select;
 
 use Jet\Tr;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_DeliveryMethods;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_DeliveryMethods;
 use JetApplication\Carrier;
 use JetApplication\Carrier_DeliveryPoint;
 use JetApplication\Carrier_Service;
@@ -63,7 +63,7 @@ use JetApplication\Timer_Action_SetPrice;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Delivery method',
-	admin_manager_interface: Admin_Managers_DeliveryMethods::class,
+	admin_manager_interface: Application_Service_Admin_DeliveryMethods::class,
 	images: [
 		'icon1' => 'Icon 1',
 		'icon2' => 'Icon 2',
@@ -267,6 +267,26 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		label: 'Discount is not allowed'
 	)]
 	protected bool $discount_is_not_allowed = false;
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Minimal order amount:'
+	)]
+	protected float $minimal_order_amount = 0.0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Maximal order amount:'
+	)]
+	protected float $maximal_order_amount = 0.0;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -631,7 +651,7 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 			
 			public function formatActionContextValue( mixed $action_context ) : string
 			{
-				return Admin_Managers::PriceFormatter()->formatWithCurrency(
+				return Application_Service_Admin::PriceFormatter()->formatWithCurrency(
 					$this->eshop->getDefaultPricelist(), (float)$action_context
 				);
 			}
@@ -820,6 +840,28 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		$this->free_delivery_limit = $free_delivery_limit;
 	}
 	
+	public function getMinimalOrderAmount(): float
+	{
+		return $this->minimal_order_amount;
+	}
+	
+	public function setMinimalOrderAmount( float $minimal_order_amount ): void
+	{
+		$this->minimal_order_amount = $minimal_order_amount;
+	}
+	
+	public function getMaximalOrderAmount(): float
+	{
+		return $this->maximal_order_amount;
+	}
+	
+	public function setMaximalOrderAmount( float $maximal_order_amount ): void
+	{
+		$this->maximal_order_amount = $maximal_order_amount;
+	}
+	
+	
+	
 	/**
 	 * @param bool $only_active
 	 * @return Carrier_DeliveryPoint[]
@@ -972,32 +1014,34 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		
 		$default_delivery_class = Delivery_Class::getDefault();
 		
+		$delivery_class_ids = [];
 		foreach($products as $product ) {
 			
 			$delivery_class_id = $product->getDeliveryClassId();
-			if(!$delivery_class_id) {
-				if(!$default_delivery_class) {
-					continue;
-				}
+			$delivery_class_ids[$delivery_class_id] = $delivery_class_id;
+		}
+		
+		if(!$delivery_class_ids) {
+			return [];
+		}
+		
+		$delivery_classes = Delivery_Class::fetch([''=>[
+			'id' => $delivery_class_ids
+		]], item_key_generator: function( Delivery_Class $class ) {
+			return $class->getId();
+		});
+		
+		foreach($delivery_classes as $delivery_class ) {
+			foreach($delivery_class->getKinds() as $kind ) {
+				$kind = $kind->getCode();
 				
-				$delivery_class_id = $default_delivery_class->getId();
-			}
-			
-			if(!isset($delivery_classes[$delivery_class_id])) {
-				$delivery_class = Delivery_Class::load( $delivery_class_id );
-				
-				$delivery_classes[$delivery_class_id] = $delivery_class;
-				
-				foreach($delivery_class->getKinds() as $kind ) {
-					$kind = $kind->getCode();
-					
-					if(!in_array($kind, $delivery_kinds)) {
-						$delivery_kinds[] = $kind;
-					}
-					
+				if(!in_array($kind, $delivery_kinds)) {
+					$delivery_kinds[] = $kind;
 				}
 			}
 		}
+
+		
 		
 		$has_only_personal_takeover = false;
 		$has_only_e_delivery = null;

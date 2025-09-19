@@ -371,7 +371,6 @@ abstract class Core_ProductListing
 			
 			$this->paginator->setData( $this->filtered_products_ids );
 			
-			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 			$this->visible_product_ids = $this->paginator->getData();
 		} else {
 			$this->visible_product_ids = [];

@@ -15,6 +15,7 @@ use JetApplication\Complaint_ChangeHistory;
 use JetApplication\Customer;
 use JetApplication\Customer_Address;
 use JetApplication\Delivery_Method;
+use JetApplication\EShopEntity_Address;
 
 trait Core_Complaint_Trait_Changes {
 	
@@ -95,7 +96,7 @@ trait Core_Complaint_Trait_Changes {
 		return $change;
 	}
 	
-	public function updateDeliveryAddress( Customer_Address $address ) : Complaint_ChangeHistory
+	public function updateDeliveryAddress( EShopEntity_Address $address ) : Complaint_ChangeHistory
 	{
 		$map = [
 			'delivery_company_name'      => 'CompanyName',

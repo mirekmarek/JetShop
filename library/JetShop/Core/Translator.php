@@ -10,14 +10,14 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Locale;
 use JetApplication\EShop;
-use JetApplication\Managers_General;
-use JetApplication\Translator_Manager;
+use JetApplication\Application_Service_General;
+use JetApplication\Application_Service_General_Translator;
 
 abstract class Core_Translator {
 	
-	public static function getManager() : Application_Module|Translator_Manager|null
+	public static function getManager() : Application_Module|Application_Service_General_Translator|null
 	{
-		return Managers_General::Translator();
+		return Application_Service_General::Translator();
 	}
 	
 	public function translateShortText( EShop|Locale $from, EShop|Locale $to, string $text ): string

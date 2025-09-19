@@ -24,15 +24,10 @@ abstract class Core_Supplier_GoodsOrder_Status_Pending extends Supplier_GoodsOrd
 {
 	
 	public const CODE = 'pending';
-	
+	protected string $title = 'Pending';
+	protected int $priority = 10;
 	protected bool $order_can_be_updated = true;
 	protected bool $send_allowed = true;
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Pending', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

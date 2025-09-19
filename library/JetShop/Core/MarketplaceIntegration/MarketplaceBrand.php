@@ -10,21 +10,18 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_WithEShopRelation;
+use JetApplication\MarketplaceIntegration_Entity_Interface;
+use JetApplication\MarketplaceIntegration_Marketplace;
 use JetApplication\MarketplaceIntegration_MarketplaceBrand;
-use JetApplication\EShop;
+use JetApplication\MarketplaceIntegration_Entity_Trait;
 
 #[DataModel_Definition(
 	name: 'marketplace_brand',
 	database_table_name: 'marketplace_brand',
 )]
-class Core_MarketplaceIntegration_MarketplaceBrand extends EShopEntity_WithEShopRelation
+class Core_MarketplaceIntegration_MarketplaceBrand extends EShopEntity_WithEShopRelation implements MarketplaceIntegration_Entity_Interface
 {
-	#[DataModel_Definition(
-		type: DataModel::TYPE_STRING,
-		max_len: 100,
-		is_key: true,
-	)]
-	protected string $marketplace_code = '';
+	use MarketplaceIntegration_Entity_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -40,23 +37,18 @@ class Core_MarketplaceIntegration_MarketplaceBrand extends EShopEntity_WithEShop
 	protected string $name = '';
 
 	
-	public static function get( EShop $eshop, string $marketplace_code, string $brand_id ) : ?static
+	public static function get( MarketplaceIntegration_Marketplace $marketplace, string $brand_id ) : ?static
 	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['marketplace_code'] = $marketplace_code;
+		$where = $marketplace->getWhere();
 		$where[] = 'AND';
 		$where['brand_id'] = $brand_id;
 		
 		return static::load( $where );
 	}
 	
-	public static function getBrands( EShop $eshop, string $marketplace_code ) : array
+	public static function getBrands( MarketplaceIntegration_Marketplace $marketplace ) : array
 	{
-		$where = $eshop->getWhere();
-		$where[] = 'AND';
-		$where['marketplace_code'] = $marketplace_code;
-		
+		$where = $marketplace->getWhere();
 		
 		return static::fetch(
 			[''=>$where],
@@ -65,21 +57,6 @@ class Core_MarketplaceIntegration_MarketplaceBrand extends EShopEntity_WithEShop
 				return $item->getBrandId();
 			}
 		);
-	}
-	
-	
-	public function __construct()
-	{
-	}
-	
-	public function getMarketplaceCode(): string
-	{
-		return $this->marketplace_code;
-	}
-	
-	public function setMarketplaceCode( string $marketplace_code ): void
-	{
-		$this->marketplace_code = $marketplace_code;
 	}
 	
 	public function getBrandId(): string
@@ -102,5 +79,4 @@ class Core_MarketplaceIntegration_MarketplaceBrand extends EShopEntity_WithEShop
 	{
 		$this->name = $name;
 	}
-	
 }

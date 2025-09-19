@@ -7,14 +7,14 @@
 namespace JetShop;
 
 
-use JetApplication\Files_Manager;
-use JetApplication\Managers_General;
+use JetApplication\Application_Service_General_Files;
+use JetApplication\Application_Service_General;
 
 abstract class Core_Files {
 	
-	public static function Manager() : Files_Manager
+	public static function Manager() : Application_Service_General_Files
 	{
-		return Managers_General::Files();
+		return Application_Service_General::Files();
 	}
 
 }

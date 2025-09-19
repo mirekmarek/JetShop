@@ -7,16 +7,16 @@
 namespace JetShop;
 
 
-use JetApplication\Managers_General;
-use JetApplication\Marketing_ConversionSourceDetector_Manager;
+use JetApplication\Application_Service_General;
+use JetApplication\Application_Service_General_ConversionSourceDetector;
 use JetApplication\Marketing_ConversionSourceDetector_Source;
 
 abstract class Core_Marketing_ConversionSourceDetector
 {
 	
-	public static function getDetector() : ?Marketing_ConversionSourceDetector_Manager
+	public static function getDetector() : ?Application_Service_General_ConversionSourceDetector
 	{
-		return Managers_General::MarketingConversionSourceDetector();
+		return Application_Service_General::MarketingConversionSourceDetector();
 	}
 	
 	public function getScope() : array

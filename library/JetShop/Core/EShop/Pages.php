@@ -153,7 +153,6 @@ class Core_EShop_Pages
 		return static::getPage( 'wishlist', $eshop );
 	}
 	
-	
 	public static function Complaints( ?EShop $eshop = null ): ?MVC_Page_Interface
 	{
 		return static::getPage( 'complaints', $eshop );
@@ -169,5 +168,10 @@ class Core_EShop_Pages
 		return static::getPage( 'oauth', $eshop );
 	}
 	
+	
+	public static function ProductReviews( ?EShop $eshop = null ): ?MVC_Page_Interface
+	{
+		return static::getPage( 'product_reviews', $eshop );
+	}
 	
 }

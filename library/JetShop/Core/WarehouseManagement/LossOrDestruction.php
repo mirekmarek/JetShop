@@ -16,7 +16,7 @@ use Jet\Form_Field;
 use Jet\Logger;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_WarehouseManagement_LossOrDestruction;
+use JetApplication\Application_Service_Admin_WarehouseManagement_LossOrDestruction;
 use JetApplication\Currencies;
 use JetApplication\Currency;
 use JetApplication\EShopEntity_Basic;
@@ -47,7 +47,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Warehouse management - Loss or destruction',
-	admin_manager_interface: Admin_Managers_WarehouseManagement_LossOrDestruction::class
+	admin_manager_interface: Application_Service_Admin_WarehouseManagement_LossOrDestruction::class
 )]
 abstract class Core_WarehouseManagement_LossOrDestruction extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,

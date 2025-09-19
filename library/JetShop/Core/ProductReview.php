@@ -14,12 +14,14 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_ProductReviews;
+use JetApplication\Application_Service_Admin_ProductReviews;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasPersonalData_Interface;
+use JetApplication\EShopEntity_HasPersonalData_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
@@ -39,18 +41,20 @@ use JetApplication\ProductReview_Status_Rejected;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Product review',
-	admin_manager_interface: Admin_Managers_ProductReviews::class
+	admin_manager_interface: Application_Service_Admin_ProductReviews::class
 )]
 abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implements
 	EShopEntity_Admin_Interface,
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasStatus_Interface,
-	EShopEntity_HasEvents_Interface
+	EShopEntity_HasEvents_Interface,
+	EShopEntity_HasPersonalData_Interface
 {
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasEvents_Trait;
 	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_HasPersonalData_Trait;
 	
 	protected static array $flags = [
 		'assessed',
@@ -155,6 +159,12 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 		is_key: true,
 	)]
 	protected int $customer_id = 0;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT,
+		is_key: true,
+	)]
+	protected int $order_id = 0;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -331,6 +341,18 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 		$this->customer_id = $customer_id;
 	}
 	
+	public function getOrderId(): int
+	{
+		return $this->order_id;
+	}
+	
+	public function setOrderId( int $order_id ): void
+	{
+		$this->order_id = $order_id;
+	}
+	
+	
+	
 	public function isCustomerBonusAdded(): bool
 	{
 		return $this->customer_bonus_added;
@@ -483,6 +505,13 @@ abstract class Core_ProductReview extends EShopEntity_WithEShopRelation implemen
 	
 	public function setFlags( array $flags ): void
 	{
+	}
+	
+	public function deletePersonalData() : void
+	{
+		$this->author_email = '';
+		$this->author_name = '';
+		$this->save();
 	}
 	
 }

@@ -253,22 +253,14 @@ abstract class Core_ShoppingCart
 
 	public function addItem( Product_EShopData $product, float $number_of_units, ?int $selected_gift_id=null, string &$error_message='' ) : bool|shoppingCart_item
 	{
-		$selected_gift_id = 0;
-		$gifts = $this->getAvailableProductGifts( $product );
-		foreach($gifts as $gift) {
-			$selected_gift_id = $gift->getGiftProductId();
-			break;
-		}
-		
 		$product_id = $product->getId();
 
 		$item = new ShoppingCart_Item(
 			product_id: $product_id, 
 			number_of_units: $number_of_units, 
-			measure_unit: $product->getKind()?->getMeasureUnit(), 
-			selected_gift_id: $selected_gift_id 
+			measure_unit: $product->getKind()?->getMeasureUnit()
 		);
-
+		
 		$item->setCart( $this );
 
 
@@ -277,6 +269,8 @@ abstract class Core_ShoppingCart
 
 			return false;
 		}
+		
+		
 
 		if(isset( $this->items[$product_id] )) {
 
@@ -287,9 +281,16 @@ abstract class Core_ShoppingCart
 			}
 			
 			$error_message = $this->items[$product_id]->getCheckErrorMessage();
-
+			
+			if($selected_gift_id) {
+				$this->items[$product_id]->setSelectedGiftId( $selected_gift_id );
+			}
+			
+			
 			return $this->items[$product_id];
 		}
+		
+		
 
 
 		if(!$item->checkQuantity( $number_of_units )) {
@@ -301,7 +302,11 @@ abstract class Core_ShoppingCart
 		}
 
 		$this->items[$product_id] = $item;
-
+		
+		if($selected_gift_id) {
+			$this->items[$product_id]->setSelectedGiftId( $selected_gift_id );
+		}
+		
 		return $item;
 	}
 
@@ -361,16 +366,7 @@ abstract class Core_ShoppingCart
 	 */
 	public function getAvailableProductGifts( Product_EShopData $product ) : array
 	{
-		$gifts = [];
-		
-		$available = Marketing_Gift_Product::getAvailable( $this );
-		foreach($available as $id=>$gift) {
-			if($gift->productIsRelevant( $this, $product)) {
-				$gifts[$id] = $gift;
-			}
-		}
-		
-		return $gifts;
+		return Marketing_Gift_Product::getProductGifts( $product );
 	}
 	
 	public function selectCartGift( int $gift_product_id ) : void
@@ -446,6 +442,16 @@ abstract class Core_ShoppingCart
 		return $result;
 	}
 	
+	public function selectProductGift( int $product_id, int $gift_product_id ) : void
+	{
+		if(!isset($this->getItems()[$product_id])) {
+			return;
+		}
+		
+		$item = $this->getItems()[$product_id];
+		$item->setSelectedGiftId( $gift_product_id );
+	}
+	
 	/**
 	 * @return Marketing_Gift[]
 	 */
@@ -513,6 +519,27 @@ abstract class Core_ShoppingCart
 		}
 		
 		return $res;
+	}
+	
+	public function getAllItemsAvailable() : bool
+	{
+		foreach($this->getItems() as $item) {
+			if(!$item->getDeliveryInfo()->isAvailable()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public function getTotalWeight() : float
+	{
+		$w = 0;
+		foreach($this->getItems() as $item) {
+			$w += $item->getProduct()->getWeight() * $item->getNumberOfUnits();
+		}
+		
+		return $w;
 	}
 
 }

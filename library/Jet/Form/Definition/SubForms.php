@@ -13,13 +13,13 @@ namespace Jet;
  */
 class Form_Definition_SubForms extends Form_Definition
 {
-	protected bool|string $type = 'sub_forms';
+	protected false|string $type = 'sub_forms';
 	protected bool $is_sub_forms = true;
 	
 	/**
 	 * @param object $context_object
 	 * @param string $property_name
-	 * @param array $definition_data
+	 * @param array<string,mixed> $definition_data
 	 */
 	public function __construct( object $context_object, string $property_name, array $definition_data )
 	{
@@ -27,15 +27,17 @@ class Form_Definition_SubForms extends Form_Definition
 	}
 	
 	/**
-	 * @param string|bool $type
+	 * @param string|false $type
 	 */
-	public function setType( string|bool $type ): void
+	public function setType( string|false $type ): void
 	{
 	}
 	
 	
 	/**
-	 *
+	 * @param string $parent_name
+	 * @param array<Form_Field> &$form_fields
+	 * @return void
 	 */
 	public function createFormFields( string $parent_name, array &$form_fields ): void
 	{
@@ -48,7 +50,7 @@ class Form_Definition_SubForms extends Form_Definition
 			throw new Form_Definition_Exception('Form definition '.get_class($this->context_object).'::'.$this->property_name.' - is not iterable');
 		}
 		
-
+		
 		$sub_fields = [];
 		foreach($property_value as $key=>$sub) {
 			if(!($sub instanceof Form_Definition_Interface)) {
@@ -74,6 +76,9 @@ class Form_Definition_SubForms extends Form_Definition
 			$sub_fields = $creator( $sub_fields );
 		}
 		
+		/**
+		 * @var array<Form_Field> $sub_fields
+		 */
 		foreach($sub_fields as $field) {
 			$form_fields[] = $field;
 		}

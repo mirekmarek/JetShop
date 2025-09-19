@@ -14,11 +14,13 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_ProductQuestions;
+use JetApplication\Application_Service_Admin_ProductQuestions;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_HasEvents_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
 use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasPersonalData_Interface;
+use JetApplication\EShopEntity_HasPersonalData_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
@@ -37,18 +39,20 @@ use JetApplication\ProductQuestion_Status_New;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Product question',
-	admin_manager_interface: Admin_Managers_ProductQuestions::class
+	admin_manager_interface: Application_Service_Admin_ProductQuestions::class
 )]
 abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implements
 	EShopEntity_Admin_Interface,
 	EShopEntity_HasGet_Interface,
 	EShopEntity_HasStatus_Interface,
-	EShopEntity_HasEvents_Interface
+	EShopEntity_HasEvents_Interface,
+	EShopEntity_HasPersonalData_Interface
 {
 	use EShopEntity_Admin_Trait;
 	use EShopEntity_HasGet_Trait;
 	use EShopEntity_HasEvents_Trait;
 	use EShopEntity_HasStatus_Trait;
+	use EShopEntity_HasPersonalData_Trait;
 	
 	protected static array $flags = [
 		'answered',
@@ -373,8 +377,8 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 		return ProductQuestion_Event::getEventsList( $this->getId() );
 	}
 	
-	public function setFlags( array $flags ): void
+	public function deletePersonalData() : void
 	{
+		$this->delete();
 	}
-	
 }

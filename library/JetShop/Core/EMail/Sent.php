@@ -10,6 +10,8 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EMail;
+use JetApplication\EShopEntity_HasPersonalData_Interface;
+use JetApplication\EShopEntity_HasPersonalData_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 
 #[DataModel_Definition(
@@ -17,7 +19,9 @@ use JetApplication\EShopEntity_WithEShopRelation;
 	database_table_name: 'sent_emails',
 	
 )]
-abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation {
+abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation implements EShopEntity_HasPersonalData_Interface
+{
+	use EShopEntity_HasPersonalData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -125,6 +129,22 @@ abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation {
 		$item->save();
 	}
 	
+	public static function hasBeenSent( EMail $email ) : bool
+	{
+		return (bool)static::dataFetchCol(
+			select: ['id'],
+			where: [
+				$email->getEshop()->getWhere(),
+				'AND',
+				'template_code' => $email->getTemplateCode(),
+				'AND',
+				'context' => $email->getContext(),
+				'AND',
+				'context_id' => $email->getContextId()
+			]
+		);
+	}
+	
 	/**
 	 * @var string $context
 	 * @param int $context_id
@@ -214,5 +234,8 @@ abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation {
 	}
 	
 	
-	
+	public function deletePersonalData(): void
+	{
+		$this->delete();
+	}
 }

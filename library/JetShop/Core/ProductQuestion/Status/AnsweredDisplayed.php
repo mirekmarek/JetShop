@@ -7,7 +7,6 @@
 namespace JetShop;
 
 
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\ProductQuestion;
@@ -18,17 +17,13 @@ use JetApplication\ProductQuestion_Status;
 abstract class Core_ProductQuestion_Status_AnsweredDisplayed extends ProductQuestion_Status {
 	
 	public const CODE = 'answered_displayed';
+	protected string $title = 'Answered - displayed';
+	protected int $priority = 20;
 	
 	protected static array $flags_map = [
-		'assessed' => true,
-		'approved' => true,
+		'answered' => true,
+		'display' => true,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Answered - displayed', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 20;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

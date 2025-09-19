@@ -6,8 +6,6 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
@@ -19,6 +17,8 @@ use JetApplication\Order_Status;
 abstract class Core_Order_Status_DispatchStarted extends Order_Status {
 	
 	public const CODE = 'dispatch_started';
+	protected string $title = 'Dispatch started';
+	protected int $priority = 40;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -33,12 +33,6 @@ abstract class Core_Order_Status_DispatchStarted extends Order_Status {
 		'ready_for_dispatch' => true,
 		'dispatch_started' => true,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Dispatch started', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 40;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

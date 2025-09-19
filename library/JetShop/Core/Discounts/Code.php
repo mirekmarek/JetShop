@@ -6,6 +6,7 @@
  */
 namespace JetShop;
 
+use Jet\Application_Module;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form;
@@ -15,17 +16,18 @@ use Jet\Form_Field_Input;
 use Jet\Form_Field_Select;
 use Jet\Data_DateTime;
 
+use JetApplication\CashDesk;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_DiscountCodesDefinition;
+use JetApplication\Application_Service_Admin_DiscountCodesDefinition;
 use JetApplication\Discounts;
 use JetApplication\Discounts_Code;
-use JetApplication\Discounts_Code_Module;
+use JetApplication\Application_Service_EShop_DiscountModule_Code;
 use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Order;
 use JetApplication\Pricelists;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Discounts_Code_Usage;
@@ -41,7 +43,7 @@ use JetApplication\Discounts_Discount;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Discount code',
-	admin_manager_interface: Admin_Managers_DiscountCodesDefinition::class
+	admin_manager_interface: Application_Service_Admin_DiscountCodesDefinition::class
 )]
 class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
@@ -248,13 +250,11 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 	}
 	
 	
-	public function getRelevantProductAmount() : float
+	public function getRelevantProductAmount( CashDesk $cash_desk ) : float
 	{
-		
-		$cart = EShop_Managers::ShoppingCart()->getCart();
 		$amount = 0;
 		
-		foreach($cart->getItems() as $item) {
+		foreach( $cash_desk->getCart()->getItems() as $item) {
 			if( $this->isRelevant([ $item->getProductId() ]) ) {
 				$amount += $item->getProduct()->getPrice( Pricelists::getCurrent() ) * $item->getNumberOfUnits();
 			}
@@ -263,7 +263,7 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 		return $amount;
 	}
 
-	public function isValid( ?string &$error_code='', ?array &$error_data=[] ) : bool
+	public function isValid( CashDesk $cash_desk, ?string &$error_code='', ?array &$error_data=[] ) : bool
 	{
 		$error_data = [];
 		
@@ -291,17 +291,9 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 		
 		if($this->getDoNotCombine()) {
 			/**
-			 * @var Discounts_Code_Module $module
+			 * @var Application_Service_EShop_DiscountModule_Code $module
 			 */
-			$modules = Discounts::Manager()->getActiveModules();
-			$module = null;
-			foreach($modules as $m) {
-				if( $module instanceof Discounts_Code_Module ) {
-					$module = $m;
-					break;
-				}
-			}
-			
+			$module = static::getModule( $cash_desk->getEshop() );
 			
 			$used_coupons = $module?->getUsedCodesRaw()??[];
 			
@@ -326,7 +318,7 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 		
 		$has_some_relevant_product = false;
 		
-		foreach( EShop_Managers::ShoppingCart()->getCart()->getItems() as $item ) {
+		foreach( $cash_desk->getCart()->getItems() as $item ) {
 			if( $this->isRelevant( [$item->getProductId() ] ) ) {
 				$has_some_relevant_product = true;
 				break;
@@ -343,12 +335,12 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 
 		if( $this->getMinimalOrderAmount()>0 ) {
 			
-			$amount = $this->getRelevantProductAmount();
+			$amount = $this->getRelevantProductAmount( $cash_desk );
 			
 			if($amount<$this->getMinimalOrderAmount()) {
 				$error_code = 'under_min_value';
 				$error_data = [
-					'MIN' => EShop_Managers::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
+					'MIN' => Application_Service_EShop::PriceFormatter()->formatWithCurrency( $this->getMinimalOrderAmount() )
 				];
 				
 				return false;
@@ -492,6 +484,11 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 			return true;
 		});
 		
+	}
+	
+	public static function getModule( EShop $eshop=null ) :null|Application_Module|Application_Service_EShop_DiscountModule_Code
+	{
+		return Discounts::Manager()->getActiveModuleByInterface( Application_Service_EShop_DiscountModule_Code::class, $eshop );
 	}
 	
 }

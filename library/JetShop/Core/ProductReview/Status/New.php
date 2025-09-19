@@ -24,18 +24,13 @@ use JetApplication\ProductReview_Status_Rejected;
 abstract class Core_ProductReview_Status_New extends ProductReview_Status {
 	
 	public const CODE = 'new';
+	protected string $title = 'New';
+	protected int $priority = 10;
 	
 	protected static array $flags_map = [
 		'assessed' => false,
 		'approved' => false,
 	];
-	
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('New', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 10;
-	}
 	
 	public function getShowAdminCSSClass() : string
 	{

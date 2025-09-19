@@ -112,11 +112,18 @@ abstract class Core_EShop_Template
 	{
 		return static::getRootUrl().$this->relative_dir.'/';
 	}
+
 	
 	public function getImagesUrl(): string
 	{
 		return $this->getUrl().'images/';
 	}
+	
+	public function getImagesPath(): string
+	{
+		return $this->getDir().'images/';
+	}
+	
 	
 	public function getCssUrl(): string
 	{

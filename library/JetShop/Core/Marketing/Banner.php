@@ -23,7 +23,7 @@ use Jet\SysConf_Path;
 use Jet\SysConf_URI;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers_Marketing_Banners;
+use JetApplication\Application_Service_Admin_Marketing_Banners;
 use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_Banner;
@@ -38,7 +38,7 @@ use JetApplication\EShop;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Banner',
-	admin_manager_interface: Admin_Managers_Marketing_Banners::class
+	admin_manager_interface: Application_Service_Admin_Marketing_Banners::class
 )]
 abstract class Core_Marketing_Banner extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {

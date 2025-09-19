@@ -9,6 +9,7 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Application_Modules;
+use Jet\Application_Service_List;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
@@ -16,14 +17,13 @@ use Jet\Form_Field;
 use Jet\Locale;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
-use JetApplication\Admin_Managers;
-use JetApplication\Admin_Managers_Supplier;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Application_Service_Admin_Supplier;
 use JetApplication\Currencies;
 use JetApplication\DataList;
 use JetApplication\EShopEntity_Common;
 use JetApplication\FulltextSearch_IndexDataProvider;
 use JetApplication\EShopEntity_Definition;
-use JetApplication\Managers;
 use JetApplication\EShop;
 use JetApplication\Supplier;
 use JetApplication\Supplier_Backend_Module;
@@ -35,7 +35,7 @@ use JetApplication\Supplier_Backend_Module;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Supplier',
-	admin_manager_interface: Admin_Managers_Supplier::class
+	admin_manager_interface: Application_Service_Admin_Supplier::class
 )]
 abstract class Core_Supplier extends EShopEntity_Common implements
 	FulltextSearch_IndexDataProvider,
@@ -437,12 +437,12 @@ abstract class Core_Supplier extends EShopEntity_Common implements
 	
 	public function updateFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->updateIndex( $this );
+		Application_Service_Admin::FulltextSearch()->updateIndex( $this );
 	}
 	
 	public function removeFulltextSearchIndex() : void
 	{
-		Admin_Managers::FulltextSearch()->deleteIndex( $this );
+		Application_Service_Admin::FulltextSearch()->deleteIndex( $this );
 	}
 	
 	/**
@@ -450,7 +450,7 @@ abstract class Core_Supplier extends EShopEntity_Common implements
 	 */
 	public static function getBackendModules() : array
 	{
-		return Managers::findManagers(Supplier_Backend_Module::class, 'SupplierBackend.');
+		return Application_Service_List::findPossibleModules(Supplier_Backend_Module::class, 'SupplierBackend.');
 	}
 	
 	public function setBackendModuleName( string $backend_module_name ): void

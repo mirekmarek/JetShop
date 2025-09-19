@@ -17,8 +17,9 @@ use JetApplication\EShopEntity_Admin_Trait;
 use JetApplication\EShopEntity_Marketing;
 use Jet\DataModel;
 use JetApplication\EShops;
+use JetApplication\Marketing_PromoArea;
 use JetApplication\Marketing_PromoAreaDefinition;
-use JetApplication\Admin_Managers_Marketing_PromoAreas;
+use JetApplication\Application_Service_Admin_Marketing_PromoAreas;
 use JetApplication\EShopEntity_Definition;
 
 
@@ -28,7 +29,7 @@ use JetApplication\EShopEntity_Definition;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Promotion area',
-	admin_manager_interface: Admin_Managers_Marketing_PromoAreas::class
+	admin_manager_interface: Application_Service_Admin_Marketing_PromoAreas::class
 )]
 abstract class Core_Marketing_PromoArea extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
 {
@@ -89,17 +90,30 @@ abstract class Core_Marketing_PromoArea extends EShopEntity_Marketing implements
 		return false;
 	}
 	
+	/**
+	 * @var array<string,array<string,static>>
+	 */
+	protected static array $active_promo_areas = [];
+	
 	public static function render( string $internal_code, ?EShop $eshop = null ): string
 	{
 		$eshop = $eshop ?? EShops::getCurrent();
 		
-		return static::load([
-			'internal_code' => $internal_code,
-			'AND',
-			$eshop->getWhere(),
-			'AND',
-			'is_active' => true
-		])?->getHTML()??'';
+		if(!array_key_exists($eshop->getKey(), static::$active_promo_areas)) {
+			static::$active_promo_areas[$eshop->getKey()] = static::fetch(
+				[''=>[
+					$eshop->getWhere(),
+					'AND',
+					'is_active' => true
+				]],
+				item_key_generator: function( Marketing_PromoArea $item ) {
+					return $item->getInternalCode();
+				});
+		}
+		
+		$promo_area = static::$active_promo_areas[$eshop->getKey()][$internal_code]??null;
+		
+		return $promo_area?->getHtml()??'';
 	}
 	
 }

@@ -15,7 +15,7 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Float;
 use Jet\Form_Field_Input;
-use JetApplication\Admin_Managers_WarehouseManagement_StockVerification;
+use JetApplication\Application_Service_Admin_WarehouseManagement_StockVerification;
 use JetApplication\Context_ProvidesContext_Interface;
 use JetApplication\Context_ProvidesContext_Trait;
 use JetApplication\Product;
@@ -50,7 +50,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 )]
 #[EShopEntity_Definition(
 	entity_name_readable: 'Warehouse management - stock verification',
-	admin_manager_interface: Admin_Managers_WarehouseManagement_StockVerification::class
+	admin_manager_interface: Application_Service_Admin_WarehouseManagement_StockVerification::class
 )]
 abstract class Core_WarehouseManagement_StockVerification extends EShopEntity_Basic implements
 	EShopEntity_HasNumberSeries_Interface,

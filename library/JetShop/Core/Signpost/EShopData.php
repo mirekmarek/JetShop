@@ -12,6 +12,7 @@ use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use JetApplication\Category_EShopData;
+use JetApplication\EShop;
 use JetApplication\EShopEntity_HasImages_Interface;
 use JetApplication\EShopEntity_HasImages_Trait;
 use JetApplication\EShopEntity_HasURL_Interface;
@@ -205,6 +206,60 @@ abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopDa
 		}
 		
 		return $this->categories;
+	}
+	
+	/**
+	 * @param ?EShop $eshop
+	 *
+	 * @return static[]
+	 */
+	public static function prefetchAllActive( EShop $eshop=null ) : array
+	{
+		$_signposts = static::getAllActive(order_by: 'priority');
+		$signpost_ids = [];
+		$signposts = [];
+		foreach ($_signposts as $signpost) {
+			$signpost_ids[] = $signpost->getId();
+			$signposts[$signpost->getId()] = $signpost;
+		}
+		
+		$_category_map = Signpost_Category::dataFetchAll(
+			select:['category_id', 'signpost_id'],
+			where: ['signpost_id'=>$signpost_ids],
+			order_by: ['priority'],
+			raw_mode: true
+		);
+		
+		
+		$category_ids = [];
+		$category_map = [];
+		foreach($_category_map as $m) {
+			$signpost_id = $m['signpost_id'];
+			$category_id = $m['category_id'];
+			
+			$category_ids[$category_id] = $category_id;
+			$category_map[$signpost_id][] = $category_id;
+		}
+		
+		
+		$_categories = Category_EShopData::getActiveList( $category_ids, $eshop );
+		$categories = [];
+		
+		foreach($_categories as $category) {
+			$categories[$category->getId()] = $category;
+		}
+		
+		foreach($signposts as $s_id=>$signpost) {
+			$signpost->categories = [];
+			foreach($category_map[$s_id] as $category_id) {
+				if(isset($categories[$category_id])) {
+					$signpost->categories[$category_id] = $categories[$category_id];
+				}
+			}
+		}
+		
+		return $signposts;
+		
 	}
 	
 	public function getAllProductIds() : array

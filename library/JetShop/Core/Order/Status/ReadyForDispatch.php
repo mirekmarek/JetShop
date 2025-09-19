@@ -24,6 +24,8 @@ use JetApplication\Order_Status_Cancelled;
 abstract class Core_Order_Status_ReadyForDispatch extends Order_Status {
 	
 	public const CODE = 'ready_for_dispatch';
+	protected string $title = 'Ready for dispatch';
+	protected int $priority = 30;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -38,12 +40,6 @@ abstract class Core_Order_Status_ReadyForDispatch extends Order_Status {
 		
 		'ready_for_dispatch' => true,
 	];
-	
-	public function __construct()
-	{
-		$this->title = Tr::_('Ready for dispatch', dictionary: Tr::COMMON_DICTIONARY);
-		$this->priority = 30;
-	}
 	
 	public function createEvent( Order|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ) : Order_Event
 	{
