@@ -128,7 +128,7 @@ abstract class Core_Marketing_DeliveryFeeDiscount extends EShopEntity_Marketing 
 		return false;
 	}
 	
-	public static function getModule( EShop $eshop=null ) :null|Application_Module|Application_Service_EShop_DiscountModule_DeliveryFee
+	public static function getModule( ?EShop $eshop=null ) :null|Application_Module|Application_Service_EShop_DiscountModule_DeliveryFee
 	{
 		return Discounts::Manager()->getActiveModuleByInterface( Application_Service_EShop_DiscountModule_DeliveryFee::class, $eshop );
 	}

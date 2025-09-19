@@ -412,7 +412,7 @@ class XLSXWriter
 			$style = @json_decode($style_json_string, $as_assoc=true);
 			
 			$style_indexes[$i] = array('num_fmt_idx'=>$number_format_idx);//initialize entry
-			if (isset($style['border']) && is_string($style['border']))//border is a comma delimited str
+			if (isset($style['border']) && is_string($style['border']))//border is a comma-delimited str
 			{
 				$border_value['side'] = array_intersect(explode(",", $style['border']), $border_allowed);
 				if (isset($style['border-style']) && in_array($style['border-style'],$border_style_allowed))

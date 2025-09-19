@@ -213,7 +213,7 @@ abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopDa
 	 *
 	 * @return static[]
 	 */
-	public static function prefetchAllActive( EShop $eshop=null ) : array
+	public static function prefetchAllActive( ?EShop $eshop=null ) : array
 	{
 		$_signposts = static::getAllActive(order_by: 'priority');
 		$signpost_ids = [];

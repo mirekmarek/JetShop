@@ -15,7 +15,6 @@ use Jet\UI_button;
 use Jet\UI_dialog;
 use JetApplication\Exports;
 use JetApplication\Exports_Definition;
-use JetApplication\EShops;
 use Jet\Form;
 
 /**
@@ -89,6 +88,9 @@ $schedule_dialog = UI::dialog('schedule_dialog', Tr::_('Schedule export outage')
 	<tbody>
 	<?php foreach( $list as $export ):
 		$this->setVar('export', $export);
+		if(!$export->getAllowedEshops()) {
+			continue;
+		}
 		?>
 		<tr>
 			<td nowrap="" id="status_area_<?=$export->getCode()?>">
@@ -103,8 +105,8 @@ $schedule_dialog = UI::dialog('schedule_dialog', Tr::_('Schedule export outage')
 				<?=$export->getDescription()?>
 			</td>
 			<td>
-				<div style="display: grid;grid-template-columns: 100px 1fr;gap: 10px;align-items: center">
-					<?php foreach( EShops::getList() as $eshop ): ?>
+				<div style="justify-content:center;display: grid;grid-template-columns: auto 1fr;gap: 10px;align-items: center">
+					<?php foreach( $export->getAllowedEshops() as $eshop ): ?>
 						<div>
 							<?=UI::flag( $eshop->getLocale() )?>
 							<?=$eshop->getName()?>:
@@ -112,7 +114,8 @@ $schedule_dialog = UI::dialog('schedule_dialog', Tr::_('Schedule export outage')
 						<div>
 							
 							<?php
-							echo UI::button( Tr::_('link'))->setUrl($export->getURL($eshop))->setIcon('link')->setCustomTagAttribute('target', '_blank')->setClass(UI_button::CLASS_PRIMARY);
+							echo UI::button( Tr::_('link'))->setUrl($export->getURL($eshop))->setIcon('link')->setCustomTagAttribute('target', '_blank')
+								->setClass(UI_button::CLASS_LINK);
 							?>
 						</div>
 					<?php endforeach; ?>

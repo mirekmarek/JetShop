@@ -1,7 +1,7 @@
 <?php
 use Jet\MVC_Layout;
 use Jet\MVC;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 
 /**
  * @var MVC_Layout $this
@@ -14,8 +14,8 @@ use JetApplication\EShop_Managers;
 	<?php require 'parts/head.phtml'; ?>
 </head>
 <body>
-<?=EShop_Managers::Analytics()?->documentStart()?>
+<?=Application_Service_EShop::AnalyticsManager()?->documentStart()?>
 <jet_layout_main_position/>
-<?=EShop_Managers::Analytics()?->documentEnd()?>
+<?=Application_Service_EShop::AnalyticsManager()?->documentEnd()?>
 </body>
 </html>

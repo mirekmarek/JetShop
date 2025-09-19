@@ -7,7 +7,6 @@
 namespace JetApplicationModule\EShop\CashDesk;
 
 
-use Jet\AJAX;
 use Jet\Exception;
 use Jet\Http_Headers;
 use Jet\Http_Request;
@@ -16,7 +15,6 @@ use Jet\MVC_Controller_Default;
 use Jet\MVC_Controller_Router;
 use Jet\MVC_Controller_Router_Interface;
 use Jet\MVC_View;
-use JetApplication\Application_Service_EShop;
 use JetApplication\EShop_Pages;
 use JetApplication\Order;
 use JetApplication\EShops;
@@ -142,17 +140,6 @@ class Controller_Main extends MVC_Controller_Default
 		$this->view->setVar('order', $this->order );
 		
 		$action = Http_Request::GET()->getString( 'a' );
-		if($action=='check_order_paid') {
-			if(!$this->order->getPaid()) {
-				Application_Service_EShop::QRPayment()?->checkOrderIsPaid( $this->order );
-			}
-			
-			AJAX::operationResponse(true, data: [
-				'order' => $this->order->getId(),
-				'paid' => $this->order->getPaid()
-			]);
-			
-		}
 		
 		
 		if(!$this->order->getPaid()) {
@@ -176,12 +163,6 @@ class Controller_Main extends MVC_Controller_Default
 						
 						return;
 					}
-					break;
-				case 'paid_by_qr':
-					$this->order->changePaymentMethodToBankTransfare();
-					
-					$this->output('payment-result/paid-by-qr');
-					return;
 					break;
 				default:
 					if($payment_method->getKind()->isLoan()) {

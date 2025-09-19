@@ -531,15 +531,5 @@ abstract class Core_ShoppingCart
 		
 		return true;
 	}
-	
-	public function getTotalWeight() : float
-	{
-		$w = 0;
-		foreach($this->getItems() as $item) {
-			$w += $item->getProduct()->getWeight() * $item->getNumberOfUnits();
-		}
-		
-		return $w;
-	}
 
 }

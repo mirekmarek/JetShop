@@ -11,7 +11,7 @@ use JetApplication\Currency;
 use JetApplication\Application_Service_EShop_PriceFormatter;
 use JetApplication\Pricelist;
 use JetApplication\Pricelists;
-use JetApplication\Application_EShop;
+
 
 class Main extends Application_Service_EShop_PriceFormatter
 {

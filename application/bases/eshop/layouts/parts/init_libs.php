@@ -1,14 +1,14 @@
 <?php
 use Jet\MVC_Layout;
 use Jet\SysConf_URI;
-use JetApplication\EShop_Managers;
+use JetApplication\Application_Service_EShop;
 use JetApplication\EShops;
 
 /**
  * @var MVC_Layout $this
  */
 
-EShop_Managers::MagicTags()?->init();
+Application_Service_EShop::MagicTags()?->init();
 
 $eshop = EShops::getCurrent();
 

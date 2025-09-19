@@ -25,7 +25,7 @@ use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\Exports;
 use JetApplication\Exports_Definition;
-use JetApplication\Exports_Manager;
+use JetApplication\Application_Service_General_ExportsManager;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_General_Trait;
 use JetApplication\EShops;
@@ -34,7 +34,7 @@ use JetApplication\EShopConfig_ModuleConfig_General;
 use JetApplication\Logger_Exports;
 
 
-class Main extends Exports_Manager implements
+class Main extends Application_Service_General_ExportsManager implements
 	Admin_ControlCentre_Module_Interface,
 	EShopConfig_ModuleConfig_ModuleHasConfig_General_Interface
 {

@@ -148,7 +148,7 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 		$avl_map = Product_Availability::getInStockQtyMap( $eshop->getDefaultAvailability() );
 
 		
-		$products = Product_EShopData::getAllActive();
+		$products = Product_EShopData::getAllActive( $eshop );
 
 		$count = count( $products );
 		$c = 0;

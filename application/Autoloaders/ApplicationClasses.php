@@ -30,7 +30,7 @@ return new class extends Autoloader_Loader
 	 *
 	 * @return bool|string
 	 */
-	public function getScriptPath( string $class_name ): bool|string
+	public function getScriptPath( string $class_name ): false|string
 	{
 		if( !str_starts_with($class_name, static::ROOT_NAMESPACE ) ) {
 			return false;

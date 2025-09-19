@@ -23,6 +23,7 @@ use JetApplication\EShopEntity_HasPrice_Interface;
 use JetApplication\EShopEntity_WithEShopData_EShopData;
 use JetApplication\KindOfProduct;
 use JetApplication\KindOfProduct_EShopData;
+use JetApplication\Marketing_Gift_Product;
 use JetApplication\MeasureUnit;
 use JetApplication\Product;
 use JetApplication\Product_EShopData;
@@ -649,4 +650,24 @@ abstract class Core_Product_EShopData extends EShopEntity_WithEShopData_EShopDat
 		
 		return $ids;
 	}
+	
+	protected ?array $__gifts = null;
+	
+	/**
+	 * @return Marketing_Gift_Product[]
+	 */
+	public function getGifts() : array
+	{
+		
+		if($this->__gifts === null) {
+			$this->__gifts = [];
+			
+			foreach(Marketing_Gift_Product::getProductGifts($this) as $gift) {
+				$this->__gifts[$gift->getId()] = $gift;
+			}
+		}
+		
+		return $this->__gifts;
+	}
+	
 }

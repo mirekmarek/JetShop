@@ -486,7 +486,7 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 		
 	}
 	
-	public static function getModule( EShop $eshop=null ) :null|Application_Module|Application_Service_EShop_DiscountModule_Code
+	public static function getModule( ?EShop $eshop=null ) :null|Application_Module|Application_Service_EShop_DiscountModule_Code
 	{
 		return Discounts::Manager()->getActiveModuleByInterface( Application_Service_EShop_DiscountModule_Code::class, $eshop );
 	}

@@ -183,7 +183,7 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 		
 		$f->tagStart( 'SHOP' );
 		
-		$products = Product_EShopData::getAllActive();
+		$products = Product_EShopData::getAllActive( $eshop );
 		
 		foreach($products as $sd) {
 			$f->tagStart( 'SHOPITEM' );

@@ -13,7 +13,6 @@ use Jet\Tr;
 
 use Jet\UI_messages;
 use JetApplication\Admin_Listing_Column;
-use JetApplication\Application_Admin;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Admin_EntityManager_Controller;
 use JetApplication\Application_Service_Admin;

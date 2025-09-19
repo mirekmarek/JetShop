@@ -17,31 +17,31 @@ use Jet\MVC;
 		</div>
 		
 		<div id="header-search-area">
-			<?=EShop_Managers::FulltextSearch()->renderTopSearch()?>
+			<?=Application_Service_EShop::FulltextSearch()->renderTopSearch()?>
 		</div>
 		
 		<div  id="header-icons-area">
 			<?php if($this->getBool('customer_icon', true)): ?>
 			<div id="customer_icon">
-				<?=EShop_Managers::CustomerLogin()->renderCustomerIcon()?>
+				<?=Application_Service_EShop::CustomerLogin()->renderCustomerIcon()?>
 			</div>
 			<?php endif; ?>
 			
 			<?php if($this->getBool('shopping_cart_icon', true)): ?>
 			<div id="shopping_cart_icon">
-				<?=EShop_Managers::ShoppingCart()->renderIcon();?>
+				<?=Application_Service_EShop::ShoppingCart()->renderIcon();?>
 			</div>
 			<?php endif; ?>
 			
 			<?php if($this->getBool('compare_icon', true)): ?>
 			<div id="compare_icon">
-				<?=EShop_Managers::Compare()?->renderIcon();?>
+				<?=Application_Service_EShop::Compare()?->renderIcon();?>
 			</div>
 			<?php endif; ?>
 			
 			<?php if($this->getBool('wishlist_icon', true)): ?>
 			<div id="wishlist_icon">
-				<?=EShop_Managers::Wishlist()?->renderIcon();?>
+				<?=Application_Service_EShop::Wishlist()?->renderIcon();?>
 			</div>
 			<?php endif; ?>
 			

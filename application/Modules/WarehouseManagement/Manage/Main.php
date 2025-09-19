@@ -16,8 +16,8 @@ use JetApplication\Product;
 use JetApplication\Product_Availability;
 use JetApplication\Product_EShopData;
 use JetApplication\Supplier_GoodsOrder;
+use JetApplication\Application_Service_General_WarehouseManagement;
 use JetApplication\WarehouseManagement_LossOrDestruction;
-use JetApplication\WarehouseManagement_Manager;
 use JetApplication\WarehouseManagement_StockCard;
 use JetApplication\WarehouseManagement_StockMovement;
 use JetApplication\WarehouseManagement_StockMovement_Type;
@@ -27,7 +27,7 @@ use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\WarehouseManagement_ReceiptOfGoods;
 
 
-class Main extends WarehouseManagement_Manager
+class Main extends Application_Service_General_WarehouseManagement
 {
 	public function actualizeProductsAvailability( array $product_ids ): void
 	{
