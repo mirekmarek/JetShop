@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use Jet\DataModel_Definition;
 use JetShop\Core_Signpost_EShopData;
 
@@ -14,4 +13,5 @@ use JetShop\Core_Signpost_EShopData;
 #[EShopEntity_Definition]
 class Signpost_EShopData extends Core_Signpost_EShopData {
 	
+
 }

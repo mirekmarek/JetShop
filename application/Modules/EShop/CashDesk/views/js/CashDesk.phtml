@@ -74,6 +74,11 @@ $cash_desk = $this->getRaw('cash_desk');
 						let element = document.getElementById(id);
 						if (element) {
 							element.innerHTML = response['snippets'][id];
+							
+							let scripts = element.getElementsByTagName('script');
+							for (let i = 0; i < scripts.length; i++) {
+								eval( scripts[i].innerHTML );
+							}
 						}
 					}
 				}

@@ -14,4 +14,5 @@ use JetShop\Core_Marketing_LandingPage;
 #[EShopEntity_Definition]
 class Marketing_LandingPage extends Core_Marketing_LandingPage
 {
+
 }

@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use Jet\DataModel_Definition;
 use JetShop\Core_Marketing_Gift_Product;
 
@@ -14,4 +13,5 @@ use JetShop\Core_Marketing_Gift_Product;
 #[EShopEntity_Definition]
 class Marketing_Gift_Product extends Core_Marketing_Gift_Product
 {
+
 }

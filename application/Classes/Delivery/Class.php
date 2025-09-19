@@ -17,4 +17,6 @@ use JetShop\Core_Delivery_Class;
 #[EShopEntity_Definition]
 class Delivery_Class extends Core_Delivery_Class
 {
+
+
 }

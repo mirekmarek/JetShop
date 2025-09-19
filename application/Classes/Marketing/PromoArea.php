@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use Jet\DataModel_Definition;
 use JetShop\Core_Marketing_PromoArea;
 

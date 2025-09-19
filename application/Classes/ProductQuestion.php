@@ -6,8 +6,6 @@
  */
 namespace JetApplication;
 
-
-
 use Jet\DataModel_Definition;
 use JetShop\Core_ProductQuestion;
 
@@ -15,4 +13,5 @@ use JetShop\Core_ProductQuestion;
 #[EShopEntity_Definition]
 class ProductQuestion extends Core_ProductQuestion
 {
+
 }

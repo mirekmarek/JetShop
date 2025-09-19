@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use Jet\DataModel_Definition;
 use JetShop\Core_Marketing_Banner;
 
@@ -17,4 +16,5 @@ use JetShop\Core_Marketing_Banner;
 #[EShopEntity_Definition]
 class Marketing_Banner extends Core_Marketing_Banner
 {
+
 }

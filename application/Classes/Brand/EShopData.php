@@ -7,7 +7,6 @@
 namespace JetApplication;
 
 
-
 use Jet\DataModel_Definition;
 use JetShop\Core_Brand_EShopData;
 
@@ -17,4 +16,5 @@ use JetShop\Core_Brand_EShopData;
 #[DataModel_Definition]
 #[EShopEntity_Definition]
 class Brand_EShopData extends Core_Brand_EShopData {
+
 }

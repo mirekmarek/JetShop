@@ -7,7 +7,6 @@
 namespace JetApplication;
 
 
-
 use Jet\DataModel_Definition;
 use JetShop\Core_ProductReview;
 
@@ -15,4 +14,5 @@ use JetShop\Core_ProductReview;
 #[EShopEntity_Definition]
 class ProductReview extends Core_ProductReview
 {
+
 }

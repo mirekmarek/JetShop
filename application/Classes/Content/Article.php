@@ -17,4 +17,5 @@ use JetShop\Core_Content_Article;
 #[EShopEntity_Definition]
 class Content_Article extends Core_Content_Article
 {
+
 }
