@@ -1,17 +1,20 @@
 <?php
 
 use Jet\MVC;
-use JetApplication\EShop_Managers_Articles;
-use JetApplication\EShop_Managers_CashDesk;
-use JetApplication\EShop_Managers_Catalog;
-use JetApplication\EShop_Managers_Compare;
-use JetApplication\EShop_Managers_CustomerLogin;
-use JetApplication\EShop_Managers_CustomerPasswordReset;
-use JetApplication\EShop_Managers_CustomerSection;
-use JetApplication\EShop_Managers_FulltextSearch;
-use JetApplication\EShop_Managers_OAuth;
-use JetApplication\EShop_Managers_ShoppingCart;
-use JetApplication\EShop_Managers_Wishlist;
+use JetApplication\Application_Service_EShop_Articles;
+use JetApplication\Application_Service_EShop_CashDesk;
+use JetApplication\Application_Service_EShop_Catalog;
+use JetApplication\Application_Service_EShop_Compare;
+use JetApplication\Application_Service_EShop_Complaint;
+use JetApplication\Application_Service_EShop_CustomerLogin;
+use JetApplication\Application_Service_EShop_CustomerPasswordReset;
+use JetApplication\Application_Service_EShop_CustomerSection;
+use JetApplication\Application_Service_EShop_FulltextSearch;
+use JetApplication\Application_Service_EShop_OAuth;
+use JetApplication\Application_Service_EShop_ProductReviews;
+use JetApplication\Application_Service_EShop_ReturnOfGoods;
+use JetApplication\Application_Service_EShop_ShoppingCart;
+use JetApplication\Application_Service_EShop_Wishlist;
 
 return [
 	'homepage' => [
@@ -21,7 +24,7 @@ return [
 		'title' => 'Homepage',
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_Catalog::class,
+				'manager_interface' => Application_Service_EShop_Catalog::class,
 				'controller_name' => 'Main',
 				'controller_action' => 'homepage',
 				'output_position_order' => 1,
@@ -31,7 +34,7 @@ return [
 				'output_position_order' => 2,
 			],
 			[
-				'manager_interface' => EShop_Managers_Articles::class,
+				'manager_interface' => Application_Service_EShop_Articles::class,
 				'output_position_order' => 3,
 			],
 		]
@@ -49,7 +52,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_CashDesk::class,
+				'manager_interface' => Application_Service_EShop_CashDesk::class,
 			],
 		]
 	],
@@ -65,7 +68,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_CashDesk::class,
+				'manager_interface' => Application_Service_EShop_CashDesk::class,
 				'controller_action' => 'confirmation',
 			],
 		]
@@ -83,7 +86,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_CashDesk::class,
+				'manager_interface' => Application_Service_EShop_CashDesk::class,
 				'controller_action' => 'payment',
 			],
 		]
@@ -102,7 +105,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_CustomerPasswordReset::class,
+				'manager_interface' => Application_Service_EShop_CustomerPasswordReset::class,
 			],
 		]
 	
@@ -117,7 +120,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_CustomerLogin::class,
+				'manager_interface' => Application_Service_EShop_CustomerLogin::class,
 			],
 		]
 	
@@ -132,7 +135,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_CustomerSection::class,
+				'manager_interface' => Application_Service_EShop_CustomerSection::class,
 			],
 		]
 	
@@ -151,7 +154,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_ShoppingCart::class,
+				'manager_interface' => Application_Service_EShop_ShoppingCart::class,
 			],
 		]
 	
@@ -166,7 +169,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_FulltextSearch::class,
+				'manager_interface' => Application_Service_EShop_FulltextSearch::class,
 			],
 		]
 	
@@ -183,7 +186,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_FulltextSearch::class,
+				'manager_interface' => Application_Service_EShop_FulltextSearch::class,
 				'controller_action' => 'whisper',
 			],
 		]
@@ -200,7 +203,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_Compare::class,
+				'manager_interface' => Application_Service_EShop_Compare::class,
 			],
 		]
 	
@@ -215,7 +218,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_Wishlist::class,
+				'manager_interface' => Application_Service_EShop_Wishlist::class,
 			],
 		]
 	
@@ -230,7 +233,7 @@ return [
 		
 		'content' => [
 			[
-				'manager_interface' => EShop_Managers_OAuth::class
+				'manager_interface' => Application_Service_EShop_OAuth::class
 			],
 		]
 	
@@ -247,8 +250,7 @@ return [
 		
 		'content' => [
 			[
-				//TODO:
-				'module_name' => 'EShop.Complaints',
+				'manager_interface' => Application_Service_EShop_Complaint::class
 			],
 		]
 	
@@ -263,13 +265,11 @@ return [
 		
 		'content' => [
 			[
-				//TODO:
-				'module_name' => 'EShop.ReturnsOfGoods',
+				'manager_interface' => Application_Service_EShop_ReturnOfGoods::class,
 			],
 		]
 	
 	],
-
 	
 	'change_password' => [
 		'parent_page_key' => 'homepage',
@@ -298,4 +298,18 @@ return [
 	
 	],
 	
+	'product_reviews' => [
+		'parent_page_key' => 'homepage',
+		
+		'id' => 'product_reviews',
+		'URI_path_fragment' => 'product-reviews',
+		'name' => 'Product reviews',
+		'title' => 'Product reviews',
+		
+		'content' => [
+			'manager_interface' => Application_Service_EShop_ProductReviews::class,
+		]
+	
+	]
+
 ];
