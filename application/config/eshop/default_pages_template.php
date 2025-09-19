@@ -311,7 +311,7 @@ return [
 				'manager_interface' => Application_Service_EShop_ProductReviews::class,
 			]
 		]
-	
+		
 	]
-
+	
 ];

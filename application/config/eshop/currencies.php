@@ -38,7 +38,7 @@ return [
 		'decimal_places_VAT' => 2,
 		'round_precision_without_VAT' => 2,
 		'round_precision_VAT' => 2,
-		'round_precision_with_VAT' => 2,
+		'round_precision_with_VAT' => 1,
 		'exchange_rates' => [
 			'CZK' => 25.43,
 			'HUF' => 399.74,

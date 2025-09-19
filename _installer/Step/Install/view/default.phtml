@@ -13,6 +13,7 @@ use Jet\UI_icon;
  */
 
 $steps = $this->getRaw('steps');
+
 ?>
 <style>
 	.loader {
@@ -88,7 +89,7 @@ $steps = $this->getRaw('steps');
 		}
 	}
 	
-	.step {
+	.intall-step {
 		display: grid;
 		grid-template-columns: 50px 1fr;
 		gap: 10px;
@@ -127,7 +128,7 @@ $steps = $this->getRaw('steps');
 			for( let step_code in Install.steps ) {
 				step_no ++;
 				let step = '';
-				step += '<div class="step">';
+				step += '<div class="install-step">';
 				step += '<div id="step_'+step_no+'_loader"><div class="loader"></div></div>';
 				step += '<h3>'+Install.steps[step_code]+'</h3>';
 
