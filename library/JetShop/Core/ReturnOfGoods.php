@@ -14,9 +14,13 @@ use Jet\DataModel_Definition;
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_Input;
+use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
 use JetApplication\Application_Service_Admin_ReturnOfGoods;
+use JetApplication\Complaint_DeliveryOfClaimedGoods;
+use JetApplication\DataList;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
@@ -33,9 +37,10 @@ use JetApplication\EShopEntity_HasOrderContext_Interface;
 use JetApplication\EShopEntity_HasOrderContext_Trait;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_HasStatus_Trait;
+use JetApplication\EShops;
+use JetApplication\Product;
 use JetApplication\ReturnOfGoods_Event;
 use JetApplication\Customer;
-use JetApplication\Delivery_Method;
 use JetApplication\EShopEntity_WithEShopRelation;
 use JetApplication\ReturnOfGoods;
 use JetApplication\Order;
@@ -84,6 +89,26 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	
 	use EShopEntity_Admin_Trait;
 	
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $created_by_administrator = false;
+	
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Bill number:'
+	)]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50
+	)]
+	protected string $bill_number = '';
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -127,6 +152,10 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	)]
 	protected int $customer_id = 0;
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_EMAIL,
+		label: 'Customer - email:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -134,6 +163,10 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	)]
 	protected string $email = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEL,
+		label: 'Customer - phone number:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -142,6 +175,10 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	protected string $phone = '';
 	
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Company name:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
@@ -149,36 +186,68 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	protected string $delivery_company_name = '';
 	
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - First name:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_first_name = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Surname:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_surname = '';
 	
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Address - street and number:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_address_street_no = '';
 	
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Address - town:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_address_town = '';
 	
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Address - ZIP:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_address_zip = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Customer - Address - Country:',
+		select_options_creator: [
+			DataList::class,
+			'countries'
+		],
+		
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
@@ -187,17 +256,17 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	
 	
 	#[DataModel_Definition(
-		type: DataModel::TYPE_INT,
-		is_key: true
-	)]
-	protected int $delivery_method_id = 0;
-	
-	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 50,
 		is_key: true
 	)]
-	protected string $delivery_personal_takeover_delivery_point_code = '';
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Delivery of the claimed goods:',
+		select_options_creator: [Complaint_DeliveryOfClaimedGoods::class, 'getScope']
+	)]
+	protected string $delivery_of_claimed_goods_code = '';
+
 	
 	protected ?Form $upload_images_form = null;
 	
@@ -248,6 +317,44 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 			'k' => $this->getSecondKey()
 		] );
 	}
+	
+	public function getCreatedByAdministrator(): bool
+	{
+		return $this->created_by_administrator;
+	}
+	
+	public function setCreatedByAdministrator( bool $created_by_administrator ): void
+	{
+		$this->created_by_administrator = $created_by_administrator;
+	}
+	
+	
+	public function getDeliveryOfClaimedGoodsCode(): string
+	{
+		return $this->delivery_of_claimed_goods_code??'';
+	}
+	
+	public function getDeliveryOfClaimedGoods() : ?Complaint_DeliveryOfClaimedGoods
+	{
+		return Complaint_DeliveryOfClaimedGoods::get( $this->getDeliveryOfClaimedGoodsCode() );
+	}
+	
+	public function setDeliveryOfClaimedGoodsCode( string $delivery_of_claimed_goods_code ): void
+	{
+		$this->delivery_of_claimed_goods_code = $delivery_of_claimed_goods_code;
+	}
+	
+	
+	public function getBillNumber(): string
+	{
+		return $this->bill_number;
+	}
+	
+	public function setBillNumber( string $bill_number ): void
+	{
+		$this->bill_number = $bill_number;
+	}
+	
 	
 	
 	public function getProductId(): int
@@ -432,35 +539,6 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		$this->delivery_address_country = $delivery_address_country;
 	}
 	
-	public function getDeliveryMethodId() : int
-	{
-		return $this->delivery_method_id;
-	}
-	
-	public function getDeliveryMethod() : Delivery_Method
-	{
-		return Delivery_Method::get( $this->getDeliveryMethodId() );
-	}
-	
-	public function setDeliveryMethodId( int $delivery_method_id ) : void
-	{
-		$this->delivery_method_id = $delivery_method_id;
-	}
-	
-	public function getDeliveryPersonalTakeoverDeliveryPointCode() : string
-	{
-		return $this->delivery_personal_takeover_delivery_point_code;
-	}
-	
-	public function setDeliveryPersonalTakeoverDeliveryPointCode( string $delivery_personal_takeover_delivery_point_code ) : void
-	{
-		$this->delivery_personal_takeover_delivery_point_code = $delivery_personal_takeover_delivery_point_code;
-	}
-	
-	
-	
-	
-	
 	
 
 	
@@ -630,6 +708,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	{
 		if(!$this->problem_description_edit_form) {
 			$this->problem_description_edit_form = $this->createForm('edit_form', [
+				'delivery_of_claimed_goods_code',
 				'problem_description'
 			]);
 		}
@@ -640,14 +719,24 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	protected ?array $images = null;
 	
 	
-	public function getMinimalProblemDescriptionLength() : int
+	public static function getMinimalProblemDescriptionLength() : int
 	{
 		return 10;
 	}
 	
+	public function descriptionIsShort() : bool
+	{
+		if(mb_strlen($this->problem_description)<$this::getMinimalProblemDescriptionLength()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	public function canBeFinished() : bool
 	{
-		if(strlen($this->problem_description)<$this->getMinimalProblemDescriptionLength()) {
+		if($this->descriptionIsShort()) {
 			return false;
 		}
 		
@@ -670,27 +759,95 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		return true;
 	}
 	
+	public function setupAddForm( Form $form ) : void
+	{
+		$eshop = new Form_Field_Select('eshop', 'e-shop');
+		$eshop->setSelectOptions( EShops::getScope() );
+		$eshop->setDefaultValue( $this->getEshop()->getKey() );
+		$eshop->setErrorMessages([
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+		]);
+		$eshop->setFieldValueCatcher( function( string $eshop_key ) {
+			$eshop = EShops::get( $eshop_key );
+			$this->setEshop( $eshop );
+		} );
+		
+		$form->addField( $eshop );
+
+		
+		$order = new Form_Field_Input('order', 'Order number:');
+		$order->setValidator(function($order) use ($eshop, $form) {
+			$value = $order->getValue();
+			
+			if(!$value) {
+				$bill_number = $form->field('bill_number')->getValue();
+				if($bill_number) {
+					return true;
+				}
+				
+				$order->setError(
+					Form_Field_Input::ERROR_CODE_EMPTY
+				);
+				
+				return false;
+			}
+			
+			$o = Order::getByNumber(
+				$value,
+				EShops::get( $eshop->getValue() )
+			);
+			if(!$o) {
+				$order->setError(
+					Form_Field_Input::ERROR_CODE_INVALID_VALUE
+				);
+				return false;
+			}
+			
+			
+			return true;
+		});
+		$order->setFieldValueCatcher( function( string $order_number ) use ($eshop) {
+			if(!$order_number) {
+				return;
+			}
+			$order = Order::getByNumber(
+				$order_number,
+				EShops::get( $eshop->getValue() )
+			);
+			$this->setOrder( $order );
+		} );
+		$form->addField( $order );
+		
+		$product = new Form_Field_Input('product', 'Product:');
+		$product->setValidator(function( $product ) {
+			$value = $product->getValue();
+			
+			if(!$value) {
+				$product->setError(
+					Form_Field_Input::ERROR_CODE_EMPTY
+				);
+				return false;
+			}
+			
+			if(!Product::get($value)) {
+				$product->setError(
+					Form_Field_Input::ERROR_CODE_INVALID_VALUE
+				);
+				return false;
+			}
+			
+			
+			return true;
+		});
+		$product->setFieldValueCatcher( function() use ($product) {
+			$this->setProductId( $product->getValue() );
+		} );
+		$form->addField( $product );
+		
+	}
+	
 	public function setEditable( bool $editable ): void
 	{
 	}
 	
-	public function getAddForm(): Form
-	{
-		return new Form('', []);
-	}
-	
-	public function catchAddForm(): bool
-	{
-		return false;
-	}
-	
-	public function getEditForm(): Form
-	{
-		return new Form('', []);
-	}
-	
-	public function catchEditForm(): bool
-	{
-		return false;
-	}
 }

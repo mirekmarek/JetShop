@@ -11,6 +11,7 @@ use Jet\Application_Module;
 use Jet\Application_Modules;
 use Jet\Form;
 use Jet\Locale;
+use Jet\MVC_Layout;
 use Jet\UI;
 
 use Jet\MVC_Controller_Router;
@@ -446,7 +447,19 @@ abstract class Core_Admin_EntityManager_Controller extends MVC_Controller_Defaul
 		}
 		
 		if($title) {
+			MVC_Layout::getCurrentLayout()->setVar('page_title', strip_tags($title));
+			
 			Navigation_Breadcrumb::addURL( $title, $URL );
+		} else {
+			/**
+			 * @var Admin_EntityManager_Module $module
+			 */
+			$module = $this->module;
+			if($module instanceof Admin_EntityManager_Module) {
+				$page = $module::getAdminMainPage();
+				
+				MVC_Layout::getCurrentLayout()->setVar('page_title', $page->getTitle() );
+			}
 		}
 	}
 

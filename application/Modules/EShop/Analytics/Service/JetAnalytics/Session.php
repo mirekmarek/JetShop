@@ -50,7 +50,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		'gclid'
 	];
 	
-	protected static array $bots = [
+	protected static array $robots_user_agent_kw = [
 		'http://',
 		'https://',
 		'google',
@@ -62,6 +62,34 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		'http_get',
 		'crawler',
 		'wget',
+		'google',
+		'facebook',
+		'bing',
+		'zabbix',
+		'lynx',
+		'links',
+		'crawler',
+		'guzzlehttp',
+		'gatherer',
+		'fasthttp',
+		'webhook',
+		'apachebench',
+		'wappalyzer',
+		'go-http-client',
+		'seznam',
+		'passwords',
+		'mergadobot',
+		'apache',
+		'spider',
+		'php',
+		'telegrambot',
+		'blackbox'
+	];
+	
+	protected static array $robots_IPs = [
+		'2001:4860:7:', //Google
+		'4.153.66.27', //MS
+		'18.117.180.', //Amazon
 	];
 	
 	
@@ -92,7 +120,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255
+		max_len: 1024
 	)]
 	protected string $user_agent = '';
 	
@@ -218,17 +246,34 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		
 		return static::$jet_session;
 	}
+	
+	public static function isRobot() : bool
+	{
+		$ua = mb_strtolower($_SERVER['HTTP_USER_AGENT']??'');
+		
+		foreach( static::$robots_user_agent_kw as $robot) {
+			if(str_contains($ua, $robot)) {
+				return true;
+			}
+		}
+		
+		$IP = Http_Request::clientIP();
+		
+		foreach(static::$robots_user_agent_kw as $robot_IP) {
+			if(str_starts_with($robot_IP, $IP)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 
 	public static function getCurrent() : static|false
 	{
 		if( static::$current===null ) {
-			$ua = strtolower($_SERVER['HTTP_USER_AGENT']??'');
-			
-			foreach(static::$bots as $bot) {
-				if(str_contains($ua, $bot)) {
-					static::$current = false;
-					return false;
-				}
+			if(static::isRobot()) {
+				static::$current = false;
+				return false;
 			}
 
 			$jet_session = static::getJetSession();
@@ -501,4 +546,5 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	{
 		return Session_EventMap::getMap( $this );
 	}
+	
 }

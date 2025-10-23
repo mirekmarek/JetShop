@@ -12,20 +12,19 @@ use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
+use JetApplication\EShop;
 use JetApplication\EShop_CookieSettings_Group;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\Order;
 use JetApplication\Order_Item;
 use JetApplication\Pricelists;
-use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\Application_Service_EShop_AnalyticsService;
 use JetApplication\Application_Service_EShop;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
-use JetApplication\EShops;
 use JetApplication\Signpost_EShopData;
 
 
@@ -34,32 +33,26 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	protected string $currency_code;
-	protected Pricelist $pricelist;
 	protected string $id = '';
 	
-	public function init() : void
+	public function allowed() : bool
 	{
-		$this->enabled = true;
-		$eshop = EShops::getCurrent();
-		$this->id = $this->getEshopConfig( $eshop )->getFacebookId();
-		$this->pricelist = Pricelists::getCurrent();
-		$this->currency_code = $this->pricelist->getCurrencyCode();
+		return Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::STATS);
+	}
+	
+	public function init( EShop $eshop ) : void
+	{
+		parent::init( $eshop );
 		
-		if(
-			!Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::STATS) ||
-			!$this->id
-		) {
-			$this->enabled = false;
+		$this->id = $this->getEshopConfig( $eshop )->getFacebookId();
+		
+		if( $this->id ) {
+			$this->enabled = true;
 		}
 	}
 	
 	public function header(): string
 	{
-		if( !$this->enabled ) {
-			return '';
-		}
-		
 		$this->view->setVar('id', $this->id);
 		
 		return $this->view->render('header');
@@ -67,10 +60,6 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function generateEvent( string $event, array $event_data=[] ) : string
 	{
-		if( !$this->enabled ) {
-			return '';
-		}
-		
 		$this->view->setVar('event', $event);
 		$this->view->setVar('event_data', $event_data);
 		

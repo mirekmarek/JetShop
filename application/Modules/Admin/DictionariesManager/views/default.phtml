@@ -90,13 +90,13 @@ $locale_key = $locale?$locale->toString():'';
 			<?php if($dictionary): ?>
 				<br>
 				<table class="table table-striped">
-					<?php foreach($dictionary->getPhrases() as $phrase):
-						$hash = base64_encode($phrase->getHash());
+					<?php foreach($dictionary->getPhrases() as $phrase=>$translation):
+						$hash = base64_encode($phrase);
 						?>
 						<tr>
 							<td style="width: 20px;"><?=UI::button_delete(' ')->setOnClick("remove('{$hash}', this);")?></td>
-							<td><textarea style="width: 100%" readonly><?=$phrase->getPhrase()?></textarea></td>
-							<td><textarea style="width: 100%" onchange="save('<?=$hash?>', this.value)"><?=$phrase->getTranslationRaw()?></textarea></td>
+							<td><textarea style="width: 100%" readonly><?=$phrase?></textarea></td>
+							<td><textarea style="width: 100%" onchange="save('<?=$hash?>', this.value)"><?=$translation?></textarea></td>
 						</tr>
 					<?php endforeach; ?>
 				</table>

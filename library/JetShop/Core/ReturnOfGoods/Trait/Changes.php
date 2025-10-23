@@ -6,15 +6,12 @@
  */
 namespace JetShop;
 
-
-
 use Jet\Auth;
 use Jet\Data_DateTime;
 use JetApplication\EShopEntity_Address;
 use JetApplication\ReturnOfGoods;
 use JetApplication\ReturnOfGoods_ChangeHistory;
 use JetApplication\Customer;
-use JetApplication\Delivery_Method;
 
 trait Core_ReturnOfGoods_Trait_Changes {
 	
@@ -36,64 +33,6 @@ trait Core_ReturnOfGoods_Trait_Changes {
 		return $change;
 	}
 	
-	
-	public function changeDeliveryMethod( Delivery_Method $new_delivery_method, string $personal_takeover_delivery_point_code ) : ReturnOfGoods_ChangeHistory
-	{
-		$change = $this->startChange();
-		
-		if( $this->delivery_method_id != $new_delivery_method->getId() ) {
-			$change->addChange(
-				'delivery_method',
-				$this->delivery_method_id,
-				$new_delivery_method->getId()
-			);
-			$this->delivery_method_id = $new_delivery_method->getId();
-		}
-		
-		if($this->delivery_personal_takeover_delivery_point_code!=$personal_takeover_delivery_point_code) {
-			$change->addChange(
-				'delivery_personal_takeover_delivery_point_code',
-				$this->delivery_personal_takeover_delivery_point_code,
-				$personal_takeover_delivery_point_code
-			);
-			
-			$this->delivery_personal_takeover_delivery_point_code = $personal_takeover_delivery_point_code;
-			
-			if( $this->delivery_personal_takeover_delivery_point_code ) {
-				$place = $new_delivery_method->getPersonalTakeoverDeliveryPoint( $personal_takeover_delivery_point_code );
-				if($place) {
-					$billing_address = $this->getDeliveryAddress();
-					
-					$delivery_address = new EShopEntity_Address();
-					$delivery_address->setFirstName( $billing_address->getFirstName() );
-					$delivery_address->setSurname( $billing_address->getSurname() );
-					$delivery_address->setCompanyName( $place->getName() );
-					$delivery_address->setAddressStreetNo( $place->getStreet() );
-					$delivery_address->setAddressTown( $place->getTown() );
-					$delivery_address->setAddressZip( $place->getZip() );
-					$delivery_address->setAddressCountry( $place->getCountry() );
-					
-					$this->updateDeliveryAddress( $delivery_address );
-					
-				}
-			}
-			
-		}
-		
-		
-		
-		if($change->hasChange()) {
-			
-			$this->save();
-			$change->save();
-			
-			$this->updated( $change );
-		}
-		
-		
-		
-		return $change;
-	}
 	
 	public function updateDeliveryAddress( EShopEntity_Address $address ) : ReturnOfGoods_ChangeHistory
 	{

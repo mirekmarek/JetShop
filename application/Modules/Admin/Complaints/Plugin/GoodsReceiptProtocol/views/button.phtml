@@ -1,0 +1,28 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+use Jet\Form;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Complaint;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Complaint $compaint
+ */
+
+$compaint = $this->getRaw('item');
+$form = $this->getRaw('form');
+
+echo UI::button( Tr::_('Goods receipt protocol') )
+	->setClass( UI_button::CLASS_PRIMARY )
+	->setIcon('file-invoice')
+	->setOnClick("$('#goods_receipt_protocol_dialog').modal('show');");

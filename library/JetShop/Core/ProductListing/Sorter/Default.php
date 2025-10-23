@@ -7,6 +7,7 @@
 namespace JetShop;
 
 use JetApplication\Category_Product;
+use JetApplication\Product_Availability;
 use JetApplication\ProductListing_Sorter;
 
 abstract class Core_ProductListing_Sorter_Default extends ProductListing_Sorter
@@ -39,6 +40,27 @@ abstract class Core_ProductListing_Sorter_Default extends ProductListing_Sorter
 		
 		asort( $map );
 		
-		return array_keys($map);
+		
+		$product_ids = array_keys($map);
+		
+		$avl = $this->listing->getAvailability();
+		
+		$avl_products = Product_Availability::filterIsInStock( $avl, true, $product_ids );
+		
+		$res = [];
+		
+		foreach($product_ids as $id) {
+			if(in_array($id, $avl_products)) {
+				$res[] = $id;
+			}
+		}
+		foreach($product_ids as $id) {
+			if(!in_array($id, $avl_products)) {
+				$res[] = $id;
+			}
+		}
+		
+		
+		return $res;
 	}
 }

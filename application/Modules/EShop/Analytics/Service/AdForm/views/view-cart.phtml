@@ -14,9 +14,9 @@ $page_name_prefix = $this->getString('page_name_prefix');
 
 $adform_tracking_products = [];
 
-foreach($cart->getProductIds() as $id) {
+foreach($cart->getProductIds() as $p_id) {
 	$adform_tracking_products[] = [
-		'productid' => $id,
+		'productid' => $p_id,
 		'step' => 2
 	];
 }

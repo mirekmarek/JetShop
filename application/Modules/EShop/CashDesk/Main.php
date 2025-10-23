@@ -36,17 +36,20 @@ class Main extends Application_Service_EShop_CashDesk implements
 	public function getCashDesk() : Application_CashDesk
 	{
 		if(!$this->cash_desk) {
+			$cart = Application_Service_EShop::ShoppingCart()->getCart();
+			
 			/**
 			 * @var Config_PerShop $config
 			 */
 			$config = $this->getEshopConfig( EShops::getCurrent() );
 			$this->cash_desk = new CashDesk(
 				$config,
-				Application_Service_EShop::ShoppingCart()->getCart()
+				$cart
 			);
 			
-			$this->cash_desk->checkCurrentCustomer();
-			$this->cash_desk->getDiscounts();
+			if($cart->getNumberOfUnits()) {
+				$this->cash_desk->checkCurrentCustomer();
+			}
 			
 		}
 		

@@ -61,4 +61,5 @@ return [
 	'Lyžařská' => 'Lyžařská',
 	'Silniční' => 'Silniční',
 	'In-line' => 'In-line',
+	'Invalid value' => '',
 ];

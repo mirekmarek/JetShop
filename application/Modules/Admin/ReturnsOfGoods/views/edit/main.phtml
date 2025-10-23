@@ -44,16 +44,26 @@ $return = $this->getRaw( 'return' );
 						</tr>
 					<?php endif; ?>
 					<tr>
-						<td nowrap=""><b><?=Tr::_('Purchase date and time:')?></b></td>
+						<td nowrap=""><b><?=Tr::_('Date and time:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($return->getDateStarted()) ?></td>
 					</tr>
+					<?php /*
 					<tr>
 						<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= $return->getIpAddress() ?></td>
 					</tr>
+					*/ ?>
 					<tr>
 						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Application_Service_Admin::Order()->renderItemName($return->getOrderId())?></td>
+					</tr>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Bill number:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=$return->getBillNumber()?></td>
+					</tr>
+					<tr>
+						<td><b><?=Tr::_('Delivery of the complained goods:')?></b></td>
+						<td><?=$return->getDeliveryOfClaimedGoods()?->showAdmin()?></td>
 					</tr>
 				</table>
 			</div>

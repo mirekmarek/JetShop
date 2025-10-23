@@ -40,7 +40,7 @@ class Event_PageView extends Event {
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255
+		max_len: 65535
 	)]
 	protected string $URL = '';
 	

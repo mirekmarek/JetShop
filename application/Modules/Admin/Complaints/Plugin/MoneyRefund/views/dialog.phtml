@@ -42,13 +42,19 @@ $form->renderer()->setDefaultLabelWidth([
 	Form_Renderer::LJ_SIZE_MEDIUM => 4
 ]);
 
-$form->field('amount_to_be_refunded')->input()->setCustomRenderer( function() use ($form, $order) {
+$form->field('amount_to_be_refunded')->input()->setCustomRenderer( function() use ($form, $order, $complaint) {
 	$field = $form->field('amount_to_be_refunded');
+	
+	if($order) {
+		$currency = $order->getCurrency();
+	} else {
+		$currency = $complaint->getEshop()->getDefaultPricelist()->getCurrency();
+	}
 	?>
 	<div style="display: grid;align-items: center;gap: 5px;grid-template-columns: auto 1fr auto;">
-		<div><?=$order->getCurrency()->getSymbolLeft_WithVAT()?></div>
+		<div><?=$currency->getSymbolLeft_WithVAT()?></div>
 		<?=$field->input()->renderByView()?>
-		<div><?=$order->getCurrency()->getSymbolRight_WithVAT()?></div>
+		<div><?=$currency->getSymbolRight_WithVAT()?></div>
 	</div>
 	<?php
 	

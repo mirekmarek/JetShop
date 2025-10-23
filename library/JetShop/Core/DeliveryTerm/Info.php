@@ -32,6 +32,10 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	
 	protected int $length_of_delivery = 0;
 	
+	protected int $length_of_delivery_when_not_available = 0;
+	
+	protected int $length_of_delivery_when_available = 0;
+	
 	protected bool $allow_to_order_more = true;
 	
 	protected string $situation = '';
@@ -116,6 +120,28 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 	{
 		$this->length_of_delivery = $length_of_delivery;
 	}
+	
+	public function getLengthOfDeliveryWhenNotAvailable(): int
+	{
+		return $this->length_of_delivery_when_not_available;
+	}
+	
+	public function setLengthOfDeliveryWhenNotAvailable( int $length_of_delivery_when_not_available ): void
+	{
+		$this->length_of_delivery_when_not_available = $length_of_delivery_when_not_available;
+	}
+	
+	public function getLengthOfDeliveryWhenAvailable(): int
+	{
+		return $this->length_of_delivery_when_available;
+	}
+	
+	public function setLengthOfDeliveryWhenAvailable( int $length_of_delivery_when_available ): void
+	{
+		$this->length_of_delivery_when_available = $length_of_delivery_when_available;
+	}
+	
+	
 	
 	public function getSituation(): string
 	{

@@ -1328,6 +1328,7 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 				continue;
 			}
 			
+			
 			if( ($set_items=$item->getSetItems()) ) {
 				foreach( $item->getSetItems() as $set_item ) {
 					$product = Product_EShopData::get( $set_item->getItemId(), $this->getEshop() );
@@ -1353,12 +1354,38 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 			}
 			
 			$product = Product_EShopData::get( $item->getItemId(), $this->getEshop() );
-			if(
-				!$product ||
-				!$product->isPhysicalProduct()
-			) {
+			if(!$product) {
 				continue;
 			}
+			
+			if($product->isSet()) {
+				foreach($product->getSetItems() as $set_item) {
+					$product = Product_EShopData::get( $set_item->getItemProductId(), $this->getEshop() );
+					
+					if(
+						!$product ||
+						!$product->isPhysicalProduct()
+					) {
+						continue;
+					}
+					
+					$number_of_units = $set_item->getCount()*$item->getNumberOfUnits();
+					
+					$id = $product->getId();
+					if(!isset($result[$id])) {
+						$result[$id] = new Order_ProductOverviewItem( $product, $number_of_units );
+					} else {
+						$result[$id]->addNumberOfUnits( $number_of_units );
+					}
+					
+				}
+			}
+			
+			if( !$product->isPhysicalProduct() ) {
+				continue;
+			}
+			
+			
 			
 			$number_of_units = $item->getNumberOfUnits();
 			

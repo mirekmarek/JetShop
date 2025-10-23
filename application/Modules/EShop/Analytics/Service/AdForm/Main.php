@@ -12,19 +12,17 @@ use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
+use JetApplication\EShop;
 use JetApplication\EShop_CookieSettings_Group;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\Order;
-use JetApplication\Pricelists;
-use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\Application_Service_EShop_AnalyticsService;
 use JetApplication\Application_Service_EShop;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
-use JetApplication\EShops;
 use JetApplication\Signpost_EShopData;
 
 
@@ -33,33 +31,30 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	protected string $currency_code;
-	protected Pricelist $pricelist;
 	protected string $id = '';
+	protected string $page_name_prefix = '';
 	
-	public function init() : void
+	public function allowed(): bool
 	{
-		$this->enabled = true;
-		$eshop = EShops::getCurrent();
-		$this->id = $this->getEshopConfig($eshop)->getAccountId();
-		$this->pricelist = Pricelists::getCurrent();
-		$this->currency_code = $this->pricelist->getCurrencyCode();
+		return Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::MARKETING);
+	}
+	
+	public function init( EShop $eshop ) : void
+	{
+		parent::init( $eshop );
 		
-		if(
-			!Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::MARKETING) ||
-			!$this->id
-		) {
-			$this->enabled = false;
+		$config = $this->getEshopConfig($eshop);
+		
+		$this->id = $config->getAccountId();
+		$this->page_name_prefix = $config->getPageNamePrefix();
+		
+		if( $this->id ) {
+			$this->enabled = true;
 		}
 
 	}
 	
 	public function header(): string
-	{
-		return '';
-	}
-	
-	public function generateEvent( string $event, array $event_data=[] ) : string
 	{
 		return '';
 	}
@@ -121,21 +116,10 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewCart( ShoppingCart $cart ) : string
 	{
-		if(
-			!$this->id ||
-			!$this->enabled
-		) {
-			return '';
-		}
-		/**
-		 * @var Config_PerShop $config
-		 */
-		$config = $this->getEshopConfig($cart->getEshop());
-		
-
 		$this->view->setVar('id', $this->id);
+		$this->view->setVar('page_name_prefix', $this->page_name_prefix);
+		
 		$this->view->setVar('cart', $cart);
-		$this->view->setVar('page_name_prefix', $config->getPageNamePrefix());
 		
 		return $this->view->render('view-cart');
 	}
@@ -143,7 +127,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function beginCheckout( CashDesk $cash_desk ) : string
 	{
-		return $this->generateEvent('InitiateCheckout', []);
+		return '';
 	}
 	
 	public function checkoutInProgress( CashDesk $cash_desk ) : string
@@ -153,8 +137,12 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function purchase( Order $order ) : string
 	{
-		//TODO:
-		return '';
+		$this->view->setVar('id', $this->id);
+		$this->view->setVar('page_name_prefix', $this->page_name_prefix);
+		$this->view->setVar('order', $order);
+		
+		
+		return $this->view->render('purchase');
 	}
 	
 	

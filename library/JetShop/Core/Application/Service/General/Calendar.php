@@ -30,4 +30,6 @@ abstract class Core_Application_Service_General_Calendar extends Application_Mod
 	
 	abstract public function howManyWorkingDays( EShop $eshop, Data_DateTime|string $from, Data_DateTime|string $till, bool $use_holydays=true ) : int;
 	
+	abstract public function isBusinessDay( EShop $eshop, string|Data_DateTime $date, bool $use_holydays=true ) : bool;
+	
 }

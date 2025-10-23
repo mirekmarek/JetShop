@@ -1,0 +1,80 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Form;
+use JetApplication\Application_Service_Admin;
+
+/**
+ * @var MVC_View $this
+ * @var Form     $form
+ */
+
+$form = $this->getRaw('form');
+
+$product_input = $form->field('product');
+
+$product_input->input()->setCustomRenderer(function() use ($product_input) {
+	echo Application_Service_Admin::Product()->renderSelectWidget(
+		on_select: "$('#{$product_input->getId()}').val(selected_item.id);"
+	);
+	
+	echo '<div style="display: none;">';
+	echo $product_input->input()->renderByView();
+	echo '</div>';
+});
+
+$form->field('order')->input()->addJsAction('onchange', "getOrder(this.value);");
+
+echo $form->field('product');
+echo $form->field('order');
+echo $form->field('bill_number');
+echo $form->field('delivery_of_claimed_goods_code');
+echo $form->field('complaint_type_code');
+echo $form->field('preferred_solution_code');
+echo $form->field('problem_description');
+echo $form->field('email');
+echo $form->field('phone');
+echo $form->field('delivery_company_name');
+echo $form->field('delivery_first_name');
+echo $form->field('delivery_surname');
+echo $form->field('delivery_address_street_no');
+echo $form->field('delivery_address_town');
+echo $form->field('delivery_address_zip');
+echo $form->field('delivery_address_country');
+?>
+<script>
+	async function getOrder( order_number ) {
+		const eshop_input = document.getElementById('<?=$form->field('eshop')->getId()?>');
+		const eshop = eshop_input.options[eshop_input.selectedIndex].value;
+
+
+		let response = await fetch('<?=Http_Request::currentURI()?>&get_order_info='+encodeURIComponent(order_number)+'&eshop='+eshop);
+		let response_data = await response.json();
+
+		if(response_data['result']!=='ok') {
+			return;
+		}
+
+		let order = response_data.data;
+
+		document.getElementById('<?=$form->field('email')->getId()?>').value = order.email;
+		document.getElementById('<?=$form->field('phone')->getId()?>').value = order.phone;
+
+
+		document.getElementById('<?=$form->field('delivery_company_name')->getId()?>').value = order.delivery_company_name;
+		document.getElementById('<?=$form->field('delivery_first_name')->getId()?>').value = order.delivery_first_name;
+		document.getElementById('<?=$form->field('delivery_surname')->getId()?>').value = order.delivery_surname;
+		document.getElementById('<?=$form->field('delivery_address_street_no')->getId()?>').value = order.delivery_address_street_no;
+		document.getElementById('<?=$form->field('delivery_address_town')->getId()?>').value = order.delivery_address_town;
+		document.getElementById('<?=$form->field('delivery_address_zip')->getId()?>').value = order.delivery_address_zip;
+		document.getElementById('<?=$form->field('delivery_address_country')->getId()?>').value = order.delivery_address_country;
+
+		console.debug(  );
+	}
+</script>

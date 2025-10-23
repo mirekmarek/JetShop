@@ -10,6 +10,7 @@ use Jet\Session;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
 use JetApplication\Application_Service_EShop;
+use JetApplication\EShops;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\Application_Service_EShop_AnalyticsService;
@@ -38,7 +39,7 @@ class Main extends Application_Service_EShop_AnalyticsManager
 			$this->services = Application_Service_EShop::list()->getList( Application_Service_EShop_AnalyticsService::class );
 			
 			foreach($this->services as $service) {
-				$service->init();
+				$service->init( EShops::getCurrent() );
 			}
 		}
 		
@@ -49,7 +50,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->header();
+			if($service->canPerform()) {
+				$res .= $service->header();
+			}
 		}
 		return $res;
 	}
@@ -58,7 +61,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->documentStart();
+			if($service->canPerform()) {
+				$res .= $service->documentStart();
+			}
 		}
 		return $res;
 	}
@@ -67,7 +72,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->documentEnd();
+			if($service->canPerform()) {
+				$res .= $service->documentEnd();
+			}
 		}
 		return $res;
 	}
@@ -75,7 +82,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	public function catchConversionSourceInfo() : void
 	{
 		foreach($this->getServices() as $service) {
-			$service->catchConversionSourceInfo();
+			if($service->canPerform()) {
+				$service->catchConversionSourceInfo();
+			}
 		}
 		
 	}
@@ -84,7 +93,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewCategory( $category, $product_listing );
+			if($service->canPerform()) {
+				$res .= $service->viewCategory( $category, $product_listing );
+			}
 		}
 		return $res;
 	}
@@ -93,7 +104,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewSignpost( $signpost );
+			if($service->canPerform()) {
+				$res .= $service->viewSignpost( $signpost );
+			}
 		}
 		return $res;
 	}
@@ -102,7 +115,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->customEvent( $event, $event_data );
+			if($service->canPerform()) {
+				$res .= $service->customEvent( $event, $event_data );
+			}
 		}
 		return $res;
 	}
@@ -111,7 +126,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewProductDetail( $product );
+			if($service->canPerform()) {
+				$res .= $service->viewProductDetail( $product );
+			}
 		}
 		return $res;
 	}
@@ -120,7 +137,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->addToCart( $new_cart_item );
+			if($service->canPerform()) {
+				$res .= $service->addToCart( $new_cart_item );
+			}
 		}
 		return $res;
 	}
@@ -129,7 +148,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->removeFromCart( $cart_item );
+			if($service->canPerform()) {
+				$res .= $service->removeFromCart( $cart_item );
+			}
 		}
 		return $res;
 	}
@@ -138,7 +159,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewCart( $cart );
+			if($service->canPerform()) {
+				$res .= $service->viewCart( $cart );
+			}
 		}
 		return $res;
 	}
@@ -147,7 +170,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->beginCheckout( $cash_desk );
+			if($service->canPerform()) {
+				$res .= $service->beginCheckout( $cash_desk );
+			}
 		}
 		return $res;
 	}
@@ -156,7 +181,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->checkoutInProgress( $cash_desk );
+			if($service->canPerform()) {
+				$res .= $service->checkoutInProgress( $cash_desk );
+			}
 		}
 		return $res;
 	}
@@ -164,6 +191,7 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	
 	public function purchase( Order $order ) : string
 	{
+		/*
 		$session = new Session('analytics_purchase_handled');
 		$handled = $session->getValue('handled', []);
 		if(in_array($order->getId(), $handled)) {
@@ -172,10 +200,18 @@ class Main extends Application_Service_EShop_AnalyticsManager
 		
 		$handled[] = $order->getId();
 		$session->setValue('handled', $handled);
+		*/
 		
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->purchase( $order );
+			$service->init( EShops::getCurrent() );
+			if($service->canPerform()) {
+				$service_code = $service->purchase( $order );
+				$res .= $service_code;
+				
+			} else {
+				$res .= '<!-- dis: '.$service->getModuleManifest()->getName().' -->';
+			}
 		}
 		
 		return $res;
@@ -185,7 +221,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->searchWhisperer( $q, $result_ids, $product_listing );
+			if($service->canPerform()) {
+				$res .= $service->searchWhisperer( $q, $result_ids, $product_listing );
+			}
 		}
 		return $res;
 	}
@@ -194,7 +232,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->search( $q, $result_ids, $product_listing );
+			if($service->canPerform()) {
+				$res .= $service->search( $q, $result_ids, $product_listing );
+			}
 		}
 		return $res;
 	}
@@ -203,7 +243,9 @@ class Main extends Application_Service_EShop_AnalyticsManager
 	{
 		$res = '';
 		foreach($this->getServices() as $service) {
-			$res .= $service->viewHomePage();
+			if($service->canPerform()) {
+				$res .= $service->viewHomePage();
+			}
 		}
 		return $res;
 	}

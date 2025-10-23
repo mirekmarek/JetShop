@@ -1,0 +1,65 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('form');
+
+if(!$form) {
+	return;
+}
+
+$form->field('taken_parts')->input()->addCustomCssStyle("height:200px");
+
+$dialog = new UI_dialog( 'goods_receipt_protocol_dialog', Tr::_('Goods receipt protocol'), UI_dialog::SIZE_LARGE );
+?>
+<?=$dialog->start()?>
+
+<div>
+	<?php
+	$form->renderer()->setDefaultLabelWidth([	Form_Renderer::LJ_SIZE_MEDIUM => 3
+	]);
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 9
+	]);
+	
+	
+	echo $form->start();
+	
+	foreach($form->getFields() as $field) {
+		echo $field;
+	}
+	
+	echo $dialog->footer();
+	
+	echo UI::button( Tr::_('Generate') )
+		->setType( UI_button::TYPE_SUBMIT )
+		->setClass( UI_button::CLASS_PRIMARY )
+		->setIcon('file-invoice');
+
+	
+	echo $form->end();
+	
+	?>
+</div>
+
+<?=$dialog->end()?>

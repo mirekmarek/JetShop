@@ -10,6 +10,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 use Jet\MVC_View;
 use Jet\Tr;
 use JetApplication\Application_Service_Admin;
+use JetApplication\Product;
 use JetApplication\ReturnOfGoods;
 
 /**
@@ -35,7 +36,15 @@ $money_refunds = Application_Service_Admin::MoneyRefund()?->showMoneyRefunds( $r
 		<div class="card card-body" style="margin: 10px;">
 			<h5><?=Tr::_('Product')?></h5>
 
-			<p><?=Application_Service_Admin::Product()->renderItemName( $return->getProductId() )?></p>
+			<div style="display: flex;gap: 10px;align-items: center">
+				<?php if(($p=Product::get($return->getProductId()))): ?>
+					<?=Application_Service_Admin::EntityEdit()->renderPreviewButton( $p )?>
+				<?php endif; ?>
+				<div>
+					<?=Application_Service_Admin::Product()->renderItemName( $return->getProductId() )?>
+				</div>
+			</div>
+
 		</div>
 	</fieldset>
 

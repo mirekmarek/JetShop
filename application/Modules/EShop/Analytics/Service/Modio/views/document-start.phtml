@@ -1,0 +1,16 @@
+<?php
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$id = $this->getRaw('id');
+?>
+<script>
+	(function(l, u, c, i, n, k, a) {l['ModioCZ'] = n;
+		l[n]=l[n]||function(){(l[n].q=l[n].q||[]).push(arguments)};k=u.createElement(c),
+			a=u.getElementsByTagName(c)[0];k.async=1;k.src=i;a.parentNode.insertBefore(k,a)
+	})(window, document, 'script', '//trackingapi.modio.cz/ppc.js', 'modio');
+	modio('init', '<?=$id?>');
+</script>

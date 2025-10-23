@@ -18,6 +18,7 @@ use Jet\IO_Dir;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use JetApplication\Complaint_Image;
+use JetApplication\Complaint_Status_Incomplete;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Complaint;
 
@@ -67,6 +68,12 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 	)]
 	protected bool $locked = false;
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $notification_sent = false;
+	
 	protected function getImagesDirPath() : string
 	{
 		$dir = SysConf_Path::getData().'complaint_images/'.$this->complaint->getEshop()->getKey().'/'.$this->complaint->getId().'/';
@@ -85,25 +92,30 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 	
 	public function getThbPath() : string
 	{
-		$thb_path = $this->getImagesDirPath().'thb___'.$this->name;
-		if(IO_File::exists( $thb_path )) {
+		if(str_starts_with($this->mime_type, 'image/')) {
+			$thb_path = $this->getImagesDirPath().'thb___'.$this->name;
+			if(IO_File::exists( $thb_path )) {
+				return $thb_path;
+			}
+			
+			$path = $this->getPath();
+			if(!IO_File::isReadable($path)) {
+				return $thb_path;
+			}
+			
+			try {
+				$image = new Data_Image( $path );
+				$image->createThumbnail( $thb_path, 150, 150 );
+			} catch(Data_Image_Exception $e) {
+				return '';
+			}
+			
+			
 			return $thb_path;
+			
 		}
-		
-		$path = $this->getPath();
-		if(!IO_File::isReadable($path)) {
-			return $thb_path;
-		}
-		
-		try {
-			$image = new Data_Image( $path );
-			$image->createThumbnail( $thb_path, 150, 150 );
-		} catch(Data_Image_Exception $e) {
-			return '';
-		}
-		
-		
-		return $thb_path;
+
+		return '';
 	}
 	
 	public function getComplaintId(): int
@@ -165,12 +177,25 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 	
 	public function getThbURL() : string
 	{
-		return $this->complaint->getURL().'&thb='.$this->id;
+		if(str_starts_with($this->mime_type, 'image/')) {
+			return $this->complaint->getURL().'&thb='.$this->id;
+		}
+		
+		return '';
 	}
 	
 	public function isLocked(): bool
 	{
-		return $this->locked;
+		if($this->locked) {
+			return true;
+		}
+		
+		$ttl = new Data_DateTime( date('Y-m-d H:i:s', strtotime('-5 minutes')) );
+		if($this->created<$ttl) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public function setLocked( bool $locked ): void
@@ -205,8 +230,13 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 		return $images;
 	}
 	
-	public static function uploadImage( Complaint $complaint, Form_Field_File_UploadedFile $file ) : void
+	public static function uploadImage( Complaint $complaint, Form_Field_File_UploadedFile $file, bool $notification_sent = false ) : void
 	{
+		$new_complaint = (
+			!$complaint->getStatus()::getCode() ||
+			$complaint->getStatus()::getCode()==Complaint_Status_Incomplete::getCode()
+		);
+		
 		foreach($complaint->getImages() as $e_img) {
 			if($e_img->getName()==$file->getFileName()) {
 				if($e_img->isLocked()) {
@@ -217,7 +247,13 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 				$e_img->setSize( $file->getSize() );
 				$e_img->setMimeType( $file->getMimeType() );
 				
-				IO_File::moveUploadedFile( $file->getTmpFilePath(), $e_img->getPath() );
+				IO_File::copy( $file->getTmpFilePath(), $e_img->getPath() );
+				
+				if( $new_complaint ) {
+					$e_img->setNotificationSent( true );
+				} else {
+					$e_img->setNotificationSent( false );
+				}
 				
 				$e_img->save();
 
@@ -225,13 +261,21 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 			}
 		}
 		
+		if( $new_complaint ) {
+			$notification_sent = true;
+		}
+		
+		
 		$img = new static();
 		$img->setComplaint( $complaint );
 		$img->setName( $file->getFileName() );
 		$img->setSize( $file->getSize() );
 		$img->setMimeType( $file->getMimeType() );
+		$img->setNotificationSent( $notification_sent );
 		
-		IO_File::moveUploadedFile( $file->getTmpFilePath(), $img->getPath() );
+		
+		
+		IO_File::copy( $file->getTmpFilePath(), $img->getPath() );
 		
 		$img->save();
 	}
@@ -245,9 +289,12 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 	
 	public function showThb() : void
 	{
-		IO_File::send(
-			$this->getThbPath()
-		);
+		$path = $this->getThbPath();
+		
+		if($path) {
+			IO_File::send( $path );
+		}
+		
 	}
 	
 	public function afterDelete(): void
@@ -265,4 +312,16 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 		}
 		
 	}
+	
+	public function getNotificationSent(): bool
+	{
+		return $this->notification_sent;
+	}
+	
+	public function setNotificationSent( bool $notification_sent ): void
+	{
+		$this->notification_sent = $notification_sent;
+	}
+	
+	
 }

@@ -17,6 +17,12 @@ trait CashDesk_Discounts
 	 */
 	protected ?array $discounts = null;
 	
+	public function resetDiscounts(): void
+	{
+		$this->discounts = null;
+		$this->getDiscounts();
+	}
+	
 	/**
 	 * @return Discounts_Discount[]
 	 */

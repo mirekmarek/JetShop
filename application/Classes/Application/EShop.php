@@ -56,10 +56,7 @@ class Application_EShop
 			SysConf_Jet_ErrorPages::setErrorPagesDir( $router->getBase()->getPagesDataPath( $router->getLocale() ) );
 		}
 		
-		if($router->tryDirectFiles([
-			'robots.txt',
-			'security.txt'
-		])) {
+		if($router->tryDirectFiles()) {
 			return;
 		}
 		

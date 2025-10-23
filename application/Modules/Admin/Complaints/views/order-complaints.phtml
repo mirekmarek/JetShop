@@ -20,10 +20,10 @@ $complaints = $this->getRaw('complaints');
 ?>
 
 <h5><?=Tr::_('Complaint')?></h5>
-<table>
+<table style="background-color: #f16161">
 	<?php foreach($complaints  as $complaint ): ?>
 		<tr>
-			<td><?=Application_Service_Admin::Complaint()->renderItemName( $complaint->getId() )?></td>
+			<td style="font-size: 1.2rem;font-weight: bolder;"><?=Application_Service_Admin::Complaint()->renderItemName( $complaint->getId() )?></td>
 			<td><?=$complaint->getStatus()->showAdmin()?></td>
 		</tr>
 	<?php endforeach; ?>

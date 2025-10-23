@@ -93,16 +93,16 @@ trait CashDesk_Payment {
 
 		$default_method = $this->getDefaultPaymentMethod();
 
-		$code = $session->getValue('selected_payment_method', $default_method->getId());
+		$id = $session->getValue('selected_payment_method', '');
 
-		if(!isset($methods[$code])) {
-			$session->setValue('selected_payment_method', $default_method->getId());
+		if(!isset($methods[$id])) {
+			$session->setValue('selected_payment_method', $default_method?->getId());
 			$session->setValue('selected_payment_method_option', '');
 
 			return $default_method;
 		}
 
-		return $methods[$code];
+		return $methods[$id];
 	}
 
 	public function selectPaymentMethod( int $id ) : bool

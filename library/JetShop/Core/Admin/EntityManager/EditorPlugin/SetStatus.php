@@ -33,6 +33,11 @@ trait Core_Admin_EntityManager_EditorPlugin_SetStatus
 		return true;
 	}
 	
+	public function handleOnlyIfItemIsEditable() : bool
+	{
+		return false;
+	}
+	
 	protected function init() : void
 	{
 		/**

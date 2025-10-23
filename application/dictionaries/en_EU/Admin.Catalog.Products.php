@@ -278,4 +278,5 @@ return [
 	'Similar products' => '',
 	'Non-sale product relation:' => '',
 	'Price history' => '',
+	'Video URLs:' => '',
 ];

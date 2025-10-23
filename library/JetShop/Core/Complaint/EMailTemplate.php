@@ -13,11 +13,13 @@ use JetApplication\Complaint_Event;
 use JetApplication\EMail;
 use JetApplication\EMail_Template;
 use JetApplication\EShop;
+use JetApplication\Product;
 
 abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 	
 	protected Complaint $complaint;
 	protected Complaint_Event $event;
+	protected string $note_for_customer = '';
 	
 	public function getComplaint(): Complaint
 	{
@@ -38,6 +40,7 @@ abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 	{
 		$this->event = $event;
 		$this->complaint = $event->getComplaint();
+		$this->note_for_customer = $event->getNoteForCustomer();
 	}
 	
 	
@@ -81,6 +84,27 @@ abstract class Core_Complaint_EMailTemplate extends EMail_Template {
 		$URL_property->setPropertyValueCreator( function() : string {
 			return $this->complaint->getURL();
 		} );
+		
+		
+		$this->addProperty('product_name', Tr::_('Product name'))
+			->setPropertyValueCreator( function() {
+				$p = Product::get( $this->complaint->getProductId() );
+				return $this->complaint->getProduct()->getName().' / '.$p->getInternalCode();
+			});
+		
+		$this->addProperty('note_for_customer', Tr::_('Note for customer'))
+			->setPropertyValueCreator( function() {
+				if(!$this->note_for_customer) {
+					return '';
+				}
+				
+				return nl2br($this->note_for_customer);
+			});
+		
+		$this->addCondition('has_note_for_customer', Tr::_('Has note for customer'))
+			->setConditionEvaluator( function() {
+				return (bool)$this->note_for_customer;
+			});
 		
 	}
 	

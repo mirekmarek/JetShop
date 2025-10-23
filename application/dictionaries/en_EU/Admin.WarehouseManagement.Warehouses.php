@@ -39,4 +39,6 @@ return [
 	'Public phone:' => '',
 	'Activate' => '',
 	'Deactivate' => '',
+	'Main data' => '',
+	'Warehouse management - Warehouse <b>%ITEM_NAME%</b> has been updated' => '',
 ];

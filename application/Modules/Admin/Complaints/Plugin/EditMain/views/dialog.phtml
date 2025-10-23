@@ -1,0 +1,46 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('edit_main_form');
+
+if(!$form) {
+	return;
+}
+
+$dialog = new UI_dialog( 'edit_main_dialog', Tr::_('Edit basic info'), UI_dialog::SIZE_LARGE );
+?>
+<?=$dialog->start()?>
+
+<div id="edit-main-area">
+	<?php require 'form.phtml'; ?>
+</div>
+
+<?=$dialog->end()?>
+
+<script>
+	function sendEditMain() {
+		JetAjaxForm.submit('<?=$form->getId()?>', {
+			onSuccess: function () {
+				location.reload();
+			}
+		});
+	}
+</script>

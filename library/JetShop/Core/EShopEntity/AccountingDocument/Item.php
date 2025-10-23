@@ -190,6 +190,14 @@ abstract class Core_EShopEntity_AccountingDocument_Item extends DataModel_Relate
 		return $this->type;
 	}
 	
+	public function isStdProduct() : bool
+	{
+		return (
+			$this->getType()==EShopEntity_AccountingDocument_Item::ITEM_TYPE_PRODUCT ||
+			$this->getType()==EShopEntity_AccountingDocument_Item::ITEM_TYPE_VIRTUAL_PRODUCT
+		);
+	}
+	
 	public function isPhysicalProduct() : bool
 	{
 		return (

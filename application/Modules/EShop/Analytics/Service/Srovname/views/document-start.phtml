@@ -1,0 +1,16 @@
+<?php
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$id = $this->getRaw('id');
+?>
+<!-- Start Srovname.cz Pixel -->
+<script>
+	!function(e,n,t,a,s,o,r){ e[a]||((s=e[a]=function(){s.process?s.process.apply(s,arguments):s.queue.push(arguments)}).queue=[],(o=n.createElement(t)).async=1,o.src='https://tracking.srovname.cz/srovnamepixel.js',o.dataset.srv9="1",(r=n.getElementsByTagName(t)[0]).parentNode.insertBefore(o,r))}(window,document,"script","srovname");
+	srovname("init",'<?=$id?>');
+</script>
+<!-- End Srovname.cz Pixel -->
+

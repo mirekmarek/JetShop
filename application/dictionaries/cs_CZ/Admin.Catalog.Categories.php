@@ -189,4 +189,9 @@ return [
 	'Please select file' => 'Vyberte soubor',
 	'Select and upload images' => 'Vyberte a nahrajte obrázky',
 	'Category - kind of product is used' => 'Kategorie – druh použitého produktu',
+	'Create' => '',
+	'Products (%count%)' => '',
+	'Move this category to:' => '',
+	'Move this category' => '',
+	'Move subcategories of this category' => '',
 ];

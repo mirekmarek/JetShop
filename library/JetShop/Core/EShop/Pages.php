@@ -174,4 +174,14 @@ class Core_EShop_Pages
 		return static::getPage( 'product_reviews', $eshop );
 	}
 	
+	public static function MailingSubscribe( ?EShop $eshop = null ): ?MVC_Page_Interface
+	{
+		return static::getPage( 'mailing_subscribe', $eshop );
+	}
+	
+	public static function MailingUnsubscribe( ?EShop $eshop = null ): ?MVC_Page_Interface
+	{
+		return static::getPage( 'mailing_unsubscribe', $eshop );
+	}
+	
 }

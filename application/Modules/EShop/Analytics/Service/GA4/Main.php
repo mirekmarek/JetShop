@@ -13,20 +13,16 @@ use JetApplication\Admin_ControlCentre_Module_Trait;
 use JetApplication\Brand_EShopData;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
-use JetApplication\EShop_CookieSettings_Group;
+use JetApplication\EShop;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\Pricelists;
-use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\Application_Service_EShop_AnalyticsService;
-use JetApplication\Application_Service_EShop;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
-use JetApplication\EShops;
 use JetApplication\Signpost_EShopData;
 
 
@@ -35,24 +31,26 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	use EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 	use Admin_ControlCentre_Module_Trait;
 	
-	protected string $currency_code;
-	protected Pricelist $pricelist;
+
 	protected bool $native_mode = true;
 	protected string $id = '';
 	
-	public function init() : void
+	public function allowed(): bool
 	{
-		$this->enabled = true;
-		$eshop = EShops::getCurrent();
-		$this->id = $this->getEshopConfig( $eshop )->getGoogleId();
-		$this->pricelist = Pricelists::getCurrent();
-		$this->currency_code = $this->pricelist->getCurrencyCode();
+		return true;
+	}
+	
+	public function init( EShop $eshop ) : void
+	{
+		parent::init( $eshop );
 		
-		if(
-			!Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::STATS) ||
-			!$this->id
-		) {
-			$this->enabled = false;
+		$config = $this->getEshopConfig( $eshop );
+		
+		$this->id = $config->getGoogleId();
+		$this->native_mode = $config->getNativeMode();
+		
+		if( $this->id ) {
+			$this->enabled = true;
 		}
 		
 	}
@@ -70,11 +68,6 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	
 	protected function generateEvent_dataLayer( string $event, array $event_data ) : string {
-		if( !$this->enabled ) {
-			return '';
-		}
-		
-		
 		$this->view->setVar('event', $event);
 		$this->view->setVar('event_data', $event_data);
 		
@@ -84,10 +77,6 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	protected function generateEvent_native( string $event, array $event_data ) : string
 	{
-		if( !$this->enabled ) {
-			return '';
-		}
-		
 		$this->view->setVar('event', $event);
 		$this->view->setVar('event_data', $event_data);
 		
@@ -96,10 +85,6 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function generateEvent( string $event, array $event_data ) : string
 	{
-		if( !$this->enabled ) {
-			return '';
-		}
-		
 		if($this->native_mode) {
 			return $this->generateEvent_native( $event, $event_data );
 		} else {
@@ -130,16 +115,9 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function header(): string
 	{
-		if(!$this->id) {
-			return '';
-		}
-		
 		$this->view->setVar('id', $this->id);
-		if(!$this->enabled):
-			return $this->view->render('header/disabled');
-		endif;
 		
-		return $this->view->render('header/enabled');
+		return $this->view->render('header');
 	}
 	
 	
@@ -375,19 +353,16 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	
 	public function viewSignpost( Signpost_EShopData $signpost ): string
 	{
-		// TODO: Implement viewSignpost() method.
 		return '';
 	}
 	
 	public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
-		//TODO:
 		return '';
 	}
 	
 	public function search( string $q, array $result_ids, ?ProductListing $product_listing = null ) : string
 	{
-		//TODO:
 		return '';
 	}
 	

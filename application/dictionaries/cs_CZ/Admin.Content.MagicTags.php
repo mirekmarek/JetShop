@@ -26,4 +26,8 @@ return [
 	'What to display:' => 'Co zobrazit:',
 	'Magic tags' => 'Magické značky',
 	'Co zobrazit:' => 'Co zobrazit:',
+	'Product image thumbnail URL' => '',
+	'Product name' => '',
+	'Max width:' => '',
+	'Max height:' => '',
 ];

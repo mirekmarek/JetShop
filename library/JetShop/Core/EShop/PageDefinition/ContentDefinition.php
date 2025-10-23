@@ -123,8 +123,8 @@ abstract class Core_EShop_PageDefinition_ContentDefinition extends BaseObject {
 	
 	public function getContentModuleName( EShop $eshop ) : string
 	{
-		if($this->manager_interface) {
-			return Application_Service_EShop::list($eshop)->getServiceMetaInfo( $this->manager_interface )?->getName()??'';
+		if( $this->manager_interface ) {
+			return $this->manager_group::list($eshop)->getServiceMetaInfo( $this->manager_interface )?->getName()??'';
 		}
 		
 		return $this->module_name;

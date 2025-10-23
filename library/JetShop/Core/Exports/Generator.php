@@ -18,6 +18,8 @@ use JetApplication\Exports;
 
 abstract class Core_Exports_Generator
 {
+	protected bool $buffer_mode = false;
+	
 	protected string $input_charset = 'UTF-8';
 
 	protected string $output_charset = 'UTF-8';
@@ -35,6 +37,12 @@ abstract class Core_Exports_Generator
 		$this->export_code = $export_code;
 		$this->eshop = $eshop;
 		
+	}
+	
+	public function enableBufferMode(): void
+	{
+		$this->buffer_mode = true;
+		$this->tmp_file_path = SysConf_Path::getTmp().'export_'.$this->export_code.'_'.$this->eshop->getKey().'_'.date('YmdHis');
 	}
 	
 	public function setOutputFile( string $target_file_name ) : void
@@ -95,12 +103,17 @@ abstract class Core_Exports_Generator
 	public function done() : void
 	{
 		if($this->tmp_file_path) {
-			$target_dir = dirname($this->target_path);
-			if(!IO_Dir::exists($target_dir)) {
-				IO_Dir::create($target_dir);
+			if($this->buffer_mode) {
+				IO_File::send($this->tmp_file_path);
+			} else {
+				$target_dir = dirname($this->target_path);
+				if(!IO_Dir::exists($target_dir)) {
+					IO_Dir::create($target_dir);
+				}
+				
+				IO_File::copy( $this->tmp_file_path, $this->target_path );
 			}
 			
-			IO_File::copy( $this->tmp_file_path, $this->target_path );
 			IO_File::delete( $this->tmp_file_path );
 		} else {
 			Application::end();

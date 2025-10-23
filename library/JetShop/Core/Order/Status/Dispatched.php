@@ -90,6 +90,7 @@ abstract class Core_Order_Status_Dispatched extends Order_Status {
 			
 		};
 		
+		
 		return $res;
 	}
 	

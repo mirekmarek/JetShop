@@ -12,4 +12,5 @@ use JetShop\Core_Application_Service_EShop_CashDesk;
 #[Application_Service_MetaInfo]
 abstract class Application_Service_EShop_CashDesk extends Core_Application_Service_EShop_CashDesk
 {
+	abstract public function getPhoneNumberPrefix( EShop $eshop ) : string;
 }

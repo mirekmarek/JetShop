@@ -192,7 +192,7 @@ class Main extends MarketplaceIntegration_Module implements
 		}
 		
 		if(!$client->putHeurekaOrderStatus(
-			$order_event->getOrderId(),
+			$order_event->getOrder()->getNumber(),
 			0,
 			tracking_url: $tracking_url
 		)) {
@@ -218,10 +218,10 @@ class Main extends MarketplaceIntegration_Module implements
 	{
 		$client = $this->getClient( $order_event->getEshop() );
 		if(!$client->putHeurekaOrderStatus(
-			$order_event->getOrderId(),
+			$order_event->getOrder()->getNumber(),
 			$heureka_status_id
 		)) {
-			$order_event->setErrorMessage( $client->getLastErrorMessage() );
+			$order_event->setErrorMessage( $client->getLastErrorMessage().var_export($client->getResponseData(), true) );
 			
 			return false;
 		}

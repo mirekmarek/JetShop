@@ -142,7 +142,7 @@ abstract class Core_Admin_Listing extends DataListing
 	public function getPrevEditUrl( int $current_id ): string
 	{
 		$this->handle();
-		$all_ids = $this->getNearestIds();
+		$all_ids = $this->getAllIds();
 		
 		$index = array_search( $current_id, $all_ids );
 		
@@ -159,7 +159,7 @@ abstract class Core_Admin_Listing extends DataListing
 	public function getNextEditUrl( int $current_id ): string
 	{
 		$this->handle();
-		$all_ids = $this->getNearestIds();
+		$all_ids = $this->getAllIds();
 		
 		$index = array_search( $current_id, $all_ids );
 		if( $index !== false ) {
@@ -352,12 +352,29 @@ abstract class Core_Admin_Listing extends DataListing
 				if($filter->tryDirectOpen()) {
 					$ids = $this->getNearestIds();
 					if(count($ids)==1) {
-						Http_Headers::movedTemporary( $this->getURI().'&id='.$ids[0] );
+						Http_Headers::movedTemporary( '?id='.$ids[0] );
 					}
 				}
 			}
 			
 			Http_Headers::movedTemporary( $this->getURI() );
+		}
+		
+		if(Http_Request::GET()->exists('quick_search')) {
+			foreach($this->filters as $filter) {
+				/**
+				 * @var Admin_Listing_Filter $filter
+				 */
+				if($filter->tryDirectOpen()) {
+					$ids = $this->getNearestIds();
+					if(count($ids)==1) {
+						Http_Headers::movedTemporary( '?id='.$ids[0] );
+					}
+				}
+			}
+			
+			Http_Headers::movedTemporary( $this->getURI() );
+			
 		}
 	}
 	

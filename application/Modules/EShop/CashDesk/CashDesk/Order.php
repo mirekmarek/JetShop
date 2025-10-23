@@ -21,7 +21,7 @@ trait CashDesk_Order {
 
 	public function getOrder() : Order
 	{
-
+		$discounts = $this->getDiscounts();
 
 		$delivery_method = $this->getSelectedDeliveryMethod();
 		$payment_method = $this->getSelectedPaymentMethod();

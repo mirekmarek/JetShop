@@ -9,6 +9,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use JetApplication\Admin_EntityManager_EditTabProvider;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
+use JetApplication\EShop;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
 use JetApplication\Application_Service_EShop_AnalyticsService;
@@ -22,11 +23,26 @@ class Main extends Application_Service_EShop_AnalyticsService implements Admin_E
 {
 	use Main_Trait_Admin;
 	
+	protected bool $test_mode = false;
+	
 	protected null|false|Session $session = null;
 	
-	
-	public function init() : void
+	public function allowed() : bool
 	{
+		return true;
+	}
+	
+	public function init( EShop $eshop ) : void
+	{
+		parent::init( $eshop );
+		$this->enabled = true;
+	}
+	
+	public function initTest( EShop $eshop ) : void
+	{
+		parent::init( $eshop );
+		$this->testing_allowed = false;
+		$this->test_mode = true;
 	}
 	
 	protected function initSession() : void
@@ -39,11 +55,6 @@ class Main extends Application_Service_EShop_AnalyticsService implements Admin_E
 	public function header(): string
 	{
 		$this->initSession();
-		return '';
-	}
-	
-	public function generateEvent( string $event, array $event_data=[] ) : string
-	{
 		return '';
 	}
 	
@@ -165,6 +176,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements Admin_E
 	
 	public function purchase( Order $order ) : string
 	{
+		$this->initSession();
 		if($this->session) {
 			$event = Event_Purchase::create();
 			$event->init( $order );

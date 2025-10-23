@@ -1,0 +1,30 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Tr;
+use JetApplication\Application_Service_Admin;
+use Jet\MVC_View;
+use JetApplication\ReturnOfGoods;
+
+/**
+ * @var MVC_View $this
+ * @var ReturnOfGoods[] $returns
+ */
+$returns = $this->getRaw('returns');
+?>
+
+<h5><?=Tr::_('Return of goods')?></h5>
+<table style="background-color: #ec9b07">
+	<?php foreach($returns  as $return ): ?>
+		<tr>
+			<td style="font-size: 1.2rem;font-weight: bolder;"><?=Application_Service_Admin::ReturnOfGoods()->renderItemName( $return->getId() )?></td>
+			<td><?=$return->getStatus()->showAdmin()?></td>
+		</tr>
+	<?php endforeach; ?>
+</table>

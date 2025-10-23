@@ -607,6 +607,23 @@ abstract class Core_Category extends EShopEntity_WithEShopData implements
 		return $this->product_ids;
 	}
 	
+	public function getBranchProductIds() : array
+	{
+		$category_ids = $this->getBranchChildrenIds();
+		$category_ids[] = $this->id;
+		
+		$product_ids = Category_Product::dataFetchCol(
+			select: ['product_id'],
+			where: ['category_id'=>$category_ids],
+			order_by: ['priority'],
+			raw_mode: true
+		);
+		
+		$product_ids = array_unique($product_ids);
+		
+		return $product_ids;
+	}
+	
 	public static function actualizeProductAssoc( ?int $category_id=null, ?int $product_id=null ) : void
 	{
 		if($product_id) {

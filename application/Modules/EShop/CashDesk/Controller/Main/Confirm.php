@@ -55,6 +55,12 @@ trait Controller_Main_Confirm {
 				$flag->setShowError(true);
 			}
 		}
+		
+		$this->cash_desk->resetDiscounts();
+		
+		$response->addSnippet('delivery');
+		$response->addSnippet('overview');
+		
 
 		$response->response();
 	}

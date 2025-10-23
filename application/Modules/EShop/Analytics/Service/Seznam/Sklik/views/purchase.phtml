@@ -1,0 +1,43 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+
+use Jet\MVC_View;
+use JetApplication\Application_Service_EShop;
+use JetApplication\EShop_CookieSettings_Group;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getRaw('id');
+$order = $this->getRaw('order');
+
+$email = $order->getEmail();
+
+$email = trim($email);
+$email = strtolower( $email );
+$email = hash('sha256', $email );
+?>
+<script src="https://c.seznam.cz/js/rc.js"></script>
+<script>
+	window['sznIVA']['IS']['updateIdentities']({
+		eid: "<?=$email?>"
+	});
+
+	var conversionConf = {
+		id: 2578841,
+		value: <?=$order->getProductAmount_WithoutVAT()?>,
+		orderId: <?=$order->getNumber()?>,
+		zboziType: "standard",
+		zboziId: "<?=$id?>",
+		consent: <?=(Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::MARKETING))?1:0?>,
+	};
+	
+	window.rc.conversionHit(conversionConf);
+</script>

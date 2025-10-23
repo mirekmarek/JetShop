@@ -51,6 +51,12 @@ class Core_Exports_ExportCategory_Parameter extends EShopEntity_WithEShopRelatio
 	protected string $type = '';
 	
 	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+	)]
+	protected bool $multiple_values = true;
+	
+	
+	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 100
 	)]
@@ -164,6 +170,18 @@ class Core_Exports_ExportCategory_Parameter extends EShopEntity_WithEShopRelatio
 	{
 		$this->type = $type;
 	}
+	
+	public function getMultipleValues(): bool
+	{
+		return $this->multiple_values;
+	}
+	
+	public function setMultipleValues( bool $multiple_values ): void
+	{
+		$this->multiple_values = $multiple_values;
+	}
+	
+	
 	
 	public function getOptions(): array
 	{

@@ -6,6 +6,7 @@
  */
 namespace JetShop;
 
+use JetApplication\Customer;
 use ReflectionClass;
 use Jet\IO_Dir;
 use Jet\SysConf_Path;
@@ -95,8 +96,10 @@ abstract class Core_Customer_PersonalData {
 	
 	public static function delete( int $customer_id ) : void
 	{
+		$customer = Customer::get( $customer_id );
+		
 		foreach(static::getEntities() as $entity) {
-			$entity::findAndDeletePersonalData( $customer_id );
+			$entity::findAndDeletePersonalData( $customer_id, $customer?->getEmail()??'', $customer?->getPhoneNumber()??'' );
 		}
 		
 	}

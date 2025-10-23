@@ -19,16 +19,6 @@ class Main extends Application_Service_Admin_Complaint implements PDF_TemplatePr
 {
 	public const ADMIN_MAIN_PAGE = 'complaints';
 	
-	public static function getCurrentUserCanCreate(): bool
-	{
-		return false;
-	}
-	
-	public static function getCurrentUserCanDelete(): bool
-	{
-		return false;
-	}
-	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Complaint();
@@ -50,7 +40,8 @@ class Main extends Application_Service_Admin_Complaint implements PDF_TemplatePr
 	public function getPDFTemplates(): array
 	{
 		return [
-			new PDFTemplate_ServiceReport()
+			new PDFTemplate_ServiceReport(),
+			new PDFTemplate_GoodsReceiptProtocol()
 		];
 	}
 }

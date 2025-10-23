@@ -58,7 +58,13 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 		'answered',
 		'display',
 	];
-
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255,
+	)]
+	protected string $author_ip = '';
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -173,6 +179,18 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 		
 		$this->product_id = $product_id;
 	}
+	
+	public function getAuthorIp(): string
+	{
+		return $this->author_ip;
+	}
+	
+	public function setAuthorIp( string $author_ip ): void
+	{
+		$this->author_ip = $author_ip;
+	}
+	
+	
 	
 	public function getAuthorName(): string
 	{

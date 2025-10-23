@@ -22,4 +22,8 @@ return [
 	'Date and time' => '',
 	'What to display:' => '',
 	'Magic tags' => '',
+	'Product image thumbnail URL' => '',
+	'Product name' => '',
+	'Max width:' => '',
+	'Max height:' => '',
 ];

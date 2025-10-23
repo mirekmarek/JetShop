@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 
 use Jet\Factory_MVC;
+use Jet\Tr;
 use JetApplication\Application_Service_Admin_ReturnOfGoods;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
@@ -18,16 +19,6 @@ class Main extends Application_Service_Admin_ReturnOfGoods
 {
 	public const ADMIN_MAIN_PAGE = 'returns-of-goods';
 	
-	public static function getCurrentUserCanCreate(): bool
-	{
-		return false;
-	}
-	
-	public static function getCurrentUserCanDelete(): bool
-	{
-		return false;
-	}
-	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new ReturnOfGoods();
@@ -35,15 +26,21 @@ class Main extends Application_Service_Admin_ReturnOfGoods
 	
 	public function showOrderReturnsOfGoods( Order $order ): void
 	{
-		$returns= ReturnOfGoods::getByOrder( $order );
-		if(!$returns) {
-			return;
-		}
-		
-		$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
-		$view->setVar('returns', $returns);
-		
-		echo $view->render('order-returns');
+		Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($order) {
+				$returns= ReturnOfGoods::getByOrder( $order );
+				if(!$returns) {
+					return;
+				}
+				
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				$view->setVar('returns', $returns);
+				
+				echo $view->render('order-returns');
+				
+			}
+		);
 	}
 	
 }

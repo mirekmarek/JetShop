@@ -125,6 +125,7 @@ trait Core_EShopEntity_HasStatus_Trait {
 		
 		if(!$this->status) {
 			$status = $this->setStatusByFlagState( handle_event: false );
+
 			if($status) {
 				return $status;
 			}
@@ -166,7 +167,14 @@ trait Core_EShopEntity_HasStatus_Trait {
 				$this->status = $status->getCode();
 				
 				if($set) {
-					$this->setStatus( $status, $handle_event );
+					static::updateData(
+						data: [
+							'status' => $this->status,
+						],
+						where: [
+							'id' => $this->id
+						]
+					);
 				}
 				
 				return $status;

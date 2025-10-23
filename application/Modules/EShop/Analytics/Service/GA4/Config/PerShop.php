@@ -24,14 +24,22 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Google ID: ',
-		is_required: true,
 	)]
 	protected string $google_id = '';
+
+
+	#[Config_Definition(
+		type: Config::TYPE_BOOL
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_CHECKBOX,
+		label: 'Native mode'
+	)]
+	protected bool $native_mode = true;
 
 	public function getGoogleId(): string
 	{
@@ -42,4 +50,16 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	{
 		$this->google_id = $google_id;
 	}
+	
+	public function getNativeMode(): bool
+	{
+		return $this->native_mode;
+	}
+	
+	public function setNativeMode( bool $native_mode ): void
+	{
+		$this->native_mode = $native_mode;
+	}
+	
+	
 }

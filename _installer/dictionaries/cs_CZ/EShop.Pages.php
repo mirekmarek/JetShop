@@ -17,4 +17,5 @@ return [
 	'Return of goods' => '',
 	'Change password' => '',
 	'Sign Up' => '',
+	'Product reviews' => '',
 ];

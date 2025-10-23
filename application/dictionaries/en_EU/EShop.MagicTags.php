@@ -16,4 +16,8 @@ return [
 	'Today - date' => '',
 	'Tomorrow - date' => '',
 	'Product:' => '',
+	'Product image thumbnail URL' => '',
+	'Product name' => '',
+	'Max width:' => '',
+	'Max height:' => '',
 ];

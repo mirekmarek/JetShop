@@ -319,19 +319,34 @@ abstract class Core_Exports_Module extends Application_Module
 						
 						break;
 					case Exports_ExportCategory_Parameter::PARAM_TYPE_OPTIONS:
-						$field = new Form_Field_MultiSelect( $param_id );
-						$field->setErrorMessages([
-							Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
-						]);
-						$field->setLabel( $label);
-						$field->setDoNotTranslateLabel( true );
-						$field->setSelectOptions( $param->getOptions() );
-						$field->setDefaultValue( $value->getValue()?explode('|', $value->getValue()):[] );
-						$field->setFieldValueCatcher( function() use ($value, $field) {
-							$value->setValue( implode('|', $field->getValue()) );
-							$value->save();
-						} );
-						$field->input()->addCustomCssStyle("height:400px;");
+						if($param->getMultipleValues()) {
+							$field = new Form_Field_MultiSelect( $param_id );
+							$field->setErrorMessages([
+								Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+							]);
+							$field->setLabel( $label);
+							$field->setDoNotTranslateLabel( true );
+							$field->setSelectOptions( $param->getOptions() );
+							$field->setDefaultValue( $value->getValue()?explode('|', $value->getValue()):[] );
+							$field->setFieldValueCatcher( function() use ($value, $field) {
+								$value->setValue( implode('|', $field->getValue()) );
+								$value->save();
+							} );
+							$field->input()->addCustomCssStyle("height:400px;");
+						} else {
+							$field = new Form_Field_Select( $param_id );
+							$field->setErrorMessages([
+								Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+							]);
+							$field->setLabel( $label);
+							$field->setDoNotTranslateLabel( true );
+							$field->setSelectOptions( $param->getOptions() );
+							$field->setDefaultValue( $value->getValue() );
+							$field->setFieldValueCatcher( function() use ($value, $field) {
+								$value->setValue( $field->getValue() );
+								$value->save();
+							} );
+						}
 						
 						
 						

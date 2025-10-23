@@ -49,10 +49,5 @@ return [
 	'Unblock filtered users' => 'Odblokovat vyfiltrované uživatele',
 	'The filtered users have been blocked' => 'Vyfiltrovaní uživatelé byli zablokováni',
 	'The filtered users have been unblocked' => 'Vyfiltrovaní uživatelé byli odblokováni',
-	'Admin / User management / Administrators' => 'Správce / Správa uživatelů / Správci',
-	'Please enter a value' => 'Zadejte hodnotu',
-	'Invalid value' => 'neplatná hodnota',
-	'User roles' => 'Uživatelské role',
-	'Name' => 'název',
-	'Password' => 'Heslo',
+	'Admin / User management / Administrators' => '',
 ];

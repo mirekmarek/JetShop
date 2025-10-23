@@ -24,12 +24,10 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Facebook ID: ',
-		is_required: true,
 	)]
 	protected string $facebook_id = '';
 

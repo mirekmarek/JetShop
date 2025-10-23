@@ -63,4 +63,7 @@ return [
 	'Internal notes' => '',
 	'Complaint' => '',
 	'Return of goods' => '',
+	'New' => '',
+	'In Processing' => '',
+	'Cancelled' => '',
 ];

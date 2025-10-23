@@ -409,4 +409,6 @@ return [
 	'Set properties' => '',
 	'Creation in progress' => '',
 	'Is archived' => '',
+	'From:' => '',
+	'Till:' => '',
 ];

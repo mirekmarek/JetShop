@@ -52,6 +52,9 @@ abstract class Core_Product_Price extends EShopEntity_Price
 	
 	public function getPriceBeforeDiscount(): float
 	{
+		if(!$this->discount_percentage) {
+			return 0;
+		}
 		return $this->price_before_discount;
 	}
 	

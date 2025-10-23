@@ -40,6 +40,11 @@ abstract class Core_Order_Event extends EShopEntity_Event
 
 		return $this;
 	}
+	
+	public function setOrderId( int $order_id ) : void
+	{
+		$this->order_id = $order_id;
+	}
 
 	public function getOrderId() : int
 	{

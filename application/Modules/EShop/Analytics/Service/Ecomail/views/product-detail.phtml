@@ -1,0 +1,18 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+$id = $this->getRaw('id');
+
+?>
+<!-- Ecomail starts -->
+<script type="text/javascript">
+	window.ecotrack('trackStructEvent', 'ECM_PRODUCT_VIEW', '<?=$product->getId()?>');
+</script>
+<!-- Ecomail stops -->

@@ -1,0 +1,4 @@
+<?php
+return [
+	'Uloženka' => '',
+];

@@ -395,4 +395,8 @@ return [
 	'Order item is not gift' => '',
 	'Is free of charge' => '',
 	'Is not free of charge' => '',
+	'Waiting for goods to be stocked' => '',
+	'Personal Receipt Preparation Started' => '',
+	'Personal receipt prepared' => '',
+	'Order source' => '',
 ];

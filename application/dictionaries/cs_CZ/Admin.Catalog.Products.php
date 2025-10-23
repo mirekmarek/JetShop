@@ -278,4 +278,5 @@ return [
 	'Nastavit hodnotu' => '',
 	'Add category' => '',
 	'Do you really want to delete this category?' => '',
+	'Similar products' => '',
 ];

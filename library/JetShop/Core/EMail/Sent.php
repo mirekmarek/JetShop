@@ -11,7 +11,6 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EMail;
 use JetApplication\EShopEntity_HasPersonalData_Interface;
-use JetApplication\EShopEntity_HasPersonalData_Trait;
 use JetApplication\EShopEntity_WithEShopRelation;
 
 #[DataModel_Definition(
@@ -21,8 +20,6 @@ use JetApplication\EShopEntity_WithEShopRelation;
 )]
 abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation implements EShopEntity_HasPersonalData_Interface
 {
-	use EShopEntity_HasPersonalData_Trait;
-	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -236,6 +233,21 @@ abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation implements 
 	
 	public function deletePersonalData(): void
 	{
-		$this->delete();
+		$this->to = '';
+		$this->to_copy = '';
+		
+		$this->save();
+	}
+	
+	public static function findAndDeletePersonalData( int $customer_id, string $customer_email, string $customer_phone_number ) : void
+	{
+		static::updateData([
+			'to' => '',
+			'to_copy' => '',
+		], where: [
+			'to' => $customer_email,
+			'OR',
+			'to_copy' => $customer_email,
+		]);
 	}
 }

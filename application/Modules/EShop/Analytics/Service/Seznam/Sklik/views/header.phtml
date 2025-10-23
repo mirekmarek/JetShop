@@ -1,0 +1,25 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$id = $this->getRaw('id');
+if(!$id) {
+	return;
+}
+
+?>
+<script type="text/javascript">
+	/* <![CDATA[ */
+	let seznam_retargetingId = '<?=$id?>';
+	/* ]]> */
+</script>
+<script type="text/javascript" src="//c.imedia.cz/js/retargeting.js"></script>
+

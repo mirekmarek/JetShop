@@ -1,0 +1,46 @@
+<?php
+
+use Jet\Data_Text;
+use Jet\MVC_View;
+use JetApplication\Order;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getString('id');
+$order = $this->getRaw('order');
+
+$eshop = $order->getEshop();
+
+$send_to = $this->getString('send_to');
+$conversion_js_code = $this->getRaw('conversion_js_code');
+
+$conversion_js_code = Data_Text::replaceData($conversion_js_code, [
+	'AMOUNT_PRODUCTS_WITH_VAT' => $order->getProductAmount_WithVAT()
+]);
+
+echo htmlspecialchars_decode($conversion_js_code);
+?>
+<script>
+	gtag('set', 'user_data', {
+		"sha256_email_address": '<?=hash('sha256', strtolower($order->getEmail()))?>',
+		"sha256_phone_number": '<?=hash('sha256', $order->getPhone())?>',
+		"address": {
+			"sha256_first_name": '<?=hash('sha256', $order->getBillingAddress()->getFirstName())?>',
+			"sha256_last_name": '<?=hash('sha256', $order->getBillingAddress()->getSurname())?>',
+			"street": '<?=$order->getBillingAddress()->getAddressStreetNo()?>',
+			"city": '<?=$order->getBillingAddress()->getAddressTown()?>',
+			"postal_code": '<?=$order->getBillingAddress()->getAddressZip()?>',
+			"country": '<?=$order->getBillingAddress()->getAddressCountry()?>'
+		}
+	});
+	gtag('event', 'conversion', {
+		'send_to': '<?=$send_to?>',
+		'value': <?= $order->getProductAmount_WithoutVAT() ?>,
+		'currency': '<?=$order->getCurrencyCode()?>',
+		'transaction_id': '<?=$order->getNumber()?>'
+	});
+</script>

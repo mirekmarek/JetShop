@@ -258,6 +258,15 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 	)]
 	protected float $free_delivery_limit = 0.0;
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_FLOAT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_FLOAT,
+		label: 'Free delivery limit - registered customer:'
+	)]
+	protected float $free_delivery_limit_registered_customer = 0.0;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL,
@@ -608,11 +617,13 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		
 		
 
-		$set_free_limit = new class( $this->getFreeDeliveryLimit() ) extends Timer_Action {
+		$set_free_limit = new class( $this->getFreeDeliveryLimit(), $this->getEshop() ) extends Timer_Action {
 			protected float $free_delivery_limit;
+			protected EShop $eshop;
 			
-			public function __construct( float $free_delivery_limit ) {
+			public function __construct( float $free_delivery_limit, EShop $eshop ) {
 				$this->free_delivery_limit = $free_delivery_limit;
+				$this->eshop = $eshop;
 			}
 			
 			public function perform( EShopEntity_Basic $entity, mixed $action_context ): bool
@@ -660,6 +671,61 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 		
 		$actions[$set_free_limit->getAction()] = $set_free_limit;
 		
+		
+		
+		$set_free_limit_registered = new class( $this->getFreeDeliveryLimitRegisteredCustomer(), $this->getEshop() ) extends Timer_Action {
+			protected float $free_delivery_limit_registered;
+			protected EShop $eshop;
+			
+			public function __construct( float $free_delivery_limit, EShop $eshop ) {
+				$this->free_delivery_limit_registered = $free_delivery_limit;
+				$this->eshop = $eshop;
+			}
+			
+			public function perform( EShopEntity_Basic $entity, mixed $action_context ): bool
+			{
+				/**
+				 * @var Delivery_Method $entity
+				 */
+				$entity->setFreeDeliveryLimitRegisteredCustomer( (float)$action_context );
+				$entity->save();
+				
+				return true;
+			}
+			
+			public function getAction(): string
+			{
+				return 'set_free_limit_registered';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_( 'Set free limit - registered customer' );
+			}
+			
+			public function updateForm( Form $form ): void
+			{
+				$price = new Form_Field_Float('free_limit', 'Free limit:');
+				$price->setDefaultValue( $this->free_delivery_limit_registered );
+				
+				$form->addField( $price );
+			}
+			
+			public function catchActionContextValue( Form $form ) : mixed
+			{
+				return $form->field('free_limit')->getValue();
+			}
+			
+			public function formatActionContextValue( mixed $action_context ) : string
+			{
+				return Application_Service_Admin::PriceFormatter()->formatWithCurrency(
+					$this->eshop->getDefaultPricelist(), (float)$action_context
+				);
+			}
+			
+		};
+		$actions[$set_free_limit_registered->getAction()] = $set_free_limit_registered;
+
 		
 		return $actions;
 	}
@@ -839,6 +905,18 @@ abstract class Core_Delivery_Method extends EShopEntity_Common implements
 	{
 		$this->free_delivery_limit = $free_delivery_limit;
 	}
+	
+	public function getFreeDeliveryLimitRegisteredCustomer(): float
+	{
+		return $this->free_delivery_limit_registered_customer;
+	}
+	
+	public function setFreeDeliveryLimitRegisteredCustomer( float $free_delivery_limit_registered_customer ): void
+	{
+		$this->free_delivery_limit_registered_customer = $free_delivery_limit_registered_customer;
+	}
+	
+	
 	
 	public function getMinimalOrderAmount(): float
 	{

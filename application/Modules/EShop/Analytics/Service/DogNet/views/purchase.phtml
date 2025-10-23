@@ -1,0 +1,30 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getRaw('id');
+$order = $this->getRaw('order');
+
+?>
+<script type="text/javascript" id="pap_x2s6df8d" src="https://login.dognet.sk/scripts/fj27g82d"></script>
+<script type="text/javascript">
+	PostAffTracker.setAccountId('<?=$id?>');
+	var sale = PostAffTracker.createSale();
+	sale.setTotalCost('<?=$order->getProductAmount_WithoutVAT()?>');
+	sale.setOrderID('<?=$order->getNumber()?>');
+	
+	<?php foreach($order->getItems() as $item):
+		if(!$item->isStdProduct()):
+			?>
+	sale.setProductID( <?=$item->getItemId()?> );
+			<?php
+		endif;
+	endforeach; ?>
+	
+	PostAffTracker.register();
+</script>

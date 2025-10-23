@@ -30,6 +30,11 @@ class Plugin_DispatchNewGoods_Main extends Plugin {
 	
 	protected function init() : void
 	{
+		/**
+		 * @var Complaint $item
+		 */
+		$item = $this->item;
+		
 		$comment = new Form_Field_Textarea('comment', 'Comments:');
 		
 		$product = new Form_Field_Hidden('product_id', '');
@@ -38,15 +43,15 @@ class Plugin_DispatchNewGoods_Main extends Plugin {
 		$order = Order::get( $this->item->getOrderId() );
 		
 		$delivery_method = new Form_Field_Select('delivery_method', 'Delivery method:');
-		$delivery_method->setDefaultValue( $order->getDeliveryMethodId() );
+		$delivery_method->setDefaultValue( $order?->getDeliveryMethodId()??0 );
 		$options = [];
-		foreach( Delivery_Method::getAllActive( $order->getEshop() ) as $dm ) {
+		foreach( Delivery_Method::getAllActive( $item->getEshop() ) as $dm ) {
 			$options[$dm->getId()] = $dm->getTitle();
 		}
 		$delivery_method->setSelectOptions( $options );
 		
 		$delivery_point_code = new Form_Field_Input('delivery_point_code', 'Delivery point code:');
-		$delivery_point_code->setDefaultValue( $order->getDeliveryPersonalTakeoverDeliveryPointCode() );
+		$delivery_point_code->setDefaultValue( $order?->getDeliveryPersonalTakeoverDeliveryPointCode()??'' );
 		$delivery_point_code->setErrorMessages([
 			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter delivery point code',
 			'unknown' => 'Unknown delivery point'

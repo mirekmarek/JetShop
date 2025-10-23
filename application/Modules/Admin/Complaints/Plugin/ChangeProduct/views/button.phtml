@@ -1,0 +1,33 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('change_product_form');
+
+if(!$form) {
+	return;
+}
+?>
+<div style="text-align: center;padding: 10px;">
+<?=UI::button(Tr::_('Edit'))->setIcon('pen-to-square')
+	->setClass(UI_button::CLASS_PRIMARY)
+	->setOnClick("$('#change_product_dialog').modal('show');")?>
+</div>

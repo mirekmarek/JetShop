@@ -1,0 +1,51 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\ShoppingCart;
+
+/**
+ * @var MVC_View $this
+ * @var ShoppingCart $cart
+ */
+
+$js_code = $this->getRaw('js_code');
+$email = $this->getRaw('email');
+$cart = $this->getRaw('cart');
+$cart_products = [];
+
+
+?>
+
+<!-- Ecomail starts -->
+<script type="text/javascript">
+	<?=htmlspecialchars_decode($js_code)?>
+	
+	<?php if( $email ): ?>
+	window.ecotrack('setUserId', '<?=$email?>');
+	<?php endif; ?>
+
+	window.ecotrack('trackPageView');
+	
+	<?php if($email):
+	
+		$products = [];
+		foreach($cart->getItems() as $item):
+			$product= $item->getProduct();
+			$products[] = [
+				'productId' => $product->getId(),
+				'img_url' => $product->getImageURL(0),
+				'name' => $product->getName(),
+				'price' => $product->getPrice( $cart->getPricelist() ),
+				'description' => '',
+			];
+		endforeach;
+		
+	?>
+	window.ecotrack('trackUnstructEvent', {
+		schema: '',
+		data: {
+			action: 'Basket',
+			products: <?=json_encode($products)?>
+		}
+	});	<?php endif; ?>
+</script>
+<!-- Ecomail stops -->

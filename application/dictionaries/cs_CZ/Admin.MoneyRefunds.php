@@ -66,4 +66,7 @@ return [
 	'Delete money refund data' => 'Smazat údaje o vrácení peněz',
 	'Update money refund' => 'Aktualizace vrácení peněz',
 	'Admin.MoneyRefunds' => 'Admin.MoneyRefunds',
+	'New' => '',
+	'In Processing' => '',
+	'Cancelled' => '',
 ];

@@ -23,7 +23,7 @@ use JetApplication\Complaint;
 $compaint = $this->getRaw('item');
 $form = $this->getRaw('form');
 
-echo UI::button( Tr::_('Generate service report') )
+echo UI::button( Tr::_('Service report') )
 	->setClass( UI_button::CLASS_PRIMARY )
 	->setIcon('file-invoice')
 	->setUrl( Http_Request::currentURL(set_GET_params: ['service_report_action'=>'generate']) );

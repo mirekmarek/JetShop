@@ -17,19 +17,17 @@ use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use Jet\Config;
 
 #[Config_Definition(
-	name: 'Seznam'
+	name: 'Criteo'
 )]
 class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_Definition_Interface {
 	use Form_Definition_Trait;
 	
 	#[Config_Definition(
 		type: Config::TYPE_STRING,
-		is_required: true,
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
 		label: 'Account ID: ',
-		is_required: true,
 	)]
 	protected string $account_id = '';
 

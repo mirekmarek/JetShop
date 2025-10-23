@@ -1,0 +1,41 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Order;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getString('id');
+$order = $this->getRaw('order');
+
+$eshop = $order->getEshop();
+
+
+$items = [];
+foreach($order->getItems() as $item){
+	if(!$item->isStdProduct()) {
+		continue;
+	}
+	
+	$items[] = [
+		'id' => $item->getItemId(),
+		'price' => $item->getPricePerUnit_WithoutVat(),
+		'currency' => $order->getPricelist()->getCurrency()->getCode(),
+		'name' => $item->getTitle(),
+		'gtin' => $item->getItemId(),
+		'quantity' => $item->getNumberOfUnits(),
+	];
+}
+
+?>
+<script>
+	modio('purchase', {
+		order_id : '<?=$order->getNumber()?>',
+		price : <?=$order->getTotalAmount_WithoutVAT()?>,
+		currency : '<?=$order->getPricelist()->getCurrency()->getCode()?>',
+		items : <?=json_encode($items)?>
+	});
+</script>

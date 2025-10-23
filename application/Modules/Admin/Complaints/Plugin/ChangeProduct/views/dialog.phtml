@@ -1,0 +1,46 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Tr;
+use Jet\UI_dialog;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('change_product_form');
+
+if(!$form) {
+	return;
+}
+
+$phone_end_email_dialog = new UI_dialog( 'change_product_dialog', Tr::_('Change product'), UI_dialog::SIZE_LARGE );
+?>
+<?=$phone_end_email_dialog->start()?>
+
+<div>
+	<?php require 'form.phtml'; ?>
+</div>
+
+<?=$phone_end_email_dialog->end()?>
+
+<script>
+	function sendChangeProductForm() {
+		JetAjaxForm.submit('<?=$form->getId()?>', {
+			onSuccess: function () {
+				location.reload();
+			}
+		});
+	}
+</script>

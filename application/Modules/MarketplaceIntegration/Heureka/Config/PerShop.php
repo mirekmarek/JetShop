@@ -135,7 +135,13 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	
 	public function getDeliveryMapItem( int $method_id ) : ?Config_DeliveryMapItem
 	{
-		return $this->delivery_map[$method_id]??null;
+		foreach($this->delivery_map as $i=>$dm) {
+			if($dm->getDeliveryMethodId()==$method_id) {
+				return $dm;
+			}
+		}
+		
+		return null;
 	}
 	
 	public function createPaymentMapItem( array $data ) : Config_PaymentMapItem
@@ -168,7 +174,13 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	
 	public function getPaymentMapItem( int $method_id ): ?Config_PaymentMapItem
 	{
-		return $this->payment_map[$method_id]??null;
+		foreach($this->payment_map as $i=>$dm) {
+			if($dm->getPaymentMethodId()==$method_id) {
+				return $dm;
+			}
+		}
+		
+		return null;
 	}
 	
 	public function getOverenoAPIURL(): string

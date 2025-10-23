@@ -109,7 +109,9 @@ abstract class Report
 		$all_eshop_keys = ['total'];
 		
 		foreach(EShops::getListSorted() as $eshop) {
-			$all_eshop_keys[] = $eshop->getKey();
+			if(!$eshop->getIsVirtual()) {
+				$all_eshop_keys[] = $eshop->getKey();
+			}
 		}
 		$this->selected_eshop_keys = [];
 		

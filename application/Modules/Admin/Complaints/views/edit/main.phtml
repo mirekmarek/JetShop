@@ -44,16 +44,22 @@ $complaint = $this->getRaw( 'complaint' );
 						</tr>
 					<?php endif; ?>
 					<tr>
-						<td nowrap=""><b><?=Tr::_('Purchase date and time:')?></b></td>
+						<td nowrap=""><b><?=Tr::_('Date and time:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($complaint->getDateStarted()) ?></td>
 					</tr>
+					<?php /*
 					<tr>
 						<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= $complaint->getIpAddress() ?></td>
 					</tr>
+					*/ ?>
 					<tr>
 						<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Application_Service_Admin::Order()->renderItemName($complaint->getOrderId())?></td>
+					</tr>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Bill number:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?=$complaint->getBillNumber()?></td>
 					</tr>
 					<tr>
 						<td><b><?=Tr::_('Type:')?></b></td>
@@ -66,6 +72,10 @@ $complaint = $this->getRaw( 'complaint' );
 					<tr>
 						<td><b><?=Tr::_('Preffered solution:')?></b></td>
 						<td><?=$complaint->getPreferredSolution()?->showAdmin()?></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><?=Plugin::get(Plugin_EditMain_Main::getKey())->renderButton()?></td>
 					</tr>
 				</table>
 			</div>

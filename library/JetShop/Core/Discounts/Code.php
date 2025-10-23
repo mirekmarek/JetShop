@@ -6,6 +6,7 @@
  */
 namespace JetShop;
 
+use Closure;
 use Jet\Application_Module;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
@@ -491,4 +492,30 @@ class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_A
 		return Discounts::Manager()->getActiveModuleByInterface( Application_Service_EShop_DiscountModule_Code::class, $eshop );
 	}
 	
+	public static function generate( EShop $eshop, string $prefix, int $length, Closure $setup ) : static
+	{
+		do {
+			$d_code = $prefix;
+			
+			/** @noinspection SpellCheckingInspection */
+			$characters = '0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ';
+			$charactersLength = strlen($characters);
+			
+			for ($i = 0; $i < $length; $i++) {
+				$d_code .= $characters[random_int(0, $charactersLength - 1)];
+			}
+			
+			
+		} while( static::getByCode( $d_code, $eshop ) );
+		
+		$discounts_code = new static();
+		$discounts_code->setEshop( $eshop );
+		$discounts_code->setCode( $d_code );
+		
+		$setup( $discounts_code );
+
+		$discounts_code->save();
+		
+		return $discounts_code;
+	}
 }

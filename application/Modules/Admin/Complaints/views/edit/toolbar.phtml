@@ -7,6 +7,8 @@
 namespace JetApplicationModule\Admin\Complaints;
 
 
+use Jet\Http_Request;
+use Jet\Tr;
 use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
@@ -56,16 +58,19 @@ $next_url = $listing->getNextEditUrl( $complaint->getId() );
 		
 		<?php /*Plugin::get( Plugin_SendMailConfirmation_Main::KEY )?->renderButton()* /?>
 		<?php /*<?=Plugin::get( Plugin_DispatchNewGoods_Main::KEY )->renderButton()?> */ ?>
+
+		<a href="<?=Http_Request::currentURI(['print'=>1])?>" target="_blank" class="btn btn-primary"><?=UI::icon('print')?> <?=Tr::_('Print')?></a>
 		
 		
 		<?=Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton()?>
 		
-		<?=Plugin::get(Plugin_MoneyRefund_Main::KEY)?->renderButton()?>
+		<?=Plugin::get( Plugin_MoneyRefund_Main::KEY )?->renderButton()?>
 		
-		<?=Plugin::get(Plugin_ServiceReport_Main::KEY)?->renderButton()?>
-
+		<?=Plugin::get( Plugin_GoodsReceiptProtocol_Main::KEY )?->renderButton()?>
+		<?=Plugin::get( Plugin_ServiceReport_Main::KEY )?->renderButton()?>
 
 		<?=Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton()?>
+		
 	
 	</div>
 </div>

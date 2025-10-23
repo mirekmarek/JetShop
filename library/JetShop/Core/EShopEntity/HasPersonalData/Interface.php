@@ -10,7 +10,7 @@ namespace JetShop;
 
 interface Core_EShopEntity_HasPersonalData_Interface {
 	
-	public static function findAndDeletePersonalData( int $customer_id );
+	public static function findAndDeletePersonalData( int $customer_id, string $customer_email, string $customer_phone_number );
 	
 	public function deletePersonalData() : void;
 	

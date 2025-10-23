@@ -1,0 +1,16 @@
+<?php
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ */
+
+$id = $this->getRaw('id');
+?>
+<script type="text/javascript" id="pap_x2s6df8d" src="https://login.dognet.sk/scripts/fj27g82d"></script>
+<script type="text/javascript">
+	PostAffTracker.setAccountId('<?=$id?>');
+	try {
+		PostAffTracker.track();
+	} catch (err) { }
+</script>

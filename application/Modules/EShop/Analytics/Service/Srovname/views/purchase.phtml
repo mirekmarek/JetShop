@@ -1,0 +1,44 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Order;
+use JetApplication\Product_EShopData;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getString('id');
+$order = $this->getRaw('order');
+
+$eshop = $order->getEshop();
+
+
+$items = [];
+foreach($order->getItems() as $item){
+	if(!$item->isStdProduct()) {
+		continue;
+	}
+	
+	$product = Product_EShopData::get( $item->getItemId(), $order->getEshop() );
+	
+	$items[] = [
+		'id' => $item->getItemId(),
+		'name' => $item->getTitle(),
+		'price' => $item->getPricePerUnit_WithoutVat(),
+		'quantity' => $item->getNumberOfUnits(),
+		'category' => $product?->getKind()?->getName()??'',
+	];
+}
+
+?>
+<script>
+	srovname('event', 'purchase', {
+		'value': <?=$order->getTotalAmount_WithoutVAT()?>,
+		'currency': '<?=$order->getPricelist()->getCurrency()->getCode()?>',
+		'transaction_id': '<?=$order->getNumber()?>',
+		'items': <?=json_encode($items)?>
+	});
+</script>
+

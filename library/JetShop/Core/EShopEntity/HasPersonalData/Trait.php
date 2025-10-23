@@ -9,7 +9,7 @@ namespace JetShop;
 
 trait Core_EShopEntity_HasPersonalData_Trait {
 	
-	public static function findAndDeletePersonalData( int $customer_id ) : void
+	public static function findAndDeletePersonalData( int $customer_id, string $customer_email, string $customer_phone_number ) : void
 	{
 		$items = static::fetch([''=>[
 			'customer_id' => $customer_id,
@@ -18,7 +18,6 @@ trait Core_EShopEntity_HasPersonalData_Trait {
 		foreach($items as $item) {
 			$item->deletePersonalData();
 		}
-		
 	}
 
 }

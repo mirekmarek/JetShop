@@ -26,6 +26,10 @@ trait CashDesk_ProcessControl
 			if(!$this->getEmailHasBeenSet()) {
 				return false;
 			}
+			
+			if(!$this->getPhoneHasBeenSet()) {
+				return false;
+			}
 
 			if(!$this->getCustomerRegisterOrNotBeenSet()) {
 				return false;

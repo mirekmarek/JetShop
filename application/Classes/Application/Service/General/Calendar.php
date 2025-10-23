@@ -11,5 +11,6 @@ use JetShop\Core_Application_Service_General_Calendar;
 
 #[Application_Service_MetaInfo]
 abstract class Application_Service_General_Calendar extends Core_Application_Service_General_Calendar {
-
+	
+	abstract public function getNumberOfDaysRequiredForDispatch( EShop $eshop ) : Calendar_DispatchDeadlineInfo;
 }

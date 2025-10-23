@@ -48,8 +48,14 @@ abstract class Core_Exports_Definition {
 	 */
 	public function getAllowedEshops(): array
 	{
-		if(!$this->allowed_eshops) {
-			$this->allowed_eshops = EShops::getList();
+		if( $this->allowed_eshops===null ) {
+			$this->allowed_eshops = [];
+			
+			foreach(EShops::getList() as $eshop) {
+				if($this->module->isAllowedForShop($eshop)) {
+					$this->allowed_eshops[] = $eshop;
+				}
+			}
 		}
 		return $this->allowed_eshops;
 	}
@@ -63,6 +69,16 @@ abstract class Core_Exports_Definition {
 		$this->allowed_eshops = $allowed_eshops;
 	}
 	
+	public function isAllowedForEshop( Eshop $eshop ): bool
+	{
+		foreach($this->getAllowedEshops() as $allowed_eshop) {
+			if($allowed_eshop->getKey() === $eshop->getKey()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	
 	

@@ -46,7 +46,7 @@ class Client {
 		
 		
 		$curl_handle = curl_init();
-		
+		//var_dump($method, $URL, $post_data, $get_data);
 		curl_setopt($curl_handle, CURLOPT_URL, $URL );
 		
 		$post_data = http_build_query($post_data);
@@ -60,6 +60,10 @@ class Client {
 				curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $post_data);
 				break;
 			case static::METHOD_PUT:
+				curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
+				curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $post_data );
+				
+				/*
 				$handle = fopen('php://temp', 'w+');
 				fwrite($handle, $post_data );
 				rewind($handle);
@@ -67,6 +71,7 @@ class Client {
 				curl_setopt($curl_handle, CURLOPT_PUT, true);
 				curl_setopt($curl_handle, CURLOPT_INFILE, $handle);
 				curl_setopt($curl_handle, CURLOPT_INFILESIZE, $f_stat['size']);
+				*/
 				break;
 			case static::METHOD_GET:
 				curl_setopt($curl_handle, CURLOPT_HTTPGET, true);
@@ -81,7 +86,7 @@ class Client {
 		$this->response_data = curl_exec($curl_handle);
 		
 		$this->response_status = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
-		
+		//var_dump($this->response_data, $this->response_status);
 		
 		$message = '';
 		
@@ -129,6 +134,7 @@ class Client {
 	public function heurekaRestRequest( string $method, string $action, array $post_data = [], array$get_data = [] ) : bool
 	{
 		$api_url = rtrim( $this->config->getApiUrl(), '/' );
+		$api_url .= '/'.$this->config->getAPIKey().'/1';
 		
 		return $this->commonRestRequest(
 			$api_url.'/'.$action,

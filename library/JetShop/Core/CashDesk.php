@@ -177,6 +177,8 @@ interface Core_CashDesk {
 	public function isDeliveryAddressDisabled() : bool;
 	
 	
+	public function resetDiscounts() : void;
+	
 	/**
 	 * @return Discounts_Discount[]
 	 */

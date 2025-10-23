@@ -1,0 +1,49 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Order;
+use JetApplication\Product_EShopData;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getString('id');
+$order = $this->getRaw('order');
+
+$eshop = $order->getEshop();
+
+?>
+<script type="text/javascript">
+	window['ecotrack']('addTrans',
+		'<?=$order->getNumber()?>',                        // ID objednávky (integer) - povinné
+		'<?=$_SERVER['HTTP_HOST']?>',                  // jméno obchodu
+		'<?=$order->getTotalAmount_WithVAT()?>',      // celkem - povinné
+		'<?=$order->getTotalAmount_WithVAT()-$order->getTotalAmount_WithoutVAT()?>',           // daň
+		'<?=$order->getTotalAmount_WithVAT()-$order->getProductAmount_WithVAT()?>',    // doprava
+		'<?=$order->getBillingAddress()->getAddressTown()?>',   // město
+		'<?=$order->getBillingAddress()->getAddressCountry()?>' // země
+	);
+	
+	<?php foreach($order->getItems() as $item):
+		if(!$item->isStdProduct()) {
+			continue;
+		}
+	
+		$kind_of_product = Product_EShopData::get( $item->getItemId(), $order->getEshop() )?->getKind();
+		$kind_of_product = $kind_of_product?->getName()??'';
+		?>
+		window['ecotrack']('addItem',
+			'<?=$order->getNumber()?>',          // ID objednávky (integer) - povinné
+			'<?=$item->getItemId()?>',   // SKU/code - povinné
+			<?=json_encode($item->getTitle())?>, // název produktu
+			<?=json_encode($kind_of_product)?>,           // kategorie / variace produktu
+			'<?=$item->getPricePerUnit()?>',     // cena za jednotku - povinné
+			'<?=$item->getNumberOfUnits()?>'               // množství - povinné
+		);
+		<?php endforeach; ?>
+
+	window['ecotrack']('trackTrans');
+</script>
+

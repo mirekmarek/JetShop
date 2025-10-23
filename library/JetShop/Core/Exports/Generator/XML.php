@@ -13,7 +13,6 @@ use JetApplication\Exports_Generator;
 
 abstract class Core_Exports_Generator_XML extends Exports_Generator
 {
-
 	protected int $ident = 0;
 
 	protected function _ident() : string

@@ -10,7 +10,6 @@ namespace JetShop;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EShopEntity_HasPersonalData_Interface;
-use JetApplication\EShopEntity_HasPersonalData_Trait;
 use JetApplication\SMS;
 use JetApplication\EShopEntity_WithEShopRelation;
 
@@ -21,7 +20,6 @@ use JetApplication\EShopEntity_WithEShopRelation;
 )]
 abstract class Core_SMS_Sent extends EShopEntity_WithEShopRelation implements EShopEntity_HasPersonalData_Interface
 {
-	use EShopEntity_HasPersonalData_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -124,7 +122,15 @@ abstract class Core_SMS_Sent extends EShopEntity_WithEShopRelation implements ES
 	
 	public function deletePersonalData(): void
 	{
-		$this->delete();
+		$this->to_phone_number = '';
+		$this->save();
 	}
 	
+	public static function findAndDeletePersonalData( int $customer_id, string $customer_email, string $customer_phone_number ) : void
+	{
+		static::updateData(
+			data: ['to_phone_number' => ''],
+			where: ['to_phone_number'=>$customer_phone_number],
+		);
+	}
 }

@@ -44,7 +44,11 @@ $selected_keys = $report->getSelectedEshopKeys();
 				</label>
 			</div>
 			
-			<?php foreach(EShops::getListSorted() as $eshop): ?>
+			<?php foreach(EShops::getListSorted() as $eshop):
+				if($eshop->getIsVirtual()) {
+					continue;
+				}
+				?>
 			<div class="checkbox">
 				<input type="checkbox" class="checkbox" name="eshop[]" value="<?=$eshop->getKey()?>" <?=in_array($eshop->getKey(), $selected_keys)?' checked':''?> id="select-eshop-<?=$eshop->getKey()?>">
 				<label for="select-eshop-<?=$eshop->getKey()?>" class="form-check-label">

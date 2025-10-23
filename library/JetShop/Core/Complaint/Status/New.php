@@ -16,6 +16,8 @@ use JetApplication\Complaint_Event_NewComplaintFinished;
 use JetApplication\Complaint_Status;
 use JetApplication\Complaint_Status_BeingProcessed;
 use JetApplication\Complaint_Status_Cancelled;
+use JetApplication\Complaint_Status_PickupOrdered;
+use JetApplication\Complaint_Status_GoodsReceived;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
@@ -60,6 +62,47 @@ abstract class Core_Complaint_Status_New extends Complaint_Status {
 	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
+		
+		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
+			
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Pickup ordered') )
+					->setClass( UI_button::CLASS_PRIMARY )
+					->setIcon('truck-ramp-box');
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return Complaint_Status_PickupOrdered::get();
+			}
+		};
+		
+		
+		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
+			
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Goods received') )->setClass( UI_button::CLASS_INFO );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return Complaint_Status_GoodsReceived::get();
+			}
+			
+			public function noteForCustomerEnabled() : bool
+			{
+				return true;
+			}
+			
+			public function doNotSendNotificationsSwitchEnabled() : bool
+			{
+				return true;
+			}
+			
+		};
+		
 		
 		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
 			

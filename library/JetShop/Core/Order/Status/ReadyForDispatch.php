@@ -87,8 +87,8 @@ abstract class Core_Order_Status_ReadyForDispatch extends Order_Status {
 			{
 				return true;
 			}
-			
 		};
+		
 		
 		return $res;
 	}

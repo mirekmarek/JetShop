@@ -85,10 +85,12 @@ abstract class Core_Marketing_ConversionSourceDetector_Source
 		
 		$parsed_referer = parse_url( $_SERVER['HTTP_REFERER'] );
 		
-		if($parsed_referer['host']==$_SERVER['HTTP_HOST']) {
+		$host = $parsed_referer['host']??'';
+		
+		if($host==$_SERVER['HTTP_HOST']) {
 			return '';
 		}
 		
-		return $parsed_referer['host'];
+		return $host;
 	}
 }

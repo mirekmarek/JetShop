@@ -16,4 +16,8 @@ return [
 	'Next year' => 'Příští rok',
 	'Today - date' => 'Dnes - datum',
 	'Tomorrow - date' => 'Zítra - datum',
+	'Product image thumbnail URL' => '',
+	'Product name' => '',
+	'Max width:' => '',
+	'Max height:' => '',
 ];

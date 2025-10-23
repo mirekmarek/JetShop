@@ -9,6 +9,8 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Application_Service_MetaInfo;
 use JetApplication\Application_Service_EShop;
+use JetApplication\Order;
+use JetApplication\Order_Item;
 
 #[Application_Service_MetaInfo(
 	group: Application_Service_EShop::GROUP,
@@ -19,5 +21,5 @@ use JetApplication\Application_Service_EShop;
 )]
 abstract class Core_Application_Service_EShop_Complaint extends Application_Module
 {
-
+	abstract public function generateCreateURL( Order $order, Order_Item $order_item ): false|string;
 }

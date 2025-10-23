@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\EShop\CashDesk;
 
-
 use Jet\Exception;
 use Jet\Http_Headers;
 use Jet\Http_Request;

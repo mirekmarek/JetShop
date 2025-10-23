@@ -1,0 +1,118 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Application_Service_Admin;
+use JetApplication\Complaint;
+use JetApplication\EShops;
+use JetApplication\Product;
+
+/**
+ * @var MVC_View $this
+ * @var Complaint     $complaint
+ */
+
+$complaint = $this->getRaw( 'complaint' );
+
+$product = Product::get( $complaint->getProductId() );
+
+?>
+<div style="padding: 1cm">
+	<h1 style="font-size: 0.8cm"><?=Tr::_('Complaint');?> <?=$complaint->getNumber()?></h1>
+	<hr>
+	<div style="font-weight: bolder;font-size: 0.5cm">
+		<?=$product->getInternalName()?>
+	</div>
+	<div style="font-size: 0.3cm">
+		<?=$product->getInternalCode()?> / <?=$product->getEan()?>
+	</div>
+	<hr>
+	
+	<div>
+		<h5><?=Tr::_('Description of the problem')?></h5>
+		
+		<p><?=nl2br($complaint->getProblemDescription())?></p>
+	</div>
+	<hr>
+	
+	<?php /*
+	<?php if($complaint->getImages()): ?>
+	<h3 style="font-size: 0.6cm;"><?=Tr::_('Images')?></h3>
+	<div style="display: flex; flex-wrap: wrap;gap: 0.5cm">
+		<?php foreach( $complaint->getImages() as $img ):?>
+			
+			<div style="width: 9cm">
+				<a href="<?=$img->getURL()?>" target="_blank"><img src="<?=$img->getURL()?>" style="max-width: 8.5cm; height: auto"></a>
+			</div>
+		
+		<?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+	*/ ?>
+	
+	
+</div>
+
+<hr>
+
+
+<div style="display: flex">
+	<div style="margin: 10px" class="card">
+		<div class="card-body">
+			<h3 style="font-size: 0.6cm;"><?=Tr::_('Common information')?></h3>
+			
+			<table style="margin: 10px">
+				<?php if(EShops::isMultiEShopMode()): ?>
+					<tr>
+						<td><b><?=Tr::_('e-shop')?></b></td>
+						<td><?=$complaint->getEshop()->getName()?></td>
+					</tr>
+				<?php endif; ?>
+				<tr>
+					<td nowrap=""><b><?=Tr::_('Date and time:')?></b></td>
+					<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($complaint->getDateStarted()) ?></td>
+				</tr>
+				<tr>
+					<td nowrap=""><b><?=Tr::_('Order:')?></b></td>
+					<td nowrap="" style="padding: 3px"><?=Application_Service_Admin::Order()->renderItemName($complaint->getOrderId())?></td>
+				</tr>
+				<tr>
+					<td nowrap=""><b><?=Tr::_('Bill number:')?></b></td>
+					<td nowrap="" style="padding: 3px"><?=$complaint->getBillNumber()?></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	<div style="margin: 10px;margin-left: 80px;" class="card">
+		
+		<div class="card-body">
+			<h3 style="font-size: 0.6cm;"><?=Tr::_('Customer')?></h3>
+			
+			<table>
+				<tr>
+					<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Phone:')?></td>
+					<td style="font-size: 1.2rem;font-weight: bolder"><?=$complaint->getPhone()?></td>
+				</tr>
+				<tr>
+					<td><?=Tr::_('e-mail:')?></td>
+					<td><a href="mailto:<?=$complaint->getEmail()?>"><u><?=$complaint->getEmail()?></u></a></td>
+				</tr>
+			</table>
+			
+		</div>
+	</div>
+	
+</div>
+
+<script>
+	window.print();
+</script>

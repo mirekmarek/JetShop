@@ -269,13 +269,12 @@ class Server
 		$allowed_payment_methods_ids = null;
 		$allowed_payment_methods = [];
 		
-		$available_delivery_methods = Delivery_Method::getAllActive(
-			EShops::getCurrent()
-		);
+		$available_delivery_methods = Delivery_Method::getAvailableByProducts( EShops::getCurrent(), $products );
 		
 		foreach( $available_delivery_methods as $delivery_method ) {
 			
 			$delivery_map_item = $this->config->getDeliveryMapItem( $delivery_method->getId() );
+
 			if( !$delivery_map_item ) {
 				continue;
 			}
@@ -370,9 +369,9 @@ class Server
 		
 		if($exists) {
 			$this->response([
-				'order_id' => $exists->getId(),
-				'internal_id' => $exists->getId(),
-				'variableSymbol' => $exists->getId()
+				'order_id' => $exists->getNumber(),
+				'internal_id' => $exists->getNumber(),
+				'variableSymbol' => $exists->getNumber()
 			]);
 			return;
 			
@@ -456,9 +455,9 @@ class Server
 		
 		
 		$this->response([
-			'order_id' => $order->getId(),
-			'internal_id' => $order->getId(),
-			'variableSymbol' => $order->getId()
+			'order_id' => $order->getNumber(),
+			'internal_id' => $order->getNumber(),
+			'variableSymbol' => $order->getNumber()
 		]);
 	}
 	

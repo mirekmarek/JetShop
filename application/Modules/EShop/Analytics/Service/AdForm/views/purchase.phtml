@@ -1,0 +1,45 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$order = $this->getRaw('order');
+$id = $this->getString('id');
+$page_name_prefix = $this->getString('page_name_prefix');
+
+
+$adform_tracking_products = [];
+
+foreach( $order->getItems() as $item ) {
+	if($item->isStdProduct()) {
+		$adform_tracking_products[] = [
+			'productid' => $item->getItemId(),
+			'step' => 2
+		];
+	}
+}
+
+?>
+<!-- Adform Tracking Code BEGIN -->
+<script type="text/javascript">
+	window._adftrack = {
+		pm: <?=$id?>,
+		pagename: encodeURIComponent('<?=$page_name_prefix?>|Thank_you_page'),
+		divider: encodeURIComponent('|'),
+		order: {
+			sales: '<?=$order->getProductAmount_WithoutVAT(); ?>',
+			itms: <?=json_encode($adform_tracking_products);?>
+		}
+	};
+	(function(){var s=document.createElement('script');s.type='text/javascript';s.async=true;s.src='https://track.adform.net/serving/scripts/trackpoint/async/';var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);})();
+</script>
+<noscript>
+	<p style="margin:0;padding:0;border:0;">
+		<img src="https://track.adform.net/Serving/TrackPoint/?pm=567372&ADFPageName=Nejlevnejsisport%7CThank_you_page&ADFdivider=|" width="1" height="1" alt="" />
+	</p>
+</noscript>
+<!-- Adform Tracking Code END -->

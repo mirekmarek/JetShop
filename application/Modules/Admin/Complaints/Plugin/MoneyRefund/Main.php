@@ -41,12 +41,14 @@ class Plugin_MoneyRefund_Main extends Plugin {
 		
 		$product_price = 0.0;
 		$order = Order::get( $item->getOrderId() );
-		foreach($order->getItems() as $order_item){
-			if(
-				$order_item->isPhysicalProduct() &&
-				$item->getProductId()==$order_item->getItemId()
-			) {
-				$product_price = $order_item->getPricePerUnit_WithVat();
+		if($order) {
+			foreach($order->getItems() as $order_item){
+				if(
+					$order_item->isPhysicalProduct() &&
+					$item->getProductId()==$order_item->getItemId()
+				) {
+					$product_price = $order_item->getPricePerUnit_WithVat();
+				}
 			}
 		}
 		

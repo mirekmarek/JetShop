@@ -272,7 +272,7 @@ abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopDa
 				$ids = $sc->getBranchProductIds();
 
 				if($ids) {
-					$this->all_product_ids += $sc->getBranchProductIds();
+					$this->all_product_ids = array_merge( $this->all_product_ids, $sc->getBranchProductIds() );
 				}
 			}
 			

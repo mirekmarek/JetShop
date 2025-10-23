@@ -36,7 +36,7 @@ trait CashDesk_Confirm {
 			$this->initMainAgreeFlags_survey_disagree();
 			$this->initMainAgreeFlags_mailing_subscribe();
 			
-			$this->getOrder()->getPaymentMethod()->getBackendModule()?->generateCachDeskAgreeFlags( $this );
+			$this->getSelectedPaymentMethod()->getBackendModule()?->generateCachDeskAgreeFlags( $this );
 		}
 	}
 

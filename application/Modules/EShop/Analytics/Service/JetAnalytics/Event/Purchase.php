@@ -40,6 +40,9 @@ class Event_Purchase extends Event_CheckoutStarted
 	{
 		parent::init( $order );
 		
+		$this->order_id = $order->getId();
+		$this->order_number = $order->getNumber();
+		
 		$this->session->setPurchased( true );
 	}
 	
@@ -64,6 +67,20 @@ class Event_Purchase extends Event_CheckoutStarted
 	public function getItems() : string
 	{
 		return 'thumbs-up';
+	}
+	
+	public function save() : void
+	{
+		if(($e_id=static::dataFetchOne(
+			select: ['id'],
+			where: ['order_id'=>$this->order_id]
+		))) {
+			$this->id = $e_id;
+			$this->setIsSaved();
+			return;
+		}
+		
+		parent::save();
 	}
 	
 	

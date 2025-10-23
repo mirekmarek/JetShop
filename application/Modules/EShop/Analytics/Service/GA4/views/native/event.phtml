@@ -16,10 +16,10 @@ $event_data = $this->getRaw('event_data');
 if($event_data):
 ?>
 
-<script>gtag('<?=$event?>', <?=json_encode($event_data)?>);</script>
+<script>gtag('event', '<?=$event?>', <?=json_encode($event_data)?>);</script>
 
 <?php else: ?>
 
-<script>gtag('<?=$event?>');</script>
+<script>gtag('event', '<?=$event?>');</script>
 
 <?php endif;

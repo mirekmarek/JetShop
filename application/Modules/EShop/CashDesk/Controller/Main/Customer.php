@@ -193,8 +193,12 @@ trait Controller_Main_Customer {
 		if(!$cash_desk->catchSetPasswordForm()) {
 			$response->error();
 		}
+		
+		$this->cash_desk->resetDiscounts();
 
 		$response->addSnippet('customer');
+		$response->addSnippet('delivery');
+		$response->addSnippet('overview');
 
 		$response->response();
 	}
@@ -219,8 +223,13 @@ trait Controller_Main_Customer {
 
 		$cash_desk->setNoRegistration(true);
 		$cash_desk->setCustomerRegisterOrNotBeenSet(true);
-
+		
+		$this->cash_desk->resetDiscounts();
+		
+		
 		$response->addSnippet('customer');
+		$response->addSnippet('delivery');
+		$response->addSnippet('overview');
 
 		$response->response();
 
@@ -289,10 +298,12 @@ trait Controller_Main_Customer {
 		$response = new Controller_Main_Response( $this );
 		$cash_desk = $this->cash_desk;
 
-
+		
 		$form = $cash_desk->getBillingAddressForm();
-
-		if( $form->catch() ) {
+		
+		$form->validate();
+		
+		if( !$form->getValidationErrors() ) {
 			$cash_desk->setBillingAddressHasBeenSet(true);
 			
 			if($cash_desk->isDeliveryAddressDisabled()) {

@@ -65,26 +65,6 @@ abstract class Core_Delivery_Class extends EShopEntity_Common implements EShopEn
 	)]
 	protected array $delivery_methods = [];
 	
-	public static function getScope() : array
-	{
-		if(isset(static::$scope[static::class])) {
-			return static::$scope[static::class];
-		}
-		
-		static::$scope[static::class] = static::dataFetchPairs(
-			select: [
-				'id',
-				'internal_name'
-			], order_by: ['id']);
-		
-		foreach(static::$scope[static::class] as $id=>$title) {
-			static::$scope[static::class][$id] = '['.$id.'] '.$title;
-		}
-		
-		return static::$scope[static::class];
-	}
-	
-	
 	public static function getDefault() : ?static
 	{
 		return static::load(['is_default'=>true]);

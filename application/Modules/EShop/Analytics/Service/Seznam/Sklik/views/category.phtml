@@ -1,0 +1,58 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+
+use Jet\MVC_View;
+use JetApplication\Application_Service_EShop;
+use JetApplication\EShop_CookieSettings_Group;
+
+/**
+ * @var MVC_View $this
+ */
+
+$retargeting_id = $this->getString('retargeting_id');
+$category_id = $this->getString('category_id');
+
+?>
+<script type="text/javascript" src="https://c.seznam.cz/js/rc.js"></script>
+<script>
+	var retargetingConf = {
+		rtgId: <?=$retargeting_id?>,
+		category: "",
+		pageType: "",
+		rtgUrl: "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>",
+		consent: 0
+	};
+	
+	<?php if(Application_Service_EShop::CookieSettings()?->groupAllowed(EShop_CookieSettings_Group::MARKETING)): ?>
+	retargetingConf.consent = 1;
+	<?php endif; ?>
+
+	retargetingConf.itemId = "<?=$category_id?>";
+	retargetingConf.pagetype = "category";
+
+	if (window['rc'] && window['rc']['retargetingHit']) {
+		window['rc']['retargetingHit'](retargetingConf);
+	}
+
+	if(!window['CookieSettingHandlers']) {
+		window['CookieSettingHandlers'] = [];
+	}
+
+	window['CookieSettingHandlers'].push(( state )=>{
+		if(state.marketing) {
+			if(
+				window['rc'] &&
+				window['rc']['retargetingHit']
+			) {
+				window['retargetingConf'].consent = 1;
+				window['rc']['retargetingHit'](window['retargetingConf']);
+			}
+
+		}
+	});
+	
+</script>

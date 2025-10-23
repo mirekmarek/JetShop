@@ -1,0 +1,49 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Complaints;
+
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\Tr;
+use Jet\UI;
+
+use Jet\MVC_View;
+
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ */
+
+$form = $this->getRaw('edit_main_form');
+
+if(!$form) {
+	return;
+}
+
+$form->renderer()->setDefaultLabelWidth([	Form_Renderer::LJ_SIZE_MEDIUM => 4
+]);
+$form->renderer()->setDefaultFieldWidth([
+	Form_Renderer::LJ_SIZE_MEDIUM => 8
+]);
+
+$form->renderer()->addJsAction('onsubmit', 'sendEditMain();return false;');
+
+echo $form->start();
+	echo $form->field('bill_number');
+	echo $form->field('order');
+	echo $form->field('complaint_type_code');
+	echo $form->field('delivery_of_claimed_goods_code');
+	echo $form->field('preferred_solution_code');
+
+?>
+	</div>
+	<div class="modal-footer">
+	<?php
+echo UI::button_save(Tr::_('Update'));
+echo $form->end();

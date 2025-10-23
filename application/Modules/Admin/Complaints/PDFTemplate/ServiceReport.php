@@ -34,70 +34,80 @@ class PDFTemplate_ServiceReport extends PDF_Template
 	
 	protected function init(): void
 	{
-		$this->addProperty('complaint_number', Tr::_('Complaint number'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getNumber();
-			});
-		
-		$this->addProperty('complaint_type', Tr::_('Complaint type'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getComplaintType()?->getTitle( $this->complaint->getEshop()->getLocale() )??'';
-			});
-		
-		$this->addProperty('order_number', Tr::_('Order number'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getOrderNumber();
-			});
-		
-		$this->addProperty('complaint_date_time', Tr::_('Complaint date and time'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getEshop()->getLocale()->dateAndTime( $this->complaint->getDateStarted() );
-			});
-		
-		
-		
-		$this->addProperty('customer_name', Tr::_('Customer - name'))
-			->setPropertyValueCreator( function() {
-				if( $this->complaint->getDeliveryCompanyName() ) {
-					return $this->complaint->getDeliveryCompanyName();
-				}
+		Tr::setCurrentDictionaryTemporary(
+			dictionary: 'Admin.Complaints',
+			action: function() {
+				$this->addProperty('complaint_number', Tr::_('Complaint number'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getNumber();
+					});
 				
-				return $this->complaint->getDeliveryFirstName().' '.$this->complaint->getDeliverySurname();
-			});
-		
-		
-		$this->addProperty('customer_address', Tr::_('Customer - address'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getDeliveryAddressStreetNo().'<br>'.
-					$this->complaint->getDeliveryAddressZip().' '.$this->complaint->getDeliveryAddressTown();
-			});
-		
-		
-		$this->addProperty('customer_phone', Tr::_('Customer - phone'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getPhone();
-			});
-		
-		$this->addProperty('customer_email', Tr::_('Customer - e-mail'))
-			->setPropertyValueCreator( function() {
-				return $this->complaint->getEmail();
-			});
-		
-		$this->addProperty('product_name', Tr::_('Product name'))
-			->setPropertyValueCreator( function() {
-				$p = Product::get( $this->complaint->getProductId() );
-				return $this->complaint->getProduct()->getName().' / '.$p->getInternalCode();
-			});
-		
-		$this->addProperty('problem_description', Tr::_('Problem description'))
-			->setPropertyValueCreator( function() {
-				return nl2br($this->complaint->getProblemDescription());
-			});
-		
-		$this->addProperty('service_report', Tr::_('Service report'))
-			->setPropertyValueCreator( function() {
-				return nl2br($this->complaint->getServiceReport());
-			});
+				$this->addProperty('complaint_type', Tr::_('Complaint type'))
+					->setPropertyValueCreator( function() {
+						return Tr::setCurrentDictionaryTemporary(
+							dictionary: 'Admin.Complaints',
+							action: function() {
+								return $this->complaint->getComplaintType()?->getTitle( $this->complaint->getEshop()->getLocale() )??'';
+							}
+						);
+					});
+				
+				$this->addProperty('order_number', Tr::_('Order number'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getOrderNumber();
+					});
+				
+				$this->addProperty('complaint_date_time', Tr::_('Complaint date and time'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getEshop()->getLocale()->dateAndTime( $this->complaint->getDateStarted() );
+					});
+				
+				
+				
+				$this->addProperty('customer_name', Tr::_('Customer - name'))
+					->setPropertyValueCreator( function() {
+						if( $this->complaint->getDeliveryCompanyName() ) {
+							return $this->complaint->getDeliveryCompanyName();
+						}
+						
+						return $this->complaint->getDeliveryFirstName().' '.$this->complaint->getDeliverySurname();
+					});
+				
+				
+				$this->addProperty('customer_address', Tr::_('Customer - address'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getDeliveryAddressStreetNo().'<br>'.
+							$this->complaint->getDeliveryAddressZip().' '.$this->complaint->getDeliveryAddressTown();
+					});
+				
+				
+				$this->addProperty('customer_phone', Tr::_('Customer - phone'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getPhone();
+					});
+				
+				$this->addProperty('customer_email', Tr::_('Customer - e-mail'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getEmail();
+					});
+				
+				$this->addProperty('product_name', Tr::_('Product name'))
+					->setPropertyValueCreator( function() {
+						$p = Product::get( $this->complaint->getProductId() );
+						return $this->complaint->getProduct()->getName().' / '.$p->getInternalCode();
+					});
+				
+				$this->addProperty('problem_description', Tr::_('Problem description'))
+					->setPropertyValueCreator( function() {
+						return nl2br($this->complaint->getProblemDescription());
+					});
+				
+				$this->addProperty('service_report', Tr::_('Service report'))
+					->setPropertyValueCreator( function() {
+						return nl2br($this->complaint->getServiceReport());
+					});
+			}
+		);
 
 	}
 	

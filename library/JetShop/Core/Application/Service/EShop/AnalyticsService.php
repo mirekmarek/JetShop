@@ -12,10 +12,13 @@ use Jet\Application_Module_Manifest;
 use Jet\Factory_MVC;
 use Jet\MVC_View;
 use JetApplication\Application_Service_EShop;
+use JetApplication\Availability;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
 use Jet\Application_Service_MetaInfo;
+use JetApplication\EShop;
 use JetApplication\Order;
+use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
@@ -34,6 +37,12 @@ abstract class Core_Application_Service_EShop_AnalyticsService extends Applicati
 {
 	
 	protected bool $enabled = false;
+	protected bool $testing_allowed = true;
+
+	protected EShop $eshop;
+	protected Pricelist $pricelist;
+	protected Availability $availability;
+	protected string $currency_code;
 	protected MVC_View $view;
 	
 	public function __construct( Application_Module_Manifest $manifest )
@@ -42,7 +51,18 @@ abstract class Core_Application_Service_EShop_AnalyticsService extends Applicati
 		$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
 	}
 	
-	abstract public function init() : void;
+	public function init( EShop $eshop ) : void
+	{
+		$this->eshop = $eshop;
+		$this->pricelist = $eshop->getDefaultPricelist();
+		$this->currency_code = $this->pricelist->getCurrencyCode();
+		$this->availability = $eshop->getDefaultAvailability();
+	}
+	
+	public function initTest( EShop $eshop ) : void
+	{
+		$this->init( $eshop );
+	}
 	
 	
 	public function getEnabled(): bool
@@ -50,10 +70,16 @@ abstract class Core_Application_Service_EShop_AnalyticsService extends Applicati
 		return $this->enabled;
 	}
 	
-	
-	public function setEnabled( bool $enabled ): void
+	public function getTestingAllowed(): bool
 	{
-		$this->enabled = $enabled;
+		return $this->testing_allowed;
+	}
+	
+	abstract public function allowed(): bool;
+	
+	public function canPerform() : bool
+	{
+		return $this->getEnabled() && $this->allowed();
 	}
 	
 	

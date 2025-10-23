@@ -8,18 +8,23 @@ namespace JetShop;
 
 
 use Jet\Data_DateTime;
+use Jet\Data_Image;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Form_Field_File;
 use Jet\Form_Field_FileImage;
+use Jet\Form_Field_Input;
+use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Request;
 use JetApplication\Complaint_ComplaintType;
 use JetApplication\Complaint_DeliveryOfClaimedGoods;
 use JetApplication\Complaint_PreferredSolution;
+use JetApplication\DataList;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\EShopEntity_Admin_Trait;
@@ -43,7 +48,9 @@ use JetApplication\Complaint;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\EShopEntity_HasNumberSeries_Interface;
 use JetApplication\EShopEntity_HasNumberSeries_Trait;
+use JetApplication\EShops;
 use JetApplication\Order;
+use JetApplication\Product;
 use JetApplication\Product_EShopData;
 use JetApplication\EShop_Pages;
 use JetApplication\EShop;
@@ -88,6 +95,25 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	use Complaint_Trait_Changes;
 	use EShopEntity_Admin_Trait;
 	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL,
+		is_key: true
+	)]
+	protected bool $created_by_administrator = false;
+	
+	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Bill number:'
+	)]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 50
+	)]
+	protected string $bill_number = '';
+	
+	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
 		is_key: true,
@@ -131,6 +157,10 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	)]
 	protected int $customer_id = 0;
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_EMAIL,
+		label: 'Customer - email:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -138,6 +168,10 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	)]
 	protected string $email = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_TEL,
+		label: 'Customer - phone number:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
@@ -146,6 +180,10 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	protected string $phone = '';
 	
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Company name:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
@@ -153,36 +191,65 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	protected string $delivery_company_name = '';
 	
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - First name:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_first_name = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Surname:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_surname = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Address - street and number:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_address_street_no = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Address - town:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_address_town = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Customer - Address - ZIP:'
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
 	)]
 	protected string $delivery_address_zip = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_SELECT,
+		label: 'Customer - Address - Country:',
+		select_options_creator: [
+			DataList::class,
+			'countries'
+		],
+	
+	)]
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255
@@ -202,7 +269,6 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		is_key: true
 	)]
 	protected string $delivery_personal_takeover_delivery_point_code = '';
-	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -239,7 +305,6 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		select_options_creator: [Complaint_PreferredSolution::class, 'getScope']
 	)]
 	protected string $preferred_solution_code = '';
-	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -303,7 +368,31 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		] );
 	}
 	
+	public function getCreatedByAdministrator(): bool
+	{
+		return $this->created_by_administrator;
+	}
+	
+	public function setCreatedByAdministrator( bool $created_by_administrator ): void
+	{
+		$this->created_by_administrator = $created_by_administrator;
+	}
+	
+	
+	
+	public function getBillNumber(): string
+	{
+		return $this->bill_number;
+	}
+	
+	public function setBillNumber( string $bill_number ): void
+	{
+		$this->bill_number = $bill_number;
+	}
+	
 
+	
+	
 	public function getProductId(): int
 	{
 		return $this->product_id;
@@ -787,13 +876,21 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		}
 		
 		if(!$this->upload_images_form) {
-			$image_field = new Form_Field_FileImage('image', '');
+			$image_field = new Form_Field_File('image', '');
 			$image_field->setErrorMessages([
 				Form_Field_FileImage::ERROR_CODE_INVALID_FORMAT => 'Please upload image',
 				Form_Field_FileImage::ERROR_CODE_FILE_IS_TOO_LARGE => 'Sorry, bude the file is too large',
 				Form_Field_FileImage::ERROR_CODE_DISALLOWED_FILE_TYPE => 'Please upload image',
 			]);
 			$image_field->setAllowMultipleUpload( true );
+			
+			$allowed_types = Data_Image::getSupportedMimeTypes();
+			$allowed_types[] = 'application/pdf';
+			$allowed_types[] = 'video/mp4';
+			$allowed_types[] = 'video/webm';
+			$allowed_types[] = 'video/ogg';
+			
+			$image_field->setAllowedMimeTypes( $allowed_types );
 			
 			$this->upload_images_form = new Form('upload_images_form', [
 				$image_field
@@ -852,23 +949,32 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		
 	}
 	
-	public function getMinimalImageCount() : int
+	public static function getMinimalImageCount() : int
 	{
 		return 3;
 	}
 	
-	public function getMinimalProblemDescriptionLength() : int
+	public static function getMinimalProblemDescriptionLength() : int
 	{
 		return 100;
 	}
 	
+	public function descriptionIsShort() : bool
+	{
+		if(mb_strlen($this->problem_description)<$this::getMinimalProblemDescriptionLength()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public function canBeFinished() : bool
 	{
-		if(strlen($this->problem_description)<$this->getMinimalProblemDescriptionLength()) {
+		if($this->descriptionIsShort()) {
 			return false;
 		}
 		
-		if(count($this->getImages())<$this->getMinimalImageCount()) {
+		if(count($this->getImages())<$this::getMinimalImageCount()) {
 			return false;
 		}
 		
@@ -919,24 +1025,91 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		return true;
 	}
 	
-	public function getAddForm(): Form
+	public function setupAddForm( Form $form ) : void
 	{
-		return new Form('', []);
-	}
-	
-	public function catchAddForm(): bool
-	{
-		return false;
-	}
-	
-	public function getEditForm(): Form
-	{
-		return new Form('', []);
-	}
-	
-	public function catchEditForm(): bool
-	{
-		return false;
+		$eshop = new Form_Field_Select('eshop', 'e-shop');
+		$eshop->setSelectOptions( EShops::getScope() );
+		$eshop->setDefaultValue( $this->getEshop()->getKey() );
+		$eshop->setErrorMessages([
+			Form_Field_Select::ERROR_CODE_INVALID_VALUE => 'Invalid value'
+		]);
+		$eshop->setFieldValueCatcher( function( string $eshop_key ) {
+			$eshop = EShops::get( $eshop_key );
+			$this->setEshop( $eshop );
+		} );
+		
+		$form->addField( $eshop );
+		
+		
+		$order = new Form_Field_Input('order', 'Order number:');
+		$order->setValidator(function($order) use ($eshop, $form) {
+			$value = $order->getValue();
+			
+			if(!$value) {
+				$bill_number = $form->field('bill_number')->getValue();
+				if($bill_number) {
+					return true;
+				}
+				
+				$order->setError(
+					Form_Field_Input::ERROR_CODE_EMPTY
+				);
+				
+				return false;
+			}
+			
+			$o = Order::getByNumber(
+				$value,
+				EShops::get( $eshop->getValue() )
+			);
+			if(!$o) {
+				$order->setError(
+					Form_Field_Input::ERROR_CODE_INVALID_VALUE
+				);
+				return false;
+			}
+			
+			
+			return true;
+		});
+		$order->setFieldValueCatcher( function( string $order_number ) use ($eshop) {
+			if(!$order_number) {
+				return;
+			}
+			$order = Order::getByNumber(
+				$order_number,
+				EShops::get( $eshop->getValue() )
+			);
+			$this->setOrder( $order );
+		} );
+		$form->addField( $order );
+		
+		$product = new Form_Field_Input('product', 'Product:');
+		$product->setValidator(function( $product ) {
+			$value = $product->getValue();
+			
+			if(!$value) {
+				$product->setError(
+					Form_Field_Input::ERROR_CODE_EMPTY
+				);
+				return false;
+			}
+			
+			if(!Product::get($value)) {
+				$product->setError(
+					Form_Field_Input::ERROR_CODE_INVALID_VALUE
+				);
+				return false;
+			}
+			
+			
+			return true;
+		});
+		$product->setFieldValueCatcher( function() use ($product) {
+			$this->setProductId( $product->getValue() );
+		} );
+		$form->addField( $product );
+		
 	}
 	
 }

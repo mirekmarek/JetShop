@@ -110,7 +110,7 @@ trait CashDesk_Delivery {
 			return null;
 		}
 
-		$id = $session->getValue('selected_delivery_method', $default_method->getId());
+		$id = $session->getValue('selected_delivery_method', '');
 
 		if(!isset($methods[$id])) {
 			$session->setValue('selected_delivery_method', $default_method->getId());
@@ -145,6 +145,22 @@ trait CashDesk_Delivery {
 		if(!isset( $methods[$id])) {
 			return false;
 		}
+		
+		$method = $methods[$id];
+		if($method->getInternalCode()=='b2c_cs_CZ_osobniVyzvednuti') {
+			$point = null;
+			foreach( $method->getPersonalTakeoverDeliveryPoints() as $point ) {
+				break;
+			}
+			
+			$this->selectPersonalTakeoverDeliveryPoint(
+				$method,
+				$point
+			);
+			
+			return true;
+		}
+		
 		if($session->getValue('selected_delivery_method')!=$id) {
 			$session->setValue('selected_delivery_method', $id);
 			$session->setValue('selected_personal_takeover_point_code', '');

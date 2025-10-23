@@ -26,4 +26,6 @@ abstract class Core_Application_Service_EShop_DiscountModule_DeliveryFee extends
 	
 	abstract public function remains() : float|false;
 	
+	abstract public function limitRegistered() : float|false;
+	
 }

@@ -8,11 +8,15 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
+use JetApplication\EShopConfig;
+use JetApplication\EShops;
+use JetApplication\EShop;
+use JetApplication\Application_Service_List;
 use JetApplication\Application_Service_EShop_DiscountModule;
 use JetApplication\Application_Service_EShop_AnalyticsService;
 use JetApplication\Application_Service_EShop_OAuthBackendModule;
+use JetApplication\Application_Service_EShop_ReturnOfGoods;
 use JetApplication\Application_Service_EShop_SMSSender;
-use JetApplication\EShopConfig;
 use JetApplication\Application_Service_EShop_AnalyticsManager;
 use JetApplication\Application_Service_EShop_Banners;
 use JetApplication\Application_Service_EShop_Image;
@@ -38,9 +42,7 @@ use JetApplication\Application_Service_EShop_CustomerSection;
 use JetApplication\Application_Service_EShop_CookieSettings;
 use JetApplication\Application_Service_EShop_NewOrderPostprocessor;
 use JetApplication\Application_Service_EShop_EMailMarketingSubscribeManagerBackend;
-use JetApplication\EShops;
-use JetApplication\EShop;
-use JetApplication\Application_Service_List;
+use JetApplication\Application_Service_EShop_Complaint;
 
 class Core_Application_Service_EShop
 {
@@ -227,6 +229,16 @@ class Core_Application_Service_EShop
 	public static function SMSSender( ?EShop $eshop=null ) : Application_Service_EShop_SMSSender|Application_Module|null
 	{
 		return static::list( $eshop )->get( Application_Service_EShop_SMSSender::class );
+	}
+	
+	public static function Complaints( ?EShop $eshop=null ) : Application_Service_EShop_Complaint|Application_Module|null
+	{
+		return static::list( $eshop )->get( Application_Service_EShop_Complaint::class );
+	}
+	
+	public static function ReturnOfGoods( ?EShop $eshop=null ) : Application_Service_EShop_ReturnOfGoods|Application_Module|null
+	{
+		return static::list( $eshop )->get( Application_Service_EShop_ReturnOfGoods::class );
 	}
 	
 }

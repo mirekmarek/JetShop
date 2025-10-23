@@ -246,10 +246,11 @@ trait CashDesk_Customer
 		) {
 			$billing_address = new Customer_Address();
 			
-			$billing_address->setAddressCountry( $this->eshop->getLocale()->getRegion() );
-
 			$session->setValue('billing_address', $billing_address);
 		}
+		
+		$billing_address->setAddressCountry( $this->eshop->getLocale()->getRegion() );
+		
 
 		return $billing_address;
 	}
@@ -301,6 +302,74 @@ trait CashDesk_Customer
 		return $this->phone_form;
 	}
 
+	public function validateZIP( Form_Field_Input $input ) : bool
+	{
+		$input->setErrorMessages([
+			Form_Field_Input::ERROR_CODE_EMPTY => 'Please enter ZIP code',
+			'invalid-zip-code' => "Please enter valid ZIP code",
+		]);
+		
+		$zip = $input->getValue();
+		
+		$zip = str_replace(' ', '', $zip );
+		$input->setValue( $zip );
+		
+		
+		switch($this->getEshop()->getLocale()->getRegion()) {
+			//TODO:
+			default:
+				if( !preg_match('/^[0-9]{5}$/', $zip) ) {
+					$input->setError('invalid-zip-code');
+					
+					return false;
+				}
+				
+				
+				break;
+		}
+		
+		
+		
+		return true;
+	}
+	
+	public function validateCompanyVatID( Form_Field_Input $input ) : bool
+	{
+		$value = $input->getValueRaw();
+		
+		if(!$value) {
+			return true;
+		}
+
+		
+		$value = str_replace(' ', '', $value);
+		$value = strtoupper($value);
+		
+		$input->setValue( $value );
+		
+		
+		if (strlen($value) < 10 || strlen($value) > 12) {
+			$input->setError(Form_Field_Input::ERROR_CODE_INVALID_FORMAT);
+			
+			return false;
+		}
+		
+		
+		$country_code = strtoupper( substr($value, 0, 2) );
+		$vat_number = substr($value, 2);
+		
+		if($country_code!=$this->eshop->getLocale()->getRegion()) {
+			$input->setError(Form_Field_Input::ERROR_CODE_INVALID_FORMAT);
+			return false;
+		}
+		
+		if(!preg_match('/^[0-9]{8,10}$/', $vat_number)) {
+			$input->setError(Form_Field_Input::ERROR_CODE_INVALID_FORMAT);
+			return false;
+		}
+		
+		return true;
+	}
 
 	public function getBillingAddressForm() : Form
 	{
@@ -319,6 +388,10 @@ trait CashDesk_Customer
 				]);
 
 				$this->billing_address_form->field('address_zip')->setIsRequired(true);
+				$this->billing_address_form->field('address_zip')->setValidator( function( Form_Field_Input $input ) {
+					return $this->validateZIP( $input );
+				} );
+				
 				$this->billing_address_form->field('address_zip')->setErrorMessages([
 					Form_Field::ERROR_CODE_EMPTY => "Please enter ZIP"
 				]);
@@ -343,6 +416,15 @@ trait CashDesk_Customer
 				$this->billing_address_form->field('company_id')->setErrorMessages([
 					Form_Field::ERROR_CODE_EMPTY => 'Please enter company ID'
 				]);
+				
+				$this->billing_address_form->field('company_vat_id')->setErrorMessages([
+					Form_Field::ERROR_CODE_INVALID_FORMAT => 'Please enter valid VAT ID'
+				]);
+				$this->billing_address_form->field('company_vat_id')->setValidator(function( Form_Field_Input $input ) {
+					return $this->validateCompanyVatID( $input );
+				});
+				
+				
 			} else {
 				$this->billing_address_form->field('first_name')->setIsRequired(true);
 				$this->billing_address_form->field('first_name')->setErrorMessages([
@@ -475,10 +557,10 @@ trait CashDesk_Customer
 			!($delivery_address instanceof Customer_Address)
 		) {
 			$delivery_address = new Customer_Address();
-			$delivery_address->setAddressCountry( $this->eshop->getLocale()->getRegion() );
 
 			$session->setValue('delivery_address', $delivery_address);
 		}
+		$delivery_address->setAddressCountry( $this->eshop->getLocale()->getRegion() );
 
 		return $delivery_address;
 	}

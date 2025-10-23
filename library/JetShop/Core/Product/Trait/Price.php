@@ -28,6 +28,9 @@ trait Core_Product_Trait_Price
 	
 	public function getPriceBeforeDiscount( Pricelist $pricelist ) : float
 	{
+		if(!$this->getPriceEntity($pricelist)->getDiscountPercentage()) {
+			return 0;
+		}
 		return $this->getPriceEntity( $pricelist )->getPriceBeforeDiscount();
 	}
 	

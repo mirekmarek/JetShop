@@ -1,0 +1,61 @@
+<?php
+use Jet\MVC_View;
+use JetApplication\Order;
+
+
+/**
+ * @var MVC_View $this
+ * @var Order $order
+ */
+
+$id = $this->getString('id');
+$order = $this->getRaw('order');
+
+$eshop = $order->getEshop();
+
+if($eshop->getLocale()->getRegion()=='CZ'): ?>
+	
+	<script>
+		(function(t, r, a, c, k, i, n, g) {t['ROIDataObject'] = k;
+			t[k]=t[k]||function(){(t[k].q=t[k].q||[]).push(arguments)},t[k].c=i;n=r.createElement(a),
+				g=r.getElementsByTagName(a)[0];n.async=1;n.src=c;g.parentNode.insertBefore(n,g)
+		})(window, document, 'script', '//www.heureka.cz/ocm/sdk.js?version=2&page=thank_you', 'heureka', 'cz');
+		heureka('authenticate', 'bcecf53ad2daa023cde8c51a2735bbad2603');
+		heureka('set_order_id', '<?=$order->getNumber()?>');
+		<?php
+		$sum = 0.0;
+		foreach ($order->getItems() as $item):
+		
+		$price = $item->getPricePerUnit();
+		$sum += ($price*$item->getNumberOfUnits());
+		?>
+		heureka('add_product', '<?=addslashes($item->getItemId()); ?>', '<?=addslashes($item->getTitle()); ?>', '<?=$price; ?>', '<?=$item->getNumberOfUnits(); ?>');
+		<?php endforeach; ?>
+		heureka('set_total_vat', '<?=$sum?>');
+		heureka('set_currency', 'CZK');
+		heureka('send', 'Order');
+	</script>
+<?php endif; ?>
+
+<?php if($eshop->getLocale()->getRegion()=='SK'): ?>
+	
+	<script>
+		(function(t, r, a, c, k, i, n, g) {t['ROIDataObject'] = k;
+			t[k]=t[k]||function(){(t[k].q=t[k].q||[]).push(arguments)},t[k].c=i;n=r.createElement(a),
+				g=r.getElementsByTagName(a)[0];n.async=1;n.src=c;g.parentNode.insertBefore(n,g)
+		})(window, document, 'script', '//www.heureka.sk/ocm/sdk.js?version=2&page=thank_you', 'heureka', 'sk');
+		heureka('authenticate', 'e5b2bc3c77f039d6e31ce3ede36484365cc6');
+		heureka('set_order_id', '<?=$order->getNumber()?>');
+		<?php
+		$sum = 0.0;
+		foreach ($order->getItems() as $item):
+		$price = $item->getPricePerUnit();
+		$sum += ($price*$item->getNumberOfUnits());
+		?>
+		heureka('add_product', '<?=addslashes($item->getItemId()); ?>', '<?=addslashes($item->getTitle()); ?>', '<?=$price; ?>', '<?=$item->getNumberOfUnits(); ?>');
+		<?php endforeach; ?>
+		heureka('set_total_vat', '<?=$sum?>');
+		heureka('set_currency', 'EUR');
+		heureka('send', 'Order');
+	</script>
+<?php endif; ?>
