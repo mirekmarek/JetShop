@@ -39,6 +39,12 @@ echo $form->getCommonMessage();
 
 echo $form->start();
 
+echo '<hr>';
+echo $form->field('order_deadline_time');
+echo $form->field('number_of_days_required_for_dispatch_before_order_deadline');
+echo $form->field('number_of_days_required_for_dispatch_after_order_deadline');
+echo '<hr>';
+
 echo $form->field('is_julian');
 echo $form->field('has_easter');
 echo $form->field('easter_wednesday_is_nonworking_day');

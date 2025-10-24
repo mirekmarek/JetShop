@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Exports\GoogleShopping;
 
 
+use Jet\Db;
 use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
@@ -18,6 +19,7 @@ use JetApplication\Exports_ExportCategory;
 use JetApplication\Exports_Generator_XML;
 use JetApplication\Exports_Join_KindOfProduct;
 use JetApplication\Exports_Module;
+use JetApplication\KindOfProduct;
 use JetApplication\KindOfProduct_EShopData;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
@@ -43,7 +45,7 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 
 	public function isAllowedForShop( EShop $eshop ): bool
 	{
-		return true;
+		return (bool)$this->getEshopConfig($eshop)->getCategoriesURL();
 	}
 
 	public function actualizeCategories( EShop $eshop ) : void
@@ -257,8 +259,61 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			}
 		);
 		
+		/*
+		$old_categories = new Exports_Definition(
+			module: $this,
+			name: Tr::_('Google shopping - Import old categories'),
+			description: '',
+			export_code: 'old_categories',
+			export: function() {
+				$this->importOldCategories();
+			}
+		
+		);
+		*/
+		
 		return [
-			$products
+			$products,
+			//$old_categories
 		];
+	}
+	
+	
+	public function importOldCategories() : void
+	{
+		$old_db = Db::get('old');
+		
+		$shop_map = [
+			5 => EShops::get('b2c_cs_CZ'),
+			20 => EShops::get('b2c_sk_SK'),
+		];
+		
+		$items = $old_db->fetchAll("SELECT categories_id, categories_name_gnakupy, language_id FROM categories_description_sport WHERE categories_name_gnakupy>0");
+		
+		$category_ids = [];
+		
+		foreach($items as $item) {
+			$kind_of_product= KindOfProduct::get( $item['categories_id'] );
+			if(!$kind_of_product) {
+				continue;
+			}
+			
+			$eshop = $shop_map[$item['language_id']];
+			if(!$eshop) {
+				die('!!!!');
+			}
+			
+			$join = Exports_Join_KindOfProduct::get(
+				$this->getCode(),
+				$eshop,
+				$item['categories_id'],
+			);
+			
+			$join->setExportCategoryId( $item['categories_name_gnakupy'] );
+			$join->save();
+			
+			$category_ids[] = $item['categories_name_gnakupy'];
+		}
+		
 	}
 }

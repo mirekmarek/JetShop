@@ -37,6 +37,7 @@ class Main extends Application_Service_General_Invoices implements EMail_Templat
 		$invoice = ProformaInvoice::createByOrder( $order );
 		//TODO: setup payment, atc.
 		
+		$invoice->setNumber( $order->getNumber() );
 		$invoice->save();
 		
 		return $invoice;

@@ -68,7 +68,7 @@ class Main extends Payment_Method_Module implements
 			$o_item->setAmount( $item->getTotalAmount() );
 		}
 		
-		$notification_url = '';
+		$notification_url = $return_url;
 		
 		$gopay_pm =  $order->getPaymentMethod()->getBackendModulePaymentMethodSpecification();
 		$selected_bank = $order->getPaymentMethodSpecification();
@@ -134,6 +134,29 @@ class Main extends Payment_Method_Module implements
 		}
 		
 		return true;
+	}
+	
+	public function verifyIsPaid( Order $order ): bool
+	{
+		/**
+		 * @var Config_PerShop $config
+		 */
+		$config = $this->getEshopConfig( $order->getEshop() );
+		
+		$gopay = new GoPay( $config->getGoPayConfig() );
+		$gopay->setLogger( new Logger() );
+		
+		$payments = PaymentPair::getPayments( $order->getId() );
+		
+		
+		foreach($payments as $payment ) {
+			if( $gopay->verifyPayment( $payment ) ) {
+				return true;
+			}
+		}
+		
+		return false;
+		
 	}
 	
 	

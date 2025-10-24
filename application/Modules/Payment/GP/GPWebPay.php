@@ -7,8 +7,9 @@
 namespace JetApplicationModule\Payment\GP;
 
 
+use Jet\Exception;
 use Jet\Http_Headers;
-use Jet\Logger as JetLogger;
+use Jet\Logger;
 use JetApplication\Order;
 use SoapClient;
 use SoapFault;
@@ -70,8 +71,7 @@ class GPWebPay {
 		
 		$pkeyid = openssl_get_privatekey( $key, $pass );
 		if(!$pkeyid) {
-			//TODO:
-			die('GP Web Pay: Incorrect key and/or key password');
+			throw new Exception('GP Web Pay: Incorrect key and/or key password');
 		}
 		
 		$signature = '';
@@ -148,7 +148,7 @@ class GPWebPay {
 			!isset($result->paymentStatusResponse)
 		) {
 			
-			JetLogger::danger(
+			Logger::danger(
 				event: 'payment_GP_error',
 				event_message: 'GP payment error',
 				context_object_data: [

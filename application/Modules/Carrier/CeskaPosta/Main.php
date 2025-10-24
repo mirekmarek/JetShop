@@ -83,8 +83,9 @@ class Main extends Carrier implements
 	public function getDeliveryPointTypeOptions(): array
 	{
 		return [
-			'posta' => Tr::_('Pošta', dictionary: $this->module_manifest->getName()),
-			'balikovna' => Tr::_('Balíkovna', dictionary: $this->module_manifest->getName()),
+			'pošta' => Tr::_('Pošta', dictionary: $this->module_manifest->getName()),
+			'balíkovna partner' => Tr::_('Balíkovna - partner', dictionary: $this->module_manifest->getName()),
+			'balíkovna-BOX' => Tr::_('Balíkovna - BOX', dictionary: $this->module_manifest->getName()),
 		];
 	}
 	

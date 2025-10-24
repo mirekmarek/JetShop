@@ -10,6 +10,7 @@ namespace JetApplicationModule\CalendarManager;
 use Jet\Data_DateTime;
 use JetApplication\EShop;
 use DateInterval;
+use JetApplication\Calendar_DispatchDeadlineInfo;
 
 class Calendar {
 	
@@ -262,6 +263,59 @@ class Calendar {
 		
 	}
 	
+	public function isBusinessDay( string|Data_DateTime $date, bool $use_holydays ) : bool
+	{
+		if(is_string($date)) {
+			$date = Data_DateTime::catchDateTime( $date );
+		}
+		
+		if( $use_holydays ) {
+			$holydays = $this->getHolydays();
+		} else {
+			$holydays = [];
+		}
+		
+		
+		$week_day = $date->format('w');
+		
+		if(
+			in_array( $week_day, $this->non_working_days_of_week ) ||
+			in_array( $date->format('Y-m-d'), $holydays )
+		) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	public function getNumberOfDaysRequiredForDispatch() : Calendar_DispatchDeadlineInfo
+	{
+		
+		$deadline_time = $this->config->getOrderDeadlineTime();
+		$deadline = str_replace(':', '', $deadline_time);
+		
+		$h = date('Hi');
+		
+		if(
+			$h<$deadline &&
+			$this->isBusinessDay( Data_DateTime::now(), true )
+		) {
+			$is_before_deadline = true;
+			$days = $this->config->getNumberOfDaysRequiredForDispatchBeforeOrderDeadline();
+		} else {
+			$is_before_deadline = false;
+			$days = $this->config->getNumberOfDaysRequiredForDispatchAfterOrderDeadline();
+		}
+		
+		
+		return new Calendar_DispatchDeadlineInfo(
+			is_before_deadline: $is_before_deadline,
+			deadline_time: $deadline_time,
+			number_of_days: $days,
+			delivery_term: $this->getNextBusinessDate( $days )
+		);
+	}
 	
 	
 }

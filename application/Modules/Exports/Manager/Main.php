@@ -6,12 +6,8 @@
  */
 namespace JetApplicationModule\Exports\Manager;
 
-
 use Error;
 use Jet\Application;
-use Jet\Auth;
-use Jet\Auth_Controller_Interface;
-use Jet\Auth_User_Interface;
 use Jet\Debug;
 use Jet\ErrorPages;
 use Jet\Http_Headers;
@@ -19,7 +15,7 @@ use Jet\Http_Request;
 use Jet\Locale;
 use Jet\Logger;
 use Jet\MVC;
-use Jet\MVC_Page_Interface;
+use Jet\SysConf_Jet_Debug;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
@@ -75,50 +71,6 @@ class Main extends Application_Service_General_ExportsManager implements
 	public function handleExports(): void
 	{
 		Logger::setLogger( new Logger_Exports() );
-		Auth::setController( new class implements Auth_Controller_Interface {
-			
-			public function handleLogin(): void {
-			}
-			
-			public function login( string $username, string $password ): bool
-			{
-				return false;
-			}
-			
-			public function loginUser( Auth_User_Interface $user ): bool
-			{
-				return false;
-			}
-			
-			public function logout(): void
-			{
-			}
-			
-			public function checkCurrentUser(): bool
-			{
-				return false;
-			}
-			
-			public function getCurrentUser(): Auth_User_Interface|false
-			{
-				return false;
-			}
-			
-			public function getCurrentUserHasPrivilege( string $privilege, mixed $value = null ): bool
-			{
-				return false;
-			}
-			
-			public function checkModuleActionAccess( string $module_name, string $action ): bool
-			{
-				return false;
-			}
-			
-			public function checkPageAccess( MVC_Page_Interface $page ): bool
-			{
-				return false;
-			}
-		});
 		
 		
 		
@@ -137,7 +89,9 @@ class Main extends Application_Service_General_ExportsManager implements
 		
 		[$key, $export_code] = $URL_path;
 		
-		if($key!=$this->getConfig()->getKey()) {
+		$valid_key = $this->generateKey( $export_code );
+		
+		if($key!=$valid_key) {
 			ErrorPages::handleNotFound( true );
 		}
 		
@@ -163,15 +117,21 @@ class Main extends Application_Service_General_ExportsManager implements
 			try {
 				$export->perform();
 			} catch( Error $e) {
-				Logger::danger(
-					event: 'export_fault',
-					event_message: 'Problem during export '.$export->getName(),
-					context_object_id: $export->getCode(),
-					context_object_data: [
-						'URL' => Http_Request::currentURL(),
-						'error_message' => $e->getMessage()
-					]
- 				);
+				
+				if(SysConf_Jet_Debug::getDevelMode()) {
+					throw $e;
+				} else {
+					Logger::danger(
+						event: 'export_fault',
+						event_message: 'Problem during export '.$export->getName(),
+						context_object_id: $export->getCode(),
+						context_object_data: [
+							'URL' => Http_Request::currentURL(),
+							'error_message' => $e->getMessage()
+						]
+					);
+					
+				}
 			}
 		}
 		
@@ -181,7 +141,6 @@ class Main extends Application_Service_General_ExportsManager implements
 	
 	public function getExportURL( Exports_Definition $export, ?EShop $eshop=null ) : string
 	{
-		$key = $this->getConfig()->getKey();
 		$GET_params = [];
 		if($eshop) {
 			$GET_params['eshop'] = $eshop->getKey();
@@ -191,10 +150,15 @@ class Main extends Application_Service_General_ExportsManager implements
 		
 		return $base->getHomepage( $base->getDefaultLocale() )->getURL(
 			path_fragments: [
-				$key,
+				$this->generateKey( $export->getCode() ),
 				$export->getCode()
 			],
 			GET_params: $GET_params
 		);
+	}
+	
+	protected function generateKey( string $eport_code ) : string
+	{
+		return sha1( $this->getConfig()->getKey(). $eport_code );
 	}
 }

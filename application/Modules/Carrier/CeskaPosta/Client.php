@@ -123,8 +123,7 @@ class Client {
 			$point->setCarrier( $this->carrier );
 			$point->setPointLocale( new Locale('cs_CZ') );
 			
-			$point->setPointType( 'balikovna' );
-			//$point->setPointType( (string)$item->TYP );
+			$point->setPointType( (string)$item->TYP );
 			$point->setPointCode( (string)$item->PSC );
 			
 			

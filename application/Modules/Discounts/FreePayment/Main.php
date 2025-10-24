@@ -6,12 +6,17 @@
  */
 namespace JetApplicationModule\Discounts\FreePayment;
 
+use Jet\Auth;
+use Jet\MVC;
+use JetApplication\Application_Service_EShop;
 use JetApplication\CashDesk;
+use JetApplication\Customer;
+use JetApplication\EShop_Pages;
 use JetApplication\Marketing_PaymentFeeDiscount;
 use JetApplication\Application_Service_EShop_DiscountModule_PaymentFee;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\Pricelists;
+use JetApplication\Payment_Method;
 
 class Main extends Application_Service_EShop_DiscountModule_PaymentFee
 {
@@ -50,6 +55,50 @@ class Main extends Application_Service_EShop_DiscountModule_PaymentFee
 		return $this->cash_desk->getCart()->getAmount();
 	}
 	
+	public function customerIsRegistered(): bool
+	{
+		/**
+		 * @var Customer $customer
+		 */
+		$customer = Auth::getCurrentUser();
+		
+		if(
+			$customer &&
+			$customer->getMailingSubscribed()
+		) {
+			return true;
+		}
+		
+		
+		if( MVC::getPage()->getId()==EShop_Pages::CashDesk()->getId() ) {
+			$cash_desk = Application_Service_EShop::CashDesk()->getCashDesk();
+			if(
+				!$cash_desk->getNoRegistration() &&
+				$cash_desk->getAgreeFlagChecked( 'mailing_subscribe' )
+			) {
+				return true;
+			}
+		}
+		
+		
+		return false;
+	}
+	
+	protected function getFreeLimit( Payment_Method $method ): float
+	{
+		/**
+		 * @var Customer $customer
+		 */
+		$customer = Auth::getCurrentUser();
+		
+		if( $this->customerIsRegistered() ) {
+			return $method->getFreePaymentLimitRegisteredCustomer();
+		}
+		
+		return $method->getFreePaymentLimit();
+	}
+	
+	
 	public function generateDiscounts( CashDesk $cash_desk ): void
 	{
 		$this->setCashDesk( $cash_desk );
@@ -58,9 +107,14 @@ class Main extends Application_Service_EShop_DiscountModule_PaymentFee
 			return;
 		}
 		
+		$pricelist = $cash_desk->getPricelist();
+		
+		
 		$_marketing_discounts = $this->getMarketingDiscounts();
 		
 		foreach($cash_desk->getAvailablePaymentMethods() as $method) {
+			$method->setPrice( $pricelist, $method->getDefaultPrice( $pricelist ) );
+			
 			if($method->getDiscountIsNotAllowed()) {
 				continue;
 			}
@@ -78,7 +132,6 @@ class Main extends Application_Service_EShop_DiscountModule_PaymentFee
 				}
 				
 				if($mtp<1) {
-					$pricelist = Pricelists::getCurrent();
 					
 					$price = $pricelist->round( $method->getDefaultPrice( $pricelist ) * $mtp );
 					
@@ -90,10 +143,11 @@ class Main extends Application_Service_EShop_DiscountModule_PaymentFee
 				}
 			}
 			
+			$free_limit = $this->getFreeLimit( $method );
 			
 			if(
-				$method->getFreePaymentLimit()>0 &&
-				$amount>$method->getFreePaymentLimit()
+				$free_limit>0 &&
+				$amount>$free_limit
 			) {
 				$method->setPrice( $cash_desk->getPricelist(), 0 );
 			}

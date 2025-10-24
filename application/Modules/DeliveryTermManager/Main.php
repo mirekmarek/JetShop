@@ -7,6 +7,7 @@
 namespace JetApplicationModule\DeliveryTermManager;
 
 use Jet\Data_DateTime;
+use JetApplication\Application_Service_General;
 use JetApplication\Availabilities;
 use JetApplication\Calendar;
 use JetApplication\DeliveryTerm;
@@ -45,10 +46,13 @@ class Main extends Application_Service_General_DeliveryTerm
 		$info->setNumberOfUnitsAvailable( $product->getNumberOfAvailable( $availability ) );
 		
 		if(!$product->getLengthOfDelivery( $availability )) {
-			$info->setLengthOfDelivery( 5 );
+			$info->setLengthOfDeliveryWhenNotAvailable( 5 );
 		} else {
-			$info->setLengthOfDelivery( $product->getLengthOfDelivery( $availability ) );
+			$info->setLengthOfDeliveryWhenNotAvailable( $product->getLengthOfDelivery( $availability ) );
 		}
+		
+		$dispatch_info = Application_Service_General::Calendar()->getNumberOfDaysRequiredForDispatch( $product->getEshop() );
+		$info->setLengthOfDeliveryWhenAvailable( $dispatch_info->getNumberOfDays() );
 		
 		if(!$product->getAllowToOrderWhenSoldOut()) {
 			$info->setAllowToOrderMore( false );
@@ -85,10 +89,10 @@ class Main extends Application_Service_General_DeliveryTerm
 					'default' => 'More than four weeks'
 				];
 				
-				if($info->getLengthOfDelivery()<=5) {
+				if($info->getLengthOfDeliveryWhenNotAvailable()<=5) {
 					$info->setDeliveryInfoTextWhenNotAvailable( $days_map[$info->getLengthOfDelivery()]??$days_map['default'] );
 				} else {
-					$weeks = ceil($info->getLengthOfDelivery() / 5);
+					$weeks = ceil($info->getLengthOfDeliveryWhenNotAvailable() / 5);
 					
 					$info->setDeliveryInfoTextWhenNotAvailable( $weeks_map[$weeks]??$weeks_map['default'] );
 				}
@@ -128,9 +132,11 @@ class Main extends Application_Service_General_DeliveryTerm
 		if($info->getNumberOfUnitsAvailable()>=$info->getNumberofUnitsRequired()) {
 			$info->setSituation( $info->getSituationWhenAvailable() );
 			$info->setDeliveryInfoText( $info->getDeliveryInfoTextWhenAvailable() );
+			$info->setLengthOfDelivery( $info->getLengthOfDeliveryWhenAvailable() );
 		} else {
 			$info->setSituation( $info->getSituationWhenNotAvailable() );
 			$info->setDeliveryInfoText( $info->getDeliveryInfoTextWhenNotAvailable() );
+			$info->setLengthOfDelivery( $info->getLengthOfDeliveryWhenNotAvailable() );
 		}
 		
 		

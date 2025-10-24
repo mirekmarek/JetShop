@@ -48,111 +48,60 @@ class Client
 	
 	protected function download( Locale $locale, string $JSON_URL ): array
 	{
-		$list = [];
 		$data = json_decode(file_get_contents($JSON_URL), true);
 		
-		foreach($data['data'] as $item) {
-			$id = $item['id'];
-			$name = $item['name'];
-			
-			$detail = json_decode( file_get_contents('https://api.ulozenka.cz/v3/branches/'.$id), true );
-			$item = $detail['data'][0]??null;
-
-			if(!$item) {
-				continue;
-			}
-			
-			if(
-				$locale->getRegion()=='CZ' &&
-				$item['country']!='CZE'
-			) {
-				continue;
-			}
-			
-			if(
-				$locale->getRegion()=='SK' &&
-				$item['country']!='SVK'
-			) {
-				continue;
-			}
-
-			
-			var_dump($id, $item);
-			
-			die();
+		if(!is_array($data['intime']['branches'])) {
+			return [];
 		}
 		
-		die();
-		/*
-		var_dump($JSON_URL, $data);
-		die();
 		
-		$import = function( $data ) use ( &$list, $locale ) {
-			foreach( $data as $item ) {
+		$list = [];
+		foreach( $data['intime']['branches'] as $item ) {
+			if($item['address']['country']!=$locale->getRegion()) {
+				continue;
+			}
+			
+			$place = new Carrier_DeliveryPoint();
+			$place->setPointLocale( $locale );
+			$place->setCarrier( $this->carrier );
+			
+			$place->setPointType( $item['branch_type'] );
+			
+			$place->setPointCode( $item['code'] );
+			$place->setName( $item['name'] );
+			$place->setStreet( $item['address']['street'].' '.$item['address']['number'] );
+			$place->setTown( $item['address']['town'] );
+			$place->setCountry( $item['address']['country'] );
+			$place->setZip( str_replace(' ', '', $item['address']['postal_code']) );
+			
+			
+			$place->addImage($item['photo']);
+			
+			$place->setLatitude( $item['position']['lat'] );
+			$place->setLongitude( $item['position']['lng'] );
+			
+			$days = [
+				'mon' => 'Monday',
+				'tue' => 'Tuesday',
+				'wed' => 'Wednesday',
+				'thu' => 'Thursday',
+				'fri' => 'Friday',
+				'sat' => 'Saturday',
+				'sun' => 'Sunday',
+			];
+			
+			foreach($days as $day=>$label) {
+				$oh = $item['opening_hours'][$day];
 				
-				
-				$place = new Carrier_DeliveryPoint();
-				$place->setPointLocale( $locale );
-				$place->setCarrier( $this->carrier );
-				
-				$place->setPointCode( $item['id'] );
-				$place->setName( $item['name'] );
-				$place->setStreet( $item['street'].' '.$item['house_number'] );
-				$place->setTown( $item['town'] );
-				$place->setZip( $item['zip'] );
-				
-				
-				if(!empty($item['_links']['picture']['href'])) {
-					$place->addImage($item['_links']['picture']['href']);
-				}
-				
-				$place->setLatitude( $item['gps']['latitude'] );
-				$place->setLongitude( $item['gps']['longitude'] );
-				
-				
-				$days = [
-					'monday',
-					'tuesday',
-					'wednesday',
-					'thursday',
-					'friday',
-					'saturday',
-					'sunday',
-				];
-				
-				
-				foreach($days as $day ) {
-					if(!isset($item['opening_hours']['regular'][$day])) {
-						continue;
-					}
-					
-					$oh = $item['opening_hours']['regular'][$day];
-					if(
-						!$oh ||
-						!isset($oh['hours']) ||
-						!isset($oh['hours'][0])
-					) {
-						continue;
-					}
-					
-					$oh = $oh['hours'][0];
-					
-					$place->addOpeningHours( $day, $oh['open'], $oh['close']);
-				}
-				
-				$list[$place->getPointCode()] = $place;
+				$place->addOpeningHours( $label, $oh['from'], $oh['to'] );
 			}
 			
 			
-		};
-		
-		
-		$import( $data['data']['destination'] );
-		$import( $data['data']['register'] );
-		*/
+			$list[$place->getPointCode()] = $place;
+			
+		}
 		
 		return $list;
-		
 	}
 	
 	

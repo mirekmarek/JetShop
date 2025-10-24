@@ -7,10 +7,12 @@
 namespace JetApplicationModule\Exports\Heureka;
 
 
+use Jet\Db;
 use Jet\Tr;
 use JetApplication\Admin_ControlCentre;
 use JetApplication\Admin_ControlCentre_Module_Interface;
 use JetApplication\Admin_ControlCentre_Module_Trait;
+use JetApplication\Application_Service_General;
 use JetApplication\Availability;
 use JetApplication\Brand_EShopData;
 use JetApplication\Exports_Definition;
@@ -22,6 +24,7 @@ use JetApplication\Exports_Join_KindOfProduct;
 use JetApplication\Exports_Module;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Interface;
 use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
+use JetApplication\KindOfProduct;
 use JetApplication\Pricelist;
 use JetApplication\Product_EShopData;
 use JetApplication\EShops;
@@ -50,7 +53,11 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 	{
 		$locale = $eshop->getLocale()->toString();
 		
-		return in_array( $locale, $this->allowed_locales );
+		if(!in_array( $locale, $this->allowed_locales )) {
+			return false;
+		}
+		
+		return (bool)$this->getEshopConfig($eshop)->getCategoriesURL();
 	}
 	
 	
@@ -130,11 +137,13 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$item[$name] = $line[$i];
 			}
 			
-			if( $item['categoryId'] != $category_id ) {
+			if( $item['category_id'] != $category_id ) {
 				continue;
 			}
 			
-			$param_id = $item['parametrId'];
+			//var_dump($item);
+			
+			$param_id = $item['parameter_id'];
 			
 			$e_p = Exports_ExportCategory_Parameter::get(
 				$eshop,
@@ -151,22 +160,33 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$e_p->setExportParameterId( $param_id );
 			}
 			
-			switch( $item['parameterDataType'] ) {
+			$e_p->setName( $item['parameter_name'] );
+			$e_p->setUnits( $item['parameter_unit'] );
+			
+			switch( $item['parameter_data_type'] ) {
+				case 'bool':
+					$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_OPTIONS );
+					$e_p->setMultipleValues( false );
+					$e_p->setOptions([
+						'ano' => 'Ano',
+						'ne' => 'Ne'
+					]);
+					break;
+				case 'int':
+				case 'integer':
+				case 'float':
+					$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_NUMBER );
+					break;
+				default:
 				case 'string':
 					$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_STRING );
 					break;
-				default:
-					$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_OPTIONS );
-					break;
 			}
 			
-			$e_p->setName( $item['parameterName'] );
-			$e_p->setOptions( explode( ',', $item['parameterValue'] ) );
-			$e_p->setUnits( $item['parameterUnit'] );
 			
 			$e_p->save();
-			
 		}
+		
 	}
 	
 	/** @noinspection SpellCheckingInspection */
@@ -186,6 +206,10 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 		$products = Product_EShopData::getAllActive( $eshop );
 		
 		foreach($products as $sd) {
+			if($sd->isVariantMaster()) {
+				continue;
+			}
+			
 			$f->tagStart( 'SHOPITEM' );
 			
 			$f->tagPair( 'ITEM_ID', $sd->getId() );
@@ -194,16 +218,13 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$f->tagPair( 'ITEMGROUP_ID', $sd->getVariantMasterProductId() );
 			}
 			
-			if($sd->isVariantMaster()) {
-				$f->tagPair( 'ITEMGROUP_ID', $sd->getId() );
-			}
 			
 			$f->tagPair( 'PRODUCT', $sd->getName() );
 			$f->tagPair( 'PRODUCTNAME', $sd->getName() );
 			$f->tagPair( 'DESCRIPTION', $sd->getDescription() );
 			$f->tagPair( 'PRODUCTNO', $sd->getInternalCode() );
 			$f->tagPair( 'URL', $sd->getURL() );
-			$f->tagPair( 'PRICE_VAT', $sd->getPriceBeforeDiscount( $pricelist ) );
+			$f->tagPair( 'PRICE_VAT', $sd->getPrice_WithVAT( $pricelist ) );
 			
 			if(isset($brand_map[$sd->getBrandId()])) {
 				$f->tagPair( 'MANUFACTURER', $brand_map[$sd->getBrandId()] );
@@ -247,7 +268,8 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 					$value = $values[$param_id]??null;
 					if(
 						!$value ||
-						$value->getValue()===''
+						$value->getValue()==='' ||
+						$value->getValue()==='0'
 					) {
 						continue;
 					}
@@ -288,6 +310,69 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 		
 		
 		$f->tagEnd( 'SHOP' );
+		
+		$f->done();
+	}
+	
+	
+	public function generateExports_availability( EShop $eshop, Pricelist $pricelist, Availability $availability ): void
+	{
+		
+		$calendar = Application_Service_General::Calendar();
+		$delivery_deadline_info = $calendar->getNumberOfDaysRequiredForDispatch( $eshop );
+		
+		$deadline = $delivery_deadline_info->getDeadline()->format('Y-m-d H:i');
+		
+		$term = $delivery_deadline_info->getDeliveryTerm()->format('Y-m-d 16:00');
+		
+		
+		$f = new Exports_Generator_XML( $this->getCode(), $eshop );
+		$f->enableBufferMode();
+		
+		$brand_map = Brand_EShopData::getNameMap( $eshop );
+		$export_category_map = Exports_Join_KindOfProduct::getMap( $this->getCode(), $eshop );
+		$parameters = [];
+		$export_categories = [];
+		
+		$f->start();
+		
+		$f->tagStart( 'item_list' );
+		
+		$products = Product_EShopData::getAllActive( $eshop );
+		
+		foreach($products as $sd) {
+			if($sd->isVariantMaster()) {
+				continue;
+			}
+			
+			$avl_info = $sd->getDeliveryInfo( 1, $availability );
+			
+			$f->tagStart( 'item', attributes: [
+				'id' => $sd->getId(),
+			] );
+			
+			$f->tagPair( 'stock_quantity', $avl_info->getNumberOfUnitsAvailable() );
+			
+			if($avl_info->getNumberOfUnitsAvailable()>0) {
+				$f->tagPair('delivery_time', $term, attributes: [
+					'orderDeadline' => $deadline,
+				]);
+			} else {
+				/*
+				$f->tagPair('delivery_time', $calendar->getNextBusinessDate( $eshop, $avl_info->getLengthOfDelivery())->format('Y-m-d H:i:s'),
+					attributes: [
+						'orderDeadline' => $deadline,
+					]
+				);
+				*/
+			}
+			
+			$f->tagEnd( 'item' );
+		}
+		
+		
+		$f->tagEnd( 'item_list' );
+		
 		
 		$f->done();
 	}
@@ -336,8 +421,151 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			}
 		);
 		
+		$availability = new Exports_Definition(
+			module: $this,
+			name: Tr::_('Heureka - Availability'),
+			description: '',
+			export_code: 'availability',
+			export: function() {
+				$eshop = EShops::getCurrent();
+				
+				$this->generateExports_availability(
+					$eshop,
+					$eshop->getDefaultPricelist(),
+					$eshop->getDefaultAvailability()
+				);
+			}
+		);
+		
+		/*
+		$old_categories = new Exports_Definition(
+			module: $this,
+			name: Tr::_('Heureka - Import old categories'),
+			description: '',
+			export_code: 'old_categories',
+			export: function() {
+				$this->importOldCategories();
+			}
+			
+		);
+		*/
+		
 		return [
-			$products
+			$products,
+			$availability,
+			//$old_categories
 		];
+	}
+	
+	public function importOldCategories() : void
+	{
+		$old_db = Db::get('old');
+		
+		$shop_map = [
+			5 => EShops::get('b2c_cs_CZ'),
+			20 => EShops::get('b2c_sk_SK'),
+		];
+		
+		$items = $old_db->fetchAll("SELECT categories_id, categories_name_heureka, language_id FROM categories_description_sport WHERE categories_name_heureka>0");
+		
+		$category_ids = [];
+		
+		foreach($items as $item) {
+			$kind_of_product= KindOfProduct::get( $item['categories_id'] );
+			if(!$kind_of_product) {
+				continue;
+			}
+			
+			$eshop = $shop_map[$item['language_id']];
+			if(!$eshop) {
+				die('!!!!');
+			}
+		
+			$join = Exports_Join_KindOfProduct::get(
+				$this->getCode(),
+				$eshop,
+				$item['categories_id'],
+			);
+			
+			$join->setExportCategoryId( $item['categories_name_heureka'] );
+			$join->save();
+			
+			$category_ids[] = $item['categories_name_heureka'];
+		}
+		
+		$category_ids = array_unique($category_ids);
+		
+		foreach($shop_map as $eshop) {
+			$csv_url = $this->getEshopConfig($eshop)->getParametersCsvURL();
+			
+			$data = file_get_contents( $csv_url );
+			
+			$data = explode( "\n", $data );
+			
+			$schema = str_getcsv( $data[0] );
+			unset( $data[0] );
+			
+			$l = 0;
+			foreach( $data as $line ) {
+				$line = trim( $line );
+				$line = str_getcsv( $line );
+				
+				$item = [];
+				foreach( $schema as $i => $name ) {
+					$item[$name] = $line[$i];
+				}
+				
+				
+				$c_id = $item['category_id']??0;
+				
+				if(!in_array($c_id, $category_ids)) {
+					continue;
+				}
+				
+				$param_id = $item['parameter_id'];
+				
+				$e_p = Exports_ExportCategory_Parameter::get(
+					$eshop,
+					$this->getCode(),
+					$c_id,
+					$param_id
+				);
+				
+				if( !$e_p ) {
+					$e_p = new Exports_ExportCategory_Parameter();
+					$e_p->setEshop( $eshop );
+					$e_p->setExportCode( $this->getCode() );
+					$e_p->setExportCategoryId( $c_id );
+					$e_p->setExportParameterId( $param_id );
+				}
+				
+				$e_p->setName( $item['parameter_name'] );
+				$e_p->setUnits( $item['parameter_unit'] );
+				
+				switch( $item['parameter_data_type'] ) {
+					case 'bool':
+						$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_OPTIONS );
+						$e_p->setMultipleValues( false );
+						$e_p->setOptions([
+							'ano' => 'Ano',
+							'ne' => 'Ne'
+						]);
+						break;
+					case 'int':
+					case 'integer':
+					case 'float':
+						$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_NUMBER );
+						break;
+					default:
+					case 'string':
+						$e_p->setType( Exports_ExportCategory_Parameter::PARAM_TYPE_STRING );
+						break;
+				}
+				
+				$e_p->save();
+				
+			}
+			
+		}
 	}
 }

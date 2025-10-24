@@ -99,6 +99,34 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	protected array $non_working_days_of_week = [0, 6];
 	
 	
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_TIME,
+		label: 'Order deadline time:',
+	)]
+	protected string $order_deadline_time = '';
+	
+	#[Config_Definition(
+		type: Config::TYPE_INT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Number of days required for dispatch - before deadline:',
+	)]
+	protected int $number_of_days_required_for_dispatch_before_order_deadline = 1;
+	
+	#[Config_Definition(
+		type: Config::TYPE_INT,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INT,
+		label: 'Number of days required for dispatch - after deadline:',
+	)]
+	protected int $number_of_days_required_for_dispatch_after_order_deadline = 2;
+	
+	
 	
 	#[Config_Definition(
 		type: Config::TYPE_ARRAY,
@@ -300,5 +328,37 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 		
 		return true;
 	}
+	
+	public function getOrderDeadlineTime(): string
+	{
+		return $this->order_deadline_time;
+	}
+	
+	public function setOrderDeadlineTime( string $order_deadline_time ): void
+	{
+		$this->order_deadline_time = $order_deadline_time;
+	}
+	
+	public function getNumberOfDaysRequiredForDispatchBeforeOrderDeadline(): int
+	{
+		return $this->number_of_days_required_for_dispatch_before_order_deadline;
+	}
+	
+	public function setNumberOfDaysRequiredForDispatchBeforeOrderDeadline( int $number_of_days_required_for_dispatch_before_order_deadline ): void
+	{
+		$this->number_of_days_required_for_dispatch_before_order_deadline = $number_of_days_required_for_dispatch_before_order_deadline;
+	}
+	
+	public function getNumberOfDaysRequiredForDispatchAfterOrderDeadline(): int
+	{
+		return $this->number_of_days_required_for_dispatch_after_order_deadline;
+	}
+	
+	public function setNumberOfDaysRequiredForDispatchAfterOrderDeadline( int $number_of_days_required_for_dispatch_after_order_deadline ): void
+	{
+		$this->number_of_days_required_for_dispatch_after_order_deadline = $number_of_days_required_for_dispatch_after_order_deadline;
+	}
+	
+	
 	
 }

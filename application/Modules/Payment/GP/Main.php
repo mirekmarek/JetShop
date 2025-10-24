@@ -123,6 +123,7 @@ class Main extends Payment_Method_Module implements
 			description:   Tr::_( 'Verify that all payments have been processed.' ),
 			service_code: 'go_pay_check_payments',
 			service:       function() {
+				//var_dump(EShops::getCurrent()->getKey());
 				//TODO:
 			}
 		);

@@ -16,6 +16,7 @@ use JetApplication\EShopConfig_ModuleConfig_ModuleHasConfig_PerShop_Trait;
 use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\EShops;
 use JetApplication\EShop;
+use JetApplication\Calendar_DispatchDeadlineInfo;
 
 
 class Main extends Application_Service_General_Calendar implements
@@ -59,6 +60,11 @@ class Main extends Application_Service_General_Calendar implements
 		return Calendar::get( $this->getConfig($eshop) )->howManyWorkingDays( $from, $till, $use_holydays );
 	}
 	
+	public function isBusinessDay( EShop $eshop, Data_DateTime|string $date, bool $use_holydays = true ): bool
+	{
+		return Calendar::get( $this->getConfig($eshop) )->isBusinessDay( $date, $use_holydays );
+	}
+	
 	public function getControlCentreGroup(): string
 	{
 		return Admin_ControlCentre::GROUP_MAIN;
@@ -82,5 +88,10 @@ class Main extends Application_Service_General_Calendar implements
 	public function getControlCentrePerShopMode(): bool
 	{
 		return true;
+	}
+	
+	public function getNumberOfDaysRequiredForDispatch( EShop $eshop ) : Calendar_DispatchDeadlineInfo
+	{
+		return Calendar::get( $this->getConfig($eshop) )->getNumberOfDaysRequiredForDispatch();
 	}
 }

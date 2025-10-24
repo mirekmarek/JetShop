@@ -7,6 +7,7 @@
 namespace JetApplicationModule\SysServices\Orders\SendRemindersForUnpaidOrders;
 
 use Jet\Tr;
+use JetApplication\Application_Service_EShop;
 use JetApplication\Order_EMailTemplate;
 
 class EMailTemplate_BankTransfer extends Order_EMailTemplate {
@@ -17,5 +18,13 @@ class EMailTemplate_BankTransfer extends Order_EMailTemplate {
 		$this->setInternalNotes('');
 		
 		$this->initCommonProperties();
+		
+		$message_property = $this->addProperty('qr_payment_info', Tr::_('QR Payment Info') );
+		$message_property->setPropertyValueCreator( function() : string {
+			$qr_payment = Application_Service_EShop::QRPayment( $this->order->getEshop() );
+			return $qr_payment?->generateReminderEmailInfoText( $this->order )??'';
+			
+		} );
+		
 	}
 }

@@ -2,7 +2,7 @@
 return [
 	'vendor' => '',
 	'version' => '',
-	'label' => 'Uloženka',
+	'label' => 'OnePoint',
 	'description' => '',
 	'is_mandatory' => false,
 ];

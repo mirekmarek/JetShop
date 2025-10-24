@@ -9,6 +9,8 @@ namespace JetApplicationModule\SysServices\Catalog\AutoDeactivate\Product;
 
 use Jet\Application_Module;
 use Jet\Tr;
+use JetApplication\Availabilities;
+use JetApplication\Availability;
 use JetApplication\Product;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
@@ -44,17 +46,14 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			'deactivate_after_sell_out' => true
 		]);
 		
+		$avl = Availabilities::get('b2c_cz');
+		
 		foreach ($products as $product) {
-			echo $product->getAdminTitle().": ";
+			$no_avl = $product->getNumberOfAvailable( $avl );
 			
-			$on_stock = false;
-			$stock_cards = WarehouseManagement_StockCard::getCardsByProduct( $product->getId() );
-			foreach( $stock_cards as $stock_card ) {
-				if($stock_card->getInStock()) {
-					$on_stock = true;
-					break;
-				}
-			}
+			echo $product->getAdminTitle().": ".$no_avl;
+			
+			$on_stock = $no_avl>0;
 			
 			if(!$on_stock) {
 				echo "\tDEACTIVATED\n";

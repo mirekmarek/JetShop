@@ -7,14 +7,19 @@
 namespace JetApplicationModule\Discounts\FreeDelivery;
 
 
+use Jet\Auth;
 use Jet\Factory_MVC;
+use Jet\MVC;
 use Jet\Tr;
+use JetApplication\Application_Service_EShop;
 use JetApplication\CashDesk;
+use JetApplication\Delivery_Method;
+use JetApplication\EShop_Pages;
 use JetApplication\Marketing_DeliveryFeeDiscount;
 use JetApplication\Application_Service_EShop_DiscountModule_DeliveryFee;
 use JetApplication\Order;
 use JetApplication\Order_Item;
-use JetApplication\Pricelists;
+use JetApplication\Customer;
 
 class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 {
@@ -50,9 +55,9 @@ class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 		
 		$view = Factory_MVC::getViewInstance($this->getViewsDir());
 		
-		$view->setVar('limit', $this->limit());
-		$view->setVar('remains', $this->remains());
+		$view->setVar('module', $this );
 		$view->setVar('cash_desk', $cash_desk);
+		
 		
 		
 		return Tr::setCurrentDictionaryTemporary(
@@ -68,6 +73,46 @@ class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 		return $this->cash_desk->getCart()->getAmount();
 	}
 	
+	public function customerIsRegistered(): bool
+	{
+		/**
+		 * @var Customer $customer
+		 */
+		$customer = Auth::getCurrentUser();
+		
+		if(
+			$customer &&
+			$customer->getMailingSubscribed()
+		) {
+			return true;
+		}
+		
+		
+		if( MVC::getPage()->getId()==EShop_Pages::CashDesk()->getId() ) {
+			$cash_desk = Application_Service_EShop::CashDesk()->getCashDesk();
+			
+			if(
+				!$cash_desk->getNoRegistration() &&
+				$cash_desk->getAgreeFlagChecked( 'mailing_subscribe' )
+			) {
+				return true;
+			}
+		}
+		
+		
+		return false;
+	}
+	
+	protected function getFreeLimit( Delivery_Method $method ): float
+	{
+		
+		if( $this->customerIsRegistered() ) {
+			return $method->getFreeDeliveryLimitRegisteredCustomer();
+		}
+		
+		return $method->getFreeDeliveryLimit();
+	}
+	
 	public function generateDiscounts( CashDesk $cash_desk ): void
 	{
 		$this->setCashDesk($cash_desk);
@@ -77,10 +122,14 @@ class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 			return;
 		}
 		
+		$pricelist = $cash_desk->getPricelist();
+		
+		
 		$marketing_discounts = $this->getMarketingDiscounts();
 		
-		
 		foreach($cash_desk->getAvailableDeliveryMethods() as $method) {
+			$method->setPrice( $pricelist, $method->getDefaultPrice( $pricelist ) );
+			
 			if($method->getDiscountIsNotAllowed()) {
 				continue;
 			}
@@ -98,7 +147,6 @@ class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 				}
 				
 				if($mtp<1) {
-					$pricelist = Pricelists::getCurrent();
 					
 					$price = $pricelist->round( $method->getDefaultPrice( $pricelist ) * $mtp );
 					
@@ -108,9 +156,11 @@ class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 				}
 			}
 			
+			$free_limit = $this->getFreeLimit( $method );
+			
 			if(
-				$method->getFreeDeliveryLimit()>0 &&
-				$amount>$method->getFreeDeliveryLimit()
+				$free_limit>0 &&
+				$amount>$free_limit
 			) {
 				$method->setPrice( $cash_desk->getPricelist(), 0 );
 			}
@@ -123,19 +173,49 @@ class Main extends Application_Service_EShop_DiscountModule_DeliveryFee
 		$limit = false;
 		foreach($this->cash_desk->getAvailableDeliveryMethods() as $method) {
 			if(
-				$method->getDiscountIsNotAllowed() ||
-				$method->getFreeDeliveryLimit()==0
+				$method->getDiscountIsNotAllowed()
 			) {
 				continue;
 			}
 			
-			if($limit===false || $limit>$method->getFreeDeliveryLimit()) {
-				$limit = $method->getFreeDeliveryLimit();
+			$free_limit = $this->getFreeLimit( $method );
+			if(!$free_limit) {
+				continue;
+			}
+			
+			if( $limit===false || $limit>$free_limit ) {
+				$limit = $free_limit;
 			}
 		}
+		
 
 		return $limit;
 	}
+	
+	public function limitRegistered() : float|false
+	{
+		$limit = false;
+		foreach($this->cash_desk->getAvailableDeliveryMethods() as $method) {
+			if(
+				$method->getDiscountIsNotAllowed()
+			) {
+				continue;
+			}
+			
+			$free_limit = $method->getFreeDeliveryLimitRegisteredCustomer();
+			if(!$free_limit) {
+				continue;
+			}
+			
+			if( $limit===false || $limit>$free_limit ) {
+				$limit = $free_limit;
+			}
+		}
+		
+		
+		return $limit;
+	}
+	
 	
 	public function remains() : float|false
 	{

@@ -1,0 +1,101 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Payment\HomeCredit;
+
+use Jet\MVC_View;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Config_PerShop $config
+ * @var Pricelist $pricelist
+ * @var Product_EShopData $product
+ */
+
+$config = $this->getRaw('config');
+$pricelist = $this->getRaw('pricelist');
+$product = $this->getRaw('product');
+
+$locale = str_replace('_', '-', $config->getEshop()->getLocale());
+?>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		body {
+			background-color : transparent;
+		}
+	</style>
+</head>
+<body>
+
+<script>
+	<?php require 'calc/app.js'; ?>
+</script>
+
+
+<script>
+	const HomeCreditCalc = {
+		showCalc: ( price ) => {
+			const productSetCode = 'COCHCONO';
+			const fixDownPayment = false;
+
+			const downPayment = 0;
+			const sent = false;
+
+			let app = document.createElement('hc-calc');
+			app.callback = HomeCreditCalc.processCalcResult;
+			app.apiKey = '<?=$config->getCalcKey()?>';
+			app.dataCalculatorBaseUrl = '<?=$config->getCalcURL()?>';
+			app.productSetCode = productSetCode;
+			app.price = price*100;
+			app.downPayment = downPayment;
+			app.fixDownPayment = fixDownPayment;
+			app.language = '<?=$locale?>';
+			app.debug = false;
+
+			document.body.appendChild(app);
+
+			var observer = new MutationObserver(function (e) {
+				if(e[0]['removedNodes'][0]) {
+					const removed = e[0].removedNodes[0];
+					if(removed.nodeName=='HC-CALC') {
+						HomeCreditCalc.closed();
+					}
+				}
+			});
+
+			observer.observe(document.body, { childList: true });
+		},
+
+		closed: () => {
+			window.parent.postMessage({name:'hc-calc-closed'}, "*");
+		},
+
+		processCalcResult: (calcResult) => {
+			if(HomeCreditCalc.sent) {
+				return;
+			}
+
+			HomeCreditCalc.sent = true;
+			calcResult = btoa(encodeURIComponent(JSON.stringify( calcResult )));
+
+			window.parent.postMessage({name:'hc-calc-response', calcResult: calcResult}, "*");
+		}
+
+	};
+
+	HomeCreditCalc.showCalc( <?=$product->getPrice($pricelist)*$this->getInt('qty', 1)?> );
+</script>
+
+
+</body>
+</html>

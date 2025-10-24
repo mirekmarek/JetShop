@@ -12,9 +12,12 @@ use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Application_Service_General_EMailMarketingSubscribeManager;
 use JetApplication\EShop;
+use JetApplication\EShop_ModuleUsingTemplate_Interface;
+use JetApplication\EShop_ModuleUsingTemplate_Trait;
 
-class Main extends Application_Service_General_EMailMarketingSubscribeManager
+class Main extends Application_Service_General_EMailMarketingSubscribeManager implements EShop_ModuleUsingTemplate_Interface
 {
+	use EShop_ModuleUsingTemplate_Trait;
 	
 	public function showStatus( EShop $eshop, string $email ) : string
 	{

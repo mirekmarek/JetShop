@@ -104,7 +104,7 @@ class Main extends Application_Service_EShop_DiscountModule_Code
 		$this->setUsedCodesRaw( $ids );
 		
 		$this->used_form = null;
-		$this->cash_desk->getDiscounts( true );
+		$this->cash_desk->resetDiscounts();
 		
 	}
 
@@ -120,7 +120,7 @@ class Main extends Application_Service_EShop_DiscountModule_Code
 		
 		$ids = array_keys($used_codes);
 		$this->setUsedCodesRaw( $ids );
-		$this->cash_desk->getDiscounts( true );
+		$this->cash_desk->resetDiscounts();
 	}
 
 

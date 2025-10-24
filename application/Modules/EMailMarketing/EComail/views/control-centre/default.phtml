@@ -1,0 +1,60 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EMailMarketing\EComail;
+
+
+use Jet\Form;
+use Jet\Form_Renderer;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_messages;
+
+/**
+ * @var MVC_View $this
+ * @var Form $main_form
+ * @var Config_PerShop $config
+ */
+
+$config = $this->getRaw('config');
+$main_form = $this->getRaw('form');
+
+
+$setupForm = function( Form $form ) {
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 10
+	]);
+	$form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	
+};
+
+$setupForm( $main_form );
+
+$saveBtn = function() {
+	?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<?=UI::button_save()?>
+		</div>
+	</div>
+	<?php
+};
+
+foreach( UI_messages::get(context: 'CC') as $message ):
+	echo $message;
+endforeach;
+
+echo $main_form->getCommonMessage();
+echo $main_form->start();
+echo $main_form->field('API_URL');
+echo $main_form->field('API_key');
+echo $main_form->field('list_id');
+$saveBtn();
+echo $main_form->end();
+

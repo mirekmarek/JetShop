@@ -1,0 +1,73 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Payment\HomeCredit;
+
+use Jet\MVC_View;
+use JetApplication\Pricelist;
+use JetApplication\Product_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Config_PerShop $config
+ * @var Pricelist $pricelist
+ * @var Product_EShopData $product
+ */
+
+$config = $this->getRaw('config');
+$pricelist = $this->getRaw('pricelist');
+$product = $this->getRaw('product');
+$calc_url = $this->getRaw('calc_url');
+
+$locale = str_replace('_', '-', $config->getEshop()->getLocale());
+?>
+<script>
+	const creditCalc = {
+		product_id: <?=$product->getId()?>,
+		product_qty: 0,
+
+		init: () => {
+			window.addEventListener('message', function(event) {
+				if(!event.data.name) {
+					return;
+				}
+
+				if(event.data.name=='hc-calc-closed') {
+					creditCalc.close();
+				}
+
+				if(event.data.name=='hc-calc-response') {
+					creditCalc.close();
+					creditCalc.processCalcResult(event.data.calcResult);
+				}
+			});
+
+
+
+		},
+
+		close: () => {
+			dialog.close('cedit-calc-dialog');
+		},
+
+		open: () => {
+			creditCalc.product_qty = document.getElementById('product_quantity_<?=$product->getId()?>').value;
+
+			document.getElementById('cedit-calc-frame').innerHTML = '<iframe src="<?= $calc_url ?>&qty='+creditCalc.product_qty+'" style="border:none;width: 100%;height: 100%;">';
+			dialog.open('cedit-calc-dialog');
+		},
+
+		processCalcResult: (calcResult) => {
+			ShoppingCart.buy(
+				creditCalc.product_id,
+				creditCalc.product_qty
+			);
+		}
+
+	};
+
+	creditCalc.init();
+</script>

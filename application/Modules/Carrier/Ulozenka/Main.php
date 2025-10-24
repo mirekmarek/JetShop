@@ -41,7 +41,7 @@ class Main extends Carrier implements
 	
 	public function getControlCentreTitle(): string
 	{
-		return 'Uloženka';
+		return 'OnePoint';
 	}
 	
 	public function getControlCentreIcon(): string
@@ -147,7 +147,7 @@ class Main extends Carrier implements
 	{
 		$actualize_points_service = new SysServices_Definition(
 			module:        $this,
-			name:          Tr::_( 'Uloženka - Actualize delivery points' ),
+			name:          Tr::_( 'OnePoint - Actualize delivery points' ),
 			description:   Tr::_( 'Updates the list of points where the consignment can be delivered / where the customer can pick up the consignment.' ),
 			service_code: 'actualize_delivery_points',
 			service:       function() {

@@ -17,7 +17,7 @@ use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use Jet\Config;
 
 #[Config_Definition(
-	name: 'HeurekaExport'
+	name: 'GoogleShoppingExport'
 )]
 class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_Definition_Interface {
 	use Form_Definition_Trait;
@@ -28,8 +28,7 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	)]
 	#[Form_Definition(
 		type: Form_Field::TYPE_INPUT,
-		label: 'Heureka categories URL: ',
-		is_required: true,
+		label: 'Google categories URL: ',
 	)]
 	protected string $categories_URL = '';
 	
