@@ -15,6 +15,8 @@ use JetApplication\Application_Service_EShop_ProductReviews;
 use JetApplication\Application_Service_EShop_ReturnOfGoods;
 use JetApplication\Application_Service_EShop_ShoppingCart;
 use JetApplication\Application_Service_EShop_Wishlist;
+use JetApplication\Application_Service_General;
+use JetApplication\Application_Service_General_EMailMarketingSubscribeManager;
 
 return [
 	'homepage' => [
@@ -312,6 +314,40 @@ return [
 			]
 		]
 		
-	]
+	],
+	
+	'mailing_subscribe' => [
+		'parent_page_key' => 'homepage',
+		
+		'id' => 'mailing_subscribe',
+		'URI_path_fragment' => 'mailing-subscribe',
+		'name' => 'Mailing - subscribe',
+		'title' => 'Mailing - subscribe',
+		
+		'content' => [
+			[
+				'manager_group' => Application_Service_General::class,
+				'manager_interface' => Application_Service_General_EMailMarketingSubscribeManager::class,
+				'controller_action' => 'subscribe',
+			]
+		]
+	],
+	
+	'mailing_unsubscribe' => [
+		'parent_page_key' => 'homepage',
+		
+		'id' => 'mailing_unsubscribe',
+		'URI_path_fragment' => 'mailing-unsubscribe',
+		'name' => 'Mailing - unsubscribe',
+		'title' => 'Mailing - unsubscribe',
+		
+		'content' => [
+			[
+				'manager_group' => Application_Service_General::class,
+				'manager_interface' => Application_Service_General_EMailMarketingSubscribeManager::class,
+				'controller_action' => 'unsubscribe',
+			]
+		]
+	],
 	
 ];
