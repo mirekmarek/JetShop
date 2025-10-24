@@ -217,6 +217,10 @@ class Index extends DataModel {
 				$ids = $result;
 			}
 		}
+		
+		if(is_numeric($search_string)) {
+			$ids[] = (int)$search_string;
+		}
 
 		if(!$ids) {
 			return [];

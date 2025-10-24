@@ -7,7 +7,6 @@
 namespace JetApplicationModule\Payment\ESSOX;
 
 use Jet\Application;
-use Jet\Factory_MVC;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;

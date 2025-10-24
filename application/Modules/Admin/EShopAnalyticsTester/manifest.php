@@ -2,7 +2,9 @@
 return [
 	'vendor' => '',
 	'version' => '',
-	'label' => 'Exports.DogNet',
+	'label' => 'Admin.EShopAnalyticsTester',
 	'description' => '',
 	'is_mandatory' => false,
+	'ACL_actions' => [
+	],
 ];

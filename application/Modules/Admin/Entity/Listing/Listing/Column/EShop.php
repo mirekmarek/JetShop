@@ -40,12 +40,12 @@ class Listing_Column_EShop extends Admin_Listing_Column
 	
 	public function getOrderByAsc(): array|string
 	{
-		return '+shop_code';
+		return '+eshop_code';
 	}
 	
 	public function getOrderByDesc(): array|string
 	{
-		return '-shop_code';
+		return '-eshop_code';
 	}
 	
 	public function getExportData( mixed $item ): string

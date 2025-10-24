@@ -81,6 +81,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 		if(Main::getCurrentUserCanEdit()) {
 			$GET = Http_Request::GET();
+			
 
 			if(($sort=$GET->getString('sort'))) {
 				$p = 0;

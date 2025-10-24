@@ -25,6 +25,7 @@ $order = $this->getRaw('item');
 
 ?>
 <form method="GET" action="<?=MVC::getPage()->getURLPath()?>">
+	<input type="hidden" name="quick_search" value="1">
 	<?php foreach(Http_Request::GET()->getRawData() as $key => $value):
 		if(in_array($key, ['search', 'p','id','action'])) {
 			continue;

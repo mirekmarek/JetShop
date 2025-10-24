@@ -38,6 +38,11 @@ trait Controller_Main_Product
 				($category = static::$product->getCategories()[$category_id]??null)
 			) {
 				static::$category = $category;
+			} else {
+				foreach( static::$product->getCategories() as $category ) {
+					static::$category = $category;
+					break;
+				}
 			}
 			
 			
@@ -83,7 +88,7 @@ trait Controller_Main_Product
 		$this->_initBreadcrumbNavigation();
 
 		
-		$this->outputWithCache('product:'.static::$product->getId(), 'product/detail', 30);
+		$this->output( 'product/detail' );
 	}
 	
 }

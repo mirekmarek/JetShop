@@ -9,9 +9,9 @@ namespace JetApplicationModule\Payment\HomeCredit;
 use CurlHandle;
 
 class Client {
-	const REQUEST_TYPE_GET = 'GET';
-	const REQUEST_TYPE_POST = 'POST';
-	const REQUEST_TYPE_PUT = 'PUT';
+	public const REQUEST_TYPE_GET = 'GET';
+	public const REQUEST_TYPE_POST = 'POST';
+	public const REQUEST_TYPE_PUT = 'PUT';
 	
 	protected string $last_request_type = '';
 	protected mixed $last_request_data = null;

@@ -14,7 +14,6 @@ use Jet\Form_Field_Input;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Complaint;
-use JetApplication\EShops;
 use JetApplication\Order;
 
 class Plugin_EditMain_Main extends Plugin {

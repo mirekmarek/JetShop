@@ -39,7 +39,7 @@ class Controller_Main extends MVC_Controller_Default
 			Navigation_Breadcrumb::addURL(
 				Tr::_('Return of goods request %n% (Order:%on%)', [
 					'n' => $return->getNumber(),
-					'on' => Order::get( $return->getOrderId() )->getNumber()
+					'on' => Order::get( $return->getOrderId() )?->getNumber()??''
 				]),
 				Http_Request::currentURI(unset_GET_params: ['product_id'])
 			);
@@ -262,7 +262,8 @@ class Controller_Main extends MVC_Controller_Default
 				$enter_problem_form->field('problem_description')->getValue()
 			);
 			
-			Http_Headers::movedTemporary( $return->getURL() );
+			
+			Http_Headers::movedTemporary( $return->getURL().'&finish' );
 		}
 		
 		$this->view->setVar('enter_problem_form', $enter_problem_form);

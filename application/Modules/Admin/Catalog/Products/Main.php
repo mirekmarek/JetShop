@@ -7,7 +7,10 @@
 namespace JetApplicationModule\Admin\Catalog\Products;
 
 
+use Jet\AJAX;
 use Jet\Factory_MVC;
+use Jet\Form_Field_Hidden;
+use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Application_Service_Admin_Product;
 use JetApplication\EShopEntity_Basic;
@@ -45,6 +48,34 @@ class Main extends Application_Service_Admin_Product
 			selected_entity_edit_URL: $selected?->getEditUrl()
 		);
 	}
+	
+	public function renderSelectProductsWidget( Form_Field_Hidden $input ) : string
+	{
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($input) {
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				
+				$view->setVar('input', $input);
+				
+				$GET = Http_Request::GET();
+				if(
+					$GET->exists('show_products') &&
+					$GET->getString('input_id')==$input->getId()
+				) {
+					$input->setDefaultValue( $GET->getString('show_products') );
+					
+					AJAX::snippetResponse(
+						$view->render('select-products/products')
+					);
+				}
+				
+				return $view->render('select-products/select');
+				
+			}
+		);
+	}
+	
 	
 	
 	public static function getEntityInstance(): EShopEntity_Basic

@@ -58,24 +58,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 		]);
 	}
 	
-	public function edit_main_Action() : void
-	{
-		$GET = Http_Request::GET();
-		if($GET->exists('show_categories')) {
-			$show_categories = $GET->getString('show_categories');
-			$show_categories = $show_categories ? explode(',', $show_categories) : [];
-			
-			$item = $this->current_item;
-			
-			$this->view->setVar('item', $item);
-			$this->view->setVar('category_ids', $show_categories);
-			
-			AJAX::snippetResponse( $this->view->render('edit/main/categories') );
-			
-		}
-		
-		parent::edit_main_Action();
-	}
 	
 	public function edit_banners_Action() : void
 	{

@@ -43,7 +43,19 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$stat = $this->stats[ $stat_key ];
 		$stat->setIsSelected( true );
-		$stat->setEshop( EShops::get( $GET->getString('eshop', EShops::getCurrentKey() ) ) );
+		
+		$eshop_key = $GET->getString('eshop', $stat::ALL_ESHOPS );
+		$eshop = null;
+		if(EShops::exists($eshop_key)) {
+			$eshop = EShops::get( $eshop_key );
+		}
+		
+		$stat->setEshop( $eshop );
+		if($eshop) {
+			$stat->setOutputCurrency( $eshop->getDefaultPricelist()->getCurrency() );
+		} else {
+			$stat->setOutputCurrency( EShops::getDefault()->getDefaultPricelist()->getCurrency() );
+		}
 		
 		
 		$this_year = date('Y');

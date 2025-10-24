@@ -44,9 +44,10 @@ if(CustomerBlacklist::customerIsBlacklisted( $order->getEmail(), load_details: t
 	<?= nl2br( $bl_detail->getDescription() ) ?>
 
 <?php else: ?>
-<div style="text-align: center;padding: 10px;">
+<div style="text-align: center;padding: 10px;margin-top: 80px;">
 	<?=UI::button(Tr::_('Add customer to blacklist'))->setIcon('book-skull')
 	->setClass(UI_button::CLASS_DANGER)
+	->setSize( UI_button::SIZE_EXTRA_SMALL )
 	->setOnClick("$('#bl_dialog').modal('show');")?>
 </div>
 <?php endif;

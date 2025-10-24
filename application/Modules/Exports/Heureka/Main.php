@@ -357,15 +357,15 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$f->tagPair('delivery_time', $term, attributes: [
 					'orderDeadline' => $deadline,
 				]);
-			} else {
-				/*
+			} /* else {
+				
 				$f->tagPair('delivery_time', $calendar->getNextBusinessDate( $eshop, $avl_info->getLengthOfDelivery())->format('Y-m-d H:i:s'),
 					attributes: [
 						'orderDeadline' => $deadline,
 					]
 				);
-				*/
 			}
+			*/
 			
 			$f->tagEnd( 'item' );
 		}

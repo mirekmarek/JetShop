@@ -14,7 +14,6 @@ use JetApplication\Pricelist;
 use JetApplication\Product;
 use JetApplication\Product_Price;
 use JetApplication\Product_PriceHistory;
-use JetApplication\Product_SpecialDiscount;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
 
@@ -65,14 +64,12 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 		);
 		
 		$sale_relations_map = Product::getSaleRelationsMap();
-		$special_discounts = Product_SpecialDiscount::getActivePrices( $pricelist );
 		
 		
 		foreach($prices as $price) {
 			$product_id = $price['entity_id'];
 			if(
-				isset($sale_relations_map[$product_id]) ||
-				isset($special_discounts[$product_id])
+				isset($sale_relations_map[$product_id])
 			) {
 				continue;
 			}

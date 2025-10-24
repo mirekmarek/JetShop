@@ -21,7 +21,7 @@ use Exception;
  *         "deliveryType" => "CESKA_POSTA",
  *         "deliveryPrice" => 80,
  *         "otherCosts" => 20,
- *         "paymentType" => "dobírka",
+ *         "paymentType" => "dobï¿½rka",
  *     ));
  *
  *     // Add bought items
@@ -56,7 +56,7 @@ class ZboziKonverze {
 	/**
 	 * Endpoint URL
 	 */
-	const BASE_URL = 'https://%%DOMAIN%%/action/%%SHOP_ID%%/conversion/backend';
+	public const BASE_URL = 'https://%%DOMAIN%%/action/%%SHOP_ID%%/conversion/backend';
 
 	/**
 	 * Private identifier of request creator
@@ -105,7 +105,7 @@ class ZboziKonverze {
 	public array $cart = [];
 
 	/**
-	 * Determine URL where the request will be send to
+	 * Determine URL where the request will send to
 	 */
 	private bool $sandbox;
 
@@ -242,7 +242,7 @@ class ZboziKonverze {
 	 * Creates HTTP request and returns response body
 	 *
 	 * @param string $url URL
-	 * @return boolean true if everything is perfect else throws exception
+	 * @return bool true if everything is perfect else throws exception
 	 * @throws ZboziKonverze_Exception can be thrown if connection to Zbozi.cz
 	 * server cannot be established.
 	 */
@@ -337,7 +337,7 @@ class ZboziKonverze {
 	/**
 	 * Sends request to ZboziKonverze service and checks for valid response
 	 *
-	 * @return boolean true if everything is perfect else throws exception
+	 * @return bool true if everything is perfect else throws exception
 	 * @throws ZboziKonverze_Exception can be thrown if connection to Zbozi.cz
 	 * server cannot be established or mandatory values are missing.
 	 */

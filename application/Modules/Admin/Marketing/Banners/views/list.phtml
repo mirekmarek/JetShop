@@ -7,7 +7,7 @@
 namespace JetApplicationModule\Admin\Marketing\Banners;
 
 
-use Jet\Http_Request;
+use Jet\Data_DateTime;use Jet\Http_Request;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Tr;
@@ -87,20 +87,21 @@ require 'select.phtml';
 	<?php endif; ?>
 </div>
 
-<div id="banners">
-	<?php foreach($list as $banner):
-		
-		$edit_URL = Http_Request::currentURI(set_GET_params: ['id'=>$banner->getId()]);
-		?>
+<?php
+$showBanner = function ( Marketing_Banner $banner, bool $expired ) use ($editable, $showValidFrom, $showValidTill, $group, $media_size_mtp) : void {
+	$edit_URL = Http_Request::currentURI(set_GET_params: ['id'=>$banner->getId()]);
+	
+	$opacity = $expired ? 0.3:1;
+	?>
 	<div class="sort_item card card-body"
 	     data-id="<?=$banner->getId()?>"
-	     style="display: grid;grid-template-columns: 20px 60px 200px 100px 250px 1fr 30px;align-items: center;margin: 10px;">
+	     style="display: grid;grid-template-columns: 20px 60px 200px 100px 250px 1fr 30px;align-items: center;margin: 10px;opacity:<?=$opacity?>">
 		<div>
 			<?php if($editable):
 				echo UI::icon('arrows-v');
 			endif; ?>
 		</div>
-		
+
 		<div>
 			<a href="<?=$edit_URL?>"><?=$banner->getId()?></a>
 		</div>
@@ -118,10 +119,10 @@ require 'select.phtml';
 			<?php $showValidFrom($banner)?>
 			<?php $showValidTill($banner)?>
 		</div>
-		
+
 		<div style="padding: 10px;">
 			<?php if($banner->getImageMain()): ?>
-			<img src="<?=$banner->getImageMainURI()?>" style="width: <?=$group->getMainImageW()*$media_size_mtp?>px;height: <?=$group->getMobileImageH()*$media_size_mtp?>px;"/>
+				<img src="<?=$banner->getImageMainURI()?>" style="width: <?=$group->getMainImageW()*$media_size_mtp?>px;height: <?=$group->getMobileImageH()*$media_size_mtp?>px;"/>
 			<?php endif; ?>
 			
 			<?php if($banner->getImageMobile()): ?>
@@ -139,17 +140,48 @@ require 'select.phtml';
 					<source src="<?=$banner->getVideoMobileURI()?>">
 				</video>
 			<?php endif; ?>
-			
+
 		</div>
-		
+
 		<div style="text-align: right">
 			<?php if(Main::getCurrentUserCanDelete()):?>
-			<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['id'=>$banner->getId(), 'action'=>'delete']) )?>
+				<?=UI::button_delete(' ')->setUrl( Http_Request::currentURI(['id'=>$banner->getId(), 'action'=>'delete']) )?>
 			<?php endif; ?>
 		</div>
-	
+
 	</div>
-	<?php endforeach; ?>
+	<?php
+
+}
+?>
+
+<div id="banners">
+	<?php
+	foreach($list as $banner):
+		if(
+			$banner->isActive() ||
+			(
+				$banner->getActiveFrom()!==null &&
+				$banner->getActiveFrom()>Data_DateTime::now()
+			)
+		):
+			$showBanner( $banner, false );
+		endif;
+	endforeach;
+	
+	foreach($list as $banner):
+		if(
+			!$banner->isActive() &&
+			(
+				$banner->getActiveFrom()===null ||
+				$banner->getActiveFrom()<Data_DateTime::now()
+			)
+		):
+			$showBanner( $banner, true );
+		endif;
+	endforeach;
+	
+	?>
 </div>
 	
 	
@@ -169,7 +201,7 @@ require 'select.phtml';
 
 						items = items.join(',');
 
-						fetch('<?=Http_Request::currentURI()?>&sort='+items);
+						fetch('?sort='+items);
 					}
 				});
 			}

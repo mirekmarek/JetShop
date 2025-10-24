@@ -48,7 +48,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$q['order_number *'] = '%'.$search.'%';
 			
 			$q[] = 'OR';
-			$q['phone *'] = '%'.$search.'%';
+			$q['phone *'] = '%'.$search;
 			$q[] = 'OR';
 			$q['email *'] = '%'.$search.'%';
 			$q[] = 'OR';

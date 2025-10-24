@@ -12,7 +12,6 @@ use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
-use JetApplication\Complaint_Event_Cancelled;
 use JetApplication\Complaint_Event_NewProductDispatched;
 use JetApplication\Complaint_Status;
 use JetApplication\Complaint_Status_AcceptedMoneyRefunded;

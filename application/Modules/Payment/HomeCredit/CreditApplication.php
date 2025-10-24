@@ -11,33 +11,33 @@ use stdClass;
 
 class CreditApplication implements JsonSerializable {
 	
-	const APPLICATION_CANCELLED_CARRIER_CHANGED      = 'APPLICATION_CANCELLED_CARRIER_CHANGED';      //Zmìna dodavatele zboží
-	const APPLICATION_CANCELLED_CART_CONTENT_CHANGED = 'APPLICATION_CANCELLED_CART_CONTENT_CHANGED'; //Obsah nákupního košíku zmìnìn
-	const APPLICATION_CANCELLED_BY_CUSTOMER          = 'APPLICATION_CANCELLED_BY_CUSTOMER';          //Zrušeno zákazníkem (ve správì jeho úètu/objednávek)
-	const APPLICATION_CANCELLED_BY_ERP               = 'APPLICATION_CANCELLED_BY_ERP';               //Zrušeno na základì back-office procesu obchodu (napø. z dùvodu chybìjící položky zboží)
-	const APPLICATION_CANCELLED_EXPIRED              = 'APPLICATION_CANCELLED_EXPIRED';              //Vypršení platnosti žádosti/objednávky
-	const APPLICATION_CANCELLED_UNFINISHED           = 'APPLICATION_CANCELLED_UNFINISHED';           //Objednávka nebyla zákazníkem dokonèena
-	const APPLICATION_CANCELLED_BY_ESHOP_RULES       = 'APPLICATION_CANCELLED_BY_ESHOP_RULES';       //Porušení vnitøních pravidel e-shopu (napø. z dùvodu neplatných dodateèných dat zákazníka)
-	const APPLICATION_CANCELLED_OTHER                = 'APPLICATION_CANCELLED_OTHER';                //Jiný dùvod specifikovaný v položce customReason
-
+	public const APPLICATION_CANCELLED_CARRIER_CHANGED      = 'APPLICATION_CANCELLED_CARRIER_CHANGED';      //Zmï¿½na dodavatele zboï¿½ï¿½
+	public const APPLICATION_CANCELLED_CART_CONTENT_CHANGED = 'APPLICATION_CANCELLED_CART_CONTENT_CHANGED'; //Obsah nï¿½kupnï¿½ho koï¿½ï¿½ku zmï¿½nï¿½n
+	public const APPLICATION_CANCELLED_BY_CUSTOMER          = 'APPLICATION_CANCELLED_BY_CUSTOMER';          //Zruï¿½eno zï¿½kaznï¿½kem (ve sprï¿½vï¿½ jeho ï¿½ï¿½tu/objednï¿½vek)
+	public const APPLICATION_CANCELLED_BY_ERP               = 'APPLICATION_CANCELLED_BY_ERP';               //Zruï¿½eno na zï¿½kladï¿½ back-office procesu obchodu (napï¿½. z dï¿½vodu chybï¿½jï¿½cï¿½ poloï¿½ky zboï¿½ï¿½)
+	public const APPLICATION_CANCELLED_EXPIRED              = 'APPLICATION_CANCELLED_EXPIRED';              //Vyprï¿½enï¿½ platnosti ï¿½ï¿½dosti/objednï¿½vky
+	public const APPLICATION_CANCELLED_UNFINISHED           = 'APPLICATION_CANCELLED_UNFINISHED';           //Objednï¿½vka nebyla zï¿½kaznï¿½kem dokonï¿½ena
+	public const APPLICATION_CANCELLED_BY_ESHOP_RULES       = 'APPLICATION_CANCELLED_BY_ESHOP_RULES';       //Poruï¿½enï¿½ vnitï¿½nï¿½ch pravidel e-shopu (napï¿½. z dï¿½vodu neplatnï¿½ch dodateï¿½nï¿½ch dat zï¿½kaznï¿½ka)
+	public const APPLICATION_CANCELLED_OTHER                = 'APPLICATION_CANCELLED_OTHER';                //Jinï¿½ dï¿½vod specifikovanï¿½ v poloï¿½ce customReason
 	
-	const STATE_PROCESSING_REDIRECT_NEEDED  = 'PROCESSING_REDIRECT_NEEDED'; //stav po pøesmìrování, resp. po vytvoøení createApplication, 1.krok
-	const STATE_PROCESSING_PREAPPROVED      = 'PROCESSING_PREAPPROVED';     //
-	const STATE_PROCESSING_APPROVED         = 'PROCESSING_APPROVED';        //
-	const STATE_PROCESSING_REVIEW           = 'PROCESSING_REVIEW';          //
-	const STATE_PROCESSING_ALT_OFFER        = 'PROCESSING_ALT_OFFER';       //
-	const STATE_PROCESSING_SIGNED           = 'PROCESSING_SIGNED';          //klient podepsal smlouvy, nyní je pøesmìrován zpìt na eshop na adresu Url_approved
 	
-	const STATE_READY_TO_SHIP      = 'READY_TO_SHIP';    //objednávka je pøipravena k odeslání klientovi, zboží odešlete nebo pøedejte klientovi
+	public const STATE_PROCESSING_REDIRECT_NEEDED  = 'PROCESSING_REDIRECT_NEEDED'; //stav po pï¿½esmï¿½rovï¿½nï¿½, resp. po vytvoï¿½enï¿½ createApplication, 1.krok
+	public const STATE_PROCESSING_PREAPPROVED      = 'PROCESSING_PREAPPROVED';     //
+	public const STATE_PROCESSING_APPROVED         = 'PROCESSING_APPROVED';        //
+	public const STATE_PROCESSING_REVIEW           = 'PROCESSING_REVIEW';          //
+	public const STATE_PROCESSING_ALT_OFFER        = 'PROCESSING_ALT_OFFER';       //
+	public const STATE_PROCESSING_SIGNED           = 'PROCESSING_SIGNED';          //klient podepsal smlouvy, nynï¿½ je pï¿½esmï¿½rovï¿½n zpï¿½t na eshop na adresu Url_approved
 	
-	const STATE_READY_SHIPPED      = 'READY_SHIPPED';    //potvrzeno eshopem, že zboží bylo odesláno klientovi
-	const STATE_READY_DELIVERED    = 'READY_DELIVERED';  //potvrzeno eshopem, že zboží bylo dodáno klientovi
-
-	const STATE_READY_PAID         = 'READY_PAID';       //
+	public const STATE_READY_TO_SHIP      = 'READY_TO_SHIP';    //objednï¿½vka je pï¿½ipravena k odeslï¿½nï¿½ klientovi, zboï¿½ï¿½ odeï¿½lete nebo pï¿½edejte klientovi
 	
-	const STATE_REJECTED           = 'STATE_REJECTED';            //klient byl zamítnut, nyní je odeslán zpìt na eshop na adresu url_rejected
-	const STATE_CANCELLED_NOT_PAID = 'STATE_CANCELLED_NOT_PAID';  //
-	const STATE_CANCELLED_RETURNED = 'STATE_CANCELLED_RETURNED';  //
+	public const STATE_READY_SHIPPED      = 'READY_SHIPPED';    //potvrzeno eshopem, ï¿½e zboï¿½ï¿½ bylo odeslï¿½no klientovi
+	public const STATE_READY_DELIVERED    = 'READY_DELIVERED';  //potvrzeno eshopem, ï¿½e zboï¿½ï¿½ bylo dodï¿½no klientovi
+	
+	public const STATE_READY_PAID         = 'READY_PAID';       //
+	
+	public const STATE_REJECTED           = 'STATE_REJECTED';            //klient byl zamï¿½tnut, nynï¿½ je odeslï¿½n zpï¿½t na eshop na adresu url_rejected
+	public const STATE_CANCELLED_NOT_PAID = 'STATE_CANCELLED_NOT_PAID';  //
+	public const STATE_CANCELLED_RETURNED = 'STATE_CANCELLED_RETURNED';  //
 
 	
 	protected Config_PerShop $config;

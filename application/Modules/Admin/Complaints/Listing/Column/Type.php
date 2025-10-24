@@ -26,6 +26,10 @@ class Listing_Column_Type extends Admin_Listing_Column
 	
 	public function getExportData( mixed $item ): string
 	{
+		/**
+		 * @var Complaint $item
+		 */
+		return $item->getComplaintType()->getTitle();
 	}
 	
 	public function render( mixed $item ): string

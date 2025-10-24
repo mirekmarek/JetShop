@@ -6,10 +6,8 @@
  */
 namespace JetApplicationModule\Admin\Orders;
 
-use Jet\Data_DateTime;
 use Jet\Tr;
 use JetApplication\Admin_Listing_Filter_StdFilter;
-use JetApplication\Order;
 
 class Listing_Filter_Archived extends Admin_Listing_Filter_StdFilter
 {
@@ -40,16 +38,6 @@ class Listing_Filter_Archived extends Admin_Listing_Filter_StdFilter
 			'archived' => false,
 		]);
 		
-		Order::updateData(
-			data: [
-				'archived' => true,
-			],
-			where: [
-				'archived' => false,
-				'AND',
-				'date_purchased <=' => new Data_DateTime( date('Y-m-d H:i:s', strtotime('-2 years')) ),
-			]
-		);
 	}
 	
 }

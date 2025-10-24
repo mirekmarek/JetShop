@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Orders;
 
 
+use Jet\Db;
 use Jet\Http_Request;
 use Jet\MVC_Layout;
 use JetApplication\Admin_EntityManager_Controller;
@@ -21,12 +22,15 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function setupListing() : void
 	{
+		$this->listing_manager->addColumn( new Listing_Column_Number() );
+		$this->listing_manager->addColumn( new Listing_Column_Tags() );
 		$this->listing_manager->addColumn( new Listing_Column_Customer() );
 		$this->listing_manager->addColumn( new Listing_Column_TotalAmountWithVAT() );
 		$this->listing_manager->addColumn( new Listing_Column_Items() );
 		$this->listing_manager->addColumn( new Listing_Column_DatePurchased() );
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Source() );
+		$this->listing_manager->addFilter( new Listing_Filter_Delay() );
 		$this->listing_manager->addFilter( new Listing_Filter_Cancelled() );
 		$this->listing_manager->addFilter( new Listing_Filter_PaymentRequired() );
 		$this->listing_manager->addFilter( new Listing_Filter_Paid() );
@@ -36,6 +40,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addFilter( new Listing_Filter_DatePurchased() );
 		$this->listing_manager->addFilter( new Listing_Filter_Customer() );
 		$this->listing_manager->addFilter( new Listing_Filter_Product() );
+		
+		$this->listing_manager->addFilter( new Listing_Filter_Archived() );
 		
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
@@ -71,10 +77,49 @@ class Controller_Main extends Admin_EntityManager_Controller
 					'delivery_surname *' => '%'.$search_separated[0].'%'
 				];
 				
+				$q[] = 'OR';
+				$q[] = [
+					'delivery_first_name *' => '%'.$search_separated[1].' '.$search_separated[0].'%',
+				];
+				$q[] = 'OR';
+				$q[] = [
+					'delivery_first_name *' => '%'.$search_separated[0].' '.$search_separated[1].'%',
+				];
+				
+				$q[] = 'OR';
+				$q[] = [
+					'billing_first_name *' => '%'.$search_separated[1].' '.$search_separated[0].'%',
+				];
+				$q[] = 'OR';
+				$q[] = [
+					'billing_first_name *' => '%'.$search_separated[0].' '.$search_separated[1].'%',
+				];
+				
 			}
 			
+			$old_number = Db::get()->fetchCol("SELECT order_id FROM orders_packets WHERE number='".addslashes($search)."'");
+			
 			$q[] = 'OR';
-			$q['phone *'] = '%'.$search.'%';
+			$q[] = [
+				'billing_first_name *' => '%'.$search.'%',
+			];
+			$q[] = 'OR';
+			$q[] = [
+				'billing_surname *' => '%'.$search.'%',
+			];
+			
+			$q[] = 'OR';
+			$q[] = [
+				'delivery_first_name *' => '%'.$search.'%',
+			];
+			$q[] = 'OR';
+			$q[] = [
+				'delivery_surname *' => '%'.$search.'%',
+			];
+			
+			
+			$q[] = 'OR';
+			$q['phone *'] = '%'.$search;
 			$q[] = 'OR';
 			$q['email *'] = '%'.$search.'%';
 			$q[] = 'OR';
@@ -85,21 +130,30 @@ class Controller_Main extends Admin_EntityManager_Controller
 			$q['billing_company_id *'] = '%'.$search.'%';
 			$q[] = 'OR';
 			$q['import_remote_id'] = $search;
-			$q[] = 'OR';
-			$q['number'] = $search;
+			if($old_number) {
+				$old_number[] = $search;
+				$q[] = 'OR';
+				$q['number'] = $old_number;
+				
+			} else {
+				$q[] = 'OR';
+				$q['number'] = $search;
+				
+			}
 			
 			$by_tracking_number = OrderDispatch::findOrderIdsByTrackingNumber( $search );
 			if($by_tracking_number) {
 				$q[] = 'OR';
 				$q['id'] = $by_tracking_number;
 			}
-			
+
 			return $q;
 		} );
 		
 		$this->listing_manager->setDefaultColumnsSchema([
 			'eshop',
 			'number',
+			Listing_Column_Tags::KEY,
 			Listing_Column_Customer::KEY,
 			Listing_Column_TotalAmountWithVAT::KEY,
 			Listing_Column_Items::KEY,
@@ -112,6 +166,8 @@ class Controller_Main extends Admin_EntityManager_Controller
 		} );
 		
 		$this->listing_manager->addHandler( new Listing_Handler_DispatchAllReady() );
+		
+		$this->listing_manager->setDefaultSort('-date_purchased');
 		
 	}
 	

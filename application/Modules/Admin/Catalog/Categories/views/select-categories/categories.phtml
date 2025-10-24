@@ -1,0 +1,40 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Catalog\Categories;
+
+use Jet\Form_Field_Hidden;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Application_Service_Admin;
+
+/**
+ * @var MVC_View $this
+ * @var Form_Field_Hidden $input
+ */
+
+$input = $this->getRaw('input');
+
+$name = $input->getId();
+
+$category_ids = $input->getDefaultValue() ? explode(',', $input->getDefaultValue()) : [];
+?>
+<table class="table table-striped">
+	<?php foreach($category_ids as $c_id):
+		$c_id = (int) $c_id;
+		?>
+		<tr>
+			<?php if(!$input->getIsReadonly()): ?>
+				<td style="width: 20px;">
+					<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnClick("Categories_{$name}.remove({$c_id});")?>
+				</td>
+			<?php endif; ?>
+			
+			<td><?=Application_Service_Admin::Category()->renderItemName( $c_id )?></td>
+		</tr>
+	<?php endforeach; ?>
+</table>

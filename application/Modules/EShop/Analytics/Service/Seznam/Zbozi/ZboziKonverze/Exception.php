@@ -9,7 +9,7 @@ use Exception;
  */
 
 /**
- * Thrown when an service returns an exception
+ * Thrown when a service returns an exception
  */
 class ZboziKonverze_Exception extends Exception {
 

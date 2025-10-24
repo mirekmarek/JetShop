@@ -4,6 +4,8 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
+
+use Jet\Tr;
 use Jet\UI;
 use Jet\MVC_View;
 use Jet\UI_button;
@@ -13,7 +15,7 @@ use Jet\UI_button;
  */
 
 ?>
-<?=UI::button('Adjust quantity / Remove item')
+<?=UI::button( Tr::_('Adjust quantity / Remove item') )
 	->setIcon('pen-to-square')
 	->addCustomCssClass('dropdown-item')
 	->setClass( UI_button::CLASS_INFO )

@@ -1,0 +1,79 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Catalog\Categories;
+
+use Jet\Form_Field_Hidden;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use JetApplication\Application_Service_Admin;
+
+/**
+ * @var MVC_View $this
+ * @var Form_Field_Hidden $input
+ */
+
+$input = $this->getRaw('input');
+
+$name = $input->getId();
+
+echo $input;
+
+?>
+
+<div class="card card-body">
+<?php if( !$input->getIsReadonly() ): ?>
+	<?= Application_Service_Admin::Category()->renderSelectWidget("Categories_{$name}.add(selected_item.id);", name: 'add_category_'.$name)?>
+<?php endif ?>
+
+<div id="categoeies_<?=$name?>" style="height: 400px;overflow: auto;">
+	<?=$this->render('select-categories/categories')?>
+</div>
+</div>
+
+<?php if( !$input->getIsReadonly() ): ?>
+	<script>
+		const Categories_<?=$name?> = {
+			getCurrent: () => {
+				let ids = document.getElementById('<?=$input->getId()?>').value;
+				if(!ids) {
+					return [];
+				}
+
+				return ids.split(',');
+			},
+			actualize: ( ids ) => {
+				ids = ids.join(',');
+				document.getElementById('<?=$input->getId()?>').value = ids;
+				$('#categoeies_<?=$name?>').load( '<?=Http_Request::currentURI()?>&show_categories='+ids+'&input_id=<?=$input->getId()?>' );
+			},
+			add: (id) => {
+				id = id+'';
+
+				let current = Categories_<?=$name?>.getCurrent();
+				if(current.includes(id)) {
+					return;
+				}
+				current.push(id);
+				Categories_<?=$name?>.actualize( current );
+			},
+			remove: (id) => {
+				id = id+'';
+
+				let current = Categories_<?=$name?>.getCurrent();
+
+				if(!current.includes(id)) {
+					return;
+				}
+
+
+				current.splice(current.indexOf(id), 1);
+
+				Categories_<?=$name?>.actualize( current );
+			}
+		};
+	</script>
+<?php endif ?>

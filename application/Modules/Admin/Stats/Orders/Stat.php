@@ -10,11 +10,14 @@ use IntlCalendar;
 use Closure;
 use Jet\Locale;
 use Jet\Tr;
+use JetApplication\Currencies;
+use JetApplication\Currency;
 use JetApplication\EShop;
 use JetApplication\Order;
 use JetApplication\Order_Status;
 
 class Stat {
+	public const ALL_ESHOPS = 'all';
 	public const KEY = null;
 	
 	protected int $current_month = 0;
@@ -29,7 +32,9 @@ class Stat {
 	protected bool $is_default = false;
 	protected bool $display_days_by_default = false;
 	
-	protected EShop $eshop;
+	protected ?EShop $eshop = null;
+	
+	protected Currency $output_currency;
 	
 	protected bool $display_days = false;
 	
@@ -113,14 +118,24 @@ class Stat {
 		return $this->week_days[ $this->getWeekDayNo( $y, $m, $d )  ];
 	}
 	
-	public function getEshop(): EShop
+	public function getEshop(): ?EShop
 	{
 		return $this->eshop;
 	}
 	
-	public function setEshop( EShop $eshop ): void
+	public function setEshop( ?EShop $eshop ): void
 	{
 		$this->eshop = $eshop;
+	}
+	
+	public function getOutputCurrency(): Currency
+	{
+		return $this->output_currency;
+	}
+	
+	public function setOutputCurrency( Currency $output_currency ): void
+	{
+		$this->output_currency = $output_currency;
 	}
 	
 	
@@ -309,7 +324,11 @@ class Stat {
 	
 	public function getDataWhere() : array
 	{
-		$where = $this->eshop->getWhere();
+		if($this->eshop) {
+			$where = $this->eshop->getWhere();
+		} else {
+			$where = [];
+		}
 		
 		$staus_where = [];
 		foreach($this->getOrderStatuses() as $status) {
@@ -320,13 +339,17 @@ class Stat {
 		}
 		
 		if($staus_where) {
-			$where[] = 'AND';
+			if($where) {
+				$where[] = 'AND';
+			}
 			$where[] = $staus_where;
 		}
 		
 		
 		if( $this->getWhere() ) {
-			$where[] = 'AND';
+			if($where) {
+				$where[] = 'AND';
+			}
 			$where[] = $this->getWhere();
 		}
 		
@@ -339,6 +362,7 @@ class Stat {
 			select: [
 				$this->date_column,
 				$this->amount_column,
+				'currency_code'
 			],
 			where: $this->getDataWhere(),
 			raw_mode: true
@@ -361,8 +385,16 @@ class Stat {
 				];
 			}
 			
+			$amount = $d[$this->amount_column];
+			
+			if($d['currency_code']!=$this->output_currency->getCode()) {
+				$currency = Currencies::get( $d['currency_code'] );
+				
+				$amount = Currencies::calcExchange( $currency, $this->output_currency, $amount );
+			}
+			
 			$res[$day]['count']++;
-			$res[$day]['amount'] += $d[$this->amount_column];
+			$res[$day]['amount'] += $amount;
 		}
 		
 		return $res;

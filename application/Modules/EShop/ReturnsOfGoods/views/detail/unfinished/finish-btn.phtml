@@ -28,10 +28,10 @@ $return = $this->getRaw('return');
 	<?=UI::button( Tr::_('Finish entering return of goods request') )->setUrl( Http_Request::currentURI(['finish'=>1]) )->setClass(UI_button::CLASS_SUCCESS)?>
 	<?php
 else:
-	if(strlen($return->getProblemDescription())<$return->getMinimalProblemDescriptionLength()):
+	if(strlen($return->getProblemDescription())<$return::getMinimalProblemDescriptionLength()):
 		?>
 		<div class="return-of-goods-description">
-		<?=UI_messages::createInfo( Tr::_('Please provide a sufficiently detailed description of the problem.', ['m'=>$return->getMinimalProblemDescriptionLength()]) )?>
+		<?=UI_messages::createInfo( Tr::_('Please provide a sufficiently detailed description of the problem.', ['m'=>$return::getMinimalProblemDescriptionLength()]) )?>
 		</div>
 		<?php
 	endif;

@@ -8,9 +8,7 @@ namespace JetApplicationModule\Admin\Complaints;
 
 
 use JetApplication\Admin_Listing_Filter_DateInterval;
-use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
-use JetApplication\Complaint_Event_Accepted;
 use JetApplication\Complaint_Event_AcceptedMoneyRefund;
 use JetApplication\Complaint_Event_AcceptedRepaired;
 use JetApplication\Complaint_Event_NewProductDispatched;
@@ -32,7 +30,6 @@ class Listing_Filter_FinishedDate extends Admin_Listing_Filter_DateInterval
 		}
 		
 		$event_codes = [
-			Complaint_Event_Accepted::getCode(),
 			Complaint_Event_AcceptedMoneyRefund::getCode(),
 			Complaint_Event_Rejected::getCode(),
 			Complaint_Event_NewProductDispatched::getCode(),

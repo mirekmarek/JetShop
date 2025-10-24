@@ -61,7 +61,7 @@ $show_full = $this->getBool('shop_full');
 					<div class="card card-body">
 						<b><?=Tr::_('Notes for customer')?></b>
 						<br>
-						<?=nl2br($event->getInternalNote())?>
+						<?=nl2br($event->getNoteForCustomer())?>
 					</div>
 				<?php endif; ?>
 				

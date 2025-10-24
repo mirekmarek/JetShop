@@ -4,10 +4,12 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-use Jet\MVC_View;
+namespace JetApplicationModule\Admin\EShopAnalyticsTester;
 
-/**
- * @var MVC_View $this
- */
-?>
-Ospravedlňujeme sa za problémy s vašou objednávkou <?=$this->getRaw('order_number')?>
+use Jet\Application_Module;
+
+
+class Main extends Application_Module
+{
+
+}

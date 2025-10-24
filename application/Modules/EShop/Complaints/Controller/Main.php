@@ -40,7 +40,7 @@ class Controller_Main extends MVC_Controller_Default
 			Navigation_Breadcrumb::addURL(
 				Tr::_('Complaint %n% (Order:%on%)', [
 					'n' => $complaint->getNumber(),
-					'on' => Order::get( $complaint->getOrderId() )->getNumber()
+					'on' => Order::get( $complaint->getOrderId() )?->getNumber()??''
 				]),
 				Http_Request::currentURI(unset_GET_params: ['product_id'])
 			);

@@ -170,7 +170,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 				if($exp_eshop) {
 					$selected_exp_eshop = EShops::get($exp_eshop);
 					if($selected_exp_eshop) {
-						if(!$selected_exp->isAllowedForShop($selected_exp_eshop)) {
+						if(!$selected_exp->isAllowedForShop( $selected_exp_eshop  )) {
 							$selected_exp = null;
 							$selected_exp_eshop = null;
 						}

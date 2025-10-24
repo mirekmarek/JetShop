@@ -7,6 +7,10 @@
 namespace JetApplicationModule\Admin\Catalog\Categories;
 
 
+use Jet\AJAX;
+use Jet\Factory_MVC;
+use Jet\Form_Field_Hidden;
+use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Application_Service_Admin_Category;
 use JetApplication\Category;
@@ -41,6 +45,33 @@ class Main extends Application_Service_Admin_Category
 	public static function getEntityInstance(): EShopEntity_Basic
 	{
 		return new Category();
+	}
+	
+	public function renderSelectCategoriesWidget( Form_Field_Hidden $input ) : string
+	{
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($input) {
+				$view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+				
+				$view->setVar('input', $input);
+				
+				$GET = Http_Request::GET();
+				if(
+					$GET->exists('show_categories') &&
+					$GET->getString('input_id')==$input->getId()
+				) {
+					$input->setDefaultValue( $GET->getString('show_categories') );
+					
+					AJAX::snippetResponse(
+						$view->render('select-categories/categories')
+					);
+				}
+				
+				return $view->render('select-categories/select');
+				
+			}
+		);
 	}
 
 }

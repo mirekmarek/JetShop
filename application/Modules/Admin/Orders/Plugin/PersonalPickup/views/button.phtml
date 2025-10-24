@@ -1,0 +1,43 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+
+use Jet\Form;
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use Jet\MVC_View;
+use JetApplication\Order;
+
+/**
+ * @var MVC_View $this
+ * @var Form $form
+ * @var Order $order
+ */
+
+
+$order = $this->getRaw('item');
+if(
+	!$order->getDeliveryMethod()?->getKind()?->isPersonalTakeoverInternal() ||
+	$order->getDelivered()
+) {
+	return;
+}
+
+
+echo UI::button(Tr::_('Ready to hand over'))
+	->setClass(UI_button::CLASS_SUCCESS)
+	->setIcon('check')
+	->setUrl( Http_Request::currentURI(set_GET_params: ['pp_action'=>'ready_to_head_over']) );
+
+echo UI::button(Tr::_('Picked up by customer'))
+	->setClass(UI_button::CLASS_INFO)
+	->setIcon('check-double')
+	->setUrl( Http_Request::currentURI(set_GET_params: ['pp_action'=>'picked_up_by_customer']) );
+	

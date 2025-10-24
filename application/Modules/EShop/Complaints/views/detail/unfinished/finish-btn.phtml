@@ -28,15 +28,15 @@ $complaint = $this->getRaw('complaint');
 	<?=UI::button( Tr::_('Finish entering the complaint') )->setUrl( Http_Request::currentURI(['finish'=>1]) )->setClass(UI_button::CLASS_SUCCESS)?>
 	<?php
 else:
-	if(count($complaint->getImages())<$complaint->getMinimalImageCount()): ?>
+	if(count($complaint->getImages())<$complaint::getMinimalImageCount()): ?>
 		<div class="complaints-description">
-		<?=UI_messages::createInfo( Tr::_('Please upload at least %m% pictures.', ['m'=>$complaint->getMinimalImageCount()]) )?>
+		<?=UI_messages::createInfo( Tr::_('Please upload at least %m% pictures.', ['m'=>$complaint::getMinimalImageCount()]) )?>
 		</div>
 	<?php endif;
 	
-	if(strlen($complaint->getProblemDescription())<$complaint->getMinimalProblemDescriptionLength()): ?>
+	if(strlen($complaint->getProblemDescription())<$complaint::getMinimalProblemDescriptionLength()): ?>
 		<div class="complaints-description">
-		<?=UI_messages::createInfo( Tr::_('Please provide a sufficiently detailed description of the problem.', ['m'=>$complaint->getMinimalProblemDescriptionLength()]) )?>
+		<?=UI_messages::createInfo( Tr::_('Please provide a sufficiently detailed description of the problem.', ['m'=>$complaint::getMinimalProblemDescriptionLength()]) )?>
 		</div>
 	<?php endif;
 endif;

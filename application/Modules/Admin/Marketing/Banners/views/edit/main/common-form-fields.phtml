@@ -23,13 +23,14 @@ $group = $item->getGroup();
 ?>
 
 <?=$form->field('group_id')?>
-<?php if($group->getHasText()):
+<?php
 	echo $form->field('text');
-	if($group->getHasColor()):
-		echo $form->field('text_color');
-	endif;
-endif; ?>
+	echo $form->field('text_color');
+?>
 <?=$form->field('URL')?>
+
+
+<?=$form->field('display_info');?>
 <?=$form->field('nofollow')?>
 <?=$form->field('open_in_new_window')?>
 

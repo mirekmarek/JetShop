@@ -6,11 +6,8 @@
  */
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
-use Jet\AJAX;
-use Jet\Http_Request;
 use Jet\Tr;
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\EShops;
 
 class Controller_Main extends Admin_EntityManager_Controller
 {
@@ -44,24 +41,4 @@ class Controller_Main extends Admin_EntityManager_Controller
 		
 	}
 	
-	public function edit_description_Action() : void
-	{
-		$GET = Http_Request::GET();
-		if($GET->exists('show_categories')) {
-			$show_categories = $GET->getString('show_categories');
-			$show_categories = $show_categories ? explode(',', $show_categories) : [];
-			$eshop = EShops::get( $GET->getString('eshop') );
-			
-			$item = $this->current_item;
-			
-			$this->view->setVar('item', $item);
-			$this->view->setVar('category_ids', $show_categories);
-			$this->view->setVar('eshop', $eshop);
-			
-			AJAX::snippetResponse( $this->view->render('edit/main/categories') );
-			
-		}
-		
-		parent::edit_description_Action();
-	}
 }

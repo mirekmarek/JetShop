@@ -19,8 +19,8 @@ class Item
     public ?string $isbn_code = null;
     public ?string $issn_code = null;
     public ?string $heureka_category = null;
-
-    function __construct( int $type, string $name, string $product_id, int $quantity, float $price_vat, float $vat, ?string $ean_code=null, ?string $isbn_code=null, ?string $issn_code=null, ?string $heureka_category=null)
+	
+	public function __construct( int $type, string $name, string $product_id, int $quantity, float $price_vat, float $vat, ?string $ean_code=null, ?string $isbn_code=null, ?string $issn_code=null, ?string $heureka_category=null)
     {
         $this->type = $type;
         $this->name = $name;

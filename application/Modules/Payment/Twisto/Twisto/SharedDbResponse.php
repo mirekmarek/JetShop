@@ -4,7 +4,7 @@ namespace Twisto;
 
 class SharedDbResponse
 {
-    function __construct()
+	public function __construct()
     {
         set_time_limit(0);
         @ob_end_clean();
@@ -15,7 +15,7 @@ class SharedDbResponse
      * @param SharedDbCustomer $customer
      * @param array<SharedDbOrder> $orders
      */
-    function add(SharedDbCustomer $customer, array $orders) : void
+	public function add(SharedDbCustomer $customer, array $orders) : void
     {
         echo json_encode(array(
             'customer' => $customer->serialize(),

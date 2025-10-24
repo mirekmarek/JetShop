@@ -42,6 +42,7 @@ class Listing_Handler_DispatchAllReady extends Admin_Listing_Handler
 	
 	public function canBeHandled(): bool
 	{
+		return false;
 		return Main::getCurrentUserCanEdit();
 	}
 }

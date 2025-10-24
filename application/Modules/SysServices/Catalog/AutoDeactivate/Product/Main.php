@@ -10,11 +10,9 @@ namespace JetApplicationModule\SysServices\Catalog\AutoDeactivate\Product;
 use Jet\Application_Module;
 use Jet\Tr;
 use JetApplication\Availabilities;
-use JetApplication\Availability;
 use JetApplication\Product;
 use JetApplication\SysServices_Definition;
 use JetApplication\SysServices_Provider_Interface;
-use JetApplication\WarehouseManagement_StockCard;
 
 
 class Main extends Application_Module implements SysServices_Provider_Interface

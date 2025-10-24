@@ -64,18 +64,18 @@ class Controller_Main extends MVC_Controller_Default
 		if($dictionary) {
 			switch($GET->getString('action')) {
 				case 'save_translation':
-					$hash = base64_decode($POST->getString('hash'));
+					$phrase = base64_decode($POST->getString('hash'));
 					$translation = $POST->getRaw('translation');
 					
-					$dictionary->addPhrase( $hash, $translation );
+					$dictionary->addPhrase( $phrase, $translation );
 					Translator::saveDictionary( $dictionary );
 					
 					AJAX::operationResponse(true);
 					break;
 				case 'remove_phrase':
-					$hash = base64_decode($POST->getString('hash'));
+					$phrase = base64_decode($POST->getString('hash'));
 					
-					$dictionary->removePhrase( $hash );
+					$dictionary->removePhrase( $phrase );
 					Translator::saveDictionary( $dictionary );
 					
 					AJAX::operationResponse(true);

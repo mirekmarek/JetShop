@@ -12,7 +12,6 @@ use Jet\Form_Field_File_UploadedFile;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
-use Jet\Http_Request;
 use Jet\IO_File;
 use Jet\SysConf_Path;
 use Jet\Tr;

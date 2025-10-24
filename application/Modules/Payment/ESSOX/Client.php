@@ -13,19 +13,19 @@ use JetApplication\EShopConfig_ModuleConfig_PerShop;
 use JetApplication\Order;
 
 class Client {
-	const SERVICE_STD = 'std';
-	const SERVICE_SPLIT = 'split';
+	public const SERVICE_STD = 'std';
+	public const SERVICE_SPLIT = 'split';
 	
 	
-	const METHOD_POST = 'POST';
-	const METHOD_GET = 'GET';
-	const METHOD_DELETE = 'DELETE';
-	const METHOD_PUT = 'PUT';
+	public const METHOD_POST = 'POST';
+	public const METHOD_GET = 'GET';
+	public const METHOD_DELETE = 'DELETE';
+	public const METHOD_PUT = 'PUT';
 	
-	const HTTP_STATUS_OK = 200;
-	const HTTP_STATUS_CREATED = 201;
-	const HTTP_STATUS_ACCEPTED = 202;
-	const HTTP_STATUS_NO_CONTENT = 204;
+	public const HTTP_STATUS_OK = 200;
+	public const HTTP_STATUS_CREATED = 201;
+	public const HTTP_STATUS_ACCEPTED = 202;
+	public const HTTP_STATUS_NO_CONTENT = 204;
 	
 	protected string $API_URL = '';
 	protected string $key = '';

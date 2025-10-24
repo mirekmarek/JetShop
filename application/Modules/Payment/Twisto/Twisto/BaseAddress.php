@@ -5,9 +5,9 @@ namespace Twisto;
 
 interface BaseAddress
 {
-    const TYPE_FULL = 1;
-    const TYPE_SHORT = 2;
+	public const TYPE_FULL = 1;
+	public const TYPE_SHORT = 2;
 
     public function serialize() : array;
-    static function deserialize( array $data) : static;
+	public static function deserialize( array $data) : static;
 }

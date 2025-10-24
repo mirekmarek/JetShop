@@ -13,9 +13,12 @@ use JetApplication\Customer;
 use JetApplication\Application_Service_Admin_Order;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Order;
+use JetApplication\SysServices_Definition;
+use JetApplication\SysServices_Provider_Interface;
+use Jet\Data_DateTime;
 
 
-class Main extends Application_Service_Admin_Order
+class Main extends Application_Service_Admin_Order implements SysServices_Provider_Interface
 {
 	public const ADMIN_MAIN_PAGE = 'orders';
 	
@@ -53,4 +56,28 @@ class Main extends Application_Service_Admin_Order
 		
 	}
 	
+	public function getSysServicesDefinitions(): array
+	{
+		$archive_orders = new SysServices_Definition(
+			module: $this,
+			name: 'Archive orders',
+			description: 'Archive orders older than 3 years',
+			service_code: 'archive_orders',
+			service: function() {
+				Order::updateData(
+					data: [
+						'archived' => true,
+					],
+					where: [
+						'archived' => false,
+						'AND',
+						'date_purchased <=' => new Data_DateTime( date('Y-m-d H:i:s', strtotime('-3 years')) ),
+					]
+				);
+				
+			}
+		);
+		
+		return [$archive_orders];
+	}
 }

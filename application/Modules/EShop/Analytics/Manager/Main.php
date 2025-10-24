@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Manager;
 
-use Jet\Session;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
 use JetApplication\Application_Service_EShop;

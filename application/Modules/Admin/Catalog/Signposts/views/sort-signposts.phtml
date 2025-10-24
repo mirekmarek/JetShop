@@ -14,7 +14,7 @@ use Jet\UI_button;
 use JetApplication\Signpost;
 
 echo '&nbsp;';
-echo UI::button('Sort signposts')
+echo UI::button( Tr::_('Sort signposts') )
 	->setClass(UI_button::CLASS_INFO)
 	->setOnClick("sortSignposts.openDialog();");
 

@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Stats\Orders;
 
 use Jet\Locale;
+use JetApplication\Application_Service_Admin;
 
 class Result_Item {
 	
@@ -100,13 +101,22 @@ class Result_Item {
 	}
 	
 	
+	protected function formatPrice( float $price ) : string
+	{
+		$currenty = $this->result->getStat()->getOutputCurrency();
+		$formatter = Application_Service_Admin::PriceFormatter();
+		
+		return $formatter->formatWithCurrency_WithVAT( $currenty, $price );
+		
+	}
+	
 	public function getAmount( bool $format=true ) : float|string
 	{
 		if(!$format) {
 			return $this->amount;
 		}
 		
-		return Locale::float( $this->amount );
+		return $this->formatPrice( $this->amount );
 	}
 	
 	
@@ -116,7 +126,7 @@ class Result_Item {
 			return $this->amount;
 		}
 		
-		return Locale::float( $this->amount );
+		return $this->formatPrice( $this->amount );
 	}
 	
 	public function getAverageAmount( bool $format=true ) : float|string
@@ -131,7 +141,7 @@ class Result_Item {
 			return $avg;
 		}
 		
-		return Locale::float( $avg );
+		return $this->formatPrice( $avg );
 		
 	}
 	

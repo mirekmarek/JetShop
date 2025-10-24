@@ -52,33 +52,10 @@ class Main extends Application_Module implements SysServices_Provider_Interface,
 		$date_to->setTime(23, 59, 59);
 
 		
-		if($eshop->getLocale()->getRegion()=='CZ') {
-			$numbers = [
-				'721688',
-				'721732',
-				'721757',
-			];
-		}
-		
-		if($eshop->geTLocale()->getRegion()=='SK') {
-			$numbers = [
-				'314560',
-				'314584',
-				'314596',
-				'314600',
-				'314603',
-			];
-		}
-		
 		$order_ids = Order::dataFetchCol(
 			select: ['id'],
 			where: [
 				$eshop->getWhere(),
-				'AND',
-				'number' => $numbers,
-				'AND',
-				'cancelled' => false,
-				/*
 				'AND',
 				'dispatched' => false,
 				'AND',
@@ -87,17 +64,14 @@ class Main extends Application_Module implements SysServices_Provider_Interface,
 				'delivered' => false,
 				'AND',
 				'payment_required' => true,
-				*/
 				'AND',
 				'paid' => false,
-				/*
 				'AND',
 				[
 					'date_purchased >=' => $date_from,
 					'AND',
 					'date_purchased <=' => $date_to,
 				]
-				*/
 			]
 		);
 		

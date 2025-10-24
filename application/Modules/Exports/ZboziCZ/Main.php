@@ -205,14 +205,8 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			$f->tagPair('SHOP_DEPOTS', '12870152');
 			$f->tagPair('SHOP_DEPOTS', '12870139');
 			
-			if($sd->getDopravaZdarma()) {
-				$f->tagPair('EXTRA_MESSAGE', 'free_delivery');
-			}
 			if($sd->getGifts()) {
 				$f->tagPair('EXTRA_MESSAGE', 'free_gift');
-			}
-			if($sd->getExtendedWarranty()) {
-				$f->tagPair('EXTRA_MESSAGE', 'extended_warranty');
 			}
 			$f->tagPair('EXTRA_MESSAGE', 'free_store_pickup');
 			
