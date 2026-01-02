@@ -45,17 +45,18 @@ class Main extends Application_Module implements SysServices_Provider_Interface,
 		
 		$calendar = Application_Service_General::Calendar();
 		
-		$date_from = $calendar->getPrevBusinessDate( eshop: $eshop, number_of_working_days: 2 );
-		$date_to = $calendar->getPrevBusinessDate( eshop: $eshop, number_of_working_days: 1 );
+		$date_from = $calendar->getPrevBusinessDate( eshop: $eshop, number_of_working_days: 3 );
+		$date_to = $calendar->getPrevBusinessDate( eshop: $eshop, number_of_working_days: 2 );
 		
 		$date_from->setTime(0, 0, 0);
 		$date_to->setTime(23, 59, 59);
-
 		
 		$order_ids = Order::dataFetchCol(
 			select: ['id'],
 			where: [
 				$eshop->getWhere(),
+				'AND',
+				'cancelled' => false,
 				'AND',
 				'dispatched' => false,
 				'AND',
@@ -84,14 +85,23 @@ class Main extends Application_Module implements SysServices_Provider_Interface,
 				continue;
 			}
 			
+			echo $order->getId().': number:'.$order->getNumber().PHP_EOL;
+			
 			$pm = $order->getPaymentMethod();
 			if(
-				!$pm ||
-				$pm->getKind()->isLoan()
+				!$pm
 			) {
-				echo "\tUnknown PM or isLoan\n";
+				echo "\tUnknown PM\n";
 				continue;
 			}
+			
+			if(
+				$pm->getKind()->isLoan()
+			) {
+				echo "\tIs loan\n";
+				continue;
+			}
+			
 			
 			
 			if($pm->getKind()->isBankTransfer()) {
@@ -111,7 +121,6 @@ class Main extends Application_Module implements SysServices_Provider_Interface,
 				continue;
 			}
 			
-			echo $order->getId().': number:'.$order->getNumber().PHP_EOL;
 			
 			//echo $email->getBodyHtml();
 			

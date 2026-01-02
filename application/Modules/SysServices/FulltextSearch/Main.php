@@ -8,11 +8,14 @@ namespace JetApplicationModule\SysServices\FulltextSearch;
 
 
 use Jet\Application_Module;
+use Jet\Db;
+use Jet\Locale;
 use Jet\Tr;
 use JetApplication\Brand;
 use JetApplication\Category;
 use JetApplication\Content_Article;
 use JetApplication\EShopEntity_WithEShopData;
+use JetApplication\FulltextSearch_Dictionary;
 use JetApplication\KindOfProduct;
 use JetApplication\Product;
 use JetApplication\Property;
@@ -74,7 +77,56 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			
 		}
 		
+		
+		$import_dictionary = new SysServices_Definition(
+			module: $this,
+			name: Tr::_('Import old dictionary - CZ'),
+			description: Tr::_('Import old dictionary - CZ'),
+			service_code: 'import_old_dictionary:cz',
+			service: function() use ($class) {
+				$this->importOldDictionary(
+					new Locale('cs_CZ'),
+					'fulltext_dictionary'
+				);
+			}
+		);
+		$import_dictionary->setIsPeriodicallyTriggeredService( false );
+		$services[] = $import_dictionary;
+		
+		$import_dictionary = new SysServices_Definition(
+			module: $this,
+			name: Tr::_('Import old dictionary - SK'),
+			description: Tr::_('Import old dictionary - SK'),
+			service_code: 'import_old_dictionary:sk',
+			service: function() use ($class) {
+				$this->importOldDictionary(
+					new Locale('sk_SK'),
+					'sk_fulltext_dictionary'
+				);
+
+			}
+		);
+		$import_dictionary->setIsPeriodicallyTriggeredService( false );
+		$services[] = $import_dictionary;
+		
+		
 		return $services;
+	}
+	
+	public function importOldDictionary( Locale $locale, string $old_table ) : void
+	{
+		FulltextSearch_Dictionary::dataDelete(where: [
+			'locale' => $locale,
+		]);
+		
+		$old = Db::get('old')->fetchAll("SELECT note, words FROM {$old_table}");
+		foreach( $old as $o ) {
+			$rec = new FulltextSearch_Dictionary();
+			$rec->setLocale( $locale );
+			$rec->setWords( $o['words'] );
+			$rec->setNote( $o['note'] );
+			$rec->save();
+		}
 	}
 	
 	public function updateIndex( string $class, bool $active, bool $non_active ) : void

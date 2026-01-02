@@ -28,19 +28,8 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			}
 		);
 		
-		$timeplan = new SysServices_Definition(
-			module: $this,
-			name: Tr::_('Marketing tools time plan - Gift - Product'),
-			description: Tr::_('Applies a timeline - Gift - Product'),
-			service_code: 'handle_time_plan',
-			service: function() {
-				Marketing_Gift_Product::handleTimePlan();
-			}
-		);
-		
 		return [
-			$relations,
-			$timeplan
+			$relations
 		];
 	}
 

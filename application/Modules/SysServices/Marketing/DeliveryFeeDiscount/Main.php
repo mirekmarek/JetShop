@@ -18,16 +18,6 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 {
 	public function getSysServicesDefinitions(): array
 	{
-		$timeplan = new SysServices_Definition(
-			module: $this,
-			name: Tr::_('Marketing tools time plan - Delivery Fee Discount'),
-			description: Tr::_('Applies a timeline - Delivery Fee Discount'),
-			service_code: 'handle_time_plan',
-			service: function() {
-				Marketing_DeliveryFeeDiscount::handleTimePlan();
-			}
-		);
-		
 		$relations = new SysServices_Definition(
 			module: $this,
 			name: Tr::_('Delivery fee discount - actualize product assoc'),
@@ -38,9 +28,7 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 			}
 		);
 		
-		
 		return [
-			$timeplan,
 			$relations
 		];
 	}

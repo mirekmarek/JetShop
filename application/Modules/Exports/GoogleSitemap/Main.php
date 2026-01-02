@@ -403,7 +403,7 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			}
 			
 			$f->tagStart('sitemap');
-			$f->tagPair('loc', str_replace('2025.mastersport.cz', $_SERVER['HTTP_HOST'], $export->getURL()));
+			$f->tagPair('loc', $export->getURL() );
 			$f->tagEnd('sitemap');
 		}
 		
