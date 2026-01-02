@@ -291,14 +291,21 @@ abstract class Core_DeliveryTerm_Info implements BaseObject_Interface_Serializab
 		$item = new static();
 
 		try {
-			$item->is_virtual_product = $data['is_virtual_product'];
-			$item->number_of_units_available = $data['number_of_units_available'];
-			$item->length_of_delivery = $data['length_of_delivery'];
-			$item->allow_to_order_more = $data['allow_to_order_more'];
-			$item->situation = $data['situation'];
-			$item->delivery_info_text = $data['delivery_info_text'];
-			$item->delivery_info_text_when_available = $data['delivery_info_text_when_available'];
-			$item->delivery_info_text_when_not_available = $data['delivery_info_text_when_not_available'];
+			foreach($data as $k=>$v) {
+				if(!property_exists($item, $k)) {
+					continue;
+				}
+				if(in_array($k, ['available_from_date', 'availability', 'eshop'])) {
+					continue;
+				}
+				
+				$item->{$k} = $v;
+			}
+			
+			if(is_array($data['available_from_date'])) {
+				$data['available_from_date'] = $data['available_from_date']['date']??null;
+			}
+			
 			$item->available_from_date = Data_DateTime::catchDate( $data['available_from_date'] );
 			$item->availability = Availabilities::get( $data['availability'] );
 			$item->eshop = EShops::get( $data['eshop']??EShops::getDefault()->getKey() );

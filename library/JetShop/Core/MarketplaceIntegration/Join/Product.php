@@ -77,6 +77,10 @@ abstract class Core_MarketplaceIntegration_Join_Product extends EShopEntity_With
 			];
 			
 			foreach( MarketplaceIntegration_Join_KindOfProduct::getList() as $kinds_of_product_join ) {
+				if(!isset(KindOfProduct::getScope()[$kinds_of_product_join->getKindOfProductId()])) {
+					continue;
+				}
+				
 				$mp_category = MarketplaceIntegration_MarketplaceCategory::get( $this->getMarketplace(), $kinds_of_product_join->getMarketplaceCategoryId() );
 				if(!$mp_category) {
 					continue;

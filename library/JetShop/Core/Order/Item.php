@@ -11,6 +11,7 @@ use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 
+use JetApplication\Calendar;
 use JetApplication\DeliveryTerm_Info;
 use JetApplication\Order;
 use JetApplication\Order_Item_SetItem;
@@ -56,7 +57,7 @@ abstract class Core_Order_Item extends EShopEntity_AccountingDocument_Item {
 		type: DataModel::TYPE_STRING,
 		max_len: 65536
 	)]
-	protected string|null $not_available_units_delivery_tem_info = '';
+	protected string|null $delivery_tem_info = '';
 	
 	
 	/**
@@ -119,20 +120,46 @@ abstract class Core_Order_Item extends EShopEntity_AccountingDocument_Item {
 		$this->not_available_units_promised_delivery_date = Data_DateTime::catchDate( $date );
 	}
 	
-	public function getNotAvailableUnitsDeliveryTemInfo(): ?DeliveryTerm_Info
+	public function getDeliveryTemInfo(): ?DeliveryTerm_Info
 	{
-		return $this->not_available_units_delivery_tem_info ? DeliveryTerm_Info::fromJSON( $this->not_available_units_delivery_tem_info ) : null;
+		return $this->delivery_tem_info ? DeliveryTerm_Info::fromJSON( $this->delivery_tem_info ) : null;
 	}
 	
-	public function setNotAvailableUnitsDeliveryTemInfo( ?DeliveryTerm_Info $not_available_units_delivery_tem_info ): void
+	public function setDeliveryTemInfo( ?DeliveryTerm_Info $delivery_tem_info ): void
 	{
-		if($not_available_units_delivery_tem_info) {
-			$not_available_units_delivery_tem_info = $not_available_units_delivery_tem_info->toJSON();
+		if($delivery_tem_info) {
+			$delivery_tem_info = $delivery_tem_info->toJSON();
 		} else {
-			$not_available_units_delivery_tem_info = '';
+			$delivery_tem_info = '';
 		}
 		
-		$this->not_available_units_delivery_tem_info = $not_available_units_delivery_tem_info;
+		$this->delivery_tem_info = $delivery_tem_info;
+	}
+	
+	public function setupDeliveryTermInfo( Order $order, DeliveryTerm_Info $delivery_term_info ) : void
+	{
+		$this->setDeliveryTemInfo( $delivery_term_info );
+		
+		$this->setAvailableUnitsPromisedDeliveryDate( Calendar::getNextBusinessDate(
+			eshop: $delivery_term_info->getEshop(),
+			number_of_working_days: $delivery_term_info->getLengthOfDeliveryWhenAvailable(),
+			start_date: $order->getDatePurchased()
+		) );
+		$this->setNotAvailableUnitsPromisedDeliveryDate( Calendar::getNextBusinessDate(
+			eshop: $delivery_term_info->getEshop(),
+			number_of_working_days: $delivery_term_info->getLengthOfDeliveryWhenNotAvailable(),
+			start_date: $order->getDatePurchased()
+		) );
+		
+	}
+	
+	public function getPromisedDeliveryDate() : ?Data_DateTime
+	{
+		if($this->number_of_units_not_available > 0) {
+			return $this->not_available_units_promised_delivery_date;
+		}
+		
+		return $this->available_units_promised_delivery_date;
 	}
 	
 	public function clone() : static

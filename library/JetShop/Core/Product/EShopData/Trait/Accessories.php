@@ -7,11 +7,24 @@
 namespace JetShop;
 
 
+use JetApplication\Accessories_Accessory;
 use JetApplication\Accessories_Group;
 use JetApplication\Product_Accessories_Group;
 
 trait Core_Product_EShopData_Trait_Accessories
 {
+	
+	public function getDirectAccessoriesIds() : array
+	{
+		$id = $this->getId();
+		if($this->isVariant()) {
+			$id = $this->getVariantMasterProductId();
+		}
+		
+		
+		return Accessories_Accessory::getAccessoryIds( $id );
+	}
+	
 	
 	public function getAccessoriesGroupIds() : array
 	{
@@ -28,6 +41,12 @@ trait Core_Product_EShopData_Trait_Accessories
 	{
 		$groups = $this->getAccessoriesGroupIds();
 		
-		return Accessories_Group::getAccessoriesIds( $groups );
+		$by_groups = Accessories_Group::getAccessoriesIds( $groups );
+		$direct = $this->getDirectAccessoriesIds();
+		
+		$accessories = array_merge(  $by_groups, $direct );
+		array_unique( $accessories );
+		
+		return $accessories;
 	}
 }

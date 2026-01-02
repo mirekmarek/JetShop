@@ -24,6 +24,16 @@ use JetApplication\Application_Service_Admin_DiscountCodesDefinition;
 use JetApplication\Discounts;
 use JetApplication\Discounts_Code;
 use JetApplication\Application_Service_EShop_DiscountModule_Code;
+use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
+use JetApplication\EShopEntity_HasActivationByTimePlan_Trait;
+use JetApplication\EShopEntity_HasEShopRelation_Interface;
+use JetApplication\EShopEntity_HasEShopRelation_Trait;
+use JetApplication\EShopEntity_HasGet_Interface;
+use JetApplication\EShopEntity_HasGet_Trait;
+use JetApplication\EShopEntity_HasInternalParams_Interface;
+use JetApplication\EShopEntity_HasInternalParams_Trait;
+use JetApplication\EShopEntity_HasProductsRelation_Interface;
+use JetApplication\EShopEntity_HasProductsRelation_Trait;
 use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Order;
@@ -46,9 +56,20 @@ use JetApplication\Discounts_Discount;
 	entity_name_readable: 'Discount code',
 	admin_manager_interface: Application_Service_Admin_DiscountCodesDefinition::class
 )]
-class Core_Discounts_Code extends EShopEntity_Marketing implements EShopEntity_Admin_Interface
+class Core_Discounts_Code extends EShopEntity_Marketing implements
+	EShopEntity_Admin_Interface,
+	EShopEntity_HasInternalParams_Interface,
+	EShopEntity_HasEShopRelation_Interface,
+	EShopEntity_HasGet_Interface,
+	EShopEntity_HasActivationByTimePlan_Interface,
+	EShopEntity_HasProductsRelation_Interface
 {
 	use EShopEntity_Admin_Trait;
+	use EShopEntity_HasEShopRelation_Trait;
+	use EShopEntity_HasInternalParams_Trait;
+	use EShopEntity_HasGet_Trait;
+	use EShopEntity_HasActivationByTimePlan_Trait;
+	use EShopEntity_HasProductsRelation_Trait;
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID,

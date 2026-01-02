@@ -107,13 +107,15 @@ trait Core_Order_Trait_Events {
 		$this->setStatusByFlagState();
 		
 		$this->createEvent(Order_Event_Paid::new())->handleImmediately();
-		
-		$this->checkIsReady();
 	}
 	
 	public function checkIsReady() : void
 	{
 		//TODO: virtual status
+		if($this->getDeliveryMethod()->isEDelivery()) {
+			return;
+		}
+		
 		if(
 			(
 				$this->paid ||

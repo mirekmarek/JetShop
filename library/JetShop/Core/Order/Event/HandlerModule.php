@@ -14,6 +14,7 @@ use JetApplication\Order_Event;
 use JetApplication\EShop;
 use JetApplication\Order;
 use JetApplication\Order_EMailTemplate;
+use JetApplication\Product_EShopData;
 
 
 abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
@@ -49,4 +50,48 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 		
 		return $email?->send()??true;
 	}
+	
+	public function handleVirtualProducts() : void
+	{
+		foreach($this->order->getItems() as $item) {
+			if($item->isPhysicalProduct()) {
+				continue;
+			}
+			
+			if( ($set_items=$item->getSetItems()) ) {
+				foreach( $item->getSetItems() as $set_item ) {
+					$product = Product_EShopData::get( $set_item->getItemId(), $this->order->getEshop() );
+					
+					if(
+						!$product ||
+						!$product->isVirtual()
+					) {
+						continue;
+					}
+					
+					$vp_handler = $product->getKind()?->getVirtualProductHandler();
+					if($vp_handler) {
+						$vp_handler->dispatchOrder( $this->order, $set_item );
+					}
+				}
+				
+				continue;
+			}
+			
+			$product = Product_EShopData::get( $item->getItemId(), $this->order->getEshop() );
+			if(
+				!$product ||
+				!$product->isVirtual()
+			) {
+				continue;
+			}
+			
+			$vp_handler = $product->getKind()?->getVirtualProductHandler();
+			if($vp_handler) {
+				$vp_handler->dispatchOrder( $this->order, $item );
+			}
+		}
+		
+	}
+	
 }

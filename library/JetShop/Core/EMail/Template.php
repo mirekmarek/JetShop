@@ -67,6 +67,13 @@ abstract class Core_EMail_Template extends Template
 			return null;
 		}
 		
+		if(
+			!$template->getSenderEmail() ||
+			!$template->getBodyHTML()
+		) {
+			return null;
+		}
+		
 		$placeholder = '%body%';
 		
 		

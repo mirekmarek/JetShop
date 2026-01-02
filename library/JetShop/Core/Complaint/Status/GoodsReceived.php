@@ -14,12 +14,10 @@ use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_GoodsReceived;
 use JetApplication\Complaint_Status;
-use JetApplication\Complaint_Status_AcceptedMoneyRefunded;
-use JetApplication\Complaint_Status_AcceptedNewProduct;
-use JetApplication\Complaint_Status_AcceptedSentForRepair;
 use JetApplication\Complaint_Status_Cancelled;
-use JetApplication\Complaint_Status_ClarificationRequired;
-use JetApplication\Complaint_Status_Rejected;
+use JetApplication\Complaint_Status_GoodsReceived;
+use JetApplication\Complaint_Status_HandedOverToTechnician;
+use JetApplication\Complaint_Status_SentForReview;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
@@ -31,7 +29,7 @@ abstract class Core_Complaint_Status_GoodsReceived extends Complaint_Status
 	
 	public const CODE = 'goods_received';
 	protected string $title = 'Goods received';
-	protected int $priority = 30;
+	protected int $priority = 11;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -64,145 +62,9 @@ abstract class Core_Complaint_Status_GoodsReceived extends Complaint_Status
 	{
 		$res = [];
 		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Clarification required') )
-					->setClass( UI_button::CLASS_PRIMARY );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return Complaint_Status_ClarificationRequired::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-		};
-		
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Rejected') )
-					->setClass( UI_button::CLASS_DANGER );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return Complaint_Status_Rejected::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Accepted - money refund') )
-					->setClass( UI_button::CLASS_SUCCESS );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return Complaint_Status_AcceptedMoneyRefunded::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Accepted - new product') )
-					->setClass( UI_button::CLASS_SUCCESS );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return Complaint_Status_AcceptedNewProduct::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Accepted - repair') )
-					->setClass( UI_button::CLASS_INFO );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return Complaint_Status_AcceptedSentForRepair::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-		};
-		
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Cancel') )->setClass( UI_button::CLASS_DANGER );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return Complaint_Status_Cancelled::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-		};
+		$res[] = Complaint_Status_SentForReview::getAsPossibleFutureStatus();
+		$res[] = Complaint_Status_HandedOverToTechnician::getAsPossibleFutureStatus();
+		$res[] = Complaint_Status_Cancelled::getAsPossibleFutureStatus();
 		
 		
 		return $res;
@@ -216,6 +78,33 @@ abstract class Core_Complaint_Status_GoodsReceived extends Complaint_Status
 		 */
 		$event =  $item->createEvent( Complaint_Event_GoodsReceived::new() );
 		$event->handleImmediately();
+	}
+	
+	public static function getAsPossibleFutureStatus() : ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
+			
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Goods received') )->setClass( UI_button::CLASS_INFO );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return Complaint_Status_GoodsReceived::get();
+			}
+			
+			public function noteForCustomerEnabled() : bool
+			{
+				return true;
+			}
+			
+			public function doNotSendNotificationsSwitchEnabled() : bool
+			{
+				return true;
+			}
+			
+		};
 	}
 	
 }

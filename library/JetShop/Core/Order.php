@@ -1290,6 +1290,9 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 	
 	public function getAdminTitle(): string
 	{
+		if($this->getImportSource()) {
+			return $this->getNumber().' ('.$this->getImportSource().':'.$this->getImportRemoteId().')';
+		}
 		return $this->getNumber();
 	}
 	
@@ -1468,7 +1471,6 @@ abstract class Core_Order extends EShopEntity_WithEShopRelation implements
 		return $result;
 		
 	}
-	
 	
 	public function getHasVirtualProducts() : bool
 	{

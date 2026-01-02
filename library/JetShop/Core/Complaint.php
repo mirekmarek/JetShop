@@ -149,7 +149,32 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	#[DataModel_Definition(
 		type: DataModel::TYPE_DATE_TIME
 	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Start date:'
+	)]
 	protected ?Data_DateTime $date_started = null;
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Date of receipt of clained goods:'
+	)]
+	protected ?Data_DateTime $date_of_receipt_of_clained_goods = null;
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATE_TIME
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_DATE_TIME,
+		label: 'Finish date:'
+	)]
+	protected ?Data_DateTime $date_finished = null;
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_INT,
@@ -333,17 +358,30 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	public static function startNew(
 		Order $order,
 		Product_EShopData $product,
-		string $problem_description
+		string $problem_description,
+		Complaint_ComplaintType $type,
+		Complaint_DeliveryOfClaimedGoods $delivery,
+		Complaint_PreferredSolution $preferred_solution
 	) : static
 	{
 		$complaint = new static();
+		
+		$complaint->setComplaintTypeCode( $type->getCode() );
+		$complaint->setDeliveryOfClaimedGoodsCode( $delivery->getCode() );
+		$complaint->setPreferredSolutionCode( $preferred_solution->getCode() );
 		
 		$complaint->setEshop( $order->getEshop() );
 		
 		$complaint->setOrder( $order );
 		
 		$complaint->setCustomerId( $order->getCustomerId() );
-		$complaint->setDeliveryAddress( $order->getDeliveryAddress() );
+		
+		$address = $order->getDeliveryAddress();
+		if($order->getDeliveryMethod()->isPersonalTakeover()) {
+			$address = $order->getBillingAddress();
+		}
+		
+		$complaint->setDeliveryAddress( $address );
 		$complaint->setEmail( $order->getEmail() );
 		$complaint->setPhone( $order->getPhone() );
 		
@@ -352,6 +390,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		
 		$complaint->setProblemDescription( $problem_description );
 		$complaint->setProductId( $product->getId() );
+		
 		
 		$complaint->save();
 		
@@ -463,6 +502,33 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 	{
 		$this->date_started = $date_started;
 	}
+	
+	public function getDateOfReceiptOfClainedGoods(): ?Data_DateTime
+	{
+		return $this->date_of_receipt_of_clained_goods;
+	}
+	
+	public function setDateOfReceiptOfClainedGoods( ?Data_DateTime $date_of_receipt_of_clained_goods ): void
+	{
+		$this->date_of_receipt_of_clained_goods = $date_of_receipt_of_clained_goods;
+	}
+	
+	public function getDateFinished( bool $auto_set=false ): ?Data_DateTime
+	{
+		if(!$this->date_finished && $auto_set) {
+			$this->date_finished = Data_DateTime::now();
+			$this->save();
+		}
+		
+		return $this->date_finished;
+	}
+	
+	public function setDateFinished( ?Data_DateTime $date_finished ): void
+	{
+		$this->date_finished = $date_finished;
+	}
+	
+	
 	
 	public function getCustomerId() : int
 	{

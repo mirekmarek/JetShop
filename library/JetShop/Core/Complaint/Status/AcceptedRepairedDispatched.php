@@ -6,24 +6,25 @@
  */
 namespace JetShop;
 
+
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
-use JetApplication\Complaint_Event_AcceptedMoneyRefund;
+use JetApplication\Complaint_Event_AcceptedRepairedDispatched;
 use JetApplication\Complaint_Status;
-use JetApplication\Complaint_Status_AcceptedMoneyRefunded;
+use JetApplication\Complaint_Status_AcceptedRepairedDispatched;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_VirtualStatus;
 
-abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Status {
+abstract class Core_Complaint_Status_AcceptedRepairedDispatched extends Complaint_Status {
 	
-	public const CODE = 'accepted_money_refunded';
-	protected string$title = 'Accepted - Money Refunded';
-	protected int $priority = 41;
+	public const CODE = 'accepted_repaired_dispatched';
+	protected string $title = 'Accepted - Repaired dispatched';
+	protected int $priority = 51;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -36,10 +37,10 @@ abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Sta
 		
 		'accepted' => true,
 		
-		'money_refund' => true,
-		'sent_for_repair' => false,
-		'repaired' => false,
-		'send_new_products' => false,
+		'money_refund' => null,
+		'sent_for_repair' => null,
+		'repaired' => null,
+		'send_new_products' => null,
 	];
 	
 	public function getShowAdminCSSClass() : string
@@ -49,12 +50,15 @@ abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Sta
 	
 	public function createEvent( Complaint|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?Complaint_Event
 	{
-		return $item->createEvent( Complaint_Event_AcceptedMoneyRefund::new() );
+		return $item->createEvent( Complaint_Event_AcceptedRepairedDispatched::new() );
 	}
 	
 	public function getPossibleFutureStatuses(): array
 	{
-		return [];
+		$res = [];
+		
+		
+		return $res;
 	}
 	
 	public static function getAsPossibleFutureStatus() : ?EShopEntity_Status_PossibleFutureStatus
@@ -62,13 +66,13 @@ abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Sta
 		return new class extends EShopEntity_Status_PossibleFutureStatus {
 			public function getButton(): UI_button
 			{
-				return UI::button( Tr::_('Money refund') )
+				return UI::button( Tr::_('Repaired product has been sent') )
 					->setClass( UI_button::CLASS_SUCCESS );
 			}
 			
 			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
 			{
-				return Complaint_Status_AcceptedMoneyRefunded::get();
+				return Complaint_Status_AcceptedRepairedDispatched::get();
 			}
 			
 			public function noteForCustomerEnabled() : bool
@@ -81,7 +85,7 @@ abstract class Core_Complaint_Status_AcceptedMoneyRefunded extends Complaint_Sta
 				return true;
 			}
 		};
-	
+		
 	}
 	
 }

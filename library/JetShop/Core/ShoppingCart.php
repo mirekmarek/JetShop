@@ -203,11 +203,22 @@ abstract class Core_ShoppingCart
 		return $res;
 	}
 	
-	public function selectAutoOffer( Marketing_AutoOffer $auto_offer, float $number_of_units, string &$error_message='' ) : bool|shoppingCart_item
+	public function selectAutoOffer( Marketing_AutoOffer $auto_offer, int $variant_id, float $number_of_units, string &$error_message='' ) : bool|shoppingCart_item
 	{
 		$product_id = $auto_offer->getOfferProductId();
 		
 		$product = Product_EShopData::get( $product_id, $this->eshop );
+		if(
+			$product->isVariantMaster() &&
+			$variant_id
+		) {
+			foreach($product->getVariants() as $variant) {
+				if($variant->getId() == $variant_id) {
+					$product_id = $variant_id;
+					break;
+				}
+			}
+		}
 		
 		$item = new ShoppingCart_Item(
 			product_id: $product_id,

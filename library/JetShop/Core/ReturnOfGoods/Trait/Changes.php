@@ -127,6 +127,28 @@ trait Core_ReturnOfGoods_Trait_Changes {
 		return $change;
 	}
 	
+	public function updateBankAccountNumber( ?string $new_bank_account_number=null ) : ReturnOfGoods_ChangeHistory
+	{
+		if($new_bank_account_number===null) {
+			$new_bank_account_number = $this->getBankAccountNumber();
+		}
+		
+		$change = $this->startChange();
+		
+		if($new_bank_account_number!=$this->getBankAccountNumber()) {
+			
+			$change->addChange('bank_account_number', $this->getBankAccountNumber(), $new_bank_account_number);
+			$this->setBankAccountNumber( $new_bank_account_number );
+		}
+		
+		if($change->hasChange()) {
+			$this->save();
+			$change->save();
+			$this->updated( $change );
+		}
+		
+		return $change;
+	}
 	
 	
 }

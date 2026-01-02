@@ -36,5 +36,4 @@ abstract class Core_Complaint_Status extends EShopEntity_Status {
 	protected static ?array $list = null;
 	
 	abstract public function createEvent( EShopEntity_Basic|Complaint $item, EShopEntity_Status $previouse_status ): ?Complaint_Event;
-	
 }

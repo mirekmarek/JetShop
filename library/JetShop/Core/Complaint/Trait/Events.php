@@ -16,6 +16,7 @@ use JetApplication\Complaint_Event_NewUnfinishedComplaint;
 use JetApplication\Complaint_Event_Rejected;
 use JetApplication\Complaint_Event_Updated;
 use JetApplication\Complaint_Note;
+use JetApplication\Complaint_Status_New;
 use JetApplication\EShopEntity_Event;
 
 trait Core_Complaint_Trait_Events {
@@ -39,7 +40,7 @@ trait Core_Complaint_Trait_Events {
 		$this->completed = true;
 		$this->save();
 		
-		$this->createEvent( Complaint_Event_NewComplaintFinished::new() )->handleImmediately();
+		$this->setStatus( Complaint_Status_New::get() );
 	}
 	
 	public function rejected( string $message_for_customer ) : void

@@ -63,6 +63,8 @@ abstract class Core_Application_Service_EShop_AnalyticsManager extends Applicati
 	
 	abstract public function checkoutInProgress( CashDesk $cash_desk ) : string;
 	
+	abstract public function setPurchaseHandled( Order $order ) : void;
+	
 	abstract public function purchase( Order $order ) : string;
 	
 	abstract public function searchWhisperer( string $q, array $result_ids, ?ProductListing $product_listing=null ) : string;

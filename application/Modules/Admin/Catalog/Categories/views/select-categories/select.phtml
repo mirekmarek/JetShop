@@ -34,7 +34,15 @@ echo $input;
 </div>
 </div>
 
-<?php if( !$input->getIsReadonly() ): ?>
+<?php if( !$input->getIsReadonly() ):
+	
+	$base_URL = Http_Request::currentURI();
+	if(str_contains($base_URL, '?')) {
+		$base_URL .= '&';
+	} else {
+		$base_URL .= '?';
+	}
+	?>
 	<script>
 		const Categories_<?=$name?> = {
 			getCurrent: () => {
@@ -48,7 +56,7 @@ echo $input;
 			actualize: ( ids ) => {
 				ids = ids.join(',');
 				document.getElementById('<?=$input->getId()?>').value = ids;
-				$('#categoeies_<?=$name?>').load( '<?=Http_Request::currentURI()?>&show_categories='+ids+'&input_id=<?=$input->getId()?>' );
+				$('#categoeies_<?=$name?>').load( '<?=$base_URL?>show_categories='+ids+'&input_id=<?=$input->getId()?>' );
 			},
 			add: (id) => {
 				id = id+'';

@@ -18,6 +18,7 @@ use Jet\UI_tabs;
 use JetApplication\EShopEntity_Admin_Interface;
 use JetApplication\Application_Service_Admin;
 use JetApplication\Exports_ExportCategory;
+use JetApplication\Exports_Join_Product;
 use JetApplication\Exports_Module;
 use JetApplication\Product;
 use JetApplication\EShop;
@@ -37,7 +38,7 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 	
 	protected bool $editable;
 	
-	protected bool $selling;
+	protected Exports_Join_Product $product_join;
 	
 	protected UI_tabs $tabs;
 	
@@ -73,15 +74,16 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 		return $this->category;
 	}
 	
-	public function getSelling(): bool
-	{
-		return $this->selling;
-	}
-	
 	public function getParametersForm(): ?Form
 	{
 		return $this->parameters_form;
 	}
+	
+	public function getProductJoin(): Exports_Join_Product
+	{
+		return $this->product_join;
+	}
+	
 	
 	
 	public function resolve(): bool|string
@@ -101,7 +103,7 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 		$this->export = $export;
 		$this->editable = $product->isEditable();
 		$this->category = $this->export->getCategory( $eshop, $product );
-		$this->selling = $this->export->getProductIsSelling( $this->eshop, $this->product->getId() );
+		$this->product_join = $this->export->getProductJoin( $this->eshop, $this->product->getId() );
 		
 		$tabs = $this->initTabs();
 		
@@ -146,6 +148,14 @@ abstract class Core_Exports_Module_Controller_ProductSettings extends MVC_Contro
 				}
 				
 			}
+			
+			if( $this->product_join->getEditForm()->catch() ) {
+				
+				$this->product_join->save();
+				
+				Http_Headers::reload();
+			}
+			
 			
 		} else {
 			$this->parameters_form->setIsReadonly();

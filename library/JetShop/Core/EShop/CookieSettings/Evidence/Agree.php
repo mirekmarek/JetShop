@@ -86,7 +86,18 @@ class Core_EShop_CookieSettings_Evidence_Agree extends EShopEntity_WithEShopRela
 	{
 		$this->complete_agree = $complete_agree;
 	}
-
 	
+	
+	public function afterUpdate(): void
+	{
+	}
+	
+	public function afterDelete(): void
+	{
+	}
+	
+	public function afterAdd(): void
+	{
+	}
 	
 }

@@ -49,6 +49,10 @@ trait Core_Admin_EntityManager_EditorPlugin_ForceStatus
 		$status_field = new Form_Field_Select('status', 'Force status:');
 		$options = [];
 		foreach($this->statuses as $status ) {
+			if($status::isHidden()) {
+				continue;
+			}
+			
 			$options[$status::getCode()] = new Form_Field_Select_Option( $status->getTitle() );
 			$options[$status::getCode()]->setSelectOptionCssClass( $status->getShowAdminCSSClass() );
 			$options[$status::getCode()]->setSelectOptionCssStyle( $status->getShowAdminCSSStyle() );

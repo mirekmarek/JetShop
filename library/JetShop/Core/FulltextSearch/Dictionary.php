@@ -11,6 +11,7 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\Data_Text;
+use Jet\Locale;
 use JsonSerializable;
 
 #[DataModel_Definition(
@@ -28,6 +29,12 @@ abstract class Core_FulltextSearch_Dictionary extends DataModel implements JsonS
 	protected int $id = 0;
 	
 	#[DataModel_Definition(
+		type: DataModel::TYPE_LOCALE,
+		is_key: true
+	)]
+	protected ?Locale $locale = null;
+	
+	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
 		max_len: 255,
 	)]
@@ -35,52 +42,50 @@ abstract class Core_FulltextSearch_Dictionary extends DataModel implements JsonS
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 255,
+		max_len: 99999999,
 	)]
 	protected string $words = '';
 	
 	/**
-	 * @var static[]
+	 * @var static[][]
 	 */
-	protected static array $loaded_items = [];
+	protected static array $dictionary = [];
 	
-	/**
-	 * @var static[]
-	 */
-	protected static ?array $dictionary = null;
-	
-	protected static ?array $word_variants = null;
+	protected static array $word_variants = [];
 	
 	
 	/**
 	 * @return static[]
 	 */
-	public static function getDictionary() : iterable
+	public static function getDictionary( Locale $locale ) : iterable
 	{
+		$locale_str = $locale->toString();
 		
-		if(static::$dictionary===null) {
-			static::$dictionary = [];
+		if(!array_key_exists($locale_str, static::$dictionary)) {
+			static::$dictionary[$locale_str] = [];
 			
-			foreach(static::fetchInstances() as $dict) {
-				static::$dictionary[] = $dict;
+			foreach(static::fetch([''=>['locale'=>$locale]]) as $dict) {
+				static::$dictionary[$locale_str][] = $dict;
 			}
 		}
 		
-		return static::$dictionary;
+		return static::$dictionary[$locale_str];
 		
 	}
 	
-	public static function findWordVariants( string $word ) : array
+	public static function findWordVariants( Locale $locale, string $word ) : array
 	{
-		if(static::$word_variants===null) {
-			static::$word_variants = [];
+		$locale_str = $locale->toString();
+		
+		if(!array_key_exists($locale_str, static::$word_variants)) {
+			static::$word_variants[$locale_str] = [];
 			
-			foreach( static::getDictionary() as $rec ) {
-				static::$word_variants[] = explode(' ', trim($rec->getWords()));
+			foreach( static::getDictionary($locale) as $rec ) {
+				static::$word_variants[$locale_str][] = explode(' ', trim($rec->getWords()));
 			}
 		}
 		
-		foreach( static::$word_variants as $variants ) {
+		foreach( static::$word_variants[$locale_str] as $variants ) {
 			if(in_array($word, $variants)) {
 				return $variants;
 			}
@@ -100,7 +105,7 @@ abstract class Core_FulltextSearch_Dictionary extends DataModel implements JsonS
 		return $text;
 	}
 	
-	public static function collectWords( array $texts ) : array
+	public static function collectWords( ?Locale $locale, array $texts ) : array
 	{
 		$words = [];
 		
@@ -113,11 +118,17 @@ abstract class Core_FulltextSearch_Dictionary extends DataModel implements JsonS
 					continue;
 				}
 				
-				$variants = static::findWordVariants( $word );
-				
-				foreach( $variants as $variant ) {
-					if(!in_array($variant, $words)) {
-						$words[] = $variant;
+				if($locale) {
+					$variants = static::findWordVariants( $locale, $word );
+					
+					foreach( $variants as $variant ) {
+						if(!in_array($variant, $words)) {
+							$words[] = $variant;
+						}
+					}
+				} else {
+					if(!in_array($word, $words)) {
+						$words[] = $word;
 					}
 				}
 			}
@@ -135,6 +146,18 @@ abstract class Core_FulltextSearch_Dictionary extends DataModel implements JsonS
 	{
 		$this->id = $id;
 	}
+	
+	public function getLocale(): ?Locale
+	{
+		return $this->locale;
+	}
+	
+	public function setLocale( ?Locale $locale ): void
+	{
+		$this->locale = $locale;
+	}
+	
+	
 	
 	public function getNote() : string
 	{

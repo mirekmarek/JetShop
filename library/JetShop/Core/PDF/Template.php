@@ -19,11 +19,14 @@ use JetApplication\Template;
 
 abstract class Core_PDF_Template extends Template {
 	
+	protected EShop $eshop;
 	protected static ?array $all_templates = null;
 	
 	
 	public function preparePDF( EShop $eshop ) : PDF
 	{
+		$this->eshop = $eshop;
+		
 		/**
 		 * @var PDF_TemplateText_EShopData $template
 		 */

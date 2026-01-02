@@ -9,17 +9,16 @@ namespace JetShop;
 
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
-use JetApplication\Complaint_Event_ClarificationRequired;
+use JetApplication\Complaint_Event_Accepted;
 use JetApplication\Complaint_Status;
-use JetApplication\Complaint_Status_Cancelled;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 
-abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Status {
+abstract class Core_Complaint_Status_AcceptedDone extends Complaint_Status {
 	
-	public const CODE = 'clarification_required';
-	protected string $title = 'Clarification required';
-	protected int $priority = 40;
+	public const CODE = 'accepted_done';
+	protected string $title = 'Accepted - Done';
+	protected int $priority = 110;
 	
 	protected static array $flags_map = [
 		'cancelled' => false,
@@ -27,36 +26,33 @@ abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Sta
 		'completed' => true,
 		'rejected' => false,
 		
-		'being_processed' => true,
-		'clarification_required' => true,
+		'clarification_required' => null,
+		'being_processed' => null,
 		
-		'accepted' => false,
-		'money_refund' => false,
-		'sent_for_repair' => false,
-		'repaired' => false,
-		'send_new_products' => false,
+		'accepted' => true,
 		
+		'money_refund' => null,
+		'sent_for_repair' => null,
+		'repaired' => null,
+		'send_new_products' => null,
 	];
 	
 	public function getShowAdminCSSClass() : string
 	{
-		return 'status-warning';
+		return 'status-done';
 	}
 	
 	public function createEvent( Complaint|EShopEntity_Basic $item, EShopEntity_Status $previouse_status ): ?Complaint_Event
 	{
-		return $item->createEvent( Complaint_Event_ClarificationRequired::new() );
+		return $item->createEvent( Complaint_Event_Accepted::new() );
 	}
 	
 	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
 		
-		$res[] = Complaint_Status_Cancelled::getAsPossibleFutureStatus();
-		
 		
 		return $res;
 	}
-	
 	
 }

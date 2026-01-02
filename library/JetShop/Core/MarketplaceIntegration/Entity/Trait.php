@@ -40,6 +40,13 @@ trait Core_MarketplaceIntegration_Entity_Trait {
 	{
 		return $this->marketplace_code;
 	}
+	
+	public function setMarketplaceCode( string $marketplace_code ): void
+	{
+		$this->marketplace_code = $marketplace_code;
+	}
+	
+	
 
 	
 }

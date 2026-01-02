@@ -144,7 +144,9 @@ abstract class Core_MarketplaceIntegration extends BaseObject
 	{
 		$res = [];
 		foreach(static::getActiveModules() as $mp) {
-			$res[$mp->getImportSource()] = $mp->getImportSource();
+			foreach($mp->getImportSource() as $src) {
+				$res[$src] = $src;
+			}
 		}
 		
 		return $res;

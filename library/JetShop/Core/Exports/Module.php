@@ -130,9 +130,9 @@ abstract class Core_Exports_Module extends Application_Module
 	
 	
 	
-	public function getProductIsSelling( EShop $eshop, int $product_id ) : bool
+	public function getProductJoin( EShop $eshop, int $product_id ) : Exports_Join_Product
 	{
-		return (bool)Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
+		return Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
 	}
 	
 	public function getProductCommonData( EShop $eshop, int $product_id, string $common_data_key ) : mixed
@@ -191,25 +191,7 @@ abstract class Core_Exports_Module extends Application_Module
 		$cd->save();
 	}
 	
-	public function stopSelling( EShop $eshop, int $product_id ) : void
-	{
-		$join = Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
-		$join?->delete();
-	}
-	
-	public function startSelling( EShop $eshop, int $product_id ) : void
-	{
-		$join = Exports_Join_Product::get( $this->getCode(), $eshop, $product_id );
-		if($join) {
-			return;
-		}
-		
-		$join = new Exports_Join_Product();
-		$join->setEshop( $eshop );
-		$join->setExportCode( $this->getCode() );
-		$join->setProductId( $product_id );
-		$join->save();
-	}
+
 	
 	public function getSellingProductIds( EShop $eshop ) : array
 	{

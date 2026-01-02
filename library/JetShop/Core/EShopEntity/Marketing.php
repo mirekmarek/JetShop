@@ -10,9 +10,10 @@ namespace JetShop;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
 use Jet\Form_Field;
+use Jet\Tr;
 use JetApplication\EShopEntity_Basic;
-use JetApplication\EShopEntity_HasActivationByTimePlan_Interface;
-use JetApplication\EShopEntity_HasActivationByTimePlan_Trait;
+use JetApplication\EShopEntity_HasActivation_Interface;
+use JetApplication\EShopEntity_HasActivation_Trait;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\EShopEntity_HasGet_Interface;
@@ -21,24 +22,27 @@ use JetApplication\EShopEntity_HasInternalParams_Interface;
 use JetApplication\EShopEntity_HasInternalParams_Trait;
 use JetApplication\EShopEntity_HasProductsRelation_Interface;
 use JetApplication\EShopEntity_HasProductsRelation_Trait;
+use JetApplication\EShopEntity_HasTimer_Interface;
 use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShops;
 use JetApplication\EShop;
 use JetApplication\Product_Relation;
 use JetApplication\Product_RelevantRelation;
+use JetApplication\Timer_Action;
 
 #[DataModel_Definition]
 abstract class Core_EShopEntity_Marketing extends EShopEntity_Basic implements
 	EShopEntity_HasInternalParams_Interface,
 	EShopEntity_HasEShopRelation_Interface,
 	EShopEntity_HasGet_Interface,
-	EShopEntity_HasActivationByTimePlan_Interface,
-	EShopEntity_HasProductsRelation_Interface
+	EShopEntity_HasActivation_Interface,
+	EShopEntity_HasProductsRelation_Interface,
+	EShopEntity_HasTimer_Interface
 {
 	use EShopEntity_HasEShopRelation_Trait;
 	use EShopEntity_HasInternalParams_Trait;
 	use EShopEntity_HasGet_Trait;
-	use EShopEntity_HasActivationByTimePlan_Trait;
+	use EShopEntity_HasActivation_Trait;
 	use EShopEntity_HasProductsRelation_Trait;
 	
 	
@@ -171,5 +175,57 @@ abstract class Core_EShopEntity_Marketing extends EShopEntity_Basic implements
 		Product_RelevantRelation::removeAll( $this );
 		Product_Relation::removeAll( $this );
 	}
+	
+	/**
+	 * @return Timer_Action[]
+	 */
+	public function getAvailableTimerActions() : array
+	{
+		$actions = [];
+		
+		$activate = new class() extends Timer_Action {
+			
+			public function getAction(): string
+			{
+				return 'activate';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Activate');
+			}
+			
+			public function perform( EShopEntity_Basic|EShopEntity_HasActivation_Interface $entity, mixed $action_context ): bool
+			{
+				$entity->activate();
+				return true;
+			}
+		};
+		$actions[$activate->getAction()] = $activate;
+		
+		$deactivate = new class() extends Timer_Action {
+			
+			public function getAction(): string
+			{
+				return 'deactivate';
+			}
+			
+			public function getTitle(): string
+			{
+				return Tr::_('Deactivate');
+			}
+			
+			public function perform( EShopEntity_Basic|EShopEntity_HasActivation_Interface $entity, mixed $action_context ): bool
+			{
+				$entity->deactivate();
+				return true;
+			}
+		};
+		$actions[$deactivate->getAction()] = $deactivate;
+		
+		
+		return $actions;
+	}
+	
 	
 }

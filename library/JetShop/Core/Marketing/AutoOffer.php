@@ -22,6 +22,7 @@ use JetApplication\EShopEntity_HasImages_Trait;
 use JetApplication\EShopEntity_Marketing;
 use JetApplication\EShopEntity_Definition;
 use JetApplication\Marketing_AutoOffer;
+use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
 	name: 'auto_offers',
@@ -222,6 +223,15 @@ abstract class Core_Marketing_AutoOffer extends EShopEntity_Marketing implements
 	
 	public function isRelevant( array $product_ids ) : bool
 	{
+		$offer_product = Product_EShopData::get( $this->offer_product_id );
+		if($offer_product?->isVariantMaster()) {
+			foreach($offer_product->getVariants() as $variant) {
+				if(in_array($variant->getId(), $product_ids)) {
+					return false;
+				}
+			}
+		}
+		
 		if(in_array($this->offer_product_id, $product_ids)) {
 			return false;
 		}

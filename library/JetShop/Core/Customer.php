@@ -70,7 +70,7 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 		max_len: 255,
 	)]
 	#[Form_Definition(
-		type: Form_Field::TYPE_INPUT,
+		type: Form_Field::TYPE_EMAIL,
 		label: 'E-mail',
 		is_required: true,
 		error_messages: [
@@ -802,7 +802,9 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 		return static::load( [
 			'oauth_service' => $oauth_service,
 			'AND',
-			'oauth_key' => $oauth_key
+			'oauth_key' => $oauth_key,
+			'AND',
+			EShops::getCurrent()->getWhere()
 		] );
 	}
 	

@@ -26,6 +26,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 	
 	protected Order $order;
 	protected Order_Event $event;
+	protected string $note_for_customer = '';
 	
 	public function getOrder(): Order
 	{
@@ -46,6 +47,7 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 	{
 		$this->event = $event;
 		$this->setOrder( $event->getOrder() );
+		$this->note_for_customer = $event->getNoteForCustomer();
 	}
 	
 	public function initTest( EShop $eshop ): void
@@ -343,6 +345,19 @@ abstract class Core_Order_EMailTemplate extends EMail_Template {
 				return $item->getTotalAmount()>0;
 			} );
 		
+		$this->addProperty('note_for_customer', Tr::_('Note for customer'))
+			->setPropertyValueCreator( function() {
+				if(!$this->note_for_customer) {
+					return '';
+				}
+				
+				return nl2br($this->note_for_customer);
+			});
+		
+		$this->addCondition('has_note_for_customer', Tr::_('Has note for customer'))
+			->setConditionEvaluator( function() {
+				return (bool)$this->note_for_customer;
+			});
 		
 		
 	}

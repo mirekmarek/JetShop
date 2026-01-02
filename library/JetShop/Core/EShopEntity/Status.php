@@ -22,6 +22,7 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	public const CODE = null;
 	
 	protected static string $base_status_class;
+	protected static bool $is_hidden = false;
 	
 	protected string $title;
 	protected int $priority;
@@ -36,6 +37,13 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	{
 		return static::CODE;
 	}
+	
+	public static function isHidden(): bool
+	{
+		return static::$is_hidden;
+	}
+	
+	
 	
 	public function getTitle(): string
 	{
@@ -169,5 +177,10 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	 * @return EShopEntity_Status_PossibleFutureStatus[]
 	 */
 	abstract public function getPossibleFutureStatuses() : array;
+	
+	public static function getAsPossibleFutureStatus() : ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
+	}
 	
 }

@@ -111,6 +111,10 @@ trait CashDesk_ProcessControl
 	
 	public function getPhoneHasBeenSet() : bool
 	{
+		if(!$this->getPhone()) {
+			$this->getSession()->setValue('phone_has_been_set', false);
+			return false;
+		}
 		return $this->getSession()->getValue('phone_has_been_set', false);
 	}
 	

@@ -296,6 +296,9 @@ abstract class Core_EShopEntity_Event extends EShopEntity_Basic implements EShop
 	public function setErrorMessage( string $value ) : void
 	{
 		$this->error_message = $value;
+		if($value) {
+			$this->handled_date_time = Data_DateTime::now();
+		}
 		$this->save();
 	}
 	

@@ -254,6 +254,16 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	)]
 	protected string $delivery_address_country = '';
 	
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Bank account number:',
+	)]
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $bank_account_number = '';
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -284,7 +294,9 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	public static function startNew(
 		Order $order,
 		Product_EShopData $product,
-		string $problem_description
+		string $problem_description,
+		string $bank_account_number,
+		string $delivery_of_claimed_goods_code
 	) : static
 	{
 		$return = new static();
@@ -302,6 +314,10 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		
 		$return->setProblemDescription( $problem_description );
 		$return->setProductId( $product->getId() );
+		
+		$return->setBankAccountNumber( $bank_account_number );
+		
+		$return->setDeliveryOfClaimedGoodsCode( $delivery_of_claimed_goods_code );
 		
 		$return->save();
 		
@@ -539,6 +555,17 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		$this->delivery_address_country = $delivery_address_country;
 	}
 	
+	public function getBankAccountNumber(): string
+	{
+		return $this->bank_account_number;
+	}
+	
+	public function setBankAccountNumber( string $bank_account_number ): void
+	{
+		$this->bank_account_number = $bank_account_number;
+	}
+	
+	
 	
 
 	
@@ -709,6 +736,7 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 		if(!$this->problem_description_edit_form) {
 			$this->problem_description_edit_form = $this->createForm('edit_form', [
 				'delivery_of_claimed_goods_code',
+				'bank_account_number',
 				'problem_description'
 			]);
 		}
@@ -736,7 +764,10 @@ abstract class Core_ReturnOfGoods extends EShopEntity_WithEShopRelation implemen
 	
 	public function canBeFinished() : bool
 	{
-		if($this->descriptionIsShort()) {
+		if(
+			!$this->getBankAccountNumber() ||
+			$this->descriptionIsShort()
+		) {
 			return false;
 		}
 		

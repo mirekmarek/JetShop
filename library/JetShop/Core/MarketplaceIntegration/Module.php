@@ -236,14 +236,11 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 	
 	abstract public function actualizeCategory( string $category_id ) : void;
 	
-	public function getImportSource() : string
-	{
-		return static::IMPORT_SOURCE;
-	}
+	abstract public function getImportSource() : array;
 	
 	public function orderIsRelevant( Order $order ) : bool
 	{
-		return ($order->getImportSource()==$this->getImportSource());
+		return in_array( $order->getImportSource(), $this->getImportSource() );
 	}
 	
 	abstract public function handleOrderEvent( Order_Event $order_event ) : bool;
@@ -348,9 +345,15 @@ abstract class Core_MarketplaceIntegration_Module extends Application_Module
 		$join->save();
 	}
 	
-	public function getSellingProductIds() : array
+	public function getSellingProductIds( ?EShop $eshop = null ) : array
 	{
-		return MarketplaceIntegration_Join_Product::getProductIds( $this->getMarketplace() );
+		if($eshop) {
+			$marketplace = new MarketplaceIntegration_Marketplace( $this->getCode(), $eshop );
+		} else {
+			$marketplace = $this->getMarketplace();
+		}
+		
+		return MarketplaceIntegration_Join_Product::getProductIds( $marketplace );
 	}
 	
 	public function getBrands() : array
