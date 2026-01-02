@@ -25,6 +25,7 @@ use Jet\MVC;
 use Jet\MVC_Page;
 use Jet\Form;
 use Jet\Form_Field;
+use Jet\Auth_AvailablePrivilegeProvider;
 
 /**
  *

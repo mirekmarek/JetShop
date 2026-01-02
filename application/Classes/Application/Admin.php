@@ -133,7 +133,8 @@ class Application_Admin
 		Tr::setCurrentLocale( $selected_locale );
 		//$router->setLocale( $selected_locale );
 	}
-	
+
+
 	public static function handleUploadTooLarge() : void
 	{
 		if( Http_Request::postMaxSizeExceeded() ) {
