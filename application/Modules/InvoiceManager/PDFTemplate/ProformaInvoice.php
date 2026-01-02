@@ -42,23 +42,6 @@ class PDFTemplate_ProformaInvoice extends PDFTemplate {
 				return (bool)$invoice->getPaymentQrCodeImageFilename();
 			});
 		
-		$this->addProperty('text_before_items', Tr::_('Text before ttems'))
-			->setPropertyValueCreator(function() : string {
-				/**
-				 * @var ProformaInvoice $invoice
-				 */
-				$invoice = $this->invoice;
-				return $invoice->getTextBeforeItems();
-			});
-		
-		$this->addProperty('text_after_items', Tr::_('Text after ttems'))
-			->setPropertyValueCreator(function() : string {
-				/**
-				 * @var ProformaInvoice $invoice
-				 */
-				$invoice = $this->invoice;
-				return $invoice->getTextAfterItems();
-			});
 	}
 	
 	public function initTest( EShop $eshop ): void

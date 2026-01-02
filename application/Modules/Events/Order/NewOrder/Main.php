@@ -55,15 +55,6 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		if($email) {
 			$this->order->getPaymentMethod()->updateOrderConfirmationEmail( $this->order, $email );
 			$email->send();
-			
-			if($this->order->getEshopCode()=='b2b') {
-				$email->setSaveHistoryAfterSend( false );
-				$email->setTo([
-					'silvie.rakova@mastersport.cz',
-				]);
-				$email->send();
-			}
-			
 		}
 		
 		$this->order->getPaymentMethod()->updateOrderConfirmationEmail( $this->order, $email );

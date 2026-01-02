@@ -53,10 +53,10 @@ class InappropriateContentReporting extends Core_InappropriateContentReporting
 		$mail .= '</table>';
 		
 		$email = new Mailing_Email();
-		$email->setSenderEmail('robot@mastersport.cz');
+		$email->setSenderEmail('');
 		$email->setSubject($subject);
 		$email->setBodyHtml( $mail );
-		$email->setTo( 'dsa@mastersport.cz' );
+		$email->setTo( '' );
 		$email->send();
 		
 		

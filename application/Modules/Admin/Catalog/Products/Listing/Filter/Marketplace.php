@@ -29,11 +29,10 @@ class Listing_Filter_Marketplace extends Admin_Listing_Filter_StdFilter
 		
 		[$mp_code, $eshop_key] = explode(':', $this->value);
 		
-		$mp = MarketplaceIntegration::getActiveModule( $mp_code );
 		$eshop = EShops::get( $eshop_key );
-		$mp->init( $eshop );
 		
-		$ids = $mp->getSellingProductIds();
+		$mp = MarketplaceIntegration::getActiveModule( $mp_code );
+		$ids = $mp->getSellingProductIds(  $eshop);
 		if(!$ids) {
 			$ids = [0];
 		}

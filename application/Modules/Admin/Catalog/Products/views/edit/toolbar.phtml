@@ -37,8 +37,8 @@ $clone_form = $this->getRaw('clone_form');
 		$variant_master = $item->getVariantMasterProduct();
 		?>
 		<?=UI_messages::createWarning(Tr::_('This is variant of <a href="%URL%">%NAME%</a>', [
-		'URL' => $variant_master->getEditUrl(),
-		'NAME' => $variant_master->getAdminTitle()
+		'URL' => $variant_master?->getEditUrl()??'',
+		'NAME' => $variant_master?->getAdminTitle()??''
 	]))->setCloseable(false)?>
 	<?php endif; ?>
 </div>

@@ -34,7 +34,7 @@ $form->renderer()->setDefaultFieldWidth([
 	Form_Renderer::LJ_SIZE_MEDIUM => 10
 ]);
 
-$form->field('groups')->input()->addCustomCssStyle("height: calc(100vh - 250px)");
+$form->field('groups')->input()->addCustomCssStyle("height: 470px");
 ?>
 <div id="main-col">
 	
@@ -42,6 +42,21 @@ $form->field('groups')->input()->addCustomCssStyle("height: calc(100vh - 250px)"
 	<br>
 	
 	<?=$form->start()?>
-	<?=$form->field('groups')?>
+	
+	<div style="display: grid;grid-template-columns: 1fr 1fr;gap: 20px;align-items:top">
+		<div class="card">
+			<h5 class="card-header"><?=Tr::_( 'Groups' )?></h5>
+			<div class="card-body">
+				<?=$form->field('groups')->input()?>
+			</div>
+		</div>
+		<div class="card">
+			<h5 class="card-header"><?=Tr::_( 'Products' )?></h5>
+			<div class="card-body">
+				<?=Application_Service_Admin::Product()->renderSelectProductsWidget( $form->field('accessory') )?>
+			</div>
+		</div>
+	</div>
+	
 	<?=$form->end()?>
 </div>

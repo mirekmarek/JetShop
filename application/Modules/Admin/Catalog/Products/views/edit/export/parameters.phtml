@@ -28,10 +28,43 @@ $eshop = $controller->getEshop();
 $editable = $controller->getEditable();
 $category = $controller->getCategory();
 $params_form = $controller->getParametersForm();
+$product_join = $controller->getProductJoin();
 
 ?>
 <?=$controller->getTabs()?>
 <br>
+
+<div class="card card-body">
+<?php if($editable):
+	$form = $product_join->getEditForm();
+	
+	$form->renderer()->setDefaultFieldWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 5
+	]);
+	$form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 2
+	]);
+	
+	echo $form->start();
+	foreach($form->getFields() as $field):
+		echo $field;
+	endforeach;
+	?>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-5">
+			<?=UI::button_save()?>
+		</div>
+	</div>
+	
+	<?php
+	echo $form->end();
+	?>
+<?php endif; ?>
+</div>
+<br><br>
+
+
 <?php if($category): ?>
 	<div>
 		<b><?=$category->getCategoryId()?></b> <?=implode(' / ', $category->getFullName())?>

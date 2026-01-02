@@ -89,6 +89,10 @@ $return = $this->getRaw( 'return' );
 						<td><?=Tr::_('e-mail:')?></td>
 						<td><a href="mailto:<?=$return->getEmail()?>"><u><?=$return->getEmail()?></u></a></td>
 					</tr>
+					<tr>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Bank account number:')?></td>
+						<td style="font-size: 1.2rem;font-weight: bolder"><?=$return->getBankAccountNumber()?></td>
+					</tr>
 				</table>
 				
 				<?=Plugin::get( Plugin_ChangeEMailAndPhone_Main::KEY )?->renderButton()?>

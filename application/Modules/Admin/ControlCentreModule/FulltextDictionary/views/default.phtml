@@ -1,0 +1,227 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\ControlCentreModule\FulltextDictionary;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_messages;
+use JetApplication\EShop;
+use JetApplication\FulltextSearch_Dictionary;
+
+/**
+ * @var MVC_View   $this
+ * @var EShop|null $selected_eshop
+ */
+
+$selected_eshop = $this->getRaw('selected_eshop');
+?>
+
+<script type="text/javascript">
+	var dictionary_manage = {
+		add: function () {
+			var note = $('#note_new').val();
+			var words = $('#words_new').val();
+
+			if(!note.length || !words.length) {
+				return;
+			}
+
+			$.ajax({
+				url: '<?=Http_Request::currentURI(['action'=>'add'])?>',
+				method: "POST",
+				data: { note: note, words: words },
+				dataType: "json",
+				success: function( response ) {
+					response = response['data'];
+					
+					var id = response['id'];
+
+					var new_row_template = '';
+					new_row_template += '<tr id="rec_'+id+'" class="rec">';
+					new_row_template += '<td valign="top"><button type="button" class="btn btn-danger" id="delete_btn_'+id+'">X</button> </td>';
+					new_row_template += '<td><input id="note_'+id+'" class="note" value="" style="width: 250px;"/></td>';
+					new_row_template += '<td>';
+					new_row_template += '<textarea id="words_'+id+'" class="words" style="width: 600px;height: 100px;"></textarea>';
+					new_row_template += '<div id="saved_'+id+'" style="display: none;">';
+					new_row_template += '<?=str_replace("\n", '', UI_messages::createSuccess(Tr::_('Saved ....'))->setCloseable(false))?>';
+					new_row_template += '</div>';
+					new_row_template += '</td>';
+					new_row_template += '</tr>';
+
+					var new_row = $(new_row_template);
+
+					$('#new_record_placeholder').before( new_row );
+
+					$('#note_'+id).val(response.note);
+					$('#words_'+id).val(response.words);
+
+					$('#note_'+id).blur( function() {
+						dictionary_manage.save(id);
+					} );
+					$('#words_'+id).blur( function() {
+						dictionary_manage.save(id);
+					} );
+
+					$('#delete_btn_'+id).click( function() {
+						dictionary_manage.delete(id);
+					} );
+
+					$('#note_new').val('');
+					$('#words_new').val('');
+
+					$('#note_new').focus();
+
+				}
+			});
+
+		},
+
+		addOnEnter: function( event ) {
+			var code = event.keyCode ? event.keyCode : event.which;
+			if(code!=13) {
+				return;
+			}
+
+			dictionary_manage.add();
+		},
+
+		save: function ( id ) {
+			var note = $('#note_'+id).val();
+			var words = $('#words_'+id).val();
+
+			if(!note.length || !words.length) {
+				return;
+			}
+
+			$.ajax({
+				url: '<?=Http_Request::currentURI(['action'=>'save'])?>',
+				method: "POST",
+				data: { id: id, note: note, words: words },
+				dataType: "json",
+				success: function( response ) {
+					response = response['data'];
+
+					$('#note_'+id).val(response.note);
+					$('#words_'+id).val(response.words);
+
+					$('#saved_'+id).show();
+
+					setTimeout( function () {
+						$('#saved_'+id).hide();
+					}, 1000 );
+				}
+			});
+
+		},
+
+		delete: function( id ) {
+
+			if(confirm('<?=Tr::_('Do you really want to delete dictionary record?')?>')) {
+				$.ajax({
+					url: '<?=Http_Request::currentURI(['action'=>'delete'])?>',
+					method: "POST",
+					data: { id: id },
+					dataType: "json",
+					success: function( response ) {
+						$('#rec_'+id).remove();
+					}
+				});
+			}
+		},
+
+		search: function( value ) {
+
+			$('.rec').each( function( index, item ) {
+				item = $(item);
+				var founded = false;
+
+				if(value) {
+					var note = item.find('.note').val();
+					var words = item.find('.words').val();
+
+					if(
+						note.indexOf(value)>-1 ||
+						words.indexOf(value)>-1
+					) {
+						founded = true;
+					}
+
+				} else {
+					founded = true;
+				}
+
+
+				if(founded) {
+					item.show();
+				} else {
+					item.hide();
+				}
+
+			} );
+
+
+		}
+
+	};
+</script>
+
+<div class="toolbar" id="main-toolbar">
+	<button type="button" onclick="$('#search').val('');dictionary_manage.search('');" class="btn bnt-default"><i class="fa fa-times"></i></button>
+	<input id="search" onkeyup="dictionary_manage.search(this.value)" style="width: 300px;" class="form-control" placeholder="<?=Tr::_('Search ...')?>"/>
+</div>
+
+<div id="main-col">
+	<table id="dictionary_table" class="table table-striped">
+		<thead>
+		<tr>
+			<th style="width: 30px"></th>
+			<th style="width: 300px;"><?=Tr::_('Internal name and notes')?></th>
+			<th><?=Tr::_('Words')?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach( FulltextSearch_Dictionary::getDictionary( $selected_eshop->getLocale() ) as $word ): ?>
+			<tr id="rec_<?=$word->getId()?>" class="rec">
+				<td valign="top">
+					<button type="button" class="btn btn-danger" id="delete_btn_<?=$word->getId()?>" onclick="dictionary_manage.delete(<?=$word->getId()?>)">X</button>
+				</td>
+				<td valign="top">
+					<input id="note_<?=$word->getId()?>" class="note" value="<?=$word->getNote()?>" style="width: 250px;" onblur="dictionary_manage.save(<?=$word->getId()?>)"/>
+				</td>
+				<td valign="top">
+					<textarea id="words_<?=$word->getId()?>" class="words" style="width: 600px;height: 100px;" onblur="dictionary_manage.save(<?=$word->getId()?>)"><?=trim($word->getWords())?></textarea>
+					<div id="saved_<?=$word->getId()?>" style="display: none">
+						<?=UI_messages::createSuccess(Tr::_('Saved ....'))->setCloseable(false)?>
+					</div>
+				</td>
+			</tr>
+		
+		<?php endforeach; ?>
+		<tr id="new_record_placeholder">
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr id="new_rec_row">
+			<td><b><?=Tr::_('New')?></b></td>
+			<td valign="top">
+				<input id="note_new" value="" style="width: 250px;"/>
+			</td>
+			<td valign="top">
+				<textarea id="words_new" style="width: 600px;height: 100px;" onkeyup="dictionary_manage.addOnEnter(event)"></textarea>
+				<div>
+					<?=UI::button_create(Tr::_('Add'))->setOnClick("dictionary_manage.add()")?>
+				</div>
+			</td>
+		</tr>
+
+		</tbody>
+	</table>
+	
+</div>

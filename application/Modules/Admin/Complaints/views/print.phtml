@@ -31,15 +31,15 @@ $product = Product::get( $complaint->getProductId() );
 	<div style="font-weight: bolder;font-size: 0.5cm">
 		<?=$product->getInternalName()?>
 	</div>
-	<div style="font-size: 0.3cm">
+	<div style="font-size: 0.5cm">
 		<?=$product->getInternalCode()?> / <?=$product->getEan()?>
 	</div>
 	<hr>
 	
 	<div>
-		<h5><?=Tr::_('Description of the problem')?></h5>
+		<h5 style="font-weight: bolder"><?=Tr::_('Description of the problem')?></h5>
 		
-		<p><?=nl2br($complaint->getProblemDescription())?></p>
+		<p style="font-size: 0.5cm"><?=nl2br($complaint->getProblemDescription())?></p>
 	</div>
 	<hr>
 	
@@ -98,6 +98,15 @@ $product = Product::get( $complaint->getProductId() );
 			<h3 style="font-size: 0.6cm;"><?=Tr::_('Customer')?></h3>
 			
 			<table>
+				<tr>
+					<td style="font-size: 1.2rem;font-weight: bolder"></td>
+					<td style="font-size: 1.2rem;font-weight: bolder">
+						<?php if($complaint->getDeliveryCompanyName()):?>
+						<?=$complaint->getDeliveryCompanyName()?><br>
+						<?php endif; ?>
+						<?=$complaint->getDeliveryFirstName()?> <?=$complaint->getDeliverySurname()?>
+					</td>
+				</tr>
 				<tr>
 					<td style="font-size: 1.2rem;font-weight: bolder"><?=Tr::_('Phone:')?></td>
 					<td style="font-size: 1.2rem;font-weight: bolder"><?=$complaint->getPhone()?></td>

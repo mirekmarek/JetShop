@@ -14,7 +14,7 @@ use JetApplication\Marketing_ProductSticker;
 
 class Main extends Application_Service_Admin_Marketing_ProductStickers
 {
-	public const ADMIN_MAIN_PAGE = 'auto_offers';
+	public const ADMIN_MAIN_PAGE = 'product-stickers';
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

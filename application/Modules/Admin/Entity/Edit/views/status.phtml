@@ -16,6 +16,8 @@ use JetApplication\EShopEntity_Status;
  */
 
 $status = $this->getRaw('status');
+
+
 ?>
 <div class="status <?=$status->getShowAdminCSSClass()?>" style="<?=$status->getShowAdminCSSStyle()?>">
 <?=$status->getTitle()?>

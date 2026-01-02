@@ -36,8 +36,6 @@ class Controller_Main extends Admin_EntityManager_Controller
 	
 	public function setupRouter( string $action, string $selected_tab ) : void
 	{
-		Marketing_Banner::handleTimePlan();
-		
 		parent::setupRouter( $action, $selected_tab );
 		
 		$this->router->addAction('edit_banners', $this->module::ACTION_UPDATE)

@@ -70,9 +70,7 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 					}
 					
 					$vp_handler = $product->getKind()?->getVirtualProductHandler();
-					if($vp_handler) {
-						$vp_handler->dispatchOrder( $this->order, $set_item );
-					}
+					$vp_handler?->dispatchOrder( $this->order, $set_item );
 				}
 				
 				continue;
@@ -87,9 +85,7 @@ abstract class Core_Order_Event_HandlerModule extends Event_HandlerModule
 			}
 			
 			$vp_handler = $product->getKind()?->getVirtualProductHandler();
-			if($vp_handler) {
-				$vp_handler->dispatchOrder( $this->order, $item );
-			}
+			$vp_handler?->dispatchOrder( $this->order, $item );
 		}
 		
 	}

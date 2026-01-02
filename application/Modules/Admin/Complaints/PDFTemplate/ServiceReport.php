@@ -62,6 +62,10 @@ class PDFTemplate_ServiceReport extends PDF_Template
 						return $this->complaint->getEshop()->getLocale()->dateAndTime( $this->complaint->getDateStarted() );
 					});
 				
+				$this->addProperty('done_date_time', Tr::_('Date and time of claim completion'))
+					->setPropertyValueCreator( function() {
+						return $this->complaint->getEshop()->getLocale()->dateAndTime( $this->complaint->getDateFinished(true) );
+					});
 				
 				
 				$this->addProperty('customer_name', Tr::_('Customer - name'))

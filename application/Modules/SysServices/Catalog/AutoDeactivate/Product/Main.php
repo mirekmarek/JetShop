@@ -39,8 +39,6 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 		$products = Product::fetchInstances([
 			'is_active' => true,
 			'AND',
-			'is_sale' => true,
-			'AND',
 			'deactivate_after_sell_out' => true
 		]);
 		
@@ -49,15 +47,20 @@ class Main extends Application_Module implements SysServices_Provider_Interface
 		foreach ($products as $product) {
 			$no_avl = $product->getNumberOfAvailable( $avl );
 			
-			echo $product->getAdminTitle().": ".$no_avl;
+			//echo $product->getAdminTitle().": ".$no_avl;
+			
+			echo mb_substr(mb_str_pad($product->getInternalName(), 50, ' '),0,50).'  ';
+			echo mb_str_pad('('.$product->getInternalCode().', '.$product->getId().'): ', 40);
+			echo $no_avl;
+			echo "\n";
 			
 			$on_stock = $no_avl>0;
 			
 			if(!$on_stock) {
-				echo "\tDEACTIVATED\n";
-				$product->deactivate();
-			} else {
-				echo "\tstill on stock\n";
+				if($product->isActive()) {
+					$product->deactivate();
+					echo "\tDEACTIVATED\n";
+				}
 			}
 		}
 

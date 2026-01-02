@@ -12,12 +12,10 @@ use Jet\Locale;
 use Jet\Tr;
 use JetApplication\Currencies;
 use JetApplication\Currency;
-use JetApplication\EShop;
 use JetApplication\Order;
 use JetApplication\Order_Status;
 
 class Stat {
-	public const ALL_ESHOPS = 'all';
 	public const KEY = null;
 	
 	protected int $current_month = 0;
@@ -32,7 +30,7 @@ class Stat {
 	protected bool $is_default = false;
 	protected bool $display_days_by_default = false;
 	
-	protected ?EShop $eshop = null;
+	protected Source $source;
 	
 	protected Currency $output_currency;
 	
@@ -118,15 +116,18 @@ class Stat {
 		return $this->week_days[ $this->getWeekDayNo( $y, $m, $d )  ];
 	}
 	
-	public function getEshop(): ?EShop
+	public function getSource(): Source
 	{
-		return $this->eshop;
+		return $this->source;
 	}
 	
-	public function setEshop( ?EShop $eshop ): void
+	public function setSource( Source $source ): void
 	{
-		$this->eshop = $eshop;
+		$this->source = $source;
+		$this->output_currency = $source->getOutputCurrency();
 	}
+	
+
 	
 	public function getOutputCurrency(): Currency
 	{
@@ -324,11 +325,7 @@ class Stat {
 	
 	public function getDataWhere() : array
 	{
-		if($this->eshop) {
-			$where = $this->eshop->getWhere();
-		} else {
-			$where = [];
-		}
+		$where = $this->source->getWhere();
 		
 		$staus_where = [];
 		foreach($this->getOrderStatuses() as $status) {

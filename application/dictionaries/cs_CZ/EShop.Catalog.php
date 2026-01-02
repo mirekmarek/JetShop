@@ -65,8 +65,6 @@ return [
 	'Skrýt text' => 'Skrýt text',
 	'<span>Položek</span>v kategorii' => '<span>Položek</span> v kategorii',
 	'Potřebujete poradit?' => 'Potřebujete poradit?',
-	'poradna@mastersport.cz' => 'poradna@mastersport.cz',
-	'596 633 216' => '596 633 216',
 	'Vybíráme z nabídky' => 'Vybíráme z nabídky',
 	'Všechny značky' => 'Všechny značky',
 	'FILTER_in_stock' => '',

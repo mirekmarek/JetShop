@@ -305,7 +305,7 @@ class Index extends DataModel {
 			$index->setObjectTitle( $object->getInternalFulltextObjectTitle() );
 			$index->setObjectIsActive( $object->getFulltextObjectIsActive() );
 			
-			$words = FulltextSearch_Dictionary::collectWords( $object->getInternalFulltextTexts() );
+			$words = FulltextSearch_Dictionary::collectWords( null, $object->getInternalFulltextTexts() );
 			
 			$index->setWords( $words );
 			
@@ -340,7 +340,7 @@ class Index extends DataModel {
 		}
 		
 		$old_words = $index->getWords();
-		$words = FulltextSearch_Dictionary::collectWords( $object->getInternalFulltextTexts() );
+		$words = FulltextSearch_Dictionary::collectWords( null, $object->getInternalFulltextTexts() );
 		$index->setWords( $words );
 		if($old_words!=$index->getWords()) {
 			$update = true;

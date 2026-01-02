@@ -14,7 +14,6 @@ use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
-use JetApplication\EShops;
 use DateInterval;
 use JetApplication\Order_Status;
 
@@ -101,22 +100,15 @@ $showDayData = function( $y, $m, $d ) use ($stat, &$default_result, &$default_co
 
 <div class="card card-body shadow" style="margin: 20px;">
 	<div style="display: grid;grid-template-columns: 150px 1fr;gap: 20px;margin: 10px;align-items: center">
-		<div><?=Tr::_('E-Shop:')?></div>
+		<div><?=Tr::_('Source:')?></div>
 		<div style="display: flex;gap: 10px;align-items: center;flex-wrap: wrap;">
 			<?php
-			if(!$stat->getEshop()):
-				?><div class="btn btn-success"><?=Tr::_('All')?></div><?php
-			else:
-				?><a href="<?=Http_Request::currentURI(['eshop'=>$stat::ALL_ESHOPS])?>" class="btn btn-secondary"><?=Tr::_('All')?></a><?php
-			endif;
-			
-			
-			foreach(EShops::getListSorted() as $eshop):
+			foreach(Source::getList() as $source):
 				
-				if($stat->getEshop()?->getKey()==$eshop->getKey()):
-					?><div class="btn btn-success"><?=$eshop->getName()?></div><?php
+				if($stat->getSource()->getKey()==$source->getKey()):
+					?><div class="btn btn-success"><?=$source->getTitle()?></div><?php
 				else:
-					?><a href="<?=Http_Request::currentURI(['eshop'=>$eshop->getKey()])?>" class="btn btn-secondary"><?=$eshop->getName()?></a><?php
+					?><a href="<?=Http_Request::currentURI(['source'=>$source->getKey()])?>" class="btn btn-secondary"><?=$source->getTitle()?></a><?php
 				endif;
 			endforeach; ?>
 		</div>
@@ -134,7 +126,7 @@ $showDayData = function( $y, $m, $d ) use ($stat, &$default_result, &$default_co
 	</div>
 
 	<form method="get">
-		<input type="hidden" name="eshop" value="<?=$stat->getEshop()?->getKey()??$stat::ALL_ESHOPS?>">
+		<input type="hidden" name="source" value="<?=$stat->getSource()->getKey()?>">
 		<input type="hidden" name="stat" value="<?=$stat->getKey()?>">
 
 		<div style="display: grid;grid-template-columns: 150px 1fr;gap: 20px;margin: 10px;align-items: center">

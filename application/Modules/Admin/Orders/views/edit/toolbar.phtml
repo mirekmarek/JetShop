@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Orders;
 
 use Jet\Http_Request;
 use Jet\Tr;
+use Jet\UI_button;
 use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
@@ -41,10 +42,20 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 				<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
 			<?php endif; ?>
 		</div>
-		
-		
-		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+
+
+		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;display:flex;">
 			<b><?=$order->getNumber()?></b>
+			
+			<?=UI::button(' ')->setIcon('clipboard')->setOnClick("cpNumber();")->setClass(UI_button::CLASS_LINK)?>
+
+			<script>
+				function cpNumber() {
+					var number = "<?=$order::getEntityDefinition()->getEntityNameReadable(true)?> <?=$order->getNumber()?>";
+					navigator.clipboard.writeText(number).then(function() {}, function(err) {});
+				}
+			</script>
+			
 		</div>
 		
 		<div style="width: 50px;text-align: center">
@@ -54,7 +65,6 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 		</div>
 		
 		<?=Plugin::get(Plugin_Note_Main::KEY)?->renderButton()?>
-		
 		
 		<?php if($is_editable && Main::getCurrentUserCanEdit()): ?>
 			<div class="dropdown">
@@ -79,6 +89,7 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 				<div class="dropdown-menu" aria-labelledby="change-menu">
 					<div style="width:400px;display: grid;grid-template-columns: 1fr;gap: 10px;padding: 10px;">
 						<?=Plugin::get(Plugin_SendMailConfirmation_Main::KEY)?->renderButton()?>
+						<?=Plugin::get(Plugin_SendMailPaymentConfirmation_Main::KEY)?->renderButton()?>
 					</div>
 				</div>
 			</div>
@@ -86,6 +97,7 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 			<?=Plugin::get(Plugin_Invoicing_Main::KEY)?->renderButton()?>
 		<?php endif; ?>
 		
+		<?=Plugin::get(Plugin_PersonalPickup_Main::KEY)?->renderButton()?>
 		<?=Plugin::get(Plugin_MoneyRefund_Main::KEY)?->renderButton()?>
 		<?=Plugin::get(Plugin_SetStatus_Main::KEY)?->renderButton()?>
 		&nbsp;&nbsp;&nbsp;

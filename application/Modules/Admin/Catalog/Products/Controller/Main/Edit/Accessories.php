@@ -47,7 +47,13 @@ trait Controller_Main_Edit_Accessories
 			$product->setAccessoriesGroupIds( $value );
 		} );
 		
-		$form = new Form('groups_edit_form', [$groups]);
+		$accessory = new Form_Field_Hidden('accessory', '');
+		$accessory->setDefaultValue( implode(',', $product->getDirectAccessoriesIds() ) );
+		$accessory->setFieldValueCatcher(function($value) use ($product) {
+			$product->setAccessoriesIds( $value ? explode( ',', $value ) : [] );
+		});
+		
+		$form = new Form('groups_edit_form', [$groups, $accessory]);
 		if($editable) {
 			if($form->catch()) {
 				UI_messages::success(

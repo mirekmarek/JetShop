@@ -409,7 +409,7 @@ class Server
 		$order->setBillingAddressStreetNo( $data['customer']['street'] );
 		$order->setBillingAddressTown( $data['customer']['city'] );
 		$order->setBillingAddressZip( $data['customer']['postCode'] );
-		$order->setBillingAddressCountry( $data['customer']['state'] );
+		$order->setBillingAddressCountry( $this->eshop->getLocale()->getRegion() );
 		
 		
 		$order->setDeliveryCompanyName($data['deliveryAddress']['company']??'');
@@ -418,7 +418,7 @@ class Server
 		$order->setDeliveryAddressStreetNo( $data['deliveryAddress']['street'] );
 		$order->setDeliveryAddressTown( $data['deliveryAddress']['city'] );
 		$order->setDeliveryAddressZip( $data['deliveryAddress']['postCode'] );
-		$order->setDeliveryAddressCountry( $data['deliveryAddress']['state'] );
+		$order->setDeliveryAddressCountry( $this->eshop->getLocale()->getRegion() );
 		
 		
 		foreach($this->getProducts() as $item) {
@@ -442,7 +442,7 @@ class Server
 		
 		
 		$delivery_method = Delivery_Method::get( $data['deliveryId'] );
-		$order->setDeliveryMethod( $delivery_method, $data['originalId'] );
+		$order->setDeliveryMethod( $delivery_method, '' );
 		
 		$payment_method = Payment_Method::get( $data['paymentId'] );
 		$order->setPaymentMethod( $payment_method );

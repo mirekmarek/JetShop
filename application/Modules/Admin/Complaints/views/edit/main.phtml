@@ -47,6 +47,21 @@ $complaint = $this->getRaw( 'complaint' );
 						<td nowrap=""><b><?=Tr::_('Date and time:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($complaint->getDateStarted()) ?></td>
 					</tr>
+
+					<?php if($complaint->getDateOfReceiptOfClainedGoods()): ?>
+					<tr>
+						<td nowrap=""><b><?=Tr::_('Date of receipt of clained goods:')?></b></td>
+						<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($complaint->getDateOfReceiptOfClainedGoods()) ?></td>
+					</tr>
+					<?php endif; ?>
+					
+					<?php if($complaint->getDateFinished()): ?>
+						<tr>
+							<td nowrap=""><b><?=Tr::_('Finish date:')?></b></td>
+							<td nowrap="" style="padding: 3px"><?= Locale::dateAndTime($complaint->getDateFinished()) ?></td>
+						</tr>
+					<?php endif; ?>
+					
 					<?php /*
 					<tr>
 						<td nowrap=""><b><?=Tr::_('IP address:')?></b></td>
@@ -91,6 +106,15 @@ $complaint = $this->getRaw( 'complaint' );
 						<td>
 							<?=Application_Service_Admin::Customer()->renderItemName( $complaint->getCustomerId() )?>
 							<br>
+						</td>
+					</tr>
+					<tr>
+						<td style="font-size: 1.2rem;font-weight: bolder"></td>
+						<td style="font-size: 1.2rem;font-weight: bolder">
+							<?php if($complaint->getDeliveryCompanyName()):?>
+								<?=$complaint->getDeliveryCompanyName()?><br>
+							<?php endif; ?>
+							<?=$complaint->getDeliveryFirstName()?> <?=$complaint->getDeliverySurname()?>
 						</td>
 					</tr>
 					<tr>

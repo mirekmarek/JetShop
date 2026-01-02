@@ -43,6 +43,13 @@ class Main extends MarketplaceIntegration_Module implements
 	
 	public const IMPORT_SOURCE = 'Heureka';
 	
+	
+	public function getImportSource() : array
+	{
+		return [static::IMPORT_SOURCE];
+	}
+	
+	
 	public function getTitle(): string
 	{
 		return 'Heureka';

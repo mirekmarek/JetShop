@@ -42,6 +42,10 @@ $icons = [
 
 ?>
 
+<h1 style="font-size: 8mm;padding: 3mm;font-weight: bolder"><?=$order->getNumber()?></h1>
+<?php if($order->getImportSource()): ?>
+<div style="padding: 3mm;font-weight: bolder;font-size: 4mm;"><?=$order->getImportSource()?>: <?=$order->getImportRemoteId()?></div>
+<?php endif; ?>
 <div style="display: grid;grid-template-columns: 1fr 1fr;gap: 10px;margin: 10px;">
 	<div class="card">
 		<div class="card-header"><b><?=Tr::_('Common information')?></b></div>

@@ -57,12 +57,29 @@ class Listing_Filter_Status extends Admin_Listing_Filter
 	{
 		$options = [''=>Tr::_(' - all -')];
 		foreach( $this->status_list as $status ) {
+			if($status::isHidden()) {
+				continue;
+			}
+			
 			$opt = new Form_Field_Select_Option( $status->getTitle() );
 			$opt->setSelectOptionCssStyle( $status->getShowAdminCSSStyle() );
 			$opt->setSelectOptionCssClass( $status->getShowAdminCSSClass() );
 			
 			$options[ $status::getCode() ] = $opt;
 		}
+		
+		foreach( $this->status_list as $status ) {
+			if(!$status::isHidden()) {
+				continue;
+			}
+			
+			$opt = new Form_Field_Select_Option( '(XXX) '.$status->getTitle() );
+			$opt->setSelectOptionCssStyle( 'color:#bbbbbb;text-decoration:line-through;' );
+			$opt->setSelectOptionCssClass( '' );
+			
+			$options[ $status::getCode() ] = $opt;
+		}
+		
 		
 		$source = new Form_Field_Select('status', 'Status:' );
 		$source->setDefaultValue( $this->status );

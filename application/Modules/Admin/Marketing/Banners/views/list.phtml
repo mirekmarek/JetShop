@@ -6,9 +6,7 @@
  */
 namespace JetApplicationModule\Admin\Marketing\Banners;
 
-
-use Jet\Data_DateTime;use Jet\Http_Request;
-use Jet\Locale;
+use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
 use Jet\UI;
@@ -31,6 +29,7 @@ $selected_eshop_key = $selected_eshop?->getKey();
 $editable = Main::getCurrentUserCanEdit();
 
 $showValidFrom = function( Marketing_Banner $item ) {
+	/*
 	if($item->isActiveByTimePlan()) {
 		$class = 'active';
 	} else {
@@ -51,9 +50,11 @@ $showValidFrom = function( Marketing_Banner $item ) {
 	?>
 	<div class="time-interval time-interval-<?=$class?>"><?=Locale::dateAndTime( $item->getActiveFrom() )?></div>
 	<?php
+	*/
 };
 
 $showValidTill = function( Marketing_Banner $item ) {
+	/*
 	if($item->isActiveByTimePlan()) {
 		$class = 'active';
 	} else {
@@ -74,7 +75,7 @@ $showValidTill = function( Marketing_Banner $item ) {
 	?>
 	<div class="time-interval time-interval-<?=$class?>"><?=Locale::dateAndTime( $item->getActiveTill() )?></div>
 	<?php
-	
+	*/
 };
 
 $media_size_mtp = 0.4;
@@ -159,11 +160,13 @@ $showBanner = function ( Marketing_Banner $banner, bool $expired ) use ($editabl
 	<?php
 	foreach($list as $banner):
 		if(
-			$banner->isActive() ||
+			$banner->isActive()
+			/* ||
 			(
 				$banner->getActiveFrom()!==null &&
 				$banner->getActiveFrom()>Data_DateTime::now()
 			)
+			*/
 		):
 			$showBanner( $banner, false );
 		endif;
@@ -171,11 +174,13 @@ $showBanner = function ( Marketing_Banner $banner, bool $expired ) use ($editabl
 	
 	foreach($list as $banner):
 		if(
-			!$banner->isActive() &&
+			!$banner->isActive()
+			/* &&
 			(
 				$banner->getActiveFrom()===null ||
 				$banner->getActiveFrom()<Data_DateTime::now()
 			)
+			*/
 		):
 			$showBanner( $banner, true );
 		endif;
@@ -200,8 +205,17 @@ $showBanner = function ( Marketing_Banner $banner, bool $expired ) use ($editabl
 						});
 
 						items = items.join(',');
+						
+						<?php
+						$base_URL = Http_Request::currentURI();
+						if(str_contains($base_URL, '?')) {
+							$base_URL .= '&sort=';
+						} else {
+							$base_URL .= '?sort=';
+						}
+						?>
 
-						fetch('?sort='+items);
+						fetch('<?=$base_URL?>'+items);
 					}
 				});
 			}

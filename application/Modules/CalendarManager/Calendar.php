@@ -289,13 +289,14 @@ class Calendar {
 	}
 	
 	
-	public function getNumberOfDaysRequiredForDispatch() : Calendar_DispatchDeadlineInfo
+	public function getNumberOfDaysRequiredForDispatch( ?Data_DateTime $date_time=null ) : Calendar_DispatchDeadlineInfo
 	{
+		$date_time = $date_time ? : Data_DateTime::now();
 		
 		$deadline_time = $this->config->getOrderDeadlineTime();
 		$deadline = str_replace(':', '', $deadline_time);
 		
-		$h = date('Hi');
+		$h = $date_time->format('Hi');
 		
 		if(
 			$h<$deadline &&

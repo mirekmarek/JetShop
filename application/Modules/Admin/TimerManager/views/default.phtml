@@ -38,17 +38,17 @@ if($scheduled):
 			<table class="table table-striped">
 				<thead>
 				<tr>
-					<th nowrap=""><?=Tr::_('Scheduled date and time')?></th>
-					<th nowrap=""><?=Tr::_('Action')?></th>
-					<th nowrap=""><?=Tr::_('Context value')?></th>
+					<th><?=Tr::_('Scheduled date and time')?></th>
+					<th style="width: 100%"><?=Tr::_('Action')?></th>
+					<th><?=Tr::_('Context value')?></th>
 					<th style="width: 100%"></th>
 				</tr>
 				</thead>
 				<?php foreach($scheduled as $item): ?>
 				<tr>
-					<td nowrap=""><?=Locale::dateAndTime( $item->getDateTime() )?></td>
-					<td nowrap=""><b><?=$actions[$item->getAction()]?->getTitle()?></b></td>
-					<td nowrap=""><?=$actions[$item->getAction()]?->formatActionContextValue( $item->getActionContext() )?></td>
+					<td><?=Locale::dateAndTime( $item->getDateTime() )?></td>
+					<td><b><?=$actions[$item->getAction()]?->getTitle()?></b></td>
+					<td><?=$actions[$item->getAction()]?->formatActionContextValue( $item->getActionContext() )?></td>
 					<td style="text-align: right">
 						<?php if(Main::getCurrentUserCanCancel()):
 							echo UI::button_delete( Tr::_('Cancel'))->setUrl( Http_Request::currentURI(set_GET_params: ['cancel'=>$item->getId()]) );

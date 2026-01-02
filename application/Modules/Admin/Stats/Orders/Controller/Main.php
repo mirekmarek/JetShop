@@ -9,7 +9,6 @@ namespace JetApplicationModule\Admin\Stats\Orders;
 
 use Jet\Http_Request;
 use Jet\MVC_Controller_Default;
-use JetApplication\EShops;
 use JetApplication\Order_Status;
 
 
@@ -44,18 +43,15 @@ class Controller_Main extends MVC_Controller_Default
 		$stat = $this->stats[ $stat_key ];
 		$stat->setIsSelected( true );
 		
-		$eshop_key = $GET->getString('eshop', $stat::ALL_ESHOPS );
-		$eshop = null;
-		if(EShops::exists($eshop_key)) {
-			$eshop = EShops::get( $eshop_key );
-		}
 		
-		$stat->setEshop( $eshop );
-		if($eshop) {
-			$stat->setOutputCurrency( $eshop->getDefaultPricelist()->getCurrency() );
-		} else {
-			$stat->setOutputCurrency( EShops::getDefault()->getDefaultPricelist()->getCurrency() );
-		}
+		$sources = Source::getList();
+		$source_keys = array_keys( $sources );
+		$default_source_key = $source_keys[0];
+		
+		$source_key = $GET->getString('source', default_value: $default_source_key, valid_values: $source_keys );
+		$source = $sources[$source_key];
+		
+		$stat->setSource( $source );
 		
 		
 		$this_year = date('Y');

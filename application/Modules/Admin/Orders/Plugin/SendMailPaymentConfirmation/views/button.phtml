@@ -1,0 +1,19 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\Orders;
+
+
+use Jet\Http_Request;
+use Jet\Tr;
+use Jet\UI_button;
+use Jet\UI;
+?>
+
+<?=UI::button(Tr::_('Resend order payment confirmation e-mail'))->setClass(UI_button::CLASS_INFO)
+	->setUrl(Http_Request::currentURI(['send_email'=>'payment_confirm']))
+	->addCustomCssClass('dropdown-item')
+	->setIcon('money-bill')?>

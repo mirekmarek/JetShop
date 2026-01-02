@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\ReturnsOfGoods;
 
 
+use Jet\UI_button;
 use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
@@ -41,8 +42,18 @@ $next_url = $listing->getNextEditUrl( $return->getId() );
 		</div>
 		
 		
-		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;display:flex;">
 			<b><?=$return->getNumber()?></b>
+			
+			<?=UI::button(' ')->setIcon('clipboard')->setOnClick("cpNumber();")->setClass(UI_button::CLASS_LINK)?>
+
+			<script>
+				function cpNumber() {
+					var number = "<?=$return::getEntityDefinition()->getEntityNameReadable(true)?> <?=$return->getNumber()?>";
+					navigator.clipboard.writeText(number).then(function() {}, function(err) {});
+				}
+			</script>
+			
 		</div>
 		
 		<div style="width: 50px;text-align: center">

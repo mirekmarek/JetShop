@@ -26,15 +26,13 @@ $filter_form = $listing->getFilterForm();
 
 $show_filter = function( Form_Field $field, string $what ) {
 	?>
-	<div style="display: inline-block">
 		<div
 			class="badge badge-<?=match((string)$field->getValue()) {''=>'light', '-1'=>'danger', '1'=>'success' }?>"
-			style="display: grid;grid-template-columns: 70px 100px;align-items: center"
+			style="display: grid;justify-content:left;grid-template-columns: auto 100px;align-items: center;gap: 10px;"
 		>
 			<div><?=$what?></div>
 			<div><?=$field->input()->addJsAction('onchange', 'this.form.submit()')?></div>
 		</div>
-	</div>
 	
 	<?php
 };
@@ -62,6 +60,9 @@ echo Application_Service_Admin::EntityListing()->renderListingFilter(
 	form_fields: $fields,
 	is_active:   $is_active,
 	renderer:    function() use ($show_filter, $filter_form, $filter) {
+		?>
+		<div style="display: flex;flex-wrap: wrap;gap: 10px;">
+		<?php
 		$show_filter(
 			$filter_form->field('is_active_general'),
 			Tr::_('General', dictionary: Tr::COMMON_DICTIONARY)
@@ -76,5 +77,8 @@ echo Application_Service_Admin::EntityListing()->renderListingFilter(
 			
 			endforeach;
 		endif;
+		?>
+		</div>
+		<?php
 	}
 );

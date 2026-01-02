@@ -12,11 +12,12 @@ use Jet\Locale;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
+use Jet\UI_messages;
 use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\MVC_View;
-use JetApplication\MarketplaceIntegration;
+use JetApplication\Application_Service_General;use JetApplication\MarketplaceIntegration;
 use JetApplication\EShops;
 use JetApplication\Order;
 
@@ -118,7 +119,6 @@ $order = $this->getRaw( 'order' );
 						<td><b><?=Tr::_('Paid:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Tr::_($order->getPaid() ? 'yes' : 'no')?></td>
 					</tr>
-						
 						<?php if(
 							!$order->getPaid() &&
 							!$order->getDispatched() &&
@@ -145,6 +145,7 @@ $order = $this->getRaw( 'order' );
 						<?php endif ?>
 					<?php endif; ?>
 					
+					<?php /*
 					<tr>
 						<td><b><?=Tr::_('All items available:')?></b></td>
 						<td nowrap="" style="padding: 3px"><?=Tr::_($order->getAllItemsAvailable() ? 'yes' : 'no')?></td>
@@ -156,11 +157,13 @@ $order = $this->getRaw( 'order' );
 							<?=$order->getWarehouse()?->getInternalName()?>
 						</td>
 					</tr>
-					
+					*/ ?>
 				</table>
 
-				<?php Application_Service_Admin::Complaint()->showOrderComplaints( $order ); ?>
+				<?php Application_Service_Admin::Complaint()?->showOrderComplaints( $order ); ?>
+				<?php Application_Service_Admin::ReturnOfGoods()?->showOrderReturnsOfGoods( $order ); ?>
 				
+				<?=Plugin::get( Plugin_ERPExport_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		
@@ -184,6 +187,18 @@ $order = $this->getRaw( 'order' );
 						<td><?=Tr::_('e-mail:')?></td>
 						<td><a href="mailto:<?=$order->getEmail()?>"><u><?=$order->getEmail()?></u></a></td>
 					</tr>
+					<?php if($order->getCustomerId()): ?>
+					<tr>
+						<td></td>
+						<td>
+							<?php if( Application_Service_General::EMailMarketingSubscribe()->isSubscribed( $order->getEshop(), $order->getEmail() ) ):
+								echo UI_messages::createSuccess( Tr::_('Mailing registered') )->setCloseable( false );
+							else:
+								echo UI_messages::createInfo( Tr::_('Mailing not registered') )->setCloseable( false );
+							endif; ?>
+						</td>
+					</tr>
+					<?php endif; ?>
 				</table>
 				
 				
@@ -215,3 +230,13 @@ $order = $this->getRaw( 'order' );
 		</div>
 	</div>
 
+<?php if($order->getSpecialRequirements()): ?>
+<div class="card">
+	<div class="card-header bg-warning" style="font-weight: bolder"><?=Tr::_('Special requirements and order notes from the customer')?></div>
+
+	<div class="card-body">
+		<?=nl2br($order->getSpecialRequirements())?>
+	</div>
+</div>
+
+<?php endif; ?>

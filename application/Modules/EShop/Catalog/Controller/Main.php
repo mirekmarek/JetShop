@@ -84,13 +84,6 @@ class Controller_Main extends MVC_Controller_Default
 		$this->outputWithCache( '', 'homepage', 30);
 	}
 
-	public function b2b_menu_Action() : void
-	{
-		$this->view->setVar('category', static::$category);
-		
-		$this->output('b2b_menu');
-	}
-	
 	public function brands_Action() : void
 	{
 		$this->output('brands');

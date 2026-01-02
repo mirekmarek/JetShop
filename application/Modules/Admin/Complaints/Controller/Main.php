@@ -37,6 +37,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addFilter( new Listing_Filter_Product() );
 		$this->listing_manager->addFilter( new Listing_Filter_Type() );
 		$this->listing_manager->addFilter( new Listing_Filter_StartedDate() );
+		$this->listing_manager->addFilter( new Listing_Filter_DateOfReceiptOfClainedGoods() );
 		$this->listing_manager->addFilter( new Listing_Filter_FinishedDate() );
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {

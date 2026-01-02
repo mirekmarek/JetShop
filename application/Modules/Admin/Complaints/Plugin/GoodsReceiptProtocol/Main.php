@@ -17,6 +17,10 @@ use Jet\SysConf_Path;
 use Jet\Tr;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Image;
+use JetApplication\Complaint_Status_BeingProcessed;
+use JetApplication\Complaint_Status_GoodsReceived;
+use JetApplication\Complaint_Status_New;
+use JetApplication\Complaint_Status_PickupOrdered;
 
 class Plugin_GoodsReceiptProtocol_Main extends Plugin
 {
@@ -60,6 +64,27 @@ class Plugin_GoodsReceiptProtocol_Main extends Plugin
 		$this->form = new Form( 'goods_receipt_protocol_form', [$goods_received_in_full, $condition_of_goods, $taken_parts] );
 		
 		$this->view->setVar('form', $this->form );
+	}
+	
+	public function canBeHandled() : bool
+	{
+		if(!parent::canBeHandled()) {
+			return false;
+		}
+		
+		/**
+		 * @var Complaint $complaint
+		 */
+		$complaint = $this->item;
+		
+		return in_array(
+			$complaint->getStatus()::getCode(),
+			[
+				Complaint_Status_BeingProcessed::getCode(),
+				Complaint_Status_PickupOrdered::getCode(),
+				Complaint_Status_GoodsReceived::getCode()
+			]
+		);
 	}
 	
 	public function handle() : void

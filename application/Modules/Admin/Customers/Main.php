@@ -10,12 +10,14 @@ namespace JetApplicationModule\Admin\Customers;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Application_Service_Admin_Customer;
+use JetApplication\Customer_EMailTemplate_B2BWelcome;
+use JetApplication\EMail_TemplateProvider;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Customer;
 use JetApplication\EShop;
 
-class Main extends Application_Service_Admin_Customer
+class Main extends Application_Service_Admin_Customer implements EMail_TemplateProvider
 {
 	public const ADMIN_MAIN_PAGE = 'customers';
 	
@@ -32,12 +34,13 @@ class Main extends Application_Service_Admin_Customer
 	
 	public static function getCurrentUserCanCreate(): bool
 	{
-		return false;
+		return parent::getCurrentUserCanCreate();
+		//return false;
 	}
 	
 	public static function getCurrentUserCanDelete(): bool
 	{
-		return false;
+		return parent::getCurrentUserCanDelete();
 	}
 	
 	public static function getEntityInstance(): EShopEntity_Basic

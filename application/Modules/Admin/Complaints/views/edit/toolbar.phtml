@@ -9,6 +9,7 @@ namespace JetApplicationModule\Admin\Complaints;
 
 use Jet\Http_Request;
 use Jet\Tr;
+use Jet\UI_button;
 use JetApplication\Application_Service_Admin_EShopEntity_Listing;
 
 use Jet\UI;
@@ -44,8 +45,16 @@ $next_url = $listing->getNextEditUrl( $complaint->getId() );
 		</div>
 		
 		
-		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;">
+		<div style="padding-left: 10px;padding-right: 10px;text-align: center;font-size: 1.5rem;display:flex;">
 			<b><?=$complaint->getNumber()?></b>
+			<?=UI::button(' ')->setIcon('clipboard')->setOnClick("cpNumber();")->setClass(UI_button::CLASS_LINK)?>
+			
+			<script>
+				function cpNumber() {
+					var number = "<?=$complaint::getEntityDefinition()->getEntityNameReadable(true)?> <?=$complaint->getNumber()?>";
+					navigator.clipboard.writeText(number).then(function() {}, function(err) {});
+				}
+			</script>
 		</div>
 		
 		<div style="width: 50px;text-align: center">

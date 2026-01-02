@@ -31,7 +31,7 @@ foreach( $future_statuses as $state ):
 	
 	$dialog = UI::dialog(
 		"set_status_dialog_{$state->getStatus()::getCode()}",
-		Tr::_('Set status: '.$state->getStatus()->getTitle()),
+		Tr::_('Set status: ').$state->getStatus()->getTitle(),
 		UI_dialog::SIZE_EXTRA_LARGE
 	);
 

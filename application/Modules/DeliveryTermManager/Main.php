@@ -9,7 +9,6 @@ namespace JetApplicationModule\DeliveryTermManager;
 use Jet\Data_DateTime;
 use JetApplication\Application_Service_General;
 use JetApplication\Availabilities;
-use JetApplication\Calendar;
 use JetApplication\DeliveryTerm;
 use JetApplication\DeliveryTerm_Info;
 use JetApplication\Application_Service_General_DeliveryTerm;
@@ -20,7 +19,7 @@ use JetApplication\Availability;
 
 class Main extends Application_Service_General_DeliveryTerm
 {
-	public function getInfo( Product_EShopData $product, float $units_required=1, ?Availability $availability=null ) : DeliveryTerm_Info
+	public function getInfo( Product_EShopData $product, float $units_required=1, ?Availability $availability=null, ?Data_DateTime $date_time=null ) : DeliveryTerm_Info
 	{
 		if(!$availability) {
 			$availability = Availabilities::getCurrent();
@@ -51,7 +50,7 @@ class Main extends Application_Service_General_DeliveryTerm
 			$info->setLengthOfDeliveryWhenNotAvailable( $product->getLengthOfDelivery( $availability ) );
 		}
 		
-		$dispatch_info = Application_Service_General::Calendar()->getNumberOfDaysRequiredForDispatch( $product->getEshop() );
+		$dispatch_info = Application_Service_General::Calendar()->getNumberOfDaysRequiredForDispatch( $product->getEshop(), $date_time );
 		$info->setLengthOfDeliveryWhenAvailable( $dispatch_info->getNumberOfDays() );
 		
 		if(!$product->getAllowToOrderWhenSoldOut()) {
@@ -145,8 +144,6 @@ class Main extends Application_Service_General_DeliveryTerm
 	
 	public function setupOrder( Order $order ) : void
 	{
-		$lod = $order->getDeliveryMethod()?->getLengthOfDeliveryInWorkingDays()??0;
-		
 		foreach( $order->getItems() as $item ) {
 			if(!$item->isPhysicalProduct()) {
 				continue;
@@ -159,18 +156,9 @@ class Main extends Application_Service_General_DeliveryTerm
 						continue;
 					}
 					
-					if($set_item->getNumberOfUnitsAvailable()>0) {
-						$set_item->setAvailableUnitsPromisedDeliveryDate( Calendar::getNextBusinessDate(
-							eshop: $order->getEshop(),
-							number_of_working_days: $lod
-						) );
-					}
+					$delivery_info = $this->getInfo( $product, $item->getNumberOfUnits(), $order->getAvailability(), $order->getDatePurchased() );
 					
-					if($set_item->getNumberOfUnitsNotAvailable()>0) {
-						$delivery_info = $this->getInfo( $product, $item->getNumberOfUnits(), $order->getAvailability() );
-						$set_item->setNotAvailableUnitsDeliveryTemInfo( $delivery_info );
-						$set_item->setNotAvailableUnitsPromisedDeliveryDate( $delivery_info->getEstimatedArrivalDateByDeliveryMethod( $lod ) );
-					}
+					$set_item->setupDeliveryTermInfo( $order, $delivery_info );
 					
 				}
 			}
@@ -181,19 +169,12 @@ class Main extends Application_Service_General_DeliveryTerm
 				continue;
 			}
 			
-			if($item->getNumberOfUnitsAvailable()>0) {
-				$item->setAvailableUnitsPromisedDeliveryDate( Calendar::getNextBusinessDate(
-					eshop: $order->getEshop(),
-					number_of_working_days: $lod
-				) );
-			}
-			
-			if($item->getNumberOfUnitsNotAvailable()>0) {
-				$delivery_info = $this->getInfo( $product, $item->getNumberOfUnits(), $order->getAvailability() );
-				$item->setNotAvailableUnitsDeliveryTemInfo( $delivery_info );
-				$item->setNotAvailableUnitsPromisedDeliveryDate( $delivery_info->getEstimatedArrivalDateByDeliveryMethod( $lod ) );
-			}
+			$delivery_info = $this->getInfo( $product, $item->getNumberOfUnits(), $order->getAvailability(), $order->getDatePurchased() );
+
+			$item->setupDeliveryTermInfo( $order, $delivery_info );
 		}
+		$order->save();
+		
 		
 		$order_promised_delivery_date = Data_DateTime::now();
 		foreach($order->getItems() as $item) {
@@ -203,38 +184,29 @@ class Main extends Application_Service_General_DeliveryTerm
 			
 			if($item->getSetItems()) {
 				foreach($item->getSetItems() as $set_item) {
+					$pd = $set_item->getPromisedDeliveryDate();
 					if(
-						$set_item->getAvailableUnitsPromisedDeliveryDate() &&
-						$set_item->getAvailableUnitsPromisedDeliveryDate()>$order_promised_delivery_date
+						$pd &&
+						$pd>$order_promised_delivery_date
 					) {
-						$order_promised_delivery_date = $set_item->getAvailableUnitsPromisedDeliveryDate();
+						$order_promised_delivery_date = $pd;
 					}
-					if(
-						$set_item->getNotAvailableUnitsPromisedDeliveryDate() &&
-						$set_item->getNotAvailableUnitsPromisedDeliveryDate()>$order_promised_delivery_date
-					) {
-						$order_promised_delivery_date = $set_item->getNotAvailableUnitsPromisedDeliveryDate();
-					}
-					
 				}
 				continue;
 			}
 			
+			$pd = $item->getPromisedDeliveryDate();
+			
 			if(
-				$item->getAvailableUnitsPromisedDeliveryDate() &&
-				$item->getAvailableUnitsPromisedDeliveryDate()>$order_promised_delivery_date
+				$pd &&
+				$pd>$order_promised_delivery_date
 			) {
-				$order_promised_delivery_date = $item->getAvailableUnitsPromisedDeliveryDate();
-			}
-			if(
-				$item->getNotAvailableUnitsPromisedDeliveryDate() &&
-				$item->getNotAvailableUnitsPromisedDeliveryDate()>$order_promised_delivery_date
-			) {
-				$order_promised_delivery_date = $item->getNotAvailableUnitsPromisedDeliveryDate();
+				$order_promised_delivery_date = $pd;
 			}
 		}
 		
 		$order->setPromisedDeliveryDate( $order_promised_delivery_date );
 		
+		$order->save();
 	}
 }

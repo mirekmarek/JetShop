@@ -15,6 +15,7 @@ use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Complaint;
+use JetApplication\Complaint_Status_AcceptedMoneyRefunded;
 use JetApplication\MoneyRefund;
 use JetApplication\Order;
 
@@ -59,6 +60,27 @@ class Plugin_MoneyRefund_Main extends Plugin {
 		$this->form = new Form('money_refund_form', [ $internal_summary, $amount_to_be_refunded ]);
 		$this->view->setVar('money_refund_form', $this->form);
 	}
+	
+	public function canBeHandled() : bool
+	{
+		if(!parent::canBeHandled()) {
+			return false;
+		}
+		
+		/**
+		 * @var Complaint $complaint
+		 */
+		$complaint = $this->item;
+		
+		/** @noinspection PhpInArrayCanBeReplacedWithComparisonInspection */
+		return in_array(
+			$complaint->getStatus()::getCode(),
+			[
+				Complaint_Status_AcceptedMoneyRefunded::getCode()
+			]
+		);
+	}
+	
 	
 	public function handle() : void
 	{

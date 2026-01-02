@@ -553,9 +553,11 @@ class Main extends Application_Service_Admin_EShopEntity_Edit
 	}
 	public function renderShowStatus( EShopEntity_Status $status ): string
 	{
-		return $this->render('status', [
-			'status' => $status
-		]);
+		$this->view = Factory_MVC::getViewInstance( $this->getViewsDir() );
+		
+		$this->view->setVar('status', $status);
+		
+		return $this->view->render('status');
 	}
 	
 	public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item, bool $shop_full=false ) : string

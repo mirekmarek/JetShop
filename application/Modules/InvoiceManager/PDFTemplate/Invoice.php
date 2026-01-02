@@ -10,7 +10,6 @@ namespace JetApplicationModule\InvoiceManager;
 use Jet\Tr;
 use JetApplication\EShop;
 use JetApplication\Invoice;
-use JetApplication\Template_Property_Param;
 
 class PDFTemplate_Invoice extends PDFTemplate {
 	
@@ -20,47 +19,6 @@ class PDFTemplate_Invoice extends PDFTemplate {
 		$this->setInternalNotes('');
 		
 		$this->initCommonFields();
-		
-		
-		$qr = $this->addProperty('qr', Tr::_('QR'));
-		$qr->setPropertyValueCreator(function() : string {
-			/**
-			 * @var Invoice $invoice
-			 */
-			$invoice = $this->invoice;
-			return $invoice->getPaymentQrCodeImageFilename();
-			
-		});
-		$qr->addParam( Template_Property_Param::TYPE_INT, 'max_w', Tr::_('Maximal image width') );
-		$qr->addParam( Template_Property_Param::TYPE_INT, 'max_h', Tr::_('Maximal image height') );
-		
-		$this->addCondition('qr', 'QR code defined')
-			->setConditionEvaluator( function() : bool {
-				/**
-				 * @var Invoice $invoice
-				 */
-				$invoice = $this->invoice;
-				return (bool)$invoice->getPaymentQrCodeImageFilename();
-			});
-		
-		$this->addProperty('text_before_items', Tr::_('Text before ttems'))
-			->setPropertyValueCreator(function() : string {
-				/**
-				 * @var Invoice $invoice
-				 */
-				$invoice = $this->invoice;
-				return $invoice->getTextBeforeItems();
-			});
-		
-		$this->addProperty('text_after_items', Tr::_('Text after ttems'))
-			->setPropertyValueCreator(function() : string {
-				/**
-				 * @var Invoice $invoice
-				 */
-				$invoice = $this->invoice;
-				return $invoice->getTextAfterItems();
-			});
-		
 	}
 	
 	public function initTest( EShop $eshop ): void

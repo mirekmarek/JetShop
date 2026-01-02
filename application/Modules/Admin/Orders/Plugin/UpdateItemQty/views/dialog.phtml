@@ -81,9 +81,9 @@ echo $select_dialog->start();
 						<b style="color: red"><?=$item->getNumberOfUnitsNotAvailable()?>&nbsp;<?=$item->getMeasureUnit()?->getName()?></b><br>
 						
 						<?php
-						echo $item->getNotAvailableUnitsDeliveryTemInfo()?->getDeliveryInfoText();
+						echo $item->getDeliveryTemInfo()?->getDeliveryInfoText();
 						echo '<br>';
-						echo Locale::date( $item->getNotAvailableUnitsPromisedDeliveryDate() );
+						echo Locale::date( $item->getPromisedDeliveryDate() );
 						?>
 					
 					<?php endif; ?>
@@ -115,7 +115,7 @@ echo $select_dialog->start();
 							<?php if($set_item->getNumberOfUnitsNotAvailable()>0):?>
 								<b style="color: red"><?=$set_item->getNumberOfUnitsNotAvailable()?>&nbsp;<?=$set_item->getMeasureUnit()?->getName()?></b><br>
 								<?php
-								echo $set_item->getNotAvailableUnitsDeliveryTemInfo()?->getDeliveryInfoText();
+								echo $set_item->getDeliveryTemInfo()?->getDeliveryInfoText();
 								echo '<br>';
 								echo Locale::date( $set_item->getNotAvailableUnitsPromisedDeliveryDate() );
 								?>

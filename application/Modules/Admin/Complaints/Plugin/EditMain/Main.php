@@ -39,6 +39,9 @@ class Plugin_EditMain_Main extends Plugin {
 			'complaint_type_code',
 			'delivery_of_claimed_goods_code',
 			'preferred_solution_code',
+			'date_started',
+			'date_of_receipt_of_clained_goods',
+			'date_finished'
 		]);
 		
 		$order = new Form_Field_Input('order', 'Order number:');

@@ -12,6 +12,14 @@ use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use JetApplication\Complaint;
+use JetApplication\Complaint_Status_AcceptedDispatched;
+use JetApplication\Complaint_Status_AcceptedIrreparable;
+use JetApplication\Complaint_Status_AcceptedRepaired;
+use JetApplication\Complaint_Status_AcceptedRepairedDispatched;
+use JetApplication\Complaint_Status_HandedOverToTechnician;
+use JetApplication\Complaint_Status_Rejected;
+use JetApplication\Complaint_Status_AcceptedNewProduct;
+use JetApplication\Complaint_Status_SentForReview;
 
 class Plugin_ServiceReport_Main extends Plugin
 {
@@ -23,6 +31,8 @@ class Plugin_ServiceReport_Main extends Plugin
 	{
 		return false;
 	}
+	
+	
 	
 	protected function init() : void
 	{
@@ -41,6 +51,32 @@ class Plugin_ServiceReport_Main extends Plugin
 		$this->form = new Form( 'service_report_form', [$service_report] );
 		
 		$this->view->setVar('form', $this->form );
+	}
+	
+	public function canBeHandled() : bool
+	{
+		if(!parent::canBeHandled()) {
+			return false;
+		}
+		
+		/**
+		 * @var Complaint $complaint
+		 */
+		$complaint = $this->item;
+		
+		return in_array(
+			$complaint->getStatus()::getCode(),
+			[
+				Complaint_Status_HandedOverToTechnician::getCode(),
+				Complaint_Status_SentForReview::getCode(),
+				Complaint_Status_Rejected::getCode(),
+				Complaint_Status_AcceptedRepaired::getCode(),
+				Complaint_Status_AcceptedRepairedDispatched::getCode(),
+				Complaint_Status_AcceptedIrreparable::getCode(),
+				Complaint_Status_AcceptedNewProduct::getCode(),
+				Complaint_Status_AcceptedDispatched::getCode()
+			]
+		);
 	}
 	
 	public function handle() : void

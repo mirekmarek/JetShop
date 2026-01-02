@@ -90,8 +90,8 @@ class Main extends Application_Service_General_Calendar implements
 		return true;
 	}
 	
-	public function getNumberOfDaysRequiredForDispatch( EShop $eshop ) : Calendar_DispatchDeadlineInfo
+	public function getNumberOfDaysRequiredForDispatch( EShop $eshop, ?Data_DateTime $date_time=null ) : Calendar_DispatchDeadlineInfo
 	{
-		return Calendar::get( $this->getConfig($eshop) )->getNumberOfDaysRequiredForDispatch();
+		return Calendar::get( $this->getConfig($eshop) )->getNumberOfDaysRequiredForDispatch( $date_time );
 	}
 }

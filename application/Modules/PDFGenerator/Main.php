@@ -19,7 +19,7 @@ class Main extends Application_Service_General_PDFGenerator
 	/** @noinspection PhpMethodParametersCountMismatchInspection */
 	public function generate( PDF $pdf ): string
 	{
-		require 'TCPDF/tcpdf.php';
+		require_once 'TCPDF/tcpdf.php';
 		
 		$eshop = $pdf->getEshop();
 		

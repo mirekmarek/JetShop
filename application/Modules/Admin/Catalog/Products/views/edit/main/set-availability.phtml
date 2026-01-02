@@ -46,8 +46,7 @@ foreach(Availabilities::getList() as $availability):
 		<?php
 		$field_name_prefix = '/'.$availability->getCode().'/';
 		
-		echo $set_availability_form->field( $field_name_prefix.'available_from' );
-		echo $set_availability_form->field( $field_name_prefix.'length_of_delivery' );
+		echo $set_availability_form->field( $field_name_prefix.'number_od_available' );
 		?>
 	</fieldset>
 <?php endforeach;

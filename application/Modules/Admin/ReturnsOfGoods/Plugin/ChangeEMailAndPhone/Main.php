@@ -34,16 +34,20 @@ class Plugin_ChangeEMailAndPhone_Main extends Plugin {
 		
 		$this->form = new Form('phone_and_email_form', []);
 		
+		/**
+		 * @var ReturnOfGoods $return
+		 */
+		$return = $this->item;
 		
 		$email = new Form_Field_Email('email', 'E-Mail:');
-		$email->setDefaultValue( $this->item->getEmail() );
+		$email->setDefaultValue( $return->getEmail() );
 		$email->setIsRequired(true);
 		$email->setErrorMessages([
 			Form_Field_Email::ERROR_CODE_EMPTY => 'Invalid value',
 			Form_Field_Email::ERROR_CODE_INVALID_FORMAT => 'Invalid value',
 			'used' => 'This e-mail is already used'
 		]);
-		if($this->item->getCustomerId()) {
+		if($return->getCustomerId()) {
 			$email->setValidator(function() use ($email) {
 				/**
 				 * @var ReturnOfGoods $item
@@ -71,14 +75,19 @@ class Plugin_ChangeEMailAndPhone_Main extends Plugin {
 		
 		
 		$phone = new Form_Field_Input('phone', 'Phone:');
-		$phone->setDefaultValue( $this->item->getPhone() );
+		$phone->setDefaultValue( $return->getPhone() );
 		$phone->setIsRequired( true );
 		$phone->setErrorMessages([
 			Form_Field_Input::ERROR_CODE_EMPTY => 'Invalid value'
 		]);
 		$this->form->addField( $phone );
 		
-		if($this->item->getCustomerId()) {
+		
+		$ba_number = new Form_Field_Input('bank_account_number', 'Bank account number:');
+		$ba_number->setDefaultValue( $return->getBankAccountNumber() );
+		$this->form->addField( $ba_number );
+		
+		if($return->getCustomerId()) {
 			$update_customer_account = new Form_Field_Checkbox('update_customer_account', 'Update customer account');
 			$update_customer_account->setDefaultValue(true);
 			
@@ -115,6 +124,8 @@ class Plugin_ChangeEMailAndPhone_Main extends Plugin {
 			if($this->form->validate()) {
 				$new_email = $this->form->field('email')->getValue();
 				$new_phone = $this->form->field('phone')->getValue();
+				$new_ba_number = $this->form->field('bank_account_number')->getValue();
+				
 				if($this->form->fieldExists('update_customer_account')) {
 					$update_customer_account = $this->form->field('update_customer_account')->getValue();
 				} else {
@@ -139,6 +150,10 @@ class Plugin_ChangeEMailAndPhone_Main extends Plugin {
 					UI_messages::success( Tr::_( 'Phone has been changed' ) );
 				}
 				
+				$change = $change = $item->updateBankAccountNumber( $new_ba_number );
+				if($change->hasChange('bank_account_number')) {
+					UI_messages::success( Tr::_( 'Bank account number has been updated' ) );
+				}
 				
 				
 				AJAX::operationResponse(true);

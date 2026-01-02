@@ -199,7 +199,7 @@ abstract class PDFTemplate extends PDF_Template {
 		
 		$this->addProperty('custoner_company_id', Tr::_('Custoner - Company ID'))
 			->setPropertyValueCreator(function() : string {
-				return $this->invoice->getCustomerAddressZip();
+				return $this->invoice->getCustomerCompanyId();
 			});
 		
 		$this->addProperty('custoner_company_vat_id', Tr::_('Custoner - Company VAT ID'))
