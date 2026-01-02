@@ -49,7 +49,9 @@ class Event_Purchase extends Event_CheckoutStarted
 	protected function initItems( Order $order ) : void
 	{
 		foreach($order->getItems() as $item) {
-			$this->items[] = Event_Purchase_Item::createNew( $this, $item );
+			foreach(Event_Purchase_Item::createNew( $this, $item ) as $created_item) {
+				$this->items[] = $created_item;
+			}
 		}
 	}
 	
@@ -64,7 +66,7 @@ class Event_Purchase extends Event_CheckoutStarted
 		return 'success';
 	}
 	
-	public function getItems() : string
+	public function getIcon() : string
 	{
 		return 'thumbs-up';
 	}
@@ -83,11 +85,25 @@ class Event_Purchase extends Event_CheckoutStarted
 		parent::save();
 	}
 	
-	
-	public function showShortDetails(): string
+	public function getOrderNumber(): string
 	{
-		//TODO:
-		return '';
+		return $this->order_number;
 	}
+	
+	public function getOrderId(): int
+	{
+		return $this->order_id;
+	}
+	
+	/**
+	 * @return array<Event_Purchase_Item>
+	 */
+	public function getItems(): array
+	{
+		return $this->items;
+	}
+	
+	
+	
 	
 }

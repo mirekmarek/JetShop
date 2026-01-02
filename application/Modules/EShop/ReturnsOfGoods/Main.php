@@ -25,13 +25,13 @@ class Main extends Application_Service_EShop_ReturnOfGoods implements EShop_Modu
 			return false;
 		}
 		
-		return EShop_Pages::ReturnOfGoods( $order->getEshop() )->getURL(
+		return EShop_Pages::ReturnOfGoods( $order->getEshop() )?->getURL(
 			GET_params: [
 				'order' => $order->getKey(),
 				'product_id' => $order_item->getItemId(),
 				'm' => sha1($order->getEmail())
 			]
-		);
+		)??'';
 
 	}
 }

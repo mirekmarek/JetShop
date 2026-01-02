@@ -1,0 +1,181 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Form;
+use Jet\Form_Field;
+use Jet\Http_Request;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Application_Service_Admin;
+use JetApplication\EShop;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ * @var array $data
+ * @var Form $form
+ * @var Report_General_ExportOrders_RelevantEvent[] $events
+ * @var array $sum
+ * @var EShop $eshop
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+$data = $this->getRaw('data');
+$form = $this->getRaw('form');
+$events = $this->getRaw('events');
+$sum = $this->getRaw('sum');
+$eshop = $this->getRaw('eshop');
+
+echo $module->renderSelectOneEShop();
+?>
+
+<div style="padding: 10px;">
+	<?=$form->start()?>
+	
+	<?php
+	foreach($form->getFields() as $field):
+		if($field->getType()==Form_Field::TYPE_HIDDEN) {
+			if($field->input()->getDataAttributes()['def']??null) {
+				echo $field;
+			}
+		}
+	endforeach;
+	?>
+	
+	<div class="row">
+		<div class="col-md-2"><?=$form->field('categories')->getLabel()?></div>
+		<div class="col-md-4" style="padding: 10px">
+			<?=Application_Service_Admin::Category()->renderSelectCategoriesWidget( $form->field('categories') )?>
+		</div>
+	</div>
+	<?=$form->field('include_subcategories')?>
+	
+	<div class="row">
+		<div class="col-md-2"><?=$form->field('products')->getLabel()?></div>
+		<div class="col-md-4" style="padding: 10px">
+			<?=Application_Service_Admin::Product()->renderSelectProductsWidget( $form->field('products') )?>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-2"><?=$form->field('foce_non_relevant_products')->getLabel()?></div>
+		<div class="col-md-4" style="padding: 10px">
+			<?=Application_Service_Admin::Product()->renderSelectProductsWidget( $form->field('foce_non_relevant_products') )?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2"><?=$form->field('ignore_products')->getLabel()?></div>
+		<div class="col-md-4" style="padding: 10px">
+			<?=Application_Service_Admin::Product()->renderSelectProductsWidget( $form->field('ignore_products') )?>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-4" style="padding: 10px">
+			<?=UI::button('Export')->setType(UI_button::TYPE_SUBMIT)->setClass(UI_button::CLASS_PRIMARY)?>
+		</div>
+	</div>
+	
+	<?=$form->end()?>
+
+</div>
+
+<?php if(!$events):
+	return;
+endif;
+
+
+$formatPrice = function( $number) use ($eshop) {
+	echo Application_Service_Admin::PriceFormatter()->formatWithCurrency( $eshop->getDefaultPricelist(), $number);
+};
+$formatInt = function($number) {
+	return Locale::int($number);
+};
+
+?>
+
+<div style="padding: 10px;">
+	<div class="toolbar">
+		<a href="<?=Http_Request::currentURI(['export'=>'xlsx'])?>" target="_blank" class="btn btn-success">Exportovat do XLSx</a>
+	</div>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th nowrap=""><?=Tr::_('Order number')?></th>
+			<th nowrap=""><?=Tr::_('Date and time')?></th>
+			<th nowrap=""><?=Tr::_('Total')?></th>
+			<th nowrap=""><?=Tr::_('Relevant items')?></th>
+			<th nowrap=""><?=Tr::_('Amount of relevant items')?></th>
+			<th nowrap=""><?=Tr::_('Number of relevant items')?></th>
+
+			<th nowrap=""><?=Tr::_('Non-relevant items')?></th>
+			<th nowrap=""><?=Tr::_('Amount of non-relevant items')?></th>
+			<th nowrap=""><?=Tr::_('Number of non-relevant items')?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach( $events as $e):
+			$event = $e->getEvent();
+			?>
+			<tr>
+				<td nowrap=""><?= $event->getOrderNumber()?></td>
+				<td nowrap=""><?= Locale::dateAndTime( $event->getDateTime() )?></td>
+				<td nowrap=""><?=$formatPrice( $event->getTotalAmountWithVAT() )?></td>
+				<td>
+					<?php foreach( $e->getRelevantItems() as $item ): ?>
+						<?=$item->getNumberOfUnits();?>x <?=$e->getItemName($item);?><br>
+					<?php endforeach; ?>
+				</td>
+				<td nowrap=""><?=$formatPrice( $e->getRelevantAmount() )?></td>
+				<td nowrap=""><?=$formatInt( $e->getRelevantQty() )?></td>
+
+				<td>
+					<?php foreach( $e->getNonRelevantItems() as $item ): ?>
+						<?=$item->getNumberOfUnits();?>x <?=$e->getItemName($item);?><br>
+					<?php endforeach; ?>
+				</td>
+				<td nowrap=""><?=$formatPrice( $e->getNonRelevantAmount() )?></td>
+				<td nowrap=""><?=$formatInt( $e->getNonRelevantQty() )?></td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+
+		<tfoot>
+		<tr>
+			<th nowrap=""><?=Tr::_('Order number')?></th>
+			<th nowrap=""></th>
+			<th nowrap=""><?=Tr::_('Total')?></th>
+			<th nowrap=""></th>
+			<th nowrap=""><?=Tr::_('Amount of relevant items')?></th>
+			<th nowrap=""><?=Tr::_('Number of relevant items')?></th>
+
+			<th nowrap=""></th>
+			<th nowrap=""><?=Tr::_('Amount of non-relevant items')?></th>
+			<th nowrap=""><?=Tr::_('Number of non-relevant items')?></th>
+		</tr>
+		<tr>
+			<td><?=Tr::_('Number of orders:')?> <b><?=$formatInt(count($events))?></b></td>
+			<td></td>
+			<td nowrap=""><b><?=$formatPrice( $sum['amount'])?></b></td>
+			<td></td>
+			<td nowrap=""><b><?=$formatPrice( $sum['relevant_amount'])?></b></td>
+			<td nowrap=""><b><?=$formatInt($sum['relevant_qty'])?></b></td>
+			<td></td>
+			<td nowrap=""><b><?=$formatPrice( $sum['non_relevant_amount'])?></b></td>
+			<td nowrap=""><b><?=$formatInt($sum['non_relevant_qty'])?></b></td>
+		</tr>
+		</tfoot>
+		
+	</table>
+</div>

@@ -6,6 +6,7 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
+use Jet\DataModel;
 use Jet\DataModel_Definition;
 
 #[DataModel_Definition(
@@ -16,5 +17,14 @@ use Jet\DataModel_Definition;
 )]
 class Event_CheckoutInProgress_Item extends Event_CheckoutStarted_Item
 {
+	
+	/**
+	 * @var Event_CheckoutInProgress_Item_Category[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Event_CheckoutInProgress_Item_Category::class
+	)]
+	protected array $categories = [];
 
 }

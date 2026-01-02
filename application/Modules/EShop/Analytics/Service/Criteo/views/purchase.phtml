@@ -18,7 +18,7 @@ foreach ($order->getItems() as $item):
 	if($item->isStdProduct()):
 		$items[] = [
 			'id' => $item->getId(),
-			'price' => $item->getPricePerUnit(),
+			'price' => $item->getPricePerUnit_WithoutVat(),
 			'quantity' => $item->getNumberOfUnits(),
 		];
 	endif;

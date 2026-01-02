@@ -74,7 +74,13 @@ class Controller_Main extends MVC_Controller_Default
 				$success = true;
 				Http_Headers::reload();
 			} else {
-				$form->setCommonMessage( UI_messages::createDanger(Tr::_('Incorrect e-mail or password')) );
+				$customer = Customer::getByIdentity( $email, $password );
+				if(!$customer) {
+					$form->setCommonMessage( UI_messages::createDanger(Tr::_('Incorrect e-mail or password'))->setCloseable(false) );
+				} else {
+					$form->setCommonMessage( UI_messages::createInfo(Tr::_('Your user account is currently inactive.'))->setCloseable(false) );
+				}
+				
 			}
 		}
 		
@@ -100,7 +106,12 @@ class Controller_Main extends MVC_Controller_Default
 			if(Auth::login($email, $password)) {
 				$success = true;
 			} else {
-				$form->setCommonMessage( Tr::_('Incorrect e-mail or password') );
+				$customer = Customer::getByIdentity( $email, $password );
+				if(!$customer) {
+					$form->setCommonMessage( UI_messages::createDanger(Tr::_('Incorrect e-mail or password'))->setCloseable(false) );
+				} else {
+					$form->setCommonMessage( UI_messages::createInfo(Tr::_('Your user account is currently inactive.'))->setCloseable(false) );
+				}
 			}
 		}
 

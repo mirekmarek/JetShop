@@ -161,8 +161,12 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			
 
 			$f->tagStart( 'item' );
-
-			$f->tagPair( 'title', $sd->getFullName() );
+			
+			$name = $sd->getFullName();
+			$join = $this->getProductJoin( $sd->getEshop(), $sd->getId() );
+			$name = $join->getAletrnativeName() ?  : $name;
+			
+			$f->tagPair( 'title', $name );
 			$f->tagPair( 'description', $sd->getDescription() );
 			$f->tagPair( 'link', $sd->getURL() );
 

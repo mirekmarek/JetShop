@@ -23,6 +23,7 @@ abstract class Report
 	protected bool $is_default = false;
 	protected array $sub_reports;
 	protected int $priority = 0;
+	protected bool $one_eshop_mode = false;
 	
 	protected Data_DateTime $date_from ;
 	protected Data_DateTime $date_to;
@@ -116,17 +117,23 @@ abstract class Report
 		$this->selected_eshop_keys = [];
 		
 		$GET = Http_Request::GET();
-		if($GET->exists('eshop')) {
-			 $keys = $GET->getRaw('eshop');
-			 if(is_array($keys)) {
-				 $this->selected_eshop_keys = array_intersect( $all_eshop_keys, $keys );
-			 }
-			 
+		if($this->one_eshop_mode) {
+			
+			$keys = $GET->getString('eshop', default_value: EShops::getDefault()->getKey(), valid_values: $all_eshop_keys);
+			$this->selected_eshop_keys = [ $keys ];
+			
+		} else {
+			if($GET->exists('eshop')) {
+				$keys = $GET->getRaw('eshop');
+				$this->selected_eshop_keys = array_intersect( $all_eshop_keys, $keys );
+			}
+			
+			if(!$this->selected_eshop_keys) {
+				$this->selected_eshop_keys = $all_eshop_keys;
+			}
+			
 		}
 		
-		if(!$this->selected_eshop_keys) {
-			$this->selected_eshop_keys = $all_eshop_keys;
-		}
 		
 	}
 	

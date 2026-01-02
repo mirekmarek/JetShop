@@ -43,13 +43,13 @@ class Main extends Application_Service_EShop_Complaint implements
 			return false;
 		}
 		
-		return EShop_Pages::Complaints( $order->getEshop() )->getURL(
+		return EShop_Pages::Complaints( $order->getEshop() )?->getURL(
 			GET_params: [
 				'order' => $order->getKey(),
 				'product_id' => $order_item->getItemId(),
 				'm' => sha1($order->getEmail())
 			]
-		);
+		)??'';
 	}
 	
 	public function getSysServicesDefinitions(): array

@@ -9,12 +9,14 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\Data_DateTime;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
+use Jet\DataModel_Definition_Property_DataModel;
 use Jet\DataModel_IDController_AutoIncrement;
 use Jet\DataModel_Related_1toN;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\Order_Item;
 use JetApplication\Pricelists;
+use JetApplication\Product_EShopData;
 
 #[DataModel_Definition(
 	name: 'ja_event_checkout_started_item',
@@ -165,23 +167,47 @@ class Event_CheckoutStarted_Item extends DataModel_Related_1toN implements EShop
 	protected float $set_discount_per_unit = 0.0;
 	
 	
+	/**
+	 * @var Event_CheckoutStarted_Item_Category[]
+	 */
+	#[DataModel_Definition(
+		type: DataModel::TYPE_DATA_MODEL,
+		data_model_class: Event_CheckoutStarted_Item_Category::class
+	)]
+	protected array $categories = [];
+	
+	
+	
 	public function getArrayKeyValue(): string
 	{
 		return $this->id;
 	}
 	
-	public static function createNew( Event $event, Order_Item $order_item ) : static
+	/**
+	 * @param Event $event
+	 * @param Order_Item $order_item
+	 * @return array<static>
+	 */
+	public static function createNew( Event $event, Order_Item $order_item ) : array
 	{
+		/**
+		 * @var DataModel_Definition_Property_DataModel $categories_property
+		 */
+		$categories_property = static::getDataModelDefinition()->getProperty('categories');
+		$item_category_class_name = $categories_property->getValueDataModelClass();
+		
+		
+		$pricelist = Pricelists::getCurrent();
+		
+		$res = [];
+		
 		$item = new static();
 		$item->setEshop( $event->getEshop() );
 		$item->session_id = $event->getSessionId();
 		$item->date_time = $event->getDateTime();
 		
-		$pricelist = Pricelists::getCurrent();
-		
 		$item->currency_code = $pricelist->getCurrencyCode();
 		$item->pricelist_code = $pricelist->getCode();
-		
 		
 		$item->type = $order_item->getType();
 		$item->sub_type = $order_item->getSubType();
@@ -201,7 +227,72 @@ class Event_CheckoutStarted_Item extends DataModel_Related_1toN implements EShop
 		$item->total_amount_vat = $order_item->getTotalAmount_Vat();
 		$item->set_discount_per_unit = $order_item->getSetDiscountPerUnit();
 		
-		return $item;
+		if($order_item->isStdProduct()) {
+			$product = Product_EShopData::get($order_item->getItemId(), $event->getEshop());
+			foreach($product->getCategories() as $category) {
+				/**
+				 * @var Event_CheckoutStarted_Item_Category|Event_CheckoutInProgress_Item_Category|Event_Purchase_Item_Category $item_category
+				 */
+				$item_category = new $item_category_class_name();
+				$item_category->setEshop( $event->getEshop() );
+				$item_category->setProductId( $product->getId() );
+				$item_category->setCategoryId( $category->getId() );
+				
+				$item->categories[] = $item_category;
+			}
+		}
+		
+		$res[] = $item;
+		
+		foreach($order_item->getSetItems() as $set_item){
+			$item = new static();
+			$item->setEshop( $event->getEshop() );
+			$item->session_id = $event->getSessionId();
+			$item->date_time = $event->getDateTime();
+			
+			$item->currency_code = $pricelist->getCurrencyCode();
+			$item->pricelist_code = $pricelist->getCode();
+			
+			
+			$item->type = $order_item->getType();
+			$item->sub_type = $order_item->getSubType();
+			
+			$item->item_code = $set_item->getItemCode();
+			$item->sub_code = $set_item->getSubCode();
+			$item->item_id = $set_item->getItemId();
+			$item->number_of_units = $set_item->getNumberOfUnits();
+			$item->measure_unit = $set_item->getNumberOfUnits();
+			$item->vat_rate = $set_item->getVatRate();
+			$item->price_per_unit = $set_item->getPricePerUnit();
+			$item->price_per_unit_with_vat = $set_item->getPricePerUnit_WithVat();
+			$item->price_per_unit_without_vat = $set_item->getPricePerUnit_WithoutVat();
+			$item->price_per_unit_vat = $set_item->getPricePerUnit_Vat();
+			$item->total_amount = $set_item->getTotalAmount();
+			$item->total_amount_with_vat = $set_item->getTotalAmount_WithVat();
+			$item->total_amount_without_vat = $set_item->getTotalAmount_WithoutVat();
+			$item->total_amount_vat = $set_item->getTotalAmount_Vat();
+			
+
+			$product = Product_EShopData::get($set_item->getItemId(), $event->getEshop());
+			foreach($product->getCategories() as $category) {
+				/**
+				 * @var Event_CheckoutStarted_Item_Category|Event_CheckoutInProgress_Item_Category|Event_Purchase_Item_Category $item_category
+				 */
+				$item_category = new $item_category_class_name();
+				$item_category->setEshop( $event->getEshop() );
+				$item_category->setProductId( $product->getId() );
+				$item_category->setCategoryId( $category->getId() );
+				
+				$item->categories[] = $item_category;
+			}
+
+			
+			
+			$res[] = $item;
+		}
+		
+		
+		return $res;
 	}
 	
 	public function getId(): int

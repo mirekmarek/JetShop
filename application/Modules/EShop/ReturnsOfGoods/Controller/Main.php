@@ -81,11 +81,13 @@ class Controller_Main extends MVC_Controller_Default
 	{
 		$form = $return->getProblemDescriptionEditForm();
 		$this->view->setVar('form', $form);
-		
+
 		if( $form->catchInput() ) {
 			
 			if($form->catch()) {
 				$return->save();
+			} else {
+				$this->view->setVar('errors', $form->getValidationErrors());
 			}
 			
 			AJAX::operationResponse(
@@ -259,8 +261,12 @@ class Controller_Main extends MVC_Controller_Default
 			$return = ReturnOfGoods::startNew(
 				$order,
 				$product,
-				$enter_problem_form->field('problem_description')->getValue()
+				$enter_problem_form->field('problem_description')->getValue(),
+				$enter_problem_form->field('bank_account_number')->getValue(),
+				$enter_problem_form->field('delivery_of_claimed_goods_code')->getValue()
 			);
+			
+			$return->save();
 			
 			
 			Http_Headers::movedTemporary( $return->getURL().'&finish' );

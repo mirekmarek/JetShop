@@ -21,7 +21,7 @@ use Exception;
  *         "deliveryType" => "CESKA_POSTA",
  *         "deliveryPrice" => 80,
  *         "otherCosts" => 20,
- *         "paymentType" => "dob�rka",
+ *         "paymentType" => "dobírka",
  *     ));
  *
  *     // Add bought items
@@ -105,7 +105,7 @@ class ZboziKonverze {
 	public array $cart = [];
 
 	/**
-	 * Determine URL where the request will send to
+	 * Determine URL where the request will be send to
 	 */
 	private bool $sandbox;
 

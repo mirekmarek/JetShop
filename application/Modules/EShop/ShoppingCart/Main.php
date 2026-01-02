@@ -15,6 +15,7 @@ use JetApplication\EShop_ModuleUsingTemplate_Interface;
 use JetApplication\EShop_ModuleUsingTemplate_Trait;
 use JetApplication\ShoppingCart;
 use JetApplication\EShops;
+use JetApplication\Application_EShop;
 
 class Main extends Application_Service_EShop_ShoppingCart implements EShop_ModuleUsingTemplate_Interface
 {

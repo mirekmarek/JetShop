@@ -30,6 +30,15 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 		label: 'Account ID: ',
 	)]
 	protected string $account_id = '';
+	
+	#[Config_Definition(
+		type: Config::TYPE_STRING,
+	)]
+	#[Form_Definition(
+		type: Form_Field::TYPE_INPUT,
+		label: 'Campaign ID: ',
+	)]
+	protected string $campaign_id = '';
 
 	public function getAccountId(): string
 	{
@@ -40,4 +49,16 @@ class Config_PerShop extends EShopConfig_ModuleConfig_PerShop implements Form_De
 	{
 		$this->account_id = $account_id;
 	}
+	
+	public function getCampaignId(): string
+	{
+		return $this->campaign_id;
+	}
+	
+	public function setCampaignId( string $campaign_id ): void
+	{
+		$this->campaign_id = $campaign_id;
+	}
+	
+	
 }

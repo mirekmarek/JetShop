@@ -24,10 +24,16 @@ use JetApplication\EShop_Pages;
 			);
 		},
 
-		selectAutoOffer: function( offer_id, qty ) {
-			ShoppingCart._request(
-				'?select_auto_offer='+offer_id+'&qty='+qty
-			);
+		selectAutoOffer: function( offer_id, qty, variant_id ) {
+			if(variant_id) {
+				ShoppingCart._request(
+					'?select_auto_offer='+offer_id+'&variant='+variant_id+'&qty='+qty
+				);
+			} else {
+				ShoppingCart._request(
+					'?select_auto_offer='+offer_id+'&qty='+qty
+				);
+			}
 		},
 		
 

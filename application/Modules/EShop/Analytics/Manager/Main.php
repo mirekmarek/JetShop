@@ -6,6 +6,7 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Manager;
 
+use Jet\Session;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
 use JetApplication\Application_Service_EShop;
@@ -187,19 +188,39 @@ class Main extends Application_Service_EShop_AnalyticsManager
 		return $res;
 	}
 	
+	protected ?Session $purchase_event_lock_session = null;
+	
+	public function getPurchaseEventLockSession() : Session
+	{
+		if(!$this->purchase_event_lock_session) {
+			$this->purchase_event_lock_session = new Session('analytics_purchase_handled_orders');
+		}
+		
+		return $this->purchase_event_lock_session;
+	}
+	
+	public function getPurchaseHandled( Order $order ) : bool
+	{
+		$session = $this->getPurchaseEventLockSession();
+		$handled = $session->getValue('handled', []);
+		
+		return in_array($order->getId(), $handled);
+	}
+	
+	public function setPurchaseHandled( Order $order ) : void
+	{
+		$session = $this->getPurchaseEventLockSession();
+		$handled = $session->getValue('handled', []);
+		$handled[] = $order->getId();
+		
+		$session->setValue('handled', $handled);
+	}
 	
 	public function purchase( Order $order ) : string
 	{
-		/*
-		$session = new Session('analytics_purchase_handled');
-		$handled = $session->getValue('handled', []);
-		if(in_array($order->getId(), $handled)) {
-			return '';
+		if($this->getPurchaseHandled($order)) {
+			return '<!-- P-handled -->';
 		}
-		
-		$handled[] = $order->getId();
-		$session->setValue('handled', $handled);
-		*/
 		
 		$res = '';
 		foreach($this->getServices() as $service) {

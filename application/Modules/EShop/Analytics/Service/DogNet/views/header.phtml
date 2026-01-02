@@ -6,11 +6,22 @@ use Jet\MVC_View;
  */
 
 $id = $this->getRaw('id');
+$campaign_id = $this->getRaw('campaign_id');
 ?>
-<script type="text/javascript" id="pap_x2s6df8d" src="https://login.dognet.sk/scripts/fj27g82d"></script>
+<div id='papPlaceholder'></div>
+
 <script type="text/javascript">
-	PostAffTracker.setAccountId('<?=$id?>');
-	try {
-		PostAffTracker.track();
-	} catch (err) { }
+	(function(d,t) {
+		var script = d.createElement(t); script.id= 'pap_x2s6df8d'; script.async = true;
+		script.src = '//login.dognet.sk/scripts/fj27g82d';
+		script.onload = script.onreadystatechange = function() {
+			var rs = this.readyState; if (rs && (rs != 'complete') && (rs != 'loaded')) return;
+			PostAffTracker.setAccountId('<?=$id?>');
+			try { var CampaignID='<?=$campaign_id?>';
+				PostAffTracker.track(); } catch (e) {}
+		}
+		var placeholder = document.getElementById('papPlaceholder');
+		placeholder.parentNode.insertBefore(script, placeholder);
+		placeholder.parentNode.removeChild(placeholder);
+	})(document, 'script');
 </script>

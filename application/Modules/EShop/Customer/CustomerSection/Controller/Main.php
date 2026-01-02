@@ -8,11 +8,16 @@ namespace JetApplicationModule\EShop\Customer\CustomerSection;
 
 
 use Jet\Form;
+use Jet\Form_Field;
 use Jet\Form_Field_Email;
 use Jet\Form_Field_Input;
+use Jet\Form_Field_Password;
 use Jet\Http_Headers;
 use Jet\Http_Request;
+use Jet\Logger;
 use Jet\MVC_Controller_Default;
+use Jet\Tr;
+use Jet\UI_messages;
 use Jet\UI_tabs;
 use JetApplication\EMailMarketing;
 use JetApplication\EShops;
@@ -127,6 +132,80 @@ class Controller_Main extends MVC_Controller_Default
 			
 			$this->view->setVar('form', $form);
 		}
+		
+		
+		$customer = Customer::getCurrentCustomer();
+		if(!$customer->getOauthService())
+		{
+			$current_password = new Form_Field_Password( 'current_password', 'Current password' );
+			$current_password->setIsRequired( true );
+			$current_password->setErrorMessages(
+				[
+					Form_Field::ERROR_CODE_EMPTY => 'Please enter new password',
+					'incorect_password' => 'Incorrect password',
+				
+				]
+			);
+			$current_password->setValidator( function( Form_Field_Password $field ) use ($customer) : bool {
+				if(!$customer->verifyPassword($field->getValue())) {
+					$field->setError('incorect_password');
+					return false;
+				}
+				
+				return true;
+			} );
+			
+			
+			$password = new Form_Field_Password( 'password', 'New password: ' );
+			$password->setIsRequired( true );
+			$password->setErrorMessages(
+				[
+					Form_Field::ERROR_CODE_EMPTY         => 'Please enter new password',
+				]
+			);
+			
+			
+			$password_check = $password->generateCheckField(
+				field_name: 'password_check',
+				field_label: 'Confirm new password',
+				error_message_empty: 'Please confirm new password',
+				error_message_not_match: 'Password confirmation do not match'
+			);
+			
+			
+			$change_password_form = new Form(
+				'change_password', [
+					$current_password,
+					$password,
+					$password_check
+				]
+			);
+			
+			if( $change_password_form->catchInput() && $change_password_form->validate() ) {
+				$data = $change_password_form->getValues();
+				
+				$customer->setPassword( $data['password'] );
+				$customer->setPasswordIsValid( true );
+				$customer->setPasswordIsValidTill( null );
+				$customer->save();
+				
+				UI_messages::success( Tr::_('Your password has been changed'), 'password_change' );
+				
+				Logger::info(
+					event: 'password_changed',
+					event_message: 'Customer ' . $customer->getUsername() . ' (id:' . $customer->getId() . ') changed password',
+					context_object_id: $customer->getId(),
+					context_object_name: $customer->getUsername()
+				);
+				
+				Http_Headers::reload();
+			}
+			
+			$this->view->setVar( 'change_password_form', $change_password_form );
+			
+			
+		}
+		
 		
 		
 		$this->output('basic');

@@ -228,6 +228,15 @@ class Storage extends DataModel
 		$_items = static::get( $cart->getId() );
 		$items = [];
 		foreach($_items as $_item) {
+			
+			$p = Product_EShopData::get( $_item->getProductId(), $cart->getEshop() );
+			if(
+				!$p ||
+				!$p->isActive()
+			) {
+				continue;
+			}
+			
 			$item = new ShoppingCart_Item(
 				$_item->getProductId(),
 				$_item->getNumberOfUnits(),

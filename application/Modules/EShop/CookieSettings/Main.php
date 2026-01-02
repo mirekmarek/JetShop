@@ -35,14 +35,14 @@ class Main extends Application_Service_EShop_CookieSettings implements EShop_Mod
 		$stats->setCode( EShop_CookieSettings_Group::STATS );
 		$stats->setTitle( Tr::_('Stats', dictionary: $dictionary) );
 		$stats->setDescription( '' );
-		$stats->setChecked( true );
+		$stats->setChecked( false );
 		$groups[$stats->getCode()] = $stats;
 		
 		$marketing = new EShop_CookieSettings_Group();
 		$marketing->setCode( EShop_CookieSettings_Group::MARKETING );
 		$marketing->setTitle( Tr::_('Marketing', dictionary: $dictionary) );
 		$marketing->setDescription( '' );
-		$marketing->setChecked( true );
+		$marketing->setChecked( false );
 		$groups[$marketing->getCode()] = $marketing;
 		
 
@@ -51,7 +51,7 @@ class Main extends Application_Service_EShop_CookieSettings implements EShop_Mod
 		$mesurement->setCode( EShop_CookieSettings_Group::MESUREMENT );
 		$mesurement->setTitle( Tr::_('Mesurement', dictionary: $dictionary) );
 		$mesurement->setDescription( '' );
-		$mesurement->setChecked( true );
+		$mesurement->setChecked( false );
 		$groups[$mesurement->getCode()] = $mesurement;
 		*/
 		
@@ -62,7 +62,7 @@ class Main extends Application_Service_EShop_CookieSettings implements EShop_Mod
 	public function groupEnabled( string $group_code ) : bool
 	{
 		if(empty($_COOKIE[static::COOKIE_NAME])) {
-			return true;
+			return false;
 		}
 		
 		return in_array($group_code, $this->getEnabledGroups());

@@ -29,6 +29,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	use Admin_ControlCentre_Module_Trait;
 	
 	protected string $id = '';
+	protected string $campaign_id = '';
 	
 	public function allowed(): bool
 	{
@@ -38,8 +39,11 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	public function init( EShop $eshop ) : void
 	{
 		parent::init( $eshop );
+		
+		$config = $this->getEshopConfig($eshop);
 
-		$this->id = $this->getEshopConfig($eshop)->getAccountId();
+		$this->id = $config->getAccountId();
+		$this->campaign_id = $config->getCampaignId();
 		
 		if( $this->id ) {
 			$this->enabled = true;
@@ -49,6 +53,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	public function header(): string
 	{
 		$this->view->setVar('id', $this->id);
+		$this->view->setVar('campaign_id', $this->campaign_id);
 		
 		return $this->view->render('header');
 	}
@@ -121,6 +126,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 	public function purchase( Order $order ) : string
 	{
 		$this->view->setVar('id', $this->id);
+		$this->view->setVar('campaign_id', $this->campaign_id);
 		$this->view->setVar('order', $order);
 		
 		return $this->view->render('purchase');

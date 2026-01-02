@@ -136,7 +136,9 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 		
 		$f->start();
 		
-		$f->tagStart( 'SHOP' );
+		$f->tagStart( 'SHOP', [
+			'xmlns' => 'http://www.zbozi.cz/ns/offer/1.0'
+		] );
 		
 		$products = Product_EShopData::getAllActive( $eshop );
 		
@@ -163,8 +165,14 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$f->tagPair( 'ITEMGROUP_ID', $sd->getVariantMasterProductId() );
 			}
 			
+			$name = $sd->getFullName();
+			$join = $this->getProductJoin( $sd->getEshop(), $sd->getId() );
+			
+			$name = $join->getAletrnativeName() ? : $name;
+			
+			
 			$f->tagPair( 'PRODUCTNO', $sd->getInternalCode() );
-			$f->tagPair( 'PRODUCTNAME', $sd->getFullName() );
+			$f->tagPair( 'PRODUCTNAME', $name );
 			$f->tagPair( 'PRODUCT', $sd->getName() );
 			$f->tagPair( 'DESCRIPTION', $sd->getDescription() );
 			$f->tagPair( 'URL', $sd->getURL() );
@@ -173,7 +181,14 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			if($sd->getImageURL(1)) {
 				$f->tagPair( 'IMGURL_ALTERNATIVE', $sd->getImageURL(1) );
 			}
-			$f->tagPair('EAN', $sd->getEan() );
+			
+			$ean = $sd->getEan();
+			if(str_contains($ean, ',')) {
+				$ean = explode(',', $ean);
+				$ean = $ean[0];
+			}
+			
+			$f->tagPair('EAN', $ean );
 			
 			if(isset($brand_map[$sd->getBrandId()])) {
 				$f->tagPair( 'MANUFACTURER', $brand_map[$sd->getBrandId()] );
@@ -199,16 +214,26 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			
 			$f->tagPair('DELIVERY_DATE',
 				$delivery_info->getAvailableFromDate() ?
-				$delivery_info->getAvailableFromDate()->format('Y-m-d') : $delivery_info->getLengthOfDelivery()
+				$delivery_info->getAvailableFromDate()->format('Y-m-d') :
+					($delivery_info->isAvailable() ? 0 : $delivery_info->getLengthOfDelivery())
 			);
 			
 			$f->tagPair('SHOP_DEPOTS', '12870152');
 			$f->tagPair('SHOP_DEPOTS', '12870139');
 			
+			/*
+			if($sd->getDopravaZdarma()) {
+				$f->tagPair('EXTRA_MESSAGE', 'free_delivery');
+			}
+			*/
+			
 			if($sd->getGifts()) {
 				$f->tagPair('EXTRA_MESSAGE', 'free_gift');
 			}
-			$f->tagPair('EXTRA_MESSAGE', 'free_store_pickup');
+			if($sd->getExtendedWarranty()) {
+				$f->tagPair('EXTRA_MESSAGE', 'extended_warranty');
+			}
+			//$f->tagPair('EXTRA_MESSAGE', 'free_store_pickup');
 			
 			
 			$params = $product_params_export->get( $sd );
@@ -217,15 +242,17 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$f->tagStart('PARAM');
 				$f->tagPair('PARAM_NAME', $param->getName());
 				if(is_bool($param->getValue())) {
-					$f->tagPair('VALUE', $param->getValue()?'ano':'ne');
+					$f->tagPair('VAL', $param->getValue()?'ano':'ne');
 				} else {
 					if(is_array($param->getValue())) {
-						$f->tagPair('VALUE', implode(', ', $param->getValue()));
+						$f->tagPair('VAL', implode(', ', $param->getValue()));
 					} else {
-						$f->tagPair('VALUE', $param->getValue());
+						$f->tagPair('VAL', $param->getValue());
 					}
 				}
-				if($param->getUnits()) {
+				if(
+					$param->getUnits()
+				) {
 					$f->tagPair('UNIT', $param->getUnits());
 				}
 				$f->tagEnd('PARAM');

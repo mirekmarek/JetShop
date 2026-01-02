@@ -59,22 +59,30 @@ class Main extends Application_Service_EShop_OAuthBackendModule implements
 		return $this->getConfig( $eshop )->getTokenEndpointURL();
 	}
 	
+	public function getOAuthServiceAuthorizationLink() : string
+	{
+		$data = [
+			'client_id'     => $this->getClientId(),
+			'redirect_uri'  => $this->getHandlerUrl(),
+			'scope'         => 'identity',
+			'response_type' => 'code'
+		];
+		
+		return  $this->getOAuthURL().'?'.http_build_query($data);
+	}
+	
+	
 	public function handleTokenResponse( EShop_OAuth_UserHandler $user_handler ) : bool
 	{
+		$email = strtolower($this->last_response_data['account_name']??'');
+		$oauth_user_id = $this->last_response_data['oauth_user_id']??'';
 		
-		$id_token = $this->last_response_data['id_token'];
-		
-		if( substr_count( $id_token, '.' ) != 2 ) {
+		if(!$email || !$oauth_user_id) {
 			return false;
 		}
 		
-		$parts = explode( '.', $id_token );
-		
-		$payload = json_decode(base64_decode($parts[1]), true);
-		
-		
-		$user_handler->setOauthUserId( $payload['sub'] );
-		$user_handler->setOauthUserEmail( $payload['email'] );
+		$user_handler->setOauthUserId( $oauth_user_id );
+		$user_handler->setOauthUserEmail( $email );
 		
 		return true;
 	}
@@ -104,11 +112,6 @@ class Main extends Application_Service_EShop_OAuthBackendModule implements
 	public function getControlCentrePerShopMode(): bool
 	{
 		return true;
-	}
-	
-	public function getHandlerUrl(): string
-	{
-		return $this->handler_url.'/';
 	}
 	
 }

@@ -218,9 +218,13 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 				$f->tagPair( 'ITEMGROUP_ID', $sd->getVariantMasterProductId() );
 			}
 			
+			$name = $sd->getFullName();
+			$join = $this->getProductJoin( $sd->getEshop(), $sd->getId() );
 			
-			$f->tagPair( 'PRODUCT', $sd->getName() );
-			$f->tagPair( 'PRODUCTNAME', $sd->getName() );
+			$name = $join->getAletrnativeName() ? : $name;
+			
+			$f->tagPair( 'PRODUCT', $name );
+			$f->tagPair( 'PRODUCTNAME', $name );
 			$f->tagPair( 'DESCRIPTION', $sd->getDescription() );
 			$f->tagPair( 'PRODUCTNO', $sd->getInternalCode() );
 			$f->tagPair( 'URL', $sd->getURL() );
@@ -347,25 +351,19 @@ class Main extends Exports_Module implements EShopConfig_ModuleConfig_ModuleHasC
 			
 			$avl_info = $sd->getDeliveryInfo( 1, $availability );
 			
+			if($avl_info->getNumberOfUnitsAvailable()<1) {
+				continue;
+			}
+			
 			$f->tagStart( 'item', attributes: [
 				'id' => $sd->getId(),
 			] );
 			
-			$f->tagPair( 'stock_quantity', $avl_info->getNumberOfUnitsAvailable() );
 			
-			if($avl_info->getNumberOfUnitsAvailable()>0) {
-				$f->tagPair('delivery_time', $term, attributes: [
-					'orderDeadline' => $deadline,
-				]);
-			} /* else {
-				
-				$f->tagPair('delivery_time', $calendar->getNextBusinessDate( $eshop, $avl_info->getLengthOfDelivery())->format('Y-m-d H:i:s'),
-					attributes: [
-						'orderDeadline' => $deadline,
-					]
-				);
-			}
-			*/
+			$f->tagPair( 'stock_quantity', $avl_info->getNumberOfUnitsAvailable() );
+			$f->tagPair('delivery_time', $term, attributes: [
+				'orderDeadline' => $deadline,
+			]);
 			
 			$f->tagEnd( 'item' );
 		}

@@ -88,6 +88,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		$auto_offer_id = $GET->getInt('select_auto_offer');
 		$product_gty = $GET->getInt('qty');
+		$variant_id  = $GET->getInt('variant');
 		
 		$auto_offer = Marketing_AutoOffer::load( $auto_offer_id );
 		if(!$auto_offer) {
@@ -96,7 +97,7 @@ class Controller_Main extends MVC_Controller_Default
 		
 		
 		$error_message = '';
-		if(($new_item = $this->cart->selectAutoOffer( $auto_offer, $product_gty, error_message: $error_message ))) {
+		if(($new_item = $this->cart->selectAutoOffer( $auto_offer, $variant_id, $product_gty, error_message: $error_message ))) {
 			$this->manager->saveCart();
 			
 			AJAX::commonResponse([

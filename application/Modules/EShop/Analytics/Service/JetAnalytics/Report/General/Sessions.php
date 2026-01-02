@@ -19,8 +19,6 @@ class Report_General_Sessions extends Report_General
 		'purchased' => 'Purchased / not purchased',
 	];
 	
-	protected array $selected_eshop_keys = [];
-	
 	public function prepare_summary() : void
 	{
 		$data = $this->getRawData();
@@ -54,6 +52,10 @@ class Report_General_Sessions extends Report_General
 					'start_date_time >=' => $this->date_from,
 					'AND',
 					'start_date_time <=' => $this->date_to,
+				],
+				'AND',
+				[
+					'start_date_time < ' => Session::getDataModelDefinition()->getProperty('last_activity_date_time'),
 				],
 				'AND',
 				'customer_id >' => 0

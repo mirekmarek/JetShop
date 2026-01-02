@@ -259,7 +259,7 @@ class Index extends DataModel
 			$new_words = $object->getShopFulltextTexts( $eshop );
 			
 			if($new_words) {
-				$new_words = FulltextSearch_Dictionary::collectWords( $new_words );
+				$new_words = FulltextSearch_Dictionary::collectWords( $eshop->getLocale(), $new_words );
 				
 				$index->setWords( $new_words );
 				
@@ -283,7 +283,8 @@ class Index extends DataModel
 		
 		$old_words = $index->getWords();
 		
-		$new_words = $object->getInternalFulltextTexts();
+		$new_words = $object->getShopFulltextTexts( $eshop );
+		
 		
 		if(!$new_words) {
 			Index_Word::dataDelete($where);
@@ -294,7 +295,7 @@ class Index extends DataModel
 		
 		$update_words = false;
 		
-		$new_words = FulltextSearch_Dictionary::collectWords( $new_words );
+		$new_words = FulltextSearch_Dictionary::collectWords( $eshop->getLocale(), $new_words );
 		
 		if($old_words!=$new_words) {
 			$index->setWords( $new_words );

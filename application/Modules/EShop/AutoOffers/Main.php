@@ -28,9 +28,11 @@ class Main extends Application_Service_EShop_AutoOffers implements EShop_ModuleU
 		
 		$_auto_offers = Marketing_AutoOffer::getAllActive( $cash_desk->getEshop(), order_by: ['priority'] );
 		
+		$product_ids = $cart->getProductIds();
+		
 		$auto_offers = [];
 		foreach($_auto_offers as $offer) {
-			if( $offer->isRelevant( $cart->getProductIds() ) ) {
+			if( $offer->isRelevant( $product_ids ) ) {
 				$auto_offers[$offer->getId()] = $offer;
 			}
 		}

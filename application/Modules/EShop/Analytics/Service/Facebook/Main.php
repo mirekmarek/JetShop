@@ -199,7 +199,7 @@ class Main extends Application_Service_EShop_AnalyticsService implements EShopCo
 				$item->getType()==Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT
 			) {
 				$data['content_ids'][] = $item->getItemId();
-				$data['value'] += $item->getTotalAmount();
+				$data['value'] += $item->getTotalAmount_WithoutVat();
 			}
 		}
 		

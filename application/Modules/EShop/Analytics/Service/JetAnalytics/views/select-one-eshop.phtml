@@ -1,0 +1,48 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Http_Request;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\EShops;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$selected_keys = $report->getSelectedEshopKeys();
+?>
+<div style="padding: 10px;">
+		
+		<div style="display: flex;align-items: center;justify-content: left;gap: 30px;margin: 5px;">
+			
+			<?php foreach(EShops::getListSorted() as $eshop):
+				if($eshop->getIsVirtual()) {
+					continue;
+				}
+				
+				if( in_array($eshop->getKey(), $selected_keys) ):
+					echo UI::button( $eshop->getName() )->setClass( UI_button::CLASS_SUCCESS );
+				else:
+					echo UI::button( $eshop->getName() )->setClass( UI_button::CLASS_SECONDARY )->setUrl(
+						Http_Request::currentURI(set_GET_params: ['eshop'=>$eshop->getKey()])
+					);
+					
+				endif;
+			endforeach; ?>
+			
+		
+		</div>
+
+</div>

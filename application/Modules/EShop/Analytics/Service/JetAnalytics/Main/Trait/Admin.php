@@ -250,6 +250,14 @@ trait Main_Trait_Admin {
 		return $view->render('select-eshop');
 	}
 	
+	public function renderSelectOneEShop() : string
+	{
+		
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'report', $this->report_controller->getSelectedReport() );
+		
+		return $view->render('select-one-eshop');
+	}
 	
 	public function renderSelectSubReport() : string
 	{

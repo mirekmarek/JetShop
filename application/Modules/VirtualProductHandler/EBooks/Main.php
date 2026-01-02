@@ -8,14 +8,15 @@ namespace JetApplicationModule\VirtualProductHandler\EBooks;
 
 
 use JetApplication\Order;
-use JetApplication\Order_ProductOverviewItem;
+use JetApplication\Order_Item;
+use JetApplication\Order_Item_SetItem;
 use JetApplication\Product_VirtualProductHandler;
 
 
 class Main extends Product_VirtualProductHandler
 {
 	
-	public function dispatchOrder( Order $order, Order_ProductOverviewItem $item ) : void
+	public function dispatchOrder( Order $order, Order_Item|Order_Item_SetItem $item ) : void
 	{
 		// TODO: Implement dispatchOrder() method.
 	}

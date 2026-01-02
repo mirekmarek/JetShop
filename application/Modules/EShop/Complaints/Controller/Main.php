@@ -18,6 +18,9 @@ use Jet\MVC_Controller_Default;
 use Jet\Tr;
 use Jet\Navigation_Breadcrumb;
 
+use JetApplication\Complaint_ComplaintType;
+use JetApplication\Complaint_DeliveryOfClaimedGoods;
+use JetApplication\Complaint_PreferredSolution;
 use JetApplication\Customer;
 use JetApplication\Order;
 use JetApplication\Product_EShopData;
@@ -289,7 +292,10 @@ class Controller_Main extends MVC_Controller_Default
 			$complaint = Complaint::startNew(
 				$order,
 				$product,
-				$enter_problem_form->field('problem_description')->getValue()
+				$enter_problem_form->field('problem_description')->getValue(),
+				Complaint_ComplaintType::get($enter_problem_form->field('complaint_type_code')->getValue()),
+				Complaint_DeliveryOfClaimedGoods::get( $enter_problem_form->field('delivery_of_claimed_goods_code')->getValue() ),
+				Complaint_PreferredSolution::get($enter_problem_form->field('preferred_solution_code')->getValue())
 			);
 			
 			Http_Headers::movedTemporary( $complaint->getURL() );
