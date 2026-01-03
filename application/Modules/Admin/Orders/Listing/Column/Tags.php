@@ -10,7 +10,6 @@ use Jet\SysConf_URI;
 use Jet\Tr;
 use Jet\UI_dataGrid_column;
 use JetApplication\Admin_Listing_Column;
-use JetApplication\CustomerBlacklist;
 use JetApplication\Order;
 
 class Listing_Column_Tags extends Admin_Listing_Column

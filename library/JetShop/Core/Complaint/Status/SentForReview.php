@@ -22,7 +22,6 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_VirtualStatus;
-use JetApplication\Complaint_Status_Cancelled;
 use JetApplication\Complaint_Status_Rejected;
 
 abstract class Core_Complaint_Status_SentForReview extends Complaint_Status {

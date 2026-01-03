@@ -19,7 +19,6 @@ use JetApplication\Complaint;
 use JetApplication\Complaint_Image;
 use JetApplication\Complaint_Status_BeingProcessed;
 use JetApplication\Complaint_Status_GoodsReceived;
-use JetApplication\Complaint_Status_New;
 use JetApplication\Complaint_Status_PickupOrdered;
 
 class Plugin_GoodsReceiptProtocol_Main extends Plugin

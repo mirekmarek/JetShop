@@ -42,6 +42,8 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 	
 	public function handleInternals(): bool
 	{
+		$this->complaint->getDateFinished(true);
+		
 		return true;
 	}
 	
@@ -52,6 +54,6 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 	
 	public function getEventCSSClass(): string
 	{
-		return 'event-dispatched';
+		return 'event-done-success';
 	}
 }

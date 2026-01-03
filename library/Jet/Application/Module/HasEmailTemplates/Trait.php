@@ -12,6 +12,7 @@ trait Application_Module_HasEmailTemplates_Trait
 {
 	public function getEmailTemplatesDir(): string
 	{
+		/** @noinspection PhpUndefinedMethodInspection */
 		return $this->getModuleManifest()->getModuleDir().'email-templates/';
 	}
 	

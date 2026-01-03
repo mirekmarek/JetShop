@@ -13,7 +13,6 @@ use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_ProcessingStarted;
 use JetApplication\Complaint_Status;
-use JetApplication\Complaint_Status_AcceptedIrreparable;
 use JetApplication\Complaint_Status_AcceptedMoneyRefunded;
 use JetApplication\Complaint_Status_Advice;
 use JetApplication\Complaint_Status_BeingProcessed;

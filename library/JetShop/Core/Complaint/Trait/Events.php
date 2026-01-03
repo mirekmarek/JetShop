@@ -10,7 +10,6 @@ use JetApplication\Complaint_ChangeHistory;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_InternalNote;
 use JetApplication\Complaint_Event_MessageForCustomer;
-use JetApplication\Complaint_Event_NewComplaintFinished;
 use JetApplication\Complaint_Event_NewProductDispatched;
 use JetApplication\Complaint_Event_NewUnfinishedComplaint;
 use JetApplication\Complaint_Event_Rejected;

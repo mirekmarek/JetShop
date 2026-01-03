@@ -10,14 +10,12 @@ namespace JetApplicationModule\Admin\Customers;
 use Jet\Factory_MVC;
 use Jet\Tr;
 use JetApplication\Application_Service_Admin_Customer;
-use JetApplication\Customer_EMailTemplate_B2BWelcome;
-use JetApplication\EMail_TemplateProvider;
 use JetApplication\EShopEntity_Address;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Customer;
 use JetApplication\EShop;
 
-class Main extends Application_Service_Admin_Customer implements EMail_TemplateProvider
+class Main extends Application_Service_Admin_Customer
 {
 	public const ADMIN_MAIN_PAGE = 'customers';
 	

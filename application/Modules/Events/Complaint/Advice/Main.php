@@ -4,7 +4,7 @@
  * @license EUPL 1.2  https://eupl.eu/1.2/en/
  * @author Miroslav Marek <mirek.marek@web-jet.cz>
  */
-namespace JetApplicationModule\Events\Complaint\AcceptedNewGoodsWillBeSend;
+namespace JetApplicationModule\Events\Complaint\Advice;
 
 
 use JetApplication\Complaint_Event_HandlerModule;
@@ -14,11 +14,10 @@ use JetApplication\EMail_TemplateProvider;
 class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvider
 {
 	
-	
 	public function sendNotifications(): bool
 	{
 		$email_template = new EMailTemplate();
-
+		
 		$email_template->setComplaint( $this->complaint );
 		
 		$email = $email_template->createEmail( $this->complaint->getEshop() );
@@ -49,7 +48,7 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 	
 	public function getEventNameReadable(): string
 	{
-		return 'Accepted- New goods will be send';
+		return 'Done - Advice';
 	}
 	
 	public function getEventCSSClass(): string

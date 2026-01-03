@@ -6,8 +6,8 @@
  */
 namespace JetApplicationModule\Events\Order\NewOrder;
 
-
 use Jet\Tr;
+use JetApplication\Marketing_PromoArea;
 use JetApplication\Order_EMailTemplate;
 
 class EMailTemplate extends Order_EMailTemplate {
@@ -20,7 +20,21 @@ class EMailTemplate extends Order_EMailTemplate {
 		
 		$this->initCommonProperties();
 		
+		$this->addProperty('marketing_position', Tr::_('Marketing position'))
+			->setPropertyValueCreator( function( ) : string {
+				return Marketing_PromoArea::render('order_confirmation_info', $this->order->getEshop());
+			} );
+		
 	}
+	
+	/*
+	public function initTest( EShop $eshop ): void
+	{
+		$id = 21;
+		
+		$this->order = Order::get($id);
+	}
+	*/
 	
 	
 }

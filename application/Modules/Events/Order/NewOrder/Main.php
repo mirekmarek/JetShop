@@ -7,18 +7,24 @@
 namespace JetApplicationModule\Events\Order\NewOrder;
 
 
+use JetApplication\Application_Service_EShop;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order;
 use JetApplication\Order_Event_HandlerModule;
+use JetApplication\SMS_TemplateProvider;
 use JetApplication\WarehouseManagement;
 
 
-class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
+class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider, SMS_TemplateProvider
 {
 	
 	public function handleExternals(): bool
 	{
+		foreach( Application_Service_EShop::NewOrderPostprocessors( $this->event->getEshop() ) as $postprocessor ) {
+			$postprocessor->processNewOrder( $this->event->getOrder() );
+		}
+		
 		$res = MarketplaceIntegration::handleOrderEvent( $this->event );
 		if($res!==null) {
 			return $res;
@@ -57,7 +63,9 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 			$email->send();
 		}
 		
-		$this->order->getPaymentMethod()->updateOrderConfirmationEmail( $this->order, $email );
+		$template = new SMSTemplate();
+		$template->setEvent($this->event);
+		$template->createSMS( $this->getEvent()->getEshop() )?->send();
 		
 		return true;
 	}
@@ -65,6 +73,14 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	public function getEMailTemplates(): array
 	{
 		$template = new EMailTemplate();
+		
+		return [$template];
+	}
+	
+	
+	public function getSMSTemplates(): array
+	{
+		$template = new SMSTemplate();
 		
 		return [$template];
 	}
@@ -78,4 +94,5 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	{
 		return 'event-new';
 	}
+	
 }

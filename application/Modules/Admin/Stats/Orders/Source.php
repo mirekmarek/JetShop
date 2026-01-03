@@ -36,7 +36,7 @@ abstract class Source extends BaseObject
 	
 	
 	
-	abstract function getWhere() : array;
+	abstract public function getWhere() : array;
 	
 	protected static function addSource( Source $source ) : void
 	{
@@ -56,15 +56,6 @@ abstract class Source extends BaseObject
 			foreach(EShops::getList() as $eshop) {
 				static::addSource( new Source_CommonEShop($eshop) );
 			}
-			
-			static::addSource( new Source_B2B() );
-			static::addSource( new Source_CZpHeureka() );
-			static::addSource( new Source_SKpHeureka() );
-			static::addSource( new Source_MallCZ() );
-			static::addSource( new Source_MallSK() );
-			static::addSource( new Source_MallHU() );
-			static::addSource( new Source_HeurekaCZ() );
-			static::addSource( new Source_HeurekaSK() );
 			
 		}
 		

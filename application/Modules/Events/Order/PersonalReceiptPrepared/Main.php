@@ -10,9 +10,10 @@ namespace JetApplicationModule\Events\Order\PersonalReceiptPrepared;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order_Event_HandlerModule;
+use JetApplication\SMS_TemplateProvider;
 
 
-class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
+class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider, SMS_TemplateProvider
 {
 	public function handleExternals(): bool
 	{
@@ -31,7 +32,13 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	
 	public function sendNotifications(): bool
 	{
-		return $this->sendEMail( new EMailTemplate() );
+		$this->sendEMail( new EMailTemplate() );
+		
+		$template = new SMSTemplate();
+		$template->setEvent( $this->event );
+		$template->createSMS( $this->getEvent()->getEshop() )?->send();
+		
+		return true;
 	}
 	
 	
@@ -50,5 +57,12 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	public function getEventCSSClass(): string
 	{
 		return 'event-dispatched';
+	}
+	
+	public function getSMSTemplates(): array
+	{
+		return [
+			new SMSTemplate()
+		];
 	}
 }

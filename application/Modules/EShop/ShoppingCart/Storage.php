@@ -14,6 +14,7 @@ use Jet\DataModel_IDController_Passive;
 use Jet\Locale;
 use JetApplication\MeasureUnit;
 use JetApplication\MeasureUnits;
+use JetApplication\Product_EShopData;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\EShop;

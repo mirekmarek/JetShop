@@ -10,8 +10,6 @@ namespace JetApplicationModule\Events\Order\DispatchStarted;
 use JetApplication\EMail_TemplateProvider;
 use JetApplication\MarketplaceIntegration;
 use JetApplication\Order_Event_HandlerModule;
-use JetApplication\OrderDispatch;
-use JetApplication\OrderPersonalReceipt;
 
 
 class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
@@ -33,6 +31,7 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 	
 	public function handleInternals(): bool
 	{
+		/*
 		$physical_products = $this->order->getHasPhysicalProducts();
 		$virtual_products = $this->order->getHasVirtualProducts();
 		
@@ -61,20 +60,11 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 		if( $virtual_products && !$physical_products ) {
 			$this->order->dispatched();
 		}
+		*/
 		
 		return true;
 	}
 	
-	protected function handleVirtualProducts() : void
-	{
-		if($this->order->getPaid()) {
-			$virtual_products = $this->order->getVirtualProductOverview();
-			
-			foreach( $virtual_products as $vp ) {
-				$vp->getProduct()->getKind()?->getVirtualProductHandler()?->dispatchOrder( $this->order, $vp );
-			}
-		}
-	}
 	
 	public function getEventNameReadable(): string
 	{

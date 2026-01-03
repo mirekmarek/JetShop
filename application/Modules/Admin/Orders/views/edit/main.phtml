@@ -162,8 +162,6 @@ $order = $this->getRaw( 'order' );
 
 				<?php Application_Service_Admin::Complaint()?->showOrderComplaints( $order ); ?>
 				<?php Application_Service_Admin::ReturnOfGoods()?->showOrderReturnsOfGoods( $order ); ?>
-				
-				<?=Plugin::get( Plugin_ERPExport_Main::KEY )?->renderButton()?>
 			</div>
 		</div>
 		

@@ -35,6 +35,6 @@ class Main extends Complaint_Event_HandlerModule
 	
 	public function getEventCSSClass(): string
 	{
-		return 'event-dispatch-started';
+		return 'event-dispatched';
 	}
 }

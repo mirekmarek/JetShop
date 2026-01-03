@@ -107,7 +107,7 @@ $icons = Order_Item::getItemIcons();
 
 				<td>
 					<?php if( $p ): ?>
-						<a href="<?=$product_manager::getEditUrl( $item->getItemId() )?>"><?=$p?->getInternalCode()?></a>
+						<a href="<?=$product_manager::getEditUrl( $item->getItemId() )?>"><?=$p->getInternalCode()?></a>
 					<?php endif; ?>
 				</td>
 

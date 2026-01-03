@@ -48,9 +48,27 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 			$template->setCarrierName( $dispatch->getCarrierCode() );
 			$template->setTrackingUrl( $dispatch->getOurNote() );
 			$template->setConsignmentNumber( $dispatch->getTrackingNumber() );
+			
+			$note =
+			"Dopravce: {$dispatch->getCarrierCode()}<br>".
+			"Číslo zásilky: <b>{$dispatch->getTrackingNumber()}</b><br>".
+			"URL pro sledování: <a href=\"{$dispatch->getOurNote()}\" target=\"_blank\">{$dispatch->getOurNote()}</a><br>";
+			
+			$this->event->setInternalNote($note);
+			
+			$this->event::updateData(
+				data: [
+					'internal_note' => $note
+				],
+				where: [
+					'id' => $this->event->getId()
+				]
+			);
+			
 		}
 		
 		$email = $template->createEmail( $this->getEvent()->getEshop() );
+		
 		
 		$email?->send();
 		

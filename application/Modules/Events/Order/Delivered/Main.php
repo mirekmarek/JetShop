@@ -15,8 +15,6 @@ class Main extends Order_Event_HandlerModule
 {
 	public function sendNotifications(): bool
 	{
-		//TODO:
-		
 		return true;
 	}
 	
@@ -32,11 +30,7 @@ class Main extends Order_Event_HandlerModule
 	
 	public function handleInternals(): bool
 	{
-		$virtual_products = $this->order->getVirtualProductOverview();
-
-		foreach( $virtual_products as $vp ) {
-			$vp->getProduct()->getKind()?->getVirtualProductHandler()?->dispatchOrder( $this->order, $vp );
-		}
+		$this->handleVirtualProducts();
 		
 		return true;
 	}

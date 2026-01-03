@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Events\Complaint\GoodsReceived;
 
 
+use Jet\Data_DateTime;
 use JetApplication\Complaint_Event_HandlerModule;
 use JetApplication\EMail_TemplateProvider;
 
@@ -36,6 +37,9 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 	
 	public function handleInternals(): bool
 	{
+		$this->complaint->setDateOfReceiptOfClainedGoods( Data_DateTime::now() );
+		$this->complaint->save();
+		
 		return true;
 	}
 	
@@ -46,6 +50,6 @@ class Main extends Complaint_Event_HandlerModule implements EMail_TemplateProvid
 	
 	public function getEventCSSClass(): string
 	{
-		return 'event-dispatch-started';
+		return 'event-dispatched';
 	}
 }

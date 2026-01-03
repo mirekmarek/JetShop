@@ -15,7 +15,6 @@ use Jet\MVC_Cache;
 use Jet\Tr;
 use Jet\UI_messages;
 use JetApplication\Admin_EntityManager_Controller;
-use JetApplication\EShops;
 use JetApplication\Signpost;
 
 
@@ -132,18 +131,10 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$sort = explode(',', Http_Request::GET()->getString('sort_signposts'));
 		
 		$p = 0;
-		$row = 0;
 		foreach($sort as $id) {
-			if($id=='row') {
-				$row++;
-				continue;
-			}
 			$sp = Signpost::get( $id );
 			if($sp) {
 				$sp->setPriority( $p );
-				foreach(EShops::getList() as $eshop) {
-					$sp->getEshopData($eshop)->setTopMenuRow($row);
-				}
 				$sp->save();
 				$p++;
 			}

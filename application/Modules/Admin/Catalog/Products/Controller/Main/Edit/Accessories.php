@@ -12,6 +12,7 @@ use Jet\Form_Field_MultiSelect;
 use Jet\Http_Headers;
 use Jet\Tr;
 use Jet\UI_messages;
+use Jet\Form_Field_Hidden;
 use JetApplication\Accessories_Group;
 use JetApplication\Product;
 
