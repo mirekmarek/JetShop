@@ -6,14 +6,9 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
-use Jet\UI;
-use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
-use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\ReturnOfGoods;
 use JetApplication\ReturnOfGoods_Event;
 use JetApplication\ReturnOfGoods_Event_ReturnOfGoodsFinished;
@@ -50,44 +45,8 @@ abstract class Core_ReturnOfGoods_Status_New extends ReturnOfGoods_Status {
 	{
 		$res = [];
 		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Start processing') )
-					->setClass( UI_button::CLASS_PRIMARY );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return ReturnOfGoods_Status_BeingProcessed::get();
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Cancel') )->setClass( UI_button::CLASS_DANGER );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return ReturnOfGoods_Status_Cancelled::get();
-			}
-			
-			public function noteForCustomerEnabled() : bool
-			{
-				return true;
-			}
-			
-			public function doNotSendNotificationsSwitchEnabled() : bool
-			{
-				return true;
-			}
-			
-		};
-		
+		$res[] = ReturnOfGoods_Status_BeingProcessed::getAsPossibleFutureStatus();
+		$res[] = ReturnOfGoods_Status_Cancelled::getAsPossibleFutureStatus();
 		
 		return $res;
 	}
@@ -96,4 +55,10 @@ abstract class Core_ReturnOfGoods_Status_New extends ReturnOfGoods_Status {
 	{
 		return $item->createEvent( ReturnOfGoods_Event_ReturnOfGoodsFinished::new() );
 	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
+	}
+	
 }

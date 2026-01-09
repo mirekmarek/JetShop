@@ -9,6 +9,7 @@ namespace JetShop;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\Supplier_GoodsOrder;
 use JetApplication\Supplier_GoodsOrder_Event_GoodsReceived;
 use JetApplication\Supplier_GoodsOrder_Status;
@@ -56,6 +57,11 @@ abstract class Core_Supplier_GoodsOrder_Status_GoodsReceived extends Supplier_Go
 		}
 		
 		return $event;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
 	}
 	
 }

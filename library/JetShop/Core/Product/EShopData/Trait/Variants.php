@@ -143,14 +143,64 @@ trait Core_Product_EShopData_Trait_Variants
 		return $this->_variants;
 	}
 	
-	public function syncVariant( Product_EShopData $variant_eshop_data ) : void
+	public function syncVariant( Product_EShopData $variant_eshop_data ) : bool
 	{
-		$variant_eshop_data->setKindId( $this->getKindId() );
-		$variant_eshop_data->setName( $this->getName() );
-		$variant_eshop_data->setDescription( $this->getDescription() );
-		$variant_eshop_data->setShortDescription( $this->getShortDescription() );
-		$variant_eshop_data->setSeoTitle( $this->getSeoTitle() );
-		$variant_eshop_data->setSeoDescription( $this->getSeoDescription() );
-		$variant_eshop_data->setSeoKeywords( $this->getSeoKeywords() );
+		$updated = false;
+		if(
+			$this->getKindId()!=$variant_eshop_data->getKindId()
+		) {
+			$variant_eshop_data->setKindId( $this->getKindId() );
+			$updated = true;
+		}
+		
+		if(
+			$this->getName() &&
+			$this->getName()!=$variant_eshop_data->getName()
+		) {
+			$variant_eshop_data->setName( $this->getName() );
+			$updated = true;
+		}
+		
+		if(
+			$this->getDescription() &&
+			$this->getDescription()!=$variant_eshop_data->getDescription()
+		) {
+			$variant_eshop_data->setDescription( $this->getDescription() );
+			$updated = true;
+		}
+		
+		if(
+			$this->getShortDescription() &&
+			$this->getShortDescription()!=$variant_eshop_data->getShortDescription()
+		) {
+			$variant_eshop_data->setShortDescription( $this->getShortDescription() );
+			$updated = true;
+		}
+		
+		if(
+			$this->getSeoTitle() &&
+			$this->getSeoTitle()!=$variant_eshop_data->getSeoTitle()
+		) {
+			$variant_eshop_data->setSeoTitle( $this->getSeoTitle() );
+			$updated = true;
+		}
+		
+		if(
+			$this->getSeoDescription() &&
+			$this->getSeoDescription()!=$variant_eshop_data->getSeoDescription()
+		) {
+			$variant_eshop_data->setSeoDescription( $this->getSeoDescription() );
+			$updated = true;
+		}
+		
+		if(
+			$this->getSeoKeywords() &&
+			$this->getSeoKeywords()!=$variant_eshop_data->getSeoKeywords()
+		) {
+			$variant_eshop_data->setSeoKeywords( $this->getSeoKeywords() );
+			$updated = true;
+		}
+		
+		return $updated;
 	}
 }

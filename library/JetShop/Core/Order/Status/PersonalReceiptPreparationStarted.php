@@ -9,6 +9,7 @@ namespace JetShop;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_HasStatus_Interface;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\Order;
 use JetApplication\Order_Event;
 use JetApplication\Order_Event_PersonalReceiptPreparationStarted;
@@ -57,6 +58,11 @@ abstract class Core_Order_Status_PersonalReceiptPreparationStarted extends Order
 	public function getPossibleFutureStatuses(): array
 	{
 		return [];
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
 	}
 	
 }

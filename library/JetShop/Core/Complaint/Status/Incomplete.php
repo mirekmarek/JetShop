@@ -17,6 +17,7 @@ use JetApplication\Complaint_Status_GoodsReceived;
 use JetApplication\Complaint_Status_PickupOrdered;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 
 abstract class Core_Complaint_Status_Incomplete extends Complaint_Status {
 	
@@ -61,6 +62,11 @@ abstract class Core_Complaint_Status_Incomplete extends Complaint_Status {
 		
 		
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
 	}
 	
 }

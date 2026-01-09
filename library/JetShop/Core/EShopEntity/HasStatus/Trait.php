@@ -16,6 +16,7 @@ use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_HasEvents_Interface;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_VirtualStatus;
 
 trait Core_EShopEntity_HasStatus_Trait {
@@ -151,6 +152,11 @@ trait Core_EShopEntity_HasStatus_Trait {
 			public function getPossibleFutureStatuses(): array
 			{
 				return [];
+			}
+			
+			public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+			{
+				return null;
 			}
 		};
 

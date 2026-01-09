@@ -178,9 +178,6 @@ abstract class Core_EShopEntity_Status extends BaseObject {
 	 */
 	abstract public function getPossibleFutureStatuses() : array;
 	
-	public static function getAsPossibleFutureStatus() : ?EShopEntity_Status_PossibleFutureStatus
-	{
-		return null;
-	}
+	abstract public static function getAsPossibleFutureStatus() : ?EShopEntity_Status_PossibleFutureStatus;
 	
 }

@@ -52,4 +52,17 @@ class Core_EShop_CookieSettings_Evidence_Disagree extends EShopEntity_WithEShopR
 	{
 		$this->date_time = $date_time;
 	}
+	
+	public function afterUpdate(): void
+	{
+	}
+	
+	public function afterDelete(): void
+	{
+	}
+	
+	public function afterAdd(): void
+	{
+	}
+	
 }

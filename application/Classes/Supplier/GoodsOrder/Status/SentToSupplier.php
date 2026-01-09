@@ -10,5 +10,4 @@ use JetShop\Core_Supplier_GoodsOrder_Status_SentToSupplier;
 
 class Supplier_GoodsOrder_Status_SentToSupplier extends Core_Supplier_GoodsOrder_Status_SentToSupplier
 {
-
 }

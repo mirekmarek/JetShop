@@ -6,12 +6,18 @@
  */
 namespace JetShop;
 
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
+use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\WarehouseManagement_StockVerification;
 use JetApplication\WarehouseManagement_StockVerification_Event_Cancelled;
 use JetApplication\WarehouseManagement_StockVerification_Status;
+use JetApplication\WarehouseManagement_StockVerification_Status_Cancelled;
 
 abstract class Core_WarehouseManagement_StockVerification_Status_Cancelled extends WarehouseManagement_StockVerification_Status
 {
@@ -37,6 +43,21 @@ abstract class Core_WarehouseManagement_StockVerification_Status_Cancelled exten
 	): ?EShopEntity_Event
 	{
 		return $item->createEvent( new WarehouseManagement_StockVerification_Event_Cancelled() );
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
+			public function getButton(): UI_button
+			{
+				return UI::button(Tr::_('Cancel'))->setClass(UI_button::CLASS_DANGER);
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return WarehouseManagement_StockVerification_Status_Cancelled::get();
+			}
+		};
 	}
 	
 }

@@ -19,6 +19,7 @@ use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Event_Sent;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Cancelled;
 use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Received;
+use JetApplication\WarehouseManagement_TransferBetweenWarehouses_Status_Sent;
 
 abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Status_Sent extends WarehouseManagement_TransferBetweenWarehouses_Status
 {
@@ -39,29 +40,8 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Status_Sent ex
 	{
 		$statuses = [];
 		
-		$statuses[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button(Tr::_('Finished - received'))->setClass(UI_button::CLASS_SUCCESS);
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return WarehouseManagement_TransferBetweenWarehouses_Status_Received::get();
-			}
-		};
-		
-		$statuses[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			public function getButton(): UI_button
-			{
-				return UI::button(Tr::_('Cancel'))->setClass(UI_button::CLASS_DANGER);
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return WarehouseManagement_TransferBetweenWarehouses_Status_Cancelled::get();
-			}
-		};
+		$statuses[] = WarehouseManagement_TransferBetweenWarehouses_Status_Received::getAsPossibleFutureStatus();
+		$statuses[] = WarehouseManagement_TransferBetweenWarehouses_Status_Cancelled::getAsPossibleFutureStatus();
 		
 		
 		return $statuses;
@@ -75,5 +55,21 @@ abstract class Core_WarehouseManagement_TransferBetweenWarehouses_Status_Sent ex
 	{
 		return $item->createEvent( new WarehouseManagement_TransferBetweenWarehouses_Event_Sent() );
 	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
+			public function getButton(): UI_button
+			{
+				return UI::button(Tr::_('Done - sent'))->setClass(UI_button::CLASS_SUCCESS);
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return WarehouseManagement_TransferBetweenWarehouses_Status_Sent::get();
+			}
+		};
+	}
+	
 	
 }

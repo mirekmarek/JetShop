@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use JetShop\Core_MoneyRefund_Status_InProcessing;
 
 class MoneyRefund_Status_InProcessing extends Core_MoneyRefund_Status_InProcessing

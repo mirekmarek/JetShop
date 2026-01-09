@@ -6,6 +6,7 @@
  */
 namespace JetShop;
 
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\WarehouseManagement_LossOrDestruction_Status;
 
 abstract class Core_WarehouseManagement_LossOrDestruction_Status_Done extends WarehouseManagement_LossOrDestruction_Status {
@@ -26,4 +27,8 @@ abstract class Core_WarehouseManagement_LossOrDestruction_Status_Done extends Wa
 		return [];
 	}
 	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
+	}
 }

@@ -10,5 +10,4 @@ use JetShop\Core_Supplier_GoodsOrder_Status_Cancelled;
 
 class Supplier_GoodsOrder_Status_Cancelled extends Core_Supplier_GoodsOrder_Status_Cancelled
 {
-
 }

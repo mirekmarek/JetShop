@@ -7,12 +7,18 @@
 namespace JetShop;
 
 
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
+use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\ProductQuestion;
 use JetApplication\ProductQuestion_Event;
 use JetApplication\ProductQuestion_Event_AnsweredDisplayed;
 use JetApplication\ProductQuestion_Status;
+use JetApplication\ProductQuestion_Status_AnsweredDisplayed;
 
 abstract class Core_ProductQuestion_Status_AnsweredDisplayed extends ProductQuestion_Status {
 	
@@ -40,6 +46,22 @@ abstract class Core_ProductQuestion_Status_AnsweredDisplayed extends ProductQues
 		$res = [];
 		
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus
+		{
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Answer and display') )->setClass( UI_button::CLASS_SUCCESS );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return ProductQuestion_Status_AnsweredDisplayed::get();
+			}
+		};
 	}
 	
 }

@@ -6,7 +6,6 @@
  */
 namespace JetApplication;
 
-
 use JetShop\Core_ReturnOfGoods_Status_AcceptedMoneyRefunded;
 
 class ReturnOfGoods_Status_AcceptedMoneyRefunded extends Core_ReturnOfGoods_Status_AcceptedMoneyRefunded {

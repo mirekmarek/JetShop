@@ -189,24 +189,62 @@ trait Core_Product_Trait_Variants
 
 	public function syncVariant( Product $variant ) : void
 	{
-		$variant->variant_master_product_id = $this->getId();
-		$variant->type = static::PRODUCT_TYPE_VARIANT;
+		$updated = false;
 		
-		$variant->kind_id = $this->kind_id;
-		$variant->brand_id = $this->brand_id;
-		$variant->supplier_id = $this->supplier_id;
-		$variant->internal_name = $this->internal_name;
-		$variant->delivery_class_id = $this->delivery_class_id;
+		if($variant->variant_master_product_id != $this->getId()) {
+			$variant->variant_master_product_id = $this->getId();
+			$updated = true;
+		}
+		
+		if( $variant->type != static::PRODUCT_TYPE_VARIANT ) {
+			$variant->type = static::PRODUCT_TYPE_VARIANT;
+			$updated = true;
+		}
+		
+		if( $variant->kind_id != $this->kind_id ) {
+			$variant->kind_id = $this->kind_id;
+			$updated = true;
+		}
+		
+		if( $variant->brand_id != $this->brand_id ) {
+			$variant->brand_id = $this->brand_id;
+			$updated = true;
+		}
+		
+		if( $variant->supplier_id != $this->supplier_id ) {
+			$variant->supplier_id = $this->supplier_id;
+			$updated = true;
+		}
+		
+		if( $variant->internal_name != $this->internal_name ) {
+			$variant->internal_name = $this->internal_name;
+			$updated = true;
+		}
+		
+		if( $variant->delivery_class_id != $this->delivery_class_id ) {
+			$variant->delivery_class_id = $this->delivery_class_id;
+			$updated = true;
+		}
+		
 		
 		foreach( EShops::getList() as $eshop ) {
-			$variant->getEshopData( $eshop )->setVariantMasterProductId( $this->id );
+			$variant_sd = $variant->getEshopData( $eshop );
 			
-			$this->getEshopData( $eshop )->syncVariant(
+			if($variant_sd->getVariantMasterProductId()!=$this->id) {
+				$variant->setVariantMasterProductId( $this->id );
+				$updated = true;
+			}
+			
+			if($this->getEshopData( $eshop )->syncVariant(
 				$variant->getEshopData( $eshop )
-			);
+			)) {
+				$updated = true;
+			}
 		}
 
-		$variant->save();
+		if($updated) {
+			$variant->save();
+		}
 	}
 	
 	
@@ -356,6 +394,7 @@ trait Core_Product_Trait_Variants
 	public function catchUpdateVariantsForm(): bool
 	{
 		$edit_form = $this->getUpdateVariantsForm();
+		
 		if( $edit_form->catch() ) {
 			foreach($this->getVariants() as $variant) {
 				$variant->save();

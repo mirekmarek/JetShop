@@ -14,6 +14,7 @@ use JetApplication\Complaint_Status_BeingProcessed;
 use JetApplication\Complaint_Status_Cancelled;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 
 abstract class Core_Complaint_Status_New extends Complaint_Status {
 	
@@ -61,4 +62,8 @@ abstract class Core_Complaint_Status_New extends Complaint_Status {
 		return $res;
 	}
 	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
+	}
 }

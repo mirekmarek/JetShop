@@ -9,9 +9,12 @@ namespace JetShop;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
 use JetApplication\OrderPersonalReceipt_Status;
+use JetApplication\OrderPersonalReceipt_Status_Cancel;
+use JetApplication\OrderPersonalReceipt_Status_InProgress;
 
 abstract class Core_OrderPersonalReceipt_Status_Pending extends OrderPersonalReceipt_Status {
 	
@@ -34,8 +37,16 @@ abstract class Core_OrderPersonalReceipt_Status_Pending extends OrderPersonalRec
 	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
-		//TODO:
+		
+		$res[] = OrderPersonalReceipt_Status_InProgress::getAsPossibleFutureStatus();
+		$res[] = OrderPersonalReceipt_Status_Cancel::getAsPossibleFutureStatus();
+		
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
 	}
 	
 }

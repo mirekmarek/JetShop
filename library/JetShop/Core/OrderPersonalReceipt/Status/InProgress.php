@@ -6,13 +6,21 @@
  */
 namespace JetShop;
 
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
+use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\OrderPersonalReceipt;
 use JetApplication\OrderPersonalReceipt_Event;
 use JetApplication\OrderPersonalReceipt_Event_PreparationStarted;
 use JetApplication\OrderPersonalReceipt_Status;
+use JetApplication\OrderPersonalReceipt_Status_Cancel;
+use JetApplication\OrderPersonalReceipt_Status_InProgress;
+use JetApplication\OrderPersonalReceipt_Status_Prepared;
 
 abstract class Core_OrderPersonalReceipt_Status_InProgress extends OrderPersonalReceipt_Status {
 	
@@ -35,8 +43,27 @@ abstract class Core_OrderPersonalReceipt_Status_InProgress extends OrderPersonal
 	public function getPossibleFutureStatuses(): array
 	{
 		$res = [];
-		//TODO:
+		
+		$res[] = OrderPersonalReceipt_Status_Prepared::getAsPossibleFutureStatus();
+		$res[] = OrderPersonalReceipt_Status_Cancel::getAsPossibleFutureStatus();
+		
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
+			
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('In progress') )->setClass( UI_button::CLASS_INFO );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return OrderPersonalReceipt_Status_InProgress::get();
+			}
+		};
 	}
 	
 }

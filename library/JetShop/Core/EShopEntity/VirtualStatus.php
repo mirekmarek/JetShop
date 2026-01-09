@@ -11,6 +11,7 @@ use Jet\Autoloader;
 use Jet\BaseObject;
 use Jet\IO_Dir;
 use JetApplication\EShopEntity_HasStatus_Interface;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\EShopEntity_VirtualStatus;
 use Closure;
 
@@ -79,5 +80,7 @@ abstract class Core_EShopEntity_VirtualStatus extends BaseObject {
 	{
 		static::$list[$status->getCode()] = $status;
 	}
+	
+	abstract public static function getAsPossibleFutureStatus() : ?EShopEntity_Status_PossibleFutureStatus;
 	
 }

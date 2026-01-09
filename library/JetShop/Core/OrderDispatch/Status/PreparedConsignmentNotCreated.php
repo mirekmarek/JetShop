@@ -9,6 +9,7 @@ namespace JetShop;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Event;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
 use JetApplication\OrderDispatch_Status;
@@ -44,6 +45,12 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentNotCreated extends O
 		$res = [];
 		//TODO:
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		// TODO: Implement getAsPossibleFutureStatus() method.
+		return null;
 	}
 	
 }

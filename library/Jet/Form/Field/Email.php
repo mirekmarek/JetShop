@@ -18,6 +18,8 @@ class Form_Field_Email extends Form_Field_Input
 	 */
 	protected string $_type = Form_Field::TYPE_EMAIL;
 	
+	protected static ?Form_Field_Email_Validator $email_validator = null;
+	
 	/**
 	 * @var array<string,string>
 	 */
@@ -26,29 +28,28 @@ class Form_Field_Email extends Form_Field_Input
 		Form_Field::ERROR_CODE_INVALID_FORMAT => 'Invalid value',
 	];
 	
+	public static function getEmailValidator(): ?Form_Field_Email_Validator
+	{
+		if(!static::$email_validator) {
+			static::$email_validator = new Form_Field_Email_Validator();
+		}
+		
+		return static::$email_validator;
+	}
+	
+	public static function setEmailValidator( ?Form_Field_Email_Validator $email_validator ): void
+	{
+		static::$email_validator = $email_validator;
+	}
+	
+	
+	
 	/**
 	 * @return bool
 	 */
 	protected function validate_email() : bool
 	{
-		if(
-			$this->_value &&
-			!filter_var( $this->_value, FILTER_VALIDATE_EMAIL )
-		) {
-			$this->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
-			
-			return false;
-		}
-		
-		$domain = explode('@', $this->_value)[1];
-		
-		if( !checkdnsrr($domain, 'MX') ) {
-			$this->setError( Form_Field::ERROR_CODE_INVALID_FORMAT );
-			return false;
-		}
-		
-		
-		return true;
+		return static::getEmailValidator()->validate( $this, $this->_value );
 	}
 	
 	/**

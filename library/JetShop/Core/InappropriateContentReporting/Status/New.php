@@ -6,14 +6,9 @@
  */
 namespace JetShop;
 
-
-use Jet\Tr;
-use Jet\UI;
-use Jet\UI_button;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
-use JetApplication\EShopEntity_VirtualStatus;
 use JetApplication\InappropriateContentReporting;
 use JetApplication\InappropriateContentReporting_Event;
 use JetApplication\InappropriateContentReporting_Event_New;
@@ -46,33 +41,15 @@ abstract class Core_InappropriateContentReporting_Status_New extends Inappropria
 	{
 		$res = [];
 		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Approve') )->setClass( UI_button::CLASS_SUCCESS );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return InappropriateContentReporting_Status_Approved::get();
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Reject') )->setClass( UI_button::CLASS_DANGER );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return InappropriateContentReporting_Status_Rejected::get();
-			}
-		};
+		$res[] = InappropriateContentReporting_Status_Approved::getAsPossibleFutureStatus();
+		$res[] = InappropriateContentReporting_Status_Rejected::getAsPossibleFutureStatus();
 		
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return null;
 	}
 	
 }

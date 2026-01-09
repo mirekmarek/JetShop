@@ -19,6 +19,7 @@ use JetApplication\MoneyRefund_Event_ProcessingStarted;
 use JetApplication\MoneyRefund_Status;
 use JetApplication\MoneyRefund_Status_Cancelled;
 use JetApplication\MoneyRefund_Status_Done;
+use JetApplication\MoneyRefund_Status_InProcessing;
 use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 
 abstract class Core_MoneyRefund_Status_InProcessing extends MoneyRefund_Status {
@@ -40,48 +41,27 @@ abstract class Core_MoneyRefund_Status_InProcessing extends MoneyRefund_Status {
 	public function getPossibleFutureStatuses(): array
 	{
 
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Done') )
-					->setClass( UI_button::CLASS_SUCCESS );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return MoneyRefund_Status_Done::get();
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Cancel') )
-					->setClass( UI_button::CLASS_DANGER );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return MoneyRefund_Status_Cancelled::get();
-			}
-		};
-		
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
-			
-			public function getButton(): UI_button
-			{
-				return UI::button( Tr::_('Rollback') )->setClass( UI_button::CLASS_LIGHT );
-			}
-			
-			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
-			{
-				return MoneyRefund_VirtualStatus_Rollback::get();
-			}
-		};
+		$res[] = MoneyRefund_Status_Done::getAsPossibleFutureStatus();
+		$res[] = MoneyRefund_Status_Cancelled::getAsPossibleFutureStatus();
+		$res[] = MoneyRefund_VirtualStatus_Rollback::getAsPossibleFutureStatus();
 		
 		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Start processing') )
+					->setClass( UI_button::CLASS_PRIMARY );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return MoneyRefund_Status_InProcessing::get();
+			}
+		};
 	}
 	
 }

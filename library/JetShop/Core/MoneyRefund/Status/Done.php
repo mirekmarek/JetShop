@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_button;
@@ -18,6 +17,7 @@ use JetApplication\MoneyRefund;
 use JetApplication\MoneyRefund_Event;
 use JetApplication\MoneyRefund_Event_Done;
 use JetApplication\MoneyRefund_Status;
+use JetApplication\MoneyRefund_Status_Done;
 use JetApplication\MoneyRefund_VirtualStatus_Rollback;
 
 abstract class Core_MoneyRefund_Status_Done extends MoneyRefund_Status {
@@ -39,20 +39,27 @@ abstract class Core_MoneyRefund_Status_Done extends MoneyRefund_Status {
 	
 	public function getPossibleFutureStatuses(): array
 	{
-		$res[] = new class extends EShopEntity_Status_PossibleFutureStatus {
+		$res[] = MoneyRefund_VirtualStatus_Rollback::getAsPossibleFutureStatus();
+		
+		return $res;
+	}
+	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
 			
 			public function getButton(): UI_button
 			{
-				return UI::button( Tr::_('Rollback') )->setClass( UI_button::CLASS_LIGHT );
+				return UI::button( Tr::_('Done') )
+					->setClass( UI_button::CLASS_SUCCESS );
 			}
 			
 			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
 			{
-				return MoneyRefund_VirtualStatus_Rollback::get();
+				return MoneyRefund_Status_Done::get();
 			}
 		};
-		
-		return $res;
 	}
+	
 	
 }

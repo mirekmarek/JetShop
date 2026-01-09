@@ -7,13 +7,19 @@
 namespace JetShop;
 
 
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Complaint;
 use JetApplication\Complaint_Event;
 use JetApplication\Complaint_Event_ClarificationRequired;
 use JetApplication\Complaint_Status;
 use JetApplication\Complaint_Status_Cancelled;
+use JetApplication\Complaint_Status_ClarificationRequired;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\EShopEntity_Status;
+use JetApplication\EShopEntity_Status_PossibleFutureStatus;
+use JetApplication\EShopEntity_VirtualStatus;
 
 abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Status {
 	
@@ -58,5 +64,30 @@ abstract class Core_Complaint_Status_ClarificationRequired extends Complaint_Sta
 		return $res;
 	}
 	
+	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
+	{
+		return new class extends EShopEntity_Status_PossibleFutureStatus {
+			public function getButton(): UI_button
+			{
+				return UI::button( Tr::_('Clarification required') )
+					->setClass( UI_button::CLASS_PRIMARY );
+			}
+			
+			public function getStatus(): EShopEntity_Status|EShopEntity_VirtualStatus
+			{
+				return Complaint_Status_ClarificationRequired::get();
+			}
+			
+			public function noteForCustomerEnabled() : bool
+			{
+				return true;
+			}
+			
+			public function doNotSendNotificationsSwitchEnabled() : bool
+			{
+				return true;
+			}
+		};
+	}
 	
 }
