@@ -8,11 +8,11 @@ namespace JetApplicationModule\Admin\Complaints;
 
 use Jet\Application;
 use Jet\Form;
-use Jet\Form_Field_File_UploadedFile;
 use Jet\Form_Field_Select;
 use Jet\Form_Field_Textarea;
 use Jet\Http_Headers;
 use Jet\IO_File;
+use Jet\IO_UploadedFile;
 use Jet\SysConf_Path;
 use Jet\Tr;
 use JetApplication\Complaint;
@@ -136,7 +136,7 @@ class Plugin_GoodsReceiptProtocol_Main extends Plugin
 		
 		IO_File::write( $file_path, $pdf );
 		
-		$file = new Form_Field_File_UploadedFile(
+		$file = new IO_UploadedFile(
 			file_name: $file_name,
 			tmp_file_path: $file_path
 		);

@@ -10,11 +10,11 @@ namespace JetApplicationModule\Admin\Catalog\SetProductPrices;
 use Exception;
 use Jet\Form;
 use Jet\Form_Field_File;
-use Jet\Form_Field_File_UploadedFile;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\IO_Dir;
 use Jet\IO_File;
+use Jet\IO_UploadedFile;
 use Jet\MVC_Controller_Default;
 use Jet\Navigation_Breadcrumb;
 use Jet\SysConf_Path;
@@ -195,7 +195,7 @@ class Controller_Main extends MVC_Controller_Default
 		if($form->catch()) {
 			foreach($price_list->getValue() as $file) {
 				/**
-				 * @var Form_Field_File_UploadedFile $file
+				 * @var IO_UploadedFile $file
 				 */
 				try {
 					$xlsx = new XLSXReader( $file->getTmpFilePath() );

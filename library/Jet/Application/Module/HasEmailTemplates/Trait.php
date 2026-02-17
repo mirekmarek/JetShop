@@ -8,11 +8,13 @@
 
 namespace Jet;
 
+/**
+ * @method getModuleManifest()
+ */
 trait Application_Module_HasEmailTemplates_Trait
 {
 	public function getEmailTemplatesDir(): string
 	{
-		/** @noinspection PhpUndefinedMethodInspection */
 		return $this->getModuleManifest()->getModuleDir().'email-templates/';
 	}
 	
@@ -20,7 +22,8 @@ trait Application_Module_HasEmailTemplates_Trait
 	{
 		
 		/**
-		 * @var Application_Module_HasEmailTemplates_Interface $module
+		 * @var Application_Module|Application_Module_HasEmailTemplates_Interface $module
+		 * @phpstan-ignore varTag.nativeType
 		 */
 		$module = Application_Modules::moduleInstance( Application_Modules::getModuleNameByClassName( static::class ) );
 		

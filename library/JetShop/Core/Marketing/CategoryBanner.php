@@ -12,10 +12,10 @@ use Jet\Form;
 use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_File;
-use Jet\Form_Field_File_UploadedFile;
 use Jet\Form_Field_FileImage;
 use Jet\IO_Dir;
 use Jet\IO_File;
+use Jet\IO_UploadedFile;
 use Jet\SysConf_Path;
 use Jet\SysConf_URI;
 use JetApplication\Category;
@@ -134,7 +134,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 		$this->_setFile($src_file_path, $file_name, $this->image_mobile );
 	}
 	
-	protected function setFile( Form_Field_File_UploadedFile $file, &$property ): void
+	protected function setFile( IO_UploadedFile $file, &$property ): void
 	{
 		$dir = $this->getDir();
 		if( $property ) {
@@ -178,7 +178,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 		return $this->getURI() . rawurlencode( $this->image_main );
 	}
 	
-	public function setImageMain( Form_Field_File_UploadedFile $file ): void
+	public function setImageMain( IO_UploadedFile $file ): void
 	{
 		$this->setFile( $file, $this->image_main );
 	}
@@ -202,7 +202,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 		return $this->getURI() . rawurlencode( $this->image_mobile );
 	}
 	
-	public function setImageMobile( Form_Field_File_UploadedFile $file ): void
+	public function setImageMobile( IO_UploadedFile $file ): void
 	{
 		$this->setFile( $file, $this->image_mobile );
 	}
@@ -217,7 +217,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 		return $this->video_main;
 	}
 	
-	public function setVideoMain( Form_Field_File_UploadedFile $file ): void
+	public function setVideoMain( IO_UploadedFile $file ): void
 	{
 		$this->setFile( $file, $this->video_main );
 	}
@@ -242,7 +242,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 		return $this->video_mobile;
 	}
 	
-	public function setVideoMobile( Form_Field_File_UploadedFile $file ): void
+	public function setVideoMobile( IO_UploadedFile $file ): void
 	{
 		$this->setFile( $file, $this->video_mobile );
 	}
@@ -316,7 +316,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 	{
 		return $this->getUploadImageForm(
 			'upload_form_main_image',
-			function(Form_Field_File_UploadedFile $file) {
+			function(IO_UploadedFile $file) {
 				$this->setImageMain($file);
 				$this->save();
 			}
@@ -332,7 +332,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 	{
 		return $this->getUploadImageForm(
 			'upload_form_mobile_image',
-			function(Form_Field_File_UploadedFile $file) {
+			function(IO_UploadedFile $file) {
 				$this->setImageMobile($file);
 				$this->save();
 			}
@@ -351,7 +351,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 	{
 		return $this->getUploadVideoForm(
 			'upload_form_main_video',
-			function(Form_Field_File_UploadedFile $file) {
+			function(IO_UploadedFile $file) {
 				$this->setVideoMain($file);
 				$this->save();
 			}
@@ -367,7 +367,7 @@ abstract class Core_Marketing_CategoryBanner extends EShopEntity_Marketing imple
 	{
 		return $this->getUploadVideoForm(
 			'upload_form_mobile_video',
-			function(Form_Field_File_UploadedFile $file) {
+			function(IO_UploadedFile $file) {
 				$this->setVideoMobile($file);
 				$this->save();
 			}

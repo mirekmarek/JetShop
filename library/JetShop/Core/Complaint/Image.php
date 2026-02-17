@@ -13,9 +13,9 @@ use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\DataModel_IDController_AutoIncrement;
 
-use Jet\Form_Field_File_UploadedFile;
 use Jet\IO_Dir;
 use Jet\IO_File;
+use Jet\IO_UploadedFile;
 use Jet\SysConf_Path;
 use JetApplication\Complaint_Image;
 use JetApplication\Complaint_Status_Incomplete;
@@ -230,7 +230,7 @@ abstract class Core_Complaint_Image extends EShopEntity_Basic
 		return $images;
 	}
 	
-	public static function uploadImage( Complaint $complaint, Form_Field_File_UploadedFile $file, bool $notification_sent = false ) : void
+	public static function uploadImage( Complaint $complaint, IO_UploadedFile $file, bool $notification_sent = false ) : void
 	{
 		$new_complaint = (
 			!$complaint->getStatus()::getCode() ||

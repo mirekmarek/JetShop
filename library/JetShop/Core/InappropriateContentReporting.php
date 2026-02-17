@@ -13,8 +13,8 @@ use Jet\Form_Definition;
 use Jet\Form_Field;
 use Jet\Form_Field_Email;
 use Jet\Form_Field_File;
-use Jet\Form_Field_File_UploadedFile;
 use Jet\Form_Field_FileImage;
+use Jet\IO_UploadedFile;
 use Jet\Locale;
 use JetApplication\Application_Service_Admin_InappropriateContentReporting;
 use JetApplication\EShopEntity_Admin_Interface;
@@ -278,7 +278,7 @@ abstract class Core_InappropriateContentReporting extends EShopEntity_WithEShopR
 		
 		foreach($form->field( 'images' )->getValue() as $file) {
 			/**
-			 * @var Form_Field_File_UploadedFile $file
+			 * @var IO_UploadedFile $file
 			 */
 			$images[$file->getTmpFilePath()] = $file->getFileName();
 		}
