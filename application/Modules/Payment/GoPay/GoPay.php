@@ -121,6 +121,13 @@ class GoPay {
 			'Authorization: Bearer '.$token
 		]);
 		
+		$allowed_bnpl_types = null;
+		if(str_contains($payment_method, '|')) {
+			$payment_method = explode('|', $payment_method);
+			$allowed_bnpl_types = [$payment_method[1]];
+			$payment_method = $payment_method[0];
+		}
+		
 		$payment_data = [
 			'target' => [
 				'type' => 'ACCOUNT',
@@ -152,6 +159,10 @@ class GoPay {
 				'notification_url' => $notification_url
 			],
 		];
+		
+		if($allowed_bnpl_types) {
+			$payment_data['payer']['allowed_bnpl_types'] = $allowed_bnpl_types;
+		}
 		
 		if($selected_bank) {
 			unset($payment_data['payer']['default_payment_instrument']);
