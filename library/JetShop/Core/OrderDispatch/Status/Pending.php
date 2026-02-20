@@ -13,6 +13,7 @@ use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
+use JetApplication\OrderDispatch_Event_Pending;
 use JetApplication\OrderDispatch_Status;
 
 abstract class Core_OrderDispatch_Status_Pending extends OrderDispatch_Status {
@@ -32,21 +33,17 @@ abstract class Core_OrderDispatch_Status_Pending extends OrderDispatch_Status {
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderDispatch_Event
 	{
-		//TODO:
-		return null;
+		return $item->createEvent( OrderDispatch_Event_Pending::new() );
 	}
 	
 	
 	public function getPossibleFutureStatuses(): array
 	{
-		$res = [];
-		//TODO:
-		return $res;
+		return [];
 	}
 	
 	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
 	{
-		// TODO: Implement getAsPossibleFutureStatus() method.
 		return null;
 	}
 	

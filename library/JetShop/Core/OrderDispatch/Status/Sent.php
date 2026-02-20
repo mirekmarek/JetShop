@@ -36,9 +36,7 @@ abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 	
 	public function getPossibleFutureStatuses(): array
 	{
-		$res = [];
-		//TODO:
-		return $res;
+		return [];
 	}
 	
 	public function setupObjectAfterStatusUpdated( EShopEntity_Basic|OrderDispatch $item, array $params=[] ): void
@@ -49,7 +47,6 @@ abstract class Core_OrderDispatch_Status_Sent extends OrderDispatch_Status {
 	
 	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
 	{
-		// TODO: Implement getAsPossibleFutureStatus() method.
 		return null;
 	}
 	

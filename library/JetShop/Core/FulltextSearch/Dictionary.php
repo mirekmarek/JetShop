@@ -98,9 +98,11 @@ abstract class Core_FulltextSearch_Dictionary extends DataModel implements JsonS
 	{
 		$text = Data_Text::removeAccents( $text );
 		$text = strtolower($text);
+		$text = str_replace('-', '', $text);
 		$text = preg_replace( '/([0-9]+)x([0-9]+)/', '$1 $2', $text);
 		$text = preg_replace("/[^a-z0-9 ]/", ' ', $text);
 		$text = preg_replace('/ {2,}/', ' ', $text);
+		$text = trim($text);
 		
 		return $text;
 	}

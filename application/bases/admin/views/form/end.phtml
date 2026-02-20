@@ -15,7 +15,6 @@ $form = $r->getForm();
 <?php if($form->getValidationErrors()):
 	foreach($form->getValidationErrors() as $error):
 		?>
-		<!--suppress StatementWithEmptyBodyJS -->
 		<script>
 			setTimeout(() => {
 				const input_element = document.getElementById('<?=$error->getField()->getId()?>');

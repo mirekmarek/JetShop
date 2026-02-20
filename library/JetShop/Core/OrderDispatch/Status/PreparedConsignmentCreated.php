@@ -12,6 +12,7 @@ use JetApplication\EShopEntity_Status;
 use JetApplication\EShopEntity_Status_PossibleFutureStatus;
 use JetApplication\OrderDispatch;
 use JetApplication\OrderDispatch_Event;
+use JetApplication\OrderDispatch_Event_PreparedConsignmentCreated;
 use JetApplication\OrderDispatch_Status;
 
 abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends OrderDispatch_Status {
@@ -33,16 +34,13 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends Orde
 	
 	public function createEvent( EShopEntity_Basic|OrderDispatch $item, EShopEntity_Status $previouse_status ): null|EShopEntity_Event|OrderDispatch_Event
 	{
-		//TODO:
-		return null;
+		return $item->createEvent( OrderDispatch_Event_PreparedConsignmentCreated::new() );
 	}
 	
 	
 	public function getPossibleFutureStatuses(): array
 	{
-		$res = [];
-		//TODO:
-		return $res;
+		return [];
 
 	}
 	
@@ -55,7 +53,6 @@ abstract class Core_OrderDispatch_Status_PreparedConsignmentCreated extends Orde
 	
 	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
 	{
-		// TODO: Implement getAsPossibleFutureStatus() method.
 		return null;
 	}
 	

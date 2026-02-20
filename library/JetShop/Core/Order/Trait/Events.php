@@ -10,12 +10,9 @@ namespace JetShop;
 use JetApplication\EShopEntity_Event;
 use JetApplication\Order_ChangeHistory;
 use JetApplication\Order_Event;
-use JetApplication\Order_Event_DispatchCanceled;
 use JetApplication\Order_Event_InternalNote;
 use JetApplication\Order_Event_MessageForCustomer;
 use JetApplication\Order_Event_NewOrder;
-use JetApplication\Order_Event_NotReadyForDispatch;
-use JetApplication\Order_Event_Paid;
 use JetApplication\Order_Event_Updated;
 use JetApplication\Order_Note;
 use JetApplication\Order_Status_Cancelled;
@@ -24,8 +21,10 @@ use JetApplication\Order_Status_Dispatched;
 use JetApplication\Order_Status_DispatchStarted;
 use JetApplication\Order_Status_PersonalReceiptPreparationStarted;
 use JetApplication\Order_Status_PersonalReceiptPrepared;
-use JetApplication\Order_Status_ReadyForDispatch;
 use JetApplication\Order_Status_HandedOver;
+use JetApplication\Order_VirtualStatus_CancelDispatch;
+use JetApplication\Order_VirtualStatus_CheckIsReady;
+use JetApplication\Order_VirtualStatus_Paid;
 
 trait Core_Order_Trait_Events {
 	
@@ -80,68 +79,17 @@ trait Core_Order_Trait_Events {
 	
 	public function cancelDispatch() : void
 	{
-		//TODO: virtual status
-		$this->setFlags(
-			[
-				'ready_for_dispatch' => true,
-				'dispatch_started' => false,
-				'dispatched' => false,
-				'delivered' => false,
-			]
-		);
-		$this->setStatusByFlagState();
-		
-		$this->createEvent( Order_Event_DispatchCanceled::new() )->handleImmediately();
+		$this->setStatus( Order_VirtualStatus_CancelDispatch::get() );
 	}
 	
 	public function paid() : void
 	{
-		//TODO: virtual status
-		if($this->paid) {
-			return;
-		}
-		
-		$this->setFlags([
-			'paid' => true,
-		]);
-		$this->setStatusByFlagState();
-		
-		$this->createEvent(Order_Event_Paid::new())->handleImmediately();
+		$this->setStatus( Order_VirtualStatus_Paid::get() );
 	}
 	
 	public function checkIsReady() : void
 	{
-		//TODO: virtual status
-		if($this->getDeliveryMethod()->isEDelivery()) {
-			return;
-		}
-		
-		if(
-			(
-				$this->paid ||
-				!$this->payment_required
-			) &&
-			$this->all_items_available
-		) {
-			if(!$this->ready_for_dispatch) {
-				$this->setStatus( Order_Status_ReadyForDispatch::get() );
-			}
-		} else {
-			if($this->ready_for_dispatch) {
-				
-				$this->setFlags(
-					[
-						'ready_for_dispatch' => false,
-						'dispatch_started' => false,
-						'dispatched' => false,
-						'delivered' => false,
-					]
-				);
-				$this->setStatusByFlagState();
-				
-				$this->createEvent( Order_Event_NotReadyForDispatch::new() )->handleImmediately();
-			}
-		}
+		$this->setStatus( Order_VirtualStatus_CheckIsReady::get() );
 	}
 	
 	

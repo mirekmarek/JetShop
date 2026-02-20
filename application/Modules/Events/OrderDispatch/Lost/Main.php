@@ -29,7 +29,7 @@ class Main extends OrderDispatch_Event_HandlerModule
 	
 	public function getEventNameReadable(): string
 	{
-		return true;
+		return '';
 	}
 	
 	public function getEventCSSClass(): string

@@ -1,6 +1,7 @@
 <?php
 use Jet\MVC_View;
 use Jet\Form_Renderer_Form;
+use Jet\UI_messages;
 
 /**
  * @var MVC_View $this
@@ -8,6 +9,7 @@ use Jet\Form_Renderer_Form;
  */
 $r = $this->getRaw( 'renderer' );
 $form = $r->getForm();
+
 
 
 //if(!$r->getBaseCssClasses()) {
@@ -21,4 +23,8 @@ $form = $r->getForm();
 	<?php if(($csrf_field=$form->getCSRFTokenField())):
 		echo $csrf_field;
 	endif;
-endif; ?>
+endif;
+
+foreach($form->getValidationErrors() as $error):
+	echo UI_messages::createDanger( '<span>'.$error->getField()->getLabel().'</span> '.$error->getMessage() );
+endforeach;

@@ -3,6 +3,9 @@ html, body {
 	background-color: #ffffff;
 }
 
+@media only screen and (max-width:990px) {
+	html { font-size: calc(1em + 2vw); }
+}
 
 .listing-filter {
 	display: grid;

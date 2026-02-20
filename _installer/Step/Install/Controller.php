@@ -87,7 +87,6 @@ class Installer_Step_Install_Controller extends Installer_Step_Controller
 	public function install_createDb() : bool
 	{
 		$classes = [];
-		//TODO: class finder
 		
 		$finder = new class {
 			/**

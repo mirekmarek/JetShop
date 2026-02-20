@@ -1,4 +1,7 @@
 <?php
+
+use Jet\SysConf_URI;
+
 require_once 'parts/init_libs.php';
 ?>
 <!DOCTYPE html>
@@ -18,16 +21,52 @@ require_once 'parts/init_libs.php';
             background: #c9c9c9;
             background: linear-gradient(#aaaaaa, #ffffff);
         }
+        
+        #login_dialog {
+			display: flex;
+			flex-wrap: wrap;
+	        align-items: center;
+	        justify-content: center;
+	        width: 100vw;
+	        height: 100vh;
+			border: 1px solid red;
+	    
+	        padding-left: 20vw;
+	        padding-right: 20vw;
+        }
+
+		#login_dialog>div {
+			width: 100%;
+		}
+		
+		#login_logo {
+			text-align: center;
+			padding: 20px;
+			background-color: #ffffff;
+			margin-bottom: 40px;
+			box-shadow: 0 30px 40px rgba(0, 0, 0, .1);
+		}
+
+		@media screen and (width<=1000px) {
+			#login_dialog {
+				padding-left: 2vw;
+				padding-right: 2vw;
+			}
+		}
+		
 	</style>
 
 </head>
 <body>
 
-<div class="container h-100">
-	<div class="row align-items-center h-100">
-		<div class="col-12 justify-content-center">
-			<jet_layout_main_position/>
+<div id="login_dialog">
+	
+	<div>
+		<div id="login_logo">
+			<img src="<?= SysConf_URI::getImages()?>admin/logo.png">
 		</div>
+
+		<jet_layout_main_position/>
 	</div>
 </div>
 

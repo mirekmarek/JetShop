@@ -125,6 +125,9 @@ abstract class Report
 		} else {
 			if($GET->exists('eshop')) {
 				$keys = $GET->getRaw('eshop');
+				if(!is_array($keys)) {
+					$keys = [$keys];
+				}
 				$this->selected_eshop_keys = array_intersect( $all_eshop_keys, $keys );
 			}
 			
@@ -280,6 +283,10 @@ abstract class Report
 			$locale = $row['locale'];
 			
 			$eshop_key = EShop::generateKey( $eshop_code, $locale );
+			
+			if(!isset($res[$eshop_key])) {
+				continue;
+			}
 			
 			if(isset($res['total'])) {
 				$res['total'][$date]++;

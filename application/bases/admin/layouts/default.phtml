@@ -40,5 +40,50 @@ require_once 'parts/init_libs.php';
 </div>
 
 
+<style>
+	#nav_buttons {
+		position: fixed;
+		bottom:10px;
+		right:10px;
+		display: grid;
+		grid-template-columns: 40px 40px;
+		grid-template-rows: 40px;
+		gap: 10px;
+	}
+
+	#nav_buttons>div {
+		background-color:#f9f9f9;
+		border:1px #aaaaaa solid;
+		color: #aaaaaa;
+		border-radius:0;
+		cursor:pointer;
+		transition: all;
+		transition-duration: 0.2s;
+		opacity: 0.4;
+		font-size: 20px;
+		text-align: center;
+		padding-top: 5px;
+	}
+
+	#nav_buttons>div:hover {
+		background-color:#000000;
+	}
+	
+</style>
+<script>
+	document.addEventListener('scroll', function (e) {
+		if(window.scrollY>800) {
+			$('#nav_buttons').fadeIn();
+		} else {
+			$('#nav_buttons').fadeOut();
+		}
+	});
+</script>
+
+<div id="nav_buttons" style="display: none;">
+	<div id="nav_to_the_top" onclick="$('html, body').animate({scrollTop: 0}, 400);">&#11205;</div>
+	<div id="nav_to_the_bottom" onclick="$('html, body').animate({scrollTop: $(document).height()}, 400);">&#11206;</div>
+</div>
+
 </body>
 </html>

@@ -300,13 +300,27 @@ trait Main_Trait_Admin {
 	
 	public static function keyToTitle( string $key ) : string
 	{
+		if(strpos($key, '|')) {
+			$key = explode('|', $key);
+			
+			if( $key[0]=='total' ) {
+				return Tr::_('Total').' '.Tr::_( $key[1] );
+			}
+			
+			$eshop = EShops::get($key[0]);
+			if($eshop) {
+				return UI::flag($eshop->getLocale()).' '.$eshop->getName().' '.Tr::_( $key[1] );
+			}
+		}
+		
+		
 		if($key=='total') {
 			return Tr::_('Total');
 		}
 
 		$eshop = EShops::get($key);
 		if($eshop) {
-			return UI::flag($eshop->getLocale()).' '.EShops::get($key)->getName();
+			return UI::flag($eshop->getLocale()).' '.$eshop->getName();
 		}
 		
 		return $key;

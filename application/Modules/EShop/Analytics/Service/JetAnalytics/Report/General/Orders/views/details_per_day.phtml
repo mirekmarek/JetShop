@@ -1,0 +1,24 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ * @var array $data
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+$data = $this->getRaw('data');
+
+echo $module->renderSelectEShop();
+
+echo $module->renderTable_Line_DaysPerEShop( $data );

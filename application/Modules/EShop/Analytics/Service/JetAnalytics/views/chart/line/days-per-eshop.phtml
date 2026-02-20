@@ -72,17 +72,20 @@ foreach($data as $key=>$_items) {
 }
 
 $labels = array_values( $labels );
+
+$canvas_id = 'chart-canvas-'.uniqid();
+$chart_id = 'ctx_'.uniqid();
 ?>
 
 <div>
-	<canvas id="chart-canvas"></canvas>
+	<canvas id="<?=$canvas_id?>"></canvas>
 </div>
 
 
 <script>
-	const ctx = document.getElementById('chart-canvas');
+	const <?=$chart_id?> = document.getElementById('<?=$canvas_id?>');
 
-	new Chart(ctx, {
+	new Chart(<?=$chart_id?>, {
 		type: 'line',
 		data: {
 			labels: <?=json_encode( $labels )?>,

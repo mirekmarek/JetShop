@@ -34,14 +34,11 @@ abstract class Core_OrderDispatch_Status_Returned extends OrderDispatch_Status {
 	
 	public function getPossibleFutureStatuses(): array
 	{
-		$res = [];
-		//TODO:
-		return $res;
+		return [];
 	}
 	
 	public static function getAsPossibleFutureStatus(): ?EShopEntity_Status_PossibleFutureStatus
 	{
-		// TODO: Implement getAsPossibleFutureStatus() method.
 		return null;
 	}
 	
