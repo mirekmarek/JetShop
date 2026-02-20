@@ -149,7 +149,6 @@ class Main extends Application_Service_EShop_EMailMarketingSubscribeManagerBacke
 	
 	public function sendCartTracking( EShop $eshop ) : void
 	{
-		//TODO:
 		$ttl = Data_DateTime::catchDateTime( date('Y-m-d H:i:s', strtotime('-2 months')) );
 		
 		CartToBeSend::dataDelete(where: [
