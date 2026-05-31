@@ -59,7 +59,7 @@ class Report_Signpost_Views extends Report_Signpost
 		);
 		
 		
-		return $this->prepareDataPerShopPerDay( $data, $this->selected_eshop_keys );
+		return $this->prepareData_PerShop_PerDay_Count( $data, 'date_time' );
 	}
 	
 }

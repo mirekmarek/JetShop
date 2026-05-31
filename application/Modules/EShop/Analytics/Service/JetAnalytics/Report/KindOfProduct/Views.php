@@ -72,7 +72,7 @@ class Report_KindOfProduct_Views extends Report_KindOfProduct
 		);
 
 		
-		return $this->prepareDataPerShopPerDay( $data, $this->selected_eshop_keys );
+		return $this->prepareData_PerShop_PerDay_Count( $data, 'date_time' );
 	}
 	
 }

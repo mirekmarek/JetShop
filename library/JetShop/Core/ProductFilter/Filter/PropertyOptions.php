@@ -11,6 +11,7 @@ use JetApplication\Product_Parameter_Value;
 use JetApplication\ProductFilter_Filter;
 use JetApplication\ProductFilter_Filter_PropertyOptions_Property;
 use JetApplication\ProductFilter_Storage;
+use JetApplication\Property_EShopData;
 use JetApplication\Property_Options_Option;
 
 abstract class Core_ProductFilter_Filter_PropertyOptions extends ProductFilter_Filter
@@ -63,11 +64,17 @@ abstract class Core_ProductFilter_Filter_PropertyOptions extends ProductFilter_F
 	public function setSelectedOptions( int $property_id, array $selected_option_ids ) : void
 	{
 		if($selected_option_ids) {
-			$this->is_active = true;
-			if(!isset($this->properties[$property_id])) {
-				$this->properties[$property_id] = new ProductFilter_Filter_PropertyOptions_Property( $this, $property_id, $selected_option_ids );
+			$this->getProductFilter()->getEshop();
+			$property = Property_EShopData::get( $property_id, $this->product_filter->getEshop() );
+			if($property?->isActive()) {
+				
+				$this->is_active = true;
+				if(!isset($this->properties[$property_id])) {
+					$this->properties[$property_id] = new ProductFilter_Filter_PropertyOptions_Property( $this, $property_id, $selected_option_ids );
+				}
+				$this->properties[$property_id]->setSelectedOptions( $selected_option_ids );
+				
 			}
-			$this->properties[$property_id]->setSelectedOptions( $selected_option_ids );
 		}
 	}
 	
@@ -159,7 +166,7 @@ abstract class Core_ProductFilter_Filter_PropertyOptions extends ProductFilter_F
 		}
 		
 		$where['property_id'] = array_keys( $this->properties );
-
+		
 		$data = Product_Parameter_Value::dataFetchAll(
 			select: [
 				'product_id',
@@ -169,7 +176,7 @@ abstract class Core_ProductFilter_Filter_PropertyOptions extends ProductFilter_F
 			where: $where,
 			raw_mode: true
 		);
-
+		
 		foreach($data as $d) {
 			$property_id = (int)$d['property_id'];
 			$option_id = (int)$d['value'];
@@ -190,7 +197,7 @@ abstract class Core_ProductFilter_Filter_PropertyOptions extends ProductFilter_F
 				unset( $this->properties[$property_id] );
 			}
 		}
-
+		
 		
 		$selected_product_ids = [];
 		foreach($this->properties as $property_id=>$property) {
@@ -212,7 +219,7 @@ abstract class Core_ProductFilter_Filter_PropertyOptions extends ProductFilter_F
 		
 		
 		$this->filter_result = call_user_func_array('array_intersect', $selected_product_ids);
-
+		
 	}
 	
 	public function load( ProductFilter_Storage $storage ): void

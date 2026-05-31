@@ -1,0 +1,74 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$data = $this->getRaw('data');
+
+
+echo $module->renderSelectOneEShop();
+
+$labels = [];
+
+foreach( array_keys( array_values($data['count'])[0] ) as $date ) {
+	$labels[$date] = Locale::date( new Data_DateTime( $date ), Locale::DATE_TIME_FORMAT_SHORT );
+}
+
+$data_set_count = [];
+foreach($data['count'] as $source=>$_items) {
+	$items = [];
+	foreach( $_items as $date=>$v) {
+		$items[$labels[$date]] = $v;
+	}
+	
+	$data_set_count[] = [
+		'label' => $source,
+		'data' => $items,
+		'borderWidth' => 1
+	];
+}
+
+
+$data_set_total = [];
+foreach($data['total'] as $source=>$_items) {
+	$items = [];
+	foreach( $_items as $date=>$v) {
+		$items[$labels[$date]] = $v;
+	}
+	
+	$data_set_total[] = [
+		'label' => $source,
+		'data' => $items,
+		'borderWidth' => 1
+	];
+}
+
+$labels = array_values($labels);
+?>
+
+<h2><?=Tr::_('By quantity')?></h2>
+<?=$module->renderChart_Line_Common( $data_set_count, $labels );?>
+<br><br>
+<h2><?=Tr::_('By revenues')?></h2>
+<?=$module->renderChart_Line_Common( $data_set_total, $labels );?>
+
+
+

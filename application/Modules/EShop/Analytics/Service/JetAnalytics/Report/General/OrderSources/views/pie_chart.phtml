@@ -1,0 +1,100 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$data = $this->getRaw('data');
+
+$labels_count = [];
+$data_count = [];
+
+foreach($data['count'] as $source=>$data_per_days) {
+	$labels_count[] = $source;
+	$data_count[$source] = 0;
+
+	foreach( $data_per_days as $d=>$v ) {
+		$data_count[$source] += $v;
+	}
+
+}
+$data_count = array_values($data_count);
+
+
+$labels_total = [];
+$data_total = [];
+
+foreach($data['total'] as $source=>$data_per_days) {
+	$labels_total[] = $source;
+	$data_total[$source] = 0;
+	
+	foreach( $data_per_days as $d=>$v ) {
+		$data_total[$source] += $v;
+	}
+	
+}
+$data_total = array_values($data_total);
+
+
+echo $module->renderSelectOneEShop();
+
+?>
+<div style="display: grid;grid-template-columns: 1fr 1fr;gap: 5%;padding: 2%">
+	<div>
+		<h2><?=Tr::_('By quantity')?></h2>
+	</div>
+	<div>
+		<h2><?=Tr::_('By revenues')?></h2>
+	</div>
+	<div>
+		<canvas id="chart-canvas-count"></canvas>
+	</div>
+	<div>
+		<canvas id="chart-canvas-total"></canvas>
+	</div>
+</div>
+
+<script>
+	new Chart(document.getElementById('chart-canvas-count'), {
+		type: 'pie',
+		data: {
+			labels: <?=json_encode($labels_count)?>,
+			datasets: [{
+				label: '',
+				data: <?=json_encode($data_count)?>,
+				hoverOffset: 4
+			}]
+		}
+	});
+
+	new Chart(document.getElementById('chart-canvas-total'), {
+		type: 'pie',
+		data: {
+			labels: <?=json_encode($labels_total)?>,
+			datasets: [{
+				label: '',
+				data: <?=json_encode($data_total)?>,
+				hoverOffset: 4
+			}]
+		}
+	});
+	
+</script>
+

@@ -12,7 +12,7 @@ class Report_General_Orders extends Report_General
 {
 	public const KEY = 'orders';
 	protected ?string $title = 'Orders';
-	protected bool $is_default = true;
+	protected bool $is_default = false;
 	protected array $sub_reports = [
 		'summary' => 'Summary',
 		'chart' => 'Chart',
@@ -36,6 +36,7 @@ class Report_General_Orders extends Report_General
 		$data = $this->getRawData();
 		$this->view->setVar('data', $data);
 	}
+
 	
 	protected function getRawData() : array
 	{
@@ -62,7 +63,7 @@ class Report_General_Orders extends Report_General
 		);
 		
 		
-		return $this->prepareDataPerShopPerDay( $data, $this->selected_eshop_keys, 'date_purchased' );
+		return $this->prepareData_PerShop_PerDay_Count( $data, 'date_purchased' );
 	}
 	
 }

@@ -42,6 +42,9 @@ endif;
 <div>
 	<?php foreach( $session->getEventMap() as $event_map_item):
 		$event = $event_map_item->getEvent();
+		if(!$event) {
+			continue;
+		}
 	
 		$long_details = $event->showLongDetails();
 		?>

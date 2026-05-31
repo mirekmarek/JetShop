@@ -279,6 +279,16 @@ trait Main_Trait_Admin {
 		
 	}
 	
+	public function renderChart_Line_Common( array $data_set, array $labels ) : string
+	{
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'data_set', $data_set );
+		$view->setVar( 'labels', $labels );
+		
+		return $view->render('chart/line/common');
+		
+	}
+	
 	
 	public function renderTable_Line_DaysPerEShop( array $data ) : string
 	{

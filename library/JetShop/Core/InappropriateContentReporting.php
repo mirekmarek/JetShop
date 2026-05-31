@@ -272,6 +272,14 @@ abstract class Core_InappropriateContentReporting extends EShopEntity_WithEShopR
 			return false;
 		}
 		
+		if(
+			str_contains($this->getEmail(), 'test') ||
+			str_contains($this->getEmail(), 'example') ||
+			str_contains($this->getURL(), 'example')
+		) {
+			return false;
+		}
+		
 		$this->save();
 		
 		$images = [];

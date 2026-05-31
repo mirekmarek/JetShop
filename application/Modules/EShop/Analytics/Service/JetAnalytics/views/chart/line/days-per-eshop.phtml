@@ -25,35 +25,6 @@ foreach( array_keys( array_values($data)[0] ) as $date ) {
 	$labels[$date] = Locale::date( new Data_DateTime( $date ), Locale::DATE_TIME_FORMAT_SHORT );
 }
 
-/*
-foreach($data as $key=>$_items) {
-	if($key=='total') {
-		foreach( $_items as $date=>$v) {
-			$data[$key][$date] = 0;
-		}
-		
-		continue;
-	}
-	
-	foreach( $_items as $date=>$v) {
-		$data[$key][$date] = rand(0, 1000);
-	}
-}
-
-if(isset($data['total'])) {
-	foreach($data as $key=>$_items) {
-		if($key=='total') {
-			continue;
-		}
-		
-		foreach( $_items as $date=>$v) {
-			$data['total'][$date] += $data[$key][$date];
-		}
-	}
-}
-*/
-
-
 foreach($data as $key=>$_items) {
 
 	
@@ -73,30 +44,8 @@ foreach($data as $key=>$_items) {
 
 $labels = array_values( $labels );
 
-$canvas_id = 'chart-canvas-'.uniqid();
-$chart_id = 'ctx_'.uniqid();
-?>
+$this->setVar('labels', $labels);
+$this->setVar('data_set', $data_set);
 
-<div>
-	<canvas id="<?=$canvas_id?>"></canvas>
-</div>
+echo $this->render('chart/line/common');
 
-
-<script>
-	const <?=$chart_id?> = document.getElementById('<?=$canvas_id?>');
-
-	new Chart(<?=$chart_id?>, {
-		type: 'line',
-		data: {
-			labels: <?=json_encode( $labels )?>,
-			datasets: <?=json_encode($data_set)?>
-		},
-		options: {
-			scales: {
-				y: {
-					beginAtZero: false
-				}
-			}
-		}
-	});
-</script>

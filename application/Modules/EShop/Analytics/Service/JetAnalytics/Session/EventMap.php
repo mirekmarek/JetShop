@@ -112,7 +112,7 @@ class Session_EventMap extends DataModel
 		return $this->event_id;
 	}
 	
-	public function getEvent(): Event
+	public function getEvent(): ?Event
 	{
 		/**
 		 * @var Event $class

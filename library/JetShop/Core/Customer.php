@@ -870,5 +870,10 @@ abstract class Core_Customer extends EShopEntity_WithEShopRelation implements
 			]
 		);
 	}
+
+	public function afterDelete() : void
+	{
+		EMailMarketing::SubscriptionManager()?->unsubscribe( $this->getEshop(), $this->getEmail(), '', 'User has been deleted' );
+	}
 	
 }

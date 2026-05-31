@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Events\OrderPersonalReceipt\HandedOver;
 
 
+use Jet\Data_DateTime;
 use JetApplication\Order;
 use JetApplication\OrderPersonalReceipt_Event_HandlerModule;
 use JetApplication\WarehouseManagement;
@@ -33,6 +34,12 @@ class Main extends OrderPersonalReceipt_Event_HandlerModule
 				$this->event->setErrorMessage( 'Unknown context '.$this->order_personal_receipt->getContextType() );
 				break;
 		}
+		
+		
+		$this->order_personal_receipt->setHeadedOverDate( Data_DateTime::now() );
+		$this->order_personal_receipt->setHeadedOverDateTime( Data_DateTime::now() );
+		$this->order_personal_receipt->save();
+		
 		
 		return true;
 	}

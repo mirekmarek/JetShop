@@ -1,0 +1,51 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\MVC_View;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ */
+
+
+$data_set = $this->getRaw('data_set');
+$labels = $this->getRaw('labels');
+
+
+$canvas_id = 'chart-canvas-'.uniqid();
+$chart_id = 'ctx_'.uniqid();
+?>
+
+<div>
+	<canvas id="<?=$canvas_id?>"></canvas>
+</div>
+
+
+<script>
+	const <?=$chart_id?> = document.getElementById('<?=$canvas_id?>');
+
+	new Chart(<?=$chart_id?>, {
+		type: 'line',
+		data: {
+			labels: <?=json_encode( $labels )?>,
+			datasets: <?=json_encode($data_set)?>
+		},
+		options: {
+			responsive: true,
+			interaction: {
+				intersect: false,
+			},
+			scales: {
+				y: {
+					beginAtZero: false
+				}
+			}
+		}
+	});
+</script>

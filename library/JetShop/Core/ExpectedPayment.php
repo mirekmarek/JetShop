@@ -47,6 +47,22 @@ abstract class Core_ExpectedPayment extends EShopEntity_WithEShopRelation implem
 	use Context_HasContext_Trait;
 	use EShopEntity_Admin_Trait;
 	
+	//TODO: castka
+	//TODO: mena
+	//TODO: context
+	//TODO: datum splatnosti
+	//TODO: kolik již uhrazeno
+	//TODO: obecný příznak Uhrazeno
+	//TODO: stavy:
+	/*
+	Nevyrovnané (Otevřené): Pohledávka, ke které nebyla v systému spárována úhrada (bankovní výpis, pokladní doklad).
+	Vyrovnané (Uhrazené): Pohledávka, jejíž saldo je nulové (částka dokladu odpovídá součtu úhrad).
+	Částečně uhrazené: Doklad, u kterého proběhla platba jen v určité výši.
+	Přeplatetk
+	Po splatnosti
+	*/
+	
+	
 	public function getNumberSeriesEntityShop(): ?EShop
 	{
 		return $this->getEshop();

@@ -85,6 +85,7 @@ class Main extends Application_Service_General_ExportsManager implements
 		
 		if(count($URL_path)!=2) {
 			ErrorPages::handleNotFound( true );
+			return;
 		}
 		
 		[$key, $export_code] = $URL_path;
@@ -93,12 +94,14 @@ class Main extends Application_Service_General_ExportsManager implements
 		
 		if($key!=$valid_key) {
 			ErrorPages::handleNotFound( true );
+			return;
 		}
 		
 		$export = Exports::getExport( $export_code );
 		
 		if( !$export ) {
 			ErrorPages::handleNotFound( true );
+			return;
 		}
 		
 		Debug::setOutputIsJSON( true );

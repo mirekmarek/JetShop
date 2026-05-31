@@ -105,6 +105,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		'34.1.29.', //Google
 		'34.1.30.', //Google
 		'34.1.31.', //Google
+		'2001:4860:7:',  //Google
 		'4.153.66.27', //MS
 		'18.117.180.', //Amazon
 		'2a03:2880:', //Facebook
@@ -248,6 +249,12 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		max_len: 255
 	)]
 	protected string $gclid = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $source = '';
 	
 	/**
 	 * @var Event[]
@@ -565,4 +572,198 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		return Session_EventMap::getMap( $this );
 	}
 	
+	public function getSource() : string
+	{
+		if(!$this->source) {
+			$this->source = Session_SourceDetector::detect( $this );
+			
+			static::updateData(
+				data: [
+					'source' => $this->source
+				],
+				where: [
+					'id' => $this->id
+				]
+			);
+		}
+		
+		return $this->source;
+	}
+	
+	public function afterAdd() : void
+	{
+		$this->getSource();
+	}
+	
+	public static function determineSources() : void
+	{
+		$session_ids = static::dataFetchCol(
+			select: ['id'],
+			where: ['source'=>''],
+			limit: 50000
+		);
+		
+		foreach($session_ids as $id) {
+			echo "{$id}\n";
+			static::load( $id )?->getSource();
+		}
+	}
+	
+	public function delete() : void
+	{
+		foreach($this->getEventMap() as $event_map_item) {
+			$event_map_item->getEvent()?->delete();
+			$event_map_item->delete();
+		}
+		
+		parent::delete();
+	}
+	
+	public static function cleanup() : void
+	{
+		$ttl = new Data_DateTime( date('Y-m-d H:i:s', strtotime('-12 hours')) );
+		
+		$ids = static::dataFetchCol(
+			select: ['id'],
+			where: [
+				'start_date_time' => static::getDataModelDefinition()->getProperty('last_activity_date_time'),
+				'AND',
+				'last_activity_date_time < ' => $ttl
+			],
+			order_by: ['-id'],
+			limit: 10000
+		);
+		
+		foreach($ids as $id) {
+			$session = static::load( $id );
+			if(!$session) {
+				continue;
+			}
+			echo "{$id} - {$session->getStartDateTime()}\n";
+			
+			$session->delete();
+		}
+	}
+	
 }
+
+/*
+<?php
+// ==========================================================================
+// 1. KONFIGURACE (Doplňte své údaje)
+// ==========================================================================
+$developerToken = 'ZDE_VLOZTE_DEV_TOKEN';
+$customerId     = '1234567890'; // ID Google Ads účtu BEZ pomlček (jen čísla)
+$gclid          = 'ZDE_VLOZTE_TESTOVACI_GCLID';
+
+// OAuth 2.0 údaje (získané z Google Cloud Console)
+$clientId     = 'ZDE_VLOZTE_CLIENT_ID';
+$clientSecret = 'ZDE_VLOZTE_CLIENT_SECRET';
+$refreshToken = 'ZDE_VLOZTE_REFRESH_TOKEN';
+
+// Aktuální stabilní verze Google Ads API pro rok 2026
+$apiVersion = 'v17';
+
+// ==========================================================================
+// 2. ZÍSKÁNÍ AKTUÁLNÍHO ACCESS TOKENU (OAuth 2.0)
+// ==========================================================================
+$tokenUrl = 'https://googleapis.com';
+$tokenPostFields = http_build_query([
+    'client_id'     => $clientId,
+    'client_secret' => $clientSecret,
+    'refresh_token' => $refreshToken,
+    'grant_type'    => 'refresh_token'
+]);
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $tokenUrl);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $tokenPostFields);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+
+$tokenResponse = curl_exec($ch);
+if (curl_errno($ch)) {
+    die('Chyba při získávání Access Tokenu: ' . curl_error($ch));
+}
+curl_close($ch);
+
+$tokenData = json_decode($tokenResponse, true);
+if (isset($tokenData['error'])) {
+    die('OAuth Chyba: ' . $tokenData['error_description']);
+}
+
+$accessToken = $tokenData['access_token'];
+
+// ==========================================================================
+// 3. VOLÁNÍ GOOGLE ADS API (Získání dat o kliknutí)
+// ==========================================================================
+$apiUrl = "https://googleapis.com{$apiVersion}/customers/{$customerId}/googleAds:search";
+
+// Definice dotazu v jazyce GAQL
+$gaqlQuery = "SELECT
+                click_view.gclid,
+                campaign.id,
+                campaign.name,
+                ad_group.id,
+                ad_group.name
+              FROM click_view
+              WHERE click_view.gclid = '{$gclid}'";
+
+$apiPayload = json_encode([
+    'query' => $gaqlQuery
+]);
+
+$apiHeaders = [
+    "Authorization: Bearer {$accessToken}",
+    "developer-token: {$developerToken}",
+    "Content-Type: application/json"
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $apiUrl);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $apiPayload);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $apiHeaders);
+
+$apiResponse = curl_exec($ch);
+
+if (curl_errno($ch)) {
+    die('Chyba při komunikaci s Google Ads API: ' . curl_error($ch));
+}
+curl_close($ch);
+
+// ==========================================================================
+// 4. ZPRACOVÁNÍ VÝSLEDKŮ
+// ==========================================================================
+$result = json_decode($apiResponse, true);
+
+// Ošetření případné chyby přímo z API
+if (isset($result['error'])) {
+    echo "API vrátilo chybu:\n";
+    print_r($result['error']);
+    exit;
+}
+
+// Výpis nalezených dat
+if (!empty($result['results'])) {
+    echo "Data k zadanému GCLID nalezena:\n\n";
+    foreach ($result['results'] as $row) {
+        $clickView = $row['clickView'] ?? [];
+        $campaign  = $row['campaign'] ?? [];
+        $adGroup   = $row['adGroup'] ?? [];
+
+        echo "GCLID: " . ($clickView['gclid'] ?? 'N/A') . "\n";
+        echo "Kampaň ID: " . ($campaign['id'] ?? 'N/A') . "\n";
+        echo "Kampaň Název: " . ($campaign['name'] ?? 'N/A') . "\n";
+        echo "Sestava ID: " . ($adGroup['id'] ?? 'N/A') . "\n";
+        echo "Sestava Název: " . ($adGroup['name'] ?? 'N/A') . "\n";
+        echo "-----------------------------------------\n";
+    }
+} else {
+    echo "Pro zadané GCLID nebyl nalezen žádný záznam (může jít o kliknutí starší 90 dnů, nebo se data ještě nepropisují).\n";
+}
+?>
+
+ */

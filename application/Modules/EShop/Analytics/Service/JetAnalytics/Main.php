@@ -6,6 +6,7 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
+use Jet\Tr;
 use JetApplication\Admin_EntityManager_EditTabProvider;
 use JetApplication\CashDesk;
 use JetApplication\Category_EShopData;
@@ -17,9 +18,11 @@ use JetApplication\ProductListing;
 use JetApplication\ShoppingCart;
 use JetApplication\ShoppingCart_Item;
 use JetApplication\Signpost_EShopData;
+use JetApplication\SysServices_Definition;
+use JetApplication\SysServices_Provider_Interface;
 
 
-class Main extends Application_Service_EShop_AnalyticsService implements Admin_EntityManager_EditTabProvider
+class Main extends Application_Service_EShop_AnalyticsService implements Admin_EntityManager_EditTabProvider, SysServices_Provider_Interface
 {
 	use Main_Trait_Admin;
 	
@@ -218,5 +221,35 @@ class Main extends Application_Service_EShop_AnalyticsService implements Admin_E
 		}
 		return '';
 	}
-
+	
+	public function getSysServicesDefinitions(): array
+	{
+		$determine_source = new SysServices_Definition(
+			module: $this,
+			name: Tr::_('Jet Analytics - determine session source'),
+			description: '',
+			service_code: 'ja_determine_source',
+			service: function() {
+				Session::determineSources();
+			}
+		);
+		$determine_source->setIsPeriodicallyTriggeredService( false );
+		
+		$determine_cleanup = new SysServices_Definition(
+			module: $this,
+			name: Tr::_('Jet Analytics - Cleanup'),
+			description: '',
+			service_code: 'ja_cleanup',
+			service: function() {
+				Session::cleanup();
+			}
+		);
+		
+		
+		
+		return [
+			$determine_source,
+			$determine_cleanup
+		];
+	}
 }

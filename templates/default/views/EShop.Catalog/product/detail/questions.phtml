@@ -1,0 +1,28 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Catalog;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+use JetApplication\Application_Service_EShop;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$questions_manager = Application_Service_EShop::ProductQuestions();
+if(!$questions_manager) {
+	return;
+}
+?>
+<h3><?=Tr::_('Questions (%cnt%)', ['cnt'=>$product->getQuestionCount()]);?></h3>
+<?=$questions_manager->renderQuestions( $product )?>

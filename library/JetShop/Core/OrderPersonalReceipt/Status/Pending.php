@@ -15,6 +15,7 @@ use JetApplication\OrderPersonalReceipt_Event;
 use JetApplication\OrderPersonalReceipt_Status;
 use JetApplication\OrderPersonalReceipt_Status_Cancel;
 use JetApplication\OrderPersonalReceipt_Status_InProgress;
+use JetApplication\OrderPersonalReceipt_VirtualStatus_Rollback;
 
 abstract class Core_OrderPersonalReceipt_Status_Pending extends OrderPersonalReceipt_Status {
 	
@@ -40,6 +41,7 @@ abstract class Core_OrderPersonalReceipt_Status_Pending extends OrderPersonalRec
 		
 		$res[] = OrderPersonalReceipt_Status_InProgress::getAsPossibleFutureStatus();
 		$res[] = OrderPersonalReceipt_Status_Cancel::getAsPossibleFutureStatus();
+		$res[] = OrderPersonalReceipt_VirtualStatus_Rollback::getAsPossibleFutureStatus();
 		
 		return $res;
 	}

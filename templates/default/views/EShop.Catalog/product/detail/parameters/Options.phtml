@@ -1,0 +1,27 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Catalog;
+
+
+use Jet\MVC_View;
+use JetApplication\Property_Options_Option_EShopData;
+use JetApplication\Property_EShopData;
+
+/**
+ * @var MVC_View $this
+ * @var Property_EShopData $property
+ * @var Property_Options_Option_EShopData[] $value
+ */
+
+$property = $this->getRaw('property');
+
+$value = $property->getProductDetailDisplayValue();
+
+foreach($value as $option):
+	echo $option->getFilterLabel();
+	echo '<br>';
+endforeach;

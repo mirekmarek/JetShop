@@ -47,6 +47,7 @@ use JetApplication\OrderPersonalReceipt_Status_HandedOver;
 use JetApplication\OrderPersonalReceipt_Status_InProgress;
 use JetApplication\OrderPersonalReceipt_Status_Pending;
 use JetApplication\OrderPersonalReceipt_Status_Prepared;
+use JetApplication\OrderPersonalReceipt_VirtualStatus_Rollback;
 use JetApplication\Product_EShopData;
 use JetApplication\WarehouseManagement_Warehouse;
 use JetApplication\OrderPersonalReceipt_Event;
@@ -371,6 +372,17 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 		return $this->headed_over_date_time;
 	}
 	
+	public function setHeadedOverDate( ?Data_DateTime $headed_over_date ): void
+	{
+		$this->headed_over_date = Data_DateTime::catchDate( $headed_over_date );
+	}
+	
+	public function setHeadedOverDateTime( ?Data_DateTime $headed_over_date_time ): void
+	{
+		$this->headed_over_date_time = Data_DateTime::catchDateTime( $headed_over_date_time );
+	}
+	
+	
 	
 	
 	public function getAmountToPay(): float
@@ -568,17 +580,9 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	}
 	
 	
-	
-	public function rollBack() : bool
+	public function rollBack() : void
 	{
-		//TODO: virtual status
-		$this->setStatus(OrderPersonalReceipt_Status_Pending::get(), handle_event: false );
-		
-		$this->headed_over_date = null;
-		$this->headed_over_date_time = null;
-		$this->save();
-		
-		return true;
+		$this->setStatus(OrderPersonalReceipt_VirtualStatus_Rollback::get(), handle_event: false );
 	}
 	
 	public function cancel() : void
@@ -595,10 +599,6 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public function handedOver() : void
 	{
 		$this->setStatus( OrderPersonalReceipt_Status_HandedOver::get() );
-		
-		$this->headed_over_date = Data_DateTime::now();
-		$this->headed_over_date_time = Data_DateTime::now();
-		$this->save();
 	}
 	
 	public function getOurNoteForm() : Form

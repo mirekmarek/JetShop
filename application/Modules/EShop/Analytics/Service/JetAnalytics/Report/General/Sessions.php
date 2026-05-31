@@ -62,7 +62,7 @@ class Report_General_Sessions extends Report_General
 			],
 			raw_mode: true
 		);
-		$logged_in = $this->prepareDataPerShopPerDay( $logged_in, $this->selected_eshop_keys, 'start_date_time' );
+		$logged_in = $this->prepareData_PerShop_PerDay_Count( $logged_in, 'start_date_time' );
 
 		
 		$not_logged_in = Session::dataFetchAll(
@@ -85,7 +85,7 @@ class Report_General_Sessions extends Report_General
 		);
 		
 		
-		$not_logged_in = $this->prepareDataPerShopPerDay( $not_logged_in, $this->selected_eshop_keys, 'start_date_time' );
+		$not_logged_in = $this->prepareData_PerShop_PerDay_Count( $not_logged_in, 'start_date_time' );
 		
 		
 		
@@ -115,7 +115,7 @@ class Report_General_Sessions extends Report_General
 			],
 			raw_mode: true
 		);
-		$purchased = $this->prepareDataPerShopPerDay( $purchased, $this->selected_eshop_keys, 'start_date_time' );
+		$purchased = $this->prepareData_PerShop_PerDay_Count( $purchased, 'start_date_time' );
 		
 		
 		$not_purchased = Session::dataFetchAll(
@@ -138,7 +138,7 @@ class Report_General_Sessions extends Report_General
 		);
 		
 		
-		$not_purchased = $this->prepareDataPerShopPerDay( $not_purchased, $this->selected_eshop_keys, 'start_date_time' );
+		$not_purchased = $this->prepareData_PerShop_PerDay_Count( $not_purchased, 'start_date_time' );
 		
 		
 		$this->view->setVar('data_purchased', $purchased);
@@ -172,7 +172,7 @@ class Report_General_Sessions extends Report_General
 		);
 		
 		
-		return $this->prepareDataPerShopPerDay( $data, $this->selected_eshop_keys, 'start_date_time' );
+		return $this->prepareData_PerShop_PerDay_Count( $data, 'start_date_time' );
 	}
 	
 }

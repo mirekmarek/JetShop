@@ -17,6 +17,7 @@ use Jet\ErrorPages;
 use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Locale;
+use Jet\Lock;
 use Jet\Logger;
 use Jet\MVC;
 use Jet\MVC_Page_Interface;
@@ -135,17 +136,20 @@ class Main extends Application_Service_General_SysServices implements
 		
 		if(count($URL_path)<2) {
 			ErrorPages::handleNotFound( true );
+			return;
 		}
 		
 		[$key, $service_code] = $URL_path;
 		
 		if($key!=$this->getConfig()->getKey()) {
 			ErrorPages::handleNotFound( true );
+			return;
 		}
 		
 		$service = SysServices::getService( $service_code );
 		if( !$service ) {
 			ErrorPages::handleNotFound( true );
+			return;
 		}
 		
 		unset($URL_path[0]);
@@ -173,6 +177,16 @@ class Main extends Application_Service_General_SysServices implements
 				]
 			);
 			
+			$lock_name = 'SysService:'.$service_code;
+			if($service->getServiceRequiresEshopDesignation()) {
+				$lock_name .= ':'.EShops::getCurrentKey();
+			}
+			
+			if(!Lock::lockIfPossible( $lock_name )) {
+				echo "\n\nLocked - this servise is running right now\n\n";
+				Application::end();
+			}
+			
 			try {
 				set_time_limit(-1);
 				$service->perform();
@@ -190,6 +204,8 @@ class Main extends Application_Service_General_SysServices implements
 					]
 				);
 			}
+			
+			Lock::unlock( $lock_name );
 		}
 		
 		

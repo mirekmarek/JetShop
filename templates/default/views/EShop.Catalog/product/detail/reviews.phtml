@@ -1,0 +1,29 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Catalog;
+
+
+use Jet\MVC_View;
+use Jet\Tr;
+use JetApplication\Product_EShopData;
+use JetApplication\Application_Service_EShop;
+
+/**
+ * @var MVC_View $this
+ * @var Product_EShopData $product
+ */
+
+$product = $this->getRaw('product');
+
+$reviews_manager = Application_Service_EShop::ProductReviews();
+
+if(!$reviews_manager || !$product->getReviewCount()) {
+	return;
+}
+?>
+<h3><?=Tr::_('Reviews (%cnt%)', ['cnt'=>$product->getReviewCount()])?></h3>
+<?=$reviews_manager->renderReviews( $product );?>

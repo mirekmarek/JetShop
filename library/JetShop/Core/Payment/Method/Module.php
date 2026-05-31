@@ -26,6 +26,11 @@ abstract class Core_Payment_Method_Module extends Application_Module
 	
 	abstract public function handlePaymentReturn( Order $order ) : bool;
 	
+	public function handleOrderCancellation( Order $order, ?string &$error_message  ) : bool
+	{
+		return true;
+	}
+	
 	
 	
 	public function generateConfirmationEmailInfoText( Order $order, Payment_Method $payment_method ) : string

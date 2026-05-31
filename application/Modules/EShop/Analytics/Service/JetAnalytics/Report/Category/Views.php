@@ -58,7 +58,7 @@ class Report_Category_Views extends Report_Category
 		);
 		
 		
-		return $this->prepareDataPerShopPerDay( $data, $this->selected_eshop_keys );
+		return $this->prepareData_PerShop_PerDay_Count( $data, 'date_time' );
 	}
 	
 }

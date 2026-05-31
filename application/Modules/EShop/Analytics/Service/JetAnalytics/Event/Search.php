@@ -24,7 +24,7 @@ class Event_Search extends Event
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
-		max_len: 50
+		max_len: 255
 	)]
 	protected string $search_query = '';
 	

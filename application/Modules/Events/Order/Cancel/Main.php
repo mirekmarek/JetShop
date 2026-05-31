@@ -23,6 +23,17 @@ class Main extends Order_Event_HandlerModule implements EMail_TemplateProvider
 			return $res;
 		}
 		
+		$payment_handler_module = $this->order->getPaymentMethod()?->getBackendModule();
+		if($payment_handler_module) {
+			$error_message = '';
+			if(!$payment_handler_module->handleOrderCancellation( $this->order, $error_message )) {
+				$this->event->setErrorMessage( $error_message );
+				
+				return false;
+			}
+		}
+		
+		
 		return true;
 	}
 

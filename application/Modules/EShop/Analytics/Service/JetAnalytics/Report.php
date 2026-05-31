@@ -31,6 +31,7 @@ abstract class Report
 	protected Main $module;
 	protected string $selected_subreport;
 	protected array $selected_eshop_keys = [];
+	protected ?EShop $selected_eshop;
 	
 	
 	protected ?MVC_View $view = null;
@@ -119,8 +120,9 @@ abstract class Report
 		$GET = Http_Request::GET();
 		if($this->one_eshop_mode) {
 			
-			$keys = $GET->getString('eshop', default_value: EShops::getDefault()->getKey(), valid_values: $all_eshop_keys);
-			$this->selected_eshop_keys = [ $keys ];
+			$key = $GET->getString('eshop', default_value: EShops::getDefault()->getKey(), valid_values: $all_eshop_keys);
+			$this->selected_eshop_keys = [ $key ];
+			$this->selected_eshop = EShops::get( $key );
 			
 		} else {
 			if($GET->exists('eshop')) {
@@ -268,8 +270,11 @@ abstract class Report
 		return $map;
 	}
 	
-	public function prepareDataPerShopPerDay( array $data, array $eshop_keys, $date_column='date_time' ) : array
+	public function prepareData_PerShop_PerDay_Count( array $data, string $date_column, ?array $eshop_keys=null ) : array
 	{
+		if($eshop_keys===null) {
+			$eshop_keys = $this->selected_eshop_keys;
+		}
 		
 		$res = [];
 		foreach($eshop_keys as $key) {
@@ -289,14 +294,87 @@ abstract class Report
 			}
 			
 			if(isset($res['total'])) {
-				$res['total'][$date]++;
+				if(isset($res['total'][$date])) {
+					$res['total'][$date]++;
+				}
 			}
 			
 			if(isset($res[$eshop_key])) {
-				$res[$eshop_key][$date]++;
+				if(isset($res[$eshop_key][$date])) {
+					$res[$eshop_key][$date]++;
+				}
 			}
 		}
 
+		return $res;
+	}
+	
+	public function prepareData_PerShop_PerDay_Total( array $data, string $value_column, string $date_column, ?array $eshop_keys=null ) : array
+	{
+		if($eshop_keys===null) {
+			$eshop_keys = $this->selected_eshop_keys;
+		}
+		
+		$res = [];
+		foreach($eshop_keys as $key) {
+			$res[$key] = $this->prepareDayMap();
+		}
+		
+		foreach($data as $row) {
+			$date = explode(' ', $row[$date_column])[0];
+			
+			$eshop_code = $row['eshop_code'];
+			$locale = $row['locale'];
+			
+			$eshop_key = EShop::generateKey( $eshop_code, $locale );
+			
+			if(!isset($res[$eshop_key])) {
+				continue;
+			}
+			
+			if(isset($res['total'])) {
+				$res['total'][$date] += $row[$value_column];
+			}
+			
+			if(isset($res[$eshop_key])) {
+				$res[$eshop_key][$date] += $row[$value_column];
+			}
+		}
+		
+		return $res;
+	}
+	
+	
+	
+	public function prepareData_PerDay_Count( array $data, string $date_column ) : array
+	{
+		
+		$res = $this->prepareDayMap();
+		
+		foreach($data as $row) {
+			$date = explode(' ', $row[$date_column])[0];
+			
+			if(isset($res[$date])) {
+				$res[$date]++;
+			}
+		}
+		
+		return $res;
+	}
+	
+	public function prepareData_PerDay_Total( array $data, string $value_column, string $date_column ) : array
+	{
+		
+		$res = $this->prepareDayMap();
+		
+		foreach($data as $row) {
+			$date = explode(' ', $row[$date_column])[0];
+			
+			if(isset($res[$date])) {
+				$res[$date] += $row[$value_column];
+			}
+		}
+		
 		return $res;
 	}
 	

@@ -288,7 +288,7 @@ abstract class Core_Marketing_Gift_Product extends EShopEntity_Marketing impleme
 					where_per_model: [ '' => $where],
 					order_by: 'priority',
 					item_key_generator: function( Marketing_Gift_Product $item ) : int {
-						return $item->getGiftProductId();
+						return $item->getId();
 					}
 				);
 				
