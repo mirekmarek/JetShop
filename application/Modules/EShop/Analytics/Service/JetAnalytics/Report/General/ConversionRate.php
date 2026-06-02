@@ -74,7 +74,6 @@ class Report_General_ConversionRate extends Report_General
 			'no_shopping'   => $days
 		];
 		
-		
 		foreach($sessions as $s) {
 			
 			$date = $s['date_time']->format('Y-m-d');
@@ -90,13 +89,12 @@ class Report_General_ConversionRate extends Report_General
 				}
 			}
 			
-			$data[$what][$date] = rand(10, 500);
+			$data[$what][$date]++;
 		}
 		
 		foreach($days as $date=>$v) {
 			$data['sessions_count'][$date] = $data['purchased'][$date]+$data['cart_used'][$date]+$data['no_shopping'][$date];
 		}
-		
 		
 		return $data;
 	}

@@ -153,7 +153,12 @@ abstract class Report
 	public function init( Report_Controller $controller ) : void
 	{
 		$this->date_from = $controller->getDateFrom();
+		$this->date_from->setTime(0,0,0);
+		
 		$this->date_to = $controller->getDateTo();
+		$this->date_to->setTime(23,59,59);
+		
+		
 		$this->time_period = $controller->getSelectedTimePeriod();
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->module = $controller->getModule();
