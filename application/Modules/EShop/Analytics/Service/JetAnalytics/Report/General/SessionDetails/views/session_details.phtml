@@ -6,6 +6,8 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
+use Jet\Form;
+use Jet\Form_Renderer;
 use Jet\Http_Request;
 use Jet\MVC_View;
 use Jet\Tr;
@@ -17,37 +19,33 @@ use Jet\UI;
  * @var Report $report
  * @var Session $session
  * @var Report_SessionListing $listing
+ * @var Form $filter_form
  */
 
 $module = $this->getRaw('module');
 $report = $this->getRaw('report');
 $listing = $this->getRaw('listing');
 
-$filter = $this->getRaw('filter');
-$filter_options = $this->getRaw('filter_options');
+$filter_form = $this->getRaw('filter_form');
 
 $session = $this->getRaw('session');
 if(!$session):
+	$filter_form->renderer()->setDefaultLabelWidth([
+		Form_Renderer::LJ_SIZE_MEDIUM => 1
+	]);
+	$filter_form->renderer()->setDefaultFieldWidth([
+			Form_Renderer::LJ_SIZE_MEDIUM => 11
+	]);
+	$filter_form->field('what')->input()->addJsAction('onchange', 'this.form.submit();');
+	$filter_form->field('source')->input()->addJsAction('onchange', 'this.form.submit();');
 	?>
 	<h2><?=Tr::_('Sessions list')?></h2>
 
 	<div class="card card-body">
-		<form method="GET">
-			<?php foreach(Http_Request::GET()->getRawData() as $k=>$v):
-				if($k=='filter') continue;
-				?>
-				<input type="hidden" name="<?=$k?>" value="<?=Http_Request::GET()->getString($k)?>">
-			<?php endforeach; ?>
-			<select name="filter" class="form-control" onchange="this.form.submit();">
-				<?php foreach($filter_options as $f_o=>$f_l):
-					if($f_o==$filter):
-						?><option value="<?=$f_o?>" selected><?=$f_l?></option><?php
-					else:
-						?><option value="<?=$f_o?>"><?=$f_l?></option><?php
-					endif;
-				endforeach; ?>
-			</select>
-		</form>
+		<?=$filter_form->start()?>
+		<?=$filter_form->field('what')?>
+		<?=$filter_form->field('source')?>
+		<?=$filter_form->end()?>
 	</div>
 	<?php
 	echo $listing->getGrid();

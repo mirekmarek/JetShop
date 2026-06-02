@@ -428,6 +428,19 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		return $this->referer_domain;
 	}
 	
+	public function getUtm() : array
+	{
+		$utm = [];
+		
+		foreach(get_object_vars( $this ) as $k=>$v) {
+			if($v && str_starts_with($k, 'utm')) {
+				$utm[$k] = $v;
+			}
+		}
+		
+		return $utm;
+	}
+	
 	public function getUtmSource(): string
 	{
 		return $this->utm_source;

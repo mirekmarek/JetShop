@@ -73,6 +73,19 @@ class Report_SessionListing extends DataListing {
 		} );
 		
 		$this->addColumn( new class extends DataListing_Column {
+			public function getKey(): string { return 'source'; }
+			public function getTitle(): string { return Tr::_('Source'); }
+			public function render( mixed $item ) : string
+			{
+				/**
+				 * @var Session $item
+				 */
+				return $item->getSource();
+			}
+		} );
+		
+		
+		$this->addColumn( new class extends DataListing_Column {
 			public function getKey(): string { return 'shopping_cart_used'; }
 			public function getTitle(): string { return Tr::_('Shopping cart used ?'); }
 			public function render( mixed $item ) : string
@@ -128,15 +141,12 @@ class Report_SessionListing extends DataListing {
 			}
 		} );
 		
-		
+		/*
 		$this->addColumn( new class extends DataListing_Column {
 			public function getKey(): string { return 'first_page_URL'; }
 			public function getTitle(): string { return Tr::_('The first visited page'); }
 			public function render( mixed $item ) : string
 			{
-				/**
-				 * @var Session $item
-				 */
 				return '<div style="white-space: nowrap;overflow: hidden;width:20vw;max-width: 20vw!important;" title="'.$item->getFirstPageURL().'"><a href="'.$item->getFirstPageURL().'" target="_blank">'.UI::icon('link').'</a> '.$item->getFirstPageURL().'</div>';
 			}
 		} );
@@ -146,13 +156,10 @@ class Report_SessionListing extends DataListing {
 			public function getTitle(): string { return Tr::_('The last visited page'); }
 			public function render( mixed $item ) : string
 			{
-				/**
-				 * @var Session $item
-				 */
 				return '<div style="white-space: nowrap;overflow: hidden;width:20vw;max-width: 20vw!important;" title="'.$item->getLastPageURL().'"><a href="'.$item->getLastPageURL().'" target="_blank">'.UI::icon('link').'</a> '.$item->getLastPageURL().'</div>';
 			}
 		} );
-		
+		*/
 		
 		
 		

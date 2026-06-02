@@ -6,6 +6,9 @@
  */
 namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 
+use Jet\Form;
+use Jet\Form_Field_Select;
+use Jet\Http_Headers;
 use Jet\Http_Request;
 use Jet\Tr;
 
@@ -18,9 +21,11 @@ class Report_General_SessionDetails extends Report_General
 	protected array $sub_reports = [
 		'session_details' => 'Session details',
 	];
-	protected string $filter = '';
+	protected array $filter = [
+		'what' => '',
+	];
 	
-	public function getFilter(): string
+	public function getFilter(): array
 	{
 		return $this->filter;
 	}
@@ -29,14 +34,6 @@ class Report_General_SessionDetails extends Report_General
 	
 	public function prepare_session_details() : void
 	{
-		$filter_options = [
-			'' => Tr::_('- all -'),
-			'purchased' => Tr::_('Purchased'),
-			'shopping_cart_used' => Tr::_('Shopping cart used, not purchased'),
-			'no_shopping' => Tr::_('No shopping'),
-		];
-		
-		$this->filter = Http_Request::GET()->getString('filter', default_value: '', valid_values: array_keys($filter_options));
 		
 		
 		$session = null;
@@ -55,6 +52,48 @@ class Report_General_SessionDetails extends Report_General
 		
 		
 		if(!$session) {
+			$what_options = [
+				'' => Tr::_('- all -'),
+				'purchased' => Tr::_('Purchased'),
+				'shopping_cart_used' => Tr::_('Shopping cart used, not purchased'),
+				'no_shopping' => Tr::_('No shopping'),
+			];
+			$this->filter['what'] = Http_Request::GET()->getString('what', default_value: '', valid_values: array_keys($what_options));
+			
+			$source_options = [
+				'' => Tr::_('- all -'),
+			];
+			foreach(Session_SourceDetector::getSources() as $source) {
+				$source_options[$source] = $source;
+			}
+			
+			$this->filter['source'] = Http_Request::GET()->getString('source', default_value: '', valid_values: array_keys($source_options));
+			
+			
+			
+			$filter_what = new Form_Field_Select('what', 'What:');
+			$filter_what->setDefaultValue( $this->filter['what'] );
+			$filter_what->setSelectOptions( $what_options );
+			
+			$filter_source = new Form_Field_Select('source', 'Source:');
+			$filter_source->setDefaultValue( $this->filter['source'] );
+			$filter_source->setSelectOptions( $source_options );
+			
+			$filter_form = new Form('filter_form', [
+				$filter_what,
+				$filter_source
+			]);
+			
+			if($filter_form->catch()) {
+				$f = [];
+				foreach($filter_form->getFields() as $field) {
+					$f[$field->getName()] = $field->getValue();
+				}
+				
+				Http_Headers::reload( set_GET_params: $f );
+			}
+			
+			
 			
 			$listing = new class( $this ) extends Report_SessionListing {
 				protected function getDefaultFilterWhere() : array
@@ -71,37 +110,43 @@ class Report_General_SessionDetails extends Report_General
 					
 					$filter = $this->report->getFilter();
 					
-					if($filter) {
+					switch($filter['what']) {
+						case 'purchased':
+							$where[] = 'AND';
+							$where[] = [
+								'purchased' => true
+							];
+							break;
+						case 'shopping_cart_used':
+							$where[] = 'AND';
+							$where[] = [
+								'purchased' => false,
+								'AND',
+								'shopping_cart_used' => true
+							];
+							break;
+						case 'no_shopping':
+							$where[] = 'AND';
+							$where[] = [
+								'purchased' => false,
+								'AND',
+								'shopping_cart_used' => false
+							];
+							break;
+					}
+					
+					if($filter['source']) {
 						$where[] = 'AND';
-						switch($filter) {
-							case 'purchased':
-								$where[] = [
-									'purchased' => true
-								];
-								break;
-							case 'shopping_cart_used':
-								$where[] = [
-									'purchased' => false,
-									'AND',
-									'shopping_cart_used' => true
-								];
-								break;
-							case 'no_shopping':
-								$where[] = [
-									'purchased' => false,
-									'AND',
-									'shopping_cart_used' => false
-								];
-								break;
-						}
+						$where['source'] = $filter['source'];
 					}
 					
 					return $where;
 				}
 			};
 			
-			$this->view->setVar( 'filter_options', $filter_options );
-			$this->view->setVar( 'filter', $this->getFilter() );
+			$this->view->setVar( 'filter_form', $filter_form );
+			
+			
 			$this->view->setVar( 'listing', $listing );
 		}
 		
