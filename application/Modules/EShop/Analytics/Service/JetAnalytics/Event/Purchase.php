@@ -9,6 +9,7 @@ namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Tr;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Order;
 
 #[DataModel_Definition(
@@ -104,6 +105,17 @@ class Event_Purchase extends Event_CheckoutStarted
 	}
 	
 	
+	public function showShortDetails(): string
+	{
+		$res = '';
+		
+		$res .= Application_Service_Admin::Order()->renderItemName( $this->order_id );
+		$res .= '<br>';
+		
+		$res .= parent::showShortDetails();
+		
+		return $res;
+	}
 	
 	
 }

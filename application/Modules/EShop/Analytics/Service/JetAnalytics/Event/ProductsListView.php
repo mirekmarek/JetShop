@@ -231,7 +231,7 @@ class Event_ProductsListView extends DataModel
 		$res = '';
 		
 		foreach(explode('|', $this->visible_product_ids) as $product_id) {
-			$res .= Application_Service_Admin::Product()->renderItemName( $product_id ).'<br>';
+			$res .= Application_Service_Admin::Product()->renderItemName( (int)$product_id ).'<br>';
 		}
 		
 		return $res;

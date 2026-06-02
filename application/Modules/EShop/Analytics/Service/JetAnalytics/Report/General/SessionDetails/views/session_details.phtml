@@ -30,6 +30,8 @@ $filter_form = $this->getRaw('filter_form');
 
 $session = $this->getRaw('session');
 if(!$session):
+	echo $module->renderSelectOneEShop();
+
 	$filter_form->renderer()->setDefaultLabelWidth([
 		Form_Renderer::LJ_SIZE_MEDIUM => 1
 	]);
