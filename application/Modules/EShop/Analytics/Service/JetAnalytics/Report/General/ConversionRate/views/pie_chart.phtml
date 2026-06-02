@@ -1,0 +1,79 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$_data = $this->getRaw('data');
+
+
+$labels = [
+	Tr::_('Purchased'),
+	Tr::_('Shopping cart used, not purchased'),
+	Tr::_('No shopping')
+];
+$data = [
+	'purchased' => 0,
+	'cart_used' => 0,
+	'no_shopping' => 0
+];
+
+foreach( $_data as $what=> $data_per_days) {
+	if($what=='sessions_count') {
+		continue;
+	}
+
+
+	foreach( $data_per_days as $d=>$v ) {
+		$data[$what] += $v;
+	}
+
+}
+$data = array_values($data);
+
+
+
+
+echo $module->renderSelectOneEShop();
+
+?>
+<div style="display: grid;grid-template-columns: 1fr 1fr;gap: 5%;padding: 2%">
+	<div>
+		<canvas id="chart-canvas-cr"></canvas>
+	</div>
+</div>
+
+<script>
+	new Chart(document.getElementById('chart-canvas-cr'), {
+		type: 'pie',
+		data: {
+			labels: <?=json_encode($labels)?>,
+			datasets: [{
+				label: '',
+				data: <?=json_encode($data)?>,
+				backgroundColor: [
+					'rgb(150,220,150)',
+					'rgb(150,150,220)',
+					'rgb(220,150,150)',
+				],
+				hoverOffset: 4
+			}]
+		}
+	});
+
+</script>

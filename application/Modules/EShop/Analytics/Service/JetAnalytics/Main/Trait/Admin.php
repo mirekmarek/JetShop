@@ -336,4 +336,15 @@ trait Main_Trait_Admin {
 		return $key;
 	}
 	
+	public function renderSessionDetails( Session $session ) : string
+	{
+		
+		$view = Factory_MVC::getViewInstance( static::getViewsDir() );
+		$view->setVar( 'report', $this->report_controller->getSelectedReport() );
+		$view->setVar( 'session', $session );
+		
+		return $view->render('session_details');
+	}
+	
+	
 }

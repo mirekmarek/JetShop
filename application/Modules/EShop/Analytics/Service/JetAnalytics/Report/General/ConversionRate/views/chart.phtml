@@ -1,0 +1,144 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ */
+
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$data = $this->getRaw('data');
+
+
+echo $module->renderSelectOneEShop();
+
+$labels = [];
+
+foreach( array_keys( $data['sessions_count'] ) as $date ) {
+	$labels[$date] = Locale::date( new Data_DateTime( $date ), Locale::DATE_TIME_FORMAT_SHORT );
+}
+
+$data_set = [
+	'no_shopping' => [
+			'label' => Tr::_('No shopping'),
+			'data' => [],
+			'backgroundColor' => 'rgb(220,150,150)',
+	],
+	'cart_used' => [
+			'label' => Tr::_('Shopping cart used, not purchased'),
+			'data' => [],
+			'backgroundColor' => 'rgb(150,150,220)',
+	],
+	'purchased' => [
+		'label' => Tr::_('Purchased'),
+		'data' => [],
+		'backgroundColor' => 'rgb(150,220,150)',
+	],
+];
+
+$data_set_percent = $data_set;
+$data_set_count = $data_set;
+
+
+foreach( $data as $what=> $_items) {
+	if($what=='sessions_count') {
+		continue;
+	}
+
+	$items_percent = [];
+	foreach( $_items as $date=>$v) {
+		$prc = $data['sessions_count'][$date]/100;
+
+		if($prc) {
+			$items_percent[$labels[$date]] = ($v/$prc);
+		} else {
+			$items_percent[$labels[$date]] = 0;
+		}
+	}
+
+	$data_set_percent[$what]['data'] = $items_percent;
+
+	$items_count = [];
+	foreach( $_items as $date=>$v) {
+		$items_count[$labels[$date]] = $v;
+	}
+
+	$data_set_count[$what]['data'] = $items_count;
+
+}
+
+$data_set_percent = array_values($data_set_percent);
+$data_set_count = array_values($data_set_count);
+$labels = array_values( $labels );
+
+?>
+<div style="display: grid;grid-template-columns: 1fr;gap: 5%;padding: 2%">
+	<div>
+		<h2><?=Tr::_('Percentage')?></h2>
+	</div>
+	<div>
+		<canvas id="chart-canvas-prc"></canvas>
+	</div>
+	<div>
+		<h2><?=Tr::_('Quantity')?></h2>
+	</div>
+	<div>
+		<canvas id="chart-canvas-count"></canvas>
+	</div>
+</div>
+
+<script>
+
+	new Chart(document.getElementById('chart-canvas-prc'), {
+		type: 'bar',
+		data: {
+			labels: <?=json_encode($labels)?>,
+			datasets: <?=json_encode($data_set_percent)?>
+		},
+		options: {
+			responsive: true,
+			scales: {
+				x: {
+					stacked: true,
+				},
+				y: {
+					stacked: true
+				}
+			}
+		}
+	});
+
+	new Chart(document.getElementById('chart-canvas-count'), {
+		type: 'bar',
+		data: {
+			labels: <?=json_encode($labels)?>,
+			datasets: <?=json_encode($data_set_count)?>
+		},
+		options: {
+			responsive: true,
+			scales: {
+				x: {
+					stacked: true,
+				},
+				y: {
+					stacked: true
+				}
+			}
+		}
+	});
+
+</script>

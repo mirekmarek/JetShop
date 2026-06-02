@@ -23,10 +23,32 @@ $module = $this->getRaw('module');
 $report = $this->getRaw('report');
 $listing = $this->getRaw('listing');
 
+$filter = $this->getRaw('filter');
+$filter_options = $this->getRaw('filter_options');
+
 $session = $this->getRaw('session');
 if(!$session):
 	?>
 	<h2><?=Tr::_('Sessions list')?></h2>
+
+	<div class="card card-body">
+		<form method="GET">
+			<?php foreach(Http_Request::GET()->getRawData() as $k=>$v):
+				if($k=='filter') continue;
+				?>
+				<input type="hidden" name="<?=$k?>" value="<?=Http_Request::GET()->getString($k)?>">
+			<?php endforeach; ?>
+			<select name="filter" class="form-control" onchange="this.form.submit();">
+				<?php foreach($filter_options as $f_o=>$f_l):
+					if($f_o==$filter):
+						?><option value="<?=$f_o?>" selected><?=$f_l?></option><?php
+					else:
+						?><option value="<?=$f_o?>"><?=$f_l?></option><?php
+					endif;
+				endforeach; ?>
+			</select>
+		</form>
+	</div>
 	<?php
 	echo $listing->getGrid();
 	return;

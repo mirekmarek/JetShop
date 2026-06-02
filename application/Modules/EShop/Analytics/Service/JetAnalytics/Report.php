@@ -69,6 +69,13 @@ abstract class Report
 		return $this->sub_reports;
 	}
 	
+	public function getSelectedEshop(): ?EShop
+	{
+		return $this->selected_eshop;
+	}
+	
+	
+	
 	public function getSelectedEshopKeys(): array
 	{
 		return $this->selected_eshop_keys;
