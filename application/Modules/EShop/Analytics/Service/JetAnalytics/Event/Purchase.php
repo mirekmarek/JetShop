@@ -41,8 +41,10 @@ class Event_Purchase extends Event_CheckoutStarted
 	{
 		parent::init( $order );
 		
-		$this->order_id = $order->getId();
-		$this->order_number = $order->getNumber();
+		if($this->session->isConsent()) {
+			$this->order_id = $order->getId();
+			$this->order_number = $order->getNumber();
+		}
 		
 		$this->session->setPurchased( true );
 	}
@@ -109,8 +111,10 @@ class Event_Purchase extends Event_CheckoutStarted
 	{
 		$res = '';
 		
-		$res .= Application_Service_Admin::Order()->renderItemName( $this->order_id );
-		$res .= '<br>';
+		if($this->order_id) {
+			$res .= Application_Service_Admin::Order()->renderItemName( $this->order_id );
+			$res .= '<br>';
+		}
 		
 		$res .= parent::showShortDetails();
 		

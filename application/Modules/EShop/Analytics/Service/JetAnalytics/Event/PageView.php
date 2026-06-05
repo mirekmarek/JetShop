@@ -93,7 +93,7 @@ class Event_PageView extends Event {
 	
 	public function showShortDetails(): string
 	{
-		return '<a href="'.$this->URL.'" target="_blank">'.$this->URL.'</a>';
+		return $this->showUrl( $this->URL );
 	}
 	
 	public function getIcon(): string

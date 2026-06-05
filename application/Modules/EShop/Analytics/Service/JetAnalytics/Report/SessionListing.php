@@ -38,7 +38,11 @@ class Report_SessionListing extends DataListing {
 	
 	protected function getIdList(): array
 	{
-		return [];
+		return Session::dataFetchCol(
+			select: ['id'],
+			where: $this->getFilterWhere(),
+			order_by: $this->getQueryOrderBy()
+		);
 	}
 	
 	public function getFilterView(): MVC_View
@@ -101,6 +105,21 @@ class Report_SessionListing extends DataListing {
 		} );
 		
 		$this->addColumn( new class extends DataListing_Column {
+			public function getKey(): string { return 'checkout_started'; }
+			public function getTitle(): string { return Tr::_('Checkout started ?'); }
+			public function render( mixed $item ) : string
+			{
+				/**
+				 * @var Session $item
+				 */
+				return $item->getCheckoutStarted() ?
+					UI::badge( UI_badge::SUCCESS, Tr::_('Yes') )
+					:
+					UI::badge( UI_badge::INFO, Tr::_('No') );
+			}
+		} );
+		
+		$this->addColumn( new class extends DataListing_Column {
 			public function getKey(): string { return 'purchased'; }
 			public function getTitle(): string { return Tr::_('Purchased ?'); }
 			public function render( mixed $item ) : string
@@ -141,25 +160,17 @@ class Report_SessionListing extends DataListing {
 			}
 		} );
 		
-		/*
 		$this->addColumn( new class extends DataListing_Column {
-			public function getKey(): string { return 'first_page_URL'; }
-			public function getTitle(): string { return Tr::_('The first visited page'); }
+			public function getKey(): string { return 'session_duration'; }
+			public function getTitle(): string { return Tr::_('Session duration'); }
 			public function render( mixed $item ) : string
 			{
-				return '<div style="white-space: nowrap;overflow: hidden;width:20vw;max-width: 20vw!important;" title="'.$item->getFirstPageURL().'"><a href="'.$item->getFirstPageURL().'" target="_blank">'.UI::icon('link').'</a> '.$item->getFirstPageURL().'</div>';
+				/**
+				 * @var Session $item
+				 */
+				return $item->getSessionDuration( true );
 			}
 		} );
-		
-		$this->addColumn( new class extends DataListing_Column {
-			public function getKey(): string { return 'last_page_URL'; }
-			public function getTitle(): string { return Tr::_('The last visited page'); }
-			public function render( mixed $item ) : string
-			{
-				return '<div style="white-space: nowrap;overflow: hidden;width:20vw;max-width: 20vw!important;" title="'.$item->getLastPageURL().'"><a href="'.$item->getLastPageURL().'" target="_blank">'.UI::icon('link').'</a> '.$item->getLastPageURL().'</div>';
-			}
-		} );
-		*/
 		
 		
 		

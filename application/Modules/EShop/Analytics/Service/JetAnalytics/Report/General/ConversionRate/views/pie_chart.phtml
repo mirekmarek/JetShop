@@ -24,11 +24,13 @@ $_data = $this->getRaw('data');
 
 $labels = [
 	Tr::_('Purchased'),
-	Tr::_('Shopping cart used, not purchased'),
+	Tr::_('Checkout started, no purchase'),
+	Tr::_('Shopping cart used, checkout not started'),
 	Tr::_('No shopping')
 ];
 $data = [
 	'purchased' => 0,
+	'checkout_started' => 0,
 	'cart_used' => 0,
 	'no_shopping' => 0
 ];
@@ -68,8 +70,9 @@ echo $module->renderSelectOneEShop();
 				data: <?=json_encode($data)?>,
 				backgroundColor: [
 					'rgb(150,220,150)',
+					'rgb(255,15,15 )',
 					'rgb(150,150,220)',
-					'rgb(220,150,150)',
+					'rgb(48,159,48)',
 				],
 				hoverOffset: 4
 			}]

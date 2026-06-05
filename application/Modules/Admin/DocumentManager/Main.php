@@ -19,6 +19,7 @@ class Main extends Application_Service_Admin_Document
 {
 	protected static array $allowed_mime_types = [
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/msword',
 		'application/vnd.oasis.opendocument.text',
 		'application/rtf',
 		'application/pdf',
@@ -32,6 +33,7 @@ class Main extends Application_Service_Admin_Document
 	
 	protected static array $mime_type_icons = [
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'file-word',
+		'application/msword' => 'file-word',
 		'application/vnd.oasis.opendocument.text' => 'file-word',
 		'application/rtf' => 'file-lines',
 		'application/pdf' => 'file-pdf',

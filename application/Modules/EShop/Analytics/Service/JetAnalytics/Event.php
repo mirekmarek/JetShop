@@ -92,4 +92,8 @@ abstract class Event extends DataModel implements EShopEntity_HasEShopRelation_I
 	
 	abstract public function showLongDetails() : string;
 
+	public function showUrl( string $URL ) : string
+	{
+		return '<div style="white-space: nowrap;max-width: 50vw!important;overflow: hidden;" title="'.$URL.'"><a href="'.$URL.'" target="_blank">'.$URL.'</a></div>';
+	}
 }

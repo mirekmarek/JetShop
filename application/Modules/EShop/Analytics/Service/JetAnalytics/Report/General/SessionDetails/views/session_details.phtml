@@ -54,9 +54,36 @@ if(!$session):
 	return;
 endif;
 
+$next_id = $listing->getNextItemId( $session->getId() );
+$next_url = null;
+if($next_id) {
+	$next_url = Http_Request::currentURI(set_GET_params: ['session_id'=>$next_id]);
+}
+
+
+$prev_id = $listing->getPrevItemId( $session->getId() );
+$prev_url = null;
+if($prev_id) {
+	$prev_url = Http_Request::currentURI(set_GET_params: ['session_id'=>$prev_id]);
+}
 ?>
 <div class="toolbar">
 	<?=UI::button_goBack()->setUrl(Http_Request::currentURI(unset_GET_params: ['session_id']))?>
+
+	<div style="display: inline-block;padding-left: 10px;padding-right: 10px;">
+		<div style="width: 40px;display: inline-block;text-align: center">
+			<?php if($prev_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-left')->setUrl($prev_url)?>
+			<?php endif; ?>
+		</div>
+
+		<div style="width: 40px;display: inline-block;text-align: center">
+			<?php if($next_url): ?>
+				<?=UI::button(' ')->setIcon('chevron-right')->setUrl($next_url)?>
+			<?php endif; ?>
+		</div>
+	</div>
+
 </div>
 
 <div>

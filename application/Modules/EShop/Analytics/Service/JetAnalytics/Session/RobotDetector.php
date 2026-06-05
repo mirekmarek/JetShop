@@ -45,7 +45,9 @@ class Session_RobotDetector
 		'spider',
 		'php',
 		'telegrambot',
-		'blackbox'
+		'blackbox',
+		'claudebot',
+		'geedoshopproductfinder'
 	];
 	
 	protected static array $robots_IPs = [

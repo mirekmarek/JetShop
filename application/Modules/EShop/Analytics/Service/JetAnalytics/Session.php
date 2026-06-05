@@ -16,6 +16,8 @@ use Jet\Http_Request;
 use Jet\MVC;
 use Jet\Session as Jet_Session;
 use Jet\Data_DateTime;
+use JetApplication\Application_Service_EShop;
+use JetApplication\EShop_CookieSettings_Group;
 use JetApplication\EShopEntity_HasEShopRelation_Interface;
 use JetApplication\EShopEntity_HasEShopRelation_Trait;
 use JetApplication\EShops;
@@ -38,6 +40,8 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	
 	protected array $actualized_properties = [];
 	
+	protected static string $session_cookie_name = 'jasi';
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_ID_AUTOINCREMENT,
@@ -54,6 +58,11 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		type: DataModel::TYPE_DATE_TIME
 	)]
 	protected ?Data_DateTime $last_activity_date_time = null;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT
+	)]
+	protected int $session_duration = 0;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -95,6 +104,11 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		type: DataModel::TYPE_BOOL
 	)]
 	protected bool $shopping_cart_used = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	protected bool $checkout_started = false;
 
 	#[DataModel_Definition(
 		type: DataModel::TYPE_STRING,
@@ -180,6 +194,18 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	)]
 	protected string $source = '';
 	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_BOOL
+	)]
+	protected bool $consent = false;
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_INT
+	)]
+	protected int $event_counter = 0;
+	
+	
 	/**
 	 * @var Event[]
 	 */
@@ -216,6 +242,18 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	{
 		return Session_RobotDetector::isRobot();
 	}
+	
+	public static function getSessionCookieName(): string
+	{
+		return self::$session_cookie_name;
+	}
+	
+	public static function setSessionCookieName( string $session_cookie_name ): void
+	{
+		self::$session_cookie_name = $session_cookie_name;
+	}
+	
+	
 
 	public static function getCurrent() : static|false
 	{
@@ -224,30 +262,15 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 				static::$current = false;
 				return false;
 			}
-
-			$jet_session = static::getJetSession();
-			$session_id = $jet_session->getValue('session_id', 0);
 			
-			$session = null;
-			if($session_id) {
-				$session = static::load( $session_id );
-			}
+			$initializer = new Session_Initializer(static::$session_cookie_name);
 			
-			if(!$session) {
-				$session = new static();
-				$session->newSessionStarted();
-				
-				$session_id = $session->id;
-				
-				$jet_session->setValue('session_id', $session_id);
-			}
-			
-			static::$current = $session;
+			static::$current = $initializer->init();
 			
 			if(MVC::getPage()) {
 				$default_event = Event_PageView::create();
 				$default_event->init();
-				$session->setDefaultEvent( $default_event );
+				static::$current->setDefaultEvent( $default_event );
 			}
 			
 			register_shutdown_function( function() {
@@ -259,13 +282,13 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		return static::$current;
 	}
 	
-	protected function newSessionStarted() : void
+	
+	public function newSessionStarted() : void
 	{
 		$this->setEshop( EShops::getCurrent() );
-		$this->IP_address = Http_Request::clientIP();
-		$this->user_agent = $_SERVER['HTTP_USER_AGENT']??'';
 		$this->start_date_time = Data_DateTime::now();
 		$this->first_page_URL = Http_Request::currentURL();
+		
 
 
 		$this->http_referer = $_SERVER['HTTP_REFERER'] ?? '';
@@ -286,14 +309,49 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		
 		$this->save();
 	}
+	
+	public function setupConsent() : void
+	{
+		if(
+			!$this->consent &&
+			Application_Service_EShop::CookieSettings()?->groupAllowed( EShop_CookieSettings_Group::STATS )
+		) {
+			$this->consent = true;
+			$this->IP_address = Http_Request::clientIP();
+			$this->user_agent = $_SERVER['HTTP_USER_AGENT']??'';
+			
+			$this->actualized_properties['consent'] = $this->consent;
+			$this->actualized_properties['IP_address'] = $this->IP_address;
+			$this->actualized_properties['user_agent'] = $this->user_agent;
+		}
+		
+	}
+	
+	public function isConsent(): bool
+	{
+		return $this->consent;
+	}
+	
+	
 
 	protected function actualizeSeession() : void
 	{
+		$this->setupConsent();
 		$this->setLastActivityDateTime( Data_DateTime::now() );
 		$this->setLastPageURL( Http_Request::currentURL() );
-		if(Auth::getCurrentUser()) {
+		if(
+			$this->isConsent() &&
+			Auth::getCurrentUser()
+		) {
 			$this->setCustomerId( Auth::getCurrentUser()->getId() );
 		}
+		
+		$this->event_counter = Session_EventMap::getEventCount( $this );
+		$this->actualized_properties['event_counter'] = $this->event_counter;
+		
+		$this->session_duration = $this->last_activity_date_time->getTimestamp() - $this->start_date_time->getTimestamp();
+		
+		$this->actualized_properties['session_duration'] = $this->session_duration;
 		
 		static::updateData(
 			$this->actualized_properties,
@@ -332,6 +390,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		}
 		
 		$this->events[] = $event;
+		
 	}
 	
 	public function getLastPageURL(): string
@@ -373,6 +432,19 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		$this->actualized_properties['shopping_cart_used'] = $this->shopping_cart_used;
 	}
 	
+	public function getCheckoutStarted(): bool
+	{
+		return $this->checkout_started;
+	}
+	
+	public function setCheckoutStarted( bool $checkout_started ): void
+	{
+		$this->checkout_started = $checkout_started;
+		$this->actualized_properties['checkout_started'] = $this->checkout_started;
+	}
+	
+	
+	
 	public function getId(): int
 	{
 		return $this->id;
@@ -387,6 +459,20 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	{
 		return $this->last_activity_date_time;
 	}
+	
+	public function getSessionDuration( bool $as_time=false ): int|string
+	{
+		if($as_time) {
+			$tz = date_default_timezone_get();
+			date_default_timezone_set('UTC');
+			$t = date( 'H:i:s', $this->session_duration);
+			date_default_timezone_set( $tz );
+			return $t;
+		}
+		return $this->session_duration;
+	}
+	
+	
 	
 	public function getIPAddress(): string
 	{
@@ -558,14 +644,23 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	
 	public static function cleanup() : void
 	{
-		$ttl = new Data_DateTime( date('Y-m-d H:i:s', strtotime('-12 hours')) );
+
+		$ttl = new Data_DateTime( date('Y-m-d H:i:s', strtotime('-8 hours')) );
 		
 		$ids = static::dataFetchCol(
 			select: ['id'],
 			where: [
-				'start_date_time' => static::getDataModelDefinition()->getProperty('last_activity_date_time'),
+				'last_activity_date_time < ' => $ttl,
 				'AND',
-				'last_activity_date_time < ' => $ttl
+				'event_counter < ' => 2,
+				'AND',
+				'purchased' => false,
+				'AND',
+				'checkout_started' => false,
+				'AND',
+				'shopping_cart_used' => false,
+				'AND',
+				'source' => ['Direct', 'Internal'],
 			],
 			order_by: ['-id'],
 			limit: 10000
@@ -580,6 +675,67 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 			
 			$session->delete();
 		}
+		
+		/*
+		
+		$ttl_a = new Data_DateTime( date('Y-m-d H:i:s', strtotime('-4 hours')) );
+		$ttl_b = new Data_DateTime( date('Y-m-d H:i:s', strtotime('-6 hours')) );
+		
+		$ids = static::dataFetchCol(
+			select: ['id'],
+			where: [
+				'last_activity_date_time < ' => $ttl_a,
+				'AND',
+				'last_activity_date_time >= ' => $ttl_b,
+				'AND',
+				'source' => 'Direct'
+			],
+			order_by: ['-id']
+		);
+		
+		if(!$ids) {
+			return;
+		}
+		
+		$_event_map = Session_EventMap::dataFetchAll(
+			select: ['session_id', 'event_id'],
+			where: ['session_id'=>$ids]
+		);
+		
+		$event_map = [];
+		foreach($_event_map as $e) {
+			$id = $e['session_id'];
+			if(!isset($event_map[$id])) {
+				$event_map[$id] = 0;
+			}
+			
+			$event_map[$id]++;
+		}
+		
+		foreach($event_map as $id=>$count) {
+			if($count>1) {
+				unset( $event_map[$id] );
+			}
+		}
+		
+		$ids = array_keys($event_map);
+		
+		foreach($ids as $id) {
+
+			$session = static::load( $id );
+			if(!$session) {
+				continue;
+			}
+			if(count($session->getEventMap())>1) {
+				continue;
+			}
+			
+			echo "b:{$id} - {$session->getStartDateTime()}\n";
+			
+			$session->delete();
+		}
+		*/
+		
 	}
 	
 }

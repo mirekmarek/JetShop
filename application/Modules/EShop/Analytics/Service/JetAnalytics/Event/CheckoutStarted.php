@@ -129,6 +129,7 @@ class Event_CheckoutStarted extends Event
 		
 		$this->delivery_method_id= $order->getDeliveryMethodId();
 		$this->payment_method_id= $order->getPaymentMethodId();
+		
 		$this->currency_code = $pricelist->getCurrencyCode();
 		$this->pricelist_code = $pricelist->getCode();
 		
@@ -142,6 +143,8 @@ class Event_CheckoutStarted extends Event
 		$this->discount_amount_without_VAT = $order->getDiscountAmount_WithoutVAT();
 		$this->total_amount_with_VAT = $order->getTotalAmount_WithVAT();
 		$this->total_amount_without_VAT = $order->getTotalAmount_WithoutVAT();
+		
+		$this->session->setCheckoutStarted( true );
 		
 		$this->initItems( $order );
 	}
@@ -174,22 +177,21 @@ class Event_CheckoutStarted extends Event
 		
 		$price_formatter = Application_Service_Admin::PriceFormatter();
 		
-		$res = '<table>';
+		$res = '<div style="display: grid;gap: 10px;grid-template-columns: 80px 1fr 100px 100px;">';
 		
 		foreach($this->items as $item) {
 			$unit = MeasureUnits::get( $item->getMeasureUnit() );
 			$currency = Currencies::get( $item->getCurrencyCode() );
 			$pricelist = Pricelists::get( $item->getPricelistCode() );
 			
-			$res .= '<tr>';
 			
 			if(!$unit) {
-				$res .= '<td>'.$item->getNumberOfUnits().'</td>';
+				$res .= '<div>'.$item->getNumberOfUnits().'</div>';
 			} else {
-				$res .= '<td>'.$unit->round($item->getNumberOfUnits()).' '.$unit->getNAme(Locale::getCurrentLocale()).'</td>';
+				$res .= '<div>'.$unit->round($item->getNumberOfUnits()).' '.$unit->getName(Locale::getCurrentLocale()).'</div>';
 			}
 			
-			$res .= '<td>';
+			$res .= '<div>';
 			switch($item->getType()) {
 				case Order_Item::ITEM_TYPE_PRODUCT:
 				case Order_Item::ITEM_TYPE_VIRTUAL_PRODUCT:
@@ -208,15 +210,14 @@ class Event_CheckoutStarted extends Event
 						$res .= $item->getItemCode().':'.$item->getSubCode();
 					break;
 			}
-			$res .= '</td>';
+			$res .= '</div>';
 			
 			
-			$res .= '<td>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit() ).'</td>';
-			$res .= '<td>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit()*$item->getNumberOfUnits() ).'</td>';
-			$res .= '</tr>';
+			$res .= '<div>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit() ).'</div>';
+			$res .= '<div>'.$price_formatter->formatWithCurrency( $pricelist, $item->getPricePerUnit()*$item->getNumberOfUnits() ).'</div>';
 		}
 		
-		$res .= '</table>';
+		$res .= '</div>';
 		
 		return $res;
 	}

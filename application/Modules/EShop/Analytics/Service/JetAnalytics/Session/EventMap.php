@@ -69,6 +69,13 @@ class Session_EventMap extends DataModel
 		return $item;
 	}
 	
+	public static function getEventCount( Session $session ) : int
+	{
+		return count(static::dataFetchCol(select: ['id'], where: [
+			'session_id' => $session->getId()
+		], raw_mode: true));
+	}
+	
 	/**
 	 * @return static[]
 	 */

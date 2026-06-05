@@ -224,6 +224,16 @@ class Main extends Application_Service_EShop_AnalyticsService implements Admin_E
 	
 	public function getSysServicesDefinitions(): array
 	{
+		$cleanup = new SysServices_Definition(
+			module: $this,
+			name: Tr::_('Jet Analytics - Cleanup'),
+			description: '',
+			service_code: 'ja_cleanup',
+			service: function() {
+				Session::cleanup();
+			}
+		);
+		
 		$determine_source = new SysServices_Definition(
 			module: $this,
 			name: Tr::_('Jet Analytics - determine session source'),

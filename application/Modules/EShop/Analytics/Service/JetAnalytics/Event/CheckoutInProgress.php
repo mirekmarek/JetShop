@@ -26,6 +26,8 @@ class Event_CheckoutInProgress extends Event_CheckoutStarted
 	
 	protected function initItems( Order $order ) : void
 	{
+		$this->session->setCheckoutStarted( true );
+		
 		foreach($order->getItems() as $item) {
 			foreach(Event_CheckoutInProgress_Item::createNew( $this, $item ) as $created_item) {
 				$this->items[] = $created_item;

@@ -54,6 +54,7 @@ class Report_General_ConversionRate extends Report_General
 				'id',
 				'date_time' => 'start_date_time',
 				'shopping_cart_used',
+				'checkout_started',
 				'purchased',
 			],
 			where: [
@@ -68,10 +69,11 @@ class Report_General_ConversionRate extends Report_General
 		$days = $this->prepareDayMap();
 		
 		$data = [
-			'sessions_count' => $days,
-			'purchased'      => $days,
-			'cart_used'      => $days,
-			'no_shopping'   => $days
+			'sessions_count'   => $days,
+			'purchased'        => $days,
+			'checkout_started' => $days,
+			'cart_used'        => $days,
+			'no_shopping'      => $days
 		];
 		
 		foreach($sessions as $s) {
@@ -82,19 +84,24 @@ class Report_General_ConversionRate extends Report_General
 			if($s['purchased']) {
 				$what = 'purchased';
 			} else {
-				if($s['shopping_cart_used']) {
-					$what = 'cart_used';
+				if($s['checkout_started']) {
+					$what = 'checkout_started';
 				} else {
-					$what = 'no_shopping';
+					if($s['shopping_cart_used']) {
+						$what = 'cart_used';
+					} else {
+						$what = 'no_shopping';
+					}
+					
 				}
 			}
 			
-			$data[$what][$date]++;
+			if(isset($data['sessions_count'][$date])) {
+				$data['sessions_count'][$date]++;
+				$data[$what][$date]++;
+			}
 		}
 		
-		foreach($days as $date=>$v) {
-			$data['sessions_count'][$date] = $data['purchased'][$date]+$data['cart_used'][$date]+$data['no_shopping'][$date];
-		}
 		
 		return $data;
 	}

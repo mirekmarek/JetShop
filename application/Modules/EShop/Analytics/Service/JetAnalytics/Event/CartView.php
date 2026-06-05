@@ -101,10 +101,19 @@ class Event_CartView extends Event
 			$units += $item->getNumberOfUnits();
 		}
 		
-		return
-			Tr::_('Units: <b>%UNITS%</b>', ['UNITS' => $units])
-			.'<br>'
-			.Tr::_('Amount: <b>%AMOUNT%</b>', ['AMOUNT' => $amount]);
+		
+		
+		$res = '<div style="justify-content:left; display: grid;grid-template-columns: auto auto;align-items: center;gap: 5px;">';
+		
+		$res .= '<div>'.Tr::_('Units:').'</div>';
+		$res .= '<div style="font-weight: bolder">'.$units.'</div>';
+		
+		$res .= '<div>'.Tr::_('Amount:').'</div>';
+		$res .= '<div style="font-weight: bolder">'.$amount.'</div>';
+		
+		$res .= '</div>';
+		
+		return $res;
 	}
 	
 	public function showLongDetails(): string

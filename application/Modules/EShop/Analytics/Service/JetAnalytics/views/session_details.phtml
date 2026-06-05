@@ -1,0 +1,143 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_Text;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_badge;use Jet\UI_button;
+use Jet\UI_icon;
+use Jet\UI_messages;
+use JetApplication\Application_Service_Admin;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ * @var Session $session
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+
+$session = $this->getRaw('session');
+?>
+<div class="card card-body">
+	<div style="justify-content: left;display: grid;gap: 10px; grid-template-columns: auto auto;">
+
+		<?php if($session->isConsent()): ?>
+			<div><?=Tr::_('IP:')?></div>
+			<div><?=Data_Text::htmlSpecialChars( $session->getIPAddress() )?></div>
+
+			<div><?=Tr::_('Http User agent:')?></div>
+			<div><?=Data_Text::htmlSpecialChars( $session->getUserAgent() )?></div>
+
+			<div><?=Tr::_('Customer:')?></div>
+			<div>
+				<?php if($session->getCustomerId()):
+					echo Application_Service_Admin::Customer()->renderItemName( $session->getCustomerId() );
+				else:
+					echo Tr::_('Not logget in');
+				endif;?>
+			</div>
+
+		<?php else: ?>
+			<div></div>
+			<div>
+				<?php if(!$session->isConsent()):
+					echo UI_messages::createWarning( Tr::_('Anonymized measurement without consent') )->setCloseable(false);
+				endif; ?>
+			</div>
+		<?php endif; ?>
+
+		<div><?=Tr::_('Source:')?></div>
+		<div><?=$session->getSource()?></div>
+
+		<div><?=Tr::_('Referer:')?></div>
+		<div><?=$session->getHttpReferer()?></div>
+
+
+		<div>UTM:</div>
+		<div>
+			<?php foreach($session->getUtm() as $k=>$v):
+					echo Data_Text::htmlSpecialChars( $k );
+					echo ' = ';
+					echo Data_Text::htmlSpecialChars( $v );
+					echo '<br>';
+			endforeach; ?>
+		</div>
+
+		<div><?=Tr::_('Start date time:')?></div>
+		<div><?=Locale::dateAndTime( $session->getStartDateTime() )?></div>
+
+		<div><?=Tr::_('Last activity date time:')?></div>
+		<div><?=Locale::dateAndTime( $session->getLastActivityDateTime() )?></div>
+
+		<div><?=Tr::_('Session duration:')?></div>
+		<div><?=$session->getSessionDuration( true )?></div>
+
+		<div><?=Tr::_('Shopping cart used ?')?></div>
+		<div><?=$session->isShoppingCartUsed() ? UI::badge( UI_badge::SUCCESS, Tr::_('Yes') ) : UI::badge( UI_badge::INFO, Tr::_('No') )?></div>
+
+		<div><?=Tr::_('Checkout started ?')?></div>
+		<div><?=$session->getCheckoutStarted() ? UI::badge( UI_badge::SUCCESS, Tr::_('Yes') ) : UI::badge( UI_badge::INFO, Tr::_('No') )?></div>
+
+
+		<div><?=Tr::_('Purchased ?')?></div>
+		<div><?=$session->isPurchased() ? UI::badge( UI_badge::SUCCESS, Tr::_('Yes') ) : UI::badge( UI_badge::INFO, Tr::_('No') )?></div>
+
+
+		<div><?=Tr::_('First page:')?></div>
+		<div><div style="white-space: nowrap;max-width: 50vw!important;overflow: hidden;" title="<?=$session->getFirstPageURL()?>"><a href="<?=$session->getFirstPageURL()?>" target="_blank"><?=$session->getFirstPageURL()?></a></div></div>
+
+		<div><?=Tr::_('Last page:')?></div>
+		<div><div style="white-space: nowrap;max-width: 50vw!important;overflow: hidden;" title="<?=$session->getLastPageURL()?>"><a href="<?=$session->getLastPageURL()?>" target="_blank"><?=$session->getLastPageURL()?></a></div></div>
+
+	</div>
+
+
+</div>
+<?php
+foreach( $session->getEventMap() as $event_map_item):
+		$event = $event_map_item->getEvent();
+		if(!$event) {
+			continue;
+		}
+
+		$long_details = $event->showLongDetails();
+		?>
+	<div class="card card-body bg-<?=$event->getCssClass()?>" style="margin: 10px;padding: 10px;">
+		<div style="display: grid;grid-template-columns: 40px 300px 1fr;align-items: center;gap: 10px;">
+			<div style="text-align: center"><?=UI::icon($event->getIcon())->setSize(UI_icon::SIZE_EXTRA_LARGE)?></div>
+			<div>
+				<div><?=$event->getTitle()?></div>
+				<span style="font-size: 0.6rem;opacity: 0.7"><?=Locale::dateAndTime( $event_map_item->getDateTime(), Locale::DATE_TIME_FORMAT_SHORT )?></span>
+			</div>
+			<div>
+				<?=$event->showShortDetails()?>
+			</div>
+
+			<?php if($long_details): ?>
+				<div></div>
+				<div></div>
+				<div>
+					<?=UI::button(Tr::_('Show details'))->setOnClick("$('#event_details_{$event->getId()}').toggle();")->setClass(UI_button::CLASS_INFO);?>
+				</div>
+
+				<div></div>
+				<div></div>
+				<div style="display:none;" id="event_details_<?=$event->getId()?>">
+					<?=$long_details?>
+				</div>
+			<?php endif; ?>
+
+		</div>
+
+	</div>
+<?php endforeach;
