@@ -88,7 +88,9 @@ echo Application_Service_Admin::EntityListing()->renderListingFilter(
 		
 		<div>
 			<div style="width: 300px;">
-				<?=Application_Service_Admin::Category()->renderSelectWidget("productFilter.addCategory(selected_item.id)")?>
+				<?=Application_Service_Admin::Category()->renderSelectWidget(
+						on_select: "productFilter.addCategory(selected_item.id)"
+				)?>
 			</div>
 			
 			<?php foreach( $filter->getSelectedCategoryIds() as $c_id ): ?>

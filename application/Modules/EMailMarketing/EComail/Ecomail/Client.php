@@ -173,8 +173,6 @@ class Ecomail_Client {
 			}
 		}
 		
-		curl_close($ch);
-		
 		$raw_output = json_decode($raw_output, true);
 		
 		return $raw_output;

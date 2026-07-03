@@ -33,7 +33,7 @@ $eshop_key = $eshop->getKey();
 	<div class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?= Tr::_('Categories:')?></div>
 	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
 		<?= /** @noinspection PhpParamsInspection */
-		Application_Service_Admin::Category()->renderSelectCategoriesWidget( $form->field('/eshop_data/'.$eshop_key.'/_category_ids') )?>
+		Application_Service_Admin::Category()->renderSelectEntitiesWidget( $form->field('/eshop_data/'.$eshop_key.'/_category_ids') )?>
 		<br><br><br><br><br><br>
 		<br><br><br><br><br><br>
 	</div>

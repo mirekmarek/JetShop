@@ -199,6 +199,7 @@ class Controller_Main extends MVC_Controller_Default
 			if($item->getId()==$edit_item_id) {
 				if($item->catchEditForm()) {
 					$item->save();
+					$item->sendNewTaskNotifications();
 				}
 				break;
 			}
@@ -210,6 +211,7 @@ class Controller_Main extends MVC_Controller_Default
 			if($item->getId()==$edit_item_id) {
 				if($item->catchEditForm()) {
 					$item->save();
+					$item->sendNewTaskNotifications();
 				}
 				break;
 			}
@@ -235,6 +237,7 @@ class Controller_Main extends MVC_Controller_Default
 				$add_form->catchFieldValues();
 				$new_item->setCreatedDateTime( Data_DateTime::now() );
 				$new_item->save();
+				$new_item->sendNewTaskNotifications();
 				
 				$new_item = Item::prepareNew( $this->entity_type, $this->entity_id );
 				$add_form = $new_item->getAddForm();

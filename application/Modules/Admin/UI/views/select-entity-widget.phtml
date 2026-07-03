@@ -7,30 +7,43 @@
 
 /** @noinspection BadExpressionStatementJS */
 
+use Jet\Tr;
 use Jet\MVC_View;
 use JetApplication\Application_Service_Admin;
+use JetApplication\EShopEntity_Basic;
+use JetApplication\Admin_EntityManager_Module;
 
 /**
  * @var MVC_View $this
+ * @var string|EShopEntity_Basic $entity_class
+ * @var Admin_EntityManager_Module $manager
  */
 
 $name = $this->getRaw('name');
+
+$entity_class = $this->getRaw('entity_class');
+$entity_definition = $entity_class::getEntityDefinition();
+$manager = Application_Service_Admin::list()->get( $entity_definition->getAdminManagerInterface() );
+
+$js_class_name = $name.'_select_widget_controll';
+$selected = $this->getRaw('selected');
+
 ?>
 <div style="display: table;width: 100%">
 	<div style="display: table-row">
-		<div class="select_item_selected_area form-control" style="display: table-cell" onclick="<?=$name?>.startSelect()" id="<?=$name?>_selected_area">
-			<?php if($this->getRaw('selected_entity_title')): ?>
-				<a href="<?=$this->getRaw('selected_entity_edit_URL')?>"><?=$this->getRaw('selected_entity_title')?></a>
-			<?php else: ?>
-				<?=$this->getRaw('caption');?>
-			<?php endif; ?>
+		<div class="select_item_selected_area form-control" style="display: table-cell" onclick="<?=$js_class_name?>.startSelect()" id="<?=$name?>_selected_area">
+			<?php if($selected):
+				echo $manager->renderItemName( $selected );
+			else:
+				echo Tr::_( $this->getRaw('caption') );
+			endif; ?>
 		</div>
 		
 		<div style="display: none" id="<?=$name?>_whisperer_area">
 			<?=Application_Service_Admin::FulltextSearch()->renderWhisperer(
 				name: $name,
-				entity_type: $this->getString('entity_type'),
-				on_select: "{$name}.onSelect( selected_item );",
+				entity_type: $entity_class::getEntityType(),
+				on_select: "{$js_class_name}.onSelect( selected_item );",
 				object_type_filter:  $this->getRaw('object_type_filter'),
 				object_is_active_filter: $this->getRaw('$object_is_active_filter')
 			);?>
@@ -40,7 +53,7 @@ $name = $this->getRaw('name');
 
 
 <script>
-	window['<?=$name?>'] = {
+	const <?=$js_class_name?> = {
 		startSelect: function() {
 			$('#<?=$name?>_selected_area').hide();
 			$('#<?=$name?>_whisperer_area').show();
@@ -52,10 +65,11 @@ $name = $this->getRaw('name');
 			selected_item.id = selected_item.object_id;
 			selected_item.name = selected_item.object_title;
 
+
 			$('#<?=$name?>_selected_area').html(selected_item.object_title);
 			$('#<?=$name?>_whisperer_area').hide();
 			$('#<?=$name?>_selected_area').show();
-			
+
 			<?=$this->getRaw('on_select')?>
 		}
 	};

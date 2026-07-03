@@ -41,6 +41,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	protected array $actualized_properties = [];
 	
 	protected static string $session_cookie_name = 'jasi';
+	protected static string $visitor_cookie_name = 'javi';
 	
 	
 	#[DataModel_Definition(
@@ -88,6 +89,14 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		max_len: 2048
 	)]
 	protected string $last_page_URL = '';
+	
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 100,
+		is_key: true
+	)]
+	protected string $visitor_id = '';
 	
 
 	#[DataModel_Definition(
@@ -194,6 +203,18 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	)]
 	protected string $source = '';
 	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $sub_source_1 = '';
+	
+	#[DataModel_Definition(
+		type: DataModel::TYPE_STRING,
+		max_len: 255
+	)]
+	protected string $sub_source_2 = '';
+	
 	
 	#[DataModel_Definition(
 		type: DataModel::TYPE_BOOL
@@ -245,13 +266,24 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	
 	public static function getSessionCookieName(): string
 	{
-		return self::$session_cookie_name;
+		return static::$session_cookie_name;
 	}
 	
 	public static function setSessionCookieName( string $session_cookie_name ): void
 	{
-		self::$session_cookie_name = $session_cookie_name;
+		static::$session_cookie_name = $session_cookie_name;
 	}
+	
+	public static function getVisitorCookieName(): string
+	{
+		return static::$visitor_cookie_name;
+	}
+	
+	public static function setVisitorCookieName( string $visitor_cookie_name ): void
+	{
+		static::$visitor_cookie_name = $visitor_cookie_name;
+	}
+	
 	
 	
 
@@ -263,7 +295,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 				return false;
 			}
 			
-			$initializer = new Session_Initializer(static::$session_cookie_name);
+			$initializer = new Session_Initializer();
 			
 			static::$current = $initializer->init();
 			
@@ -288,7 +320,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		$this->setEshop( EShops::getCurrent() );
 		$this->start_date_time = Data_DateTime::now();
 		$this->first_page_URL = Http_Request::currentURL();
-		
+		$this->user_agent = $_SERVER['HTTP_USER_AGENT']??'';
 
 
 		$this->http_referer = $_SERVER['HTTP_REFERER'] ?? '';
@@ -314,14 +346,20 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	{
 		if(
 			!$this->consent &&
-			Application_Service_EShop::CookieSettings()?->groupAllowed( EShop_CookieSettings_Group::STATS )
+			(
+				Application_Service_EShop::CookieSettings()?->groupAllowed( EShop_CookieSettings_Group::STATS )
+			)
 		) {
-			$this->consent = true;
-			$this->IP_address = Http_Request::clientIP();
-			$this->user_agent = $_SERVER['HTTP_USER_AGENT']??'';
+
+			$this->setVisitorId( $_COOKIE[static::$visitor_cookie_name] );
 			
+			$this->consent = true;
 			$this->actualized_properties['consent'] = $this->consent;
+			
+			$this->IP_address = Http_Request::clientIP();
 			$this->actualized_properties['IP_address'] = $this->IP_address;
+			
+			$this->user_agent = $_SERVER['HTTP_USER_AGENT']??'';
 			$this->actualized_properties['user_agent'] = $this->user_agent;
 		}
 		
@@ -350,7 +388,6 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		$this->actualized_properties['event_counter'] = $this->event_counter;
 		
 		$this->session_duration = $this->last_activity_date_time->getTimestamp() - $this->start_date_time->getTimestamp();
-		
 		$this->actualized_properties['session_duration'] = $this->session_duration;
 		
 		static::updateData(
@@ -419,6 +456,19 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		$this->customer_id = $customer_id;
 		$this->actualized_properties['customer_id'] = $this->customer_id;
 	}
+	
+	public function getVisitorId(): string
+	{
+		return $this->visitor_id;
+	}
+	
+	public function setVisitorId( string $visitor_id ): void
+	{
+		$this->visitor_id = $visitor_id;
+		$this->actualized_properties['visitor_id'] = $this->visitor_id;
+	}
+	
+	
 	
 	public function setPurchased( bool $purchased ): void
 	{
@@ -595,14 +645,21 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		return Session_EventMap::getMap( $this );
 	}
 	
-	public function getSource() : string
+	public function getSource( bool $force_detect_again=false ) : string
 	{
-		if(!$this->source) {
-			$this->source = Session_SourceDetector::detect( $this );
+		if(!$this->source || $force_detect_again ) {
+			$detector = new Session_SourceDetector( $this );
+			
+
+			$this->source = $detector->getSource();
+			$this->sub_source_1 = $detector->getSubSource1();
+			$this->sub_source_2 = $detector->getSubSource2();
 			
 			static::updateData(
 				data: [
-					'source' => $this->source
+					'source' => $this->source,
+					'sub_source_1' => $this->sub_source_1,
+					'sub_source_2' => $this->sub_source_2,
 				],
 				where: [
 					'id' => $this->id
@@ -613,6 +670,18 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 		return $this->source;
 	}
 	
+	public function getSubSource1(): string
+	{
+		return $this->sub_source_1;
+	}
+	
+	public function getSubSource2(): string
+	{
+		return $this->sub_source_2;
+	}
+	
+	
+	
 	public function afterAdd() : void
 	{
 		$this->getSource();
@@ -622,13 +691,16 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 	{
 		$session_ids = static::dataFetchCol(
 			select: ['id'],
-			where: ['source'=>''],
-			limit: 50000
+			where: [
+				'source'=>'',
+			],
+			order_by: ['-id'],
+			limit: 10000,
 		);
 		
 		foreach($session_ids as $id) {
 			echo "{$id}\n";
-			static::load( $id )?->getSource();
+			static::load( $id )?->getSource( true );
 		}
 	}
 	
@@ -653,6 +725,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 				'last_activity_date_time < ' => $ttl,
 				'AND',
 				'event_counter < ' => 2,
+				/*
 				'AND',
 				'purchased' => false,
 				'AND',
@@ -661,6 +734,7 @@ class Session extends DataModel implements EShopEntity_HasEShopRelation_Interfac
 				'shopping_cart_used' => false,
 				'AND',
 				'source' => ['Direct', 'Internal'],
+				*/
 			],
 			order_by: ['-id'],
 			limit: 10000

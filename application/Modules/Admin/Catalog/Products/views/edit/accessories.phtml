@@ -11,9 +11,9 @@ use Jet\Form_Renderer;
 use Jet\MVC_View;
 use Jet\Form;
 use Jet\Tr;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Product_Box;
 use JetApplication\Product;
-use JetApplication\Application_Service_Admin;
 
 /**
  * @var MVC_View   $this
@@ -55,7 +55,7 @@ $form->field('groups')->input()->addCustomCssStyle("height: 470px");
 		<div class="card">
 			<h5 class="card-header"><?=Tr::_( 'Products' )?></h5>
 			<div class="card-body">
-				<?=Application_Service_Admin::Product()->renderSelectProductsWidget( $form->field('accessory') )?>
+				<?=Application_Service_Admin::Product()->renderSelectEntitiesWidget( $form->field('accessory') )?>
 			</div>
 		</div>
 	</div>

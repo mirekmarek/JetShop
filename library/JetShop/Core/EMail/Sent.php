@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Jet\Data_Text;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use JetApplication\EMail;
@@ -118,7 +119,7 @@ abstract class Core_EMail_Sent extends EShopEntity_WithEShopRelation implements 
 		$item->sender_name = $email->getSenderName();
 		$item->sender_email = $email->getSenderEmail();
 		$item->attachments = implode("\n", $email->getAttachments());
-		$item->subject = $email->getSubject();
+		$item->subject = Data_Text::emojiToHTMLEntities( $email->getSubject() );
 		$item->body_txt = $email->getBodyTxt();
 		$item->body_html = $email->getBodyHtmlRaw();
 		$item->custom_headers = implode("\n", $email->getCustomHeaders());

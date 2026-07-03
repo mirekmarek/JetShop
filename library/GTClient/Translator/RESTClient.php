@@ -117,8 +117,6 @@ class Translator_RESTClient
 			
 		}
 		
-		curl_close( $curl_handle );
-		
 		return $result;
 	}
 	

@@ -115,6 +115,9 @@ $next_url = $listing->getNextEditUrl( $order->getId() );
 		<?php if(!empty($dispatch)): ?>
 		<a class="order-navi" data-tg="o_dispatch" style="cursor: pointer"><?=UI::icon('boxes-packing')?> <?=Tr::_('Order dispatch')?></a>
 		<?php endif; ?>
+		<?php if( !empty($generated_vouchers) ): ?>
+			<a class="order-navi" data-tg="o_generated_vouchers" style="cursor: pointer"><?=UI::icon('ticket')?> <?=Tr::_('Generated vouchers')?></a>
+		<?php endif; ?>
 		<?php if(!empty($invoices)): ?>
 		<a class="order-navi" data-tg="o_invoices" style="cursor: pointer"><?=UI::icon('file-invoice-dollar')?> <?=Tr::_('Invoices')?></a>
 		<?php endif; ?>

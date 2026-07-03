@@ -77,8 +77,6 @@ class GoPay {
 			return false;
 		}
 		
-		curl_close($curl_handle);
-		
 		$token = $response_data['access_token'];
 		
 		return $token;
@@ -189,8 +187,6 @@ class GoPay {
 		$response = curl_exec($curl_handle);
 		
 		$response_data = json_decode(trim( $response ), true);
-
-		curl_close($curl_handle);
 		
 		if( empty($response_data['gw_url'])) {
 			
@@ -245,7 +241,6 @@ class GoPay {
 		$response = curl_exec($curl_handle);
 		
 		$response_data = json_decode(trim( $response ), true);
-		curl_close($curl_handle);
 		
 		
 		if(empty($response_data['state'])) {

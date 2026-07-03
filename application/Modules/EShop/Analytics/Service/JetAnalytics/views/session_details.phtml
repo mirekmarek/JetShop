@@ -50,14 +50,15 @@ $session = $this->getRaw('session');
 		<?php else: ?>
 			<div></div>
 			<div>
-				<?php if(!$session->isConsent()):
-					echo UI_messages::createWarning( Tr::_('Anonymized measurement without consent') )->setCloseable(false);
-				endif; ?>
+				<?=UI_messages::createWarning( Tr::_('Anonymized measurement without consent') )->setCloseable(false);?>
 			</div>
 		<?php endif; ?>
 
 		<div><?=Tr::_('Source:')?></div>
-		<div><?=$session->getSource()?></div>
+		<div>
+			<?=$session->getSource()?>
+			<br><span style="font-size: 0.8rem;"><?=$session->getSubSource1()?></span>
+		</div>
 
 		<div><?=Tr::_('Referer:')?></div>
 		<div><?=$session->getHttpReferer()?></div>

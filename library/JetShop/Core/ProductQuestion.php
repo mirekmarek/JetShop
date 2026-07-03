@@ -399,4 +399,40 @@ abstract class Core_ProductQuestion extends EShopEntity_WithEShopRelation implem
 	{
 		$this->delete();
 	}
+	
+	public function isSpam() : bool
+	{
+		$is_spam = false;
+		
+		$q = $this->getQuestion();
+		if(
+			str_contains( $q, 'http://' ) ||
+			str_contains( $q, 'https://' ) ||
+			str_contains( $q, 'href=' ) ||
+			str_contains( $q, 'www.' ) ||
+			str_contains( $q, 'rb.gy/' ) ||
+			str_contains( $q, 'short.gy/' ) ||
+			str_contains( $q, 'WhatsApp' ) ||
+			str_contains( $q, 'Hello' ) ||
+			str_contains( $q, 'telegra.ph/' ) ||
+			str_contains( $q, 'Community' ) ||
+			str_contains( $q, 'Join' ) ||
+			preg_match( '/\p{Cyrillic}/u', $q )
+		) {
+			$is_spam = true;
+		}
+		
+		$q = $this->getAuthorName();
+		if(
+			str_contains( $q, 'http://' ) ||
+			str_contains( $q, 'https://' ) ||
+			str_contains( $q, 'href=' ) ||
+			str_contains( $q, 'www.' )
+		) {
+			$is_spam = true;
+		}
+		
+		return $is_spam;
+	}
+	
 }

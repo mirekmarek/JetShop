@@ -245,21 +245,74 @@ class Main extends Application_Service_EShop_AnalyticsService implements Admin_E
 		);
 		$determine_source->setIsPeriodicallyTriggeredService( false );
 		
-		$determine_cleanup = new SysServices_Definition(
+		
+		$repair_session = new SysServices_Definition(
 			module: $this,
-			name: Tr::_('Jet Analytics - Cleanup'),
+			name: 'Jet Analytics - Repair session',
 			description: '',
-			service_code: 'ja_cleanup',
+			service_code: 'ja_repair',
 			service: function() {
-				Session::cleanup();
+				$JaSession = new class extends Session{
+					
+					public static function getIds() : array
+					{
+						return static::dataFetchCol(
+							select: ['id'],
+							where: ['session_duration' => 0],
+							order_by: ['-id'],
+							limit: 5000,
+						);
+					}
+					
+					public function repair() : void
+					{
+						$this->session_duration = ($this->last_activity_date_time?->getTimestamp()??0) - ($this->start_date_time?->getTimestamp()??0);
+						
+						/*
+						$event_map = $this->getEventMap();
+						
+						foreach($event_map as $evm_item) {
+							switch($evm_item->getEventType()) {
+								case 'CheckoutStarted':
+								case 'CheckoutInProgress':
+									$this->checkout_started = true;
+									break;
+								case 'Purchase':
+									$this->purchased = true;
+									break;
+							}
+						}
+						
+						$this->event_counter = count($event_map);
+						*/
+						
+						$this->save();
+					}
+				};
+				
+				$ids = $JaSession::getIds();
+				
+				$count = count( $ids );
+				$c = 0;
+				
+				foreach($ids as $id) {
+					$c++;
+					
+					echo "[{$c}/{$count}] {$id}\n";
+					
+					$s = $JaSession::load( $id );
+					$s->repair();
+				}
+
 			}
 		);
 		
-		
+		$repair_session->setIsPeriodicallyTriggeredService( false );
 		
 		return [
+			$cleanup,
 			$determine_source,
-			$determine_cleanup
+			//$repair_session
 		];
 	}
 }

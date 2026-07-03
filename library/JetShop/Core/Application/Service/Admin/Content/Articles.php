@@ -6,7 +6,6 @@
  */
 namespace JetShop;
 
-
 use JetApplication\Admin_EntityManager_Module;
 use Jet\Application_Service_MetaInfo;
 use JetApplication\Application_Service_Admin;

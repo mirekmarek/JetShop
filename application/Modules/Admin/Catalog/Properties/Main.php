@@ -9,8 +9,6 @@ namespace JetApplicationModule\Admin\Catalog\Properties;
 
 use Jet\Factory_MVC;
 use Jet\Form;
-use Jet\Tr;
-use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Service_Admin_Property;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Property;
@@ -19,29 +17,6 @@ use JetApplication\Property;
 class Main extends Application_Service_Admin_Property
 {
 	public const ADMIN_MAIN_PAGE = 'properties';
-	
-	public function renderSelectWidget( string $on_select,
-	                                                   int $selected_property_id=0,
-	                                                   ?string $only_type_filter=null,
-	                                                   ?bool $only_active_filter=null,
-	                                                   string $name='select_property' ) : string
-	{
-		
-		$selected = $selected_property_id ? Property::get($selected_property_id) : null;
-		
-		return Application_Service_Admin::UI()->renderSelectEntityWidget(
-			name: $name,
-			caption: Tr::_('... select property ...', dictionary: $this->module_manifest->getName()),
-			on_select: $on_select,
-			entity_type: Property::getEntityType(),
-			object_type_filter: $only_type_filter,
-			object_is_active_filter: $only_active_filter,
-			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditUrl()
-		);
-		
-	}
-
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

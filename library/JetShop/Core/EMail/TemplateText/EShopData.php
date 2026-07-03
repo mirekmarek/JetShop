@@ -7,6 +7,7 @@
 namespace JetShop;
 
 
+use Jet\Data_Text;
 use Jet\DataModel;
 use Jet\DataModel_Definition;
 use Jet\Form_Definition;
@@ -153,7 +154,7 @@ abstract class Core_EMail_TemplateText_EShopData extends EShopEntity_WithEShopDa
 	
 	public function setSubject( string $subject ): void
 	{
-		$this->subject = $subject;
+		$this->subject = Data_Text::emojiToHTMLEntities( $subject );
 	}
 	
 	public function setBodyHTML( string $value ) : void

@@ -8,8 +8,6 @@ namespace JetApplicationModule\Admin\Catalog\KindsOfProduct;
 
 
 use Jet\Factory_MVC;
-use Jet\Tr;
-use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Service_Admin_KindOfProduct;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Exports_Module_Controller_KindOfProductSettings;
@@ -20,25 +18,6 @@ use JetApplication\KindOfProduct;
 class Main extends Application_Service_Admin_KindOfProduct
 {
 	public const ADMIN_MAIN_PAGE = 'kind-of-product';
-	
-	public function renderSelectWidget( string $on_select,
-                                        int $selected_kind_of_product_id=0,
-                                        ?bool $only_active_filter=null,
-                                        string $name='select_kind_of_product' ) : string
-	{
-		$selected = $selected_kind_of_product_id ? KindOfProduct::get($selected_kind_of_product_id) : null;
-		
-		return Application_Service_Admin::UI()->renderSelectEntityWidget(
-			name: $name,
-			caption: Tr::_('... select kind of product ...', dictionary: $this->module_manifest->getName()),
-			on_select: $on_select,
-			entity_type: KindOfProduct::getEntityType(),
-			object_type_filter: null,
-			object_is_active_filter: $only_active_filter,
-			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditUrl()
-		);
-	}
 	
 	public static function getEntityInstance(): EShopEntity_Basic
 	{

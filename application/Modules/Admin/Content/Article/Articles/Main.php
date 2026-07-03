@@ -6,7 +6,6 @@
  */
 namespace JetApplicationModule\Admin\Content\Article\Articles;
 
-
 use JetApplication\Application_Service_Admin_Content_Articles;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\Content_Article;
@@ -20,5 +19,4 @@ class Main extends Application_Service_Admin_Content_Articles
 	{
 		return new Content_Article();
 	}
-	
 }

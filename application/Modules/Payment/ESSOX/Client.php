@@ -126,14 +126,12 @@ class Client {
 			$this->last_error_message = 'CURL_ERR:' . curl_errno($curl_handle) . ' - ' . curl_error($curl_handle);
 			$this->last_response_data = null;
 			
-			curl_close($curl_handle);
 			return false;
 		} else {
 			if(
 				$response_status==self::HTTP_STATUS_NO_CONTENT ||
 				$response_status==self::HTTP_STATUS_CREATED
 			) {
-				curl_close($curl_handle);
 				return true;
 			}
 			
@@ -142,18 +140,15 @@ class Client {
 			if(!is_array($this->last_response_data)) {
 				$this->last_error_message = "Neocekavana odpoved: HTTP status: {$response_status}, Data odpovedi: " . $response_data;
 				
-				curl_close($curl_handle);
 				return false;
 			} else {
 				
 				switch ($response_status) {
 					case self::HTTP_STATUS_OK:
 					case self::HTTP_STATUS_ACCEPTED:
-						curl_close($curl_handle);
 						return true;
 					default:
 						$this->last_error_message = "http error: {$response_status}";
-						curl_close($curl_handle);
 						return false;
 				}
 				

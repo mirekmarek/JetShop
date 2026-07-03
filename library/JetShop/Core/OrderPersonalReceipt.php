@@ -599,6 +599,10 @@ abstract class Core_OrderPersonalReceipt extends EShopEntity_WithEShopRelation i
 	public function handedOver() : void
 	{
 		$this->setStatus( OrderPersonalReceipt_Status_HandedOver::get() );
+		
+		$this->headed_over_date = Data_DateTime::now();
+		$this->headed_over_date_time = Data_DateTime::now();
+		$this->save();
 	}
 	
 	public function getOurNoteForm() : Form

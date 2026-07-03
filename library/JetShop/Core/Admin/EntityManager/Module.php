@@ -9,8 +9,10 @@ namespace JetShop;
 
 use Jet\Application_Module;
 use Jet\Auth;
+use Jet\Form_Field_Hidden;
 use Jet\MVC;
 use Jet\MVC_Page_Interface;
+use Jet\Tr;
 use JetApplication\Application_Admin;
 use JetApplication\Application_Service_Admin;
 use JetApplication\Auth_Administrator_Role;
@@ -108,4 +110,50 @@ abstract class Core_Admin_EntityManager_Module extends Application_Module {
 	{
 		return static::getEntityInstance()::getEntityDefinition()->getEntityNameReadable( $translate );
 	}
+	
+	public function renderSelectWidget( string             $on_select,
+	                                    int|string|null    $selected_id=0,
+	                                    ?string            $name = null,
+	                                    string|array|null  $object_type_filter = null,
+	                                    ?bool              $object_is_active_filter = null
+	) : string
+	{
+		if(!$name) {
+			$name = 'select_'.static::getEntityInstance()::getEntityType();
+		}
+		
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($name, $on_select, $selected_id, $object_type_filter, $object_is_active_filter) {
+				return Application_Service_Admin::UI()->renderSelectEntityWidget(
+					entity_class: static::getEntityInstance(),
+					name: $name,
+					on_select: $on_select,
+					selected: $selected_id,
+					object_type_filter: $object_type_filter,
+					object_is_active_filter: $object_is_active_filter,
+				);
+			});
+		
+	}
+	
+	
+	public function renderSelectEntitiesWidget(
+	                                       Form_Field_Hidden $input,
+	                                       string|array|null  $object_type_filter = null,
+	                                       ?bool              $object_is_active_filter = null
+	) : string
+	{
+		return Tr::setCurrentDictionaryTemporary(
+			dictionary: $this->module_manifest->getName(),
+			action: function() use ($input, $object_type_filter, $object_is_active_filter) {
+				return Application_Service_Admin::UI()->renderSelectEntitiesWidget(
+					entity_class: static::getEntityInstance(),
+					input: $input,
+					object_type_filter: $object_type_filter,
+					object_is_active_filter: $object_is_active_filter,
+				);
+			});
+	}
+	
 }

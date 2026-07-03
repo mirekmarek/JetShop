@@ -74,8 +74,8 @@ abstract class Core_Admin_Listing_Filter_Product extends Admin_Listing_Filter
 				</script>
 				<div style="width: 400px;">
 					<?=Application_Service_Admin::Product()->renderSelectWidget(
-						"filterProduct_{$this::getKey()}(selected_item.id)",
-						$this->form_field->getValue()
+						on_select: "filterProduct_{$this::getKey()}(selected_item.id)",
+						selected_id: $this->form_field->getValue()
 					)?>
 					<?= $this->form_field->input() ?>
 				</div>

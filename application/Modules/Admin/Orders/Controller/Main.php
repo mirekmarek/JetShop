@@ -42,6 +42,7 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addFilter( new Listing_Filter_Product() );
 		
 		$this->listing_manager->addFilter( new Listing_Filter_Archived() );
+		$this->listing_manager->addFilter( new Listing_Filter_EventProblem() );
 		
 		
 		$this->listing_manager->setSearchWhereCreator( function( string $search ) : array {
@@ -168,6 +169,11 @@ class Controller_Main extends Admin_EntityManager_Controller
 		$this->listing_manager->addHandler( new Listing_Handler_DispatchAllReady() );
 		
 		$this->listing_manager->setDefaultSort('-date_purchased');
+		
+		
+		$this->listing_manager->setCustomBtnRenderer( function() {
+			return $this->view->render('warnings');
+		} );
 		
 	}
 	

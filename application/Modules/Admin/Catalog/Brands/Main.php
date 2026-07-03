@@ -8,8 +8,6 @@ namespace JetApplicationModule\Admin\Catalog\Brands;
 
 
 use Jet\Factory_MVC;
-use Jet\Tr;
-use JetApplication\Application_Service_Admin;
 use JetApplication\Application_Service_Admin_Brand;
 use JetApplication\EShopEntity_Basic;
 use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
@@ -23,27 +21,6 @@ class Main extends Application_Service_Admin_Brand
 	{
 		return new Brand();
 	}
-	
-	public function renderSelectWidget( string $on_select,
-	                                    int $selected_brand_id=0,
-	                                    ?bool $only_active_filter=null,
-	                                    string $name='select_brand' ) : string
-	{
-		
-		$selected = $selected_brand_id ? Brand::get($selected_brand_id) : null;
-		
-		return Application_Service_Admin::UI()->renderSelectEntityWidget(
-			name: $name,
-			caption: Tr::_('... select brand ...', dictionary: $this->module_manifest->getName()),
-			on_select: $on_select,
-			entity_type: Brand::getEntityType(),
-			object_type_filter: null,
-			object_is_active_filter: $only_active_filter,
-			selected_entity_title: $selected?->getInternalName(),
-			selected_entity_edit_URL: $selected?->getEditUrl()
-		);
-	}
-	
 	
 	public function renderMarketPlaceIntegrationForm( MarketplaceIntegration_Module_Controller_BrandSettings $controller ): string
 	{

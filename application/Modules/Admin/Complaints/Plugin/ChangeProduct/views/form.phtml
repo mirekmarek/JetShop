@@ -44,7 +44,10 @@ foreach($form->getFields() as $field) {
 		<div style="display: flex;flex-wrap:nowrap;gap: 10px;align-items: center;margin: 20px;">
 			<div style="width: 150px"><?=Tr::_('Select product:')?></div>
 			<div style="width: 500px;">
-				<?=Application_Service_Admin::Product()->renderSelectWidget("document.getElementById('".$form->field('product')->getId()."').value=selected_item.id;sendChangeProductForm();", name: "change_product_selection")?>
+				<?=Application_Service_Admin::Product()->renderSelectWidget(
+						on_select: "document.getElementById('".$form->field('product')->getId()."').value=selected_item.id;sendChangeProductForm();",
+						name: "change_product_selection"
+				)?>
 			</div>
 		</div>
 	</div>

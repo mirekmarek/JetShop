@@ -1,0 +1,58 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\UI;
+
+use Jet\Form_Field_Hidden;
+use Jet\MVC_View;
+use Jet\UI;
+use Jet\UI_button;
+use JetApplication\Application_Service_Admin;
+
+/**
+ * @var MVC_View $this
+ * @var Form_Field_Hidden $input
+ */
+
+$entity_class = $this->getRaw('entity_class');
+$entity_definition = $entity_class::getEntityDefinition();
+$manager = Application_Service_Admin::list()->get( $entity_definition->getAdminManagerInterface() );
+
+
+$input = $this->getRaw('input');
+$js_class_name = $this->getRaw('js_class_name');
+
+$name = $input->getId();
+
+$ids = $input->getDefaultValue() ? explode(',', $input->getDefaultValue()) : [];
+
+foreach( $ids as $c_id):
+	$c_id = (int) $c_id;
+	?>
+	<?php if($input->getIsReadonly()): ?>
+		<div class="sortable-item" style="grid-template-columns: 1fr;">
+			<div><?=$manager->renderItemName( $c_id )?></div>
+		</div>
+	<?php else: ?>
+		<div class="sortable-item" data-id="<?=$c_id?>" style="grid-template-columns: 20px 30px 1fr;">
+			<div>
+				<?=UI::icon('arrows-up-down')?>
+			</div>
+			<div>
+				<?=UI::button_delete(' ')->setSize(UI_button::SIZE_EXTRA_SMALL)->setOnClick("{$js_class_name}.remove({$c_id});")?>
+			</div>
+			<div><?=$manager->renderItemName( $c_id )?></div>
+		</div>
+	<?php endif;
+endforeach; ?>
+
+<?php if(!$input->getIsReadonly()): ?>
+<script>
+	setTimeout(()=> {
+		<?=$js_class_name?>.sortInit();
+	}, 100)
+</script>
+<?php endif; ?>

@@ -42,7 +42,7 @@ if($form->fieldExists('kind_of_product_id')) {
 		</div>
 		<?=Application_Service_Admin::KindOfProduct()->renderSelectWidget(
 			on_select: "document.getElementById('{$kind_id_field->getId()}').value=selected_item.id",
-			selected_kind_of_product_id: $kind_id_field->getValue()?:0
+			selected_id: $kind_id_field->getValue()?:0
 		);?>
 		<?php
 	});
@@ -93,7 +93,7 @@ if($form->fieldExists('kind_of_product_id')) {
 	<div class="col-md-8">
 		<?=Application_Service_Admin::Product()->renderSelectWidget(
 				on_select: "$('#{$form->field('non_sale_product_id')->getId()}').val(selected_item.id)",
-				selected_product_id: $item->getNonSaleProductId(),
+				selected_id: $item->getNonSaleProductId(),
 				name: 'non_sale_product_select'
 		)?>
 	</div>

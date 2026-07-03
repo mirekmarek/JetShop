@@ -8,6 +8,7 @@ namespace JetShop;
 
 
 use Jet\Application_Module;
+use JetApplication\Application_Service_Admin_Content_Articles;
 use JetApplication\Application_Service_Admin_Content_MagicTags;
 use JetApplication\Application_Service_Admin_Document;
 use JetApplication\Application_Service_Admin_MoneyRefund;
@@ -241,5 +242,13 @@ class Core_Application_Service_Admin {
 	{
 		return static::list()->get( Application_Service_Admin_Document::class );
 	}
+	
+	
+	public static function ContentArticle() : Application_Service_Admin_Content_Articles|Application_Module|null
+	{
+		return static::list()->get( Application_Service_Admin_Content_Articles::class );
+	}
+	
+
 	
 }

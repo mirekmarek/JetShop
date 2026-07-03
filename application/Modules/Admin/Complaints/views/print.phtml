@@ -115,6 +115,16 @@ $product = Product::get( $complaint->getProductId() );
 					<td><?=Tr::_('e-mail:')?></td>
 					<td><a href="mailto:<?=$complaint->getEmail()?>"><u><?=$complaint->getEmail()?></u></a></td>
 				</tr>
+				<tr>
+					<td><?=Tr::_('Address:')?></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<?=Application_Service_Admin::Customer()->formatAddress( $complaint->getEshop(), $complaint->getDeliveryAddress() )?>
+					</td>
+				</tr>
 			</table>
 			
 		</div>

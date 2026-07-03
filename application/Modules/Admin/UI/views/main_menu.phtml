@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\UI;
 
 
+use Jet\SysConf_URI;
 use JetApplication\Application_Admin;
 use JetApplication\EShops;
 
@@ -55,9 +56,10 @@ $showMenu = function( Navigation_Menu $menu, callable $separator_renderer, calla
 	}
 }
 ?>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-	<a class="navbar-brand" href="<?=MVC::getPage( MVC::HOMEPAGE_ID )->getURLPath()?>">Jet Shop</a>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: #232323">
+	<a class="navbar-brand" href="<?=MVC::getPage( MVC::HOMEPAGE_ID )->getURLPath()?>">
+		<img src="<?=SysConf_URI::getImages()?>admin/logo-small.png" style="width: auto;height: auto;margin-left: 3px;margin-right: 3px">
+	</a>
 	
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavBar" aria-controls="mainNavBar" aria-expanded="false" aria-label="">
 		<span class="navbar-toggler-icon"></span>

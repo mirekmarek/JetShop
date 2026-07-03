@@ -7,7 +7,6 @@
 namespace JetShop;
 
 
-use Jet\Form_Field_Hidden;
 use JetApplication\Admin_EntityManager_Module;
 use Jet\Application_Service_MetaInfo;
 use JetApplication\Application_Service_Admin;
@@ -23,14 +22,6 @@ use JetApplication\Exports_Module_Controller_ProductSettings;
 )]
 abstract class Core_Application_Service_Admin_Product extends Admin_EntityManager_Module
 {
-	abstract public function renderSelectWidget( string $on_select,
-	                                    int $selected_product_id=0,
-	                                    ?array $only_type_filter=null,
-	                                    ?bool $only_active_filter=null,
-	                                    string $name='select_product' ) : string;
-	
-	abstract public function renderSelectProductsWidget( Form_Field_Hidden $input ) : string;
-	
 	abstract public function renderMarketPlaceSettings_main(
 		MarketplaceIntegration_Module_Controller_ProductSettings $controller
 	) : string;

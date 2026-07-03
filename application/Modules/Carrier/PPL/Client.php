@@ -66,7 +66,6 @@ class Client {
 		
 		$response_data = json_decode(trim(curl_exec($curl_handle)), true);
 		//$response_status = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
-		curl_close( $curl_handle );
 		
 		if(
 			!$response_data ||
@@ -113,8 +112,6 @@ class Client {
 			$response_data = curl_exec($curl_handle);
 			//$response_status = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
 			$header_size = curl_getinfo($curl_handle, CURLINFO_HEADER_SIZE);
-			
-			curl_close( $curl_handle );
 			
 			
 			$header = substr($response_data, 0, $header_size);

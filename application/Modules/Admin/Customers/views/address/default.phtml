@@ -8,6 +8,7 @@ namespace JetApplicationModule\Admin\Customers;
 
 
 use Jet\MVC_View;
+use Jet\Tr;
 use JetApplication\Customer_Address;
 use JetApplication\DataList;
 use JetApplication\EShop;
@@ -24,8 +25,12 @@ $address = $this->getRaw('address');
 ?>
 <?php if($address->getCompanyName()): ?>
 	<?=$address->getCompanyName()?><br>
-	<?=$address->getCompanyId()?><br>
-	<?=$address->getCompanyVatId()?><br>
+	<?php if($address->getCompanyId()): ?>
+	<?=Tr::_('Company ID:')?> <?=$address->getCompanyId()?><br>
+	<?php endif; ?>
+	<?php if($address->getCompanyVatId()): ?>
+	<?=Tr::_('VAT ID:')?> <?=$address->getCompanyVatId()?><br>
+	<?php endif; ?>
 <?php endif?>
 
 <?=$address->getFirstName()?> <?=$address->getSurname()?><br>

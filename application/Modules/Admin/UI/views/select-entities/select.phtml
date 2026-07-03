@@ -1,0 +1,121 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\Admin\UI;
+
+use Jet\Form_Field_Hidden;
+use Jet\Http_Request;
+use Jet\MVC_View;
+use JetApplication\Admin_EntityManager_Module;
+use JetApplication\Application_Service_Admin;
+use JetApplication\EShopEntity_Basic;
+
+/**
+ * @var MVC_View $this
+ * @var Form_Field_Hidden $input
+ * @var string|EShopEntity_Basic $entity_class
+ * @var Admin_EntityManager_Module $manager
+ */
+
+$entity_class = $this->getRaw('entity_class');
+$entity_definition = $entity_class::getEntityDefinition();
+$manager = Application_Service_Admin::list()->get( $entity_definition->getAdminManagerInterface() );
+
+$input = $this->getRaw('input');
+$js_class_name = $this->getRaw('js_class_name');
+
+$name = $input->getId();
+
+$base_URL = Http_Request::currentURI();
+if(str_contains($base_URL, '?')) {
+	$base_URL .= '&';
+} else {
+	$base_URL .= '?';
+}
+
+$list_node_id = $entity_class::getEntityType().'_list_'.$name;
+
+echo $input;
+?>
+
+<div class="card card-body">
+<?php if( !$input->getIsReadonly() ): ?>
+	<?= $manager->renderSelectWidget(
+			on_select: "{$js_class_name}.add(selected_item.id);",
+			selected_id: 0,
+			name: 'add_'.$name,
+			object_type_filter:  $this->getRaw('object_type_filter'),
+			object_is_active_filter: $this->getRaw('$object_is_active_filter'))?>
+<?php endif ?>
+
+<div id="<?=$list_node_id?>" style="height: 400px;overflow: auto;">
+	<?=$this->render('select-entities/list')?>
+</div>
+</div>
+
+<?php if( !$input->getIsReadonly() ): ?>
+	<script>
+		const <?=$js_class_name?> = {
+			sortInit: () => {
+				$('#<?=$list_node_id?>')['sortable']({
+					stop: function () {
+						<?=$js_class_name?>.setSort();
+					}
+				});
+
+			},
+
+			setSort: () =>  {
+				let ids = [];
+
+				$('#<?=$list_node_id?>').find('.sortable-item').each(function (i, item) {
+					ids.push($(item).data('id'));
+				});
+
+				ids = ids.join(',');
+				document.getElementById('<?=$input->getId()?>').value = ids;
+
+			},
+
+			getCurrent: () => {
+				let ids = document.getElementById('<?=$input->getId()?>').value;
+				if(!ids) {
+					return [];
+				}
+
+				return ids.split(',');
+			},
+			actualize: ( ids ) => {
+				ids = ids.join(',');
+				document.getElementById('<?=$input->getId()?>').value = ids;
+				$('#<?=$list_node_id?>').load( '<?=$base_URL?>show_entities_widget_list='+ids+'&input_id=<?=$input->getId()?>' );
+			},
+			add: (id) => {
+				id = id+'';
+
+				let current = <?=$js_class_name?>.getCurrent();
+				if(current.includes(id)) {
+					return;
+				}
+				current.push(id);
+				<?=$js_class_name?>.actualize( current );
+			},
+			remove: (id) => {
+				id = id+'';
+				let current = <?=$js_class_name?>.getCurrent();
+
+				if(!current.includes(id)) {
+					return;
+				}
+
+
+				current.splice(current.indexOf(id), 1);
+
+				<?=$js_class_name?>.actualize( current );
+			}
+		};
+	</script>
+<?php endif ?>

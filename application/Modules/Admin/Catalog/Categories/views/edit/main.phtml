@@ -54,8 +54,8 @@ $editable = !$form->getIsReadonly();
 				<div style="display: grid;grid-template-columns: 400px 150px;align-items: center">
 					<div>
 						<?=Application_Service_Admin::KindOfProduct()->renderSelectWidget(
-							"$('#kind_of_product_id').val(selected_item.id);",
-							$category->getKindOfProductId()
+							on_select: "$('#kind_of_product_id').val(selected_item.id);",
+							selected_id: $category->getKindOfProductId()
 						)?>
 					</div>
 					<div><?=UI::button_save(Tr::_('Change')); ?></div>

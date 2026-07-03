@@ -127,11 +127,17 @@ $showPropertyEditForm = function( Product $product, string $main_prefix, Form $f
 											'activate_variant_completely'=>$variant->getId()
 										]);
 									},
-									deactivate_per_eshop_url_creator: function( EShop $eshop ) : string {
-										return '';
+									deactivate_per_eshop_url_creator: function( EShop $eshop ) use ($variant) : string {
+										return Http_Request::currentURI([
+												'deactivate_variant_for_eshop'=>$variant->getId(),
+												'eshop' => $eshop->getKey()
+										]);
 									},
-									activate_per_eshop_url_creator: function( EShop $eshop ) : string {
-										return '';
+									activate_per_eshop_url_creator: function( EShop $eshop ) use ($variant) : string {
+										return Http_Request::currentURI([
+											'activate_variant_for_eshop'=>$variant->getId(),
+											'eshop' => $eshop->getKey()
+										]);
 									}
 								
 								);?>

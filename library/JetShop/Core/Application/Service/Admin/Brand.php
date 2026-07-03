@@ -21,11 +21,6 @@ use JetApplication\MarketplaceIntegration_Module_Controller_BrandSettings;
 )]
 abstract class Core_Application_Service_Admin_Brand extends Admin_EntityManager_Module
 {
-	abstract public function renderSelectWidget( string $on_select,
-	                                    int $selected_brand_id=0,
-	                                    ?bool $only_active_filter=null,
-	                                    string $name='select_brand' ) : string;
-	
 	abstract public function renderMarketPlaceIntegrationForm(
 		MarketplaceIntegration_Module_Controller_BrandSettings $controller
 	) : string;

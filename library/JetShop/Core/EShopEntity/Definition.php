@@ -19,7 +19,7 @@ use JetApplication\EShopEntity_Definition_Property;
 use ReflectionClass;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
-abstract class Core_EShopEntity_Definition extends BaseObject
+class Core_EShopEntity_Definition extends BaseObject
 {
 	protected ?string $admin_manager_interface = null;
 	protected ?string $entity_name_readable = null;

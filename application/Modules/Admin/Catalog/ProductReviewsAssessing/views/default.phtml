@@ -1,0 +1,99 @@
+<?php
+namespace JetApplicationModule\Admin\Catalog\ProductReviewsAssessing;
+
+use Jet\Data_Text;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;use JetApplication\Application_Service_Admin;
+use JetApplication\ProductReview;
+
+/**
+ * @var MVC_View   $this
+ * @var ProductReview[] $reviews
+ */
+
+$reviews = $this->getRaw('reviews');
+
+$textarea = function(
+	ProductReview $item,
+	string $name
+) {
+	$getter = match( $name ) {
+		'positive_characteristics' => 'getPositiveCharacteristics',
+		'negative_characteristics' => 'getNegativeCharacteristics',
+		'summary' => 'getSummary',
+		'our_comments' => 'getOurComments',
+		default => 'unknown'
+	};
+	
+	$value = Data_Text::emojiToHTMLEntities(
+			Data_Text::htmlSpecialChars( $item->{$getter}() )
+		);
+	
+	$form_id = "save_value_{$name}_{$item->getId()}";
+	?>
+	<form id="<?=$form_id?>" method="post" action="?">
+		<input type="hidden" name="operation" value="save"/>
+		<input type="hidden" name="what" value="<?=$name?>"/>
+		<input type="hidden" name="id" value="<?=$item->getId()?>"/>
+		
+		<textarea name="value" class="form-control" rows="10" onchange="JetAjaxForm.submit('<?=$form_id?>')"><?=$value?></textarea>
+	</form>
+	<?php
+};
+?>
+<div class="toolbar" id="main-toolbar">
+
+</div>
+<div id="main-col">
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th></th>
+			<th style="width: 20%"><?=UI::icon('plus')?></th>
+			<th style="width: 20%"><?=UI::icon('minus')?></th>
+			<th style="width: 20%"><?=Tr::_('Summary')?></th>
+			<th style="width: 20%"><?=Tr::_('Our comments')?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach($reviews as $item): ?>
+		<tr>
+			<td>
+				<div style="font-weight: bolder;font-size: 2rem"><?=Locale::float($item->getRank())?>%</div>
+				<div><?=Application_Service_Admin::Product()->renderItemName( $item->getProductId() ) ?></div>
+				
+				<div style="padding: 20px;opacity: 0.6"><?=$item->getEshop()->getName()?> / <?=Locale::dateAndTime($item->getCreated())?></div>
+				<div style="padding: 20px;opacity: 0.6"><?=Data_Text::emojiToHTMLEntities($item->getAuthorName())?> (<?=Data_Text::emojiToHTMLEntities($item->getAuthorEmail())?>)</div>
+				<br>
+				<form method="post" action="?">
+					<input type="hidden" name="operation" value="reject"/>
+					<input type="hidden" name="id" value="<?=$item->getId()?>"/>
+					
+					<?=UI::button( Tr::_('Reject') )->setType( UI_button::TYPE_SUBMIT )->setClass(UI_button::CLASS_DANGER)->setSize(UI_button::SIZE_EXTRA_SMALL)?>
+				</form>
+				
+			</td>
+
+			<td><?php $textarea( $item, 'positive_characteristics' )?></td>
+			<td><?php $textarea( $item, 'negative_characteristics' )?></td>
+			<td><?php $textarea( $item, 'summary' )?></td>
+			<td>
+				<?php $textarea( $item, 'our_comments' )?>
+				<div style="text-align: right;padding: 10px;">
+					<form method="post" action="?">
+						<input type="hidden" name="operation" value="approve"/>
+						<input type="hidden" name="id" value="<?=$item->getId()?>"/>
+						
+						<?=UI::button( Tr::_('Approve') )->setType( UI_button::TYPE_SUBMIT )->setClass(UI_button::CLASS_SUCCESS )?>
+					</form>
+					
+				</div>
+			</td>
+		</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>

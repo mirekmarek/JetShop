@@ -377,7 +377,7 @@ abstract class Core_Complaint extends EShopEntity_WithEShopRelation implements
 		$complaint->setCustomerId( $order->getCustomerId() );
 		
 		$address = $order->getDeliveryAddress();
-		if($order->getDeliveryMethod()->isPersonalTakeover()) {
+		if($order->getDeliveryMethod()?->isPersonalTakeover()) {
 			$address = $order->getBillingAddress();
 		}
 		

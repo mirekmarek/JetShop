@@ -562,6 +562,8 @@ class Main extends Application_Service_Admin_EShopEntity_Edit
 	
 	public function renderEventHistory( EShopEntity_Basic|EShopEntity_HasEvents_Interface $item, bool $shop_full=false ) : string
 	{
+		
+		
 		return $this->render('event-history', [
 			'shop_full' => $shop_full,
 			'history' => $item->getHistory()

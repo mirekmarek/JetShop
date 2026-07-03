@@ -7,6 +7,7 @@
 namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 
 use Jet\MVC_View;
+use Jet\UI_messages;
 use JetApplication\ProductQuestion;
 
 /**
@@ -20,6 +21,9 @@ if( $item->getIsNew() ) {
 	return;
 }
 
+if($item->isSpam()) {
+	echo UI_messages::createDanger('SPAM')->setCloseable(false);
+}
 
 echo Plugin::get( Plugin_SetStatus_Main::KEY )?->renderButton();
 echo Plugin::get( Plugin_ForceStatus_Main::KEY )?->renderButton();

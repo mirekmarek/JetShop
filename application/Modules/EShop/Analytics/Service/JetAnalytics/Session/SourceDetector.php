@@ -21,12 +21,14 @@ class Session_SourceDetector
 	public const ORGANIC_SOCIAL = 'Organic Social';
 	
 	public static array $search_services = [
-						'google.',
+						'google.com',
+						'android.gm',
+						'android.googlequicksearchbox',
 						'seznam.cz',
 						'bing.com',
 						'yahoo.com',
 						'duckduckgo.com',
-						'ecosia.org'
+						'ecosia.org',
 					];
 	
 	public static array $social_networks = [
@@ -38,6 +40,36 @@ class Session_SourceDetector
 						'pinterest.com',
 						'tiktok.com'
 					];
+	
+	
+	public static array $utm_medium_aliases = [
+						'fb' => 'facebook'
+					];
+	
+	
+	public static array $utm_medium_paid_search = [
+						'cpc',
+						'ppc',
+						'paidsearch'
+					];
+	
+	public static array $utm_sources_paid_search = [
+						'seznam',
+						'google'
+					];
+	
+	public static array $utm_medium_paid_social = [
+						'facebook',
+					];
+	
+	
+	
+	protected Session $session;
+	
+	protected string $source = '';
+	protected string $sub_source_1 = '';
+	protected string $sub_source_2 = '';
+	
 	
 	public static function getSources() : array
 	{
@@ -54,65 +86,137 @@ class Session_SourceDetector
 		];
 	}
 	
-	public static function detect( Session $session ) : string
+	public function __construct( Session $session )
 	{
+		$this->session = $session;
+		$this->detect();
+	}
+	
+	
+	
+	public function detect() : void
+	{
+		if( $this->session->getGclid() ) {
+			$this->source = static::PAID_SEARCH;
+			$this->sub_source_1 = 'google';
+			
+			return;
+		}
 
-		$utm_medium = $session->getUtmMedium();
-		$utm_source = $session->getUtmSource();
+		$utm_medium = $this->session->getUtmMedium();
+		$utm_source = $this->session->getUtmSource();
+		
+		if(isset(static::$utm_medium_aliases[$utm_medium])) {
+			$utm_medium = static::$utm_medium_aliases[$utm_medium];
+		}
+		
+		
+		$cutDomain = function( string $domain ) : string  {
+			$domain = explode('.', $domain);
+			if( count($domain)>2 ) {
+				$cnt = count($domain);
+				
+				$domain = $domain[$cnt-2].'.'.$domain[$cnt-1];
+			} else {
+				$domain = implode('.', $domain);
+			}
+			
+			return $domain;
+		};
+		
+		$referer_host = $cutDomain( $this->session->getRefererDomain() );
+		$eshop_host = $cutDomain( parse_url( $this->session->getEshop()->getHomepage()->getURL() )['host'] );
 		
 		if( $utm_medium ) {
-			if( in_array( $utm_medium, [
-				'cpc',
-				'ppc',
-				'paidsearch'
-			] ) ) {
-				return static::PAID_SEARCH;
+			
+			if(
+				in_array(
+					$utm_medium,
+					static::$utm_medium_paid_search
+				) &&
+				in_array(
+					$utm_source,
+					static::$utm_sources_paid_search
+				)
+			) {
+				$this->source = static::PAID_SEARCH;
+				$this->sub_source_1 = $utm_source;
+				return;
 			}
 			
-			if( in_array( $utm_medium, [
-				'social',
-				'social-network',
-				'social-media'
-			] ) ) {
-				return static::PAID_SOCIAL;
+			
+			
+			if( in_array( $utm_medium, static::$utm_medium_paid_social ) ) {
+				$this->source = static::PAID_SOCIAL;
+				$this->sub_source_1 = $utm_medium;
+				return;
 			}
 			
-			if( $utm_medium === 'email' ) {
-				return static::EMAIL;
+			if(
+				$utm_medium === 'email' ||
+				str_contains( $this->session->getRefererDomain(), 'mail' )
+			) {
+				$this->source = static::EMAIL;
+				$this->sub_source_1 = $this->session->getRefererDomain();
+				
+				return;
 			}
 			
-			return static::OTHER_CAMPAIGN;
+			$this->source = static::OTHER_CAMPAIGN;
+			$this->sub_source_1 = $referer_host ? : $this->session->getUtmSource();
+			
+			return;
 		}
 		
-		if( $session->getGclid() ) {
-			return static::PAID_SEARCH;
-		}
 		
 		
-		$referer_host = $session->getRefererDomain();
 		if( !$referer_host ) {
-			return static::DIRECT;
+			$this->source = static::DIRECT;
+			return;
 		}
 		
-		
-		if( str_contains( $referer_host, parse_url( $session->getEshop()->getHomepage()->getURL() )['host'] ) ) {
-			return static::INTERNAL;
+		if( $referer_host ==  $eshop_host ) {
+			$this->source = static::INTERNAL;
+			
+			return;
 		}
 		
 		foreach( static::$search_services as $search_service ) {
 			if( str_contains( $referer_host, $search_service ) ) {
-				return static::ORGANIC_SEARCH;
+				$this->source = static::ORGANIC_SEARCH;
+				$this->sub_source_1 = $referer_host;
+				
+				return;
 			}
 		}
 		
 		foreach( static::$social_networks as $social_network ) {
 			if( str_contains( $referer_host, $social_network ) ) {
-				return static::ORGANIC_SOCIAL;
+				$this->source = static::ORGANIC_SOCIAL;
+				$this->sub_source_1 = $referer_host;
+				return;
 			}
 		}
 		
-		return static::REFERRAL;
-		
+		$this->source = static::REFERRAL;
+		$this->sub_source_1 = $referer_host;
 	}
+	
+	public function getSource(): string
+	{
+		return $this->source;
+	}
+	
+	public function getSubSource1(): string
+	{
+		return $this->sub_source_1;
+	}
+	
+	public function getSubSource2(): string
+	{
+		return $this->sub_source_2;
+	}
+	
+	
 }
 

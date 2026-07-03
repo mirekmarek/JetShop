@@ -21,8 +21,8 @@ $form = $this->getRaw('form');
 		<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"><?= Tr::_('Offer:')?></label>
 		<div class="col-md-8" style="padding-bottom: 10px">
 			<?=Application_Service_Admin::Product()->renderSelectWidget(
-				"$('#{$form->field('offer_product_id')->getId()}').val(selected_item.id)",
-				selected_product_id: 0
+				on_select: "$('#{$form->field('offer_product_id')->getId()}').val(selected_item.id)",
+				selected_id: 0
 			);?>
 		</div>
 	</div>
@@ -32,5 +32,12 @@ echo $form->field( 'priority' );
 echo $form->field( 'relevance_mode' );
 echo $form->field( 'show_mode' );
 echo $form->field( 'label' );
+
+echo $form->field( 'do_not_apply_categories' );
+echo $form->field( 'special_offer' );
+echo $form->field( 'use_checkbox' );
+echo $form->field( 'remove_link' );
+
+
 echo $form->field( 'description' );
 

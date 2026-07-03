@@ -75,6 +75,19 @@ trait Controller_Main_Edit_Variants
 			Http_Headers::reload(unset_GET_params: ['activate_variant']);
 		}
 		
+		if($GET->exists('activate_variant_for_eshop')) {
+			$variant_id=$GET->getInt('activate_variant_for_eshop');
+			$eshop = EShops::get($GET->getString('eshop'));
+			
+			if( ($variant = $product->getVariants()[$variant_id]??null) ) {
+				$variant->activateEShopData( $eshop );
+				$product->actualizeVariantMaster();
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['activate_variant_for_eshop', 'eshop']);
+		}
+		
+		
 		if($GET->exists('activate_variant_completely')) {
 			$variant_id=$GET->getInt('activate_variant_completely');
 			
@@ -95,6 +108,18 @@ trait Controller_Main_Edit_Variants
 			}
 			
 			Http_Headers::reload(unset_GET_params: ['deactivate_variant']);
+		}
+		
+		if($GET->exists('deactivate_variant_for_eshop')) {
+			$variant_id=$GET->getInt('deactivate_variant_for_eshop');
+			$eshop = EShops::get($GET->getString('eshop'));
+			
+			if( ($variant = $product->getVariants()[$variant_id]??null) ) {
+				$variant->deactivateEShopData( $eshop );
+				$product->actualizeVariantMaster();
+			}
+			
+			Http_Headers::reload(unset_GET_params: ['deactivate_variant_for_eshop', 'eshop']);
 		}
 		
 		

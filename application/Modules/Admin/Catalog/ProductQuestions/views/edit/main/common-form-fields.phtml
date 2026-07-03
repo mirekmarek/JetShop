@@ -10,6 +10,9 @@ namespace JetApplicationModule\Admin\Catalog\ProductQuestions;
 use Jet\Locale;
 use Jet\MVC_View;
 use Jet\Form;
+use Jet\Tr;
+use Jet\UI;
+use Jet\UI_button;
 use JetApplication\Application_Service_Admin;
 use JetApplication\ProductQuestion;
 
@@ -49,6 +52,22 @@ $form->field('answer')->input()->addCustomCssStyle('height:400px');
 
 <?=$form->field('question')?>
 <?=$form->field('answer')?>
+
+<div class="row">
+	<label class="col-form-label col-xs-12 col-sm-12 col-md-3 col-lg-2"></label>
+	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+		<input type="hidden" name="action" value="" id="action_field">
+
+		<?=UI::button( Tr::_('Answer and display') )
+				->setClass( UI_button::CLASS_SUCCESS )
+				->setType(UI_button::TYPE_BUTTON)
+				->setOnClick("document.getElementById('action_field').value='answer_and_display';this.form.submit();");?>
+		<?=UI::button( Tr::_('Answer but don\'t display') )
+				->setClass( UI_button::CLASS_INFO )
+				->setType(UI_button::TYPE_BUTTON)
+				->setOnClick("document.getElementById('action_field').value='answer_and_do_not_display';this.form.submit();");?>
+	</div>
+</div>
 
 <br><br><br>
 <?=Application_Service_Admin::EntityEdit()->renderEventHistory( $item, true )?>

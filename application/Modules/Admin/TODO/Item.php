@@ -20,10 +20,13 @@ use Jet\Form_Field_Hidden;
 use Jet\Form_Field_RadioButton;
 use Jet\Form_Field_Select_Option;
 use Jet\Http_Request;
+use Jet\Mailing_Email;
 use Jet\Tr;
 use Jet\UI;
 use Jet\UI_badge;
+use JetApplication\Application_Service_Admin;
 use JetApplication\Auth_Administrator_User;
+use JetApplication\EShopEntity;
 
 /**
  *
@@ -545,5 +548,57 @@ class Item extends DataModel
 		$this->is_done_date_time = Data_DateTime::now();
 		
 		$this->save();
+	}
+	
+	public function sendNewTaskNotifications_generateEmail() : Mailing_Email
+	{
+		$addresses = [];
+		foreach( $this->getVisibleForUsers() as $user ) {
+			if($user->getId()!=$this->getCreatedByUserId()) {
+				$addresses[] = $user->getEmail();
+			}
+		}
+		$addresses = array_unique( $addresses );
+		
+		
+		$entity_name = $this->getContextEntityType();
+		$item_name = $this->getContextEntityId();
+		$item_URL = '';
+		
+		$entity_definition = EShopEntity::getEntityDefinitionByType( $this->getContextEntityType() );
+		if($entity_definition) {
+			$entity_name = $entity_definition->getEntityNameReadable( true );
+			
+			$manager = Application_Service_Admin::list()->get( $entity_definition->getAdminManagerInterface() );
+			if($manager) {
+				$item_URL = $manager->renderItemName( $this->getContextEntityId() );
+				$item_name = strip_tags( $item_URL );
+			}
+		}
+		
+		$subject = 'Nový úkol: '.$entity_name.' : '.$item_name;
+		
+		$message =
+			 'Máte nový úkol od '.$this->getCreatedByUserName().'<hr><br>'
+			.'Úkol se týká: '.$entity_name.' '.$item_URL.'<hr><br>'
+			.nl2br($this->getTask());
+		
+		
+		
+		$email = new Mailing_Email();
+		$email->setSenderEmail('todo@mastersport.cz');
+		$email->setTo( $addresses );
+		$email->setSubject( $subject );
+		$email->setBodyHtml( $message );
+		return $email;
+	}
+	
+	public function sendNewTaskNotifications() : void
+	{
+		$email = $this->sendNewTaskNotifications_generateEmail();
+		
+		if($email->getTo()) {
+			$email->send();
+		}
 	}
 }

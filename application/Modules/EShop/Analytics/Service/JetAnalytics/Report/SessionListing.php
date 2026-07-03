@@ -84,7 +84,7 @@ class Report_SessionListing extends DataListing {
 				/**
 				 * @var Session $item
 				 */
-				return $item->getSource();
+				return $item->getSource().'<br><span style="font-size: 0.8rem;">'.$item->getSubSource1().'</span>';
 			}
 		} );
 		

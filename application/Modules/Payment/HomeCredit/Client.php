@@ -129,7 +129,6 @@ class Client {
 		
 		$this->last_response_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		
-		curl_close($ch);
 		
 		$this->last_response = json_decode( $this->last_response_raw,true );
 		

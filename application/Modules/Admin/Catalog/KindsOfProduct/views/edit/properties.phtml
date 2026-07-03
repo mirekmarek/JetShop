@@ -213,7 +213,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 <div id="main-col">
 	<?=$this->getRaw('tabs')?>
 
-	<div class="toolbar"style="display: flex;align-items: center;gap: 10px;padding: 10px;">
+	<div class="toolbar" style="display: flex;align-items: center;gap: 10px;padding: 10px;">
 		<?php if( $editable ): ?>
 
 			<div style="padding-left: 30px;;"><?=Tr::_('Add property: ')?></div>
@@ -226,7 +226,7 @@ echo $this->controller->getEditorManager()->renderToolbar();
 		
 			<div style="padding-left: 30px;"><?=Tr::_('Add property group: ')?></div>
 			<div style="width: 400px;">
-				<?=Application_Service_Admin::PropertyGroup()->renderSelectWidget( "addGroup(selected_item.id)" )?>
+				<?=Application_Service_Admin::PropertyGroup()->renderSelectWidget( on_select: "addGroup(selected_item.id)" )?>
 			</div>
 		
 		<?php endif; ?>

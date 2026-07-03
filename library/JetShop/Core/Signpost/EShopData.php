@@ -222,6 +222,9 @@ abstract class Core_Signpost_EShopData extends EShopEntity_WithEShopData_EShopDa
 			$signpost_ids[] = $signpost->getId();
 			$signposts[$signpost->getId()] = $signpost;
 		}
+		if(!$signpost_ids) {
+			return [];
+		}
 		
 		$_category_map = Signpost_Category::dataFetchAll(
 			select:['category_id', 'signpost_id'],

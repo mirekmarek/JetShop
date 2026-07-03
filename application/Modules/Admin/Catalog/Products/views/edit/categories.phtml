@@ -35,7 +35,7 @@ require '_toolbar.phtml';
 		<?=Tr::_('Add category')?>
 	</div>
 	<div style="width: 300px">
-		<?=Application_Service_Admin::Category()->renderSelectWidget("location.href='".Http_Request::currentURI()."&add_category='+selected_item.id;")?>
+		<?=Application_Service_Admin::Category()->renderSelectWidget(on_select: "location.href='".Http_Request::currentURI()."&add_category='+selected_item.id;")?>
 	</div>
 	<?php endif; ?>
 </div>

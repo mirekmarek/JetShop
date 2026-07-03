@@ -92,7 +92,6 @@ class Client {
 		
 		$curl_error_no = curl_errno($curl_handle);
 		$curl_error = curl_error($curl_handle);
-		curl_close($curl_handle);
 
 		
 		if($this->response_data===false) {

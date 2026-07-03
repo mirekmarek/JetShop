@@ -177,7 +177,6 @@ abstract class Core_Application_Service_EShop_OAuthBackendModule extends Applica
 			$this->last_error_message = 'CURL_ERR:' . curl_errno($curl_handle) . ' - ' . curl_error($curl_handle);
 			$this->last_response_data = null;
 			
-			curl_close($curl_handle);
 			return false;
 		} else {
 			
@@ -187,7 +186,6 @@ abstract class Core_Application_Service_EShop_OAuthBackendModule extends Applica
 			if(!is_array($this->last_response_data)) {
 				$this->last_error_message = "Unexpected response: HTTP status: $response_status, Response: $response_data";
 				
-				curl_close($curl_handle);
 				return false;
 			} else {
 				if(isset($this->last_response_data['result']['message'])) {
@@ -198,12 +196,10 @@ abstract class Core_Application_Service_EShop_OAuthBackendModule extends Applica
 					case self::HTTP_STATUS_OK:
 					case self::HTTP_STATUS_CREATED:
 					case self::HTTP_STATUS_ACCEPTED:
-						curl_close($curl_handle);
 						return true;
 						break;
 					default:
 						$this->last_error_message = "http error: $response_status, message: " . $message;
-						curl_close($curl_handle);
 						return false;
 				}
 				

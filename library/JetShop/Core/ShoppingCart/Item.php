@@ -206,7 +206,7 @@ abstract class Core_ShoppingCart_Item
 			text: 'Sorry, but the maximum quantity is %units% %mu%',
 			data: [
 				'units' => $number_of_units,
-				'mu' => $p->getKind()->getMeasureUnit()->getName( $this->getCart()->getEshop()->getLocale() )
+				'mu' => $p->getKind()?->getMeasureUnit()?->getName( $this->getCart()->getEshop()->getLocale() )
 			],
 			locale: $this->getCart()->getEshop()->getLocale()
 		);

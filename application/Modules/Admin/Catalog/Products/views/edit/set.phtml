@@ -58,7 +58,7 @@ require '_toolbar.phtml';
 			<div style="text-align: right;font-weight: bolder;"><?=Tr::_('Add product: ')?></div>
 			<div style="width: 400px;"><?=Application_Service_Admin::Product()->renderSelectWidget(
 				on_select: "$('#set_add_item_form__product_id').val(selected_item.id);$('#set_add_item_form').submit();",
-				only_type_filter: [Product::PRODUCT_TYPE_REGULAR]
+				object_type_filter: [Product::PRODUCT_TYPE_REGULAR]
 			)?></div>
 	<?php endif; ?>
 	

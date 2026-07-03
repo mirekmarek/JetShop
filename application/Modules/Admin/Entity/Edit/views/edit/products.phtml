@@ -51,7 +51,7 @@ echo $edit_manager->renderToolbar();
 				<div>
 					<?=Application_Service_Admin::Product()->renderSelectWidget(
 						on_select: "location='".Http_Request::currentURI()."&add_product='+selected_item.id",
-						only_type_filter:[
+						object_type_filter:[
 							Product::PRODUCT_TYPE_REGULAR,
 							Product::PRODUCT_TYPE_VARIANT_MASTER,
 							Product::PRODUCT_TYPE_SET

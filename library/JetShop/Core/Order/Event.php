@@ -76,4 +76,16 @@ abstract class Core_Order_Event extends EShopEntity_Event
 		);
 	}
 	
+	
+	public static function getProblematicOrderIds() : array
+	{
+		return static::dataFetchCol(
+			select: ['order_id'],
+			where: [
+				'handled' => 0
+			],
+			raw_mode:  true
+		);
+	}
+	
 }

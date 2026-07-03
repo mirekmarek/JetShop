@@ -47,7 +47,7 @@ $form = $this->getRaw('form');
 </script>
 <div class="toolbar" style="display: grid;grid-template-columns: auto 1fr; gap: 5px;padding: 10px;">
 	<div><b><?= Tr::_('Add product:')?></b></div>
-	<?= Application_Service_Admin::Product()->renderSelectWidget("Products.add(selected_item.id)")?>
+	<?= Application_Service_Admin::Product()->renderSelectWidget( on_select:  "Products.add(selected_item.id)" )?>
 </div>
 
 <div id="product">

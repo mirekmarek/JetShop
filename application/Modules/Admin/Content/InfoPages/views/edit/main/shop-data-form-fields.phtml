@@ -22,7 +22,7 @@ $eshop = $this->getRaw('eshop');
 $form = $this->getRaw('form');
 $eshop_key = $eshop->getKey();
 
-$base_URL = MVC::getBase($eshop->getBaseId())->getHomepage($eshop->getLocale())->getURL();
+$base_URL = MVC::getBase($eshop->getBaseId())?->getHomepage($eshop->getLocale())->getURL()??'';
 ?>
 <?=$form->field('/eshop_data/'.$eshop_key.'/title')?>
 <?=$form->field('/eshop_data/'.$eshop_key.'/menu_title')?>

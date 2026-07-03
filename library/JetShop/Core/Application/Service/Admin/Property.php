@@ -24,12 +24,6 @@ abstract class Core_Application_Service_Admin_Property extends Admin_EntityManag
 	
 	abstract public function showType( string $type ) : string;
 	
-	abstract public function renderSelectWidget( string $on_select,
-	                                                   int $selected_property_id=0,
-	                                                   ?string $only_type_filter=null,
-	                                                   ?bool $only_active_filter=null,
-	                                                   string $name='select_property' ) : string;
-	
 	abstract public function renderProductPropertyEditFormField(
 		Form $form,
 		int $property_id,

@@ -75,7 +75,7 @@ $form->field('notes')->input()->addCustomCssStyle("height: 500px");
 			<div class="col-md-8">
 				<?=Application_Service_Admin::Product()->renderSelectWidget(
 					on_select: "document.getElementById('{$form->field('product_id')->getId()}').value=selected_item.id;",
-					selected_product_id: $rcp->getProductId()
+					selected_id: $rcp->getProductId()
 				);?>
 			</div>
 		</div>

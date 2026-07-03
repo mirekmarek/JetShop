@@ -10,7 +10,9 @@ namespace JetShop;
 use Jet\Application_Module;
 use Jet\Form;
 use Jet\Application_Service_MetaInfo;
+use Jet\Form_Field_Hidden;
 use JetApplication\Application_Service_Admin;
+use JetApplication\EShopEntity_Basic;
 
 #[Application_Service_MetaInfo(
 	group: Application_Service_Admin::GROUP,
@@ -24,14 +26,19 @@ abstract class Core_Application_Service_Admin_UI extends Application_Module
 	abstract public function handleCurrentPreferredShop();
 	
 	abstract public function renderSelectEntityWidget(
+		string|EShopEntity_Basic $entity_class,
 		string $name,
-		string $caption,
 		string $on_select,
-		string $entity_type,
-		string|array|null $object_type_filter,
-		?bool $object_is_active_filter,
-		?string $selected_entity_title,
-		?string $selected_entity_edit_URL
+		string|EShopEntity_Basic|null $selected = null,
+		string|array|null $object_type_filter = null,
+		?bool $object_is_active_filter = null
+	) : string;
+	
+	abstract public function renderSelectEntitiesWidget(
+		string|EShopEntity_Basic $entity_class,
+		Form_Field_Hidden $input,
+		string|array|null $object_type_filter=null,
+		?bool $object_is_active_filter=null,
 	) : string;
 	
 	

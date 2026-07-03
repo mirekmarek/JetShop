@@ -15,20 +15,34 @@ use JetApplication\EShops;
 
 class Session_Initializer {
 	protected string $enc_method = 'AES-256-CBC';
-	protected string $session_cookie_name;
 	
-	public function __construct( string $session_cookie_name )
+	public function __construct()
 	{
-		$this->session_cookie_name = $session_cookie_name;
 	}
 	
 	public function init() : Session
 	{
-		if(!isset($_COOKIE[$this->session_cookie_name])) {
+		if(!isset($_COOKIE[Session::getVisitorCookieName()])) {
+			$_COOKIE[Session::getVisitorCookieName()] = md5(time().uniqid().uniqid().uniqid());
+		}
+		
+		if(!headers_sent()) {
+			setcookie(
+				name: Session::getVisitorCookieName(),
+				value: $_COOKIE[Session::getVisitorCookieName()],
+				expires_or_options: time() + (10 * 365 * 24 * 60 * 60),
+				path: '/',
+				secure: true,
+				httponly: true
+			);
+		}
+
+		
+		if(!isset($_COOKIE[Session::getSessionCookieName()])) {
 			return $this->startSession();
 		}
 		
-		$session_id = $this->decryptData( $_COOKIE[$this->session_cookie_name] );
+		$session_id = $this->decryptData( $_COOKIE[Session::getSessionCookieName()] );
 		
 		return Session::load( $session_id ) ? : $this->startSession();
 	}
@@ -40,16 +54,15 @@ class Session_Initializer {
 		
 		$session_id = $this->encryptData( $session->getId() );
 		
-		$_COOKIE[$this->session_cookie_name] = $session_id;
+		$_COOKIE[Session::getSessionCookieName()] = $session_id;
 		setcookie(
-			name: $this->session_cookie_name,
+			name: Session::getSessionCookieName(),
 			value: $session_id,
 			expires_or_options: 0,
 			path: '/',
 			secure: true,
 			httponly: true
 		);
-		
 		
 		return $session;
 	}

@@ -1,0 +1,76 @@
+<?php
+/**
+ * @copyright Copyright (c) Miroslav Marek <mirek.marek@web-jet.cz>
+ * @license EUPL 1.2  https://eupl.eu/1.2/en/
+ * @author Miroslav Marek <mirek.marek@web-jet.cz>
+ */
+namespace JetApplicationModule\EShop\Analytics\Service\JetAnalytics;
+
+use Jet\Data_DateTime;
+use Jet\Locale;
+use Jet\MVC_View;
+use Jet\Tr;
+
+/**
+ * @var MVC_View $this
+ * @var Main $module
+ * @var Report $report
+ * @var array $data
+ */
+
+$module = $this->getRaw('module');
+$report = $this->getRaw('report');
+$data_club = $this->getRaw('data_club');
+$data_non_club = $this->getRaw('data_non_club');
+
+$days = array_keys($data_club['total']);
+
+echo $module->renderSelectEShop();
+?>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th></th>
+		<th><?=Tr::_('Total')?></th>
+		<?php foreach ($data_club as $key=>$items): ?>
+			<th>
+				<?=Main::keyToTitle($key.'|Club')?>
+			</th>
+			<th>
+				<?=Main::keyToTitle($key.'|Non-club')?>
+			</th>
+		<?php endforeach; ?>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach($days as $day):
+		
+		$date = new Data_DateTime($day);
+		$ws = $date->format('w');
+		
+		$row_class = match ($ws) {
+			'0', '6' => 'table-info',
+			default => ''
+		};
+		
+		$total_per_day = $data_club['total'][$day]+$data_non_club['total'][$day];
+		?>
+		<tr class="<?=$row_class?>">
+			<td><?=Locale::date( $date, Locale::DATE_TIME_FORMAT_SHORT )?></td>
+			<td>
+				<?=$total_per_day?>
+			</td>
+			
+			<?php foreach (array_keys($data_club) as $key): ?>
+				<td>
+					<?=$data_club[$key][$day]?>
+				</td>
+				<td>
+					<?=$data_non_club[$key][$day]?>
+				</td>
+			<?php endforeach; ?>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>
